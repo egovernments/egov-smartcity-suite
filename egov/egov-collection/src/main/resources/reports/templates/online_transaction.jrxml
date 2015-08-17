@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-07-06T15:03:01 -->
+<!-- 2015-08-15T16:09:26 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="online_transaction" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6c32d2bb-93b0-4b77-9de8-d1cb8d0afd9f">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Postgresql"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<style name="eGov Basic" isDefault="true" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hTextAlign="Left" hImageAlign="Left" vTextAlign="Middle" vImageAlign="Middle" rotation="None" fontName="Times New Roman" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman">
 		<box leftPadding="5" rightPadding="5"/>
@@ -48,21 +49,29 @@
 		<defaultValueExpression><![CDATA[-1]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_DEPT_ID" class="java.lang.String">
-		<defaultValueExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "" : "AND cm.department = " + $P{EGOV_DEPT_ID}]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "" : "AND EGCL_COLLECTIONMIS.department = " + $P{EGOV_DEPT_ID}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_SERVICE_ID" class="java.lang.String">
-		<defaultValueExpression><![CDATA[($P{EGOV_BILLING_SERVICE_ID} == null || $P{EGOV_BILLING_SERVICE_ID} == -1) ? "" : "AND rh.service = " + $P{EGOV_BILLING_SERVICE_ID}]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_BILLING_SERVICE_ID} == null || $P{EGOV_BILLING_SERVICE_ID} == -1) ? "" : "AND EGCL_SERVICEDETAILS.id = " + $P{EGOV_BILLING_SERVICE_ID}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_PAYMENTSTATUS_ID" class="java.lang.String">
-		<defaultValueExpression><![CDATA[($P{EGOV_ONLINETRANSACTION_STATUS_ID} == null || $P{EGOV_ONLINETRANSACTION_STATUS_ID} == -1) ? "" : "AND onlinePayment.status = " + $P{EGOV_ONLINETRANSACTION_STATUS_ID}]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_ONLINETRANSACTION_STATUS_ID} == null || $P{EGOV_ONLINETRANSACTION_STATUS_ID} == -1) ? "" : "AND EGW_STATUS.ID = " + $P{EGOV_ONLINETRANSACTION_STATUS_ID}]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT referencenumber,consumerCode,rh.createdDate,receiptnumber,totalAmount,rh.servicedetails as service,onlinePayment.status FROM 
-	EGCL_COLLECTIONHEADER rh, egcl_onlinepayments onlinePayment, egcl_collectionmis cm
+		<![CDATA[SELECT EGCL_COLLECTIONHEADER.REFERENCENUMBER as referencenumber, EGCL_COLLECTIONHEADER.CONSUMERCODE as consumerCode, EGCL_COLLECTIONHEADER.RECEIPTNUMBER as receiptnumber, EGCL_COLLECTIONHEADER.CREATEDDATE as createdDate, EGCL_COLLECTIONHEADER.TOTALAMOUNT as totalAmount,
+		EGCL_SERVICEDETAILS.NAME as service, EGW_STATUS.description as status,EGCL_ONLINEPAYMENTS.transactionnumber as transactionNumber, EGCL_ONLINEPAYMENTS.transactiondate 
+			FROM 
+		 		EGCL_COLLECTIONHEADER EGCL_COLLECTIONHEADER
+		  INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER
+		  INNER JOIN EGCL_ONLINEPAYMENTS EGCL_ONLINEPAYMENTS ON EGCL_ONLINEPAYMENTS.COLLECTIONHEADER =EGCL_COLLECTIONHEADER.ID
+		  INNER JOIN EGW_STATUS EGW_STATUS ON EGCL_ONLINEPAYMENTS.STATUS = EGW_STATUS.ID 
+		  INNER JOIN EGCL_SERVICEDETAILS EGCL_SERVICEDETAILS ON EGCL_COLLECTIONHEADER.SERVICEDETAILS = EGCL_SERVICEDETAILS.ID
+
+
 	
-	WHERE rh.collectiontype = 'O'
-	AND rh.createdDate >= $P{EGOV_FROM_DATE}
-	and rh.createdDate <= $P{EGOV_TO_DATE}
+	WHERE EGCL_COLLECTIONHEADER.collectiontype = 'O'
+	AND EGCL_COLLECTIONHEADER.createdDate >= $P{EGOV_FROM_DATE}
+	and EGCL_COLLECTIONHEADER.createdDate <= $P{EGOV_TO_DATE}
 	$P!{Q_DEPT_ID}
 	$P!{Q_SERVICE_ID}
 	$P!{Q_PAYMENTSTATUS_ID}]]>
@@ -86,7 +95,12 @@
 		<fieldDescription><![CDATA[Billing System]]></fieldDescription>
 	</field>
 	<field name="status" class="java.lang.String"/>
-	<field name="onlinePayment" />
+	<field name="transactionNumber" class="java.lang.String">
+		<fieldDescription><![CDATA[Transaction Number]]></fieldDescription>
+	</field>
+	<field name="transactionDate" class="java.lang.String">
+		<fieldDescription><![CDATA[Transaction Date]]></fieldDescription>
+	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -204,7 +218,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_BILLING_SERVICE_ID} == null || $P{EGOV_BILLING_SERVICE_ID} == -1) ? "All Services" : (String)ReportUtil.fetchFromDBHql("SELECT sd.serviceName FROM org.egov.infstr.models.ServiceDetails sd WHERE sd.id = " + $P{EGOV_BILLING_SERVICE_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_BILLING_SERVICE_ID} == null || $P{EGOV_BILLING_SERVICE_ID} == -1) ? "All Services" : (String)ReportUtil.fetchFromDBHql("SELECT sd.name FROM org.egov.infstr.models.ServiceDetails sd WHERE sd.id = " + $P{EGOV_BILLING_SERVICE_ID})]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
 				<reportElement x="101" y="24" width="140" height="20" uuid="e80a1e77-c965-4bc3-a75b-a5d05ee8fa48"/>
@@ -389,7 +403,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[$F{onlinePayment}.status.description]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
 				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="362" y="0" width="80" height="20" uuid="d9fe0e2e-356b-49d8-b6d4-7d7ccf3250e6"/>
@@ -413,7 +427,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[$F{service}.serviceName]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{service}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="442" y="0" width="90" height="20" uuid="32853a3f-eac5-4454-a1bd-55214e824220"/>
@@ -424,7 +438,7 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textFieldExpression><![CDATA[$F{onlinePayment}.transactionNumber]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{transactionNumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true">
 				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="532" y="0" width="90" height="20" uuid="4550a090-77a0-4972-be39-bb0a78fba93b"/>
@@ -436,7 +450,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[$F{onlinePayment}.transactionDate]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{transactionDate}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

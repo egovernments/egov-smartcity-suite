@@ -62,15 +62,14 @@ jQuery(document).ready(function() {
     	 doLoadingMask();
     });
      doLoadingMask();
+     onBodyLoad();
+
+     jQuery( "#instrumentDate" ).datepicker({ dateFormat: 'dd/mm/yy' }).val();
  });
 
 jQuery(window).load(function () {
 	undoLoadingMask();
 });
-
-jQuery(function() {
-	jQuery( "#instrumentDate" ).datepicker({ dateFormat: 'dd/mm/yy' }).val();
-       });
 
 function showInstrumentDetails(obj){
 	if(obj.id=='cashradiobutton'){
@@ -675,6 +674,7 @@ function populateapportioningamount()
 
 function validate()
 {
+	
 	callpopulateapportioningamountforbills();	
 
 	if (document.getElementById("bankChallanDate").value=='DD/MM/YYYY')	{
@@ -1480,10 +1480,37 @@ function validateChallanDate(obj)
 	return true;
 }
 
+function scrolltop()
+{
+	 setTimeout(function(){ 
+		  jQuery("html, body").animate({ scrollTop: 0 }, "fast");
+	  }, 50);
+}
+
 function validateManualReceiptDate(obj)
 {
-	if(validateDateFormat(obj)){
-		trim(obj,obj.value);
+      document.getElementById("receipt_dateerror_area").style.display="none";
+	  document.getElementById("receipt_dateerror_area").innerHTML="";
+	  if(jQuery(obj).val())
+	  {
+		  var dmy=jQuery(obj).val().split('/');
+
+		  if(dmy.length === 3)
+		  {
+			  var seldate=new Date(dmy[2],(dmy[1]-1), dmy[0]);
+			  if(seldate>new Date())
+			  {
+				  document.getElementById("receipt_dateerror_area").style.display="block";
+			      document.getElementById("receipt_dateerror_area").innerHTML+=
+							'<s:text name="billreceipt.manualreceipt.futuredate.errormessage" />'+'<br/>';
+				  scrolltop();
+				  return false;
+			  }
+		  }
+		 
+	  }
+	
+		/*trim(obj,obj.value);
 		document.getElementById("receipt_dateerror_area").style.display="none";
 		document.getElementById("receipt_dateerror_area").innerHTML="";
 	   	if(obj.value!="");
@@ -1500,9 +1527,12 @@ function validateManualReceiptDate(obj)
 	       }
 	       window.scroll(0,0);
 	       return false;
-		}
-	}
-	return true;
+		}*/
+
+		
+	  return true;
+	
+	
 }
 
 
@@ -1641,7 +1671,7 @@ var bankfuncObj;
 var bankArray;
 function loadDropDownCodesBank()
 {
-	var url = "${pageContext.request.contextPath}"+"/commons/Process.jsp?type=getAllBankName";
+	var url = "<c:url value='/commons/Process.jsp?type=getAllBankName' context='/EGF'/>";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -1760,11 +1790,13 @@ function showHideMandataryMark(obj){
 	<title><s:text name="billreceipt.pagetitle"/></title>
 </head>
 <!-- Area for error display -->
-<body onLoad="onBodyLoad();refreshInbox();"><br>
+<body onLoad="refreshInbox();"><br>
 
 
 <div class="errorstyle" id="receipt_error_area" style="display:none;"></div>
 <div class="errorstyle" id="common_error_area" style="display:none;"></div>
+<div class="errorstyle" id="receipt_dateerror_area" style="display:none;"></div>
+
 <span align="center" style="display:none" id="delerror">
   <li>
      <font size="2" color="red"><b><s:text name="common.lastrow.error"/></b></font>
@@ -1877,7 +1909,6 @@ function showHideMandataryMark(obj){
 	   <tr>
 	   <td class="bluebox" width="3%" ></td>
 	   <td class="bluebox" width="22%" ><s:text name="billreceipt.payment.mode"/>:<span class="mandatory1">*</span></td>
-	   <div class="errorstyle" id="receipt_dateerror_area" style="display:none;"></div>
 	   <td class="bluebox" colspan="2" >
       		
 	            	<span style="float:left;" id="cashradiobuttonspan">
@@ -2114,7 +2145,7 @@ function showHideMandataryMark(obj){
 					<td class="bluebox"><s:text name="billreceipt.manualreceipt.receiptnumber"/></td>
 					<td class="bluebox"><s:textfield label="manualReceiptNumber" id="manualReceiptNumber" maxlength="50" name="manualReceiptNumber" size="18" /></td>
 					<td class="bluebox"><s:text name="billreceipt.manualreceipt.receiptdate"/></td>
-					<td class="bluebox"><s:textfield id="manualReceiptDate" name="manualReceiptDate"  styleId="manualReceiptDate" onblur="validateManualReceiptDate(this);" onkeyup="DateFormat(this,this.value,event,false,'3')"/><div>(DD/MM/YYYY)</div></td>
+					<td class="bluebox"><s:textfield id="manualReceiptDate" name="manualReceiptDate"  styleId="manualReceiptDate" onblur="validateManualReceiptDate(this);" data-inputmask="'mask': 'd/m/y'"/><div>(DD/MM/YYYY)</div></td>
 				</tr>
 		 </s:if>
 		
@@ -2186,5 +2217,9 @@ function showHideMandataryMark(obj){
 var bobexample=new switchcontent("switchgroup1", "div") //Limit scanning of switch contents to just "div" elements
 bobexample.collapsePrevious(true) //Only one content open at any given time
 bobexample.init()
+</script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script>
+jQuery(":input").inputmask();
 </script>
 </body>

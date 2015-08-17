@@ -968,9 +968,9 @@ public class ReceiptAction extends BaseFormAction {
 		// create vouchers also based on configuration
 		/*for (ReceiptPayeeDetails payeeDetails : receiptPayeePersistedList) {
 			receiptHeaderService.startWorkflow(payeeDetails.getReceiptHeaders(), this.getReceiptBulkUpload());
-		}*/
+		}
 		receiptHeaderService.startWorkflow(receiptHeader, this.getReceiptBulkUpload());
-		receiptHeaderService.getSession().flush();
+		receiptHeaderService.getSession().flush();*/
 		LOGGER.info("Workflow started for newly created receipts");
 
 		if (serviceType.equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING)) {
