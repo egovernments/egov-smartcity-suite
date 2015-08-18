@@ -157,5 +157,19 @@ $(document).ready(function()
 			 }
 			return;
 		});	
-	
+		changeLabel();
+		function changeLabel() {
+			if ($('#usageType :selected').text().localeCompare("Lodges") == 0) {
+				$('#persons').hide();
+				$('#rooms').show();
+			}
+			else {
+				$('#persons').show();
+				$('#rooms').hide();
+			}
+		}
+		
+		$('#usageType').change(function () {
+			changeLabel();
+		});
 });

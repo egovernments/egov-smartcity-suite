@@ -1,8 +1,52 @@
 $(document).ready(function(){
 	loadPropertyDetails();
 	
+	var mode =$('#mode').val();
+	var currentloggedInUser=$('#currentUser').val();
+	if(currentloggedInUser=='true' && mode=='')
+		{
+		$(".show-row").hide(); 
+		/*$('#approvalComent').hide();
+		$('#approvalComent').hide();*/
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		}
+	
+	
+	changeLabel();
+	function changeLabel() {
+		if ($('#usageType :selected').text().localeCompare("Lodges") == 0) {
+			$('#persons').hide();
+			$('#rooms').show();
+		}
+		else {
+			$('#persons').show();
+			$('#rooms').hide();
+		}
+	}
+	
+	$('#usageType').change(function () {
+		changeLabel();
+	});
+	
+	$('#cardHolderDiv').hide();
+	$('#bplCardHolderName').removeAttr('required');
+	
 	if($('#validationMessage').val()!='')
 		alert($('#validationMessage').val());
+	
+	$('#connectionCategorie').change(function(){
+		if ($('#connectionCategorie :selected').text().localeCompare("BPL") == 0) {  
+			$("#cardHolderDiv").show();
+	    	$("#bplCardHolderName").attr('required', 'required');
+	    	$("#bplCardHolderName").val();
+		}
+		else  {
+			$("#cardHolderDiv").hide();
+	    	$("#bplCardHolderName").removeAttr('required');
+		}
+	});
 	
 	function loadPropertyDetails() {
 		propertyID=$('#propertyIdentifier').html()

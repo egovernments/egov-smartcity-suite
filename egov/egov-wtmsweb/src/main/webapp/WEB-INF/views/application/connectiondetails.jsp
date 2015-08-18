@@ -137,8 +137,10 @@
 		<form:input class="form-control patternvalidation" data-pattern="number" maxlength="6" id="sumpCapacity" path="sumpCapacity" />
 		<form:errors path="sumpCapacity" cssClass="add-margin error-msg" />		
 	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message
+	<label class="col-sm-2 control-label text-right" id="persons"><spring:message
 			code="lbl.no.of.persons" /></label> 
+	<label class="col-sm-2 control-label text-right" id="rooms" style="display:none"><spring:message
+		code="lbl.no.of.rooms" /></label>
 		<div class="col-sm-3 add-margin">
 			<form:input class="form-control patternvalidation" data-pattern="number" maxlength="3" id="numberOfPerson" path="numberOfPerson" />
 			<form:errors path="numberOfPerson" cssClass="add-margin error-msg" />		

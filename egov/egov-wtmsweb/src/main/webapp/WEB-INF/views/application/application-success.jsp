@@ -53,8 +53,9 @@
 				<c:choose>
 					<c:when test="${waterConnectionDetails.connection.parentConnection.id!=null && waterConnectionDetails.connectionStatus == 'INPROGRESS'}">
 						<spring:message code="msg.addconnection.ack.msg" />
+						<div ><spring:message code="msg.sussess.forward" />${approverName}</div>
 					</c:when>
-					<c:when test="${waterConnectionDetails.connection.parentConnection.id!=null && waterConnectionDetails.connectionStatus == 'ACTIVE'}">
+					<c:when test="${waterConnectionDetails.connection.parentConnection.id!=null && waterConnectionDetails.connectionStatus == 'ACTIVE' && waterConnectionDetails.egwStatus.code == 'SANCTIONED'}">
 						<spring:message code="msg.addconnection.approved" />
 					</c:when>
 					<c:otherwise>
