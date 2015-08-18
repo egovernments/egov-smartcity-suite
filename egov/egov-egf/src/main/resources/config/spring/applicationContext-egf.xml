@@ -182,7 +182,8 @@
 	</bean>
 		<bean id="chequeAssignmentService" class="org.egov.services.cheque.ChequeAssignmentService" scope="prototype">
 	</bean>
-	
+	<bean id="billsAccountingService" class="org.egov.billsaccounting.services.BillsAccountingService" scope="prototype">
+	</bean>
 	 <!-- <bean id="dishonorChequeWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">			
 			<constructor-arg ref="dishonorChequeService"/>
 			<constructor-arg value="org.egov.model.instrument.DishonorCheque" />					

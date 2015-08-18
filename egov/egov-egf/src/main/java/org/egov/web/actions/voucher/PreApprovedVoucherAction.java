@@ -135,9 +135,9 @@ public class PreApprovedVoucherAction extends BaseFormAction
         protected List<String> headerFields = new ArrayList<String>();
         protected List<String> mandatoryFields = new ArrayList<String>();
         protected EisUtilService eisService;
-        private static  BillsService billsMngr=null;
+        private @Autowired static  BillsService billsMngr;
         private @Autowired AppConfigValueService appConfigValuesService;		
-        private BillsAccountingService billsAccountingService;
+        private @Autowired BillsAccountingService billsAccountingService;
         private BillsService billsManager;
         private static final Logger LOGGER = Logger.getLogger(PreApprovedVoucherAction.class);
         protected FinancialYearHibernateDAO financialYearDAO;
@@ -449,7 +449,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
                 getMasterDataForBillVoucher();
                 return "view";
         }
-
+        @Action(value="/voucher/preApprovedVoucher-save")
         public String save() throws ValidationException
         {
                 try
@@ -1228,5 +1228,14 @@ public class PreApprovedVoucherAction extends BaseFormAction
         public void setFinancialYearDAO(FinancialYearHibernateDAO financialYearDAO) {
                 this.financialYearDAO = financialYearDAO;
         }
+
+		public static BillsService getBillsMngr() {
+			return billsMngr;
+		}
+
+		public static void setBillsMngr(BillsService billsMngr) {
+			PreApprovedVoucherAction.billsMngr = billsMngr;
+		}
+
         
 }
