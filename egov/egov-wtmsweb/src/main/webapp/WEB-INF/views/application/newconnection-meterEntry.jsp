@@ -42,6 +42,11 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+			
 <form:form role="form" method="post"
 	modelAttribute="waterConnectionDetails"
 	id="editmeterWaterConnectionform"
@@ -60,7 +65,7 @@
 				<strong>${message}</strong>
 			</div>
 		</div>
-		<div class="panel panel-primary" data-collapsed="0">
+		
 			<div class="panel-heading">
 				<div class="panel-title">
 					<spring:message code="lbl.basicdetails" />
@@ -69,31 +74,36 @@
 			<jsp:include page="commonappdetails-view.jsp" />
 			<jsp:include page="connectiondetails-view.jsp" />
 
-		</div>
+	
 
 
 
-	</div>
-<div class="panel-heading">
+	<div class="panel-heading">
 				<div class="panel-title">
-					<spring:message  code="lbl.meterbasicdetails"/>
-				</div>
-			</div>
-	<div class="form-group" id="previousMeter">
-		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.meterread.previous" /><span class="mandatory"></span></label>
-		<div class="col-sm-3 add-margin">
-			<c:if test="${meterReadingpriviousObj!=null}">
-				<input type="text" id="previousreading" name="previousreading"
-					value="${meterReadingpriviousObj.currentReading}" />
+					<spring:message code="lbl.meterbasicdetails"/>
+				</div>					
+			
+	<table id="meterDetailprevioussid">
+			<tr>
+			
+			<td class="col-sm-3 table-div-column"><spring:message
+				code="lbl.meterread.previous"/> 
+				</td>
+				<td class="col-sm-3 add-margin">
+					<c:if test="${meterReadingpriviousObj!=null}">
+				<input class="form-control" type="" id="previousreading" name="previousreading"
+						value="${meterReadingpriviousObj.currentReading}"  min="3" maxlength="50" readonly="readonly"
+						required="required" /> </c:if></td>
+
+					<td>
+					<c:if test="${meterReadingpriviousObj.currentReadingDate!=null}">
 					<fmt:formatDate value="${meterReadingpriviousObj.currentReadingDate}" var="historyDate" pattern="dd/MM/yyyy" />
 					<input type="hidden" id="previousreadingDate" class="form-control" data-date-end-date="0d"  name="previousreadingDate"
 					value="${historyDate}" />
-					
-			</c:if>
-			
-		</div>
-	</div>
+					</c:if></td>
+			</tr>
+		</table>
+
 
 
 	<div class="form-group">
@@ -123,7 +133,7 @@
 			</tr>
 		</table>
 	</div>
-
+</div>
 	<div class="row">
 		<div class="text-center">
 			<button type="submit" class="btn btn-primary"
@@ -135,7 +145,11 @@
 			</a>
 		</div>
 	</div>
+	</div>
 </form:form>
+</div>
+</div>
+</div>
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script
@@ -145,6 +159,8 @@
 function valiateReading(){
 var previousReading = $('#previousreading').val();
 var currentReading = $('#metercurrentReading').val();
+var currentMeterDate=$('#metercurrentReadingDate').val();
+var previousMeterDate=$('#previousreadingDate').val();
 if($('#metercurrentReading').val()=='')
 	{
 	alert('Current Meter Reading is required');
@@ -156,11 +172,13 @@ if((currentReading-previousReading)<0)
 	$('#metercurrentReading').val('');
 	return false;
 	}
-	/* if(!validateDateRange($('#metercurrentReadingDate').val(), $('#previousreadingDate').val())) {
+	if(currentMeterDate !=undefined && previousMeterDate!= undefined){
+	 if(!validateDateRange(currentMeterDate, previousMeterDate)) {
 		alert("Entered Metered Date allready present in System");
 		$('#metercurrentReadingDate').val('');
 		return false;			
-	} */
+	} 
+}
 else{
 	document.forms[0].submit;
 	return true;

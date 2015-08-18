@@ -59,12 +59,16 @@
 					</c:when>
 					<c:otherwise>
 						<c:choose>
-							<c:when test="${waterConnectionDetails.egwStatus.code == 'SANCTIONED' && waterConnectionDetails.connectionStatus == 'ACTIVE' }">
+							<c:when test="${waterConnectionDetails.egwStatus.code == 'APPROVED' && waterConnectionDetails.connectionStatus == 'INPROGRESS' }">
 								<spring:message code="msg.connection.approved.success" />
 								<%-- <spring:message code="msg.sussess.forward" /><br>${approvalUser} --%>
 							</c:when>
 							<c:when test="${waterConnectionDetails.connectionStatus == 'INACTIVE' }">
 							<div><spring:message code="msg.newapplication.cancel.success" /></div>
+							</c:when>
+							<c:when test="${waterConnectionDetails.egwStatus.code == 'SANCTIONED' && waterConnectionDetails.connectionStatus == 'ACTIVE' }">
+								<spring:message code="msg.connection.sanctioned.success" />
+								<%-- <spring:message code="msg.sussess.forward" /><br>${approvalUser} --%>
 							</c:when>
 							<c:otherwise>
 								<div><spring:message code="msg.newconnection.ack.success" /></div>

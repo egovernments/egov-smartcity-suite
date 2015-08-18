@@ -64,9 +64,9 @@ public class MeterReadingController {
             meterReadingpriviousObj = new MeterReadingConnectionDetails();
             if (waterConnectionDetails.getConnection().getInitialReading() != null)
                 meterReadingpriviousObj.setCurrentReading(waterConnectionDetails.getConnection().getInitialReading());
+                //Todo needs to add MeterReading date to Tap Execution date
             else
-                meterReadingpriviousObj.setCurrentReading(0l);
-            meterReadingpriviousObj.setCurrentReadingDate(new Date());
+            meterReadingpriviousObj.setCurrentReading(0l);
         }
         model.addAttribute("mode", "meterEntry");
         model.addAttribute("meterReadingpriviousObj", meterReadingpriviousObj);
@@ -109,7 +109,9 @@ public class MeterReadingController {
         final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         try {
             currentDate = dateFormat.parse(readingDate);
+            if(request.getParameter("previousreadingDate")!=null){
             previousDate = dateFormat.parse(request.getParameter("previousreadingDate"));
+            }
         } catch (final ParseException e) {
             e.printStackTrace();
         }
@@ -117,7 +119,11 @@ public class MeterReadingController {
         meterReadingConnectionDeatilObj.setCurrentReadingDate(currentDate);
 
         populateMeterReadingDetails(meterReadingConnectionDeatilObj);
+        if(previousDate !=null){
         noofmonths = DateUtils.noOfMonths(previousDate, currentDate);
+        }else{
+            noofmonths = DateUtils.noOfMonths(new Date(), currentDate); 
+        }
         final Long currentToPreviousDiffOfUnits = Long.valueOf(request.getParameter("metercurrentReading"))
                 - previousReading;
         Long noOfUnitsForPerMonth = 0l;

@@ -392,6 +392,7 @@ public class WaterConnectionDetailsService {
                 waterConnectionDetails.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_SANCTIONED, WaterTaxConstants.MODULETYPE));
                 waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
+                updateIndexes(waterConnectionDetails);
                 if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
                     waterConnectionDetails.transition(true).end().withSenderName(user.getName())
                             .withComments(approvalComent).withDateInfo(currentDate.toDate());
@@ -561,7 +562,8 @@ public class WaterConnectionDetailsService {
             }
             if (waterConnectionDetails.getEgwStatus() != null
                     && waterConnectionDetails.getEgwStatus().getCode()
-                            .equals(WaterTaxConstants.APPLICATION_STATUS_APPROVED))
+                            .equals(WaterTaxConstants.APPLICATION_STATUS_APPROVED) || waterConnectionDetails
+                            .getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED))
                 consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails);
         } else {
             final String strQuery = "select md from EgModules md where md.name=:name";
