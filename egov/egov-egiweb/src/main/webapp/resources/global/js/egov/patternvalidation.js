@@ -11,7 +11,7 @@ var regexp_alphabet = /[^a-zA-Z ]/g ;
 
 //This will allow you to enter only alphabets with specified special characters like dot(.), slash(/), hash(#), ampersand(&), plus(+), minus(-). If you need some additional special characters, add those characters to the corresponding regular expression. 
 //(eg: data-pattern="alphabetwithspecialcharacters")
-var regexp_alphabetspecialcharacters = /[^a-zA-Z_@./#&+-]*$/ ;
+var regexp_alphabetspecialcharacters = /[^a-zA-Z_@./#&+-]/g ;
 
 //This will allow you to enter only numbers. (eg: data-pattern="number")
 var regexp_number = /[^0-9]/g ;
@@ -20,7 +20,7 @@ var regexp_number = /[^0-9]/g ;
 var regexp_alphanumeric = /[^a-zA-Z0-9 ]/g ;
 
 //This will allow you to enter alphabets and numbers with specified special characters like dot(.), slash(/), hash(#), ampersand(&), plus(+), minus(-). If you need some additional special characters, add those characters to the corresponding regular expression. (eg: data-pattern="alphanumericwithspecialcharacters")
-var regexp_alphanumericspecialcharacters = /[^a-zA-Z0-9_@./#&+-]*$/ ;
+var regexp_alphanumericspecialcharacters = /[^a-zA-Z0-9_@./#&+-]/g ;
 
 //This will allow you to enter alphabets and numbers with space, hyphen(-) and underscore(_). (eg: data-pattern="alphanumericwithspace-hyphen-underscore")
 var regexp_alphanumerichyphenunderscore = /[^a-zA-Z0-9 _-]/g ;
@@ -29,7 +29,7 @@ var regexp_alphanumerichyphenunderscore = /[^a-zA-Z0-9 _-]/g ;
 var regexp_decimalvalue = /[^0-9.]/g ;
 
 //This will allow you to enter alphabets and numbers with specified special characters like  slash(/), hyphen(-). (eg: data-pattern="alphanumerichyphenbackslash")
-var regexp_alphanumerichyphenbackslash = /[^a-zA-Z0-9/-]*$/ ;
+var regexp_alphanumerichyphenbackslash = /[^a-zA-Z0-9/-]/g ;
 
 function patternvalidation(){
 	
@@ -59,11 +59,11 @@ function patternvalidation(){
 			if($(this).val().match(regexp_alphanumerichyphenunderscore)){
 				$(this).val( $(this).val().replace(regexp_alphanumerichyphenunderscore,'') );
 			}
-		}else if($(this).data('pattern') === "decimalvalue"){ //decimal value
+		}else if($(this).data('pattern') === "decimalvalue"){ //decimalvalue
 			if($(this).val().match(regexp_decimalvalue)){
 				$(this).val( $(this).val().replace(regexp_decimalvalue,'') );
 			}
-		}else if($(this).data('pattern') === "alphanumerichyphenbackslash"){ //decimal value
+		}else if($(this).data('pattern') === "alphanumerichyphenbackslash"){ //alphanumerichyphenbackslash
 			if($(this).val().match(regexp_alphanumerichyphenbackslash)){
 				$(this).val( $(this).val().replace(regexp_alphanumerichyphenbackslash,'') );
 			}
