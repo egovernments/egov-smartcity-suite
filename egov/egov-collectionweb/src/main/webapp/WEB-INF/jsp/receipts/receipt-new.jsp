@@ -42,7 +42,6 @@
 
 <head>
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <style type="text/css">
 #bankcodescontainer {position:absolute;left:11em;width:9%;text-align: left;}
@@ -56,6 +55,8 @@
 <script type="text/javascript">
 
 jQuery.noConflict();
+
+var isDatepickerOpened=false;
 jQuery(document).ready(function() {
   	 
      jQuery(" form ").submit(function( event ) {
@@ -64,7 +65,24 @@ jQuery(document).ready(function() {
      doLoadingMask();
      onBodyLoad();
 
-     jQuery( "#instrumentDate" ).datepicker({ dateFormat: 'dd/mm/yy' }).val();
+     jQuery( "#instrumentDate" ).datepicker({ 
+         dateFormat: 'dd/mm/yy',
+         beforeShow: function(input) {
+             jQuery(this).unbind('blur');
+             isDatepickerOpened=true;
+		 },
+         onSelect: function(dateText) {
+        	 //checkForCurrentDate(this);
+     	 },
+     	 onClose: function(dateText, inst){ 
+         	console.log('called!'); 
+         	isDatepickerOpened=false; 
+         	checkForCurrentDate(this);
+         	
+        }
+     	
+	  });
+
  });
 
 jQuery(window).load(function () {
@@ -1538,12 +1556,12 @@ function validateManualReceiptDate(obj)
 
 function checkForCurrentDate(obj)
 {
-	 var receiptDate;
+	var receiptDate;
 	if(validateDateFormat(obj))
 	   {
 	   document.getElementById("receipt_dateerror_area").style.display="none";
 		document.getElementById("receipt_dateerror_area").innerHTML="";
-	   trim(obj,obj.value);
+	   //trim(obj,obj.value);
 	   <s:if test="%{!isBillSourcemisc()}">
 		   if (  document.getElementById('manualreceiptinfo').checked==true){
 			   if(document.getElementById("manualReceiptDate").value != null  && document.getElementById("manualReceiptDate").value != ''){
@@ -1957,7 +1975,7 @@ function showHideMandataryMark(obj){
 					    <td class="bluebox" width="22%"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory1">*</span></td>
 					    <td class="bluebox"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[0].instrumentNumber" size="18" /></td>
 					    <td class="bluebox" ><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory1">*</span></td>
-					    <td class="bluebox"><input type ="text" id="instrumentDate" name="instrumentProxyList[0].instrumentDate"   onblur="checkForCurrentDate(this);"  onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');checkForCurrentDate(this);"/><div>(DD/MM/YYYY)</div></td>
+					    <td class="bluebox"><input type ="text" id="instrumentDate" name="instrumentProxyList[0].instrumentDate"   onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');"  data-inputmask="'mask': 'd/m/y'" /><div>(DD/MM/YYYY)</div></td>
 				    </tr>
 				    <!-- This row captures the cheque/DD Bank and Branch names -->
 		     		<tr id="chequebankrow">
@@ -2009,7 +2027,7 @@ function showHideMandataryMark(obj){
 					    <td class="bluebox2new"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory1">*</span></td>
 					    <td class="bluebox2" width="20%"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[%{#instrstatus.index}].instrumentNumber" size="18" /></td>
 					    <td class="bluebox2" width="23%"><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory1">*</span></td>
-					   <td class="bluebox2"><input type ="text" id="instrumentDate" name="instrumentProxyList[%{#instrstatus.index}].instrumentDate"   onblur="checkForCurrentDate(this);"  onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');checkForCurrentDate(this);"/><div>(DD/MM/YYYY)</div></td>
+					   <td class="bluebox2"><input type ="text" id="instrumentDate" name="instrumentProxyList[%{#instrstatus.index}].instrumentDate" data-inputmask="'mask': 'd/m/y'"  onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');"/><div>(DD/MM/YYYY)</div></td>
 				    </tr>
 				    <!-- This row captures the cheque/DD Bank and Branch names -->
 		     		<tr id="chequebankrow">

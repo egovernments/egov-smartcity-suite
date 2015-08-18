@@ -294,7 +294,7 @@ public class CollectionsUtil {
 				            validationErrors.add(new ValidationError("Department", "billreceipt.counter.deptcode.null"));
 				}
 				else {     
-				    if(dept.getCode()=="A")      
+				    if(dept.getCode().equals("R"))      
 				    	collectionsModeNotAllowed.add("card");   
 				    else         {
 				    	collectionsModeNotAllowed.add("cash");  

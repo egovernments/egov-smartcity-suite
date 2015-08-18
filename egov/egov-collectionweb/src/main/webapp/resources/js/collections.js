@@ -348,28 +348,30 @@ switchcontent.setCookie=function(name, value, days){
 
 function waterMarkTextIn(styleId,value)
 {
-	var txt=document.getElementById(styleId).value;
+	jQuery('#'+styleId).attr('placeholder', value);
+	/*var txt=document.getElementById(styleId).value;
 	if(txt==value)
 	{
 	document.getElementById(styleId).value='';
 	document.getElementById(styleId).style.color='';
-	}
+	}*/
 }
 
 function waterMarkTextOut(styleId,value)
 {
-	var txt=document.getElementById(styleId).value;
+	/*var txt=document.getElementById(styleId).value;
 	if(txt=='')
 	{
 	document.getElementById(styleId).value=value;
 	document.getElementById(styleId).style.color='DarkGray';
-	}
+	}*/
 }
 
 function waterMarkInitialize(styleId,value)
 {
-	document.getElementById(styleId).value=value;
-	document.getElementById(styleId).style.color='DarkGray';
+	//document.getElementById(styleId).value=value;
+	//document.getElementById(styleId).style.color='DarkGray';
+	jQuery('#'+styleId).attr('placeholder', value);
 }
 
 /**
