@@ -685,7 +685,9 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 		for (final PropertyOwnerInfo ownerInfo : this.getPropertyOwnerInfo()) {
 			ownerName.append(ownerInfo.getOwner().getName()).append(", ");
 		}
-		ownerName.deleteCharAt(ownerName.length() - 2);
+		if(ownerName.length() > 2) {
+			ownerName.deleteCharAt(ownerName.length() - 2);
+		}
 		return ownerName.toString();
 	}
 	

@@ -113,5 +113,12 @@
     <bean id="revisionPetitionService" class="org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService" scope="prototype">
 		<property name="type" value="org.egov.ptis.domain.entity.objection.RevisionPetition" />
     </bean>
-      
+    <bean id="taxCalculator" class="org.egov.ptis.client.service.calculator.APTaxCalculator" scope="prototype"/>
+    <bean id="propService" class="org.egov.ptis.domain.service.property.PropertyService" scope="prototype" >
+		<property name="propPerServ" ref="persistenceService"/>
+		<property name="propertyTaxUtil" ref="propertyTaxUtil" />
+		<property name="taxCalculator" ref="taxCalculator" />
+		<property name="eisCommonsService" ref="eisCommonsService" />
+		<property name="basicPropertyService" ref="basicPropertyService" />
+	</bean>  
 </beans>

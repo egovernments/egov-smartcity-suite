@@ -41,7 +41,9 @@ package org.egov.ptis.web.rest;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
@@ -60,13 +62,18 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.DrainageEnum;
 import org.egov.ptis.domain.model.ErrorDetails;
+import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.LocalityDetails;
 import org.egov.ptis.domain.model.MasterCodeNamePairDetails;
+import org.egov.ptis.domain.model.NewPropertyDetails;
+import org.egov.ptis.domain.model.OwnerDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -107,7 +114,7 @@ public class AssessmentService {
 
 		return getJSONResponse(assessmentDetail);
 	}
-	
+
 	/**
 	 * This method is used get the property tax details.
 	 * 
@@ -210,23 +217,26 @@ public class AssessmentService {
 	@Path("/property/payPropertyTax")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String payPropertyTax(@FormParam("assessmentNo") String assessmentNo, @FormParam("paymentMode") String paymentMode, 
-			@FormParam("totalAmount") BigDecimal totalAmount, @FormParam("paidBy") String paidBy, @FormParam("username") String username, 
+	public String payPropertyTax(@FormParam("assessmentNo") String assessmentNo,
+			@FormParam("paymentMode") String paymentMode, @FormParam("totalAmount") BigDecimal totalAmount,
+			@FormParam("paidBy") String paidBy, @FormParam("username") String username,
 			@FormParam("password") String password) throws JsonGenerationException, JsonMappingException, IOException {
 		String responseJson = new String();
 		Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
 		if (isAuthenticatedUser) {
-			ErrorDetails errorDetails = propertyExternalService.validatePaymentDetails(assessmentNo, paymentMode, totalAmount, paidBy);
-			if(null != errorDetails) {
+			ErrorDetails errorDetails = propertyExternalService.validatePaymentDetails(assessmentNo, paymentMode,
+					totalAmount, paidBy);
+			if (null != errorDetails) {
 				responseJson = getJSONResponse(errorDetails);
 			} else {
-				ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(assessmentNo, paymentMode, totalAmount, paidBy, username, password);
+				ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(assessmentNo, paymentMode,
+						totalAmount, paidBy, username, password);
 				responseJson = getJSONResponse(receiptDetails);
 			}
 		}
 		return responseJson;
 	}
-	
+
 	/**
 	 * This method is used to pay the water tax.
 	 * 
@@ -251,14 +261,17 @@ public class AssessmentService {
 	@Path("/property/payWaterTax")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String payWateTax(@FormParam("consumerNo") String consumerNo, @FormParam("paymentMode") String paymentMode, 
-			@FormParam("totalAmount") BigDecimal totalAmount, @FormParam("paidBy") String paidBy, @FormParam("username") String username, 
-			@FormParam("password") String password) throws JsonGenerationException, JsonMappingException, IOException {
-		ErrorDetails errorDetails = propertyExternalService.validatePaymentDetails(consumerNo, paymentMode, totalAmount, paidBy);
-		if(null != errorDetails) {
+	public String payWateTax(@FormParam("consumerNo") String consumerNo, @FormParam("paymentMode") String paymentMode,
+			@FormParam("totalAmount") BigDecimal totalAmount, @FormParam("paidBy") String paidBy,
+			@FormParam("username") String username, @FormParam("password") String password)
+					throws JsonGenerationException, JsonMappingException, IOException {
+		ErrorDetails errorDetails = propertyExternalService.validatePaymentDetails(consumerNo, paymentMode, totalAmount,
+				paidBy);
+		if (null != errorDetails) {
 			return getJSONResponse(errorDetails);
 		} else {
-			errorDetails = propertyExternalService.payWaterTax(consumerNo, paymentMode, totalAmount, paidBy, username, password);
+			errorDetails = propertyExternalService.payWaterTax(consumerNo, paymentMode, totalAmount, paidBy, username,
+					password);
 			return getJSONResponse(errorDetails);
 		}
 	}
@@ -293,7 +306,7 @@ public class AssessmentService {
 		}
 		return responseJson;
 	}
-	
+
 	/**
 	 * This method is used to get the property type based one category
 	 * 
@@ -311,8 +324,9 @@ public class AssessmentService {
 	@POST
 	@Path("/property/getPropertyTypeCategoryDetails")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getPropertyTypeCategoryDetails(@FormParam("categoryCode") String categoryCode, @FormParam("username") String username,
-			@FormParam("password") String password) throws JsonGenerationException, JsonMappingException, IOException {
+	public String getPropertyTypeCategoryDetails(@FormParam("categoryCode") String categoryCode,
+			@FormParam("username") String username, @FormParam("password") String password)
+					throws JsonGenerationException, JsonMappingException, IOException {
 		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = null;
 		ErrorDetails errorDetails = null;
 		String responseJson = null;
@@ -326,7 +340,7 @@ public class AssessmentService {
 		}
 		return responseJson;
 	}
-	
+
 	/**
 	 * This method is used to get all the apartments and complexes.
 	 * 
@@ -357,7 +371,7 @@ public class AssessmentService {
 		}
 		return responseJson;
 	}
-	
+
 	/**
 	 * This method is used to get reasons for create the property.
 	 * 
@@ -433,18 +447,17 @@ public class AssessmentService {
 	 * @throws IOException
 	 */
 	@POST
-	@Path("/property/getLocalityByBoundaryCode")
+	@Path("/property/getBoundaryByLocalityCode")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getBoundaryByBoundaryCode(@FormParam("boundaryCode") String boundaryCode, @FormParam("username") String username, @FormParam("password") String password)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String getBoundaryByLocalityCode(@FormParam("localityCode") String localityCode,
+			@FormParam("username") String username, @FormParam("password") String password)
+					throws JsonGenerationException, JsonMappingException, IOException {
 		LocalityDetails localityDetails = null;
 		ErrorDetails errorDetails = null;
 		String responseJson = null;
 		Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
 		if (isAuthenticatedUser) {
-			Long boundaryNo = Long.valueOf(boundaryCode.substring(0, boundaryCode.indexOf("~")).trim());
-			String name = boundaryCode.substring(boundaryCode.indexOf("~") + 1).trim();
-			localityDetails = propertyExternalService.getLocalityDetailsByBoundaryNo(boundaryNo, name);
+			localityDetails = propertyExternalService.getLocalityDetailsByLocalityCode(localityCode);
 			responseJson = getJSONResponse(localityDetails);
 		} else {
 			errorDetails = getInvalidCredentialsErrorDetails();
@@ -475,7 +488,7 @@ public class AssessmentService {
 		String responseJson = null;
 		Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
 		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getElectionWards();
+			mstrCodeNamePairDetailsList = propertyExternalService.getElectionBoundaries();
 			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
 		} else {
 			errorDetails = getInvalidCredentialsErrorDetails();
@@ -663,10 +676,10 @@ public class AssessmentService {
 		if (isAuthenticatedUser) {
 			TreeMap<Integer, String> floorMap = CommonServices.floorMap();
 			Set<Integer> keys = floorMap.keySet();
-			for(Integer key : keys) {
+			for (Integer key : keys) {
 				MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
 				mstrCodeNamePairDetails.setCode(key.toString());
-				mstrCodeNamePairDetails.setName(floorMap.get(key));;
+				mstrCodeNamePairDetails.setName(floorMap.get(key));
 				mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
 			}
 			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
@@ -678,7 +691,8 @@ public class AssessmentService {
 	}
 
 	/**
-	 * This method is used to get all classifications of the property structutres.
+	 * This method is used to get all classifications of the property
+	 * structutres.
 	 * 
 	 * @param username
 	 *            - usernam credential
@@ -692,8 +706,8 @@ public class AssessmentService {
 	@POST
 	@Path("/property/getBuildingClassifications")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getBuildingClassifications(@FormParam("username") String username, @FormParam("password") String password)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String getBuildingClassifications(@FormParam("username") String username,
+			@FormParam("password") String password) throws JsonGenerationException, JsonMappingException, IOException {
 		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
 		ErrorDetails errorDetails = null;
 		String responseJson = null;
@@ -785,8 +799,8 @@ public class AssessmentService {
 	@POST
 	@Path("/property/getExemptionCategories")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getTaxExemptionCategories(@FormParam("username") String username, @FormParam("password") String password)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String getTaxExemptionCategories(@FormParam("username") String username,
+			@FormParam("password") String password) throws JsonGenerationException, JsonMappingException, IOException {
 		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
 		ErrorDetails errorDetails = null;
 		String responseJson = null;
@@ -812,7 +826,7 @@ public class AssessmentService {
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
-	 */	
+	 */
 	@POST
 	@Path("/property/getDrainages")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -868,7 +882,83 @@ public class AssessmentService {
 		}
 		return responseJson;
 	}
-	
+
+	/**
+	 * This method is used to create property.
+	 * 
+	 * @param username
+	 *            - username credential
+	 * @param password
+	 *            - password credential
+	 * @return responseJson - server response in JSON format
+	 * @throws JsonGenerationException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 * @throws ParseException 
+	 */
+	@POST
+	@Path("/property/createProperty")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String createProperty(@FormParam("propertyTypeMasterCode") String propertyTypeMasterCode,
+			@FormParam("propertyCategoryCode") String propertyCategoryCode,
+			@FormParam("apartmentCmplxCode") String apartmentCmplxCode, @FormParam("ownerDetails") String ownerDetails,
+			@FormParam("mutationReasonCode") String mutationReasonCode, @FormParam("extentOfSite") String extentOfSite,
+			@FormParam("isExtentAppurtenantLand") String isExtentAppurtenantLand,
+			@FormParam("occupancyCertificationNo") String occupancyCertificationNo,
+			@FormParam("isSuperStructure") Boolean isSuperStructure,
+			@FormParam("isBuildingPlanDetails") Boolean isBuildingPlanDetails, @FormParam("regdDocNo") String regdDocNo,
+			@FormParam("regdDocDate") String regdDocDate, @FormParam("localityCode") String localityCode,
+			@FormParam("street") String street, @FormParam("electionWardCode") String electionWardCode,
+			@FormParam("doorNo") String doorNo, @FormParam("enumerationBlockCode") String enumerationBlockCode,
+			@FormParam("pinCode") String pinCode, @FormParam("isCorrAddrDiff") Boolean isCorrAddrDiff,
+			@FormParam("corrAddr1") String corrAddr1, @FormParam("corrAddr2") String corrAddr2,
+			@FormParam("corrPinCode") String corrPinCode, @FormParam("hasLift") Boolean hasLift, @FormParam("hasToilet") Boolean hasToilet,
+			@FormParam("hasWaterTap") Boolean hasWaterTap, @FormParam("hasElectricity") Boolean hasElectricity,
+			@FormParam("hasAttachedBathroom") String hasAttachedBathroom,
+			@FormParam("hasWaterHarvesting") String hasWaterHarvesting,
+			@FormParam("floorTypeCode") String floorTypeCode, @FormParam("roofTypeCode") String roofTypeCode,
+			@FormParam("wallTypeCode") String wallTypeCode, @FormParam("woodTypeCode") String woodTypeCode,
+			@FormParam("floorDetails") String floorDetails, @FormParam("surveyNumber") String surveyNumber,
+			@FormParam("pattaNumber") String pattaNumber, @FormParam("vacantLandArea") Double vacantLandArea,
+			@FormParam("marketValue") Double marketValue, @FormParam("currentCapitalValue") Double currentCapitalValue,
+			@FormParam("completionDate") String completionDate, @FormParam("northBoundary") String northBoundary,
+			@FormParam("southBoundary") String southBoundary, @FormParam("eastBoundary") String eastBoundary,
+			@FormParam("westBoundary") String westBoundary, @FormParam("username") String username,
+			@FormParam("password") String password)
+			throws JsonGenerationException, JsonMappingException, IOException, ParseException {
+		ErrorDetails errorDetails = null;
+		String responseJson = null;
+		Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
+		if (isAuthenticatedUser) {
+			EgovThreadLocals.setUserId(Long.valueOf("16"));
+			List<FloorDetails> floorDetailsList = new ObjectMapper().readValue(floorDetails.toString(),
+					new TypeReference<Collection<FloorDetails>>() {
+					});
+			List<OwnerDetails> ownerDetailsList = new ObjectMapper().readValue(ownerDetails.toString(),
+					new TypeReference<Collection<OwnerDetails>>() {
+					});
+			NewPropertyDetails newPropertyDetails = propertyExternalService.createNewProperty(propertyTypeMasterCode,
+					propertyCategoryCode, apartmentCmplxCode, ownerDetailsList, mutationReasonCode, extentOfSite,
+					isExtentAppurtenantLand, occupancyCertificationNo, isSuperStructure, isBuildingPlanDetails,
+					regdDocNo, regdDocDate, localityCode, street, electionWardCode, doorNo, enumerationBlockCode,
+					pinCode, isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, hasLift, hasToilet, hasWaterTap,
+					hasElectricity, hasAttachedBathroom, hasWaterHarvesting, floorTypeCode, roofTypeCode, wallTypeCode,
+					woodTypeCode, floorDetailsList, surveyNumber, pattaNumber, vacantLandArea, marketValue,
+					currentCapitalValue, completionDate, northBoundary, southBoundary, eastBoundary, westBoundary);
+			if (null != newPropertyDetails) {
+				responseJson = getJSONResponse(newPropertyDetails);
+			} else {
+				errorDetails = getRequestFailedErrorDetails();
+				responseJson = getJSONResponse(errorDetails);
+			}
+		} else {
+			errorDetails = getInvalidCredentialsErrorDetails();
+			responseJson = getJSONResponse(errorDetails);
+		}
+		return responseJson;
+	}
+
 	/**
 	 * This method is used to prepare jSON response.
 	 * 
@@ -888,12 +978,23 @@ public class AssessmentService {
 
 	/**
 	 * This method is used to get the error details for invalid credentials.
+	 * 
 	 * @return
 	 */
 	private ErrorDetails getInvalidCredentialsErrorDetails() {
 		ErrorDetails errorDetails = new ErrorDetails();
 		errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_INVALIDCREDENTIALS);
 		errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_INVALIDCREDENTIALS);
+		return errorDetails;
+	}
+	/**
+	 * This method is used to get the error details for communication failure.
+	 * @return
+	 */
+	private ErrorDetails getRequestFailedErrorDetails() {
+		ErrorDetails errorDetails = new ErrorDetails();
+		errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_COMMUNICATION_FAILURE);
+		errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_COMMUNICATION_FAILURE);
 		return errorDetails;
 	}
 }

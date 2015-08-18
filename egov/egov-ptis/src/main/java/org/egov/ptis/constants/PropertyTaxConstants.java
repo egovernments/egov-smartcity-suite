@@ -208,6 +208,7 @@ public interface PropertyTaxConstants {
 	public static final String AREA_BNDRY_TYPE = "Revenue Area";
 	public static final String ZONE = "Zone";
 	public static final String WARD = "Ward";
+	public static final String BLOCK = "Block";
 	public static final String STREET = "Street";
 	public static final String LOCALITY = "locality";
 	public static final String ELECTIONWARD_BNDRY_TYPE = "Election Ward";
@@ -951,7 +952,7 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_ERR_CODE_INVALIDCREDENTIALS = "1";
     public static final String THIRD_PARTY_ERR_MSG_INVALIDCREDENTIALS = "Invaild Credentials";
     public static final String THIRD_PARTY_ERR_CODE_COMMUNICATION_FAILURE = "3";
-    public static final String THIRD_PARTY_ERR_MSG_COMMUNICATION = "Communication Failure or Server may be down";
+    public static final String THIRD_PARTY_ERR_MSG_COMMUNICATION_FAILURE = "Communication Failure or Server may be down";
     public static final String THIRD_PARTY_ERR_CODE_ULBCODE = "4";
     public static final String THIRD_PARTY_ERR_MSG_ULBCODE = "Please Make Sure That First 4 Characters Of Assessment Must Match With ULB";
     public static final String THIRD_PARTY_ERR_CODE_PENDINGTAX = "5";
@@ -984,6 +985,10 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_ERR_MSG_PAYMENT_MODE_INVALID = "Payment mode is invalid";
     public static final String THIRD_PARTY_PAYMENT_MODE_CASH = "CASH";
     public static final String THIRD_PARTY_PAYMENT_MODE_CHEQUE = "CHEQUE";
+    public static final String THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_EXISTS = "15";
+    public static final String THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_EXISTS = "Aadhaar number {0} already exists";
+    public static final String THIRD_PARTY_ERR_CODE_MOBILE_NUMBER_EXISTS = "16";
+    public static final String THIRD_PARTY_ERR_MSG_MOBILE_NUMBER_EXISTS = "Mobile number {0} already exists";
     
 	public static final String TOTAL_AMOUNT = "amount";
     public final static String PAID_BY = "paidBy";
