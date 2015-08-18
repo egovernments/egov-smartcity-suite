@@ -45,7 +45,7 @@
 <div class="row">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"><spring:message code="lbl.application.date"/> : <fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" /></div>
-		<form:form role="form" action="newConnection-createExisting"
+		<form:form role="form" action="newConnection-createExisting" 
 			modelAttribute="waterConnectionDetails" id="newWaterConnectionform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
@@ -69,17 +69,17 @@
 					<jsp:include page="applicantdetails.jsp"></jsp:include>
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.consumerno" /></label>
+								code="lbl.consumerno" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="connection.consumerCode"
-								class="form-control text-left" />
+							<form:input path="connection.consumerCode" 
+								class="form-control text-left" required="required"/>
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.connectiondate" /></label>
+								code="lbl.connectiondate" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<input type=text name="executionDate"  
+							<form:input  path="executionDate"  
 								class="form-control datepicker" data-date-end-date="0d"
-								id="executionDate" data-inputmask="'mask': 'd/m/y'" />
+								id="executionDate" data-inputmask="'mask': 'd/m/y'" required="required" />
 						</div>
 					</div>
 					<jsp:include page="connectiondetails.jsp"></jsp:include>	
@@ -88,6 +88,12 @@
 				</div>
 			</div>			
 		<script>
+
+		 if($('#connectionType').val()=='METERED')
+		 {
+		 $('#metereddetails').show();
+		 }
+		
 		function validate()		{
 			var radioValue = $("input[name='applicationType']:checked").val();
 			alert(radioValue);

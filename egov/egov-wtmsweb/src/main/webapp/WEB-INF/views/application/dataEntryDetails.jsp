@@ -39,7 +39,7 @@
 #------------------------------------------------------------------------------- -->
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-
+<form:errors path="existingConnection.arrears" cssClass="add-margin error-msg" />	
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
 		<spring:message code="lbl.feedetails" />
@@ -51,23 +51,27 @@
 			code="lbl.monthlyfees" /></label>
 	<div class="col-sm-3 add-margin">
 		<form:input path="existingConnection.monthlyFee" class="form-control text-right"  />  
+		<form:errors path="existingConnection.monthlyFee" cssClass="add-margin error-msg" />	
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.donationcharges" /></label>
+			code="lbl.donationcharges" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="existingConnection.donationCharges" class="form-control text-right"  />
+		<form:input path="existingConnection.donationCharges" class="form-control text-right"   required="required"/>
+			<form:errors path="existingConnection.donationCharges" cssClass="add-margin error-msg" />	
 	</div>
 </div>
 <div class="form-group">  
 
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.arrears" /></label>
+			code="lbl.arrears" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="existingConnection.arrears"    class="form-control text-right" /> 
-		<form:errors path="existingConnection.arrears" cssClass="add-margin error-msg" />	
+		<form:input path="existingConnection.arrears"    class="form-control text-right" required="required" /> 
+			<form:errors path="existingConnection.arrears" cssClass="add-margin error-msg" />	
+		
+
 	</div>	  
 </div>	
-<div  id="metereddetails" >  
+<div  id="metereddetails" style="display: none" >  
 
 
 
@@ -75,12 +79,14 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.metercost" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="existingConnection.meterCost" class="form-control text-right"  />  
+		<form:input path="existingConnection.meterCost" class="form-control text-right"  />
+			<form:errors path="existingConnection.meterCost" cssClass="add-margin error-msg" />	  
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.metername" /></label>
 	<div class="col-sm-3 add-margin">
 		<form:input path="existingConnection.meterName" class="form-control text-left" /> 
+			<form:errors path="existingConnection.meterName" cssClass="add-margin error-msg" />	
 	</div>
 </div>
 
@@ -89,11 +95,13 @@
 			code="lbl.meterslno" /></label>
 	<div class="col-sm-3 add-margin">
 		<form:input path="existingConnection.meterNo"  class="form-control text-left"/>   
+			<form:errors path="existingConnection.meterNo" cssClass="add-margin error-msg" />	
 	</div>
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.previousreading" /></label>
 	<div class="col-sm-3 add-margin">
-	<form:input path="existingConnection.previousReading"  class="form-control text-right"/>    
+	<form:input path="existingConnection.previousReading"  class="form-control text-right"/>   
+		<form:errors path="existingConnection.previousReading" cssClass="add-margin error-msg" />	 
 	</div>  
 	
 </div>
@@ -103,12 +111,14 @@
 			code="lbl.previousreading" /></label>
 	<div class="col-sm-3 add-margin">
 	<form:input path="existingConnection.readingDate"  class="form-control datepicker" data-date-end-date="0d"
-								id="readingDate" data-inputmask="'mask': 'd/m/y'" />       
+								id="readingDate" data-inputmask="'mask': 'd/m/y'" />  
+	<form:errors path="existingConnection.readingDate" cssClass="add-margin error-msg" />	     
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.currentreading" /></label>
 	<div class="col-sm-3 add-margin">
 		<form:input path="existingConnection.currentReading" class="form-control text-right" />
+			<form:errors path="existingConnection.currentReading" cssClass="add-margin error-msg" />	
 	</div>
 </div>
 </div>

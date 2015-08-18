@@ -292,16 +292,50 @@ public class NewConnectionController extends GenericConnectionController {
     }
     
     private void validateExisting(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
+
+        if (waterConnectionDetails.getExistingConnection().getArrears() == null)
+            errors.rejectValue("existingConnection.arrears", "err.required");
+        if (waterConnectionDetails.getExistingConnection().getDonationCharges() == null)
+            errors.rejectValue("existingConnection.donationCharges", "err.required");
+
         if (waterConnectionDetails.getConnectionType() != null
-                && waterConnectionDetails.getConnectionType()==ConnectionType.METERED) {
-        	
-        	if( waterConnectionDetails.getExistingConnection().getArrears()==null )
-    			{
-        		errors.rejectValue("existingConnection.arrears", "err.required");
-       			}
-          
-        }
+                && waterConnectionDetails.getConnectionType() == ConnectionType.METERED) {
+            if (waterConnectionDetails.getExistingConnection().getMeterCost() == null)
+                errors.rejectValue("existingConnection.meterCost", "err.required");
+            if (waterConnectionDetails.getConnection().getConsumerCode() == null)
+                errors.rejectValue("connection.consumerCode", "err.required");
+            if (waterConnectionDetails.getExecutionDate() == null)
+                errors.rejectValue("executionDate", "err.required");
+            if (waterConnectionDetails.getExistingConnection().getMeterName() == null)
+                errors.rejectValue("existingConnection.meterName", "err.required");
+            if (waterConnectionDetails.getExistingConnection().getMeterNo() == null)
+                errors.rejectValue("existingConnection.meterNo", "err.required");
+            if (waterConnectionDetails.getExistingConnection().getPreviousReading() == null)
+                errors.rejectValue("existingConnection.previousReading", "err.required");
+            if (waterConnectionDetails.getExistingConnection().getReadingDate() == null)
+                errors.rejectValue("existingConnection.readingDate", "err.required");
+            if (waterConnectionDetails.getExistingConnection().getCurrentReading() == null)
+                errors.rejectValue("existingConnection.currentReading", "err.required");
+
+        } else if (waterConnectionDetails.getExistingConnection().getMonthlyFee() == null)
+            errors.rejectValue("existingConnection.monthlyFee", "err.required");
     }
+
+
+   @RequestMapping(value = "/newConnection-editExisting/{consumerCode}", method = GET)
+    public String editExisting(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
+            @PathVariable final String consumerCode, final Model model) {
+        waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode);
+        final Map<Long, String> connectionTypeMap = new HashMap<Long, String>();
+
+        connectionTypeMap.put(applicationTypeService.findByCode(WaterTaxConstants.NEWCONNECTION).getId(),
+                WaterTaxConstants.PRIMARYCONNECTION);
+        connectionTypeMap.put(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION).getId(),
+                WaterTaxConstants.CONN_NAME_ADDNLCONNECTION);
+        model.addAttribute("radioButtonMap", connectionTypeMap);
+        return "newconnection-dataEntryForm";
+    }
+
     
     @ModelAttribute
     @Override
