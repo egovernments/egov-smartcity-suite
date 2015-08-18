@@ -164,7 +164,7 @@ public class WaterConnectionDetails extends StateAware {
     @Length(max = 1024)
     private String connectionReason;
 
-    private String connectionOrder;
+    private Integer numberOfRooms;
 
     private String bplCardHolderName;
 
@@ -390,12 +390,12 @@ public class WaterConnectionDetails extends StateAware {
         this.connectionReason = connectionReason;
     }
 
-    public String getConnectionOrder() {
-        return connectionOrder;
+    public Integer getNumberOfRooms() {
+        return numberOfRooms;
     }
 
-    public void setConnectionOrder(final String connectionOrder) {
-        this.connectionOrder = connectionOrder;
+    public void setNumberOfRooms(final Integer numberOfRooms) {
+        this.numberOfRooms = numberOfRooms;
     }
 
     public EgDemand getDemand() {
