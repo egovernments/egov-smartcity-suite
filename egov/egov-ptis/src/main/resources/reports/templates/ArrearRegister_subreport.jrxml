@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ArrearRegister_subreport" language="groovy" pageWidth="655" pageHeight="1157" columnWidth="655" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0bb0e5bf-8634-481a-b624-67c26bf93bf4">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<import value="org.egov.ptis.domain.entity.property.*"/>
+	<field name="indexNumber" class="java.lang.String"/>
+	<field name="houseNo" class="java.lang.String"/>
+	<field name="ownerName" class="java.lang.String"/>
+	<field name="arrearInstallmentYear" class="java.lang.String"/>
+	<field name="arrearLibraryCess" class="java.math.BigDecimal"/>
+	<field name="arrearPropertyTax" class="java.math.BigDecimal"/>
+	<field name="arrearPenalty" class="java.math.BigDecimal"/>
+	<field name="totalArrearTax" class="java.math.BigDecimal"/>
+	<field name="basicPropId" class="java.lang.Long"/>
+	<variable name="subTotalArrearGenTax" class="java.math.BigDecimal" resetType="Group" resetGroup="subTotalTax" calculation="Sum">
+		<variableExpression><![CDATA[$F{arrearPropertyTax}.setScale(2)]]></variableExpression>
+	</variable>
+	<variable name="subTotalArrearLibCessTax" class="java.math.BigDecimal" resetType="Group" resetGroup="subTotalTax" calculation="Sum">
+		<variableExpression><![CDATA[$F{arrearLibraryCess}.setScale(2)]]></variableExpression>
+	</variable>
+	<variable name="subTotalArrearPenaltyTax" class="java.math.BigDecimal" resetType="Group" resetGroup="subTotalTax" calculation="Sum">
+		<variableExpression><![CDATA[$F{arrearPenalty}.setScale(2)]]></variableExpression>
+	</variable>
+	<variable name="subTotalTotalTax" class="java.math.BigDecimal" resetType="Group" resetGroup="subTotalTax" calculation="Sum">
+		<variableExpression><![CDATA[$F{totalArrearTax}.setScale(2)]]></variableExpression>
+	</variable>
+	<variable name="indexNumCount" class="java.lang.Integer" resetType="Group" resetGroup="subTotalTax" calculation="Count">
+		<variableExpression><![CDATA[$F{basicPropId}]]></variableExpression>
+	</variable>
+	<group name="subTotalTax">
+		<groupExpression><![CDATA[$F{basicPropId}]]></groupExpression>
+		<groupFooter>
+			<band height="37" splitType="Prevent">
+				<staticText>
+					<reportElement x="263" y="0" width="72" height="20" uuid="5fc0dcf8-c666-4dfa-9cc6-80864a57262c">
+						<printWhenExpression><![CDATA[$V{indexNumCount} > 1]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="335" y="0" width="83" height="20" uuid="88db655a-ff2f-4055-a3e9-8d22482f99dc">
+						<printWhenExpression><![CDATA[$V{indexNumCount} > 1]]></printWhenExpression>
+					</reportElement>
+					<box rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{subTotalArrearLibCessTax} != null ? $V{subTotalArrearLibCessTax}.setScale(2) : (BigDecimal.ZERO).setScale(2)]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="418" y="0" width="86" height="20" uuid="38af8673-4def-433a-8b55-2f01f6bd9b60">
+						<printWhenExpression><![CDATA[$V{indexNumCount} > 1]]></printWhenExpression>
+					</reportElement>
+					<box rightPadding="2">
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{subTotalArrearGenTax} != null ? $V{subTotalArrearGenTax}.setScale(2) : (BigDecimal.ZERO).setScale(2)]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="504" y="0" width="80" height="20" uuid="fe93ca1e-889d-4ca0-babd-4a103fc63bd1">
+						<printWhenExpression><![CDATA[$V{indexNumCount} > 1]]></printWhenExpression>
+					</reportElement>
+					<box rightPadding="2">
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{subTotalArrearPenaltyTax} != null ? $V{subTotalArrearPenaltyTax}.setScale(2) : (BigDecimal.ZERO).setScale(2)]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="584" y="0" width="69" height="20" uuid="6353b6f1-3250-486d-b4f5-54f9d71493eb">
+						<printWhenExpression><![CDATA[$V{indexNumCount} > 1]]></printWhenExpression>
+					</reportElement>
+					<box rightPadding="2">
+						<topPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{subTotalTotalTax} != null ? $V{subTotalTotalTax}.setScale(2) : (BigDecimal.ZERO).setScale(2)]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="33" splitType="Prevent">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="89" y="1" width="95" height="32" isPrintWhenDetailOverflows="true" uuid="20a195b4-8157-4293-a3d7-79275a77668e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ownerName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="335" y="1" width="83" height="32" uuid="8bc2ee64-480f-4900-a285-07964f03846c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{arrearLibraryCess} != null ? $F{arrearLibraryCess}.setScale(2) : (BigDecimal.ZERO).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="418" y="0" width="86" height="33" uuid="93fcd1d6-0ad5-4469-9462-b1a90f30504c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{arrearPropertyTax} != null ? $F{arrearPropertyTax}.setScale(2) : (BigDecimal.ZERO).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="584" y="0" width="69" height="33" uuid="33f6096a-5776-4789-8957-09abbe8bc9e0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{totalArrearTax} != null ? $F{totalArrearTax}.setScale(2) : (BigDecimal.ZERO).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="184" y="1" width="79" height="32" isPrintWhenDetailOverflows="true" uuid="6ffd2c9c-8ff5-41ab-b2ab-9450cbf08b4a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{houseNo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="1" width="89" height="32" isPrintWhenDetailOverflows="true" uuid="0c76dbf8-8081-4afd-8ece-916ae053a9c6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{indexNumber}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="504" y="0" width="80" height="33" uuid="95c3e789-736e-49aa-ac73-392e9a776d30"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{arrearPenalty} != null ? $F{arrearPenalty}.setScale(2) : (BigDecimal.ZERO).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="263" y="0" width="72" height="33" uuid="4861d7f5-57f7-46d3-b7d5-d939a8e26eed"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{arrearInstallmentYear}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

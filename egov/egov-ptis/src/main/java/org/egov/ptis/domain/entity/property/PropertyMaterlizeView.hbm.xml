@@ -73,7 +73,7 @@
 		<property name="gisRefNo" column="GISREFNO" />
 		<property name="alv" column="ALV"/>
 		
-		<set name="instDmdColl" table="EGPT_MV_INST_DEM_COLL" >
+		<set name="instDmdColl" table="EGPT_MV_INST_DEM_COLL" order-by="id_installment" >
             <key>
                 <column name="ID_BASIC_PROPERTY"  not-null="true" />
             </key>

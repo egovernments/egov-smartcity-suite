@@ -40,15 +40,14 @@
 package org.egov.ptis.actions.common;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.AREA_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_CONSTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -145,7 +144,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	private Map<String, String> propTypeCategoryMap = new TreeMap<String, String>();
 	private Date completionOccupationDate;
 	private Logger LOGGER = Logger.getLogger(getClass());
-	private List<String> partNumbers;
+	private List<String> partNumbers; 
 	private HttpServletResponse response;
 	private List<Assignment> assignmentList;
 	private String currentStatusCode;
@@ -171,10 +170,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	public String wardByZone() {
 		LOGGER.debug("Entered into wardByZone, zoneId: " + zoneId);
 		wardList = new ArrayList<Boundary>();
-		wardList = getPersistenceService()
-				.findAllBy(
-						"from Boundary BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.id ",
-						"Ward", getZoneId());
+		wardList = boundaryService.getActiveChildBoundariesByBoundaryId(getZoneId());
 		LOGGER.debug("Exiting from wardByZone, No of wards in zone: " + zoneId + "are "
 				+ ((wardList != null) ? wardList : ZERO));
 		return WARD;
@@ -185,10 +181,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	public String areaByWard() {
 		LOGGER.debug("Entered into areaByWard, wardId: " + wardId);
 		areaList = new ArrayList<Boundary>();
-		areaList = getPersistenceService()
-				.findAllBy(
-						"from BoundaryImpl BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.name ",
-						AREA_BNDRY_TYPE, getWardId());
+		areaList =  boundaryService.getActiveChildBoundariesByBoundaryId(getWardId());
 		LOGGER.debug("Exiting from areaByWard, No of areas in ward: " + wardId + " are "
 				+ ((areaList != null) ? areaList : ZERO));
 		return AREA;
@@ -209,8 +202,6 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	@Action(value = "/ajaxCommon-blockByLocality")
 	public void blockByLocality() throws IOException, NoSuchObjectException {
 		LOGGER.debug("Entered into blockByLocality, locality: " + locality);
-
-		// streetList = new ArrayList<Boundary>(0);
 
 		Boundary blockBoundary = (Boundary) getPersistenceService().find(
 				"select CH.parent from CrossHeirarchyImpl CH where CH.child.id = ? ", getLocality());
@@ -613,5 +604,13 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	public void setCurrentStatusCode(String currentStatusCode) {
 		this.currentStatusCode = currentStatusCode;
 	}
+
+    public List<Boundary> getAreaList() {
+        return areaList;
+    }
+
+    public void setAreaList(List<Boundary> areaList) {
+        this.areaList = areaList;
+    }
 
 }

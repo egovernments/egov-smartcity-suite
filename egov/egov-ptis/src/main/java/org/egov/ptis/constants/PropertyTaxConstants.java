@@ -266,7 +266,7 @@ public interface PropertyTaxConstants {
 	public static final String REPORT_TEMPLATENAME_EGS_EDU_CESS_COLLECTION = "Egs_EduCess_CollectionInfo";
 	public static final String REPORT_TEMPLATENAME_CALSHEET_FOR_GOVT_PROPS = "IndCalSheetForGovtProperties";
 	public static final String REPORT_TEMPLATENAME_MUTATION_CERTIFICATE = "MutationCertificate";
-	public static final String REPORT_TEMPLATENAME_JAMABANDI = "Jamabandi";
+	public static final String REPORT_TEMPLATENAME_ARREARREGISTER = "ArrearRegister"; 
 	public static final String REPORT_TEMPLATENAME_BAKAYAFERIST = "Bakaya_Ferist";
 	public static final String REPORT_TEMPLATENAME_HEADWISEDMDCOLL = "HeadWiseDmdNdRec";
 	public static final String REPORT_TEMPLATENAME_BIGBUILDINGRECOVERY = "BigBuildingRecoveryStmt";

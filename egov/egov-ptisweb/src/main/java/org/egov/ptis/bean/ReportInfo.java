@@ -53,10 +53,12 @@ public class ReportInfo {
 	private String currInstallment;
 	private String zoneNo;
 	private String wardNo;
+	private String blockNo;
+	private String localityNo;
 	private String partNo;
 	private List<AssesseeInfo> assesseeInfoList;
 	private List<DemandCollInfo> demandCollInfoList;
-	private List<UnitWiseInfo> unitWiseInfoList;
+	private List<PropertyWiseArrearInfo> propertyWiseArrearInfoList;
 	private String dateString;
 	private Map<String,BigDecimal> demandCollMap;
 	private Integer totalNoProps;
@@ -111,12 +113,6 @@ public class ReportInfo {
 	public void setDateString(String dateString) {
 		this.dateString = dateString;
 	}
-	public List<UnitWiseInfo> getUnitWiseInfoList() {
-		return unitWiseInfoList;
-	}
-	public void setUnitWiseInfoList(List<UnitWiseInfo> unitWiseInfoList) {
-		this.unitWiseInfoList = unitWiseInfoList;
-	}
 	public Map<String, BigDecimal> getDemandCollMap() {
 		return demandCollMap;
 	}
@@ -129,9 +125,6 @@ public class ReportInfo {
 	public void setTotalNoProps(Integer totalNoProps) {
 		this.totalNoProps = totalNoProps;
 	}
-	
-	
-	
 	public BigDecimal getArrSewerageTax() {
 		return demandCollMap.get("arrSewerageTax");
 	}
@@ -344,5 +337,23 @@ public class ReportInfo {
 	public void setTotalColl(BigDecimal totalColl) {
 		this.totalColl = totalColl;
 	}
+    public String getBlockNo() {
+        return blockNo;
+    }
+    public void setBlockNo(String blockNo) {
+        this.blockNo = blockNo;
+    }
+    public String getLocalityNo() {
+        return localityNo;
+    }
+    public void setLocalityNo(String localityNo) {
+        this.localityNo = localityNo;
+    }
+    public List<PropertyWiseArrearInfo> getPropertyWiseArrearInfoList() {
+        return propertyWiseArrearInfoList;
+    }
+    public void setPropertyWiseArrearInfoList(List<PropertyWiseArrearInfo> propertyWiseArrearInfoList) {
+        this.propertyWiseArrearInfoList = propertyWiseArrearInfoList;
+    }
 	
 }
