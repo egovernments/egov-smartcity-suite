@@ -243,7 +243,7 @@ public class ContingentBillAction extends BaseBillAction {
                 reset();
                 commonBean.setBillDate(getDefaultDate());  
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("bigllDetailslist.............................."+billDetailslist.size());
-                if(true/*getValidActions("authentication",null).size()==0*/)
+               /* if(getValidActions("authentication",null).size()==0)
                 {
                         addActionMessage(getText("cbill.user.authenticate"));
                 }
@@ -253,7 +253,7 @@ public class ContingentBillAction extends BaseBillAction {
                         addDropdownData(DESIGNATION_LIST, (List<Designation>)map.get(DESIGNATION_LIST)); 
                         addDropdownData(USER_LIST, Collections.EMPTY_LIST);
                         nextLevel = map.get(WFITEMSTATE)!=null?map.get(WFITEMSTATE).toString():null;
-                }
+                }*///Phoenix 
                 return NEW;
         }
         
