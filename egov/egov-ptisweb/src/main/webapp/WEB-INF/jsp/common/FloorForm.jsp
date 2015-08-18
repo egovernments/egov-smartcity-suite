@@ -49,7 +49,6 @@
 		<th class="bluebgheadtd"><s:text name="Occupantname" /></th>
 		<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="PlinthArea" /><span	class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="exemptioncategory" /></th>
 		<th class="bluebgheadtd"><s:text name="drainage" /></th>
 		<th class="bluebgheadtd"><s:text name="noOfSeats" /></th>
 		<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
@@ -127,16 +126,6 @@
 						maxlength="15" size="10" id="propertyDetail.floorDetailsProxy[0].builtUpArea.area" value="%{propertyDetail.floorDetailsProxy[0].builtUpArea.area}"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
 						cssStyle="width:100%" />
-				</div>
-			</td>
-
-			<td class="blueborderfortd" style="padding: 2px 2px">
-				<div align="center">
-					<s:select name="propertyDetail.floorDetailsProxy[0].taxExemptedReason.id" id="taxExemptedReason" headerValue="select"
-							headerKey="" list="dropdownData.taxExemptionReasonList" value="%{propertyDetail.floorDetailsProxy[0].taxExemptedReason.id}" 
-							listKey="id" listValue="name"
-							cssClass="selectnew" data-optional="1">
-						</s:select>
 				</div>
 			</td>
 			

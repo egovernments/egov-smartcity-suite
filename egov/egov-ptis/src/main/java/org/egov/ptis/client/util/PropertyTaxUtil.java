@@ -43,6 +43,8 @@ import static java.math.BigDecimal.ROUND_HALF_UP;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMP_ACTUAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMP_ENCODED_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_ISCORPORATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_IS_PRIMARY_SERVICECHARGES_APPLICABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS_DMD;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREAR_REBATE_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
@@ -1871,10 +1873,37 @@ public class PropertyTaxUtil {
                                 .setString("depreName", depreciationYear).uniqueResult();
         }
         
-        public List<InstrumentType> prepareInstrumentTypeList() {
-            return persistenceService.findAllBy("from InstrumentType order by type");
-        } 
+	public List<InstrumentType> prepareInstrumentTypeList() {
+		return persistenceService.findAllBy("from InstrumentType order by type");
+	}
 
+	public Boolean isCorporation() {
+		Boolean isCorporation = Boolean.FALSE;
+		final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+				APPCONFIG_ISCORPORATION);
+		if (appConfigValue != null && !appConfigValue.isEmpty())
+			isCorporation = Boolean.valueOf(appConfigValue.get(0).getValue());
+		return isCorporation;
+	}
+
+	public Boolean isSeaShoreULB() {
+		Boolean isCorporation = Boolean.FALSE;
+		final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+				APPCONFIG_ISCORPORATION);
+		if (appConfigValue != null && !appConfigValue.isEmpty())
+			isCorporation = Boolean.valueOf(appConfigValue.get(0).getValue());
+		return isCorporation;
+	}
+
+	public Boolean isPrimaryServiceApplicable() {
+		Boolean isCorporation = Boolean.FALSE;
+		final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+				APPCONFIG_IS_PRIMARY_SERVICECHARGES_APPLICABLE);
+		if (appConfigValue != null && !appConfigValue.isEmpty())
+			isCorporation = Boolean.valueOf(appConfigValue.get(0).getValue());
+		return isCorporation;
+	}
+        
 }
 
 

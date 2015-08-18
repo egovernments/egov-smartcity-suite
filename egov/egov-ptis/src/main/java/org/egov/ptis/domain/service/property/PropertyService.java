@@ -229,7 +229,7 @@ public class PropertyService {
             final String propTypeId, final String propUsageId, final String propOccId, final Character status,
             final String docnumber,
             final String nonResPlotArea, final Long floorTypeId, final Long roofTypeId, final Long wallTypeId,
-            final Long woodTypeId) {
+            final Long woodTypeId, final Long taxExemptId) {
         LOGGER.debug("Entered into createProperty");
         LOGGER.debug("createProperty: Property: " + property + ", areaOfPlot: " + areaOfPlot + ", mutationCode: "
                 + mutationCode + ",propTypeId: " + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: "
@@ -333,10 +333,6 @@ public class PropertyService {
                     if (floor.getUnitType() != null)
                         unitType = (PropertyTypeMaster) getPropPerServ().find(
                                 "from PropertyTypeMaster utype where utype.id = ?", floor.getUnitType().getId());
-                    if (floor.getTaxExemptedReason() != null && floor.getTaxExemptedReason().getId() != null
-                            && floor.getTaxExemptedReason().getId() != -1)
-                        taxExemption = (TaxExeptionReason) getPropPerServ().find("from TaxExeptionReason where id = ?",
-                                floor.getTaxExemptedReason().getId());
                     if (floor.getPropertyUsage() != null)
                         usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
                                 floor.getPropertyUsage().getId());
@@ -365,7 +361,6 @@ public class PropertyService {
                     floor.setPropertyUsage(usage);
                     floor.setPropertyOccupation(occupancy);
                     floor.setStructureClassification(structureClass);
-                    floor.setTaxExemptedReason(taxExemption);
                     floor.setPropertyDetail(property.getPropertyDetail());
                     floor.setCreatedDate(new Date());
                     floor.setModifiedDate(new Date());
@@ -518,37 +513,12 @@ public class PropertyService {
         final PropertyTypeMaster newPropTypeMaster = newProperty.getPropertyDetail().getPropertyTypeMaster();
         new HashSet<EgDemandDetails>();
 
-        if (!oldProperty.getPropertyDetail().getPropertyTypeMaster().getCode()
-                .equalsIgnoreCase(newProperty.getPropertyDetail().getPropertyTypeMaster().getCode())
-                /*
-                 * || !oldProperty.getPropertyDetail().getExtra_field1()
-                 * .equals(newProperty.getPropertyDetail().getExtra_field1())
-                 */
-                || isBigResidentialType(oldProperty.getPtDemandSet()) ^ isBigResidentialType(newProperty
-                        .getPtDemandSet())
-                        || oldProperty.getTaxExemptReason() == null
-                        ^ newProperty.getTaxExemptReason() == null) {
-            LOGGER.info("Old Property and New Property are different, Going for adjustments");
-
-            LOGGER.info("newProperty:" + prepareRsnWiseDemandForOldProp(newProperty));
-
-            LOGGER.info("------------------------Start OldProperty demand set ---------------------------");
-            for (final Ptdemand ptd : oldProperty.getPtDemandSet())
-                LOGGER.info(ptd.getEgInstallmentMaster().getDescription() + " : " + ptd.getEgDemandDetails());
-            LOGGER.info("------------------------End OldProperty demand set ---------------------------");
-            LOGGER.info("------------------------Start New Property demand set ---------------------------");
-            for (final Ptdemand ptd : newProperty.getPtDemandSet())
-                LOGGER.info(ptd.getEgInstallmentMaster().getDescription() + " : " + ptd.getEgDemandDetails());
-            LOGGER.info("------------------------End New Property demand set ---------------------------");
-
-            for (final Installment installment : instList)
-                createAllDmdDetails(oldProperty, newProperty, installment, instList, instTaxMap);
-
-            LOGGER.info("----------------------------------------------- Adjustments --------------------------------------------------");
-            for (final Ptdemand ptd : newProperty.getPtDemandSet())
-                LOGGER.info(ptd.getEgInstallmentMaster().getDescription() + " : " + ptd.getEgDemandDetails());
-            LOGGER.info("--------------------------------------------------------------------------------------------------------------");
-        }
+		if (!oldProperty.getPropertyDetail().getPropertyTypeMaster().getCode()
+				.equalsIgnoreCase(newProperty.getPropertyDetail().getPropertyTypeMaster().getCode())
+				|| !oldProperty.getIsExemptedFromTax() ^ !newProperty.getIsExemptedFromTax()) {
+			for (final Installment installment : instList)
+				createAllDmdDetails(oldProperty, newProperty, installment, instList, instTaxMap);
+		}
 
         final Map<String, Ptdemand> newPtdemandMap = getPtdemandsAsInstMap(newProperty.getPtDemandSet());
         ptDemandNew = newPtdemandMap.get(currentInstall.getDescription());
@@ -844,7 +814,7 @@ public class PropertyService {
                     LOGGER.info("Old Demand Set:" + inst + "=" + oldEgDemandDetailsSet);
                     LOGGER.info("New Demand set:" + inst + "=" + newEgDemandDetailsSet);
 
-                    if (oldProperty.getTaxExemptReason() == null && newProperty.getTaxExemptReason() == null)
+                    if (!oldProperty.getIsExemptedFromTax() && !newProperty.getIsExemptedFromTax())
                         for (int i = 0; i < adjstmntReasons.size(); i++) {
                             final String oldPropRsn = adjstmntReasons.get(i);
                             String newPropRsn = null;
@@ -871,7 +841,7 @@ public class PropertyService {
                                     continue;
                             }
                         }
-                    else if (oldProperty.getTaxExemptReason() == null)
+                    else if (!oldProperty.getIsExemptedFromTax())
                         newEgDemandDetailsSet = adjustmentsForTaxExempted(ptDemandOld.getEgDemandDetails(),
                                 newEgDemandDetailsSet, inst);
 
@@ -925,7 +895,7 @@ public class PropertyService {
              * When a unit in new property is exempted from tax, tax exemption made unit level instead of property level with new
              * requirement, refer card #3427 Modified on 16 October 2014 [Nayeem]
              */
-            if (newProperty.getTaxExemptReason() != null && !newProperty.getTaxExemptReason().equals("-1"))
+            if (newProperty.getIsExemptedFromTax() != null && !newProperty.getIsExemptedFromTax().equals("-1"))
                 if (!rsn.equalsIgnoreCase(DEMANDRSN_CODE_LIBRARY_CESS)
                         && !rsn.equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS)
                         && !rsn.equalsIgnoreCase(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY))

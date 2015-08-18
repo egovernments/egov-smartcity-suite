@@ -186,18 +186,20 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         ownerInfo.setAssessmentNo(basicProperty.getUpicNo());
         final Ptdemand currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
         BigDecimal totalTax = BigDecimal.ZERO;
-        for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {
-            totalTax = totalTax.add(demandDetail.getAmount());
-            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().toUpperCase()
-                    .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS))
-                ownerInfo.setEducationTax(demandDetail.getAmount());
-            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().toUpperCase()
-                    .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS))
-                ownerInfo.setLibraryTax(demandDetail.getAmount());
-            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().toUpperCase()
-                    .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX))
-                ownerInfo.setGeneralTax(demandDetail.getAmount());
-        }
+		for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {
+			totalTax = totalTax.add(demandDetail.getAmount());
+			if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+					.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS))
+				ownerInfo.setEducationTax(demandDetail.getAmount());
+			if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+					.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS))
+				ownerInfo.setLibraryTax(demandDetail.getAmount());
+			if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+					.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX)
+					|| demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+							.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX))
+				ownerInfo.setGeneralTax(demandDetail.getAmount());
+		}
         ownerInfo.setTotalTax(totalTax);
         final PropertyID propertyId = basicProperty.getPropertyID();
         ownerInfo.setZoneName(propertyId.getZone().getName());

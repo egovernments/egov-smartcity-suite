@@ -125,7 +125,7 @@ function populateApprover() {
 	</tr>
 	  	<tr>   
 	  	 	 <td class="${approverOddCSS}" width="5%">&nbsp;</td>
-			 <td class="${approverOddCSS}" id="deptLabel" width="14%">Approver Department:</td>
+			 <td class="${approverOddCSS}" id="deptLabel" width="14%"><s:text name="wf.approver.department"/>:</td>
 			 <td class="${approverOddTextCss}" width="14%">
 				<s:select name="approverDepartment" id="approverDepartment" list="dropdownData.approverDepartmentList" 
 					listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"  
@@ -134,14 +134,14 @@ function populateApprover() {
 				<egov:ajaxdropdown fields="['Text','Value']" url="workflow/ajaxWorkFlow-getDesignationsByObjectType.action" id="approverDesignation" dropdownId="approverDesignation" 
 					contextToBeUsed="/eis"/>
 			</td>
-			<td class="${approverOddCSS}" width="14%">Approver Designation:</td>
+			<td class="${approverOddCSS}" width="14%"><s:text name="wf.approver.designation"/>:</td>
 			<td class="${approverOddTextCss}" width="14%">
 				<s:select id="approverDesignation" name="approverDesignation" list="dropdownData.designationList" listKey="designationId" headerKey="-1" listValue="designationName" headerValue="----Choose----" 
 					onchange="populateApprover();" onfocus="callAlertForDepartment();" cssClass="dropDownCss" />
 				<egov:ajaxdropdown id="approverPositionId" fields="['Text','Value']" dropdownId="approverPositionId" 
 					url="workflow/ajaxWorkFlow-getPositionByPassingDesigId.action" contextToBeUsed="/eis" />
 			</td>
-			<td class="${approverOddCSS}" width="14%">Approver:</td>
+			<td class="${approverOddCSS}" width="14%"><s:text name="wf.approver"/>:</td>
 			<td class="${approverOddTextCss}" width="14%">
 			  	<s:select id="approverPositionId"  name="approverPositionId" list="dropdownData.approverList" headerKey="-1" headerValue="----Choose----" listKey="id" listValue="firstName"  onfocus="callAlertForDesignation();" 
 			  			value="%{approverPositionId}" cssClass="dropDownCss" /></td> 
@@ -156,7 +156,7 @@ function populateApprover() {
          <tr>
            <td width="10%" class="${approverEvenCSS}">&nbsp;</td>
            <td width="20%" class="${approverEvenCSS}">&nbsp;</td>
-           <td class="${approverEvenCSS}" width="13%">Approver Remarks: </td>
+           <td class="${approverEvenCSS}" width="13%"><s:text name="wf.approver.remarks"/>: </td>
            <td class="${approverEvenTextCSS}"> 
            	<textarea id="approverComments" name="approverComments" rows="2" cols="35" ></textarea>  
            </td>

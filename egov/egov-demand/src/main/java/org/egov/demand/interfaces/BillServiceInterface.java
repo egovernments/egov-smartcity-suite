@@ -147,7 +147,7 @@ public abstract class BillServiceInterface {
 			billdetails.setEgBill(bill);
 		}
 		
-		bill.setConsumerId(billObj.getPropertyId());
+		bill.setConsumerId(billObj.getConsumerId());
 		bill.setCallBackForApportion(billObj.isCallbackForApportion());
 		egBillDAO.create(bill);
 		return bill;

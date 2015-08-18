@@ -157,12 +157,18 @@ public class ViewPropertyAction extends BaseFormAction {
                         .getPropertyTypeMaster();
                 viewMap.put("ownershipType", propertyTypeMaster.getType());
             }
-            final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
-            viewMap.put("currTax", demandCollMap.get(CURR_DMD_STR).toString());
-            viewMap.put("currTaxDue",
-                    demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)).toString());
-            viewMap.put("totalArrDue",
-                    demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
+			if (!property.getIsExemptedFromTax()) {
+				final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
+				viewMap.put("currTax", demandCollMap.get(CURR_DMD_STR).toString());
+				viewMap.put("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR))
+						.toString());
+				viewMap.put("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR))
+						.toString());
+			} else {
+				viewMap.put("currTax", BigDecimal.ZERO);
+				viewMap.put("currTaxDue", BigDecimal.ZERO);
+				viewMap.put("totalArrDue", BigDecimal.ZERO);
+			}
             getBasicProperty().getObjections();
             propStatusValSet = getBasicProperty().getPropertyStatusValuesSet();
             for (final PropertyStatusValues propStatusVal : propStatusValSet) {

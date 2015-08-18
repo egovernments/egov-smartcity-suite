@@ -74,7 +74,7 @@
         		   <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.guardianRelation}" /></span>
         		</td>
         		<td class="blueborderfortd" align="center">
-        		   <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.gardian}" /></span>
+        		   <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.guardian}" /></span>
         		</td>
         	</tr>
      </s:iterator>

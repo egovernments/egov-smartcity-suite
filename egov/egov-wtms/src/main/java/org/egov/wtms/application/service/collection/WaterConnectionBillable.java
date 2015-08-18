@@ -231,7 +231,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     }
 
     @Override
-    public String getPropertyId() {
+    public String getConsumerId() {
         return getWaterConnectionDetails().getApplicationNumber();
     }
 

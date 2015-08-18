@@ -46,12 +46,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTE
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.OCC_TENANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_ROLEFORNONEMPLOYEE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_WORKFLOWDEPARTEMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_WORKFLOWDESIGNATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.TENANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
@@ -71,18 +67,13 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.entity.Employee;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -225,7 +216,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     }
 
     protected void validateProperty(final Property property, final String areaOfPlot, final String dateOfCompletion,
-            final boolean chkIsTaxExempted, final String taxExemptReason, final String propTypeId,
+            final Long taxExemptedReason, final String propTypeId,
             final String propUsageId, final String propOccId, final Long floorTypeId, final Long roofTypeId,
             final Long wallTypeId, final Long woodTypeId) {
 
@@ -328,7 +319,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                             final PropertyOccupation occupancy = (PropertyOccupation) getPersistenceService()
                                     .find("from PropertyOccupation po where po.id = ?",
                                             floor.getPropertyOccupation().getId());
-                            if (occupancy.getOccupation().equalsIgnoreCase(TENANT)
+                            if (occupancy.getOccupation().equalsIgnoreCase(OCC_TENANT)
                                     && floor.getOccupantName().equals(""))
                                 addActionError(getText("mandatory.floor.occupantName"));
                         }

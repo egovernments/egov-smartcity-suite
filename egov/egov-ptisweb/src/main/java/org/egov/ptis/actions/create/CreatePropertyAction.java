@@ -192,8 +192,6 @@ public class CreatePropertyAction extends WorkflowAction {
     private String dateOfCompletion;
     private String applicationNo;
     private TreeMap<Integer, String> floorNoMap;
-    private boolean chkIsTaxExempted;
-    private String taxExemptReason;
     private boolean chkIsCorrIsDiff;
     private String corrAddress1;
     private String corrAddress2;
@@ -243,6 +241,7 @@ public class CreatePropertyAction extends WorkflowAction {
     private String applicationNoMessage;
     private String assessmentNoMessage;
     private String propertyInitiatedBy;
+    private Long taxExemptedReason;
 
     @Autowired
     private UserService userService;
@@ -291,8 +290,8 @@ public class CreatePropertyAction extends WorkflowAction {
     public String create() {
         LOGGER.debug("create: Property creation started, Property: " + property + ", zoneId: " + zoneId + ", wardId: "
                 + wardId + ", blockId: " + blockId + ", areaOfPlot: " + areaOfPlot + ", dateOfCompletion: "
-                + dateOfCompletion + ", chkIsTaxExempted: " + chkIsTaxExempted + ", taxExemptReason: "
-                + taxExemptReason + ", propTypeId: " + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: "
+                + dateOfCompletion + ", taxExemptedReason: "
+                + taxExemptedReason + ", propTypeId: " + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: "
                 + propOccId);
         final long startTimeMillis = System.currentTimeMillis();
         final BasicProperty basicProperty = createBasicProp(STATUS_ISACTIVE);
@@ -466,7 +465,7 @@ public class CreatePropertyAction extends WorkflowAction {
         basicProp.setPropertyMutationMaster(propertyMutationMaster);
         property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(), propTypeId,
                 propUsageId, propOccId, status, getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(),
-                getWallTypeId(), getWoodTypeId());
+                getWallTypeId(), getWoodTypeId(), taxExemptedReason);
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propCompletionDate = propService.getLowestDtOfCompFloorWise(property.getPropertyDetail().getFloorDetails());
         else
@@ -697,7 +696,7 @@ public class CreatePropertyAction extends WorkflowAction {
          */
         property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(), propTypeId,
                 propUsageId, propOccId, status, getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(),
-                getWallTypeId(), getWoodTypeId());
+                getWallTypeId(), getWoodTypeId(), taxExemptedReason);
         property.setStatus(status);
 
         LOGGER.debug("createBasicProp: Property after call to PropertyService.createProperty: " + property);
@@ -876,7 +875,7 @@ public class CreatePropertyAction extends WorkflowAction {
                     addActionError(getText("mandatory.emailId"));
             }
 
-        validateProperty(property, areaOfPlot, dateOfCompletion, chkIsTaxExempted, taxExemptReason, propTypeId,
+        validateProperty(property, areaOfPlot, dateOfCompletion, taxExemptedReason, propTypeId,
                 propUsageId, propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId);
 
         if (isBlank(pinCode))
@@ -1023,23 +1022,15 @@ public class CreatePropertyAction extends WorkflowAction {
         this.floorNoMap = floorNoMap;
     }
 
-    public boolean isChkIsTaxExempted() {
-        return chkIsTaxExempted;
-    }
+    public Long getTaxExemptedReason() {
+		return taxExemptedReason;
+	}
 
-    public void setChkIsTaxExempted(final boolean chkIsTaxExempted) {
-        this.chkIsTaxExempted = chkIsTaxExempted;
-    }
+	public void setTaxExemptedReason(Long taxExemptedReason) {
+		this.taxExemptedReason = taxExemptedReason;
+	}
 
-    public String getTaxExemptReason() {
-        return taxExemptReason;
-    }
-
-    public void setTaxExemptReason(final String taxExemptReason) {
-        this.taxExemptReason = taxExemptReason;
-    }
-
-    public boolean isChkIsCorrIsDiff() {
+	public boolean isChkIsCorrIsDiff() {
         return chkIsCorrIsDiff;
     }
 

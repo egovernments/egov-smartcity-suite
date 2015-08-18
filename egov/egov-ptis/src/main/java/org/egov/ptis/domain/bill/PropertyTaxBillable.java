@@ -393,23 +393,13 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     }
 
     @Override
-    public String getPropertyId() {
-        if (isMutationFeePayment()) {
-            return mutationApplicationNo;
-        } else {
-            final StringBuilder consumerCode = new StringBuilder();
-            consumerCode.append(getBasicProperty().getUpicNo());
-            if (getBasicProperty().getPropertyID() != null) {
-                consumerCode.append("(Zone:");
-                if (getBasicProperty().getPropertyID().getZone() != null)
-                    consumerCode.append(getBasicProperty().getPropertyID().getZone().getBoundaryNum());
-                consumerCode.append(" Ward:");
-                if (getBasicProperty().getPropertyID().getWard() != null)
-                    consumerCode.append(getBasicProperty().getPropertyID().getWard().getBoundaryNum()).append(")");
-            }
-            return consumerCode.toString();
-        }
-    }
+	public String getConsumerId() {
+		if (isMutationFeePayment()) {
+			return mutationApplicationNo;
+		} else {
+			return getBasicProperty().getUpicNo();
+		}
+	}
 
     private Map<Installment, EgDemandDetails> getInstallmentWisePenaltyDemandDetails(final Property property,
             final Installment currentInstallment) {

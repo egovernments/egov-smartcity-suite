@@ -68,10 +68,12 @@ import java.util.TreeMap;
 
 public interface PropertyTaxConstants {
     
-        public static final Float SQUARE_YARD_TO_SQUARE_METER_VALUE = 0.836127f;
+	public static final String APPCONFIG_ISCORPORATION = "IS_CORPORATION";
+	public static final String APPCONFIG_ISSEASHORE_ULB = "IS_SEASHORE_ULB";
+	public static final String APPCONFIG_IS_PRIMARY_SERVICECHARGES_APPLICABLE = "IS_PRIMARYSERVICECHARGES_APPLICABLE";
+    public static final Float SQUARE_YARD_TO_SQUARE_METER_VALUE = 0.836127f;
 	// General constants used across Clients
 	public static final String PTMODULENAME = "Property Tax";
-	public static final String PTISCONFIGFILE = "ptis_egov_config.xml";
 	public static final String DEACTIVATION = "DEACTIVATION";
 	public static final String DATE_FORMAT_DDMMYYY = "dd/MM/yyyy";
 	public static final String SESSIONLOGINID = "userid";
@@ -216,7 +218,7 @@ public interface PropertyTaxConstants {
 	public static final String OWNERSHIP_TYPE_STATE_GOVT = "STATE_GOVT";
 	public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_335 = "CENTRAL_GOVT_33.5";
 	public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_50 = "CENTRAL_GOVT_50";
-	public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_70 = "CENTRAL_GOVT_70";
+	public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_75 = "CENTRAL_GOVT_75";
 
 	// Ownership type string
 	public static final String OWNERSHIP_TYPE_VAC_LAND_STR = "Vacant Land";
@@ -224,7 +226,7 @@ public interface PropertyTaxConstants {
 	public static final String OWNERSHIP_TYPE_STATE_GOVT_STR = "State Government";
 	public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_335_STR = "Central Government 33.5%";
 	public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_50_STR = "Central Government 50%";
-	public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_70_STR = "Central Government 70%";
+	public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_75_STR = "Central Government 75%";
 
 	// Property Type Categories
 	public static final String PROPTYPE_VAC_LAND = "RESD";
@@ -273,15 +275,12 @@ public interface PropertyTaxConstants {
 	public static final String REPORT_TEMPLATENAME_DCBREPORT = "DcbReport";
 
 	// Occupancy Types
-	public static final String TENANT = "TENANT";
-	public static final String OWNER = "SELFOCC";
-	public static final String OCCUPANCY_VACANT = "VACANT";
-	public static final String OCCUPIER = "OCCUPIER";
-
-	public static final String TENANT_OCC = "Tenanted";
-	public static final String OWNER_OCC = "Owner";
-	public static final String VACANT_OCC = "Vacant";
-	public static final String OCCUPIER_OCC = "Occupier";
+	public static final String OCC_TENANT = "TENANT";
+	public static final String OCC_OWNER = "OWNER";
+	public static final String OCC_COMMERCIAL = "COMMERCIAL";
+	
+	// Usage Types
+	public static final String USAGE_RESIDENTIAL = "RESD";
 
 	// TreeMap for Non Vacant Land types
 	public static final TreeMap<String, String> NON_VAC_LAND_PROPERTY_TYPE_CATEGORY = new TreeMap<String, String>() {
@@ -306,6 +305,11 @@ public interface PropertyTaxConstants {
 			put("26-100%", "26-100%");
 		}
 	};
+	// Un authorized penalty percentages on property tax
+	public static final BigDecimal BPA_DEVIATION_TAXPERC_1_10 = new BigDecimal(0.25);// 25%
+	public static final BigDecimal BPA_DEVIATION_TAXPERC_11_25 = new BigDecimal(0.5);// 50%
+	public static final BigDecimal BPA_DEVIATION_TAXPERC_26_100 = new BigDecimal(1);// 100%
+	
 	//TreeMap for Guardian Relation
 	public static final TreeMap<String, String> GUARDIAN_RELATION = new TreeMap<String, String>() {
 		{
@@ -374,7 +378,7 @@ public interface PropertyTaxConstants {
 	public static final String DEMANDRSN_CODE_LIBRARY_CESS = "LIB_CESS";
 	public static final String DEMANDRSN_CODE_EDUCATIONAL_CESS = "EDU_CESS";
 	public static final String DEMANDRSN_CODE_SEWERAGE_TAX = "SEW_TAX";
-	public static final String DEMANDRSN_CODE_PUBLIC_SERVICE_CHARGES = "PUB_SER_CHRG";
+	public static final String DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES = "PRIMARY_SER_CHRG";
 	public static final String DEMANDRSN_CODE_UNAUTHORIZED_PENALTY = "UNAUTH_PENALTY";
 	public static final String DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY = "CHQ_BUNC_PENALTY";
 	public static final String DEMANDRSN_CODE_PENALTY_FINES = "PENALTY_FINES";
@@ -388,6 +392,7 @@ public interface PropertyTaxConstants {
 
 	// Demand Reason master Strings
 	public static final String DEMANDRSN_STR_GENERAL_TAX = "GENERAL TAX";
+	public static final String DEMANDRSN_STR_VACANT_TAX = "VACANT LAND TAX";
 	public static final String DEMANDRSN_STR_LIBRARY_CESS = "LIBRARY CESS";
 	public static final String DEMANDRSN_STR_EDUCATIONAL_CESS = "EDUCATION CESS";
 	public static final String DEMANDRSN_STR_UNAUTHORIZED_PENALTY = "UNAUTHORIZED PENALTY";

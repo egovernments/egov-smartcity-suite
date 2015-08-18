@@ -102,7 +102,7 @@ public class DCBServiceImpl implements DCBService {
     @Override
     public DCBReport getCurrentDCBAndReceipts(final DCBDisplayInfo dcbDispInfo) {
         validate();
-        LOGGER.info("getCurrentDCBAndReceipts() called for: " + billable.getPropertyId());
+        LOGGER.info("getCurrentDCBAndReceipts() called for: " + billable.getConsumerId());
         final DCBReport dcbReport = new DCBReport();
         populateDCB(dcbDispInfo, dcbReport);
         populateReceipts(dcbReport);
@@ -113,7 +113,7 @@ public class DCBServiceImpl implements DCBService {
     @Override
     public DCBReport getCurrentDCBOnly(final DCBDisplayInfo dcbDispInfo) {
         validate();
-        LOGGER.info("getCurrentDCBOnly() called for: " + billable.getPropertyId());
+        LOGGER.info("getCurrentDCBOnly() called for: " + billable.getConsumerId());
         final DCBReport dcbReport = new DCBReport();
         populateDCB(dcbDispInfo, dcbReport);
         LOGGER.info("getCurrentDCBOnly() returned: " + dcbReport);
@@ -123,7 +123,7 @@ public class DCBServiceImpl implements DCBService {
     @Override
     public DCBReport getReceiptsOnly() {
         validate();
-        LOGGER.info("getReceiptsOnly() called for: " + billable.getPropertyId());
+        LOGGER.info("getReceiptsOnly() called for: " + billable.getConsumerId());
         final DCBReport dcbReport = new DCBReport();
         populateReceipts(dcbReport);
         LOGGER.info("getReceiptsOnly() returned: " + dcbReport);

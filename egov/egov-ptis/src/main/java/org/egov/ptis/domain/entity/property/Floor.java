@@ -56,8 +56,9 @@ import org.egov.infstr.models.BaseModel;
 
 /**
  * <p>
- * This is a class which describes the Floor Details of a Property. A Property might have one or more floors. The data for
- * property tax might be given for individual floors or at aggregate level.
+ * This is a class which describes the Floor Details of a Property. A Property
+ * might have one or more floors. The data for property tax might be given for
+ * individual floors or at aggregate level.
  * </p>
  *
  */
@@ -82,18 +83,15 @@ public class Floor extends BaseModel implements Auditable {
 	private PropertyDetail propertyDetail;
 	private Date occupancyDate;
 	private String occupantName;
-	private TaxExeptionReason taxExemptedReason = null;
 	private Boolean drainage;
 	private Integer noOfSeats;
 
-	public Floor(ConstructionTypeSet constructionTypeSet,
-			StructureClassification structureClassification, PropertyUsage propertyUsage,
-			PropertyOccupation propertyOccupation, Integer floorNo,
-			DepreciationMaster depreciationMaster, Area builtUpArea, Area floorArea,
-			String waterMeter, String electricMeter, Date lastUpdatedTimeStamp,
-			Date createdTimeStamp, BigDecimal rentPerMonth,BigDecimal manualAlv, PropertyTypeMaster unitType,
-			String unitTypeCategory, String waterRate, BigDecimal alv, TaxExeptionReason taxExemptedReason,
-			Date occupancyDate, String occupierName,Boolean drainage,Integer noOfSeats) {
+	public Floor(ConstructionTypeSet constructionTypeSet, StructureClassification structureClassification,
+			PropertyUsage propertyUsage, PropertyOccupation propertyOccupation, Integer floorNo,
+			DepreciationMaster depreciationMaster, Area builtUpArea, Area floorArea, String waterMeter,
+			String electricMeter, Date lastUpdatedTimeStamp, Date createdTimeStamp, BigDecimal rentPerMonth,
+			BigDecimal manualAlv, PropertyTypeMaster unitType, String unitTypeCategory, String waterRate,
+			BigDecimal alv, Date occupancyDate, String occupierName, Boolean drainage, Integer noOfSeats) {
 		super();
 		this.constructionTypeSet = constructionTypeSet;
 		this.structureClassification = structureClassification;
@@ -105,14 +103,12 @@ public class Floor extends BaseModel implements Auditable {
 		this.floorArea = floorArea;
 		this.waterMeter = waterMeter;
 		this.electricMeter = electricMeter;
-
 		this.rentPerMonth = rentPerMonth;
 		this.manualAlv = manualAlv;
 		this.unitType = unitType;
 		this.unitTypeCategory = unitTypeCategory;
 		this.waterRate = waterRate;
 		this.alv = alv;
-		this.taxExemptedReason = taxExemptedReason;
 		this.occupancyDate = occupancyDate;
 		this.occupantName = occupierName;
 		this.drainage = drainage;
@@ -123,11 +119,10 @@ public class Floor extends BaseModel implements Auditable {
 
 	}
 
-	public Floor(ConstructionTypeSet constructionTypeSet,
-			StructureClassification structureClassification, PropertyUsage propertyUsage,
-			PropertyOccupation propertyOccupation, Integer floorNo,
-			DepreciationMaster depreciationMaster, Area builtUpArea, Area floorArea,
-			String waterMeter, String electricMeter) {
+	public Floor(ConstructionTypeSet constructionTypeSet, StructureClassification structureClassification,
+			PropertyUsage propertyUsage, PropertyOccupation propertyOccupation, Integer floorNo,
+			DepreciationMaster depreciationMaster, Area builtUpArea, Area floorArea, String waterMeter,
+			String electricMeter) {
 		this.constructionTypeSet = constructionTypeSet;
 		this.structureClassification = structureClassification;
 		this.propertyUsage = propertyUsage;
@@ -310,9 +305,8 @@ public class Floor extends BaseModel implements Auditable {
 	}
 
 	/**
-	 * @return true if the given Object is equal to Floor this will get
-	 *         invoke when more than one object is adding to
-	 *         collection(ex:Set,Map.)
+	 * @return true if the given Object is equal to Floor this will get invoke
+	 *         when more than one object is adding to collection(ex:Set,Map.)
 	 */
 
 	public boolean equals(Object that) {
@@ -353,8 +347,7 @@ public class Floor extends BaseModel implements Auditable {
 
 	public boolean validateFloor() {
 		if (getFloorNo() == null)
-			throw new EGOVRuntimeException(
-					"In Floor Validate : FloorNumber is Not Set, Please Check !!");
+			throw new EGOVRuntimeException("In Floor Validate : FloorNumber is Not Set, Please Check !!");
 
 		return true;
 	}
@@ -399,14 +392,6 @@ public class Floor extends BaseModel implements Auditable {
 		this.alv = alv;
 	}
 
-	public TaxExeptionReason getTaxExemptedReason() {
-		return taxExemptedReason;
-	}
-
-	public void setTaxExemptedReason(TaxExeptionReason taxExemptedReason) {
-		this.taxExemptedReason = taxExemptedReason;
-	}
-
 	public Date getOccupancyDate() {
 		return occupancyDate;
 	}
@@ -424,16 +409,12 @@ public class Floor extends BaseModel implements Auditable {
 	}
 
 	public String toString() {
-		return new StringBuilder(256).append("Floor [Id: ").append(getId())
-				.append(", FloorNo=").append(getFloorNo()).append(", FloorArea=")
-				.append(getFloorArea() != null ? getFloorArea().getArea() : "null")
+		return new StringBuilder(256).append("Floor [Id: ").append(getId()).append(", FloorNo=").append(getFloorNo())
+				.append(", FloorArea=").append(getFloorArea() != null ? getFloorArea().getArea() : "null")
 				.append(", PropertyUsage=").append(getPropertyUsage()).append(", StructCl=")
-				.append(getStructureClassification()).append(", Occupancy=")
-				.append(getPropertyOccupation()).append(", Depreciation=")
-				.append(getDepreciationMaster()).append(", WaterRate=").append(getWaterRate())
-				.append(", alv=").append(getAlv()).append(", taxExemptedReason=")
-				.append(taxExemptedReason).append("]").toString();
-
+				.append(getStructureClassification()).append(", Occupancy=").append(getPropertyOccupation())
+				.append(", Depreciation=").append(getDepreciationMaster()).append(", WaterRate=")
+				.append(getWaterRate()).append(", alv=").append(getAlv()).append("]").toString();
 	}
 
 	public PropertyDetail getPropertyDetail() {

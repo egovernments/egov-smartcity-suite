@@ -155,8 +155,7 @@
 							<tr>
 								<%-- <td width="10%" class="${approverEvenCSS}">&nbsp;</td> --%>
 								 <td width="25%" class="${approverEvenCSS}">&nbsp;</td> 
-								<td class="${approverEvenCSS}" width="13%">Approver
-									Remarks:</td>
+								<td class="${approverEvenCSS}" width="13%"><s:text name="wf.approver.remarks"/>:</td>
 								<td class="${approverEvenTextCSS}"><textarea
 										id="approverComments" name="approverComments" rows="2"
 										value="#approverComments" cols="35"></textarea></td>

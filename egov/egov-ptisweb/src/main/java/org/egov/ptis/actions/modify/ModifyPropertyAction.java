@@ -184,8 +184,6 @@ public class ModifyPropertyAction extends WorkflowAction {
     private BasicProperty basicProp;
     private PropertyImpl oldProperty = new PropertyImpl();
     private PropertyImpl propertyModel = new PropertyImpl();
-    private boolean chkIsTaxExempted;
-    private String taxExemptReason;
     private String areaOfPlot;
     private Map<String, String> waterMeterMap;
     private boolean generalTax;
@@ -261,6 +259,8 @@ public class ModifyPropertyAction extends WorkflowAction {
     private BigDecimal currentWaterTaxDue;
     private BigDecimal arrearPropertyTaxDue;
     private String taxDueErrorMsg;
+    private Long taxExemptedReason;
+    
     @Autowired
     private PropertyPersistenceService basicPropertyService;
     @Autowired
@@ -602,14 +602,9 @@ public class ModifyPropertyAction extends WorkflowAction {
         }
         propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                 Long.valueOf(getModelId()));
-        final TaxExeptionReason taxExemption = null;
         if (propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
                 .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propertyModel.getPropertyDetail().getFloorDetails().clear();
-        else
-            for (final Floor floor : propertyModel.getPropertyDetail().getFloorDetails())
-                if (floor.getTaxExemptedReason() != null && floor.getTaxExemptedReason().getId() == null)
-                    floor.setTaxExemptedReason(taxExemption);
 
         LOGGER.debug("reject: Property: " + propertyModel);
         final BasicProperty basicProperty = propertyModel.getBasicProperty();
@@ -758,7 +753,7 @@ public class ModifyPropertyAction extends WorkflowAction {
         basicProp.setPropOccupationDate(propCompletionDate);
 
         setProperty(propService.createProperty(propertyModel, getAreaOfPlot(), mutationCode, propTypeId, propUsageId,
-                propOccId, status, propertyModel.getDocNumber(), null, floorTypeId, roofTypeId, wallTypeId, woodTypeId));
+                propOccId, status, propertyModel.getDocNumber(), null, floorTypeId, roofTypeId, wallTypeId, woodTypeId, taxExemptedReason));
         updatePropertyID(basicProp);
         propertyModel.setPropertyModifyReason(modifyRsn);
         propertyModel.setBasicProperty(basicProp);
@@ -959,7 +954,7 @@ public class ModifyPropertyAction extends WorkflowAction {
     @Override
     public void validate() {
         LOGGER.debug("Entered into validate, ModifyRsn: " + modifyRsn);
-        validateProperty(propertyModel, areaOfPlot, dateOfCompletion, chkIsTaxExempted, taxExemptReason, propTypeId,
+        validateProperty(propertyModel, areaOfPlot, dateOfCompletion, taxExemptedReason, propTypeId,
                 propUsageId, propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId);
 
         validateApproverDetails();
@@ -1200,23 +1195,15 @@ public class ModifyPropertyAction extends WorkflowAction {
         this.basicProp = basicProp;
     }
 
-    public boolean isChkIsTaxExempted() {
-        return chkIsTaxExempted;
-    }
+    public Long getTaxExemptedReason() {
+		return taxExemptedReason;
+	}
 
-    public void setChkIsTaxExempted(final boolean chkIsTaxExempted) {
-        this.chkIsTaxExempted = chkIsTaxExempted;
-    }
+	public void setTaxExemptedReason(Long taxExemptedReason) {
+		this.taxExemptedReason = taxExemptedReason;
+	}
 
-    public String getTaxExemptReason() {
-        return taxExemptReason;
-    }
-
-    public void setTaxExemptReason(final String taxExemptReason) {
-        this.taxExemptReason = taxExemptReason;
-    }
-
-    public String getModifyRsn() {
+	public String getModifyRsn() {
         return modifyRsn;
     }
 

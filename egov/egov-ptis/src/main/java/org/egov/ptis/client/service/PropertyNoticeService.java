@@ -46,19 +46,19 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERA
 import static org.egov.ptis.constants.PropertyTaxConstants.MIXED_SHORTFORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.NONRESD_SHORTFORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_HISTORY_TAX_DETAIL;
+import static org.egov.ptis.constants.PropertyTaxConstants.OCC_COMMERCIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.OCC_OWNER;
+import static org.egov.ptis.constants.PropertyTaxConstants.OCC_TENANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_SHORTFORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNER_OCC;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_MIXED;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.RESD_SHORTFORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATEGOVT_BUILDING_GENERALTAX_ADDITIONALDEDUCTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATE_GOVT_SHORTFORM;
-import static org.egov.ptis.constants.PropertyTaxConstants.TENANT_OCC;
-import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_OCC;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -353,7 +353,7 @@ public class PropertyNoticeService {
 
 		for (Property property : basicProperty.getPropertySet()) {
 			if (property.getRemarks() == null || !property.getRemarks().startsWith(STR_MIGRATED)) {
-				propertyByCreatedDate.put(property.getCreatedDate() , property);
+				propertyByCreatedDate.put(property.getCreatedDate(), property);
 			}
 		}
 
@@ -596,8 +596,11 @@ public class PropertyNoticeService {
 		List<EgDemandReasonDetails> demandReasonDetails = new ArrayList<EgDemandReasonDetails>();
 
 		String propertyType = property.getPropertyDetail().getPropertyTypeMaster().getCode();
-		/*String amenities = property.getPropertyDetail().getExtra_field4();
-		String propertyTypeCategory = property.getPropertyDetail().getExtra_field5();*/
+		/*
+		 * String amenities = property.getPropertyDetail().getExtra_field4();
+		 * String propertyTypeCategory =
+		 * property.getPropertyDetail().getExtra_field5();
+		 */
 		String amenities = "";
 		String propertyTypeCategory = "";
 
@@ -680,7 +683,7 @@ public class PropertyNoticeService {
 
 				if (propertyType != null && propertyType.equalsIgnoreCase(OWNERSHIP_TYPE_CENTRAL_GOVT_50)) {
 					calculatedActualTax = calculatedAnnualTax.setScale(0, ROUND_HALF_UP);
-					//TODO need write business logic to get a Govt prop tax.
+					// TODO need write business logic to get a Govt prop tax.
 					calculatedAnnualTax = BigDecimal.ZERO;
 					miscTaxDetail.setCalculatedTaxValue(calculatedAnnualTax);
 					miscTaxDetail.setActualTaxValue(calculatedActualTax);
@@ -803,9 +806,9 @@ public class PropertyNoticeService {
 		StringBuilder occupierName = new StringBuilder();
 
 		if (OWNERSHIP_TYPE_VAC_LAND.equals(propType)) {
-			if (OWNER_OCC.equals(unit.getUnitOccupation()) || VACANT_OCC.equals(unit.getUnitOccupation())) {
+			if (OCC_OWNER.equals(unit.getUnitOccupation()) || OCC_COMMERCIAL.equals(unit.getUnitOccupation())) {
 				occupierName.append(propType);
-			} else if (TENANT_OCC.equals(unit.getUnitOccupation())) {
+			} else if (OCC_TENANT.equals(unit.getUnitOccupation())) {
 				occupierName.append(OPEN_PLOT_SHORTFORM + "-" + unit.getUnitOccupier());
 			}
 		} else if (PROPTYPE_RESD.equals(propType)) {
@@ -813,18 +816,18 @@ public class PropertyNoticeService {
 		} else if (PROPTYPE_NON_RESD.equals(propType)) {
 			occupierName.append(NONRESD_SHORTFORM);
 		} else if (OWNERSHIP_TYPE_STATE_GOVT.equals(propType)) {
-			occupierName.append(STATE_GOVT_SHORTFORM + "-" + OWNER_OCC);
+			occupierName.append(STATE_GOVT_SHORTFORM + "-" + OCC_OWNER);
 		} else if (OWNERSHIP_TYPE_CENTRAL_GOVT_50.equals(propType)) {
-			occupierName.append(CENTRAL_GOVT_SHORTFORM + "-" + OWNER_OCC);
+			occupierName.append(CENTRAL_GOVT_SHORTFORM + "-" + OCC_OWNER);
 		} else if (PROPTYPE_MIXED.equals(propType)) {
 			occupierName.append(MIXED_SHORTFORM);
 		}
 
 		if (!OWNERSHIP_TYPE_VAC_LAND.equals(propType) && !OWNERSHIP_TYPE_STATE_GOVT.equals(propType)
 				&& !OWNERSHIP_TYPE_CENTRAL_GOVT_50.equals(propType)) {
-			if (TENANT_OCC.equals(unit.getUnitOccupation())) {
+			if (OCC_TENANT.equals(unit.getUnitOccupation())) {
 				occupierName.append("-" + unit.getUnitOccupier());
-			} else if (OWNER_OCC.equals(unit.getUnitOccupation()) || VACANT_OCC.equals(unit.getUnitOccupation())) {
+			} else if (OCC_OWNER.equals(unit.getUnitOccupation()) || OCC_COMMERCIAL.equals(unit.getUnitOccupation())) {
 				occupierName.append("-" + unit.getUnitOccupation());
 			}
 		}

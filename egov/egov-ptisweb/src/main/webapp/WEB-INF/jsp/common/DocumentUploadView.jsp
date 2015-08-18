@@ -61,15 +61,15 @@
 					<tr>
 						<th class="bluebgheadtd"><s:text name="doctable.sno" /></th>
 						<th class="bluebgheadtd"><s:text name="doctable.doctype" /></th>
-						<th class="bluebgheadtd">File</th>
+						<th class="bluebgheadtd"><s:text name="file" /></th>
 					</tr>
 					<s:iterator value="documentTypes" status="status" var="documentType">
 						<tr>
 							<td class="blueborderfortd" style="text-align: center">
 								<span class="bold"><s:property value="#status.index + 1"/></span>
 							</td>
-							<td class="blueborderfortd" style="text-align: center">
-								<span class="bold"><s:property	value="%{name}" /></span>
+							<td class="blueborderfortd" style="text-align: left">
+								<span class="bold"><s:property value="%{name}" /></span>
 							</td>
 							<td class="blueborderfortd" style="text-align: center">
 								<s:if test="%{documents.isEmpty() || documents[#status.index].files.isEmpty()}">

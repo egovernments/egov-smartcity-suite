@@ -61,7 +61,7 @@
 					<tr>
 						<th class="bluebgheadtd"><s:text name="doctable.sno" /></th>
 						<th class="bluebgheadtd"><s:text name="doctable.doctype" /></th>
-						<th class="bluebgheadtd">Upload File</th>
+						<th class="bluebgheadtd"><s:text name="upload.file" /></th>
 					</tr>
 					<s:iterator value="documentTypes" status="status" var="documentType">
 						<tr>

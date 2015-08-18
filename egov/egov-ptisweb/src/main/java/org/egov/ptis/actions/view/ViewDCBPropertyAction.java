@@ -46,9 +46,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CANCELLED_RECEIPT_STA
 import static org.egov.ptis.constants.PropertyTaxConstants.CITIZENUSER;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -90,7 +88,7 @@ import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyArrear;
-import org.egov.ptis.domain.entity.property.PropertyDetail;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyReceipt;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
@@ -107,7 +105,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 	private String ownerName;
 	private String propertyAddress;
 	private String propertyType;
-	private String currTaxAmount;
+	private BigDecimal currTaxAmount;
 
 	private BasicProperty basicProperty;
 	private DCBDisplayInfo dcbDispInfo;
@@ -128,6 +126,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 	final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	private List<Receipt> cancelRcpt = new ArrayList<Receipt>();
 	private List<Receipt> activeRcpts = new ArrayList<Receipt>();
+	private List<Receipt> mutationRcpts = new ArrayList<Receipt>();
 	private String demandEffectiveYear;
 	private Integer noOfDaysForInactiveDemand;
 	private String errorMessage;
@@ -168,8 +167,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 	public String displayPropInfo() {
 
 		LOGGER.debug("Entered into method displayPropInfo");
-		LOGGER.debug("displayPropInfo : Index Number : " + propertyId);
-		StringBuilder encodedPropertyid = new StringBuilder();
+		LOGGER.debug("displayPropInfo : propertyId : " + propertyId);
 		DCBUtils dcbUtils = new DCBUtils();
 		session = request.getSession();
 		if (session.getAttribute("com.egov.user.LoginUserId") == null) {
@@ -186,63 +184,51 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 			setCitizen(Boolean.FALSE);
 		}
 
-		basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
-		PropertyDetail propertyDetail = basicProperty.getProperty().getPropertyDetail();
-		viewMap = new HashMap<String, Object>();
-		viewMap.put("propDetail", propertyDetail);
-		viewMap.put("propID", basicProperty.getPropertyID());
-		PropertyTypeMaster propertyTypeMaster = basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster();
-		viewMap.put("ownershipType", propertyTypeMaster.getType());
-		Property property = getBasicProperty().getProperty();
-		viewMap.put("propAddress", getBasicProperty().getAddress().toString());
-		Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
-
 		try {
 			if (getBasicProperty() == null) {
 				throw new PropertyNotFoundException();
 			} else {
 				LOGGER.debug("BasicProperty : " + basicProperty);
+				basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
+				viewMap = new HashMap<String, Object>();
+				viewMap.put("propID", basicProperty.getPropertyID());
+				PropertyTypeMaster propertyTypeMaster = basicProperty.getProperty().getPropertyDetail()
+						.getPropertyTypeMaster();
+				viewMap.put("ownershipType", propertyTypeMaster.getType());
+				Property property = getBasicProperty().getProperty();
+				viewMap.put("propAddress", getBasicProperty().getAddress().toString());
 				setOwnerName(basicProperty.getFullOwnerName());
 				setPropertyAddress(basicProperty.getAddress().toString());
 				setWardName(basicProperty.getPropertyID().getWard().getName());
 				setPropertyType(property.getPropertyDetail().getPropertyTypeMaster().getType());
-				setCurrTaxAmount(demandCollMap.get(CURR_DMD_STR).toString());
-				LOGGER.debug("Owner name : " + getOwnerName() + ", " + "Property address : " + getPropertyAddress()
-						+ ", " + "Ward name : " + getWardName() + ", " + "Property type : " + getPropertyType() + ", "
-						+ "Current tax : " + getCurrTaxAmount());
+				if (!property.getIsExemptedFromTax()) {
+					Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
+					setCurrTaxAmount(demandCollMap.get(CURR_DMD_STR));
+					PropertyTaxBillable billable = (PropertyTaxBillable) beanProvider
+							.getBean(BEANNAME_PROPERTY_TAX_BILLABLE);
+					billable.setBasicProperty(basicProperty);
+					dcbService.setBillable(billable);
+
+					dcbDispInfo = dcbUtils.prepareDisplayInfo();
+
+					dcbReport = dcbService.getCurrentDCBAndReceipts(dcbDispInfo);
+					// Display active receipt
+					activeRcpts = populateActiveReceiptsOnly(dcbReport.getReceipts());
+					// Display cancelled receipt
+					cancelRcpt = populateCancelledReceiptsOnly(dcbReport.getReceipts());
+					// Display name transfer receipts
+					populateMutationReceipts();
+				} else {
+					setCurrTaxAmount(BigDecimal.ZERO);
+				}
 
 			}
 		} catch (PropertyNotFoundException e) {
-			LOGGER.error("Property not found with given Index Number " + propertyId, e);
-		}
-		encodedPropertyid.append(propertyId).append("(Zone:")
-				.append(basicProperty.getPropertyID().getZone().getBoundaryNum()).append(" ").append("Ward:")
-				.append(basicProperty.getPropertyID().getWard().getBoundaryNum()).append(")");
-		LOGGER.debug("Consumer Code : " + encodedPropertyid.toString());
-		try {
-			setEncodedConsumerCode(URLEncoder.encode(encodedPropertyid.toString(), "UTF-8"));
-			LOGGER.debug("ecoded Consumer Code : " + getEncodedConsumerCode());
-		} catch (UnsupportedEncodingException e) {
-			LOGGER.error("Error occured in method displayPropInfo while ecoding index no ", e);
-		}
-
-		PropertyTaxBillable billable = (PropertyTaxBillable) beanProvider.getBean(BEANNAME_PROPERTY_TAX_BILLABLE);
-		billable.setBasicProperty(basicProperty);
-		dcbService.setBillable(billable);
-
-		dcbDispInfo = dcbUtils.prepareDisplayInfo();
-
-		try {
-			dcbReport = dcbService.getCurrentDCBAndReceipts(dcbDispInfo);
-			// Display active receipt
-			activeRcpts = populateActiveReceiptsOnly(dcbReport.getReceipts());
-			// Display cancelled receipt
-			cancelRcpt = populateCancelledReceiptsOnly(dcbReport.getReceipts());
+			LOGGER.error("Property not found with given propertyId " + propertyId, e);
 		} catch (DCBException e) {
 			errorMessage = "Demand details does not exists !";
 			LOGGER.warn(errorMessage);
 		}
-
 		LOGGER.debug("Exit from method displayPropInfo");
 		return VIEW;
 	}
@@ -363,6 +349,17 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		return RESULT_ARREAR;
 	}
 
+	private void populateMutationReceipts() {
+		Receipt receipt = null;
+		for (PropertyMutation propMutation : basicProperty.getPropertyMutations()) {
+			receipt = new Receipt();
+			receipt.setReceiptNumber(propMutation.getReceiptNum());
+			receipt.setReceiptAmt(propMutation.getMarketValue());
+			receipt.setReceiptDate(propMutation.getReceiptDate());
+			mutationRcpts.add(receipt);
+		}
+	}
+
 	public String getPropertyId() {
 		return propertyId;
 	}
@@ -435,11 +432,11 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		this.dcbReport = dcbReport;
 	}
 
-	public String getCurrTaxAmount() {
+	public BigDecimal getCurrTaxAmount() {
 		return currTaxAmount;
 	}
 
-	public void setCurrTaxAmount(String currTaxAmount) {
+	public void setCurrTaxAmount(BigDecimal currTaxAmount) {
 		this.currTaxAmount = currTaxAmount;
 	}
 
@@ -453,7 +450,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 
 	public Boolean getIsCitizen() {
 		return isCitizen;
-	} 
+	}
 
 	public void setCitizen(Boolean isCitizen) {
 		this.isCitizen = isCitizen;

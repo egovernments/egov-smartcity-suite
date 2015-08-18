@@ -201,6 +201,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         private String westBoundary;
         private Map<String, String> propTypeCategoryMap;
         private Integer reportId = -1;
+        private Long taxExemptedReason;
+        
         @Autowired
         private PropertyStatusValuesDAO propertyStatusValuesDAO;
         @Autowired
@@ -1411,7 +1413,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                                                 (objection.getProperty().getPropertyDetail().getWallType() != null ? objection
                                                         .getProperty().getPropertyDetail().getWallType().getId() : null),
                                                         (objection.getProperty().getPropertyDetail().getWoodType() != null ? objection
-                                                                .getProperty().getPropertyDetail().getWoodType().getId() : null));
+                                                                .getProperty().getPropertyDetail().getWoodType().getId() : null), taxExemptedReason);
                                 
 	         updatePropertyID(objection.getBasicProperty());
 		PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
@@ -1477,8 +1479,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 				(objection.getProperty().getPropertyDetail().getDateOfCompletion() != null ? sdf
 						.format(objection.getProperty().getPropertyDetail()
 								.getDateOfCompletion()).toString() : ""),
-				isShowAckMessage,
-				"",
+				taxExemptedReason,
 				(objection.getProperty().getPropertyDetail().getPropertyTypeMaster() != null ? objection
 						.getProperty().getPropertyDetail().getPropertyTypeMaster().getId()
 						.toString()
@@ -1738,6 +1739,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
         public void setsMSEmailService(SMSEmailService sMSEmailService) {
             this.sMSEmailService = sMSEmailService;
-        }      
+        }
+
+		public Long getTaxExemptedReason() {
+			return taxExemptedReason;
+		}
+
+		public void setTaxExemptedReason(Long taxExemptedReason) {
+			this.taxExemptedReason = taxExemptedReason;
+		}      
 	    
 }
