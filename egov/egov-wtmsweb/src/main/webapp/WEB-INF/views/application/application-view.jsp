@@ -63,7 +63,8 @@
 	<c:if test="${waterConnectionDetails.egwStatus.code == 'ESTIMATIONNOTICEGENERATED'}">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
 	</c:if> 
-	<c:if test="${waterConnectionDetails.egwStatus.code == 'ESTIMATIONNOTICEGENERATED' && waterConnectionDetails.fieldInspectionDetails != null}">
+	<c:if test="${waterConnectionDetails.egwStatus.code != 'CREATED' && waterConnectionDetails.egwStatus.code != 'VERIFIED' 
+	&& waterConnectionDetails.egwStatus.code != 'CANCELLED' && waterConnectionDetails.fieldInspectionDetails != null && !legacy}">
 		<button type="submit" class="btn btn-primary" id="viewEstimationNotice"><spring:message code="lbl.printestimationnotice"/></button>
 	</c:if>
 		<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
