@@ -162,10 +162,17 @@ $(document).ready(function()
 			if ($('#usageType :selected').text().localeCompare("Lodges") == 0) {
 				$('#persons').hide();
 				$('#rooms').show();
+				$('#personsdiv').hide();
+				$('#roomsdiv').show();
+				$('#numberOfPerson').val(null);
 			}
 			else {
 				$('#persons').show();
 				$('#rooms').hide();
+				$('#personsdiv').show();
+				$('#roomsdiv').hide();
+				$('#numberOfRooms').val(null);
+				
 			}
 		}
 		

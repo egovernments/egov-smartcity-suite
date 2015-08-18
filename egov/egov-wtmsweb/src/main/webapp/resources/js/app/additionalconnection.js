@@ -19,10 +19,14 @@ $(document).ready(function(){
 		if ($('#usageType :selected').text().localeCompare("Lodges") == 0) {
 			$('#persons').hide();
 			$('#rooms').show();
+			$('#personsdiv').hide();
+			$('#roomsdiv').show();
 		}
 		else {
 			$('#persons').show();
 			$('#rooms').hide();
+			$('#personsdiv').show();
+			$('#roomsdiv').hide();
 		}
 	}
 	

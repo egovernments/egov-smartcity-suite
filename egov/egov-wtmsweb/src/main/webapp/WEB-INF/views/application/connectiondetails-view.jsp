@@ -68,8 +68,14 @@
 					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.sumpCapacity}" /></div>
 				</div>
 				<div class="row add-border">
-					<div class="col-xs-3 add-margin"><spring:message code="lbl.no.of.persons" /></div>
-					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.numberOfPerson}" /></div>
+					<c:if test="${not empty waterConnectionDetails.numberOfPerson}">
+						<div class="col-xs-3 add-margin"><spring:message code="lbl.no.of.persons" /></div>
+						<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.numberOfPerson}" /></div>
+					</c:if>
+					<c:if test="${not empty waterConnectionDetails.numberOfRooms}">
+						<div class="col-xs-3 add-margin"><spring:message code="lbl.no.of.rooms" /></div>
+						<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.numberOfRooms}" /></div>
+					</c:if>
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.bpl.cardholdername" /></div>
 					<div class="col-xs-3 add-margin view-content">
 					<c:choose>
@@ -82,7 +88,7 @@
                     </c:choose>
                     </div>
 					</div>
-				</div>
+				
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.donationcharge"/></div>  
 					<div class="col-xs-3 add-margin view-content">
@@ -109,6 +115,7 @@
 					</div>
 				</div>
 				</c:if>
+				</div>
 			</div>
 		</div>					
 	</div>
