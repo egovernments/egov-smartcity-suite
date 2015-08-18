@@ -827,6 +827,10 @@ function deleteOwner(obj)
 			      'name': function(_, name) {
 			    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
 			      },
+				  'data-idx' : function(_,dataIdx)
+				  {
+					  return idx;
+				  }
 			   });
 		    });
 			
@@ -913,12 +917,12 @@ function addOwner() {
 							isValid = 0;// set validation failure
 							return false;
 						}
-					});
+			});
 
 			if (isValid === 0) {
 				return false;
 			}
-
+			
 			// Generate all textboxes Id and name with new index
 			jQuery("#nameRow").clone().find("input, select, img").each(
 					function() {
@@ -937,6 +941,10 @@ function addOwner() {
 											return name.replace('[0]', '['
 													+ nextIdx + ']');
 										},
+										'data-idx' : function(_,dataIdx)
+										{
+											return nextIdx;
+										}
 									});
 
 							// if element is static attribute hold values for
@@ -949,7 +957,16 @@ function addOwner() {
 									jQuery(this).prop('selectedIndex', 0);
 								}
 							}
-
+							
+							console.log('data index -> '+jQuery(this).html());
+							
+							jQuery(this).attr('readonly', false);
+							jQuery(this).removeAttr('disabled');
+							
+							/*if (jQuery(this).data('idx')) {
+								jQuery(this).data('idx', nextIdx);
+							}*/
+							
 						}
 
 					}).end().appendTo("#nameTable");

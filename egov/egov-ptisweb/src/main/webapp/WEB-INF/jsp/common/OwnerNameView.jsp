@@ -53,10 +53,10 @@
     <s:iterator value="basicProperty.propertyOwnerInfo" status="ownerStatus">
 			<tr id="nameRow">
         		<td class="blueborderfortd" align="center">
-        			<span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.aadhaarNumber}" /></span>
+        			<span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.aadhaarNumber}" default="N/A" /></span>
         		</td>
         		<td class="blueborderfortd" align="center">
-        			<span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.salutation}" /></span>
+        			<span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.salutation}" default="N/A" /></span>
         		</td>
         		<td class="blueborderfortd" align="center">
         		    <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.name}" /></span>

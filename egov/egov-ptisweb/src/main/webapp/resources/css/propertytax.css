@@ -577,6 +577,11 @@ div.searchvalue {
   padding-left: 4px;
 }
 
+select:disabled
+{
+  background:#eceded !important;	
+} 
+
 td.bluebox1{
 	background-color: #fff;
 	font-size: 11px;

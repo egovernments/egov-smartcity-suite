@@ -81,6 +81,7 @@ import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
@@ -148,6 +149,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	private HttpServletResponse response;
 	private List<Assignment> assignmentList;
 	private String currentStatusCode;
+	private String mobileNumber;
 
 	@Autowired
 	private CategoryDao categoryDAO;
@@ -159,6 +161,8 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	private AssignmentService assignmentService;
 	@Autowired
 	private SecurityUtils securityUtils;
+	@Autowired
+	private UserService userService;
 
 	@Override
 	public Object getModel() {
@@ -399,6 +403,24 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 		LOGGER.debug("Exiting from getStructureClassifications");
 		return RESULT_STRUCTURAL;
 	}
+	
+	 @Action(value = "/ajaxCommon-getUserByMobileNo")
+	    public void getUserByMobileNo() throws IOException {
+	        final User user = userService.getUserByMobileNumber(mobileNumber);
+	        final JSONObject jsonObject = new JSONObject();
+	        if (null != user) {
+	            jsonObject.put("exists",Boolean.TRUE);
+	            jsonObject.put("name", user.getName());
+	            jsonObject.put("mobileNumber", user.getMobileNumber());
+	            jsonObject.put("salutaion", user.getSalutation());
+	            jsonObject.put("gender", user.getGender());
+	            jsonObject.put("email", user.getEmailId());
+	            jsonObject.put("guardian", user.getGuardian());
+	            jsonObject.put("guardianRelarion", user.getGuardianRelation());
+	        }
+	        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+	        IOUtils.write(jsonObject.toString(), response.getWriter());
+	    }
 
 	public Long getZoneId() {
 		return zoneId;
@@ -611,6 +633,14 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 
     public void setAreaList(List<Boundary> areaList) {
         this.areaList = areaList;
+    }
+    
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(final String mobileNumber) {
+        this.mobileNumber = mobileNumber;
     }
 
 }

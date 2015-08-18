@@ -861,18 +861,12 @@ public class CreatePropertyAction extends WorkflowAction {
 
         for (final PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfoProxy())
             if (owner != null) {
-                if (StringUtils.isBlank(owner.getOwner().getAadhaarNumber()))
-                    addActionError(getText("mandatory.adharNo"));
-                if (StringUtils.isBlank(owner.getOwner().getSalutation()))
-                    addActionError(getText("mandatory.salutation"));
                 if (StringUtils.isBlank(owner.getOwner().getName()))
                     addActionError(getText("mandatory.ownerName"));
                 if (null == owner.getOwner().getGender())
                     addActionError(getText("mandatory.gender"));
                 if (StringUtils.isBlank(owner.getOwner().getMobileNumber()))
                     addActionError(getText("mandatory.mobilenumber"));
-                if (StringUtils.isBlank(owner.getOwner().getEmailId()))
-                    addActionError(getText("mandatory.emailId"));
             }
 
         validateProperty(property, areaOfPlot, dateOfCompletion, taxExemptedReason, propTypeId,
@@ -894,6 +888,7 @@ public class CreatePropertyAction extends WorkflowAction {
             area.setArea(new Float(areaOfPlot));
             property.getPropertyDetail().setSitalArea(area);
         }
+        if(null != mutationId && mutationId != -1) {
         final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
                 "from PropertyMutationMaster pmm where pmm.id=?", mutationId);
         if (mode.equals(CREATE)) 
@@ -910,7 +905,10 @@ public class CreatePropertyAction extends WorkflowAction {
                         addActionError(getText("error.parent"));
 
                 } else
-                    addActionError("error.parent.index");
+                    addActionError(getText("error.parent.index"));
+        } else {
+            addActionError(getText("mandatory.createRsn"));
+        }
 
         validateApproverDetails();
         super.validate();

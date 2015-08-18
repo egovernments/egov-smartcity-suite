@@ -1,7 +1,6 @@
 package org.egov.ptis.domain.service.property;
 
-import java.util.List;
-
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
@@ -32,7 +31,12 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         for (final PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfoProxy()) {
             orderNo++;
             if (ownerInfo != null) {
-                final User user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
+                User user = null;
+                if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
+                    user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
+                else
+                    user = (User) find("From User where name = ? and mobileNumber = ? and gender = ? ", ownerInfo.getOwner()
+                            .getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner().getGender());
                 if (user == null) {
                     final Citizen newOwner = new Citizen();
                     newOwner.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
@@ -58,8 +62,8 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                     ownerInfo.setBasicProperty(basicProperty);
                 }
             }
+
             basicProperty.addPropertyOwners(ownerInfo);
         }
     }
-
 }

@@ -202,14 +202,27 @@ function loadOnStartUp() {
 	
 	document.getElementById("taxExemptRow").style.display = "none";		 */
 	//enableSubmitButton();  
+     var aadhartextboxes = jQuery('.txtaadhar');
+     console.log(aadhartextboxes);
+     aadhartextboxes.each(function() {
+	   	if(jQuery(this).val())
+	   	{
+		   	alert("Hi");
+	   		  getAadharDetails(this);
+	   	}
+	 });
 }
 
 function onSubmit() { 
+
+	jQuery('#salutation, #gender, #guardianRelation').removeAttr('disabled');
+    
 	document.forms[0].action = 'createProperty-create.action';
 	<s:if test="mode=='edit'">
 	document.forms[0].action = 'createProperty-forward.action';
 	</s:if>
 	document.forms[0].submit;
+	
    return true;
 }
 /* var areUnitTypeCatsAndUsagePopulated = false;
