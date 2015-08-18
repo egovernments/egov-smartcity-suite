@@ -793,3 +793,44 @@ table.tablebottom
 	overflow-y:hidden;
 	overflow-x:auto;
 }
+
+tbody td.details-control {
+    background: url('../image/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+tbody tr.shown td.details-control {
+    background: url('../image/details_close.png') no-repeat center center;
+}
+
+@media (max-width: 768px)
+{
+	
+	
+	#tbldcbdrilldown > thead th {
+	  display:table-head;
+	  position: relative;
+	  top: 0;
+	  left: 0;
+	}
+	
+	table#tbldcbdrilldown
+	{
+	  display:table;
+	}
+	/*  
+	table#tbldcbdrilldown > tbody
+	{
+	  display: table-row-group;
+	}  */
+	
+	table#tbldcbdrilldown > tbody > tr
+	{
+	  display:table-row;
+	}
+	
+	table#tbldcbdrilldown > tbody > tr > td
+	{
+	  display:table-cell;
+	  border: 1px solid #ddd;
+	}
+}

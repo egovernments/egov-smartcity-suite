@@ -225,12 +225,7 @@ public class ArrearRegisterReportAction extends ReportFormAction {
 								propMatView.getInstDmdColl());
 						List unitList = new ArrayList();
 						PropertyWiseArrearInfo propertyWiseInfoTotal = null;
-						/**
-						 * unitList list has the list of unit number for that
-						 * particular Assessment/Index number unitWiseInfoTotal has the
-						 * grouped info of unitwise if the unit numbers are same
-						 * for that particular index num
-						 */
+						
 						for (InstDmdCollMaterializeView instlDmdColMatView : idcList) {
 							PropertyWiseArrearInfo propertyWiseInfo = preparePropertyWiseInfo(instlDmdColMatView);
 							if(propertyWiseInfo!=null){

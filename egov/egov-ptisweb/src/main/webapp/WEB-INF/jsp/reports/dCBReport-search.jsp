@@ -87,7 +87,7 @@
 			<div class="row display-hide report-section">
 				<div class="col-md-12 table-header text-left">DCB Drill Down Report Details</div>
 				<div class="col-md-12 form-group report-table-container">
-					<table class="table table-bordered datatable dt-responsive table-hover multiheadertbl" id="tbldcbdrilldown">
+					<table class="table table-bordered table-hover multiheadertbl" id="tbldcbdrilldown">
 						<thead>
                             <tr>
                              <th rowspan="2">Name</th>
@@ -167,10 +167,8 @@
 		</div>
 	</div>
 <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
