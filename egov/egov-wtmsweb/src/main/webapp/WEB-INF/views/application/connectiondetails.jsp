@@ -153,6 +153,7 @@
 		<form:errors path="bplCardHolderName" cssClass="add-margin error-msg" />		
 	</div>
 </div>
+
 <c:if test="${mode=='addconnection'}">
 <div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
