@@ -217,7 +217,6 @@ public class ArrearRegisterReportAction extends ReportFormAction {
 								.iterator().next();
 						PropertyWiseArrearInfo propertyWiseInfo = preparePropertyWiseInfo(currIDCMatView);
 						if(propertyWiseInfo!=null){
-						    propertyWiseInfo.setIsLastUnit(TRUE);
 						    propertyWiseInfoList.add(propertyWiseInfo);
 						}
 					} else {
