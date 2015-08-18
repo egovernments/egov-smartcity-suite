@@ -65,6 +65,12 @@ $(document).ready(function()
 		$('#approvalDesignation').attr('required', 'required');
 		$('#approvalPosition').attr('required', 'required');
 		}
+		if(status=='ESTIMATIONNOTICEGENERATED')
+		{
+			$(".btn-primary").hide();
+			$("#button2").show();
+			
+		}
 		
 		function validateDateRange(fromDate, toDate) {
 			if (fromDate != "" && toDate != "") {

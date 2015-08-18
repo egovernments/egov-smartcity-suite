@@ -50,7 +50,7 @@
 					<spring:message  code="lbl.meterbasicdetails"/>
 				</div>
 				<div class="panel-title text-center no-float">
-					<strong>${message}</strong>
+					<spring:message  code="msg.meterEntry.save.success"/>
 				</div>
 			</div>
 			<div class="row text-center">

@@ -39,7 +39,7 @@ public class MeterReadingController {
     private final WaterRatesDetailsRepository waterRatesDetailsRepository;
     @Autowired
     private ConnectionDemandService connectionDemandService;
-    
+
     @Autowired
     public MeterReadingController(final WaterConnectionDetailsRepository waterConnectionDetailsRepository,
             final WaterRatesDetailsRepository waterRatesDetailsRepository) {
@@ -53,7 +53,7 @@ public class MeterReadingController {
         return waterConnectionDetails;
     }
 
-    @RequestMapping(value = "/meterEntry/{consumerCode}", method = RequestMethod.GET)
+    @RequestMapping(value = "/meterentry/{consumerCode}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String consumerCode, final HttpServletRequest request) {
         MeterReadingConnectionDetails meterReadingpriviousObj = null;
         final List<MeterReadingConnectionDetails> meterReadingpriviousObjlist = waterConnectionDetailsRepository
@@ -65,7 +65,7 @@ public class MeterReadingController {
             if (waterConnectionDetails.getConnection().getInitialReading() != null)
                 meterReadingpriviousObj.setCurrentReading(waterConnectionDetails.getConnection().getInitialReading());
             else
-            meterReadingpriviousObj.setCurrentReading(0l);
+                meterReadingpriviousObj.setCurrentReading(0l);
             meterReadingpriviousObj.setCurrentReadingDate(new Date());
         }
         model.addAttribute("mode", "meterEntry");
@@ -74,88 +74,87 @@ public class MeterReadingController {
         return "newconnection-meterEntry";
     }
 
-    @RequestMapping(value = "/meterEntry/{consumerCode}", method = RequestMethod.POST)
+    @RequestMapping(value = "/meterentry/{consumerCode}", method = RequestMethod.POST)
     public String updateMeterEntry(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
-        final MeterReadingConnectionDetails meterNewObj = new MeterReadingConnectionDetails();
+        final MeterReadingConnectionDetails meterReadingConnectionDeatilObj = new MeterReadingConnectionDetails();
         Long previousReading = 0l;
         if (errors.hasErrors())
             return "newconnection-meterEntry";
         if (null != request.getParameter("previousreading") && !"".equals(request.getParameter("previousreading")))
             previousReading = Long.valueOf(request.getParameter("previousreading"));
-        
+
         if (Long.valueOf(request.getParameter("metercurrentReading")) < previousReading) {
             final String message = "Current rate should not be less than Previous reading";
             model.addAttribute("message", message);
             return "newconnection-meterEntry";
         }
         waterConnectionDetails = billCalculationAndDemandUpdate(waterConnectionDetails, errors, model, request,
-                meterNewObj,previousReading);
+                meterReadingConnectionDeatilObj, previousReading);
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
-        final String message = "Meter Reading Entered Successfully";
         redirectAttrs.addFlashAttribute("waterConnectionDetails", savedWaterConnectionDetails);
-        model.addAttribute("message", message);
+
         return "newconnection-success";
     }
 
     private WaterConnectionDetails billCalculationAndDemandUpdate(WaterConnectionDetails waterConnectionDetails,
             final BindingResult errors, final Model model, final HttpServletRequest request,
-            final MeterReadingConnectionDetails meterNew,final Long previousReading) {
+            final MeterReadingConnectionDetails meterReadingConnectionDeatilObj, final Long previousReading) {
         Date currentDate = null;
         Date previousDate = null;
         int noofmonths = 0;
-        if (request.getParameter("metercurrentReading") != null
-                && request.getParameter("metercurrentReadingDate") != null) {
-            final Long meterRead = Long.valueOf(request.getParameter("metercurrentReading"));
-            final String readingDate = request.getParameter("metercurrentReadingDate");
-            final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            try {
-                currentDate = dateFormat.parse(readingDate);
-                previousDate = dateFormat.parse(request.getParameter("previousreadingDate"));
-            } catch (final ParseException e) {
-                e.printStackTrace();
-            }
-            meterNew.setCurrentReading(meterRead);
-            meterNew.setCurrentReadingDate(currentDate);
+        final String readingDate = request.getParameter("metercurrentReadingDate");
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        try {
+            currentDate = dateFormat.parse(readingDate);
+            previousDate = dateFormat.parse(request.getParameter("previousreadingDate"));
+        } catch (final ParseException e) {
+            e.printStackTrace();
         }
-        populateMeterReadingDetails(meterNew);
+        meterReadingConnectionDeatilObj.setCurrentReading(Long.valueOf(request.getParameter("metercurrentReading")));
+        meterReadingConnectionDeatilObj.setCurrentReadingDate(currentDate);
+
+        populateMeterReadingDetails(meterReadingConnectionDeatilObj);
         noofmonths = DateUtils.noOfMonths(previousDate, currentDate);
-        final Long currentToPreviousDiffOfUnits = Long.valueOf(request.getParameter("metercurrentReading")) - previousReading;
-        Long noOfUnitsForPerMonth=0l;
-        if(noofmonths !=0){
-         noOfUnitsForPerMonth = currentToPreviousDiffOfUnits / (noofmonths);
-        }else{
+        final Long currentToPreviousDiffOfUnits = Long.valueOf(request.getParameter("metercurrentReading"))
+                - previousReading;
+        Long noOfUnitsForPerMonth = 0l;
+        if (noofmonths > 0)
+            noOfUnitsForPerMonth = currentToPreviousDiffOfUnits / noofmonths;
+        else
             noOfUnitsForPerMonth = currentToPreviousDiffOfUnits;
-        }
-        final WaterRatesDetails waterRateDetail = waterRatesDetailsRepository
+        WaterRatesDetails waterRateDetail = null;
+        final List<WaterRatesDetails> waterDetList = waterRatesDetailsRepository
                 .findByWaterRate(waterConnectionDetails.getConnectionType(), waterConnectionDetails.getUsageType(),
                         noOfUnitsForPerMonth);
-        final double amountToBeCollectedWithUnitRatePerMonth = noOfUnitsForPerMonth * (waterRateDetail != null ? waterRateDetail.getUnitRate() : 0d);
-         double finalAmountToBePaid =0d;
-        if(noofmonths !=0){
-         finalAmountToBePaid = (amountToBeCollectedWithUnitRatePerMonth * (noofmonths )) / 1000;
-        }else{
-            finalAmountToBePaid = (amountToBeCollectedWithUnitRatePerMonth) / 1000;
-        }
-        
-        if (BigDecimal.valueOf(finalAmountToBePaid).compareTo(BigDecimal.ZERO) > 0){
+        if (!waterDetList.isEmpty())
+            waterRateDetail = waterDetList.get(0);
+        final double amountToBeCollectedWithUnitRatePerMonth = noOfUnitsForPerMonth
+                * (waterRateDetail != null ? waterRateDetail.getUnitRate() : 0d);
+        double finalAmountToBePaid = 0d;
+        if (noofmonths > 0)
+            finalAmountToBePaid = amountToBeCollectedWithUnitRatePerMonth * noofmonths / 1000;
+        else
+            finalAmountToBePaid = amountToBeCollectedWithUnitRatePerMonth / 1000;
+
+        if (BigDecimal.valueOf(finalAmountToBePaid).compareTo(BigDecimal.ZERO) > 0)
             waterConnectionDetails = connectionDemandService.updateDemandForMeteredConnection(waterConnectionDetails,
                     BigDecimal.valueOf(finalAmountToBePaid));
-        }
         return waterConnectionDetails;
     }
 
-    private void populateMeterReadingDetails(final MeterReadingConnectionDetails meterNewObj) {
-        final List<MeterReadingConnectionDetails> meterentryDetailsDetails = new ArrayList<MeterReadingConnectionDetails>();
-        if (meterNewObj != null)
-            if (validMeterEntryDetail(meterNewObj)) {
-                meterNewObj.setWaterConnectionDetails(waterConnectionDetails);
-                meterentryDetailsDetails.add(meterNewObj);
+    private void populateMeterReadingDetails(final MeterReadingConnectionDetails meterReadingConnectionDeatilObj) {
+        final List<MeterReadingConnectionDetails> meterentryDetailsList = new ArrayList<MeterReadingConnectionDetails>(
+                0);
+        if (meterReadingConnectionDeatilObj != null)
+            if (validMeterEntryDetail(meterReadingConnectionDeatilObj)) {
+                meterReadingConnectionDeatilObj.setWaterConnectionDetails(waterConnectionDetails);
+                meterentryDetailsList.add(meterReadingConnectionDeatilObj);
             }
         waterConnectionDetails.getMeterConnection().clear();
-        waterConnectionDetails.setMeterConnection(meterentryDetailsDetails);
+        waterConnectionDetails.setMeterConnection(meterentryDetailsList);
     }
 
     private boolean validMeterEntryDetail(final MeterReadingConnectionDetails meterReadingConnectionDetails) {

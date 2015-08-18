@@ -161,7 +161,7 @@ jQuery(document).ready(function($) {
 											// window.location.href="excecutiondate.html"
 										}
 										else if (this.value == 8) {
-											var url = '/wtms/application/meterEntry/'+ consumerNumber;
+											var url = '/wtms/application/meterentry/'+ consumerNumber;
 											$('#waterSearchRequestForm').attr('method', 'get');
 											$('#waterSearchRequestForm').attr('action', url);
 											window.location = url;
