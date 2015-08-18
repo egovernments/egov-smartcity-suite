@@ -57,6 +57,9 @@
 					</div>
 				</div>
 				<div class="panel-body custom-form ">
+				<input type="hidden" id="currentUser" value="${currentUser}"/>  
+				<form:hidden id="mode" path=""  value="${mode}"/>
+				<form:hidden id="documentName" path="" value="${documentName}"/>
 				<form:hidden path="applicationType" id="applicationType.id" value="${addConnection.applicationType.id}"/>
 				<form:hidden path="connectionStatus" id="connectionStatus" value="${addConnection.connectionStatus}"/>
 				<form:hidden path="connection.parentConnection" value="${parentConnection.id}"/>
@@ -68,18 +71,13 @@
 				</c:if>
 				</div>
 			</div>			
-			<c:if test="${validationMessage==''}">
-				<jsp:include page="../common/workflow.jsp"></jsp:include>	
-			</c:if>
 			<div class="row">
 				<div class="text-center">
 				<c:if test="${validationMessage==''}">
-					<button type="submit" class="btn btn-primary"><spring:message code="lbl.createapplication"/></button>
-					<button type="reset" class="btn btn-primary" id="reset">
-						<spring:message code="lbl.clear" />
-					</button>
-					<a href="javascript:void(0);" class="btn btn-primary" onclick="self.close()"><spring:message
-							code='lbl.close' /></a>
+						<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+							<div class="buttonbottom" align="center">
+							<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+					</div>
 				</c:if>	
 				</div>
 			</div>

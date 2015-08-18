@@ -55,6 +55,7 @@ import org.egov.wtms.application.service.WaterConnectionService;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -79,6 +80,8 @@ public class AdditionalConnectionController extends GenericConnectionController 
     private WaterConnectionService waterConnectionService;
     @Autowired
     private AdditionalConnectionService additionalConnectionService;
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
     
     private  WaterConnectionDetails addConnection;
     
@@ -139,6 +142,10 @@ public class AdditionalConnectionController extends GenericConnectionController 
                     applicationDocs.add(applicationDocument);
                 i++;
             }
+        
+        if (addConnection.getState() == null)
+            addConnection.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                    WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));
 
         if (resultBinder.hasErrors()) {
             final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
@@ -164,16 +171,15 @@ public class AdditionalConnectionController extends GenericConnectionController 
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-        waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComent, getAdditionalRule(), workFlowAction );
-        return "redirect:/application/application-success?applicationNumber=" + addConnection.getApplicationNumber();
+        waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComent, addConnection.getApplicationType().getCode(), workFlowAction );
+        final String pathVars = addConnection.getApplicationNumber() + ","
+                + waterTaxUtils.getApproverUserName(approvalPosition);
+        return "redirect:/application/application-success?pathVars=" + pathVars;
     }
     
     @ModelAttribute
     public StateAware getModel() {
       return addConnection;
         
-    }
-    public String getAdditionalRule() {
-        return "NEW CONNECTION";
     }
 }
