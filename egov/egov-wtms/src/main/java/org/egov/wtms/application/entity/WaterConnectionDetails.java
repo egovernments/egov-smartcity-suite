@@ -153,7 +153,6 @@ public class WaterConnectionDetails extends StateAware {
     @JoinColumn(name = "pipeSize", nullable = false)
     private PipeSize pipeSize;
 
-    @NotNull
     private Long sumpCapacity;
 
     private Long plotSize;
