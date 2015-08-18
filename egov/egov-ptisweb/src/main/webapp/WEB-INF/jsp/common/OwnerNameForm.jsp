@@ -156,7 +156,7 @@
 					} else if (userInfoObj.gender == 'F' || userInfoObj.gender == 'Female') {
 						jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").val("FEMALE");
 					} else {
-						jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").val("TRANSGENDER");
+						jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").val("OTHERS");
 					} 
 					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").attr('disabled','disabled');
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.mobileNumber']").val(userInfoObj.phone);

@@ -74,7 +74,7 @@ public class AadhaarInfoImpl extends AadhaarInfo {
 
     @Override
     public String getCareof() {
-        return careof = returns.careof;
+        return careof = returns.careof.equals("101") ? "" : returns.careof;
     }
 
     @Override

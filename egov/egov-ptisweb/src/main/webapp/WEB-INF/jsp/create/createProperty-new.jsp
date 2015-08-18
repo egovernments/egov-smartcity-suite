@@ -207,7 +207,6 @@ function loadOnStartUp() {
      aadhartextboxes.each(function() {
 	   	if(jQuery(this).val())
 	   	{
-		   	alert("Hi");
 	   		  getAadharDetails(this);
 	   	}
 	 });

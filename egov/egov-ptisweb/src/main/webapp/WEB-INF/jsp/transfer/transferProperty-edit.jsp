@@ -63,7 +63,15 @@
 		jQuery('.datepicker').on('changeDate', function(ev){
 			jQuery(this).datepicker('hide');
 		});
-		
+
+		var aadhartextboxes = jQuery('.txtaadhar');
+	     console.log(aadhartextboxes);
+	     aadhartextboxes.each(function() {
+		   	if(jQuery(this).val())
+		   	{
+			   	getAadharDetailsForTransferee(this);
+		   	}
+		 });
 		
 	}
 	function onSubmit() {
@@ -192,76 +200,7 @@
 							  </table> 
 						</td>
 					</tr>
-					<tr>
-						<td colspan="5">
-							<div class="headingsmallbg">
-								<s:text name="transferDtls" />
-							</div>
-						</td>
-					</tr>
-
-					<tr>
-						<td colspan="5">
-							<div>
-								<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable" >
-								    <tr>
-								    	<th class="bluebgheadtd"><s:text name="adharno"/><span class="mandatory1">*</span></th>
-								    	<th class="bluebgheadtd"><s:text name="salutation"/><span class="mandatory1">*</span></th>
-										<th class="bluebgheadtd"><s:text name="OwnerName"/><span class="mandatory1">*</span></th>
-										<th class="bluebgheadtd"><s:text name="gender"/><span class="mandatory1">*</span></th>
-										<th class="bluebgheadtd"><s:text name="MobileNumber" />(without +91)<span class="mandatory1">*</span></th>
-										<th class="bluebgheadtd"><s:text name="EmailAddress"/><span class="mandatory1">*</span></th>
-										<th class="bluebgheadtd"><s:text name="GuardianRelation"/></th>
-										<th class="bluebgheadtd"><s:text name="Guardian"/></th>
-										<th class="bluebgheadtd">Add/Delete</th>
-									</tr>
-									 <s:iterator value="transfereeInfos" status="status" >
-								      <tr id="nameRow" >
-								        <td class="blueborderfortd" align="center">
-										   <s:textfield name="transfereeInfos[%{#status.index}].aadhaarNumber" size="12" maxlength="12"></s:textfield>
-										</td>
-										<td class="blueborderfortd" align="center">
-											<s:select name="transfereeInfos[%{#status.index}].salutation" id="transfereeInfos[%{#status.index}].salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }"
-				                                   cssClass="selectwk"></s:select>
-								        </td>
-								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].name" maxlength="100" size="20"
-								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
-								        </td>
-								        <td class="blueborderfortd" align="center">
-								        	<s:select name="transfereeInfos[%{#status.index}].gender" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
-								        </td>
-								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].mobileNumber" maxlength="10" size="20"
-								        		onblur="validNumber(this);checkZero(this,'Mobile Number');"/>
-								        </td>
-								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].emailId" maxlength="100" size="20"
-								        		onblur="trim(this,this.value);validateEmail(this);"/>
-								        		<!-- This hidden field can become dropdown later when transferee become non citizen -->
-								        	<s:hidden name="transfereeInfos[%{#status.index}].type" value="CITIZEN" data-static="true"/>
-								        </td>
-								        <td class="blueborderfortd" align="center">
-								        <s:select id="transfereeInfos[%{#status.index}].guardianRelation" name="transfereeInfos[%{#status.index}].guardianRelation" value="%{transfereeInfos[%{#status.index}].guardianRelation}"
-				                                     headerValue="Choose" headerKey="" list="guardianRelationMap"/>
-								        </td>
-								         <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].guardian" maxlength="100" size="20"
-								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
-								        </td>
-								       
-								        <td class="blueborderfortd">
-								        	<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
-								      		<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteTranferee(this);return false;" data-server="${id}" alt="Remove" width="18" height="18" border="0" />
-								        </td>
-								     </tr>
-								     </s:iterator>
-								</table>
-							</div>
-							<br/>
-						</td>
-					</tr>
-
+					<%@ include file="transfereeDetailsForm.jsp"%>
 					<tr>
 						<td class="greybox2">
 							&nbsp;
@@ -479,7 +418,6 @@
 				alert("Atleast one owner details is mandatory!");
 			}
 		}
-		jQuery('#nameTable tr:not(:eq(1)) td img[alt="Add"]').hide();
 </script>
 </body>
 </html>

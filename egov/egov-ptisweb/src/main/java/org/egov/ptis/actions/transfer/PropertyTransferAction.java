@@ -410,14 +410,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             for (final User propOwnerInfo : propertyMutation.getTransfereeInfos()) {
                 if (StringUtils.isBlank(propOwnerInfo.getName()))
                     addActionError(getText("mandatory.ownerName"));
-                if (StringUtils.isBlank(propOwnerInfo.getAadhaarNumber()))
-                    addActionError(getText("mandatory.adharNo"));
-                if (StringUtils.isBlank(propOwnerInfo.getSalutation()))
-                    addActionError(getText("mandatory.salutation"));
                 if (StringUtils.isBlank(propOwnerInfo.getMobileNumber()))
                     addActionError(getText("mandatory.mobilenumber"));
-                if (StringUtils.isBlank(propOwnerInfo.getEmailId()))
-                    addActionError(getText("mandatory.emailId"));
             }
 
         if (getMutationId() != null) {

@@ -134,7 +134,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
 
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private SimpleRestClient simpleRestClient;
 
@@ -152,10 +152,10 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
 
     @Autowired
     private ApplicationContextBeanProvider beanProvider;
-    
+
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
-    
+
     @Autowired
     private CityService cityService;
 
@@ -182,14 +182,14 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         createUserIfNotExist(propertyMutation.getTransfereeInfos());
         int order = 1;
         for (final User propertyOwner : propertyMutation.getTransfereeInfos()) {
-            final PropertyOwnerInfo propertyOwnerInfo = new PropertyOwnerInfo(basicProperty, propertySource, propertyOwner,
-                    order++);
+            final PropertyOwnerInfo propertyOwnerInfo = new PropertyOwnerInfo(basicProperty, propertySource,
+                    propertyOwner, order++);
             basicProperty.getPropertyOwnerInfo().add(propertyOwnerInfo);
         }
         basicProperty.setUnderWorkflow(false);
         basicPropertyService.persist(basicProperty);
     }
-    
+
     @Transactional
     public void updatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         checkAllMandatoryDocumentsAttached(propertyMutation);
@@ -197,7 +197,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         basicProperty.setUnderWorkflow(true);
         basicPropertyService.persist(basicProperty);
     }
-    
+
     @Transactional
     public void viewPropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         basicPropertyService.persist(basicProperty);
@@ -215,16 +215,18 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
 
     public double calculateMutationFee(final double marketValue, final String transferReason,
             final PropertyMutation propertyMutation) {
-        final int transferedInMonths = Months.monthsBetween(new LocalDate(propertyMutation.getMutationDate()).withDayOfMonth(1),
+        final int transferedInMonths = Months.monthsBetween(
+                new LocalDate(propertyMutation.getMutationDate()).withDayOfMonth(1),
                 new LocalDate(propertyMutation.getDeedDate()).withDayOfMonth(1)).getMonths();
-        return (Double) scriptService.executeScript("PTIS-MUTATION-FEE-CALCULATOR", ScriptService.createContext("marketValue",
-                marketValue, "transferedInMonths", transferedInMonths, "transferReason", transferReason));
+        return (Double) scriptService
+                .executeScript("PTIS-MUTATION-FEE-CALCULATOR", ScriptService.createContext("marketValue", marketValue,
+                        "transferedInMonths", transferedInMonths, "transferReason", transferReason));
     }
 
     public BigDecimal getWaterTaxDues(final String wtmsTaxDueChecking_REST_url, final String upicNo) {
         final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsTaxDueChecking_REST_url);
-        return waterTaxInfo.get("totalTaxDue") == null ? BigDecimal.ZERO
-                : new BigDecimal(Double.valueOf((Double) waterTaxInfo.get("totalTaxDue")));
+        return waterTaxInfo.get("totalTaxDue") == null ? BigDecimal.ZERO : new BigDecimal(
+                Double.valueOf((Double) waterTaxInfo.get("totalTaxDue")));
     }
 
     public PropertyImpl getActiveProperty(final String upicNo) {
@@ -258,8 +260,8 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         return currentPropertyMutation;
     }
 
-    public ReportOutput generateAcknowledgement(final BasicProperty basicProperty, final PropertyMutation propertyMutation,
-            final String cityName, final String cityLogo) {
+    public ReportOutput generateAcknowledgement(final BasicProperty basicProperty,
+            final PropertyMutation propertyMutation, final String cityName, final String cityLogo) {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
         ackBean.setUlbLogo(cityLogo);
@@ -270,8 +272,8 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         ackBean.setApplicationName(propertyMutation.getFullTranfereeName());
         ackBean.setOwnerName(basicProperty.getFullOwnerName());
         ackBean.setOwnerAddress(basicProperty.getAddress().toString());
-        ackBean.setNoOfDays(
-                ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, TRANSFER).getResolutionTime().toString());
+        ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, TRANSFER)
+                .getResolutionTime().toString());
         ackBean.setLoggedInUsername(userService.getUserById(EgovThreadLocals.getUserId()).getName());
 
         final ReportRequest reportInput = new ReportRequest("transferProperty_ack", ackBean, reportParams);
@@ -280,7 +282,8 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
     }
 
     @Transactional
-    public ReportOutput generateTransferNotice(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
+    public ReportOutput generateTransferNotice(final BasicProperty basicProperty,
+            final PropertyMutation propertyMutation) {
         final PropertyAckNoticeInfo noticeBean = new PropertyAckNoticeInfo();
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());
@@ -301,16 +304,23 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
     private void checkAllMandatoryDocumentsAttached(final PropertyMutation propertyMutation) {
         for (final Document document : propertyMutation.getDocuments())
             if ((document.getType().isMandatory() || document.isEnclosed()) && document.getFiles().isEmpty())
-                throw new ValidationException(
-                        new ValidationError("documents", "Please attach mandatory/marked enclosed documents."));
+                throw new ValidationException(new ValidationError("documents",
+                        "Please attach mandatory/marked enclosed documents."));
     }
 
     private void createUserIfNotExist(final List<User> transferees) {
         final List<User> newOwners = new ArrayList<>();
         transferees.forEach(transferee -> {
             if (transferee.isNew()) {
+                User user = null;
                 getSession().setFlushMode(FlushMode.MANUAL);
-                final User user = userService.getUserByAadhaarNumberAndType(transferee.getAadhaarNumber(), transferee.getType());
+                if (null != transferee.getAadhaarNumber())
+                    user = userService.getUserByAadhaarNumberAndType(transferee.getAadhaarNumber(),
+                            transferee.getType());
+                else
+                    user = (User) basicPropertyService.find(
+                            "From User where name = ? and mobileNumber = ? and gender = ? ", transferee.getName(),
+                            transferee.getMobileNumber(), transferee.getGender());
                 if (user == null) {
                     if (UserType.CITIZEN.equals(transferee.getType())) {
                         final Citizen newOwner = new Citizen();
@@ -341,7 +351,8 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
             if (!document.getUploads().isEmpty()) {
                 int fileCount = 0;
                 for (final File file : document.getUploads()) {
-                    final FileStoreMapper fileStore = fileStoreService.store(file, document.getUploadsFileName().get(fileCount),
+                    final FileStoreMapper fileStore = fileStoreService.store(file,
+                            document.getUploadsFileName().get(fileCount),
                             document.getUploadsContentType().get(fileCount++), "PTIS");
                     document.getFiles().add(fileStore);
                 }
@@ -351,7 +362,8 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
     }
 
     public String generateReceipt(final PropertyMutation propertyMutation) {
-        final PropertyTaxBillable propertyTaxBillable = (PropertyTaxBillable) beanProvider.getBean("propertyTaxBillable");
+        final PropertyTaxBillable propertyTaxBillable = (PropertyTaxBillable) beanProvider
+                .getBean("propertyTaxBillable");
         propertyTaxBillable.setBasicProperty(propertyMutation.getBasicProperty());
         propertyTaxBillable.setMutationFeePayment(Boolean.TRUE);
         propertyTaxBillable.setMutationFee(propertyMutation.getMutationFee());
@@ -359,27 +371,27 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         propertyTaxBillable.setCallbackForApportion(Boolean.FALSE);
         propertyTaxBillable.setMutationApplicationNo(propertyMutation.getApplicationNo());
         propertyTaxBillable.setUserId(EgovThreadLocals.getUserId());
-        propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator
-                .generateManualBillNumber(propertyMutation.getBasicProperty().getPropertyID()));
+        propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateManualBillNumber(propertyMutation
+                .getBasicProperty().getPropertyID()));
         return ptBillServiceImpl.getBillXML(propertyTaxBillable);
     }
-    
+
     public String getLoggedInUserDesignation() {
-        Designation designation = propertyTaxUtil.getDesignationForUser(securityUtils.getCurrentUser().getId());
+        final Designation designation = propertyTaxUtil.getDesignationForUser(securityUtils.getCurrentUser().getId());
         return designation.getName();
     }
-    
+
     public User getLoggedInUser() {
-       return securityUtils.getCurrentUser();
+        return securityUtils.getCurrentUser();
     }
-    
+
     @Transactional
     public void updateMutationCollection(final PropertyMutation propertyMutation) {
         persist(propertyMutation);
     }
-    
+
     public String getCityName() {
         return cityService.getCityByURL(EgovThreadLocals.getDomainName()).getName();
     }
-    
-    }
+
+}
