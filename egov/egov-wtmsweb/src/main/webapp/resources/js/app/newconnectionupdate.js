@@ -51,7 +51,7 @@ $(document).ready(function()
 		$('#approvalDesignation').removeAttr('required');
 		$('#approvalPosition').removeAttr('required');
 		}
-	 if(approvalPositionExist!=0 && status=='CREATED' && (mode =='noedit' || mode==''))
+	 if(approvalPositionExist!=0 && status=='CREATED' && (mode =='edit' || mode==''))
 		{
 			$(".show-row").show(); 
 			$('#approvalDepartment').attr('required', 'required');
@@ -71,7 +71,24 @@ $(document).ready(function()
 			$("#button2").show();
 			
 		}
-		
+		$('#cardHolderDiv').hide();
+		$('#bplCardHolderName').removeAttr('required');
+		$('#connectionCategorie').change(function(){
+			if ($('#connectionCategorie :selected').text().localeCompare("BPL") == 0) {  
+				$("#cardHolderDiv").show();
+		    	$("#bplCardHolderName").attr('required', 'required');
+		    	$("#bplCardHolderName").val();
+				/*$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').attr("required","required");
+				$(".check-text:contains('"+documentName+"')").parent().find('input:checkbox').prop('checked', true);*/
+			}
+			else  {
+				$("#cardHolderDiv").hide();
+		    	$("#bplCardHolderName").removeAttr('required');
+		     	/*$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').removeAttr('required');
+		     	$(".check-text:contains('"+other+"')").parent().find('input, textarea, button, select').removeAttr('required');
+		     	$(".check-text:contains('"+documentName+"')").parent().find('input:checkbox').prop('checked', false);*/
+			}
+		});
 		function validateDateRange(fromDate, toDate) {
 			if (fromDate != "" && toDate != "") {
 				var stsplit = fromDate.split("/");

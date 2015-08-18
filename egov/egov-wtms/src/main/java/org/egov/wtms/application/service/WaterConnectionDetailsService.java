@@ -499,7 +499,7 @@ public class WaterConnectionDetailsService {
         if (waterConnectionDetails.getEgwStatus() != null && waterConnectionDetails.getEgwStatus().getCode() != null)
             if (waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)
                     && waterConnectionDetails.getState() != null)
-                if (mode.equals("noedit"))
+                if (mode.equals("edit"))
                     approvalPosition = waterConnectionDetails.getState().getOwnerPosition().getId();
                 else
                     approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),

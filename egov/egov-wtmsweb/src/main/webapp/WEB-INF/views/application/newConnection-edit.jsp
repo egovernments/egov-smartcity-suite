@@ -62,12 +62,19 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 	<c:if test="${waterConnectionDetails.egwStatus.code != 'CREATED'}">
 		<jsp:include page="connectiondetails-view.jsp"></jsp:include>
 	</c:if>
-	<c:if test="${waterConnectionDetails.egwStatus.code =='CREATED'}">
+	<c:if test="${waterConnectionDetails.egwStatus.code =='CREATED' && mode=='fieldInspection'}">
 		<div class="panel panel-primary" data-collapsed="0">
 			<jsp:include page="connectiondetails.jsp"></jsp:include> 	
 		</div>
 			<jsp:include page="documentdetails-view.jsp"></jsp:include> 
 			<jsp:include page="estimationdetails.jsp"></jsp:include>
+	</c:if>				
+	<c:if test="${waterConnectionDetails.egwStatus.code =='CREATED' && mode=='' && waterConnectionDetails.state.value =='Rejected'}">
+		<div class="panel panel-primary" data-collapsed="0">
+			<jsp:include page="connectiondetails.jsp"></jsp:include> 	
+		</div>
+			<jsp:include page="documentdetails-view.jsp"></jsp:include> 
+			
 	</c:if>				
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
