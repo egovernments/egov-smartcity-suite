@@ -81,6 +81,7 @@ function validate()
 }
 </script>
 </head>
+<body>
 <span align="center" style="display: none" id="mandatoryfromdate">
 <li><font size="2" color="red"><b> <s:text
 	name="common.datemandatory.fromdate" /> </b></font></li>
@@ -97,7 +98,6 @@ function validate()
 <li><font size="2" color="red"><b> <s:text
 	name="common.comparedate.errormessage" /> </b></font></li>
 </span>
-<body>
 <s:form theme="simple" name="onlineTransactionForm" action="onlineTransactionReport-report.action">
 <div class="formmainbox"><div class="subheadnew"><s:text name="onlineTransactionreport.title"/></div>
 <div class="subheadsmallnew"><span class="subheadnew"><s:text name="collectionReport.criteria"/></span></div>

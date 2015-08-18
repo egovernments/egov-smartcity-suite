@@ -709,12 +709,12 @@ function validate()
 		if(document.getElementById('manualreceiptinfo').checked==true){
 				if(document.getElementById("manualReceiptDate").value=="" ){
 							document.getElementById("receipt_error_area").innerHTML+=
-									'<s:text name="billreceipt.manualreceiptnumbermissing.error" />'+ '<br>';
+									'<s:text name="billreceipt.manualreceiptdatemissing.error" />'+ '<br>';
 						validation = false;		
 				}
 				if(document.getElementById("manualReceiptNumber").value==""){
 								document.getElementById("receipt_error_area").innerHTML+=
-									'<s:text name="billreceipt.manualreceiptdatemissing.error" />'+ '<br>';
+									'<s:text name="billreceipt.manualreceiptnumbermissing.error" />'+ '<br>';
 						validation = false;			
 				}
 		}

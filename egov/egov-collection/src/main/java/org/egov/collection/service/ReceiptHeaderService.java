@@ -383,20 +383,18 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	    //createVoucherForBillingService = receiptHeader.getService().getVoucherCreation() ? Boolean.FALSE : receiptHeader.getService().getVoucherCreation();
 
 	    if (receiptHeader.getState() == null) {
+	        Position position = null;
 	        if(!collectionsUtil.isEmployee(receiptHeader.getCreatedBy()))
 	        {
 	            Department dept = departmentService.getDepartmentByName(collectionsUtil.getDepartmentForWorkFlow());
 	            final Designation desgn = designationService.getDesignationByName(collectionsUtil.getDesignationForThirdPartyUser());      
-	            Position position = collectionsUtil.getPositionByDeptDesgAndBoundary(dept,desgn, receiptHeader.getReceiptMisc().getBoundary());
-	            receiptHeader.transition().start().withSenderName(receiptHeader.getCreatedBy().getName()).withComments("Receipt created")
-	            .withStateValue(CollectionConstants.WF_STATE_RECEIPT_CREATED).withOwner(position).withDateInfo(new Date());
-
+	            position = collectionsUtil.getPositionByDeptDesgAndBoundary(dept,desgn, receiptHeader.getReceiptMisc().getBoundary());
 	        }
 	        else {
-
-	            receiptHeader.transition().start().withSenderName(receiptHeader.getCreatedBy().getName()).withComments("Receipt created")
-	            .withStateValue(CollectionConstants.WF_STATE_RECEIPT_CREATED).withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy())).withDateInfo(new Date());
+	            position = collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
 	        }
+	        receiptHeader.transition().start().withSenderName(receiptHeader.getCreatedBy().getName()).withComments("Receipt created")
+	        .withStateValue(CollectionConstants.WF_STATE_RECEIPT_CREATED).withOwner(position).withDateInfo(new Date());
 	    }
 
 	    LOGGER.debug("Workflow state transition complete");
@@ -1095,12 +1093,22 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	 *            Comment for the transition
 	 */
 	public void endReceiptWorkFlowOnCancellation(ReceiptHeader receiptHeaderToBeCancelled) {
-		// End work-flow for the cancelled receipt
-		Position position = collectionsUtil.getPositionOfUser(receiptHeaderToBeCancelled.getCreatedBy());
-		if (position != null) {
-			receiptHeaderToBeCancelled.transition(true).end().withSenderName(receiptHeaderToBeCancelled.getCreatedBy().getName()).withComments("Receipt Cancelled - Workflow ends")
-				.withStateValue(CollectionConstants.WF_STATE_END).withOwner(position).withDateInfo(new Date());
-		}
+	    // End work-flow for the cancelled receipt
+	    Position position = null;
+	    if(!collectionsUtil.isEmployee(receiptHeaderToBeCancelled.getCreatedBy()))
+	    {
+	        Department dept = departmentService.getDepartmentByName(collectionsUtil.getDepartmentForWorkFlow());
+	        final Designation desgn = designationService.getDesignationByName(collectionsUtil.getDesignationForThirdPartyUser());      
+	        position = collectionsUtil.getPositionByDeptDesgAndBoundary(dept,desgn, receiptHeaderToBeCancelled.getReceiptMisc().getBoundary());
+	    }
+	    else {
+	        position = collectionsUtil.getPositionOfUser(receiptHeaderToBeCancelled.getCreatedBy());
+	    }
+
+	    if (position != null) {
+	        receiptHeaderToBeCancelled.transition(true).end().withSenderName(receiptHeaderToBeCancelled.getCreatedBy().getName()).withComments("Receipt Cancelled - Workflow ends")
+	        .withStateValue(CollectionConstants.WF_STATE_END).withOwner(position).withDateInfo(new Date());
+	    }
 	}
 	
 	/**

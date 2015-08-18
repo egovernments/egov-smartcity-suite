@@ -123,7 +123,7 @@ function validate()
 		<tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td width="21%" class="bluebox"><s:text name="collectionReport.criteria.zone"/></td>
-	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('collectionReport.zone.all')}" name="boundaryId" id="boundaryId" cssClass="selectwk" list="dropdownData.activeZoneList" listKey="id" listValue="localname" value="%{boundaryId}" /> </td>
+	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('collectionReport.zone.all')}" name="boundaryId" id="boundaryId" cssClass="selectwk" list="dropdownData.activeZoneList" listKey="id" listValue="localName" value="%{boundaryId}" /> </td>
 		  <td width="21%" class="bluebox">&nbsp;</td>
 	      <td width="30%" class="bluebox">&nbsp;</td>
 	    </tr>
