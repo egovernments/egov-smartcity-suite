@@ -687,9 +687,9 @@ public class WaterConnectionDetailsService {
         return savedChangeOfUse;
     }
 
-    private Date getDisposalDate(final WaterConnectionDetails changeOfUse, final Integer appProcessTime) {
+    public Date getDisposalDate(final WaterConnectionDetails waterConnectionDetails, final Integer appProcessTime) {
         final Calendar c = Calendar.getInstance();
-        c.setTime(changeOfUse.getApplicationDate());
+        c.setTime(waterConnectionDetails.getApplicationDate());
         c.add(Calendar.DATE, appProcessTime);
         return c.getTime();
     }
