@@ -60,7 +60,9 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.actions.common.CommonServices;
@@ -92,6 +94,7 @@ public class ViewPropertyAction extends BaseFormAction {
     private String currTaxDue;
     private String totalArrDue;
     private Map<String, Object> viewMap;
+    private PropertyTaxUtil propertyTaxUtil;
     private String markedForDeactive = "N";
     private String roleName;
     private Set<PropertyDocs> propDocsSet;
@@ -100,15 +103,12 @@ public class ViewPropertyAction extends BaseFormAction {
     private String demandEffectiveYear;
     private Integer noOfDaysForInactiveDemand;
     private String parentProps;
-    private List<User> propertyOwners = new ArrayList<User>();
-    private boolean isUserOperator;
-    
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
     private PtDemandDao ptDemandDAO;
-	@Autowired
-	private PropertyTaxUtil propertyTaxUtil;
+    @Autowired
+    private UserService UserService;
 
     @Override
     public Object getModel() {
@@ -164,7 +164,7 @@ public class ViewPropertyAction extends BaseFormAction {
             }
             final Long userId = (Long) session().get(SESSIONLOGINID);
             if (userId != null) {
-                setRoleName(propertyTaxUtil.getRolesForUserId(userId));
+                setRoleName(getRolesForUserId(userId));
             }
             if (!getBasicProperty().getPropertyDocsSet().isEmpty() && getBasicProperty().getPropertyDocsSet() != null)
                 for (final PropertyDocs propDocs : getBasicProperty().getPropertyDocsSet())
@@ -191,14 +191,20 @@ public class ViewPropertyAction extends BaseFormAction {
         LOGGER.debug("Exiting from checkIsDemandActive");
     }
 
-    public void setBasicPropertyDAO(final BasicPropertyDAO basicPropertyDAO) {
-        this.basicPropertyDAO = basicPropertyDAO;
+    private String getRolesForUserId(final Long userId) {
+        LOGGER.debug("Entered into method getRolesForUserId");
+        LOGGER.debug("User id : " + userId);
+        String roleName;
+        final List<String> roleNameList = new ArrayList<String>();
+        final User user = UserService.getUserById(userId);
+        for (final Role role : user.getRoles()) {
+            roleName = role.getName() != null ? role.getName() : "";
+            roleNameList.add(roleName);
+        }
+        LOGGER.debug("Exit from method getRolesForUserId with return value : " + roleNameList.toString().toUpperCase());
+        return roleNameList.toString().toUpperCase();
     }
 
-    public void setPtDemandDAO(final PtDemandDao ptDemandDAO) {
-        this.ptDemandDAO = ptDemandDAO;
-    }
-    
     public String getFloorNoStr(final Integer floorNo) {
         return CommonServices.getFloorStr(floorNo);
     }
@@ -249,6 +255,14 @@ public class ViewPropertyAction extends BaseFormAction {
 
     public void setTotalArrDue(final String totalArrDue) {
         this.totalArrDue = totalArrDue;
+    }
+
+    public PropertyTaxUtil getPropertyTaxUtil() {
+        return propertyTaxUtil;
+    }
+
+    public void setPropertyTaxUtil(final PropertyTaxUtil propertyTaxUtil) {
+        this.propertyTaxUtil = propertyTaxUtil;
     }
 
     public Map<String, Object> getViewMap() {
@@ -311,22 +325,6 @@ public class ViewPropertyAction extends BaseFormAction {
         this.noOfDaysForInactiveDemand = noOfDaysForInactiveDemand;
     }
 
-    public List<User> getPropertyOwners() {
-        return propertyOwners;
-    }
-
-    public void setPropertyOwners(final List<User> propertyOwners) {
-        this.propertyOwners = propertyOwners;
-    }
-
-    public boolean getIsUserOperator() {
-        return isUserOperator;
-    }
-
-    public void setIsUserOperator(final boolean isUserOperator) {
-        this.isUserOperator = isUserOperator;
-    }
-
     public String getParentProps() {
         return parentProps;
     }
@@ -338,5 +336,16 @@ public class ViewPropertyAction extends BaseFormAction {
     public Property getProperty() {
         return property;
     }
+    
+    public void setBasicPropertyDAO(final BasicPropertyDAO basicPropertyDAO) {
+        this.basicPropertyDAO = basicPropertyDAO;
+    }
 
+    public void setPtDemandDAO(final PtDemandDao ptDemandDAO) {
+        this.ptDemandDAO = ptDemandDAO;
+    }
+
+    public void setUserService(final UserService userService) {
+        UserService = userService;
+    }
 }
