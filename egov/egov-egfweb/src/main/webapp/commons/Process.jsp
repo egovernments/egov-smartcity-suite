@@ -56,7 +56,7 @@ rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 else if(request.getParameter("type").equalsIgnoreCase("getAllBankName")){
 String query="select name||'`-`'||id as \"code\" from bank where  isactive = 1 order by name ";
-rs = HibernateUtil.getCurrentSession().createSQLQuery(query).list()
+rs = HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }	
 else if(request.getParameter("type").equalsIgnoreCase("coaDetailCodeType")){
 
