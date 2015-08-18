@@ -149,7 +149,7 @@ $(document).ready(function()
 	    });
 	}
 
-	$('.upload-file').change(function(e){
+	/*$('.upload-file').change(function(e){
 		var fileInput = $(this);
    		var maxSize = 20971520; //file size  in bytes(20MB)
 		var inMB = maxSize/1024/1024;
@@ -168,7 +168,7 @@ $(document).ready(function()
 		
 			
 		}
-	});
+	});*/
 	
 	$("select").each(function() { 
 		if($(this).children('option').length == 2)

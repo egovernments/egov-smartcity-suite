@@ -39,7 +39,7 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
 	
-	var fileformatsinclude = ['doc','docx','xls','xlsx','rtf','pdf','jpeg','jpg','png','txt',]; 
+	var fileformatsinclude = ['doc','docx','xls','xlsx','rtf','pdf','jpeg','jpg','png','txt','xml']; 
 	
 	$('.upload-file').change(function(e){		
 		/*validation for file upload*/
@@ -49,7 +49,7 @@ $(document).ready(function(){
 			//do something    
 		}
 		else{
-			alert("Please upload .doc, .docx, .xls, .xlsx, .rtf, .pdf, jpeg, .jpg, .png, and .txt format documents only");
+			alert("Please upload .doc, .docx, .xls, .xlsx, .rtf, .pdf, jpeg, .jpg, .png, .txt and .xml format documents only");
 			$( this ).val('');
 			return false;
 		}	
@@ -66,7 +66,7 @@ $(document).ready(function(){
 				return false;			
 			} 
 			else if(fileSize > maxSize){
-				alert('File size should not exceed '+inMB+' MB!');
+				alert('File size should not exceed '+ inMB +' MB!');
 				fileInput.replaceWith(fileInput.val('').clone(true));
 				return false;
 			}			
