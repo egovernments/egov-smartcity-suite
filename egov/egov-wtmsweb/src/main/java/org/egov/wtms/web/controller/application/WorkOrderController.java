@@ -127,7 +127,7 @@ public class WorkOrderController {
             reportParams.put("purpose", connectionDetails.getUsageType().getName());
             reportParams.put("workorderdate", connectionDetails.getWorkOrderDate());
             reportParams.put("workorderno", connectionDetails.getWorkOrderNumber());
-            reportParams.put("applicantname", ownerName);
+            reportParams.put("applicantname", WordUtils.capitalize(ownerName));
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("doorno", doorno[0]);
             reportInput = new ReportRequest(CONNECTIONWORKORDER, connectionDetails, reportParams);
