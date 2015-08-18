@@ -138,12 +138,13 @@ public class ConnectionDemandService {
 
         if (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getCode()))
             donationDetails = donationDetailsService.findByDonationHeader(donationHeaderService
-                    .findByCategoryandUsage(waterConnectionDetails.getCategory(), waterConnectionDetails.getUsageType()));
+                    .findByCategoryandUsageandMinPipeSize(waterConnectionDetails.getCategory(),
+                            waterConnectionDetails.getUsageType(), waterConnectionDetails.getPipeSize()));
 
         if (donationDetails != null) {
             feeDetails.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, donationDetails.getAmount());
             waterConnectionDetails.setDonationCharges(donationDetails.getAmount());
-        }
+        } 
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), new Date(), WaterTaxConstants.YEARLY);
         // Not updating demand amount collected for new connection as per the discussion.
@@ -374,14 +375,15 @@ public class ConnectionDemandService {
     public EgDemand getDemandByInstAndApplicationNumber(final Installment installment, final String consumerCode) {
         return waterConnectionDetailsRepository.findByApplicationNumberAndInstallment(installment, consumerCode).getDemand();
     }
-    
-    public WaterConnectionDetails updateDemandForMeteredConnection(final WaterConnectionDetails waterConnectionDetails,BigDecimal billAmount)
-    {
+
+    public WaterConnectionDetails updateDemandForMeteredConnection(final WaterConnectionDetails waterConnectionDetails,
+            final BigDecimal billAmount) {
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
-                moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), new Date(),"Yearly");
-        EgDemand demandObj= waterConnectionDetails.getDemand();
+                moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), new Date(), "Yearly");
+        final EgDemand demandObj = waterConnectionDetails.getDemand();
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
-        dmdDetailSet.add(createDemandDetails(Double.parseDouble(billAmount.toString()), WaterTaxConstants.WATERTAXREASONCODE, installment));//WATERTAXREASONCODE
+        dmdDetailSet.add(createDemandDetails(Double.parseDouble(billAmount.toString()), WaterTaxConstants.WATERTAXREASONCODE,
+                installment));// WATERTAXREASONCODE
         demandObj.setBaseDemand(demandObj.getBaseDemand().add(billAmount));
         demandObj.setEgInstallmentMaster(installment);
         demandObj.getEgDemandDetails().addAll(dmdDetailSet);

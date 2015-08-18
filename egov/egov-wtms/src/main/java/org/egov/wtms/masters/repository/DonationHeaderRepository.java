@@ -43,6 +43,7 @@ import java.util.List;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationHeader;
+import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.UsageType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -53,7 +54,10 @@ public interface DonationHeaderRepository extends JpaRepository<DonationHeader, 
     List<DonationHeader> findAllByCategory(ConnectionCategory category);
 
     List<DonationHeader> findAllByUsageType(UsageType usageType);
-    
-    DonationHeader findByCategoryAndUsageType(ConnectionCategory category,UsageType usageType);
+
+    List<DonationHeader> findByCategoryAndUsageType(ConnectionCategory category, UsageType usageType);
+      
+    DonationHeader findByCategoryAndUsageTypeAndMinPipeSize(ConnectionCategory category, UsageType usageType,
+            PipeSize pipeSize);
 
 }

@@ -227,7 +227,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getCollModesNotAllowed() {
-        return "cash,cheque";
+        return "cheque";
     }
 
     @Override

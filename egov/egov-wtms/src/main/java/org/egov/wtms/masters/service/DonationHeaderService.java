@@ -43,6 +43,7 @@ import java.util.List;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationHeader;
+import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.repository.DonationHeaderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,7 @@ public class DonationHeaderService {
 
     @Transactional
     public void updateDonationHeader(final DonationHeader donationHeader) {
-    	donationHeaderRepository.save(donationHeader);
+        donationHeaderRepository.save(donationHeader);
     }
 
     public List<DonationHeader> findAll() {
@@ -90,8 +91,14 @@ public class DonationHeaderService {
         return donationHeaderRepository.getOne(id);
     }
 
-    public DonationHeader findByCategoryandUsage(final ConnectionCategory category, final UsageType usageType) {
-    	return donationHeaderRepository.findByCategoryAndUsageType(category, usageType);
+    public List<DonationHeader> findByCategoryandUsage(final ConnectionCategory category, final UsageType usageType) {
+        return donationHeaderRepository.findByCategoryAndUsageType(category, usageType);
     }
 
- }
+    public DonationHeader findByCategoryandUsageandMinPipeSize(final ConnectionCategory category,
+            final UsageType usageType, final PipeSize minPipeSize) {
+        return donationHeaderRepository.findByCategoryAndUsageTypeAndMinPipeSize(category, usageType,
+                minPipeSize);
+    }
+
+}
