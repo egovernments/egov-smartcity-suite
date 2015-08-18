@@ -1027,10 +1027,11 @@ public class PropertyExternalService {
 		propertyImpl.setBasicProperty(basicProperty);
 		propertyImpl.getPropertyDetail().setFloorDetailsProxy(getFloorList(floorDetailsList));
 		propertyImpl.getBasicProperty().setPropertyID(propertyID);
+		//TODO: Need to check this again
 		property = propService.createProperty(propertyImpl, extentOfSite, mutationReasonCode,
 				propertyTypeMaster.getId().toString(), propertyUsage.getId().toString(),
 				propertyOccupation.getId().toString(), PropertyTaxConstants.STATUS_ISACTIVE, regdDocNo, nonResPlotArea,
-				floorType.getId(), roofType.getId(), wallType.getId(), woodType.getId());
+				floorType.getId(), roofType.getId(), wallType.getId(), woodType.getId(), null);
 		property.setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
 		basicProperty.addProperty(property);
 		Date propCompletionDate = null;
@@ -1263,8 +1264,9 @@ public class PropertyExternalService {
 			Area builtUpArea = new Area();
 			builtUpArea.setArea(floorDetials.getPlinthArea());
 			floor.setBuiltUpArea(builtUpArea);
-			TaxExeptionReason taxExemptionReason = getTaxExemptionReasonByCode(floorDetials.getExemptionCategoryCode());
-			floor.setTaxExemptedReason(taxExemptionReason);
+			//TODO: Need to check
+			//TaxExeptionReason taxExemptionReason = getTaxExemptionReasonByCode(floorDetials.getExemptionCategoryCode());
+			//floor.setTaxExemptedReason(taxExemptionReason);
 			floor.setDrainage(floorDetials.getDrainageCode());
 			floor.setNoOfSeats(floorDetials.getNoOfSeats());
 			floorList.add(floor);
