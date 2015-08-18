@@ -439,7 +439,36 @@ public final class CollectionConstants {
 	public static final String RCPT_CANCEL = "Receipt Cancellation";
 	
 	public static final String PGI_BILLINGSERVICE_CONFIGKEY  = "BILLINGSERVICEPAYMENTGATEWAY";
+	public static final String COLLECTION_ROLEFORNONEMPLOYEE  = "COLLECTIONROLEFORNONEMPLOYEE";
+	public static final String COLLECTION_WORKFLOWDEPARTEMENT = "COLLECTIONDEPARTMENTFORWORKFLOW";
+	public static final String COLLECTION_DESIGNATIONFORCSCOPERATOR = "COLLECTIONDESIGNATIONFORCSCOPERATORASCLERK";
 	
-	public static final String ONLINE_PAYMENT_AXIS_MERCHANTID = "TESTEPAYCDMA"; 
-	public static final String MESSAGEKEY_AXIS_REV_HEAD_="axis.revenuehead.";
+	
+	//AXIS payment gateway  variables name
+	public static final String ONLINE_PAYMENT_AXIS_MERCHANTID = "TESTEPAYCDMA";
+        public static final String AXIS_PAYMENT_CLIENT       = "virtualPaymentClientURL";
+        public static final String AXIS_VERSION    = "vpc_Version";
+        public static final String AXIS_COMMAND  = "vpc_Command";
+        public static final String AXIS_ACCESS_CODE        = "vpc_AccessCode" ;
+        public static final String AXIS_MERCHANT_TXN_REF          = "vpc_MerchTxnRef";
+        public static final String AXIS_MERCHANT      = "vpc_Merchant";
+        public static final String AXIS_AMOUNT = "vpc_Amount";
+        public static final String AXIS_RETURN_URL  = "vpc_ReturnURL";
+        public static final String AXIS_LOCALE    = "vpc_Locale";
+        public static final String AXIS_TICKET_NO         = "vpc_TicketNo";
+        
+        public static final String  MESSAGEKEY_AXIS_PAYMENT_CLIENT             = "axis.payment.client";
+        public static final String  MESSAGEKEY_AXIS_VERSION          = "axis.version";
+        public static final String  MESSAGEKEY_AXIS_COMMAND                        = "axis.command";
+        public static final String  MESSAGEKEY_AXIS_ACCESS_CODE            = "axis.access.code";
+        public static final String  MESSAGEKEY_AXIS_MERCHANT     = "axis.merchant";
+        public static final String  MESSAGEKEY_AXIS_LOCALE                     = "axis.locale";
+        public static final String  MESSAGEKEY_AXIS_TICKET_NO                       = "axis.ticket.no";
+        public static final String AXIS_SECURE_SECRET = "6A92740F77EFF1C21DFF9281EC53C519";
+        
+        // This is an array for creating hex chars
+        public static final char[] AXIS_HEX_TABLE = new char[] {
+        '0', '1', '2', '3', '4', '5', '6', '7',
+        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+	
 }
