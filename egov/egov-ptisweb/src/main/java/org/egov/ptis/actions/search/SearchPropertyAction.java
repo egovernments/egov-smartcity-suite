@@ -68,15 +68,13 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.ptis.actions.common.CommonServices;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -128,13 +126,13 @@ public class SearchPropertyAction extends BaseFormAction {
     private BoundaryService boundaryService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private BasicPropertyDAO basicPropertyDAO;
 
     @Autowired
     private PtDemandDao ptDemandDAO;
+    
+	@Autowired
+	private PropertyTaxUtil propertyTaxUtil;
 
     @Override
     public Object getModel() {
@@ -313,8 +311,8 @@ public class SearchPropertyAction extends BaseFormAction {
         addDropdownData("PropTypeMaster",
                 getPersistenceService().findAllByNamedQuery(PropertyTaxConstants.GET_PROPERTY_TYPES));
         final Long userId = (Long) session().get(SESSIONLOGINID);
-        if (mode != null && userId != null)
-            setRoleName(getRolesForUserId(userId));
+        if (userId != null)
+            setRoleName(propertyTaxUtil.getRolesForUserId(userId));
         LOGGER.debug("Exit from prepare method");
     }
 
@@ -397,20 +395,6 @@ public class SearchPropertyAction extends BaseFormAction {
         LOGGER.debug("Search list : " + (searchList != null ? searchList : ZERO));
         LOGGER.debug("Exit from getSearchResults method");
         return searchList;
-    }
-
-    private String getRolesForUserId(final Long userId) {
-        LOGGER.debug("Entered into getRolesForUserId method");
-        LOGGER.debug("User id : " + userId);
-        String roleName;
-        final List<String> roleNameList = new ArrayList<String>();
-        final User user = userService.getUserById(userId);
-        for (final Role role : user.getRoles()) {
-            roleName = role.getName() != null ? role.getName() : "";
-            roleNameList.add(roleName);
-        }
-        LOGGER.debug("Exit from method getRolesForUserId with return value : " + roleNameList.toString().toUpperCase());
-        return roleNameList.toString().toUpperCase();
     }
 
     private void checkIsMarkForDeactive(final BasicProperty basicProperty) {

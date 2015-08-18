@@ -44,9 +44,7 @@
 			
 			function getPropdetails(obj, assessmentNum) {
 				var selectedValue = obj.options[obj.selectedIndex].value;
-				if (selectedValue == "ViewProperty") {
-					window.location = "../view/viewProperty-viewForm.action?propertyId=" + assessmentNum;
-				} else if (selectedValue == "TransferProperty") {
+				if (selectedValue == "TransferProperty") {
 					window.location = "../property/transfer/new.action?assessmentNo=" + assessmentNum;
 				} else if (selectedValue == 'ADD_OR_ALTER') {
 					window.location = "../modify/modifyProperty-modifyForm.action?modifyRsn=ADD_OR_ALTER&indexNumber=" + assessmentNum;
@@ -54,6 +52,8 @@
 					window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=BIFURCATE&indexNumber="+assessmentNum;
 				} else if (selectedValue == 'RevisionPetition') {
 					window.location = "../revPetition/revPetition-newForm.action?indexNumber=" + assessmentNum;
+				} else if (selectedValue == 'CollectTax') {
+					window.location = "/../ptis/collection/collectPropertyTax-generateBill.action?propertyId=" + assessmentNum;
 				}
 			}
 
@@ -127,11 +127,8 @@
 										<option value="">
 											----Choose----
 										</option>
-										<option value="ViewProperty">
-											<s:text name="viewProp"></s:text>
-										</option>
 										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) ||
-										roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_CSC_OPERATOR.toUpperCase())}">
+										roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
 											<s:if test="%{isDemandActive}">
 												<option value="ADD_OR_ALTER">
 													<s:text name="viewprop.option.alter"></s:text>
@@ -149,6 +146,11 @@
 												</option>
 											</s:else>
 										</s:if>
+										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
+												<option value="CollectTax">
+													<s:text name="collectTax"></s:text>
+												</option>
+										</s:if>		
 									</select>
 								</display:column>
 								<display:setProperty name="paging.banner.item" value="Record" />

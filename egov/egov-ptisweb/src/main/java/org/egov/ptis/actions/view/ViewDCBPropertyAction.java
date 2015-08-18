@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.BEANNAME_PROPERTY_TAX
 import static org.egov.ptis.constants.PropertyTaxConstants.CANCELLED_RECEIPT_STATUS;
 import static org.egov.ptis.constants.PropertyTaxConstants.CITIZENUSER;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -101,10 +102,6 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 
 	private static final String HEADWISE_DCB = "headwiseDcb";
 	private String propertyId;
-	private String wardName;
-	private String ownerName;
-	private String propertyAddress;
-	private String propertyType;
 	private BigDecimal currTaxAmount;
 
 	private BasicProperty basicProperty;
@@ -120,8 +117,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 	private HttpSession session = null;
 	private HttpServletRequest request;
 	private Long userId;
-	private Boolean isCitizen;
-	private String encodedConsumerCode;
+	private Boolean isCitizen = Boolean.FALSE;
 	private List<PropertyReceipt> propReceiptList = new ArrayList<PropertyReceipt>();
 	final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	private List<Receipt> cancelRcpt = new ArrayList<Receipt>();
@@ -130,6 +126,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 	private String demandEffectiveYear;
 	private Integer noOfDaysForInactiveDemand;
 	private String errorMessage;
+	private String roleName;
 
 	private Map<String, Object> viewMap;
 
@@ -143,6 +140,9 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 	private ApplicationContextBeanProvider beanProvider;
 	@Autowired
 	private DCBService dcbService;
+	
+	@Autowired
+	private PropertyTaxUtil propertyTaxUtil;
 
 	public ViewDCBPropertyAction() {
 	}
@@ -170,18 +170,19 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		LOGGER.debug("displayPropInfo : propertyId : " + propertyId);
 		DCBUtils dcbUtils = new DCBUtils();
 		session = request.getSession();
-		if (session.getAttribute("com.egov.user.LoginUserId") == null) {
+		if (session.getAttribute(SESSIONLOGINID) == null) {
 			User user = userService.getUserByUsername(CITIZENUSER);
 			userId = user.getId();
 			EgovThreadLocals.setUserId(userId);
 			session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
-
-			if (user != null) {
+			if (user != null)
 				setCitizen(Boolean.TRUE);
-			}
-
-		} else {
+		} else{
 			setCitizen(Boolean.FALSE);
+			final Long userId = (Long) session().get(SESSIONLOGINID);
+            if (userId != null) {
+                setRoleName(propertyTaxUtil.getRolesForUserId(userId));
+            }
 		}
 
 		try {
@@ -197,10 +198,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 				viewMap.put("ownershipType", propertyTypeMaster.getType());
 				Property property = getBasicProperty().getProperty();
 				viewMap.put("propAddress", getBasicProperty().getAddress().toString());
-				setOwnerName(basicProperty.getFullOwnerName());
-				setPropertyAddress(basicProperty.getAddress().toString());
-				setWardName(basicProperty.getPropertyID().getWard().getName());
-				setPropertyType(property.getPropertyDetail().getPropertyTypeMaster().getType());
+				viewMap.put("ownerName", basicProperty.getFullOwnerName());
 				if (!property.getIsExemptedFromTax()) {
 					Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
 					setCurrTaxAmount(demandCollMap.get(CURR_DMD_STR));
@@ -368,21 +366,6 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		this.propertyId = propertyId;
 	}
 
-	public String getOwnerName() {
-		return ownerName;
-	}
-
-	public void setOwnerName(String ownerName) {
-		this.ownerName = ownerName;
-	}
-
-	public String getPropertyAddress() {
-		return propertyAddress;
-	}
-
-	public void setPropertyAddress(String propertyAddress) {
-		this.propertyAddress = propertyAddress;
-	}
 
 	public BasicProperty getBasicProperty() {
 		return basicProperty;
@@ -390,22 +373,6 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 
 	public void setBasicProperty(BasicProperty basicProperty) {
 		this.basicProperty = basicProperty;
-	}
-
-	public String getWardName() {
-		return wardName;
-	}
-
-	public void setWardName(String wardName) {
-		this.wardName = wardName;
-	}
-
-	public String getPropertyType() {
-		return propertyType;
-	}
-
-	public void setPropertyType(String propertyType) {
-		this.propertyType = propertyType;
 	}
 
 	public DCBService getDcbService() {
@@ -464,14 +431,6 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		this.propertyArrearsList = propertyArrearsList;
 	}
 
-	public String getEncodedConsumerCode() {
-		return encodedConsumerCode;
-	}
-
-	public void setEncodedConsumerCode(String encodedConsumerCode) {
-		this.encodedConsumerCode = encodedConsumerCode;
-	}
-
 	public List<PropertyReceipt> getPropReceiptList() {
 		return propReceiptList;
 	}
@@ -527,4 +486,13 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+	
 }

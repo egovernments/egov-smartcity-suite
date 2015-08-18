@@ -584,7 +584,7 @@ public interface PropertyTaxConstants {
 	public static final String DEPT_CODE_TAX = "T";
 
 	// Roles
-	public static final String PROPERTY_CSC_OPERATOR = "CSC Operator";
+	public static final String CSC_OPERATOR_ROLE = "CSC Operator";
 	public static final String ASSISTANT_ROLE = "ASSISTANT";
 	public static final String PTVERIFIER_ROLE = "Property Verifier";
 	public static final String PTAPPROVER_ROLE = "Property Approver";

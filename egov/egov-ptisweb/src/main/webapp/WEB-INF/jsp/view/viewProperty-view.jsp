@@ -46,14 +46,27 @@
 		
 			function loadOnStartup () {
 				var btnCheckbox = document.getElementById('taxEnsureCheckbox');
-				var btnPayTax = document.getElementById('payBill');
-				if (btnCheckbox != null && btnPayTax != null) {
+				var btnPayTax = document.getElementById('PayTax');
+				var buttorOperatorPayTax = document.getElementById('operatorPayBill');
+				
+				if (btnPayTax != null) {
 					btnPayTax.disabled = (btnCheckbox.checked) ? false : true;
+				}
+				
+				if (buttorOperatorPayTax != null) {
+					buttorOperatorPayTax.disabled = (btnCheckbox.checked) ? false : true;
 				}
 			}
 			
-			function switchPayTaxButton (ensureCheckbox) {
-				jQuery('#payBill').attr('disabled', ensureCheckbox.checked ? false : true);			
+			function switchPayTaxButton(ensureCheckbox) {
+				var buttonPayTax = document.getElementById('PayTax');
+				
+				if (buttonPayTax == null) {
+					document.getElementById('operatorPayBill').disabled = (ensureCheckbox.checked) ? false : true;
+				} else {
+					buttonPayTax.disabled = (ensureCheckbox.checked) ? false : true;	
+				}
+				
 			}
 
 			jQuery(document).ready( function () {
@@ -72,23 +85,24 @@
 				<br/>
 				<jsp:include page="viewProperty.jsp"/>
 				<div class="buttonbottom" align="center">
-				<s:if test="%{isUserOperator}">
+				<s:if test="%{isCitizen || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
 					<div align="center">
 						<s:checkbox name="taxEnsureCheckbox" id="taxEnsureCheckbox" onclick="switchPayTaxButton(this);" required="true" />
-						<span style="font-size:15px; color:red">
+						<span style="font-size:15px; color:red ">										
 							<s:text name="msg.payBill.verification" /> <br><br>
-							<s:text name="msg.activeDemand" />	
-						</span> 
+							<s:text name="msg.activeDemand"/>
+						</span>
 					</div><br>
 					<div align="center">
-						<table>
-							<tr>
-								<td align="center">
-									<input type="button" name="payBill" id="payBill" value="Pay Bill" class="buttonsubmit" />
-								</td>
-							</tr>
-						</table>
-					</div><br>
+						<s:if test="%{isCitizen}">
+							<input type="button" name="PayTax" id="PayTax" value="Pay Tax" class="buttonsubmit"
+										onclick="window.location='../citizen/collection/collection-generateBill.action?indexNum=<s:property value="%{propertyId}" />';" />
+						</s:if>
+						<s:else> 
+							<input type="button" name="operatorPayBill" id="operatorPayBill" value="Pay Bill" class="buttonsubmit"
+										onclick="window.location='/../ptis/collection/collectPropertyTax-generateBill.action?propertyId=<s:property value="%{propertyId}" />';" />
+						</s:else>
+					</div>
 				</s:if>
 				
 				<br>	

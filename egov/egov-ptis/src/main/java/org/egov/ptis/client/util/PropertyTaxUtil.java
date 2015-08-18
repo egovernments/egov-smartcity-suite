@@ -129,6 +129,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -1903,7 +1904,18 @@ public class PropertyTaxUtil {
 			isCorporation = Boolean.valueOf(appConfigValue.get(0).getValue());
 		return isCorporation;
 	}
+	
+	public String getRolesForUserId(final Long userId) {
+        LOGGER.debug("Entered into method getRolesForUserId " + userId);
+        String roleName;
+        final List<String> roleNameList = new ArrayList<String>();
+        final User user = userService.getUserById(userId);
+        for (final Role role : user.getRoles()) {
+            roleName = role.getName() != null ? role.getName() : "";
+            roleNameList.add(roleName);
+        }
+        LOGGER.debug("Exit from method getRolesForUserId with return value : " + roleNameList.toString().toUpperCase());
+        return roleNameList.toString().toUpperCase();
+    }
         
 }
-
-

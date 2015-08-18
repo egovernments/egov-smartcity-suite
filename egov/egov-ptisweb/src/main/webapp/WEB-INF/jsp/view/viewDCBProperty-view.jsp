@@ -82,13 +82,6 @@
 				
 			}
 			
-			jQuery(document).ready( function () {
-				jQuery('#operatorPayBill').click( function () {
-					var propertyId = '<s:property value="%{basicProperty.upicNo}"/>';
-					window.location = '/../ptis/collection/collectPropertyTax-generateBill.action?propertyId='+propertyId;
-				});
-			});
-			
 		</script>
 	</head>
 
@@ -675,7 +668,7 @@
 													<tr>
 														<td class="blueborderfortd">
 															<div align="center">
-																<a href="/../collection/citizen/onlineReceipt!viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{encodedConsumerCode}" />&serviceCode=PT" target="_blank" >
+																<a href="/../collection/citizen/onlineReceipt!viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=PT" target="_blank" >
 																	<s:property value="#rcpt.getReceiptNumber()" />
 																</a>
 															</div>
@@ -733,7 +726,7 @@
 													<tr>
 														<td class="blueborderfortd">
 															<div align="center">
-																<a href="/../collection/citizen/onlineReceipt!viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{encodedConsumerCode}" />&serviceCode=PT" target="_blank" >
+																<a href="/../collection/citizen/onlineReceipt!viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=PT" target="_blank" >
 																	<s:property value="#rcpt.getReceiptNumber()" />
 																</a>
 															</div>
@@ -768,31 +761,25 @@
 											<s:text name="msg.activeDemand" />
 										</div>			
 									</s:if>
-									<s:else>
+									<s:elseif test="%{isCitizen || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
 										<div align="center">
 											<s:checkbox name="taxEnsureCheckbox" id="taxEnsureCheckbox" onclick="switchPayTaxButton(this);" required="true" />
 											<span style="font-size:15px; color:red ">										
 												<s:text name="msg.payBill.verification" /> <br><br>
-												<s:text name="msg.activeDemand" />	
-											</span> 
+												<s:text name="msg.activeDemand"/>
+											</span>
 										</div><br>
 										<div align="center">
-											<s:if test="%{isCitizen()}">
+											<s:if test="%{isCitizen}">
 												<input type="button" name="PayTax" id="PayTax" value="Pay Tax" class="buttonsubmit"
 															onclick="window.location='../citizen/collection/collection-generateBill.action?indexNum=<s:property value="%{propertyId}" />';" />
-											</s:if> 
-											<s:else>
-											<table>
-												<tr>
-													<td align="center">
-															<input type="button" name="operatorPayBill" id="operatorPayBill"
-																value="Pay Bill" class="button"/>
-													</td>
-												</tr>
-											</table>
-										</s:else>
+											</s:if>
+											<s:else> 
+												<input type="button" name="operatorPayBill" id="operatorPayBill" value="Pay Bill" class="buttonsubmit"
+															onclick="window.location='/../ptis/collection/collectPropertyTax-generateBill.action?propertyId=<s:property value="%{propertyId}" />';" />
+											</s:else>
 										</div>
-									</s:else><br> 
+									</s:elseif><br> 
 									<input type="button" name="button2" id="button2" value="Back"
 										class="button" onclick="history.back(-1)" />
 									<input type="button" name="button2" id="button2" value="Close"

@@ -54,7 +54,10 @@
 				formObj.submit;
 			   return true;
 			} 
-
+			function collectTax(){
+				var propertyId=document.getElementById('assessmentNum').value;
+				window.location = '/../ptis/collection/collectPropertyTax-generateBill.action?propertyId='+propertyId;
+			}
 		</script>
 		<title><s:text name="searchProp.title"></s:text></title>
 	</head>
@@ -95,6 +98,20 @@
 							</tr>
 							
 							<tr>
+							<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
+								<td class="greybox" colspan="2">
+									<div class="greybox" style="text-align:right">
+										<s:hidden id="mode" name="mode" value="assessment"></s:hidden>
+										<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByAssessment.action', 'assessmentform');"></s:submit>
+									</div>		
+								</td>
+								<td class="greybox" colspan="2">
+									<div class="greybox" style="text-align:left">
+									    <input type="button" name="CollectTax" value="Collect Tax" class="buttonsubmit" onclick="return collectTax()"/>
+									</div>
+								</td>
+							</s:if>
+							<s:else>
 								<td class="greybox">&nbsp;</td>
 								<td class="greybox" colspan="2">
 								   <br/>
@@ -104,6 +121,7 @@
 									</div>
 								</td>
 								<td class="greybox">&nbsp;</td>
+							</s:else>
 							</tr>
 						</s:form>
 					</table>			
