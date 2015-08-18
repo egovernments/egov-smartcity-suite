@@ -97,7 +97,7 @@
 		<form:input path="existingConnection.meterNo"  class="form-control text-left"/>   
 			<form:errors path="existingConnection.meterNo" cssClass="add-margin error-msg" />	
 	</div>
-	<label class="col-sm-3 control-label text-right"><spring:message
+	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.previousreading" /></label>
 	<div class="col-sm-3 add-margin">
 	<form:input path="existingConnection.previousReading"  class="form-control text-right"/>   

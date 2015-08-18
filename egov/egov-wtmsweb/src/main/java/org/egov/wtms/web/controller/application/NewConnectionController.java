@@ -326,6 +326,11 @@ public class NewConnectionController extends GenericConnectionController {
     public String editExisting(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
             @PathVariable final String consumerCode, final Model model) {
         waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode);
+        model.addAttribute("allowIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
+        model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
+        model.addAttribute("currentUser",
+                waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+        model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
         final Map<Long, String> connectionTypeMap = new HashMap<Long, String>();
 
         connectionTypeMap.put(applicationTypeService.findByCode(WaterTaxConstants.NEWCONNECTION).getId(),
@@ -333,6 +338,8 @@ public class NewConnectionController extends GenericConnectionController {
         connectionTypeMap.put(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION).getId(),
                 WaterTaxConstants.CONN_NAME_ADDNLCONNECTION);
         model.addAttribute("radioButtonMap", connectionTypeMap);
+        
+        model.addAttribute("waterConnectionDetails", waterConnectionDetails);
         return "newconnection-dataEntryForm";
     }
 

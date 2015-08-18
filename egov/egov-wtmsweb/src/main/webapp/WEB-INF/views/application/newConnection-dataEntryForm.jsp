@@ -45,11 +45,12 @@
 <div class="row">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"><spring:message code="lbl.application.date"/> : <fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" /></div>
-		<form:form role="form" action="newConnection-createExisting" 
+		<form:form role="form" action="/wtms/application/newConnection-createExisting" 
 			modelAttribute="waterConnectionDetails" id="newWaterConnectionform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<form:hidden path="applicationType" id="applicationType" value="${waterConnectionDetails.applicationType.id}"/>
+			<form:hidden path="id" id="id" value="${waterConnectionDetails.id}"/>
 			<form:hidden path="legacy" id="legacy" value="true"/>
 			<form:hidden path="connectionStatus" id="connectionStatus" value="${waterConnectionDetails.connectionStatus}"/> 
 			<input type="hidden" name="allowIfPTDueExists" id="allowIfPTDueExists" value="${allowIfPTDueExists}"> 
@@ -73,13 +74,15 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="connection.consumerCode" 
 								class="form-control text-left" required="required"/>
+								<form:errors path="connection.consumerCode" cssClass="add-margin error-msg" />	
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.connectiondate" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input  path="executionDate"  
 								class="form-control datepicker" data-date-end-date="0d"
-								id="executionDate" data-inputmask="'mask': 'd/m/y'" required="required" />
+								id="executionDate" data-inputmask="'mask': 'd/m/y'" required="required" />4
+								<form:errors path="executionDate" cssClass="add-margin error-msg" />
 						</div>
 					</div>
 					<jsp:include page="connectiondetails.jsp"></jsp:include>	
@@ -95,12 +98,11 @@
 		 }
 		
 		function validate()		{
+			//alert(document.forms[0].action);
 			var radioValue = $("input[name='applicationType']:checked").val();
-			alert(radioValue);
-            var ar=document.getElementsByName('applicationType');
+		    var ar=document.getElementsByName('applicationType');
             ar[0].value=radioValue;
-          //  alert(radioValue);
-			
+         
 			return ture;}
 		</script>
 		</form:form>

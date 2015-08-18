@@ -43,9 +43,10 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div class="row">
-	<div class="col-md-12"> 
+	<div class="col-md-12" style=> <centre><strong>
 	<spring:message code="msg.dataentry.save.success"/>
-	
+	</strong>
+	</centre>
 	</div>
 <div class="buttonbottom" align="center">
 	<table>
