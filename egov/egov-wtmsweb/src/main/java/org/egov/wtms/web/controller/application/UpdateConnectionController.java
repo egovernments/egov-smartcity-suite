@@ -234,6 +234,10 @@ public class UpdateConnectionController extends GenericConnectionController {
             waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
                     approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction, mode);
 
+            if (workFlowAction != null && !workFlowAction.isEmpty()
+                    && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_ESTIMATION_NOTICE_BUTTON))
+                return "redirect:/application/estimationNotice?pathVar=" + waterConnectionDetails.getApplicationNumber();
+
             if (null != workFlowAction && !workFlowAction.isEmpty()
                     && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON))
                 return "redirect:/application/workorder?pathVar=" + waterConnectionDetails.getApplicationNumber();

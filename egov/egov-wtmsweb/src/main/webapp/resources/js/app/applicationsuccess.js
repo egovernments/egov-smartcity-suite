@@ -54,6 +54,14 @@ $(document).ready(function(){
 	if(mode=='inbox') {
 		$("#propertytaxdue").addClass("error-msg");
 	}
+	
+	$('#viewEstimationNotice').click(function() {
+		var url = '/wtms/application/estimationNotice/view/'+ $('#applicationCode').val();
+		$('#waterConnectionSuccess').attr('method', 'get');
+		$('#waterConnectionSuccess').attr('action', url);
+		$('#waterConnectionSuccess').attr('mode', 'search');
+		window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+	});
 });
 
 $('#payBtn').click(function() {

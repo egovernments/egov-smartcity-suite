@@ -95,7 +95,7 @@ $(document).ready(function()
 		$(".btn-primary").click(function() { 
 			var action = document.getElementById("workFlowAction").value;
 			 var status=$('#statuscode').val();
-			 if(action == 'Generate WorkOrder' && status=='APPROVED') {
+			 if((action == 'Generate Estimation Notice' && status=='VERIFIED') || (action == 'Generate WorkOrder' && status=='APPROVED')) {
 				 document.forms[0].submit();	
 			 }
 			 
