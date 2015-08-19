@@ -176,8 +176,7 @@ public class TitleTransferRegisterAction extends BaseFormAction {
             boundaryWhrCond=",PropertyID pi where pm.basicProperty.id=pi.basicProperty.id "
                     + " and pm.state.value='"+PropertyTaxConstants.TRANSFER_OF_OWNER_APPROVED_STATUS+"' ";
         } else{
-           // boundaryWhrCond=" where pm.state.value='"+PropertyTaxConstants.TRANSFER_OF_OWNER_APPROVED_STATUS+"' ";
-            boundaryWhrCond=" where pm.state.value!=null";//+PropertyTaxConstants.TRANSFER_OF_OWNER_APPROVED_STATUS+"' ";
+            boundaryWhrCond=" where pm.state.value='"+PropertyTaxConstants.TRANSFER_OF_OWNER_APPROVED_STATUS+"' ";
         }
         // Query that retrieves all the properties that has arrears.
         query.append("select pm from PropertyMutation pm").append(boundaryWhrCond).append(boundaryCond);
