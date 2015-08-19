@@ -146,75 +146,7 @@ $(document).ready(function(){
 		}		
 	}
 	
-	function loadPropertyDetails() {
-		propertyID=$('#propertyIdentifier').val()
-		allowIfPTDueExists = $('#allowIfPTDueExists').val() 
-		
-		if(propertyID != '') {
-			$.ajax({
-				url: "/ptis/rest/property/"+propertyID,      
-				type: "GET",
-				dataType: "json",
-				success: function (response) { 
-					console.log("success"+response);
-					
-					if(response.errorDetails.errorCode != null && response.errorDetails.errorCode != '') {
-						if($('#legacy')==none)
-						{
-					    resetPropertyDetails();
-						}
-						alert(response.errorDetails.errorMessage);
-					}
-					else {	
-						 if(allowIfPTDueExists=='false' && response.propertyDetails.taxDue > 0) {
-							resetPropertyDetails();
-							errorMessage = "Property tax is due with Rs. "+response.propertyDetails.taxDue+"/- for the assessment no "+propertyID+", please pay the due amount to create new water tap connection"
-							alert(errorMessage);
-						}
-						else {						
-							$('#propertyIdentifierError').html('');
-							applicantName = '';
-							for(i=0; i<response.ownerNames.length; i++) {
-								if(applicantName == '')
-									applicantName = response.ownerNames[i].ownerName;
-								else 							
-									applicantName = applicantName+ ', '+response.ownerNames[i].ownerName;
-							}
-							$("#applicantname").val(applicantName);
-							$("#nooffloors").val(response.propertyDetails.noOfFloors);
-							if(response.ownerNames[0].mobileNumber != '')
-								$("#mobileNumber").val(response.ownerNames[0].mobileNumber);
-							if(response.ownerNames[0].emailId != '')
-								$("#email").val(response.ownerNames[0].emailId);
-							$("#propertyaddress").val(response.propertyAddress);
-							boundaryData = '';
-							if(response.boundaryDetails.zoneName != null && response.boundaryDetails.zoneName != '')
-								boundaryData = response.boundaryDetails.zoneName;
-							if(response.boundaryDetails.wardName != null && response.boundaryDetails.wardName != '') {
-								if(boundaryData == '')
-									boundaryData = response.boundaryDetails.wardName;
-								else
-									boundaryData = boundaryData + " / " + response.boundaryDetails.wardName;
-							}
-							if(response.boundaryDetails.blockName != null && response.boundaryDetails.blockName != '') {
-								if(boundaryData == '')
-									boundaryData = response.boundaryDetails.blockName;
-								else
-									boundaryData = boundaryData + " / " +response.boundaryDetails.blockName; 
-							}
-							$("#aadhaar").val(response.ownerNames[0].aadhaarNumber);
-							$("#locality").val(response.boundaryDetails.localityName);
-							$("#zonewardblock").val(boundaryData);
-							$("#propertytax").val(response.propertyDetails.currentTax);
-						}
-					}					
-				}, 
-				error: function (response) {
-					console.log("failed");
-				}
-			});
-		}		
-	}
+	
 	
 	function resetPropertyDetails() {
 		$('#propertyIdentifier').val('');
@@ -248,4 +180,73 @@ $(document).ready(function(){
 	
 });
 
+function loadPropertyDetails() {
+	propertyID=$('#propertyIdentifier').val()
+	allowIfPTDueExists = $('#allowIfPTDueExists').val() 
+	
+	if(propertyID != '') {
+		$.ajax({
+			url: "/ptis/rest/property/"+propertyID,      
+			type: "GET",
+			dataType: "json",
+			success: function (response) { 
+				console.log("success"+response);
+				
+				if(response.errorDetails.errorCode != null && response.errorDetails.errorCode != '') {
+					if($('#legacy')==none)
+					{
+				    resetPropertyDetails();
+					}
+					alert(response.errorDetails.errorMessage);
+				}
+				else {	
+					 if(allowIfPTDueExists=='false' && response.propertyDetails.taxDue > 0) {
+						resetPropertyDetails();
+						errorMessage = "Property tax is due with Rs. "+response.propertyDetails.taxDue+"/- for the assessment no "+propertyID+", please pay the due amount to create new water tap connection"
+						alert(errorMessage);
+					}
+					else {						
+						$('#propertyIdentifierError').html('');
+						applicantName = '';
+						for(i=0; i<response.ownerNames.length; i++) {
+							if(applicantName == '')
+								applicantName = response.ownerNames[i].ownerName;
+							else 							
+								applicantName = applicantName+ ', '+response.ownerNames[i].ownerName;
+						}
+						$("#applicantname").val(applicantName);
+						$("#nooffloors").val(response.propertyDetails.noOfFloors);
+						if(response.ownerNames[0].mobileNumber != '')
+							$("#mobileNumber").val(response.ownerNames[0].mobileNumber);
+						if(response.ownerNames[0].emailId != '')
+							$("#email").val(response.ownerNames[0].emailId);
+						$("#propertyaddress").val(response.propertyAddress);
+						boundaryData = '';
+						if(response.boundaryDetails.zoneName != null && response.boundaryDetails.zoneName != '')
+							boundaryData = response.boundaryDetails.zoneName;
+						if(response.boundaryDetails.wardName != null && response.boundaryDetails.wardName != '') {
+							if(boundaryData == '')
+								boundaryData = response.boundaryDetails.wardName;
+							else
+								boundaryData = boundaryData + " / " + response.boundaryDetails.wardName;
+						}
+						if(response.boundaryDetails.blockName != null && response.boundaryDetails.blockName != '') {
+							if(boundaryData == '')
+								boundaryData = response.boundaryDetails.blockName;
+							else
+								boundaryData = boundaryData + " / " +response.boundaryDetails.blockName; 
+						}
+						$("#aadhaar").val(response.ownerNames[0].aadhaarNumber);
+						$("#locality").val(response.boundaryDetails.localityName);
+						$("#zonewardblock").val(boundaryData);
+						$("#propertytax").val(response.propertyDetails.currentTax);
+					}
+				}					
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
+	}		
+}
 

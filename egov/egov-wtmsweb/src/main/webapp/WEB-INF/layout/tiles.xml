@@ -124,4 +124,9 @@
         <put-attribute name="page-title" value="title.zonewisedcbreport" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/dCBReport-search.jsp"/>
     </definition>
+       <definition name="newconnection-dataEntryMessage" extends="base_layout">
+        <put-attribute name="page-title" value="title.dataentry" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/newConnection-dataEntryMessage.jsp"/>
+    </definition>
+    
 </tiles-definitions>

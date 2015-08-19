@@ -42,15 +42,17 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<script src="<c:url value='/resources/js/app/newconnection.js'/>"></script>
 <div class="row">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"><spring:message code="lbl.application.date"/> : <fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" /></div>
 		<form:form role="form" action="/wtms/application/newConnection-createExisting" 
 			modelAttribute="waterConnectionDetails" id="newWaterConnectionform"
+			commandName="waterConnectionDetails"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<form:hidden path="applicationType" id="applicationType" value="${waterConnectionDetails.applicationType.id}"/>
-			<form:hidden path="id" id="id" value="${waterConnectionDetails.id}"/>
+			<form:hidden path="id" id="id" value="${id}"/>
 			<form:hidden path="legacy" id="legacy" value="true"/>
 			<form:hidden path="connectionStatus" id="connectionStatus" value="${waterConnectionDetails.connectionStatus}"/> 
 			<input type="hidden" name="allowIfPTDueExists" id="allowIfPTDueExists" value="${allowIfPTDueExists}"> 
@@ -62,9 +64,11 @@
 				</div>
 				<div class="panel-body custom-form ">
 					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.appType" /></label>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.appType" /></label>
 						<div class="col-sm-6 add-margin dynamic-span capitalize">
-							<form:radiobuttons path="applicationType" items="${radioButtonMap}"  element="span" /> 
+							<form:radiobuttons path="applicationType"
+								items="${radioButtonMap}" element="span" disabled="true" />
 						</div>
 					</div>
 					<jsp:include page="applicantdetails.jsp"></jsp:include>
@@ -72,26 +76,27 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.consumerno" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="connection.consumerCode" 
-								class="form-control text-left" required="required"/>
-								<form:errors path="connection.consumerCode" cssClass="add-margin error-msg" />	
+							<form:input path="connection.consumerCode"
+								class="form-control text-left" required="required" />
+							<form:errors path="connection.consumerCode"
+								cssClass="add-margin error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.connectiondate" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input  path="executionDate"  
-								class="form-control datepicker" data-date-end-date="0d"
-								id="executionDate" data-inputmask="'mask': 'd/m/y'" required="required" />
-								<form:errors path="executionDate" cssClass="add-margin error-msg" />
+							<form:input path="executionDate" class="form-control datepicker"
+								data-date-end-date="0d" id="executionDate"
+								data-inputmask="'mask': 'd/m/y'" required="required" />
+							<form:errors path="executionDate" cssClass="add-margin error-msg" />
 						</div>
 					</div>
-					<jsp:include page="connectiondetails.jsp"></jsp:include>	
+					<jsp:include page="connectiondetails.jsp"></jsp:include>
 					<jsp:include page="dataEntryDetails.jsp"></jsp:include>
 					<div class="buttonbottom" align="center">
 						<table>
 							<tr>
 								<td><form:button type="submit" id="Create"
-										class="btn btn-primary" value="Create" onclick="validate();">Create </form:button>
+										class="btn btn-primary" value="Create" onclick="validate();">Update </form:button>
 									<input type="button" name="button2" id="button2" value="Close"
 									class="btn btn-primary" onclick="window.close();" /></td>
 							</tr>
@@ -106,6 +111,9 @@
 		 $('#metereddetails').show();
 		 }
 		
+		 $('#propertyIdentifier').attr("disabled", "disabled");
+		 loadPropertyDetails();
+		
 		function validate()		{
 			//alert(document.forms[0].action);
 			var radioValue = $("input[name='applicationType']:checked").val();
@@ -118,4 +126,3 @@
 	</div>
 </div>
 
-<script src="<c:url value='/resources/js/app/newconnection.js'/>"></script>

@@ -122,15 +122,5 @@
 	</div>
 </div>
 </div>
-<div class="buttonbottom" align="center">
-	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
-	<table>
-		<tr>
-			<td>
-	
-				<form:button type="submit" id="Create" class="btn btn-primary"  value="Create" onclick="validate();">Create </form:button>
-				<input type="button" name="button2" id="button2" value="Close" 	class="btn btn-primary" onclick="window.close();" /></td>
-		</tr>
-	</table>
-</div>
+
 				
