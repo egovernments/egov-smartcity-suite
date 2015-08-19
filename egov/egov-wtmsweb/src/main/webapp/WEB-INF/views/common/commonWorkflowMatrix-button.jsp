@@ -72,7 +72,7 @@
 						<c:out value="${validButtons}" /> </form:button>
 			</c:forEach>
 				<input type="button" name="button2" id="button2" value="Close"
-				class="btn btn-primary" onclick="window.close();" /></td>
+				class="btn btn-default" onclick="window.close();" /></td>
 		</tr>
 	</table>
 </div>
