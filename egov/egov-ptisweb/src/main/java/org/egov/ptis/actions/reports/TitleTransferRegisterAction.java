@@ -182,7 +182,7 @@ public class TitleTransferRegisterAction extends BaseFormAction {
         query.append("select pm from PropertyMutation pm").append(boundaryWhrCond).append(boundaryCond);
         if(fromDate != null && !fromDate.isEmpty()){
             if(toDate!=null && !toDate.isEmpty())
-                query.append(" and pm.createdDate between to_date('"+fromDate+"', 'MM/DD/YYYY') and to_date('"+toDate+"','MM/DD/YYYY') ");
+                query.append(" and pm.createdDate between to_date('"+fromDate+"', 'DD/MM/YYYY') and to_date('"+toDate+"','DD/MM/YYYY') ");
             else
                 query.append(" and pm.createdDate between ('"+fromDate+"') and ('"+new Date()+"') "); 
         } 

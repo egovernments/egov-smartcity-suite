@@ -198,18 +198,12 @@ public class CollectionSummaryReportAction extends SearchFormAction {
 	                        countQry = "select count(*) from egpt_mv_c10_report c10, eg_boundary localityBndry where ";
 	                    }
 	                    if (fromDate != null && !fromDate.equals("DD/MM/YYYY") && !fromDate.equals("")) {
-	                            fromDateLocal = fromDate + " 00:00:00";
-	                            fromDateLocal=sdf.format(new Date(fromDate));
-	                            LOGGER.debug("fromDateLocal = " + fromDateLocal);
-	                            srchQryStr= "receipt_date >= to_date(?, 'dd/MM/yyyy') ";
-	                            paramList.add(fromDateLocal);
+	                            srchQryStr= "receipt_date >= to_date(?, 'DD/MM/YYYY') ";
+	                            paramList.add(fromDate);
 	                    }
 	                    if (toDate != null && !toDate.equals("DD/MM/YYYY") && !toDate.equals("")) {
-	                            toDateLocal = toDate + " 23:59:59";
-	                            toDateLocal =  sdf.format(new Date(toDate));
-	                            LOGGER.debug("toDateLocal = " + toDateLocal);
-	                            srchQryStr=srchQryStr+"and receipt_date <= to_date(?, 'dd/MM/yyyy') ";
-	                            paramList.add(toDateLocal); 
+	                            srchQryStr=srchQryStr+"and receipt_date <= to_date(?, 'DD/MM/YYYY') ";
+	                            paramList.add(toDate); 
 	                    }
 	                    if (collMode != null && !collMode.equals("") && !collMode.equals("-1")) {
 	                            LOGGER.debug("Collection Mode = " + collMode);
