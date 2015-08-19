@@ -1,5 +1,4 @@
-/*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -53,6 +52,8 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "eg_citypreferences")
@@ -81,6 +82,39 @@ public class CityPreferences extends AbstractAuditable {
     @NotNull
     private FileStoreMapper logo;
 
+    @NotNull
+    @SafeHtml
+    @Length(max=50)
+    private String corporationName;
+
+    @SafeHtml
+    @Length(max=20)
+    private String corporationContactNo;
+
+    @SafeHtml
+    @Length(max=200)
+    private String corporationAddress;
+
+    @SafeHtml
+    @Length(max=50)
+    private String corporationContactEmail;
+
+    @SafeHtml
+    @Length(max=100)
+    private String corporationOfficeGisLocation;
+
+    @SafeHtml
+    @Length(max=20)
+    private String corporationCallCenterNo;
+
+    @SafeHtml
+    @Length(max=100)
+    private String facebookLink;
+
+    @SafeHtml
+    @Length(max=100)
+    private String twitterLink;
+
     @Override
     protected void setId(final Long id) {
         this.id = id;
@@ -100,9 +134,9 @@ public class CityPreferences extends AbstractAuditable {
     }
 
     public boolean kmlExist() {
-        return this.gisKML != null;
+        return gisKML != null;
     }
-    
+
     public FileStoreMapper getGisShape() {
         return gisShape;
     }
@@ -112,9 +146,9 @@ public class CityPreferences extends AbstractAuditable {
     }
 
     public boolean shapeExist() {
-        return this.gisShape != null;
+        return gisShape != null;
     }
-    
+
     public FileStoreMapper getLogo() {
         return logo;
     }
@@ -122,8 +156,72 @@ public class CityPreferences extends AbstractAuditable {
     public void setLogo(final FileStoreMapper logo) {
         this.logo = logo;
     }
-    
+
+    public String getCorporationName() {
+        return corporationName;
+    }
+
+    public void setCorporationName(final String corporationName) {
+        this.corporationName = corporationName;
+    }
+
+    public String getCorporationContactNo() {
+        return corporationContactNo;
+    }
+
+    public void setCorporationContactNo(final String corporationContactNo) {
+        this.corporationContactNo = corporationContactNo;
+    }
+
+    public String getCorporationAddress() {
+        return corporationAddress;
+    }
+
+    public void setCorporationAddress(final String corporationAddress) {
+        this.corporationAddress = corporationAddress;
+    }
+
+    public String getCorporationContactEmail() {
+        return corporationContactEmail;
+    }
+
+    public void setCorporationContactEmail(final String corporationContactEmail) {
+        this.corporationContactEmail = corporationContactEmail;
+    }
+
+    public String getCorporationOfficeGisLocation() {
+        return corporationOfficeGisLocation;
+    }
+
+    public void setCorporationOfficeGisLocation(final String corporationOfficeGisLocation) {
+        this.corporationOfficeGisLocation = corporationOfficeGisLocation;
+    }
+
+    public String getCorporationCallCenterNo() {
+        return corporationCallCenterNo;
+    }
+
+    public void setCorporationCallCenterNo(final String corporationCallCenterNo) {
+        this.corporationCallCenterNo = corporationCallCenterNo;
+    }
+
+    public String getFacebookLink() {
+        return facebookLink;
+    }
+
+    public void setFacebookLink(final String facebookLink) {
+        this.facebookLink = facebookLink;
+    }
+
+    public String getTwitterLink() {
+        return twitterLink;
+    }
+
+    public void setTwitterLink(final String twitterLink) {
+        this.twitterLink = twitterLink;
+    }
+
     public boolean logoExist() {
-        return this.logo != null;
+        return logo != null;
     }
 }

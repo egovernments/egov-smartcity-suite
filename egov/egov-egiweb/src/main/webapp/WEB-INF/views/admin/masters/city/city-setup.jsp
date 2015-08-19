@@ -52,12 +52,9 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<ul class="nav nav-tabs" id="settingstab">
-						<li class="active">
-						  <a data-toggle="tab" href="#citysetup" data-tabidx=0>
-						    <spring:message code="title.city.setup" />
-						   </a>
-						</li>
-						<li><a data-toggle="tab" href="#preferences" data-tabidx=1>Preferences</a></li>
+						<li class="active"><a data-toggle="tab" href="#citysetup" data-tabidx=0><spring:message code="tab.city.info" /></a></li>
+						<li><a data-toggle="tab" href="#preferences" data-tabidx=1><spring:message code="tab.corp.info" /></a></li>
+						<li><a data-toggle="tab" href="#configuration" data-tabidx=2><spring:message code="tab.city.config" /></a></li>
 					</ul>
 				</div>
 
@@ -203,8 +200,7 @@
 
 						<div id="preferences" class="tab-pane fade">
 						    <div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message
-										code="lbl.city.logo" /></label>
+								<label class="col-sm-3 control-label">Logo</label>
 								<div class="col-sm-6" style="padding-top: 7px">
 									<img id="imglogo" height="60" width="60"
 										src="/egi/downloadfile?fileStoreId=${city.preferences.logo.fileStoreId}&moduleName=${sessionScope.cityCode}">
@@ -217,6 +213,153 @@
 										cssClass="add-margin error-msg" />
 								</div>
 							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label"><spring:message code="lbl.corp.name" /></label>
+								<div class="col-sm-6" style="padding-top: 7px">
+									<div class="input-group">
+										<form:input path="preferences.corporationName" id="latitude" type="text"
+											cssClass="form-control" placeholder=""
+											autocomplete="off" required="required" />
+										<span class="input-group-btn">
+											<button class="btn btn-default btnpopover" type="button"
+												data-toggle="popover" data-placement="right" title=""
+												data-content="<spring:message code="help.corp.name" />">
+												<i class="entypo-help"></i>
+											</button>
+										</span>
+									</div>
+									<form:errors path="preferences.corporationName" cssClass="add-margin error-msg" />
+								</div>
+
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label"><spring:message code="lbl.corp.address" /></label>
+								<div class="col-sm-6" style="padding-top: 7px">
+									<div class="input-group">
+										<form:textarea path="preferences.corporationAddress" id="corporationAddress" type="text"
+											cssClass="form-control" placeholder=""
+											autocomplete="off" rows="5"/>
+										<span class="input-group-btn">
+											<button class="btn btn-default btnpopover" type="button"
+												data-toggle="popover" data-placement="right" title=""
+												data-content="<spring:message code="help.corp.address" />">
+												<i class="entypo-help"></i>
+											</button>
+										</span>
+									</div>
+									<form:errors path="preferences.corporationAddress" cssClass="add-margin error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label"><spring:message code="lbl.corp.contact.no" /></label>
+								<div class="col-sm-6" style="padding-top: 7px">
+									<div class="input-group">
+										<form:input path="preferences.corporationContactNo" id="corporationContactNo" type="text"
+											cssClass="form-control" placeholder=""
+											autocomplete="off" />
+										<span class="input-group-btn">
+											<button class="btn btn-default btnpopover" type="button"
+												data-toggle="popover" data-placement="right" title=""
+												data-content="<spring:message code="help.corp.contact.no" />">
+												<i class="entypo-help"></i>
+											</button>
+										</span>
+									</div>
+									<form:errors path="preferences.corporationContactNo" cssClass="add-margin error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label"><spring:message code="lbl.corp.contact.email" /></label>
+								<div class="col-sm-6" style="padding-top: 7px">
+									<div class="input-group">
+										<form:input path="preferences.corporationContactEmail" id="corporationContactEmail" type="text"
+											cssClass="form-control" placeholder=""
+											autocomplete="off" />
+										<span class="input-group-btn">
+											<button class="btn btn-default btnpopover" type="button"
+												data-toggle="popover" data-placement="right" title=""
+												data-content="<spring:message code="help.corp.contact.email" />">
+												<i class="entypo-help"></i>
+											</button>
+										</span>
+									</div>
+									<form:errors path="preferences.corporationContactEmail" cssClass="add-margin error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label"><spring:message code="lbl.corp.callcenter.no" /></label>
+								<div class="col-sm-6" style="padding-top: 7px">
+									<div class="input-group">
+										<form:input path="preferences.corporationCallCenterNo" id="corporationCallCenterNo" type="text"
+											cssClass="form-control" placeholder=""
+											autocomplete="off" />
+										<span class="input-group-btn">
+											<button class="btn btn-default btnpopover" type="button"
+												data-toggle="popover" data-placement="right" title=""
+												data-content="<spring:message code="help.corp.callcenter.no" />">
+												<i class="entypo-help"></i>
+											</button>
+										</span>
+									</div>
+									<form:errors path="preferences.corporationCallCenterNo" cssClass="add-margin error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label"><spring:message code="lbl.corp.gis.location.link" /></label>
+								<div class="col-sm-6" style="padding-top: 7px">
+									<div class="input-group">
+										<form:input path="preferences.corporationOfficeGisLocation" id="corporationOfficeGisLocation" type="text"
+											cssClass="form-control" placeholder=""
+											autocomplete="off" />
+										<span class="input-group-btn">
+											<button class="btn btn-default btnpopover" type="button"
+												data-toggle="popover" data-placement="right" title=""
+												data-content="<spring:message code="help.corp.gis.location.link" />">
+												<i class="entypo-help"></i>
+											</button>
+										</span>
+									</div>
+									<form:errors path="preferences.corporationOfficeGisLocation" cssClass="add-margin error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label"><spring:message code="lbl.corp.fb.link" /></label>
+								<div class="col-sm-6" style="padding-top: 7px">
+									<div class="input-group">
+										<form:input path="preferences.facebookLink" id="facebookLink" type="text"
+											cssClass="form-control" placeholder=""
+											autocomplete="off" />
+										<span class="input-group-btn">
+											<button class="btn btn-default btnpopover" type="button"
+												data-toggle="popover" data-placement="right" title=""
+												data-content="<spring:message code="help.corp.fb.link" />">
+												<i class="entypo-help"></i>
+											</button>
+										</span>
+									</div>
+									<form:errors path="preferences.facebookLink" cssClass="add-margin error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label"><spring:message code="lbl.corp.twitter.link" /></label>
+								<div class="col-sm-6" style="padding-top: 7px">
+									<div class="input-group">
+										<form:input path="preferences.twitterLink" id="twitterLink" type="text"
+											cssClass="form-control" placeholder=""
+											autocomplete="off" />
+										<span class="input-group-btn">
+											<button class="btn btn-default btnpopover" type="button"
+												data-toggle="popover" data-placement="right" title=""
+												data-content="<spring:message code="help.corp.twitter.link" />">
+												<i class="entypo-help"></i>
+											</button>
+										</span>
+									</div>
+									<form:errors path="preferences.twitterLink" cssClass="add-margin error-msg" />
+								</div>
+							</div>
+						</div>
+						<div id="configuration" class="tab-pane fade">
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.city.lat" /></label>
@@ -329,7 +472,6 @@
 
 							</div>
 						</div>
-
 					</div>
 					<div>
 						<div class="col-sm-12" style="padding-top: 7px">

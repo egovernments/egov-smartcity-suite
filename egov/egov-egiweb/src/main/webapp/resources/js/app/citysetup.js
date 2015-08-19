@@ -1,18 +1,28 @@
 //tab switch handle
 var currenttabidx=0;
-var lasttabidx=1;
+var lasttabidx=$('a[data-tabidx]').length-1;
 
 document.body.addEventListener('keydown', function (e) {
     if((e.which === 37 || e.which === 39))
     {
-      console.log(currenttabidx);
       if(currenttabidx === lasttabidx)
       {
+    	  if(e.which === 39)
     	  $('a[data-tabidx="0"]').tab('show');
+    	  else if(e.which === 37)
+    	  $('a[data-tabidx="'+ (currenttabidx-1) +'"]').tab('show');
       }
       else
       {
-    	  $('a[data-tabidx="'+ (currenttabidx+1) +'"]').tab('show');
+    	  if(e.which === 37)
+    	  {
+    		 
+    		  currenttabidx = (currenttabidx === 0 ? lasttabidx : (currenttabidx-1));    		  
+    		  $('a[data-tabidx="'+ currenttabidx +'"]').tab('show');
+    	  }
+    	  else{
+    	    $('a[data-tabidx="'+ (currenttabidx+1) +'"]').tab('show');
+    	  }
       }
     }
 });

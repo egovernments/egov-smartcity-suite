@@ -52,6 +52,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.envers.Audited;
@@ -244,15 +245,23 @@ public class City extends AbstractAuditable {
         final Map<String, Object> cityPrefs = new HashMap<>();
         cityPrefs.put("cityBoundaryId", getBoundary().getId().toString());
         cityPrefs.put("cityurl", getDomainURL());
-        cityPrefs.put("cityname", getName());
         final CityPreferences cityPreferences = getPreferences();
-        if (cityPreferences == null)
+        if (cityPreferences == null) {
             cityPrefs.put("citylogo", "/resources/global/images/logo@2x.png");
-        else {
+            cityPrefs.put("cityname", getName());
+        } else {
+            cityPrefs.put("cityname", StringUtils.isEmpty(cityPreferences.getCorporationName()) ? getName() : cityPreferences.getCorporationName());
             cityPrefs.put("citylogo", cityPreferences.logoExist()
                     ? String.format("/downloadfile/logo?fileStoreId=%s&moduleName=%s", cityPreferences.getLogo().getFileStoreId(), getCode()) : "");
             cityPrefs.put("cityKmlFileStoreId", cityPreferences.kmlExist() ? cityPreferences.getGisKML().getFileStoreId() : "");
             cityPrefs.put("cityShapeFileStoreId", cityPreferences.shapeExist() ? cityPreferences.getGisShape().getFileStoreId() : "");
+            cityPrefs.put("corpAddress", cityPreferences.getCorporationAddress());
+            cityPrefs.put("corpCallCenterNo", cityPreferences.getCorporationCallCenterNo());
+            cityPrefs.put("corpContactNo", cityPreferences.getCorporationContactNo());
+            cityPrefs.put("corpContactEmail", cityPreferences.getCorporationContactEmail());
+            cityPrefs.put("corpTwitterLink", cityPreferences.getTwitterLink());
+            cityPrefs.put("corpFBLink", cityPreferences.getFacebookLink());
+            cityPrefs.put("corpGisLink", cityPreferences.getCorporationOfficeGisLocation());
         }
 
         cityPrefs.put("citynamelocal", getLocalName());
@@ -262,7 +271,8 @@ public class City extends AbstractAuditable {
         cityPrefs.put("citylat", getLatitude());
         cityPrefs.put("citylng", getLongitude());
         cityPrefs.put("cityCode", getCode());
-        cityPrefs.put("districtName",getDistrictName());
+        cityPrefs.put("districtName", getDistrictName());
+        cityPrefs.put("districtCode", getDistrictCode());
         return cityPrefs;
     }
 
