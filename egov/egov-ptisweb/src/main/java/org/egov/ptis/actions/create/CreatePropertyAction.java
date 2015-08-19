@@ -518,7 +518,13 @@ public class CreatePropertyAction extends WorkflowAction {
         basicPropertyService.update(basicProp);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         buildSMS(property, APPLICATION_TYPE_NEW_ASSESSENT);
-        propertyInitiatedBy = property.getCreatedBy().getName();
+        approverName = "";
+        if (propService.isEmployee(property.getCreatedBy()))
+            propertyInitiatedBy = property.getCreatedBy().getName();
+        else
+            propertyInitiatedBy = assignmentService
+                    .getPrimaryAssignmentForPositon(property.getStateHistory().get(0).getOwnerPosition().getId())
+                    .getEmployee().getUsername();
         setAckMessage("Property Created Successfully in the System and Forwarded to : ");
         setAssessmentNoMessage(" for Notice Genaration with assessment number : ");
         LOGGER.debug("approve: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());

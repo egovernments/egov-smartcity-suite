@@ -1,0 +1,1 @@
+INSERT INTO eg_roleaction  (actionid,roleid) VALUES ((SELECT id FROM eg_action WHERE name='Approve Modify Property' and contextroot='ptis'),(SELECT id FROM eg_role WHERE name ='Property Approver'));

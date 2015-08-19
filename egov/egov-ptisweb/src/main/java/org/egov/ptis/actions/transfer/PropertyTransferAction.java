@@ -291,7 +291,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public String approve() {
         transitionWorkFlow(propertyMutation);
         transferOwnerService.approvePropertyTransfer(basicproperty, propertyMutation);
-        mutationInitiatedBy = propertyMutation.getCreatedBy().getName();
+        approverName = "";
+        if (propertyService.isEmployee(propertyMutation.getCreatedBy()))
+            mutationInitiatedBy = propertyMutation.getCreatedBy().getName();
+        else
+            mutationInitiatedBy = assignmentService
+                    .getPrimaryAssignmentForPositon(propertyMutation.getStateHistory().get(0).getOwnerPosition().getId())
+                    .getEmployee().getUsername();
         buildSMS(propertyMutation);
         setAckMessage("Transfer of ownership is created successfully in the system and forwarded to : ");
         setAssessmentNoMessage(" for notice generation for the property : ");

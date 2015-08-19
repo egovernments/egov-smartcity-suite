@@ -1789,7 +1789,7 @@ public class PropertyTaxUtil {
         if (name.length() < 6)
             userName = String.format("%-6s", name).replace(' ', '0');
         else
-            userName = name.substring(0, 5).replace(' ', '0');
+            userName = name.substring(0, 6).replace(' ', '0');
         userNameBuilder.append(userName).append(RandomStringUtils.randomNumeric(4));
         return userNameBuilder.toString();
     }
