@@ -76,11 +76,11 @@ public class WaterRatesDetails extends AbstractPersistable<Long> {
 
     private Long endingUnits;
 
-    private double unitRate;
+    private Double unitRate;
 
-    private double minimumRate;
+    private Double minimumRate;
 
-    private double monthlyRate;
+    private Double monthlyRate;
 
     @NotNull
     @Temporal(value = TemporalType.DATE)
@@ -123,30 +123,6 @@ public class WaterRatesDetails extends AbstractPersistable<Long> {
         this.endingUnits = endingUnits;
     }
 
-    public double getUnitRate() {
-        return unitRate;
-    }
-
-    public void setUnitRate(final double unitRate) {
-        this.unitRate = unitRate;
-    }
-
-    public double getMinimumRate() {
-        return minimumRate;
-    }
-
-    public void setMinimumRate(final double minimumRate) {
-        this.minimumRate = minimumRate;
-    }
-
-    public double getMonthlyRate() {
-        return monthlyRate;
-    }
-
-    public void setMonthlyRate(final double monthlyRate) {
-        this.monthlyRate = monthlyRate;
-    }
-
     public Date getFromDate() {
         return fromDate;
     }
@@ -161,6 +137,30 @@ public class WaterRatesDetails extends AbstractPersistable<Long> {
 
     public void setToDate(final Date toDate) {
         this.toDate = toDate;
+    }
+
+    public Double getUnitRate() {
+        return unitRate;
+    }
+
+    public void setUnitRate(final Double unitRate) {
+        this.unitRate = unitRate;
+    }
+
+    public Double getMinimumRate() {
+        return minimumRate;
+    }
+
+    public void setMinimumRate(final Double minimumRate) {
+        this.minimumRate = minimumRate;
+    }
+
+    public Double getMonthlyRate() {
+        return monthlyRate;
+    }
+
+    public void setMonthlyRate(final Double monthlyRate) {
+        this.monthlyRate = monthlyRate;
     }
 
 }

@@ -53,9 +53,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WaterRatesDetailsRepository extends JpaRepository<WaterRatesDetails, Long> {
 
-	List<WaterRatesDetails> findAllByWaterRatesHeader(WaterRatesHeader waterRatesHeader);
-	
-	 @Query("select A from WaterRatesDetails A where A.waterRatesHeader.connectionType=:connectionType and A.waterRatesHeader.usageType=:usageType and A.startingUnits <= :noofunits and A.endingUnits >= :noofunits and A.waterRatesHeader.active=true")
-	List< WaterRatesDetails> findByWaterRate(@Param("connectionType")ConnectionType connectionType,@Param("usageType") UsageType usageType, @Param("noofunits") Long noofunits);
-	
+    List<WaterRatesDetails> findAllByWaterRatesHeader(WaterRatesHeader waterRatesHeader);
+
+    @Query("select A from WaterRatesDetails A where A.waterRatesHeader.connectionType=:connectionType and A.waterRatesHeader.usageType=:usageType and A.startingUnits <= :noofunits and A.endingUnits >= :noofunits and A.waterRatesHeader.active=true")
+    List<WaterRatesDetails> findByWaterRate(@Param("connectionType") ConnectionType connectionType,
+            @Param("usageType") UsageType usageType, @Param("noofunits") Long noofunits);
+
+    WaterRatesDetails findByWaterRatesHeader(WaterRatesHeader waterRatesHeader);
 }

@@ -41,6 +41,7 @@ package org.egov.wtms.masters.service;
 
 import java.util.List;
 
+import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterRatesHeader;
 import org.egov.wtms.masters.entity.WaterSource;
@@ -73,7 +74,7 @@ public class WaterRatesHeaderService {
 
     @Transactional
     public void updateWaterRatesHeader(final WaterRatesHeader waterRatesHeader) {
-    	waterRatesHeaderRepository.save(waterRatesHeader);
+        waterRatesHeaderRepository.save(waterRatesHeader);
     }
 
     public List<WaterRatesHeader> findAll() {
@@ -87,13 +88,19 @@ public class WaterRatesHeaderService {
     public List<WaterRatesHeader> findAllByUsageType(final UsageType usageType) {
         return waterRatesHeaderRepository.findAllByUsageType(usageType);
     }
-    
+
     public List<WaterRatesHeader> findAllByWaterSource(final WaterSource waterSource) {
         return waterRatesHeaderRepository.findAllByWaterSource(waterSource);
     }
 
     public WaterRatesHeader load(final Long id) {
         return waterRatesHeaderRepository.getOne(id);
+    }
+
+    public WaterRatesHeader findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(final ConnectionType connectionType,
+            final UsageType usageType, final WaterSource waterSource, final PipeSize pipeSize) {
+        return waterRatesHeaderRepository.findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(connectionType, usageType,
+                waterSource, pipeSize);
     }
 
 }

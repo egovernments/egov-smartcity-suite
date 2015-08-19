@@ -60,8 +60,10 @@ import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -74,8 +76,12 @@ import org.egov.wtms.application.rest.WaterTaxDue;
 import org.egov.wtms.application.service.collection.ConnectionBillService;
 import org.egov.wtms.application.service.collection.WaterConnectionBillable;
 import org.egov.wtms.masters.entity.DonationDetails;
+import org.egov.wtms.masters.entity.WaterRatesDetails;
+import org.egov.wtms.masters.entity.WaterRatesHeader;
 import org.egov.wtms.masters.service.DonationDetailsService;
 import org.egov.wtms.masters.service.DonationHeaderService;
+import org.egov.wtms.masters.service.WaterRatesDetailsService;
+import org.egov.wtms.masters.service.WaterRatesHeaderService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Query;
@@ -124,6 +130,12 @@ public class ConnectionDemandService {
     @Autowired
     private WaterConnectionDetailsRepository waterConnectionDetailsRepository;
 
+    @Autowired
+    private WaterRatesDetailsService waterRatesDetailsService;
+
+    @Autowired
+    private WaterRatesHeaderService waterRatesHeaderService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -144,7 +156,7 @@ public class ConnectionDemandService {
         if (donationDetails != null) {
             feeDetails.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, donationDetails.getAmount());
             waterConnectionDetails.setDonationCharges(donationDetails.getAmount());
-        } 
+        }
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), new Date(), WaterTaxConstants.YEARLY);
         // Not updating demand amount collected for new connection as per the discussion.
@@ -347,7 +359,7 @@ public class ConnectionDemandService {
         waterConnectionBillable.setUserId(EgovThreadLocals.getUserId());
         waterConnectionBillable.setReferenceNumber(
                 generateBillNumber(assessmentDetails.getBoundaryDetails().getWardNumber().toString()));
-        waterConnectionBillable.setBillType(getBillTypeByCode(WaterTaxConstants.BILLTYPE_MANUAL));
+        waterConnectionBillable.setBillType(getBillTypeByCode(WaterTaxConstants.BILLTYPE_AUTO));
 
         final String billXml = connectionBillService.getBillXML(waterConnectionBillable);
         collectXML = URLEncoder.encode(billXml);
@@ -389,6 +401,37 @@ public class ConnectionDemandService {
         demandObj.getEgDemandDetails().addAll(dmdDetailSet);
         demandObj.setModifiedDate(new Date());
         waterConnectionDetails.setDemand(demandObj);
+        return waterConnectionDetails;
+    }
+
+    public WaterConnectionDetails updateDemandForNonmeteredConnection(final WaterConnectionDetails waterConnectionDetails) {
+        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(
+                moduleService.getModuleByName(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE), new Date());
+        double totalWaterRate = 0;
+        final WaterRatesHeader waterRatesHeader = waterRatesHeaderService
+                .findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(
+                        waterConnectionDetails.getConnectionType(), waterConnectionDetails.getUsageType(),
+                        waterConnectionDetails.getWaterSource(), waterConnectionDetails.getPipeSize());
+        final WaterRatesDetails waterRatesDetails = waterRatesDetailsService
+                .findByWaterRatesHeader(waterRatesHeader);
+        final int noofmonths = DateUtils.noOfMonths(new Date(), installment.getToDate());
+        if (null != waterRatesDetails) {
+            if (noofmonths > 0)
+                totalWaterRate = waterRatesDetails.getMonthlyRate() * (noofmonths + 1);
+            else
+                totalWaterRate = waterRatesDetails.getMonthlyRate();
+
+            final EgDemand demand = waterConnectionDetails.getDemand();
+            final EgDemandDetails demandDetails = createDemandDetails(totalWaterRate, WaterTaxConstants.WATERTAXREASONCODE,
+                    installment);
+            demand.setBaseDemand(BigDecimal.valueOf(totalWaterRate));
+            demand.setEgInstallmentMaster(installment);
+            demand.getEgDemandDetails().add(demandDetails);
+            demand.setModifiedDate(new Date());
+            waterConnectionDetails.setDemand(demand);
+
+        } else
+            throw new EGOVRuntimeException("err.water.rate.not.found");
         return waterConnectionDetails;
     }
 }

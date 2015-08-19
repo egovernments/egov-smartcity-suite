@@ -41,6 +41,7 @@ package org.egov.wtms.masters.repository;
 
 import java.util.List;
 
+import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterRatesHeader;
 import org.egov.wtms.masters.entity.WaterSource;
@@ -51,10 +52,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WaterRatesHeaderRepository extends JpaRepository<WaterRatesHeader, Long> {
 
-	List<WaterRatesHeader> findAllByConnectionType(ConnectionType connectionType);
+    List<WaterRatesHeader> findAllByConnectionType(ConnectionType connectionType);
 
     List<WaterRatesHeader> findAllByUsageType(UsageType usageType);
 
     List<WaterRatesHeader> findAllByWaterSource(WaterSource waterSource);
 
+    WaterRatesHeader findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(ConnectionType connectionType, UsageType usageType,
+            WaterSource waterSource,
+            PipeSize pipeSize);
 }

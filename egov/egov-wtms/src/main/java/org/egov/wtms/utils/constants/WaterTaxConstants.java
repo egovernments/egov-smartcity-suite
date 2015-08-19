@@ -143,4 +143,5 @@ public class WaterTaxConstants {
 
     public static final String WATERTAXREASONCODE = "WTAXCHARGES";
     public static final String WF_ESTIMATION_NOTICE_BUTTON = "Generate Estimation Notice";
+    public static final String WATER_RATES_NONMETERED_PTMODULE = "Property Tax";
 }

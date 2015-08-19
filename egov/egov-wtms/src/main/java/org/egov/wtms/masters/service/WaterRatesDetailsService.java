@@ -71,7 +71,7 @@ public class WaterRatesDetailsService {
 
     @Transactional
     public void updateWaterRatesDetails(final WaterRatesDetails waterRatesDetails) {
-    	waterRatesDetailsRepository.save(waterRatesDetails);
+        waterRatesDetailsRepository.save(waterRatesDetails);
     }
 
     public List<WaterRatesDetails> findAll() {
@@ -84,5 +84,9 @@ public class WaterRatesDetailsService {
 
     public WaterRatesDetails load(final Long id) {
         return waterRatesDetailsRepository.getOne(id);
+    }
+
+    public WaterRatesDetails findByWaterRatesHeader(final WaterRatesHeader waterRatesHeader) {
+        return waterRatesDetailsRepository.findByWaterRatesHeader(waterRatesHeader);
     }
 }
