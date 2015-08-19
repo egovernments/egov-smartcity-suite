@@ -1038,5 +1038,6 @@ public interface PropertyTaxConstants {
     public static final String PROPERTYTAX_ROLEFORNONEMPLOYEE = "PROPERTYTAXROLEFORNONEMPLOYEE";
     public static final String APPLICATION_TYPE_REVISION_PETITION = "Revision Petition";
     
-    public static final String TRANSFER_OF_OWNER_APPROVED_STATUS="Commissioner Approved";
+    //Action targets
+    public static final String TARGET_WORKFLOW_ERROR = "workFlowError";
 }

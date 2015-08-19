@@ -750,13 +750,13 @@
 									</tr>
 									</table>
 								</s:if>
-								<s:if test="%{getMutationRcpts() != null && !mutationRcpts().isEmpty()}">
+								<s:if test="%{getMutationRcpts() != null && !getMutationRcpts().isEmpty()}">
 									<table width="100%" border="0" align="center" cellpadding="0"
 												cellspacing="0" class="tablebottom">
 									<tr>
 										<td align="center">
 											<div class="headingsmallbg">
-												<s:text name="tationFeeRcptHeader" />
+												<s:text name="mutationFeeRcptHeader" />
 											</div>
 										</td>
 									</tr>
@@ -778,7 +778,7 @@
 													</th>
 												</tr>
 		
-												<s:iterator value="mutationRcpts()" var="rcpt">
+												<s:iterator value="getMutationRcpts()" var="rcpt">
 		
 													<tr>
 														<td class="blueborderfortd">

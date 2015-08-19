@@ -44,12 +44,13 @@ import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 //import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.service.bill.BillService;
-import org.quartz.StatefulJob;
+import org.quartz.DisallowConcurrentExecution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SuppressWarnings("unchecked")
+@DisallowConcurrentExecution
 public class BulkBillGenerationJob extends AbstractQuartzJob  {
 
     private static final Logger LOGGER = Logger

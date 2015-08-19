@@ -53,7 +53,8 @@
 				<ref bean="bulkBillGenerationCronTrigger1" />
 				<ref bean="bulkBillGenerationCronTrigger2" />
 				<ref bean="bulkBillGenerationCronTrigger3" />
-				<ref bean="bulkBillGenerationCronTrigger4" />		
+				<ref bean="bulkBillGenerationCronTrigger4" />
+				<ref bean="demandActivationJobTrigger"/>
 	    	</list>
 		</property>	
 		<property name="applicationContextSchedulerContextKey" value="applicationQuartzContext-ptis" /> 
@@ -228,5 +229,38 @@
     </bean>
      
      <!-- END bulkBillGenerationJobScheduler4 --> 
+     
+     <!-- description for DemandActivationJob -->
+ 	 
+  <bean name="demandActivationJobScheduler" id="demandActivationJobScheduler" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+		<property name="group" value="PTIS_DEMAND_ACTIVATION_JOB_GROUP"/>
+		<property name="name" value="PTISDemandActivationJob"/>
+		<property name="jobClass" value="org.egov.ptis.scheduler.DemandActivationJob"/>
+        <property name="requestsRecovery" value="false"/>
+		<property name="jobDataAsMap">
+            <map>
+                <entry key="jobBeanName" value="demandActivationJob"/>
+				<entry key="userName" value="egovernments"/>
+				<entry key="transactional"  value="true" />
+				<entry key="moduleName" value="ptis"/>
+            </map>
+        </property>   	
+	</bean>
+	
+	<bean id="demandActivationJob" class="org.egov.ptis.scheduler.DemandActivationJob" lazy-init="true" scope="prototype">
+        <property name="basicPrpertyService" ref="basicPropertyService" />      
+    </bean>
+    
+    <!-- This job will be triggered everyday at 12:15AM -->
+    
+    <bean id="demandActivationJobTrigger" name="demandActivationJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="demandActivationJobScheduler" />
+        <property name="group" value="PTIS_DEMAND_ACTIVATION_JOB_GROUP"/>
+		<property name="name" value="PTISDemandActivationJob"/>
+        <property name="cronExpression" value="0 15 0 * * ?" />
+		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
+    </bean>
+     
+    <!-- END DemandActivationJob -->
 </beans>
 

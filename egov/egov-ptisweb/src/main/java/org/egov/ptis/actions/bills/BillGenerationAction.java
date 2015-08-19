@@ -234,6 +234,9 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
 		LOGGER.debug("generateBill: ReportId: " + reportId);
 		LOGGER.debug("Exit from generateBill");
+			if (property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
+				property.setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
+			}
     	  } catch (final Exception e) {
     	      throw new EGOVRuntimeException("Bill Generation Exception : " + e);
     	  }

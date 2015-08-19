@@ -86,6 +86,7 @@ import org.egov.infstr.utils.MoneyUtils;
 import org.egov.ptis.client.service.CollectionApportioner;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -303,7 +304,10 @@ public class PropertyTaxCollection extends TaxCollection {
                 }
             }
         }
-
+		// Activating the demand on payment
+		if (((Ptdemand) demand).getEgptProperty().getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
+			((Ptdemand) demand).getEgptProperty().setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
+		}
         LOGGER.debug("Exiting method saveCollectionDetails");
     }
 
@@ -674,7 +678,8 @@ public class PropertyTaxCollection extends TaxCollection {
         EgBill egBill = (EgBill) egBillDAO.findById(billId, false);
 
         String query = "SELECT ptd FROM Ptdemand ptd " + "WHERE ptd.egInstallmentMaster = ? "
-                + "AND ptd.egptProperty.basicProperty.upicNo = ? " + "AND ptd.egptProperty.status = 'A' "
+                + "AND ptd.egptProperty.basicProperty.upicNo = ? " 
+        		+ "AND (ptd.egptProperty.status = 'I' OR ptd.egptProperty.status = 'A') "
                 + "AND ptd.egptProperty.basicProperty.active = true";
 
 		EgDemand egDemand = (EgDemand) persistenceService.find(query, PropertyTaxUtil.getCurrentInstallment(),

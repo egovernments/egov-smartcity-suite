@@ -106,7 +106,7 @@
 				</s:if>
 				
 				<br>	
-				<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase())}">
+				<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
 					<s:if test="%{isDemandActive}">
 						<input type="button" class="buttonsubmit" name="btnModifyProperty" id="btnModifyProperty" value="Addition/Alteration of Assessment"
 							onclick="window.location='../modify/modifyProperty-modifyForm.action?modifyRsn=MODIFY&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
@@ -114,30 +114,23 @@
 							onclick="window.location='../modify/modifyProperty-modifyForm.action?modifyRsn=BIFURCATE&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
 						<input type="button" class="buttonsubmit" name="btnTrnsProperty" id="btnTrnsProperty" value="Transfer Ownership"
 							onclick="window.location='../property/transfer/new.action?assessmentNo=<s:property value="%{basicProperty.upicNo}" />';" />
-						<input type="button" name="generateBill" id="generateBill" value="Generate Bill" class="buttonsubmit"
-							onclick="window.location='../bills/billGeneration-generateBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
 					</s:if>
-					<%-- <s:else> --%>
-						<input type="button" class="buttonsubmit" name="objection" id="objection"
-							value="Create Revision Petition"
+					<s:else>
+						<input type="button" class="buttonsubmit" name="objection" id="objection" value="Create Revision Petition"
 							onclick="window.location='../revPetition/revPetition-newForm.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
-					<%-- </s:else> --%>
+					</s:else>
+					<input type="button" name="generateBill" id="generateBill" value="Generate Bill" class="buttonsubmit"
+						onclick="window.location='../bills/billGeneration-generateBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
 				</s:if>		
-									
+				<br/><br/> <!-- common buttons starts here -->				
+				<input type="button" class="buttonsubmit" name="btnViewDCB" id="btnViewDCB" value="View DCB"
+					onclick="window.location='../view/viewDCBProperty-displayPropInfo.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
 				<input type="button" class="buttonsubmit" name="SearchProperty"
 					id="SearchProperty" value="Search Property" onclick="window.location='../search/searchProperty-searchForm.action';" />
-				<input type="button" class="buttonsubmit" name="btnViewDCB"
-					id="btnViewDCB" value="View DCB"
-					onclick="window.location='../view/viewDCBProperty-displayPropInfo.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
-				<input type="button" class="buttonsubmit" name="revPetition"
-					id="revPetition" value="Create Revision Petition"
-					onclick="window.location='../revPetition/revPetition-newForm.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
-			    <input type="button" name="btnPrint" id="btnPrint" value="Print"
-					class="buttonsubmit" onclick="window.print();" />
-				<input type="button" name="button2" id="button2" value="Close"
-					class="button" onclick="window.close();" />
-				<s:hidden label="upicNo" id="upicNo" name="upicNo"
-					value="%{basicProperty.upicNo}" />
+			    <input type="button" name="btnPrint" id="btnPrint" value="Print" class="buttonsubmit" onclick="window.print();" />
+				<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
+				<s:hidden label="upicNo" id="upicNo" name="upicNo" value="%{basicProperty.upicNo}" />
+				<!-- common buttons ends here -->
 				</div>				
 			</div>
 		</s:form>

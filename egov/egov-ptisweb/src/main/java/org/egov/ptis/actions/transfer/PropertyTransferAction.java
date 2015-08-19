@@ -41,11 +41,11 @@ package org.egov.ptis.actions.transfer;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_READY_FOR_PAYMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
@@ -104,7 +104,7 @@ import com.opensymphony.xwork2.ActionContext;
     @Result(name = BaseFormAction.NEW, location = "transfer/transferProperty-new.jsp"),
     @Result(name = BaseFormAction.EDIT, location = "transfer/transferProperty-edit.jsp"),
     @Result(name = BaseFormAction.VIEW, location = "transfer/transferProperty-view.jsp"),
-    @Result(name = PropertyTransferAction.WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
+    @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
     @Result(name = PropertyTransferAction.ACK, location = "transfer/transferProperty-ack.jsp"),
     @Result(name = PropertyTransferAction.REJECT_ON_TAXDUE, location = "transfer/transferProperty-balance.jsp"),
     @Result(name = PropertyTransferAction.PRINTACK, location = "transfer/transferProperty-printAck.jsp"),
@@ -120,7 +120,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private static final long serialVersionUID = 1L;
     public static final String ACK = "ack";
     public static final String SEARCH = "search";
-    public static final String WORKFLOW_ERROR = "workFlowError";
     public static final String REJECT_ON_TAXDUE = "balance";
     public static final String PRINTACK = "printAck";
     public static final String PRINTNOTICE = "printNotice";
@@ -182,23 +181,19 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     @SkipValidation
     @Action(value = "/new")
-    public String showNewTransferForm() {
-        if (basicproperty.isUnderWorkflow()) {
-            wfErrorMsg = "Could not do property transfer now, property is undergoing some workflow.";
-            return WORKFLOW_ERROR;
-        } /*
-           * else if(propertyMutation != null) { wfErrorMsg =
-           * "Transfer of ownership is already initiated for the property";
-           * return WORKFLOW_ERROR; }
-           */else {
-            currentWaterTaxDue = propertyService.getWaterTaxDues(assessmentNo);
-            if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
-                setTaxDueErrorMsg(getText("taxdues.error.msg", new String[] { PROPERTY_TRANSFER }));
-                return REJECT_ON_TAXDUE;
-            } else
-                return NEW;
-        }
-    }
+	public String showNewTransferForm() {
+		if (basicproperty.isUnderWorkflow()) {
+			wfErrorMsg = getText("wf.pending.msg", "Transfer of Ownership");
+			return TARGET_WORKFLOW_ERROR;
+		} else {
+			currentWaterTaxDue = propertyService.getWaterTaxDues(assessmentNo);
+			if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
+				setTaxDueErrorMsg(getText("taxdues.error.msg", new String[] { PROPERTY_TRANSFER }));
+				return REJECT_ON_TAXDUE;
+			} else
+				return NEW;
+		}
+	}
 
     @ValidationErrorPage(value = NEW)
     @Action(value = "/save")

@@ -51,7 +51,7 @@
 				} else if (selectedValue=='Bifurcation') {
 					window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=BIFURCATE&indexNumber="+assessmentNum;
 				} else if (selectedValue == 'RevisionPetition') {
-					window.location = "../revPetition/revPetition-newForm.action?indexNumber=" + assessmentNum;
+					window.location = "../revPetition/revPetition-newForm.action?propertyId=" + assessmentNum;
 				} else if (selectedValue == 'CollectTax') {
 					window.location = "/../ptis/collection/collectPropertyTax-generateBill.action?propertyId=" + assessmentNum;
 				}

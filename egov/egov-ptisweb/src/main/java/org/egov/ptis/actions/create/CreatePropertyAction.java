@@ -59,7 +59,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_DEMAND_INACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
@@ -294,7 +294,8 @@ public class CreatePropertyAction extends WorkflowAction {
                 + taxExemptedReason + ", propTypeId: " + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: "
                 + propOccId);
         final long startTimeMillis = System.currentTimeMillis();
-        final BasicProperty basicProperty = createBasicProp(STATUS_ISACTIVE);
+        final BasicProperty basicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);
+        basicProperty.setUnderWorkflow(Boolean.TRUE);
         LOGGER.debug("create: BasicProperty after creatation: " + basicProperty);
         basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
         processAndStoreDocumentsWithReason(basicProperty, DOCS_CREATE_PROPERTY);
@@ -504,10 +505,9 @@ public class CreatePropertyAction extends WorkflowAction {
         LOGGER.debug("approve: Property approval started");
         LOGGER.debug("approve: Property: " + property);
         LOGGER.debug("approve: BasicProperty: " + basicProp);
-        property.setStatus(STATUS_ISACTIVE);
+        property.setStatus(STATUS_DEMAND_INACTIVE);
         final String assessmentNo = propertyTaxNumberGenerator.generateAssessmentNumber();
         basicProp.setUpicNo(assessmentNo);
-        basicProp.setUnderWorkflow(false);
         final PropertyStatus propStatus = (PropertyStatus) getPersistenceService().find(
                 "from PropertyStatus where statusCode=?", PROPERTY_STATUS_APPROVED);
         basicProp.setStatus(propStatus);

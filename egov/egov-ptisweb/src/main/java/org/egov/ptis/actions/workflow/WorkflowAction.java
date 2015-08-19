@@ -49,16 +49,12 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.eis.service.EisCommonService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.client.workflow.WorkflowDetails;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Namespace("/workflow")
 @ResultPath("/WEB-INF/jsp/")

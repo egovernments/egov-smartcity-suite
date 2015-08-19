@@ -352,7 +352,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		for (PropertyMutation propMutation : basicProperty.getPropertyMutations()) {
 			receipt = new Receipt();
 			receipt.setReceiptNumber(propMutation.getReceiptNum());
-			receipt.setReceiptAmt(propMutation.getMarketValue());
+			receipt.setReceiptAmt(propMutation.getMutationFee());
 			receipt.setReceiptDate(propMutation.getReceiptDate());
 			mutationRcpts.add(receipt);
 		}

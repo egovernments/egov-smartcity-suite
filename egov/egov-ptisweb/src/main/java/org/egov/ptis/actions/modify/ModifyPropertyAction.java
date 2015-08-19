@@ -75,6 +75,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
@@ -149,7 +150,6 @@ import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.RoofType;
-import org.egov.ptis.domain.entity.property.TaxExeptionReason;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
@@ -164,14 +164,13 @@ import org.springframework.beans.factory.annotation.Autowired;
     @Result(name = ModifyPropertyAction.EDIT, location = "modify/modifyProperty-new.jsp"),
     @Result(name = ModifyPropertyAction.NEW, location = "modify/modifyProperty-new.jsp"),
     @Result(name = ModifyPropertyAction.VIEW, location = "modify/modifyProperty-view.jsp"),
-    @Result(name = ModifyPropertyAction.WORK_FLOW_ERROR, location = "workflow/workflow-error.jsp"),
+    @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
     @Result(name = ModifyPropertyAction.BALANCE, location = "modify/modifyProperty-balance.jsp"),
     @Result(name = ModifyPropertyAction.PRINTACK, location = "modify/modifyProperty-printAck.jsp") })
 @Namespace("/modify")
 public class ModifyPropertyAction extends WorkflowAction {
     private static final String BIFURCATION = "Bifurcation";
     private final Logger LOGGER = Logger.getLogger(getClass());
-    protected static final String WORK_FLOW_ERROR = "workFlowError";
     protected static final String BALANCE = "balance";
     private static final long serialVersionUID = 1L;
     protected static final String RESULT_ACK = "ack";
@@ -314,8 +313,8 @@ public class ModifyPropertyAction extends WorkflowAction {
         String target = "";
         PropertyImpl propertyImpl = null;
         if (basicProp.isUnderWorkflow() && !fromInbox) {
-            setWfErrorMsg("This Property Under Work flow. Please finish pending work flow before do any transactions on it.");
-            target = WORK_FLOW_ERROR;
+            setWfErrorMsg(getText("wf.pending.msg", "Property Alter/Addition"));
+            target = TARGET_WORKFLOW_ERROR;
         } else {
             if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn) && !fromInbox) {
                 final Map<String, BigDecimal> propertyTaxDetails = propService.getCurrentPropertyTaxDetails(basicProp
