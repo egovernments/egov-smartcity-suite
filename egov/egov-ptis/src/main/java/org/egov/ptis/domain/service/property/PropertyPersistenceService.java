@@ -48,7 +48,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                     newOwner.setName(ownerInfo.getOwner().getName());
                     newOwner.setSalutation(ownerInfo.getOwner().getSalutation());
                     newOwner.setPassword("NOT SET");
-                    newOwner.setUsername(ownerInfo.getOwner().getMobileNumber());
+                    newOwner.setUsername(propertyTaxUtil.generateUserName(ownerInfo.getOwner().getName()));
                     userService.createUser(newOwner);
                     ownerInfo.setBasicProperty(basicProperty);
                     ownerInfo.setOwner(newOwner);

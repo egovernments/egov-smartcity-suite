@@ -68,15 +68,15 @@
 										   <s:textfield name="transfereeInfos[0].aadhaarNumber" size="12" maxlength="12" value=""  data-idx="0" onblur="getAadharDetailsForTransferee(this);" cssClass="txtaadhar"></s:textfield>
 										</td>
 										 <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[0].mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="" 
-								        		onblur="validNumber(this);checkZero(this,'Mobile Number');"/>
+								        	<s:textfield name="transfereeInfos[0].mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="" data-optional="0" data-errormsg="Mobile no is mandatory!"
+								        		onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');"/>
 								        </td>
 										<td class="blueborderfortd" align="center">
 								            <s:select name="transfereeInfos[0].salutation" id="transfereeInfos[0].salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }" value="%{transfereeInfos[0].salutation}"
 				                             cssClass="selectwk"></s:select>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[0].name" maxlength="100" size="20" id="ownerName"  value="" 
+								        	<s:textfield name="transfereeInfos[0].name" maxlength="100" size="20" id="ownerName"  value=""  data-optional="0" data-errormsg="Owner name is mandatory!"
 								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
@@ -109,15 +109,15 @@
 										   <s:textfield name="transfereeInfos[%{#status.index}].aadhaarNumber" data-idx="%{#status.index}" onblur="getAadharDetailsForTransferee(this);" cssClass="txtaadhar" size="12" maxlength="12"></s:textfield>
 										</td>
 										<td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].mobileNumber" maxlength="10" size="20"
-								        		onblur="validNumber(this);checkZero(this,'Mobile Number');"/>
+								        	<s:textfield name="transfereeInfos[%{#status.index}].mobileNumber" maxlength="10" size="20" data-optional="0" data-errormsg="Mobile no is mandatory!"
+								        		onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');"/>
 								        </td>
 										<td class="blueborderfortd" align="center">
 								        	<s:select name="transfereeInfos[%{#status.index}].salutation" id="transfereeInfos[%{#status.index}].salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }"
 				                                   cssClass="selectwk"></s:select>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].name" maxlength="100" size="20"
+								        	<s:textfield name="transfereeInfos[%{#status.index}].name" maxlength="100" size="20" data-optional="0" data-errormsg="Owner name is mandatory!"
 								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
@@ -200,4 +200,28 @@
 				   }
 				});
 	       }
+
+          function getUserDetailsForMobileNo(obj) {
+       	   var mobileNo = jQuery(obj).val();
+       	   var rowidx= jQuery(obj).data('idx');
+       	   console.log('calling :) ->'+rowidx + ' ->'+ mobileNo);
+       	   jQuery.ajax({
+   				type: "GET",
+   				url: "/ptis/common/ajaxCommon-getUserByMobileNo.action",
+   				cache: true,
+   				dataType: "json",
+   				data:{"mobileNumber" : mobileNo},
+   			}).done(function(response) {
+   				if(response.exists) {
+   					jQuery("input[name='transfereeInfos["+ rowidx +"].owner.name']").val(response.name);
+   					jQuery("select[name='transfereeInfos["+ rowidx +"].gender']").val(response.gender);
+   					jQuery("input[name='transfereeInfos["+ rowidx +"].mobileNumber']").val(response.mobileNumber);
+   					jQuery("select[name='transfereeInfos["+ rowidx +"].salutation']").val(response.salutaion);
+   					jQuery("input[name='transfereeInfos["+ rowidx +"].emailId").val(response.email);
+   					jQuery("select[name='transfereeInfos["+ rowidx +"].guardianRelation']").val(response.guardianRelarion);
+   					jQuery("input[name='transfereeInfos["+ rowidx +"].guardian']").val(response.guardian);
+   			    }
+              });
+          }
+	       
 	</script>

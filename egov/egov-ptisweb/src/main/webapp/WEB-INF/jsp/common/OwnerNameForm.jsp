@@ -72,7 +72,6 @@
         <td class="blueborderfortd" align="center"><s:select id="gender" name="basicProperty.propertyOwnerInfoProxy[0].owner.gender" value="%{basicProperty.propertyOwnerInfoProxy[0].owner.gender}"
 				headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()" cssClass="selectwk">
 		</s:select></td>
-        </td>
         <td class="blueborderfortd" align="center">
         	<s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.emailId" maxlength="64" size="20" id="emailId"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.emailId}" 
         		onblur="trim(this,this.value);validateEmail(this);"/>

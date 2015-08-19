@@ -68,7 +68,7 @@
 	     console.log(aadhartextboxes);
 	     aadhartextboxes.each(function() {
 		   	if(jQuery(this).val())
-		   	{
+		   	{  
 			   	getAadharDetailsForTransferee(this);
 		   	}
 		 });

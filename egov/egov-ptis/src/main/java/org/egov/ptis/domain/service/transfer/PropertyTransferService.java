@@ -317,7 +317,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
             if (transferee.isNew()) {
                 User user = null;
                 getSession().setFlushMode(FlushMode.MANUAL);
-                if (null != transferee.getAadhaarNumber())
+                if (null != transferee.getAadhaarNumber() && !transferee.getAadhaarNumber().isEmpty())
                     user = userService.getUserByAadhaarNumberAndType(transferee.getAadhaarNumber(),
                             transferee.getType());
                 else
@@ -336,7 +336,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
                         newOwner.setSalutation(transferee.getSalutation());
                         newOwner.setName(transferee.getName());
                         newOwner.setPassword("NOTSET");
-                        newOwner.setUsername(transferee.getMobileNumber());
+                        newOwner.setUsername(propertyTaxUtil.generateUserName(transferee.getName()));
                         newOwners.add(newOwner);
                     }
                 } else
