@@ -60,7 +60,7 @@
 			</table>
 		</div>
 		<div class="buttonbottom" align="center">
-			<input type="button" class="button" name="SearchProperty" id="SearchProperty" value="Search Property" onclick="window.location='../search/searchProperty-searchForm.action';" />
+			<input type="button" class="button" name="SearchProperty" id="SearchProperty" value="Search Property" onclick="window.location='${pageContext.request.contextPath}/search/searchProperty-searchForm.action';" />
 			<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
 		</div>
 	</body>
