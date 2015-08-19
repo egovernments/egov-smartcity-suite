@@ -1145,6 +1145,26 @@ ul.nav-tabs>li.active>a:after {
 	z-index:1010;
 	width:200px;
 }
+
+.icon-inputgroup.input-group .form-control:first-child
+{ 
+  border-radius: 4px;
+}
+
+.icon-inputgroup .input-group-btn:last-child > .btn
+{
+	border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    padding: 0;
+    margin-left: 5px;
+}
+
+.icon-inputgroup .input-group-btn:last-child > .btn:not(:last-child):not(.dropdown-toggle)
+{
+	border-radius: 50%;
+}
+
 /******end of dinesh******/
 
 .table > thead > tr > th:hover{
