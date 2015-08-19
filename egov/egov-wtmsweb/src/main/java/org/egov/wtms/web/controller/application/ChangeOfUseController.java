@@ -90,7 +90,7 @@ public class ChangeOfUseController extends GenericConnectionController {
     public String showForm(@ModelAttribute final WaterConnectionDetails changeOfUse, final Model model,
             @PathVariable final String consumerCode) {
         parentConnectionDetails = waterConnectionDetailsService
-                .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
+                .getParentConnectionDetails(consumerCode, ConnectionStatus.ACTIVE);
         if (parentConnectionDetails == null) {
             // TODO - error handling
         } else

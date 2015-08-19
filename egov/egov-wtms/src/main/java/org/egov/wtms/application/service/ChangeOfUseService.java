@@ -44,7 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class AdditionalConnectionService {
+public class ChangeOfUseService {
 
     @Autowired
     private WaterConnectionDetailsRepository waterConnectionDetailsRepository;
@@ -58,9 +58,9 @@ public class AdditionalConnectionService {
     @Autowired
     private WaterTaxUtils waterTaxUtils;
 
-    public static final String ADDCONNALLOWEDIFWTDUE = "ADDCONNECTIONALLOWEDIFWTDUE";
+    public static final String CHANGEOFUSEALLOWEDIFWTDUE = "CHANGEOFUSEALLOWEDIFWTDUE";
 
-    public String validateAdditionalConnection(final WaterConnectionDetails parentWaterConnectionDetail) {
+    public String validateAdditionalConnection(final WaterConnectionDetails parentWaterConnectionDetail,final WaterConnectionDetails changeOfUse) {
         String validationMessage = "";
         final String propertyID = parentWaterConnectionDetail.getConnection().getPropertyIdentifier();
         final WaterConnectionDetails inWorkflow = waterConnectionDetailsRepository
@@ -80,12 +80,12 @@ public class AdditionalConnectionService {
                 && null != assessmentDetails.getPropertyDetails().getTaxDue()
                 && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0) {
             if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
-                validationMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
+                validationMessage = messageSource.getMessage("err.validate.changeofuse.property.taxdue", new String[] {
                         assessmentDetails.getPropertyDetails().getTaxDue().toString(),
-                        parentWaterConnectionDetail.getConnection().getPropertyIdentifier(),"additional" }, null);
+                        parentWaterConnectionDetail.getConnection().getPropertyIdentifier() }, null);
         } else if (parentWaterConnectionDetail.getDemand().getBaseDemand().doubleValue()
                 - parentWaterConnectionDetail.getDemand().getAmtCollected().doubleValue() > 0) {
-            if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(ADDCONNALLOWEDIFWTDUE))
+            if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE))
                 validationMessage = messageSource
                 .getMessage("err.validate.primary.connection.watertax.due", null, null);
         } else if (null != inWorkflow)
@@ -95,5 +95,4 @@ public class AdditionalConnectionService {
                             inWorkflow.getApplicationNumber() }, null);
         return validationMessage;
     }
-
 }
