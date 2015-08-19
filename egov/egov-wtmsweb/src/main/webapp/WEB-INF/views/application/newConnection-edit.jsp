@@ -45,7 +45,7 @@
 <form:form role="form" method="post" modelAttribute="waterConnectionDetails" 
 id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">				
 <div class="page-container" id="page-container">
-	<form:hidden id="mode" path=""  value="${mode}"/>
+	<form:hidden id="mode" path="" name="mode" value="${mode}"/> 
 	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
 	<form:hidden path="" id="statuscode" value="${waterConnectionDetails.egwStatus.code}"/>
 	<form:hidden path="" id="wfstate" value="${waterConnectionDetails.state.id}"/> 

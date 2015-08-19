@@ -116,7 +116,7 @@ $(document).ready(function()
 				 document.forms[0].submit();	
 			 }
 			 
-			 if(status=='CREATED' && action == 'Submit') {
+			 if(status=='CREATED' && action == 'Submit' && mode == 'fieldInspection') {
 				if($('#estimationCharges')) {
 					var estimationCharge = $('#estimationCharges').val();
 			    	if(estimationCharge <= 0) {
@@ -128,6 +128,17 @@ $(document).ready(function()
 				    	document.forms[0].submit();	
 			    	}
 				}	     	
+			 }
+			 else if(status=='CREATED' && action == 'Reject' && mode == 'fieldInspection') {
+				 $('#pipelineDistance').val(0);
+				  var approvalComent=$('#approvalComent').val();
+				  if(approvalComent == "") {
+					alert("Please enter rejection comments!");
+					$('#approvalComent').focus();
+					return false;
+				  }
+				 $('#Reject').attr('formnovalidate','true');
+				 document.forms[0].submit();	
 			 }
 			 else {
 			    document.getElementById("mode").value=mode;

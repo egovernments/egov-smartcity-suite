@@ -177,36 +177,50 @@ public class UpdateConnectionController extends GenericConnectionController {
     }
 
     @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+    public String update(@Valid @ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
 
-        if (waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED) &&
-                request.getParameter("workFlowAction") != null
-                && request.getParameter("workFlowAction").equals(WaterTaxConstants.SUBMITWORKFLOWACTION)) {
-            final ConnectionCategory connectionCategory = connectionCategoryService
-                    .findBy(waterConnectionDetails.getCategory().getId());
-            if (connectionCategory != null && !connectionCategory.getCode().equalsIgnoreCase(WaterTaxConstants.CATEGORY_BPL)
-                    && waterConnectionDetails.getBplCardHolderName() != null)
-                waterConnectionDetails.setBplCardHolderName(null);
-            populateEstimationDetails();
-            waterConnectionDetails.setDemand(connectionDemandService.createDemand(waterConnectionDetails));
-            // Attach any other file during field inspection and estimation
-            final Set<FileStoreMapper> fileStoreSet = addToFileStore(files);
-            Iterator<FileStoreMapper> fsIterator = null;
-            if (fileStoreSet != null && !fileStoreSet.isEmpty())
-                fsIterator = fileStoreSet.iterator();
-            if (fsIterator != null && fsIterator.hasNext())
-                waterConnectionDetails.setFileStore(fsIterator.next());
-        }
+        String mode = "";
+        String workFlowAction = "";
+
+        if (request.getParameter("mode") != null)
+            mode = request.getParameter("mode");
+
+        if (request.getParameter("workFlowAction") != null)
+            workFlowAction = request.getParameter("workFlowAction");
+
+        if (waterConnectionDetails.getEgwStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_CREATED) &&
+                mode.equalsIgnoreCase("fieldInspection"))
+            if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.SUBMITWORKFLOWACTION)) {
+                final ConnectionCategory connectionCategory = connectionCategoryService
+                        .findBy(waterConnectionDetails.getCategory().getId());
+                if (connectionCategory != null && !connectionCategory.getCode().equalsIgnoreCase(WaterTaxConstants.CATEGORY_BPL)
+                        && waterConnectionDetails.getBplCardHolderName() != null)
+                    waterConnectionDetails.setBplCardHolderName(null);
+
+                populateEstimationDetails();
+                waterConnectionDetails.setDemand(connectionDemandService.createDemand(waterConnectionDetails));
+
+                // Attach any other file during field inspection and estimation
+                final Set<FileStoreMapper> fileStoreSet = addToFileStore(files);
+                Iterator<FileStoreMapper> fsIterator = null;
+                if (fileStoreSet != null && !fileStoreSet.isEmpty())
+                    fsIterator = fileStoreSet.iterator();
+                if (fsIterator != null && fsIterator.hasNext())
+                    waterConnectionDetails.setFileStore(fsIterator.next());
+            } else if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WFLOW_ACTION_STEP_REJECT)) {
+                waterConnectionDetails = waterConnectionDetailsService.findBy(waterConnectionDetails.getId());
+                waterConnectionDetails.setFieldInspectionDetails(null);
+                waterConnectionDetails.setEstimationDetails(null);
+                waterConnectionDetails.setFileStore(null);
+            }
+
         Long approvalPosition = 0l;
         String approvalComent = "";
-        String workFlowAction = "";
 
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
-        if (request.getParameter("workFlowAction") != null)
-            workFlowAction = request.getParameter("workFlowAction");
 
         if (workFlowAction != null && workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION)
                 && waterConnectionDetails.getEgwStatus() != null
@@ -216,9 +230,6 @@ public class UpdateConnectionController extends GenericConnectionController {
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-        String mode = "";
-        if (request.getAttribute("mode") != null)
-            mode = request.getParameter("mode");
         if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
             approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(
                     waterConnectionDetails, approvalPosition, waterConnectionDetails.getApplicationType().getCode(), mode);
