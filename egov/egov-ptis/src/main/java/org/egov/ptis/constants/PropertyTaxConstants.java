@@ -989,7 +989,17 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_EXISTS = "Aadhaar number {0} already exists";
     public static final String THIRD_PARTY_ERR_CODE_MOBILE_NUMBER_EXISTS = "16";
     public static final String THIRD_PARTY_ERR_MSG_MOBILE_NUMBER_EXISTS = "Mobile number {0} already exists";
-    
+    public static final String THIRD_PARTY_ERR_CODE_REVISIONPETITION_RECEIVEDON = "17";
+    public static final String THIRD_PARTY_ERR_MSG_REVISIONPETITION_RECEIVEDON = "Revision petition received date required";
+    public static final String THIRD_PARTY_ERR_CODE_REVISIONPETITION_RECEIVEDBY = "18";
+    public static final String THIRD_PARTY_ERR_MSG_REVISIONPETITION_RECEIVEDBY = "Revision petition received user details required";
+    public static final String THIRD_PARTY_ERR_CODE_REVISIONPETITION_RECEIVEDDETAIL = "19";
+    public static final String THIRD_PARTY_ERR_MSG_REVISIONPETITION_RECEIVEDDETAIL = "Revision petition details are required";
+    public static final String THIRD_PARTY_ERR_CODE_REVISIONPETITION_ALREADYINWORKFLOW = "20";
+    public static final String THIRD_PARTY_ERR_MSG_REVISIONPETITION_ALREADYINWORKFLOW = "Selected property can not be objected,the property is in objected state or the property is in a different workflow";
+        
+    public static final String THIRD_PARTY_ERR_CODE_REVISIONPETITION_INVALID = "21";
+    public static final String THIRD_PARTY_ERR_MSG_REVISIONPETITION_INVALID = "Invalid Revision petition number.";
 	public static final String TOTAL_AMOUNT = "amount";
     public final static String PAID_BY = "paidBy";
 
