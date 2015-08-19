@@ -5,15 +5,14 @@
 	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
-	<field name="installment" class="org.egov.commons.Installment">
-		<fieldDescription><![CDATA[installment]]></fieldDescription>
-	</field>
 	<field name="propertyTax" class="java.math.BigDecimal"/>
 	<field name="penalty" class="java.math.BigDecimal"/>
 	<field name="waterTax" class="java.math.BigDecimal"/>
 	<field name="drinageSewarageTax" class="java.math.BigDecimal"/>
 	<field name="vacantLandTax" class="java.math.BigDecimal"/>
 	<field name="total" class="java.math.BigDecimal"/>
+	<field name="fromDate" class="java.lang.String"/>
+	<field name="toDate" class="java.lang.String"/>
 	<variable name="totalPropertyTax" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{propertyTax}]]></variableExpression>
 	</variable>
@@ -172,7 +171,7 @@ Sewarage Tax]]></text>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{installment}.getFromDate()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fromDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="78" y="-1" width="67" height="20" uuid="84db6e56-6691-4fe7-9dfc-3418256c3ce0"/>
@@ -186,10 +185,12 @@ Sewarage Tax]]></text>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{installment}.getToDate()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{toDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="145" y="-1" width="81" height="20" uuid="f24c6857-ff50-42c0-be73-0ce4a58bacba"/>
+				<reportElement stretchType="RelativeToTallestObject" x="145" y="-1" width="81" height="20" uuid="f24c6857-ff50-42c0-be73-0ce4a58bacba">
+					<printWhenExpression><![CDATA[$F{propertyTax}!=0]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>

@@ -9,6 +9,8 @@ import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.wtms.ConsumerConsumtion;
+import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,12 +21,12 @@ public class DemandNoticeInfo {
 	private BasicProperty basicProperty;
 	private String billNo;
 	private String oldAssessmentNo;
-	private String waterConnectionNo;
 	private String noOfTap;
 	private String sewarageConnectionNo;
 	private String rentPaid;
 	private List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo;
 	private ReportUtil reportUtil;
+	private PropertyWiseConsumptions propertyWiseConsumptions;
 	
 	@Autowired
 	@Qualifier("cityService")
@@ -85,20 +87,32 @@ public class DemandNoticeInfo {
 	}
 
 	public String getWaterConnectionNo() {
-		return waterConnectionNo;
-	}
+	     String waterConnectionNo="";
+	        if(propertyWiseConsumptions!=null){
+	            if(propertyWiseConsumptions.getConsumerConsumtions()!=null && !propertyWiseConsumptions.getConsumerConsumtions().isEmpty()){
+	                String hscno="";
+	                for(ConsumerConsumtion cc:propertyWiseConsumptions.getConsumerConsumtions()){
+	                    if(cc!=null){
+	                        if(hscno!=null && hscno!="")  
+	                            hscno=hscno+cc.getHscno()+",";
+	                    } 
+	                }
+	                if(hscno!="" && hscno!=null)    
+	                    waterConnectionNo=hscno.substring(0,hscno.length()-1); 
+	            }
+	        }
 
-	public void setWaterConnectionNo(String waterConnectionNo) {
-		this.waterConnectionNo = waterConnectionNo;
+	        return waterConnectionNo;
 	}
 
 	public String getNoOfTap() {
+    	        if(propertyWiseConsumptions!=null){
+                  if(propertyWiseConsumptions.getConsumerConsumtions()!=null && !propertyWiseConsumptions.getConsumerConsumtions().isEmpty())  
+                      noOfTap=Integer.toString(propertyWiseConsumptions.getConsumerConsumtions().size());
+    	        }
 		return noOfTap;
 	}
 
-	public void setNoOfTap(String noOfTap) {
-		this.noOfTap = noOfTap;
-	}
 
 	public String getSewarageConnectionNo() {
 		return sewarageConnectionNo;
@@ -147,6 +161,14 @@ public class DemandNoticeInfo {
 
     public void setReportUtil(ReportUtil reportUtil) {
         this.reportUtil = reportUtil;
+    }
+
+    public PropertyWiseConsumptions getPropertyWiseConsumptions() {
+        return propertyWiseConsumptions;
+    }
+
+    public void setPropertyWiseConsumptions(PropertyWiseConsumptions propertyWiseConsumptions) {
+        this.propertyWiseConsumptions = propertyWiseConsumptions;
     }
 
 }

@@ -111,6 +111,7 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.bill.BillService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
+import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -152,6 +153,8 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	private List<ReportInfo> reportInfos = new ArrayList<ReportInfo>();
 	InputStream billPDF;
 	private String wardNum;
+	@Autowired
+	private WaterChargesIntegrationService waterChargesIntegrationService;
 
 	@Autowired
 	private ModuleService moduleDao;
@@ -223,11 +226,12 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 			} else {
         	                //To generate Notice having installment and reasonwise balance for a property
         	                demandNoticeInfo.setBasicProperty(basicProperty);
+        	                demandNoticeInfo.setPropertyWiseConsumptions(propertyTaxUtil.getPropertyWiseConsumptions(basicProperty.getId().toString()));
         	                demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty));
         	                ReportRequest reportRequest = null;	   
         	                propertyTaxUtil.logoBasePath();
         	                reportRequest = new ReportRequest(REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION, demandNoticeInfo,new HashMap<String, Object>());
-        	                reportOutput = getReportService().createReport(reportRequest); 
+        	                reportOutput = getReportService().createReport(reportRequest);   
 			}
 	                
 		}

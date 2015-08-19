@@ -135,6 +135,7 @@ public class BillService {
         		//To generate Notice having installment and reasonwise balance for a property
                          demandNoticeInfo.setBasicProperty(basicProperty);
                          demandNoticeInfo.setBillNo(getBillNo());
+                         demandNoticeInfo.setPropertyWiseConsumptions(propertyTaxUtil.getPropertyWiseConsumptions(basicProperty.getId().toString()));
                          demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty));
                          
                          ReportRequest reportRequest = null;

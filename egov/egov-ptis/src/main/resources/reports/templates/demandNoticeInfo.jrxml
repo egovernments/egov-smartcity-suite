@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="demandNoticeInfo" language="groovy" pageWidth="695" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="57716523-e607-4b0c-b551-0d2fb1c4222a">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="24"/>
+	<property name="ireport.y" value="31"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
@@ -120,19 +120,19 @@
 				<text><![CDATA[1) Property Id :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3" y="106" width="130" height="35" uuid="f69fb172-53b1-42c2-ae7c-ae01662e5d97"/>
+				<reportElement x="3" y="175" width="130" height="35" uuid="f69fb172-53b1-42c2-ae7c-ae01662e5d97"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[3) Water Connection
+				<text><![CDATA[5) Water Connection
      No :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3" y="172" width="106" height="31" uuid="7c92f1c9-1014-4294-b612-21b4e0602667"/>
+				<reportElement x="3" y="106" width="106" height="31" uuid="7c92f1c9-1014-4294-b612-21b4e0602667"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[5) Sewarage
+				<text><![CDATA[3) Sewarage
     Connection No :]]></text>
 			</staticText>
 			<staticText>
@@ -192,21 +192,21 @@
 				<textFieldExpression><![CDATA[$F{houseNo}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="103" y="46" width="100" height="20" uuid="763fd449-b37b-405a-a945-3152eb7e9b30"/>
+				<reportElement x="103" y="46" width="111" height="20" uuid="763fd449-b37b-405a-a945-3152eb7e9b30"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{assessmentNo}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="133" y="106" width="100" height="35" uuid="0b399de0-d3cd-4897-b2b1-4590cdcf562d"/>
+				<reportElement x="133" y="175" width="521" height="35" uuid="0b399de0-d3cd-4897-b2b1-4590cdcf562d"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{waterConnectionNo}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="109" y="172" width="100" height="31" uuid="bfe1e688-525b-4d22-ae0f-46463d1b287b"/>
+				<reportElement x="109" y="106" width="105" height="31" uuid="bfe1e688-525b-4d22-ae0f-46463d1b287b"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
@@ -220,7 +220,7 @@
 				<textFieldExpression><![CDATA[$F{oldAssessmentNo}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="103" y="147" width="100" height="20" uuid="a3736bac-eeb3-409c-a197-4b92ba573598"/>
+				<reportElement x="103" y="147" width="111" height="20" uuid="a3736bac-eeb3-409c-a197-4b92ba573598"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
