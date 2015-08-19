@@ -329,7 +329,6 @@ public class PropertyService {
                     PropertyTypeMaster unitType = null;
                     PropertyUsage usage = null;
                     PropertyOccupation occupancy = null;
-                    TaxExeptionReason taxExemption = null;
                     if (floor.getUnitType() != null)
                         unitType = (PropertyTypeMaster) getPropPerServ().find(
                                 "from PropertyTypeMaster utype where utype.id = ?", floor.getUnitType().getId());

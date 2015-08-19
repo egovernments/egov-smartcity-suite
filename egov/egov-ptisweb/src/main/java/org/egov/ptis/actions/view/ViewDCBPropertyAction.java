@@ -455,6 +455,14 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		this.activeRcpts = activeRcpts;
 	}
 
+	public List<Receipt> getMutationRcpts() {
+		return mutationRcpts;
+	}
+
+	public void setMutationRcpts(List<Receipt> mutationRcpts) {
+		this.mutationRcpts = mutationRcpts;
+	}
+
 	public String getDemandEffectiveYear() {
 		return demandEffectiveYear;
 	}

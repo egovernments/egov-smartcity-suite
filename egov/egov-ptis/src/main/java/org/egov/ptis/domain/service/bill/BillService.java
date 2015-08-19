@@ -89,7 +89,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class BillService {
 
 	private static final Logger LOGGER = Logger.getLogger(BillService.class);
-	private static final String STR_TO = " to ";
 	private static final String STR_BILL_SHORTCUT = "B";
 
 	private ReportService reportService;

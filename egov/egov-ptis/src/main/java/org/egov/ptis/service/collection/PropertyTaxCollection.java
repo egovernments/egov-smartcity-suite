@@ -118,9 +118,9 @@ public class PropertyTaxCollection extends TaxCollection {
         totalAmount = billRcptInfo.getTotalAmount();
         LOGGER.debug("updateDemandDetails : Updating Demand Details Started, billRcptInfo : " + billRcptInfo);
         EgDemand demand = getCurrentDemand(Long.valueOf(billRcptInfo.getBillReferenceNum()));
-        String indexNo = ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader().getConsumerCode();
+        String assessmentNo = ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader().getConsumerCode();
         LOGGER.info("updateDemandDetails : Demand before proceeding : " + demand);
-        LOGGER.info("updateDemandDetails : collection back update started for property : " + indexNo
+        LOGGER.info("updateDemandDetails : collection back update started for property : " + assessmentNo
                 + " and receipt event is " + billRcptInfo.getEvent() + ". Total Receipt amount is." + totalAmount
                 + " with receipt no." + billRcptInfo.getReceiptNum());
        
@@ -677,8 +677,8 @@ public class PropertyTaxCollection extends TaxCollection {
                 + "AND ptd.egptProperty.basicProperty.upicNo = ? " + "AND ptd.egptProperty.status = 'A' "
                 + "AND ptd.egptProperty.basicProperty.active = true";
 
-        EgDemand egDemand = (EgDemand) persistenceService.find(query, PropertyTaxUtil.getCurrentInstallment(), egBill
-                .getConsumerId().substring(0, egBill.getConsumerId().indexOf('(')));
+		EgDemand egDemand = (EgDemand) persistenceService.find(query, PropertyTaxUtil.getCurrentInstallment(),
+				egBill.getConsumerId());
 
         LOGGER.debug("Exiting from getCurrentDemand");
         return egDemand;

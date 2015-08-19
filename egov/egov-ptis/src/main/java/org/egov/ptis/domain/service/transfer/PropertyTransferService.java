@@ -158,6 +158,9 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
 
     @Autowired
     private CityService cityService;
+    
+	@Autowired
+	private PropertyTaxBillable propertyTaxBillable;
 
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
@@ -362,8 +365,6 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
     }
 
     public String generateReceipt(final PropertyMutation propertyMutation) {
-        final PropertyTaxBillable propertyTaxBillable = (PropertyTaxBillable) beanProvider
-                .getBean("propertyTaxBillable");
         propertyTaxBillable.setBasicProperty(propertyMutation.getBasicProperty());
         propertyTaxBillable.setMutationFeePayment(Boolean.TRUE);
         propertyTaxBillable.setMutationFee(propertyMutation.getMutationFee());

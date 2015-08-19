@@ -193,7 +193,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     @Override
     public String getBoundaryType() {
-        return PropertyTaxConstants.WARD_BNDRY_TYPE;
+        return PropertyTaxConstants.WARD;
     }
 
     @Override

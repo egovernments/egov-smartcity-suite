@@ -749,7 +749,64 @@
 										</td>
 									</tr>
 									</table>
-								</s:if>												
+								</s:if>
+								<s:if test="%{getMutationRcpts() != null && !mutationRcpts().isEmpty()}">
+									<table width="100%" border="0" align="center" cellpadding="0"
+												cellspacing="0" class="tablebottom">
+									<tr>
+										<td align="center">
+											<div class="headingsmallbg">
+												<s:text name="tationFeeRcptHeader" />
+											</div>
+										</td>
+									</tr>
+
+									<tr>
+										<td align="center">
+											<table width="100%" border="0" align="center" cellpadding="0"
+												cellspacing="0" class="tablebottom">
+		
+												<tr>
+													<th class="bluebgheadtd">
+														<s:text name="receiptNo" />
+													</th>
+													<th class="bluebgheadtd">
+														<s:text name="receiptDate" />
+													</th>
+													<th class="bluebgheadtd">
+														<s:text name="totalAmount" />
+													</th>
+												</tr>
+		
+												<s:iterator value="mutationRcpts()" var="rcpt">
+		
+													<tr>
+														<td class="blueborderfortd">
+															<div align="center">
+																<a href="/../collection/citizen/onlineReceipt!viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=PT" target="_blank" >
+																	<s:property value="#rcpt.getReceiptNumber()" />
+																</a>
+															</div>
+														</td>
+														<td class="blueborderfortd">
+															<div align="center">
+																<s:date name="#rcpt.getReceiptDate()" format="dd/MM/yyyy h:mm:ss"/>
+															</div>
+														</td>
+														<td class="blueborderfortd">
+															<div align="center">
+																<s:text name="format.money">
+																    <s:param name="value" value="#rcpt.getReceiptAmt()"/>
+																</s:text>
+															</div>
+														</td>
+													</tr>
+												</s:iterator>
+											</table>
+										</td>
+									</tr>
+									</table>
+								</s:if>																			
 							</table>				
 							</td>
 							</tr>

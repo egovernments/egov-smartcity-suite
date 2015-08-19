@@ -107,6 +107,9 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 	
 	@Autowired
 	private ApplicationContextBeanProvider beanProvider;
+	
+	@Autowired
+	private PropertyTaxBillable propertyTaxBillable;
 
 	@Override
 	public Object getModel() {
@@ -118,21 +121,21 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 		LOGGER.info("Entered method generatePropertyTaxBill, Generating bill for index no : "
 				+ propertyId);
 
-		PropertyTaxBillable ptBill = (PropertyTaxBillable) beanProvider.getBean("propertyTaxBillable");
+		//PropertyTaxBillable ptBill = (PropertyTaxBillable) beanProvider.getBean("propertyTaxBillable");
 
 		BasicProperty basicProperty = basicPropertyService.findByNamedQuery(
 				PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, propertyId);
 
 		LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
 
-		ptBill.setLevyPenalty(true);
-		ptBill.setBasicProperty(basicProperty);
-		ptBill.setUserId(Long.valueOf(getSession().get("userid").toString()));
-		ptBill.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
+		propertyTaxBillable.setLevyPenalty(true);
+		propertyTaxBillable.setBasicProperty(basicProperty);
+		propertyTaxBillable.setUserId(Long.valueOf(getSession().get("userid").toString()));
+		propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
 				.getPropertyID().getWard().getBoundaryNum().toString()));
-		ptBill.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_AUTO));
+		propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_AUTO));
 
-		String billXml = ptBillServiceImpl.getBillXML(ptBill);
+		String billXml = ptBillServiceImpl.getBillXML(propertyTaxBillable);
 		collectXML = URLEncoder.encode(billXml);
 		LOGGER.info("Exiting method generatePropertyTaxBill, collectXML (before decode): "
 				+ billXml);
