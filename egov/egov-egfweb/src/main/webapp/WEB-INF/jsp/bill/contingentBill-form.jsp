@@ -115,8 +115,8 @@ Show/Hide Details</a></div></td>
 			
 			</tr>
 			<tr>
-		<td class="blueborderfortd1" style="text-align:left"><s:text name="payto"/></td>
-		<td class="blueborderfortd1" style="text-align:left;width:240" colspan="4" >
+		<td class="bluebox" style="text-align:left"><s:text name="payto"/><span class="mandatory1"> *</span></td>
+		<td class="bluebox" style="text-align:left;width:240" colspan="4" >
 		<s:textfield name="commonBean.payto" id="commonBean.payto" size="55"/>
 		</td>
 		</tr>

@@ -67,7 +67,7 @@ function validate(name,value)
 	}
 	else
 	{
-		alert("No Account code is selected for Save . Please add Account code and click done then try to save again");	
+		alert("No Account code is selected for Save . Please add Account code and click done and then try to save again");	
 		undoLoadingMask() ;
 		return false;
 	}
@@ -157,7 +157,7 @@ for(var i=0;i<allRecords.getLength();i++){
 
 }
 else{
-alert("This row can not be deleted");
+alert("This row cannot be deleted");
 }
 }	
 
@@ -183,7 +183,7 @@ for(var i=0;i<allRecords.getLength();i++){
 calculatenNetFordelete();
 }
 else{
-alert("This row can not be deleted");
+alert("This row cannot be deleted");
 }
 }	
 
@@ -233,7 +233,7 @@ function validateNetPaySubledgerAndDetailTypes()
 		}
 		if(found==false)
 		{
-			alert("selected net payable's detailtypes and selected subledgertype doesnot match ");
+			alert("Selected net payable's detailtypes and selected subledgertype does not match ");
 			return false;
 		}
 	}else
@@ -246,7 +246,7 @@ function updateTabels()
 {
 	if(document.getElementById('billDetailsTableNet[0].debitAmountDetail').value<0)
 	{
-		alert('Negetive Net payable is not allowed');
+		alert('Negative Net payable is not allowed');
 		return false;
 	}                           
 var netpayablevalue=document.getElementById("billDetailsTableNet[0].glcodeDetail").value
@@ -267,7 +267,7 @@ if(document.getElementById("billDetailsTableNet[0].isSubledger").value=='true')
 {
 	if(document.getElementById("detailCode").value.trim()=="")
 	{
-		alert("subledger is not selected for net payable");
+		alert("Subledger is not selected for net payable");
 		return false;
 	}
 }
