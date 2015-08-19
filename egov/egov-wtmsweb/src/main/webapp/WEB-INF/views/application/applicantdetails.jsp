@@ -45,7 +45,7 @@
 	<div class="col-sm-3 add-margin">
 		<div class="input-group">
 			<form:input id="propertyIdentifier" path="connection.propertyIdentifier" class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" min="3" maxlength="50" required="required" /> 
-			<span class="input-group-addon"> <i class="fa fa-search"></i></span>
+			<span class="input-group-addon"> <i class="fa fa-search specific"></i></span>
 		</div>
 		<form:errors path="connection.propertyIdentifier" id="propertyIdentifierError" cssClass="add-margin error-msg" />
 	</div>

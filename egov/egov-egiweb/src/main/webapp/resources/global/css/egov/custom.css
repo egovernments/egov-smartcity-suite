@@ -2131,6 +2131,9 @@ body.index, .page-container{
 .form-group .input-group .input-group-addon i {
   color: #6b4f2c;
 }
+.form-group .input-group .input-group-addon i.specific {
+    color:#fff;
+}
 
 .signin-leftpadding{
     padding-left: 18px;
@@ -2165,6 +2168,7 @@ body.index, .page-container{
     font-size:16px;
     display:inline-block;
     vertical-align: top;
+    padding:0 5px;
 }
 
 .label-subfont{
