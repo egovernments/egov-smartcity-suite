@@ -256,16 +256,6 @@
 							cssStyle="width:100%" />
 					</div>
 				</td>
-
-				<td class="blueborderfortd" style="padding: 2px 2px">
-					<div align="center">
-						<s:select name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].taxExemptedReason.id" id="taxExemptedReason" headerValue="select"
-							headerKey="" list="dropdownData.taxExemptionReasonList" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].taxExemptedReason.id}" 
-							listKey="id" listValue="name"
-							cssClass="selectnew" data-optional="1">
-						</s:select>
-					</div>
-				</td>
 				
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
