@@ -235,6 +235,7 @@
   <bean name="demandActivationJobScheduler" id="demandActivationJobScheduler" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
 		<property name="group" value="PTIS_DEMAND_ACTIVATION_JOB_GROUP"/>
 		<property name="name" value="PTISDemandActivationJob"/>
+		<property name="durability" value="true" />
 		<property name="jobClass" value="org.egov.ptis.scheduler.DemandActivationJob"/>
         <property name="requestsRecovery" value="false"/>
 		<property name="jobDataAsMap">
