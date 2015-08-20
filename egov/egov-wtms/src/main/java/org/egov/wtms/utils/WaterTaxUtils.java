@@ -256,7 +256,7 @@ public class WaterTaxUtils {
             emailBody = messageSource.getMessage(code, new String[] { applicantName,
                     waterConnectionDetails.getConnection().getConsumerCode(),
                     formatter.format(waterConnectionDetails.getExecutionDate()).toString(),
-                    waterConnectionDetails.getDemand().getBaseDemand().toString() }, null);
+                    waterConnectionDetails.getDemand().getBaseDemand().toString(),getCityName() }, null);
         }
         // Dear {0},\n\nWater tap connection with H.S.C number {1} is installed
         // at your site on {2} by our Asst engineer and your monthly
@@ -305,8 +305,7 @@ public class WaterTaxUtils {
         else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION)) {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             smsMsg = messageSource.getMessage(code,
-                    new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                            waterConnectionDetails.getConnection().getConsumerCode(),
+                    new String[] { applicantName,waterConnectionDetails.getConnection().getConsumerCode(),
                             formatter.format(waterConnectionDetails.getExecutionDate()).toString(),
                             waterConnectionDetails.getDemand().getBaseDemand().toString(), getCityName() }, null);
         }

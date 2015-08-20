@@ -242,7 +242,7 @@ public class WaterConnectionDetailsService {
                         .equalsIgnoreCase(waterConnectionDetails.getEgwStatus().getCode())) {
                     buildSMS(waterConnectionDetails, WaterTaxConstants.SMSEMAILTYPENEWCONNESTNOTICE, mobileNumber);
                     buildEmail(waterConnectionDetails, WaterTaxConstants.SMSEMAILTYPENEWCONNESTNOTICE, email);
-                } else if (WaterTaxConstants.APPLICATION_STATUS_WOGENERATED
+                } else if (WaterTaxConstants.APPLICATION_STATUS_SANCTIONED
                         .equalsIgnoreCase(waterConnectionDetails.getEgwStatus().getCode())) {
                     buildSMS(waterConnectionDetails, WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION, mobileNumber);
                     buildEmail(waterConnectionDetails, WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION, email);
