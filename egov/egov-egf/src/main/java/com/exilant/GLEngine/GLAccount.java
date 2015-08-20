@@ -54,7 +54,7 @@ public class GLAccount implements Serializable
    /**
     * Id of the GLAccount
     */
-	private int ID;
+	private long ID;
    
    /**
     * GLCode
@@ -84,7 +84,7 @@ public class GLAccount implements Serializable
     * 
     * @return   the current value of the id property
     */
-   public int getId() 
+   public long getId() 
    {
       return ID;
    }

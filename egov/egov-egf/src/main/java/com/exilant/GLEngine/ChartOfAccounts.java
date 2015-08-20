@@ -353,7 +353,7 @@ public class ChartOfAccounts {
 	
 	private static GLAccount getGlAccId(CChartOfAccounts glCodeId,Map glAccountIds) {
 		for (Object key : glAccountIds.keySet()) {
-			if(((String)key).equalsIgnoreCase(glCodeId.getId().toString()))
+			if(((String)key.toString()).equalsIgnoreCase(glCodeId.getId().toString()))
 				return (GLAccount)glAccountIds.get(key);
 		}
 		return null;

@@ -1069,7 +1069,7 @@ public class CreateVoucher {
                          mis.setVoucherheaderid(vh);
                          vh.setVouchermis(mis);
                          insertIntoVoucherHeader(vh);
-                         insertIntoRecordStatus(vh);
+//                         insertIntoRecordStatus(vh);
                          List<Transaxtion> transactions = createTransaction(headerdetails,accountcodedetails,subledgerdetails,vh);
                          HibernateUtil.getCurrentSession().flush();
                          engine=chartOfAccounts.getInstance();
