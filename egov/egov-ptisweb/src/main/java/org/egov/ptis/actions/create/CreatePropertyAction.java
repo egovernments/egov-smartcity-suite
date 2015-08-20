@@ -304,7 +304,7 @@ public class CreatePropertyAction extends WorkflowAction {
         basicPropertyService.applyAuditing(property.getState());
         basicPropertyService.persist(basicProperty);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
-        buildSMS(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         setBasicProp(basicProperty);
         setAckMessage("Property Data Saved Successfully in the System and forwarded to : ");
         setApplicationNoMessage(" with application number : ");
@@ -517,7 +517,7 @@ public class CreatePropertyAction extends WorkflowAction {
         basicPropertyService.applyAuditing(property.getState());
         basicPropertyService.update(basicProp);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
-        buildSMS(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         approverName = "";
         if (propService.isEmployee(property.getCreatedBy()))
             propertyInitiatedBy = property.getCreatedBy().getName();
@@ -540,7 +540,7 @@ public class CreatePropertyAction extends WorkflowAction {
         basicProp.setUnderWorkflow(true);
         basicPropertyService.persist(basicProp);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
-        buildSMS(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (propService.isEmployee(property.getCreatedBy()))
             propertyInitiatedBy = property.getCreatedBy().getName();
         else

@@ -487,7 +487,7 @@ public class ModifyPropertyAction extends WorkflowAction {
                         : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         prepareAckMsg();
-        buildSMS(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
+        buildEmailandSms(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
         addActionMessage(getText("property.forward.success", new String[] { propertyModel.getBasicProperty()
                 .getUpicNo() }));
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
@@ -517,7 +517,7 @@ public class ModifyPropertyAction extends WorkflowAction {
                         : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         prepareAckMsg();
-        buildSMS(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
+        buildEmailandSms(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
         addActionMessage(getText("property.forward.success", new String[] { propertyModel.getBasicProperty()
                 .getUpicNo() }));
         LOGGER.debug("Exiting from forwardView");
@@ -580,7 +580,7 @@ public class ModifyPropertyAction extends WorkflowAction {
                         : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
         setBasicProp(basicProp);
         setAckMessage(getText("property.approve.succes", new String[] { propertyModel.getBasicProperty().getUpicNo() }));
-        buildSMS(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
+        buildEmailandSms(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
         addActionMessage(getText("property.approve.success", new String[] { propertyModel.getBasicProperty()
                 .getUpicNo() }));
         LOGGER.debug("Exiting approve");
@@ -626,7 +626,7 @@ public class ModifyPropertyAction extends WorkflowAction {
                     .getEmployee().getUsername();
         setAckMessage("Property Rejected Successfully and forwarded to initiator : " + username
                 + " with Index Number : ");
-        buildSMS(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
+        buildEmailandSms(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
         LOGGER.debug("reject: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
         LOGGER.debug("reject: Property rejection ended");
         return RESULT_ACK;

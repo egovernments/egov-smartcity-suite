@@ -451,42 +451,85 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         addDropdownData("approverList", Collections.EMPTY_LIST);
     }
 
-    public void buildSMS(final PropertyImpl property, final String applicationType) {
+    public void buildEmailandSms(final PropertyImpl property, final String applicationType) {
         final User user = property.getBasicProperty().getPrimaryOwner();
         final String mobileNumber = user.getMobileNumber();
+        final String emailid = user.getEmailId();
         final String applicantName = user.getName();
         final List<String> args = new ArrayList<String>();
         args.add(applicantName);
         String smsMsg = "";
+        String emailSubject = "";
+        String emailBody = "";
+
         final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
         if (null != property && null != property.getState()) {
             final State propertyState = property.getState();
             if (propertyState.getValue().endsWith(WF_STATE_REVENUE_CLERK_APPROVED)) {
                 args.add(property.getApplicationNo());
                 args.add(sMSEmailService.getCityName());
-                if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType))
-                    smsMsg = getText("msg.newpropertycreate.sms", args);
-                else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType))
-                    smsMsg = getText("msg.alterAssessmentForward.sms", args);
+                if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType)) {
+                    if (mobileNumber != null)
+                        smsMsg = getText("msg.newpropertycreate.sms", args);
+                    if (emailid != null) {
+                        emailSubject = getText("msg.newpropertycreate.email.subject");
+                        emailBody = getText("msg.newpropertycreate.email", args);
+                    }
+                } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
+
+                    if (mobileNumber != null)
+                        smsMsg = getText("msg.alterAssessmentForward.sms", args);
+                    if (emailid != null) {
+                        emailSubject = getText("msg.alterAssessmentForward.email.subject");
+                        emailBody = getText("msg.alterAssessmentForward.email", args);
+                    }
+                }
             } else if (propertyState.getValue().endsWith(WF_STATE_REJECTED)) {
                 args.add(property.getApplicationNo());
                 args.add(sMSEmailService.getCityName());
-                if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType))
-                    smsMsg = getText("msg.newpropertyreject.sms", args);
-                else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType))
-                    smsMsg = getText("msg.alterAssessmentReject.sms", args);
+                if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType)) {
+                    if (mobileNumber != null)
+                        smsMsg = getText("msg.newpropertyreject.sms", args);
+                    if (emailid != null) {
+                        emailSubject = getText("msg.newpropertyreject.email.subject");
+                        emailBody = getText("msg.newpropertyreject.email", args);
+                    }
+                } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
+                    if (mobileNumber != null)
+                        smsMsg = getText("msg.alterAssessmentReject.sms", args);
+
+                    if (emailid != null) {
+                        emailSubject = getText("msg.alterAssessmentReject.email.subject");
+                        emailBody = getText("msg.alterAssessmentReject.email", args);
+                    }
+                }
             } else if (propertyState.getValue().endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
                 args.add(property.getBasicProperty().getUpicNo());
                 args.add(demandCollMap.get(CURR_DMD_STR).add(demandCollMap.get(ARR_DMD_STR)).toString());
                 args.add(DateUtils.getFormattedDate(property.getBasicProperty().getPropOccupationDate(), "dd/MM/yyyy"));
                 args.add(sMSEmailService.getCityName());
-                if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType))
-                    smsMsg = getText("msg.newpropertyapprove.sms", args);
-                else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType))
-                    smsMsg = getText("msg.alterAssessmentApprove.sms", args);
+                if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType)) {
+                    if (mobileNumber != null)
+                        smsMsg = getText("msg.newpropertyapprove.sms", args);
+                    if (emailid != null) {
+                        emailSubject = getText("msg.newpropertyapprove.email.subject");
+                        emailBody = getText("msg.newpropertyapprove.email", args);
+                    }
+                } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
+                    if (mobileNumber != null)
+                        smsMsg = getText("msg.alterAssessmentApprove.sms", args);
+                    if (emailid != null) {
+                        emailSubject = getText("msg.alterAssessmentApprove.email.subject");
+                        emailBody = getText("msg.alterAssessmentApprove.email", args);
+                    }
+                }
             }
         }
-        messagingService.sendSMS(mobileNumber, smsMsg);
+        if (mobileNumber != null)
+            messagingService.sendSMS(mobileNumber, smsMsg);
+        if (emailid != null)
+            messagingService.sendEmail(emailid, emailSubject, emailBody);
+
     }
 
     public WorkflowBean getWorkflowBean() {
