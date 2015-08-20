@@ -411,8 +411,11 @@ public class CreatePropertyAction extends WorkflowAction {
             return RESULT_NEW;
         } else {
             mode = VIEW;
-            setAddressStr(basicProp.getAddress().toString());
-            corrAddress1 = basicProp.getAddress().toString();
+            for (final PropertyOwnerInfo ownerInfo : basicProp.getPropertyOwnerInfo())
+                for (final Address ownerAddress : ownerInfo.getOwner().getAddress())
+                    if (null != ownerAddress) {
+                        setCorrAddress1(ownerAddress.toString());
+                    }
             setDocNumber(property.getDocNumber());
             LOGGER.debug("IndexNumber: " + indexNumber + " Amenities: " + amenities + "NoOfFloors: "
                     + (getFloorDetails() != null ? getFloorDetails().size() : "Floor list is NULL")
@@ -789,7 +792,6 @@ public class CreatePropertyAction extends WorkflowAction {
             ownerAddress.setHouseNoBldgApt(propAddr.getHouseNoBldgApt());
             ownerAddress.setStreetRoadLine(propAddr.getStreetRoadLine());
             ownerAddress.setPinCode(propAddr.getPinCode());
-
         } else {
             final String[] corrAddr = getCorrAddress1().split(",");
             if (corrAddr.length == 1)
