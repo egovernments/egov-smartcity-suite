@@ -54,26 +54,12 @@
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="82" y="121" width="429" height="15" uuid="86c51035-7a99-4c14-8923-09aff6cb1aff"/>
+				<reportElement x="29" y="121" width="488" height="15" uuid="86c51035-7a99-4c14-8923-09aff6cb1aff"/>
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{estimationDate}+" Original Estimations"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Subject: </style>"+$P{estimationDate}+" Original Estimations"]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="29" y="121" width="53" height="15" uuid="3c551f20-c6f7-44df-a210-5fbd222c62bc"/>
-				<textElement verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<text><![CDATA[Subject :]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="189" y="82" width="45" height="15" uuid="4dd6b6e5-4deb-41ab-8323-2ccf609ffd3e"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<text><![CDATA[Date :]]></text>
-			</staticText>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="28" y="205" width="489" height="34" uuid="f82e7d01-bb33-4864-9356-b5fd08664fb5"/>
 				<textElement verticalAlignment="Middle" markup="styled">
@@ -88,13 +74,6 @@
 				</textElement>
 				<textFieldExpression><![CDATA["Owner Name Mr/Mrs: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{applicantName}+"</style>"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="234" y="82" width="130" height="15" uuid="6a363806-e39f-452c-a45b-b052ec667241"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{estimationDate}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="0" y="67" width="555" height="15" isPrintInFirstWholeBand="true" uuid="c58d977b-8206-48c6-94c4-35619ef6a4a7"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -102,19 +81,12 @@
 				</textElement>
 				<text><![CDATA[ESTIMATIONS FROM THE MUNICIPAL COMMISSIONER]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="29" y="136" width="69" height="15" uuid="70983500-2e28-4121-a98d-3057e09085ed"/>
-				<textElement verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<text><![CDATA[Reference :]]></text>
-			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="98" y="136" width="419" height="15" uuid="176c6263-1604-4577-9852-d0047e79f3af"/>
+				<reportElement x="29" y="136" width="488" height="15" uuid="176c6263-1604-4577-9852-d0047e79f3af"/>
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Application Date "+$P{applicationDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Reference:</style> Application Date "+$P{applicationDate}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="29" y="178" width="491" height="15" uuid="1fef627f-ff5e-405f-8a3b-920ca1c34c41"/>
@@ -122,6 +94,13 @@
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["House No:<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{houseNo}+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="81" width="555" height="15" uuid="17cfec43-6c3a-4a25-b5d5-8c44301e73fc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+					<font size="12" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Date: </style>"+$P{estimationDate}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -339,33 +318,19 @@
 				</textElement>
 				<text><![CDATA[Municipal Assistant Engineer]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="17" y="22" width="110" height="15" uuid="1f905d13-d5ba-4e6c-abe7-5593df07e2d4"/>
-				<textElement verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<text><![CDATA[Donation Charges :]]></text>
-			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="127" y="22" width="148" height="15" uuid="4080b245-6445-4920-a00f-f917e1fb4e88"/>
+				<reportElement x="15" y="22" width="260" height="15" uuid="4080b245-6445-4920-a00f-f917e1fb4e88"/>
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[" Rs. "+$P{donationCharges}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Donation Charges: </style>Rs. "+$P{donationCharges}+"/-"]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="301" y="22" width="118" height="15" uuid="ff5ccd4b-7d37-4c7e-aa35-07633f06a535"/>
-				<textElement verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<text><![CDATA[Estimation Charges :]]></text>
-			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="419" y="22" width="125" height="15" uuid="0f65d178-e901-463d-80af-0014adbcc9d5"/>
+				<reportElement x="344" y="22" width="200" height="15" uuid="0f65d178-e901-463d-80af-0014adbcc9d5"/>
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[" Rs. "+$P{estimationCharges}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Estimation Charges: </style>Rs. "+$P{estimationCharges}+"/-"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
