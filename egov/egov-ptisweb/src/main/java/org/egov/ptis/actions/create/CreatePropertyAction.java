@@ -782,7 +782,7 @@ public class CreatePropertyAction extends WorkflowAction {
             for (final Address address : owner.getOwner().getAddress())
                 if (null != address)
                     ownerAddress = address;
-        if (!(property.getPropertyDetail().isCorrAddressDiff() == null || property.getPropertyDetail().isCorrAddressDiff())) {
+        if (!(property.getPropertyDetail().isCorrAddressDiff() != null && property.getPropertyDetail().isCorrAddressDiff())) {
             ownerAddress.setAreaLocalitySector(propAddr.getAreaLocalitySector());
             ownerAddress.setHouseNoBldgApt(propAddr.getHouseNoBldgApt());
             ownerAddress.setStreetRoadLine(propAddr.getStreetRoadLine());
@@ -811,7 +811,7 @@ public class CreatePropertyAction extends WorkflowAction {
         propAddr.setStreetRoadLine(boundaryService.getBoundaryById(getLocality()).getName());
         if (getPinCode() != null && !getPinCode().isEmpty())
             propAddr.setPinCode(getPinCode());
-        if (!(property.getPropertyDetail().isCorrAddressDiff() == null || property.getPropertyDetail().isCorrAddressDiff())) {
+        if (!(property.getPropertyDetail().isCorrAddressDiff() != null && property.getPropertyDetail().isCorrAddressDiff())) {
             ownerAddress = new CorrespondenceAddress();
             ownerAddress.setAreaLocalitySector(propAddr.getAreaLocalitySector());
             ownerAddress.setHouseNoBldgApt(propAddr.getHouseNoBldgApt());
