@@ -53,7 +53,8 @@
 				<security:filter-chain pattern="/error/**" filters="none" />
 				<security:filter-chain pattern="/index.jsp" filters="none" />
 				<security:filter-chain pattern="/application/application-success**" filters="none"/>
-				<security:filter-chain pattern="/application/collecttax-view**" filters="none"/>
+				<security:filter-chain pattern="/application/collecttax-view**" filters="none"/> 
+				<security:filter-chain pattern="/application/estimationNotice/view/*" filters="none"/>
 				<security:filter-chain pattern="/rest/**" filters="anonymousAuthenticationFilter"/>
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
