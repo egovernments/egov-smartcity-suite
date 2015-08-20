@@ -41,9 +41,12 @@ package org.egov.ptis.actions.view;
 
 import static java.math.BigDecimal.ZERO;
 import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.BEANNAME_PROPERTY_TAX_BILLABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.CANCELLED_RECEIPT_STATUS;
 import static org.egov.ptis.constants.PropertyTaxConstants.CITIZENUSER;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 
@@ -102,8 +105,6 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 
 	private static final String HEADWISE_DCB = "headwiseDcb";
 	private String propertyId;
-	private BigDecimal currTaxAmount;
-
 	private BasicProperty basicProperty;
 	private DCBDisplayInfo dcbDispInfo;
 	private Map<String, BigDecimal> propertyArrearsMap = new TreeMap<String, BigDecimal>();
@@ -201,7 +202,9 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 				viewMap.put("ownerName", basicProperty.getFullOwnerName());
 				if (!property.getIsExemptedFromTax()) {
 					Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
-					setCurrTaxAmount(demandCollMap.get(CURR_DMD_STR));
+					viewMap.put("currTaxAmount", demandCollMap.get(CURR_DMD_STR));
+					viewMap.put("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
+					viewMap.put("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
 					PropertyTaxBillable billable = (PropertyTaxBillable) beanProvider
 							.getBean(BEANNAME_PROPERTY_TAX_BILLABLE);
 					billable.setBasicProperty(basicProperty);
@@ -217,7 +220,9 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 					// Display name transfer receipts
 					populateMutationReceipts();
 				} else {
-					setCurrTaxAmount(BigDecimal.ZERO);
+					viewMap.put("currTaxAmount", BigDecimal.ZERO);
+					viewMap.put("currTaxDue", BigDecimal.ZERO);
+					viewMap.put("currTaxAmount", BigDecimal.ZERO);
 				}
 
 			}
@@ -397,14 +402,6 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 
 	public void setDcbReport(DCBReport dcbReport) {
 		this.dcbReport = dcbReport;
-	}
-
-	public BigDecimal getCurrTaxAmount() {
-		return currTaxAmount;
-	}
-
-	public void setCurrTaxAmount(BigDecimal currTaxAmount) {
-		this.currTaxAmount = currTaxAmount;
 	}
 
 	public Map<String, BigDecimal> getPropertyArrearsMap() {

@@ -183,7 +183,7 @@
 							<s:text name="CurrentTax" /> :
 						</td>
 						<td class="greybox">
-							<span class="bold">Rs. <s:property value="%{currTaxAmount}" />
+							<span class="bold">Rs. <s:property default="N/A" value="%{viewMap.currTaxAmount}" />
 							</span>
 						</td>
 					</tr>
@@ -193,7 +193,7 @@
 							<s:text name="CurrentTaxDue" /> :
 						</td>
 						<td class="greybox">
-							<span class="bold">Rs. <s:property value="%{currTaxAmount}" />
+							<span class="bold">Rs. <s:property default="N/A" value="%{viewMap.currTaxDue}" />
 							</span>
 						</td>
 					</tr>
@@ -203,7 +203,7 @@
 							<s:text name="ArrearsDue" /> :
 						</td>
 						<td class="greybox">
-							<span class="bold">Rs. <s:property value="%{currTaxAmount}" />
+							<span class="bold">Rs. <s:property default="N/A" value="%{viewMap.totalArrDue}" />
 							</span>
 						</td>
 					</tr>
