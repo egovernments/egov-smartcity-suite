@@ -309,13 +309,15 @@ public class ModifyPropertyAction extends WorkflowAction {
     }
 
     private String populateFormData(final Boolean fromInbox) {
-        LOGGER.debug("Entered into populateFormData");
-        String target = "";
-        PropertyImpl propertyImpl = null;
-        if (basicProp.isUnderWorkflow() && !fromInbox) {
-            setWfErrorMsg(getText("wf.pending.msg", "Property Alter/Addition"));
-            target = TARGET_WORKFLOW_ERROR;
-        } else {
+		LOGGER.debug("Entered into populateFormData");
+		String target = "";
+		PropertyImpl propertyImpl = null;
+		if (basicProp.isUnderWorkflow() && !fromInbox) {
+			List<String> msgParams = new ArrayList<String>();
+			msgParams.add("Property Alter/Addition");
+			setWfErrorMsg(getText("wf.pending.msg", msgParams));
+			target = TARGET_WORKFLOW_ERROR;
+		} else {
             if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn) && !fromInbox) {
                 final Map<String, BigDecimal> propertyTaxDetails = propService.getCurrentPropertyTaxDetails(basicProp
                         .getActiveProperty());

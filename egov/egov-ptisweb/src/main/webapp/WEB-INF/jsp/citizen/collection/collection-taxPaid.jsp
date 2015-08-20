@@ -60,19 +60,25 @@
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
 			<td colspan="5" style="background-color: #FDF7F0;font-size: 15px;" align="center">
-	        	<span class="bold">Collection is fully/excess paid for index number : <s:property value="%{indexNum}"/>. For more details please go to DCB screen.</span>
+	        	<span class="bold">Collection is fully/excess paid for assessment number : <s:property value="%{assessmentNumber}"/>. For more details please go to DCB screen.</span>
 	        		
 	        </td>		    
 		</tr>
 		</table>
 	</div>
 	<div class="buttonbottom" align="center">
+		<td>
 			<input type="button" class="buttonsubmit" name="btnViewDCB" id="btnViewDCB" value="View DCB"
-			onclick="window.location='../../view/viewDCBProperty-displayPropInfo.action?propertyId=<s:property value="%{indexNum}" />';" />
+			onclick="window.location='${pageContext.request.contextPath}/view/viewDCBProperty-displayPropInfo.action?propertyId=<s:property value="%{propertyId}" />';" />
+		</td>
+		<td>
 			<input type="button" class="buttonsubmit" name="SearchProperty"
-					id="SearchProperty" value="Search Property" onclick="window.location='../../citizen/search/search-searchForm.action';" />
+					id="SearchProperty" value="Search Property" onclick="window.location='${pageContext.request.contextPath}/search/searchProperty-searchForm.action';" />
+		</td>
+		<td>
 			<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();"/>
-	</div>
+		</td>
+		</div>
   </s:form>
   </body>
 </html>

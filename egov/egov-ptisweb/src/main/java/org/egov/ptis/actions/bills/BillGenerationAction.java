@@ -105,6 +105,7 @@ import org.egov.ptis.client.model.calculator.DemandNoticeInfo;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -171,6 +172,9 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	
 	@Autowired
         private DemandNoticeInfo demandNoticeInfo;
+	
+    @Autowired
+    private PropertyDAO propertyDao;
 
 	@Override
 	public StateAware getModel() {
@@ -194,11 +198,9 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		}
 		property = (PropertyImpl) basicProperty.getProperty();
 
-		EgBill egBill = (EgBill) persistenceService.find("FROM EgBill WHERE module = ? "
-				+ "AND egBillType.code = ? "
-				+ "AND SUBSTRING(consumerId, 1, (LOCATE('(', consumerId)-1)) = ? "
-				+ "AND is_history = 'N'", moduleDao.getModuleByName(PTMODULENAME), BILLTYPE_MANUAL,
-				basicProperty.getUpicNo());
+			EgBill egBill = (EgBill) persistenceService.find("FROM EgBill WHERE module = ? "
+					+ "AND egBillType.code = ? AND consumerId = ? AND is_history = 'N'",
+					moduleDao.getModuleByName(PTMODULENAME), BILLTYPE_MANUAL, basicProperty.getUpicNo());
 		ReportOutput reportOutput = null;
 
 		if (egBill == null) {
@@ -240,6 +242,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		LOGGER.debug("Exit from generateBill");
 			if (property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
 				property.setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
+				propertyImplService.persist(property);
 			}
     	  } catch (final Exception e) {
     	      throw new EGOVRuntimeException("Bill Generation Exception : " + e);

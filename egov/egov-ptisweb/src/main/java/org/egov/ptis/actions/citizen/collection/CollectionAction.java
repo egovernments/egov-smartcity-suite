@@ -41,7 +41,6 @@ package org.egov.ptis.actions.citizen.collection;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.BEANNAME_PROPERTY_TAX_BILLABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
@@ -58,15 +57,12 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
-import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
-import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -94,15 +90,15 @@ public class CollectionAction extends BaseFormAction {
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
     private PTBillServiceImpl ptBillServiceImpl;
     private String collectXML;
-    private String indexNum;
+    private String assessmentNumber;
     private Long userId;
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
     private UserService userService;
-    @Autowired
-    private ApplicationContextBeanProvider beanProvider;
+	@Autowired
+	private PropertyTaxBillable propertyTaxBillable;
 
     public void prepare() {
         LOGGER.debug("Entered into prepare method");
@@ -114,10 +110,9 @@ public class CollectionAction extends BaseFormAction {
 
     @Action(value = "/collection-generateBill")
     public String generateBill() {
-        LOGGER.debug("Entered method generatePropertyTaxBill, indexNum: " + indexNum);
+        LOGGER.debug("Entered method generatePropertyTaxBill, assessment Number: " + assessmentNumber);
         
-        PropertyTaxBillable nmcPTBill = (PropertyTaxBillable) beanProvider.getBean(BEANNAME_PROPERTY_TAX_BILLABLE);
-        BasicProperty basicProperty = basicPropertyService.findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO, indexNum);
+        BasicProperty basicProperty = basicPropertyService.findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO, assessmentNumber);
         
         LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
         Map<String, BigDecimal> demandCollMap = propertyTaxUtil.getDemandAndCollection(basicProperty.getProperty());
@@ -128,13 +123,13 @@ public class CollectionAction extends BaseFormAction {
             return RESULT_TAXPAID;
         }
         
-        nmcPTBill.setBasicProperty(basicProperty);
-        nmcPTBill.setLevyPenalty(true);
-        nmcPTBill.setUserId(userId);
-        nmcPTBill.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty.getPropertyID()
+        propertyTaxBillable.setBasicProperty(basicProperty);
+        propertyTaxBillable.setLevyPenalty(true);
+        propertyTaxBillable.setUserId(userId);
+        propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty.getPropertyID()
                 .getWard().getBoundaryNum().toString()));
-        nmcPTBill.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_AUTO));
-        collectXML = URLEncoder.encode(ptBillServiceImpl.getBillXML(nmcPTBill));
+        propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_AUTO));
+        collectXML = URLEncoder.encode(ptBillServiceImpl.getBillXML(propertyTaxBillable));
         LOGGER.info("Exiting method generatePropertyTaxBill, collectXML: " + collectXML);
         
         return RESULT_COLLECTTAX;
@@ -173,20 +168,20 @@ public class CollectionAction extends BaseFormAction {
     }
 
     @Override
-    public Object getModel() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public Object getModel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    public String getIndexNum() {
-        return indexNum;
-    }
+	public String getAssessmentNumber() {
+		return assessmentNumber;
+	}
 
-    public void setIndexNum(String indexNum) {
-        this.indexNum = indexNum;
-    }
+	public void setAssessmentNumber(String assessmentNumber) {
+		this.assessmentNumber = assessmentNumber;
+	}
 
-    public Long getUserId() {
+	public Long getUserId() {
         return userId;
     }
 

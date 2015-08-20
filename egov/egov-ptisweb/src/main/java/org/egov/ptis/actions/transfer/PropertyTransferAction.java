@@ -185,7 +185,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/new")
     public String showNewTransferForm() {
         if (basicproperty.isUnderWorkflow()) {
-            wfErrorMsg = getText("wf.pending.msg", "Transfer of Ownership");
+			List<String> msgParams = new ArrayList<String>();
+			msgParams.add("Transfer of Ownership");
+            wfErrorMsg = getText("wf.pending.msg", msgParams);
             return TARGET_WORKFLOW_ERROR;
         } else {
             currentWaterTaxDue = propertyService.getWaterTaxDues(assessmentNo);

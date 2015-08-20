@@ -525,9 +525,11 @@ public class PropertyImpl extends StateAware implements Property {
 
 	@Override
 	public String getStateDetails() {
+		final String upicNo = getBasicProperty().getUpicNo() != null && !getBasicProperty().getUpicNo().isEmpty() ? getBasicProperty()
+				.getUpicNo() : "";
 		final String applicationNo = getApplicationNo() != null && !getApplicationNo().isEmpty() ? getApplicationNo()
 				: "";
-		return applicationNo + " - " + getCreatedBy().getName();
+		return upicNo.isEmpty() ? applicationNo : upicNo;
 	}
 
 	@Override

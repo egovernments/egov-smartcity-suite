@@ -1191,19 +1191,25 @@ public class PropertyService {
         return floorDmdCalc;
     }
 
-    public void setFloorDmdCalTax(final UnitTaxCalculationInfo unitTax, final FloorwiseDemandCalculations floorDmdCalc) {
-        floorDmdCalc.setAlv(unitTax.getNetARV());
-        for (final MiscellaneousTax miscTax : unitTax.getMiscellaneousTaxes())
-            for (final MiscellaneousTaxDetail taxDetail : miscTax.getTaxDetails())
-                if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX.equals(miscTax.getTaxName()))
-                    floorDmdCalc.setTax1(floorDmdCalc.getTax1().add(taxDetail.getCalculatedTaxValue()));
-                else if (PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS.equals(miscTax.getTaxName()))
-                    floorDmdCalc.setTax2(floorDmdCalc.getTax2().add(taxDetail.getCalculatedTaxValue()));
-                else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS.equals(miscTax.getTaxName()))
-                    floorDmdCalc.setTax3(floorDmdCalc.getTax3().add(taxDetail.getCalculatedTaxValue()));
-                else if (PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY.equals(miscTax.getTaxName()))
-                    floorDmdCalc.setTax4(floorDmdCalc.getTax4().add(taxDetail.getCalculatedTaxValue()));
-    }
+	public void setFloorDmdCalTax(final UnitTaxCalculationInfo unitTax, final FloorwiseDemandCalculations floorDmdCalc) {
+		floorDmdCalc.setAlv(unitTax.getNetARV());
+		for (final MiscellaneousTax miscTax : unitTax.getMiscellaneousTaxes())
+			for (final MiscellaneousTaxDetail taxDetail : miscTax.getTaxDetails())
+				if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX.equals(miscTax.getTaxName()))
+					floorDmdCalc.setTax1(floorDmdCalc.getTax1().add(taxDetail.getCalculatedTaxValue()));
+				else if (PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX.equals(miscTax.getTaxName()))
+					floorDmdCalc.setTax2(floorDmdCalc.getTax2().add(taxDetail.getCalculatedTaxValue()));
+				else if (PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS.equals(miscTax.getTaxName()))
+					floorDmdCalc.setTax3(floorDmdCalc.getTax3().add(taxDetail.getCalculatedTaxValue()));
+				else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS.equals(miscTax.getTaxName()))
+					floorDmdCalc.setTax4(floorDmdCalc.getTax4().add(taxDetail.getCalculatedTaxValue()));
+				else if (PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX.equals(miscTax.getTaxName()))
+					floorDmdCalc.setTax4(floorDmdCalc.getTax5().add(taxDetail.getCalculatedTaxValue()));
+				else if (PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY.equals(miscTax.getTaxName()))
+					floorDmdCalc.setTax4(floorDmdCalc.getTax6().add(taxDetail.getCalculatedTaxValue()));
+				else if (PropertyTaxConstants.DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES.equals(miscTax.getTaxName()))
+					floorDmdCalc.setTax4(floorDmdCalc.getTax7().add(taxDetail.getCalculatedTaxValue()));
+	}
 
     public Date getLowestDtOfCompFloorWise(final List<Floor> floorList) {
         LOGGER.debug("Entered into getLowestDtOfCompFloorWise, floorList: " + floorList);

@@ -84,6 +84,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CRE
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEACTIVATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -98,6 +100,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -1899,4 +1902,17 @@ public class PropertyTaxUtil {
         PropertyWiseConsumptions propertyWiseConsumptions= waterChargesIntegrationService.getPropertyWiseConsumptionsForWaterCharges(basicPropertyId);
         return propertyWiseConsumptions;
     }
+    
+	public Properties loadTaxRates() {
+		Properties taxRates = new Properties();
+		String s = appConfigValuesService.getAppConfigValueByDate(PTMODULENAME, "PT_TAXRATES", new Date()).getValue();
+		StringReader sr = new StringReader(s);
+		try {
+			taxRates.load(sr);
+		} catch (IOException e) {
+			throw new EGOVRuntimeException("Could not decipher Tax rates from string" + s, e);
+		}
+		sr.close();
+		return taxRates;
+	}
 }

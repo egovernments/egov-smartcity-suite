@@ -39,16 +39,15 @@
  ******************************************************************************/
 package org.egov.ptis.actions.collection;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 
+import java.math.BigDecimal;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -57,14 +56,10 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
-import org.egov.commons.Installment;
-import org.egov.demand.dao.EgDemandDetailsDao;
-import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.ptis.actions.citizen.collection.CollectionAction;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
-import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -77,14 +72,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Namespace("/collection")
 @ResultPath("/WEB-INF/jsp/")
 @Results({ 
-    @Result(name = CollectPropertyTaxAction.RESULT_VIEW, location = "collection/collectPropertyTax-view.jsp")
+    @Result(name = CollectPropertyTaxAction.RESULT_VIEW, location = "collection/collectPropertyTax-view.jsp"),
+    @Result(name = CollectPropertyTaxAction.RESULT_TAXPAID, location = "collection/collectPropertyTax-taxPaid.jsp")
 })
 @ParentPackage("egov")
 public class CollectPropertyTaxAction extends BaseFormAction {
 
-	private static final String RESULT_SHOWPENALTY = "showPenalty";
-	public static final String RESULT_VIEW = "view";
 	private static final Logger LOGGER = Logger.getLogger(CollectPropertyTaxAction.class);
+	public static final String RESULT_VIEW = "view";
+    public static final String RESULT_TAXPAID = "taxPaid";
 
 	private PersistenceService<BasicProperty, Long> basicPropertyService;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
@@ -94,19 +90,6 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 	private String propertyId;
 	private String collectXML = "";
 	private Boolean levyPenalty = false;
-	private Boolean isPenaltyConfirmed = false;
-	private List<PenaltyAndRebate> instTaxBeanList = new ArrayList<PenaltyAndRebate>();
-	private Map<Integer, Installment> installmentAndId = new HashMap<Integer, Installment>();
-	private Map<Installment, EgDemandDetails> installmentAndDemandDetails = new HashMap<Installment, EgDemandDetails>();
-	
-	@Autowired
-	private EgDemandDetailsDao egDemandDetailsDAO;
-
-	@PersistenceContext
-	private EntityManager entityManager;
-	
-	@Autowired
-	private ApplicationContextBeanProvider beanProvider;
 	
 	@Autowired
 	private PropertyTaxBillable propertyTaxBillable;
@@ -121,13 +104,17 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 		LOGGER.info("Entered method generatePropertyTaxBill, Generating bill for index no : "
 				+ propertyId);
 
-		//PropertyTaxBillable ptBill = (PropertyTaxBillable) beanProvider.getBean("propertyTaxBillable");
-
 		BasicProperty basicProperty = basicPropertyService.findByNamedQuery(
 				PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, propertyId);
 
 		LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
+        Map<String, BigDecimal> demandCollMap = propertyTaxUtil.getDemandAndCollection(basicProperty.getProperty());
+        BigDecimal currDue = demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR));
+        BigDecimal arrDue = demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR));
 
+        if (currDue.compareTo(BigDecimal.ZERO) <= 0 && arrDue.compareTo(BigDecimal.ZERO) <= 0) {
+            return RESULT_TAXPAID;
+        }
 		propertyTaxBillable.setLevyPenalty(true);
 		propertyTaxBillable.setBasicProperty(basicProperty);
 		propertyTaxBillable.setUserId(Long.valueOf(getSession().get("userid").toString()));
@@ -191,23 +178,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 		this.propertyTaxCollection = propertyTaxCollection;
 	}
 
-	public List<PenaltyAndRebate> getInstTaxBeanList() {
-		return instTaxBeanList;
+	public void setPtBillServiceImpl(PTBillServiceImpl ptBillServiceImpl) {
+		this.ptBillServiceImpl = ptBillServiceImpl;
 	}
-
-	public void setInstTaxBeanList(List<PenaltyAndRebate> instTaxBeanList) {
-		this.instTaxBeanList = instTaxBeanList;
-	}
-
-	public Boolean getIsPenaltyConfirmed() {
-		return isPenaltyConfirmed;
-	}
-
-	public void setIsPenaltyConfirmed(Boolean isPenaltyConfirmed) {
-		this.isPenaltyConfirmed = isPenaltyConfirmed;
-	}
-	
-        public void setPtBillServiceImpl(PTBillServiceImpl ptBillServiceImpl) {
-            this.ptBillServiceImpl = ptBillServiceImpl;
-        }
 }

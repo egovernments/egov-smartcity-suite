@@ -87,6 +87,7 @@ import org.egov.ptis.client.service.CollectionApportioner;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.property.Property;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -99,6 +100,7 @@ public class PropertyTaxCollection extends TaxCollection {
     private static final Logger LOGGER = Logger.getLogger(PropertyTaxCollection.class);
     private PersistenceService persistenceService;
     private BigDecimal totalAmount = BigDecimal.ZERO;
+    private Installment currInstallment=null;
     
     @Autowired
     private ModuleService moduleDao;
@@ -108,6 +110,9 @@ public class PropertyTaxCollection extends TaxCollection {
     
     @Autowired
     private DemandGenericDao demandGenericDAO;
+    
+    @Autowired
+    private PersistenceService<Property, Long> propertyImplService;
 
     @Override
     protected Module module() {
@@ -117,6 +122,7 @@ public class PropertyTaxCollection extends TaxCollection {
     @Override
     public void updateDemandDetails(BillReceiptInfo billRcptInfo) {
         totalAmount = billRcptInfo.getTotalAmount();
+		currInstallment = PropertyTaxUtil.getCurrentInstallment();
         LOGGER.debug("updateDemandDetails : Updating Demand Details Started, billRcptInfo : " + billRcptInfo);
         EgDemand demand = getCurrentDemand(Long.valueOf(billRcptInfo.getBillReferenceNum()));
         String assessmentNo = ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader().getConsumerCode();
@@ -196,10 +202,10 @@ public class PropertyTaxCollection extends TaxCollection {
         cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
         EgDemandDetails dmdDet = null;
 
-        EgDemandDetails penaltyDmdDet = getDemandDetail(demand, getCurrentInstallment(),
+        EgDemandDetails penaltyDmdDet = getDemandDetail(demand, currInstallment,
                 DEMANDRSN_STR_CHQ_BOUNCE_PENALTY);
         if (penaltyDmdDet == null) {
-            dmdDet = insertPenalty(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, chqBouncePenalty, getCurrentInstallment());
+            dmdDet = insertPenalty(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, chqBouncePenalty, currInstallment);
         } else {
             BigDecimal existDmdDetAmt = penaltyDmdDet.getAmount();
             existDmdDetAmt = (existDmdDetAmt == null || existDmdDetAmt.equals(BigDecimal.ZERO)) ? existDmdDetAmt = BigDecimal.ZERO
@@ -271,7 +277,6 @@ public class PropertyTaxCollection extends TaxCollection {
         LOGGER.info("saveCollectionDetails - installment demandDetails size = "
                 + installmentWiseDemandDetailsByReason.size());
 
-        Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
         EgDemandDetails demandDetail = null;
 
         for (ReceiptAccountInfo rcptAccInfo : accountDetails) {
@@ -305,8 +310,10 @@ public class PropertyTaxCollection extends TaxCollection {
             }
         }
 		// Activating the demand on payment
-		if (((Ptdemand) demand).getEgptProperty().getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
-			((Ptdemand) demand).getEgptProperty().setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
+        Property property = ((Ptdemand) demand).getEgptProperty();
+		if (property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
+			property.setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
+			propertyImplService.persist(property);
 		}
         LOGGER.debug("Exiting method saveCollectionDetails");
     }
@@ -682,8 +689,7 @@ public class PropertyTaxCollection extends TaxCollection {
         		+ "AND (ptd.egptProperty.status = 'I' OR ptd.egptProperty.status = 'A') "
                 + "AND ptd.egptProperty.basicProperty.active = true";
 
-		EgDemand egDemand = (EgDemand) persistenceService.find(query, PropertyTaxUtil.getCurrentInstallment(),
-				egBill.getConsumerId());
+		EgDemand egDemand = (EgDemand) persistenceService.find(query, currInstallment, egBill.getConsumerId());
 
         LOGGER.debug("Exiting from getCurrentDemand");
         return egDemand;
@@ -720,10 +726,6 @@ public class PropertyTaxCollection extends TaxCollection {
             demandDetail = createDemandDetails(egDemandReason, advanceCollectionAmount, BigDecimal.ZERO);
         }
         return demandDetail;
-    }
-
-    public PersistenceService getPersistenceService() {
-        return persistenceService;
     }
 
     public void setPersistenceService(PersistenceService persistenceService) {

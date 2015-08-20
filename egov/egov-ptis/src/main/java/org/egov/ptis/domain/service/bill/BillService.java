@@ -169,15 +169,11 @@ public class BillService {
 		Long count = (Long) HibernateUtil
 				.getCurrentSession()
 				.createQuery(
-						"SELECT COUNT (*) FROM EgBill " + "WHERE module = ? "
-								+ "AND egBillType.code = ? "
-								+ "AND SUBSTRING(consumerId, 1, (LOCATE('(', consumerId)-1)) = ? "
-								+ "AND is_Cancelled = 'N' " + "AND issueDate between ? and ? ")
-				.setEntity(0, currentInstallment.getModule()).setString(1, BILLTYPE_MANUAL)
-				.setString(2, basicProperty.getUpicNo())
-				.setDate(3, currentInstallment.getFromDate())
-				.setDate(4, currentInstallment.getToDate()).list().get(0);
-
+						"SELECT COUNT (*) FROM EgBill WHERE module = ? "
+								+ "AND egBillType.code = ? AND consumerId = ? AND is_Cancelled = 'N' "
+								+ "AND issueDate between ? and ? ").setEntity(0, currentInstallment.getModule())
+				.setString(1, BILLTYPE_MANUAL).setString(2, basicProperty.getUpicNo())
+				.setDate(3, currentInstallment.getFromDate()).setDate(4, currentInstallment.getToDate()).list().get(0);
 		return count.intValue();
 	}
 
