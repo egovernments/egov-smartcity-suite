@@ -76,6 +76,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_SOURCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
@@ -2146,7 +2147,7 @@ public class PropertyService {
         for (final Property property : basicProperty.getPropertySet())
             if ((PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(property.getPropertyModifyReason()) || PROP_CREATE_RSN_BIFUR
                     .equalsIgnoreCase(property.getPropertyModifyReason()))
-                    && !STATUS_WORKFLOW.equals(property.getStatus())) {
+                    && !(STATUS_WORKFLOW.equals(property.getStatus()) || STATUS_CANCELLED.equals(property.getStatus()))) {
                 propBifurcated = Boolean.TRUE;
                 break;
             }
