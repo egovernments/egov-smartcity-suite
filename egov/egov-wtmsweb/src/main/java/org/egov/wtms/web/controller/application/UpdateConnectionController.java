@@ -47,6 +47,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.service.ChairPersonService;
@@ -253,10 +254,12 @@ public class UpdateConnectionController extends GenericConnectionController {
                 waterConnectionDetails.setWorkOrderDate(new Date());
                 waterConnectionDetails.setWorkOrderNumber(waterTaxNumberGenerator.generateWorkOrderNumber());
             }
-
-            waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
-                    approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction, mode);
-
+            try {
+                waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
+                        approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction, mode);
+            } catch (final ValidationException e) {
+                throw new ValidationException(e.getMessage());
+            }
             if (workFlowAction != null && !workFlowAction.isEmpty()
                     && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_ESTIMATION_NOTICE_BUTTON))
                 return "redirect:/application/estimationNotice?pathVar=" + waterConnectionDetails.getApplicationNumber();

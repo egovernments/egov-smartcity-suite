@@ -52,6 +52,7 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.ValidationException;
 
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -62,7 +63,6 @@ import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.utils.DateUtils;
@@ -111,7 +111,7 @@ public class ConnectionDemandService {
 
     @Autowired
     private InstallmentDao installmentDao;
-    
+
     @Autowired
     private DemandGenericDao demandGenericDao;
 
@@ -141,7 +141,7 @@ public class ConnectionDemandService {
 
     @Autowired
     private WaterRatesHeaderService waterRatesHeaderService;
-    
+
     @Autowired
     private WaterTaxNumberGenerator waterTaxNumberGenerator;
 
@@ -187,7 +187,7 @@ public class ConnectionDemandService {
 
     private EgDemandDetails createDemandDetails(final Double amount, final String demandReason,
             final Installment installment) {
-        final EgDemandReason demandReasonObj = getDemandReasonByCodeAndInstallment(demandReason,installment);
+        final EgDemandReason demandReasonObj = getDemandReasonByCodeAndInstallment(demandReason, installment);
         final EgDemandDetails demandDetail = new EgDemandDetails();
         demandDetail.setAmount(BigDecimal.valueOf(amount));
         demandDetail.setAmtCollected(BigDecimal.ZERO);
@@ -204,7 +204,8 @@ public class ConnectionDemandService {
         demandQuery.setParameter(1, installment.getId());
         final EgDemandReason demandReasonObj = (EgDemandReason) demandQuery.uniqueResult();
         return demandReasonObj;
-    } 
+    }
+
     public HashMap<String, Double> getSplitFee(final WaterConnectionDetails waterConnectionDetails) {
         final EgDemand demand = waterConnectionDetails.getDemand();
         final HashMap<String, Double> splitAmount = new HashMap<>();
@@ -452,7 +453,8 @@ public class ConnectionDemandService {
         return billObj;
     }
 
-    public WaterConnectionDetails updateDemandForNonmeteredConnection(final WaterConnectionDetails waterConnectionDetails) {
+    public WaterConnectionDetails updateDemandForNonmeteredConnection(final WaterConnectionDetails waterConnectionDetails)
+            throws ValidationException {
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(
                 moduleService.getModuleByName(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE), new Date());
         double totalWaterRate = 0;
@@ -479,7 +481,7 @@ public class ConnectionDemandService {
             waterConnectionDetails.setDemand(demand);
 
         } else
-            throw new EGOVRuntimeException("err.water.rate.not.found");
+            throw new ValidationException("err.water.rate.not.found");
         return waterConnectionDetails;
     }
 }
