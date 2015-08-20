@@ -364,6 +364,12 @@ public class CollectionsUtil {
                  desgnObj.getId(), boundary.getId());
          if (!employeeList.isEmpty())
              assignmentObj = assignmentService.getPrimaryAssignmentForEmployee(employeeList.get(0).getId());
+         else {
+             List<Employee> empList = employeeService.findByDepartmentDesignationAndBoundary(deptObj.getId(),
+                     desgnObj.getId(), boundary.getParent().getId());
+             assignmentObj = assignmentService.getPrimaryAssignmentForEmployee(empList.get(0).getId());
+         }
+             
          return assignmentObj != null ? assignmentObj.getPosition() : null;
      }
     
