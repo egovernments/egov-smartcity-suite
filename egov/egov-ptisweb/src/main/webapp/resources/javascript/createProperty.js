@@ -219,7 +219,7 @@ function resetNonResidentialDetails(propType, floorRow) {
 }
 
 function enableCorresAddr() {
-	if (document.forms[0].chkIsCorrIsDiff.checked == true) {
+	if (document.forms[0].corrAddressDiff.checked == true) {
 		document.getElementById("corrAddress1").readOnly = false;
 		document.getElementById("corrAddress2").readOnly = false;
 		document.getElementById("corrPinCode").readOnly = false;

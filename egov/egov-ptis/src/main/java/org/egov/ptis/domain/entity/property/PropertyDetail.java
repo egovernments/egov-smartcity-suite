@@ -381,4 +381,8 @@ public interface PropertyDetail extends Property {
     public List<Floor> getFloorDetailsProxy();
 
     public void setFloorDetailsProxy(List<Floor> floorDetailsProxy);
+
+    public Boolean isCorrAddressDiff();
+
+    public void setCorrAddressDiff(Boolean corrAddressDiff);
 }

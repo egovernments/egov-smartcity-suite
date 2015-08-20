@@ -110,6 +110,7 @@ public class BuiltUpProperty extends AbstractProperty {
     private String deviationPercentage;
     private Boolean appurtenantLandChecked;
     private Boolean buildingPlanDetailsChecked;
+    private Boolean corrAddressDiff;
 
     public BuiltUpProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea,
             Area plinthArea, Area commVacantLand, Area nonResPlotArea, Boolean irregular,
@@ -127,7 +128,7 @@ public class BuiltUpProperty extends AbstractProperty {
             String pattaNumber, Double currentCapitalValue, Double marketValue,
             String categoryType, String occupancyCertificationNo, String buildingPermissionNo,
             Date buildingPermissionDate, String deviationPercentage,
-            Boolean appurtenantLandChecked, Boolean buildingPlanDetailsChecked) {
+            Boolean appurtenantLandChecked, Boolean buildingPlanDetailsChecked, Boolean corrAddressDiff) {
         super();
         this.sitalArea = sitalArea;
         this.totalBuiltupArea = totalBuiltupArea;
@@ -182,6 +183,7 @@ public class BuiltUpProperty extends AbstractProperty {
         this.deviationPercentage = deviationPercentage;
         this.appurtenantLandChecked = appurtenantLandChecked;
         this.buildingPlanDetailsChecked = buildingPlanDetailsChecked;
+        this.corrAddressDiff = corrAddressDiff;
     }
 
     public BuiltUpProperty() {
@@ -954,6 +956,16 @@ public class BuiltUpProperty extends AbstractProperty {
     @Override
     public void setFloorDetailsProxy(List<Floor> floorDetailsProxy) {
         this.floorDetailsProxy = floorDetailsProxy;
+    }
+
+    @Override
+    public Boolean isCorrAddressDiff() {
+        return corrAddressDiff;
+    }
+
+    @Override
+    public void setCorrAddressDiff(Boolean corrAddressDiff) {
+        this.corrAddressDiff = corrAddressDiff;
     }
 
 }

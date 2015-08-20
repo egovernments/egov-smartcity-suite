@@ -76,7 +76,7 @@
  function setCorrCheckBox(){
     
      <s:if test="%{isAddressCheck()}">
-			document.getElementById("chkIsCorrIsDiff").checked=true;
+			document.getElementById("corrAddressDiff").checked=true;
 	</s:if>
    }
 

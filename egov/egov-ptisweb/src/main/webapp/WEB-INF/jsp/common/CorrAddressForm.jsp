@@ -42,7 +42,7 @@
 	<table width="100%">
 		<tr>
 	      <td class="bluebox" colspan="5" style="padding-left: 5%;"><s:text name="CorrAddrConfirm"/>
-	     	<s:checkbox name="chkIsCorrIsDiff" id="chkIsCorrIsDiff" value="%{chkIsCorrIsDiff}" onclick="enableCorresAddr();"/> <!--  have to check this -->
+	     	<s:checkbox name="propertyDetail.corrAddressDiff" id="corrAddressDiff" value="%{propertyDetail.corrAddressDiff}" onclick="enableCorresAddr();"/> <!--  have to check this -->
 	   	  </td>
 	    
 	    </tr>

@@ -192,7 +192,6 @@ public class CreatePropertyAction extends WorkflowAction {
     private String dateOfCompletion;
     private String applicationNo;
     private TreeMap<Integer, String> floorNoMap;
-    private boolean chkIsCorrIsDiff;
     private String corrAddress1;
     private String corrAddress2;
     private String corrPinCode;
@@ -363,7 +362,6 @@ public class CreatePropertyAction extends WorkflowAction {
                         setCorrAddress1(corrAddress);
                         setCorrAddress2(ownerAddress.getStreetRoadLine());
                         setCorrPinCode(ownerAddress.getPinCode());
-                        chkIsCorrIsDiff = true;
                     }
             if (null != basicProp.getPropertyID()) {
                 final PropertyID propBoundary = basicProp.getPropertyID();
@@ -759,7 +757,7 @@ public class CreatePropertyAction extends WorkflowAction {
                                 propertyDetail.getCategoryType(), propertyDetail.getOccupancyCertificationNo(),
                                 propertyDetail.getBuildingPermissionNo(), propertyDetail.getBuildingPermissionDate(),
                                 propertyDetail.getDeviationPercentage(), propertyDetail.isAppurtenantLandChecked(),
-                                propertyDetail.isBuildingPlanDetailsChecked());
+                                propertyDetail.isBuildingPlanDetailsChecked(), propertyDetail.isCorrAddressDiff());
 
         vacantProperty.setManualAlv(propertyDetail.getManualAlv());
         vacantProperty.setOccupierName(propertyDetail.getOccupierName());
@@ -784,7 +782,7 @@ public class CreatePropertyAction extends WorkflowAction {
             for (final Address address : owner.getOwner().getAddress())
                 if (null != address)
                     ownerAddress = address;
-        if (!isChkIsCorrIsDiff()) {
+        if (!(property.getPropertyDetail().isCorrAddressDiff() == null || property.getPropertyDetail().isCorrAddressDiff())) {
             ownerAddress.setAreaLocalitySector(propAddr.getAreaLocalitySector());
             ownerAddress.setHouseNoBldgApt(propAddr.getHouseNoBldgApt());
             ownerAddress.setStreetRoadLine(propAddr.getStreetRoadLine());
@@ -813,7 +811,7 @@ public class CreatePropertyAction extends WorkflowAction {
         propAddr.setStreetRoadLine(boundaryService.getBoundaryById(getLocality()).getName());
         if (getPinCode() != null && !getPinCode().isEmpty())
             propAddr.setPinCode(getPinCode());
-        if (!isChkIsCorrIsDiff()) {
+        if (!(property.getPropertyDetail().isCorrAddressDiff() == null || property.getPropertyDetail().isCorrAddressDiff())) {
             ownerAddress = new CorrespondenceAddress();
             ownerAddress.setAreaLocalitySector(propAddr.getAreaLocalitySector());
             ownerAddress.setHouseNoBldgApt(propAddr.getHouseNoBldgApt());
@@ -879,7 +877,7 @@ public class CreatePropertyAction extends WorkflowAction {
 
         if (isBlank(pinCode))
             addActionError(getText("mandatory.pincode"));
-        if (chkIsCorrIsDiff) {
+        if (property.getPropertyDetail().isCorrAddressDiff() != null && property.getPropertyDetail().isCorrAddressDiff()) {
             if (isBlank(corrAddress1))
                 addActionError(getText("mandatory.corr.addr1"));
             if (isBlank(corrAddress2))
@@ -1023,15 +1021,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
     public void setFloorNoMap(final TreeMap<Integer, String> floorNoMap) {
         this.floorNoMap = floorNoMap;
-    }
-
-
-    public boolean isChkIsCorrIsDiff() {
-        return chkIsCorrIsDiff;
-    }
-
-    public void setChkIsCorrIsDiff(final boolean chkIsCorrIsDiff) {
-        this.chkIsCorrIsDiff = chkIsCorrIsDiff;
     }
 
     public String getCorrAddress1() {
