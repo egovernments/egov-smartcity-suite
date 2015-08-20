@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="480"/>
+	<property name="ireport.y" value="192"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="district" class="java.lang.String"/>
 	<parameter name="applicationType" class="java.lang.String"/>
@@ -54,21 +54,21 @@
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="84" y="121" width="433" height="15" uuid="86c51035-7a99-4c14-8923-09aff6cb1aff"/>
+				<reportElement x="82" y="121" width="429" height="15" uuid="86c51035-7a99-4c14-8923-09aff6cb1aff"/>
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{estimationDate}+" Original Estimations"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="29" y="121" width="55" height="15" uuid="3c551f20-c6f7-44df-a210-5fbd222c62bc"/>
+				<reportElement x="29" y="121" width="53" height="15" uuid="3c551f20-c6f7-44df-a210-5fbd222c62bc"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[Subject :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="189" y="82" width="53" height="15" uuid="4dd6b6e5-4deb-41ab-8323-2ccf609ffd3e"/>
+				<reportElement x="189" y="82" width="45" height="15" uuid="4dd6b6e5-4deb-41ab-8323-2ccf609ffd3e"/>
 				<textElement verticalAlignment="Middle">
 					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
@@ -89,7 +89,7 @@
 				<textFieldExpression><![CDATA["Owner Name Mr/Mrs: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{applicantName}+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="242" y="82" width="147" height="15" uuid="6a363806-e39f-452c-a45b-b052ec667241"/>
+				<reportElement x="234" y="82" width="130" height="15" uuid="6a363806-e39f-452c-a45b-b052ec667241"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="12"/>
 				</textElement>
@@ -121,7 +121,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["House No:<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{houseNo}+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["House No:<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{houseNo}+"</style>"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -300,7 +300,7 @@
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 		</band>
-	</detail>	
+	</detail>
 	<pageFooter>
 		<band height="182" splitType="Stretch">
 			<textField isBlankWhenNull="true">
@@ -333,39 +333,39 @@
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="329" y="109" width="191" height="15" uuid="6dc216b3-e96a-4034-83c5-2d471a08c27d"/>
+				<reportElement x="329" y="109" width="194" height="15" uuid="6dc216b3-e96a-4034-83c5-2d471a08c27d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[Municipal Assistant Engineer]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="17" y="22" width="112" height="15" uuid="1f905d13-d5ba-4e6c-abe7-5593df07e2d4"/>
+				<reportElement x="17" y="22" width="110" height="15" uuid="1f905d13-d5ba-4e6c-abe7-5593df07e2d4"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[Donation Charges :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="129" y="22" width="148" height="15" uuid="4080b245-6445-4920-a00f-f917e1fb4e88"/>
+				<reportElement x="127" y="22" width="148" height="15" uuid="4080b245-6445-4920-a00f-f917e1fb4e88"/>
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Rs. "+$P{donationCharges}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" Rs. "+$P{donationCharges}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="301" y="22" width="112" height="15" uuid="ff5ccd4b-7d37-4c7e-aa35-07633f06a535"/>
+				<reportElement x="301" y="22" width="118" height="15" uuid="ff5ccd4b-7d37-4c7e-aa35-07633f06a535"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[Estimation Charges :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="413" y="22" width="131" height="15" uuid="0f65d178-e901-463d-80af-0014adbcc9d5"/>
+				<reportElement x="419" y="22" width="125" height="15" uuid="0f65d178-e901-463d-80af-0014adbcc9d5"/>
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Rs. "+$P{estimationCharges}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" Rs. "+$P{estimationCharges}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
