@@ -31,7 +31,7 @@
 		<td class="greybox" width="25%"><s:text name="exemptioncategory"/> :</td>
 		<td class="greybox">
 		<s:select name="taxExemptedReason" id="taxExemptedReason" headerValue="select"
-				headerKey="" list="dropdownData.taxExemptionReasonList" value="%{taxExemptedReason}" 
+				headerKey="" list="dropdownData.taxExemptionReasonList" value="%{taxExemptedReason.id}" 
 				listKey="id" listValue="name" cssClass="selectnew" data-optional="1">
 			</s:select>
 		</td>

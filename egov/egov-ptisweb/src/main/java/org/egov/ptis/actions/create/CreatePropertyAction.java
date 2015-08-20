@@ -241,7 +241,6 @@ public class CreatePropertyAction extends WorkflowAction {
     private String applicationNoMessage;
     private String assessmentNoMessage;
     private String propertyInitiatedBy;
-    private Long taxExemptedReason;
 
     @Autowired
     private UserService userService;
@@ -265,14 +264,13 @@ public class CreatePropertyAction extends WorkflowAction {
         this.addRelatedEntity("property.propertyDetail.floorDetails.propertyOccupation", PropertyOccupation.class);
         this.addRelatedEntity("property.propertyDetail.floorDetails.structureClassification",
                 StructureClassification.class);
-        this.addRelatedEntity("property.propertyDetail.floorDetails.taxExemptedReason", TaxExeptionReason.class);
         this.addRelatedEntity("property.basicProperty.propertyOwnerInfo.owner", Citizen.class);
         this.addRelatedEntity("property.propertyDetail.apartment", Apartment.class);
         addRelatedEntity("property.propertyDetail.floorType", FloorType.class);
         addRelatedEntity("property.propertyDetail.roofType", RoofType.class);
         addRelatedEntity("property.propertyDetail.wallType", WallType.class);
         addRelatedEntity("property.propertyDetail.woodType", WoodType.class);
-
+        addRelatedEntity("taxExemptedReason", TaxExeptionReason.class);
     }
 
     @Override
@@ -290,8 +288,7 @@ public class CreatePropertyAction extends WorkflowAction {
     public String create() {
         LOGGER.debug("create: Property creation started, Property: " + property + ", zoneId: " + zoneId + ", wardId: "
                 + wardId + ", blockId: " + blockId + ", areaOfPlot: " + areaOfPlot + ", dateOfCompletion: "
-                + dateOfCompletion + ", taxExemptedReason: "
-                + taxExemptedReason + ", propTypeId: " + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: "
+                + dateOfCompletion + ", propTypeId: " + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: "
                 + propOccId);
         final long startTimeMillis = System.currentTimeMillis();
         final BasicProperty basicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);
@@ -469,7 +466,7 @@ public class CreatePropertyAction extends WorkflowAction {
         basicProp.setPropertyMutationMaster(propertyMutationMaster);
         property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(), propTypeId,
                 propUsageId, propOccId, status, getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(),
-                getWallTypeId(), getWoodTypeId(), taxExemptedReason);
+                getWallTypeId(), getWoodTypeId(), null);
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propCompletionDate = propService.getLowestDtOfCompFloorWise(property.getPropertyDetail().getFloorDetails());
         else
@@ -705,7 +702,7 @@ public class CreatePropertyAction extends WorkflowAction {
          */
         property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(), propTypeId,
                 propUsageId, propOccId, status, getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(),
-                getWallTypeId(), getWoodTypeId(), taxExemptedReason);
+                getWallTypeId(), getWoodTypeId(), null);
         property.setStatus(status);
 
         LOGGER.debug("createBasicProp: Property after call to PropertyService.createProperty: " + property);
@@ -877,7 +874,7 @@ public class CreatePropertyAction extends WorkflowAction {
                     addActionError(getText("mandatory.mobilenumber"));
             }
 
-        validateProperty(property, areaOfPlot, dateOfCompletion, taxExemptedReason, propTypeId,
+        validateProperty(property, areaOfPlot, dateOfCompletion, null, propTypeId,
                 propUsageId, propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId);
 
         if (isBlank(pinCode))
@@ -1028,15 +1025,8 @@ public class CreatePropertyAction extends WorkflowAction {
         this.floorNoMap = floorNoMap;
     }
 
-    public Long getTaxExemptedReason() {
-		return taxExemptedReason;
-	}
 
-	public void setTaxExemptedReason(Long taxExemptedReason) {
-		this.taxExemptedReason = taxExemptedReason;
-	}
-
-	public boolean isChkIsCorrIsDiff() {
+    public boolean isChkIsCorrIsDiff() {
         return chkIsCorrIsDiff;
     }
 
