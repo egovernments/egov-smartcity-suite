@@ -10,6 +10,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.commons.Installment;
 import org.egov.infra.utils.DateUtils;
 import org.egov.wtms.application.entity.MeterReadingConnectionDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -37,14 +38,16 @@ public class MeterReadingController {
     private WaterConnectionDetails waterConnectionDetails;
     private final WaterConnectionDetailsRepository waterConnectionDetailsRepository;
     private final WaterRatesDetailsRepository waterRatesDetailsRepository;
-    @Autowired
-    private ConnectionDemandService connectionDemandService;
+
+    private final ConnectionDemandService connectionDemandService;
 
     @Autowired
     public MeterReadingController(final WaterConnectionDetailsRepository waterConnectionDetailsRepository,
-            final WaterRatesDetailsRepository waterRatesDetailsRepository) {
+            final WaterRatesDetailsRepository waterRatesDetailsRepository,
+            final ConnectionDemandService connectionDemandService) {
         this.waterConnectionDetailsRepository = waterConnectionDetailsRepository;
         this.waterRatesDetailsRepository = waterRatesDetailsRepository;
+        this.connectionDemandService = connectionDemandService;
     }
 
     @ModelAttribute
@@ -56,17 +59,19 @@ public class MeterReadingController {
     @RequestMapping(value = "/meterentry/{consumerCode}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String consumerCode, final HttpServletRequest request) {
         MeterReadingConnectionDetails meterReadingpriviousObj = null;
-        final List<MeterReadingConnectionDetails> meterReadingpriviousObjlist = waterConnectionDetailsRepository
+       final List<MeterReadingConnectionDetails> meterReadingpriviousObjlist = waterConnectionDetailsRepository
                 .findPreviousMeterReadingReading(waterConnectionDetails.getId());
         if (!meterReadingpriviousObjlist.isEmpty())
             meterReadingpriviousObj = meterReadingpriviousObjlist.get(0);
         else {
             meterReadingpriviousObj = new MeterReadingConnectionDetails();
-            if (waterConnectionDetails.getConnection().getInitialReading() != null)
+            if (waterConnectionDetails.getConnection().getInitialReading() != null){
                 meterReadingpriviousObj.setCurrentReading(waterConnectionDetails.getConnection().getInitialReading());
-                //Todo needs to add MeterReading date to Tap Execution date
-            else
-            meterReadingpriviousObj.setCurrentReading(0l);
+                //meterReadingpriviousObj.setCurrentReadingDate(waterConnectionDetails.getExecutionDate());    
+            }
+            else{
+                meterReadingpriviousObj.setCurrentReading(0l);
+             }
         }
         model.addAttribute("mode", "meterEntry");
         model.addAttribute("meterReadingpriviousObj", meterReadingpriviousObj);
@@ -78,6 +83,26 @@ public class MeterReadingController {
     public String updateMeterEntry(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        Date givenDate = null;
+        try {
+            givenDate = dateFormat.parse(request.getParameter("metercurrentReadingDate"));
+        } catch (final ParseException e) {
+
+        }
+        final Installment installment = connectionDemandService.getMonthlyInstallMentForgivenDate(givenDate);
+        if(waterConnectionDetails.getDemand()!=null && waterConnectionDetails.getDemand().getEgInstallmentMaster()!=null)
+        if (installment.getInstallmentNumber().equals(
+                waterConnectionDetails.getDemand().getEgInstallmentMaster().getInstallmentNumber())) {
+            final Boolean currentInstallmentExist = true;
+            model.addAttribute("currentInstallmentExist", currentInstallmentExist);
+            final String message = "Meter Entry For Selected Month allready Exist";
+            model.addAttribute("message", message);
+            model.addAttribute("consumerCode", waterConnectionDetails.getConnection().getConsumerCode());
+            return "newconnection-meterEntry";
+          /*  return "redirect:/application/meterdemandnotice?pathVar="
+                    + waterConnectionDetails.getConnection().getConsumerCode();*/
+        }
         final MeterReadingConnectionDetails meterReadingConnectionDeatilObj = new MeterReadingConnectionDetails();
         Long previousReading = 0l;
         if (errors.hasErrors())
@@ -91,27 +116,31 @@ public class MeterReadingController {
             return "newconnection-meterEntry";
         }
         waterConnectionDetails = billCalculationAndDemandUpdate(waterConnectionDetails, errors, model, request,
-                meterReadingConnectionDeatilObj, previousReading);
+                meterReadingConnectionDeatilObj, previousReading, dateFormat);
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
-        redirectAttrs.addFlashAttribute("waterConnectionDetails", savedWaterConnectionDetails);
-
-        return "newconnection-success";
+        /*
+         * redirectAttrs.addFlashAttribute("waterConnectionDetails",
+         * savedWaterConnectionDetails); return "newconnection-success";
+         */
+        return "redirect:/application/meterdemandnotice?pathVar="
+                + savedWaterConnectionDetails.getConnection().getConsumerCode();
     }
 
     private WaterConnectionDetails billCalculationAndDemandUpdate(WaterConnectionDetails waterConnectionDetails,
             final BindingResult errors, final Model model, final HttpServletRequest request,
-            final MeterReadingConnectionDetails meterReadingConnectionDeatilObj, final Long previousReading) {
+            final MeterReadingConnectionDetails meterReadingConnectionDeatilObj, final Long previousReading,
+            final SimpleDateFormat dateFormat) {
         Date currentDate = null;
         Date previousDate = null;
         int noofmonths = 0;
+
         final String readingDate = request.getParameter("metercurrentReadingDate");
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
         try {
             currentDate = dateFormat.parse(readingDate);
-            if(request.getParameter("previousreadingDate")!=null){
-            previousDate = dateFormat.parse(request.getParameter("previousreadingDate"));
-            }
+            if (request.getParameter("previousreadingDate") != null)
+                previousDate = dateFormat.parse(request.getParameter("previousreadingDate"));
         } catch (final ParseException e) {
             e.printStackTrace();
         }
@@ -119,11 +148,10 @@ public class MeterReadingController {
         meterReadingConnectionDeatilObj.setCurrentReadingDate(currentDate);
 
         populateMeterReadingDetails(meterReadingConnectionDeatilObj);
-        if(previousDate !=null){
-        noofmonths = DateUtils.noOfMonths(previousDate, currentDate);
-        }else{
-            noofmonths = DateUtils.noOfMonths(new Date(), currentDate); 
-        }
+        if (previousDate != null)
+            noofmonths = DateUtils.noOfMonths(previousDate, currentDate);
+        else
+            noofmonths = DateUtils.noOfMonths(new Date(), currentDate);
         final Long currentToPreviousDiffOfUnits = Long.valueOf(request.getParameter("metercurrentReading"))
                 - previousReading;
         Long noOfUnitsForPerMonth = 0l;
@@ -131,6 +159,17 @@ public class MeterReadingController {
             noOfUnitsForPerMonth = currentToPreviousDiffOfUnits / noofmonths;
         else
             noOfUnitsForPerMonth = currentToPreviousDiffOfUnits;
+        
+        double finalAmountToBePaid = calculateAmountTobePaid(waterConnectionDetails, noofmonths, noOfUnitsForPerMonth);
+
+        if (BigDecimal.valueOf(finalAmountToBePaid).compareTo(BigDecimal.ZERO) > 0)
+            waterConnectionDetails = connectionDemandService.updateDemandForMeteredConnection(waterConnectionDetails,
+                    BigDecimal.valueOf(finalAmountToBePaid), currentDate);
+        return waterConnectionDetails;
+    }
+
+    private double calculateAmountTobePaid(WaterConnectionDetails waterConnectionDetails, int noofmonths,
+            Long noOfUnitsForPerMonth) {
         WaterRatesDetails waterRateDetail = null;
         final List<WaterRatesDetails> waterDetList = waterRatesDetailsRepository
                 .findByWaterRate(waterConnectionDetails.getConnectionType(), waterConnectionDetails.getUsageType(),
@@ -144,11 +183,7 @@ public class MeterReadingController {
             finalAmountToBePaid = amountToBeCollectedWithUnitRatePerMonth * noofmonths / 1000;
         else
             finalAmountToBePaid = amountToBeCollectedWithUnitRatePerMonth / 1000;
-
-        if (BigDecimal.valueOf(finalAmountToBePaid).compareTo(BigDecimal.ZERO) > 0)
-            waterConnectionDetails = connectionDemandService.updateDemandForMeteredConnection(waterConnectionDetails,
-                    BigDecimal.valueOf(finalAmountToBePaid));
-        return waterConnectionDetails;
+        return finalAmountToBePaid;
     }
 
     private void populateMeterReadingDetails(final MeterReadingConnectionDetails meterReadingConnectionDeatilObj) {

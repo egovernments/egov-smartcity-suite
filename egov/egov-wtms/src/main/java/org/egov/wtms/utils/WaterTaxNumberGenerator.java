@@ -57,6 +57,7 @@ import org.springframework.stereotype.Service;
 public class WaterTaxNumberGenerator {
     private static final String CONSUMER_NUMBER_SEQ_PREFIX = "SEQ_CONSUMER_NUMBER";
     private static final String WORKORDER_NUMBER_SEQ_PREFIX = "SEQ_WORKORDER_NUMBER";
+    private static final String METERDEMANDNOTICE_NUMBER_SEQ_PREFIX = "SEQ_METERNOTICE_NUMBER";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -99,6 +100,21 @@ public class WaterTaxNumberGenerator {
             return String.format("%s%06d","",sequenceNumber);
         } catch (final SQLException e) {
             throw new EGOVRuntimeException("Error occurred while generating Consumer Number", e);
+        }
+    }
+    @Transactional
+    public String generateMeterDemandNoticeNumber() {
+        try {
+            final String sequenceName = METERDEMANDNOTICE_NUMBER_SEQ_PREFIX;
+            Serializable sequenceNumber;
+            try {
+                sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
+            } catch (final SQLGrammarException e) {
+                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
+            }
+            return String.format("%s%06d","",sequenceNumber);
+        } catch (final SQLException e) {
+            throw new EGOVRuntimeException("Error occurred while generating meter Generate Number", e);
         }
     }
 

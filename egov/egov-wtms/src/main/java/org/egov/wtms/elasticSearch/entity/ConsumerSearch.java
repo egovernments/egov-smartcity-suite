@@ -34,6 +34,8 @@ public class ConsumerSearch implements Indexable {
     private String applicationCode;
     @Searchable(group = Searchable.Group.CLAUSES)
     private String status;
+    @Searchable(group = Searchable.Group.CLAUSES)
+    private String connectionType;
 
     public ConsumerSearch(final String consumerCode, final String mobileNumber, final String usageType,
             final Date createdDate) {
@@ -208,4 +210,13 @@ public class ConsumerSearch implements Indexable {
     public void setApplicationCode(final String applicationCode) {
         this.applicationCode = applicationCode;
     }
+    public String getConnectionType() {
+        return connectionType;
+    }
+    public void setConnectionType(String connectionType) {
+        this.connectionType = connectionType;
+    }
+    
+    
+    
 }

@@ -52,13 +52,16 @@
 	id="editmeterWaterConnectionform"
 	cssClass="form-horizontal form-groups-bordered">
 	<div class="page-container" id="page-container">
-		<form:hidden id="mode" path="" value="${mode}" />
+		<form:hidden id="mode" path="" name="mode" value="${mode}" />
 		<form:hidden id="meterReadingpriviousObj" path=""
 			value="${meterReadingpriviousObj}" />
 			<form:hidden id="meterReadingCurrentObj" path=""
 			value="${meterReadingCurrentObj}" />
-			
-
+			currentInstallmentExist
+<input type="hidden" id="currentInstallmentExist"  name="currentInstallmentExist"
+			value="${currentInstallmentExist}" />
+			<input type="hidden" id="consumerCode"  name="consumerCode"
+			value="${consumerCode}" />
 		<form:hidden path="id" />
 		<div class="panel-heading">
 			<div class="panel-title text-center no-float">
@@ -74,15 +77,11 @@
 			<jsp:include page="commonappdetails-view.jsp" />
 			<jsp:include page="connectiondetails-view.jsp" />
 
-	
-
-
-
 	<div class="panel-heading">
 				<div class="panel-title">
 					<spring:message code="lbl.meterbasicdetails"/>
 				</div>					
-			
+	<c:if test="${!currentInstallmentExist}">		
 	<table id="meterDetailprevioussid">
 			<tr>
 			
@@ -132,14 +131,20 @@
 				<%-- <form:hidden id="meterConnectionid" path="" value="${meterConnection.id}" />  --%>
 			</tr>
 		</table>
-	</div>
+		
+	</div></c:if>
 </div>
 	<div class="row">
 		<div class="text-center">
-			<button type="submit" class="btn btn-primary"
+			<button type="submit" class="btn btn-primary" id="submitButtonId"
 				onclick="return valiateReading();">
 				<spring:message code="lbl.submit" />
 			</button>
+			
+			<c:if test="${currentInstallmentExist}">
+			<button type="submit" class="btn btn-primary" onclick="return getUrlToPring()">
+					Print Demand Notice
+			</button></c:if>
 			<a href="javascript:void(0);" class="btn btn-primary"
 				onclick="self.close()"> <spring:message code='lbl.close' />
 			</a>
@@ -156,6 +161,18 @@
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 
 <script>
+var currentInstallmentExist=$('#currentInstallmentExist').val();
+if(currentInstallmentExist){
+	$('#submitButtonId').hide();
+}
+function getUrlToPring()
+{
+	var consumerCode=$('#consumerCode').val();
+	var url = '/wtms/application/meterdemandnotice?pathVar='+ consumerCode;
+	$('#editmeterWaterConnectionform').attr('method', 'get');
+	$('#editmeterWaterConnectionform').attr('action', url);
+	window.location = url;
+}
 function valiateReading(){
 var previousReading = $('#previousreading').val();
 var currentReading = $('#metercurrentReading').val();
@@ -173,7 +190,7 @@ if((currentReading-previousReading)<0)
 	return false;
 	}
 	if(currentMeterDate !=undefined && previousMeterDate!= undefined){
-	 if(!validateDateRange(currentMeterDate, previousMeterDate)) {
+	 if(!validateDateRange( previousMeterDate,currentMeterDate)) {
 		alert("Entered Metered Date allready present in System");
 		$('#metercurrentReadingDate').val('');
 		return false;			
@@ -186,7 +203,6 @@ else{
 }
 
 function validateDateRange(fromDate, toDate) {
-	alert();
 	if (fromDate != "" && toDate != "") {
 		var stsplit = fromDate.split("/");
 		var ensplit = toDate.split("/");
@@ -196,7 +212,7 @@ function validateDateRange(fromDate, toDate) {
 		
         // Check the date range, 86400000 is the number of milliseconds in one day
         var difference = (endDate - startDate) / (86400000 * 7);
-        if (difference == 0 || difference < 0) {
+        if (difference <= 0) {
 			return false;
 			} 
         else {

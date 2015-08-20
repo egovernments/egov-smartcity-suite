@@ -433,10 +433,11 @@ public class DemandGenericHibDao implements DemandGenericDao {
 		StringBuffer qryStr = new StringBuffer(2000);
 		if (includeHistory != null && !includeHistory.equals("") && includeHistory != null
 				&& !includeCancelled.equals("")) {
-			qryStr.append("from EgBill egBill  where  egBill.is_History =:includeHistory and egBill.is_Cancelled =:includeCancelled  ");
+			qryStr.append("from EgBill egBill  where  egBill.is_History =:includeHistory and egBill.is_Cancelled =:includeCancelled ");
 			if (demand != null) {
 				qryStr.append(" and egBill" + ".egDemand =:demand ");
 			}
+			qryStr.append(" order by createDate desc ");  
 			qry = getCurrentSession().createQuery(qryStr.toString());
 			if (demand != null) {
 				qry.setEntity("demand", demand);
