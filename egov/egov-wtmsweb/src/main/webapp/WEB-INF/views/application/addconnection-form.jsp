@@ -71,16 +71,12 @@
 				</c:if>
 				</div>
 			</div>			
-			<div class="row">
-				<div class="text-center">
 				<c:if test="${validationMessage==''}">
 						<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 							<div class="buttonbottom" align="center">
 							<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 					</div>
 				</c:if>	
-				</div>
-			</div>
 		</form:form>
 	</div>
 </div>

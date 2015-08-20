@@ -63,14 +63,15 @@
 <form:hidden id="userRole" value="${userRole}" path=""/>
 			
 					<div class="form-group">
-				<label for="field-1" class="col-sm-4 control-label"> <spring:message
+						<label for="field-1" class="col-md-4 control-label"> <spring:message
 										code="lbl.mobilenumber" /></label>
 				
 						<div class="col-md-4 add-margin">
 							<input type="text" name="mobileNumber" class="form-control" id="app-appcodo" min="10" maxlength="12" />
-						</div></div>
+						</div>
+					</div>
 						<div class="form-group">
-				<label for="field-1" class="col-sm-4 control-label">Consumer No</label>
+				<label for="field-1" class="col-md-4 control-label">Consumer No</label>
 										  <div class="col-md-4 add-margin">
 							<input type="text" name="consumerCode" class="form-control" id="app-appcodo"/>
 						</div>
@@ -78,14 +79,14 @@
 						
 						
 						<div class="form-group">
-					<label for="field-1" class="col-sm-4 control-label"> <spring:message
+					<label for="field-1" class="col-md-4 control-label"> <spring:message
 										code="lbl.applicant.name" /></label>
 						<div class="col-md-4 add-margin">
 							<input type="text" name="applicationName" class="form-control" id="app-mobno" />
 						</div>
 						</div>
 						<div class="form-group">
-					<label for="field-1" class="col-sm-4 control-label">Locality</label>
+					<label for="field-1" class="col-md-4 control-label">Locality</label>
 						<div class="col-md-4 add-margin">
 							<input type="text" name="locality" class="form-control" id="app-mobno"
 								/>

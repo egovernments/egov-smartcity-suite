@@ -87,18 +87,20 @@
 					</div>
 					<jsp:include page="connectiondetails.jsp"></jsp:include>	
 					<jsp:include page="dataEntryDetails.jsp"></jsp:include>
-					<div class="buttonbottom" align="center">
-						<table>
-							<tr>
-								<td><form:button type="submit" id="Create"
-										class="btn btn-primary" value="Create" onclick="validate();">Create </form:button>
-									<input type="button" name="button2" id="button2" value="Close"
-									class="btn btn-primary" onclick="window.close();" /></td>
-							</tr>
-						</table>
-					</div>
+					
 				</div>
-			</div>			
+			</div>	
+			<div class="buttonbottom" align="center">
+				<table>
+					<tr>
+						<td><form:button type="submit" id="Create"
+								class="btn btn-primary" value="Create" onclick="validate();">Create </form:button>
+							<input type="button" name="button2" id="button2" value="Close"
+							class="btn btn-primary" onclick="window.close();" /></td>
+					</tr>
+				</table>
+			</div>
+					
 		<script>
 
 		 if($('#connectionType').val()=='METERED')
