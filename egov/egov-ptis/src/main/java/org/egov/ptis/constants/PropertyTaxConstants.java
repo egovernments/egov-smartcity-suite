@@ -1052,4 +1052,14 @@ public interface PropertyTaxConstants {
     
     //Action targets
     public static final String TARGET_WORKFLOW_ERROR = "workFlowError";
+
+	public static final String THIRD_PARTY_PHOTO_OF_ASSESSMENT_CODE = "1";
+    public static final String THIRD_PARTY_BUILDING_PERMISSION_COPY_CODE = "2";
+    public static final String THIRD_PARTY_ATTESTED_COPY_PROPERTY_DOCUMENT_CODE = "3";
+    public static final String THIRD_PARTY_NON_JUDICIAL_STAMP_PAPERS_CODE = "4";
+    public static final String THIRD_PARTY_NOTARIZED_AFFIDAVIT_CUM_IDEMNITY_BOND_CODE = "5";
+    public static final String THIRD_PARTY_DEATH_CERTIFICATE_COPY_CODE = "6";
+    
+    public static final String THIRD_PARTY_JAVA_TEMP_DIR = "java.io.tmpdir";
+    public static final String THIRD_PARTY_CONTENT_TYPE = "application/{0}";
 }

@@ -45,6 +45,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.MessageFormat;
@@ -62,6 +66,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.commons.io.FilenameUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
@@ -97,6 +102,8 @@ import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
+import org.egov.ptis.domain.entity.property.Document;
+import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
@@ -132,6 +139,8 @@ import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import com.sun.jersey.core.header.FormDataContentDisposition;
 
 public class PropertyExternalService {
 	public static final Integer FLAG_MOBILE_EMAIL = 0;
@@ -951,7 +960,7 @@ public class PropertyExternalService {
 			String hasWaterHarvesting, String floorTypeCode, String roofTypeCode, String wallTypeCode,
 			String woodTypeCode, List<FloorDetails> floorDetailsList, String surveyNumber, String pattaNumber,
 			Double vacantLandArea, Double marketValue, Double currentCapitalValue, String completionDate,
-			String northBoundary, String southBoundary, String eastBoundary, String westBoundary)
+			String northBoundary, String southBoundary, String eastBoundary, String westBoundary, List<Document> documents)
 					throws ParseException {
 
 		NewPropertyDetails newPropertyDetails = null;
@@ -959,9 +968,10 @@ public class PropertyExternalService {
 				extentOfSite, regdDocNo, regdDocDate, localityCode, street, doorNo, electionWardCode, pinCode,
 				isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, floorTypeCode, roofTypeCode, wallTypeCode,
 				woodTypeCode, floorDetailsList, completionDate, northBoundary, southBoundary, eastBoundary,
-				westBoundary);
+				westBoundary, documents);
 		basicProperty.setIsTaxXMLMigrated(PropertyTaxConstants.STATUS_YES_XML_MIGRATION);
 		processAndStoreDocumentsWithReason(basicProperty, PropertyTaxConstants.DOCS_CREATE_PROPERTY);
+		//propService.processAndStoreDocument(documents);
 		basicProperty.setPropertyOwnerInfoProxy(getPropertyOwnerInfoList(ownerDetailsList));
 		basicPropertyService.createOwners(property, basicProperty, basicProperty.getAddress());
 		basicProperty = basicPropertyService.persist(basicProperty);
@@ -981,7 +991,8 @@ public class PropertyExternalService {
 			String localityCode, String street, String doorNo, String electionWardCode, String pinCode,
 			Boolean isCorrAddrDiff, String corrAddr1, String corrAddr2, String corrPinCode, String floorTypeCode,
 			String roofTypeCode, String wallTypeCode, String woodTypeCode, List<FloorDetails> floorDetailsList,
-			String completionDate, String northBoundary, String southBoundary, String eastBoundary, String westBoundary)
+			String completionDate, String northBoundary, String southBoundary, String eastBoundary, String westBoundary, 
+			List<Document> documents)
 					throws ParseException {
 		BasicProperty basicProperty = new BasicPropertyImpl();
 		basicProperty.setRegdDocNo(regdDocNo);
@@ -1027,6 +1038,7 @@ public class PropertyExternalService {
 		propertyImpl.setBasicProperty(basicProperty);
 		propertyImpl.getPropertyDetail().setFloorDetailsProxy(getFloorList(floorDetailsList));
 		propertyImpl.getBasicProperty().setPropertyID(propertyID);
+		propertyImpl.setDocuments(documents);
 		TaxExeptionReason taxExemptedReason = getTaxExemptionReasonByCode(floorDetailsList.get(0).getExemptionCategoryCode());
 		propertyImpl.setTaxExemptedReason(taxExemptedReason);
 		property = propService.createProperty(propertyImpl, extentOfSite, mutationReasonCode,
@@ -1036,12 +1048,17 @@ public class PropertyExternalService {
 		property.setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
 		basicProperty.addProperty(property);
 		Date propCompletionDate = null;
-		if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+		if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
 			propCompletionDate = propService
 					.getLowestDtOfCompFloorWise(property.getPropertyDetail().getFloorDetailsProxy());
-		else
+		} else {
 			propCompletionDate = property.getPropertyDetail().getDateOfCompletion();
+		}
 		basicProperty.setPropOccupationDate(propCompletionDate);
+
+		if (property != null && !property.getDocuments().isEmpty()) {
+			propService.processAndStoreDocument(property.getDocuments());
+		}
 		propService.createDemand(propertyImpl, propCompletionDate);
 		return basicProperty;
 	}
@@ -1291,6 +1308,29 @@ public class PropertyExternalService {
 		return proeprtyOwnerInfoList;
 	}
 	
+	public List<MasterCodeNamePairDetails> getPropertyCreateDocumentTypes() {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		List<DocumentType> documentTypes = propService.getPropertyCreateDocumentTypes();
+		for (DocumentType documentType : documentTypes) {
+			MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+			mstrCodeNamePairDetails.setCode(documentType.getId().toString());
+			mstrCodeNamePairDetails.setName(documentType.getName());
+			mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+	
+	public DocumentType getDocumentTypeByCode(String docTypeCode) {
+		List<DocumentType> documentTypes = propService.getPropertyCreateDocumentTypes();
+		DocumentType documentType = null;
+		for(DocumentType docType : documentTypes) {
+			if(docType.getId() == Long.valueOf(docTypeCode)) {
+				documentType = docType;
+			}
+		}
+		return documentType;
+	}
+	
 	//TODO: Need to uncomment when it is required to check whether aadhaar number or mobile number is exists or not
 	/*public ErrorDetails isAadhaarNumberExist(List<OwnerDetails> ownerDetailsList) {
 		ErrorDetails errorDetails = null;
@@ -1323,4 +1363,146 @@ public class PropertyExternalService {
 		}
 		return errorDetails;
 	}*/
+	
+	/**
+	 * This method is used to get document's list to upload the documents.
+	 * 
+	 * @param photoAsmntStream
+	 *            - photo of assessment input stream object
+	 * @param photoAsmntDisp
+	 *            - photo of assessment content disposition object
+	 * @param bldgPermCopyStream
+	 *            - building permission copy input stream object
+	 * @param bldgPermCopyDisp
+	 *            - building permission copy content disposition object
+	 * @param atstdCopyPropDocStream
+	 *            - attested copy of property document input stream object
+	 * @param atstdCopyPropDocDisp
+	 *            - attested copy of property document content disposition
+	 *            object
+	 * @param nonJudcStampStream
+	 *            - non judicial stamp input stream object
+	 * @param nonJudcStampDisp
+	 *            - non judicial stamp content disposition object
+	 * @param afdvtBondStream
+	 *            - affidavit bond paper input stream object
+	 * @param afdvtBondDisp
+	 *            - affidavit bond paper content disposition object
+	 * @param deathCertCopyStream
+	 *            - death certificate copy input stream object
+	 * @param deathCertCopyDisp
+	 *            - death certificate copy content disposition object
+	 * @return document - list of document
+	 */
+	public List<Document> getDocuments(InputStream photoAsmntStream, FormDataContentDisposition photoAsmntDisp,
+			InputStream bldgPermCopyStream, FormDataContentDisposition bldgPermCopyDisp,
+			InputStream atstdCopyPropDocStream, FormDataContentDisposition atstdCopyPropDocDisp,
+			InputStream nonJudcStampStream, FormDataContentDisposition nonJudcStampDisp, InputStream afdvtBondStream,
+			FormDataContentDisposition afdvtBondDisp, InputStream deathCertCopyStream,
+			FormDataContentDisposition deathCertCopyDisp) {
+		List<Document> documents = new ArrayList<Document>();
+		DocumentType documentType = null;
+		Document document = null;
+		if (photoAsmntStream != null && photoAsmntDisp != null) {
+			documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_PHOTO_OF_ASSESSMENT_CODE);
+			document = createDocument(photoAsmntStream, photoAsmntDisp);
+			document.setType(documentType);
+			documents.add(document);
+		}
+
+		if (bldgPermCopyStream != null && bldgPermCopyDisp != null) {
+			documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_BUILDING_PERMISSION_COPY_CODE);
+			document = createDocument(bldgPermCopyStream, bldgPermCopyDisp);
+			document.setType(documentType);
+			documents.add(document);
+		}
+
+		if (atstdCopyPropDocStream != null && atstdCopyPropDocDisp != null) {
+			documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_ATTESTED_COPY_PROPERTY_DOCUMENT_CODE);
+			document = createDocument(atstdCopyPropDocStream, atstdCopyPropDocDisp);
+			document.setType(documentType);
+			documents.add(document);
+		}
+
+		if (nonJudcStampStream != null && nonJudcStampDisp != null) {
+			documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_NON_JUDICIAL_STAMP_PAPERS_CODE);
+			document = createDocument(nonJudcStampStream, nonJudcStampDisp);
+			document.setType(documentType);
+			documents.add(document);
+		}
+
+		if (afdvtBondStream != null && afdvtBondDisp != null) {
+			documentType = getDocumentTypeByCode(
+					PropertyTaxConstants.THIRD_PARTY_NOTARIZED_AFFIDAVIT_CUM_IDEMNITY_BOND_CODE);
+			document = createDocument(afdvtBondStream, afdvtBondDisp);
+			document.setType(documentType);
+			documents.add(document);
+		}
+
+		if (deathCertCopyStream != null && deathCertCopyDisp != null) {
+			documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_DEATH_CERTIFICATE_COPY_CODE);
+			document = createDocument(deathCertCopyStream, deathCertCopyDisp);
+			document.setType(documentType);
+			documents.add(document);
+		}
+		return documents;
+	}
+	
+	/**
+	 * This method is used to create Document object to upload the files.
+	 * 
+	 * @param inputStream
+	 *            - InputStream object coming as request
+	 * @param formDataContentDisposition
+	 *            - FormDataContentDisposition object coming as request
+	 * @return document - Document object
+	 */
+	private Document createDocument(InputStream inputStream, FormDataContentDisposition formDataContentDisposition) {
+		Document document = new Document();
+		List<File> files = new ArrayList<File>();
+		List<String> contentTypes = new ArrayList<String>();
+		List<String> fileNames = new ArrayList<String>();
+		File file = null;
+		if (inputStream != null && formDataContentDisposition != null) {
+			fileNames.add(formDataContentDisposition.getFileName());
+			document.setUploadsFileName(fileNames);
+			file = writeToFile(inputStream, formDataContentDisposition.getFileName());
+			files.add(file);
+			document.setUploads(files);
+			contentTypes.add(MessageFormat.format(PropertyTaxConstants.THIRD_PARTY_CONTENT_TYPE,
+					FilenameUtils.getExtension(file.getPath())));
+			document.setUploadsContentType(contentTypes);
+		}
+		return document;
+	}
+	
+	/**
+	 * This method is used to convert incoming InputStream object to File object
+	 * 
+	 * @param uploadedInputStream
+	 *            - InputStream object
+	 * @param fileName
+	 *            - name od the file
+	 * @return file - File object
+	 */
+	private File writeToFile(InputStream uploadedInputStream, String fileName) {
+		String tmpDir = System.getProperty(PropertyTaxConstants.THIRD_PARTY_JAVA_TEMP_DIR);
+		String uploadedFileLocation = tmpDir +File.separator+ fileName;
+		File file = new File(uploadedFileLocation);
+		try {
+			OutputStream out = new FileOutputStream(new File(uploadedFileLocation));
+			int read = 0;
+			byte[] bytes = new byte[1024];
+
+			out = new FileOutputStream(new File(uploadedFileLocation));
+			while ((read = uploadedInputStream.read(bytes)) != -1) {
+				out.write(bytes, 0, read);
+			}
+			out.flush();
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return file;
+	}
 }
