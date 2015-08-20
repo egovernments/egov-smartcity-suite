@@ -39,6 +39,7 @@
  */
 package org.egov.ptis.actions.transfer;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
@@ -201,6 +202,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         transitionWorkFlow(propertyMutation);
         transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
         buildSMS(propertyMutation);
+        buildEmail(propertyMutation);
+        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         setAckMessage("Transfer of ownership data saved successfully in the system and forwarded to : ");
         setAssessmentNoMessage(" with assessment number : ");
         return ACK;
@@ -256,6 +259,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         } else
             transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
         buildSMS(propertyMutation);
+        buildEmail(propertyMutation);
+        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         setAssessmentNoMessage(" with assessment number : ");
         return ACK;
     }
@@ -266,6 +271,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         transitionWorkFlow(propertyMutation);
         transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
         buildSMS(propertyMutation);
+        buildEmail(propertyMutation);
+        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         if (propertyService.isEmployee(propertyMutation.getCreatedBy()))
             mutationInitiatedBy = propertyMutation.getCreatedBy().getName();
         else
@@ -294,6 +301,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     .getPrimaryAssignmentForPositon(propertyMutation.getStateHistory().get(0).getOwnerPosition().getId())
                     .getEmployee().getUsername();
         buildSMS(propertyMutation);
+        buildEmail(propertyMutation);
+        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         setAckMessage("Transfer of ownership is created successfully in the system and forwarded to : ");
         setAssessmentNoMessage(" for notice generation for the property : ");
         return ACK;
@@ -534,19 +543,79 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 smsMsgForTransferee = getText("msg.paymenttransferproperty.sms", argsForTransferee);
             } else if (mutationState.getValue().equals(WF_STATE_COMMISSIONER_APPROVED)) {
                 argsForTransferor.add(propertyMutation.getFullTranferorName());
+                argsForTransferor.add(propertyMutation.getFullTranferorName());
                 argsForTransferor.add(propertyMutation.getFullTranfereeName());
                 argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
                 argsForTransferor.add(transferOwnerService.getCityName());
+                smsMsgForTransferor = getText("msg.approvetransferproperty.sms", argsForTransferor);
+                argsForTransferee.add(propertyMutation.getFullTranfereeName());
                 argsForTransferee.add(propertyMutation.getFullTranferorName());
                 argsForTransferee.add(propertyMutation.getFullTranfereeName());
                 argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
                 argsForTransferee.add(transferOwnerService.getCityName());
-                smsMsgForTransferor = getText("msg.approvetransferproperty.sms", argsForTransferor);
                 smsMsgForTransferee = getText("msg.approvetransferproperty.sms", argsForTransferee);
             }
         }
         messagingService.sendSMS(transferorMobileNumber, smsMsgForTransferor);
         messagingService.sendSMS(transfereeMobileNumber, smsMsgForTransferee);
+    }
+    
+    public void buildEmail(final PropertyMutation propertyMutation) {
+        String transferorEmailId = propertyMutation.getPrimaryTransferor().getEmailId();
+        final String transfereeEmailId = propertyMutation.getPrimaryTransferee().getEmailId();
+        String emailBodyTransferor  = "";
+        String emailBodyTransferee  = "";
+        String subject = "";
+        final List<String> argsForTransferor = new ArrayList<String>();
+        final List<String> argsForTransferee = new ArrayList<String>();
+        if (null != propertyMutation && null != propertyMutation.getState()) {
+            final State mutationState = propertyMutation.getState();
+            if (mutationState.getValue().equals(WF_STATE_REVENUE_CLERK_APPROVED)) {
+                subject = getText("subject.createtransferproperty",propertyMutation.getBasicProperty().getUpicNo());
+                argsForTransferor.add(propertyMutation.getFullTranferorName());
+                argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
+                argsForTransferor.add(transferOwnerService.getCityName());
+                emailBodyTransferor = getText("body.createtransferproperty", argsForTransferor);
+                argsForTransferee.add(propertyMutation.getFullTranfereeName());
+                argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
+                argsForTransferee.add(transferOwnerService.getCityName());
+                emailBodyTransferee = getText("body.createtransferproperty", argsForTransferee);
+            } else if (mutationState.getValue().equals(WF_STATE_REJECTED)) {
+                subject = getText("subject.rejecttransferproperty");
+                argsForTransferor.add(propertyMutation.getFullTranferorName());
+                argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
+                argsForTransferor.add(transferOwnerService.getCityName());
+                argsForTransferee.add(propertyMutation.getFullTranfereeName());
+                argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
+                argsForTransferee.add(transferOwnerService.getCityName());
+                emailBodyTransferor = getText("body.rejecttransferproperty", argsForTransferor);
+                emailBodyTransferee = getText("body.rejecttransferproperty", argsForTransferee);
+            } else if (mutationState.getNextAction().equals(WFLOW_ACTION_READY_FOR_PAYMENT)) {
+                subject = getText("subject.paymenttransferproperty");
+                argsForTransferee.add(propertyMutation.getFullTranfereeName());
+                argsForTransferee.add(propertyMutation.getMarketValue().toString());
+                argsForTransferee.add(propertyMutation.getMutationFee().toString());
+                argsForTransferee.add(transferOwnerService.getCityName());
+                transferorEmailId = "";
+                emailBodyTransferee = getText("body.paymenttransferproperty", argsForTransferee);
+            } else if (mutationState.getValue().equals(WF_STATE_COMMISSIONER_APPROVED)) {
+                subject = getText("subject.approvetransferproperty");
+                argsForTransferor.add(propertyMutation.getFullTranferorName()); 
+                argsForTransferor.add(propertyMutation.getFullTranferorName()); 
+                argsForTransferor.add(propertyMutation.getFullTranfereeName());
+                argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
+                argsForTransferor.add(transferOwnerService.getCityName());
+                argsForTransferee.add(propertyMutation.getFullTranfereeName());
+                argsForTransferee.add(propertyMutation.getFullTranferorName());
+                argsForTransferee.add(propertyMutation.getFullTranfereeName());
+                argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
+                argsForTransferee.add(transferOwnerService.getCityName());
+                emailBodyTransferor = getText("body.approvetransferproperty", argsForTransferor);
+                emailBodyTransferee = getText("body.approvetransferproperty", argsForTransferee);
+            }
+        }
+        messagingService.sendEmail(transferorEmailId, subject, emailBodyTransferor);
+        messagingService.sendEmail(transfereeEmailId, subject, emailBodyTransferee);
     }
 
     public BigDecimal getCurrentPropertyTax() {

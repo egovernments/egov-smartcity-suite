@@ -40,6 +40,7 @@ package org.egov.ptis.domain.service.transfer;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -256,7 +257,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
     public PropertyMutation getCurrentPropertyMutationByAssessmentNo(final String assessmentNo) {
         PropertyMutation currentPropertyMutation = null;
         for (final PropertyMutation propertyMutation : getBasicPropertyByUpicNo(assessmentNo).getPropertyMutations())
-            if (propertyMutation.stateInProgress()) {
+            if (!propertyMutation.getState().getValue().equals(WF_STATE_CLOSED)) {
                 currentPropertyMutation = propertyMutation;
                 break;
             }

@@ -71,7 +71,7 @@ public interface PropertyTaxConstants {
 	public static final String APPCONFIG_ISCORPORATION = "IS_CORPORATION";
 	public static final String APPCONFIG_ISSEASHORE_ULB = "IS_SEASHORE_ULB";
 	public static final String APPCONFIG_IS_PRIMARY_SERVICECHARGES_APPLICABLE = "IS_PRIMARYSERVICECHARGES_APPLICABLE";
-    public static final Float SQUARE_YARD_TO_SQUARE_METER_VALUE = 0.836127f;
+        public static final Float SQUARE_YARD_TO_SQUARE_METER_VALUE = 0.836127f;
 	// General constants used across Clients
 	public static final String PTMODULENAME = "Property Tax";
 	public static final String DEACTIVATION = "DEACTIVATION";
@@ -516,6 +516,7 @@ public interface PropertyTaxConstants {
 	public static final String WF_STATE_REJECTED = "Rejected";
 	public static final String WF_STATE_REVENUE_CLERK_APPROVED = "Revenue Clerk Approved";
 	public static final String WF_STATE_COMMISSIONER_APPROVAL_PENDING = "Commissioner Approval Pending";
+	public static final String WF_STATE_CLOSED = "Closed";
 
 	public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 
@@ -1041,6 +1042,7 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_NEW_ASSESSENT = "New Assessment";
     public static final String APPLICATION_TYPE_ALTER_ASSESSENT = "Alter Assessment";
     public static final String APPLICATION_TYPE_BIFURCATE_ASSESSENT = "Bifuracate Assessment";
+    public static final String APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP = "Transfer of Ownership";
     
     //AppConfig values
     public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";
