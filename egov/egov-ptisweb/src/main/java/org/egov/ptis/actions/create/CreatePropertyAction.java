@@ -562,7 +562,7 @@ public class CreatePropertyAction extends WorkflowAction {
         property.getPropertyDetail().setFloorDetailsProxy(floorList);
         int i = 0;
         for (final Floor flr : floorList) {
-            floorNoStr[i] = propertyTaxUtil.getFloorStr(flr.getFloorNo());
+            floorNoStr[i] = CommonServices.floorMap().get(flr.getFloorNo());
             LOGGER.debug("setFloorDetails: floorNoStr[" + i + "]->" + floorNoStr[i]);
             i++;
         }

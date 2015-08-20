@@ -939,7 +939,7 @@ public class ModifyPropertyAction extends WorkflowAction {
         property.getPropertyDetail().setFloorDetailsProxy(floors);
         int i = 0;
         for (final Floor flr : floors) {
-            floorNoStr[i] = propertyTaxUtil.getFloorStr(flr.getFloorNo());
+            floorNoStr[i] = CommonServices.floorMap().get(flr.getFloorNo());
             i++;
         }
 
