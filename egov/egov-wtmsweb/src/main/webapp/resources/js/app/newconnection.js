@@ -148,16 +148,7 @@ $(document).ready(function(){
 	
 	
 	
-	function resetPropertyDetails() {
-		$('#propertyIdentifier').val('');
-		$('#applicantname').val('');
-		$('#mobileNumber').val('');
-		$('#email').val('');
-		$('#propertyaddress').val('');
-		$('#locality').val('');
-		$('#zonewardblock').val('');
-		$('#propertytax').val('0.00');
-	}
+	
 	
 	changeLabel();
 	function changeLabel() {
@@ -180,6 +171,9 @@ $(document).ready(function(){
 	
 });
 
+
+
+
 function loadPropertyDetails() {
 	propertyID=$('#propertyIdentifier').val()
 	allowIfPTDueExists = $('#allowIfPTDueExists').val() 
@@ -193,7 +187,7 @@ function loadPropertyDetails() {
 				console.log("success"+response);
 				
 				if(response.errorDetails.errorCode != null && response.errorDetails.errorCode != '') {
-					if($('#legacy')==none)
+					if($('#legacy'))
 					{
 				    resetPropertyDetails();
 					}
@@ -250,3 +244,13 @@ function loadPropertyDetails() {
 	}		
 }
 
+function resetPropertyDetails() {
+	$('#propertyIdentifier').val('');
+	$('#applicantname').val('');
+	$('#mobileNumber').val('');
+	$('#email').val('');
+	$('#propertyaddress').val('');
+	$('#locality').val('');
+	$('#zonewardblock').val('');
+	$('#propertytax').val('0.00');
+}
