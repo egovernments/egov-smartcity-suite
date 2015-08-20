@@ -14,6 +14,7 @@ public class DCBReportHelperAdaptor implements JsonSerializer<DCBReportResult> {
         final JsonObject jsonObject = new JsonObject();
         if (dCBReportObj != null) {
             jsonObject.addProperty("boundaryName", dCBReportObj.getBoundaryName());
+            jsonObject.addProperty("id", dCBReportObj.getId());
             jsonObject.addProperty("boundaryId", dCBReportObj.getBoundaryId());
             jsonObject.addProperty("propertyid", dCBReportObj.getPropertyid());
             jsonObject.addProperty("address", dCBReportObj.getAddress());

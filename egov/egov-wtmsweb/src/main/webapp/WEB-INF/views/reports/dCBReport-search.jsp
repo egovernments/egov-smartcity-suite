@@ -48,11 +48,10 @@
 
 
 
-						<s:hidden id="mode" name="mode" value="${mode}"/> 
-						<s:hidden id="boundaryId" name="boundaryId" value="${boundaryId}"/> 
-						<s:hidden id="selectedModeBndry" name="selectedModeBndry" value="${selectedModeBndry}"/> 
+						
 		<form:form class="form-horizontal form-groups-bordered" action=""
-			id="waterSearchRequestForm" modelAttribute="dCBReportResult" method ="post">
+			id="waterSearchRequestForm" modelAttribute="dCBReportResult" method ="get">
+			
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -60,8 +59,9 @@
 					</div>
 				</div>
 				<div class="panel-body">
-
-
+						<s:hidden id="mode" name="mode" value="${mode}"/> 
+						<s:hidden id="boundaryId" name="boundaryId" value="${boundaryId}"/> 
+						<s:hidden id="selectedModeBndry" name="selectedModeBndry" value="${selectedModeBndry}"/> 
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.connectiontype" /><small><i
@@ -163,7 +163,9 @@
 					</table>
 				</div>
 			</div>
-
+<div id="report-backbutton" class="col-xs-12 text-center">
+				<div class="form-group"> <buttton class="btn btn-primary" id="backButton" > Back</buttton></div>
+</div>
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
 <script
