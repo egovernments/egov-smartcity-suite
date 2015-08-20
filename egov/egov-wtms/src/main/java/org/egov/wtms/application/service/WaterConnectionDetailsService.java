@@ -636,12 +636,20 @@ public class WaterConnectionDetailsService {
                             waterConnectionDetails, applicantName,type);
                 } else if (WaterTaxConstants.SMSEMAILTYPENEWCONNESTNOTICE.equalsIgnoreCase(type)) {
                     flag = Boolean.TRUE;
-                    smsMsg = waterTaxUtils.SmsBodyByCodeAndArgsWithType("msg.newconncetionOnGenerateNotice.sms",
+                    if(!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getName()))
+                        smsMsg = waterTaxUtils.SmsBodyByCodeAndArgsWithType("msg.newconncetionOnGenerateNotice.sms",
                             waterConnectionDetails, applicantName,type);
+                    else
+                        smsMsg = waterTaxUtils.SmsBodyByCodeAndArgsWithType("msg.noticegen.for.bpl.sms",
+                                waterConnectionDetails, applicantName,type);
                 } else if (WaterTaxConstants.SMSEMAILTYPEADDCONNESTNOTICE.equalsIgnoreCase(type)) {
                     flag = Boolean.TRUE;
-                    smsMsg = waterTaxUtils.SmsBodyByCodeAndArgsWithType("msg.addconncetionOnGenerateNotice.sms",
+                    if(!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getName()))
+                        smsMsg = waterTaxUtils.SmsBodyByCodeAndArgsWithType("msg.addconncetionOnGenerateNotice.sms",
                             waterConnectionDetails, applicantName,type);
+                    else
+                        smsMsg = waterTaxUtils.SmsBodyByCodeAndArgsWithType("msg.noticegen.for.bpl.sms",
+                                waterConnectionDetails, applicantName,type);
                 }
             if (flag)
                 waterTaxUtils.sendSMSOnWaterConnection(mobileNumber, smsMsg);
@@ -690,19 +698,41 @@ public class WaterConnectionDetailsService {
                                 "msg.newconncetionOnExecutionDate.email.subject",
                                 waterConnectionDetails.getApplicationNumber());
                     } else if (WaterTaxConstants.SMSEMAILTYPENEWCONNESTNOTICE.equalsIgnoreCase(type)) {
-                        flag = Boolean.TRUE;
-                        body = waterTaxUtils.EmailBodyByCodeAndArgsWithType(
-                                "msg.newconncetionOnGenerateNotice.email.body", waterConnectionDetails, applicantName,type);
-                        subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs(
-                                "msg.conncetionOnGenerateNotice.email.subject",
-                                waterConnectionDetails.getApplicationNumber());
+                        if(!WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())){
+                            flag = Boolean.TRUE;
+                            body = waterTaxUtils.EmailBodyByCodeAndArgsWithType(
+                                    "msg.newconncetionOnGenerateNotice.email.body", waterConnectionDetails, applicantName,type);
+                            subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs(
+                                    "msg.conncetionOnGenerateNotice.email.subject",
+                                    waterConnectionDetails.getApplicationNumber());
+                        }
+                        else
+                        {
+                            flag = Boolean.TRUE;
+                            body = waterTaxUtils.EmailBodyByCodeAndArgsWithType(
+                                    "msg.noticegen.for.bpl.email.body", waterConnectionDetails, applicantName,type);
+                            subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs(
+                                    "msg.noticegen.for.bpl.email.subject",
+                                    waterConnectionDetails.getApplicationNumber());
+                        }
                     } else if (WaterTaxConstants.SMSEMAILTYPEADDCONNESTNOTICE.equalsIgnoreCase(type)) {
+                        if(!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getName())) {
                         flag = Boolean.TRUE;
                         body = waterTaxUtils.EmailBodyByCodeAndArgsWithType(
                                 "msg.addconncetionOnGenerateNotice.email.body", waterConnectionDetails, applicantName,type);
                         subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs(
                                 "msg.conncetionOnGenerateNotice.email.subject",
                                 waterConnectionDetails.getApplicationNumber());
+                        }
+                        else
+                        {
+                            flag = Boolean.TRUE;
+                            body = waterTaxUtils.EmailBodyByCodeAndArgsWithType(
+                                    "msg.noticegen.for.bpl.email.body", waterConnectionDetails, applicantName,type);
+                            subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs(
+                                    "msg.noticegen.for.bpl.email.subject",
+                                    waterConnectionDetails.getApplicationNumber());
+                        }
                     }
                     if (flag)
                         waterTaxUtils.sendEmailOnWaterConnection(email, body, subject);
