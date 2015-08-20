@@ -41,24 +41,24 @@ package org.egov.pims.client;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
 import org.apache.struts.actions.DispatchAction;
-import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.EgovMasterDataCaching;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.dao.GenericMasterDAO;
 import org.egov.pims.model.GenericMaster;
 import org.egov.pims.service.EmployeeServiceOld;
-
 import org.hibernate.exception.ConstraintViolationException;
 
 // Referenced classes of package org.egov.pims.client:
@@ -92,7 +92,7 @@ public class AfterGenericMasterAction extends DispatchAction {
 					&& !genericForm.getName().equals("")) {
 				String code = genericForm.getName().trim().toUpperCase();
 				if (employeeService.checkDuplication(code, className)) {
-					throw new DuplicateElementException((new StringBuilder(
+					throw new EGOVRuntimeException((new StringBuilder(
 							"duplicate ")).append(className).toString());
 				}
 			}
@@ -116,7 +116,7 @@ public class AfterGenericMasterAction extends DispatchAction {
 			alertMessage = "Executed successfully";
 		}
 
-		catch (DuplicateElementException e) {
+		catch (EGOVRuntimeException e) {
 			target = ERROR;
 			LOGGER.error(e.getMessage());
 			EGOVRuntimeException er = new EGOVRuntimeException(e.getMessage());

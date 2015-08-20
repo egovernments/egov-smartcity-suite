@@ -38,18 +38,15 @@
  */
 package org.egov.portal.service;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.repository.CitizenRepository;
 import org.egov.portal.utils.constants.CommonConstants;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -71,22 +68,17 @@ public class CitizenService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Transactional
-    public void create(final Citizen citizen) throws DuplicateElementException {
-        if (getCitizenByUserName(citizen.getMobileNumber()) != null)
-            throw new DuplicateElementException("Mobile Number already exists");
+    @Autowired
+    private ApplicationProperties applicationProperties;
 
-        if (StringUtils.isNotBlank(citizen.getEmailId()) && getCitizenByEmailId(citizen.getEmailId()) != null)
-            throw new DuplicateElementException("Email already exists");
-        final Calendar pwdExpiryDate = Calendar.getInstance();
-        pwdExpiryDate.setTime(new Date());
-        pwdExpiryDate.add(Calendar.YEAR, 100);
+    @Transactional
+    public void create(final Citizen citizen) {
         citizen.addRole(roleService.getRoleByName(CommonConstants.CITIZEN_ROLE));
-        citizen.setPwdExpiryDate(pwdExpiryDate.getTime());
-        citizen.setUsername(citizen.getMobileNumber());
+        citizen.setPwdExpiryDate(new DateTime().plusDays(applicationProperties.userPasswordExpiryInDays()).toDate());
         citizen.setPassword(passwordEncoder.encode(citizen.getPassword()));
         citizen.setActivationCode(RandomStringUtils.random(5, Boolean.TRUE, Boolean.TRUE).toUpperCase());
         citizenRepository.save(citizen);
+        sendActivationMessage(citizen);
     }
 
     @Transactional
@@ -110,8 +102,20 @@ public class CitizenService {
         return citizenRepository.findByActivationCode(activationCode);
     }
 
+    @Transactional
+    public Citizen activateCitizen(final String activationCode) {
+        final Citizen citizen = getCitizenByActivationCode(activationCode);
+        if (citizen != null) {
+            citizen.setActive(true);
+            citizen.setActivationCode(RandomStringUtils.random(5, Boolean.TRUE, Boolean.TRUE).toUpperCase());
+            update(citizen);
+        }
+        return citizen;
+    }
+
     public void sendActivationMessage(final Citizen citizen) throws EGOVRuntimeException {
-        messagingService.sendEmail(citizen.getEmailId(), "Portal Activation", "Hello,\r\n Your Portal Activation Code is : " + citizen.getActivationCode());
+        messagingService.sendEmail(citizen.getEmailId(), "Portal Activation",
+                String.format("Dear %s,\r\n Your Portal Activation Code is : %s", citizen.getName(), citizen.getActivationCode()));
         messagingService.sendSMS(citizen.getMobileNumber(), "Your Portal Activation Code is : " + citizen.getActivationCode());
     }
 

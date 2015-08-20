@@ -38,21 +38,23 @@
  */
 package org.egov.portal.web.controller.citizen;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
-import org.egov.exceptions.DuplicateElementException;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.validation.ValidatorUtils;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.service.CitizenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value = "/citizen")
@@ -64,60 +66,33 @@ public class CitizenRegistrationController {
         this.citizenService = citizenService;
     }
 
-    @RequestMapping(value = "/register", method = POST)
-    public String registerCitizen(@ModelAttribute final Citizen citizen, final BindingResult errors,
-            final HttpServletRequest request) {
-        //TODO Rework this
-        String SUCCESS = "redirect:/../egi/login/secure";
-        if (!ValidatorUtils.isValidPassword(citizen.getPassword()))
-            return SUCCESS + "?pwdInvalid=true";
-        if(!ValidatorUtils.isCaptchaValid(request))
-            return SUCCESS + "?captchaInvalid=true";
-        try {
-            citizenService.create(citizen);
-            citizenService.sendActivationMessage(citizen);
-            SUCCESS = SUCCESS + "?citizenActivation=true&citizenId=" + citizen.getId();
-
-        } catch (final DuplicateElementException e) {
-
-            if (e.getMessage().equals("Mobile Number already exists"))
-                SUCCESS = SUCCESS + "?mobInvalid=true";
-            else if (e.getMessage().equals("Email already exists"))
-                SUCCESS = SUCCESS + "?emailInvalid=true";
-        } catch (final EGOVRuntimeException e) {
-
-            SUCCESS = SUCCESS + "?activationCodeSendingFailed=true";
-
-        }
-
-        return SUCCESS;
+    @RequestMapping(value = "/register", method = GET)
+    public String registerCitizen(@ModelAttribute final Citizen citizen) {
+        return "signup";
     }
 
-    @RequestMapping(value = "/activation/{citizenId}", method = POST)
-    public String citizenActivation(@PathVariable final Long citizenId, @ModelAttribute final Citizen model) {
-        final Citizen citizen = citizenService.getCitizenById(citizenId);
-        if (citizen.getActivationCode().equals(model.getActivationCode())) {
-            citizen.setActive(true);
-            citizenService.update(citizen);
-            return "redirect:/../egi/login/secure?citizenActivationSuccess=true";
-        } else
-            return "redirect:/../egi/login/secure?citizenActivationFailed=true&citizenId=" + citizenId;
-
+    @RequestMapping(value = "/register", method = POST)
+    public String registerCitizen(@Valid @ModelAttribute final Citizen citizen, final BindingResult errors, final HttpServletRequest request) {
+        if (!ValidatorUtils.isValidPassword(citizen.getPassword()))
+            errors.addError(new FieldError("citizen", "password", citizen.getPassword(), false, new String[] { "error.pwd.invalid" }, null, null));
+        else if (!StringUtils.equals(citizen.getPassword(), (String) request.getParameter("con-password")))
+            errors.addError(new FieldError("citizen", "password", citizen.getPassword(), false, new String[] { "error.pwd.mismatch" }, null, null));
+        if (!ValidatorUtils.isCaptchaValid(request))
+            errors.addError(new FieldError("citizen", "active", citizen.isActive(), false, new String[] { "error.recaptcha.verification" }, null, null));
+        if (errors.hasErrors())
+            return "signup";
+        citizenService.create(citizen);
+        return "redirect:register?activation=true";
     }
 
     @RequestMapping(value = "/activation", method = POST)
-    public String citizenOTPActivation(@ModelAttribute final Citizen model) {
-        final Citizen citizen = citizenService.getCitizenByActivationCode(model.getActivationCode());
-        if (citizen != null) {
-            if (citizen.getActivationCode().equals(model.getActivationCode()) && !citizen.isActive()) {
-                citizen.setActive(true);
-                citizenService.update(citizen);
-                return "redirect:/../egi/login/secure?citizenActivationSuccess=true";
-            } else
-                return "redirect:/../egi/login/secure?citizenActivationFailed=true";
-        } else
-            return "redirect:/../egi/login/secure?citizenActivationFailed=true";
-
+    public String citizenOTPActivation(@RequestParam final String activationCode) {
+        final Citizen citizen = citizenService.activateCitizen(activationCode);
+        if (citizen == null) {
+            return "redirect:register?activation=true&activated=false";
+        } else {
+            return "redirect:register?activation=true&activated=true";
+        }
     }
 
 }

@@ -38,6 +38,8 @@
  */
 package org.egov.infra.admin.master.repository;
 
+import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
+
 import java.util.Date;
 import java.util.List;
 
@@ -57,7 +59,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
 
-    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
+    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
     Boundary findByName(String name);
 
     List<Boundary> findByNameContainingIgnoreCase(String name);
@@ -90,7 +92,7 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     @Query("select b from Boundary b where b.isHistory=false AND b.parent is not null AND b.parent.id = :parentBoundaryId AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.name")
     List<Boundary> findActiveChildBoundariesByBoundaryIdAndAsOnDate(@Param("parentBoundaryId") Long parentBoundaryId,
             @Param("asOnDate") Date asOnDate);
-    
+
     @Query("from Boundary BND where BND.isHistory=false AND BND.materializedPath like (select B.materializedPath from Boundary B where B.id=:parentId)||'%'")
     List<Boundary> findActiveChildrenWithParent(@Param("parentId") Long parentId);
 
@@ -122,16 +124,16 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     @Query("select b from Boundary b where b.isHistory=false AND upper(b.boundaryType.name) = upper(:boundaryTypeName) AND upper(b.boundaryType.hierarchyType.name) = upper(:hierarchyTypeName) AND UPPER(b.name) like UPPER(:name) order by b.id")
     List<Boundary> findActiveBoundariesByNameAndBndryTypeNameAndHierarchyTypeName(
             @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName, @Param("name") String name);
-    
+
     @Query("from Boundary BND where BND.materializedPath like (select B.materializedPath from Boundary B where B.id=:parentId)||'.'||'%'")
     List<Boundary> findAllChildrenWithOutParent(@Param("parentId") Long parentId);
-    
+
     @Query("from Boundary BND where BND.isHistory=false AND BND.materializedPath like (select B.materializedPath from Boundary B where B.id=:parentId)||'.'||'%'")
     List<Boundary> findActiveChildrenWithOutParent(@Param("parentId") Long parentId);
-    
+
     @Query("from Boundary BND where BND.isHistory=false AND BND.parent.id=:parentId)")
     List<Boundary> findActiveImmediateChildrenWithOutParent(@Param("parentId") Long parentId);
-    
+
     @Query("from Boundary BND where BND.parent is null")
     List<Boundary> findAllParents();
 }

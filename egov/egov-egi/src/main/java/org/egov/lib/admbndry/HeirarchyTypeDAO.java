@@ -49,7 +49,6 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.exceptions.TooManyValuesException;
@@ -80,7 +79,7 @@ public class HeirarchyTypeDAO {
     /**
      * @see org.egov.lib.admbndry.ejb.api.HeirarchyTypeManager#create(org.egov.infra.admin.master.entity.HierarchyType)
      */
-    public void create(final HierarchyType heirarchyType) throws DuplicateElementException {
+    public void create(final HierarchyType heirarchyType)  {
         try {
             getSession().save(heirarchyType);
         } catch (final HibernateException e) {

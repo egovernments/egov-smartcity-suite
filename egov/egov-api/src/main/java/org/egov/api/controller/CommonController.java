@@ -6,7 +6,6 @@ import org.egov.api.adapter.UserAdapter;
 import org.egov.api.controller.core.ApiController;
 import org.egov.api.controller.core.ApiResponse;
 import org.egov.api.controller.core.ApiUrl;
-import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.common.service.IdentityRecoveryService;
 import org.egov.infra.admin.master.entity.Device;
@@ -68,8 +67,6 @@ public class CommonController extends ApiController {
             citizenService.create(citizenCreate);
             citizenService.sendActivationMessage(citizenCreate);
             return res.setDataAdapter(new UserAdapter()).success(citizenCreate, this.getMessage("msg.citizen.reg.success"));
-        } catch (DuplicateElementException e) {
-            msg = e.getMessage();
         } catch (EGOVRuntimeException e) {
             msg = e.getMessage();
         }

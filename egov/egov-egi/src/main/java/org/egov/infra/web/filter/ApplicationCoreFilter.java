@@ -63,7 +63,7 @@ public class ApplicationCoreFilter implements Filter {
     private CityService cityService;
 
     @Resource(name = "redisTemplate")
-    private HashOperations<String, String, Object> hashOps;
+    private HashOperations<String, String, Object> cityPrefCache;
 
     @Override
     public void doFilter(final ServletRequest req, final ServletResponse resp, final FilterChain chain) throws IOException, ServletException {
@@ -79,9 +79,9 @@ public class ApplicationCoreFilter implements Filter {
     }
 
     private void prepareCityPreferences(final HttpServletRequest request, final HttpSession session) {
-        final Map<String, Object> cityPrefs = hashOps.entries(EgovThreadLocals.getTenantID() + "-cityPrefs");
+        final Map<String, Object> cityPrefs = cityPrefCache.entries(EgovThreadLocals.getTenantID() + "-cityPrefs");
         if (cityPrefs.isEmpty())
-            hashOps.putAll(EgovThreadLocals.getTenantID() + "-cityPrefs",
+            cityPrefCache.putAll(EgovThreadLocals.getTenantID() + "-cityPrefs",
                     cityService.getCityByURL(WebUtils.extractRequestedDomainName(request)).toMap());
         else if (session.getAttribute(EgovThreadLocals.getTenantID()) == null)
             cityPrefs.forEach((k, v) -> {

@@ -38,6 +38,8 @@
  */
 package org.egov.infra.admin.master.repository;
 
+import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
+
 import java.util.List;
 
 import javax.persistence.QueryHint;
@@ -53,11 +55,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
 
-    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
+    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
     Department findByName(String name);
 
     List<Department> findByNameContainingIgnoreCase(String name);
 
-    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
+    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
     Department findByCode(String code);
 }

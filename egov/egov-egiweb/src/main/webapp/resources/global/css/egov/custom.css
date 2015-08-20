@@ -2245,3 +2245,10 @@ body.index, .page-container{
 .btn-custom:hover, .btn-custom:focus, .btn-custom.focus, .btn-custom:active, .btn-custom.active, .open > .dropdown-toggle.btn-custom {
   color: #fff;
 }
+.font-green {
+  color:green;	
+}
+
+.font-12{
+	font-size:12px;
+}

@@ -38,6 +38,8 @@
  */
 package org.egov.infra.admin.master.repository;
 
+import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
+
 import java.util.List;
 import java.util.Set;
 
@@ -57,7 +59,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Set<User> findByUsernameContainingIgnoreCase(String userName);
 
-    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
+    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
     User findByUsername(String userName);
 
     User findByEmailId(String emailId);

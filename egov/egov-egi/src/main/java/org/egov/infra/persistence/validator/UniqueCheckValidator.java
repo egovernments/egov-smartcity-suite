@@ -66,17 +66,17 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
 
     @Override
     public boolean isValid(final Object arg0, final ConstraintValidatorContext constraintValidatorContext) {
+        boolean isValid = true;
         if (unique.fields() == null || unique.fields().length == 0)
-            return true;
-
+            return isValid;
         for (int i = 0; i < unique.fields().length; i++)
             if (!isUnique(arg0, unique.fields()[i], unique.columnName()[i])) {
                 if(unique.enableDfltMsg())
                     constraintValidatorContext.buildConstraintViolationWithTemplate(unique.message())
                         .addPropertyNode(unique.fields()[i]).addConstraintViolation();
-                return false;
+                isValid = false;
             }
-        return true;
+        return isValid;
     }
 
     private boolean isUnique(final Object arg0, final String field, final String columnName) {

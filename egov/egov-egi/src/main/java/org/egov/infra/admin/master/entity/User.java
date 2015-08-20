@@ -162,10 +162,10 @@ public class User extends AbstractAuditable {
     private Date dob;
 
     @NotNull
-    private Date pwdExpiryDate;
+    private Date pwdExpiryDate = new Date();
 
     @NotNull
-    private String locale;
+    private String locale = "en_IN";
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
