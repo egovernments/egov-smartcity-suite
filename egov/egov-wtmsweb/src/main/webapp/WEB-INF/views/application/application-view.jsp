@@ -61,7 +61,7 @@
 <div class="row text-center">
 	<div class="add-margin">
 	<c:if test="${waterConnectionDetails.egwStatus.code == 'ESTIMATIONNOTICEGENERATED'}">
-		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
+		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.collect.fees"/></button>
 	</c:if> 
 	<c:if test="${waterConnectionDetails.egwStatus.code != 'CREATED' && waterConnectionDetails.egwStatus.code != 'VERIFIED' 
 	&& waterConnectionDetails.egwStatus.code != 'CANCELLED' && waterConnectionDetails.fieldInspectionDetails != null && !legacy}">
