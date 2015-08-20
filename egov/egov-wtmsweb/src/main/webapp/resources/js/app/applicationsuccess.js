@@ -62,6 +62,14 @@ $(document).ready(function(){
 		$('#waterConnectionSuccess').attr('mode', 'search');
 		window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 	});
+	
+	$('#viewWorkOrder').click(function() {
+		var url = '/wtms/application/workorder/view/'+ $('#applicationCode').val();
+		$('#waterConnectionSuccess').attr('method', 'get');
+		$('#waterConnectionSuccess').attr('action', url);
+		$('#waterConnectionSuccess').attr('mode', 'search');
+		window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+	});
 });
 
 $('#payBtn').click(function() {

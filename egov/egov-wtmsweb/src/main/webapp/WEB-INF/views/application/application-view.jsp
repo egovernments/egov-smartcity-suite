@@ -67,6 +67,9 @@
 	&& waterConnectionDetails.egwStatus.code != 'CANCELLED' && waterConnectionDetails.fieldInspectionDetails != null && !legacy}">
 		<button type="submit" class="btn btn-primary" id="viewEstimationNotice"><spring:message code="lbl.printestimationnotice"/></button>
 	</c:if>
+	<c:if test="${!legacy&& (waterConnectionDetails.egwStatus.code == 'SANCTIONED' || waterConnectionDetails.egwStatus.code == 'WORKORDERGENERATED')}">
+		<button type="submit" class="btn btn-primary" id="viewWorkOrder"><spring:message code="lb.printworkorder"/></button>
+	</c:if>
 		<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 	</div>
 </div>
