@@ -83,12 +83,6 @@ public class FieldInspectionDetails extends AbstractAuditable {
 
     private double pipelineDistance;
 
-    private double diggingCharges;
-
-    private double supervisionCharges;
-
-    private double materialCharges;
-
     @NotNull
     private double estimationCharges;
 
@@ -132,30 +126,6 @@ public class FieldInspectionDetails extends AbstractAuditable {
 
     public void setPipelineDistance(final double pipelineDistance) {
         this.pipelineDistance = pipelineDistance;
-    }
-
-    public double getDiggingCharges() {
-        return diggingCharges;
-    }
-
-    public void setDiggingCharges(final double diggingCharges) {
-        this.diggingCharges = diggingCharges;
-    }
-
-    public double getSupervisionCharges() {
-        return supervisionCharges;
-    }
-
-    public void setSupervisionCharges(final double supervisionCharges) {
-        this.supervisionCharges = supervisionCharges;
-    }
-
-    public double getMaterialCharges() {
-        return materialCharges;
-    }
-
-    public void setMaterialCharges(final double materialCharges) {
-        this.materialCharges = materialCharges;
     }
 
     public double getEstimationCharges() {

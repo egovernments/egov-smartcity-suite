@@ -121,37 +121,10 @@
 				<div class="form-group">
 					<div class="row">
 						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.diggingcharges" />							 
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin">
-							<form:input class="form-control patternvalidation text-right" data-pattern="decimalvalue" maxlength="8" id="diggingCharges" value="0.00" path="fieldInspectionDetails.diggingCharges" onblur="calculateEstimationCharges();" />
-							<form:errors path="fieldInspectionDetails.diggingCharges" cssClass="add-margin error-msg" />
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.supervisioncharges" />						
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin">
-							<form:input class="form-control patternvalidation text-right" data-pattern="decimalvalue" maxlength="8" id="supervisionCharges" value="0.00" path="fieldInspectionDetails.supervisionCharges" onblur="calculateEstimationCharges();" />
-							<form:errors path="fieldInspectionDetails.supervisionCharges" cssClass="add-margin error-msg" />
-							
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="row">
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.materialcharges" />							
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin">
-							<form:input class="form-control patternvalidation text-right" data-pattern="decimalvalue" maxlength="8" id="materialCharges" value="0.00" path="fieldInspectionDetails.materialCharges" onblur="calculateEstimationCharges();" />
-							<form:errors path="fieldInspectionDetails.materialCharges" cssClass="add-margin error-msg" />
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.estimationcharges" /><span class="mandatory"></span>						
+							<spring:message code="lbl.estimationcharges" /><span class="mandatory"></span>							
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin"> 
-							<input class="form-control text-right" id="estimationCharges" value="0.00" name="estimationCharges" disabled/>
-							<form:hidden path="fieldInspectionDetails.estimationCharges" id="estimationChargesHidden" /> 
+							<form:input class="form-control patternvalidation text-right" data-pattern="decimalvalue" maxlength="8" id="estimationCharges" path="fieldInspectionDetails.estimationCharges" required="required"/>
 							<form:errors path="fieldInspectionDetails.estimationCharges" cssClass="add-margin error-msg" />
 						</div>
 					</div>

@@ -42,6 +42,9 @@ $(document).ready(function()
 	if($('#pipelineDistance') != null && $('#pipelineDistance').val() == 0.0)
 		$('#pipelineDistance').val('');	
 	
+	if($('#estimationCharges') != null && $('#estimationCharges').val() == 0.0)
+		$('#estimationCharges').val('');
+	
 	loadConnectionCategories();
 	
 	$('#connectionCategorie').change(function () {
@@ -195,25 +198,6 @@ $(document).ready(function()
         calculateTotalAmount();
 	});	
 	
-	/*$(".btn-primary").click(function() { 
-		var action = document.getElementById("workFlowAction").value;
-		if(action == 'Submit') {
-			if($('#estimationCharges')) {
-				var estimationCharge = $('#estimationCharges').val();
-		    	if(estimationCharge <= 0) {
-		    		alert("Estimation charges is mandatory. So please enter atleast any one of Digging Charges/Supervision Charges/Material Charges!");
-		    		$('#estimationCharges').focus('');
-		    		return false;	
-		    	}
-		    	else {
-		    		validateWorkFlowApprover(action);
-			    	document.forms[0].submit();	
-		    	}
-			}	    	
-		}
-		return;
-	});	*/
-	
 });
 
 function calculateTotalAmount() {
@@ -233,22 +217,4 @@ function calculateTotalAmount() {
     	}
     }
     $('#grandTotal').val(grandTotal);
-}
-    
-function calculateEstimationCharges() {
-	
-	var diggingCharges = $('#diggingCharges').val();
-	var supervisionCharges = $('#supervisionCharges').val();
-	var materialCharges = $('#materialCharges').val();
-	var estimationCharge = 0;
-	if(diggingCharges == '') 
-		diggingCharges = 0.00;
-	if(supervisionCharges == '') 
-		supervisionCharges = 0.00;
-	if(materialCharges == '') 
-		materialCharges = 0.00;
-	
-	estimationCharge = eval(diggingCharges) + eval(supervisionCharges) + eval(materialCharges);
-	$('#estimationCharges').val(estimationCharge);
-	$('#estimationChargesHidden').val(estimationCharge);
 }

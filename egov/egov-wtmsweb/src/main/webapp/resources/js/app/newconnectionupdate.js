@@ -120,7 +120,8 @@ $(document).ready(function()
 				if($('#estimationCharges')) {
 					var estimationCharge = $('#estimationCharges').val();
 			    	if(estimationCharge <= 0) {
-			    		alert("Estimation charges is mandatory. So please enter atleast any one of Digging Charges/Supervision Charges/Material Charges!");
+			    		alert("Estimation charges is mandatory. Please enter the value greater than ZERO!");
+			    		$('#estimationCharges').focus();
 			      		return false;	
 			    	}
 			    	else {
