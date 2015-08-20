@@ -30,6 +30,7 @@
  */
 package org.egov.wtms.utils;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -208,6 +209,7 @@ public class WaterTaxUtils {
     public String EmailBodyByCodeAndArgsWithType(final String code,
             final WaterConnectionDetails waterConnectionDetails, final String applicantName, final String type) {
         String emailBody = "";
+        DecimalFormat amountFormat = new DecimalFormat("#.00");
         if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNCREATE)
                 || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDITONALCONNCREATE))
             emailBody = messageSource.getMessage(code,
@@ -231,16 +233,17 @@ public class WaterTaxUtils {
         // to this e-mail.\n\nRegards,\n{3}
         else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNESTNOTICE)
                 || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDCONNESTNOTICE)) {
+            
             if(!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getName())){
                 emailBody = messageSource.getMessage(
                         code,
                         new String[] {
                                 applicantName,
                                 waterConnectionDetails.getApplicationNumber(),
-                                String.valueOf(waterConnectionDetails.getDonationCharges()),
-                                String.valueOf(waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges()),
-                                String.valueOf(waterConnectionDetails.getDonationCharges()
-                                        + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges()),
+                                String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges())),
+                                String.valueOf(amountFormat.format(waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges())),
+                                String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges()
+                                        + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges())),
                                         getCityName() }, null);
             // Dear {0},\n\nWe have processed your application for new tap
             // connection with acknowledgement number {1}.and generated an
@@ -261,8 +264,8 @@ public class WaterTaxUtils {
                                 WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails
                                         .getApplicationType().getCode()) ? "new water" : "additioanl water",
                                         waterConnectionDetails.getApplicationNumber(),
-                                        String.valueOf(waterConnectionDetails.getFieldInspectionDetails()
-                                        .getEstimationCharges()), getCityName() }, null);
+                                        String.valueOf(amountFormat.format(waterConnectionDetails.getFieldInspectionDetails()
+                                        .getEstimationCharges())), getCityName() }, null);
                 //Dear {0},\n\nWe have processed your application for {1} tap 
                 //connection with acknowledgement number {2} and generated an 
                 //estimation notice.\n Estimation amount for your application will be Rs.{3}/-. 
@@ -276,7 +279,7 @@ public class WaterTaxUtils {
             emailBody = messageSource.getMessage(code,
                     new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
                             formatter.format(waterConnectionDetails.getExecutionDate()).toString(),
-                            waterConnectionDetails.getDemand().getBaseDemand().toString(), getCityName() }, null);
+                            amountFormat.format(waterConnectionDetails.getDemand().getBaseDemand()).toString(), getCityName() }, null);
         }
         // Dear {0},\n\nWater tap connection with H.S.C number {1} is installed
         // at your site on {2} by our Asst engineer and your monthly
@@ -290,6 +293,7 @@ public class WaterTaxUtils {
     public String SmsBodyByCodeAndArgsWithType(final String code, final WaterConnectionDetails waterConnectionDetails,
             final String applicantName, final String type) {
         String smsMsg = "";
+        DecimalFormat amountFormat = new DecimalFormat("#.00");
         if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNCREATE)
                 || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDITONALCONNCREATE))
             smsMsg = messageSource.getMessage(code,
@@ -312,11 +316,11 @@ public class WaterTaxUtils {
                         new String[] {
                                 applicantName,
                                 waterConnectionDetails.getApplicationNumber(),
-                                String.valueOf(waterConnectionDetails.getDonationCharges()),
-                                String.valueOf(waterConnectionDetails.getFieldInspectionDetails()
-                                        .getEstimationCharges()),
-                                String.valueOf(waterConnectionDetails.getDonationCharges()
-                                        + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges()),
+                                String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges())),
+                                String.valueOf(amountFormat.format(waterConnectionDetails.getFieldInspectionDetails()
+                                        .getEstimationCharges())),
+                                String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges()
+                                        + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges())),
                                         getCityName() }, null);
             // --- for NON BPL --
             // Dear {0}, We have processed your application for new tap
@@ -331,10 +335,10 @@ public class WaterTaxUtils {
                         new String[] {
                                 applicantName,
                                 WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails
-                                        .getApplicationType().getCode()) ? "new water" : "additioanl water",
+                                        .getApplicationType().getCode()) ? "new water" : "additional water",
                                         waterConnectionDetails.getApplicationNumber(),
-                                        String.valueOf(waterConnectionDetails.getFieldInspectionDetails()
-                                        .getEstimationCharges()), getCityName() }, null);
+                                        String.valueOf(amountFormat.format(waterConnectionDetails.getFieldInspectionDetails()
+                                        .getEstimationCharges())), getCityName() }, null);
             // -- for BPL --
             // Dear {0}, We have processed your application for {1} tap
             // connection with acknowledgement number {2} and generated an
@@ -347,7 +351,7 @@ public class WaterTaxUtils {
             smsMsg = messageSource.getMessage(code,
                     new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
                     formatter.format(waterConnectionDetails.getExecutionDate()).toString(),
-                    waterConnectionDetails.getDemand().getBaseDemand().toString(), getCityName() }, null);
+                    amountFormat.format(waterConnectionDetails.getDemand().getBaseDemand()).toString(), getCityName() }, null);
         }
         // Dear {0}, Water tap connection with H.S.C number {1} is installed at
         // your site on {2} by our Asst engineer and your monthly water

@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -107,6 +108,7 @@ public class WorkOrderController {
         if(null!=connectionDetails ){
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(connectionDetails.getConnection().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS);
+            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String doorno[] = assessmentDetails.getPropertyAddress().split(",");
             String ownerName = "";
             for(OwnerName names:assessmentDetails.getOwnerNames()){
@@ -125,7 +127,7 @@ public class WorkOrderController {
             reportParams.put("municipality", session.getAttribute("cityname"));
             reportParams.put("district", session.getAttribute("districtName"));
             reportParams.put("purpose", connectionDetails.getUsageType().getName());
-            reportParams.put("workorderdate", connectionDetails.getWorkOrderDate());
+            reportParams.put("workorderdate", formatter.format(connectionDetails.getWorkOrderDate()));
             reportParams.put("workorderno", connectionDetails.getWorkOrderNumber());
             reportParams.put("applicantname", WordUtils.capitalize(ownerName));
             reportParams.put("address", assessmentDetails.getPropertyAddress());
@@ -141,7 +143,10 @@ public class WorkOrderController {
 
     public void validateWorkOrder(final WaterConnectionDetails connectionDetails,final Boolean isView ) {
         
-        if(isView && null==connectionDetails.getWorkOrderNumber()){
+        if(null!=connectionDetails && connectionDetails.getLegacy()) {
+            errorMessage = messageSource.getMessage("err.validate.workorder.for.legacy", new String[] {""}, null);
+        }
+        else if(isView && null==connectionDetails.getWorkOrderNumber()){
             errorMessage = messageSource.getMessage("err.validate.workorder.view", new String[] {connectionDetails.getApplicationNumber()}, null);
         }
         else if(!isView && !connectionDetails.getEgwStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED)){
