@@ -65,6 +65,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwStatus;
+import org.egov.commons.entity.ChairPerson;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.workflow.entity.StateAware;
@@ -189,14 +190,18 @@ public class WaterConnectionDetails extends StateAware {
     private String workOrderNumber;
 
     private double donationCharges;
-    private Boolean legacy=false;
-    
+    private Boolean legacy = false;
+
     @Temporal(value = TemporalType.DATE)
     private Date executionDate;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "filestoreid")
     private FileStoreMapper fileStore;
+
+    @ManyToOne
+    @JoinColumn(name = "chairPerson")
+    private ChairPerson chairPerson;
 
     @Valid
     @OneToOne(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -221,7 +226,7 @@ public class WaterConnectionDetails extends StateAware {
     public void setMeterConnection(final List<MeterReadingConnectionDetails> meterConnection) {
         this.meterConnection = meterConnection;
     }
-    
+
     @Override
     public Long getId() {
         return id;
@@ -485,6 +490,14 @@ public class WaterConnectionDetails extends StateAware {
         this.fileStore = fileStore;
     }
 
+    public ChairPerson getChairPerson() {
+        return chairPerson;
+    }
+
+    public void setChairPerson(final ChairPerson chairPerson) {
+        this.chairPerson = chairPerson;
+    }
+
     public double getDonationCharges() {
         return donationCharges;
     }
@@ -497,15 +510,15 @@ public class WaterConnectionDetails extends StateAware {
         return executionDate;
     }
 
-    public void setExecutionDate(Date executionDate) {
+    public void setExecutionDate(final Date executionDate) {
         this.executionDate = executionDate;
     }
-    
-    public Boolean getLegacy() {
-		return legacy;
-	}
 
-	public void setLegacy(Boolean legacy) {
-		this.legacy = legacy;
-	}
+    public Boolean getLegacy() {
+        return legacy;
+    }
+
+    public void setLegacy(final Boolean legacy) {
+        this.legacy = legacy;
+    }
 }

@@ -40,6 +40,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -64,11 +65,24 @@
 							<form:input id="approvalDate" path="approvalDate" class="form-control datepicker today" data-date-end-date="0d" required="required" />
 							<form:errors path="approvalDate" cssClass="add-margin error-msg" />
 						</div>
-						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.disposal.date" /></div>
-						<div class="col-xs-3 col-xs-6 add-margin add-margin view-content">
-							<fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.disposalDate}" />
-						</div>
 					</div>
+					<c:if test="${chairPerson != null}">
+						<div class="row">
+							<div class="col-md-3 col-xs-6 add-margin">
+								<spring:message code="lbl.chairpersonname"/>
+							</div>
+							<div class="col-md-3 col-xs-6 add-margin">
+								<input type="text" class="form-control" id="chairperson" name="chairperson" value="${chairPerson.name}" disabled> 
+								<form:hidden path="chairPerson" id="chairPersonId" value="${chairPerson.id}"/> 
+							</div>			
+						</div>					
+					</c:if> 
+					    <div class="row">
+							<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.disposal.date" /></div>
+							<div class="col-xs-3 col-xs-6 add-margin add-margin view-content">
+								<fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.disposalDate}" />
+							</div>					
+						</div>				
 				</div>
 			</div>
 		</div>

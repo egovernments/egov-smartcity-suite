@@ -48,6 +48,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.commons.entity.ChairPerson;
+import org.egov.commons.service.ChairPersonService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -103,6 +105,9 @@ public class UpdateConnectionController extends GenericConnectionController {
     private WaterTaxNumberGenerator waterTaxNumberGenerator;
 
     @Autowired
+    private ChairPersonService chairPersonService;
+
+    @Autowired
     public UpdateConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
             final DepartmentService departmentService, final ConnectionDemandService connectionDemandService,
             final SmartValidator validator) {
@@ -139,6 +144,13 @@ public class UpdateConnectionController extends GenericConnectionController {
                 waterConnectionDetailsService.getConnectionTypesMap().get(waterConnectionDetails.getConnectionType().name()));
         model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
+
+        if (waterConnectionDetails.getEgwStatus() != null && waterConnectionDetails.getEgwStatus().getCode()
+                .equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)) {
+            final ChairPerson chairPerson = chairPersonService.getActiveChairPersonAsOnCurrentDate();
+            model.addAttribute("chairPerson", chairPerson);
+        }
+
         appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
         return "newconnection-edit";
     }
