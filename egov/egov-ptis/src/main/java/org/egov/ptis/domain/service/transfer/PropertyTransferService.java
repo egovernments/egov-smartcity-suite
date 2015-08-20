@@ -257,6 +257,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
     public PropertyMutation getCurrentPropertyMutationByAssessmentNo(final String assessmentNo) {
         PropertyMutation currentPropertyMutation = null;
         for (final PropertyMutation propertyMutation : getBasicPropertyByUpicNo(assessmentNo).getPropertyMutations())
+            //Checking for mutation object which is in workflow
             if (!propertyMutation.getState().getValue().equals(WF_STATE_CLOSED)) {
                 currentPropertyMutation = propertyMutation;
                 break;

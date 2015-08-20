@@ -121,7 +121,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
             billdetail.setCrAmount(billable.getMutationFee());
             billdetail.setDrAmount(BigDecimal.ZERO);
             billdetail.setGlcode(GLCODE_FOR_MUTATION_FEE);
-            billdetail.setDescription(MUTATION_FEE_STR + "-" + currInstallment.getDescription());
+            billdetail.setDescription(MUTATION_FEE_STR);
             billdetail.setAdditionalFlag(Integer.valueOf(0));
             billdetail.setEgInstallmentMaster(currInstallment);
             billdetail.setAdditionalFlag(Integer.valueOf(1));

@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUNCTIONARY_C
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_SRC_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -80,6 +81,7 @@ import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.RebatePeriod;
 import org.egov.ptis.domain.service.property.RebatePeriodService;
 import org.joda.time.DateTime;
@@ -92,7 +94,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("propertyTaxBillable")
 public class PropertyTaxBillable extends AbstractBillable implements Billable, LatePayPenaltyCalculator,
-        RebateCalculator {
+RebateCalculator {
 
     private static final String STRING_DEPARTMENT_CODE = "R";
     private static final String STRING_SERVICE_CODE = "PT";
@@ -188,7 +190,14 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
      */
     @Override
     public String getBillPayee() {
-        return getBasicProperty().getFullOwnerName();
+        String payeeName = "";
+        if (isMutationFeePayment()) {
+            for (final PropertyMutation propertyMutation : getBasicProperty().getPropertyMutations())
+                if (!propertyMutation.getState().getValue().equals(WF_STATE_CLOSED))
+                    payeeName = propertyMutation.getFullTranfereeName();
+        } else
+            payeeName = getBasicProperty().getPrimaryOwner().getName();
+        return payeeName;
     }
 
     @Override
@@ -246,11 +255,10 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     @Override
     public String getServiceCode() {
-        if (isMutationFeePayment()) {
+        if (isMutationFeePayment())
             return STRING_MUTATION_SERVICE_CODE;
-        } else {
+        else
             return STRING_SERVICE_CODE;
-        }
     }
 
     @Override
@@ -271,15 +279,14 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
                 if (penaltyAmount != null && penaltyAmount.compareTo(BigDecimal.ZERO) > 0)
                     balance = balance.add(penaltyAmount);
             }
-        } else {
+        } else
             balance = getMutationFee();
-        }
         return balance;
     }
 
     @Override
     public String getDescription() {
-        return "Property Tax Bill Number: " + getBasicProperty().getUpicNo();
+        return "Property Tax Assessment Number: " + getBasicProperty().getUpicNo();
     }
 
     /**
@@ -324,7 +331,10 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     @Override
     public String getDisplayMessage() {
-        return "Property Tax Collection";
+        if (isMutationFeePayment())
+            return "Mutation Fee Collection";
+        else
+            return "Property Tax Collection";
     }
 
     @Override
@@ -393,13 +403,12 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     }
 
     @Override
-	public String getConsumerId() {
-		if (isMutationFeePayment()) {
-			return mutationApplicationNo;
-		} else {
-			return getBasicProperty().getUpicNo();
-		}
-	}
+    public String getConsumerId() {
+        if (isMutationFeePayment())
+            return mutationApplicationNo;
+        else
+            return getBasicProperty().getUpicNo();
+    }
 
     private Map<Installment, EgDemandDetails> getInstallmentWisePenaltyDemandDetails(final Property property,
             final Installment currentInstallment) {
@@ -476,13 +485,12 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
                     penaltyAndRebate = new PenaltyAndRebate();
                     penaltyAndRebate.setRebate(calculateEarlyPayRebate(tax));
 
-                    if (existingPenaltyDemandDetail == null) {
+                    if (existingPenaltyDemandDetail == null)
                         penaltyAndRebate.setPenalty(calculatePenalty(null, getPenaltyEffectiveDate(installment),
                                 balance));
-                    } else {
+                    else
                         penaltyAndRebate.setPenalty(existingPenaltyDemandDetail.getAmount().subtract(
                                 existingPenaltyDemandDetail.getAmtCollected()));
-                    }
                     installmentPenaltyAndRebate.put(installment, penaltyAndRebate);
                 }
             }
@@ -494,9 +502,9 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     private Date getPenaltyEffectiveDate(final Installment installment) {
         final DateTime installmentDate = new DateTime(installment.getFromDate());
         final DateTime firstHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_FIRST_HALF.toDate())
-                .withYear(installmentDate.getYear());
+        .withYear(installmentDate.getYear());
         final DateTime secondHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_SECOND_HALF.toDate())
-                .withYear(installmentDate.getYear());
+        .withYear(installmentDate.getYear());
 
         if (propertyTaxUtil.between(firstHalfPeriod.toDate(), installment.getFromDate(), installment.getToDate()))
             return firstHalfPeriod.toDate();
@@ -579,11 +587,11 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         return mutationFeePayment;
     }
 
-    public void setMutationFeePayment(boolean mutationFeePayment) {
+    public void setMutationFeePayment(final boolean mutationFeePayment) {
         this.mutationFeePayment = mutationFeePayment;
     }
 
-    public void setMutationApplicationNo(String mutationApplicationNo) {
+    public void setMutationApplicationNo(final String mutationApplicationNo) {
         this.mutationApplicationNo = mutationApplicationNo;
     }
 }
