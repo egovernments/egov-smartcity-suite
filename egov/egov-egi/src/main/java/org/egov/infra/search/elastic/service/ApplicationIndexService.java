@@ -54,7 +54,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Service for the Application Index
  *
  * @author rishi
- *
  */
 @Service
 @Transactional(readOnly = true)
