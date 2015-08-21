@@ -32,7 +32,6 @@ package org.egov.infra.utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -61,7 +60,7 @@ public class FileStoreUtils {
                 response.setHeader("Content-Disposition", "attachment;filename=" + fileStoreMapper.getFileName());
             else
                 response.setHeader("Content-Disposition", "inline;filename=" + fileStoreMapper.getFileName());
-            response.setContentType(Files.probeContentType(file.toPath()));
+            response.setContentType(fileStoreMapper.getContentType());
             final OutputStream out = response.getOutputStream();
             IOUtils.write(FileUtils.readFileToByteArray(file), out);
             IOUtils.closeQuietly(out);
