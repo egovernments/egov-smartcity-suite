@@ -139,9 +139,9 @@ public class MeterDemandNoticeController {
                     .findPreviousMeterReadingReading(waterConnectionDetails.getId());
             if (meterReadingpriviousObjlist.size() > 1) {
                 meterReadingpriviousObj.setCurrentReading(meterReadingpriviousObjlist.get(1).getCurrentReading());
-                if(meterReadingpriviousObjlist.get(1).getCurrentReadingDate()!=null){
-                meterReadingpriviousObj.setCurrentReadingDate(meterReadingpriviousObjlist.get(1).getCurrentReadingDate());
-                }else
+                if (meterReadingpriviousObjlist.get(1).getCurrentReadingDate() != null)
+                    meterReadingpriviousObj.setCurrentReadingDate(meterReadingpriviousObjlist.get(1).getCurrentReadingDate());
+                else
                     meterReadingpriviousObj.setCurrentReadingDate(waterConnectionDetails.getExecutionDate());
             } else {// waterConnectionDetails.getConnection().getInitialReading()
                 if (waterConnectionDetails.getConnection().getInitialReading() != null)
@@ -182,16 +182,16 @@ public class MeterDemandNoticeController {
      * @param yearName
      */
     private void prepareReportParams(final WaterConnectionDetails waterConnectionDetails, final HttpSession session,
-            final SimpleDateFormat formatter, final AssessmentDetails assessmentDetails, String ownerName,
-            EgBill billObj, final MeterReadingConnectionDetails meterReadingpriviousObj, final String monthName,
+            final SimpleDateFormat formatter, final AssessmentDetails assessmentDetails, final String ownerName,
+            final EgBill billObj, final MeterReadingConnectionDetails meterReadingpriviousObj, final String monthName,
             final String yearName) {
         if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
             reportParams.put("applicationType",
                     WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()).toString());
         else if (WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType()
                 .getCode()))
-                reportParams.put("applicationType",
-                        WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()).toString());
+            reportParams.put("applicationType",
+                    WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()).toString());
         //
         reportParams.put("municipality", session.getAttribute("cityname"));
         reportParams.put("district", session.getAttribute("districtName"));
@@ -211,10 +211,10 @@ public class MeterDemandNoticeController {
         reportParams.put("currentMonthCharges", getCurrentMonthDemandAmount(waterConnectionDetails));
         reportParams.put("totalDueAmount", getTotalDue(waterConnectionDetails));
         reportParams.put("previousReading", meterReadingpriviousObj.getCurrentReading());
-        if(meterReadingpriviousObj.getCurrentReadingDate()!=null)
-        reportParams.put("previousReadingDate", formatter.format(meterReadingpriviousObj.getCurrentReadingDate()));
+        if (meterReadingpriviousObj.getCurrentReadingDate() != null)
+            reportParams.put("previousReadingDate", formatter.format(meterReadingpriviousObj.getCurrentReadingDate()));
         else
-           reportParams.put("previousReadingDate", "");
+            reportParams.put("previousReadingDate", "");
         reportParams.put("currentReading", waterConnectionDetails.getMeterConnection().get(0).getCurrentReading());
         reportParams.put("currrentReadingDate",
                 formatter.format(waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
@@ -249,7 +249,8 @@ public class MeterDemandNoticeController {
 
     private BigDecimal getCurrentMonthDemandAmount(final WaterConnectionDetails waterConnectionDetails) {
         BigDecimal currentAmount = BigDecimal.ZERO;
-        final Installment installment = connectionDemandService.getMonthlyInstallMentForgivenDate(new Date());
+        final Installment installment = connectionDemandService.getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
+                WaterTaxConstants.MONTHLY, new Date());
         final EgDemandReason demandReasonObj = connectionDemandService.getDemandReasonByCodeAndInstallment(
                 WaterTaxConstants.WATERTAXREASONCODE, installment);
         final List<EgDemandDetails> demnadDetList = demandGenericDao.getDemandDetailsForDemandAndReasons(

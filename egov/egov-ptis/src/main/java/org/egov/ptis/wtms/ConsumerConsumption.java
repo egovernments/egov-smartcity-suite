@@ -42,62 +42,71 @@ package org.egov.ptis.wtms;
 
 import java.math.BigDecimal;
 
-import org.apache.struts2.components.Date;
 import org.joda.time.DateTime;
 
-public class ConsumerConsumtion {
-	String hscno;
-	BigDecimal currentDue;
-	BigDecimal arrearDue;
-	DateTime currentFromDate;
-	DateTime curentToDate;
-	DateTime arrearFromDate;
-	DateTime arrearToDate;
-	
-	public String getHscno() {
-		return hscno;
-	}
-	public void setHscno(String hscno) {
-		this.hscno = hscno;
-	}
-	public BigDecimal getCurrentDue() {
-		return currentDue;
-	}
-	public void setCurrentDue(BigDecimal currentDue) {
-		this.currentDue = currentDue;
-	}
-	public BigDecimal getArrearDue() {
-		return arrearDue;
-	}
-	public void setArrearDue(BigDecimal arrearDue) {
-		this.arrearDue = arrearDue;
-	}
-	public DateTime getCurrentFromDate() {
-		return currentFromDate;
-	}
-	public void setCurrentFromDate(DateTime currentFromDate) {
-		this.currentFromDate = currentFromDate;
-	}
-	public DateTime getCurentToDate() {
-		return curentToDate;
-	}
-	public void setCurentToDate(DateTime curentToDate) {
-		this.curentToDate = curentToDate;
-	}
-	public DateTime getArrearFromDate() {
-		return arrearFromDate;
-	}
-	public void setArrearFromDate(DateTime arrearFromDate) {
-		this.arrearFromDate = arrearFromDate;
-	}
-	public DateTime getArrearToDate() {
-		return arrearToDate;
-	}
-	public void setArrearToDate(DateTime arrearToDate) {
-		this.arrearToDate = arrearToDate;
-	}
-	
-	
-	
+public class ConsumerConsumption {
+    String hscno;
+    BigDecimal currentDue;
+    BigDecimal arrearDue;
+    DateTime currentFromDate;
+    DateTime curentToDate;
+    DateTime arrearFromDate;
+    DateTime arrearToDate;
+
+    public String getHscno() {
+        return hscno;
+    }
+
+    public void setHscno(final String hscno) {
+        this.hscno = hscno;
+    }
+
+    public BigDecimal getCurrentDue() {
+        return currentDue;
+    }
+
+    public void setCurrentDue(final BigDecimal currentDue) {
+        this.currentDue = currentDue;
+    }
+
+    public BigDecimal getArrearDue() {
+        return arrearDue;
+    }
+
+    public void setArrearDue(final BigDecimal arrearDue) {
+        this.arrearDue = arrearDue;
+    }
+
+    public DateTime getCurrentFromDate() {
+        return currentFromDate;
+    }
+
+    public void setCurrentFromDate(final DateTime currentFromDate) {
+        this.currentFromDate = currentFromDate;
+    }
+
+    public DateTime getCurentToDate() {
+        return curentToDate;
+    }
+
+    public void setCurentToDate(final DateTime curentToDate) {
+        this.curentToDate = curentToDate;
+    }
+
+    public DateTime getArrearFromDate() {
+        return arrearFromDate;
+    }
+
+    public void setArrearFromDate(final DateTime arrearFromDate) {
+        this.arrearFromDate = arrearFromDate;
+    }
+
+    public DateTime getArrearToDate() {
+        return arrearToDate;
+    }
+
+    public void setArrearToDate(final DateTime arrearToDate) {
+        this.arrearToDate = arrearToDate;
+    }
 
 }

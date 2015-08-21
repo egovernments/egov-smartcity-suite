@@ -186,7 +186,7 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
-import org.egov.ptis.wtms.ConsumerConsumtion;
+import org.egov.ptis.wtms.ConsumerConsumption;
 import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
@@ -1694,7 +1694,7 @@ public class PropertyTaxUtil {
         if(tempList!=null && !tempList.isEmpty())
             demandNoticeDetailsInfo.addAll(tempList);
         //Water Tax
-        PropertyWiseConsumptions propertyWiseConsumptions= getPropertyWiseConsumptions(basicProperty.getId().toString());
+        PropertyWiseConsumptions propertyWiseConsumptions= getPropertyWiseConsumptions(basicProperty.getUpicNo().toString());
         if(propertyWiseConsumptions!=null){
             tempList = new LinkedList<DemandNoticeDetailsInfo>();
             tempList = getArrearCurrentDemandforWaterTax(propertyWiseConsumptions);
@@ -1718,8 +1718,8 @@ public class PropertyTaxUtil {
         String currentToDate="";
         DemandNoticeDetailsInfo dndi;
         BigDecimal currentAmount= BigDecimal.ZERO;
-        if(propertyWiseConsumptions.getConsumerConsumtions()!=null && propertyWiseConsumptions.getConsumerConsumtions().size()>0){
-             for(ConsumerConsumtion cc : propertyWiseConsumptions.getConsumerConsumtions()){
+        if(propertyWiseConsumptions.getConsumerConsumptions()!=null && propertyWiseConsumptions.getConsumerConsumptions().size()>0){
+             for(ConsumerConsumption cc : propertyWiseConsumptions.getConsumerConsumptions()){
                  if(cc!=null){
                      if(cc.getArrearDue()!=null &&  cc.getArrearDue()!= BigDecimal.ZERO){
                          if(arrearFromDate=="")

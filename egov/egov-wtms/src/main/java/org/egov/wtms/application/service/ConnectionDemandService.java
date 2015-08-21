@@ -404,7 +404,8 @@ public class ConnectionDemandService {
     @Transactional
     public WaterConnectionDetails updateDemandForMeteredConnection(final WaterConnectionDetails waterConnectionDetails,
             final BigDecimal billAmount, final Date currentDate) {
-        final Installment installment = getMonthlyInstallMentForgivenDate(currentDate);
+        final Installment installment = getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY,
+                currentDate);
         final EgDemand demandObj = waterConnectionDetails.getDemand();
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
         dmdDetailSet.add(createDemandDetails(Double.parseDouble(billAmount.toString()),
@@ -424,12 +425,6 @@ public class ConnectionDemandService {
 
         generateBillForMeterAndMonthly(waterConnectionDetails.getConnection().getConsumerCode());
         return waterConnectionDetails;
-    }
-
-    public Installment getMonthlyInstallMentForgivenDate(final Date givenDate) {
-        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
-                moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), givenDate, WaterTaxConstants.MONTHLY);
-        return installment;
     }
 
     @Transactional
@@ -455,8 +450,8 @@ public class ConnectionDemandService {
 
     public WaterConnectionDetails updateDemandForNonmeteredConnection(final WaterConnectionDetails waterConnectionDetails)
             throws ValidationException {
-        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(
-                moduleService.getModuleByName(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE), new Date());
+        final Installment installment = getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null,
+                new Date());
         double totalWaterRate = 0;
         final WaterRatesHeader waterRatesHeader = waterRatesHeaderService
                 .findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(
@@ -484,4 +479,61 @@ public class ConnectionDemandService {
             throw new ValidationException("err.water.rate.not.found");
         return waterConnectionDetails;
     }
+
+    public Map<String, BigDecimal> getDemandCollMapForPtisIntegration(final WaterConnectionDetails waterConnectionDetails,
+            final String moduleName,
+            final String installmentType) {
+        final EgDemand currDemand = waterConnectionDetails.getDemand();
+        Installment installment = null;
+        List<Object> dmdCollList = new ArrayList<Object>();
+        Installment currInst = null;
+        Integer instId = null;
+        BigDecimal curDue = BigDecimal.ZERO;
+        BigDecimal arrDue = BigDecimal.ZERO;
+
+        BigDecimal arrearInstallmentfrom = BigDecimal.ZERO;
+        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
+        if (currDemand != null)
+            dmdCollList = getDmdCollAmtInstallmentWiseWithIsDmdTrue(currDemand);
+        currInst = getCurrentInstallment(moduleName, null, new Date());
+        for (final Object object : dmdCollList) {
+            final Object[] listObj = (Object[]) object;
+            instId = Integer.valueOf(listObj[1].toString());
+            installment = (Installment) installmentDao.findById(instId, false);
+            if (currInst.equals(installment))
+                curDue = new BigDecimal(listObj[5].toString());
+            else {
+                arrDue = (BigDecimal) listObj[5];
+                if (arrDue.signum() > 0)
+                    if (null == arrearInstallmentfrom)
+                        arrearInstallmentfrom = BigDecimal.valueOf(instId);
+
+            }
+        }
+        retMap.put(WaterTaxConstants.ARR_DUE, arrDue);
+        retMap.put(WaterTaxConstants.CURR_DUE, curDue);
+        retMap.put(WaterTaxConstants.ARR_INSTALFROM_STR, arrearInstallmentfrom);
+        return retMap;
+    }
+
+    public List<Object> getDmdCollAmtInstallmentWiseWithIsDmdTrue(final EgDemand egDemand) {
+        final StringBuffer strBuf = new StringBuffer(2000);
+        strBuf.append("select dmdResId,installment,amount,amt_collected,amt_rebate,amount-amt_collected as balance,"
+                + "instStartDate from (SELECT dmdRes.id as dmdResId, dmdRes.id_installment as installment,"
+                + "SUM(dmdDet.amount) AS amount,SUM(dmdDet.amt_collected) AS amt_collected,SUM(dmdDet.amt_rebate) AS amt_rebate,"
+                + "inst.start_date as inststartdate FROM eg_demand_details dmdDet,eg_demand_reason dmdRes,eg_installment_master inst, "
+                + "eg_demand_reason_master dmdresmas WHERE dmdDet.id_demand_reason=dmdRes.id AND dmdDet.id_demand =:dmdId "
+                + "AND dmdRes.id_installment = inst.id AND dmdresmas.id = dmdres.id_demand_reason_master and "
+                + "dmdresmas.isdemand=true GROUP BY dmdRes.id, dmdRes.id_installment, inst.start_date ORDER BY inst.start_date) as dcb");
+        return getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId()).list();
+    }
+
+    public Installment getCurrentInstallment(final String moduleName, final String installmentType, final Date date) {
+        if (null == installmentType)
+            return installmentDao.getInsatllmentByModuleForGivenDate(moduleService.getModuleByName(moduleName), new Date());
+        else
+            return installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
+                    moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), date, WaterTaxConstants.MONTHLY);
+    }
+
 }

@@ -9,7 +9,7 @@ import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.wtms.ConsumerConsumtion;
+import org.egov.ptis.wtms.ConsumerConsumption;
 import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,9 +89,9 @@ public class DemandNoticeInfo {
 	public String getWaterConnectionNo() {
 	     String waterConnectionNo="";
 	        if(propertyWiseConsumptions!=null){
-	            if(propertyWiseConsumptions.getConsumerConsumtions()!=null && !propertyWiseConsumptions.getConsumerConsumtions().isEmpty()){
+	            if(propertyWiseConsumptions.getConsumerConsumptions()!=null && !propertyWiseConsumptions.getConsumerConsumptions().isEmpty()){
 	                String hscno="";
-	                for(ConsumerConsumtion cc:propertyWiseConsumptions.getConsumerConsumtions()){
+	                for(ConsumerConsumption cc:propertyWiseConsumptions.getConsumerConsumptions()){
 	                    if(cc!=null){
 	                        if(hscno!=null && hscno!="")  
 	                            hscno=hscno+cc.getHscno()+",";
@@ -107,8 +107,8 @@ public class DemandNoticeInfo {
 
 	public String getNoOfTap() {
     	        if(propertyWiseConsumptions!=null){
-                  if(propertyWiseConsumptions.getConsumerConsumtions()!=null && !propertyWiseConsumptions.getConsumerConsumtions().isEmpty())  
-                      noOfTap=Integer.toString(propertyWiseConsumptions.getConsumerConsumtions().size());
+                  if(propertyWiseConsumptions.getConsumerConsumptions()!=null && !propertyWiseConsumptions.getConsumerConsumptions().isEmpty())  
+                      noOfTap=Integer.toString(propertyWiseConsumptions.getConsumerConsumptions().size());
     	        }
 		return noOfTap;
 	}

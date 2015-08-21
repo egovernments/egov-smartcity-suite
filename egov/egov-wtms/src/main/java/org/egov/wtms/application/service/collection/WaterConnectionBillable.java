@@ -102,7 +102,8 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getBillAddress() {
-        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(getWaterConnectionDetails().getConnection().getPropertyIdentifier(),PropertyExternalService.FLAG_FULL_DETAILS);
+        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+                getWaterConnectionDetails().getConnection().getPropertyIdentifier(), PropertyExternalService.FLAG_FULL_DETAILS);
         return buildAddressDetails(assessmentDetails);
     }
 
@@ -124,7 +125,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
                 final String loginUser = userService.getUserById(getUserId()).getName();
                 if (!loginUser.equals(WaterTaxConstants.CITIZENUSER))
                     billType = egBillDAO.getBillTypeByCode(WaterTaxConstants.BILLTYPE_MANUAL);
-                }
+            }
         return billType;
     }
 
@@ -217,7 +218,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getDescription() {
-        return "Water Tax Bill Number: " + getWaterConnectionDetails().getApplicationNumber();
+        return "Water Tax Application Number: " + getWaterConnectionDetails().getApplicationNumber();
     }
 
     @Override

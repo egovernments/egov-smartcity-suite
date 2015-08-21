@@ -44,41 +44,41 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class PropertyWiseConsumptions {
-	String PropertyID;
-	BigDecimal arrearTotal;
-	BigDecimal currentTotal;
-	List<ConsumerConsumtion> consumerConsumtions;
+    String PropertyID;
+    BigDecimal arrearTotal;
+    BigDecimal currentTotal;
+    List<ConsumerConsumption> consumerConsumptions;
 
-	public String getPropertyID() {
-		return PropertyID;
-	}
+    public String getPropertyID() {
+        return PropertyID;
+    }
 
-	public void setPropertyID(final String propertyID) {
-		PropertyID = propertyID;
-	}
+    public void setPropertyID(final String propertyID) {
+        PropertyID = propertyID;
+    }
 
-	public BigDecimal getArrearTotal() {
-		return arrearTotal;
-	}
+    public BigDecimal getArrearTotal() {
+        return arrearTotal;
+    }
 
-	public void setArrearTotal(final BigDecimal arrearTotal) {
-		this.arrearTotal = arrearTotal;
-	}
+    public void setArrearTotal(final BigDecimal arrearTotal) {
+        this.arrearTotal = arrearTotal;
+    }
 
-	public BigDecimal getCurrentTotal() {
-		return currentTotal;
-	}
+    public BigDecimal getCurrentTotal() {
+        return currentTotal;
+    }
 
-	public void setCurrentTotal(final BigDecimal currentTotal) {
-		this.currentTotal = currentTotal;
-	}
+    public void setCurrentTotal(final BigDecimal currentTotal) {
+        this.currentTotal = currentTotal;
+    }
 
-	public List<ConsumerConsumtion> getConsumerConsumtions() {
-		return consumerConsumtions;
-	}
+    public List<ConsumerConsumption> getConsumerConsumptions() {
+        return consumerConsumptions;
+    }
 
-	public void setConsumerConsumtions(final List<ConsumerConsumtion> consumerConsumtions) {
-		this.consumerConsumtions = consumerConsumtions;
-	}
+    public void setConsumerConsumptions(final List<ConsumerConsumption> consumerConsumptions) {
+        this.consumerConsumptions = consumerConsumptions;
+    }
 
 }

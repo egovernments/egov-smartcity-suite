@@ -42,56 +42,80 @@ package org.egov.wtms.integration;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-import org.egov.ptis.wtms.ConsumerConsumtion;
+import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentDao;
+import org.egov.ptis.wtms.ConsumerConsumption;
 import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
+import org.egov.wtms.application.entity.WaterConnection;
+import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.ConnectionDemandService;
+import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.application.service.WaterConnectionService;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrationService {
 
+    @Autowired
+    private WaterConnectionDetailsService waterConnectionDetailsService;
+    @Autowired
+    private WaterConnectionService waterConnectionService;
+    @Autowired
+    private ConnectionDemandService connectionDemandService;
+    @Autowired
+    private InstallmentDao installmentDao;
+
     @Override
-    public PropertyWiseConsumptions getPropertyWiseConsumptionsForWaterCharges(final String PropertyId) {
-        // TODO Auto-generated method stub
+    public PropertyWiseConsumptions getPropertyWiseConsumptionsForWaterCharges(final String propertyId) {
         final PropertyWiseConsumptions propertyWiseConsumptions = new PropertyWiseConsumptions();
-        propertyWiseConsumptions.setPropertyID(PropertyId);
-        BigDecimal CurrentTotal = BigDecimal.ZERO;
-        BigDecimal ArrearTotal = BigDecimal.ZERO;
-        BigDecimal Currenttax = BigDecimal.ZERO;
-        BigDecimal ArrearTax = BigDecimal.ZERO;
+        propertyWiseConsumptions.setPropertyID(propertyId);
+        BigDecimal currentTotal = BigDecimal.ZERO;
+        BigDecimal arrearTotal = BigDecimal.ZERO;
+        Installment arrInstal = null;
+        System.out.println();
+        final Installment currentInstallment = connectionDemandService
+                .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
+        final List<WaterConnection> waterConnections = waterConnectionService.findByPropertyIdentifier(propertyId);
+        final List<ConsumerConsumption> consumerConsumptions = new ArrayList<ConsumerConsumption>();
+        for (final WaterConnection waterConnection : waterConnections) {
+            final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                    .getActiveConnectionDetailsByConnection(waterConnection);
+            if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
+                final ConsumerConsumption consumerConsumption = new ConsumerConsumption();
+                consumerConsumption.setHscno(waterConnectionDetails.getConnection().getConsumerCode());
+                final Map<String, BigDecimal> resultmap = connectionDemandService.getDemandCollMapForPtisIntegration(
+                        waterConnectionDetails,
+                        WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null);
+                if (null != resultmap && !resultmap.isEmpty()) {
+                    final BigDecimal arrInstallment = resultmap.get(WaterTaxConstants.ARR_INSTALFROM_STR);
+                    if (null != arrInstallment && arrInstallment != BigDecimal.ZERO)
+                        arrInstal = (Installment) installmentDao.findById(arrInstallment.longValue(), false);
+                    consumerConsumption.setCurrentDue(resultmap.get(WaterTaxConstants.CURR_DUE));
+                    consumerConsumption.setArrearDue(resultmap.get(WaterTaxConstants.ARR_DUE));
+                    if (null != arrInstal) {
+                        consumerConsumption.setArrearFromDate(new DateTime(arrInstal.getFromDate()));
+                        consumerConsumption.setArrearToDate(new DateTime(currentInstallment.getFromDate()).minusDays(1));
+                    }
+                    consumerConsumption.setCurrentFromDate(new DateTime(currentInstallment.getFromDate()));
+                    consumerConsumption.setCurentToDate(new DateTime(currentInstallment.getToDate()));
+                    consumerConsumptions.add(consumerConsumption);
+                    currentTotal = currentTotal.add(consumerConsumption.getCurrentDue());
+                    arrearTotal = arrearTotal.add(consumerConsumption.getArrearDue());
+                }
+            }
 
-        final List<ConsumerConsumtion> consumerConsumtions = new ArrayList<ConsumerConsumtion>();
-
-        // TODO Iterate through all Water Connection attached with the Propertyid and fill up the consumerConsumtion object with
-        // individual connection details
-        {
-            Currenttax = BigDecimal.ZERO;
-            ArrearTax = BigDecimal.ZERO;
-            // get the value from connection demand and set the variable for current and arrear tax
-            Currenttax = new BigDecimal("1234.76");
-            ArrearTax = new BigDecimal("2456.76");
-
-            CurrentTotal = CurrentTotal.add(Currenttax);
-            ArrearTotal = ArrearTotal.add(ArrearTax);
-            final ConsumerConsumtion consumerConsumtion = new ConsumerConsumtion();
-
-            consumerConsumtion.setArrearDue(Currenttax);
-            consumerConsumtion.setCurrentDue(ArrearTax);
-            // TODO get the fromdate from oldest arrear installment and to date from latest arrear installment and put in the
-            // consumerConsumtion object
-            consumerConsumtion.setArrearFromDate(new DateTime(2015, 4, 1, 0, 0));
-            consumerConsumtion.setArrearToDate(new DateTime(2015, 9, 30, 0, 0));
-            // TODO get the fromdate from current installment and date from latest current installment and put in the
-            // consumerConsumtion object
-
-            consumerConsumtion.setCurrentFromDate(new DateTime(2015, 10, 1, 0, 0));
-            consumerConsumtion.setCurentToDate(new DateTime(2016, 3, 31, 0, 0));
-            consumerConsumtions.add(consumerConsumtion);
         }
-        propertyWiseConsumptions.setCurrentTotal(CurrentTotal);
-        propertyWiseConsumptions.setArrearTotal(ArrearTotal);
-        propertyWiseConsumptions.setConsumerConsumtions(consumerConsumtions);
+        propertyWiseConsumptions.setCurrentTotal(currentTotal);
+        propertyWiseConsumptions.setArrearTotal(arrearTotal);
+        propertyWiseConsumptions.setConsumerConsumptions(consumerConsumptions);
+
         return propertyWiseConsumptions;
     }
 
