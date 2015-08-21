@@ -39,7 +39,7 @@
 -->
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-			<table width="100%" class="checkbox-section">
+			<table width="100%" class="checkbox-section" id="amenitiesTable">
 				<tr>
 					<td width="20%" align="right">
 					<label><s:text name="lift"></s:text> <s:checkbox name="propertyDetail.lift"

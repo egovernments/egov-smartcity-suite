@@ -113,7 +113,8 @@
 		</td>
 		<td class="bluebox" width="25%"><s:text name="reg.docdate"/> :</td>
 		<td class="bluebox">
-			<span class="bold"><s:property value="%{basicProp.regdDocDate}" default="N/A"/></span>
+		<s:date name="basicProp.regdDocDate" var="regDate" format="dd/MM/yyyy" /> 
+			<span class="bold"><s:property value="%{#regDate}" default="N/A"/></span>
 		</td>
 	</tr>
 	<tr class="extentSite">
@@ -127,7 +128,7 @@
 		<td class="greybox">
 		</td>
 	</tr>
-	<tr>
+	<tr class="superStructureRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
 		<td class="bluebox">
@@ -189,9 +190,9 @@
 			&nbsp;
 		</td>
 	</tr>
-	
-	<tr>
+	<tr class="bpddetailsheader">
 		<td class="greybox">&nbsp;</td>
+		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
 		<td class="bluebox">
 		 <s:checkbox name="propertyDetail.buildingPlanDetailsChecked" id="buildingPlanDetailsChecked"

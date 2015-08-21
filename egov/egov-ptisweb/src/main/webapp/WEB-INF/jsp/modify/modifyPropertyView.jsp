@@ -176,7 +176,7 @@
 		<td class="greybox">
 		</td>
 	</tr>
-	<tr>
+	<tr class="superStructureRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="superstructure"></s:text> :</td>
 		<td class="greybox">
@@ -229,7 +229,7 @@
 			&nbsp;
 		</td>
 	</tr>
-	<tr>
+	<tr class="bpddetailsheader">
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
 		<td class="bluebox">

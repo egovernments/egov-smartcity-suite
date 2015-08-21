@@ -100,7 +100,7 @@
 				onblur="validNumber(this);checkZero(this);"></s:textfield></td>
 	</tr>
 	
-	<tr id="superStructureRow">
+	<tr class="superStructureRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
 		<td class="bluebox">
@@ -132,7 +132,6 @@
 		<s:textfield name="propertyDetail.buildingPermissionDate" cssClass="datepicker" value="%{#buildingPermDate}" autocomplete="off"
 				id="propertyDetail.buildingPermissionDate" size="12" maxlength="12"></s:textfield>
 		</td>
-
 	</tr>
 
     <tr class="bpddetails">

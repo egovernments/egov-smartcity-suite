@@ -74,6 +74,12 @@ function enableFieldsForPropType() {
 					tbl.deleteRow(rIndex);
 				}
 			});
+			jQuery("#amenitiesTable tr").each(function() {
+				jQuery(this).prop('checked', false);
+			});
+			jQuery("tr.construction").find('select').each(function() {
+				jQuery(this).prop('selectedIndex', 0);
+			});
 			jQuery('tr.floordetails').hide();
 			jQuery('tr.vacantlanddetaills').show();
 			jQuery('tr.construction').hide();

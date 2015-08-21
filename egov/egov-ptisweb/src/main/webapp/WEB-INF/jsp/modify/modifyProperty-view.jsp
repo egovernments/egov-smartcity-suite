@@ -116,6 +116,9 @@
 						jQuery('#appurtenantRow').hide();
 						jQuery('tr.extentSite').hide();
 						jQuery('tr.appurtenant').hide();
+						jQuery('tr.superStructureRow').hide();
+						jQuery('tr.bpddetailsheader').hide();
+						jQuery('tr.bpddetails').hide();
 					} else {
 						jQuery('tr.floordetails').show();
 						jQuery('tr.vacantlanddetaills').hide();
@@ -124,6 +127,9 @@
 						jQuery('#appurtenantRow').hide();
 						jQuery('tr.extentSite').show();
 						jQuery('tr.appurtenant').show();
+						jQuery('tr.superStructureRow').show();
+						jQuery('tr.bpddetailsheader').show();
+						jQuery('tr.bpddetails').show();
 					}
 				}
 			}
