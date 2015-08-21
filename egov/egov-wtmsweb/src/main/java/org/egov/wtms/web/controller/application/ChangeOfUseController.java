@@ -49,6 +49,7 @@ import javax.validation.Valid;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.ChangeOfUseService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
@@ -73,7 +74,10 @@ public class ChangeOfUseController extends GenericConnectionController {
     @Autowired
     private ApplicationTypeService applicationTypeService;
     
-    private  WaterConnectionDetails parentConnectionDetails;
+    private  WaterConnectionDetails changeOfUse;
+    
+    @Autowired
+    private ChangeOfUseService changeOfUseService;
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails changeOfUse) {
@@ -83,11 +87,11 @@ public class ChangeOfUseController extends GenericConnectionController {
 
     @ModelAttribute
     public StateAware getModel() {
-      return parentConnectionDetails;
+      return changeOfUse;
         
     } 
     @RequestMapping(value = "/changeOfUse/{consumerCode}", method = RequestMethod.GET)
-    public String showForm(@ModelAttribute final WaterConnectionDetails changeOfUse, final Model model,
+    public String showForm(WaterConnectionDetails parentConnectionDetails,@ModelAttribute final WaterConnectionDetails changeOfUse, final Model model,
             @PathVariable final String consumerCode) {
         parentConnectionDetails = waterConnectionDetailsService
                 .getParentConnectionDetails(consumerCode, ConnectionStatus.ACTIVE);
@@ -162,6 +166,8 @@ public class ChangeOfUseController extends GenericConnectionController {
                 .get(parentConnectionDetails.getConnectionType().name()));
         model.addAttribute("changeOfUse", changeOfUse);
         model.addAttribute("mode", "changeOfUse");
+        model.addAttribute("validationMessage",
+                changeOfUseService.validateChangeOfUseConnection(parentConnectionDetails));
     }
 
 }

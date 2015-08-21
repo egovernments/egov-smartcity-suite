@@ -55,23 +55,28 @@
 						<spring:message  code="lbl.basicdetails"/>
 					</div>
 				</div>
-				<form:hidden path="connection" id="connection" value="${changeOfUse.connection.id}"/>
-				<form:hidden path="applicationType" id="applicationType" value="${changeOfUse.applicationType.id}"/>
-				<form:hidden path="connectionStatus" id="connectionStatus" value="${changeOfUse.connectionStatus}"/>
-				<form:hidden path="waterSource" id="waterSource" value="${waterConnectionDetails.waterSource.id}"/>
+				<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}">
+				<input type="hidden" id="currentUser" value="${currentUser}"/>  
+				<form:hidden id="mode" path=""  value="${mode}"/>
+				<form:hidden id="documentName" path="" value="${documentName}"/>
+				<form:hidden path="applicationType" id="applicationType.id" value="${addConnection.applicationType.id}"/>
+				<form:hidden path="connectionStatus" id="connectionStatus" value="${addConnection.connectionStatus}"/>
+				<form:hidden path="connection.parentConnection" value="${parentConnection.id}"/>
+				<form:hidden path="connection.propertyIdentifier" value="${waterConnectionDetails.connection.propertyIdentifier}"/>
+				<c:if test="${validationMessage==''}">
 					<jsp:include page="commonappdetails-view.jsp"></jsp:include>
+				</c:if>	
 			</div>	
 					<jsp:include page="connectiondetails-changeofuse.jsp"></jsp:include>	
 			<div class="panel panel-primary" data-collapsed="0">
 					<jsp:include page="documentdetails.jsp"></jsp:include>	
 			</div>
-			<div class="row">
-				<div class="text-center">
-					<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
-					<a href="javascript:void(0);" class="btn btn-primary" onclick="self.close()"><spring:message
-							code='lbl.close' /></a>
-				</div>
-			</div>
+			<c:if test="${validationMessage==''}">
+						<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+							<div class="buttonbottom" align="center">
+							<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+					</div>
+				</c:if>	
 		</form:form>
 	</div>
 </div>

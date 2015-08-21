@@ -60,7 +60,7 @@ public class ChangeOfUseService {
 
     public static final String CHANGEOFUSEALLOWEDIFWTDUE = "CHANGEOFUSEALLOWEDIFWTDUE";
 
-    public String validateAdditionalConnection(final WaterConnectionDetails parentWaterConnectionDetail,final WaterConnectionDetails changeOfUse) {
+    public String validateChangeOfUseConnection(final WaterConnectionDetails parentWaterConnectionDetail) {
         String validationMessage = "";
         final String propertyID = parentWaterConnectionDetail.getConnection().getPropertyIdentifier();
         final WaterConnectionDetails inWorkflow = waterConnectionDetailsRepository
@@ -87,7 +87,7 @@ public class ChangeOfUseService {
                 - parentWaterConnectionDetail.getDemand().getAmtCollected().doubleValue() > 0) {
             if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE))
                 validationMessage = messageSource
-                .getMessage("err.validate.primary.connection.watertax.due", null, null);
+                        .getMessage("err.validate.primary.connection.watertax.due", null, null);
         } else if (null != inWorkflow)
             validationMessage = messageSource.getMessage(
                     "err.validate.addconnection.application.inprocess",
