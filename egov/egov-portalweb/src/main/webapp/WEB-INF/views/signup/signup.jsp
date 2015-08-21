@@ -105,7 +105,7 @@
 									<div class="input-group-addon style-label">
 										<i class="entypo-user theme-color style-color"></i>
 									</div>
-									<form:input path="username" cssClass="form-control style-form" id="username" placeholder="Username" minlength="2" maxlength="64" autocomplete="off" required="required"/>
+									<form:input path="username" cssClass="form-control style-form patternvalidation" data-pattern="username" id="username" placeholder="Username" minlength="2" maxlength="64" autocomplete="off" required="required" data-content="Should contain only upper case, lower case alphabet, number, underscore and dot"/>
 									<span class="mandatory set-mandatory"></span>
 									<form:errors path="username" cssClass="add-margin error-msg font-12"/>
 								</div>
@@ -117,7 +117,7 @@
 											<div class="input-group-addon style-label">
 												<i class="entypo-key theme-color style-color"></i>
 											</div>
-											<form:password path="password" cssClass="form-control style-form" id="password" placeholder="Password" minlength="8" maxlength="32" autocomplete="off" required="required"/>
+											<form:password path="password" cssClass="form-control style-form check-password" id="password" placeholder="Password" minlength="8" maxlength="32" autocomplete="off" required="required" data-content="Minimum 8 to 32 characters long and should contain upper case, lower case alphabet,number and special character except [& < > # % \" ' / and space]"/>
 											<span class="mandatory set-mandatory"></span>
 										</div>
 									</div>
@@ -126,12 +126,13 @@
 											<div class="input-group-addon style-label">
 												<i class="entypo-key theme-color style-color"></i>
 											</div>
-											<input type="password" class="form-control style-form" name="con-password" id="con-password" placeholder="Confirm password" 
+											<input type="password" class="form-control style-form check-password" name="con-password" id="con-password" placeholder="Confirm password" 
 											autocomplete="off" required="required" minlength="8" maxlength="32"/><span class="mandatory set-mandatory"></span>
 										</div>
 									</div>
 								</div>
-								<font size="1" color="gray"><spring:message code="hint.password.strength"/></font>
+								<div class="text-right add-margin error-msg display-hide password-error">These passwords don't match. Try again!</div>
+								<%-- <font size="1" color="gray"><spring:message code="hint.password.strength"/></font> --%>
 								<form:errors path="password" cssClass="add-margin error-msg font-12"/>
 							</div>
 							<div class="add-margin overflow-section"></div>
@@ -140,7 +141,7 @@
 									<div class="input-group-addon style-label">
 										<i class="entypo-user theme-color style-color"></i>
 									</div>
-									<form:input path="name" cssClass="form-control style-form" id="name" placeholder="Full name" minlength="2" maxlength="100" autocomplete="off" required="required"/>
+									<form:input path="name" cssClass="form-control style-form patternvalidation" data-pattern="alphabetwithspace" id="name" placeholder="Full name" minlength="2" maxlength="100" autocomplete="off" required="required"/>
 									<span class="mandatory set-mandatory"></span>
 									<form:errors path="name" cssClass="add-margin error-msg font-12"/>
 								</div>
@@ -150,7 +151,7 @@
 									<div class="input-group-addon style-label">
 										<i class="entypo-mobile theme-color style-color"></i>
 									</div>
-									<form:input path="mobileNumber" cssClass="form-control style-form is_valid_number" id="is_valid_number" placeholder="Mobile number" minlength="10" maxlength="10" autocomplete="off" required="required"/>
+									<form:input path="mobileNumber" cssClass="form-control style-form is_valid_number" id="is_valid_number" placeholder="Mobile number" title="Enter valid mobile number!" minlength="10" maxlength="10" autocomplete="off" required="required"/>
 									<span class="mandatory set-mandatory"></span>
 									<form:errors path="mobileNumber" cssClass="add-margin error-msg font-12"/>
 								</div>
@@ -160,7 +161,7 @@
 									<div class="input-group-addon style-label">
 										<i class="entypo-mail theme-color style-color"></i>
 									</div>
-									<form:input path="emailId" cssClass="form-control style-form" id="emailId" placeholder="Email" minlength="5" maxlength="128" autocomplete="off" required="required"/>
+									<form:input path="emailId" cssClass="form-control style-form" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" title="Enter vaild Email ID!" id="emailId" placeholder="Email" minlength="5" maxlength="128" autocomplete="off" required="required"/>
 									<span class="mandatory set-mandatory"></span>
 									<form:errors path="emailId" cssClass="add-margin error-msg font-12"/>
 								</div>
@@ -414,6 +415,7 @@
             </div>
         </div>
         <script src="/egi/resources/global/js/bootstrap/bootstrap.js" type="text/javascript"></script>
+        <script src="<c:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
 		<script src="/egi/resources/global/js/egov/custom.js" type="text/javascript"></script>
         <script src="../resources/js/signup.js"></script>
   </body>

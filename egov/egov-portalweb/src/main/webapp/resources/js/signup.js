@@ -31,12 +31,20 @@ $(document).ready(function(){
 		{
 			if ($('#password').val() === $('#con-password').val()) {
 				$('.password-error').hide();
-				$('#con-password').removeClass('error');
+				$('.check-password').removeClass('error');
 			}else{
 				$('.password-error').show();
-				$('#con-password').addClass('error');
+				$('.check-password').addClass('error');
 			}
 		}
+	});
+	
+	$('#name').blur(function(){
+		var arr = $(this).val().split(' ');
+	    var result = "";
+	    for (var x=0; x<arr.length; x++)
+        result+=arr[x].substring(0,1).toUpperCase()+arr[x].substring(1)+' ';
+	    $(this).val(result.substring(0, result.length-1));
 	});
 	
 	$('#activationCode').focus(function() {
@@ -57,4 +65,7 @@ $(document).ready(function(){
 		}
 		return false;
 	});
+	
+	$('#password, #username').popover({ trigger: "focus",placement: "bottom"})
+	
 });

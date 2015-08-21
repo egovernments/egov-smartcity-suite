@@ -31,6 +31,9 @@ var regexp_decimalvalue = /[^0-9.]/g ;
 //This will allow you to enter alphabets and numbers with specified special characters like  slash(/), hyphen(-). (eg: data-pattern="alphanumerichyphenbackslash")
 var regexp_alphanumerichyphenbackslash = /[^a-zA-Z0-9/-]/g ;
 
+//username pattern
+var regexp_username = /[^a-zA-Z0-9_.]/g ;
+
 function patternvalidation(){
 	
 	$('.patternvalidation').on("input", function(){
@@ -66,6 +69,10 @@ function patternvalidation(){
 		}else if($(this).data('pattern') === "alphanumerichyphenbackslash"){ //alphanumerichyphenbackslash
 			if($(this).val().match(regexp_alphanumerichyphenbackslash)){
 				$(this).val( $(this).val().replace(regexp_alphanumerichyphenbackslash,'') );
+			}
+		}else if($(this).data('pattern') === "username"){ //username
+			if($(this).val().match(regexp_username)){
+				$(this).val( $(this).val().replace(regexp_username,'') );
 			}
 		}
 
