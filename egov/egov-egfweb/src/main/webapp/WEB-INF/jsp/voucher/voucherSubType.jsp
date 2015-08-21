@@ -55,7 +55,7 @@
 				</select>
 			</td>
 			<td class="greybox"><s:text name="jv.partyName" /><div id="partyNameDivId" style="display:none"><span class="mandatory1">*</span></div></td>	
-		 	<td class="greybox"><s:textfield name="voucherTypeBean.partyName" id="voucherTypeBean.partyName" onblur="isSpecialChar(this)" value="%{voucherTypeBean.partyName}"/></td>
+		 	<td class="bluebox"><s:textfield name="voucherTypeBean.partyName" id="voucherTypeBean.partyName" onblur="isSpecialChar(this)" value="%{voucherTypeBean.partyName}"/></td>
 		</tr>
 	<tr>
 		 <td style="width:5%"></td>
@@ -67,7 +67,7 @@
        <tr>
        	<td style="width:5%"></td>
 		<td class="greybox"><s:text name="jv.partyBillDate" /></td>
-		 <td class="greybox"><s:date name="voucherTypeBean.partyBillDate" id="partyBillDateId" format="dd/MM/yyyy"/>
+		 <td class="bluebox"><s:date name="voucherTypeBean.partyBillDate" id="partyBillDateId" format="dd/MM/yyyy"/>
 			<s:textfield name="voucherTypeBean.partyBillDate" id="partyBillDate" value="%{partyBillDateId}"  maxlength="10" size="15" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
 			<a href="javascript:show_calendar('jvcreateform.partyBillDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 		 <td class="bluebox"><s:text name="jv.billDate" /></td>	

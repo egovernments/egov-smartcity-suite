@@ -160,7 +160,7 @@
 				</s:if>
 			</s:iterator>	
 			<input type="submit" class="buttonsubmit" value="Send for Approval" id="%{aa_approve}" name="%{aa_approve}" onclick="return validateAndSubmitJV('save','%{aa_approve}','%{Send for Approval}');" />
-			<input type="reset" id="Reset" value="Cancel" class="buttonsubmit"/>
+			<input type="reset" id="Reset" value="Cancel" class="button"/>
 			<input type="button" value="Close" onclick="javascript:window.close()" class="button" />        
 		</div>
 	<!-- 		
@@ -179,8 +179,6 @@
 <input type="hidden" id="voucherTypeBean.voucherType" name="voucherTypeBean.voucherType" value="Journal Voucher"/>
 <input type="hidden" id="voucherTypeBean.voucherNumType" name="voucherTypeBean.voucherNumType" value="${voucherTypeBean.voucherNumType}" />
 <input type="hidden" id="voucherTypeBean.cgnType" name="voucherTypeBean.cgnType" value="JVG"/>
-<input type="hidden" id="worksVoucherRestrictedDate" name="worksVoucherRestrictedDate" value="${worksVoucherRestrictedDate}"/>
-
 <input type="hidden" id="buttonValue" name="buttonValue" />
 
 </s:form>
@@ -244,19 +242,16 @@
 	function validateJV(btnval,name,value)
 	{
 	 // alert("inside validate jv");  
+	// alert(document.getElementById('billDetailTable').size);
 	   document.getElementById("buttonValue").value=btnval;
 		document.getElementById('lblError').innerHTML ="";
 		var cDate = new Date();
 		
 		var currDate = cDate.getDate()+"/"+(parseInt(cDate.getMonth())+1)+"/"+cDate.getYear();
 		var vhDate=document.getElementById('voucherDate').value;
-		var VhType= document.getElementById('vType').value;
-		var typeDate=document.getElementById('worksVoucherRestrictedDate').value;
-		var restrictionDate = typeDate.split(",");  //worksVoucherRestrictedDate have  billtype and restrictiondate as comma separated values.
-			//alert("Hi vType->"+VhType);
-
+	
 		if(vhDate == '' )	{
-			document.getElementById('lblError').innerHTML = "Please enter a voucher date ";
+			document.getElementById('lblError').innerHTML = "Please enter the Voucher date ";
 			document.getElementById('voucherDate').focus();
 			return false;
 		}
@@ -269,90 +264,85 @@
 				return false;
 			}
 		}
-		if(VhType=='Works'){
-			var chkd1=vhDate.split('/');
-			var chkd2=restrictionDate[1].split('/');
-			var voucherDt=new Date(chkd1[2],chkd1[1]-1,chkd1[0]);
-			var restrictionDt=new Date(chkd2[2],chkd2[1]-1,chkd2[0]);
-
-			//alert("-----restrictionDt--------"+restrictionDt);
-			//alert("-----voucherDt--------"+voucherDt);
-			if(voucherDt>=restrictionDt){
-				alert(" Cannot Create Works JV for Date to greater than "+restrictionDate[1]);
-				return false;
-			}
-		}
+		
 		
 	// Javascript validation of the MIS Manadate attributes.
 		<s:if test="%{isFieldMandatory('vouchernumber')}"> 
 			 if(null != document.getElementById('voucherNumber') && document.getElementById('voucherNumber').value.trim().length == 0 ){
 
-				document.getElementById('lblError').innerHTML = "Please enter a voucher number";
+				document.getElementById('lblError').innerHTML = "Please enter the Voucher number";
 				return false;
 			 }
 		 </s:if>
 		 <s:if test="%{isFieldMandatory('voucherdate')}"> 
 				 if(null != document.getElementById('voucherDate') && document.getElementById('voucherDate').value.trim().length == 0){
 
-					document.getElementById('lblError').innerHTML = "Please enter a voucher date";
+					document.getElementById('lblError').innerHTML = "Please enter the Voucher date";
 					return false;
 				 }
 			 </s:if>    
 		 	<s:if test="%{isFieldMandatory('fund')}"> 
 				 if(null != document.getElementById('fundId') && document.getElementById('fundId').value == -1){
-					document.getElementById('lblError').innerHTML = "Please Select a fund";
+					document.getElementById('lblError').innerHTML = "Please select a Fund";
 					return false;
 				 }    
 			 </s:if>   
 			 <s:if test="%{isFieldMandatory('function')}">                        
 			 if(null != document.getElementById('vouchermis.function') && document.getElementById('vouchermis.function').value == -1){
 
-				document.getElementById('lblError').innerHTML = "Please Select a function";
+				document.getElementById('lblError').innerHTML = "Please select a Function";
 				return false;
 			 }
 		 </s:if>
 			<s:if test="%{isFieldMandatory('department')}"> 
 				 if(null!= document.getElementById('vouchermis.departmentid') && document.getElementById('vouchermis.departmentid').value == -1){
 
-					document.getElementById('lblError').innerHTML = "Please select a department";
+					document.getElementById('lblError').innerHTML = "Please select a Department";
 					return false;
 				 }
 			</s:if>
 			<s:if test="%{isFieldMandatory('scheme')}"> 
 				 if(null!=document.getElementById('schemeid') &&  document.getElementById('schemeid').value == -1){
 
-					document.getElementById('lblError').innerHTML = "Please select a scheme";
+					document.getElementById('lblError').innerHTML = "Please select a Scheme";
 					return false;
 				 }
 			</s:if>
 			<s:if test="%{isFieldMandatory('subscheme')}"> 
 				 if(null!= document.getElementById('subschemeid') && document.getElementById('subschemeid').value == -1){
 
-					document.getElementById('lblError').innerHTML = "Please select a subscheme";
+					document.getElementById('lblError').innerHTML = "Please select a Subscheme";
 					return false;
 				 }
 			</s:if>
 			<s:if test="%{isFieldMandatory('functionary')}"> 
 				 if(null!=document.getElementById('vouchermis.functionary') &&  document.getElementById('vouchermis.functionary').value == -1){
 
-					document.getElementById('lblError').innerHTML = "Please select a functionary";
+					document.getElementById('lblError').innerHTML = "Please select a Functionary";
 					return false;
 				 }
 			</s:if>
 			<s:if test="%{isFieldMandatory('fundsource')}"> 
 				 if(null !=document.getElementById('fundsourceId') &&  document.getElementById('fundsourceId').value == -1){
 
-					document.getElementById('lblError').innerHTML = "Please select a fundsource";
+					document.getElementById('lblError').innerHTML = "Please select a Fundsource";
 					return false;
 				}
 			</s:if>
 			<s:if test="%{isFieldMandatory('field')}"> 
 				 if(null!= document.getElementById('vouchermis.divisionid') && document.getElementById('vouchermis.divisionid').value == -1){
 
-					document.getElementById('lblError').innerHTML = "Please select a field";
+					document.getElementById('lblError').innerHTML = "Please select a Field";
 					return false;
 				 }
 			</s:if>
+
+			if(null!= document.getElementById('vouchermis.divisionid') && document.getElementById('vouchermis.divisionid').value == -1){
+
+				document.getElementById('lblError').innerHTML = "Please select a Field";
+				return false;
+			 }	
+			
 			//result =validateApproverUser(name,value);
 			
 	return true;
