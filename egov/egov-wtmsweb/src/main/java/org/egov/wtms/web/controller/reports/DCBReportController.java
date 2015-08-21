@@ -55,10 +55,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.reports.entity.DCBReportView;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -69,7 +67,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
@@ -78,111 +75,111 @@ import com.google.gson.GsonBuilder;
 @Controller
 @RequestMapping(value = "/reports")
 public class DCBReportController {
-    
+
     public static final String ZONEWISE = "zone";
     public static final String WARDWISE = "ward";
     public static final String BLOCKWISE = "block";
     public static final String PROPERTY = "property";
-    
+
     @PersistenceContext
     EntityManager entityManager;
-    
+
     @Autowired(required = true)
     protected WaterConnectionDetailsService waterConnectionDetailsService;
     @Autowired
     private BoundaryService boundaryService;
-    
-    
+
     @ModelAttribute("dCBReportResult")
     public DCBReportResult dCBReportResultModel() {
         return new DCBReportResult();
     }
-    
+
     @Autowired
     public @ModelAttribute("connectionTypes") Map<String, String> connectionTypes() {
         return waterConnectionDetailsService.getConnectionTypesMap();
     }
+
     @ModelAttribute("zones")
     public List<Boundary> zones() {
-        return  boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,ADMIN_HIERARCHY_TYPE);
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, ADMIN_HIERARCHY_TYPE);
     }
-    @RequestMapping(value="/dCBReport",method = RequestMethod.GET)
+
+    @RequestMapping(value = "/dCBReport", method = RequestMethod.GET)
     public String search(final Model model) {
         model.addAttribute("mode", "zone");
         return "dCBReport-search";
     }
 
-    @RequestMapping(value="/dCBReportList",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public  @ResponseBody void search(final HttpServletRequest request,final HttpServletResponse response,final Model model) throws IOException  {
-        List<DCBReportResult> resultList = new  ArrayList<DCBReportResult>();
-        String connectionType="",mode="";
-        String[] boundaryId = null ;
-        StringBuilder zones = new StringBuilder();
-        if (request.getParameter("boundaryId[]") != null && !"".equals(request.getParameter("boundaryId[]"))){
+    @RequestMapping(value = "/dCBReportList", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody void search(final HttpServletRequest request, final HttpServletResponse response, final Model model)
+            throws IOException {
+        List<DCBReportResult> resultList = new ArrayList<DCBReportResult>();
+        String connectionType = "", mode = "";
+        String[] boundaryId = null;
+        final StringBuilder zones = new StringBuilder();
+        if (request.getParameter("boundaryId[]") != null && !"".equals(request.getParameter("boundaryId[]")))
             boundaryId = request.getParameterValues("boundaryId[]");
-        
-        }else if (request.getParameter("boundaryId") != null && !"".equals(request.getParameter("boundaryId"))){
+        else if (request.getParameter("boundaryId") != null && !"".equals(request.getParameter("boundaryId")))
             boundaryId = request.getParameterValues("boundaryId");
-        }
-        if(boundaryId!=null){
-        for (String n : boundaryId) { 
-            if (zones.length() > 0) zones.append(',');
-            zones.append(n);
+        if (boundaryId != null)
+            for (final String n : boundaryId) {
+                if (zones.length() > 0)
+                    zones.append(',');
+                zones.append(n);
             }
-        }
         if (request.getParameter("connectionType") != null && !"".equals(request.getParameter("connectionType")))
             connectionType = request.getParameter("connectionType");
         if (request.getParameter("mode") != null && !"".equals(request.getParameter("mode")))
             mode = request.getParameter("mode");
-        if(mode.equalsIgnoreCase(WARDWISE)){
-            model.addAttribute("boundaryId",boundaryId);
-        }
-        SQLQuery query = prepareQuery(zones.toString(),connectionType,mode);
+        if (mode.equalsIgnoreCase(WARDWISE))
+            model.addAttribute("boundaryId", boundaryId);
+        final SQLQuery query = prepareQuery(zones.toString(), connectionType, mode);
         resultList = query.list();
         String result = null;
         result = new StringBuilder("{ \"data\":").append(toJSON(resultList)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
     }
-    private SQLQuery prepareQuery(String paramList,String connectionType,String mode){
-        String query ,whereQry = "",selectQry = "",fromQry="",groupByQry = "";
-        query=" cast(SUM(arr_demand) as bigint) AS arr_demand,cast(SUM(curr_demand) as bigint) AS curr_demand,cast(SUM(arr_coll) as bigint) AS arr_coll,cast(SUM(curr_coll) as bigint) AS curr_coll,"
+
+    private SQLQuery prepareQuery(final String paramList, final String connectionType, final String mode) {
+        String query, whereQry = "", selectQry = "", fromQry = "", groupByQry = "";
+        query = " cast(SUM(arr_demand) as bigint) AS arr_demand,cast(SUM(curr_demand) as bigint) AS curr_demand,cast(SUM(arr_coll) as bigint) AS arr_coll,cast(SUM(curr_coll) as bigint) AS curr_coll,"
                 + "cast(SUM(arr_balance) as bigint) AS arr_balance,cast(SUM(curr_balance) as bigint) AS curr_balance ";
         fromQry = " from egwtr_mv_dcb_view dcbinfo,eg_boundary boundary ";
-        if(mode.equalsIgnoreCase(ZONEWISE)){
-            selectQry="select distinct cast(dcbinfo.zoneid as integer) as \"zoneid\",boundary.name as \"boundaryName\", ";
-            groupByQry=" group by dcbinfo.zoneid,boundary.name order by boundary.name";
-            whereQry=" where dcbinfo.zoneid=boundary.id ";
-            if(paramList!=null && !paramList.equalsIgnoreCase(""))
-                whereQry=whereQry+ " and dcbinfo.zoneid in ("+paramList+")";
+        if (mode.equalsIgnoreCase(ZONEWISE)) {
+            selectQry = "select distinct cast(dcbinfo.zoneid as integer) as \"zoneid\",boundary.name as \"boundaryName\",dcbinfo.username as \"username\", ";
+            groupByQry = " group by dcbinfo.zoneid,boundary.name,dcbinfo.username order by boundary.name";
+            whereQry = " where dcbinfo.zoneid=boundary.id ";
+            if (paramList != null && !paramList.equalsIgnoreCase(""))
+                whereQry = whereQry + " and dcbinfo.zoneid in (" + paramList + ")";
         } else if (mode.equalsIgnoreCase(WARDWISE)) {
-            selectQry="select distinct cast(dcbinfo.wardid as integer) as \"wardid\",boundary.name as \"boundaryName\", ";
-            groupByQry=" group by dcbinfo.wardid,boundary.name order by boundary.name";
-            whereQry=" where dcbinfo.wardid=boundary.id ";
-            if(paramList!=null && !paramList.equalsIgnoreCase(""))
-            whereQry=whereQry+" and dcbinfo.zoneid in ("+paramList+")";
-        } else if(mode.equalsIgnoreCase(BLOCKWISE)){
-            selectQry="select distinct cast(dcbinfo.block as integer) as \"wardid\",boundary.name as \"boundaryName\", ";
-            groupByQry=" group by dcbinfo.block,boundary.name order by boundary.name";
-            whereQry=" where dcbinfo.block=boundary.id ";
-            if(paramList!=null && !paramList.equalsIgnoreCase(""))
-            whereQry=whereQry+" and dcbinfo.wardid in ("+paramList+")";
-        } else if(mode.equalsIgnoreCase(PROPERTY)){
-            selectQry="select distinct dcbinfo.hscno as hscno,cast(dcbinfo.propertyid as integer) as \"propertyid\" , ";   
+            selectQry = "select distinct cast(dcbinfo.wardid as integer) as \"wardid\",boundary.name as \"boundaryName\",dcbinfo.username as \"username\", ";
+            groupByQry = " group by dcbinfo.wardid,boundary.name,dcbinfo.username order by boundary.name";
+            whereQry = " where dcbinfo.wardid=boundary.id ";
+            if (paramList != null && !paramList.equalsIgnoreCase(""))
+                whereQry = whereQry + " and dcbinfo.zoneid in (" + paramList + ")";
+        } else if (mode.equalsIgnoreCase(BLOCKWISE)) {
+            selectQry = "select distinct cast(dcbinfo.block as integer) as \"wardid\",boundary.name as \"boundaryName\",dcbinfo.username as \"username\", ";
+            groupByQry = " group by dcbinfo.block,boundary.name,dcbinfo.username order by boundary.name";
+            whereQry = " where dcbinfo.block=boundary.id ";
+            if (paramList != null && !paramList.equalsIgnoreCase(""))
+                whereQry = whereQry + " and dcbinfo.wardid in (" + paramList + ")";
+        } else if (mode.equalsIgnoreCase(PROPERTY)) {
+            selectQry = "select distinct dcbinfo.hscno as hscno,cast(dcbinfo.propertyid as integer) as \"propertyid\" ,dcbinfo.username as \"username\", ";
             fromQry = " from egwtr_mv_dcb_report dcbinfo ";
-            groupByQry = "group by dcbinfo.hscno,dcbinfo.propertyid ";  
+            groupByQry = "group by dcbinfo.hscno,dcbinfo.propertyid,dcbinfo.username ";
             whereQry = "where dcbinfo.hscno is not null  ";
-            if(paramList!=null && !paramList.equalsIgnoreCase(""))
-            whereQry=whereQry +" and dcbinfo.block in ("+paramList+")";
-        }   
-        if(!connectionType.equalsIgnoreCase("")){
-            whereQry = whereQry + " and dcbinfo.connectiontype = '"+connectionType+"'";
+            if (paramList != null && !paramList.equalsIgnoreCase(""))
+                whereQry = whereQry + " and dcbinfo.block in (" + paramList + ")";
         }
-        query = selectQry + query + fromQry + whereQry+ groupByQry ;
-        SQLQuery finalQuery = entityManager.unwrap(Session.class).createSQLQuery(query.toString());
+        if (!connectionType.equalsIgnoreCase(""))
+            whereQry = whereQry + " and dcbinfo.connectiontype = '" + connectionType + "'";
+        query = selectQry + query + fromQry + whereQry + groupByQry;
+        final SQLQuery finalQuery = entityManager.unwrap(Session.class).createSQLQuery(query.toString());
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DCBReportResult.class));
         return finalQuery;
     }
+
     private Object toJSON(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(DCBReportResult.class,
@@ -190,6 +187,5 @@ public class DCBReportController {
         final String json = gson.toJson(object);
         return json;
     }
-    
 
 }

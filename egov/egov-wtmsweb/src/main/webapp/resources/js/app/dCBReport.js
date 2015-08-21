@@ -97,7 +97,7 @@ function setHiddenValueByLink(obj, param,event,boundaryId) {
 	$('input[name=' + $(obj).data('hiddenele') + ']')
 	.val($(obj).data('eleval'));   
 	if(param.attributes[0].value=='property'){
-		window.open("../view/viewProperty-viewForm.action?propertyId="+boundaryId, '', 'scrollbars=yes,width=1000,height=700,status=yes');
+		window.open("/ptis/view/viewProperty-viewForm.action?propertyId="+boundaryId, '', 'scrollbars=yes,width=1000,height=700,status=yes');
 	} else{
 		$('#boundaryId')[0].attributes[0].value = boundaryId;
 		if(param.attributes[0].value=='zone'){
@@ -135,10 +135,8 @@ function callAjaxByBoundary(event) {
 	$('.report-section').removeClass('display-hide');
 	$('#report-footer').show();
 	event.preventDefault();
-	reportdatatable = drillDowntableContainer
+	var reportdatatable = drillDowntableContainer
 			.dataTable({
-				processing : true,
-				serverSide : true,
 				type : 'GET',
 				responsive : true,
 				destroy : true,
@@ -152,7 +150,7 @@ function callAjaxByBoundary(event) {
 					}
 				},
 				"sPaginationType" : "bootstrap",
-				"autoWidth" : false,
+				"autoWidth" : true,
 				"bDestroy" : true,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
@@ -173,7 +171,10 @@ function callAjaxByBoundary(event) {
 								return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,mode,event,'+data.id +');" data-hiddenele="boundaryId" data-eleval="'
 										+ data.id + '">' + data.name + '</a>';
 							},
-							"sTitle" : "Name"
+							"sTitle" : "Number"
+						},{
+							"data" : "username",
+							"sTitle" : "User Name"
 						},
 						{
 							"data" : "arr_demand",
@@ -211,7 +212,6 @@ function callAjaxByBoundary(event) {
 						$('#report-footer').show();
 					}
 					if (data.length > 0) {
-						updateTotalFooter(1, api);
 						updateTotalFooter(2, api);
 						updateTotalFooter(3, api);
 						updateTotalFooter(4, api);
@@ -220,16 +220,23 @@ function callAjaxByBoundary(event) {
 						updateTotalFooter(7, api);
 						updateTotalFooter(8, api);
 						updateTotalFooter(9, api);
+						updateTotalFooter(10, api);
+						
 					}
-					jQuery('.loader-class').modal('hide');
 				},
 				"aoColumnDefs" : [ {
-					"aTargets" : [ 1, 2, 3,4,5,6,7,8,9],
+					"aTargets" : [2, 3,4,5,6,7,8,9,10],
 					"mRender" : function(data, type, full) {
 						return formatNumberInr(data);    
 					}
 				} ]
 			});
+	jQuery('.loader-class').modal('hide');
+	if(modeVal!='property'){
+		reportdatatable.fnSetColumnVis(1, false);
+	}else{
+		reportdatatable.fnSetColumnVis(1, true);
+	}
 	
 }
 

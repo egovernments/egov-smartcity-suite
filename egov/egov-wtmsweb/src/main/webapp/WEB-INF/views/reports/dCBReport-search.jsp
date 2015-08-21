@@ -48,10 +48,11 @@
 
 
 
-						
+
 		<form:form class="form-horizontal form-groups-bordered" action=""
-			id="waterSearchRequestForm" modelAttribute="dCBReportResult" method ="get">
-			
+			id="waterSearchRequestForm" modelAttribute="dCBReportResult"
+			method="get">
+
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -59,16 +60,18 @@
 					</div>
 				</div>
 				<div class="panel-body">
-						<s:hidden id="mode" name="mode" value="${mode}"/> 
-						<s:hidden id="boundaryId" name="boundaryId" value="${boundaryId}"/> 
-						<s:hidden id="selectedModeBndry" name="selectedModeBndry" value="${selectedModeBndry}"/> 
+					<s:hidden id="mode" name="mode" value="${mode}" />
+					<s:hidden id="boundaryId" name="boundaryId" value="${boundaryId}" />
+					<s:hidden id="selectedModeBndry" name="selectedModeBndry"
+						value="${selectedModeBndry}" />
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.connectiontype" /><small><i
 								class="entypo-star error-msg"></i></small> </label>
 						<div class="col-sm-3 add-margin">
-							<form:select path="connectionType" id="connectionType" data-first-option="false" 
-								cssClass="form-control" required="required">
+							<form:select path="connectionType" id="connectionType"
+								data-first-option="false" cssClass="form-control"
+								required="required">
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
@@ -85,9 +88,9 @@
 								class="entypo-star error-msg"></i></small>
 						</label>
 						<div class="col-sm-6 add-margin">
-							<form:select path="zones" multiple="true" size="10"
-								id="zones" cssClass="form-control"
-								cssErrorClass="form-control error" required="required">
+							<form:select path="zones" multiple="true" size="10" id="zones"
+								cssClass="form-control" cssErrorClass="form-control error"
+								required="required">
 								<form:options items="${zones}" itemValue="id" itemLabel="name" />
 							</form:select>
 
@@ -95,76 +98,79 @@
 						</div>
 						<spring:message code="lbl.zones.pressCntrlToSelectMultipleZone" />
 					</div>
-				
-				</div>
-				</div>
-		
 
-		<div class="row">
+				</div>
+			</div>
+
+
+			<div class="row">
 				<div class="text-center">
-					<button type="submit" id="btnsearch" class="btn btn-primary"><spring:message code="lbl.search"/></button>
-			        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"><spring:message code="lbl.close"/></button>
+					<button type="submit" id="btnsearch" class="btn btn-primary">
+						<spring:message code="lbl.search" />
+					</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						onclick="window.close();">
+						<spring:message code="lbl.close" />
+					</button>
 				</div>
 			</div>
 
 		</form:form>
 	</div>
-			
 
-	</div>
+
+</div>
 
 <div class="row display-hide report-section">
-				<div class="col-md-12 table-header text-left">DCB Drill Down Report Details</div>
-				<div class="col-md-12 form-group report-table-container">
-					<table class="table table-bordered datatable dt-responsive table-hover multiheadertbl" id="tbldcbdrilldown">
-						<thead>
-                            <tr>
-                             <th rowspan="2">Name</th>
-                             <th colspan="3">Demand</th>
-                             <th colspan="3">Collection</th>
-                             <th colspan="3">Balance</th>
-                            </tr>
+	<div class="col-md-12 table-header text-left">DCB Drill Down
+		Report Details</div>
+	<div class="col-md-12 form-group report-table-container">
+		<table
+			class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
+			id="tbldcbdrilldown">
+			<thead>
+				<tr>
+					<th rowspan="2">Number</th>
+					<th colspan="1">UserName</th>
+					<th colspan="3">Demand</th>
+					<th colspan="3">Collection</th>
+					<th colspan="3">Balance</th>
+				</tr>
 
-							<tr>
-								<th>Arrear
-								</th>
-								<th>Current
-									</th>
-								<th>Total
-									</th>
-								<th>Arrear
-									</th>
-								<th>Current
-									</th>
-								<th>Total
-									</th>
-								<th>Arrear
-									</th>
-								<th>Current
-									</th>
-								<th>Total
-									</th>
-							</tr>
-						</thead>
-						 <tfoot id="report-footer">
-							<tr>
-								<td>Total</td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-							</tr>
-						</tfoot> 
-					</table>
-				</div>
-			</div>
+				<tr>
+					<th>UserName</th>
+					<th>Arrear</th>
+					<th>Current</th>
+					<th>Total</th>
+					<th>Arrear</th>
+					<th>Current</th>
+					<th>Total</th>
+					<th>Arrear</th>
+					<th>Current</th>
+					<th>Total</th>
+				</tr>
+			</thead>
+			<tfoot id="report-footer">
+				<tr>
+					<td colspan="2">Total</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div>
 <div id="report-backbutton" class="col-xs-12 text-center">
-				<div class="form-group"> <buttton class="btn btn-primary" id="backButton" > Back</buttton></div>
+	<div class="form-group">
+		<buttton class="btn btn-primary" id="backButton"> Back</buttton>
+	</div>
 </div>
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
@@ -183,6 +189,7 @@
 <script
 	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
 	type="text/javascript"></script>
-<script type="text/javascript" src="<c:url value='/resources/js/app/dCBReport.js'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/js/app/dCBReport.js'/>"></script>
 
 
