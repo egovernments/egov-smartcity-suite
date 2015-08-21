@@ -39,8 +39,8 @@
 #-------------------------------------------------------------------------------*/
 var tableContainer;
 
-jQuery(document).ready(function ($) {
-    $(":input").inputmask();
+
+    /*$(":input").inputmask();*/
 	
     tableContainer1 = $("#complaintSearchResults"); 
        
@@ -433,7 +433,7 @@ jQuery(document).ready(function ($) {
         );
     }
 
-});
+
 
 //inr formatting number
 function formatNumberInr(x){

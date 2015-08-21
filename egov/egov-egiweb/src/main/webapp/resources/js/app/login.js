@@ -53,7 +53,7 @@ $(document).ready(function()
 	$('#compsearch').click(function() {
 		var compnum=$('#compsearchtxt').val();
 		if (compnum !== "") {
-			window.open("/pgr/complaint/citizen/anonymous/search","_blank");
+			window.open("/pgr/complaint/citizen/anonymous/search?crn="+compnum,"_blank");
 		}
 	});
 });
