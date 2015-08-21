@@ -48,6 +48,7 @@ import javax.validation.Valid;
 
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.application.entity.ApplicationDocuments;
+import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.AdditionalConnectionService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -94,8 +95,9 @@ public class AdditionalConnectionController extends GenericConnectionController 
     @RequestMapping(value = "/addconnection/{consumerCode}", method = RequestMethod.GET)
     public String showAdditionalApplicationForm(WaterConnectionDetails parentConnectionDetails,@ModelAttribute final WaterConnectionDetails addConnection,
             final Model model, @PathVariable final String consumerCode) {
+        final WaterConnection connection = waterConnectionService.findByConsumerCode(consumerCode);
         parentConnectionDetails = waterConnectionDetailsService
-                .getParentConnectionDetails(consumerCode, ConnectionStatus.ACTIVE);
+                .getParentConnectionDetails(connection.getPropertyIdentifier(), ConnectionStatus.ACTIVE);
         loadBasicDetails(addConnection, model, parentConnectionDetails);
         return "addconnection-form";
     }

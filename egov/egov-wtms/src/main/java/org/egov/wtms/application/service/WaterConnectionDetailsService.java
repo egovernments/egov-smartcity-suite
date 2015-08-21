@@ -784,10 +784,10 @@ public class WaterConnectionDetailsService {
         this.applicantName = applicantName;
     }
 
-    public WaterConnectionDetails getParentConnectionDetails(final String consumerCode,
+    public WaterConnectionDetails getParentConnectionDetails(final String propertyIdentifier,
             final ConnectionStatus connectionStatus) {
         return waterConnectionDetailsRepository
-                .findByConnection_ConsumerCodeAndConnectionStatusAndConnection_ParentConnectionIsNull(consumerCode,
+                .findByConnection_PropertyIdentifierAndConnectionStatusAndConnection_ParentConnectionIsNull(propertyIdentifier,
                         connectionStatus);
     }
 

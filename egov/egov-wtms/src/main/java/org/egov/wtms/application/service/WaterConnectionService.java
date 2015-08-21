@@ -76,7 +76,7 @@ public class WaterConnectionService {
         return waterConnectionRepository.findAll(new Sort(Sort.Direction.ASC, "consumerCode"));
     }
 
-    public WaterConnection findByName(final String consumerCode) {
+    public WaterConnection findByConsumerCode(final String consumerCode) {
         return waterConnectionRepository.findByConsumerCode(consumerCode);
     }
 

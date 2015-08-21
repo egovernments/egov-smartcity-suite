@@ -48,9 +48,11 @@ import javax.validation.Valid;
 
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.application.entity.ApplicationDocuments;
+import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ChangeOfUseService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.application.service.WaterConnectionService;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
@@ -73,6 +75,8 @@ public class ChangeOfUseController extends GenericConnectionController {
     private WaterConnectionDetailsService waterConnectionDetailsService;
     @Autowired
     private ApplicationTypeService applicationTypeService;
+    @Autowired
+    private WaterConnectionService waterConnectionService;
     
     private  WaterConnectionDetails changeOfUse;
     
@@ -93,8 +97,9 @@ public class ChangeOfUseController extends GenericConnectionController {
     @RequestMapping(value = "/changeOfUse/{consumerCode}", method = RequestMethod.GET)
     public String showForm(WaterConnectionDetails parentConnectionDetails,@ModelAttribute final WaterConnectionDetails changeOfUse, final Model model,
             @PathVariable final String consumerCode) {
+        final WaterConnection connection = waterConnectionService.findByConsumerCode(consumerCode);
         parentConnectionDetails = waterConnectionDetailsService
-                .getParentConnectionDetails(consumerCode, ConnectionStatus.ACTIVE);
+                .getParentConnectionDetails(connection.getPropertyIdentifier(), ConnectionStatus.ACTIVE);
         if (parentConnectionDetails == null) {
             // TODO - error handling
         } else
