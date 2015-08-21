@@ -109,7 +109,7 @@
 				<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
 					<s:if test="%{isDemandActive}">
 						<input type="button" class="buttonsubmit" name="btnModifyProperty" id="btnModifyProperty" value="Addition/Alteration of Assessment"
-							onclick="window.location='../modify/modifyProperty-modifyForm.action?modifyRsn=MODIFY&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
+							onclick="window.location='../modify/modifyProperty-modifyForm.action?modifyRsn=ADD_OR_ALTER&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
 						<input type="button" class="buttonsubmit" name="btnModifyProperty" id="btnModifyProperty" value="Bifurcation"
 							onclick="window.location='../modify/modifyProperty-modifyForm.action?modifyRsn=BIFURCATE&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
 						<input type="button" class="buttonsubmit" name="btnTrnsProperty" id="btnTrnsProperty" value="Transfer Ownership"

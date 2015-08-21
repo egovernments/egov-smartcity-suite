@@ -204,7 +204,7 @@
 			</div>
 	</s:form>
 	<s:if test="!noticeList.isEmpty()">
-		<display:table name="searchResult" uid="currentRowObject" pagesize = "20" class="tablebottom" style="width:100%;" cellpadding="0" cellspacing="0" export="true" requestURI="">
+		<display:table name="searchResult" uid="currentRowObject" pagesize = "20" class="tablebottom" style="width:100%;border-left: 1px solid #DFDFDF;" cellpadding="0" cellspacing="0" export="true" requestURI="">
 			<display:caption>
 				<div class="headingsmallbgnew" align="center" style="text-align:center;width:98%;">
 					<span class="searchvalue1">Search Criteria :</span> 

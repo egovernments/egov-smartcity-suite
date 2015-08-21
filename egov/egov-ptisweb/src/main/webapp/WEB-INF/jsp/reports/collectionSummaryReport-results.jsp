@@ -45,11 +45,11 @@
 		 <tbody>
 		  <tr> 
 			 <s:if test="%{dateSelected == 'currentDate'}">
-				  <td><s:text name="collectionsummary.notetext"></s:text></td>
+				  <td style="padding:5px;"><s:text name="collectionsummary.notetext"></s:text></td>
 			</s:if>
 		  </tr>	
 		 <tr>
-	        <th class="bluebgheadtd" colspan="5" style="text-align:center;font-size:14px;"><s:text name="collectionsummary.pagetitle" /></th>
+	        <th class="bluebgheadtd" style="text-align:center;font-size:14px;"><s:text name="collectionsummary.pagetitle" /></th>
 	    </tr>
 		
 		<s:if test="%{resultList != null && !resultList.isEmpty()}">	   
@@ -130,12 +130,11 @@
 					<display:setProperty name="export.pdf" value="true" />
 				</display:table>
 			</td>
-			<td>&nbsp;</td>
 		</tr>
 		</s:if>
 		<s:else>
 		<tr>
-			<td>
+			<td style="padding:5px;">
 				<s:text name="noRecsFound"></s:text>
 			</td>
 		</tr>

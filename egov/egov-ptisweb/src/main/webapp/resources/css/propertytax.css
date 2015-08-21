@@ -807,6 +807,12 @@ tbody tr.shown td.details-control {
     background: url('../image/details_close.png') no-repeat center center;
 }
 
+.DTTT_container a:hover
+{
+	font-size:14px;
+	border: 1px solid #ddd;
+} 
+
 @media (max-width: 768px)
 {
 	

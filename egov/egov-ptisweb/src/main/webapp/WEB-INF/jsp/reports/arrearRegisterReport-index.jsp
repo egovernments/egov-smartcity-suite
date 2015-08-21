@@ -110,7 +110,6 @@
   		</div>
 		<s:form name="arrearRegForm" theme="simple" validate="true">
 		<div class="formmainbox">
-			<div class="formheading"></div>
 			<div class="headingbg"><s:text name="arrearRegReport.search"/></div>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				 <tr>
