@@ -107,6 +107,9 @@ $(document).ready(function()
 	    		validateWorkFlowApprover(action);
 		    	document.forms[0].submit();	
 			 }
+			 else if(status=='WORKORDERGENERATED' && action=='Tap Execution Date') {
+				 validateTapExecutionDate();
+			 }
 			 else if(status=='CREATED' && action == 'Reject' && mode == 'fieldInspection') {
 				 $('#pipelineDistance').val(0);
 				  var approvalComent=$('#approvalComent').val();
@@ -186,4 +189,24 @@ $(document).ready(function()
 		$('#usageType').change(function () {
 			changeLabel();
 		});
+		
+		$('#executionDate').blur(function (){
+			validateTapExecutionDate();
+		});
+		
+		function validateTapExecutionDate() {
+			var applicationDate = $('#appDate').val();	 
+			var executionDate = $('#executionDate').val();
+			if(applicationDate !='' && executionDate != '') {
+				if(!validateDateRange(applicationDate, executionDate)) {
+					alert("The Execution Date can not be less than the Date of Application.");
+					$('#executionDate').val('');
+					return false;			
+				}
+				else{
+					/*validateWorkFlowApprover(action);
+			    	document.forms[0].submit();	*/
+				}
+			}
+		}
 });

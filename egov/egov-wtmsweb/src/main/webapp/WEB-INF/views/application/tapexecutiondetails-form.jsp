@@ -40,6 +40,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <div class="row">
 	<div class="col-md-12">
@@ -49,6 +50,7 @@
 					<spring:message code="lbl.tapexecutiondetails"/>
 				</div>					
 			</div>
+			<input type="hidden" value='<fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" />' id="appDate"/>
 			<div class="panel-body">
 				<div class="form-group">
 					<div class="col-sm-3 control-label text-right"><spring:message code="lbl.executiondate" /><span class="mandatory"></span></div>
