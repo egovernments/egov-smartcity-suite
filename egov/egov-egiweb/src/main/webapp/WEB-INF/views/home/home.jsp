@@ -276,6 +276,7 @@
 							<div class="form-group">
 								<div class="col-md-12 add-margin">
 									 <textarea class="form-control" rows="5" id="comment" placeholder="Message"></textarea>
+									 Mail will be sent to ${sessionScope.corpContactEmail}
 								</div>
 							</div>
 							<div class="form-group text-right">

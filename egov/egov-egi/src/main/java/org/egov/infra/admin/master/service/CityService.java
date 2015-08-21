@@ -43,6 +43,7 @@ import java.util.List;
 
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -54,7 +55,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class CityService {
 
     private final CityRepository cityRepository;
-    
+
+    @Autowired
+    private MessagingService messagingService;
+
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
@@ -65,7 +69,7 @@ public class CityService {
 
     @Transactional
     public City updateCity(final City city) {
-        redisTemplate.delete(EgovThreadLocals.getTenantID()+"-cityPrefs");
+        redisTemplate.delete(EgovThreadLocals.getTenantID() + "-cityPrefs");
         return cityRepository.save(city);
     }
 
@@ -83,5 +87,9 @@ public class CityService {
 
     public List<City> findAll() {
         return cityRepository.findAll();
+    }
+
+    public void sentFeedBackMail(final String email, final String subject, final String message) {
+        messagingService.sendEmail(email, subject, message);
     }
 }

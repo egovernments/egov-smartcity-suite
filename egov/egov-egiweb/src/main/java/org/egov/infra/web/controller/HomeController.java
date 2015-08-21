@@ -50,6 +50,7 @@ import org.egov.infra.admin.common.entity.Favourites;
 import org.egov.infra.admin.common.entity.MenuLink;
 import org.egov.infra.admin.common.service.FavouritesService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.properties.ApplicationProperties;
@@ -94,6 +95,9 @@ public class HomeController {
     @Autowired
     private ApplicationProperties applicationProperties;
 
+    @Autowired
+    private CityService cityService;
+
     @RequestMapping
     public String showHome(final HttpSession session, final ModelMap modelData) {
         final User user = securityUtils.getCurrentUser();
@@ -133,9 +137,9 @@ public class HomeController {
     }
 
     @RequestMapping(value = "feedback/sent")
-    public @ResponseBody boolean sendFeedback(@RequestParam final String subject, @RequestParam final String message) {
-        // TODO
-        return false;
+    public @ResponseBody boolean sendFeedback(@RequestParam final String subject, @RequestParam final String message, final HttpSession session) {
+        cityService.sentFeedBackMail((String) session.getAttribute("corpContactEmail"), subject, message + " \n Regards \n " + user().getName());
+        return true;
     }
 
     @ModelAttribute("user")
