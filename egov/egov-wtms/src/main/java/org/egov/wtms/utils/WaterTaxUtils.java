@@ -53,6 +53,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
@@ -67,6 +68,7 @@ import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Service
 public class WaterTaxUtils {
@@ -107,6 +109,9 @@ public class WaterTaxUtils {
 
     @Autowired
     private ResourceBundleMessageSource messageSource;
+    
+    @Autowired
+    private UserService userService;
 
     public Boolean isSmsEnabled() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -454,5 +459,17 @@ public class WaterTaxUtils {
             assignmentObj = assignmentService.getPrimaryAssignmentForEmployee(employeeList.get(0).getId());
         return assignmentObj != null ? assignmentObj.getPosition() : null;
     }
-
+    
+    @ModelAttribute(value = "checkOperator")
+    public Boolean checkCollectionOperatorRole() {
+        Boolean isCSCOperator = false;
+        final User userObj = userService.getUserById(EgovThreadLocals.getUserId());
+        if (userObj != null)
+            for (final Role role : userObj.getRoles())
+                if (role != null && role.getName().contains(WaterTaxConstants.CSCOPERTAORROLE)) {
+                    isCSCOperator = true;
+                    break;
+                }
+        return isCSCOperator;
+    }
 }
