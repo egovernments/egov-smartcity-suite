@@ -228,7 +228,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 			} else {
         	                //To generate Notice having installment and reasonwise balance for a property
         	                demandNoticeInfo.setBasicProperty(basicProperty);
-        	                demandNoticeInfo.setPropertyWiseConsumptions(propertyTaxUtil.getPropertyWiseConsumptions(basicProperty.getId().toString()));
+        	                demandNoticeInfo.setPropertyWiseConsumptions(propertyTaxUtil.getPropertyWiseConsumptions(basicProperty.getUpicNo()));
         	                demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty));
         	                ReportRequest reportRequest = null;	   
         	                propertyTaxUtil.logoBasePath();
