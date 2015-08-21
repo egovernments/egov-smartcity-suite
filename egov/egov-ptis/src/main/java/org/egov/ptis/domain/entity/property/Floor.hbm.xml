@@ -119,5 +119,8 @@
 		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User">
 			<column name="MODIFIED_BY" />
 		</many-to-one>
+		<one-to-one name="floorDmdCalc" lazy="proxy" outer-join="true"
+			class="org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations" property-ref="floor"
+			cascade="none" />
 	</class>
 </hibernate-mapping>

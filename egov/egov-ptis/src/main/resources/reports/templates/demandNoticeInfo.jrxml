@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="demandNoticeInfo" language="groovy" pageWidth="695" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="57716523-e607-4b0c-b551-0d2fb1c4222a">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="demandNoticeInfo" language="groovy" pageWidth="695" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="24"/>
-	<property name="ireport.y" value="31"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
@@ -23,112 +23,113 @@
 	<field name="demandNoticeDetailsInfo" class="java.util.List"/>
 	<field name="cityName" class="java.lang.String"/>
 	<field name="cityLogo" class="java.lang.String"/>
+	<field name="billPeriod" class="java.lang.String"/>
+	<field name="locality" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
 		<band height="62" splitType="Stretch">
 			<staticText>
-				<reportElement x="264" y="33" width="147" height="20" uuid="7a850de5-03d5-4285-94d4-154822f43ba4"/>
+				<reportElement x="264" y="33" width="147" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font fontName="SansSerif" size="16" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Demand Notice]]></text>
+				<text><![CDATA[Demand Bill]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="181" y="0" width="300" height="33" uuid="caa3d5e8-47d0-47b4-8d65-a0ef8be3ec0c"/>
+				<reportElement x="181" y="0" width="300" height="33"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="20" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{cityName}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{cityName}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
-				<reportElement x="37" y="2" width="60" height="60" uuid="3a456ff4-6407-4cfe-941d-6106adaee580"/>
-				<imageExpression><![CDATA[$F{cityLogo}]]></imageExpression>
+				<reportElement x="37" y="2" width="60" height="60"/>
+				<imageExpression class="java.lang.String"><![CDATA[$F{cityLogo}]]></imageExpression>
 			</image>
 		</band>
 	</title>
 	<pageHeader>
 		<band height="210" splitType="Stretch">
 			<line>
-				<reportElement x="0" y="1" width="655" height="1" uuid="6100e3c6-4200-471a-82d4-192b055fb167"/>
+				<reportElement x="0" y="1" width="655" height="1"/>
 			</line>
 			<line>
-				<reportElement x="0" y="38" width="655" height="1" uuid="24738eec-89b9-4240-8b25-96d79c0a1728"/>
+				<reportElement x="0" y="38" width="655" height="1"/>
 			</line>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="3" y="10" width="63" height="21" uuid="f5d23928-9d1c-4d3b-aafb-6fa68850de9b"/>
+				<reportElement stretchType="RelativeToBandHeight" x="3" y="10" width="63" height="21"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Ward No :]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="66" y="10" width="89" height="21" uuid="41a8544a-fe45-4e36-ba13-b518ee6a811a"/>
+				<reportElement x="66" y="10" width="89" height="21"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{wardNo}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{wardNo}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="162" y="10" width="47" height="21" uuid="d1d9503f-ba56-4850-b117-a23782fca88f"/>
+				<reportElement x="162" y="10" width="47" height="21"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Bill No :]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="209" y="10" width="89" height="21" uuid="67a7391c-2261-4997-88b2-7c70b5abcbf9"/>
+				<reportElement x="209" y="10" width="89" height="21"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{billNo}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{billNo}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="313" y="10" width="57" height="21" uuid="40b06728-18d3-4874-b6cd-e05f38c30bff"/>
+				<reportElement x="313" y="10" width="57" height="21"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Bill Date :]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="370" y="10" width="80" height="21" uuid="375ada89-68c3-4f51-9d64-017fc2e4257b"/>
+				<reportElement x="370" y="10" width="80" height="21"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{billDate}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{billDate}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="466" y="10" width="80" height="21" uuid="e9843283-65e1-4feb-812a-1a7b33cda3bb"/>
+				<reportElement x="466" y="10" width="80" height="21"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Owner Name :]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="546" y="10" width="109" height="21" uuid="4ee53c87-dcf7-491b-9b5e-ababc41ee45a"/>
+				<reportElement x="546" y="10" width="109" height="21"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="3" y="45" width="100" height="20" uuid="7385220f-ca6a-4d0e-99cd-1214acb0c12a"/>
+				<reportElement x="3" y="45" width="123" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[1) Property Id :]]></text>
+				<text><![CDATA[1) Assessment No :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3" y="175" width="130" height="35" uuid="f69fb172-53b1-42c2-ae7c-ae01662e5d97"/>
+				<reportElement x="3" y="175" width="142" height="35"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[5) Water Connection
-     No :]]></text>
+				<text><![CDATA[5) Water Connection No :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3" y="106" width="106" height="31" uuid="7c92f1c9-1014-4294-b612-21b4e0602667"/>
+				<reportElement x="3" y="106" width="106" height="31"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
@@ -136,95 +137,95 @@
     Connection No :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3" y="74" width="111" height="20" uuid="85ba1a45-94fb-4412-89c7-f45d10d5bded"/>
+				<reportElement x="3" y="74" width="130" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[2) Old Property Id :]]></text>
+				<text><![CDATA[2) Old Assessment No :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3" y="147" width="100" height="20" uuid="e6f73330-2120-4af9-b4d9-a58597c3ccab"/>
+				<reportElement x="3" y="147" width="100" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[4) No of Tap :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="311" y="45" width="100" height="20" uuid="1bef5758-fbec-4fec-b8ed-ebaac3dc0bbb"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[ Rent Paid :]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="311" y="74" width="100" height="20" uuid="279c57db-a093-4df1-877e-1f8c69145bc1"/>
+				<reportElement x="311" y="74" width="100" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[ Door No :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="311" y="107" width="100" height="20" uuid="57982055-00bd-4888-8cd9-5f8f63a745c8"/>
+				<reportElement x="311" y="107" width="100" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[ Street Name :]]></text>
+				<text><![CDATA[ Locality :]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="411" y="45" width="100" height="20" uuid="8b9b9d8f-5381-4bea-8c2f-06257a2075d0"/>
+				<reportElement x="411" y="107" width="100" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{rentPaid}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{locality}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="411" y="107" width="100" height="20" uuid="827289ba-e8a7-478f-88da-7ed981f810d3"/>
+				<reportElement x="411" y="74" width="100" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{streetName}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{houseNo}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="411" y="74" width="100" height="20" uuid="e599b17c-ee47-47ed-9cf0-0970263e138a"/>
+				<reportElement x="113" y="46" width="111" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{houseNo}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{assessmentNo}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="103" y="46" width="111" height="20" uuid="763fd449-b37b-405a-a945-3152eb7e9b30"/>
+				<reportElement x="133" y="175" width="521" height="35"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{assessmentNo}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{waterConnectionNo}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="133" y="175" width="521" height="35" uuid="0b399de0-d3cd-4897-b2b1-4590cdcf562d"/>
+				<reportElement x="109" y="106" width="105" height="31"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{waterConnectionNo}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sewarageConnectionNo}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="109" y="106" width="105" height="31" uuid="bfe1e688-525b-4d22-ae0f-46463d1b287b"/>
+				<reportElement x="126" y="74" width="100" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{sewarageConnectionNo}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{oldAssessmentNo}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="114" y="74" width="100" height="20" uuid="b6253cf2-fdc7-4264-9be5-6f692fe9f914"/>
+				<reportElement x="103" y="147" width="111" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{oldAssessmentNo}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{noOfTap}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="311" y="54" width="100" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bill Period :]]></text>
+			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="103" y="147" width="111" height="20" uuid="a3736bac-eeb3-409c-a197-4b92ba573598"/>
+				<reportElement x="411" y="54" width="100" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{noOfTap}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{billPeriod}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -234,9 +235,9 @@
 	<detail>
 		<band height="41" splitType="Prevent">
 			<subreport>
-				<reportElement x="2" y="1" width="652" height="40" uuid="4777c4fc-5ea3-40fe-baad-408a8ae00341"/>
+				<reportElement x="2" y="1" width="652" height="40"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{demandNoticeDetailsInfo}, false)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("demandNoticeDetails.jasper")]]></subreportExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[ReportUtil.getTemplateAsStream("demandNoticeDetails.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>

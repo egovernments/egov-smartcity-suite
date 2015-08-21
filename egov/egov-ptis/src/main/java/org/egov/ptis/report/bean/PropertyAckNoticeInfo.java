@@ -49,6 +49,7 @@ public class PropertyAckNoticeInfo {
     private String regDocDate;
     private String currentInstallment;
     private BigDecimal amount = BigDecimal.ZERO;
+    private BigDecimal rate = BigDecimal.ZERO;
 
     public String getCreationReason() {
         return creationReason;
@@ -409,4 +410,13 @@ public class PropertyAckNoticeInfo {
     public void setAmount(final BigDecimal amount) {
         this.amount = amount;
     }
+
+	public BigDecimal getRate() {
+		return rate;
+	}
+
+	public void setRate(BigDecimal rate) {
+		this.rate = rate;
+	}
+    
 }

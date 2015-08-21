@@ -1832,9 +1832,9 @@ public class PropertyTaxUtil {
     public DepreciationMaster getDepreciationByDate(final Date depreciationDate) {
         String depreciationYear = null;
         final int years = DateUtils.getNumberOfYearPassesed(new Date(), depreciationDate);
-        if (years > 0 && years <= 25)
+        if (years >= 0 && years <= 25)
             depreciationYear = "0-25";
-        else if (years > 0 && years <= 25)
+        else if (years > 25 && years <= 40)
             depreciationYear = "26-40";
         else
             depreciationYear = "Above 40";

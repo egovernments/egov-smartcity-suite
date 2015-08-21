@@ -211,25 +211,27 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         propertyNotice.setOwnerInfo(ownerInfo);
     }
 
-    private List<PropertyAckNoticeInfo> getFloorDetailsForNotice(final BigDecimal totalTax) {
-        final List<PropertyAckNoticeInfo> floorDetailsList = new ArrayList<PropertyAckNoticeInfo>();
-        final PropertyDetail detail = property.getPropertyDetail();
-        PropertyAckNoticeInfo floorInfo = null;
-        for (final Floor floor : detail.getFloorDetails()) {
-            floorInfo = new PropertyAckNoticeInfo();
-            floorInfo.setBuildingClassification(floor.getStructureClassification().getTypeName());
-            floorInfo.setNatureOfUsage(floor.getPropertyUsage().getUsageName());
-            floorInfo.setPlinthArea(new BigDecimal(floor.getBuiltUpArea().getArea()));
-            floorInfo.setBuildingAge(floor.getDepreciationMaster().getDepreciationName());
-            floorInfo.setMonthlyRentalValue(BigDecimal.ZERO);
-            floorInfo.setYearlyRentalValue(BigDecimal.ZERO);
-            floorInfo.setTaxPayableForCurrYear(totalTax);
-            floorInfo.setTaxPayableForNewRates(BigDecimal.ZERO);
+	private List<PropertyAckNoticeInfo> getFloorDetailsForNotice(final BigDecimal totalTax) {
+		final List<PropertyAckNoticeInfo> floorDetailsList = new ArrayList<PropertyAckNoticeInfo>();
+		final PropertyDetail detail = property.getPropertyDetail();
+		PropertyAckNoticeInfo floorInfo = null;
+		for (final Floor floor : detail.getFloorDetails()) {
+			floorInfo = new PropertyAckNoticeInfo();
+			floorInfo.setBuildingClassification(floor.getStructureClassification().getTypeName());
+			floorInfo.setNatureOfUsage(floor.getPropertyUsage().getUsageName());
+			floorInfo.setPlinthArea(new BigDecimal(floor.getBuiltUpArea().getArea()));
+			floorInfo.setBuildingAge(floor.getDepreciationMaster().getDepreciationName());
+			floorInfo.setMonthlyRentalValue(floor.getFloorDmdCalc() != null ? floor.getFloorDmdCalc().getMrv()
+					: BigDecimal.ZERO);
+			floorInfo.setYearlyRentalValue(floor.getFloorDmdCalc() != null ? floor.getFloorDmdCalc().getAlv()
+					: BigDecimal.ZERO);
+			floorInfo.setTaxPayableForCurrYear(totalTax);
+			floorInfo.setRate(floor.getFloorDmdCalc().getCategoryAmt());
 
-            floorDetailsList.add(floorInfo);
-        }
-        return floorDetailsList;
-    }
+			floorDetailsList.add(floorInfo);
+		}
+		return floorDetailsList;
+	}
 
     /**
      * This method ends the workflow. The Property is transitioned to END state.

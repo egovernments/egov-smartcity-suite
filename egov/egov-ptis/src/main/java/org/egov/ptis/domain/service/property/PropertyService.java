@@ -1193,6 +1193,8 @@ public class PropertyService {
 
 	public void setFloorDmdCalTax(final UnitTaxCalculationInfo unitTax, final FloorwiseDemandCalculations floorDmdCalc) {
 		floorDmdCalc.setAlv(unitTax.getNetARV());
+		floorDmdCalc.setMrv(unitTax.getMrv());
+		floorDmdCalc.setCategoryAmt(unitTax.getBaseRate());
 		for (final MiscellaneousTax miscTax : unitTax.getMiscellaneousTaxes())
 			for (final MiscellaneousTaxDetail taxDetail : miscTax.getTaxDetails())
 				if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX.equals(miscTax.getTaxName()))

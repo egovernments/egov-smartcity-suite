@@ -76,6 +76,7 @@ public class FloorwiseDemandCalculations {
 	private BigDecimal tax9 = BigDecimal.ZERO;
 	private BigDecimal tax10 = BigDecimal.ZERO;
 	private BigDecimal alv;
+	private BigDecimal mrv;
 
 	public FloorwiseDemandCalculations() {
 		super();
@@ -117,6 +118,7 @@ public class FloorwiseDemandCalculations {
 		this.tax9 = thatFloorDmdCalc.getTax9();
 		this.tax10 = thatFloorDmdCalc.getTax10();
 		this.alv = thatFloorDmdCalc.getAlv();
+		this.mrv = thatFloorDmdCalc.getMrv();
 	}
 	/**
 	 * @return the id
@@ -414,6 +416,14 @@ public class FloorwiseDemandCalculations {
 
 	public void setAlv(BigDecimal alv) {
 		this.alv = alv;
+	}
+
+	public BigDecimal getMrv() {
+		return mrv;
+	}
+
+	public void setMrv(BigDecimal mrv) {
+		this.mrv = mrv;
 	}
 
 	/**

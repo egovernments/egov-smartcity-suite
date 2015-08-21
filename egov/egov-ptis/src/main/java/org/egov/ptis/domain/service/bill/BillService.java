@@ -94,7 +94,7 @@ public class BillService {
 	private ReportService reportService;
 	private NoticeService noticeService;
 	@Autowired
-        private PropertyTaxUtil propertyTaxUtil;
+	private PropertyTaxUtil propertyTaxUtil;
 	private PTBillServiceImpl ptBillServiceImpl;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	private Map<String, Map<String, BigDecimal>> reasonwiseDues;
@@ -110,7 +110,7 @@ public class BillService {
 	private PropertyTaxBillable propertyTaxBillable;
 	private PersistenceService persistenceService;
 	@Autowired
-        private BasicPropertyDAO basicPropertyDAO;
+	private BasicPropertyDAO basicPropertyDAO;
 	@Autowired
 	private DemandNoticeInfo demandNoticeInfo;
 
@@ -124,35 +124,41 @@ public class BillService {
 	 */
 	public ReportOutput generateBill(BasicProperty basicProperty, Integer userId) {
 		LOGGER.debug("Entered into generateBill BasicProperty : " + basicProperty);
-		ReportOutput reportOutput=null;
-		try{
-        		setBillNo(propertyTaxNumberGenerator
-                                .generateManualBillNumber(basicProperty.getPropertyID()));
-        		int noOfBillGenerated = getNumberOfBills(basicProperty);
-        		if (noOfBillGenerated > 0) {
-        		    setBillNo(getBillNo() + "/" + STR_BILL_SHORTCUT + noOfBillGenerated);
-        		}
-        		//To generate Notice having installment and reasonwise balance for a property
-                         demandNoticeInfo.setBasicProperty(basicProperty);
-                         demandNoticeInfo.setBillNo(getBillNo());
-                         demandNoticeInfo.setPropertyWiseConsumptions(propertyTaxUtil.getPropertyWiseConsumptions(basicProperty.getUpicNo().toString()));
-                         demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty));
-                         
-                         ReportRequest reportRequest = null;
-                         reportRequest = new ReportRequest(REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION,demandNoticeInfo,new HashMap<String, Object>());
-                         reportOutput = getReportService().createReport(reportRequest); 
-                         if (reportOutput != null && reportOutput.getReportOutputData() != null) {
-                             billPDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
-                         }
-        		saveEgBill(basicProperty, userId);// saving eg_bill 
-        		basicProperty.setIsBillCreated(STATUS_BILL_CREATED);
-                        basicProperty.setBillCrtError(STRING_EMPTY);
-        		noticeService.saveNotice(getBillNo(), NOTICE_TYPE_BILL, basicProperty, billPDF);// Save Notice
-        		noticeService.getSession().flush(); // Added as notice was not getting saved
+		ReportOutput reportOutput = null;
+		try {
+			setBillNo(propertyTaxNumberGenerator.generateManualBillNumber(basicProperty.getPropertyID()));
+			int noOfBillGenerated = getNumberOfBills(basicProperty);
+			if (noOfBillGenerated > 0) {
+				setBillNo(getBillNo() + "/" + STR_BILL_SHORTCUT + noOfBillGenerated);
+			}
+			// To generate Notice having installment and reasonwise balance for
+			// a property
+			demandNoticeInfo.setBasicProperty(basicProperty);
+			demandNoticeInfo.setBillNo(getBillNo());
+			demandNoticeInfo.setLocality(basicProperty.getPropertyID().getLocality().getName());
+			demandNoticeInfo.setBillPeriod(propertyTaxUtil.getCurrentInstallment().getDescription());
+			demandNoticeInfo.setPropertyWiseConsumptions(propertyTaxUtil.getPropertyWiseConsumptions(basicProperty
+					.getUpicNo()));
+			demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty));
+
+			ReportRequest reportRequest = null;
+			reportRequest = new ReportRequest(REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION, demandNoticeInfo,
+					new HashMap<String, Object>());
+			reportOutput = getReportService().createReport(reportRequest);
+			if (reportOutput != null && reportOutput.getReportOutputData() != null) {
+				billPDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
+			}
+			saveEgBill(basicProperty, userId);// saving eg_bill
+			basicProperty.setIsBillCreated(STATUS_BILL_CREATED);
+			basicProperty.setBillCrtError(STRING_EMPTY);
+			noticeService.saveNotice(getBillNo(), NOTICE_TYPE_BILL, basicProperty, billPDF);// Save
+																							// Notice
+			noticeService.getSession().flush(); // Added as notice was not
+												// getting saved
 		} catch (final Exception e) {
-		    e.printStackTrace();
-	              throw new EGOVRuntimeException("Bill Generation Exception : " + e);
-	        }
+			e.printStackTrace();
+			throw new EGOVRuntimeException("Bill Generation Exception : " + e);
+		}
 		LOGGER.debug("Exiting from generateBill");
 		return reportOutput;
 	}
@@ -188,164 +194,138 @@ public class BillService {
 		EgBill egBill = ptBillServiceImpl.generateBill(propertyTaxBillable);
 		LOGGER.debug("Exit from saveEgBill, EgBill: " + egBill);
 	}
-	
+
 	/**
 	 * @description Called from ptisSchedular for bulk bill generation
 	 * @param modulo
 	 * @param billsCount
 	 */
-	public void bulkBillGeneration(Integer modulo,Integer billsCount){
-	    LOGGER.debug("Entered into executeJob" + modulo);
+	public void bulkBillGeneration(Integer modulo, Integer billsCount) {
+		LOGGER.debug("Entered into executeJob" + modulo);
 
-            Long currentTime = System.currentTimeMillis();
+		Long currentTime = System.currentTimeMillis();
 
-            //returns all the property for which bill is created or cancelled
-            Query query = getQuery(modulo,billsCount);
+		// returns all the property for which bill is created or cancelled
+		Query query = getQuery(modulo, billsCount);
 
-            List<String> assessmentNumbers = query.list();
+		List<String> assessmentNumbers = query.list();
 
-            LOGGER.info("executeJob" + modulo + " - got " + assessmentNumbers
-                            + "indexNumbers for bill generation");
-            Long timeTaken = currentTime - System.currentTimeMillis();
-            LOGGER.debug("executeJob" + modulo + " took " + (timeTaken / 1000)
-                            + " secs for BasicProperty selection");
-            LOGGER.debug("executeJob" + modulo + " - BasicProperties = "
-                            + assessmentNumbers.size());
-            LOGGER.info("executeJob" + modulo + " - Generating bills.....");
+		LOGGER.info("executeJob" + modulo + " - got " + assessmentNumbers + "indexNumbers for bill generation");
+		Long timeTaken = currentTime - System.currentTimeMillis();
+		LOGGER.debug("executeJob" + modulo + " took " + (timeTaken / 1000) + " secs for BasicProperty selection");
+		LOGGER.debug("executeJob" + modulo + " - BasicProperties = " + assessmentNumbers.size());
+		LOGGER.info("executeJob" + modulo + " - Generating bills.....");
 
-            currentTime = System.currentTimeMillis();
-            int noOfBillsGenerated = 0;
+		currentTime = System.currentTimeMillis();
+		int noOfBillsGenerated = 0;
 
-            for (String assessmentNumber : assessmentNumbers) {
-                    BasicProperty basicProperty = null;
-                    try {
-                            basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNumber);
-                            generateBill(basicProperty,EgovThreadLocals.getUserId().intValue());
-                            noOfBillsGenerated++;
-                    } catch (Exception e) {
-                            basicProperty.setIsBillCreated('F');
-                            basicProperty.setBillCrtError(e.getMessage());
-                            String msg = " Error while generating Demand bill via BulkBillGeneration Job "
-                                            + modulo.toString();
-                            String propertyType = " for "
-                                            + (basicProperty.getIsMigrated().equals('Y') ? " migrated property "
-                                                            : " non-migrated property ");
-                            LOGGER.error(msg + propertyType + basicProperty.getUpicNo(), e);
-                    }
-            }
+		for (String assessmentNumber : assessmentNumbers) {
+			BasicProperty basicProperty = null;
+			try {
+				basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNumber);
+				generateBill(basicProperty, EgovThreadLocals.getUserId().intValue());
+				noOfBillsGenerated++;
+			} catch (Exception e) {
+				basicProperty.setIsBillCreated('F');
+				basicProperty.setBillCrtError(e.getMessage());
+				String msg = " Error while generating Demand bill via BulkBillGeneration Job " + modulo.toString();
+				String propertyType = " for "
+						+ (basicProperty.getIsMigrated().equals('Y') ? " migrated property "
+								: " non-migrated property ");
+				LOGGER.error(msg + propertyType + basicProperty.getUpicNo(), e);
+			}
+		}
 
-            timeTaken = currentTime - System.currentTimeMillis();
+		timeTaken = currentTime - System.currentTimeMillis();
 
-            LOGGER.info("executeJob" + modulo + " - " + noOfBillsGenerated + "/"
-                            + assessmentNumbers.size() + " Bill(s) generated in "
-                            + (timeTaken / 1000) + " (secs)");
+		LOGGER.info("executeJob" + modulo + " - " + noOfBillsGenerated + "/" + assessmentNumbers.size()
+				+ " Bill(s) generated in " + (timeTaken / 1000) + " (secs)");
 
-            LOGGER.debug("Exiting from executeJob" + modulo);
+		LOGGER.debug("Exiting from executeJob" + modulo);
 	}
-	
+
 	/**
-	 * @description returns list of property assestment number(Zone and ward wise). 
-	 *              properties for which bill is not created or cancelled.
+	 * @description returns list of property assestment number(Zone and ward
+	 *              wise). properties for which bill is not created or
+	 *              cancelled.
 	 * @param modulo
 	 * @param billsCount
 	 * @return
 	 */
-	private Query getQuery(Integer modulo,Integer billsCount) {
+	private Query getQuery(Integer modulo, Integer billsCount) {
 
-            StringBuilder queryString = new StringBuilder(200);
-            StringBuilder zoneParamString = new StringBuilder();
-            StringBuilder wardParamString = new StringBuilder();
-            Installment currentInstallment = propertyTaxUtil
-                            .getCurrentInstallment();
-            Module ptModule = moduleDao
-                            .getModuleByName(PropertyTaxConstants.PTMODULENAME);
-            //read zone and ward saved in bulkbillgeneration table.
-            List<BulkBillGeneration> bulkBillGeneration = getPersistenceService().findAllBy(
-                    "from BulkBillGeneration where zone.id is not null and installment.id = ? order by id", currentInstallment.getId());
-            queryString = queryString
-                    .append("select bp.upicNo ")
-                    .append("from BasicPropertyImpl bp ")
-                    .append("where bp.active = true ")
-                    .append("and bp.upicNo IS not NULL ")
-                    .append("and (bp.isBillCreated is NULL or bp.isBillCreated='N' or bp.isBillCreated='false') ")
-                    .append("and MOD(bp.id, ").append(QUARTZ_BULKBILL_JOBS)
-                    .append(") = :modulo ");
-            if(bulkBillGeneration!=null && !bulkBillGeneration.isEmpty()){
-                wardParamString.append("(");
-                zoneParamString.append("(");
-                int count = 1; 
-                for (BulkBillGeneration bbg : bulkBillGeneration) {
-                    if(bbg.getWard()!=null){
-                        if (count == bulkBillGeneration.size()) {
-                            wardParamString.append("'").append(bbg.getZone().getId()).append('-').append(bbg.getWard().getId())
-                                            .append("')");
-                        } else {
-                            wardParamString.append("'").append(bbg.getZone().getId()).append('-').append(bbg.getWard().getId())
-                                                .append("', ");
-                        }
-                      
-                    } else {
-                        if (count == bulkBillGeneration.size()) {
-                            zoneParamString.append(bbg.getZone().getId())
-                                            .append(")");
-                        } else {
-                            zoneParamString.append(bbg.getZone().getId())
-                                                .append(", ");
-                        }
-                    }
-                    count++;
-                }
-                if(wardParamString!=null){
-                    if(wardParamString.charAt(wardParamString.length()-2)==',')
-                       wardParamString.setCharAt(wardParamString.length()-2, ')');
-                }
-                if(zoneParamString!=null){
-                    if(zoneParamString.charAt(zoneParamString.length()-2)==',')
-                        zoneParamString.setCharAt(zoneParamString.length()-2, ')');
-                }
-                    
-                if(wardParamString!=null && zoneParamString==null){
-                   queryString.append(" AND ")
-                    .append("bp.propertyID.ward.parent.id||'-'||bp.propertyID.ward.id")
-                    .append(" IN ").append(wardParamString.toString());
-                }
-                else if(zoneParamString!=null && wardParamString==null){
-                    queryString.append(" AND ")
-                     .append("bp.propertyID.zone.id")
-                     .append(" IN ").append(zoneParamString.toString());
-                }
-                else if(wardParamString!=null && zoneParamString!=null){
-                    queryString.append(" AND ") 
-                    .append("(bp.propertyID.ward.parent.id||'-'||bp.propertyID.ward.id")
-                    .append(" IN ").append(wardParamString.toString())
-                    .append(" OR ")
-                    .append("bp.propertyID.zone.id")
-                    .append(" IN ").append(zoneParamString.toString()).append(')');
-                }
-            }
-            queryString = queryString
-                            .append(" AND bp NOT IN (SELECT bp FROM BasicPropertyImpl bp, EgBill b ")
-                            .append("WHERE bp.active = true ")
-                            .append("AND bp.upicNo = substring(b.consumerId, 1, strpos(b.consumerId,'(')-1) ")
-                            .append("AND b.module = :ptModule ")
-                            .append("AND b.egBillType = :billType ")
-                            .append("AND b.is_History = 'N' ")
-                            .append("AND b.is_Cancelled = 'N' ")
-                            .append("AND (b.issueDate BETWEEN :fromDate AND :toDate)) ");
-            Query query = getPersistenceService()
-                            .getSession()
-                            .createQuery(queryString.toString())
-                            .setInteger("modulo", modulo)
-                            .setEntity("ptModule", ptModule)
-                            .setEntity("billType", propertyTaxUtil.getBillTypeByCode(
-                                                            PropertyTaxConstants.BILLTYPE_MANUAL))
-                            .setDate("fromDate", currentInstallment.getFromDate())
-                            .setDate("toDate", currentInstallment.getToDate());
-            query.setMaxResults(billsCount);
+		StringBuilder queryString = new StringBuilder(200);
+		StringBuilder zoneParamString = new StringBuilder();
+		StringBuilder wardParamString = new StringBuilder();
+		Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
+		Module ptModule = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		// read zone and ward saved in bulkbillgeneration table.
+		List<BulkBillGeneration> bulkBillGeneration = getPersistenceService().findAllBy(
+				"from BulkBillGeneration where zone.id is not null and installment.id = ? order by id",
+				currentInstallment.getId());
+		queryString = queryString.append("select bp.upicNo ").append("from BasicPropertyImpl bp ")
+				.append("where bp.active = true ").append("and bp.upicNo IS not NULL ")
+				.append("and (bp.isBillCreated is NULL or bp.isBillCreated='N' or bp.isBillCreated='false') ")
+				.append("and MOD(bp.id, ").append(QUARTZ_BULKBILL_JOBS).append(") = :modulo ");
+		if (bulkBillGeneration != null && !bulkBillGeneration.isEmpty()) {
+			wardParamString.append("(");
+			zoneParamString.append("(");
+			int count = 1;
+			for (BulkBillGeneration bbg : bulkBillGeneration) {
+				if (bbg.getWard() != null) {
+					if (count == bulkBillGeneration.size()) {
+						wardParamString.append("'").append(bbg.getZone().getId()).append('-')
+								.append(bbg.getWard().getId()).append("')");
+					} else {
+						wardParamString.append("'").append(bbg.getZone().getId()).append('-')
+								.append(bbg.getWard().getId()).append("', ");
+					}
 
-            return query;
-    }
+				} else {
+					if (count == bulkBillGeneration.size()) {
+						zoneParamString.append(bbg.getZone().getId()).append(")");
+					} else {
+						zoneParamString.append(bbg.getZone().getId()).append(", ");
+					}
+				}
+				count++;
+			}
+			if (wardParamString != null) {
+				if (wardParamString.charAt(wardParamString.length() - 2) == ',')
+					wardParamString.setCharAt(wardParamString.length() - 2, ')');
+			}
+			if (zoneParamString != null) {
+				if (zoneParamString.charAt(zoneParamString.length() - 2) == ',')
+					zoneParamString.setCharAt(zoneParamString.length() - 2, ')');
+			}
 
+			if (wardParamString != null && zoneParamString == null) {
+				queryString.append(" AND ").append("bp.propertyID.ward.parent.id||'-'||bp.propertyID.ward.id")
+						.append(" IN ").append(wardParamString.toString());
+			} else if (zoneParamString != null && wardParamString == null) {
+				queryString.append(" AND ").append("bp.propertyID.zone.id").append(" IN ")
+						.append(zoneParamString.toString());
+			} else if (wardParamString != null && zoneParamString != null) {
+				queryString.append(" AND ").append("(bp.propertyID.ward.parent.id||'-'||bp.propertyID.ward.id")
+						.append(" IN ").append(wardParamString.toString()).append(" OR ")
+						.append("bp.propertyID.zone.id").append(" IN ").append(zoneParamString.toString()).append(')');
+			}
+		}
+		queryString = queryString.append(" AND bp NOT IN (SELECT bp FROM BasicPropertyImpl bp, EgBill b ")
+				.append("WHERE bp.active = true ")
+				.append("AND bp.upicNo = substring(b.consumerId, 1, strpos(b.consumerId,'(')-1) ")
+				.append("AND b.module = :ptModule ").append("AND b.egBillType = :billType ")
+				.append("AND b.is_History = 'N' ").append("AND b.is_Cancelled = 'N' ")
+				.append("AND (b.issueDate BETWEEN :fromDate AND :toDate)) ");
+		Query query = getPersistenceService().getSession().createQuery(queryString.toString())
+				.setInteger("modulo", modulo).setEntity("ptModule", ptModule)
+				.setEntity("billType", propertyTaxUtil.getBillTypeByCode(PropertyTaxConstants.BILLTYPE_MANUAL))
+				.setDate("fromDate", currentInstallment.getFromDate())
+				.setDate("toDate", currentInstallment.getToDate());
+		query.setMaxResults(billsCount);
+
+		return query;
+	}
 
 	public ReportService getReportService() {
 		return reportService;
@@ -399,20 +379,20 @@ public class BillService {
 		this.noticeService = noticeService;
 	}
 
-        public PTBillServiceImpl getPtBillServiceImpl() {
-            return ptBillServiceImpl;
-        }
-    
-        public void setPtBillServiceImpl(PTBillServiceImpl ptBillServiceImpl) {
-            this.ptBillServiceImpl = ptBillServiceImpl;
-        }
+	public PTBillServiceImpl getPtBillServiceImpl() {
+		return ptBillServiceImpl;
+	}
 
-        public PersistenceService getPersistenceService() {
-            return persistenceService;
-        }
+	public void setPtBillServiceImpl(PTBillServiceImpl ptBillServiceImpl) {
+		this.ptBillServiceImpl = ptBillServiceImpl;
+	}
 
-        public void setPersistenceService(PersistenceService persistenceService) {
-            this.persistenceService = persistenceService;
-        }
+	public PersistenceService getPersistenceService() {
+		return persistenceService;
+	}
+
+	public void setPersistenceService(PersistenceService persistenceService) {
+		this.persistenceService = persistenceService;
+	}
 
 }

@@ -89,12 +89,12 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.Property;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This class is used to persist Collections .This is used for the integration
  * of Collections and Bills and property tax.
  */
-
 public class PropertyTaxCollection extends TaxCollection {
 
     private static final Logger LOGGER = Logger.getLogger(PropertyTaxCollection.class);
@@ -133,6 +133,7 @@ public class PropertyTaxCollection extends TaxCollection {
        
         if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED)) {
             updateCollForRcptCreate(demand, billRcptInfo);
+            activateDemand(demand);
 
         } else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED)) {
             updateCollForRcptCancel(demand, billRcptInfo);
@@ -309,12 +310,6 @@ public class PropertyTaxCollection extends TaxCollection {
                 }
             }
         }
-		// Activating the demand on payment
-        Property property = ((Ptdemand) demand).getEgptProperty();
-		if (property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
-			property.setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
-			propertyImplService.persist(property);
-		}
         LOGGER.debug("Exiting method saveCollectionDetails");
     }
 
@@ -728,7 +723,17 @@ public class PropertyTaxCollection extends TaxCollection {
         return demandDetail;
     }
 
-    public void setPersistenceService(PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
-    }
+	// Activating the demand on payment
+    @Transactional
+	private void activateDemand(EgDemand demand) {
+		Property property = ((Ptdemand) demand).getEgptProperty();
+		if (property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
+			property.setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
+			propertyImplService.persist(property);
+		}
+	}
+
+	public void setPersistenceService(PersistenceService persistenceService) {
+		this.persistenceService = persistenceService;
+	}
 }

@@ -53,6 +53,7 @@ import org.egov.demand.model.DepreciationMaster;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infstr.models.BaseModel;
+import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 
 /**
  * <p>
@@ -85,13 +86,15 @@ public class Floor extends BaseModel implements Auditable {
 	private String occupantName;
 	private Boolean drainage;
 	private Integer noOfSeats;
+	private FloorwiseDemandCalculations floorDmdCalc;
 
 	public Floor(ConstructionTypeSet constructionTypeSet, StructureClassification structureClassification,
 			PropertyUsage propertyUsage, PropertyOccupation propertyOccupation, Integer floorNo,
 			DepreciationMaster depreciationMaster, Area builtUpArea, Area floorArea, String waterMeter,
 			String electricMeter, Date lastUpdatedTimeStamp, Date createdTimeStamp, BigDecimal rentPerMonth,
 			BigDecimal manualAlv, PropertyTypeMaster unitType, String unitTypeCategory, String waterRate,
-			BigDecimal alv, Date occupancyDate, String occupierName, Boolean drainage, Integer noOfSeats) {
+			BigDecimal alv, Date occupancyDate, String occupierName, Boolean drainage, Integer noOfSeats,
+			FloorwiseDemandCalculations floorDmdCalc) {
 		super();
 		this.constructionTypeSet = constructionTypeSet;
 		this.structureClassification = structureClassification;
@@ -113,6 +116,7 @@ public class Floor extends BaseModel implements Auditable {
 		this.occupantName = occupierName;
 		this.drainage = drainage;
 		this.noOfSeats = noOfSeats;
+		this.floorDmdCalc = floorDmdCalc;
 	}
 
 	public Floor() {
@@ -439,6 +443,14 @@ public class Floor extends BaseModel implements Auditable {
 
 	public void setNoOfSeats(Integer noOfSeats) {
 		this.noOfSeats = noOfSeats;
+	}
+
+	public FloorwiseDemandCalculations getFloorDmdCalc() {
+		return floorDmdCalc;
+	}
+
+	public void setFloorDmdCalc(FloorwiseDemandCalculations floorDmdCalc) {
+		this.floorDmdCalc = floorDmdCalc;
 	}
 
 }

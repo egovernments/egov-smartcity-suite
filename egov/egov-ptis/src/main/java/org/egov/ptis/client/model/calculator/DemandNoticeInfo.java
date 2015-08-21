@@ -24,9 +24,11 @@ public class DemandNoticeInfo {
 	private String noOfTap;
 	private String sewarageConnectionNo;
 	private String rentPaid;
+	private String locality;
 	private List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo;
 	private ReportUtil reportUtil;
 	private PropertyWiseConsumptions propertyWiseConsumptions;
+	private String billPeriod;
 	
 	@Autowired
 	@Qualifier("cityService")
@@ -170,5 +172,21 @@ public class DemandNoticeInfo {
     public void setPropertyWiseConsumptions(PropertyWiseConsumptions propertyWiseConsumptions) {
         this.propertyWiseConsumptions = propertyWiseConsumptions;
     }
+
+	public String getLocality() {
+		return locality;
+	}
+
+	public void setLocality(String locality) {
+		this.locality = locality;
+	}
+
+	public String getBillPeriod() {
+		return billPeriod;
+	}
+
+	public void setBillPeriod(String billPeriod) {
+		this.billPeriod = billPeriod;
+	}
 
 }
