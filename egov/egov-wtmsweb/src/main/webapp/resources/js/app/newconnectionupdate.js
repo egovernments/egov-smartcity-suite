@@ -48,6 +48,7 @@ $(document).ready(function()
 	if(approvalPositionExist!=0 && ((status=='CREATED' && wfstate!=null )|| status=='VERIFIED' || status=='ESTIMATIONNOTICEGENERATED' ||status=='ESTIMATIONAMOUNTPAID' || status=='WORKORDERGENERATED' || status=='APPROVED'))
 		{
 		$(".show-row").hide(); 
+		$('#approverDetailHeading').hide();
 		$('#approvalDepartment').removeAttr('required');
 		$('#approvalDesignation').removeAttr('required');
 		$('#approvalPosition').removeAttr('required');
@@ -55,6 +56,7 @@ $(document).ready(function()
 	 if(approvalPositionExist!=0 && status=='CREATED' && (mode =='edit' || mode==''))
 		{
 			$(".show-row").show(); 
+			$('#approverDetailHeading').show();
 			$('#approvalDepartment').attr('required', 'required');
 			$('#approvalDesignation').attr('required', 'required');
 			$('#approvalPosition').attr('required', 'required');
