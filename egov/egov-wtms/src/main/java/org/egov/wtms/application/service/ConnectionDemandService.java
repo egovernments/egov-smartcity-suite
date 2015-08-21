@@ -533,7 +533,7 @@ public class ConnectionDemandService {
             return installmentDao.getInsatllmentByModuleForGivenDate(moduleService.getModuleByName(moduleName), new Date());
         else
             return installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
-                    moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), date, WaterTaxConstants.MONTHLY);
+                    moduleService.getModuleByName(moduleName), date, installmentType);
     }
 
 }
