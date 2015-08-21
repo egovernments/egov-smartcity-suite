@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+/* eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
  * government organizations.
  *
  * Copyright (C) <2015> eGovernments Foundation
@@ -60,6 +59,8 @@ public class FileStoreUtils {
             final File file = fileStoreService.fetch(fileStoreMapper, moduleName);
             if (toSave)
                 response.setHeader("Content-Disposition", "attachment;filename=" + fileStoreMapper.getFileName());
+            else
+                response.setHeader("Content-Disposition", "inline;filename=" + fileStoreMapper.getFileName());
             response.setContentType(Files.probeContentType(file.toPath()));
             final OutputStream out = response.getOutputStream();
             IOUtils.write(FileUtils.readFileToByteArray(file), out);

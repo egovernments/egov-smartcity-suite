@@ -249,7 +249,7 @@
 				<div class="row text-center">
 					<div class="col-md-12 feature-top text-center"></div>
 					<div class="col-md-4 top-community-space">
-						<a href="https://goo.gl/maps/KyhLM" target="_blank"><span><i
+						<a href="${sessionScope.corpGisLink}" target="_blank"><span><i
 								class="fa fa-map-marker fa-2x"></i></span></a>
 						<p>
 							${sessionScope.corpAddress}
