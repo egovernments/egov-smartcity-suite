@@ -131,7 +131,7 @@
 								        	<s:hidden name="transfereeInfos[%{#status.index}].type" value="CITIZEN" data-static="true"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								         <s:select id="transfereeInfos[%{#status.index}].guardianRelation" name="transfereeInfos[%{#status.index}].guardianRelation" value="%{transfereeInfos[%{#status.index}].guardianRelation}"
+								         <s:select id="transfereeInfos[%{#status.index}].guardianRelation" name="transfereeInfos[%{#status.index}].guardianRelation" value="%{transfereeInfos[#status.index].guardianRelation}"
 				                                     headerValue="Choose" headerKey="" list="guardianRelationMap"/>
 								
 								        </td>

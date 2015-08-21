@@ -222,7 +222,7 @@
 									</td>
 									<td class="blueborderfortd" align="center"><span
 										class="bold"><s:property
-												value="%{transfereeInfos[#ownerStatus.index].gardian}" /></span></td>
+												value="%{transfereeInfos[#ownerStatus.index].guardian}" /></span></td>
 												</tr>
 								</s:iterator>
 							</table>
