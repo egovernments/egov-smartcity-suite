@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="192"/>
+	<property name="ireport.y" value="295"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="district" class="java.lang.String"/>
 	<parameter name="applicationType" class="java.lang.String"/>
@@ -26,7 +26,7 @@
 	<background>
 		<band height="780" splitType="Stretch">
 			<rectangle>
-				<reportElement x="0" y="62" width="555" height="708" uuid="0e6d2994-c285-439a-bbb6-836a2e4ff230"/>
+				<reportElement x="0" y="62" width="555" height="689" uuid="0e6d2994-c285-439a-bbb6-836a2e4ff230"/>
 			</rectangle>
 		</band>
 	</background>
@@ -283,7 +283,7 @@
 	<pageFooter>
 		<band height="182" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement x="15" y="90" width="237" height="78" uuid="089a9d46-0c17-46f3-a998-7a7c2e981d06"/>
+				<reportElement x="12" y="81" width="237" height="65" uuid="089a9d46-0c17-46f3-a998-7a7c2e981d06"/>
 				<box topPadding="2"/>
 				<textElement verticalAlignment="Top">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
@@ -291,28 +291,28 @@
 				<textFieldExpression><![CDATA[$P{address}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="15" y="75" width="237" height="15" uuid="308016cd-d5f2-4be2-a19b-b9e9d6807f48"/>
+				<reportElement x="12" y="66" width="237" height="15" uuid="308016cd-d5f2-4be2-a19b-b9e9d6807f48"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{applicantName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="15" y="60" width="42" height="15" uuid="d0db9718-78a4-4a95-82cf-80f32b0af0d2"/>
+				<reportElement x="12" y="51" width="42" height="15" uuid="d0db9718-78a4-4a95-82cf-80f32b0af0d2"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[To,]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="329" y="124" width="194" height="15" uuid="0ffe897f-e02e-4bd2-862a-df68075566ef"/>
+				<reportElement x="326" y="115" width="194" height="15" uuid="0ffe897f-e02e-4bd2-862a-df68075566ef"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="329" y="109" width="194" height="15" uuid="6dc216b3-e96a-4034-83c5-2d471a08c27d"/>
+				<reportElement x="326" y="100" width="194" height="15" uuid="6dc216b3-e96a-4034-83c5-2d471a08c27d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
