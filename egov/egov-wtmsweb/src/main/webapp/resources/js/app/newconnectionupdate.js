@@ -39,6 +39,7 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function()
 {
+	
 	var status=$('#statuscode').val();
 	var wfstate=$('#wfstate').val();
 	var currentUser=$('#currentUser').val();
@@ -71,24 +72,10 @@ $(document).ready(function()
 			$("#button2").show();
 			
 		}
-		$('#cardHolderDiv').hide();
-		$('#bplCardHolderName').removeAttr('required');
-		$('#connectionCategorie').change(function(){
-			if ($('#connectionCategorie :selected').text().localeCompare("BPL") == 0) {  
-				$("#cardHolderDiv").show();
-		    	$("#bplCardHolderName").attr('required', 'required');
-		    	$("#bplCardHolderName").val();
-				/*$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').attr("required","required");
-				$(".check-text:contains('"+documentName+"')").parent().find('input:checkbox').prop('checked', true);*/
-			}
-			else  {
-				$("#cardHolderDiv").hide();
-		    	$("#bplCardHolderName").removeAttr('required');
-		     	/*$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').removeAttr('required');
-		     	$(".check-text:contains('"+other+"')").parent().find('input, textarea, button, select').removeAttr('required');
-		     	$(".check-text:contains('"+documentName+"')").parent().find('input:checkbox').prop('checked', false);*/
-			}
-		});
+		
+		
+		
+		
 		function validateDateRange(fromDate, toDate) {
 			if (fromDate != "" && toDate != "") {
 				var stsplit = fromDate.split("/");
@@ -161,6 +148,22 @@ $(document).ready(function()
 			 }
 			return;
 		});	
+		changeCategory();	
+		function changeCategory() {
+			if ($('#connectionCategorie :selected').text().localeCompare("BPL") == 0) {  
+				$("#cardHolderDiv").show();
+		    	$("#bplCardHolderName").attr('required', 'required');
+		    	$("#bplCardHolderName").val();
+			}
+			else  {
+				$("#cardHolderDiv").hide();
+		    	$("#bplCardHolderName").removeAttr('required');
+		    	$("#bplCardHolderName").val(null);
+			}
+		}
+		$('#connectionCategorie').change(function(){
+			changeCategory();
+		});
 		changeLabel();
 		function changeLabel() {
 			if ($('#usageType :selected').text().localeCompare("Lodges") == 0) {
