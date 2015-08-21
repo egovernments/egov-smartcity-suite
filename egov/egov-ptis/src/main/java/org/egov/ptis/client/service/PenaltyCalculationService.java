@@ -282,7 +282,7 @@ public class PenaltyCalculationService {
 		
 		Date earliestModificationDate = null;
 		
-		if (basicProperty.getIsMigrated().equals(PropertyTaxConstants.STATUS_MIGRATED)) {
+		if (!basicProperty.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_APPLICATION)) {
 			earliestModificationDate = propertyTaxUtil.getEarliestModificationDate(basicProperty.getUpicNo());
 			LOGGER.debug(" getPenaltyEffectiveDates, earliestModificationDate={}", earliestModificationDate); 
 		}

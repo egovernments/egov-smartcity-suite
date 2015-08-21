@@ -313,6 +313,7 @@ public class PropertyService {
         property.setEffectiveDate(currentInstall.getFromDate());
         property.setPropertySource(propertySource);
         property.setDocNumber(docnumber);
+        //TODO move this code out side this api as this dont have to be called every time we create property
         if (property.getApplicationNo() == null)
             property.setApplicationNo(applicationNumberGenerator.generate());
         LOGGER.debug("Exiting from createProperty");

@@ -230,8 +230,8 @@ public class BillService {
 				basicProperty.setBillCrtError(e.getMessage());
 				String msg = " Error while generating Demand bill via BulkBillGeneration Job " + modulo.toString();
 				String propertyType = " for "
-						+ (basicProperty.getIsMigrated().equals('Y') ? " migrated property "
-								: " non-migrated property ");
+						+ (basicProperty.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_APPLICATION) ? "  non-migrated property "
+                                : " migrated property");
 				LOGGER.error(msg + propertyType + basicProperty.getUpicNo(), e);
 			}
 		}

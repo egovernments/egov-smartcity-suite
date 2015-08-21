@@ -88,6 +88,10 @@
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<%@  include file="createPropertyForm.jsp"%>
+						
+					</tr>
+					<tr>
+					  <%@ include file="../common/DocumentUploadForm.jsp"%>
 					</tr>
 					<s:if test="%{propertyByEmployee == true}">
 						<tr>

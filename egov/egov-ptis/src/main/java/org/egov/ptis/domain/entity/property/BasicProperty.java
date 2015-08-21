@@ -198,9 +198,7 @@ public interface BasicProperty {
 
 	public void setPartNo(String partNo);
 
-	public Character getIsMigrated();
 
-	public void setIsMigrated(Character isMigrated);
 
 	public Boolean getAllChangesCompleted();
 
@@ -244,10 +242,7 @@ public interface BasicProperty {
 	
 	public void setRegdDocDate(Date regdDocDate);
 	
-	public String getSource();
-	
-	public void setSource(String source);
-	
+		
 	public List<PropertyOwnerInfo> getPropertyOwnerInfo();
 	
 	void setPropertyOwnerInfo(List<PropertyOwnerInfo> propertyOwnerSet);
@@ -271,5 +266,12 @@ public interface BasicProperty {
 	public void setPropertyOwnerInfoProxy(List<PropertyOwnerInfo> propertyOwnerInfoProxy);
 	
 	public User getPrimaryOwner();
+	
+	public Character getSource(); 
 
+	public void setSource(Character source);
+
+
+  
+	
 }

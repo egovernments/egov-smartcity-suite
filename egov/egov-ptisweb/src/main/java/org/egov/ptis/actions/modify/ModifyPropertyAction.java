@@ -1144,7 +1144,7 @@ public class ModifyPropertyAction extends WorkflowAction {
     public String modifyOrDataUpdateForm() {
         LOGGER.debug("Entered into modifyOrDataUpdateForm");
         String resultPage = "";
-        if (PROPERTY_MODIFY_REASON_DATA_UPDATE.equals(modifyRsn) && basicProp.getIsMigrated().equals('N')) {
+        if (PROPERTY_MODIFY_REASON_DATA_UPDATE.equals(modifyRsn) && basicProp.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_APPLICATION)) {
             setErrorMessage(" This is not a migrated property ");
             resultPage = RESULT_ERROR;
         } else

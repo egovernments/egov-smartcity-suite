@@ -1061,4 +1061,8 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_DEATH_CERTIFICATE_COPY_CODE = "6";
     
     public static final String THIRD_PARTY_CONTENT_TYPE = "application/{0}";
+    
+    public static final Character SOURCEOFDATA_APPLICATION='A';
+    public static final Character SOURCEOFDATA_MIGRATION='M';
+    public static final Character SOURCEOFDATA_DATAENTRY='D';
 }

@@ -238,7 +238,7 @@
 			</div>
 		</td>
 	</tr>
-   <%@ include file="../common/DocumentUploadForm.jsp"%>
+  
 </table>
 <script type="text/javascript">
 	function showDocumentManager() {

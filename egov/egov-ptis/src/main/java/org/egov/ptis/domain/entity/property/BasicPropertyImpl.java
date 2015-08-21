@@ -81,7 +81,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 	private Set<PtNotice> notices = new HashSet<PtNotice>();
 	private Set<RevisionPetition> objections = new HashSet<RevisionPetition>();
 	private Set<Recovery> recoveries = new HashSet<Recovery>();
-	private Character isMigrated = 'N';
+	private Character source = 'A';
 	private Set<PropertyDocs> propertyDocsSet = new HashSet<PropertyDocs>();
 	private Boolean allChangesCompleted;
 	private Character isBillCreated;
@@ -93,7 +93,6 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 	private String regdDocNo;
 	private Date regdDocDate;
 	private String vacantLandAssmtNo;
-	private String source;
 	private List<PropertyOwnerInfo> propertyOwnerInfo = new ArrayList<PropertyOwnerInfo>();
 	private List<PropertyOwnerInfo> propertyOwnerInfoProxy = new ArrayList<PropertyOwnerInfo>();
 	private boolean underWorkflow;
@@ -509,16 +508,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 		return returnProperty;
 	}
 
-	@Override
-	public Character getIsMigrated() {
-		return isMigrated;
-	}
-
-	@Override
-	public void setIsMigrated(Character isMigrated) {
-		this.isMigrated = isMigrated;
-	}
-
+	
 	@Override
 	public String getPartNo() {
 		return partNo;
@@ -662,15 +652,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 
 	}
 
-	@Override
-	public String getSource() {
-		return source;
-	}
-
-	@Override
-	public void setSource(String source) {
-		this.source = source;
-	}
+	
 
 	public boolean isUnderWorkflow() {
 		return underWorkflow;
@@ -737,6 +719,20 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 		} else if (!upicNo.equals(other.upicNo))
 			return false;
 		return true;
+	}
+
+	
+
+	@Override
+	public Character getSource() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setSource(Character source) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

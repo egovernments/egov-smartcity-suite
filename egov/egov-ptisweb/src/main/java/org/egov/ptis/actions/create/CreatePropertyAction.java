@@ -107,6 +107,7 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.utils.DateUtils;
@@ -154,7 +155,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Namespace("/create")
 @ResultPath("/WEB-INF/jsp/")
 @Results({ @Result(name = "new", location = "create/createProperty-new.jsp"),
+	@Result(name = "dataEntry", location = "create/createProperty-dataEntry.jsp"),
     @Result(name = "ack", location = "create/createProperty-ack.jsp"),
+    @Result(name = "dataEntry-ack", location = "create/createProperty-dataEntryAck.jsp"),
     @Result(name = "view", location = "create/createProperty-view.jsp"),
     @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp") })
 public class CreatePropertyAction extends WorkflowAction {
@@ -198,6 +201,7 @@ public class CreatePropertyAction extends WorkflowAction {
     private String corrPinCode;
     private String genWaterRate;
     private BasicProperty basicProp;
+    private String upicNo;
 
     @Autowired
     private PropertyService propService;
@@ -252,6 +256,7 @@ public class CreatePropertyAction extends WorkflowAction {
     private SecurityUtils securityUtils;
 
     private static final String CREATE_ACK_TEMPLATE = "createProperty_ack";
+	private static final String RESULT_DATAENTRY = "dataEntry";
 
     public CreatePropertyAction() {
         super();
@@ -292,6 +297,8 @@ public class CreatePropertyAction extends WorkflowAction {
                 + propOccId);
         final long startTimeMillis = System.currentTimeMillis();
         final BasicProperty basicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);
+        
+        addDemandAndCompleteDate(STATUS_DEMAND_INACTIVE, basicProperty, basicProperty.getPropertyMutationMaster());
         basicProperty.setUnderWorkflow(Boolean.TRUE);
         LOGGER.debug("create: BasicProperty after creatation: " + basicProperty);
         basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
@@ -704,7 +711,16 @@ public class CreatePropertyAction extends WorkflowAction {
          * entered for State Govt property or not if isfloorDetailsRequired -
          * true : no floor details created false : floor details created
          */
-        property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(), propTypeId,
+        
+        LOGGER.debug("BasicProperty: " + basicProperty + "\nExiting from createBasicProp");
+        return basicProperty;
+    }
+
+	private void addDemandAndCompleteDate(final Character status,
+			final BasicProperty basicProperty,
+			final PropertyMutationMaster propertyMutationMaster) {
+		
+		property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(), propTypeId,
                 propUsageId, propOccId, status, getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(),
                 getWallTypeId(), getWoodTypeId(), null);
         property.setStatus(status);
@@ -715,17 +731,17 @@ public class CreatePropertyAction extends WorkflowAction {
         else
             propCompletionDate = property.getPropertyDetail().getDateOfCompletion();
         basicProperty.setPropOccupationDate(propCompletionDate);
-
-        if (property != null && !property.getDocuments().isEmpty())
-            propService.processAndStoreDocument(property.getDocuments());
-
         if (propTypeMstr != null && propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
             property.setPropertyDetail(changePropertyDetail());
         basicProperty.addProperty(property);
+        if(basicProperty.getSource()==PropertyTaxConstants.SOURCEOFDATA_APPLICATION)
+        {
+        if (property != null && !property.getDocuments().isEmpty())
+            propService.processAndStoreDocument(property.getDocuments());
+        
         propService.createDemand(property, propCompletionDate);
-        LOGGER.debug("BasicProperty: " + basicProperty + "\nExiting from createBasicProp");
-        return basicProperty;
-    }
+        }
+	}
 
     /**
      * Changes the property details from {@link BuiltUpProperty} to
@@ -947,6 +963,49 @@ public class CreatePropertyAction extends WorkflowAction {
         reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
         return PRINTACK;
     }
+    
+    
+    
+    @SkipValidation
+    @Action(value = "/createProperty-dataEntry")
+    public String dataEntry() {
+        return RESULT_DATAENTRY;
+    }
+
+    
+    @ValidationErrorPage("dataEntry")
+    @Action(value = "/createProperty-createDataEntry")
+    public String save() {
+        LOGGER.debug("create: Property creation started, Property: " + property + ", zoneId: " + zoneId + ", wardId: "
+                + wardId + ", blockId: " + blockId + ", areaOfPlot: " + areaOfPlot + ", dateOfCompletion: "
+                + dateOfCompletion + ", taxExemptedReason: "
+                + ", propTypeId: " + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: "
+                + propOccId);
+        
+        final long startTimeMillis = System.currentTimeMillis();
+        final BasicProperty basicProperty = createBasicProp(PropertyTaxConstants.STATUS_ISACTIVE);
+        basicProperty.setUnderWorkflow(false);
+        basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_DATAENTRY);
+        basicProperty.setUpicNo(upicNo);
+        addDemandAndCompleteDate(PropertyTaxConstants.STATUS_ISACTIVE, basicProperty, basicProperty.getPropertyMutationMaster());
+        LOGGER.debug("create: BasicProperty after creatation: " + basicProperty);
+        basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
+       // basicPropertyService.applyAuditing(property);
+        basicPropertyService.persist(basicProperty);
+      //TODO update index by assesment no
+        //  propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        setBasicProp(basicProperty);
+        setAckMessage("Property Data for Assesment No "+upicNo+" Saved Successfully in the System  ");
+       // setApplicationNoMessage(" with application number : ");
+        final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+        LOGGER.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
+        LOGGER.debug("create: Property creation ended");
+        
+        return "dataEntry-ack";
+    }
+
+    
+     	
 
     @Override
     public PropertyImpl getProperty() {
@@ -1493,5 +1552,13 @@ public class CreatePropertyAction extends WorkflowAction {
     public String getAdditionalRule() {
         return NEW_ASSESSMENT;
     }
+
+	public String getUpicNo() {
+		return upicNo;
+	}
+
+	public void setUpicNo(String upicNo) {
+		this.upicNo = upicNo;
+	}
 
 }

@@ -162,7 +162,7 @@
 			<key column="id_basic_property"  />
 			<one-to-many class="org.egov.ptis.domain.entity.recovery.Recovery" />
 		</set>
-		<property name="isMigrated" column="ISMIGRATED" />
+		<property name="source" column="source" type='character' />
 		
 		<set name="propertyDocsSet" cascade="all-delete-orphan"
 			table="EGPT_PROPERTY_DOCS">
