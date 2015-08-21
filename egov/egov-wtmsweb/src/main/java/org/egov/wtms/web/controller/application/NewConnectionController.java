@@ -295,6 +295,7 @@ public class NewConnectionController extends GenericConnectionController {
                         waterConnectionDetails.getConnectionType().name()));
         model.addAttribute("cityName", waterTaxUtils.getCityName());
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
+        model.addAttribute("mode","ack");
         return new ModelAndView("application/application-success", "waterConnectionDetails", waterConnectionDetails);
 
     }

@@ -120,43 +120,5 @@
 		</div>					
 	</div>
 	<c:if test="${mode !='meterEntry'}">
-	<table class="table table-bordered">
-	<c:if test="${!waterConnectionDetails.applicationDocs.isEmpty()}">
-		<thead>
-			<tr>
-				<th><spring:message code="lbl.slno" /></th>
-				<th><spring:message code="lbl.documentname" /></th>
-				<th><spring:message code="lbl.documentnumber" /></th>
-				<th><spring:message code="lbl.documentdate" /></th>
-				<c:if test="${null!=mode}">
-					<th><spring:message code="lbl.files"/></th>
-				</c:if>
-			</tr>
-		</thead>
-		</c:if>
-		<c:choose>
-			<c:when test="${!waterConnectionDetails.applicationDocs.isEmpty()}">
-				<c:forEach items="${waterConnectionDetails.applicationDocs}" var="docs" varStatus="serialNo">
-					<tbody>
-						<tr>
-							<td><c:out value="${serialNo.count}"/></td>
-							<td><c:out value="${docs.documentNames.documentName}" /></td>
-							<td><c:out value="${docs.documentNumber}" /></td>
-							<td><fmt:formatDate pattern="dd/MM/yyyy" value="${docs.documentDate}" var="docsDate"/><c:out value="${docsDate}" /></td>
-							<c:if test="${null!=mode}">
-							<td><c:forEach items="${docs.getSupportDocs()}" var="file">
-									<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=Water Tax Management" target="_blank"> 
-									<c:out value="${file.fileName}"/></a>
-								</c:forEach>
-							</td>
-							</c:if>
-						</tr>
-					</tbody>
-				</c:forEach>
-			</c:when>
-			<c:otherwise>
-				<div class="col-md-3 col-xs-6 add-margin">No Documents found</div>
-			</c:otherwise>
-		</c:choose>
-	</table>
+		<jsp:include page="documentdetails-view.jsp"></jsp:include> 
 	</c:if>
