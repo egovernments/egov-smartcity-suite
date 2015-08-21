@@ -204,8 +204,8 @@ $(document).ready(function()
 					return false;			
 				}
 				else{
-					/*validateWorkFlowApprover(action);
-			    	document.forms[0].submit();	*/
+					validateWorkFlowApprover(action);
+			    	document.forms[0].submit();	
 				}
 			}
 		}
