@@ -108,26 +108,25 @@ public class WaterTaxCollection extends TaxCollection {
     @Override
     public void updateDemandDetails(final BillReceiptInfo billRcptInfo) {
         totalAmount = billRcptInfo.getTotalAmount();
-        LOGGER.debug("updateDemandDetails : Updating Demand Details Started, billRcptInfo : " + billRcptInfo);
         final EgDemand demand = getCurrentDemand(Long.valueOf(billRcptInfo.getBillReferenceNum()));
         final String indexNo = ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader()
                 .getConsumerCode();
-        LOGGER.info("updateDemandDetails : Demand before proceeding : " + demand);
-        LOGGER.info("updateDemandDetails : collection back update started for property : " + indexNo
-                + " and receipt event is " + billRcptInfo.getEvent() + ". Total Receipt amount is." + totalAmount
-                + " with receipt no." + billRcptInfo.getReceiptNum());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("updateDemandDetails : Demand before proceeding : " + demand);
+            LOGGER.debug("updateDemandDetails : collection back update started for property : " + indexNo
+                    + " and receipt event is " + billRcptInfo.getEvent() + ". Total Receipt amount is." + totalAmount
+                    + " with receipt no." + billRcptInfo.getReceiptNum());
+        }
 
         if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED))
             updateCollForRcptCreate(demand, billRcptInfo);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("updateDemandDetails : Demand after processed : " + demand);
 
-        LOGGER.info("updateDemandDetails : Demand after processed : " + demand);
-        LOGGER.debug("updateDemandDetails : Updating Demand Details Finished...");
-
-        LOGGER.debug("WaterConnectionDetails : Updating WaterConnectionDetails status and transition started");
         updateWaterConnectionDetails(demand);
-        LOGGER.debug("WaterConnectionDetails : Updating WaterConnectionDetails status and transition finished");
     }
 
+    @Transactional
     public void updateWaterConnectionDetails(final EgDemand demand) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .getWaterConnectionDetailsByDemand(demand);
@@ -150,31 +149,26 @@ public class WaterTaxCollection extends TaxCollection {
     }
 
     private void updateCollForRcptCreate(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
-        LOGGER.debug("updateCollForRcptCreate : Updating Collection Started For Demand : " + demand
-                + " with BillReceiptInfo - " + billRcptInfo);
-        LOGGER.info("updateCollForRcptCreate : Total amount collected : " + totalAmount);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("updateCollForRcptCreate : Updating Collection Started For Demand : " + demand
+                    + " with BillReceiptInfo - " + billRcptInfo);
         // Not updating demand amount collected for new connection as per the discussion.
         /*
          * demand.addCollected(totalAmount); if (demand.getMinAmtPayable() != null &&
          * demand.getMinAmtPayable().compareTo(BigDecimal.ZERO) > 0) demand.setMinAmtPayable(BigDecimal.ZERO);
          */
         updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo);
-        LOGGER.debug("updateCollForRcptCreate : Updating Demand For Collection finished...");
     }
 
     private void updateDemandDetailForReceiptCreate(final Set<ReceiptAccountInfo> accountDetails, final EgDemand demand,
             final BillReceiptInfo billRcptInfo) {
-        LOGGER.debug("Entering method saveCollectionDetails");
 
-        LOGGER.info("saveCollectionDetails : Start get demandDetailList");
         final StringBuffer query = new StringBuffer(
                 "select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ")
                         .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
                         .append("WHERE dmdet.egDemand.id = :demand");
         final List<EgDemandDetails> demandDetailList = getCurrentSession().createQuery(query.toString())
                 .setLong("demand", demand.getId()).list();
-
-        LOGGER.info("saveCollectionDetails : End get demandDetailList");
 
         final Map<String, Map<String, EgDemandDetails>> installmentWiseDemandDetailsByReason = new HashMap<String, Map<String, EgDemandDetails>>();
         Map<String, EgDemandDetails> demandDetailByReason = null;
@@ -195,11 +189,8 @@ public class WaterTaxCollection extends TaxCollection {
                 } else
                     installmentWiseDemandDetailsByReason.get(installmentDesc)
                             .put(dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
-            } else
-                LOGGER.info("saveCollectionDetails - demand detail amount is zero " + dmdDtls);
-
-        LOGGER.info("saveCollectionDetails - installment demandDetails size = "
-                + installmentWiseDemandDetailsByReason.size());
+            } else if (LOGGER.isDebugEnabled())
+                LOGGER.debug("saveCollectionDetails - demand detail amount is zero " + dmdDtls);
 
         EgDemandDetails demandDetail = null;
 
@@ -215,12 +206,12 @@ public class WaterTaxCollection extends TaxCollection {
 
                     persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
                             billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
-                    LOGGER.info("Persisted demand and receipt details for tax : " + reason + " installment : "
-                            + instDesc + " with receipt No : " + billRcptInfo.getReceiptNum() + " for Rs. "
-                            + rcptAccInfo.getCrAmount());
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("Persisted demand and receipt details for tax : " + reason + " installment : "
+                                + instDesc + " with receipt No : " + billRcptInfo.getReceiptNum() + " for Rs. "
+                                + rcptAccInfo.getCrAmount());
                 }
 
-        LOGGER.debug("Exiting method saveCollectionDetails");
     }
 
     @Override
@@ -229,13 +220,11 @@ public class WaterTaxCollection extends TaxCollection {
     }
 
     public EgDemand getCurrentDemand(final Long billId) {
-        LOGGER.debug("Entered into getCurrentDemand");
 
         final EgBill egBill = egBillDAO.findById(billId, false);
         final EgDemand egDemand = connectionDemandService.getDemandByInstAndApplicationNumber(connectionDemandService
                 .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date()),
                 egBill.getConsumerId());
-        LOGGER.debug("Exiting from getCurrentDemand");
         return egDemand;
     }
 

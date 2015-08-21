@@ -110,7 +110,7 @@ public class State extends AbstractAuditable {
     @JoinColumn(name = "OWNER_USER")
     private User ownerUser;
 
-    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, mappedBy = "state")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "state")
     @OrderBy("id")
     private List<StateHistory> history = Collections.emptyList();
 
