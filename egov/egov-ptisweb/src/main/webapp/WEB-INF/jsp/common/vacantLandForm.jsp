@@ -85,7 +85,7 @@
     
    <tr>
 		<td colspan="6"><br />
-			<table class="tablebottom" style="width: 100%;">
+			<table class="tablebottom" style="width: 100%;" id="boundaryData">
 				<tbody>
 					<tr>
 						<th class="bluebgheadtd"><s:text name="North" /></th>
@@ -103,7 +103,6 @@
 						<td class="blueborderfortd" align="center"><s:textfield	name="southBoundary" id="southBoundary" maxlength="64"
 								value="%{southBoundary}" /></td>
 					</tr>
-
 				</tbody>
 			</table>
 			</td>

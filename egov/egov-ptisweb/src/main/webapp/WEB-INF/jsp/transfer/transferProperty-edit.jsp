@@ -267,65 +267,7 @@
 							<s:textfield name="mutationFee" id="mutationFee" readOnly="true"/>
 						</td>
 					</tr>
-					
-					<tr>
-						<td colspan="5">
-							<div class="headingsmallbg">
-								<s:text name="docsectiontitle" /> 
-							</div>
-						</td>
-					</tr>
-
-                     <tr>
-						<td colspan="5">
-						<table class="tablebottom" width="100%" border="0" cellpadding="0" cellspacing="0">
-							<tbody>
-								<tr>
-									<th class="bluebgheadtd"><s:text name="doctable.docenclosed" /></th>
-									<th class="bluebgheadtd"><s:text name="doctable.doctype" /></th>
-									<th class="bluebgheadtd"><s:text name="doctable.docdate" /></th>
-									<th class="bluebgheadtd"><s:text name="doctable.docdetails" /></th>
-									<th class="bluebgheadtd">Files Attached</th>
-									<th class="bluebgheadtd">Upload File</th>
-								</tr>
-								<s:iterator value="documents" status="docstatus" var="document">
-								<tr>
-									<td class="blueborderfortd" align="center">
-									  <s:checkbox name="documents[%{#docstatus.index}].enclosed"/>
-									</td>
-									<td class="blueborderfortd" style="text-align:left">
-									  <s:property value="type.name"/><s:if test="mandatory"><span class="mandatory1">*</span></s:if>
-									  <s:hidden name="documents[%{#docstatus.index}].type.id" value="%{type.id}"></s:hidden>
-									</td>
-									<td class="blueborderfortd" align="center">
-									  <s:date name="docDate" var="documentDate" format="dd/MM/yyyy" />
-									  <s:textfield name="documents[%{#docstatus.index}].docDate" value="%{documentDate}" cssClass='datepicker' maxlength="10"/>
-									</td>
-									<td class="blueborderfortd" align="center">
-										<s:textarea name="documents[%{#docstatus.index}].description" cols="40" rows="2"></s:textarea>
-									</td>
-									<td class="blueborderfortd" style="text-align:left">
-									<c:forEach items="${document.files}" var="file">
-										<li><a target="_blank" href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PTIS">${file.fileName}</a></li>
-									</c:forEach>
-									</td>
-									<td class="blueborderfortd" align="center">
-										<s:file name="documents[%{#docstatus.index}].uploads" cssClass="button"/> 
-									</td>
-								</tr>
-								</s:iterator>
-							</tbody>
-						</table>
-					</td>
-				 </tr>
-
-				</table>
-        		<%-- <%@ include file="../workflow/property-workflow.jsp" %>   --%>
-       			<%--  <div class="buttonbottom">
-					<s:submit value="Forward" id="Mutation:Forward" name="Transfer" cssClass="buttonsubmit" align="center" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
-					<input type="reset" value="Cancel" class="button" align="center" />
-					<input type="button" value="Close" class="button" align="center" onClick="return confirmClose();" />
-				</div> --%>
+				<%@ include file="../common/DocumentUploadForm.jsp"%>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>

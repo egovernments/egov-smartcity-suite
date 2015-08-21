@@ -100,7 +100,7 @@
 				onblur="validNumber(this);checkZero(this);"></s:textfield></td>
 	</tr>
 	
-	<tr>
+	<tr id="superStructureRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
 		<td class="bluebox">
@@ -112,7 +112,7 @@
 				name="propertyDetail.siteOwner" id="propertyDetail.siteOwner"></s:textfield></td>
 	</tr>
 	
-	<tr>
+	<tr class="bpddetailsheader">
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
 		<td class="bluebox">

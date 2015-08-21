@@ -1,3 +1,43 @@
+/*#-------------------------------------------------------------------------------
+#  * eGov suite of products aim to improve the internal efficiency,transparency, 
+#    accountability and the service delivery of the government  organizations.
+# 
+#     Copyright (C) <2015>  eGovernments Foundation
+# 
+#     The updated version of eGov suite of products as by eGovernments Foundation 
+#     is available at http://www.egovernments.org
+# 
+#     This program is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     any later version.
+# 
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+# 
+#     You should have received a copy of the GNU General Public License
+#     along with this program. If not, see http://www.gnu.org/licenses/ or 
+#     http://www.gnu.org/licenses/gpl.html .
+# 
+#     In addition to the terms of the GPL license to be adhered to in using this
+#     program, the following additional terms are to be complied with:
+# 
+# 	1) All versions of this program, verbatim or modified must carry this 
+# 	   Legal Notice.
+# 
+# 	2) Any misrepresentation of the origin of the material is prohibited. It 
+# 	   is required that all modified versions of this material be marked in 
+# 	   reasonable ways as different from the original version.
+# 
+# 	3) This license does not grant any rights to any user of the program 
+# 	   with regards to rights under trademark law for use of the trade names 
+# 	   or trademarks of eGovernments Foundation.
+# 
+#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+#  
+#-------------------------------------------------------------------------------*/
 /**
  * Includes all the validations for create property
  */
@@ -19,21 +59,45 @@ function enableFieldsForPropType() {
 	var propType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
 	if (propType != "select") {
 		if (propType == "Vacant Land") {
+			jQuery("#floorDetails tr").find('input, select').each(function() {
+				if (jQuery(this).is("select")) {
+					jQuery(this).prop('selectedIndex', 0);
+				}
+				else {
+				    jQuery(this).val("");
+				}
+			});
+			jQuery("#floorDetails tr").each(function(){
+				rIndex = getRow(this).rowIndex;
+				var tbl= document.getElementById('floorDetails');
+				if(rIndex > 1) {
+					tbl.deleteRow(rIndex);
+				}
+			});
 			jQuery('tr.floordetails').hide();
 			jQuery('tr.vacantlanddetaills').show();
 			jQuery('tr.construction').hide();
 			jQuery('tr.amenities').hide();
 			jQuery('#appurtenantRow').hide();
+			jQuery('#areaOfPlot').val("");
 			jQuery('tr.extentSite').hide();
 			jQuery('tr.appurtenant').hide();
+			jQuery('tr.superStructureRow').hide();
+			jQuery('tr.bpddetailsheader').hide();
+			jQuery('tr.bpddetails').hide();
 		} else {
 			jQuery('tr.floordetails').show();
+			jQuery("#vacantLandTable tr, #boundaryData tr").find('input').each(function() {
+				jQuery(this).val("");
+			});
 			jQuery('tr.vacantlanddetaills').hide();
 			jQuery('tr.construction').show();
 			jQuery('tr.amenities').show();
 			jQuery('#appurtenantRow').hide();
 			jQuery('tr.extentSite').show();
 			jQuery('tr.appurtenant').show();
+			jQuery('tr.superStructureRow').show();
+			jQuery('tr.bpddetailsheader').show();
 		}
 	}
 }
@@ -1041,6 +1105,9 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 			jQuery('#appurtenantRow').hide();
 			jQuery('tr.extentSite').hide();
 			jQuery('tr.appurtenant').hide();
+			jQuery('tr.superStructureRow').hide();
+			jQuery('tr.bpddetailsheader').hide();
+			jQuery('tr.bpddetails').hide();
 		} else {
 			jQuery('tr.floordetails').show();
 			jQuery('tr.vacantlanddetaills').hide();
@@ -1049,6 +1116,9 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 			jQuery('#appurtenantRow').hide();
 			jQuery('tr.extentSite').show();
 			jQuery('tr.appurtenant').show();
+			jQuery('tr.superStructureRow').show();
+			jQuery('tr.bpddetailsheader').show();
+			jQuery('tr.bpddetails').show();
 			if (appurtenantLandChecked == 'true') {
 				jQuery('tr.vacantlanddetaills').show();
 				jQuery('tr.extentSite').hide();
