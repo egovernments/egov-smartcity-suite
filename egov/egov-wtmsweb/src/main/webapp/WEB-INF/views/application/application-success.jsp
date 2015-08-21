@@ -65,7 +65,7 @@
 								<%-- <spring:message code="msg.sussess.forward" /><br>${approvalUser} --%>
 							</c:when>
 							<c:when test="${waterConnectionDetails.state.value== 'Rejected' }">
-							<div><spring:message code="msg.newapplication.rejection.success" /></div>
+							<div><spring:message code="msg.newapplication.rejection.success" />${approverName}</div>
 							</c:when>
 							<c:when test="${waterConnectionDetails.connectionStatus == 'INACTIVE' }">
 							<div><spring:message code="msg.newapplication.cancel.success" /></div>

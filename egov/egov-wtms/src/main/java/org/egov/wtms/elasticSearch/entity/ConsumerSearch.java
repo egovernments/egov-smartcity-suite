@@ -32,9 +32,9 @@ public class ConsumerSearch implements Indexable {
     private final Date createdDate;
     @Searchable(name = "applicationcode", group = Searchable.Group.CLAUSES)
     private String applicationCode;
-    @Searchable(group = Searchable.Group.CLAUSES)
+    @Searchable(name = "status",group = Searchable.Group.CLAUSES)
     private String status;
-    @Searchable(group = Searchable.Group.CLAUSES)
+    @Searchable(name = "connectiontype",group = Searchable.Group.CLAUSES)
     private String connectionType;
 
     public ConsumerSearch(final String consumerCode, final String mobileNumber, final String usageType,

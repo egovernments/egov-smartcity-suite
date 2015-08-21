@@ -46,114 +46,120 @@
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
-			
-<form:form role="form" method="post"
-	modelAttribute="waterConnectionDetails"
-	id="editmeterWaterConnectionform"
-	cssClass="form-horizontal form-groups-bordered">
-	<div class="page-container" id="page-container">
-		<form:hidden id="mode" path="" name="mode" value="${mode}" />
-		<form:hidden id="meterReadingpriviousObj" path=""
-			value="${meterReadingpriviousObj}" />
-			<form:hidden id="meterReadingCurrentObj" path=""
-			value="${meterReadingCurrentObj}" />
-			currentInstallmentExist
-<input type="hidden" id="currentInstallmentExist"  name="currentInstallmentExist"
-			value="${currentInstallmentExist}" />
-			<input type="hidden" id="consumerCode"  name="consumerCode"
-			value="${consumerCode}" />
-		<form:hidden path="id" />
-		<div class="panel-heading">
-			<div class="panel-title text-center no-float">
-				<strong>${message}</strong>
-			</div>
-		</div>
-		
-			<div class="panel-heading">
-				<div class="panel-title">
-					<spring:message code="lbl.basicdetails" />
+
+			<form:form role="form" method="post"
+				modelAttribute="waterConnectionDetails"
+				id="editmeterWaterConnectionform"
+				cssClass="form-horizontal form-groups-bordered">
+				<div class="page-container" id="page-container">
+					<form:hidden id="mode" path="" name="mode" value="${mode}" />
+					<form:hidden id="meterReadingpriviousObj" path=""
+						value="${meterReadingpriviousObj}" />
+					<form:hidden id="meterReadingCurrentObj" path=""
+						value="${meterReadingCurrentObj}" />
+
+					<input type="hidden" id="currentInstallmentExist"
+						name="currentInstallmentExist" value="${currentInstallmentExist}" />
+					<input type="hidden" id="consumerCode" name="consumerCode"
+						value="${consumerCode}" />
+					<form:hidden path="id" />
+					<div class="panel-heading">
+						<div class="panel-title text-center no-float">
+							<strong>${message}</strong>
+						</div>
+					</div>
+
+					<div class="panel-heading">
+						<div class="panel-title">
+							<spring:message code="lbl.basicdetails" />
+						</div>
+					</div>
+					<jsp:include page="commonappdetails-view.jsp" />
+					<jsp:include page="connectiondetails-view.jsp" />
+
+					<div class="panel-heading">
+						<div class="panel-title">
+							<spring:message code="lbl.meterbasicdetails" />
+						</div>
+						<c:if test="${!currentInstallmentExist}">
+							<table id="meterDetailprevioussid">
+								<tr>
+
+									<td class="col-sm-3 table-div-column"><spring:message
+											code="lbl.meterread.previous" /></td>
+									<td class="col-sm-3 add-margin"><c:if
+											test="${meterReadingpriviousObj!=null}">
+											<input class="form-control" type="" id="previousreading"
+												name="previousreading"
+												value="${meterReadingpriviousObj.currentReading}" min="3"
+												maxlength="50" readonly="readonly" required="required" />
+										</c:if></td>
+
+									<td><c:if
+											test="${meterReadingpriviousObj.currentReadingDate!=null}">
+											<fmt:formatDate
+												value="${meterReadingpriviousObj.currentReadingDate}"
+												var="historyDate" pattern="dd/MM/yyyy" />
+											<input type="hidden" id="previousreadingDate"
+												class="form-control" data-date-end-date="0d"
+												name="previousreadingDate" value="${historyDate}" />
+										</c:if></td>
+								</tr>
+							</table>
+
+
+
+							<div class="form-group">
+								<table id="meterDetailsid">
+									<tr>
+										<td class="col-sm-3 table-div-column"><spring:message
+												code="lbl.meterread.currentReading" /> (<span
+											class="mandatory"></span> )</td>
+										<td class="col-sm-3 table-div-column"><spring:message
+												code="lbl.meterread.currentReadingdate" />(<span
+											class="mandatory"></span> )</td>
+									</tr>
+									<tr>
+										<td class="col-sm-3 add-margin"><form:input
+												class="form-control" id="metercurrentReading"
+												name="metercurrentReading"
+												path="${meterReadingCurrentObj.currentReading}" min="3"
+												maxlength="50" required="required" /> <form:errors path=""
+												cssClass="add-margin error-msg" /></td>
+										<td class="col-sm-3 add-margin"><form:input
+												class="form-control datepicker today"
+												data-date-end-date="0d" id="metercurrentReadingDate"
+												name="metercurrentReadingDate"
+												path="${meterReadingCurrentObj.currentReadingDate}"
+												required="required" /> <form:errors path=""
+												cssClass="add-margin error-msg" /></td>
+										<%-- <form:hidden id="meterConnectionid" path="" value="${meterConnection.id}" />  --%>
+									</tr>
+								</table>
+
+							</div>
+						</c:if>
+					</div>
+					<div class="row">
+						<div class="text-center">
+							<button type="submit" class="btn btn-primary" id="submitButtonId"
+								onclick="return valiateReading();">
+								<spring:message code="lbl.submit" />
+							</button>
+
+							<c:if test="${currentInstallmentExist}">
+								<button type="submit" class="btn btn-primary"
+									onclick="return getUrlToPring()">Print Demand Notice</button>
+							</c:if>
+							<a href="javascript:void(0);" class="btn btn-primary"
+								onclick="self.close()"> <spring:message code='lbl.close' />
+							</a>
+						</div>
+					</div>
 				</div>
-			</div>
-			<jsp:include page="commonappdetails-view.jsp" />
-			<jsp:include page="connectiondetails-view.jsp" />
-
-	<div class="panel-heading">
-				<div class="panel-title">
-					<spring:message code="lbl.meterbasicdetails"/>
-				</div>					
-	<c:if test="${!currentInstallmentExist}">		
-	<table id="meterDetailprevioussid">
-			<tr>
-			
-			<td class="col-sm-3 table-div-column"><spring:message
-				code="lbl.meterread.previous"/> 
-				</td>
-				<td class="col-sm-3 add-margin">
-					<c:if test="${meterReadingpriviousObj!=null}">
-				<input class="form-control" type="" id="previousreading" name="previousreading"
-						value="${meterReadingpriviousObj.currentReading}"  min="3" maxlength="50" readonly="readonly"
-						required="required" /> </c:if></td>
-
-					<td>
-					<c:if test="${meterReadingpriviousObj.currentReadingDate!=null}">
-					<fmt:formatDate value="${meterReadingpriviousObj.currentReadingDate}" var="historyDate" pattern="dd/MM/yyyy" />
-					<input type="hidden" id="previousreadingDate" class="form-control" data-date-end-date="0d"  name="previousreadingDate"
-					value="${historyDate}" />
-					</c:if></td>
-			</tr>
-		</table>
-
-
-
-	<div class="form-group">
-		<table id="meterDetailsid">
-			<tr>
-				<td class="col-sm-3 table-div-column"><spring:message
-				code="lbl.meterread.currentReading"/> (<span
-					class="mandatory"></span> )
-				</td>
-				<td class="col-sm-3 table-div-column"><spring:message
-				code="lbl.meterread.currentReadingdate"/>(<span
-					class="mandatory"></span> )
-				</td>
-			</tr>
-			<tr>
-				<td class="col-sm-3 add-margin"><form:input
-						class="form-control" id="metercurrentReading"
-						name="metercurrentReading" path="${meterReadingCurrentObj.currentReading}" min="3" maxlength="50"
-						required="required" /> <form:errors path=""
-						cssClass="add-margin error-msg" /></td>
-				<td class="col-sm-3 add-margin"><form:input
-						class="form-control datepicker today" data-date-end-date="0d"
-						id="metercurrentReadingDate" name="metercurrentReadingDate"
-						path="${meterReadingCurrentObj.currentReadingDate}" required="required" /> <form:errors path=""
-						cssClass="add-margin error-msg" /></td>
-				<%-- <form:hidden id="meterConnectionid" path="" value="${meterConnection.id}" />  --%>
-			</tr>
-		</table>
-		
-	</div></c:if>
-</div>
-	<div class="row">
-		<div class="text-center">
-			<button type="submit" class="btn btn-primary" id="submitButtonId"
-				onclick="return valiateReading();">
-				<spring:message code="lbl.submit" />
-			</button>
-			
-			<c:if test="${currentInstallmentExist}">
-			<button type="submit" class="btn btn-primary" onclick="return getUrlToPring()">
-					Print Demand Notice
-			</button></c:if>
-			<a href="javascript:void(0);" class="btn btn-primary"
-				onclick="self.close()"> <spring:message code='lbl.close' />
-			</a>
+			</form:form>
 		</div>
 	</div>
-	</div>
-</form:form>
-</div>
-</div>
 </div>
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
@@ -161,64 +167,61 @@
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 
 <script>
-var currentInstallmentExist=$('#currentInstallmentExist').val();
-if(currentInstallmentExist){
-	$('#submitButtonId').hide();
-}
-function getUrlToPring()
-{
-	var consumerCode=$('#consumerCode').val();
-	var url = '/wtms/application/meterdemandnotice?pathVar='+ consumerCode;
-	$('#editmeterWaterConnectionform').attr('method', 'get');
-	$('#editmeterWaterConnectionform').attr('action', url);
-	window.location = url;
-}
-function valiateReading(){
-var previousReading = $('#previousreading').val();
-var currentReading = $('#metercurrentReading').val();
-var currentMeterDate=$('#metercurrentReadingDate').val();
-var previousMeterDate=$('#previousreadingDate').val();
-if($('#metercurrentReading').val()=='')
-	{
-	alert('Current Meter Reading is required');
-	return false;
+	var currentInstallmentExist = $('#currentInstallmentExist').val();
+	if (currentInstallmentExist) {
+		$('#submitButtonId').hide();
 	}
-if((currentReading-previousReading)<0)
-	{
-	alert('Current Meter Reading should not be less than Previous Meter Reading');
-	$('#metercurrentReading').val('');
-	return false;
+	function getUrlToPring() {
+		var consumerCode = $('#consumerCode').val();
+		var url = '/wtms/application/meterdemandnotice?pathVar=' + consumerCode;
+		$('#editmeterWaterConnectionform').attr('method', 'get');
+		$('#editmeterWaterConnectionform').attr('action', url);
+		window.location = url;
 	}
-	if(currentMeterDate !=undefined && previousMeterDate!= undefined){
-	 if(!validateDateRange( previousMeterDate,currentMeterDate)) {
-		alert("Entered Metered Date allready present in System");
-		$('#metercurrentReadingDate').val('');
-		return false;			
-	} 
-}
-else{
-	document.forms[0].submit;
-	return true;
-}
-}
-
-function validateDateRange(fromDate, toDate) {
-	if (fromDate != "" && toDate != "") {
-		var stsplit = fromDate.split("/");
-		var ensplit = toDate.split("/");
-		
-		startDate = Date.parse(stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2]);
-		endDate = Date.parse(ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2]);
-		
-        // Check the date range, 86400000 is the number of milliseconds in one day
-        var difference = (endDate - startDate) / (86400000 * 7);
-        if (difference <= 0) {
+	function valiateReading() {
+		var previousReading = $('#previousreading').val();
+		var currentReading = $('#metercurrentReading').val();
+		var currentMeterDate = $('#metercurrentReadingDate').val();
+		var previousMeterDate = $('#previousreadingDate').val();
+		if ($('#metercurrentReading').val() == '') {
+			alert('Current Meter Reading is required');
 			return false;
-			} 
-        else {
+		}
+		if ((currentReading - previousReading) < 0) {
+			alert('Current Meter Reading should not be less than Previous Meter Reading');
+			$('#metercurrentReading').val('');
+			return false;
+		}
+		if (currentMeterDate != undefined && previousMeterDate != undefined) {
+			if (!validateDateRange(previousMeterDate, currentMeterDate)) {
+				alert("Entered Metered Date allready present in System");
+				$('#metercurrentReadingDate').val('');
+				return false;
+			}
+		} else {
+			document.forms[0].submit;
 			return true;
-		}	
-    }
-    return true;		
-}
+		}
+	}
+
+	function validateDateRange(fromDate, toDate) {
+		if (fromDate != "" && toDate != "") {
+			var stsplit = fromDate.split("/");
+			var ensplit = toDate.split("/");
+
+			startDate = Date.parse(stsplit[1] + "/" + stsplit[0] + "/"
+					+ stsplit[2]);
+			endDate = Date.parse(ensplit[1] + "/" + ensplit[0] + "/"
+					+ ensplit[2]);
+
+			// Check the date range, 86400000 is the number of milliseconds in one day
+			var difference = (endDate - startDate) / (86400000 * 7);
+			if (difference <= 0) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+		return true;
+	}
 </script>

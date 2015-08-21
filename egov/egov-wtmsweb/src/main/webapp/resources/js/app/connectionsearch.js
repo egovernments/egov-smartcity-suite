@@ -61,17 +61,24 @@ jQuery(document).ready(function($) {
 			           {title : 'Usage Type',data : 'resource.clauses.usage'},
 			           {title : 'Total Due',data : 'resource.clauses.totaldue'},
 			           {title : 'Status',data : 'resource.clauses.status'},
-			           {title : 'Actions',
+			           {title : 'conntype',data : 'resource.clauses.connectiontype'},
+				       {title : 'Actions',
 			        	   render : function(data,type,full) {
-									if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined && full.resource.clauses.applicationcode == 'ADDNLCONNECTION') {
-										if (full.resource.clauses.status == 'ACTIVE') {
-										if (userrole == "CSC Operator") {
-										return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option><option value="8">Enter Meter Reading</option></select>');
-										} else if (userrole == "ULB Operator") {
+									if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
+											(full.resource.clauses.applicationcode == 'ADDNLCONNECTION' || full.resource.clauses.applicationcode == 'CHANGEOFUSE')) {
+										if (full.resource.clauses.status == 'ACTIVE' ) {
+										if (userrole == "CSC Operator" ) {
+										return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
+										}
+										
+										else if (userrole == "ULB Operator" &&  full.resource.clauses.connectiontype =='METERED') {
 											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="8">Enter Meter Reading</option></select>');
-										}													
+										}
+										else if (userrole == "ULB Operator" &&  full.resource.clauses.connectiontype !='METERED') {
+											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option></select>');
+										}
 										else if(userrole=='Super User'){
-											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option><option value="8">Enter Meter Reading</option></select>');
+											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
 											
 										}
 									} else if ((userrole == 'CSC Operator' || userrole == 'ULB Operator' )
@@ -86,13 +93,18 @@ jQuery(document).ready(function($) {
 										&& full.resource.clauses.applicationcode == 'NEWCONNECTION') {
 									if (full.resource.clauses.status == 'ACTIVE') {
 										if (userrole == "CSC Operator") {
-											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option><option value="8">Enter Meter Reading</option></select>');
-										} else if (userrole == "ULB Operator") {
+											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
+										}
+										else if (userrole == "ULB Operator" && full.resource.clauses.connectiontype =='METERED' ) {
 											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="8">Enter Meter Reading</option></select>');
 										}
-										else if(userrole=='Super User'){
-											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option><option value="8">Enter Meter Reading</option></select>');
+										else if (userrole == "ULB Operator" && full.resource.clauses.connectiontype !='METERED') {
+											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option></select>');
 										}
+										else if(userrole=='Super User'){
+											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
+										}
+										
 									} else if ((userrole == 'CSC Operator' )&& full.resource.clauses.status == 'DISCONNECTED') {
 										return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">Reconnection</option></select>');
 									}
