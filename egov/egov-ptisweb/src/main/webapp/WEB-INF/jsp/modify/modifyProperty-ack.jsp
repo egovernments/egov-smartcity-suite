@@ -89,6 +89,7 @@
 						</tr>
 					</table>
 			</div>
+			<s:hidden name="modifyRsn" value="%{modifyRsn}"/>
 			<div class="buttonbottom" align="center">
 				<s:if test="%{userDesgn.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_CLERK_DESGN)}">
 					<s:submit value="Print" name="PrintAck" id="PrintAck"  method="printAck" cssClass="buttonsubmit" onclick="return onSubmit();" />

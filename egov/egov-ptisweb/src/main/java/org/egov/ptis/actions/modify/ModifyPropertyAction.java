@@ -314,7 +314,11 @@ public class ModifyPropertyAction extends WorkflowAction {
 		PropertyImpl propertyImpl = null;
 		if (basicProp.isUnderWorkflow() && !fromInbox) {
 			List<String> msgParams = new ArrayList<String>();
-			msgParams.add("Property Alter/Addition");
+			if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn)) {
+			    msgParams.add("Property Bifurcation");
+			} else {
+			    msgParams.add("Property Alter/Addition");
+			}
 			setWfErrorMsg(getText("wf.pending.msg", msgParams));
 			target = TARGET_WORKFLOW_ERROR;
 		} else {
@@ -610,8 +614,6 @@ public class ModifyPropertyAction extends WorkflowAction {
         LOGGER.debug("reject: Property: " + propertyModel);
         final BasicProperty basicProperty = propertyModel.getBasicProperty();
         setBasicProp(basicProperty);
-        if (REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn))
-            propertyModel.setStatus(STATUS_ISHISTORY);
         LOGGER.debug("reject: BasicProperty: " + basicProperty);
         transitionWorkFlow(propertyModel);
         propertyImplService.update(propertyModel);
@@ -1179,6 +1181,7 @@ public class ModifyPropertyAction extends WorkflowAction {
         ackBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(propWF.getState().getCreatedDate()));
         final Date noticeDueDate = DateUtils.add(propWF.getState().getCreatedDate(), Calendar.DAY_OF_MONTH, 15);
         ackBean.setNoticeDueDate(noticeDueDate);
+        ackBean.setCreationReason(modifyRsn);
         reportParams.put("logoPath", imagePath);
         reportParams.put("loggedInUsername", propertyTaxUtil.getLoggedInUser(getSession()).getName());
         final ReportRequest reportInput = new ReportRequest(MODIFY_ACK_TEMPLATE, ackBean, reportParams);
