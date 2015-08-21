@@ -55,52 +55,66 @@ import org.egov.search.service.SearchService;
 import org.egov.wtms.elasticSearch.service.ApplicationSearchService;
 import org.egov.wtms.web.contract.ApplicationSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/elastic/appSearch/")
 public class ApplicationSearchController {
 
-	private final ApplicationSearchService applicationSearchService;
-	 private final SearchService searchService;
-	@Autowired
-	public ApplicationSearchController(final ApplicationSearchService applicationSearchService,final SearchService searchService) {
-		this.applicationSearchService = applicationSearchService;
-		this.searchService=searchService;
-	}
-	
-	@ModelAttribute
+    private final ApplicationSearchService applicationSearchService;
+    private final SearchService searchService;
+
+    @Autowired
+    public ApplicationSearchController(final ApplicationSearchService applicationSearchService,
+            final SearchService searchService) {
+        this.applicationSearchService = applicationSearchService;
+        this.searchService = searchService;
+    }
+
+    @RequestMapping(value = "/ajax-moduleTypepopulate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<ApplicationIndex> getAppConfigs(
+            @ModelAttribute("appConfig") @RequestParam final String appModuleName) {
+        final List<ApplicationIndex> applicationIndexList = applicationSearchService
+                .findApplicationIndexApplicationTypes(appModuleName);
+        return applicationIndexList;
+    }
+
+    @ModelAttribute
     public ApplicationSearchRequest searchRequest() {
         return new ApplicationSearchRequest();
     }
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public String newSearchForm()
-	{
-	return "applicationSearch-newForm";
-	}
-	
-	@ModelAttribute(value = "modulesList")
+
+    @RequestMapping(method = RequestMethod.GET)
+    public String newSearchForm() {
+        return "applicationSearch-newForm";
+    }
+
+    @ModelAttribute(value = "modulesList")
     public List<ApplicationIndex> findApplicationIndexModules() {
         return applicationSearchService.findApplicationIndexModules();
-    } 
-	@ModelAttribute(value = "applicationTypeList")
-    public List<ApplicationIndex> findApplicationIndexApplicationTypes() {
-        return applicationSearchService.findApplicationIndexApplicationTypes();
-    } 
-	
+    }
+
+    /*
+     * @ModelAttribute(value = "applicationTypeList") public
+     * List<ApplicationIndex> findApplicationIndexApplicationTypes() { return
+     * applicationSearchService
+     * .findApplicationIndexApplicationTypes(moduleName); }
+     */
+
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<Document> searchComplaints(@ModelAttribute final ApplicationSearchRequest searchRequest) {
-    	SearchResult  searchResult = searchService.search(asList(Index.APPLICATION.toString()),
-			        asList(IndexType.APPLICATIONSEARCH.toString()), searchRequest.searchQuery(), searchRequest.searchFilters(),
-			        Sort.NULL, Page.NULL);
-	
+        final SearchResult searchResult = searchService.search(asList(Index.APPLICATION.toString()),
+                asList(IndexType.APPLICATIONSEARCH.toString()), searchRequest.searchQuery(),
+                searchRequest.searchFilters(), Sort.NULL, Page.NULL);
+
         return searchResult.getDocuments();
-       
+
     }
 }

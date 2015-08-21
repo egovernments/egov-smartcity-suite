@@ -64,7 +64,7 @@
 					<label for="field-1" class="col-sm-3 control-label"> <spring:message
 										code="lbl.Service" /></label>
 						<div class="col-sm-3 add-margin">
-						<form:select name="moduleName" path="" data-first-option="false" 
+						<form:select name="moduleName" path="" data-first-option="false" id="moduleName"
 							cssClass="form-control" >
 							<form:option value="">
 								Select from below
@@ -75,7 +75,7 @@
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
 										code="lbl.appType" /></label>
 						<div class="col-sm-3 add-margin">
-						<form:select name="applicationType" path="" data-first-option="false" 
+						<form:select name="applicationType" path="" data-first-option="false" id="applicationType"
 							cssClass="form-control" >
 							<form:option value="">
 								Select from below

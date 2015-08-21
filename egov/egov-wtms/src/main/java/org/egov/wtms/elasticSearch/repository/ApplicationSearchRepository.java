@@ -44,6 +44,7 @@ import java.util.List;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -52,7 +53,7 @@ public interface ApplicationSearchRepository extends JpaRepository<ApplicationIn
 	 @Query("select distinct ct.moduleName from ApplicationIndex ct order by ct.moduleName asc")
 	    List<ApplicationIndex> findApplicationIndexModules();
 	 
-	 @Query("select distinct ct.applicationType from ApplicationIndex ct order by ct.applicationType asc")
-	    List<ApplicationIndex> findAllApplicationTypes();
+	 @Query("select distinct ct.applicationType from ApplicationIndex ct where ct.moduleName=:moduleName order by ct.applicationType asc")
+	    List<ApplicationIndex> findAllApplicationTypes(@Param("moduleName") String moduleName);
 
 }

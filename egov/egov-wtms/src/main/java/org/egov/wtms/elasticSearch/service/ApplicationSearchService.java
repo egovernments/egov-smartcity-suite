@@ -66,8 +66,8 @@ public class ApplicationSearchService {
         return applicationSearchRepository.findApplicationIndexModules();
     }
     
-    public List<ApplicationIndex> findApplicationIndexApplicationTypes() {
-        return applicationSearchRepository.findAllApplicationTypes();
+    public List<ApplicationIndex> findApplicationIndexApplicationTypes(final String moduleName) {
+        return applicationSearchRepository.findAllApplicationTypes(moduleName);
     }
     
 }

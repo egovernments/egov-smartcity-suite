@@ -167,5 +167,29 @@ jQuery(document).ready(function ($) {
 		window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 		 
 	});
+	
+	
+	$('#moduleName').change(function(){
+		$.ajax({
+			url: "/wtms/elastic/appSearch/ajax-moduleTypepopulate",     
+			type: "GET",
+			data: {
+				appModuleName : $('#moduleName').val()   
+			},
+			dataType: "json",
+			success: function (response) {
+				console.log("success"+response);
+				$('#applicationType').empty();
+				$('#applicationType').append($("<option value=''>Select</option>"));
+				$.each(response, function(index, value) {
+					$('#applicationType').append($('<option>').text(value));
+				});
+				
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
+	});
 		
 });
