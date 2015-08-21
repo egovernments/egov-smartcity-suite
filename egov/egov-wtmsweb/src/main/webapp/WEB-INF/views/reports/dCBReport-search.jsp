@@ -56,14 +56,27 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<strong><spring:message code="title.zonewisedcbreport" /></strong>
+						<c:choose>
+							<c:when test="${reportType == 'zoneWise'}">
+								<strong><spring:message code="title.zonewisedcbreport" /></strong>
+							</c:when>
+							<c:when test="${reportType == 'wardWise'}">
+								<strong><spring:message code="title.wardwisedcbreport" /></strong>
+							</c:when>
+							<c:when test="${reportType == 'blockWise'}">
+								<strong><spring:message code="title.blockwisedcbreport" /></strong>
+							</c:when>
+							<c:otherwise>
+							</c:otherwise>
+						</c:choose>
 					</div>
 				</div>
+				<form:hidden path="mode" id="mode" value="${mode}" />
+				<form:hidden path="boundaryId" id="boundaryId" value="${boundaryId}" />
+				<form:hidden path="selectedModeBndry" id="selectedModeBndry"
+					value="${selectedModeBndry}" />
+				<form:hidden path="reportType" id="reportType" value="${reportType}" />
 				<div class="panel-body">
-					<s:hidden id="mode" name="mode" value="${mode}" />
-					<s:hidden id="boundaryId" name="boundaryId" value="${boundaryId}" />
-					<s:hidden id="selectedModeBndry" name="selectedModeBndry"
-						value="${selectedModeBndry}" />
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.connectiontype" /><small><i
@@ -82,23 +95,66 @@
 						</div>
 
 					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"> <spring:message
-								code="lbl.zone" /> <small><i
-								class="entypo-star error-msg"></i></small>
-						</label>
-						<div class="col-sm-6 add-margin">
-							<form:select path="zones" multiple="true" size="10" id="zones"
-								cssClass="form-control" cssErrorClass="form-control error"
-								required="required">
-								<form:options items="${zones}" itemValue="id" itemLabel="name" />
-							</form:select>
+					<c:choose>
+						<c:when test="${reportType == 'zoneWise'}">
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.zone" /> <small><i
+										class="entypo-star error-msg"></i></small>
+								</label>
+								<div class="col-sm-6 add-margin">
+									<form:select path="zones" multiple="true" size="10" id="zones"
+										cssClass="form-control" cssErrorClass="form-control error"
+										required="required">
+										<form:options items="${zones}" itemValue="id" itemLabel="name" />
+									</form:select>
 
-							<form:errors path="zones" cssClass="error-msg" />
-						</div>
-						<spring:message code="lbl.zones.pressCntrlToSelectMultipleZone" />
-					</div>
+									<form:errors path="zones" cssClass="error-msg" />
+								</div>
+								<spring:message code="lbl.zones.pressCntrlToSelectMultipleZone" />
+							</div>
+						</c:when>
+						<c:when test="${reportType == 'wardWise'}">
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.ward" /> <small><i
+										class="entypo-star error-msg"></i></small>
+								</label>
+								<div class="col-sm-6 add-margin">
+									<form:select path="wards" multiple="true" size="10" id="wards"
+										cssClass="form-control" cssErrorClass="form-control error"
+										required="required">
+										<form:options items="${wards}" itemValue="id" itemLabel="name" />
+									</form:select>
 
+									<form:errors path="wards" cssClass="error-msg" />
+								</div>
+								<spring:message code="lbl.wards.pressCntrlToSelectMultipleWard" />
+							</div>
+						</c:when>
+						<c:when test="${reportType == 'blockWise'}">
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.block" /> <small><i
+										class="entypo-star error-msg"></i></small>
+								</label>
+								<div class="col-sm-6 add-margin">
+									<form:select path="blocks" multiple="true" size="10"
+										id="blocks" cssClass="form-control"
+										cssErrorClass="form-control error" required="required">
+										<form:options items="${blocks}" itemValue="id"
+											itemLabel="name" />
+									</form:select>
+
+									<form:errors path="blocks" cssClass="error-msg" />
+								</div>
+								<spring:message
+									code="lbl.blocks.pressCntrlToSelectMultipleBlock" />
+							</div>
+						</c:when>
+						<c:otherwise>
+						</c:otherwise>
+					</c:choose>
 				</div>
 			</div>
 
@@ -152,7 +208,7 @@
 			</thead>
 			<tfoot id="report-footer">
 				<tr>
-					<td colspan="2">Total</td>
+					<td colspan="2" align="center">Total</td>
 					<td></td>
 					<td></td>
 					<td></td>
