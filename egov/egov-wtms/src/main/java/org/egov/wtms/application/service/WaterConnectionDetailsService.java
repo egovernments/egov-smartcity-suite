@@ -610,7 +610,7 @@ public class WaterConnectionDetailsService {
             final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
                     ((EgModules) hql.uniqueResult()).getName(), waterConnectionDetails.getApplicationNumber(),
                     waterConnectionDetails.getApplicationDate(), waterConnectionDetails.getApplicationType().getName(),
-                    consumerName.toString(), waterConnectionDetails.getConnectionStatus().toString(),
+                    consumerName.toString(), waterConnectionDetails.getEgwStatus().getDescription().toString(),
                     "/wtms/application/view/" + waterConnectionDetails.getApplicationNumber());
 
             if (waterConnectionDetails.getDisposalDate() != null)
