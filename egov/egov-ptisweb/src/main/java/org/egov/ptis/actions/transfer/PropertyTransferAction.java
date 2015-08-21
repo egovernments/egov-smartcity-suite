@@ -256,16 +256,18 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @SkipValidation
     @Action(value = "/forward")
     public String forward() {
-        transitionWorkFlow(propertyMutation);
         if (mode.equals(EDIT)) {
             validate();
             if (hasErrors()) {
                 mode = EDIT;
                 return EDIT;
             }
+            transitionWorkFlow(propertyMutation);
             transferOwnerService.updatePropertyTransfer(basicproperty, propertyMutation);
-        } else
+        } else {
+            transitionWorkFlow(propertyMutation);
             transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
+        }
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
