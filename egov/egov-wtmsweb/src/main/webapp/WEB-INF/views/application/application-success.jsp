@@ -89,12 +89,20 @@
 	<div class="panel panel-default" data-collapsed="0">
 		<div class="panel-body">
 			<div class="row">
+			<c:choose>
+			<c:when test="${waterConnectionDetails.egwStatus.code!='SANCTIONED'}">
 				<div class="col-xs-3 add-margin"><spring:message code="lbl.disposal.date" /></div>
 				<div class="col-xs-3 add-margin view-content">
 					<fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.disposalDate}" />
 				</div>
 				<div class="col-xs-6 view-content text-right"><spring:message code="msg.sign"/><br>
 					<spring:message code="msg.ack.assistant"/><br>${cityName}</div>
+			</c:when>	
+			<c:otherwise>
+				<div class="col-xs-12 view-content text-right"><spring:message code="msg.sign"/><br>
+					<spring:message code="msg.ack.assistant"/><br>${cityName}</div>
+			</c:otherwise>
+			</c:choose>
 			</div>
 		</div>
 	</div>

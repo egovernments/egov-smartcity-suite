@@ -714,7 +714,7 @@ public class WaterConnectionDetailsService {
                                 "msg.newconncetionOnExecutionDate.email.body", waterConnectionDetails, applicantName, type);
                         subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs(
                                 "msg.newconncetionOnExecutionDate.email.subject",
-                                waterConnectionDetails.getApplicationNumber());
+                                waterConnectionDetails.getConnection().getConsumerCode());
                     } else if (WaterTaxConstants.SMSEMAILTYPENEWCONNESTNOTICE.equalsIgnoreCase(type)) {
                         if (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getName())) {
                             flag = Boolean.TRUE;
