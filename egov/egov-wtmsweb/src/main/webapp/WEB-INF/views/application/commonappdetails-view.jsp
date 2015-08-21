@@ -77,15 +77,8 @@
 			<div class="col-xs-3 add-margin view-content" id='propertyIdentifier'>
 				<c:out value="${waterConnectionDetails.connection.propertyIdentifier}" />
 			</div>
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.bpanumber"/></div>
-			<div class="col-xs-3 add-margin view-content">
-				<c:choose>
-					<c:when test="${not empty waterConnectionDetails.connection.bpaIdentifier}">
-						<c:out value="${waterConnectionDetails.connection.bpaIdentifier}" />
-					</c:when>
-					<c:otherwise>N/A</c:otherwise>
-				</c:choose>
-			</div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.nooffloors"/></div>
+			<div class="col-xs-3 add-margin view-content" id="nooffloors"></div>
 		</div>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.applicantname"/></div>
@@ -121,8 +114,7 @@
 					<div class="col-xs-3 add-margin view-content">N/A</div>
 				</c:otherwise>
 			</c:choose>
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.nooffloors"/></div>
-			<div class="col-xs-3 add-margin view-content" id="nooffloors"></div>
+			
 		</div>
 	</div>
 
