@@ -41,7 +41,7 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td class="bluebox2" width="5%">
+		<td class="greybox" width="5%">
 			&nbsp;
 		</td>
 		<td class="bluebox" width="20%">
@@ -80,7 +80,7 @@
 	</tr>
 
 	<tr>
-		<td class="bluebox2">
+		<td class="greybox">
 			&nbsp;
 		</td>
 		<td class="bluebox" width="8%">
@@ -106,7 +106,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="bluebox" width="5%">&nbsp;</td>
+		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="bluebox" width="25%"><s:text name="reg.docno"/> :</td>
 		<td class="bluebox" width="">
 			<span class="bold"><s:property value="%{basicProp.regdDocNo}" default="N/A"/></span>
@@ -169,7 +169,7 @@
 		</td>
 	</tr>
 	<tr class="appurtenant">
-		<td class="bluebox">&nbsp;</td>
+		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="extent.appurtntland" /> : 
 		<td class="bluebox"><s:checkbox name="propertyDetail.appurtenantLandChecked" id="appurtenantLandChecked"
 				value="%{propertyDetail.appurtenantLandChecked}" onclick="enableAppartnaumtLandDetails();" />
@@ -185,13 +185,13 @@
 				value="%{propertyDetail.extentAppartenauntLand}" size="12"	maxlength="12" onchange="trim(this,this.value);"
 				onblur="validNumber(this);checkZero(this);"></s:textfield>
 		</td>
-		<td class="bluebox" colspan="2">
+		<td class="greybox" colspan="2">
 			&nbsp;
 		</td>
 	</tr>
 	
 	<tr>
-		<td class="bluebox">&nbsp;</td>
+		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
 		<td class="bluebox">
 		 <s:checkbox name="propertyDetail.buildingPlanDetailsChecked" id="buildingPlanDetailsChecked"
@@ -217,7 +217,7 @@
 	</tr>
 
     <tr class="bpddetails">
-		<td class="bluebox">&nbsp;</td>
+		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="deviationper"></s:text><span class="mandatory1">*</span> :</td>
 		<td class="bluebox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propertyDetail.deviationPercentage"
 				id="propertyDetail.deviationPercentage" listKey="key" listValue="value" list="deviationPercentageMap" value="%{propertyDetail.deviationPercentage}"
