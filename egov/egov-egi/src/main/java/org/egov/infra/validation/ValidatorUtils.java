@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -50,7 +49,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -66,25 +64,23 @@ public class ValidatorUtils {
     private static final Pattern PASSWORD_PATTERN = Pattern.compile(Constants.PASSWORD);
 
     public static boolean isValidPassword(final String passwd) {
-        return StringUtils.isNotBlank(passwd) && passwd.length() > 7 && passwd.length() < 31
-                && PASSWORD_PATTERN.matcher(passwd).find();
+        return StringUtils.isNotBlank(passwd) && passwd.length() > 7 && passwd.length() < 31&& PASSWORD_PATTERN.matcher(passwd).find();
     }
-    
+
     public static boolean isCaptchaValid(final HttpServletRequest request) {
         try {
-            String url = "https://www.google.com/recaptcha/api/siteverify";
-            HttpClient client = HttpClientBuilder.create().build();
-            HttpPost post = new HttpPost(url);
-            List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-            urlParameters.add(new BasicNameValuePair("secret", (String)request.getSession().getAttribute("cityRecaptchaPK")));
+            final String url = "https://www.google.com/recaptcha/api/siteverify";
+            final HttpClient client = HttpClientBuilder.create().build();
+            final HttpPost post = new HttpPost(url);
+            final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+            urlParameters.add(new BasicNameValuePair("secret", (String) request.getSession().getAttribute("cityRecaptchaPK")));
             urlParameters.add(new BasicNameValuePair("response", request.getParameter("g-recaptcha-response")));
             urlParameters.add(new BasicNameValuePair("remoteip", request.getRemoteAddr()));
             post.setEntity(new UrlEncodedFormEntity(urlParameters));
-            HttpResponse response = client.execute(post);
-            String responseJson = IOUtils.toString(response.getEntity().getContent());
+            final String responseJson = IOUtils.toString(client.execute(post).getEntity().getContent());
             return Boolean.valueOf(new GsonBuilder().create().fromJson(responseJson, HashMap.class).get("success").toString());
         } catch (UnsupportedOperationException | IOException e) {
-           return false;
+            return false;
         }
     }
 }
