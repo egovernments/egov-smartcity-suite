@@ -52,6 +52,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TY
 import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
@@ -347,7 +348,7 @@ public class CreatePropertyAction extends WorkflowAction {
             setMutationId(basicProp.getPropertyMutationMaster().getId());
             final PropertyStatusValues statusValues = (PropertyStatusValues) getPersistenceService().find(
                     "From PropertyStatusValues where basicProperty.id = ?", basicProp.getId());
-            if (null != statusValues.getReferenceBasicProperty())
+            if (null != statusValues && null != statusValues.getReferenceBasicProperty())
                 setParentIndex(statusValues.getReferenceBasicProperty().getUpicNo());
             if (null != basicProp.getAddress()) {
                 setHouseNumber(basicProp.getAddress().getHouseNoBldgApt());
@@ -408,9 +409,8 @@ public class CreatePropertyAction extends WorkflowAction {
             mode = VIEW;
             for (final PropertyOwnerInfo ownerInfo : basicProp.getPropertyOwnerInfo())
                 for (final Address ownerAddress : ownerInfo.getOwner().getAddress())
-                    if (null != ownerAddress) {
+                    if (null != ownerAddress)
                         setCorrAddress1(ownerAddress.toString());
-                    }
             setDocNumber(property.getDocNumber());
             LOGGER.debug("IndexNumber: " + indexNumber + " Amenities: " + amenities + "NoOfFloors: "
                     + (getFloorDetails() != null ? getFloorDetails().size() : "Floor list is NULL")
@@ -509,6 +509,8 @@ public class CreatePropertyAction extends WorkflowAction {
         final PropertyStatus propStatus = (PropertyStatus) getPersistenceService().find(
                 "from PropertyStatus where statusCode=?", PROPERTY_STATUS_APPROVED);
         basicProp.setStatus(propStatus);
+        if (property.getPropertyModifyReason().equals(PROPERTY_MODIFY_REASON_BIFURCATE))
+            propService.setWFPropStatValActive(basicProp);
         approved = true;
         setWardId(basicProp.getPropertyID().getWard().getId());
         processAndStoreDocumentsWithReason(basicProp, DOCS_CREATE_PROPERTY);
@@ -685,13 +687,17 @@ public class CreatePropertyAction extends WorkflowAction {
         final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
                 "from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?", PROP_CREATE_RSN, mutationId);
         basicProperty.setPropertyMutationMaster(propertyMutationMaster);
-        basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, "CREATE", null, null, null,
-                null, getParentIndex()));
+        String statusCode = "CREATE";
+        if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR)) {
+            statusCode = PROPERTY_MODIFY_REASON_BIFURCATE;
+            basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PROP_CREATE_RSN, null,
+                    null, null, null, getParentIndex()));
+        }
         basicProperty.setBoundary(boundaryService.getBoundaryById(getWardId()));
         basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
         basicPropertyService.createOwners(property, basicProperty, ownerAddress);
         property.setBasicProperty(basicProperty);
-        property.setPropertyModifyReason(propertyMutationMaster.getCode());
+        property.setPropertyModifyReason(statusCode);
 
         /*
          * isfloorDetailsRequired is used to check if floor details have to be
@@ -782,7 +788,8 @@ public class CreatePropertyAction extends WorkflowAction {
             for (final Address address : owner.getOwner().getAddress())
                 if (null != address)
                     ownerAddress = address;
-        if (!(property.getPropertyDetail().isCorrAddressDiff() != null && property.getPropertyDetail().isCorrAddressDiff())) {
+        if (!(property.getPropertyDetail().isCorrAddressDiff() != null && property.getPropertyDetail()
+                .isCorrAddressDiff())) {
             ownerAddress.setAreaLocalitySector(propAddr.getAreaLocalitySector());
             ownerAddress.setHouseNoBldgApt(propAddr.getHouseNoBldgApt());
             ownerAddress.setStreetRoadLine(propAddr.getStreetRoadLine());
@@ -811,7 +818,8 @@ public class CreatePropertyAction extends WorkflowAction {
         propAddr.setStreetRoadLine(boundaryService.getBoundaryById(getLocality()).getName());
         if (getPinCode() != null && !getPinCode().isEmpty())
             propAddr.setPinCode(getPinCode());
-        if (!(property.getPropertyDetail().isCorrAddressDiff() != null && property.getPropertyDetail().isCorrAddressDiff())) {
+        if (!(property.getPropertyDetail().isCorrAddressDiff() != null && property.getPropertyDetail()
+                .isCorrAddressDiff())) {
             ownerAddress = new CorrespondenceAddress();
             ownerAddress.setAreaLocalitySector(propAddr.getAreaLocalitySector());
             ownerAddress.setHouseNoBldgApt(propAddr.getHouseNoBldgApt());
@@ -872,12 +880,13 @@ public class CreatePropertyAction extends WorkflowAction {
                     addActionError(getText("mandatory.mobilenumber"));
             }
 
-        validateProperty(property, areaOfPlot, dateOfCompletion, null, propTypeId,
-                propUsageId, propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId);
+        validateProperty(property, areaOfPlot, dateOfCompletion, null, propTypeId, propUsageId, propOccId, floorTypeId,
+                roofTypeId, wallTypeId, woodTypeId);
 
         if (isBlank(pinCode))
             addActionError(getText("mandatory.pincode"));
-        if (property.getPropertyDetail().isCorrAddressDiff() != null && property.getPropertyDetail().isCorrAddressDiff()) {
+        if (property.getPropertyDetail().isCorrAddressDiff() != null
+                && property.getPropertyDetail().isCorrAddressDiff()) {
             if (isBlank(corrAddress1))
                 addActionError(getText("mandatory.corr.addr1"));
             if (isBlank(corrAddress2))
@@ -891,10 +900,9 @@ public class CreatePropertyAction extends WorkflowAction {
             area.setArea(new Float(areaOfPlot));
             property.getPropertyDetail().setSitalArea(area);
         }
-        if(null != mutationId && mutationId != -1) {
-        final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
-                "from PropertyMutationMaster pmm where pmm.id=?", mutationId);
-        if (mode.equals(CREATE)) 
+        if (null != mutationId && mutationId != -1) {
+            final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService()
+                    .find("from PropertyMutationMaster pmm where pmm.id=?", mutationId);
             if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR))
                 if (StringUtils.isNotBlank(parentIndex)) {
                     final BasicProperty basicProperty = basicPropertyService.find(
@@ -909,9 +917,8 @@ public class CreatePropertyAction extends WorkflowAction {
 
                 } else
                     addActionError(getText("error.parent.index"));
-        } else {
+        } else
             addActionError(getText("mandatory.createRsn"));
-        }
 
         validateApproverDetails();
         super.validate();

@@ -398,7 +398,7 @@ public class PropertyService {
         final PropertyStatus propertyStatus = (PropertyStatus) getPropPerServ().find(
                 "from PropertyStatus where statusCode=?", statusCode);
         if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(statusCode) || PROPERTY_MODIFY_REASON_AMALG.equals(statusCode)
-                || PROPERTY_MODIFY_REASON_BIFURCATE.equals(statusCode) || PROP_CREATE_RSN_BIFUR.equals(statusCode))
+                || PROPERTY_MODIFY_REASON_BIFURCATE.equals(statusCode) || PROP_CREATE_RSN.equals(statusCode))
             propStatVal.setIsActive("W");
         else
             propStatVal.setIsActive("Y");
@@ -1538,6 +1538,10 @@ public class PropertyService {
                 if (wfPropStatVal != null)
                     wfPropStatVal.setIsActive("Y");
             }
+            if (PROP_CREATE_RSN.equals(psv.getPropertyStatus().getStatusCode())
+                    && psv.getIsActive().equals("W"))
+                    psv.setIsActive("Y");
+            
         }
         LOGGER.debug("Exitinf from setWFPropStatValActive");
     }
