@@ -1060,6 +1060,5 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_NOTARIZED_AFFIDAVIT_CUM_IDEMNITY_BOND_CODE = "5";
     public static final String THIRD_PARTY_DEATH_CERTIFICATE_COPY_CODE = "6";
     
-    public static final String THIRD_PARTY_JAVA_TEMP_DIR = "java.io.tmpdir";
     public static final String THIRD_PARTY_CONTENT_TYPE = "application/{0}";
 }

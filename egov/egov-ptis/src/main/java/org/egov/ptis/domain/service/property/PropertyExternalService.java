@@ -971,7 +971,6 @@ public class PropertyExternalService {
 				westBoundary, documents);
 		basicProperty.setIsTaxXMLMigrated(PropertyTaxConstants.STATUS_YES_XML_MIGRATION);
 		processAndStoreDocumentsWithReason(basicProperty, PropertyTaxConstants.DOCS_CREATE_PROPERTY);
-		//propService.processAndStoreDocument(documents);
 		basicProperty.setPropertyOwnerInfoProxy(getPropertyOwnerInfoList(ownerDetailsList));
 		basicPropertyService.createOwners(property, basicProperty, basicProperty.getAddress());
 		basicProperty = basicPropertyService.persist(basicProperty);
@@ -1486,15 +1485,11 @@ public class PropertyExternalService {
 	 * @return file - File object
 	 */
 	private File writeToFile(InputStream uploadedInputStream, String fileName) {
-		String tmpDir = System.getProperty(PropertyTaxConstants.THIRD_PARTY_JAVA_TEMP_DIR);
-		String uploadedFileLocation = tmpDir +File.separator+ fileName;
-		File file = new File(uploadedFileLocation);
+		File file = new File(fileName);
 		try {
-			OutputStream out = new FileOutputStream(new File(uploadedFileLocation));
+			OutputStream out = new FileOutputStream(new File(fileName));
 			int read = 0;
 			byte[] bytes = new byte[1024];
-
-			out = new FileOutputStream(new File(uploadedFileLocation));
 			while ((read = uploadedInputStream.read(bytes)) != -1) {
 				out.write(bytes, 0, read);
 			}
