@@ -593,7 +593,7 @@ public class WaterConnectionDetailsService {
                                     .getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED))) {
                 final ApplicationIndex applicationIndex = applicationIndexService
                         .findByApplicationNumber(waterConnectionDetails.getApplicationNumber());
-                applicationIndex.setStatus(waterConnectionDetails.getConnectionStatus().toString());
+                applicationIndex.setStatus(waterConnectionDetails.getEgwStatus().getDescription());
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
             if (waterConnectionDetails.getEgwStatus() != null
