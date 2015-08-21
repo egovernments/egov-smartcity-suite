@@ -117,18 +117,8 @@ $(document).ready(function()
 			 }
 			 
 			 if(status=='CREATED' && action == 'Submit' && mode == 'fieldInspection') {
-				if($('#estimationCharges')) {
-					var estimationCharge = $('#estimationCharges').val();
-			    	if(estimationCharge <= 0) {
-			    		alert("Estimation charges is mandatory. Please enter the value greater than ZERO!");
-			    		$('#estimationCharges').focus();
-			      		return false;	
-			    	}
-			    	else {
-			    		validateWorkFlowApprover(action);
-				    	document.forms[0].submit();	
-			    	}
-				}	     	
+	    		validateWorkFlowApprover(action);
+		    	document.forms[0].submit();	
 			 }
 			 else if(status=='CREATED' && action == 'Reject' && mode == 'fieldInspection') {
 				 $('#pipelineDistance').val(0);
@@ -139,6 +129,8 @@ $(document).ready(function()
 					return false;
 				  }
 				 $('#Reject').attr('formnovalidate','true');
+				 if($('#estimationCharges'))
+					 $('#estimationCharges').val(0);
 				 document.forms[0].submit();	
 			 }
 			 else {
