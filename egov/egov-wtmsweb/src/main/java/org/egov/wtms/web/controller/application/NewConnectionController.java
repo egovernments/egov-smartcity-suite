@@ -296,10 +296,16 @@ public class NewConnectionController extends GenericConnectionController {
         if (waterConnectionDetails.getConnection() != null
                 && waterConnectionDetails.getConnection().getPropertyIdentifier() != null
                 && !waterConnectionDetails.getConnection().getPropertyIdentifier().equals("")) {
-            final String errorMessage = newConnectionService.checkValidPropertyAssessmentNumber(waterConnectionDetails
+            String errorMessage = newConnectionService.checkValidPropertyAssessmentNumber(waterConnectionDetails
                     .getConnection().getPropertyIdentifier());
             if (errorMessage != null && !errorMessage.equals(""))
                 errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
+            else {
+                errorMessage = newConnectionService.checkConnectionPresentForProperty(waterConnectionDetails
+                        .getConnection().getPropertyIdentifier());
+                if (errorMessage != null && !errorMessage.equals(""))
+                    errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
+            }
         }
     }
     
