@@ -1,3 +1,43 @@
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+   accountability and the service delivery of the government  organizations.
+
+    Copyright (C) <2015>  eGovernments Foundation
+
+    The updated version of eGov suite of products as by eGovernments Foundation
+    is available at http://www.egovernments.org
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see http://www.gnu.org/licenses/ or
+    http://www.gnu.org/licenses/gpl.html .
+
+    In addition to the terms of the GPL license to be adhered to in using this
+    program, the following additional terms are to be complied with:
+
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
+
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
+
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
+
+  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 package org.egov.wtms.web.controller.reports;
 
 import java.math.BigInteger;
@@ -10,11 +50,16 @@ public class DCBReportResult {
 
     private ConnectionType connectionType;
     private List<Boundary> zones;
+    private List<Boundary> wards;
+    private List<Boundary> blocks;
 
     private String boundaryName;
-    private Integer boundaryId;
+    private String boundaryId;
     private Integer propertyid;
     private String address;
+    private String mode;
+    private String selectedModeBndry;
+    private String reportType;
     private String hscno;
     private String username;
     private Integer zoneid;
@@ -32,6 +77,30 @@ public class DCBReportResult {
 
     public Integer getId() {
         return zoneid != null ? zoneid : wardid != null ? wardid : block != null ? block : null;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+
+    public String getSelectedModeBndry() {
+        return selectedModeBndry;
+    }
+
+    public void setSelectedModeBndry(String selectedModeBndry) {
+        this.selectedModeBndry = selectedModeBndry;
+    }
+
+    public String getReportType() {
+        return reportType;
+    }
+
+    public void setReportType(String reportType) {
+        this.reportType = reportType;
     }
 
     public void setId(final Integer id) {
@@ -61,11 +130,11 @@ public class DCBReportResult {
         this.boundaryName = boundaryName;
     }
 
-    public Integer getBoundaryId() {
+    public String getBoundaryId() {
         return boundaryId;
     }
 
-    public void setBoundaryId(final Integer boundaryId) {
+    public void setBoundaryId(final String boundaryId) {
         this.boundaryId = boundaryId;
     }
 
@@ -147,6 +216,22 @@ public class DCBReportResult {
 
     public void setConnectiontype(final String connectiontype) {
         this.connectiontype = connectiontype;
+    }
+
+    public List<Boundary> getWards() {
+        return wards;
+    }
+
+    public void setWards(List<Boundary> wards) {
+        this.wards = wards;
+    }
+
+    public List<Boundary> getBlocks() {
+        return blocks;
+    }
+
+    public void setBlocks(List<Boundary> blocks) {
+        this.blocks = blocks;
     }
 
     public BigInteger getCurr_demand() {

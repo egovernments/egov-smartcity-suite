@@ -53,41 +53,81 @@ $(document).ready(function(e) {
 	drillDowntableContainer = $("#tbldcbdrilldown");
 	$('#report-backbutton').hide();
 	$('form').submit(function(e) {
-		$('#mode')[0].attributes[0].value = 'zone';
+		if($('#reportType').val()=='zoneWise'){
+			$('#mode').val("zone");
+		} else if($('#reportType').val()=='wardWise'){
+			$('#mode').val("ward");
+		} else if($('#reportType').val()=='blockWise'){ 
+			$('#mode').val("block");   
+		} 
+		
 		callAjaxByBoundary(e);
 	});
 	
 	$('#backButton').click(function(e) {
 		var temp=$('#selectedModeBndry').val();
 		var valArray=temp.split('-');
-		if($('#mode')[0].attributes[0].value=='property'){
+	if($('#reportType').val()=='zoneWise'){
+		if($('#mode').val()=='property'){
 			if(valArray.length>0){
 				var propVal=valArray[2].split('~');
 				if(propVal.length>0){
-					$('#mode')[0].attributes[0].value = propVal[0];
-					$('#boundaryId')[0].attributes[0].value = propVal[1];
+					$('#mode').val(propVal[0]);
+					$('#boundaryId').val(propVal[1]);
 				}
 				$('#selectedModeBndry').val(valArray[0]+"-"+valArray[1]);
 			}
-		} else if($('#mode')[0].attributes[0].value =='block'){
+		} else if($('#mode').val() =='block'){
 			if(valArray.length>0){
 				var blockVal=valArray[1].split('~');
 				if(blockVal.length>0){
-					$('#mode')[0].attributes[0].value = blockVal[0];
-					$('#boundaryId')[0].attributes[0].value = blockVal[1];
+					$('#mode').val(blockVal[0]);
+					$('#boundaryId').val(blockVal[1]);
 				}
 				$('#selectedModeBndry').val(valArray[0]);
 			}
-		} else if($('#mode')[0].attributes[0].value=='ward'){
+		} else if($('#mode').val()=='ward'){
 			if(valArray.length>0){
 				var wardVal=valArray[0].split('~');
 				if(wardVal.length>0){
-					$('#mode')[0].attributes[0].value = wardVal[0];
-					$('#boundaryId')[0].attributes[0].value = wardVal[1]; 
+					$('#mode').val(wardVal[0]);
+					$('#boundaryId').val(wardVal[1]); 
 				}
 				$('#selectedModeBndry').val('');
 			}
-		} 
+		}
+	}else if($('#reportType').val()=='wardWise'){
+		if($('#mode').val()=='property'){
+			if(valArray.length>0){
+				var propVal=valArray[1].split('~');
+				if(propVal.length>0){
+					$('#mode').val(propVal[0]);
+					$('#boundaryId').val(propVal[1]);
+				}
+				$('#selectedModeBndry').val(valArray[0]+"-"+valArray[1]);
+			}
+		} else if($('#mode').val() =='block'){
+			if(valArray.length>0){
+				var blockVal=valArray[0].split('~');
+				if(blockVal.length>0){
+					$('#mode').val(blockVal[0]);
+					$('#boundaryId').val(blockVal[1]);
+				}
+				$('#selectedModeBndry').val(valArray[0]);
+			}
+		}
+	} else if($('#reportType').val()=='blockWise'){ 
+		if($('#mode').val()=='property'){
+			if(valArray.length>0){
+				var propVal=valArray[0].split('~');
+				if(propVal.length>0){
+					$('#mode').val(propVal[0]);
+					$('#boundaryId').val(propVal[1]);
+				}
+				$('#selectedModeBndry').val(valArray[0]+"-"+valArray[1]);
+			}
+		}
+	}
 		callAjaxByBoundary(e); 
 	});
 
@@ -96,16 +136,16 @@ $(document).ready(function(e) {
 function setHiddenValueByLink(obj, param,event,boundaryId) {
 	$('input[name=' + $(obj).data('hiddenele') + ']')
 	.val($(obj).data('eleval'));   
-	if(param.attributes[0].value=='property'){
+	if(param.value=='property'){
 		window.open("/ptis/view/viewProperty-viewForm.action?propertyId="+boundaryId, '', 'scrollbars=yes,width=1000,height=700,status=yes');
 	} else{
-		$('#boundaryId')[0].attributes[0].value = boundaryId;
-		if(param.attributes[0].value=='zone'){
-			$('#mode')[0].attributes[0].value = "ward";
-		} else if(param.attributes[0].value=='ward'){
-			$('#mode')[0].attributes[0].value = "block";
-		} else if(param.attributes[0].value=='block'){ 
-			$('#mode')[0].attributes[0].value = "property";   
+		$('#boundaryId').val(boundaryId);
+		if(param.value=='zone'){
+			$('#mode').val("ward");
+		} else if(param.value=='ward'){
+			$('#mode').val("block");
+		} else if(param.value=='block'){ 
+			$('#mode').val("property");   
 		} 
 		callAjaxByBoundary(event); 
 	}
@@ -116,17 +156,28 @@ function callAjaxByBoundary(event) {
 	var boundary_Id = "";
 	var connectiontype = "";
 	var selectedModeBndry = "";
+	var reportType = "";
 	var temp="";
-	modeVal = $('#mode')[0].attributes[0].value; 
+	modeVal = $('#mode').val(); 
 	connectiontype = $('#connectionType').val(); 
-	if(modeVal=='zone'){
+	reportType = $('#reportType').val();
+	if($('#reportType').val()=='zoneWise' && $('#mode').val()=='zone' ){
 		boundary_Id = $('#zones').val();
 		temp=modeVal+"~"+boundary_Id;
 		$('#selectedModeBndry').val(temp);
 		$('#report-backbutton').hide();
-	}
-	else{
-		boundary_Id = $('#boundaryId')[0].attributes[0].value; 
+	} else if($('#reportType').val()=='wardWise' && $('#mode').val()=='ward'){
+		boundary_Id = $('#wards').val();
+		temp=modeVal+"~"+boundary_Id;
+		$('#selectedModeBndry').val(temp);
+		$('#report-backbutton').hide();
+	} else if($('#reportType').val()=='blockWise' && $('#mode').val()=='block'){ 
+		boundary_Id = $('#blocks').val();
+		temp=modeVal+"~"+boundary_Id;
+		$('#selectedModeBndry').val(temp);
+		$('#report-backbutton').hide();
+	} else{
+		boundary_Id = $('#boundaryId').val(); 
 		temp=$('#selectedModeBndry').val()+"-"+modeVal+"~"+boundary_Id;
 		$('#selectedModeBndry').val(temp);
 		$('#report-backbutton').show();
@@ -146,11 +197,12 @@ function callAjaxByBoundary(event) {
 						'mode' : modeVal,
 						'boundaryId' : boundary_Id,
 						'connectionType' : connectiontype,
-						'selectedModeBndry' : selectedModeBndry
+						'selectedModeBndry' : selectedModeBndry,
+						'reportType':reportType
 					}
 				},
 				"sPaginationType" : "bootstrap",
-				"autoWidth" : true,
+				"autoWidth" : false,
 				"bDestroy" : true,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
