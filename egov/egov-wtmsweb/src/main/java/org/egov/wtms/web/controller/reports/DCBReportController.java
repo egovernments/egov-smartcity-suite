@@ -181,7 +181,7 @@ public class DCBReportController {
         selectQry2
                 .append(" cast(SUM(arr_demand) as bigint) AS arr_demand,cast(SUM(curr_demand) as bigint) AS curr_demand,cast(SUM(arr_coll) as bigint) AS arr_coll,cast(SUM(curr_coll) as bigint) AS curr_coll,"
                         + "cast(SUM(arr_balance) as bigint) AS arr_balance,cast(SUM(curr_balance) as bigint) AS curr_balance ");
-        fromQry = new StringBuilder(" from egwtr_mv_dcb_report dcbinfo,eg_boundary boundary ");
+        fromQry = new StringBuilder(" from egwtr_mv_dcb_view dcbinfo,eg_boundary boundary ");
         if (mode.equalsIgnoreCase(ZONEWISE)) {
             selectQry1
                     .append("select distinct cast(dcbinfo.zoneid as integer) as \"zoneid\",boundary.name as \"boundaryName\",dcbinfo.username as \"username\", ");
