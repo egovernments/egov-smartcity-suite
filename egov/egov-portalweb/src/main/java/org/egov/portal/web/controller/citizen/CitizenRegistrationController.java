@@ -51,14 +51,15 @@ import org.egov.portal.service.CitizenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/citizen")
 public class CitizenRegistrationController {
+
     private final CitizenService citizenService;
 
     @Autowired
@@ -72,27 +73,23 @@ public class CitizenRegistrationController {
     }
 
     @RequestMapping(value = "/register", method = POST)
-    public String registerCitizen(@Valid @ModelAttribute final Citizen citizen, final BindingResult errors, final HttpServletRequest request) {
-        if (!ValidatorUtils.isValidPassword(citizen.getPassword()))
-            errors.addError(new FieldError("citizen", "password", citizen.getPassword(), false, new String[] { "error.pwd.invalid" }, null, null));
-        else if (!StringUtils.equals(citizen.getPassword(), (String) request.getParameter("con-password")))
-            errors.addError(new FieldError("citizen", "password", citizen.getPassword(), false, new String[] { "error.pwd.mismatch" }, null, null));
+    public String registerCitizen(@Valid @ModelAttribute final Citizen citizen, final BindingResult errors, final HttpServletRequest request,
+            final RedirectAttributes redirectAttrib) {
+       if (!ValidatorUtils.isValidPassword(citizen.getPassword()))
+            errors.rejectValue("password", "error.pwd.invalid");
+        else if (!StringUtils.equals(citizen.getPassword(), request.getParameter("con-password")))
+            errors.rejectValue("password", "error.pwd.mismatch");
         if (!ValidatorUtils.isCaptchaValid(request))
-            errors.addError(new FieldError("citizen", "active", citizen.isActive(), false, new String[] { "error.recaptcha.verification" }, null, null));
+            errors.rejectValue("active", "error.recaptcha.verification");
         if (errors.hasErrors())
             return "signup";
         citizenService.create(citizen);
+        redirectAttrib.addAttribute("message", "msg.reg.success");
         return "redirect:register?activation=true";
     }
 
     @RequestMapping(value = "/activation", method = POST)
     public String citizenOTPActivation(@RequestParam final String activationCode) {
-        final Citizen citizen = citizenService.activateCitizen(activationCode);
-        if (citizen == null) {
-            return "redirect:register?activation=true&activated=false";
-        } else {
-            return "redirect:register?activation=true&activated=true";
-        }
+        return "redirect:register?activation=true&activated=" + (citizenService.activateCitizen(activationCode) != null);
     }
-
 }

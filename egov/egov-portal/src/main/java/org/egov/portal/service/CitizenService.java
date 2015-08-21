@@ -39,6 +39,7 @@
 package org.egov.portal.service;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.config.properties.ApplicationProperties;
@@ -104,10 +105,10 @@ public class CitizenService {
 
     @Transactional
     public Citizen activateCitizen(final String activationCode) {
-        final Citizen citizen = getCitizenByActivationCode(activationCode);
+        final Citizen citizen = getCitizenByActivationCode(StringUtils.defaultString(activationCode));
         if (citizen != null) {
             citizen.setActive(true);
-            citizen.setActivationCode(RandomStringUtils.random(5, Boolean.TRUE, Boolean.TRUE).toUpperCase());
+            citizen.setActivationCode(null);
             update(citizen);
         }
         return citizen;

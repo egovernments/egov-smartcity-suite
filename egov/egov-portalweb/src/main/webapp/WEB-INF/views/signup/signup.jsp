@@ -97,7 +97,7 @@
 						<form:form method="post" role="form" id="signupform" modelAttribute="citizen">
 							<div class="form-group text-left">
                                 <div class="signin-title">
-                                    Create an account
+                                    <spring:message code="title.signup"/>
                                 </div>
                             </div>
                              <div class="form-group">
@@ -105,7 +105,7 @@
 									<div class="input-group-addon style-label">
 										<i class="entypo-user theme-color style-color"></i>
 									</div>
-									<form:input path="username" cssClass="form-control style-form" id="username" placeholder="Username" minlength="5" maxlength="64" autocomplete="off" required="required"/>
+									<form:input path="username" cssClass="form-control style-form" id="username" placeholder="Username" minlength="2" maxlength="64" autocomplete="off" required="required"/>
 									<span class="mandatory set-mandatory"></span>
 									<form:errors path="username" cssClass="add-margin error-msg font-12"/>
 								</div>
@@ -174,11 +174,15 @@
 							</div>
 							<div class="form-group signup-leftpadding">
 								<button type="submit" class="btn btn-custom btn-block btn-login signup-submit">
-									Sign up
+									<spring:message code="btn.signup" />
 								</button>
 							</div>
                              <div class="form-group text-left" style="font-size:12px;color:#777">
-								By doing sign up, you understood and agree to our <span><a href="javascript:void(0);" data-toggle="modal" data-target="#myModal" data-backdrop="static">Terms of use</a> & <a href="javascript:void(0);" data-toggle="modal" data-target="#myModal2" data-backdrop="static">Privacy and security policies</a></span>
+								<spring:message code="lbl.signup.termsofuse1" /> <span>
+								<a href="javascript:void(0);" data-toggle="modal" data-target="#myModal" data-backdrop="static">
+								<spring:message code="lbl.signup.termsofuse2" /></a> & 
+								<a href="javascript:void(0);" data-toggle="modal" data-target="#myModal2" data-backdrop="static">
+								<spring:message code="lbl.signup.termsofuse3" /></a></span>
 							</div>
 						</form:form> 
 					</div>
@@ -188,24 +192,25 @@
 					<form:form method="post" role="form" id="activationform" action="activation" modelAttribute="citizen">
 					<div class="login-content login-content-margin otp-section signup-formcontent">
 						<c:if test="${param.activated}">
-	                    <div class="alert alert-info" role="alert">You have successfully activated your portal account
-	                     <div>Use your credentials to <a href="/egi/login/secure" class="btn btn-custom">Sign in</a></div>
+	                    <div class="alert alert-info" role="alert"><spring:message code="msg.signup.activation.success1" />
+	                     <div><spring:message code="msg.signup.activation.success2" /> <a href="/egi/login/secure" class="btn btn-custom"><spring:message code="lbl.signin" /></a></div>
 	                    </div>
 		                </c:if>
 		                <c:if test="${not empty param.activated and not param.activated}">
-		                	<div class="alert alert-danger" role="alert">Portal account activation failed, you may entered wrong activation code or your
-								registration got expired.</div>
+		                	<div class="alert alert-danger" role="alert"><spring:message code="error.signup.activation.failed" /></div>
 		                </c:if>
                         <div class="login-body">
                             <div class="form-group text-left">
                                 <div class="signin-title" style="padding:0;">
-                                   OTP Activation
+                                   <spring:message code="lbl.signup.activate" />
                                 </div>
                             </div>
                             <div class="">
+                            	<c:if test="${not empty param.message}">
                                 <div class="form-group text-left font-green">
-                                    Registration Successful. Enter your 5 digit activation code sent to your registered email or mobile to activate your account here.
+                                    <spring:message code="${param.message}" />
                                 </div>
+                                </c:if>
                                 <div class="form-group">
                                     <div class="input-group">
                                         <div class="input-group-addon style-label">
@@ -216,11 +221,11 @@
                                 </div>
                                 <div class="form-group text-right">
                                     <button type="submit" class="btn btn-custom btn-login signup-submit">
-                                        Activate
+                                        <spring:message code="btn.signup.activate"/>
                                     </button>
                                 </div>
-                                <div class="form-group text-left">
-                                    Registration will get automatically deleted if you do not activate account within next 48 hours.
+                                <div class="form-group text-left font-12">
+                                    <spring:message code="msg.signup.info"/>
                                 </div>
                             </div>
                         </div>
