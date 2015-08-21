@@ -57,6 +57,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * A Utility class which wraps up all underlying spring<br/>
  * technique to provide and register beans
  */
+@Deprecated
 public class ApplicationContextBeanProvider implements ApplicationContextAware {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(ApplicationContextBeanProvider.class);
