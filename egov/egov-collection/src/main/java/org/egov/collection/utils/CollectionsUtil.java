@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -120,28 +120,25 @@ public class CollectionsUtil {
     @Autowired
     private DesignationService designationService;
 
-
-
-
     /**
      * Returns the Status object for given status code for a receipt
-     * 
+     *
      * @param statusCode
      *            Status code for which status object is to be returned
      * @return the Status object for given status code for a receipt
      */
-    public EgwStatus getReceiptStatusForCode(String statusCode) {
+    public EgwStatus getReceiptStatusForCode(final String statusCode) {
         EgwStatus status = statusMap.get(statusCode);
 
         synchronized (this) {
             if (status == null) {
                 // Status not yet cached. Get it from DB and cache it
-                status = (EgwStatus) persistenceService.findByNamedQuery(CollectionConstants.QUERY_STATUS_BY_MODULE_AND_CODE, CollectionConstants.MODULE_NAME_RECEIPTHEADER,
-                        statusCode);
+                status = (EgwStatus) persistenceService.findByNamedQuery(
+                        CollectionConstants.QUERY_STATUS_BY_MODULE_AND_CODE,
+                        CollectionConstants.MODULE_NAME_RECEIPTHEADER, statusCode);
 
-                if (status != null) {
+                if (status != null)
                     statusMap.put(statusCode, status);
-                }
             }
         }
 
@@ -151,17 +148,17 @@ public class CollectionsUtil {
     /**
      * This method returns the <code>EgwStatus</code> for the given module type
      * and status code
-     * 
+     *
      * @param moduleName
      *            Module name of the required status
      * @param statusCode
      *            Status code of the required status
-     * 
      * @return the <code>EgwStatus</code> instance
      */
-    public EgwStatus getEgwStatusForModuleAndCode(String moduleName, String statusCode) {
+    public EgwStatus getEgwStatusForModuleAndCode(final String moduleName, final String statusCode) {
 
-        EgwStatus status = (EgwStatus) persistenceService.findByNamedQuery(CollectionConstants.QUERY_STATUS_BY_MODULE_AND_CODE, moduleName, statusCode);
+        final EgwStatus status = (EgwStatus) persistenceService.findByNamedQuery(
+                CollectionConstants.QUERY_STATUS_BY_MODULE_AND_CODE, moduleName, statusCode);
         return status;
     }
 
@@ -176,7 +173,7 @@ public class CollectionsUtil {
 
     /**
      * This method returns the User instance associated with the logged in user
-     * 
+     *
      * @param sessionMap
      *            Map of session variables
      * @return the logged in user
@@ -190,7 +187,7 @@ public class CollectionsUtil {
      *            the user whose department is to be returned
      * @return department of the given user
      */
-    public Department getDepartmentOfUser(User user) {
+    public Department getDepartmentOfUser(final User user) {
         return eisCommonService.getDepartmentForUser(user.getId());
     }
 
@@ -207,11 +204,11 @@ public class CollectionsUtil {
     /**
      * This method returns the User instance for the userName passed as
      * parameter
-     * 
+     *
      * @param userName
      * @return User
      */
-    public User getUserByUserName(String userName) {
+    public User getUserByUserName(final String userName) {
         return userService.getUserByUsername(userName);
     }
 
@@ -220,23 +217,25 @@ public class CollectionsUtil {
      *            Map of session variables
      * @return Location object for given user
      */
-    public Location getLocationOfUser(Map<String, Object> sessionMap) {
+    public Location getLocationOfUser(final Map<String, Object> sessionMap) {
         Location location = null;
         try {
-            if (sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID) != null && !sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID).equals("")) {
+            if (sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID) != null
+                    && !sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID).equals(""))
                 location = (Location) persistenceService.findByNamedQuery(CollectionConstants.QUERY_GET_LOCATIONBYID,
                         Integer.valueOf((String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID)));
-            } else {
+            else
                 location = (Location) persistenceService.findByNamedQuery(CollectionConstants.QUERY_LOCATION_BY_USER,
                         getLoggedInUser().getName());
-            }
 
-            location = (Location) HibernateUtil.getCurrentSession().createQuery("from Location where id = 2").list().get(0);
-            if(location == null){
-                throw new EGOVRuntimeException("Unable to fetch the location of the logged in user [" + (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME) + "]");
-            }
-        } catch (Exception exp) {
-            String errorMsg = "Unable to fetch the location of the logged in user [" + (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME) + "]";
+            location = (Location) HibernateUtil.getCurrentSession().createQuery("from Location where id = 2").list()
+                    .get(0);
+            if (location == null)
+                throw new EGOVRuntimeException("Unable to fetch the location of the logged in user ["
+                        + (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME) + "]");
+        } catch (final Exception exp) {
+            final String errorMsg = "Unable to fetch the location of the logged in user ["
+                    + (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME) + "]";
             LOGGER.error(errorMsg, exp);
             throw new EGOVRuntimeException(errorMsg, exp);
         }
@@ -269,14 +268,16 @@ public class CollectionsUtil {
      * @return List of all collection services (service type = C)
      */
     public List getChallanServiceList() {
-        return persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE, CollectionConstants.CHALLAN_SERVICE_TYPE);
+        return persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE,
+                CollectionConstants.CHALLAN_SERVICE_TYPE);
     }
 
     /**
      * @return List of all billing services
      */
     public List getBillingServiceList() {
-        return persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE, CollectionConstants.SERVICE_TYPE_BILLING);
+        return persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE,
+                CollectionConstants.SERVICE_TYPE_BILLING);
     }
 
     /**
@@ -287,7 +288,6 @@ public class CollectionsUtil {
     }
 
     /**
-     * 
      * @return list of all zones that have receipts created
      */
     public List getReceiptZoneList() {
@@ -297,35 +297,28 @@ public class CollectionsUtil {
     /**
      * This method returns the collection modes that are not allowed based on
      * rules configured in the script
-     * 
+     *
      * @param loggedInUser
      *            a <code>User</code> entity representing the logged in user.
-     * 
      * @return a <code>List</code> of <code>String</code> values representing
      *         the mode of payments supported.
      */
-    public List<String> getCollectionModesNotAllowed(User loggedInUser) {
-        List<String> collectionsModeNotAllowed = new ArrayList<String>();
+    public List<String> getCollectionModesNotAllowed(final User loggedInUser) {
+        final List<String> collectionsModeNotAllowed = new ArrayList<String>();
         Department dept = null;
-        if(!isEmployee(loggedInUser))
-        {
+        if (!isEmployee(loggedInUser))
             dept = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
-        }
-        else {
-             dept=getDepartmentOfUser(loggedInUser);
-        }
-        if(dept==null)   {
+        else
+            dept = getDepartmentOfUser(loggedInUser);
+        if (dept == null) {
 
             final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
             validationErrors.add(new ValidationError("Department", "billreceipt.counter.deptcode.null"));
-        }
-        else {     
-            if(dept.getCode().equals("R"))      
-                collectionsModeNotAllowed.add("card");   
-            else         {
-                collectionsModeNotAllowed.add("cash");  
-                collectionsModeNotAllowed.add("card");  
-            }
+        } else if (dept.getCode().equals("R"))
+            collectionsModeNotAllowed.add("card");
+        else {
+            collectionsModeNotAllowed.add("cash");
+            collectionsModeNotAllowed.add("card");
         }
         return collectionsModeNotAllowed;
     }
@@ -333,9 +326,8 @@ public class CollectionsUtil {
     public Boolean isEmployee(final User user) {
         for (final Role role : user.getRoles())
             for (final AppConfigValues appconfig : getThirdPartyUserRoles())
-                if (role != null && role.getName().equals(appconfig.getValue())) {
+                if (role != null && role.getName().equals(appconfig.getValue()))
                     return false;
-                }
         return true;
     }
 
@@ -349,132 +341,133 @@ public class CollectionsUtil {
 
     public String getDepartmentForWorkFlow() {
         String department = "";
-        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                CollectionConstants.COLLECTION_WORKFLOWDEPARTEMENT);
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.COLLECTION_WORKFLOWDEPARTEMENT);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             department = appConfigValue.get(0).getValue();
         return department;
     }
-    
-    public Position getPositionByDeptDesgAndBoundary(Department dept, Designation desg, Boundary boundary) {
-         Assignment assignmentObj = null;
-         final Designation desgnObj = designationService.getDesignationByName(getDesignationForThirdPartyUser());
-         final Department deptObj = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
-         final List<Employee> employeeList = employeeService.findByDepartmentDesignationAndBoundary(deptObj.getId(),
-                 desgnObj.getId(), boundary.getId());
-         if (!employeeList.isEmpty())
-             assignmentObj = assignmentService.getPrimaryAssignmentForEmployee(employeeList.get(0).getId());
-         else {
-             List<Employee> empList = employeeService.findByDepartmentDesignationAndBoundary(deptObj.getId(),
-                     desgnObj.getId(), boundary.getParent().getId());
-             assignmentObj = assignmentService.getPrimaryAssignmentForEmployee(empList.get(0).getId());
-         }
-             
-         return assignmentObj != null ? assignmentObj.getPosition() : null;
-     }
-    
+
+    public Position getPositionByDeptDesgAndBoundary(final Department dept, final Designation desg,
+            final Boundary boundary) {
+        Assignment assignmentObj = null;
+        final Designation desgnObj = designationService.getDesignationByName(getDesignationForThirdPartyUser());
+        final Department deptObj = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
+        final List<Employee> employeeList = employeeService.findByDepartmentDesignationAndBoundary(deptObj.getId(),
+                desgnObj.getId(), boundary.getId());
+        if (!employeeList.isEmpty())
+            assignmentObj = assignmentService.getPrimaryAssignmentForEmployee(employeeList.get(0).getId());
+        else {
+            final List<Employee> empList = employeeService.findByDepartmentDesignationAndBoundary(deptObj.getId(),
+                    desgnObj.getId(), boundary.getParent().getId());
+            assignmentObj = assignmentService.getPrimaryAssignmentForEmployee(empList.get(0).getId());
+        }
+
+        return assignmentObj != null ? assignmentObj.getPosition() : null;
+    }
+
     public String getDesignationForThirdPartyUser() {
         String designation = "";
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.COLLECTION_DESIGNATIONFORCSCOPERATOR);
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.COLLECTION_DESIGNATIONFORCSCOPERATOR);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             designation = appConfigValue.get(0).getValue();
         return designation;
     }
-
 
     /**
      * @param sessionMap
      *            Map of session variables
      * @return Position of logged in user
      */
-    public Position getPositionOfUser(User user) {
+    public Position getPositionOfUser(final User user) {
         return posService.getCurrentPositionForUser(user.getId());
     }
 
     /**
      * Gets position by given position name
-     * 
+     *
      * @param positionName
      *            Position name
      * @return Position object for given position name
      */
-    public Position getPositionByName(String positionName) {
+    public Position getPositionByName(final String positionName) {
         return posService.getPositionByName(positionName);
     }
 
     /**
      * This method retrieves the <code>CFinancialYear</code> for the given date.
-     * 
+     *
      * @param date
      *            an instance of <code>Date</code> for which the financial year
      *            is to be retrieved.
-     * 
      * @return an instance of <code></code> representing the financial year for
      *         the given date
      */
-    public CFinancialYear getFinancialYearforDate(Date date) {
-        return (CFinancialYear) persistenceService.getSession()
-                .createQuery("from CFinancialYear cfinancialyear where ? between " + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list().get(0);
+    public CFinancialYear getFinancialYearforDate(final Date date) {
+        return (CFinancialYear) persistenceService
+                .getSession()
+                .createQuery(
+                        "from CFinancialYear cfinancialyear where ? between "
+                                + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list()
+                                .get(0);
     }
 
     /**
      * This method checks if the given challan is valid.
-     * 
+     *
      * @param challan
      *            the <code>Challan</code> instance whose validity has to be
      *            checked
-     * 
      * @return a boolean value - true indicating that the challan is valid and
      *         false indicating that teh challan is not valid
      */
-    public boolean checkChallanValidity(Challan challan) {
-        Calendar current = Calendar.getInstance();
+    public boolean checkChallanValidity(final Challan challan) {
+        final Calendar current = Calendar.getInstance();
         current.clear(Calendar.HOUR_OF_DAY);
         current.clear(Calendar.MINUTE);
         current.clear(Calendar.SECOND);
         current.clear(Calendar.MILLISECOND);
 
-        Calendar validityStart = Calendar.getInstance();
+        final Calendar validityStart = Calendar.getInstance();
         validityStart.setTime(challan.getChallanDate());
         validityStart.clear(Calendar.HOUR_OF_DAY);
         validityStart.clear(Calendar.MINUTE);
         validityStart.clear(Calendar.SECOND);
         validityStart.clear(Calendar.MILLISECOND);
 
-        Calendar validityEnd = Calendar.getInstance();
+        final Calendar validityEnd = Calendar.getInstance();
         validityEnd.setTime(challan.getValidUpto());
         validityEnd.clear(Calendar.HOUR_OF_DAY);
         validityEnd.clear(Calendar.MINUTE);
         validityEnd.clear(Calendar.SECOND);
         validityEnd.clear(Calendar.MILLISECOND);
 
-        if (validityStart.compareTo(current) <= 0 && validityEnd.compareTo(current) >= 0) {
+        if (validityStart.compareTo(current) <= 0 && validityEnd.compareTo(current) >= 0)
             return true;
-        }
         return false;
     }
 
-    public void setScriptService(PersistenceService<Script, Long> scriptService) {
+    public void setScriptService(final PersistenceService<Script, Long> scriptService) {
         this.scriptService = scriptService;
     }
 
     /**
      * Fetches given bean from application context
-     * 
+     *
      * @param beanName
      *            name of bean to be fetched
-     * 
      * @return given bean from application context
      */
-    public Object getBean(String beanName) {
+    public Object getBean(final String beanName) {
 
         Object bean = null;
         try {
             bean = beanProvider.getBean(beanName);
             LOGGER.debug(" Got bean : " + beanName);
-        } catch (BeansException e) {
-            String errorMsg = "Could not locate bean [" + beanName + "]";
+        } catch (final BeansException e) {
+            final String errorMsg = "Could not locate bean [" + beanName + "]";
             LOGGER.error(errorMsg, e);
             throw new EGOVRuntimeException(errorMsg, e);
         }
@@ -484,76 +477,69 @@ public class CollectionsUtil {
     /**
      * This method returns the currently active config value for the given
      * module name and key
-     * 
+     *
      * @param moduleName
      *            a <code>String<code> representing the module name
-     * 
      * @param key
      *            a <code>String</code> representing the key
-     * 
      * @param defaultValue
      *            Default value to be returned in case the key is not defined
-     * 
      * @return <code>String</code> representing the configuration value
      */
-    public String getAppConfigValue(String moduleName, String key, String defaultValue) {
-        AppConfigValues configVal = appConfigValuesService.getAppConfigValueByDate(moduleName, key, new Date());
+    public String getAppConfigValue(final String moduleName, final String key, final String defaultValue) {
+        final AppConfigValues configVal = appConfigValuesService.getAppConfigValueByDate(moduleName, key, new Date());
         return configVal == null ? defaultValue : configVal.getValue();
     }
 
     /**
      * This method returns the config value for the given module name and key
-     * 
+     *
      * @param moduleName
      *            a <code>String<code> representing the module name
-     * 
      * @param key
      *            a <code>String</code> representing the key
-     * 
      * @return <code>String</code> representing the configuration value
      */
-    public String getAppConfigValue(String moduleName, String key) {
+    public String getAppConfigValue(final String moduleName, final String key) {
         return appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, key).get(0).getValue();
     }
 
     /**
      * This method returns the list of config values for the given module name
      * and key
-     * 
+     *
      * @param moduleName
      *            a <code>String<code> representing the module name
-     * 
      * @param key
      *            a <code>String</code> representing the key
-     * 
      * @return <code>List<AppConfigValues></code> representing the list of
      *         configuration values
      */
-    public List<AppConfigValues> getAppConfigValues(String moduleName, String key) {
+    public List<AppConfigValues> getAppConfigValues(final String moduleName, final String key) {
         return appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, key);
     }
 
     /**
      * Gets position by given position id
-     * 
+     *
      * @param positionId
      *            Position Id
      * @return Position object for given position id
      */
-    public Position getPositionById(Long positionId) {
+    public Position getPositionById(final Long positionId) {
         return posService.getPositionById(positionId);
     }
 
     /**
      * This method is invoked from the ReceiptHeader.workFlow script and returns
      * the position for the employee id passed as parameter
-     * 
+     *
      * @param employeeId
      *            PersonalInformation Id
      * @return Position object for Employee Id passed as parameter
      */
 
-    public Position getPositionforEmp(Integer employeeId) {
+    public Position getPositionforEmp(final Integer employeeId) {
         return EisManagersUtill.getEmployeeService().getPositionforEmp(employeeId);
     }
 
@@ -561,7 +547,7 @@ public class CollectionsUtil {
      * This method is invoked from the ReceiptHeader.workFlow script and returns
      * Employee object for the given Department Id, Designation Id ,Boundary Id
      * and FunctionaryId
-     * 
+     *
      * @param deptId
      *            Department Id
      * @param designationId
@@ -573,12 +559,14 @@ public class CollectionsUtil {
      * @return PersonalInformation
      */
 
-    public PersonalInformation getEmployeeByDepartmentDesignationBoundaryandFunctionary(Long deptId, Long designationId, Integer boundaryId, Integer functionaryId) {
+    public PersonalInformation getEmployeeByDepartmentDesignationBoundaryandFunctionary(final Long deptId,
+            final Long designationId, final Integer boundaryId, final Integer functionaryId) {
         PersonalInformation personalInformation = null;
         try {
-            personalInformation = EisManagersUtill.getEmployeeService().getEmployeeByFunctionary(deptId, designationId, Long.valueOf(boundaryId), functionaryId);
-        } catch (Exception e) {
-            String errorMsg = "Could not get PersonalInformation";
+            personalInformation = EisManagersUtill.getEmployeeService().getEmployeeByFunctionary(deptId, designationId,
+                    Long.valueOf(boundaryId), functionaryId);
+        } catch (final Exception e) {
+            final String errorMsg = "Could not get PersonalInformation";
             LOGGER.error("Could not get PersonalInformation", e);
             throw new EGOVRuntimeException(errorMsg, e);
         }
@@ -586,7 +574,6 @@ public class CollectionsUtil {
     }
 
     /**
-     * 
      * @param sessionMap
      * @return
      */
@@ -600,20 +587,17 @@ public class CollectionsUtil {
      *            the user whose non-primary department list is to be returned
      * @return list of non-primary department of the given user
      */
-    public List<Department> getAllNonPrimaryAssignmentsOfUser(User user) {
-        List<Department> departmentlist = new ArrayList<Department>();
+    public List<Department> getAllNonPrimaryAssignmentsOfUser(final User user) {
+        final List<Department> departmentlist = new ArrayList<Department>();
         try {
-            HashMap<String, String> paramMap = new HashMap<String, String>();
+            final HashMap<String, String> paramMap = new HashMap<String, String>();
             paramMap.put("code", EisManagersUtill.getEmployeeService().getEmpForUserId(user.getId()).getCode());
-            List<EmployeeView> employeeViewList = (List<EmployeeView>) eisService.getEmployeeInfoList(paramMap);
-            if (!employeeViewList.isEmpty()) {
-                for (EmployeeView employeeView : employeeViewList) {
-                    if (!employeeView.getAssignment().getPrimary()) {
+            final List<EmployeeView> employeeViewList = (List<EmployeeView>) eisService.getEmployeeInfoList(paramMap);
+            if (!employeeViewList.isEmpty())
+                for (final EmployeeView employeeView : employeeViewList)
+                    if (!employeeView.getAssignment().getPrimary())
                         departmentlist.add(employeeView.getAssignment().getDepartment());
-                    }
-                }
-            }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.error("Could not get list of assignments", e);
         }
 
@@ -626,38 +610,54 @@ public class CollectionsUtil {
      * @return non-primary department of the given user. In case user has
      *         multiple non-primary departments, the first one will be returned.
      */
-    public Department getNonPrimaryDeptOfUser(User user) {
-        List<Department> nonPrimaryAssignments = getAllNonPrimaryAssignmentsOfUser(user);
-        return (nonPrimaryAssignments.isEmpty()) ? null : nonPrimaryAssignments.get(0);
+    public Department getNonPrimaryDeptOfUser(final User user) {
+        final List<Department> nonPrimaryAssignments = getAllNonPrimaryAssignmentsOfUser(user);
+        return nonPrimaryAssignments.isEmpty() ? null : nonPrimaryAssignments.get(0);
     }
 
-    public List<Designation> getDesignationsAllowedForChallanApproval(Integer departmentId, ReceiptHeader receiptHeaderObj) {
-        List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_CHALLAN_WORKFLOWDESIGNATIONS);
-        return null ;/* (List<DesignationMaster>) scripts.get(0).eval(
-				Script.createContext("departmentId", departmentId, "collUtil", this, "receiptHeaderObj", receiptHeaderObj, "persistanceService", persistenceService));
+    public List<Designation> getDesignationsAllowedForChallanApproval(final Integer departmentId,
+            final ReceiptHeader receiptHeaderObj) {
+        scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_CHALLAN_WORKFLOWDESIGNATIONS);
+        return null;/*
+         * (List<DesignationMaster>) scripts.get(0).eval(
+         * Script.createContext("departmentId", departmentId,
+         * "collUtil", this, "receiptHeaderObj", receiptHeaderObj,
+         * "persistanceService", persistenceService));
          */
     }
 
-    public List<Department> getDepartmentsAllowedForChallanApproval(User loggedInUser, ReceiptHeader receiptHeaderObj) {
-        List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_CHALLAN_WORKFLOWDEPARTMENTS);
-        return null; /*(List<Department>) scripts.get(0).eval(
-				Script.createContext("loggedInUser", loggedInUser, "collUtil", this, "receiptHeaderObj", receiptHeaderObj, "persistanceService", persistenceService));
+    public List<Department> getDepartmentsAllowedForChallanApproval(final User loggedInUser,
+            final ReceiptHeader receiptHeaderObj) {
+        scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_CHALLAN_WORKFLOWDEPARTMENTS);
+        return null; /*
+         * (List<Department>) scripts.get(0).eval(
+         * Script.createContext("loggedInUser", loggedInUser,
+         * "collUtil", this, "receiptHeaderObj", receiptHeaderObj,
+         * "persistanceService", persistenceService));
          */
     }
 
-    public List<Department> getDepartmentsAllowedForBankRemittanceApproval(User loggedInUser) {
-        List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_BANKREMITTANCE_WORKFLOWDEPARTMENTS);
-        return  null;/*(List<Department>) scripts.get(0).eval(
-				Script.createContext("loggedInUser", loggedInUser, "collUtil", this, "persistanceService", persistenceService, "contraJournalVoucherObj",
-						new ContraJournalVoucher()));*/
+    public List<Department> getDepartmentsAllowedForBankRemittanceApproval(final User loggedInUser) {
+        scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_BANKREMITTANCE_WORKFLOWDEPARTMENTS);
+        return null;/*
+         * (List<Department>) scripts.get(0).eval(
+         * Script.createContext("loggedInUser", loggedInUser,
+         * "collUtil", this, "persistanceService",
+         * persistenceService, "contraJournalVoucherObj", new
+         * ContraJournalVoucher()));
+         */
 
     }
 
-    public List<Designation> getDesignationsAllowedForBankRemittanceApproval(Integer departmentId) {
-        List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_BANKREMITTANCE_WORKFLOWDESIGNATIONS);
-        return null;/*(List<DesignationMaster>) scripts.get(0).eval(
-				Script.createContext("departmentId", departmentId, "collUtil", this, "persistanceService", persistenceService, "contraJournalVoucherObj",
-						new ContraJournalVoucher()));*/
+    public List<Designation> getDesignationsAllowedForBankRemittanceApproval(final Integer departmentId) {
+        scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_BANKREMITTANCE_WORKFLOWDESIGNATIONS);
+        return null;/*
+         * (List<DesignationMaster>) scripts.get(0).eval(
+         * Script.createContext("departmentId", departmentId,
+         * "collUtil", this, "persistanceService",
+         * persistenceService, "contraJournalVoucherObj", new
+         * ContraJournalVoucher()));
+         */
 
     }
 
@@ -665,79 +665,78 @@ public class CollectionsUtil {
      * This method checks if the given glcode belongs to an account head
      * representing an arrear account head (for Property Tax). The glcodes for
      * such accounts are retrieved from App Config.
-     * 
+     *
      * @param glcode
      *            The Chart of Accounts Code
-     * 
      * @param description
      *            Description of the glcode
-     * 
      * @returna a <code>Boolean</code> indicating if the glcode is arrear
      *          account head
-     * 
      */
-    public boolean isPropertyTaxArrearAccountHead(String glcode, String description) {
-        List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_PROPERTYTAX, "ISARREARACCOUNT");
-        AppConfigValues penaltyGlCode = appConfigValuesService.getAppConfigValueByDate(CollectionConstants.MODULE_NAME_PROPERTYTAX, "PTPENALTYGLCODE", new Date());
+    public boolean isPropertyTaxArrearAccountHead(final String glcode, final String description) {
+        final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(
+                CollectionConstants.MODULE_NAME_PROPERTYTAX, "ISARREARACCOUNT");
+        final AppConfigValues penaltyGlCode = appConfigValuesService.getAppConfigValueByDate(
+                CollectionConstants.MODULE_NAME_PROPERTYTAX, "PTPENALTYGLCODE", new Date());
         boolean retValue = false;
         LOGGER.debug("isPropertyTaxArrearAccountHead glcode " + glcode + " description " + description);
         if (penaltyGlCode != null && penaltyGlCode.getValue().equals(glcode)) {
-            Module module = moduleService.getModuleByName(CollectionConstants.MODULE_NAME_PROPERTYTAX);
-            String currInst = commonsService.getInsatllmentByModuleForGivenDate(module, new Date()).getDescription();
-            if (currInst.equals(description.substring(16, description.length()))) {
+            final Module module = moduleService.getModuleByName(CollectionConstants.MODULE_NAME_PROPERTYTAX);
+            final String currInst = commonsService.getInsatllmentByModuleForGivenDate(module, new Date())
+                    .getDescription();
+            if (currInst.equals(description.substring(16, description.length())))
                 retValue = false;
-            } else {
+            else
                 retValue = true;
-            }
         } else {
-            ArrayList<String> accValues = new ArrayList<String>();
-            for (AppConfigValues value : list) {
+            final ArrayList<String> accValues = new ArrayList<String>();
+            for (final AppConfigValues value : list)
                 accValues.add(value.getValue());
-            }
-            if (accValues.contains(glcode)) {
+            if (accValues.contains(glcode))
                 retValue = true;
-            } else {
+            else
                 retValue = false;
-            }
         }
 
         return retValue;
     }
 
-    public void setSearchPositionService(SearchPositionService searchPositionService) {
+    public void setSearchPositionService(final SearchPositionService searchPositionService) {
         this.searchPositionService = searchPositionService;
     }
 
-    public List<EmployeeView> getPositionBySearchParameters(String beginsWith, Integer desId, Integer deptId, Integer jurdId, Integer roleId, Date userDate, Integer maxResults)
-            throws NoSuchObjectException {
+    public List<EmployeeView> getPositionBySearchParameters(final String beginsWith, final Integer desId,
+            final Integer deptId, final Integer jurdId, final Integer roleId, final Date userDate,
+            final Integer maxResults) throws NoSuchObjectException {
 
-        return searchPositionService.getPositionBySearchParameters(beginsWith, desId, deptId, Long.valueOf(jurdId), roleId, userDate, maxResults);
-
+        return searchPositionService.getPositionBySearchParameters(beginsWith, desId, deptId, Long.valueOf(jurdId),
+                roleId, userDate, maxResults);
 
     }
 
-    public User getUserById(Long userId) {
+    public User getUserById(final Long userId) {
         return userService.getUserById(userId);
     }
 
-    public Location getLocationByUser(Long userId) {
-        User user = userService.getUserById(userId);
-        return (Location) persistenceService.findByNamedQuery(CollectionConstants.QUERY_LOCATION_BY_USER, user.getUsername());
+    public Location getLocationByUser(final Long userId) {
+        final User user = userService.getUserById(userId);
+        return (Location) persistenceService.findByNamedQuery(CollectionConstants.QUERY_LOCATION_BY_USER,
+                user.getUsername());
     }
 
-    public void setUserService(UserService userService) {
+    public void setUserService(final UserService userService) {
         this.userService = userService;
     }
 
-    public void setCommonsService(CommonsService commonsService) {
+    public void setCommonsService(final CommonsService commonsService) {
         this.commonsService = commonsService;
     }
 
-    public void setBeanProvider(ApplicationContextBeanProvider beanProvider) {
+    public void setBeanProvider(final ApplicationContextBeanProvider beanProvider) {
         this.beanProvider = beanProvider;
     }
 
-    public void setPersistenceService(PersistenceService persistenceService) {
+    public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
 

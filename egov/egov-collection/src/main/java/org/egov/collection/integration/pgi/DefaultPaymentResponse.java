@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -43,267 +43,306 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class DefaultPaymentResponse implements PaymentResponse {
-	
-	private String merchantId;
-	private String customerId;
-	private String txnReferenceNo;
-	private String bankReferenceNo;
-	private BigDecimal txnAmount;
-	private Integer bankId;
-	private Integer bankMerchantId;
-	private String txnType;
-	private String currencyName;
-	private String itemCode;
-	private String securityType;
-	private Integer securityId;
-	private String securityPassword;
-	private Date txnDate;
-	private String authStatus;
-	private String settlementType;
-	private String receiptId;
-	private String additionalInfo2;
-	private String additionalInfo3;
-	//private String additionalInfo4;
-	private String paytGatewayServiceCode;
-	//private String additionalInfo5;
-	private String billingServiceCode;
-	private String additionalInfo6;
-	private String additionalInfo7;
-	private String errorStatus;
-	private String errorDescription;
-	private String checksum;
-	
-	public DefaultPaymentResponse() {
 
-	}
-	
+    private String merchantId;
+    private String customerId;
+    private String txnReferenceNo;
+    private String bankReferenceNo;
+    private BigDecimal txnAmount;
+    private Integer bankId;
+    private Integer bankMerchantId;
+    private String txnType;
+    private String currencyName;
+    private String itemCode;
+    private String securityType;
+    private Integer securityId;
+    private String securityPassword;
+    private Date txnDate;
+    private String authStatus;
+    private String settlementType;
+    private String receiptId;
+    private String additionalInfo2;
+    private String additionalInfo3;
+    // private String additionalInfo4;
+    private String paytGatewayServiceCode;
+    // private String additionalInfo5;
+    private String billingServiceCode;
+    private String additionalInfo6;
+    private String additionalInfo7;
+    private String errorStatus;
+    private String errorDescription;
+    private String checksum;
 
-	public String getMerchantId() {
-		return merchantId;
-	}
+    public DefaultPaymentResponse() {
 
-	public void setMerchantId(String merchantId) {
-		this.merchantId = merchantId;
-	}
+    }
 
-	public String getCustomerId() {
-		return customerId;
-	}
+    @Override
+    public String getMerchantId() {
+        return merchantId;
+    }
 
-	public void setCustomerId(String customerId) {
-		this.customerId = customerId;
-	}
+    @Override
+    public void setMerchantId(final String merchantId) {
+        this.merchantId = merchantId;
+    }
 
-	public String getTxnReferenceNo() {
-		return txnReferenceNo;
-	}
+    @Override
+    public String getCustomerId() {
+        return customerId;
+    }
 
-	public void setTxnReferenceNo(String txnReferenceNo) {
-		this.txnReferenceNo = txnReferenceNo;
-	}
+    @Override
+    public void setCustomerId(final String customerId) {
+        this.customerId = customerId;
+    }
 
-	public String getBankReferenceNo() {
-		return bankReferenceNo;
-	}
+    @Override
+    public String getTxnReferenceNo() {
+        return txnReferenceNo;
+    }
 
-	public void setBankReferenceNo(String bankReferenceNo) {
-		this.bankReferenceNo = bankReferenceNo;
-	}
+    @Override
+    public void setTxnReferenceNo(final String txnReferenceNo) {
+        this.txnReferenceNo = txnReferenceNo;
+    }
 
-	public BigDecimal getTxnAmount() {
-		return txnAmount;
-	}
+    @Override
+    public String getBankReferenceNo() {
+        return bankReferenceNo;
+    }
 
-	public void setTxnAmount(BigDecimal txnAmount) {
-		this.txnAmount = txnAmount;
-	}
+    @Override
+    public void setBankReferenceNo(final String bankReferenceNo) {
+        this.bankReferenceNo = bankReferenceNo;
+    }
 
-	public Integer getBankId() {
-		return bankId;
-	}
+    @Override
+    public BigDecimal getTxnAmount() {
+        return txnAmount;
+    }
 
-	public void setBankId(Integer bankId) {
-		this.bankId = bankId;
-	}
+    @Override
+    public void setTxnAmount(final BigDecimal txnAmount) {
+        this.txnAmount = txnAmount;
+    }
 
-	public Integer getBankMerchantId() {
-		return bankMerchantId;
-	}
+    @Override
+    public Integer getBankId() {
+        return bankId;
+    }
 
-	public void setBankMerchantId(Integer bankMerchantId) {
-		this.bankMerchantId = bankMerchantId;
-	}
+    @Override
+    public void setBankId(final Integer bankId) {
+        this.bankId = bankId;
+    }
 
-	public String getTxnType() {
-		return txnType;
-	}
+    @Override
+    public Integer getBankMerchantId() {
+        return bankMerchantId;
+    }
 
-	public void setTxnType(String txnType) {
-		this.txnType = txnType;
-	}
+    @Override
+    public void setBankMerchantId(final Integer bankMerchantId) {
+        this.bankMerchantId = bankMerchantId;
+    }
 
-	public String getCurrencyName() {
-		return currencyName;
-	}
+    @Override
+    public String getTxnType() {
+        return txnType;
+    }
 
-	public void setCurrencyName(String currencyName) {
-		this.currencyName = currencyName;
-	}
+    @Override
+    public void setTxnType(final String txnType) {
+        this.txnType = txnType;
+    }
 
-	public String getItemCode() {
-		return itemCode;
-	}
+    @Override
+    public String getCurrencyName() {
+        return currencyName;
+    }
 
-	public void setItemCode(String itemCode) {
-		this.itemCode = itemCode;
-	}
+    @Override
+    public void setCurrencyName(final String currencyName) {
+        this.currencyName = currencyName;
+    }
 
-	public String getSecurityType() {
-		return securityType;
-	}
+    @Override
+    public String getItemCode() {
+        return itemCode;
+    }
 
-	public void setSecurityType(String securityType) {
-		this.securityType = securityType;
-	}
+    @Override
+    public void setItemCode(final String itemCode) {
+        this.itemCode = itemCode;
+    }
 
-	public Integer getSecurityId() {
-		return securityId;
-	}
+    @Override
+    public String getSecurityType() {
+        return securityType;
+    }
 
-	public void setSecurityId(Integer securityId) {
-		this.securityId = securityId;
-	}
+    @Override
+    public void setSecurityType(final String securityType) {
+        this.securityType = securityType;
+    }
 
-	public String getSecurityPassword() {
-		return securityPassword;
-	}
+    @Override
+    public Integer getSecurityId() {
+        return securityId;
+    }
 
-	public void setSecurityPassword(String securityPassword) {
-		this.securityPassword = securityPassword;
-	}
+    @Override
+    public void setSecurityId(final Integer securityId) {
+        this.securityId = securityId;
+    }
 
-	public Date getTxnDate() {
-		return txnDate;
-	}
+    @Override
+    public String getSecurityPassword() {
+        return securityPassword;
+    }
 
-	public void setTxnDate(Date txnDate) {
-		this.txnDate = txnDate;
-	}
+    @Override
+    public void setSecurityPassword(final String securityPassword) {
+        this.securityPassword = securityPassword;
+    }
 
-	public String getAuthStatus() {
-		return authStatus;
-	}
+    @Override
+    public Date getTxnDate() {
+        return txnDate;
+    }
 
-	public void setAuthStatus(String authStatus) {
-		this.authStatus = authStatus;
-	}
+    @Override
+    public void setTxnDate(final Date txnDate) {
+        this.txnDate = txnDate;
+    }
 
-	public String getSettlementType() {
-		return settlementType;
-	}
+    @Override
+    public String getAuthStatus() {
+        return authStatus;
+    }
 
-	public void setSettlementType(String settlementType) {
-		this.settlementType = settlementType;
-	}
+    @Override
+    public void setAuthStatus(final String authStatus) {
+        this.authStatus = authStatus;
+    }
 
-	public String getReceiptId() {
-		return receiptId;
-	}
+    @Override
+    public String getSettlementType() {
+        return settlementType;
+    }
 
-	public void setReceiptId(String receiptId) {
-		this.receiptId = receiptId;
-	}
+    @Override
+    public void setSettlementType(final String settlementType) {
+        this.settlementType = settlementType;
+    }
 
-	public String getAdditionalInfo2() {
-		return additionalInfo2;
-	}
+    @Override
+    public String getReceiptId() {
+        return receiptId;
+    }
 
-	public void setAdditionalInfo2(String additionalInfo2) {
-		this.additionalInfo2 = additionalInfo2;
-	}
+    @Override
+    public void setReceiptId(final String receiptId) {
+        this.receiptId = receiptId;
+    }
 
-	public String getAdditionalInfo3() {
-		return additionalInfo3;
-	}
+    @Override
+    public String getAdditionalInfo2() {
+        return additionalInfo2;
+    }
 
-	public void setAdditionalInfo3(String additionalInfo3) {
-		this.additionalInfo3 = additionalInfo3;
-	}
+    @Override
+    public void setAdditionalInfo2(final String additionalInfo2) {
+        this.additionalInfo2 = additionalInfo2;
+    }
 
-	/*public String getAdditionalInfo4() {
-		return additionalInfo4;
-	}
+    @Override
+    public String getAdditionalInfo3() {
+        return additionalInfo3;
+    }
 
-	public void setAdditionalInfo4(String additionalInfo4) {
-		this.additionalInfo4 = additionalInfo4;
-	}
+    @Override
+    public void setAdditionalInfo3(final String additionalInfo3) {
+        this.additionalInfo3 = additionalInfo3;
+    }
 
-	public String getAdditionalInfo5() {
-		return additionalInfo5;
-	}
+    /*
+     * public String getAdditionalInfo4() { return additionalInfo4; } public
+     * void setAdditionalInfo4(String additionalInfo4) { this.additionalInfo4 =
+     * additionalInfo4; } public String getAdditionalInfo5() { return
+     * additionalInfo5; } public void setAdditionalInfo5(String additionalInfo5)
+     * { this.additionalInfo5 = additionalInfo5; }
+     */
 
-	public void setAdditionalInfo5(String additionalInfo5) {
-		this.additionalInfo5 = additionalInfo5;
-	}*/
+    @Override
+    public String getAdditionalInfo6() {
+        return additionalInfo6;
+    }
 
-	public String getAdditionalInfo6() {
-		return additionalInfo6;
-	}
+    @Override
+    public void setAdditionalInfo6(final String additionalInfo6) {
+        this.additionalInfo6 = additionalInfo6;
+    }
 
-	public void setAdditionalInfo6(String additionalInfo6) {
-		this.additionalInfo6 = additionalInfo6;
-	}
+    @Override
+    public String getAdditionalInfo7() {
+        return additionalInfo7;
+    }
 
-	public String getAdditionalInfo7() {
-		return additionalInfo7;
-	}
+    @Override
+    public void setAdditionalInfo7(final String additionalInfo7) {
+        this.additionalInfo7 = additionalInfo7;
+    }
 
-	public void setAdditionalInfo7(String additionalInfo7) {
-		this.additionalInfo7 = additionalInfo7;
-	}
+    @Override
+    public String getErrorStatus() {
+        return errorStatus;
+    }
 
-	public String getErrorStatus() {
-		return errorStatus;
-	}
+    @Override
+    public void setErrorStatus(final String errorStatus) {
+        this.errorStatus = errorStatus;
+    }
 
-	public void setErrorStatus(String errorStatus) {
-		this.errorStatus = errorStatus;
-	}
+    @Override
+    public String getErrorDescription() {
+        return errorDescription;
+    }
 
-	public String getErrorDescription() {
-		return errorDescription;
-	}
+    @Override
+    public void setErrorDescription(final String errorDescription) {
+        this.errorDescription = errorDescription;
+    }
 
-	public void setErrorDescription(String errorDescription) {
-		this.errorDescription = errorDescription;
-	}
+    @Override
+    public String getChecksum() {
+        return checksum;
+    }
 
-	public String getChecksum() {
-		return checksum;
-	}
+    @Override
+    public void setChecksum(final String checksum) {
+        this.checksum = checksum;
+    }
 
-	public void setChecksum(String checksum) {
-		this.checksum = checksum;
-	}
+    @Override
+    public String getPaytGatewayServiceCode() {
+        return paytGatewayServiceCode;
+    }
 
+    @Override
+    public void setPaytGatewayServiceCode(final String paytGatewayServiceCode) {
+        this.paytGatewayServiceCode = paytGatewayServiceCode;
+    }
 
-	public String getPaytGatewayServiceCode() {
-		return paytGatewayServiceCode;
-	}
+    @Override
+    public String getBillingServiceCode() {
+        return billingServiceCode;
+    }
 
-
-	public void setPaytGatewayServiceCode(String paytGatewayServiceCode) {
-		this.paytGatewayServiceCode = paytGatewayServiceCode;
-	}
-
-
-	public String getBillingServiceCode() {
-		return billingServiceCode;
-	}
-
-
-	public void setBillingServiceCode(String billingServiceCode) {
-		this.billingServiceCode = billingServiceCode;
-	}
+    @Override
+    public void setBillingServiceCode(final String billingServiceCode) {
+        this.billingServiceCode = billingServiceCode;
+    }
 
 }

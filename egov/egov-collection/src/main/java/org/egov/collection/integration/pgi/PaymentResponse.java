@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -48,117 +48,113 @@ import java.util.Date;
  */
 public interface PaymentResponse {
 
-	public String getMerchantId();
+    public String getMerchantId();
 
-	public void setMerchantId(String merchantId);
+    public void setMerchantId(String merchantId);
 
-	public String getCustomerId();
+    public String getCustomerId();
 
-	public void setCustomerId(String customerId);
+    public void setCustomerId(String customerId);
 
-	public String getTxnReferenceNo();
+    public String getTxnReferenceNo();
 
-	public void setTxnReferenceNo(String txnReferenceNo);
+    public void setTxnReferenceNo(String txnReferenceNo);
 
-	public String getBankReferenceNo();
+    public String getBankReferenceNo();
 
-	public void setBankReferenceNo(String bankReferenceNo);
+    public void setBankReferenceNo(String bankReferenceNo);
 
-	public BigDecimal getTxnAmount();
+    public BigDecimal getTxnAmount();
 
-	public void setTxnAmount(BigDecimal txnAmount);
+    public void setTxnAmount(BigDecimal txnAmount);
 
-	public Integer getBankId();
+    public Integer getBankId();
 
-	public void setBankId(Integer bankId);
+    public void setBankId(Integer bankId);
 
-	public Integer getBankMerchantId();
+    public Integer getBankMerchantId();
 
-	public void setBankMerchantId(Integer bankMerchantId);
+    public void setBankMerchantId(Integer bankMerchantId);
 
-	public String getTxnType();
+    public String getTxnType();
 
-	public void setTxnType(String txnType);
+    public void setTxnType(String txnType);
 
-	public String getCurrencyName();
+    public String getCurrencyName();
 
-	public void setCurrencyName(String currencyName);
+    public void setCurrencyName(String currencyName);
 
-	public String getItemCode();
+    public String getItemCode();
 
-	public void setItemCode(String itemCode);
+    public void setItemCode(String itemCode);
 
-	public String getSecurityType();
+    public String getSecurityType();
 
-	public void setSecurityType(String securityType);
+    public void setSecurityType(String securityType);
 
-	public Integer getSecurityId();
+    public Integer getSecurityId();
 
-	public void setSecurityId(Integer securityId);
+    public void setSecurityId(Integer securityId);
 
-	public String getSecurityPassword();
+    public String getSecurityPassword();
 
-	public void setSecurityPassword(String securityPassword);
+    public void setSecurityPassword(String securityPassword);
 
-	public Date getTxnDate();
+    public Date getTxnDate();
 
-	public void setTxnDate(Date txnDate);
+    public void setTxnDate(Date txnDate);
 
-	public String getAuthStatus();
+    public String getAuthStatus();
 
-	public void setAuthStatus(String authStatus);
+    public void setAuthStatus(String authStatus);
 
-	public String getSettlementType();
+    public String getSettlementType();
 
-	public void setSettlementType(String settlementType);
+    public void setSettlementType(String settlementType);
 
-	public String getReceiptId();
+    public String getReceiptId();
 
-	public void setReceiptId(String receiptId);
+    public void setReceiptId(String receiptId);
 
-	public String getAdditionalInfo2();
+    public String getAdditionalInfo2();
 
-	public void setAdditionalInfo2(String additionalInfo2);
+    public void setAdditionalInfo2(String additionalInfo2);
 
-	public String getAdditionalInfo3();
+    public String getAdditionalInfo3();
 
-	public void setAdditionalInfo3(String additionalInfo3);
+    public void setAdditionalInfo3(String additionalInfo3);
 
-	/*public String getAdditionalInfo4();
+    /*
+     * public String getAdditionalInfo4(); public void setAdditionalInfo4(String
+     * additionalInfo4); public String getAdditionalInfo5(); public void
+     * setAdditionalInfo5(String additionalInfo5);
+     */
+    public String getPaytGatewayServiceCode();
 
-	public void setAdditionalInfo4(String additionalInfo4);
+    public void setPaytGatewayServiceCode(String paytGatewayServiceCode);
 
-	public String getAdditionalInfo5();
+    public String getBillingServiceCode();
 
-	public void setAdditionalInfo5(String additionalInfo5);
-*/
-	public String getPaytGatewayServiceCode();
+    public void setBillingServiceCode(String billingServiceCode);
 
-	public void setPaytGatewayServiceCode(String paytGatewayServiceCode);
+    public String getAdditionalInfo6();
 
-	public String getBillingServiceCode();
+    public void setAdditionalInfo6(String additionalInfo6);
 
-	public void setBillingServiceCode(String billingServiceCode);
-	
-	public String getAdditionalInfo6();
+    public String getAdditionalInfo7();
 
-	public void setAdditionalInfo6(String additionalInfo6);
+    public void setAdditionalInfo7(String additionalInfo7);
 
-	public String getAdditionalInfo7();
+    public String getErrorStatus();
 
-	public void setAdditionalInfo7(String additionalInfo7);
+    public void setErrorStatus(String errorStatus);
 
-	public String getErrorStatus();
+    public String getErrorDescription();
 
-	public void setErrorStatus(String errorStatus);
+    public void setErrorDescription(String errorDescription);
 
-	public String getErrorDescription();
+    public String getChecksum();
 
-	public void setErrorDescription(String errorDescription);
+    public void setChecksum(String checksum);
 
-	public String getChecksum();
-
-	public void setChecksum(String checksum);
-	
-	
 }

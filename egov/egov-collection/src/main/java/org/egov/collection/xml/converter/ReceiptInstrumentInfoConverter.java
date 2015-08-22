@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -48,29 +48,27 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-public class ReceiptInstrumentInfoConverter implements Converter{
+public class ReceiptInstrumentInfoConverter implements Converter {
 
-	@Override
-	public void marshal(Object value, HierarchicalStreamWriter writer,
-			MarshallingContext context) {
-		
-		ReceiptInstrumentInfo receiptInstrInfo = (ReceiptInstrumentInfo) value;
-		
-		ConverterUtil.createNode(writer, "instrumentNo", receiptInstrInfo.getInstrumentNumber());
-		ConverterUtil.createNode(writer, "instrumentDate", String.valueOf(receiptInstrInfo.getInstrumentDate()));
-		ConverterUtil.createNode(writer, "instrumentAmount", String.valueOf(receiptInstrInfo.getInstrumentAmount()));
-		ConverterUtil.createNode(writer, "instrumentType", receiptInstrInfo.getInstrumentType());
-	}
+    @Override
+    public void marshal(final Object value, final HierarchicalStreamWriter writer, final MarshallingContext context) {
 
-	@Override
-	public Object unmarshal(HierarchicalStreamReader arg0,
-			UnmarshallingContext context) {
-		return null;
-	}
+        final ReceiptInstrumentInfo receiptInstrInfo = (ReceiptInstrumentInfo) value;
 
-	@Override
-	public boolean canConvert(Class clazz) {
-		return clazz.equals(ReceiptInstrumentInfoImpl.class);
-	}
-	
+        ConverterUtil.createNode(writer, "instrumentNo", receiptInstrInfo.getInstrumentNumber());
+        ConverterUtil.createNode(writer, "instrumentDate", String.valueOf(receiptInstrInfo.getInstrumentDate()));
+        ConverterUtil.createNode(writer, "instrumentAmount", String.valueOf(receiptInstrInfo.getInstrumentAmount()));
+        ConverterUtil.createNode(writer, "instrumentType", receiptInstrInfo.getInstrumentType());
+    }
+
+    @Override
+    public Object unmarshal(final HierarchicalStreamReader arg0, final UnmarshallingContext context) {
+        return null;
+    }
+
+    @Override
+    public boolean canConvert(final Class clazz) {
+        return clazz.equals(ReceiptInstrumentInfoImpl.class);
+    }
+
 }
