@@ -59,6 +59,8 @@ $(document).ready(
 					$('#mode').val("ward");
 				} else if ($('#reportType').val() == 'blockWise') {
 					$('#mode').val("block");
+				}else if ($('#reportType').val() == 'localityWise') {
+					$('#mode').val("locality");
 				}
 
 				callAjaxByBoundary(e);
@@ -131,6 +133,18 @@ $(document).ready(
 											valArray[0] + "-" + valArray[1]);
 								}
 							}
+						}else if ($('#reportType').val() == 'localityWise') {
+							if ($('#mode').val() == 'property') {
+								if (valArray.length > 0) {
+									var propVal = valArray[0].split('~');
+									if (propVal.length > 0) {
+										$('#mode').val(propVal[0]);
+										$('#boundaryId').val(propVal[1]);
+									}
+									$('#selectedModeBndry').val(
+											valArray[0] + "-" + valArray[1]);
+								}
+							}
 						}
 						callAjaxByBoundary(e);
 					});
@@ -151,6 +165,8 @@ function setHiddenValueByLink(obj, param, event, boundaryId) {
 		} else if (param.value == 'ward') {
 			$('#mode').val("block");
 		} else if (param.value == 'block') {
+			$('#mode').val("property");
+		} else if (param.value == 'locality') {
 			$('#mode').val("property");
 		}
 		callAjaxByBoundary(event);
@@ -184,7 +200,13 @@ function callAjaxByBoundary(event) {
 		temp = modeVal + "~" + boundary_Id;
 		$('#selectedModeBndry').val(temp);
 		$('#report-backbutton').hide();
-	} else {
+	} else if ($('#reportType').val() == 'localityWise'
+			&& $('#mode').val() == 'locality') {
+		boundary_Id = $('#localitys').val();
+		temp = modeVal + "~" + boundary_Id;
+		$('#selectedModeBndry').val(temp);
+		$('#report-backbutton').hide();
+	}else {
 		boundary_Id = $('#boundaryId').val();
 		temp = $('#selectedModeBndry').val() + "-" + modeVal + "~"
 				+ boundary_Id;

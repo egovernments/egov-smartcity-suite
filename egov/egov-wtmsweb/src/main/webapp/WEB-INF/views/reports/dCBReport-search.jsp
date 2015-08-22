@@ -66,6 +66,10 @@
 							<c:when test="${reportType == 'blockWise'}">
 								<strong><spring:message code="title.blockwisedcbreport" /></strong>
 							</c:when>
+							<c:when test="${reportType == 'localityWise'}">
+								<strong><spring:message
+										code="title.localitywisedcbreport" /></strong>
+							</c:when>
 							<c:otherwise>
 							</c:otherwise>
 						</c:choose>
@@ -150,6 +154,26 @@
 								</div>
 								<spring:message
 									code="lbl.blocks.pressCntrlToSelectMultipleBlock" />
+							</div>
+						</c:when>
+						<c:when test="${reportType == 'localityWise'}">
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.locality" /> <small><i
+										class="entypo-star error-msg"></i></small>
+								</label>
+								<div class="col-sm-6 add-margin">
+									<form:select path="localitys" multiple="true" size="10"
+										id="localitys" cssClass="form-control"
+										cssErrorClass="form-control error" required="required">
+										<form:options items="${localitys}" itemValue="id"
+											itemLabel="name" />
+									</form:select>
+
+									<form:errors path="localitys" cssClass="error-msg" />
+								</div>
+								<spring:message
+									code="lbl.localitys.pressCntrlToSelectMultipleLocality" />
 							</div>
 						</c:when>
 						<c:otherwise>

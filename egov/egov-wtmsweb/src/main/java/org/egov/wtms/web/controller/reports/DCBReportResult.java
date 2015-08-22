@@ -52,6 +52,7 @@ public class DCBReportResult {
     private List<Boundary> zones;
     private List<Boundary> wards;
     private List<Boundary> blocks;
+    private List<Boundary> localitys;
 
     private String boundaryName;
     private String boundaryId;
@@ -76,7 +77,7 @@ public class DCBReportResult {
     private BigInteger arr_balance = BigInteger.ZERO;
 
     public Integer getId() {
-        return zoneid != null ? zoneid : wardid != null ? wardid : block != null ? block : null;
+        return zoneid != null ? zoneid : wardid != null ? wardid : block != null ? block : locality != null ? locality : null;
     }
 
     public String getMode() {
@@ -120,6 +121,14 @@ public class DCBReportResult {
 
     public void setZones(final List<Boundary> zones) {
         this.zones = zones;
+    }
+
+    public List<Boundary> getLocalitys() {
+        return localitys;
+    }
+
+    public void setLocalitys(final List<Boundary> localitys) {
+        this.localitys = localitys;
     }
 
     public String getBoundaryName() {
