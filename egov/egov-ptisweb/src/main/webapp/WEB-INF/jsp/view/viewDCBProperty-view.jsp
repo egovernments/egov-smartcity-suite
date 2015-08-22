@@ -668,7 +668,7 @@
 													<tr>
 														<td class="blueborderfortd">
 															<div align="center">
-																<a href="/../collection/citizen/onlineReceipt!viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=PT" target="_blank" >
+																<a href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=PT" target="_blank" >
 																	<s:property value="#rcpt.getReceiptNumber()" />
 																</a>
 															</div>
@@ -726,7 +726,7 @@
 													<tr>
 														<td class="blueborderfortd">
 															<div align="center">
-																<a href="/../collection/citizen/onlineReceipt!viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=PT" target="_blank" >
+																<a href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=PT" target="_blank" >
 																	<s:property value="#rcpt.getReceiptNumber()" />
 																</a>
 															</div>
@@ -783,7 +783,7 @@
 													<tr>
 														<td class="blueborderfortd">
 															<div align="center">
-																<a href="/../collection/citizen/onlineReceipt!viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=PT" target="_blank" >
+																<a href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=PT" target="_blank" >
 																	<s:property value="#rcpt.getReceiptNumber()" />
 																</a>
 															</div>
