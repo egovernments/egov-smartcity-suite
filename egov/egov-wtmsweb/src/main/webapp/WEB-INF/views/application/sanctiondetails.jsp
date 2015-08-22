@@ -52,14 +52,14 @@
 				<div class="panel-body">
 					<div class="row">
 						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.approvalnumber"/><span class="mandatory"></span>
+							<spring:message code="lbl.sanctionnumber"/><span class="mandatory"></span>
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin">
-							<form:input class="form-control" id="approvalNumber" path="approvalNumber" min="3" maxlength="50" required="required" />
+							<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="approvalNumber" path="approvalNumber" min="3" maxlength="50" required="required" />
 							<form:errors path="approvalNumber" cssClass="add-margin error-msg" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.approvaldate"/><span class="mandatory"></span>
+							<spring:message code="lbl.sanctiondate"/><span class="mandatory"></span>
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin">
 							<form:input id="approvalDate" path="approvalDate" class="form-control datepicker today" data-date-end-date="0d" required="required" />
