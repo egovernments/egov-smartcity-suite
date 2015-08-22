@@ -938,6 +938,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			if (applicationType.equalsIgnoreCase(REVISION_PETITION_CREATED)) {
 
 				args.add(objection.getObjectionNumber());
+				args.add(sMSEmailService.getCityName());
 				if (mobileNumber != null)
 					smsMsg = getText("msg.revPetitioncreate.sms", args);
 				if (emailid != null) {
