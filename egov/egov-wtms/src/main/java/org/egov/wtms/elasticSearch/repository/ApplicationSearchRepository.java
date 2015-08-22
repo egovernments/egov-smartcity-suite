@@ -50,10 +50,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ApplicationSearchRepository extends JpaRepository<ApplicationIndex, Long> {
 
-	 @Query("select distinct ct.moduleName from ApplicationIndex ct order by ct.moduleName asc")
-	    List<ApplicationIndex> findApplicationIndexModules();
-	 
-	 @Query("select distinct ct.applicationType from ApplicationIndex ct where ct.moduleName=:moduleName order by ct.applicationType asc")
-	    List<ApplicationIndex> findAllApplicationTypes(@Param("moduleName") String moduleName);
+    @Query("select distinct ct.moduleName from ApplicationIndex ct order by ct.moduleName asc")
+    List<ApplicationIndex> findApplicationIndexModules();
+
+    @Query("select distinct ct.applicationType from ApplicationIndex ct where ct.moduleName=:moduleName order by ct.applicationType asc")
+    List<ApplicationIndex> findAllApplicationTypes(@Param("moduleName") String moduleName);
 
 }

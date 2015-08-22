@@ -56,8 +56,7 @@ public class ConsumerIndexService {
             mobileNumber = ownerNameItr.next().getMobileNumber();
 
         final ConsumerSearch consumerSearch = new ConsumerSearch(waterConnectionDetails.getConnection()
-                .getConsumerCode(), mobileNumber, waterConnectionDetails
-                        .getUsageType().getName(),
+                .getConsumerCode(), mobileNumber, waterConnectionDetails.getUsageType().getName(),
                 waterConnectionDetails.getCreatedDate());
 
         consumerSearch.setZone(assessmentDetails.getBoundaryDetails().getZoneName());

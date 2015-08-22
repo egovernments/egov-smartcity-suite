@@ -80,8 +80,8 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
         BigDecimal arrearTotal = BigDecimal.ZERO;
         Installment arrInstal = null;
         System.out.println();
-        final Installment currentInstallment = connectionDemandService
-                .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
+        final Installment currentInstallment = connectionDemandService.getCurrentInstallment(
+                WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
         final List<WaterConnection> waterConnections = waterConnectionService.findByPropertyIdentifier(propertyId);
         final List<ConsumerConsumption> consumerConsumptions = new ArrayList<ConsumerConsumption>();
         for (final WaterConnection waterConnection : waterConnections) {
@@ -91,8 +91,7 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
                 final ConsumerConsumption consumerConsumption = new ConsumerConsumption();
                 consumerConsumption.setHscno(waterConnectionDetails.getConnection().getConsumerCode());
                 final Map<String, BigDecimal> resultmap = connectionDemandService.getDemandCollMapForPtisIntegration(
-                        waterConnectionDetails,
-                        WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null);
+                        waterConnectionDetails, WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null);
                 if (null != resultmap && !resultmap.isEmpty()) {
                     final BigDecimal arrInstallment = resultmap.get(WaterTaxConstants.ARR_INSTALFROM_STR);
                     if (null != arrInstallment && arrInstallment != BigDecimal.ZERO)
@@ -101,7 +100,8 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
                     consumerConsumption.setArrearDue(resultmap.get(WaterTaxConstants.ARR_DUE));
                     if (null != arrInstal) {
                         consumerConsumption.setArrearFromDate(new DateTime(arrInstal.getFromDate()));
-                        consumerConsumption.setArrearToDate(new DateTime(currentInstallment.getFromDate()).minusDays(1));
+                        consumerConsumption
+                                .setArrearToDate(new DateTime(currentInstallment.getFromDate()).minusDays(1));
                     }
                     consumerConsumption.setCurrentFromDate(new DateTime(currentInstallment.getFromDate()));
                     consumerConsumption.setCurentToDate(new DateTime(currentInstallment.getToDate()));
@@ -122,7 +122,8 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
     @Override
     public boolean updateBillNo(final String Propertyid, final String Billno) {
 
-        // TODO Iterate through all water connections assosiated with this propertyid and update the bill no
+        // TODO Iterate through all water connections assosiated with this
+        // propertyid and update the bill no
         return true;
     }
 

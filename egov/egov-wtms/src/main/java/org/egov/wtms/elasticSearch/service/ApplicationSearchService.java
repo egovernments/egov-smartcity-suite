@@ -57,17 +57,17 @@ public class ApplicationSearchService {
     public ApplicationSearchService(final ApplicationSearchRepository applicationSearchRepository) {
         this.applicationSearchRepository = applicationSearchRepository;
     }
-	
+
     public ApplicationIndex load(final Long id) {
         return applicationSearchRepository.getOne(id);
     }
-    
+
     public List<ApplicationIndex> findApplicationIndexModules() {
         return applicationSearchRepository.findApplicationIndexModules();
     }
-    
+
     public List<ApplicationIndex> findApplicationIndexApplicationTypes(final String moduleName) {
         return applicationSearchRepository.findAllApplicationTypes(moduleName);
     }
-    
+
 }

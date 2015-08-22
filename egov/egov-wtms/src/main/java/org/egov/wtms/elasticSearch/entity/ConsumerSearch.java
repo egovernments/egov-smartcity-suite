@@ -10,31 +10,44 @@ public class ConsumerSearch implements Indexable {
 
     @Searchable(name = "zone", group = Searchable.Group.CLAUSES)
     private String zone;
+
     @Searchable(name = "ward", group = Searchable.Group.CLAUSES)
     private String ward;
+
     @Searchable(name = "consumercode", group = Searchable.Group.CLAUSES)
     private final String consumerCode;
+
     @Searchable(name = "propertyid", group = Searchable.Group.CLAUSES)
     private String propertyId;
+
     @Searchable(name = "bpaid", group = Searchable.Group.CLAUSES)
     private String bpaId;
+
     @Searchable(name = "mobilenumber", group = Searchable.Group.CLAUSES)
     private final String mobileNumber;
+
     @Searchable(name = "consumername", group = Searchable.Group.SEARCHABLE)
     private String consumerName;
+
     @Searchable(name = "locality", group = Searchable.Group.SEARCHABLE)
     private String locality;
+
     @Searchable(name = "usage", group = Searchable.Group.CLAUSES)
     private final String usageType;
+
     @Searchable(name = "totaldue", group = Searchable.Group.CLAUSES)
     private BigDecimal totalDue;
+
     @Searchable(name = "createdDate", group = Searchable.Group.COMMON)
     private final Date createdDate;
+
     @Searchable(name = "applicationcode", group = Searchable.Group.CLAUSES)
     private String applicationCode;
-    @Searchable(name = "status",group = Searchable.Group.CLAUSES)
+
+    @Searchable(name = "status", group = Searchable.Group.CLAUSES)
     private String status;
-    @Searchable(name = "connectiontype",group = Searchable.Group.CLAUSES)
+
+    @Searchable(name = "connectiontype", group = Searchable.Group.CLAUSES)
     private String connectionType;
 
     public ConsumerSearch(final String consumerCode, final String mobileNumber, final String usageType,
@@ -44,12 +57,14 @@ public class ConsumerSearch implements Indexable {
         this.usageType = usageType;
         this.createdDate = createdDate;
     }
+
     /**
      * @return the status
      */
     public String getStatus() {
         return status;
     }
+
     /**
      * @param status
      *            the status to set
@@ -210,13 +225,13 @@ public class ConsumerSearch implements Indexable {
     public void setApplicationCode(final String applicationCode) {
         this.applicationCode = applicationCode;
     }
+
     public String getConnectionType() {
         return connectionType;
     }
-    public void setConnectionType(String connectionType) {
+
+    public void setConnectionType(final String connectionType) {
         this.connectionType = connectionType;
     }
-    
-    
-    
+
 }
