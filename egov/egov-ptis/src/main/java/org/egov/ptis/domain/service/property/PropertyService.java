@@ -2134,8 +2134,7 @@ public class PropertyService {
         if (childrenCreated)
             for (final PropertyStatusValues child : children)
                 childrenArea = getPropertyArea(childrenArea, child.getBasicProperty().getProperty());
-        else
-            parentArea = getPropertyArea(parentArea, parentProperty);
+        parentArea = getPropertyArea(parentArea, parentProperty);
         area = getPropertyArea(area, propertyModel);
         return area.add(childrenArea).compareTo(parentArea) > 0 ? "error.area.greaterThanParent" : "";
     }
