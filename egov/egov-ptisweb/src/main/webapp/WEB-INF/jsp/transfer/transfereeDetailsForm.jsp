@@ -213,7 +213,7 @@
    				data:{"mobileNumber" : mobileNo},
    			}).done(function(response) {
    				if(response.exists) {
-   					jQuery("input[name='transfereeInfos["+ rowidx +"].owner.name']").val(response.name);
+   					jQuery("input[name='transfereeInfos["+ rowidx +"].name']").val(response.name);
    					jQuery("select[name='transfereeInfos["+ rowidx +"].gender']").val(response.gender);
    					jQuery("input[name='transfereeInfos["+ rowidx +"].mobileNumber']").val(response.mobileNumber);
    					jQuery("select[name='transfereeInfos["+ rowidx +"].salutation']").val(response.salutaion);

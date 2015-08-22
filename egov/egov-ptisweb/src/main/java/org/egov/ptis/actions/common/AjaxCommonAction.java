@@ -406,7 +406,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	
 	 @Action(value = "/ajaxCommon-getUserByMobileNo")
 	    public void getUserByMobileNo() throws IOException {
-	        final User user = userService.getUserByMobileNumber(mobileNumber);
+	        final User user = (User) getPersistenceService().find("From User where mobileNumber = ?",mobileNumber);
 	        final JSONObject jsonObject = new JSONObject();
 	        if (null != user) {
 	            jsonObject.put("exists",Boolean.TRUE);
