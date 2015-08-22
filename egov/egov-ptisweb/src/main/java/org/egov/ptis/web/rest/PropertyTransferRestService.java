@@ -53,6 +53,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -75,6 +76,7 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.aadhaar.webservice.client.AadhaarInfoServiceClient;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.Gender;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
@@ -103,13 +105,13 @@ import com.sun.jersey.multipart.FormDataMultiPart;
 import com.sun.jersey.multipart.FormDataParam;
 
 /**
- * The PropertyTransferRestService class is used as the RESTFul service to handle user
- * request and response.
+ * The PropertyTransferRestService class is used as the RESTFul service to
+ * handle user request and response.
  * 
  * @author Pradeep
  */
 @Component
-@Path("/trans")
+@Path("/transfer")
 public class PropertyTransferRestService {
     private static final String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
     private static final String DOCUMENT_TYPE_ADDRESSPROOF = "Address Proof Of Parties";
@@ -128,7 +130,7 @@ public class PropertyTransferRestService {
     private SimpleRestClient simpleRestClient;
     @Autowired
     private EisCommonService eisCommonService;
-    
+
     @Context
     HttpServletRequest context;
 
@@ -136,36 +138,33 @@ public class PropertyTransferRestService {
     String PASSWORD = "demo";
     String LOGIN_USERID = "16";
 
-  /**
-   * 
-   * @param accessmentnumber
-   * @param username
-   * @param password
-   * @param details
-   * @param receivedon
-   * @param recievedBy
-   * @return
-   * @throws JsonGenerationException
-   * @throws JsonMappingException
-   * @throws IOException
-   */
+    /**
+     * @param accessmentnumber
+     * @param username
+     * @param password
+     * @param details
+     * @param receivedon
+     * @param recievedBy
+     * @return
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
     @POST
     @Path("/propertyTransfer/createPropertyTransfer")
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes({MediaType.MULTIPART_FORM_DATA})
+    @Consumes({ MediaType.MULTIPART_FORM_DATA })
     public String createRevisionPetitionFromRest(@FormDataParam("accessmentnumber") String accessmentnumber,
             @FormDataParam("username") String username, @FormDataParam("password") String password,
             @FormDataParam("ownerDetails") String ownerDetails,
             @FormDataParam("mutationReasonCode") String mutationReason, @FormDataParam("saleDetail") String saleDetail,
             @FormDataParam("deedNo") String deedNo, @FormDataParam("deedDate") String deedDate,
-            FormDataMultiPart formTransferDocument
-            )
-            throws JsonGenerationException, JsonMappingException, IOException {
+            FormDataMultiPart formTransferDocument) throws JsonGenerationException, JsonMappingException, IOException {
         List<DocumentType> documentTypes = new ArrayList<>();
         String responseJson = new String();
-        PropertyMutationMaster mutationMaster =null;
-        BasicProperty basicProperty =null;
-          
+        PropertyMutationMaster mutationMaster = null;
+        BasicProperty basicProperty = null;
+
         Boolean isAuthenticatedUser = authenticateUser(username, password);
         if (isAuthenticatedUser) {
 
@@ -190,12 +189,12 @@ public class PropertyTransferRestService {
                 responseJson = getJSONResponse(errorDetails);
             } else {
 
-               // TODO:  REST API'S TO GET MASTERS
+                // TODO: REST API'S TO GET MASTERS
                 List<Document> documents = getDocumentList(formTransferDocument, documentTypes);
 
                 PropertyMutation propertyMutation = buildPropertyMutationObject(mutationReason, saleDetail, deedNo,
                         deedDate, ownerDetailsList, basicProperty);
-                
+
                 if (documents != null && documents.size() > 0)
                     propertyMutation.setDocuments(documents);
 
@@ -204,21 +203,32 @@ public class PropertyTransferRestService {
                 propertyService.updateIndexes(propertyMutation,
                         PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
 
-                responseJson = convertPropertyMutationToJson(propertyMutation); 
+                responseJson = convertPropertyMutationToJson(propertyMutation);
             }
-        }else {
+        } else {
             ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
-            responseJson = getJSONResponse(errorDetails);;
-            }
+            responseJson = getJSONResponse(errorDetails);
+            ;
+        }
         return responseJson;
     }
+/**
+ * 
+ * @param object
+ * @return
+ */
     private String convertPropertyMutationToJson(final Object object) {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        Gson gson = gsonBuilder.registerTypeAdapter(PropertyMutation.class, new PropertyMutationAdaptor()).create(); 
+        Gson gson = gsonBuilder.registerTypeAdapter(PropertyMutation.class, new PropertyMutationAdaptor()).create();
         String json = gson.toJson(object);
         return json;
     }
-    
+/**
+ * 
+ * @param formTransferDocument
+ * @param documentTypes
+ * @return
+ */
     private List<Document> getDocumentList(FormDataMultiPart formTransferDocument, List<DocumentType> documentTypes) {
         InputStream fileInputStream;
         ContentDisposition headerOfFilePart;
@@ -273,7 +283,12 @@ public class PropertyTransferRestService {
 
         return documents;
     }
-
+/**
+ * 
+ * @param fileInputStream
+ * @param headerOfFilePart
+ * @return
+ */
     private Document createDocument(InputStream fileInputStream, ContentDisposition headerOfFilePart) {
 
         Document document = new Document();
@@ -294,7 +309,12 @@ public class PropertyTransferRestService {
         return document;
 
     }
-
+/**
+ * 
+ * @param uploadedInputStream
+ * @param fileName
+ * @return
+ */
     private File writeToFile(InputStream uploadedInputStream, String fileName) {
         File file = new File(fileName);
         try {
@@ -309,8 +329,14 @@ public class PropertyTransferRestService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return file;}
-
+        return file;
+    }
+/**
+ * 
+ * @param thirdPartyPhotoOfAssessmentCode
+ * @param documentTypes
+ * @return
+ */
     private DocumentType getDocumentTypeByCode(String thirdPartyPhotoOfAssessmentCode, List<DocumentType> documentTypes) {
         for (DocumentType docType : documentTypes) {
             if (docType.getName().equalsIgnoreCase(thirdPartyPhotoOfAssessmentCode))
@@ -318,7 +344,11 @@ public class PropertyTransferRestService {
         }
         return null;
     }
-
+/**
+ * 
+ * @param assessmentNo
+ * @return
+ */
     public BigDecimal getWaterTaxDues(final String assessmentNo) {
         final String wtmsRestURL = String.format(WTMS_TAXDUE_RESTURL, WebUtils.extractRequestDomainURL(context, false),
                 assessmentNo);
@@ -326,7 +356,16 @@ public class PropertyTransferRestService {
         return waterTaxInfo.get("totalTaxDue") == null ? BigDecimal.ZERO : new BigDecimal(
                 Double.valueOf((Double) waterTaxInfo.get("totalTaxDue")));
     }
-
+/**
+ * 
+ * @param mutationReason
+ * @param saleDetail
+ * @param deedNo
+ * @param deedDate
+ * @param ownerDetailsList
+ * @param basicProperty
+ * @return
+ */
     private PropertyMutation buildPropertyMutationObject(String mutationReason, String saleDetail, String deedNo,
             String deedDate, List<OwnerDetails> ownerDetailsList, BasicProperty basicProperty) {
         PropertyMutation propertyMutation = new PropertyMutation();
@@ -343,13 +382,17 @@ public class PropertyTransferRestService {
         propertyMutation.setTransfereeInfos(getPropertyOwnerInfoList(ownerDetailsList));
         return propertyMutation;
     }
-
+/**
+ * 
+ * @param propertyMutation
+ * @param basicProperty
+ */
     private void transitionWorkFlow(PropertyMutation propertyMutation, BasicProperty basicProperty) {
         String currentState = "Created";
         Position pos = null;
-         DateTime currentDate = new DateTime();
-         User user = propertyTransferService.getLoggedInUser();
-         Assignment assignment = propertyService.getUserPositionByZone(basicProperty);
+        DateTime currentDate = new DateTime();
+        User user = propertyTransferService.getLoggedInUser();
+        Assignment assignment = propertyService.getUserPositionByZone(basicProperty);
         pos = assignment.getPosition();
 
         if (null == propertyMutation.getState()) {
@@ -360,33 +403,51 @@ public class PropertyTransferRestService {
 
             propertyMutation.transition().start().withSenderName(user.getName()).withComments("")
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                    .withSenderName((user!=null && user.getName()!=null)?user.getName():"").withOwner(user)
+                    .withSenderName((user != null && user.getName() != null) ? user.getName() : "").withOwner(user)
                     .withNextAction(wfmatrix.getNextAction());
         }
 
     }
-
+/**
+ * 
+ * @param ownerDetailsList
+ * @return
+ */
     private List<User> getPropertyOwnerInfoList(List<OwnerDetails> ownerDetailsList) {
         List<User> proeprtyOwnerInfoList = new ArrayList<User>();
         for (OwnerDetails ownerDetais : ownerDetailsList) {
-                User owner = new User();
-                owner.setAadhaarNumber(ownerDetais.getAadhaarNo());
-                owner.setSalutation(ownerDetais.getSalutationCode());
-                owner.setName(ownerDetais.getName());
-                owner.setGender(Gender.valueOf(ownerDetais.getGender()));
-                owner.setMobileNumber(ownerDetais.getMobileNumber());
-                owner.setEmailId(ownerDetais.getEmailId());
-                owner.setGuardianRelation(ownerDetais.getGuardianRelation());
-                owner.setGuardian(ownerDetais.getGuardian());
-                proeprtyOwnerInfoList.add(owner);
+            User owner = new User();
+            owner.setAadhaarNumber(ownerDetais.getAadhaarNo());
+            owner.setSalutation(ownerDetais.getSalutationCode());
+            owner.setType(UserType.CITIZEN);
+            owner.setName(ownerDetais.getName());
+            owner.setGender(Gender.valueOf(ownerDetais.getGender()));
+            owner.setMobileNumber(ownerDetais.getMobileNumber());
+            owner.setEmailId(ownerDetais.getEmailId());
+            owner.setGuardianRelation(ownerDetais.getGuardianRelation());
+            owner.setGuardian(ownerDetais.getGuardian());
+            proeprtyOwnerInfoList.add(owner);
         }
         return proeprtyOwnerInfoList;
-}
-    
-    private ErrorDetails validateTransferPropertyParams(FormDataMultiPart formTransferDocument, List<DocumentType> documentTypes,
-            PropertyMutationMaster mutationMaster, String accessmentnumber, BasicProperty basicProperty,
-            List<OwnerDetails> ownerDetailsList, String mutationReason, String saleDetail, String deedNo,
-            String deedDate) {
+    }
+/**
+ * 
+ * @param formTransferDocument
+ * @param documentTypes
+ * @param mutationMaster
+ * @param accessmentnumber
+ * @param basicProperty
+ * @param ownerDetailsList
+ * @param mutationReason
+ * @param saleDetail
+ * @param deedNo
+ * @param deedDate
+ * @return
+ */
+    private ErrorDetails validateTransferPropertyParams(FormDataMultiPart formTransferDocument,
+            List<DocumentType> documentTypes, PropertyMutationMaster mutationMaster, String accessmentnumber,
+            BasicProperty basicProperty, List<OwnerDetails> ownerDetailsList, String mutationReason, String saleDetail,
+            String deedNo, String deedDate) {
         BigDecimal currentPropertyTaxDue;
         BigDecimal currentWaterTaxDue;
         BigDecimal arrearPropertyTaxDue;
@@ -397,37 +458,36 @@ public class PropertyTransferRestService {
             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_REQUIRED);
         } else {
 
-            if (basicProperty == null){
+            if (basicProperty == null) {
                 errorDetails = new ErrorDetails();
                 errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND);
-                errorDetails
-                        .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
-            }else if (accessmentnumber.trim().length() > 0 && accessmentnumber.trim().length() < 10) {
+                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
+            } else if (accessmentnumber.trim().length() > 0 && accessmentnumber.trim().length() < 10) {
                 errorDetails = new ErrorDetails();
                 errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_LEN);
                 errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_LEN);
-            }
-            /*  else if (basicProperty != null && basicProperty.isUnderWorkflow()) {
+            } else if (basicProperty != null && basicProperty.isUnderWorkflow()) {
                 errorDetails = new ErrorDetails();
                 errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_ALREADYINWORKFLOW);
                 errorDetails
                         .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_ALREADYINWORKFLOW);
             }
-    
+
             currentWaterTaxDue = getWaterTaxDues(accessmentnumber);
             Map<String, BigDecimal> propertyTaxDetails = propertyService.getCurrentPropertyTaxDetails(basicProperty
                     .getActiveProperty());
-            currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR)
-                    .subtract(propertyTaxDetails.get(CURR_COLL_STR));
-            arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
-   
+            currentPropertyTaxDue = propertyTaxDetails.get(PropertyTaxConstants.CURR_DMD_STR).subtract(
+                    propertyTaxDetails.get(PropertyTaxConstants.CURR_COLL_STR));
+            arrearPropertyTaxDue = propertyTaxDetails.get(PropertyTaxConstants.ARR_DMD_STR).subtract(
+                    propertyTaxDetails.get(PropertyTaxConstants.ARR_COLL_STR));
+
             if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
 
                 errorDetails = new ErrorDetails();
                 errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TAXPENDING);
                 errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TAXPENDING);
 
-            }*/
+            }
 
         }
         if (documentTypes != null) {
@@ -437,27 +497,36 @@ public class PropertyTransferRestService {
                     if (docTypes.getName().equalsIgnoreCase(DOCUMENT_TYPE_ADDRESSPROOF)) {
                         if (!checkDocumentDetailsAvailable(DOCUMENT_TYPE_ADDRESSPROOF, formTransferDocument)) {
                             errorDetails = new ErrorDetails();
-                            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING);
-                            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING +DOCUMENT_TYPE_ADDRESSPROOF); 
-                       
+                            errorDetails
+                                    .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING);
+                            errorDetails
+                                    .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING
+                                            + DOCUMENT_TYPE_ADDRESSPROOF);
+
                             break;
                         }
 
                     } else if (docTypes.getName().equalsIgnoreCase(DOCUMENT_TYPE_PROPERTYDOCUMENT)) {
                         if (!checkDocumentDetailsAvailable(DOCUMENT_TYPE_PROPERTYDOCUMENT, formTransferDocument)) {
                             errorDetails = new ErrorDetails();
-                            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING);
-                            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING+DOCUMENT_TYPE_ADDRESSPROOF); 
-                        break;
+                            errorDetails
+                                    .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING);
+                            errorDetails
+                                    .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING
+                                            + DOCUMENT_TYPE_ADDRESSPROOF);
+                            break;
                         }
 
                     }
                     if (docTypes.getName().equalsIgnoreCase(DOCUMENT_TYPE_DEEDISSUEDBYREVENUEDEPT)) {
                         if (!checkDocumentDetailsAvailable(DOCUMENT_TYPE_DEEDISSUEDBYREVENUEDEPT, formTransferDocument)) {
                             errorDetails = new ErrorDetails();
-                            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING);
-                            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING+DOCUMENT_TYPE_ADDRESSPROOF); 
-                         break;
+                            errorDetails
+                                    .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING);
+                            errorDetails
+                                    .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING
+                                            + DOCUMENT_TYPE_ADDRESSPROOF);
+                            break;
                         }
 
                     }
@@ -465,52 +534,61 @@ public class PropertyTransferRestService {
                 }
             }
         }
-        
-        if(mutationMaster== null)
-        {
+
+        if (mutationMaster == null) {
             errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY);
+            errorDetails
+                    .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY);
             errorDetails
                     .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY);
-        }else if  (ownerDetailsList == null || ownerDetailsList.size() == 0) {
+        } else if (ownerDetailsList == null || ownerDetailsList.size() == 0) {
             errorDetails = new ErrorDetails();
             errorDetails
                     .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREENAME_MANDATORY);
             errorDetails
                     .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREENAME_MANDATORY);
-        } else if(ownerDetailsList!=null && ownerDetailsList.size()>0) {
+        } else if (ownerDetailsList != null && ownerDetailsList.size() > 0) {
             for (OwnerDetails owner : ownerDetailsList) {
-                
-                if(!StringUtils.isBlank(owner.getAadhaarNo()))
-                {
+
+                if (!StringUtils.isBlank(owner.getAadhaarNo())) {
                     try {
-                        if(aadhaarInfoServiceClient.getAadhaarInfo(owner.getAadhaarNo())!=null)
-                        {   errorDetails = new ErrorDetails();
-                            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_NOTEXISTS);
-                            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_NOTEXISTS + owner.getAadhaarNo() ); 
+                        if (aadhaarInfoServiceClient.getAadhaarInfo(owner.getAadhaarNo()) != null) {
+                            errorDetails = new ErrorDetails();
+                            errorDetails
+                                    .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_NOTEXISTS);
+                            errorDetails
+                                    .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_NOTEXISTS
+                                            + owner.getAadhaarNo());
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                         errorDetails = new ErrorDetails();
                         errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_NOTEXISTS);
-                        errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_NOTEXISTS + owner.getAadhaarNo() ); 
+                        errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_NOTEXISTS
+                                + owner.getAadhaarNo());
                     }
-                }else if (StringUtils.isBlank(owner.getName())) {
+                } else if (StringUtils.isBlank(owner.getName())) {
                     errorDetails = new ErrorDetails();
                     errorDetails
                             .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREE_NAMEMANDATORY);
                     errorDetails
                             .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREE_NAMEMANDATORY);
-                }else if (StringUtils.isBlank(owner.getMobileNumber())) {
+                } else if (StringUtils.isBlank(owner.getMobileNumber())) {
                     errorDetails = new ErrorDetails();
                     errorDetails
                             .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREE_MOBILENUMBERMANDATORY);
                     errorDetails
                             .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREE_MOBILENUMBERMANDATORY);
+                } else if (StringUtils.isBlank(owner.getGender())) {
+                    errorDetails = new ErrorDetails();
+                    errorDetails
+                            .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREE_GENDERMANDATORY);
+                    errorDetails
+                            .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREE_GENDERMANDATORY);
                 }
             }
 
-        }else  if (mutationReason == null || mutationReason.trim().length() == 0) {
+        } else if (mutationReason == null || mutationReason.trim().length() == 0) {
             errorDetails = new ErrorDetails();
             errorDetails
                     .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY);
@@ -538,27 +616,42 @@ public class PropertyTransferRestService {
 
         return errorDetails;
     }
-
+/**
+ * 
+ * @param documentTypeAddressproof
+ * @param formTransferDocument
+ * @return
+ */
     private boolean checkDocumentDetailsAvailable(String documentTypeAddressproof,
             FormDataMultiPart formTransferDocument) {
-         if (formTransferDocument!=null ) 
-            {
-                if(documentTypeAddressproof!=null && documentTypeAddressproof.equals(DOCUMENT_TYPE_ADDRESSPROOF) && (formTransferDocument.getFields("addressProofOfParties")==null ||
-                        formTransferDocument.getFields("addressProofOfParties").size()==0))
-                { 
-                    return false;
-                }else if(documentTypeAddressproof!=null && documentTypeAddressproof.equals(DOCUMENT_TYPE_PROPERTYDOCUMENT) && (formTransferDocument.getFields("attestedPropertyDocument")==null || 
-                        formTransferDocument.getFields("attestedPropertyDocument").size()==0))
-                {        return false;  
-                }else if(documentTypeAddressproof!=null && documentTypeAddressproof.equals(DOCUMENT_TYPE_DEEDISSUEDBYREVENUEDEPT) && (formTransferDocument.getFields("titleDeedDocument")==null|| 
-                        formTransferDocument.getFields("titleDeedDocument").size()==0)) 
-                {    return false;
-                }
+        if (formTransferDocument != null) {
+            if (documentTypeAddressproof != null
+                    && documentTypeAddressproof.equals(DOCUMENT_TYPE_ADDRESSPROOF)
+                    && (formTransferDocument.getFields("addressProofOfParties") == null || formTransferDocument
+                            .getFields("addressProofOfParties").size() == 0)) {
+                return false;
+            } else if (documentTypeAddressproof != null
+                    && documentTypeAddressproof.equals(DOCUMENT_TYPE_PROPERTYDOCUMENT)
+                    && (formTransferDocument.getFields("attestedPropertyDocument") == null || formTransferDocument
+                            .getFields("attestedPropertyDocument").size() == 0)) {
+                return false;
+            } else if (documentTypeAddressproof != null
+                    && documentTypeAddressproof.equals(DOCUMENT_TYPE_DEEDISSUEDBYREVENUEDEPT)
+                    && (formTransferDocument.getFields("titleDeedDocument") == null || formTransferDocument.getFields(
+                            "titleDeedDocument").size() == 0)) {
+                return false;
             }
+        }
         return true;
     }
-
-   
+/**
+ * 
+ * @param obj
+ * @return
+ * @throws JsonGenerationException
+ * @throws JsonMappingException
+ * @throws IOException
+ */
     private String getJSONResponse(Object obj) throws JsonGenerationException, JsonMappingException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
@@ -577,7 +670,6 @@ public class PropertyTransferRestService {
         errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_INVALIDCREDENTIALS);
         return errorDetails;
     }
-
 
     public Boolean authenticateUser(String username, String password) {
         Boolean isAuthenticated = false;
