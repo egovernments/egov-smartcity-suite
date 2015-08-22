@@ -281,10 +281,21 @@ public class WaterTaxUtils {
         }
         else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION)) {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            emailBody = messageSource.getMessage(code,
-                    new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
-                            formatter.format(waterConnectionDetails.getExecutionDate()).toString(),
-                            amountFormat.format(waterConnectionDetails.getDemand().getBaseDemand()).toString(), getCityName() }, null);
+            if(!WaterTaxConstants.METERED.toUpperCase().equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString())){
+                emailBody = messageSource.getMessage(code,
+                        new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
+                        formatter.format(waterConnectionDetails.getExecutionDate()).toString(),
+                        amountFormat.format(waterConnectionDetails.getDemand().getBaseDemand()).toString(), getCityName() }, null);
+            }
+            else {
+                emailBody = messageSource.getMessage(code,
+                       new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
+                        formatter.format(waterConnectionDetails.getExecutionDate()).toString(),
+                        getCityName()},null );
+                //Dear {0},\n\nWater tap connection with H.S.C number {1} is installed at your site on {2} by our Asst engineer. 
+                //Please pay the tax before the due date to avail uninterrupted service.\n\nThis is computer generated email and 
+                //does not need any signature and also please do not reply to this email.\n\nThanks ,\n{3}
+            }
         }
         // Dear {0},\n\nWater tap connection with H.S.C number {1} is installed
         // at your site on {2} by our Asst engineer and your monthly
@@ -363,14 +374,24 @@ public class WaterTaxUtils {
             // order.\nThanks, {4}
         } else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION)) {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            smsMsg = messageSource.getMessage(code,
-                    new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
-                    formatter.format(waterConnectionDetails.getExecutionDate()).toString(),
-                    amountFormat.format(waterConnectionDetails.getDemand().getBaseDemand()).toString(), getCityName() }, null);
+            if(!WaterTaxConstants.METERED.toUpperCase().equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString())){
+                smsMsg = messageSource.getMessage(code,
+                        new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
+                        formatter.format(waterConnectionDetails.getExecutionDate()).toString(),
+                        amountFormat.format(waterConnectionDetails.getDemand().getBaseDemand()).toString(), getCityName() }, null);
+            }
+            else {
+                smsMsg = messageSource.getMessage(code,
+                        new String[] { applicantName,waterConnectionDetails.getConnection().getConsumerCode(),
+                        formatter.format(waterConnectionDetails.getExecutionDate()).toString(),getCityName()},null);
+                //Dear {0}, Water tap connection with H.S.C number {1} is installed at your site on {2} by our Asst engineer. 
+                //Please pay the tax before the due date to avail uninterrupted service.\nThanks, {3}
+            
+            }
         }
         // Dear {0}, Water tap connection with H.S.C number {1} is installed at
-        // your site on {2} by our Asst engineer and your monthly water
-        // tax demand will be Rs.{3}.00/-.Please pay the tax before the due date
+        // your site on {2} by our Asst engineer and your 
+        // demand will be Rs.{3}.00/-.Please pay the tax before the due date
         // to avail uninterrupted service.\nThanks, {4}
         else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNFEEPAID) || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDCONNFEEPAID))
             {

@@ -676,8 +676,14 @@ public class WaterConnectionDetailsService {
                             waterConnectionDetails, applicantName, type);
                 } else if (WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION.equalsIgnoreCase(type)) {
                     flag = Boolean.TRUE;
-                    smsMsg = waterTaxUtils.SmsBodyByCodeAndArgsWithType("msg.newconncetionOnExecutionDate.sms",
-                            waterConnectionDetails, applicantName, type);
+                    if(!WaterTaxConstants.METERED.toUpperCase().equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString())){
+                        smsMsg = waterTaxUtils.SmsBodyByCodeAndArgsWithType("msg.newconncetionOnExecutionDate.sms",
+                                waterConnectionDetails, applicantName, type);
+                    }
+                    else {
+                        smsMsg = waterTaxUtils.SmsBodyByCodeAndArgsWithType("msg.conncetionexeuction.metered.sms",
+                                waterConnectionDetails, applicantName, type);
+                    }
                 } else if (WaterTaxConstants.SMSEMAILTYPENEWCONNESTNOTICE.equalsIgnoreCase(type)) {
                     flag = Boolean.TRUE;
                     if (!WaterTaxConstants.BPL_CATEGORY
@@ -745,9 +751,14 @@ public class WaterConnectionDetailsService {
                                 waterConnectionDetails.getApplicationNumber());
                     } else if (WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION.equalsIgnoreCase(type)) {
                         flag = Boolean.TRUE;
-                        body = waterTaxUtils.EmailBodyByCodeAndArgsWithType(
-                                "msg.newconncetionOnExecutionDate.email.body", waterConnectionDetails, applicantName,
-                                type);
+                        if(!WaterTaxConstants.METERED.toUpperCase().equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString())){
+                            body = waterTaxUtils.EmailBodyByCodeAndArgsWithType(
+                                    "msg.newconncetionOnExecutionDate.email.body", waterConnectionDetails, applicantName, type);
+                        }
+                        else {
+                            body = waterTaxUtils.EmailBodyByCodeAndArgsWithType(
+                                    "msg.conncetionexeuction.metered.email.body", waterConnectionDetails, applicantName, type);
+                        }
                         subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs(
                                 "msg.newconncetionOnExecutionDate.email.subject", waterConnectionDetails
                                         .getConnection().getConsumerCode());
