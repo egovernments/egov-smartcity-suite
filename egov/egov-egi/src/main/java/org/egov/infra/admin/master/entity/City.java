@@ -56,6 +56,8 @@ import javax.persistence.Table;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
@@ -84,6 +86,7 @@ public class City extends AbstractAuditable {
     @ManyToOne
     @JoinColumn(name = "boundary", updatable = false)
     @NotAudited
+    @Fetch(FetchMode.JOIN) 
     private Boundary boundary;
 
     @SafeHtml
@@ -127,6 +130,7 @@ public class City extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "preferences")
     @NotAudited
+    @Fetch(FetchMode.JOIN) 
     private CityPreferences preferences;
 
     @Override

@@ -59,11 +59,11 @@ public class ApplicationTenantResolverFilter implements Filter {
     private ApplicationProperties applicationProperties;
 
     @Override
-    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
-            throws IOException, ServletException {
+    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
+        final String domainURL = WebUtils.extractRequestedDomainName((HttpServletRequest) request);
         if (applicationProperties.multiTenancyEnabled())
-            EgovThreadLocals.setTenantID(applicationProperties
-                    .getProperty("tenant." + WebUtils.extractRequestedDomainName((HttpServletRequest) request)));
+            EgovThreadLocals.setTenantID(applicationProperties.getProperty("tenant." + domainURL));
+        EgovThreadLocals.setDomainName(domainURL);
         chain.doFilter(request, response);
     }
 

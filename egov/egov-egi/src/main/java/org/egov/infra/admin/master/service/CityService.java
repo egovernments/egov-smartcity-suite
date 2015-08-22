@@ -40,12 +40,16 @@
 package org.egov.infra.admin.master.service;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.repository.CityRepository;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,14 +58,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CityService {
 
+    private static final String CITY_PREFS_CK = "%s-cityPrefs";
+
     private final CityRepository cityRepository;
 
     @Autowired
     private MessagingService messagingService;
 
+    @Resource(name = "redisTemplate")
+    private HashOperations<String, String, Object> cityPrefCache;
+
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
-
+    
     @Autowired
     public CityService(final CityRepository cityRepository) {
         this.cityRepository = cityRepository;
@@ -69,7 +78,7 @@ public class CityService {
 
     @Transactional
     public City updateCity(final City city) {
-        redisTemplate.delete(EgovThreadLocals.getTenantID() + "-cityPrefs");
+        redisTemplate.delete(cityPrefCacheKey());
         return cityRepository.save(city);
     }
 
@@ -91,5 +100,28 @@ public class CityService {
 
     public void sentFeedBackMail(final String email, final String subject, final String message) {
         messagingService.sendEmail(email, subject, message);
+    }
+
+    public Map<String, Object> cityDataAsMap() {
+        final Map<String, Object> cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
+        if (cityPrefs.isEmpty())
+            cityPrefCache.putAll(cityPrefCacheKey(), getCityByURL(EgovThreadLocals.getDomainName()).toMap());
+        return cityPrefs;
+    }
+
+    public String getCityCode() {
+        return (String) cityDataForKey("citycode");
+    }
+
+    public String getCityShapeFileUid() {
+        return (String) cityDataForKey("cityShapeFileStoreId");
+    }
+
+    public String cityPrefCacheKey() {
+        return String.format(CITY_PREFS_CK, EgovThreadLocals.getDomainName());
+    }
+    
+    private Object cityDataForKey(final String key) {
+        return cityPrefCache.entries(cityPrefCacheKey()).get(key);
     }
 }

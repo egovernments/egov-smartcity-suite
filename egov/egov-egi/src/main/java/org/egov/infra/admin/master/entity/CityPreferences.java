@@ -51,6 +51,8 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -71,15 +73,18 @@ public class CityPreferences extends AbstractAuditable {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "gisKML")
+    @Fetch(FetchMode.JOIN) 
     private FileStoreMapper gisKML;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "gisShape")
+    @Fetch(FetchMode.JOIN) 
     private FileStoreMapper gisShape;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "municipalityLogo")
     @NotNull
+    @Fetch(FetchMode.JOIN) 
     private FileStoreMapper municipalityLogo;
 
     @NotNull

@@ -320,3 +320,4 @@
 		<script src="/egi/resources/js/app/login.js" type="text/javascript"></script>
 	</body>
 </html>
+<%session.invalidate();%>
