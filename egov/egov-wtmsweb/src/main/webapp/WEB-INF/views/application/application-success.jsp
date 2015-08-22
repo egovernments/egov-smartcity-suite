@@ -56,12 +56,12 @@
 						<div ><spring:message code="msg.sussess.forward" />${approverName}</div>
 					</c:when>
 					<c:when test="${waterConnectionDetails.connection.parentConnection.id!=null && waterConnectionDetails.connectionStatus == 'ACTIVE' && waterConnectionDetails.egwStatus.code == 'SANCTIONED'}">
-						<spring:message code="msg.addconnection.approved" />
+					<div>	<spring:message code="msg.addconnection.approved" />${approverName}</div>
 					</c:when>
 					<c:otherwise>
 						<c:choose>
 							<c:when test="${waterConnectionDetails.egwStatus.code == 'APPROVED' && waterConnectionDetails.connectionStatus == 'INPROGRESS' }">
-								<spring:message code="msg.connection.approved.success" />
+							<div><spring:message code="msg.connection.approved.success" />${approverName}</div>
 								<%-- <spring:message code="msg.sussess.forward" /><br>${approvalUser} --%>
 							</c:when>
 							<c:when test="${waterConnectionDetails.state.value== 'Rejected' }">

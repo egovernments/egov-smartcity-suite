@@ -44,6 +44,7 @@ $(document).ready(function()
 	var wfstate=$('#wfstate').val();
 	var currentUser=$('#currentUser').val();
 	var mode =$('#mode').val();
+	$('#approvalComent').show();
 	var approvalPositionExist=$('#approvalPositionExist').val();
 	if(approvalPositionExist!=0 && ((status=='CREATED' && wfstate!=null )|| status=='VERIFIED' || status=='ESTIMATIONNOTICEGENERATED' ||status=='ESTIMATIONAMOUNTPAID' || status=='WORKORDERGENERATED' || status=='APPROVED'))
 		{

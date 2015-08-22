@@ -85,32 +85,8 @@ jQuery(document).ready(function ($) {
 		
 	
 	
-	    $(".checkdate").focus(function () {
-			
-	        $(".checkdate").change(function () {
-				console.log("custom dates");
-			});
-			
-		});
-		
-		$(".checkdate").focusout(function () {
-			
-	        var start = $('#start_date').val();
-	        var end = $('#end_date').val();
-			
-	        if (start != "" && end != "") {
-				var stsplit = start.split("/");
-				var ensplit = end.split("/");
-				
-				start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
-				end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
-				
-				ValidRange(start, end);
-			}
-			
-		});
-		
-		function ValidRange(start, end) {
+	  
+		function validRange(start, end) {
 	        var startDate = Date.parse(start);
 	        var endDate = Date.parse(end);
 			
@@ -118,6 +94,7 @@ jQuery(document).ready(function ($) {
 	        var difference = (endDate - startDate) / (86400000 * 7);
 	        if (difference < 0) {
 				alert("The start date must come before the end date.");
+				$('#end_date').val('');
 				return false;
 				} else {
 				return true;
@@ -128,25 +105,30 @@ jQuery(document).ready(function ($) {
 			
 		}
 		
-		$("form").submit(function(event){
+		$(".btn-primary").click(function(event){
 			
 			if($('#start_date').val() != '' && $('#end_date').val() != ''){
 					var start = $('#start_date').val();
 					var end = $('#end_date').val();
-					
-					if (start != "" && end != "") {
-						var stsplit = start.split("/");
+					var stsplit = start.split("/");
 						var ensplit = end.split("/");
 						
 						start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
 						end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
 						
-						ValidRange(start, end);
+						if(!validRange(start,end))
+						{
+						return false;
+						}
+					
+					else {
+						document.forms[0].submit;
+						return true;
 					}
-					}else{
-					alert("Select the date");
+				}else{
+			    //alert("Select the date");
+			   // return false;
 				}
-				
 				event.preventDefault();
 			
 		});

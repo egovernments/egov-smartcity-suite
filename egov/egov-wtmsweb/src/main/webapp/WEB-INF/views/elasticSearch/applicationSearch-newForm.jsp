@@ -136,8 +136,8 @@
 					
 					<div class="form-group">
 						<div class="text-center">
-							<a href="javascript:void(0);" id="searchapplication"
-								class="btn btn-primary"><spring:message code='lbl.search' /></a>
+							<a href="javascript:void(0);" class="btn btn-primary" id="searchapplication" 
+								><spring:message code='lbl.search' /></a>
 								
 							<button class="btn btn-danger" type="reset">Reset</button>
 							<a href="javascript:void(0);" id="closeComplaints"

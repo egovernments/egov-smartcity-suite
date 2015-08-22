@@ -41,7 +41,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <c:if test="${nextaction !='END'}" > 
-		<div class="panel panel-primary" data-collapsed="0" id="approverDetailHeading">				
+		<div class="panel panel-primary" data-collapsed="0" >				
 			<div class="panel-heading">
 				<div class="panel-title">
 					<spring:message code="lbl.approverdetails"/>
@@ -65,8 +65,8 @@
 <%-- <form:hidden path="" id="approverName" name="approverName" /> --%>
 <form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>	
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>		
-				
-				<div class="row show-row">
+				<div class="row show-row"  id="approverDetailHeading">
+				<div class="row show-row" >
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.approverdepartment"/><span class="mandatory"></span>
 					</div>
@@ -109,8 +109,8 @@
 					</form:select>		
 					</div> 
 				</div>
-				
-			<%-- 	</c:when> --%>
+				</div>
+			
 				<div class="row">
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.comments"/>

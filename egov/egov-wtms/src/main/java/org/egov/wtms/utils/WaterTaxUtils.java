@@ -362,7 +362,15 @@ public class WaterTaxUtils {
         // your site on {2} by our Asst engineer and your monthly water
         // tax demand will be Rs.{3}.00/-.Please pay the tax before the due date
         // to avail uninterrupted service.\nThanks, {4}
-
+        else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNFEEPAID) || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDCONNFEEPAID))
+            {
+              smsMsg = messageSource.getMessage(
+                        code,new String[] { applicantName,String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges()
+                            + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges())),
+                            waterConnectionDetails.getApplicationNumber(),  
+                            getCityName() }, null);
+               }
+        
         return smsMsg;
     }
 

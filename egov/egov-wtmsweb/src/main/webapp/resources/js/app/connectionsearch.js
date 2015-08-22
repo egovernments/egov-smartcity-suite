@@ -61,7 +61,7 @@ jQuery(document).ready(function($) {
 			           {title : 'Usage Type',data : 'resource.clauses.usage'},
 			           {title : 'Total Due',data : 'resource.clauses.totaldue'},
 			           {title : 'Status',data : 'resource.clauses.status'},
-			           {title : 'conntype',data : 'resource.clauses.connectiontype'},
+			           {title : 'conntype',data : 'resource.clauses.connectiontype',"bVisible" : false},
 				       {title : 'Actions',
 			        	   render : function(data,type,full) {
 									if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
