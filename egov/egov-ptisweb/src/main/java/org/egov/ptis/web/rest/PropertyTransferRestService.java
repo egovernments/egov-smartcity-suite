@@ -667,7 +667,7 @@ public class PropertyTransferRestService {
                     .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY);
             errorDetails
                     .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY);
-        } else if (mutationReason != null && mutationReason.equalsIgnoreCase("SALEDEED")
+        } else if (mutationReason != null && mutationReason.equalsIgnoreCase("SALE")
                 && (saleDetail == null || saleDetail.trim().length() == 0)) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_SALEDETAIL_MANDATORY);

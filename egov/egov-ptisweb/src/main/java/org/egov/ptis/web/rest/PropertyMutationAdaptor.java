@@ -55,9 +55,10 @@ public class PropertyMutationAdaptor implements JsonSerializer<PropertyMutation>
     public JsonElement serialize(final PropertyMutation propertyMutation, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("applicationNumber", propertyMutation.getApplicationNo());
-        jsonObject.addProperty("saleDetail", "" + propertyMutation.getSaleDetail());
+        jsonObject.addProperty("accessmentnumber", "" + propertyMutation.getBasicProperty().getUpicNo());
+   /*     jsonObject.addProperty("saleDetail", "" + propertyMutation.getSaleDetail());
         jsonObject.addProperty("deedNumber",propertyMutation.getDeedNo());
-        jsonObject.addProperty("deedDate", "" + propertyMutation.getDeedDate());
+        jsonObject.addProperty("deedDate", "" + propertyMutation.getDeedDate());*/
         return jsonObject;
     }
 
