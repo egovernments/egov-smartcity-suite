@@ -250,6 +250,11 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         return propertyMutationMasterDAO.getAllPropertyMutationMastersByType(TRANSFER);
     }
 
+    public PropertyMutationMaster getPropertyTransferReasonsByCode(String mutationCode) {
+        return propertyMutationMasterDAO.getPropertyMutationMasterByCodeAndType(mutationCode,TRANSFER);
+    }
+
+    
     public PropertyMutation getPropertyMutationByApplicationNo(final String applicationNo) {
         return findByNamedQuery("BY_APPLICATION_NO", applicationNo);
     }

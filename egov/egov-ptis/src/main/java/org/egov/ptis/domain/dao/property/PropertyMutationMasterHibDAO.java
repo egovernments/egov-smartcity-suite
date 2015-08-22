@@ -82,6 +82,14 @@ public class PropertyMutationMasterHibDAO implements PropertyMutationMasterDAO {
 		return (PropertyMutationMaster) qry.uniqueResult();
 	}
 
+	    @Override
+	    public PropertyMutationMaster getPropertyMutationMasterByCodeAndType(String code, String type) {
+	        Query qry = getCurrentSession().createQuery(
+                        "from PropertyMutationMaster PM where upper(PM.code) = :code and upper(PM.type) = :type");
+        qry.setString("code", code.toUpperCase());
+        qry.setString("type", type.toUpperCase());
+        return (PropertyMutationMaster) qry.uniqueResult();
+	    }
 	public Object findById(Serializable id, boolean lock) {
 		// TODO Auto-generated method stub
 		return null;
@@ -136,5 +144,6 @@ public class PropertyMutationMasterHibDAO implements PropertyMutationMasterDAO {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }

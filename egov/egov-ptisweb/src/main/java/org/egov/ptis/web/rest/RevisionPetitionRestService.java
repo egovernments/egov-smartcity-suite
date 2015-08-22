@@ -117,15 +117,13 @@ public class RevisionPetitionRestService {
 
     }
     /**
-     * This method is used for save revision petition on user request
-     * details.
      * 
-     * @param accessmentnumber -- property number
-     * @param receivedon received date
-     * @param receivedBy received user
-     * @param details    revision petition details
-     * @param username   
+     * @param accessmentnumber
+     * @param username
      * @param password
+     * @param details
+     * @param receivedon
+     * @param recievedBy
      * @return
      * @throws JsonGenerationException
      * @throws JsonMappingException
@@ -177,7 +175,14 @@ public class RevisionPetitionRestService {
         }
         return responseJson;
     }
-
+/**
+ * 
+ * @param accessmentnumber
+ * @param details
+ * @param receivedon
+ * @param recievedBy
+ * @return
+ */
     private ErrorDetails validateRevisionPetitionForm(String accessmentnumber, String details, String receivedon,
             String recievedBy) {
         ErrorDetails errorDetails = null;
@@ -216,14 +221,9 @@ public class RevisionPetitionRestService {
     }
 
     /**
-     * This method is used to prepare jSON response.
      * 
      * @param object
-     *            - a POJO object
-     * @return jsonResponse - JSON response string
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
-     * @throws IOException
+     * @return
      */
     private String convertRevisionPetitionObjectToJson(final Object object) {
         GsonBuilder gsonBuilder = new GsonBuilder();

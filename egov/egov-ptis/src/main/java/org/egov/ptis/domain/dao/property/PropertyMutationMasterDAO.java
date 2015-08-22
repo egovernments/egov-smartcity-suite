@@ -48,7 +48,7 @@ public interface PropertyMutationMasterDAO {
 	public List<PropertyMutationMaster> getAllPropertyMutationMastersByType(String type);
 
 	public PropertyMutationMaster getPropertyMutationMasterByCode(String code);
-
+	public PropertyMutationMaster getPropertyMutationMasterByCodeAndType(String code,String type);
 	public PropertyMutationMaster findById(Integer id, boolean lock);
 
 	public List<PropertyMutationMaster> findAll();

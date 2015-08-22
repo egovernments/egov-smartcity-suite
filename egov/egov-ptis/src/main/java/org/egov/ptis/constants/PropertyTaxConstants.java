@@ -1001,7 +1001,31 @@ public interface PropertyTaxConstants {
         
     public static final String THIRD_PARTY_ERR_CODE_REVISIONPETITION_INVALID = "21";
     public static final String THIRD_PARTY_ERR_MSG_REVISIONPETITION_INVALID = "Invalid Revision petition number.";
-	public static final String TOTAL_AMOUNT = "amount";
+    public static final String THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREENAME_MANDATORY = "22";
+    public static final String THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREENAME_MANDATORY = "Owner details are mandatory, add atleast one transferee information. ";
+    public static final String THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY = "23";
+    public static final String THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY = "Please enter valid mutation reason code";
+    
+    public static final String THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_SALEDETAIL_MANDATORY = "24";
+    public static final String THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONRDEEDDATE_MANDATORY = "25";
+    public static final String THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONDEEDNUMBER_MANDATORY = "26";
+    public static final String THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_SALEDETAIL_MANDATORY =    "Please Enter Sale Details";
+    public static final String THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_MUTATIONRDEEDDATE_MANDATORY =    "Registration Document Date should not be empty";
+    public static final String THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_MUTATIONDEEDNUMBER_MANDATORY ="Registration Document Number should not be empty";
+    public static final String THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREE_MOBILENUMBERMANDATORY= "27";
+    public static final String THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREE_MOBILENUMBERMANDATORY = "Please enter mobile number. ";   
+    public static final String THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREE_NAMEMANDATORY ="Please Enter Owner Name";
+    public static final String THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREE_NAMEMANDATORY ="28";
+    public static final String THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_ALREADYINWORKFLOW = "29";
+    public static final String THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_ALREADYINWORKFLOW = "Transfer of Ownership not possible as the selected property is in a different workflow";
+    public static final String THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TAXPENDING = "30";
+    public static final String THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TAXPENDING = "Transfer of Ownership not possible.Tax due for the selected property";
+    public static final String THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_NOTEXISTS = "31";
+    public static final String THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_NOTEXISTS = "Adhaar Detail not found in uidai server for the given aadhaar number ";
+    public static final String THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING = "32";
+    public static final String THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING = "Please attach relevant documents for property transfer. Type: ";
+    
+    public static final String TOTAL_AMOUNT = "amount";
     public final static String PAID_BY = "paidBy";
 
     // Collection modes List
