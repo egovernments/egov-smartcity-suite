@@ -377,11 +377,9 @@ public class WaterTaxUtils {
             String amountToDisplay=  String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges() + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges()));
             StringBuffer smsBody = new StringBuffer().append("Dear ").append(applicantName)
                     .append(",We have received Estimation and donation amount of Rs.").append(amountToDisplay)
-                    .append("/- against your water connection application number ").append(waterConnectionDetails.getApplicationNumber()).append(".We will be now processing your application to issue an work order..\nThanks\n").append(getCityName());
+                    .append("/- against your water connection application number ").append(waterConnectionDetails.getApplicationNumber()).append(".We will be now processing your application to issue an work order..\nThanks,\n").append(getCityName());
             smsMsg =smsBody.toString();
             }
-        
-        
         return smsMsg;
     }
 
