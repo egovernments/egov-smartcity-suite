@@ -1,6 +1,15 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr id="assessmentRow" >
+						<td class="greybox" width="5%">&nbsp;</td>
+						<td class="greybox" width="25%"><s:text name="assessmentno"></s:text>
+							:</td>
+						<td class="greybox" width="25%"><s:textfield name="upicNo"
+								id="upicNo" size="12" maxlength="12"></s:textfield></td>
+						<td class="greybox" width="25%">&nbsp;</td>
+						<td class="greybox" width="20%"></td>
+					</tr>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text>

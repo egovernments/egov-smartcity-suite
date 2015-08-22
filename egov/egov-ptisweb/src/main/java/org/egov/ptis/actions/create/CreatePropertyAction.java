@@ -989,7 +989,7 @@ public class CreatePropertyAction extends WorkflowAction {
         // TODO update index by assesment no
         // propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         setBasicProp(basicProperty);
-        setAckMessage("Property Data for Assesment No " + upicNo + " Saved Successfully in the System  ");
+        setAckMessage("Property data entry saved in the system successfully and created with Assessment No " + upicNo);
         // setApplicationNoMessage(" with application number : ");
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);

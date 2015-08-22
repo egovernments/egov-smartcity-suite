@@ -44,7 +44,7 @@
 <html>
 <head>
 <title><s:if test="mode=='create' || mode=='edit'">
-		<s:text name='NewProp.title' />
+		<s:text name='dataentry.title' />
 	</s:if></title>
 <sx:head />
 <!-- <script type="text/javascript" src="/ptis/resources/javascript/unitRentAgreement.js"></script> -->
@@ -83,27 +83,13 @@
 			<s:hidden name="modelId" id="modelId" value="%{modelId}" />
 			<div class="formmainbox">
 				<div class="headingbg">
-					<s:text name="CreatePropertyHeader" />
-				</div>
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr>
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr>
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="assessmentno"></s:text> :</td>
-		<td class="greybox"><s:textfield name="upicNo" id="upicNo" size="12" maxlength="12"></s:textfield>
-		</td>
-		<td class="greybox"></td>
-		<td class="greybox"></td>
-		</tr>
-		</table>
+					<s:text name="dataentrypropertyheader" />
+						</div>
+				<table>
 					
-					<tr>
-						<%@  include file="createPropertyForm.jsp"%>
-					</tr>
-					
-
 				</table>
+
+				<%@  include file="createPropertyForm.jsp"%>
 			</div>
 			<div class="buttonbottom" align="center">
 				<table>
@@ -115,10 +101,12 @@
 			</div>
 			
 		</s:push>
+		
 	</s:form>
 	<script type="text/javascript">
 
 jQuery.noConflict();
+
 jQuery("#loadingMask").remove();
 jQuery(function ($) {
 	try { 

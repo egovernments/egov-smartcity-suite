@@ -71,7 +71,7 @@
 						<td>
 							<div class="buttonbottom" align="center">
 										<input type="button" value="Create Another" name="Create Another" id="Create Another"
-											 cssClass="buttonsubmit" align="center"
+											 class="buttonsubmit" align="center"
 											onclick="createAnother()" />
 								<input type="button" class="button" onclick="window.close();" value="Close">
 							</div>

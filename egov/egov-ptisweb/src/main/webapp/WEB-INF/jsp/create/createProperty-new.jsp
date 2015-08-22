@@ -137,6 +137,7 @@ jQuery(function ($) {
     	
 });
 function loadOnStartUp() {
+	document.getElementById('assessmentRow').style.display="none";
 	enableCorresAddr();
 	enableAppartnaumtLandDetails();
 	makeMandatory();
