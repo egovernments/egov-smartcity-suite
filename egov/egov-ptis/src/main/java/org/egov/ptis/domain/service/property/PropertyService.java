@@ -1982,7 +1982,8 @@ public class PropertyService {
             final PropertyImpl property = (PropertyImpl) stateAwareObject;
             final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getApplicationNo());
-            final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo();
+			final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo()
+					+ "&applicationType=" + applictionType;
             if (null == applicationIndex) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getApplicationNo(), property.getCreatedDate(), applictionType, property
@@ -1997,7 +1998,8 @@ public class PropertyService {
             final RevisionPetition property = (RevisionPetition) stateAwareObject;
             final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getObjectionNumber());
-            final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getObjectionNumber();
+			final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getObjectionNumber()
+					+ "&applicationType=" + applictionType;
             if (null == applicationIndex) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getObjectionNumber(), property.getCreatedDate() != null ? property.getCreatedDate()
@@ -2012,7 +2014,8 @@ public class PropertyService {
         } else if (applictionType != null && applictionType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
             final PropertyMutation property = (PropertyMutation) stateAwareObject;
             final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property.getApplicationNo());
-            final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo();
+			final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo()
+					+ "&applicationType=" + applictionType;
             if (null == applicationIndex) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
                         PTMODULENAME, property.getApplicationNo(),

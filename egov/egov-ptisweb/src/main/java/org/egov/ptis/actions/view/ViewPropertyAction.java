@@ -39,6 +39,10 @@
  ******************************************************************************/
 package org.egov.ptis.actions.view;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
@@ -65,11 +69,13 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
@@ -103,12 +109,19 @@ public class ViewPropertyAction extends BaseFormAction {
     private String demandEffectiveYear;
     private Integer noOfDaysForInactiveDemand;
     private String parentProps;
+    private String applicationNo;
+    private String applicationType;
+    
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
     private PtDemandDao ptDemandDAO;
     @Autowired
     private UserService UserService;
+    @Autowired
+    private PersistenceService<Property, Long> propertyImplService;
+    @Autowired
+    private PersistenceService<RevisionPetition, Long> revisionPetitionPersistenceService;
 
     @Override
     public Object getModel() {
@@ -121,9 +134,12 @@ public class ViewPropertyAction extends BaseFormAction {
         try {
             LOGGER.debug("viewForm : propertyId in View Property : " + propertyId);
             viewMap = new HashMap<String, Object>();
-            basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
+			if (propertyId != null && !propertyId.isEmpty()) {
+				setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
+			} else if (applicationNo != null && !applicationNo.isEmpty()) {
+				getBasicPropForAppNo(applicationNo, applicationType);
+			}
             LOGGER.debug("viewForm : BasicProperty : " + basicProperty);
-            setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
             Set<PropertyStatusValues> propStatusValSet = new HashSet<PropertyStatusValues>();
             property = getBasicProperty().getProperty();
             LOGGER.debug("viewForm : Property : " + property);
@@ -142,7 +158,7 @@ public class ViewPropertyAction extends BaseFormAction {
                         .getPropertyTypeMaster();
                 viewMap.put("ownershipType", propertyTypeMaster.getType());
             }
-			if (!property.getIsExemptedFromTax()) {
+			if (!isDemandActive) {
 				final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
 				viewMap.put("currTax", demandCollMap.get(CURR_DMD_STR).toString());
 				viewMap.put("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR))
@@ -205,6 +221,20 @@ public class ViewPropertyAction extends BaseFormAction {
         return roleNameList.toString().toUpperCase();
     }
 
+	private void getBasicPropForAppNo(String appNo, String appType) {
+		if (appType != null && !appType.isEmpty()) {
+			if ((appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
+					|| appType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || appType
+						.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT))) {
+				Property property = propertyImplService.find("from PropertyImpl where applicationNo=?", appNo);
+				setBasicProperty(property.getBasicProperty());
+			} else if (appType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
+				RevisionPetition rp = revisionPetitionPersistenceService.find(
+						"from RevisionPetition where objectionNumber=?", appNo);
+				setBasicProperty(rp.getBasicProperty());
+			}
+		}
+	}
     public String getFloorNoStr(final Integer floorNo) {
         return CommonServices.getFloorStr(floorNo);
     }
@@ -348,4 +378,21 @@ public class ViewPropertyAction extends BaseFormAction {
     public void setUserService(final UserService userService) {
         UserService = userService;
     }
+
+	public String getApplicationNo() {
+		return applicationNo;
+	}
+
+	public void setApplicationNo(String applicationNo) {
+		this.applicationNo = applicationNo;
+	}
+
+	public String getApplicationType() {
+		return applicationType;
+	}
+
+	public void setApplicationType(String applicationType) {
+		this.applicationType = applicationType;
+	}
+    
 }

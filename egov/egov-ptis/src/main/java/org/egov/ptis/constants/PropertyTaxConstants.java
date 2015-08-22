@@ -1065,10 +1065,10 @@ public interface PropertyTaxConstants {
     
     //Application Types
     
-    public static final String APPLICATION_TYPE_NEW_ASSESSENT = "New Assessment";
-    public static final String APPLICATION_TYPE_ALTER_ASSESSENT = "Alter Assessment";
-    public static final String APPLICATION_TYPE_BIFURCATE_ASSESSENT = "Bifuracate Assessment";
-    public static final String APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP = "Transfer of Ownership";
+    public static final String APPLICATION_TYPE_NEW_ASSESSENT = "New_Assessment";
+    public static final String APPLICATION_TYPE_ALTER_ASSESSENT = "Alter_Assessment";
+    public static final String APPLICATION_TYPE_BIFURCATE_ASSESSENT = "Bifuracate_Assessment";
+    public static final String APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP = "Transfer_of_Ownership";
     
     //AppConfig values
     public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";

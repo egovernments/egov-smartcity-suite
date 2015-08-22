@@ -85,6 +85,8 @@
 				<br/>
 				<jsp:include page="viewProperty.jsp"/>
 				<div class="buttonbottom" align="center">
+				<!--From application index search same view page is given, if new property is under work flow and assessment no is not generated then all links are disabled  -->
+				<s:if test="%{basicProperty.upicNo!=null}">
 				<s:if test="%{isCitizen || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
 					<div align="center">
 						<s:checkbox name="taxEnsureCheckbox" id="taxEnsureCheckbox" onclick="switchPayTaxButton(this);" required="true" />
@@ -119,14 +121,17 @@
 						<input type="button" class="buttonsubmit" name="objection" id="objection" value="Create Revision Petition"
 							onclick="window.location='../revPetition/revPetition-newForm.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
 					</s:else>
-					<input type="button" name="generateBill" id="generateBill" value="Generate Bill" class="buttonsubmit"
-						onclick="window.location='../bills/billGeneration-generateBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
 				</s:if>		
+				<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase())}">
+					<input type="button" name="generateBill" id="generateBill" value="Generate Demand Bill" class="buttonsubmit"
+						onclick="window.location='../bills/billGeneration-generateBill.action?assessmentNumber=<s:property value="%{basicProperty.upicNo}" />';" />
+				</s:if>
 				<br/><br/> <!-- common buttons starts here -->				
 				<input type="button" class="buttonsubmit" name="btnViewDCB" id="btnViewDCB" value="View DCB"
 					onclick="window.location='../view/viewDCBProperty-displayPropInfo.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
 				<input type="button" class="buttonsubmit" name="SearchProperty"
 					id="SearchProperty" value="Search Property" onclick="window.location='../search/searchProperty-searchForm.action';" />
+				</s:if>
 			    <input type="button" name="btnPrint" id="btnPrint" value="Print" class="buttonsubmit" onclick="window.print();" />
 				<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
 				<s:hidden label="upicNo" id="upicNo" name="upicNo" value="%{basicProperty.upicNo}" />
