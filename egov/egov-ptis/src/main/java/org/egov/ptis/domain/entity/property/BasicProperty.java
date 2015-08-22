@@ -271,7 +271,8 @@ public interface BasicProperty {
 
 	public void setSource(Character source);
 
-
-  
+	public Date getAssessmentdate();
+	
+	public void setAssessmentdate(Date assessmentdate); 
 	
 }

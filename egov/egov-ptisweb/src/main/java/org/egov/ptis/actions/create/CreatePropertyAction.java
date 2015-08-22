@@ -513,6 +513,7 @@ public class CreatePropertyAction extends WorkflowAction {
         property.setStatus(STATUS_DEMAND_INACTIVE);
         final String assessmentNo = propertyTaxNumberGenerator.generateAssessmentNumber();
         basicProp.setUpicNo(assessmentNo);
+        basicProp.setAssessmentdate(new Date());
         final PropertyStatus propStatus = (PropertyStatus) getPersistenceService().find(
                 "from PropertyStatus where statusCode=?", PROPERTY_STATUS_APPROVED);
         basicProp.setStatus(propStatus);

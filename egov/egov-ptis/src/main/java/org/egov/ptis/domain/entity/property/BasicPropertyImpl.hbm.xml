@@ -183,6 +183,7 @@
 		<property name="regdDocNo" column="regd_doc_no" type="java.lang.String"/> 
 		<property name="regdDocDate" column="regd_doc_date" type="java.util.Date"/> 
 		<property name="vacantLandAssmtNo" column="vl_assessmentNo" type="java.lang.String"/> 
+		<property name="assessmentdate" column="assessmentdate" type="java.util.Date"/> 
 	</class>
 
 </hibernate-mapping>
