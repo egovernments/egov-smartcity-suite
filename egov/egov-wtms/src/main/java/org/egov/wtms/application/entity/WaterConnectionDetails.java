@@ -42,7 +42,9 @@ package org.egov.wtms.application.entity;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -202,7 +204,7 @@ public class WaterConnectionDetails extends StateAware {
     @ManyToOne
     @JoinColumn(name = "chairPerson")
     private ChairPerson chairPerson;
-
+    private Boolean isHistory = false;
     @Valid
     @OneToOne(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private FieldInspectionDetails fieldInspectionDetails;
@@ -218,6 +220,10 @@ public class WaterConnectionDetails extends StateAware {
     @OrderBy("id desc")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MeterReadingConnectionDetails> meterConnection = new ArrayList<MeterReadingConnectionDetails>(0);
+
+    @OrderBy("ID DESC")
+    @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private final Set<NonMeteredConnBillDetails> nonmeteredBillDetails = new HashSet<NonMeteredConnBillDetails>(0);
 
     public List<MeterReadingConnectionDetails> getMeterConnection() {
         return meterConnection;
@@ -520,5 +526,13 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setLegacy(final Boolean legacy) {
         this.legacy = legacy;
+    }
+
+    public Boolean getIsHistory() {
+        return isHistory;
+    }
+
+    public void setIsHistory(final Boolean isHistory) {
+        this.isHistory = isHistory;
     }
 }
