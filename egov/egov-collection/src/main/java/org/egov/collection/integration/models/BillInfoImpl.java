@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -49,158 +49,159 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 @XStreamAlias("bill-collect")
 public class BillInfoImpl implements BillInfo {
 
-	private String serviceCode;
-	private String fundCode;
-	private BigDecimal functionaryCode;
-	private String fundSourceCode;
-	private String departmentCode;
+    private String serviceCode;
+    private String fundCode;
+    private BigDecimal functionaryCode;
+    private String fundSourceCode;
+    private String departmentCode;
 
-	private String displayMessage;
-	private String paidBy;
-	private Boolean partPaymentAllowed;
-	
-	// true => call the new API (of billing system), false => default logic (done by collection system).
-	private Boolean callbackForApportioning;
+    private String displayMessage;
+    private String paidBy;
+    private Boolean partPaymentAllowed;
 
-	private Boolean overrideAccountHeadsAllowed;
-	
-	private COLLECTIONTYPE collectionType;
+    // true => call the new API (of billing system), false => default logic
+    // (done by collection system).
+    private Boolean callbackForApportioning;
 
-	@XStreamImplicit(itemFieldName = "collectionModeNotAllowed")
-	private List<String> collectionModesNotAllowed;
+    private Boolean overrideAccountHeadsAllowed;
 
-	@XStreamAlias("payees")
-	private List<BillPayeeDetails> payees = new ArrayList<BillPayeeDetails>();
+    private COLLECTIONTYPE collectionType;
 
-	public String getServiceCode() {
-		return serviceCode;
-	}
+    @XStreamImplicit(itemFieldName = "collectionModeNotAllowed")
+    private List<String> collectionModesNotAllowed;
 
-	public BillInfoImpl() {
-	}
+    @XStreamAlias("payees")
+    private List<BillPayeeDetails> payees = new ArrayList<BillPayeeDetails>();
 
-	public BillInfoImpl(String serviceCode, String fundCode,
-			BigDecimal functionaryCode, String fundSourceCode,
-			String departmentCode, String displayMessage, String paidBy,
-			Boolean partPaymentAllowed, Boolean overrideAccountHeadsAllowed,
-			List<String> collectionModesNotAllowed,COLLECTIONTYPE collectionType) {
-		this.serviceCode = serviceCode;
-		this.fundCode = fundCode;
-		this.functionaryCode = functionaryCode;
-		this.fundSourceCode = fundSourceCode;
-		this.departmentCode = departmentCode;
-		this.displayMessage = displayMessage;
-		this.paidBy = paidBy;
-		this.partPaymentAllowed = partPaymentAllowed;
-		this.overrideAccountHeadsAllowed = overrideAccountHeadsAllowed;
-		this.collectionModesNotAllowed = collectionModesNotAllowed;
-		this.collectionType = collectionType;
-	}
+    @Override
+    public String getServiceCode() {
+        return serviceCode;
+    }
 
-	public String getFundCode() {
-		return fundCode;
-	}
+    public BillInfoImpl() {
+    }
 
-	public BigDecimal getFunctionaryCode() {
-		return functionaryCode;
-	}
+    public BillInfoImpl(final String serviceCode, final String fundCode, final BigDecimal functionaryCode,
+            final String fundSourceCode, final String departmentCode, final String displayMessage, final String paidBy,
+            final Boolean partPaymentAllowed, final Boolean overrideAccountHeadsAllowed,
+            final List<String> collectionModesNotAllowed, final COLLECTIONTYPE collectionType) {
+        this.serviceCode = serviceCode;
+        this.fundCode = fundCode;
+        this.functionaryCode = functionaryCode;
+        this.fundSourceCode = fundSourceCode;
+        this.departmentCode = departmentCode;
+        this.displayMessage = displayMessage;
+        this.paidBy = paidBy;
+        this.partPaymentAllowed = partPaymentAllowed;
+        this.overrideAccountHeadsAllowed = overrideAccountHeadsAllowed;
+        this.collectionModesNotAllowed = collectionModesNotAllowed;
+        this.collectionType = collectionType;
+    }
 
-	public String getFundSourceCode() {
-		return fundSourceCode;
-	}
+    @Override
+    public String getFundCode() {
+        return fundCode;
+    }
 
-	public String getDepartmentCode() {
-		return departmentCode;
-	}
+    @Override
+    public BigDecimal getFunctionaryCode() {
+        return functionaryCode;
+    }
 
-	public String getDisplayMessage() {
-		return displayMessage;
-	}
+    @Override
+    public String getFundSourceCode() {
+        return fundSourceCode;
+    }
 
-	public Boolean getPartPaymentAllowed() {
-		return partPaymentAllowed;
-	}
+    @Override
+    public String getDepartmentCode() {
+        return departmentCode;
+    }
 
-	public Boolean getOverrideAccountHeadsAllowed() {
-		return overrideAccountHeadsAllowed;
-	}
+    @Override
+    public String getDisplayMessage() {
+        return displayMessage;
+    }
 
-	public List<String> getCollectionModesNotAllowed() {
-		return collectionModesNotAllowed;
-	}
+    @Override
+    public Boolean getPartPaymentAllowed() {
+        return partPaymentAllowed;
+    }
 
-	public List<BillPayeeDetails> getPayees() {
-		return payees;
-	}
+    @Override
+    public Boolean getOverrideAccountHeadsAllowed() {
+        return overrideAccountHeadsAllowed;
+    }
 
-	public void setPayees(List<BillPayeeDetails> payees) {
-		this.payees = payees;
-	}
+    @Override
+    public List<String> getCollectionModesNotAllowed() {
+        return collectionModesNotAllowed;
+    }
 
-	public void addPayees(BillPayeeDetails payee) {
-		this.payees.add(payee);
-	}
-	
-	public COLLECTIONTYPE getCollectionType() {
-		return collectionType;
-	}
-	
-	public String getPaidBy() {
-		return paidBy;
-	}
-	
-	public Boolean getCallbackForApportioning() {
-		return callbackForApportioning;
-	}
+    @Override
+    public List<BillPayeeDetails> getPayees() {
+        return payees;
+    }
 
-	public void setCallbackForApportioning(Boolean callbackForApportioning) {
-		this.callbackForApportioning = callbackForApportioning;
-	}
+    @Override
+    public void setPayees(final List<BillPayeeDetails> payees) {
+        this.payees = payees;
+    }
 
-	public boolean equals(Object obj) {
-		if (!(obj instanceof BillInfoImpl)) {
-			return false;
-		}
+    @Override
+    public void addPayees(final BillPayeeDetails payee) {
+        payees.add(payee);
+    }
 
-		BillInfoImpl billColl = (BillInfoImpl) obj;
-		if (this.serviceCode.equals(billColl.getServiceCode())
-				&& this.fundCode.equals(billColl.fundCode)
-				&& this.functionaryCode.equals(billColl.functionaryCode)
-				&& this.fundSourceCode.equals(billColl.fundSourceCode)
-				&& this.departmentCode.equals(billColl.departmentCode)
-				&& this.displayMessage.equals(billColl.displayMessage)
-				&& this.partPaymentAllowed == billColl.partPaymentAllowed
-				&& this.overrideAccountHeadsAllowed == billColl.overrideAccountHeadsAllowed
-				&& this.callbackForApportioning == billColl.callbackForApportioning
-				&& this.getPayees().containsAll(billColl.getPayees())) {
+    public COLLECTIONTYPE getCollectionType() {
+        return collectionType;
+    }
 
-			return this.collectionModesNotAllowed == billColl
-					.getCollectionModesNotAllowed()
-					|| (this.collectionModesNotAllowed != null && this.collectionModesNotAllowed
-							.containsAll(billColl
-									.getCollectionModesNotAllowed()));
-		} else {
-			return false;
-		}
-	}
+    @Override
+    public String getPaidBy() {
+        return paidBy;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		int hashCode = this.serviceCode.hashCode() + this.fundCode.hashCode()
-				+ this.functionaryCode.hashCode()
-				+ this.fundSourceCode.hashCode()
-				+ this.departmentCode.hashCode()
-				+ this.displayMessage.hashCode()
-				+ this.partPaymentAllowed.hashCode()
-				+ this.overrideAccountHeadsAllowed.hashCode();
-		for (String collectionModeNotAllowed : this.collectionModesNotAllowed) {
-			hashCode += collectionModeNotAllowed.hashCode();
-		}
-		return hashCode;
-	}
+    @Override
+    public Boolean getCallbackForApportioning() {
+        return callbackForApportioning;
+    }
+
+    public void setCallbackForApportioning(final Boolean callbackForApportioning) {
+        this.callbackForApportioning = callbackForApportioning;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof BillInfoImpl))
+            return false;
+
+        final BillInfoImpl billColl = (BillInfoImpl) obj;
+        if (serviceCode.equals(billColl.getServiceCode()) && fundCode.equals(billColl.fundCode)
+                && functionaryCode.equals(billColl.functionaryCode) && fundSourceCode.equals(billColl.fundSourceCode)
+                && departmentCode.equals(billColl.departmentCode) && displayMessage.equals(billColl.displayMessage)
+                && partPaymentAllowed == billColl.partPaymentAllowed
+                && overrideAccountHeadsAllowed == billColl.overrideAccountHeadsAllowed
+                && callbackForApportioning == billColl.callbackForApportioning
+                && getPayees().containsAll(billColl.getPayees()))
+            return collectionModesNotAllowed == billColl.getCollectionModesNotAllowed()
+            || collectionModesNotAllowed != null
+                    && collectionModesNotAllowed.containsAll(billColl.getCollectionModesNotAllowed());
+        else
+            return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        int hashCode = serviceCode.hashCode() + fundCode.hashCode() + functionaryCode.hashCode()
+                + fundSourceCode.hashCode() + departmentCode.hashCode() + displayMessage.hashCode()
+                + partPaymentAllowed.hashCode() + overrideAccountHeadsAllowed.hashCode();
+        for (final String collectionModeNotAllowed : collectionModesNotAllowed)
+            hashCode += collectionModeNotAllowed.hashCode();
+        return hashCode;
+    }
 }
