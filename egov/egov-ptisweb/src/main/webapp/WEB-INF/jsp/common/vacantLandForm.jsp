@@ -60,19 +60,19 @@
 				maxlength="15" value="%{propertyDetail.pattaNumber}" />
         </td>
         <td class="blueborderfortd" align="center">
-        	<s:textfield name="propertyDetail.sitalArea.area" id="propertyDetail.sitalArea.area"
+        	<s:textfield name="propertyDetail.sitalArea.area" id="vacantLandArea"
 				maxlength="15" value="%{propertyDetail.sitalArea.area}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.sitalArea.area');checkZero(this,'propertyDetail.sitalArea.area');" />
         </td>
         <td class="blueborderfortd" align="center">
-        	<s:textfield name="propertyDetail.marketValue" id="propertyDetail.marketValue"
+        	<s:textfield name="propertyDetail.marketValue" id="marketValue"
 				maxlength="15" value="%{propertyDetail.marketValue}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.marketValue');checkZero(this,'propertyDetail.marketValue');" />
 		</td>
         
         <td class="blueborderfortd">
         	<s:textfield name="propertyDetail.currentCapitalValue"
-				id="propertyDetail.currentCapitalValue" maxlength="15"	value="%{propertyDetail.currentCapitalValue}"
+				id="currentCapitalValue" maxlength="15" readOnly="true" value="%{propertyDetail.currentCapitalValue}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.currentCapitalValue');checkZero(this,'propertyDetail.currentCapitalValue');" />
         </td>
         
@@ -107,5 +107,13 @@
 			</table>
 			</td>
 	</tr>
-	
 </table>
+<script type="text/javascript">
+	 jQuery("#marketValue").blur(function() {
+		 var vacantLandArea = jQuery("#vacantLandArea").val();
+		 var marketValue =  jQuery("#marketValue").val();
+		 //1 square yard = 0.836127 sqr mtrs
+		 var capitalValue = vacantLandArea * marketValue * 0.836127;
+		 jQuery("#currentCapitalValue").val(roundoff(capitalValue));
+	 });
+</script>

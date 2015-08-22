@@ -42,11 +42,12 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="vacantLandTable">
 	
 	<tr>
-	    <th class="bluebgheadtd" style="height: 45px;"><s:text name="surveyNumber" /><span class="mandatory1">*</span></th>
-	    <th class="bluebgheadtd"><s:text name="pattaNumber" /><span class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="vacantLandArea" /><span class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="MarketValue" /><span class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="currentCapitalValue" /><span	class="mandatory1">*</span></th>
+	    <th class="bluebgheadtd" style="height: 45px;"><s:text name="surveyNumber" /></th>
+	    <th class="bluebgheadtd"><s:text name="pattaNumber" /></th>
+		<th class="bluebgheadtd"><s:text name="vacantLandArea" /></th>
+		<th class="bluebgheadtd"><s:text name="MarketValue" /></th>
+		<th class="bluebgheadtd"><s:text name="currentCapitalValue"/></th>
+		<th class="bluebgheadtd"><s:text name="constCompl.date"/></th>
     </tr>
 	
 	<tr id="vacantLandRow">
@@ -62,14 +63,17 @@
         <td class="blueborderfortd" align="center">
         	<span class="bold"><s:property value="%{propertyDetail.marketValue}" default="N/A"/></span>
 		</td>
-        
         <td class="blueborderfortd">
         	<span class="bold"><s:property value="%{propertyDetail.currentCapitalValue}" default="N/A"/></span>
+        </td>
+        <td class="blueborderfortd">
+        <s:date name="%{propertyDetail.dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" />
+        	<span class="bold"><s:property value="%{#occupationDate}" default="N/A"/></span>
         </td>
     </tr>
     
    <tr>
-   <td colspan="5">
+   <td colspan="6">
      <br/>
       <table class="tablebottom" style="width: 100%;">
          <tbody>

@@ -1,5 +1,5 @@
 <%@ include file="/includes/taglibs.jsp"%>
-<tr>
+<tr class="amenities">
 	<td class="greybox" width="5%">&nbsp;</td>
 	<td class="greybox" width="20%"><s:text name="lift"></s:text>:</td>
 	<td class="greybox" width="20%"><s:if
@@ -12,7 +12,7 @@
 			<span class="bold"> Yes</span>
 		</s:if> <span class="bold"> <s:else>No</s:else></span></td>
 </tr>
-<tr>
+<tr class="amenities">
 	<td class="greybox" width="5%">&nbsp;</td>
 	<td class="greybox" width="20%"><s:text name="toilets"></s:text>:</td>
 	<td class="greybox" width="20%"><s:if
@@ -26,7 +26,7 @@
 			<span class="bold"> Yes</span>
 		</s:if> <span class="bold"> <s:else>No</s:else></span></td>
 </tr>
-<tr>
+<tr class="amenities">
 	<td class="greybox" width="5%">&nbsp;</td>
 	<td class="greybox" width="20%"><s:text name="watertap"></s:text>:</td>
 	<td class="greybox" width="20%"><s:if
@@ -41,7 +41,7 @@
 		</s:if> <span class="bold"> <s:else>No</s:else></span></td>
 </tr>
 
-<tr>
+<tr class="amenities">
 <td class="greybox" width="5%">&nbsp;</td>
 	<td class="greybox" width="20%"><s:text name="cableconnection"></s:text>:</td>
 	<td class="greybox" width="20%"><s:if
