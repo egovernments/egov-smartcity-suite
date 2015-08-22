@@ -42,11 +42,14 @@ package org.egov.ptis.actions.modify;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.AMALGAMATION_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.BIFURCATION_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILL_COLLECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
@@ -103,6 +106,7 @@ import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Area;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
@@ -161,12 +165,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ParentPackage("egov")
 @ResultPath(value = "/WEB-INF/jsp")
 @Results({ @Result(name = ModifyPropertyAction.RESULT_ACK, location = "modify/modifyProperty-ack.jsp"),
-    @Result(name = ModifyPropertyAction.EDIT, location = "modify/modifyProperty-new.jsp"),
-    @Result(name = ModifyPropertyAction.NEW, location = "modify/modifyProperty-new.jsp"),
-    @Result(name = ModifyPropertyAction.VIEW, location = "modify/modifyProperty-view.jsp"),
-    @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
-    @Result(name = ModifyPropertyAction.BALANCE, location = "modify/modifyProperty-balance.jsp"),
-    @Result(name = ModifyPropertyAction.PRINTACK, location = "modify/modifyProperty-printAck.jsp") })
+        @Result(name = ModifyPropertyAction.EDIT, location = "modify/modifyProperty-new.jsp"),
+        @Result(name = ModifyPropertyAction.NEW, location = "modify/modifyProperty-new.jsp"),
+        @Result(name = ModifyPropertyAction.VIEW, location = "modify/modifyProperty-view.jsp"),
+        @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
+        @Result(name = ModifyPropertyAction.BALANCE, location = "modify/modifyProperty-balance.jsp"),
+        @Result(name = ModifyPropertyAction.PRINTACK, location = "modify/modifyProperty-printAck.jsp") })
 @Namespace("/modify")
 public class ModifyPropertyAction extends WorkflowAction {
     private static final String BIFURCATION = "Bifurcation";
@@ -259,7 +263,8 @@ public class ModifyPropertyAction extends WorkflowAction {
     private BigDecimal arrearPropertyTaxDue;
     private String taxDueErrorMsg;
     private Long taxExemptedReason;
-    
+    private Boolean wfInitiatorRejected;
+
     @Autowired
     private PropertyPersistenceService basicPropertyService;
     @Autowired
@@ -309,19 +314,19 @@ public class ModifyPropertyAction extends WorkflowAction {
     }
 
     private String populateFormData(final Boolean fromInbox) {
-		LOGGER.debug("Entered into populateFormData");
-		String target = "";
-		PropertyImpl propertyImpl = null;
-		if (basicProp.isUnderWorkflow() && !fromInbox) {
-			List<String> msgParams = new ArrayList<String>();
-			if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn)) {
-			    msgParams.add("Property Bifurcation");
-			} else {
-			    msgParams.add("Property Alter/Addition");
-			}
-			setWfErrorMsg(getText("wf.pending.msg", msgParams));
-			target = TARGET_WORKFLOW_ERROR;
-		} else {
+        LOGGER.debug("Entered into populateFormData");
+        String target = "";
+        PropertyImpl propertyImpl = null;
+        if (basicProp.isUnderWorkflow() && !fromInbox) {
+            List<String> msgParams = new ArrayList<String>();
+            if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn)) {
+                msgParams.add("Property Bifurcation");
+            } else {
+                msgParams.add("Property Alter/Addition");
+            }
+            setWfErrorMsg(getText("wf.pending.msg", msgParams));
+            target = TARGET_WORKFLOW_ERROR;
+        } else {
             if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn) && !fromInbox) {
                 final Map<String, BigDecimal> propertyTaxDetails = propService.getCurrentPropertyTaxDetails(basicProp
                         .getActiveProperty());
@@ -540,20 +545,7 @@ public class ModifyPropertyAction extends WorkflowAction {
         LOGGER.debug("approve: Workflow property: " + propertyModel);
         basicProp = propertyModel.getBasicProperty();
         oldProperty = (PropertyImpl) basicProp.getProperty();
-
         transitionWorkFlow(propertyModel);
-        // FIX ME -- Uncomment this while implementing amalgamation of
-        // assessment
-        /*
-         * int i = 0; for (PropertyStatusValues propstatval :
-         * basicProp.getPropertyStatusValuesSet()) { if
-         * (propstatval.getIsActive().equals("Y")) { if
-         * (PROP_CREATE_RSN.equals(propstatval
-         * .getPropertyStatus().getStatusCode())) { if
-         * (propstatval.getReferenceBasicProperty() != null) { amalgPropIds[i] =
-         * propstatval.getReferenceBasicProperty().getUpicNo(); i++; } } } }
-         * setAmalgPropInactive();
-         */
         if (!PROPERTY_MODIFY_REASON_OBJ.equals(modifyRsn))
             propService.setWFPropStatValActive(basicProp);
 
@@ -565,16 +557,14 @@ public class ModifyPropertyAction extends WorkflowAction {
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
 
         /**
-         * The old property will be made history and the workflow property will
-         * be made active only when all the changes are completed in case of
-         * modify reason is 'ADD_OR_ALTER' or 'BIFURCATE'
+         * The old property will be made history and the workflow property will be made active only when all the changes are
+         * completed in case of modify reason is 'ADD_OR_ALTER' or 'BIFURCATE'
          */
         if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)) {
             propertyModel.setStatus(STATUS_ISACTIVE);
             oldProperty.setStatus(STATUS_ISHISTORY);
             propertyTaxUtil.makeTheEgBillAsHistory(basicProp);
         }
-        // upload docs
         processAndStoreDocumentsWithReason(basicProp, getReason(modifyRsn));
         if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)
                 || PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn))
@@ -585,10 +575,12 @@ public class ModifyPropertyAction extends WorkflowAction {
                 PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
                         : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
         setBasicProp(basicProp);
-        setAckMessage(getText("property.approve.succes", new String[] { propertyModel.getBasicProperty().getUpicNo() }));
+        setAckMessage(getText("property.modify.approve.success", new String[] { getModifyReasonString(),
+                propertyModel.getBasicProperty().getUpicNo() }));
         buildEmailandSms(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
-        addActionMessage(getText("property.approve.success", new String[] { propertyModel.getBasicProperty()
-                .getUpicNo() }));
+        addActionMessage(getText("property.modify.approve.success", new String[] { getModifyReasonString(),
+                propertyModel.getBasicProperty()
+                        .getUpicNo() }));
         LOGGER.debug("Exiting approve");
         return RESULT_ACK;
     }
@@ -622,14 +614,20 @@ public class ModifyPropertyAction extends WorkflowAction {
                         : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         String username = "";
+        Assignment userAssignment = assignmentService.getPrimaryAssignmentForPositon(propertyModel.getStateHistory().get(0)
+                .getOwnerPosition().getId());
         if (propService.isEmployee(propertyModel.getCreatedBy()))
             username = propertyModel.getCreatedBy().getUsername();
         else
-            username = assignmentService
-                    .getPrimaryAssignmentForPositon(propertyModel.getStateHistory().get(0).getOwnerPosition().getId())
-                    .getEmployee().getUsername();
-        setAckMessage("Property Rejected Successfully and forwarded to initiator : " + username
-                + " with Index Number : ");
+            username = userAssignment.getEmployee().getUsername();
+        Assignment wfInitiator = getWorkflowInitiator(propertyModel);
+        if (wfInitiator.getEmployee().getUsername().equals(securityUtils.getCurrentUser().getUsername())) {
+            wfInitiatorRejected = Boolean.TRUE;
+            setAckMessage(getText("property.modify.final.reject.success", new String[] { getModifyReasonString() }));
+        } else {
+            setAckMessage(getText("property.modify.reject.success", new String[] { getModifyReasonString(), username }));
+        }
+
         buildEmailandSms(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
         LOGGER.debug("reject: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
         LOGGER.debug("reject: Property rejection ended");
@@ -756,7 +754,8 @@ public class ModifyPropertyAction extends WorkflowAction {
         basicProp.setPropOccupationDate(propCompletionDate);
 
         setProperty(propService.createProperty(propertyModel, getAreaOfPlot(), mutationCode, propTypeId, propUsageId,
-                propOccId, status, propertyModel.getDocNumber(), null, floorTypeId, roofTypeId, wallTypeId, woodTypeId, taxExemptedReason));
+                propOccId, status, propertyModel.getDocNumber(), null, floorTypeId, roofTypeId, wallTypeId, woodTypeId,
+                taxExemptedReason));
         updatePropertyID(basicProp);
         propertyModel.setPropertyModifyReason(modifyRsn);
         propertyModel.setBasicProperty(basicProp);
@@ -765,14 +764,14 @@ public class ModifyPropertyAction extends WorkflowAction {
         final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
                 "from PropertyTypeMaster ptm where ptm.code = ?", OWNERSHIP_TYPE_VAC_LAND);
         /*
-         * if modifying from OPEN_PLOT to OTHERS or from OTHERS to OPEN_PLOT
-         * property type
+         * if modifying from OPEN_PLOT to OTHERS or from OTHERS to OPEN_PLOT property type
          */
         if ((oldPropTypeId == propTypeMstr.getId() && Long.parseLong(propTypeId) != propTypeMstr.getId() || oldPropTypeId != propTypeMstr
-                .getId() && Long.parseLong(propTypeId) == propTypeMstr.getId())
+                .getId()
+                && Long.parseLong(propTypeId) == propTypeMstr.getId())
                 && !propertyModel.getStatus().equals('W'))
             if (propTypeMstr != null
-            && org.apache.commons.lang.StringUtils.equals(propTypeMstr.getId().toString(), propTypeId))
+                    && org.apache.commons.lang.StringUtils.equals(propTypeMstr.getId().toString(), propTypeId))
                 changePropertyDetail(propertyModel, new VacantProperty(), 0);
             else
                 changePropertyDetail(propertyModel, new BuiltUpProperty(), propertyModel.getPropertyDetail()
@@ -802,18 +801,12 @@ public class ModifyPropertyAction extends WorkflowAction {
     }
 
     /**
-     * Changes the property details to {@link BuiltUpProperty} or
-     * {@link VacantProperty}
+     * Changes the property details to {@link BuiltUpProperty} or {@link VacantProperty}
      *
-     * @param modProperty
-     *            the property which is getting modified
-     * @param propDetail
-     *            the {@link PropertyDetail} type, either
-     *            {@link BuiltUpProperty} or {@link VacantProperty}
-     * @param numOfFloors
-     *            the no. of floors which is dependent on {@link PropertyDetail}
-     * @see {@link PropertyDetail}, {@link BuiltUpProperty},
-     *      {@link VacantProperty}
+     * @param modProperty the property which is getting modified
+     * @param propDetail the {@link PropertyDetail} type, either {@link BuiltUpProperty} or {@link VacantProperty}
+     * @param numOfFloors the no. of floors which is dependent on {@link PropertyDetail}
+     * @see {@link PropertyDetail}, {@link BuiltUpProperty}, {@link VacantProperty}
      */
 
     private void changePropertyDetail(final Property modProperty, final PropertyDetail propDetail,
@@ -888,52 +881,33 @@ public class ModifyPropertyAction extends WorkflowAction {
     // FIX ME -- Uncomment while implementing amalgamation of assessment
 
     /*
-     * @SkipValidation public String getStatus() {
-     * LOGGER.debug("Entered into getStatus"); checkAmalgStatus();
+     * @SkipValidation public String getStatus() { LOGGER.debug("Entered into getStatus"); checkAmalgStatus();
      * LOGGER.debug("Exiting from getStatus"); return "showStatus"; }
      */
 
     /*
-     * private void checkAmalgStatus() {
-     * LOGGER.debug("Entered into checkAmalgStatus, OldPropId: " + oldpropId);
-     * List<String> code = new ArrayList<String>(); BigDecimal currDemand =
-     * BigDecimal.ZERO; BigDecimal currDemandDue = BigDecimal.ZERO; BigDecimal
-     * currCollection = BigDecimal.ZERO; BigDecimal arrDemand = BigDecimal.ZERO;
-     * BigDecimal arrCollection = BigDecimal.ZERO; BigDecimal arrearsDue =
-     * BigDecimal.ZERO; PropertyStatusValues propStatVal = null;
-     * code.add(PROPERTY_STATUS_MARK_DEACTIVE); amalgPropBasicProp =
-     * basicPropertyDAO.getBasicPropertyByPropertyID(oldpropId);
-     * LOGGER.debug("Amalgmated BasicProperty: " + amalgPropBasicProp);
-     * Map<String, String> wfMap = null; String wfStatus = null; if
-     * (amalgPropBasicProp != null) { propStatVal = propertyStatusValuesDAO
-     * .getLatestPropertyStatusValuesByPropertyIdAndCode(oldpropId, code); wfMap
-     * = amalgPropBasicProp.getPropertyWfStatus(); wfStatus =
-     * wfMap.get(WFSTATUS); if (!wfStatus.equalsIgnoreCase("TRUE")) {
-     * PropertyImpl oldProp = (PropertyImpl) amalgPropBasicProp.getProperty();
-     * setOldOwnerName
-     * (ptisCacheMgr.buildOwnerFullName(oldProp.getPropertyOwnerInfo()));
-     * setOldPropAddress(
-     * ptisCacheMgr.buildAddressByImplemetation(amalgPropBasicProp
-     * .getAddress())); Map<String, BigDecimal> DmdCollMap =
-     * ptDemandDAO.getDemandCollMap(oldProp); currDemand =
-     * DmdCollMap.get("CURR_DMD"); arrDemand = DmdCollMap.get("ARR_DMD");
-     * currCollection = DmdCollMap.get("CURR_COLL"); arrCollection =
-     * DmdCollMap.get("ARR_COLL"); currDemandDue =
-     * currDemand.subtract(currCollection); arrearsDue =
-     * arrDemand.subtract(arrCollection); } } if (amalgPropBasicProp == null) {
-     * setAmalgStatus("Property does not Exist"); } else if (propStatVal !=
-     * null) { setAmalgStatus("Property is Marked for Deactivation"); } else if
-     * (!amalgPropBasicProp.isActive()) {
-     * setAmalgStatus("Property is Deactivated"); } else if
-     * (wfStatus.equalsIgnoreCase("TRUE")) {
+     * private void checkAmalgStatus() { LOGGER.debug("Entered into checkAmalgStatus, OldPropId: " + oldpropId); List<String> code
+     * = new ArrayList<String>(); BigDecimal currDemand = BigDecimal.ZERO; BigDecimal currDemandDue = BigDecimal.ZERO; BigDecimal
+     * currCollection = BigDecimal.ZERO; BigDecimal arrDemand = BigDecimal.ZERO; BigDecimal arrCollection = BigDecimal.ZERO;
+     * BigDecimal arrearsDue = BigDecimal.ZERO; PropertyStatusValues propStatVal = null; code.add(PROPERTY_STATUS_MARK_DEACTIVE);
+     * amalgPropBasicProp = basicPropertyDAO.getBasicPropertyByPropertyID(oldpropId); LOGGER.debug("Amalgmated BasicProperty: " +
+     * amalgPropBasicProp); Map<String, String> wfMap = null; String wfStatus = null; if (amalgPropBasicProp != null) {
+     * propStatVal = propertyStatusValuesDAO .getLatestPropertyStatusValuesByPropertyIdAndCode(oldpropId, code); wfMap =
+     * amalgPropBasicProp.getPropertyWfStatus(); wfStatus = wfMap.get(WFSTATUS); if (!wfStatus.equalsIgnoreCase("TRUE")) {
+     * PropertyImpl oldProp = (PropertyImpl) amalgPropBasicProp.getProperty(); setOldOwnerName
+     * (ptisCacheMgr.buildOwnerFullName(oldProp.getPropertyOwnerInfo())); setOldPropAddress(
+     * ptisCacheMgr.buildAddressByImplemetation(amalgPropBasicProp .getAddress())); Map<String, BigDecimal> DmdCollMap =
+     * ptDemandDAO.getDemandCollMap(oldProp); currDemand = DmdCollMap.get("CURR_DMD"); arrDemand = DmdCollMap.get("ARR_DMD");
+     * currCollection = DmdCollMap.get("CURR_COLL"); arrCollection = DmdCollMap.get("ARR_COLL"); currDemandDue =
+     * currDemand.subtract(currCollection); arrearsDue = arrDemand.subtract(arrCollection); } } if (amalgPropBasicProp == null) {
+     * setAmalgStatus("Property does not Exist"); } else if (propStatVal != null) {
+     * setAmalgStatus("Property is Marked for Deactivation"); } else if (!amalgPropBasicProp.isActive()) {
+     * setAmalgStatus("Property is Deactivated"); } else if (wfStatus.equalsIgnoreCase("TRUE")) {
      * setAmalgStatus("This Property Under Work flow in " + wfMap.get(WFOWNER) +
-     * "'s inbox. Please finish pending work flow before doing any transactions on it."
-     * ); } else if (currDemandDue.compareTo(BigDecimal.ZERO) == 1 ||
-     * arrearsDue.compareTo(BigDecimal.ZERO) == 1) {
-     * setAmalgStatus("Property has Pending Balance"); } else {
-     * setAmalgStatus("Property is Ready for Amalgamation"); }
-     * LOGGER.debug("AmalgStatus: " + getAmalgStatus() +
-     * "\nExiting from checkAmalgStatus"); }
+     * "'s inbox. Please finish pending work flow before doing any transactions on it." ); } else if
+     * (currDemandDue.compareTo(BigDecimal.ZERO) == 1 || arrearsDue.compareTo(BigDecimal.ZERO) == 1) {
+     * setAmalgStatus("Property has Pending Balance"); } else { setAmalgStatus("Property is Ready for Amalgamation"); }
+     * LOGGER.debug("AmalgStatus: " + getAmalgStatus() + "\nExiting from checkAmalgStatus"); }
      */
 
     private void setFloorDetails(final Property property) {
@@ -986,15 +960,18 @@ public class ModifyPropertyAction extends WorkflowAction {
     private void prepareAckMsg() {
         LOGGER.debug("Entered into prepareAckMsg, ModifyRsn: " + modifyRsn);
         final User approverUser = eisCommonService.getUserForPosition(approverPositionId, new Date());
-
-        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
-            setAckMessage(getText("property.modify.forward.success", new String[] { approverUser.getUsername() }));
-        else if (PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn))
-            setAckMessage(getText("property.bifur.forward.success", new String[] { approverUser.getUsername() }));
-        else if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn))
-            setAckMessage(getText("property.amalg.forward.success", new String[] { approverUser.getUsername() }));
+        String action = getModifyReasonString();
+        setAckMessage(getText("property.modify.forward.success",
+                new String[] { action, approverUser.getUsername(), propertyModel.getApplicationNo() }));
 
         LOGGER.debug("AckMessage: " + getAckMessage() + "\nExiting from prepareAckMsg");
+    }
+
+    private String getModifyReasonString() {
+        String action = PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? ALTERATION_OF_ASSESSMENT
+                : (PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn) ? BIFURCATION_OF_ASSESSMENT
+                        : AMALGAMATION_OF_ASSESSMENT);
+        return action;
     }
 
     private String getReason(final String modifyReason) {
@@ -1200,14 +1177,14 @@ public class ModifyPropertyAction extends WorkflowAction {
     }
 
     public Long getTaxExemptedReason() {
-		return taxExemptedReason;
-	}
+        return taxExemptedReason;
+    }
 
-	public void setTaxExemptedReason(Long taxExemptedReason) {
-		this.taxExemptedReason = taxExemptedReason;
-	}
+    public void setTaxExemptedReason(Long taxExemptedReason) {
+        this.taxExemptedReason = taxExemptedReason;
+    }
 
-	public String getModifyRsn() {
+    public String getModifyRsn() {
         return modifyRsn;
     }
 
@@ -1834,6 +1811,14 @@ public class ModifyPropertyAction extends WorkflowAction {
 
     public void setTaxDueErrorMsg(final String taxDueErrorMsg) {
         this.taxDueErrorMsg = taxDueErrorMsg;
+    }
+
+    public Boolean getWfInitiatorRejected() {
+        return wfInitiatorRejected;
+    }
+
+    public void setWfInitiatorRejected(Boolean wfInitiatorRejected) {
+        this.wfInitiatorRejected = wfInitiatorRejected;
     }
 
 }
