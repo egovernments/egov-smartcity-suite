@@ -173,11 +173,11 @@ public class DCBReportController {
 
     private SQLQuery prepareQuery(final String paramList, final String connectionType, final String mode, final String reportType) {
         StringBuilder query = new StringBuilder();
-        StringBuilder selectQry1 = new StringBuilder();
-        StringBuilder selectQry2 = new StringBuilder();
+        final StringBuilder selectQry1 = new StringBuilder();
+        final StringBuilder selectQry2 = new StringBuilder();
         StringBuilder fromQry = new StringBuilder();
         StringBuilder whereQry = new StringBuilder();
-        StringBuilder groupByQry = new StringBuilder();
+        final StringBuilder groupByQry = new StringBuilder();
         selectQry2
                 .append(" cast(SUM(arr_demand) as bigint) AS arr_demand,cast(SUM(curr_demand) as bigint) AS curr_demand,cast(SUM(arr_coll) as bigint) AS arr_coll,cast(SUM(curr_coll) as bigint) AS curr_coll,"
                         + "cast(SUM(arr_balance) as bigint) AS arr_balance,cast(SUM(curr_balance) as bigint) AS curr_balance ");

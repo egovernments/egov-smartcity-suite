@@ -83,7 +83,7 @@ public class DCBReportResult {
         return mode;
     }
 
-    public void setMode(String mode) {
+    public void setMode(final String mode) {
         this.mode = mode;
     }
 
@@ -91,7 +91,7 @@ public class DCBReportResult {
         return selectedModeBndry;
     }
 
-    public void setSelectedModeBndry(String selectedModeBndry) {
+    public void setSelectedModeBndry(final String selectedModeBndry) {
         this.selectedModeBndry = selectedModeBndry;
     }
 
@@ -99,7 +99,7 @@ public class DCBReportResult {
         return reportType;
     }
 
-    public void setReportType(String reportType) {
+    public void setReportType(final String reportType) {
         this.reportType = reportType;
     }
 
@@ -222,7 +222,7 @@ public class DCBReportResult {
         return wards;
     }
 
-    public void setWards(List<Boundary> wards) {
+    public void setWards(final List<Boundary> wards) {
         this.wards = wards;
     }
 
@@ -230,7 +230,7 @@ public class DCBReportResult {
         return blocks;
     }
 
-    public void setBlocks(List<Boundary> blocks) {
+    public void setBlocks(final List<Boundary> blocks) {
         this.blocks = blocks;
     }
 
