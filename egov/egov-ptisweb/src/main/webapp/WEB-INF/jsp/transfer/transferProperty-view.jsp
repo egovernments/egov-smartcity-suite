@@ -268,22 +268,18 @@
 					<td class="bluebox2">
 							&nbsp;
 						</td>
-						<s:if test="%{marketValue != null}">
 						<td class="bluebox">
 							<s:text name="docValue" /> :
 						</td>
 						<td class="bluebox">
 							<span	class="bold"><s:property value="%{marketValue}" default="N/A"/></span>
 						</td>
-						</s:if>
-						<s:if test="%{mutationFee != null}">
 						<td class="bluebox">
 							<s:text name="payablefee" />:
 						</td>
 						<td class="bluebox">
 							<span	class="bold"><s:property value="%{mutationFee}" default="N/A"/></span>
 						</td>
-						</s:if>
 					</tr>
 					<tr>
 		                  <%@ include file="../common/DocumentUploadView.jsp"%>

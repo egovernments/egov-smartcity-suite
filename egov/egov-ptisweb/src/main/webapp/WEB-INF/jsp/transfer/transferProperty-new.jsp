@@ -244,52 +244,24 @@
 								cssClass="datepicker" />
 						</td>
 					</tr>
-					
-				<%-- 	<tr>
-						<td colspan="5">
-							<div class="headingsmallbg">
-								<s:text name="docsectiontitle" /> 
-							</div>
+					<tr>
+						<td class="bluebox2">
+							&nbsp;
 						</td>
-					</tr> --%>
-
+						<td class="bluebox">
+							<s:text name="docValue" /><span class="mandatory1">*</span> :
+						</td>
+						<td class="bluebox">
+							<s:textfield name="marketValue" id="marketValue" maxlength="64"/>
+						</td>
+						<td class="bluebox">
+							<s:text name="payablefee" /><span class="mandatory1">*</span> :
+						</td>
+						<td class="bluebox">
+							<s:textfield name="mutationFee" id="mutationFee" readOnly="true"/>
+						</td>
+					</tr>
                     <%@ include file="../common/DocumentUploadForm.jsp"%>
-                     <%-- <tr>
-						<td colspan="5">
-						<table class="tablebottom" id="nameTable" width="100%" border="0" cellpadding="0" cellspacing="0">
-							<tbody>
-								<tr>
-									<th class="bluebgheadtd"><s:text name="doctable.docenclosed" /></th>
-									<th class="bluebgheadtd"><s:text name="doctable.doctype" /></th>
-									<th class="bluebgheadtd"><s:text name="doctable.docdate" /></th>
-									<th class="bluebgheadtd"><s:text name="doctable.docdetails" /></th>
-									<th class="bluebgheadtd">Upload File</th>
-								</tr>
-								<s:iterator value="documentTypes" status="status" var="documentType">
-								<tr>
-									<td class="blueborderfortd" align="center">
-									  <s:checkbox name="documents[%{#status.index}].enclosed" id="docDetail[%{#status.index}].enclosed"/>
-									</td>
-									<td class="blueborderfortd" style="text-align:left">
-									  <s:property value="name"/><s:if test="mandatory"><span class="mandatory1">*</span></s:if>
-									  <s:hidden name="documents[%{#status.index}].type.id" value="%{id}"></s:hidden>
-									</td>
-									<td class="blueborderfortd" align="center">
-									  <s:textfield name="documents[%{#status.index}].docDate" id="docDetail[%{#status.index}].docDate" cssClass='datepicker' maxlength="10"/>
-									</td>
-									<td class="blueborderfortd" align="center">
-										<s:textarea name="documents[%{#status.index}].description" id="docDetail[%{#status.index}].description" cols="40" rows="2"></s:textarea>
-									</td>
-									<td class="blueborderfortd" align="center">
-										<s:file name="documents[%{#status.index}].uploads" cssClass="button"/> 
-									</td>
-								</tr>
-								</s:iterator>
-							</tbody>
-						</table>
-					</td>
-				 </tr> --%>
-
 				</table>
 				<s:if test="%{propertyByEmployee == true}">
         		<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -313,7 +285,20 @@
 			</div>
 		</div>
 		<script type="text/javascript">
-		
+		jQuery("#marketValue").blur(function(){
+			var marketVal = parseInt(jQuery("#marketValue").val());
+			var transferReason = document.getElementById("transRsnId").options[document.getElementById("transRsnId").selectedIndex].text;
+	 		if(isNaN(marketVal) || marketVal < 1)
+	  			return false;
+			jQuery.ajax({
+				type: "GET",
+				url: "calculate-mutationfee.action",
+				cache: true,
+				data:{"marketValue" : marketVal, "transferReason" : transferReason, "mutationId" : jQuery("#mutationId").val()}
+			}).done(function(value) {
+				jQuery("#mutationFee").val(value);
+			});
+		});
 		function enableSaleDtls(obj) {
 			var selectedValue = obj.options[obj.selectedIndex].text;
 			if(selectedValue=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SALES_DEED}" />') {
