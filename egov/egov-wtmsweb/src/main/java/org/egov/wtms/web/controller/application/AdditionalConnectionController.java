@@ -46,7 +46,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -83,6 +85,8 @@ public class AdditionalConnectionController extends GenericConnectionController 
     private AdditionalConnectionService additionalConnectionService;
     @Autowired
     private WaterTaxUtils waterTaxUtils;
+    @Autowired
+    private SecurityUtils securityUtils;
     
     private  WaterConnectionDetails addConnection;
     
@@ -112,6 +116,9 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 waterConnectionDetailsService.getConnectionTypesMap().get(
                         parentConnectionDetails.getConnectionType().name()));
         model.addAttribute("addConnection", addConnection);
+        model.addAttribute("currentUser",
+                waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+        model.addAttribute("additionalRule", addConnection.getApplicationType().getCode());
         model.addAttribute("mode", "addconnection");
         model.addAttribute("validationMessage",
                 additionalConnectionService.validateAdditionalConnection(parentConnectionDetails));
@@ -172,6 +179,16 @@ public class AdditionalConnectionController extends GenericConnectionController 
         
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+        
+        final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils
+                .getCurrentUser());
+
+        if (applicationByOthers != null && applicationByOthers.equals(true)) {
+            final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(addConnection
+                    .getConnection().getPropertyIdentifier());
+            if (userPosition != null)
+                approvalPosition = userPosition.getId();
+        }
 
         waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComent, addConnection.getApplicationType().getCode(), workFlowAction );
         final String pathVars = addConnection.getApplicationNumber() + ","

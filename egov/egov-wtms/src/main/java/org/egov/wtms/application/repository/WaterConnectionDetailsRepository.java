@@ -87,7 +87,7 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     WaterConnectionDetails getPrimaryConnectionDetailsByPropertyID(
             @Param("propertyIdentifier") String propertyIdentifier);
 
-    @Query(" from WaterConnectionDetails WCD where WCD.connection.parentConnection is not null and WCD.connectionStatus in(:status)"
+    @Query(" from WaterConnectionDetails WCD where WCD.connectionStatus in(:status)"
             + " and WCD.connection.propertyIdentifier =:propertyIdentifier")
     WaterConnectionDetails getConnectionDetailsInWorkflow(
             @Param("propertyIdentifier") String propertyIdentifier, @Param("status") ConnectionStatus Status);
