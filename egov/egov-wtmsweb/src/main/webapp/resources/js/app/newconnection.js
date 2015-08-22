@@ -86,7 +86,8 @@ $(document).ready(function(){
 		else  {
 			$("#cardHolderDiv").hide();
 	    	$("#bplCardHolderName").removeAttr('required');
-	     	$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').removeAttr('required');
+	    	$("#bplCardHolderName").val('');
+	    	$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').removeAttr('required');
 	     	$(".check-text:contains('"+other+"')").parent().find('input, textarea, button, select').removeAttr('required');
 	     	$(".check-text:contains('"+documentName+"')").parent().find('input:checkbox').prop('checked', false);
 		}
@@ -146,10 +147,6 @@ $(document).ready(function(){
 		}		
 	}
 	
-	
-	
-	
-	
 	changeLabel();
 	function changeLabel() {
 		if ($('#usageType :selected').text().localeCompare("Lodges") == 0) {
@@ -157,12 +154,14 @@ $(document).ready(function(){
 			$('#rooms').show();
 			$('#personsdiv').hide();
 			$('#roomsdiv').show();
+			$('#numberOfPerson').val('');
 		}
 		else {
 			$('#persons').show();
 			$('#rooms').hide();
 			$('#personsdiv').show();
 			$('#roomsdiv').hide();
+			$('#numberOfRooms').val('');
 		}
 	}
 	$('#usageType').change(function () {
