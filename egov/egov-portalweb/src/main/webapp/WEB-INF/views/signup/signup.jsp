@@ -100,24 +100,24 @@
                                     <spring:message code="title.signup"/>
                                 </div>
                             </div>
-                             <div class="form-group">
+                             <div class="form-group" id="wrap">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
 										<i class="entypo-user theme-color style-color"></i>
 									</div>
-									<form:input path="username" cssClass="form-control style-form patternvalidation" data-pattern="username" id="username" placeholder="Username" minlength="2" maxlength="64" autocomplete="off" required="required" data-content="Should contain only upper case, lower case alphabet, number, underscore and dot"/>
+									<form:input path="username" cssClass="form-control style-form patternvalidation" data-pattern="username" id="username" placeholder="Username" minlength="2" maxlength="64" autocomplete="off" required="required" data-container="#wrap" data-toggle="popover" data-content="Should contain only upper case, lower case alphabet, number, underscore and dot"/>
 									<span class="mandatory set-mandatory"></span>
 									<form:errors path="username" cssClass="add-margin error-msg font-12"/>
 								</div>
 							</div>
-							<div class="form-group">
+							<div class="form-group" id="wrap">
 								<div class="row">
 									<div class="col-md-6">
 										<div class="input-group">
 											<div class="input-group-addon style-label">
 												<i class="entypo-key theme-color style-color"></i>
 											</div>
-											<form:password path="password" cssClass="form-control style-form check-password" id="password" placeholder="Password" minlength="8" maxlength="32" autocomplete="off" required="required" data-content="Minimum 8 to 32 characters long and should contain upper case, lower case alphabet,number and special character except [& < > # % \" ' / and space]"/>
+											<form:password path="password" cssClass="form-control style-form check-password" id="password" placeholder="Password" minlength="8" maxlength="32" autocomplete="off" required="required" data-container="#wrap" data-toggle="popover" data-content="Minimum 8 to 32 characters long and should contain upper case, lower case alphabet,number and special character except [& < > # % \" ' / and space]"/>
 											<span class="mandatory set-mandatory"></span>
 										</div>
 									</div>
