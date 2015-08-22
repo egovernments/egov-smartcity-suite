@@ -58,8 +58,8 @@
 
 		
 		<div class="formheading"></div>
-		<div class="headingbg"><s:text name="objection.record.message.title" /></div>
-		<%-- <s:if test="objectionRejected == true">
+	<%--	<div class="headingbg"><s:text name="objection.record.message.title" /></div>
+		 <s:if test="objectionRejected == true">
 			<script>
 	 			if(opener && opener.top.document.getElementById('inboxframe'))
 					opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();

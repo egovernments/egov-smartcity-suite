@@ -343,8 +343,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			objection.getBasicProperty().setUnderWorkflow(Boolean.TRUE);
 			updateStateAndStatus(objection);
 			addActionMessage(getText("objection.success") + objection.getObjectionNumber());
-			revisionPetitionService.createRevisionPetition(objection);
 			revisionPetitionService.applyAuditing(objection.getState());
+			revisionPetitionService.createRevisionPetition(objection);
 			sendEmailandSms(objection, REVISION_PETITION_CREATED);
 			// objectionService.persist(objection);
 			LOGGER.debug("ObjectionAction | Create | End " + objection);
@@ -1248,7 +1248,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			LOGGER.debug("revisionpetitionaction ||ended  workflow for objection");
 
 		}
-
+		revisionPetitionService.applyAuditing(objection.getState());
 	}
 
 	private void updateRevisionPetitionStatus(WorkFlowMatrix wfmatrix, RevisionPetition objection, String status) {
