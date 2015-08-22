@@ -781,9 +781,9 @@ public class WaterConnectionDetailsService {
                             flag = Boolean.TRUE;
                          body = waterTaxUtils.EmailBodyByCodeAndArgsWithType(
                                     "msg.addconncetionOnfeespaid.email.body", waterConnectionDetails, applicantName, type);
-                            subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs(
-                                    "msg.addconncetionOnfeespaid.email.subject",
-                                    waterConnectionDetails.getApplicationNumber());
+                         StringBuilder emailSubject= new StringBuilder(" Demand and donation amount received for water tax application ");
+                                 emailSubject.append(waterConnectionDetails.getApplicationNumber());
+                         subject= emailSubject.toString();
                         } 
                     if (flag)
                         waterTaxUtils.sendEmailOnWaterConnection(email, body, subject);

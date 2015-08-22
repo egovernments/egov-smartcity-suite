@@ -292,7 +292,17 @@ public class WaterTaxUtils {
         // due date to avail uninterrupted service.\n\nThis is computer
         // generated Email and does not need any signature and also please do
         // not reply to this e-mail.\n\nThanks ,\n{4}
-        return emailBody;
+        //TODO: while collectinge fees sending message not working with MessageSourse Cos Its not able to find Message.properties so hardcoding sms and Email body
+        else if(type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNFEEPAID) || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDCONNFEEPAID))
+        {
+         String amountToDisplay=  String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges() + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges()));
+               final StringBuffer emailBodyBuilder = new StringBuffer().append("Dear ").append(applicantName).append(",")
+                    .append("\n\nWe have received Estimation and donation amount of Rs.").append(amountToDisplay)
+                    .append("/- against your water connection application number ").append(waterConnectionDetails.getApplicationNumber()).append(".We will be now processing your application to issue an work order.\n\nThis is computer generated email and does not need any signature and also please do not reply to this email.\n\nRegards,").append("\n").append(getCityName());
+               emailBody=emailBodyBuilder.toString();
+        }
+            
+            return emailBody;
     }
 
     public String SmsBodyByCodeAndArgsWithType(final String code, final WaterConnectionDetails waterConnectionDetails,
@@ -364,12 +374,13 @@ public class WaterTaxUtils {
         // to avail uninterrupted service.\nThanks, {4}
         else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNFEEPAID) || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDCONNFEEPAID))
             {
-              smsMsg = messageSource.getMessage(
-                        code,new String[] { applicantName,String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges()
-                            + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges())),
-                            waterConnectionDetails.getApplicationNumber(),  
-                            getCityName() }, null);
-               }
+            String amountToDisplay=  String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges() + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges()));
+            StringBuffer smsBody = new StringBuffer().append("Dear ").append(applicantName)
+                    .append(",We have received Estimation and donation amount of Rs.").append(amountToDisplay)
+                    .append("/- against your water connection application number ").append(waterConnectionDetails.getApplicationNumber()).append(".We will be now processing your application to issue an work order..\nThanks\n").append(getCityName());
+            smsMsg =smsBody.toString();
+            }
+        
         
         return smsMsg;
     }
