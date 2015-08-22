@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_CLERK_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_READY_FOR_PAYMENT;
@@ -174,6 +175,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String assessmentNoMessage;
     private String taxDueErrorMsg;
     private Boolean propertyByEmployee = Boolean.TRUE;
+    private String userDesignation;
 
     private Map<String, String> guardianRelationMap;
 
@@ -375,6 +377,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Override
     public void prepare() {
         super.prepare();
+        userDesignation = transferOwnerService.getUserDesigantion().getName();
         propertyByEmployee = propertyService.isEmployee(transferOwnerService.getLoggedInUser());
         final String actionInvoked = ActionContext.getContext().getActionInvocation().getProxy().getMethod();
         if (!(actionInvoked.equals("search") || actionInvoked.equals("collectFee"))) {
@@ -436,7 +439,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     addActionError(getText("mandatory.mobilenumber"));
             }
 
-        if (getMutationId() != null) {
+        if (getMutationId() != null && !userDesignation.equalsIgnoreCase(REVENUE_CLERK_DESGN) ) {
             if (propertyMutation.getMutationFee() == null)
                 addActionError(getText("mandatory.mutationFee"));
             else if (propertyMutation.getMutationFee().compareTo(BigDecimal.ZERO) < 1)
@@ -761,4 +764,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         this.propertyByEmployee = propertyByEmployee;
     }
 
+    public String getUserDesignation() {
+        return userDesignation;
+    }
+
+    public void setUserDesignation(String userDesignation) {
+        this.userDesignation = userDesignation;
+    }
+    
 }

@@ -401,5 +401,11 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
     public String getCityName() {
         return cityService.getCityByURL(EgovThreadLocals.getDomainName()).getName();
     }
+    
+    public Designation getUserDesigantion() {
+        final Long userId = securityUtils.getCurrentUser().getId();
+        final Designation designation = propertyTaxUtil.getDesignationForUser(userId);
+        return designation;
+    }
 
 }

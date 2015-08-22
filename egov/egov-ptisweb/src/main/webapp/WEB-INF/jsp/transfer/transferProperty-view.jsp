@@ -45,19 +45,19 @@
 <head>
 <title><s:text name='transferProperty' /></title>
 <script type="text/javascript">
-		jQuery.noConflict();
-		jQuery("#loadingMask").remove();
-		function generateMutationCertificate() {
-			window.location = "printNotice.action?mutationId="+mutationId.value;
-		}
-    
+	jQuery.noConflict();
+	jQuery("#loadingMask").remove();
+	function generateMutationCertificate() {
+		window.location = "printNotice.action?mutationId=" + mutationId.value;
+	}
+
 	function onSubmit() {
 		var actionName = document.getElementById("workFlowAction").value;
 		if (actionName == 'Forward') {
 			document.forms[0].action = '/ptis/property/transfer/forward.action';
 		} else if (actionName == 'Reject') {
 			document.forms[0].action = '/ptis/property/transfer/reject.action';
-		} else if (actionName == 'Approve'){
+		} else if (actionName == 'Approve') {
 			document.forms[0].action = '/ptis/property/transfer/approve.action';
 		} else {
 			generateMutationCertificate();
@@ -74,13 +74,14 @@
 			<s:actionerror />
 		</div>
 	</s:if>
-	
+
 	<s:form action="" name="transferform" theme="simple">
 		<s:push value="model">
-		<s:hidden name="mode" id="mode" value="%{mode}"></s:hidden>
-		<s:hidden name="mutationId" id="mutationId" value="%{mutationId}"></s:hidden>
-		<s:hidden name="basicPropId" id="basicPropId" value="%{basicproperty.id}"></s:hidden>
-			<div class="headingbg"> 
+			<s:hidden name="mode" id="mode" value="%{mode}"></s:hidden>
+			<s:hidden name="mutationId" id="mutationId" value="%{mutationId}"></s:hidden>
+			<s:hidden name="basicPropId" id="basicPropId"
+				value="%{basicproperty.id}"></s:hidden>
+			<div class="headingbg">
 				<s:text name="transferProperty" />
 			</div>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -185,7 +186,8 @@
 								class="tablebottom" id="nameTable">
 								<tr>
 									<th class="bluebgheadtd"><s:text name="adharno" /></th>
-									<th class="bluebgheadtd"><s:text name="MobileNumber" />(without +91)</th>
+									<th class="bluebgheadtd"><s:text name="MobileNumber" />(without
+										+91)</th>
 									<th class="bluebgheadtd"><s:text name="salutation" /></th>
 									<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
 									<th class="bluebgheadtd"><s:text name="gender" /></th>
@@ -194,113 +196,100 @@
 									<th class="bluebgheadtd"><s:text name="Guardian" /></th>
 								</tr>
 								<s:iterator value="transfereeInfos" status="ownerStatus">
-								<tr>
-									<td class="blueborderfortd" align="center"><span
-										class="bold"><s:property
-												value="%{transfereeInfos[#ownerStatus.index].aadhaarNumber}" /></span>
-									</td>
-									<td class="blueborderfortd" align="center"><span
-										class="bold"><s:property
-												value="%{transfereeInfos[#ownerStatus.index].mobileNumber}" /></span>
-									</td>
-									<td class="blueborderfortd" align="center"><span
-										class="bold"><s:property
-												value="%{transfereeInfos[#ownerStatus.index].salutation}" /></span>
-									</td>
-									<td class="blueborderfortd" align="center"><span
-										class="bold"><s:property
-												value="%{transfereeInfos[#ownerStatus.index].name}" /></span></td>
-									<td class="blueborderfortd" align="center"><span
-										class="bold"><s:property
-												value="%{transfereeInfos[#ownerStatus.index].gender}" /></span></td>
-									<td class="blueborderfortd" align="center"><span
-										class="bold"><s:property
-												value="%{transfereeInfos[#ownerStatus.index].emailId}" /></span></td>
-									<td class="blueborderfortd" align="center"><span
-										class="bold"><s:property
-												value="%{transfereeInfos[#ownerStatus.index].guardianRelation}" /></span>
-									</td>
-									<td class="blueborderfortd" align="center"><span
-										class="bold"><s:property
-												value="%{transfereeInfos[#ownerStatus.index].guardian}" /></span></td>
-												</tr>
+									<tr>
+										<td class="blueborderfortd" align="center"><span
+											class="bold"><s:property
+													value="%{transfereeInfos[#ownerStatus.index].aadhaarNumber}" /></span>
+										</td>
+										<td class="blueborderfortd" align="center"><span
+											class="bold"><s:property
+													value="%{transfereeInfos[#ownerStatus.index].mobileNumber}" /></span>
+										</td>
+										<td class="blueborderfortd" align="center"><span
+											class="bold"><s:property
+													value="%{transfereeInfos[#ownerStatus.index].salutation}" /></span>
+										</td>
+										<td class="blueborderfortd" align="center"><span
+											class="bold"><s:property
+													value="%{transfereeInfos[#ownerStatus.index].name}" /></span></td>
+										<td class="blueborderfortd" align="center"><span
+											class="bold"><s:property
+													value="%{transfereeInfos[#ownerStatus.index].gender}" /></span></td>
+										<td class="blueborderfortd" align="center"><span
+											class="bold"><s:property
+													value="%{transfereeInfos[#ownerStatus.index].emailId}" /></span></td>
+										<td class="blueborderfortd" align="center"><span
+											class="bold"><s:property
+													value="%{transfereeInfos[#ownerStatus.index].guardianRelation}" /></span>
+										</td>
+										<td class="blueborderfortd" align="center"><span
+											class="bold"><s:property
+													value="%{transfereeInfos[#ownerStatus.index].guardian}" /></span></td>
+									</tr>
 								</s:iterator>
 							</table>
 						</td>
 					</tr>
-					<tr>&nbsp;</tr>
-					<tr>&nbsp;</tr>
-					<tr>&nbsp;</tr>
+					<tr>&nbsp;
+					</tr>
+					<tr>&nbsp;
+					</tr>
+					<tr>&nbsp;
+					</tr>
 					<tr>
 						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="transferreason"></s:text>  :</td>
-						<td class="greybox"><span
-										class="bold"><s:property
-								value="%{mutationReason.mutationName}" /></span></td>
-								<td class="greybox">
-							<s:text name="saleDetls" /> :
-						</td>
-						<td class="greybox"><span
-										class="bold"><s:property value="%{saleDetail}"/></span>
-						</td>
+						<td class="greybox"><s:text name="transferreason"></s:text> :</td>
+						<td class="greybox"><span class="bold"><s:property
+									value="%{mutationReason.mutationName}" /></span></td>
+						<td class="greybox"><s:text name="saleDetls" /> :</td>
+						<td class="greybox"><span class="bold"><s:property
+									value="%{saleDetail}" /></span></td>
 					</tr>
 					<tr>
-						<td class="greybox2">
-							&nbsp;
+						<td class="greybox2">&nbsp;</td>
+						<td class="greybox"><s:text name="docNum" />:</td>
+						<td class="greybox"><span class="bold"><s:property
+									value="%{deedNo}" /></span></td>
 						</td>
-						<td class="greybox">
-							<s:text name="docNum" />:
-						</td>
-						<td class="greybox">
-							<span	class="bold"><s:property
-								value="%{deedNo}" /></span></td>
-						</td>
-						<td class="greybox">
-							<s:text name="docDate" />:
-						</td>
-						<td class="greybox">
-							<s:date name="deedDate" var="docDate" format="dd/MM/yyyy" />
-							<span	class="bold"><s:property
-								value="%{#docDate}" /></span>
-						</td>
+						<td class="greybox"><s:text name="docDate" />:</td>
+						<td class="greybox"><s:date name="deedDate" var="docDate"
+								format="dd/MM/yyyy" /> <span class="bold"><s:property
+									value="%{#docDate}" /></span></td>
 					</tr>
+					<s:if
+						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.equals(userDesignation)}">
+						<tr>
+							<td class="bluebox2">&nbsp;</td>
+							<td class="bluebox"><s:text name="docValue" /> :</td>
+							<td class="bluebox"><span class="bold"><s:property
+										value="%{marketValue}" default="N/A" /></span></td>
+							<td class="bluebox"><s:text name="payablefee" />:</td>
+							<td class="bluebox"><span class="bold"><s:property
+										value="%{mutationFee}" default="N/A" /></span></td>
+						</tr>
+					</s:if>
 					<tr>
-					<td class="bluebox2">
-							&nbsp;
-						</td>
-						<td class="bluebox">
-							<s:text name="docValue" /> :
-						</td>
-						<td class="bluebox">
-							<span	class="bold"><s:property value="%{marketValue}" default="N/A"/></span>
-						</td>
-						<td class="bluebox">
-							<s:text name="payablefee" />:
-						</td>
-						<td class="bluebox">
-							<span	class="bold"><s:property value="%{mutationFee}" default="N/A"/></span>
-						</td>
+						<%@ include file="../common/DocumentUploadView.jsp"%>
 					</tr>
-					<tr>
-		                  <%@ include file="../common/DocumentUploadView.jsp"%>
-	                </tr>
 				</table>
-				<s:if test="%{!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT) && 
+				<s:if
+					test="%{!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT) && 
 				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@TRANSFER_FEE_COLLECTED)}">
-				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<tr>
-						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
-					</tr>
-					<tr>
-						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-					</tr>
-				</table>
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
+						</tr>
+						<tr>
+							<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+						</tr>
+					</table>
 				</s:if>
-				<s:elseif test="%{model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)}">
+				<s:elseif
+					test="%{model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)}">
 					<div id="workflowCommentsDiv" align="center">
 						<table width="100%">
 							<tr>
-								 <td width="25%" class="${approverEvenCSS}">&nbsp;</td> 
+								<td width="25%" class="${approverEvenCSS}">&nbsp;</td>
 								<td class="${approverEvenCSS}" width="13%">Approver
 									Remarks:</td>
 								<td class="${approverEvenTextCSS}"><textarea
@@ -312,9 +301,9 @@
 							</tr>
 						</table>
 					</div>
-				<tr>
-					<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-				</tr>
+					<tr>
+						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+					</tr>
 				</s:elseif>
 			</table>
 		</s:push>
