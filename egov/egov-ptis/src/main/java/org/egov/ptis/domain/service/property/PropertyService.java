@@ -76,6 +76,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_SOURCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE_METER_VALUE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
@@ -2169,6 +2170,17 @@ public class PropertyService {
             }
         return propBifurcated;
     }
+    
+    /**
+     * Converting sqr yards to sqr meters
+     * @param vacantLandArea
+     * @return
+     */
+    public BigDecimal convertYardToSquareMeters(final Float vacantLandArea) {
+        Float areaInSqMts = null;
+        areaInSqMts = new Float(vacantLandArea) * new Float(SQUARE_YARD_TO_SQUARE_METER_VALUE);
+        return new BigDecimal(areaInSqMts).setScale(2, BigDecimal.ROUND_HALF_UP);
+    }
 
     /**
      * Returns the proper area value for bifurcation calculation
@@ -2181,6 +2193,8 @@ public class PropertyService {
         final PropertyDetail propertyDetail = property.getPropertyDetail();
         if (propertyDetail.isAppurtenantLandChecked() != null && propertyDetail.isAppurtenantLandChecked())
             area = area.add(BigDecimal.valueOf(propertyDetail.getExtentAppartenauntLand()));
+        else if (propertyDetail.getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
+            area = convertYardToSquareMeters(propertyDetail.getSitalArea().getArea());
         else
             area = area.add(BigDecimal.valueOf(propertyDetail.getSitalArea().getArea()));
         return area;

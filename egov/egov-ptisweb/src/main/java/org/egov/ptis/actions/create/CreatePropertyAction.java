@@ -516,8 +516,7 @@ public class CreatePropertyAction extends WorkflowAction {
         final PropertyStatus propStatus = (PropertyStatus) getPersistenceService().find(
                 "from PropertyStatus where statusCode=?", PROPERTY_STATUS_APPROVED);
         basicProp.setStatus(propStatus);
-        if (property.getPropertyModifyReason().equals(PROPERTY_MODIFY_REASON_BIFURCATE))
-            propService.setWFPropStatValActive(basicProp);
+        propService.setWFPropStatValActive(basicProp);
         approved = true;
         setWardId(basicProp.getPropertyID().getWard().getId());
         processAndStoreDocumentsWithReason(basicProp, DOCS_CREATE_PROPERTY);
@@ -694,17 +693,13 @@ public class CreatePropertyAction extends WorkflowAction {
         final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
                 "from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?", PROP_CREATE_RSN, mutationId);
         basicProperty.setPropertyMutationMaster(propertyMutationMaster);
-        String statusCode = "CREATE";
-        if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR)) {
-            statusCode = PROPERTY_MODIFY_REASON_BIFURCATE;
-            basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PROP_CREATE_RSN, null,
+        basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PROP_CREATE_RSN, null,
                     null, null, null, getParentIndex()));
-        }
         basicProperty.setBoundary(boundaryService.getBoundaryById(getWardId()));
         basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
         basicPropertyService.createOwners(property, basicProperty, ownerAddress);
         property.setBasicProperty(basicProperty);
-        property.setPropertyModifyReason(statusCode);
+        property.setPropertyModifyReason(PROP_CREATE_RSN);
 
         /*
          * isfloorDetailsRequired is used to check if floor details have to be entered for State Govt property or not if
@@ -920,6 +915,7 @@ public class CreatePropertyAction extends WorkflowAction {
                     final BasicProperty basicProperty = basicPropertyService.find(
                             "From BasicPropertyImpl where upicNo = ? ", parentIndex);
                     if (null != basicProperty) {
+                        property.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
                         final String errorKey = propService.validationForBifurcation(property, basicProperty,
                                 propertyMutationMaster.getCode());
                         if (!isBlank(errorKey))

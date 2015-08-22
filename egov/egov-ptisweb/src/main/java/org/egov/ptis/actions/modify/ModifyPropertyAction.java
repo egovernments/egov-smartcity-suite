@@ -472,6 +472,10 @@ public class ModifyPropertyAction extends WorkflowAction {
             area.setArea(new Float(areaOfPlot));
             propertyModel.getPropertyDetail().setSitalArea(area);
         }
+        if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1"))
+            propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
+                    "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
+        propertyModel.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
         final String errorKey = propService.validationForBifurcation(propertyModel, basicProp, modifyRsn);
         if (!isBlank(errorKey))
             addActionError(getText(errorKey));
