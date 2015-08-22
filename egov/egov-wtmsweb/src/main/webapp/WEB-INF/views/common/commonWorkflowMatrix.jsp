@@ -66,7 +66,7 @@
 <form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>	
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>		
 				<div class="row show-row"  id="approverDetailHeading">
-				<div class="row show-row" >
+				<div class="col-md-12 show-row" >
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.approverdepartment"/><span class="mandatory"></span>
 					</div>
@@ -95,7 +95,7 @@
 						</form:select>					
 					</div>
 				</div>
-				<div class="row show-row">
+				<div class="col-md-12 show-row">
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.approver"/><span class="mandatory"></span>
 					</div>
