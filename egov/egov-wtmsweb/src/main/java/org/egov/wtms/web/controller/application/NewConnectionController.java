@@ -326,6 +326,8 @@ public class NewConnectionController extends GenericConnectionController {
             if (errorMessage != null && !errorMessage.equals(""))
                 errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
             else {
+                //if it is not edit mode then only validate for existing connection
+                if(waterConnectionDetails.getId()==null){
                 if(waterConnectionDetails.getApplicationType().getCode().equalsIgnoreCase(WaterTaxConstants.NEWCONNECTION))
                 {
                 errorMessage = newConnectionService.checkConnectionPresentForProperty(waterConnectionDetails
@@ -333,6 +335,7 @@ public class NewConnectionController extends GenericConnectionController {
                 if (errorMessage != null && !errorMessage.equals(""))
                     errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
                 }
+            }
             }
         }
     }

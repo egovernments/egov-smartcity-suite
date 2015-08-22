@@ -60,6 +60,11 @@
 </div>			
 <div class="row text-center">
 	<div class="add-margin">
+	<c:choose>
+	<c:when test="${waterConnectionDetails.legacy}">
+	<input type="button" class="btn btn-primary" id="viewWorkOrder" value="Edit" onclick="showEdit('<c:out value="${waterConnectionDetails.connection.consumerCode}" />')"/>
+	</c:when>
+	<c:otherwise>
 	<c:if test="${waterConnectionDetails.egwStatus.code == 'ESTIMATIONNOTICEGENERATED' && checkOperator }">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.collect.fees"/></button>
 	</c:if> 
@@ -70,9 +75,17 @@
 	<c:if test="${!legacy&& (waterConnectionDetails.egwStatus.code == 'SANCTIONED' || waterConnectionDetails.egwStatus.code == 'WORKORDERGENERATED')}">
 		<button type="submit" class="btn btn-primary" id="viewWorkOrder"><spring:message code="lb.printworkorder"/></button>
 	</c:if>
+	</c:otherwise>
+	</c:choose>
 		<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 	</div>
 </div>
 </form:form>
+<script>
+function showEdit(obj)
+{
+window.location="/wtms/application/newConnection-editExisting/"+obj;
+}
+</script>
 
 <script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>

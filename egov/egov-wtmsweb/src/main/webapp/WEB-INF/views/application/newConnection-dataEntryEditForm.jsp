@@ -55,7 +55,7 @@
 			<form:hidden path="id" id="id" value="${id}"/>
 			<form:hidden path="legacy" id="legacy" value="true"/>
 			<form:hidden path="connectionStatus" id="connectionStatus" value="${waterConnectionDetails.connectionStatus}"/> 
-			<input type="hidden" name="allowIfPTDueExists" id="allowIfPTDueExists" value="${allowIfPTDueExists}"> 
+			<input type="hidden" name="allowIfPTDueExists" id="allowIfPTDueExists" value="true"> 
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -77,8 +77,8 @@
 								code="lbl.consumerno" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="connection.consumerCode"
-								class="form-control text-left" required="required" />
-							<form:errors path="connection.consumerCode"
+								class="form-control text-left patternvalidation" data-pattern="number" maxlength="10" required="required" />
+							<form:errors path="connection.consumerCode" 
 								cssClass="add-margin error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
