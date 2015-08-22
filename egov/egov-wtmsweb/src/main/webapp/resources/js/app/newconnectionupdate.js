@@ -71,6 +71,7 @@ $(document).ready(function()
 		}
 		if(status=='ESTIMATIONNOTICEGENERATED')
 		{
+			$("#approverDetailHeading").hide(); 
 			$(".btn-primary").hide();
 			$("#button2").show();
 			
