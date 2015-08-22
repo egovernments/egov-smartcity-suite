@@ -89,14 +89,37 @@ public class NewConnectionService {
     public String checkValidPropertyAssessmentNumber(final String asessmentNumber) {
         String errorMessage = "";
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
-                PropertyExternalService.FLAG_FULL_DETAILS);
+        		PropertyExternalService.FLAG_FULL_DETAILS);
+            errorMessage = validateProperty(assessmentDetails);
+            if(errorMessage.isEmpty())
+            	errorMessage = validatePTDue(asessmentNumber,assessmentDetails);
+        return errorMessage;
+    }
+    
+    
+    public String checkValidPropertyForDataEntry(final String asessmentNumber) {
+        String errorMessage = "";
+        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
+        		PropertyExternalService.FLAG_FULL_DETAILS);
+            errorMessage = validateProperty(assessmentDetails);
+        return errorMessage;
+    }
 
-        if (assessmentDetails.getErrorDetails() != null && assessmentDetails.getErrorDetails().getErrorCode() != null)
+
+	private String validateProperty(final AssessmentDetails assessmentDetails) {
+		  String errorMessage = "";
+		if (assessmentDetails.getErrorDetails() != null && assessmentDetails.getErrorDetails().getErrorCode() != null)
             errorMessage = assessmentDetails.getErrorDetails().getErrorMessage();
-        else if (assessmentDetails.getPropertyDetails() != null
+		return errorMessage;
+	}
+
+	private String validatePTDue(final String asessmentNumber, final AssessmentDetails assessmentDetails) {
+		 String errorMessage="";
+		if (assessmentDetails.getPropertyDetails() != null
                 && assessmentDetails.getPropertyDetails().getTaxDue() != null
                 && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0)
-            /**
+         
+			/**
              * If property tax due present and configuration value is 'NO' then
              * restrict not to allow new water tap connection application. If
              * configuration value is 'YES' then new water tap connection can be
@@ -105,7 +128,7 @@ public class NewConnectionService {
             if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
                 errorMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
                         assessmentDetails.getPropertyDetails().getTaxDue().toString(), asessmentNumber, "new" }, null);
-        return errorMessage;
-    }
+		return errorMessage;    
+	}
 
 }

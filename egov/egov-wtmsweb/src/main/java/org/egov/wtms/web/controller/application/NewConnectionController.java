@@ -210,8 +210,8 @@ public class NewConnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model) {
 
-        validatePropertyID(waterConnectionDetails, resultBinder);
-        validateExisting(waterConnectionDetails, resultBinder);
+        validatePropertyIDForDataEntry(waterConnectionDetails, resultBinder);
+        validateExisting(waterConnectionDetails, resultBinder);  
         if (resultBinder.hasErrors()) {
             model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
             final Map<Long, String> connectionTypeMap = new HashMap<Long, String>();
@@ -313,6 +313,26 @@ public class NewConnectionController extends GenericConnectionController {
                         .getConnection().getPropertyIdentifier());
                 if (errorMessage != null && !errorMessage.equals(""))
                     errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
+            }
+        }
+    }
+    
+    private void validatePropertyIDForDataEntry(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
+        if (waterConnectionDetails.getConnection() != null
+                && waterConnectionDetails.getConnection().getPropertyIdentifier() != null
+                && !waterConnectionDetails.getConnection().getPropertyIdentifier().equals("")) {
+            String errorMessage = newConnectionService.checkValidPropertyForDataEntry(waterConnectionDetails
+                    .getConnection().getPropertyIdentifier());
+            if (errorMessage != null && !errorMessage.equals(""))
+                errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
+            else {
+                if(waterConnectionDetails.getApplicationType().getCode().equalsIgnoreCase(WaterTaxConstants.NEWCONNECTION))
+                {
+                errorMessage = newConnectionService.checkConnectionPresentForProperty(waterConnectionDetails
+                        .getConnection().getPropertyIdentifier());
+                if (errorMessage != null && !errorMessage.equals(""))
+                    errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
+                }
             }
         }
     }
