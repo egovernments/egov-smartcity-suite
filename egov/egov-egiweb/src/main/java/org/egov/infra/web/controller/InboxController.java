@@ -1,10 +1,9 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +17,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -72,24 +71,24 @@ import com.google.gson.GsonBuilder;
 public class InboxController {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("dd/MM/yyyy hh:mm a");
-    
+
     @Autowired
     private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
 
     @Autowired
     private SecurityUtils securityUtils;
 
-    @RequestMapping(produces=MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String showInbox() {
         return createInboxData(inboxRenderServiceDeligate.getInboxItems(securityUtils.getCurrentUser().getId()));
     }
 
-    @RequestMapping(value="/draft",produces=MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/draft", produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String showInboxDraft() {
         return createInboxData(inboxRenderServiceDeligate.getInboxDraftItems(securityUtils.getCurrentUser().getId()));
     }
 
-    @RequestMapping(value="/history",produces=MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/history", produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String showInboxHistory(@RequestParam final Long stateId) {
         return createInboxHistoryData(inboxRenderServiceDeligate.getWorkflowHistory(stateId));
     }
@@ -123,8 +122,8 @@ public class InboxController {
             inboxHistoryItem.setDate(DATE_FORMATTER.print(new DateTime(stateHistory.getLastModifiedDate())));
             inboxHistoryItem.setSender(stateHistory.getSenderName());
             inboxHistoryItem.setTask(workflowTypes.getDisplayName());
-            final String nextAction = inboxRenderServiceDeligate.getNextAction(stateHistory.getState());
-            inboxHistoryItem.setStatus(stateHistory.getValue() + (EMPTY.equals(nextAction) ? EMPTY : "~" + nextAction));
+            inboxHistoryItem
+                    .setStatus(stateHistory.getValue() + (EMPTY.equals(stateHistory.getNextAction()) ? EMPTY : "~" + stateHistory.getNextAction()));
             inboxHistoryItem.setDetails(stateHistory.getComments() == null ? EMPTY : escapeSpecialChars(stateHistory.getComments()));
             inboxHistoryItem.setLink(EMPTY);
             inboxHistoryItems.add(inboxHistoryItem);

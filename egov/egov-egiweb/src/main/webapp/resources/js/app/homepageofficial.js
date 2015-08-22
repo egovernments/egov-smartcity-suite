@@ -108,6 +108,7 @@ $(document).ready(function()
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 			"autoWidth": false,
 			"paging": false,
+			"destroy":true,
 			"oLanguage": {
 				"sInfo": ""
 			},
