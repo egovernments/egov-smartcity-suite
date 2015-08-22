@@ -57,6 +57,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -90,6 +91,7 @@ import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.model.ErrorDetails;
+import org.egov.ptis.domain.model.MasterCodeNamePairDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
@@ -189,8 +191,7 @@ public class PropertyTransferRestService {
                 responseJson = getJSONResponse(errorDetails);
             } else {
 
-                // TODO: REST API'S TO GET MASTERS
-                List<Document> documents = getDocumentList(formTransferDocument, documentTypes);
+                 List<Document> documents = getDocumentList(formTransferDocument, documentTypes);
 
                 PropertyMutation propertyMutation = buildPropertyMutationObject(mutationReason, saleDetail, deedNo,
                         deedDate, ownerDetailsList, basicProperty);
@@ -212,6 +213,78 @@ public class PropertyTransferRestService {
         }
         return responseJson;
     }
+    /**
+     * 
+     * @param username
+     * @param password
+     * @return
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @POST
+    @Path("/propertyTransfer/getMutationReasons")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getMutationReasons(@FormParam("username") String username, @FormParam("password") String password)
+                    throws JsonGenerationException, JsonMappingException, IOException {
+            List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+            ErrorDetails errorDetails = null;
+            String responseJson = null;
+            Boolean isAuthenticatedUser = authenticateUser(username, password);
+            if (isAuthenticatedUser) {
+                List<PropertyMutationMaster>  mutationMasterList = propertyTransferService.getPropertyTransferReasons();
+                
+                for(PropertyMutationMaster mutationMaster: mutationMasterList )
+                    {
+                    MasterCodeNamePairDetails masterCodeObj= new MasterCodeNamePairDetails();
+                        masterCodeObj.setCode(mutationMaster.getCode());
+                        masterCodeObj.setName(mutationMaster.getMutationName());
+                        mstrCodeNamePairDetailsList.add(masterCodeObj);
+                    }
+                    responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
+            } else {
+                    errorDetails = getInvalidCredentialsErrorDetails();
+                    responseJson = getJSONResponse(errorDetails);
+            }
+            return responseJson;
+    }
+    /**
+     * 
+     * @param username
+     * @param password
+     * @return
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @POST
+    @Path("/propertyTransfer/getTransferDocumentType")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getPropertyTransferDocumentType(@FormParam("username") String username, @FormParam("password") String password)
+                    throws JsonGenerationException, JsonMappingException, IOException {
+            List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+            ErrorDetails errorDetails = null;
+            String responseJson = null;
+            Boolean isAuthenticatedUser = authenticateUser(username, password);
+            if (isAuthenticatedUser) {
+                List<DocumentType>  documentTypeList = propertyTransferService.getPropertyTransferDocumentTypes();
+                
+                for(DocumentType documentType: documentTypeList )
+                    
+                    {
+                    MasterCodeNamePairDetails masterCodeObj= new MasterCodeNamePairDetails();
+                        masterCodeObj.setCode(documentType.getName());
+                        masterCodeObj.setName(documentType.getName());
+                        mstrCodeNamePairDetailsList.add(masterCodeObj);
+                    }
+                    responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
+            } else {
+                    errorDetails = getInvalidCredentialsErrorDetails();
+                    responseJson = getJSONResponse(errorDetails);
+            }
+            return responseJson;
+    }
+    
 /**
  * 
  * @param object
