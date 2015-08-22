@@ -99,7 +99,14 @@ $(document).ready(function()
 		    }
 		    return true;		
 		}
-	
+		$("form").submit(function() {
+			if($('form').valid())	{
+				$('.loader-class').modal('show', {backdrop: 'static'});
+			}
+			else 
+				$('.loader-class').modal('hide');
+		});
+		
 		$(".btn-primary").click(function() { 
 			var action = document.getElementById("workFlowAction").value;
 			 var status=$('#statuscode').val();
@@ -108,24 +115,40 @@ $(document).ready(function()
 			 }
 			 
 			 if(status=='CREATED' && action == 'Submit' && mode == 'fieldInspection') {
-	    		validateWorkFlowApprover(action);
-		    	document.forms[0].submit();	
+				 $('#approvalComent').removeAttr('required');	
+	    		 if($('form').valid())	{
+ 					var estimationCharge = $('#estimationCharges').val();
+ 			    	if(estimationCharge <= 0) {
+ 			    		alert("Please enter the value greater than ZERO for Estimation charges!");
+ 			    		$('#estimationCharges').focus();
+ 			    		return false;
+ 			    	}
+ 			    	else {
+ 			    		validateWorkFlowApprover(action);
+ 			    		document.forms[0].submit(); 
+	    			}
+	    		 }	    			 
 			 }
 			 else if(status=='WORKORDERGENERATED' && action=='Tap Execution Date') {
 				 validateTapExecutionDate();
 			 }
 			 else if(status=='CREATED' && action == 'Reject' && mode == 'fieldInspection') {
-				 $('#pipelineDistance').val(0);
-				  var approvalComent=$('#approvalComent').val();
-				  if(approvalComent == "") {
-					alert("Please enter rejection comments!");
-					$('#approvalComent').focus();
-					return false;
-				  }
-				 $('#Reject').attr('formnovalidate','true');
+				 
+				 $('#pipelineDistance').val(0);			
 				 if($('#estimationCharges'))
 					 $('#estimationCharges').val(0);
-				 document.forms[0].submit();	
+				 
+				 $('#Reject').attr('formnovalidate','true');	
+				 var approvalComent=$('#approvalComent').val();
+				  if(approvalComent == "") {
+						alert("Please enter rejection comments!");
+						$('#approvalComent').focus();
+						return false;
+				  }
+				  else {
+					  validateWorkFlowApprover(action);
+					  document.forms[0].submit();
+				  }
 			 }
 			 else {
 			    document.getElementById("mode").value=mode;
@@ -136,25 +159,28 @@ $(document).ready(function()
 						$('#approvalDate').attr('required', 'required');	
 					}
 					if(applicationDate !='' && approvalDate != '') {
-						if(!validateDateRange(applicationDate, approvalDate)) {
-							alert("The Approval Date can not be less than the Date of Application.");
-							$('#approvalDate').val('');
-							return false;			
+						if($('form').valid())	{
+							if(!validateDateRange(applicationDate, approvalDate)) {
+								alert("The Approval Date can not be less than the Date of Application.");
+								$('#approvalDate').val('');
+								return false;
+							}
+							else{
+						    	validateWorkFlowApprover(action);
+							    document.forms[0].submit();	
+							}	
 						}
-						else{
-					    		validateWorkFlowApprover(action);
-						    	document.forms[0].submit();	
-						}
-					
 					}
 			    }
 		    	else {
 		    		validateWorkFlowApprover(action);
-			    	document.forms[0].submit();	
+		    		if($('form').valid())
+		    			document.forms[0].submit();	
 		    	}
 			 }
 			return;
 		});	
+		
 		changeCategory();	
 		function changeCategory() {
 			if ($('#connectionCategorie :selected').text().localeCompare("BPL") == 0) {  
