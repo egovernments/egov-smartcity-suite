@@ -192,7 +192,9 @@
 			$('#metercurrentReading').val('');
 			return false;
 		}
-		if (currentMeterDate != undefined && previousMeterDate != undefined) {
+		document.forms[0].submit;
+		return true;
+		/* if (currentMeterDate != undefined && previousMeterDate != undefined) {
 			if (!validateDateRange(previousMeterDate, currentMeterDate)) {
 				alert("Entered Metered Date allready present in System");
 				$('#metercurrentReadingDate').val('');
@@ -201,7 +203,7 @@
 		} else {
 			document.forms[0].submit;
 			return true;
-		}
+		} */
 	}
 
 	function validateDateRange(fromDate, toDate) {
