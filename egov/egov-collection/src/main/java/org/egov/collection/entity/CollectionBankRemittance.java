@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.egov.collection.entity;
 
@@ -10,60 +10,61 @@ import org.egov.infstr.models.ServiceDetails;
 
 /**
  * @author manoranjan
- *
  */
 
 public class CollectionBankRemittance extends BaseModel {
 
-	private static final long serialVersionUID = 1L;
-	
-	private Bank depositedInBank;
-	
-	private ServiceDetails service;
-	
-	private Bankaccount bankAccounttoRemit;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * @return the depositedInBank
-	 */
-	public Bank getDepositedInBank() {
-		return depositedInBank;
-	}
+    private Bank depositedInBank;
 
-	/**
-	 * @param depositedInBank the depositedInBank to set
-	 */
-	public void setDepositedInBank(Bank depositedInBank) {
-		this.depositedInBank = depositedInBank;
-	}
+    private ServiceDetails service;
 
-	/**
-	 * @return the service
-	 */
-	public ServiceDetails getService() {
-		return service;
-	}
+    private Bankaccount bankAccounttoRemit;
 
-	/**
-	 * @param service the service to set
-	 */
-	public void setService(ServiceDetails service) {
-		this.service = service;
-	}
+    /**
+     * @return the depositedInBank
+     */
+    public Bank getDepositedInBank() {
+        return depositedInBank;
+    }
 
-	/**
-	 * @return the bankAccounttoRemit
-	 */
-	public Bankaccount getBankAccounttoRemit() {
-		return bankAccounttoRemit;
-	}
+    /**
+     * @param depositedInBank
+     *            the depositedInBank to set
+     */
+    public void setDepositedInBank(final Bank depositedInBank) {
+        this.depositedInBank = depositedInBank;
+    }
 
-	/**
-	 * @param bankAccounttoRemit the bankAccounttoRemit to set
-	 */
-	public void setBankAccounttoRemit(Bankaccount bankAccounttoRemit) {
-		this.bankAccounttoRemit = bankAccounttoRemit;
-	}
-	
+    /**
+     * @return the service
+     */
+    public ServiceDetails getService() {
+        return service;
+    }
+
+    /**
+     * @param service
+     *            the service to set
+     */
+    public void setService(final ServiceDetails service) {
+        this.service = service;
+    }
+
+    /**
+     * @return the bankAccounttoRemit
+     */
+    public Bankaccount getBankAccounttoRemit() {
+        return bankAccounttoRemit;
+    }
+
+    /**
+     * @param bankAccounttoRemit
+     *            the bankAccounttoRemit to set
+     */
+    public void setBankAccounttoRemit(final Bankaccount bankAccounttoRemit) {
+        this.bankAccounttoRemit = bankAccounttoRemit;
+    }
 
 }
