@@ -205,7 +205,7 @@
 								<label class="col-sm-3 control-label">Logo</label>
 								<div class="col-sm-6" style="padding-top: 7px">
 									<img id="imglogo" height="60" width="60"
-										src="/egi/downloadfile?fileStoreId=${city.preferences.logo.fileStoreId}&moduleName=${sessionScope.cityCode}">
+										src="/egi/downloadfile?fileStoreId=${city.preferences.municipalityLogo.fileStoreId}&moduleName=${sessionScope.cityCode}">
 
 									<div class="input-group">
 										<input type="file" name="logo" id="logo"
@@ -220,8 +220,7 @@
 											</button>
 										</span>
 									</div>
-									<form:errors path="preferences.logo"
-										cssClass="add-margin error-msg" />
+									<form:errors path="preferences.municipalityLogo" cssClass="add-margin error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -229,7 +228,7 @@
 										code="lbl.corp.name" /></label>
 								<div class="col-sm-6" style="padding-top: 7px">
 									<div class="input-group">
-										<form:input path="preferences.corporationName" id="latitude"
+										<form:input path="preferences.municipalityName" id="latitude"
 											type="text" cssClass="form-control" placeholder=""
 											autocomplete="off" required="required" />
 										<span class="input-group-btn">
@@ -240,7 +239,7 @@
 											</button>
 										</span>
 									</div>
-									<form:errors path="preferences.corporationName"
+									<form:errors path="preferences.municipalityName"
 										cssClass="add-margin error-msg" />
 								</div>
 
@@ -250,8 +249,8 @@
 										code="lbl.corp.address" /></label>
 								<div class="col-sm-6" style="padding-top: 7px">
 									<div class="icon-inputgroup input-group">
-										<form:textarea path="preferences.corporationAddress"
-											id="corporationAddress" type="text" cssClass="form-control"
+										<form:textarea path="preferences.municipalityAddress"
+											id="municipalityAddress" type="text" cssClass="form-control"
 											placeholder="" autocomplete="off" rows="5" />
 										<span class="input-group-btn">
 											<button class="btn btn-default btnpopover" type="button"
@@ -261,7 +260,7 @@
 											</button>
 										</span>
 									</div>
-									<form:errors path="preferences.corporationAddress"
+									<form:errors path="preferences.municipalityAddress"
 										cssClass="add-margin error-msg" />
 								</div>
 							</div>
@@ -270,8 +269,8 @@
 										code="lbl.corp.contact.no" /></label>
 								<div class="col-sm-6" style="padding-top: 7px">
 									<div class="input-group">
-										<form:input path="preferences.corporationContactNo"
-											id="corporationContactNo" type="text" cssClass="form-control"
+										<form:input path="preferences.municipalityContactNo"
+											id="municipalityContactNo" type="text" cssClass="form-control"
 											placeholder="" autocomplete="off" />
 										<span class="input-group-btn">
 											<button class="btn btn-default btnpopover" type="button"
@@ -281,7 +280,7 @@
 											</button>
 										</span>
 									</div>
-									<form:errors path="preferences.corporationContactNo"
+									<form:errors path="preferences.municipalityContactNo"
 										cssClass="add-margin error-msg" />
 								</div>
 							</div>
@@ -290,8 +289,8 @@
 										code="lbl.corp.contact.email" /></label>
 								<div class="col-sm-6" style="padding-top: 7px">
 									<div class="input-group">
-										<form:input path="preferences.corporationContactEmail"
-											id="corporationContactEmail" type="text"
+										<form:input path="preferences.municipalityContactEmail"
+											id="municipalityContactEmail" type="text"
 											cssClass="form-control" placeholder="" autocomplete="off" />
 										<span class="input-group-btn">
 											<button class="btn btn-default btnpopover" type="button"
@@ -301,7 +300,7 @@
 											</button>
 										</span>
 									</div>
-									<form:errors path="preferences.corporationContactEmail"
+									<form:errors path="preferences.municipalityContactEmail"
 										cssClass="add-margin error-msg" />
 								</div>
 							</div>
@@ -310,8 +309,8 @@
 										code="lbl.corp.callcenter.no" /></label>
 								<div class="col-sm-6" style="padding-top: 7px">
 									<div class="input-group">
-										<form:input path="preferences.corporationCallCenterNo"
-											id="corporationCallCenterNo" type="text"
+										<form:input path="preferences.municipalityCallCenterNo"
+											id="municipalityCallCenterNo" type="text"
 											cssClass="form-control" placeholder="" autocomplete="off" />
 										<span class="input-group-btn">
 											<button class="btn btn-default btnpopover" type="button"
@@ -321,7 +320,7 @@
 											</button>
 										</span>
 									</div>
-									<form:errors path="preferences.corporationCallCenterNo"
+									<form:errors path="preferences.municipalityCallCenterNo"
 										cssClass="add-margin error-msg" />
 								</div>
 							</div>
@@ -330,8 +329,8 @@
 										code="lbl.corp.gis.location.link" /></label>
 								<div class="col-sm-6" style="padding-top: 7px">
 									<div class="input-group">
-										<form:input path="preferences.corporationOfficeGisLocation"
-											id="corporationOfficeGisLocation" type="text"
+										<form:input path="preferences.municipalityGisLocation"
+											id="municipalityOfficeGisLocation" type="text"
 											cssClass="form-control" placeholder="" autocomplete="off" />
 										<span class="input-group-btn">
 											<button class="btn btn-default btnpopover" type="button"
@@ -341,8 +340,7 @@
 											</button>
 										</span>
 									</div>
-									<form:errors path="preferences.corporationOfficeGisLocation"
-										cssClass="add-margin error-msg" />
+									<form:errors path="preferences.municipalityGisLocation" cssClass="add-margin error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -350,7 +348,7 @@
 										code="lbl.corp.fb.link" /></label>
 								<div class="col-sm-6" style="padding-top: 7px">
 									<div class="input-group">
-										<form:input path="preferences.facebookLink" id="facebookLink"
+										<form:input path="preferences.municipalityFacebookLink" id="facebookLink"
 											type="text" cssClass="form-control" placeholder=""
 											autocomplete="off" />
 										<span class="input-group-btn">
@@ -361,8 +359,7 @@
 											</button>
 										</span>
 									</div>
-									<form:errors path="preferences.facebookLink"
-										cssClass="add-margin error-msg" />
+									<form:errors path="preferences.municipalityFacebookLink" cssClass="add-margin error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -370,7 +367,7 @@
 										code="lbl.corp.twitter.link" /></label>
 								<div class="col-sm-6" style="padding-top: 7px">
 									<div class="input-group">
-										<form:input path="preferences.twitterLink" id="twitterLink"
+										<form:input path="preferences.municipalityTwitterLink" id="twitterLink"
 											type="text" cssClass="form-control" placeholder=""
 											autocomplete="off" />
 										<span class="input-group-btn">
@@ -381,8 +378,7 @@
 											</button>
 										</span>
 									</div>
-									<form:errors path="preferences.twitterLink"
-										cssClass="add-margin error-msg" />
+									<form:errors path="preferences.municipalityTwitterLink" cssClass="add-margin error-msg" />
 								</div>
 							</div>
 						</div>

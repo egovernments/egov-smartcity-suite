@@ -1,5 +1,4 @@
-/*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -44,6 +43,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.CityPreferences;
 import org.egov.infra.admin.master.service.CityService;
@@ -113,13 +113,13 @@ public class CitySetupController {
                         city.getPreferences().setGisShape(fileStore);
                         break;
                     case "logo":
-                        city.getPreferences().setLogo(fileStore);
+                        city.getPreferences().setMunicipalityLogo(fileStore);
                         break;
                     default:
                         break;
                     }
                 } catch (final Exception e) {
-                    System.out.println(e);
+                    throw new EGOVRuntimeException("Error occurred while adding city related files");
                 }
             });
 

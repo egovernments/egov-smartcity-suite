@@ -78,42 +78,42 @@ public class CityPreferences extends AbstractAuditable {
     private FileStoreMapper gisShape;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "logo")
+    @JoinColumn(name = "municipalityLogo")
     @NotNull
-    private FileStoreMapper logo;
+    private FileStoreMapper municipalityLogo;
 
     @NotNull
     @SafeHtml
-    @Length(max=50)
-    private String corporationName;
+    @Length(max = 50)
+    private String municipalityName;
 
     @SafeHtml
-    @Length(max=20)
-    private String corporationContactNo;
+    @Length(max = 20)
+    private String municipalityContactNo;
 
     @SafeHtml
-    @Length(max=200)
-    private String corporationAddress;
+    @Length(max = 200)
+    private String municipalityAddress;
 
     @SafeHtml
-    @Length(max=50)
-    private String corporationContactEmail;
+    @Length(max = 50)
+    private String municipalityContactEmail;
 
     @SafeHtml
-    @Length(max=100)
-    private String corporationOfficeGisLocation;
+    @Length(max = 100)
+    private String municipalityGisLocation;
 
     @SafeHtml
-    @Length(max=20)
-    private String corporationCallCenterNo;
+    @Length(max = 20)
+    private String municipalityCallCenterNo;
 
     @SafeHtml
-    @Length(max=100)
-    private String facebookLink;
+    @Length(max = 100)
+    private String municipalityFacebookLink;
 
     @SafeHtml
-    @Length(max=100)
-    private String twitterLink;
+    @Length(max = 100)
+    private String municipalityTwitterLink;
 
     @Override
     protected void setId(final Long id) {
@@ -149,79 +149,79 @@ public class CityPreferences extends AbstractAuditable {
         return gisShape != null;
     }
 
-    public FileStoreMapper getLogo() {
-        return logo;
+    public FileStoreMapper getMunicipalityLogo() {
+        return municipalityLogo;
     }
 
-    public void setLogo(final FileStoreMapper logo) {
-        this.logo = logo;
+    public void setMunicipalityLogo(final FileStoreMapper municipalityLogo) {
+        this.municipalityLogo = municipalityLogo;
     }
 
-    public String getCorporationName() {
-        return corporationName;
+    public String getMunicipalityName() {
+        return municipalityName;
     }
 
-    public void setCorporationName(final String corporationName) {
-        this.corporationName = corporationName;
+    public void setMunicipalityName(final String municipalityName) {
+        this.municipalityName = municipalityName;
     }
 
-    public String getCorporationContactNo() {
-        return corporationContactNo;
+    public String getMunicipalityContactNo() {
+        return municipalityContactNo;
     }
 
-    public void setCorporationContactNo(final String corporationContactNo) {
-        this.corporationContactNo = corporationContactNo;
+    public void setMunicipalityContactNo(final String municipalityContactNo) {
+        this.municipalityContactNo = municipalityContactNo;
     }
 
-    public String getCorporationAddress() {
-        return corporationAddress;
+    public String getMunicipalityAddress() {
+        return municipalityAddress;
     }
 
-    public void setCorporationAddress(final String corporationAddress) {
-        this.corporationAddress = corporationAddress;
+    public void setMunicipalityAddress(final String municipalityAddress) {
+        this.municipalityAddress = municipalityAddress;
     }
 
-    public String getCorporationContactEmail() {
-        return corporationContactEmail;
+    public String getMunicipalityContactEmail() {
+        return municipalityContactEmail;
     }
 
-    public void setCorporationContactEmail(final String corporationContactEmail) {
-        this.corporationContactEmail = corporationContactEmail;
+    public void setMunicipalityContactEmail(final String municipalityContactEmail) {
+        this.municipalityContactEmail = municipalityContactEmail;
     }
 
-    public String getCorporationOfficeGisLocation() {
-        return corporationOfficeGisLocation;
+    public String getMunicipalityGisLocation() {
+        return municipalityGisLocation;
     }
 
-    public void setCorporationOfficeGisLocation(final String corporationOfficeGisLocation) {
-        this.corporationOfficeGisLocation = corporationOfficeGisLocation;
+    public void setMunicipalityGisLocation(final String municipalityGisLocation) {
+        this.municipalityGisLocation = municipalityGisLocation;
     }
 
-    public String getCorporationCallCenterNo() {
-        return corporationCallCenterNo;
+    public String getMunicipalityCallCenterNo() {
+        return municipalityCallCenterNo;
     }
 
-    public void setCorporationCallCenterNo(final String corporationCallCenterNo) {
-        this.corporationCallCenterNo = corporationCallCenterNo;
+    public void setMunicipalityCallCenterNo(final String municipalityCallCenterNo) {
+        this.municipalityCallCenterNo = municipalityCallCenterNo;
     }
 
-    public String getFacebookLink() {
-        return facebookLink;
+    public String getMunicipalityFacebookLink() {
+        return municipalityFacebookLink;
     }
 
-    public void setFacebookLink(final String facebookLink) {
-        this.facebookLink = facebookLink;
+    public void setMunicipalityFacebookLink(final String municipalityFacebookLink) {
+        this.municipalityFacebookLink = municipalityFacebookLink;
     }
 
-    public String getTwitterLink() {
-        return twitterLink;
+    public String getMunicipalityTwitterLink() {
+        return municipalityTwitterLink;
     }
 
-    public void setTwitterLink(final String twitterLink) {
-        this.twitterLink = twitterLink;
+    public void setMunicipalityTwitterLink(final String municipalityTwitterLink) {
+        this.municipalityTwitterLink = municipalityTwitterLink;
     }
 
     public boolean logoExist() {
-        return logo != null;
+        return municipalityLogo != null;
     }
 }

@@ -43,6 +43,7 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -73,6 +74,7 @@ public class City extends AbstractAuditable {
     private static final long serialVersionUID = -6267923687226233397L;
     public static final String SEQ_CITY = "SEQ_EG_CITY";
     public static final String QUERY_CITY_BY_URL = "CITY_BY_URL";
+    public static final String LOGO_URL = "/downloadfile/logo?fileStoreId=%s&moduleName=%s";
 
     @DocumentId
     @Id
@@ -122,7 +124,7 @@ public class City extends AbstractAuditable {
 
     private Float latitude;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "preferences")
     @NotAudited
     private CityPreferences preferences;
@@ -243,36 +245,35 @@ public class City extends AbstractAuditable {
 
     public Map<String, Object> toMap() {
         final Map<String, Object> cityPrefs = new HashMap<>();
-        cityPrefs.put("cityBoundaryId", getBoundary().getId().toString());
-        cityPrefs.put("cityurl", getDomainURL());
-        final CityPreferences cityPreferences = getPreferences();
-        if (cityPreferences == null) {
+        cityPrefs.put("cityBoundaryId", boundary.getId().toString());
+        cityPrefs.put("cityurl", domainURL);
+        if (preferences == null) {
             cityPrefs.put("citylogo", "/resources/global/images/logo@2x.png");
-            cityPrefs.put("cityname", getName());
+            cityPrefs.put("cityname", name);
         } else {
-            cityPrefs.put("cityname", StringUtils.isEmpty(cityPreferences.getCorporationName()) ? getName() : cityPreferences.getCorporationName());
-            cityPrefs.put("citylogo", cityPreferences.logoExist()
-                    ? String.format("/downloadfile/logo?fileStoreId=%s&moduleName=%s", cityPreferences.getLogo().getFileStoreId(), getCode()) : "");
-            cityPrefs.put("cityKmlFileStoreId", cityPreferences.kmlExist() ? cityPreferences.getGisKML().getFileStoreId() : "");
-            cityPrefs.put("cityShapeFileStoreId", cityPreferences.shapeExist() ? cityPreferences.getGisShape().getFileStoreId() : "");
-            cityPrefs.put("corpAddress", cityPreferences.getCorporationAddress());
-            cityPrefs.put("corpCallCenterNo", cityPreferences.getCorporationCallCenterNo());
-            cityPrefs.put("corpContactNo", cityPreferences.getCorporationContactNo());
-            cityPrefs.put("corpContactEmail", cityPreferences.getCorporationContactEmail());
-            cityPrefs.put("corpTwitterLink", cityPreferences.getTwitterLink());
-            cityPrefs.put("corpFBLink", cityPreferences.getFacebookLink());
-            cityPrefs.put("corpGisLink", cityPreferences.getCorporationOfficeGisLocation());
+            cityPrefs.put("cityname", StringUtils.isEmpty(preferences.getMunicipalityName()) ? name : preferences.getMunicipalityName());
+            cityPrefs.put("citylogo",
+                    preferences.logoExist() ? String.format(LOGO_URL, preferences.getMunicipalityLogo().getFileStoreId(), code) : "");
+            cityPrefs.put("cityKmlFileStoreId", preferences.kmlExist() ? preferences.getGisKML().getFileStoreId() : "");
+            cityPrefs.put("cityShapeFileStoreId", preferences.shapeExist() ? preferences.getGisShape().getFileStoreId() : "");
+            cityPrefs.put("corpAddress", preferences.getMunicipalityAddress());
+            cityPrefs.put("corpCallCenterNo", preferences.getMunicipalityCallCenterNo());
+            cityPrefs.put("corpContactNo", preferences.getMunicipalityContactNo());
+            cityPrefs.put("corpContactEmail", preferences.getMunicipalityContactEmail());
+            cityPrefs.put("corpTwitterLink", preferences.getMunicipalityTwitterLink());
+            cityPrefs.put("corpFBLink", preferences.getMunicipalityFacebookLink());
+            cityPrefs.put("corpGisLink", preferences.getMunicipalityGisLocation());
         }
 
-        cityPrefs.put("citynamelocal", getLocalName());
-        cityPrefs.put("cityCode", getCode());
-        cityPrefs.put("cityRecaptchaPK", getRecaptchaPK());
-        cityPrefs.put("cityRecaptchaPub", getRecaptchaPub());
-        cityPrefs.put("citylat", getLatitude());
-        cityPrefs.put("citylng", getLongitude());
-        cityPrefs.put("cityCode", getCode());
-        cityPrefs.put("districtName", getDistrictName());
-        cityPrefs.put("districtCode", getDistrictCode());
+        cityPrefs.put("citynamelocal", localName);
+        cityPrefs.put("cityCode", code);
+        cityPrefs.put("cityRecaptchaPK", recaptchaPK);
+        cityPrefs.put("cityRecaptchaPub", recaptchaPub);
+        cityPrefs.put("citylat", latitude);
+        cityPrefs.put("citylng", longitude);
+        cityPrefs.put("cityCode", code);
+        cityPrefs.put("districtName", districtName);
+        cityPrefs.put("districtCode", districtCode);
         return cityPrefs;
     }
 
