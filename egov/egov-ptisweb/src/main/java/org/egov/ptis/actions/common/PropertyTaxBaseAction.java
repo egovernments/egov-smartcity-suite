@@ -46,6 +46,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTE
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.OCC_TENANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
@@ -299,7 +300,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         msgParams = new ArrayList<String>();
                         if (floor.getFloorNo() == null || floor.getFloorNo().equals(-10))
                             addActionError(getText("mandatory.floorNO"));
-                        msgParams.add(floor.getFloorNo() != null ? CommonServices.getFloorStr(floor.getFloorNo())
+                        msgParams.add(floor.getFloorNo() != null ? FLOOR_MAP.get(floor.getFloorNo())
                                 : "N/A");
 
                         if (floor.getStructureClassification() == null
@@ -350,7 +351,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         // happen for the same houseNo
         if (!qry.list().isEmpty()
                 && (basicProperty == null || basicProperty != null
-                        && !basicProperty.getAddress().getHouseNoBldgApt().equals(houseNo)))
+                && !basicProperty.getAddress().getHouseNoBldgApt().equals(houseNo)))
             addActionError(getText("houseNo.unique"));
     }
 
@@ -374,26 +375,25 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            Assignment assignment = propertyService.getUserPositionByZone(property.getBasicProperty());
+            final Assignment assignment = propertyService.getUserPositionByZone(property.getBasicProperty());
             approverPositionId = assignment.getPosition().getId();
             approverName = assignment.getEmployee().getUsername();
-        } else {
+        } else
             currentState = null;
-        }
         if (null != property.getId())
             wfInitiator = getWorkflowInitiator(property);
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
                 property.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
-                        .withDateInfo(currentDate.toDate());
+                .withDateInfo(currentDate.toDate());
                 property.setStatus(STATUS_CANCELLED);
                 property.getBasicProperty().setUnderWorkflow(FALSE);
             } else {
                 final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
                 property.transition(true).withSenderName(user.getName()).withComments(approverComments)
-                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_REVENUE_CLERK_APPROVAL_PENDING);
+                .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_REVENUE_CLERK_APPROVAL_PENDING);
             }
 
         } else {
@@ -405,17 +405,17 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 final WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
                         null, getAdditionalRule(), currentState, null);
                 property.transition().start().withSenderName(user.getName()).withComments(approverComments)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                .withNextAction(wfmatrix.getNextAction());
             } else if (property.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 property.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
-                        .withDateInfo(currentDate.toDate());
+                .withDateInfo(currentDate.toDate());
             else {
                 final WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
                         null, getAdditionalRule(), property.getCurrentState().getValue(), null);
                 property.transition(true).withSenderName(user.getName()).withComments(approverComments)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                .withNextAction(wfmatrix.getNextAction());
             }
         }
         if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase("----Choose----")) {

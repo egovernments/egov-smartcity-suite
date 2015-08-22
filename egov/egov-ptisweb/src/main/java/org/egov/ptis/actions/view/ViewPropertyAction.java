@@ -47,6 +47,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 
@@ -70,7 +71,6 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -111,7 +111,7 @@ public class ViewPropertyAction extends BaseFormAction {
     private String parentProps;
     private String applicationNo;
     private String applicationType;
-    
+
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
@@ -134,11 +134,10 @@ public class ViewPropertyAction extends BaseFormAction {
         try {
             LOGGER.debug("viewForm : propertyId in View Property : " + propertyId);
             viewMap = new HashMap<String, Object>();
-			if (propertyId != null && !propertyId.isEmpty()) {
-				setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
-			} else if (applicationNo != null && !applicationNo.isEmpty()) {
-				getBasicPropForAppNo(applicationNo, applicationType);
-			}
+            if (propertyId != null && !propertyId.isEmpty())
+                setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
+            else if (applicationNo != null && !applicationNo.isEmpty())
+                getBasicPropForAppNo(applicationNo, applicationType);
             LOGGER.debug("viewForm : BasicProperty : " + basicProperty);
             Set<PropertyStatusValues> propStatusValSet = new HashSet<PropertyStatusValues>();
             property = getBasicProperty().getProperty();
@@ -158,18 +157,18 @@ public class ViewPropertyAction extends BaseFormAction {
                         .getPropertyTypeMaster();
                 viewMap.put("ownershipType", propertyTypeMaster.getType());
             }
-			if (!isDemandActive) {
-				final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
-				viewMap.put("currTax", demandCollMap.get(CURR_DMD_STR).toString());
-				viewMap.put("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR))
-						.toString());
-				viewMap.put("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR))
-						.toString());
-			} else {
-				viewMap.put("currTax", BigDecimal.ZERO);
-				viewMap.put("currTaxDue", BigDecimal.ZERO);
-				viewMap.put("totalArrDue", BigDecimal.ZERO);
-			}
+            if (!isDemandActive) {
+                final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
+                viewMap.put("currTax", demandCollMap.get(CURR_DMD_STR).toString());
+                viewMap.put("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR))
+                        .toString());
+                viewMap.put("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR))
+                        .toString());
+            } else {
+                viewMap.put("currTax", BigDecimal.ZERO);
+                viewMap.put("currTaxDue", BigDecimal.ZERO);
+                viewMap.put("totalArrDue", BigDecimal.ZERO);
+            }
             getBasicProperty().getObjections();
             propStatusValSet = getBasicProperty().getPropertyStatusValuesSet();
             for (final PropertyStatusValues propStatusVal : propStatusValSet) {
@@ -179,9 +178,8 @@ public class ViewPropertyAction extends BaseFormAction {
                 LOGGER.debug("Marked for Deactivation ? : " + markedForDeactive);
             }
             final Long userId = (Long) session().get(SESSIONLOGINID);
-            if (userId != null) {
+            if (userId != null)
                 setRoleName(getRolesForUserId(userId));
-            }
             if (!getBasicProperty().getPropertyDocsSet().isEmpty() && getBasicProperty().getPropertyDocsSet() != null)
                 for (final PropertyDocs propDocs : getBasicProperty().getPropertyDocsSet())
                     setDocNumber(propDocs.getSupportDoc().getFileStoreId());
@@ -221,22 +219,22 @@ public class ViewPropertyAction extends BaseFormAction {
         return roleNameList.toString().toUpperCase();
     }
 
-	private void getBasicPropForAppNo(String appNo, String appType) {
-		if (appType != null && !appType.isEmpty()) {
-			if ((appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
-					|| appType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || appType
-						.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT))) {
-				Property property = propertyImplService.find("from PropertyImpl where applicationNo=?", appNo);
-				setBasicProperty(property.getBasicProperty());
-			} else if (appType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
-				RevisionPetition rp = revisionPetitionPersistenceService.find(
-						"from RevisionPetition where objectionNumber=?", appNo);
-				setBasicProperty(rp.getBasicProperty());
-			}
-		}
-	}
+    private void getBasicPropForAppNo(final String appNo, final String appType) {
+        if (appType != null && !appType.isEmpty())
+            if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
+                    || appType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || appType
+                            .equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)) {
+                final Property property = propertyImplService.find("from PropertyImpl where applicationNo=?", appNo);
+                setBasicProperty(property.getBasicProperty());
+            } else if (appType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
+                final RevisionPetition rp = revisionPetitionPersistenceService.find(
+                        "from RevisionPetition where objectionNumber=?", appNo);
+                setBasicProperty(rp.getBasicProperty());
+            }
+    }
+
     public String getFloorNoStr(final Integer floorNo) {
-        return CommonServices.getFloorStr(floorNo);
+        return FLOOR_MAP.get(floorNo);
     }
 
     public String getPropertyId() {
@@ -366,7 +364,7 @@ public class ViewPropertyAction extends BaseFormAction {
     public Property getProperty() {
         return property;
     }
-    
+
     public void setBasicPropertyDAO(final BasicPropertyDAO basicPropertyDAO) {
         this.basicPropertyDAO = basicPropertyDAO;
     }
@@ -379,20 +377,20 @@ public class ViewPropertyAction extends BaseFormAction {
         UserService = userService;
     }
 
-	public String getApplicationNo() {
-		return applicationNo;
-	}
+    public String getApplicationNo() {
+        return applicationNo;
+    }
 
-	public void setApplicationNo(String applicationNo) {
-		this.applicationNo = applicationNo;
-	}
+    public void setApplicationNo(final String applicationNo) {
+        this.applicationNo = applicationNo;
+    }
 
-	public String getApplicationType() {
-		return applicationType;
-	}
+    public String getApplicationType() {
+        return applicationType;
+    }
 
-	public void setApplicationType(String applicationType) {
-		this.applicationType = applicationType;
-	}
-    
+    public void setApplicationType(final String applicationType) {
+        this.applicationType = applicationType;
+    }
+
 }

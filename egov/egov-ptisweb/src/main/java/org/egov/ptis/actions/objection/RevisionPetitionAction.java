@@ -44,6 +44,7 @@ package org.egov.ptis.actions.objection;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.HEARING_TIMINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
@@ -114,7 +115,6 @@ import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.actions.view.ViewPropertyAction;
 import org.egov.ptis.bean.PropertyNoticeInfo;
@@ -283,7 +283,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage order by usageName");
 		List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
 		List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
-		setFloorNoMap(CommonServices.floorMap());
+		setFloorNoMap(FLOOR_MAP);
 		addDropdownData("floorType", getPersistenceService().findAllBy("from FloorType order by name"));
 		addDropdownData("roofType", getPersistenceService().findAllBy("from RoofType order by name"));
 		final List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
@@ -983,7 +983,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
 		int i = 0;
 		for (final Floor flr : floors) {
-			floorNoStr[i] = propertyTaxUtil.getFloorStr(flr.getFloorNo());
+			floorNoStr[i] = FLOOR_MAP.get(flr.getFloorNo());
 			i++;
 		}
 

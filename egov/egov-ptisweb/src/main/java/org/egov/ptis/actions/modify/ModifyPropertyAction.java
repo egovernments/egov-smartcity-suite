@@ -59,6 +59,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_AMALGAMATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_BIFURCATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_MODIFY_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
@@ -125,7 +126,6 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.actions.workflow.WorkflowAction;
 import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
@@ -667,7 +667,7 @@ public class ModifyPropertyAction extends WorkflowAction {
         final List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
         final List<String> taxExemptionReasonList = getPersistenceService().findAllBy(
                 "from TaxExeptionReason order by name");
-        setFloorNoMap(CommonServices.floorMap());
+        setFloorNoMap(FLOOR_MAP);
         addDropdownData("floorType", floorTypes);
         addDropdownData("roofType", roofTypes);
         addDropdownData("wallType", wallTypes);
@@ -878,38 +878,6 @@ public class ModifyPropertyAction extends WorkflowAction {
         LOGGER.debug("Exiting from populateBasicProp");
     }
 
-    // FIX ME -- Uncomment while implementing amalgamation of assessment
-
-    /*
-     * @SkipValidation public String getStatus() { LOGGER.debug("Entered into getStatus"); checkAmalgStatus();
-     * LOGGER.debug("Exiting from getStatus"); return "showStatus"; }
-     */
-
-    /*
-     * private void checkAmalgStatus() { LOGGER.debug("Entered into checkAmalgStatus, OldPropId: " + oldpropId); List<String> code
-     * = new ArrayList<String>(); BigDecimal currDemand = BigDecimal.ZERO; BigDecimal currDemandDue = BigDecimal.ZERO; BigDecimal
-     * currCollection = BigDecimal.ZERO; BigDecimal arrDemand = BigDecimal.ZERO; BigDecimal arrCollection = BigDecimal.ZERO;
-     * BigDecimal arrearsDue = BigDecimal.ZERO; PropertyStatusValues propStatVal = null; code.add(PROPERTY_STATUS_MARK_DEACTIVE);
-     * amalgPropBasicProp = basicPropertyDAO.getBasicPropertyByPropertyID(oldpropId); LOGGER.debug("Amalgmated BasicProperty: " +
-     * amalgPropBasicProp); Map<String, String> wfMap = null; String wfStatus = null; if (amalgPropBasicProp != null) {
-     * propStatVal = propertyStatusValuesDAO .getLatestPropertyStatusValuesByPropertyIdAndCode(oldpropId, code); wfMap =
-     * amalgPropBasicProp.getPropertyWfStatus(); wfStatus = wfMap.get(WFSTATUS); if (!wfStatus.equalsIgnoreCase("TRUE")) {
-     * PropertyImpl oldProp = (PropertyImpl) amalgPropBasicProp.getProperty(); setOldOwnerName
-     * (ptisCacheMgr.buildOwnerFullName(oldProp.getPropertyOwnerInfo())); setOldPropAddress(
-     * ptisCacheMgr.buildAddressByImplemetation(amalgPropBasicProp .getAddress())); Map<String, BigDecimal> DmdCollMap =
-     * ptDemandDAO.getDemandCollMap(oldProp); currDemand = DmdCollMap.get("CURR_DMD"); arrDemand = DmdCollMap.get("ARR_DMD");
-     * currCollection = DmdCollMap.get("CURR_COLL"); arrCollection = DmdCollMap.get("ARR_COLL"); currDemandDue =
-     * currDemand.subtract(currCollection); arrearsDue = arrDemand.subtract(arrCollection); } } if (amalgPropBasicProp == null) {
-     * setAmalgStatus("Property does not Exist"); } else if (propStatVal != null) {
-     * setAmalgStatus("Property is Marked for Deactivation"); } else if (!amalgPropBasicProp.isActive()) {
-     * setAmalgStatus("Property is Deactivated"); } else if (wfStatus.equalsIgnoreCase("TRUE")) {
-     * setAmalgStatus("This Property Under Work flow in " + wfMap.get(WFOWNER) +
-     * "'s inbox. Please finish pending work flow before doing any transactions on it." ); } else if
-     * (currDemandDue.compareTo(BigDecimal.ZERO) == 1 || arrearsDue.compareTo(BigDecimal.ZERO) == 1) {
-     * setAmalgStatus("Property has Pending Balance"); } else { setAmalgStatus("Property is Ready for Amalgamation"); }
-     * LOGGER.debug("AmalgStatus: " + getAmalgStatus() + "\nExiting from checkAmalgStatus"); }
-     */
-
     private void setFloorDetails(final Property property) {
         LOGGER.debug("Entered into setFloorDetails, Property: " + property);
 
@@ -917,7 +885,7 @@ public class ModifyPropertyAction extends WorkflowAction {
         property.getPropertyDetail().setFloorDetailsProxy(floors);
         int i = 0;
         for (final Floor flr : floors) {
-            floorNoStr[i] = CommonServices.floorMap().get(flr.getFloorNo());
+            floorNoStr[i] = FLOOR_MAP.get(flr.getFloorNo());
             i++;
         }
 

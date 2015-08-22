@@ -46,6 +46,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_CREATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
@@ -155,11 +156,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Namespace("/create")
 @ResultPath("/WEB-INF/jsp/")
 @Results({ @Result(name = "new", location = "create/createProperty-new.jsp"),
-        @Result(name = "dataEntry", location = "create/createProperty-dataEntry.jsp"),
-        @Result(name = "ack", location = "create/createProperty-ack.jsp"),
-        @Result(name = "dataEntry-ack", location = "create/createProperty-dataEntryAck.jsp"),
-        @Result(name = "view", location = "create/createProperty-view.jsp"),
-        @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp") })
+    @Result(name = "dataEntry", location = "create/createProperty-dataEntry.jsp"),
+    @Result(name = "ack", location = "create/createProperty-ack.jsp"),
+    @Result(name = "dataEntry-ack", location = "create/createProperty-dataEntryAck.jsp"),
+    @Result(name = "view", location = "create/createProperty-view.jsp"),
+    @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp") })
 public class CreatePropertyAction extends WorkflowAction {
     /**
      *
@@ -570,7 +571,7 @@ public class CreatePropertyAction extends WorkflowAction {
         property.getPropertyDetail().setFloorDetailsProxy(floorList);
         int i = 0;
         for (final Floor flr : floorList) {
-            floorNoStr[i] = CommonServices.floorMap().get(flr.getFloorNo());
+            floorNoStr[i] = FLOOR_MAP.get(flr.getFloorNo());
             LOGGER.debug("setFloorDetails: floorNoStr[" + i + "]->" + floorNoStr[i]);
             i++;
         }
@@ -641,7 +642,7 @@ public class CreatePropertyAction extends WorkflowAction {
         addDropdownData("AgeFactorList", ageFacList);
         addDropdownData("MutationList", mutationList);
         addDropdownData("LocationFactorList", Collections.EMPTY_LIST);
-        setFloorNoMap(CommonServices.floorMap());
+        setFloorNoMap(FLOOR_MAP);
         addDropdownData("localityList", localityList);
         addDropdownData("electionWardList", electionWardList);
         addDropdownData("enumerationBlockList", enumerationBlockList);
@@ -706,9 +707,8 @@ public class CreatePropertyAction extends WorkflowAction {
         property.setPropertyModifyReason(statusCode);
 
         /*
-         * isfloorDetailsRequired is used to check if floor details have to be
-         * entered for State Govt property or not if isfloorDetailsRequired -
-         * true : no floor details created false : floor details created
+         * isfloorDetailsRequired is used to check if floor details have to be entered for State Govt property or not if
+         * isfloorDetailsRequired - true : no floor details created false : floor details created
          */
 
         LOGGER.debug("BasicProperty: " + basicProperty + "\nExiting from createBasicProp");
@@ -741,8 +741,7 @@ public class CreatePropertyAction extends WorkflowAction {
     }
 
     /**
-     * Changes the property details from {@link BuiltUpProperty} to
-     * {@link VacantProperty}
+     * Changes the property details from {@link BuiltUpProperty} to {@link VacantProperty}
      *
      * @return vacant property details
      * @see org.egov.ptis.domain.entity.property.VacantProperty
@@ -766,17 +765,17 @@ public class CreatePropertyAction extends WorkflowAction {
                 propertyDetail.getPropertyOccupation(), propertyDetail.getPropertyMutationMaster(),
                 propertyDetail.getComZone(), propertyDetail.getCornerPlot(),
                 propertyDetail.getExtentSite() != null ? propertyDetail.getExtentSite() : 0.0,
-                propertyDetail.getExtentAppartenauntLand() != null ? propertyDetail.getExtentAppartenauntLand() : 0.0,
-                propertyDetail.getFloorType(), propertyDetail.getRoofType(), propertyDetail.getWallType(),
-                propertyDetail.getWoodType(), propertyDetail.isLift(), propertyDetail.isToilets(),
-                propertyDetail.isWaterTap(), propertyDetail.isStructure(), propertyDetail.isElectricity(),
-                propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
-                propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(),
-                propertyDetail.getCurrentCapitalValue(), propertyDetail.getMarketValue(),
-                propertyDetail.getCategoryType(), propertyDetail.getOccupancyCertificationNo(),
-                propertyDetail.getBuildingPermissionNo(), propertyDetail.getBuildingPermissionDate(),
-                propertyDetail.getDeviationPercentage(), propertyDetail.isAppurtenantLandChecked(),
-                propertyDetail.isBuildingPlanDetailsChecked(), propertyDetail.isCorrAddressDiff());
+                        propertyDetail.getExtentAppartenauntLand() != null ? propertyDetail.getExtentAppartenauntLand() : 0.0,
+                                propertyDetail.getFloorType(), propertyDetail.getRoofType(), propertyDetail.getWallType(),
+                                propertyDetail.getWoodType(), propertyDetail.isLift(), propertyDetail.isToilets(),
+                                propertyDetail.isWaterTap(), propertyDetail.isStructure(), propertyDetail.isElectricity(),
+                                propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
+                                propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(),
+                                propertyDetail.getCurrentCapitalValue(), propertyDetail.getMarketValue(),
+                                propertyDetail.getCategoryType(), propertyDetail.getOccupancyCertificationNo(),
+                                propertyDetail.getBuildingPermissionNo(), propertyDetail.getBuildingPermissionDate(),
+                                propertyDetail.getDeviationPercentage(), propertyDetail.isAppurtenantLandChecked(),
+                                propertyDetail.isBuildingPlanDetailsChecked(), propertyDetail.isCorrAddressDiff());
 
         vacantProperty.setManualAlv(propertyDetail.getManualAlv());
         vacantProperty.setOccupierName(propertyDetail.getOccupierName());
@@ -1123,8 +1122,7 @@ public class CreatePropertyAction extends WorkflowAction {
     }
 
     /**
-     * This implementation transitions the <code>PropertyImpl</code> to the next
-     * workflow state.
+     * This implementation transitions the <code>PropertyImpl</code> to the next workflow state.
      */
     /*
      * @Override protected PropertyImpl property() { return property; }

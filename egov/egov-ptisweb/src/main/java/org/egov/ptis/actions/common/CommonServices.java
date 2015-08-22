@@ -89,53 +89,6 @@ public class CommonServices {
 		return (waterMeterMstr.get(mstrCode) == null) ? "N/A" : waterMeterMstr.get(mstrCode);
 	}
 
-	public static TreeMap<Integer, String> floorMap() {
-		TreeMap<Integer, String> floorMap = new TreeMap<Integer, String>();
-		floorMap.put(-2, "Basement-2");
-		floorMap.put(-1, "Basement-1");
-		floorMap.put(0, "Ground Floor");
-		floorMap.put(1, "1st floor");
-		floorMap.put(2, "2nd Floor");
-		floorMap.put(3, "3rd Floor");
-		floorMap.put(4, "4th Floor");
-		floorMap.put(5, "5th Floor");
-		floorMap.put(6, "6th Floor");
-		floorMap.put(7, "7th Floor");
-		floorMap.put(8, "8th Floor");
-		floorMap.put(9, "9th Floor");
-		floorMap.put(10, "10th Floor");
-		floorMap.put(11, "11th Floor");
-		floorMap.put(12, "12th Floor");
-		floorMap.put(13, "13th Floor");
-		floorMap.put(14, "14th Floor");
-		floorMap.put(15, "15th Floor");
-		floorMap.put(16, "16th Floor");
-		floorMap.put(17, "17th Floor");
-		floorMap.put(18, "18th Floor");
-		floorMap.put(19, "19th Floor");
-		floorMap.put(20, "20th Floor");
-		floorMap.put(21, "21st Floor");
-		floorMap.put(22, "22nd Floor");
-		floorMap.put(23, "23rd Floor");
-		floorMap.put(24, "24th Floor");
-		floorMap.put(25, "25th Floor");
-		floorMap.put(26, "26th Floor");
-		floorMap.put(27, "27th Floor");
-		floorMap.put(28, "28th Floor");
-		floorMap.put(29, "29th Floor");
-		floorMap.put(30, "30th Floor");
-		return floorMap;
-	}
-
-	public static String getFloorStr(Integer flrNo) {
-		Map<Integer, String> floorMap = floorMap();
-		String flrNoStr = "";
-		if (flrNo != null && (flrNo >= -2 && flrNo <= 10)) {
-			flrNoStr = floorMap.get(flrNo);
-		}
-		return flrNoStr;
-	}
-
 	public static Map<String, String> getNoticeTypeMstr() {
 		Map<String, String> noticeTypeMap = new HashMap<String, String>();
 		noticeTypeMap.put(NOTICE_TYPE_BILL, NOTICE_TYPE_BILL);

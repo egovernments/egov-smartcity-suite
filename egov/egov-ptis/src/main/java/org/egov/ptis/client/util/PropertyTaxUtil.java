@@ -61,7 +61,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALT
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_REBATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.MAX_ADVANCES_ALLOWED;
 import static org.egov.ptis.constants.PropertyTaxConstants.PENALTY_WATERTAX_EFFECTIVE_DATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
@@ -95,7 +94,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -233,7 +231,7 @@ public class PropertyTaxUtil {
     private FinancialYearDAO financialYearDAO;
     @Autowired
     private WaterChargesIntegrationService waterChargesIntegrationService;
-    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
@@ -242,11 +240,8 @@ public class PropertyTaxUtil {
     /**
      * This method retrieves the <code>CFinancialYear</code> for the given date.
      *
-     * @param date
-     *            an instance of <code>Date</code> for which the financial year
-     *            is to be retrieved.
-     * @return an instance of <code></code> representing the financial year for
-     *         the given date
+     * @param date an instance of <code>Date</code> for which the financial year is to be retrieved.
+     * @return an instance of <code></code> representing the financial year for the given date
      */
     public CFinancialYear getFinancialYearforDate(final Date date) {
         return (CFinancialYear) persistenceService
@@ -254,7 +249,7 @@ public class PropertyTaxUtil {
                 .createQuery(
                         "from CFinancialYear cfinancialyear where ? between "
                                 + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list()
-                .get(0);
+                                .get(0);
     }
 
     public Category getCategoryForBoundary(final Boundary boundary) {
@@ -285,13 +280,10 @@ public class PropertyTaxUtil {
     }
 
     /**
-     * Returns AppConfig Value for given key and module.Key needs to exact as in
-     * the Database,otherwise empty string will send
+     * Returns AppConfig Value for given key and module.Key needs to exact as in the Database,otherwise empty string will send
      *
-     * @param key
-     *            - Key value for which AppConfig Value is required
-     * @param moduleName
-     *            - Value for the User Id
+     * @param key - Key value for which AppConfig Value is required
+     * @param moduleName - Value for the User Id
      * @return String.
      */
     public String getAppConfigValue(final String key, final String moduleName) {
@@ -306,29 +298,17 @@ public class PropertyTaxUtil {
     }
 
     /**
-     * This method returns the currently active config value for the given
-     * module name and key
+     * This method returns the currently active config value for the given module name and key
      *
-     * @param moduleName
-     *            a <code>String<code> representing the module name
-     * @param key
-     *            a <code>String</code> representing the key
-     * @param defaultValue
-     *            Default value to be returned in case the key is not defined
+     * @param moduleName a <code>String<code> representing the module name
+     * @param key a <code>String</code> representing the key
+     * @param defaultValue Default value to be returned in case the key is not defined
      * @return <code>String</code> representing the configuration value
      */
     public String getAppConfigValue(final String moduleName, final String key, final String defaultValue) {
         final AppConfigValues appConfigValues = appConfigValuesService.getAppConfigValueByDate(moduleName, key,
                 new Date());
         return appConfigValues == null ? defaultValue : appConfigValues.getValue();
-    }
-
-    public String getFloorStr(final Integer flrNo) {
-        String flrNoStr = "";
-        if (flrNo != null && flrNo >= -5 && flrNo <= 50)
-            flrNoStr = FLOOR_MAP.get(flrNo);
-        LOGGER.info("Floor Number Text: " + flrNoStr);
-        return flrNoStr;
     }
 
     public TaxCalculationInfo getTaxCalInfo(final Ptdemand demand) {
@@ -352,10 +332,8 @@ public class PropertyTaxUtil {
     /**
      * Called locally to get sum of demand reasons by reason wise
      *
-     * @param data
-     *            a record with reason code, year, amount and amount collected
-     * @param taxSum
-     *            for reason wise sum
+     * @param data a record with reason code, year, amount and amount collected
+     * @param taxSum for reason wise sum
      * @return Map of reason wise sum
      */
 
@@ -429,8 +407,7 @@ public class PropertyTaxUtil {
     /**
      * Called locally to initialize
      *
-     * @param taxSum
-     *            Map of demand reasons
+     * @param taxSum Map of demand reasons
      * @return Map with demand reasons initialized
      */
     private Map<String, BigDecimal> initReasonsMap(final Map<String, BigDecimal> taxSum) {
@@ -448,8 +425,7 @@ public class PropertyTaxUtil {
     /**
      * This method returns the User instance associated with the logged in user
      *
-     * @param sessionMap
-     *            Map of session variables
+     * @param sessionMap Map of session variables
      * @return the logged in user
      */
     public User getLoggedInUser(final Map<String, Object> sessionMap) {
@@ -457,8 +433,7 @@ public class PropertyTaxUtil {
     }
 
     /**
-     * @param user
-     *            the user whose department is to be returned
+     * @param user the user whose department is to be returned
      * @return department of the given user
      */
     private Department getDepartmentOfUser(final User user) {
@@ -466,10 +441,8 @@ public class PropertyTaxUtil {
     }
 
     /**
-     * @param Integer
-     *            the userId
-     * @return Assignment for current date and for
-     *         <code> PersonalInformation </code>
+     * @param Integer the userId
+     * @return Assignment for current date and for <code> PersonalInformation </code>
      */
     private Assignment getAssignment(final Long userId) {
         final Employee empForUserId = employeeService.getEmployeeById(userId);
@@ -574,8 +547,7 @@ public class PropertyTaxUtil {
     }
 
     /**
-     * @param sessionMap
-     *            map of session variables
+     * @param sessionMap map of session variables
      * @return departments of currently logged in user
      */
     public List<Department> getDepartmentsForLoggedInUser(final User user) {
@@ -612,8 +584,7 @@ public class PropertyTaxUtil {
      * Prepares a map of installment and respective demand for each installment
      *
      * @param property
-     * @return Map of installment and respective reason wise demand for each
-     *         installment
+     * @return Map of installment and respective reason wise demand for each installment
      */
     public Map<Installment, BigDecimal> prepareRsnWiseDemandForProp(final Property property) {
         Installment inst = null;
@@ -645,12 +616,10 @@ public class PropertyTaxUtil {
     }
 
     /**
-     * Prepares a map of installment and respective collection for each
-     * installment
+     * Prepares a map of installment and respective collection for each installment
      *
      * @param property
-     * @return Map of installment and respective reason wise demand for each
-     *         installment
+     * @return Map of installment and respective reason wise demand for each installment
      */
     public Map<Installment, BigDecimal> prepareRsnWiseCollForProp(final Property property) {
         Installment inst = null;
@@ -811,7 +780,7 @@ public class PropertyTaxUtil {
                 .getSession()
                 .createQuery(
                         "select min(inst.fromDate) from org.egov.commons.Installment inst where inst.module.name = :moduleName")
-                .setString("moduleName", PTMODULENAME).uniqueResult();
+                        .setString("moduleName", PTMODULENAME).uniqueResult();
     }
 
     /**
@@ -833,10 +802,8 @@ public class PropertyTaxUtil {
     /**
      * Returns the number of days between fromDate and toDate
      *
-     * @param fromDate
-     *            the date
-     * @param toDate
-     *            the date
+     * @param fromDate the date
+     * @param toDate the date
      * @return Long the number of days
      */
     public static Long getNumberOfDays(final Date fromDate, final Date toDate) {
@@ -873,13 +840,10 @@ public class PropertyTaxUtil {
     }
 
     /**
-     * This method returns the number of months between dates (inclusive of
-     * month).
+     * This method returns the number of months between dates (inclusive of month).
      *
-     * @param fromDate
-     *            the from date
-     * @param toDate
-     *            the to date
+     * @param fromDate the from date
+     * @param toDate the to date
      * @return the number of months
      * @return
      */
@@ -914,8 +878,7 @@ public class PropertyTaxUtil {
     }
 
     /*
-     * antisamy filter encodes '&' to '&amp;' and the decode is not happening
-     * so, manually replacing the text
+     * antisamy filter encodes '&' to '&amp;' and the decode is not happening so, manually replacing the text
      */
     public String antisamyHackReplace(final String str) {
         String replacedStr;
@@ -924,9 +887,8 @@ public class PropertyTaxUtil {
     }
 
     /**
-     * Returns Map with below key-value pair CURR_DMD_STR - Current Installment
-     * demand ARR_DMD_STR - Current Installment collection CURR_COLL_STR -
-     * Arrear Installment demand ARR_COLL_STR - Arrear Installment demand
+     * Returns Map with below key-value pair CURR_DMD_STR - Current Installment demand ARR_DMD_STR - Current Installment
+     * collection CURR_COLL_STR - Arrear Installment demand ARR_COLL_STR - Arrear Installment demand
      *
      * @param property
      * @return Map<String, BigDecimal>
@@ -1019,18 +981,15 @@ public class PropertyTaxUtil {
         strAddress.append(isNotBlank(address.getLandmark()) ? address.getLandmark() : " ").append("|");
         strAddress.append(isNotBlank(address.getHouseNoBldgApt()) ? address.getHouseNoBldgApt() : " ").append("|");
         /*
-         * strAddress.append((isNotBlank(address.getDoorNumOld())) ?
-         * address.getDoorNumOld() : " ") .append("|");
+         * strAddress.append((isNotBlank(address.getDoorNumOld())) ? address.getDoorNumOld() : " ") .append("|");
          */
 
         final String tmpPin = address.getPinCode();
         strAddress.append(tmpPin != null && !tmpPin.toString().isEmpty() ? tmpPin : " ").append("|");
 
         /*
-         * strAddress.append((isNotBlank(address.getMobileNo())) ?
-         * address.getMobileNo() : " ") .append("|"); strAddress
-         * .append((isNotBlank(address.getEmailAddress())) ?
-         * address.getEmailAddress() : " ") .append("|");
+         * strAddress.append((isNotBlank(address.getMobileNo())) ? address.getMobileNo() : " ") .append("|"); strAddress
+         * .append((isNotBlank(address.getEmailAddress())) ? address.getEmailAddress() : " ") .append("|");
          */
 
         LOGGER.debug("Exit from buildAddress, Address: " + strAddress.toString());
@@ -1041,8 +1000,7 @@ public class PropertyTaxUtil {
     /**
      * Gives the Owner Address as string
      *
-     * @param Set
-     *            <Owner> Set of Property Owners
+     * @param Set <Owner> Set of Property Owners
      * @return String
      */
     public static String getOwnerAddress(final List<PropertyOwnerInfo> ownerSet) {
@@ -1074,7 +1032,7 @@ public class PropertyTaxUtil {
                                 + "and rd.description is not null " + "and rd.cramount > 0 "
                                 + "and rh.consumerCode like '" + consumerCode + "%' "
                                 + "group by substr(rd.description, length(rd.description)-6, length(rd.description))")
-                .list();
+                                .list();
 
         if (rcptHeaderList != null && !rcptHeaderList.isEmpty()) {
             String instStr = "";
@@ -1095,9 +1053,8 @@ public class PropertyTaxUtil {
     /**
      * Gives the latest Property (Recent property) for the BasicProperty
      * <p>
-     * This API is used during Data Entry and Modification to get the recent
-     * property when the Occupancy Date after Data Entry or Modification is in
-     * between installment
+     * This API is used during Data Entry and Modification to get the recent property when the Occupancy Date after Data Entry or
+     * Modification is in between installment
      * </p>
      *
      * @param basicProperty
@@ -1230,24 +1187,6 @@ public class PropertyTaxUtil {
         return object != null;
     }
 
-    /**
-     * @param occupancyDates
-     */
-    private Set<Date> getRemovalOccupancyDates(final List<Date> occupancyDates, final Date propModelOccupDate) {
-        final Set<Date> removalDates = new HashSet<Date>();
-
-        for (int i = 0; i < occupancyDates.size(); i++) {
-            for (int j = i + 1; j < occupancyDates.size() - 1; j++)
-                if (occupancyDates.get(i).after(occupancyDates.get(j)))
-                    removalDates.add(occupancyDates.get(i));
-
-            if (occupancyDates.get(i).after(propModelOccupDate))
-                removalDates.add(occupancyDates.get(i));
-        }
-
-        return removalDates;
-    }
-
     public static boolean isNotZero(final BigDecimal value) {
         return value == null ? false : value.compareTo(BigDecimal.ZERO) != 0;
     }
@@ -1259,26 +1198,6 @@ public class PropertyTaxUtil {
     public Date getPropertyOccupancyDate(final Property property) {
         return property.getPropertyDetail().getDateOfCompletion() == null ? property.getEffectiveDate() : property
                 .getPropertyDetail().getDateOfCompletion();
-    }
-
-    /**
-     * @param calendar
-     * @return true if the month is April
-     */
-    private boolean isMonthApril(final Date date) {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        return calendar.get(Calendar.MONTH) == Calendar.APRIL;
-    }
-
-    /**
-     * @param calendar
-     * @return true if the first day of the month
-     */
-    private boolean isFirstDayOfMonth(final Date date) {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        return calendar.get(Calendar.DAY_OF_MONTH) == 1;
     }
 
     public static boolean isResidentialUnit(final String usageName) {
@@ -1294,8 +1213,7 @@ public class PropertyTaxUtil {
     }
 
     /**
-     * Returns true if the amount is equal to 0 else false if amount is null or
-     * if its not 0
+     * Returns true if the amount is equal to 0 else false if amount is null or if its not 0
      *
      * @param amount
      * @return true if amount is equal to 0
@@ -1312,9 +1230,8 @@ public class PropertyTaxUtil {
     /**
      * Gives the Inactive demand property
      * <p>
-     * Property whose status is I is Inactive Demand property, demand will be
-     * activated either if the citizen pays tax or after 21 days from the date
-     * of notice generation
+     * Property whose status is I is Inactive Demand property, demand will be activated either if the citizen pays tax or after 21
+     * days from the date of notice generation
      * </p>
      *
      * @param basicProperty
@@ -1334,8 +1251,7 @@ public class PropertyTaxUtil {
     }
 
     /**
-     * Gives the lowest year from which demand is effective for the give
-     * property
+     * Gives the lowest year from which demand is effective for the give property
      *
      * @param property
      * @return
@@ -1359,35 +1275,22 @@ public class PropertyTaxUtil {
      * @throws ParseException
      */
     /*
-     * public static Integer getNoticeDaysForInactiveDemand(Property property)
-     * throws ParseException { String query = ""; List result = null; Integer
-     * days = 21; Date noticeDate = null; String indexNumber =
-     * property.getBasicProperty().getUpicNo(); if (isNoticeGenerated(property))
-     * { result = HibernateUtil .getCurrentSession() .createQuery(
-     * "select to_char(n.noticeDate, 'dd/mm/yyyy') from PtNotice n " +
-     * "where n.basicProperty = :basicProp " + "and n.noticeDate is not null " +
-     * "and n.noticeDate >= :propCreatedDate") .setEntity("basicProp",
-     * property.getBasicProperty()) .setDate("propCreatedDate",
-     * property.getCreatedDate().toDate()).list(); if (result.isEmpty()) {
-     * LOGGER.debug("Notice generation date is not available for property=" +
-     * indexNumber); } else { noticeDate = new
-     * SimpleDateFormat(PropertyTaxConstants
-     * .DATE_FORMAT_DDMMYYY).parse(result.get(0) .toString()); if
-     * (noticeDate.before(new Date())) { days = days -
-     * getNumberOfDays(noticeDate, new Date()).intValue(); days += 1; } } } else
-     * { LOGGER.debug(
-     * "getNoticeDaysForInactiveDemand - Notice is not yet generated for property="
-     * + indexNumber); LOGGER.debug(
-     * "getNoticeDaysForInactiveDemand - using defualt notice period days " +
-     * days); } return days; }
+     * public static Integer getNoticeDaysForInactiveDemand(Property property) throws ParseException { String query = ""; List
+     * result = null; Integer days = 21; Date noticeDate = null; String indexNumber = property.getBasicProperty().getUpicNo(); if
+     * (isNoticeGenerated(property)) { result = HibernateUtil .getCurrentSession() .createQuery(
+     * "select to_char(n.noticeDate, 'dd/mm/yyyy') from PtNotice n " + "where n.basicProperty = :basicProp " +
+     * "and n.noticeDate is not null " + "and n.noticeDate >= :propCreatedDate") .setEntity("basicProp",
+     * property.getBasicProperty()) .setDate("propCreatedDate", property.getCreatedDate().toDate()).list(); if (result.isEmpty())
+     * { LOGGER.debug("Notice generation date is not available for property=" + indexNumber); } else { noticeDate = new
+     * SimpleDateFormat(PropertyTaxConstants .DATE_FORMAT_DDMMYYY).parse(result.get(0) .toString()); if (noticeDate.before(new
+     * Date())) { days = days - getNumberOfDays(noticeDate, new Date()).intValue(); days += 1; } } } else { LOGGER.debug(
+     * "getNoticeDaysForInactiveDemand - Notice is not yet generated for property=" + indexNumber); LOGGER.debug(
+     * "getNoticeDaysForInactiveDemand - using defualt notice period days " + days); } return days; }
      */
     /*
-     * public static boolean isNoticeGenerated(Property property) { return
-     * (property.getExtra_field3() != null &&
-     * property.getExtra_field3().equalsIgnoreCase(
-     * PropertyTaxConstants.STR_YES)) || (property.getExtra_field4() != null &&
-     * property.getExtra_field4().equalsIgnoreCase(
-     * PropertyTaxConstants.STR_YES)) ? true : false; }
+     * public static boolean isNoticeGenerated(Property property) { return (property.getExtra_field3() != null &&
+     * property.getExtra_field3().equalsIgnoreCase( PropertyTaxConstants.STR_YES)) || (property.getExtra_field4() != null &&
+     * property.getExtra_field4().equalsIgnoreCase( PropertyTaxConstants.STR_YES)) ? true : false; }
      */
 
     public List<String> getAdvanceYearsFromCurrentInstallment() {
@@ -1422,7 +1325,7 @@ public class PropertyTaxUtil {
 
     /**
      * Returns map of EgDemandDetails and Reason master
-     * 
+     *
      * @param egDemandDetails
      * @return
      */
@@ -1455,7 +1358,7 @@ public class PropertyTaxUtil {
 
     /**
      * Gives the Earliest modification date
-     * 
+     *
      * @param propertyId
      * @return
      */
@@ -1468,7 +1371,7 @@ public class PropertyTaxUtil {
                                 + "where p.basicProperty.active = true " + "and p.basicProperty.upicNo = :upicNo "
                                 + "and (p.remarks is null or p.remarks <> :propertyMigrationRemarks) "
                                 + "and pd.effective_date is not null").setString("upicNo", propertyId)
-                .setString("propertyMigrationRemarks", PropertyTaxConstants.STR_MIGRATED_REMARKS).list();
+                                .setString("propertyMigrationRemarks", PropertyTaxConstants.STR_MIGRATED_REMARKS).list();
 
         Date earliestModificationDate = null;
 
@@ -1508,7 +1411,7 @@ public class PropertyTaxUtil {
 
     /**
      * Gives the properties and occupancy date map
-     * 
+     *
      * @return properties by occupancy dates
      */
     public Map<Date, Property> getPropertiesByOccupancy(final BasicProperty basicProperty) {
@@ -1615,21 +1518,21 @@ public class PropertyTaxUtil {
 
             prevMutationCode = prevProperty != null ? prevProperty.getPropertyDetail().getPropertyMutationMaster()
                     .getCode() : null;
-            mutationCode = property.getPropertyDetail().getPropertyMutationMaster().getCode();
-            nextMutationCode = i != noOfProperties - 1 ? allProperties.get(i + 1).getPropertyDetail()
-                    .getPropertyMutationMaster().getCode() : null;
+                    mutationCode = property.getPropertyDetail().getPropertyMutationMaster().getCode();
+                    nextMutationCode = i != noOfProperties - 1 ? allProperties.get(i + 1).getPropertyDetail()
+                            .getPropertyMutationMaster().getCode() : null;
 
-            if (!mutationCode.equalsIgnoreCase(PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ))
-                if (mutationsCodes.contains(mutationCode))
-                    propertyAndEffectiveDate.put(getPropertyOccupancyDate(property), property);
-                else {
+                            if (!mutationCode.equalsIgnoreCase(PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ))
+                                if (mutationsCodes.contains(mutationCode))
+                                    propertyAndEffectiveDate.put(getPropertyOccupancyDate(property), property);
+                                else {
 
-                    if (isFirstDataEntry(prevMutationCode, mutationCode, prevProperty))
-                        firstDataEntryEffectiveDate = getPropertyOccupancyDate(property);
+                                    if (isFirstDataEntry(prevMutationCode, mutationCode, prevProperty))
+                                        firstDataEntryEffectiveDate = getPropertyOccupancyDate(property);
 
-                    if (mutationCode.equalsIgnoreCase(PROPERTY_MODIFY_REASON_DATA_ENTRY) && nextMutationCode == null)
-                        propertyAndEffectiveDate.put(firstDataEntryEffectiveDate, property);
-                }
+                                    if (mutationCode.equalsIgnoreCase(PROPERTY_MODIFY_REASON_DATA_ENTRY) && nextMutationCode == null)
+                                        propertyAndEffectiveDate.put(firstDataEntryEffectiveDate, property);
+                                }
         }
 
         final Map<Date, Property> propertyByOccupancyDate = new TreeMap<Date, Property>();
@@ -1644,11 +1547,9 @@ public class PropertyTaxUtil {
     }
 
     /*
-     * private boolean areNoticesGenerated(Property property) { boolean
-     * isNotice134Or127Generated = property.getExtra_field3() != null &&
-     * property.getExtra_field3().equalsIgnoreCase("Yes") ? true : false;
-     * boolean isNoticePVRGenerated = property.getExtra_field4() != null &&
-     * property.getExtra_field4().equalsIgnoreCase("Yes") ? true : false; return
+     * private boolean areNoticesGenerated(Property property) { boolean isNotice134Or127Generated = property.getExtra_field3() !=
+     * null && property.getExtra_field3().equalsIgnoreCase("Yes") ? true : false; boolean isNoticePVRGenerated =
+     * property.getExtra_field4() != null && property.getExtra_field4().equalsIgnoreCase("Yes") ? true : false; return
      * isNotice134Or127Generated && isNoticePVRGenerated ? true : false; }
      */
 
@@ -1666,13 +1567,11 @@ public class PropertyTaxUtil {
     }
 
     /**
-     * Returns true if the date is later than dateToCompare OR date is same as
-     * dateToCompare
-     * 
+     * Returns true if the date is later than dateToCompare OR date is same as dateToCompare
+     *
      * @param date
      * @param dateToCompare
-     * @return true if date is after dateToCompare or date is equal to
-     *         dateToCompare
+     * @return true if date is after dateToCompare or date is equal to dateToCompare
      */
     public static boolean afterOrEqual(final Date date, final Date dateToCompare) {
         return date.after(dateToCompare) || date.equals(dateToCompare);
@@ -1682,81 +1581,83 @@ public class PropertyTaxUtil {
         final List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo = new LinkedList<DemandNoticeDetailsInfo>();
         final EgDemand egDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
         final Module module = moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-        CFinancialYear finYear=financialYearDAO.getFinancialYearByDate(new Date());
+        final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
         List<DemandNoticeDetailsInfo> tempList = new LinkedList<DemandNoticeDetailsInfo>();
-        //General Tax
-        tempList=getArrearCurrentDemandbyReasonCode(egDemand, module,DEMANDRSN_CODE_GENERAL_TAX,finYear);
-        if(tempList!=null && !tempList.isEmpty())
+        // General Tax
+        tempList = getArrearCurrentDemandbyReasonCode(egDemand, module, DEMANDRSN_CODE_GENERAL_TAX, finYear);
+        if (tempList != null && !tempList.isEmpty())
             demandNoticeDetailsInfo.addAll(tempList);
-        //Penalty
+        // Penalty
         tempList = new LinkedList<DemandNoticeDetailsInfo>();
-        tempList = getArrearCurrentDemandbyReasonCode(egDemand, module,DEMANDRSN_CODE_PENALTY_FINES,finYear);
-        if(tempList!=null && !tempList.isEmpty())
+        tempList = getArrearCurrentDemandbyReasonCode(egDemand, module, DEMANDRSN_CODE_PENALTY_FINES, finYear);
+        if (tempList != null && !tempList.isEmpty())
             demandNoticeDetailsInfo.addAll(tempList);
-        //Water Tax
-        PropertyWiseConsumptions propertyWiseConsumptions= getPropertyWiseConsumptions(basicProperty.getUpicNo().toString());
-        if(propertyWiseConsumptions!=null){
+        // Water Tax
+        final PropertyWiseConsumptions propertyWiseConsumptions = getPropertyWiseConsumptions(basicProperty.getUpicNo()
+                .toString());
+        if (propertyWiseConsumptions != null) {
             tempList = new LinkedList<DemandNoticeDetailsInfo>();
             tempList = getArrearCurrentDemandforWaterTax(propertyWiseConsumptions);
-            if(tempList!=null && !tempList.isEmpty())
+            if (tempList != null && !tempList.isEmpty())
                 demandNoticeDetailsInfo.addAll(tempList);
         }
         return demandNoticeDetailsInfo;
     }
-    
+
     /**
      * @Description Returns Aggregated list of arrear and current demand amount for water tax
      * @param propertyWiseConsumptions
      * @return
      */
-    private List<DemandNoticeDetailsInfo> getArrearCurrentDemandforWaterTax(PropertyWiseConsumptions propertyWiseConsumptions){
-        List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo = new LinkedList<DemandNoticeDetailsInfo>();
-        String arrearFromDate="";
-        String arrearToDate="";
-        BigDecimal arrearAmount=  BigDecimal.ZERO;
-        String currentFromDate="";
-        String currentToDate="";
+    private List<DemandNoticeDetailsInfo> getArrearCurrentDemandforWaterTax(
+            final PropertyWiseConsumptions propertyWiseConsumptions) {
+        final List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo = new LinkedList<DemandNoticeDetailsInfo>();
+        String arrearFromDate = "";
+        String arrearToDate = "";
+        BigDecimal arrearAmount = BigDecimal.ZERO;
+        String currentFromDate = "";
+        String currentToDate = "";
         DemandNoticeDetailsInfo dndi;
-        BigDecimal currentAmount= BigDecimal.ZERO;
-        if(propertyWiseConsumptions.getConsumerConsumptions()!=null && propertyWiseConsumptions.getConsumerConsumptions().size()>0){
-             for(ConsumerConsumption cc : propertyWiseConsumptions.getConsumerConsumptions()){
-                 if(cc!=null){
-                     if(cc.getArrearDue()!=null &&  cc.getArrearDue()!= BigDecimal.ZERO){
-                         if(arrearFromDate=="")
-                             arrearFromDate=sdf.format(cc.getArrearFromDate().toDate());
-                         arrearToDate=sdf.format(cc.getArrearToDate().toDate()); 
-                         arrearAmount=arrearAmount.add(cc.getArrearDue());
-                                 
-                     }
-                     if(cc.getCurrentDue()!=null &&  cc.getCurrentDue()!= BigDecimal.ZERO){
-                         if(currentFromDate=="")
-                             currentFromDate=sdf.format(cc.getCurrentFromDate().toDate());
-                         currentToDate=sdf.format(cc.getCurentToDate().toDate()); 
-                         currentAmount=currentAmount.add(cc.getCurrentDue());
-                     }
-                 }
-             }
-             if(arrearFromDate!=""){
-                 dndi=new DemandNoticeDetailsInfo();
-                 dndi.setFromDate(arrearFromDate);
-                 dndi.setToDate(arrearToDate);
-                 dndi.setWaterTax(arrearAmount);
-                 dndi.setTotal(arrearAmount);
-                 demandNoticeDetailsInfo.add(dndi);
-             }
-             if(currentFromDate!=""){
-                 dndi=new DemandNoticeDetailsInfo();
-                 dndi.setFromDate(currentFromDate);
-                 dndi.setToDate(currentToDate);
-                 dndi.setWaterTax(currentAmount);
-                 dndi.setTotal(currentAmount);
-                 demandNoticeDetailsInfo.add(dndi);
-             }
-             return demandNoticeDetailsInfo;
+        BigDecimal currentAmount = BigDecimal.ZERO;
+        if (propertyWiseConsumptions.getConsumerConsumptions() != null
+                && propertyWiseConsumptions.getConsumerConsumptions().size() > 0) {
+            for (final ConsumerConsumption cc : propertyWiseConsumptions.getConsumerConsumptions())
+                if (cc != null) {
+                    if (cc.getArrearDue() != null && cc.getArrearDue() != BigDecimal.ZERO) {
+                        if (arrearFromDate == "")
+                            arrearFromDate = sdf.format(cc.getArrearFromDate().toDate());
+                        arrearToDate = sdf.format(cc.getArrearToDate().toDate());
+                        arrearAmount = arrearAmount.add(cc.getArrearDue());
+
+                    }
+                    if (cc.getCurrentDue() != null && cc.getCurrentDue() != BigDecimal.ZERO) {
+                        if (currentFromDate == "")
+                            currentFromDate = sdf.format(cc.getCurrentFromDate().toDate());
+                        currentToDate = sdf.format(cc.getCurentToDate().toDate());
+                        currentAmount = currentAmount.add(cc.getCurrentDue());
+                    }
+                }
+            if (arrearFromDate != "") {
+                dndi = new DemandNoticeDetailsInfo();
+                dndi.setFromDate(arrearFromDate);
+                dndi.setToDate(arrearToDate);
+                dndi.setWaterTax(arrearAmount);
+                dndi.setTotal(arrearAmount);
+                demandNoticeDetailsInfo.add(dndi);
+            }
+            if (currentFromDate != "") {
+                dndi = new DemandNoticeDetailsInfo();
+                dndi.setFromDate(currentFromDate);
+                dndi.setToDate(currentToDate);
+                dndi.setWaterTax(currentAmount);
+                dndi.setTotal(currentAmount);
+                demandNoticeDetailsInfo.add(dndi);
+            }
+            return demandNoticeDetailsInfo;
         }
         return demandNoticeDetailsInfo;
     }
-    
+
     /**
      * @Description Returns Aggregated list of arrear and current demand amount for specific reasoncode
      * @param egDemand
@@ -1765,56 +1666,55 @@ public class PropertyTaxUtil {
      * @param finYear
      * @return
      */
-    private List<DemandNoticeDetailsInfo> getArrearCurrentDemandbyReasonCode(EgDemand egDemand, Module module, String reasonCode, 
-            CFinancialYear finYear){
+    private List<DemandNoticeDetailsInfo> getArrearCurrentDemandbyReasonCode(final EgDemand egDemand, final Module module,
+            final String reasonCode,
+            final CFinancialYear finYear) {
         List list = new LinkedList();
-        String arrearFromDate="";
-        String arrearToDate="";
-        BigDecimal arrearAmount=  BigDecimal.ZERO;
-        String currentFromDate="";
-        String currentToDate="";
+        String arrearFromDate = "";
+        String arrearToDate = "";
+        BigDecimal arrearAmount = BigDecimal.ZERO;
+        String currentFromDate = "";
+        String currentToDate = "";
         Integer instId = null;
-        BigDecimal currentAmount= BigDecimal.ZERO;
+        BigDecimal currentAmount = BigDecimal.ZERO;
         Installment installment;
-        List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo = new LinkedList<DemandNoticeDetailsInfo>();
+        final List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo = new LinkedList<DemandNoticeDetailsInfo>();
         DemandNoticeDetailsInfo dndi;
-        list = demandGenericDAO.getDCBByReasonCode(egDemand, module,reasonCode);
+        list = demandGenericDAO.getDCBByReasonCode(egDemand, module, reasonCode);
         for (final Object record : list) {
             final Object[] data = (Object[]) record;
             instId = Integer.valueOf(data[5].toString());
             installment = (Installment) installmentDao.findById(instId, false);
-            if(installment.getFromDate().compareTo(finYear.getStartingDate())<0){
-                if(arrearFromDate==""){
-                    arrearFromDate=sdf.format(installment.getFromDate());
-                }
-                arrearToDate=sdf.format(installment.getToDate());
-                arrearAmount=currentAmount.add(new BigDecimal(data[2].toString()));
-            }else{
-                if(currentFromDate==""){
-                    currentFromDate=sdf.format(installment.getFromDate());
-                }
-                currentToDate=sdf.format(installment.getToDate());
-                currentAmount=currentAmount.add(new BigDecimal(data[2].toString()));
+            if (installment.getFromDate().compareTo(finYear.getStartingDate()) < 0) {
+                if (arrearFromDate == "")
+                    arrearFromDate = sdf.format(installment.getFromDate());
+                arrearToDate = sdf.format(installment.getToDate());
+                arrearAmount = currentAmount.add(new BigDecimal(data[2].toString()));
+            } else {
+                if (currentFromDate == "")
+                    currentFromDate = sdf.format(installment.getFromDate());
+                currentToDate = sdf.format(installment.getToDate());
+                currentAmount = currentAmount.add(new BigDecimal(data[2].toString()));
             }
         }
-        if(arrearFromDate!=""){
-            dndi=new DemandNoticeDetailsInfo();
+        if (arrearFromDate != "") {
+            dndi = new DemandNoticeDetailsInfo();
             dndi.setFromDate(arrearFromDate);
             dndi.setToDate(arrearToDate);
-            if(reasonCode.equalsIgnoreCase(DEMANDRSN_CODE_GENERAL_TAX))
+            if (reasonCode.equalsIgnoreCase(DEMANDRSN_CODE_GENERAL_TAX))
                 dndi.setPropertyTax(arrearAmount);
-            else if(reasonCode.equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES))
+            else if (reasonCode.equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES))
                 dndi.setPenalty(arrearAmount);
             dndi.setTotal(arrearAmount);
             demandNoticeDetailsInfo.add(dndi);
         }
-        if(currentFromDate!=""){
-            dndi=new DemandNoticeDetailsInfo();
+        if (currentFromDate != "") {
+            dndi = new DemandNoticeDetailsInfo();
             dndi.setFromDate(currentFromDate);
             dndi.setToDate(currentToDate);
-            if(reasonCode.equalsIgnoreCase(DEMANDRSN_CODE_GENERAL_TAX))
+            if (reasonCode.equalsIgnoreCase(DEMANDRSN_CODE_GENERAL_TAX))
                 dndi.setPropertyTax(currentAmount);
-            else if(reasonCode.equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES))
+            else if (reasonCode.equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES))
                 dndi.setPenalty(currentAmount);
             dndi.setTotal(currentAmount);
             demandNoticeDetailsInfo.add(dndi);
@@ -1897,22 +1797,23 @@ public class PropertyTaxUtil {
         userNameBuilder.append(userName).append(RandomStringUtils.randomNumeric(4));
         return userNameBuilder.toString();
     }
-    
-    public PropertyWiseConsumptions getPropertyWiseConsumptions(String basicPropertyId){
-        PropertyWiseConsumptions propertyWiseConsumptions= waterChargesIntegrationService.getPropertyWiseConsumptionsForWaterCharges(basicPropertyId);
+
+    public PropertyWiseConsumptions getPropertyWiseConsumptions(final String basicPropertyId) {
+        final PropertyWiseConsumptions propertyWiseConsumptions = waterChargesIntegrationService
+                .getPropertyWiseConsumptionsForWaterCharges(basicPropertyId);
         return propertyWiseConsumptions;
     }
-    
-	public Properties loadTaxRates() {
-		Properties taxRates = new Properties();
-		String s = appConfigValuesService.getAppConfigValueByDate(PTMODULENAME, "PT_TAXRATES", new Date()).getValue();
-		StringReader sr = new StringReader(s);
-		try {
-			taxRates.load(sr);
-		} catch (IOException e) {
-			throw new EGOVRuntimeException("Could not decipher Tax rates from string" + s, e);
-		}
-		sr.close();
-		return taxRates;
-	}
+
+    public Properties loadTaxRates() {
+        final Properties taxRates = new Properties();
+        final String s = appConfigValuesService.getAppConfigValueByDate(PTMODULENAME, "PT_TAXRATES", new Date()).getValue();
+        final StringReader sr = new StringReader(s);
+        try {
+            taxRates.load(sr);
+        } catch (final IOException e) {
+            throw new EGOVRuntimeException("Could not decipher Tax rates from string" + s, e);
+        }
+        sr.close();
+        return taxRates;
+    }
 }

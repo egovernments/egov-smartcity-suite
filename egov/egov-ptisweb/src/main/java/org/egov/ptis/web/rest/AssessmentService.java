@@ -39,6 +39,8 @@
  */
 package org.egov.ptis.web.rest;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -65,7 +67,6 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -679,7 +680,7 @@ public class AssessmentService {
 		String responseJson = null;
 		Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
 		if (isAuthenticatedUser) {
-			TreeMap<Integer, String> floorMap = CommonServices.floorMap();
+			TreeMap<Integer, String> floorMap = FLOOR_MAP;
 			Set<Integer> keys = floorMap.keySet();
 			for (Integer key : keys) {
 				MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
