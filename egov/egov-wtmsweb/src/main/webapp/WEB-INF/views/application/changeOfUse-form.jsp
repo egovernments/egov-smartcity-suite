@@ -55,14 +55,14 @@
 						<spring:message  code="lbl.basicdetails"/>
 					</div>
 				</div>
+				<form:hidden path="connection" id="connection" value="${changeOfUse.connection.id}"/>
 				<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}">
 				<input type="hidden" id="currentUser" value="${currentUser}"/>  
 				<form:hidden id="mode" path=""  value="${mode}"/>
 				<form:hidden id="documentName" path="" value="${documentName}"/>
-				<form:hidden path="applicationType" id="applicationType.id" value="${addConnection.applicationType.id}"/>
-				<form:hidden path="connectionStatus" id="connectionStatus" value="${addConnection.connectionStatus}"/>
-				<form:hidden path="connection.parentConnection" value="${parentConnection.id}"/>
-				<form:hidden path="connection.propertyIdentifier" value="${waterConnectionDetails.connection.propertyIdentifier}"/>
+				<form:hidden path="applicationType" id="applicationType.id" value="${changeOfUse.applicationType.id}"/>
+				<form:hidden path="connectionStatus" id="connectionStatus" value="${changeOfUse.connectionStatus}"/>
+				<form:hidden path="connection.propertyIdentifier" value="${changeOfUse.connection.propertyIdentifier}"/>
 				<c:if test="${validationMessage==''}">
 					<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 				</c:if>	
@@ -82,3 +82,4 @@
 </div>
 
 <script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
+<script src="<c:url value='/resources/js/app/changeofuse.js'/>"></script>

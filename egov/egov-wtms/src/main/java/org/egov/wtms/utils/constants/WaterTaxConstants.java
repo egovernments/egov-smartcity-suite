@@ -68,6 +68,14 @@ public class WaterTaxConstants {
     
     public static final String SMSEMAILTYPENEWCONNFEEPAID = "newconnfeepaid";
     public static final String SMSEMAILTYPEADDCONNFEEPAID = "addconnfeepaid";
+    
+    public static final String SMSEMAILTYPECHANGEOFUSECREATE = "changeofusecreate";
+    public static final String SMSEMAILTYPECHANGEOFUSEAPPROVE = "changeofuseapprove";
+    public static final String SMSEMAILTYPECHANGEOFUSENOTICE = "changeofusenotice";
+    public static final String SMSEMAILTYPECHANGEOFUSEEXECUTION = "changeofuseexecution";
+    public static final String SMSEMAILTYPECHANGEOFUSEREJECTION = "changeofuserejection";
+    public static final String SMSEMAILTYPECHANGEOFUSEFEEPAID = "changeofusefeepaid";
+    
     public static final String CATEGORY_BPL = "BPL";
     public static final String WATERTAX_FIELDINSPECTION_CHARGE = "WTAXFIELDINSPEC";
     // User Roles

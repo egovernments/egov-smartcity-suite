@@ -312,6 +312,13 @@ public class WaterTaxUtils {
                     .append("/- against your water connection application number ").append(waterConnectionDetails.getApplicationNumber()).append(".We will be now processing your application to issue an work order.\n\nThis is computer generated email and does not need any signature and also please do not reply to this email.\n\nRegards,").append("\n").append(getCityName());
                emailBody=emailBodyBuilder.toString();
         }
+        else if(WaterTaxConstants.SMSEMAILTYPECHANGEOFUSECREATE.equalsIgnoreCase(type)) {
+            emailBody = messageSource.getMessage(code,new String[] {applicantName,waterConnectionDetails.getConnection().getConsumerCode(),
+                    waterConnectionDetails.getApplicationNumber(),getCityName()},null);
+            //Dear {0},\nYour application for change of use for the H.S.C number {1} is accepted and the acknowledgement number is {2}.\n 
+            //Please use this number as reference in all your future transactions.\n\nThis is computer generated email and does not need any 
+            //signature and also please do not reply to this email.\n\nThanks ,\n{3}
+        }
             
             return emailBody;
     }
@@ -401,6 +408,14 @@ public class WaterTaxUtils {
                     .append("/- against your water connection application number ").append(waterConnectionDetails.getApplicationNumber()).append(".We will be now processing your application to issue an work order..\nThanks,\n").append(getCityName());
             smsMsg =smsBody.toString();
             }
+        else if (WaterTaxConstants.SMSEMAILTYPECHANGEOFUSECREATE.equalsIgnoreCase(type)) {
+            smsMsg = messageSource.getMessage(code,new String[] {applicantName,waterConnectionDetails.getConnection().getConsumerCode(),
+                    waterConnectionDetails.getApplicationNumber(),getCityName()},null);
+            
+            //Dear {0}, Your application for change of use for the H.S.C number {1} is accepted and the acknowledgement number is {2}. 
+            //Please use this number as reference in all your future transactions.\nThanks, {3}
+        }
+        
         return smsMsg;
     }
 

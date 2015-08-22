@@ -116,11 +116,38 @@
 				<form:errors path="pipeSize" cssClass="add-margin error-msg" />					
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message
-					code="lbl.sumpcapacity.litres" /><span class="mandatory"></span></label>
+					code="lbl.sumpcapacity.litres" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input class="form-control patternvalidation" data-pattern="number" maxlength="15" id="sumpCapacity" path="sumpCapacity" required="required" />
+				<form:input class="form-control patternvalidation" data-pattern="number" maxlength="15" id="sumpCapacity" path="sumpCapacity"/>
 				<form:errors path="sumpCapacity" cssClass="add-margin error-msg" />		
 			</div>
+		</div>
+		<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.watersourcetype" /><span class="mandatory"></span></label>
+		<div class="col-sm-3 add-margin">
+			<form:select path="waterSource" data-first-option="false"
+						cssClass="form-control" required="required" >
+						<form:option value="">
+							<spring:message code="lbl.select" />
+						</form:option>
+						<form:options items="${waterSourceTypes}" itemValue="id"
+							itemLabel="waterSourceType" />
+			</form:select>	
+			<form:errors path="waterSource" cssClass="add-margin error-msg" />
+		</div>
+		<label class="col-sm-2 control-label text-right" id="rooms" style="display:none"><spring:message
+		code="lbl.no.of.rooms" /></label>
+	<div class="col-sm-3 add-margin" style="display:none" id="roomsdiv">
+			<form:input class="form-control patternvalidation" data-pattern="number" maxlength="3" id="numberOfRooms" path="numberOfRooms" />
+			<form:errors path="numberOfRooms" cssClass="add-margin error-msg" />		
+		</div>	
+	<label class="col-sm-2 control-label text-right" id="persons"><spring:message
+			code="lbl.no.of.persons" /></label> 
+		<div class="col-sm-3 add-margin" id="personsdiv">
+			<form:input class="form-control patternvalidation" data-pattern="number" maxlength="3" id="numberOfPerson" path="numberOfPerson" />
+			<form:errors path="numberOfPerson" cssClass="add-margin error-msg" />		
+		</div>
 		</div>
 		<div class="form-group">
 				<label class="col-sm-3 control-label text-right"><spring:message

@@ -322,8 +322,8 @@ public class WaterConnectionDetailsService {
 			// SMS and Email for additional connection
 			else if (WaterTaxConstants.ADDNLCONNECTION
 					.equalsIgnoreCase(waterConnectionDetails
-							.getApplicationType().getCode()))
-				if (waterConnectionDetails.getState().getHistory().isEmpty()
+							.getApplicationType().getCode())) {
+				if (waterConnectionDetails.getState().getHistory().isEmpty() 
 						&& WaterTaxConstants.APPLICATION_STATUS_CREATED
 								.equalsIgnoreCase(waterConnectionDetails
 										.getEgwStatus().getCode())) {
@@ -369,6 +369,58 @@ public class WaterConnectionDetailsService {
 							WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION,
 							email);
 				}
+			}
+			//SMS and email for change of use
+				else if (WaterTaxConstants.CHANGEOFUSE
+                                        .equalsIgnoreCase(waterConnectionDetails
+                                                        .getApplicationType().getCode())){
+                                if (waterConnectionDetails.getState().getHistory().isEmpty()
+                                                && WaterTaxConstants.APPLICATION_STATUS_CREATED
+                                                                .equalsIgnoreCase(waterConnectionDetails
+                                                                                .getEgwStatus().getCode())) {
+                                        buildSMS(waterConnectionDetails,
+                                                        WaterTaxConstants.SMSEMAILTYPECHANGEOFUSECREATE,
+                                                        mobileNumber);
+                                        buildEmail(waterConnectionDetails,
+                                                        WaterTaxConstants.SMSEMAILTYPECHANGEOFUSECREATE,
+                                                        email);
+                                } else if (WaterTaxConstants.APPLICATION_STATUS_APPROVED
+                                                .equalsIgnoreCase(waterConnectionDetails.getEgwStatus()
+                                                                .getCode())) {
+                                        buildSMS(waterConnectionDetails,
+                                                        WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEAPPROVE,
+                                                        mobileNumber);
+                                        buildEmail(waterConnectionDetails,
+                                                        WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEAPPROVE,
+                                                        email);
+                                } else if (WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN
+                                                .equalsIgnoreCase(waterConnectionDetails.getEgwStatus()
+                                                                .getCode())) {
+                                        buildSMS(waterConnectionDetails,
+                                                        WaterTaxConstants.SMSEMAILTYPECHANGEOFUSENOTICE,
+                                                        mobileNumber);
+                                        buildEmail(waterConnectionDetails,
+                                                        WaterTaxConstants.SMSEMAILTYPECHANGEOFUSENOTICE,
+                                                        email);
+                                } else if (WaterTaxConstants.APPLICATION_STATUS_FEEPAID
+                                                .equalsIgnoreCase(waterConnectionDetails.getEgwStatus()
+                                                                .getCode())) {
+                                        buildSMS(waterConnectionDetails,
+                                                        WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEFEEPAID,
+                                                        mobileNumber);
+                                        buildEmail(waterConnectionDetails,
+                                                        WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEFEEPAID, email);
+                                } else if (WaterTaxConstants.APPLICATION_STATUS_SANCTIONED
+                                                .equalsIgnoreCase(waterConnectionDetails.getEgwStatus()
+                                                                .getCode())) {
+                                        buildSMS(waterConnectionDetails,
+                                                        WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEEXECUTION,
+                                                        mobileNumber);
+                                        buildEmail(waterConnectionDetails,
+                                                        WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEEXECUTION,
+                                                        email);
+                                }
+			}
 		}
 	}
 
@@ -909,6 +961,11 @@ public class WaterConnectionDetailsService {
 							"msg.additionalconncetioncreate.sms",
 							waterConnectionDetails, applicantName, type);
 
+				} else if(WaterTaxConstants.SMSEMAILTYPECHANGEOFUSECREATE.equalsIgnoreCase(type)) {
+				    flag = Boolean.TRUE;
+                                    smsMsg = waterTaxUtils.SmsBodyByCodeAndArgsWithType(
+                                                    "msg.changeofuseconncetioncreate.sms",
+                                                    waterConnectionDetails, applicantName, type);
 				} else if (type
 						.equals(WaterTaxConstants.SMSEMAILTYPENEWCONNAPPROVE)) {
 					flag = Boolean.TRUE;
@@ -1005,7 +1062,17 @@ public class WaterConnectionDetailsService {
 										"msg.additionalconnectioncreate.email.subject",
 										waterConnectionDetails
 												.getApplicationNumber());
-					} else if (type
+					}else if(WaterTaxConstants.SMSEMAILTYPECHANGEOFUSECREATE.equalsIgnoreCase(type)) {
+    					        flag = Boolean.TRUE;
+                                                body = waterTaxUtils.EmailBodyByCodeAndArgsWithType(
+                                                                "msg.changeofuseconncetioncreate.email.body",
+                                                                waterConnectionDetails, applicantName, type);
+                                                subject = waterTaxUtils
+                                                                .emailSubjectforEmailByCodeAndArgs(
+                                                                                "msg.changeofuseconncetioncreate.email.subject",
+                                                                                waterConnectionDetails
+                                                                                                .getApplicationNumber());
+					}else if (type
 							.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNAPPROVE)) {
 						flag = Boolean.TRUE;
 						body = waterTaxUtils.EmailBodyByCodeAndArgsWithType(
@@ -1139,8 +1206,9 @@ public class WaterConnectionDetailsService {
 
 	@Transactional
 	public WaterConnectionDetails createChangeOfUseApplication(
-			final WaterConnectionDetails changeOfUse,
-			final Long approvalPosition, final String approvalComent) {
+	        final WaterConnectionDetails changeOfUse,
+                final Long approvalPosition, final String approvalComent,
+                final String additionalRule, final String workFlowAction) {
 		if (changeOfUse.getApplicationNumber() == null)
 			changeOfUse.setApplicationNumber(applicationNumberGenerator
 					.generate());
@@ -1153,6 +1221,13 @@ public class WaterConnectionDetailsService {
 					appProcessTime));
 		final WaterConnectionDetails savedChangeOfUse = waterConnectionDetailsRepository
 				.save(changeOfUse);
+		
+		createMatrixWorkflowTransition(savedChangeOfUse,
+                        approvalPosition, approvalComent, additionalRule,
+                        workFlowAction);
+
+                updateIndexes(savedChangeOfUse);
+                sendSmsAndEmail(changeOfUse, workFlowAction);
 		return savedChangeOfUse;
 	}
 
