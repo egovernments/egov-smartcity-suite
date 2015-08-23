@@ -79,6 +79,7 @@ public class PropertyTaxNumberGenerator {
             if (org.apache.commons.lang.StringUtils.isNotBlank(noticeType))
                 if (noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE)) {
                     final String cityCode = EgovThreadLocals.getCityCode();
+                    noticeNo.append("SN").append("/");
                     noticeNo.append(cityCode);
                     final String index = sequenceNumberGenerator.getNextSequence(SEQ_EGPT_NOTICE_NUMBER).toString();
                     noticeNo.append(org.apache.commons.lang.StringUtils.leftPad(index, 6, "0"));
@@ -107,6 +108,7 @@ public class PropertyTaxNumberGenerator {
         final StringBuffer billNo = new StringBuffer();
         try {
             // reading from service to support bulkbillgeneration through schedular
+            billNo.append("B").append("/");
             final String cityCode = cityService.findAll().get(0).getCode();
             billNo.append(cityCode);
             final String bill = sequenceNumberGenerator.getNextSequence(SEQ_EG_BILL).toString();
