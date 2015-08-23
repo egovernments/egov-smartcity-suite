@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice_floorDetails" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice_floorDetails" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6e1de6a4-8ac0-4dd3-982a-e9687e471c14">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -20,7 +20,7 @@
 	<columnHeader>
 		<band height="67" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="82" height="67"/>
+				<reportElement x="0" y="0" width="82" height="67" uuid="50f2ead1-0dc9-45e3-8795-55669d1bc6c4"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -34,7 +34,7 @@
 				<text><![CDATA[Building Classification]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="82" y="0" width="58" height="67"/>
+				<reportElement x="82" y="0" width="58" height="67" uuid="53ce90bc-f32d-4e0c-9301-a5fae7593793"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -48,7 +48,7 @@
 				<text><![CDATA[Nature of Usage]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="140" y="0" width="62" height="67"/>
+				<reportElement x="140" y="0" width="62" height="67" uuid="b2b16788-4380-4569-8ff2-062d4031065a"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -62,7 +62,7 @@
 				<text><![CDATA[Plinth Area]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="202" y="0" width="49" height="67"/>
+				<reportElement x="202" y="0" width="62" height="67" uuid="9bb261ea-2cdf-4221-81aa-6496f1d24297"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -76,7 +76,7 @@
 				<text><![CDATA[Rate Applicable]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="251" y="0" width="60" height="67"/>
+				<reportElement x="264" y="0" width="60" height="67" uuid="914aada3-8303-4521-80b8-74857cdca8de"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -91,7 +91,7 @@
 Rental Value]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="311" y="0" width="60" height="67"/>
+				<reportElement x="324" y="0" width="60" height="67" uuid="e6028dde-4625-4b8a-b6c7-72cb3d2fbdcc"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -105,7 +105,7 @@ Rental Value]]></text>
 				<text><![CDATA[Building Age]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="371" y="0" width="64" height="67"/>
+				<reportElement x="384" y="0" width="64" height="67" uuid="9929d181-ed33-4cc3-a7b7-9956d014cb0d"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -120,7 +120,7 @@ Rental Value]]></text>
 Rental Value]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="435" y="0" width="65" height="67"/>
+				<reportElement x="448" y="0" width="65" height="67" uuid="0238e215-9585-4440-ae7d-1644f3a36583"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -138,8 +138,7 @@ Current
 Year]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="500" y="0" width="55" height="67"/>
-				<textElement/>
+				<reportElement x="513" y="0" width="42" height="67" uuid="89f72452-ca8a-4671-939f-f7823820765b"/>
 				<text><![CDATA[]]></text>
 			</staticText>
 		</band>
@@ -147,7 +146,7 @@ Year]]></text>
 	<detail>
 		<band height="31" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="82" height="31" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="82" height="31" isPrintWhenDetailOverflows="true" uuid="8cd96a53-bb9d-44c1-a8e9-71c6e48cb8d3"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -158,10 +157,10 @@ Year]]></text>
 				<textElement>
 					<font isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{buildingClassification}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{buildingClassification}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="82" y="0" width="58" height="31" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="82" y="0" width="58" height="31" isPrintWhenDetailOverflows="true" uuid="39bb9396-680c-4586-a94c-ecc57b8eba60"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -172,10 +171,10 @@ Year]]></text>
 				<textElement>
 					<font isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{natureOfUsage}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{natureOfUsage}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="140" y="0" width="62" height="31" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="140" y="0" width="62" height="31" isPrintWhenDetailOverflows="true" uuid="e8cb0e24-eabe-4128-911d-f0e01a5a7652"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -186,10 +185,10 @@ Year]]></text>
 				<textElement textAlignment="Right">
 					<font isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{plinthArea}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{plinthArea}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="202" y="0" width="49" height="31" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="202" y="0" width="62" height="31" isPrintWhenDetailOverflows="true" uuid="ab59812a-681e-4521-81e6-0d201fc1c1ee"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -200,10 +199,10 @@ Year]]></text>
 				<textElement>
 					<font isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{rate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{rate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="251" y="0" width="60" height="31" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="264" y="0" width="60" height="31" isPrintWhenDetailOverflows="true" uuid="35d7a721-f3f3-42b0-b84a-6a443954d495"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -214,10 +213,10 @@ Year]]></text>
 				<textElement textAlignment="Right">
 					<font isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{monthlyRentalValue}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{monthlyRentalValue}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="311" y="0" width="60" height="31" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="324" y="0" width="60" height="31" isPrintWhenDetailOverflows="true" uuid="b4b17a94-47e4-4dd8-b573-87d7dc8a5a47"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -228,10 +227,10 @@ Year]]></text>
 				<textElement textAlignment="Right">
 					<font isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{buildingAge}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{buildingAge}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="371" y="0" width="64" height="31" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="384" y="0" width="64" height="31" isPrintWhenDetailOverflows="true" uuid="18e019c2-b1f0-4c97-8b73-f55e1f018c8c"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -242,10 +241,10 @@ Year]]></text>
 				<textElement textAlignment="Right">
 					<font isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{yearlyRentalValue}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{yearlyRentalValue}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="435" y="0" width="65" height="31" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="448" y="0" width="65" height="31" isPrintWhenDetailOverflows="true" uuid="8de23f85-ca95-4b79-9da1-c8c594101ae9"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -256,11 +255,10 @@ Year]]></text>
 				<textElement textAlignment="Right">
 					<font isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{taxPayableForCurrYear}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{taxPayableForCurrYear}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="500" y="0" width="55" height="31"/>
-				<textElement/>
+				<reportElement x="513" y="0" width="42" height="31" uuid="58b5671f-81e8-48da-ad9b-859d6cc5c570"/>
 				<text><![CDATA[]]></text>
 			</staticText>
 		</band>

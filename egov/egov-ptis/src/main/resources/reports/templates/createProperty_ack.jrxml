@@ -2,11 +2,12 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="createProperty_ack" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f03713ef-53ed-45c0-b461-665772a871b1">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="101"/>
+	<property name="ireport.y" value="48"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="logoPath" class="java.lang.String"/>
 	<parameter name="loggedInUsername" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
 	<field name="ownerName" class="java.lang.String"/>
 	<field name="ownerAddress" class="java.lang.String"/>
 	<field name="approvedDate" class="java.lang.String"/>
@@ -17,30 +18,30 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="325" splitType="Stretch">
+		<band height="273" splitType="Stretch">
 			<staticText>
-				<reportElement x="102" y="106" width="390" height="31" uuid="85343d61-403c-488a-8c35-3b351144ffef"/>
-				<textElement>
+				<reportElement x="123" y="28" width="390" height="31" uuid="85343d61-403c-488a-8c35-3b351144ffef"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true" isItalic="false" isUnderline="true" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[New Assessment Application Acknowledgement  ]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="29" y="157" width="278" height="20" uuid="cef5fce6-d30f-4c1a-83b8-792f33ab6d83"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="29" y="97" width="278" height="20" uuid="cef5fce6-d30f-4c1a-83b8-792f33ab6d83"/>
 				<textElement markup="none">
 					<font size="11" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Application Number: "+$F{applicationNo}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="348" y="157" width="182" height="20" uuid="8059dcec-7361-4dfc-8c5d-012591fcd0d9"/>
+				<reportElement stretchType="RelativeToTallestObject" x="348" y="97" width="182" height="20" uuid="8059dcec-7361-4dfc-8c5d-012591fcd0d9"/>
 				<textElement textAlignment="Right" markup="none">
 					<font size="11" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Application Date: "+$F{applicationDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="31" y="205" width="495" height="103" isPrintWhenDetailOverflows="true" uuid="2a6e61ac-efd7-496e-8f46-536043856e7f"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="31" y="145" width="499" height="103" isPrintWhenDetailOverflows="true" uuid="2a6e61ac-efd7-496e-8f46-536043856e7f"/>
 				<textElement textAlignment="Justified" markup="styled">
 					<font size="12" isPdfEmbedded="true"/>
 					<paragraph lineSpacing="1_1_2"/>
@@ -48,18 +49,14 @@
 				<textFieldExpression><![CDATA["	Property Tax assessment of Sri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerName}+"</style> with address <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerAddress}+"</style> is received on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{approvedDate}+"</style>. The connected property tax special notice can be obtained on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+DateUtils.getDefaultFormattedDate($F{noticeDueDate})+"</style> duly producing this receipt."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="99" y="41" width="430" height="27" uuid="10795881-3533-4eef-84f4-e38f1b29a0ff"/>
-				<textElement textAlignment="Center" markup="none">
+				<reportElement x="123" y="1" width="390" height="27" uuid="10795881-3533-4eef-84f4-e38f1b29a0ff"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font size="16" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[ReportUtil.getCityName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="24" y="177" width="505" height="27" uuid="d34b284c-8f40-42ad-8692-da9ec9cf0f20"/>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<image onErrorType="Blank">
-				<reportElement x="24" y="32" width="65" height="67" uuid="d0f2e83e-3e6c-49c5-9a5a-0f1ad6a64fdc"/>
+			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement x="41" y="1" width="60" height="60" uuid="771b8be2-e2c5-4158-8968-ef55dc437c0f"/>
 				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
 			</image>
 		</band>
@@ -67,60 +64,46 @@
 	<summary>
 		<band height="254" splitType="Stretch">
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="440" y="32" width="84" height="20" uuid="d31d7dee-5624-433f-8c3e-6d2f46e453f9"/>
-				<textElement textAlignment="Right">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="381" y="10" width="149" height="20" uuid="d31d7dee-5624-433f-8c3e-6d2f46e453f9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="11" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Signature]]></text>
 			</staticText>
 			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="381" y="66" width="143" height="20" uuid="e0d7c3e8-041b-46a6-96d6-6926a518bb3e"/>
-				<textElement textAlignment="Right" markup="none">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="381" y="30" width="149" height="20" uuid="e0d7c3e8-041b-46a6-96d6-6926a518bb3e"/>
+				<textElement textAlignment="Center" markup="none">
 					<font size="11" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{loggedInUsername}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="178" y="92" width="346" height="20" uuid="9a1701d1-8007-420b-b784-12c7c88862ca"/>
-				<textElement textAlignment="Right" markup="none">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="178" y="50" width="352" height="20" uuid="9a1701d1-8007-420b-b784-12c7c88862ca"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" markup="none">
 					<font size="11" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[ReportUtil.getCityName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="13" y="163" width="31" height="16" uuid="ce551a5c-3f48-45b8-b8df-ab37a0b8eadb"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="29" y="95" width="41" height="16" uuid="ce551a5c-3f48-45b8-b8df-ab37a0b8eadb"/>
 				<textElement>
 					<font size="11" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[Note:]]></text>
+				<text><![CDATA[Note :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="50" y="163" width="476" height="26" uuid="30465cf5-5e56-4210-9ad4-23a34a553f04"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="70" y="95" width="460" height="26" uuid="30465cf5-5e56-4210-9ad4-23a34a553f04"/>
 				<textElement>
 					<font fontName="SansSerif" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[1. The applicant can contact the municipal commissioner, immediately if the special notice is not given as indicated above on the date fixed. ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="50" y="192" width="476" height="36" uuid="797325a9-1e60-4ccf-984f-d7d778f164dc"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="70" y="121" width="460" height="36" uuid="797325a9-1e60-4ccf-984f-d7d778f164dc"/>
 				<textElement>
 					<font isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[2. Compensation will be paid @ Rs. 50/- per day for the delay caused and towards the valuable time lost by the applicant, if the special notice is not given as indicated above in the date fixed.]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="24" y="122" width="505" height="34" uuid="c66381bb-d3de-4a8d-9b01-afc2f12107dd"/>
-				<textElement>
-					<font isPdfEmbedded="true"/>
-				</textElement>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="31" y="0" width="495" height="29" uuid="6800bad8-eb65-4af3-962a-f4eae21d90d0"/>
-				<textElement>
-					<font isPdfEmbedded="true"/>
-				</textElement>
-				<text><![CDATA[]]></text>
 			</staticText>
 		</band>
 	</summary>

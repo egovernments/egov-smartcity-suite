@@ -77,6 +77,7 @@ import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.BulkBillGeneration;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.service.notice.NoticeService;
+import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -113,7 +114,8 @@ public class BillService {
 	private BasicPropertyDAO basicPropertyDAO;
 	@Autowired
 	private DemandNoticeInfo demandNoticeInfo;
-
+	@Autowired
+        private WaterChargesIntegrationService waterChargesIntegrationService;
 	/**
 	 * Generates a Demand Notice or the Bill giving the break up of the tax
 	 * amounts and the <code>EgBill</code>
@@ -151,10 +153,13 @@ public class BillService {
 			saveEgBill(basicProperty, userId);// saving eg_bill
 			basicProperty.setIsBillCreated(STATUS_BILL_CREATED);
 			basicProperty.setBillCrtError(STRING_EMPTY);
+			boolean flag=waterChargesIntegrationService.updateBillNo(basicProperty.getId().toString(), getBillNo());
+			if(flag)
+			    LOGGER.debug("Billno updated successfully in water tax");
+			else
+			    LOGGER.debug("Failed to updated billno in water tax");
 			noticeService.saveNotice(getBillNo(), NOTICE_TYPE_BILL, basicProperty, billPDF);// Save
-																							// Notice
-			noticeService.getSession().flush(); // Added as notice was not
-												// getting saved
+			noticeService.getSession().flush(); // Added as notice was not getting saved
 		} catch (final Exception e) {
 			e.printStackTrace();
 			throw new EGOVRuntimeException("Bill Generation Exception : " + e);

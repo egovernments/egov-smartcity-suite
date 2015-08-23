@@ -2,7 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="transferProperty_notice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3a3a1848-4830-4533-aae0-f7eb43a1fbb7">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="1"/>
+	<property name="ireport.y" value="96"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
 	<field name="newOwnerName" class="java.lang.String"/>
 	<field name="newOwnerParentName" class="java.lang.String"/>
 	<field name="oldOwnerName" class="java.lang.String"/>
@@ -10,218 +12,74 @@
 	<field name="regDocNo" class="java.lang.String"/>
 	<field name="regDocDate" class="java.lang.String"/>
 	<field name="currentInstallment" class="java.lang.String"/>
+	<field name="municipalityName" class="java.lang.String"/>
+	<field name="ulbLogo" class="java.lang.Object"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="27" splitType="Stretch"/>
-	</title>
-	<pageHeader>
-		<band height="35" splitType="Stretch">
+		<band height="60" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="137" y="1" width="355" height="26" uuid="ff8776b7-ecd2-4ed6-b784-7ec61b21fcba"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{municipalityName}]]></textFieldExpression>
+			</textField>
 			<staticText>
-				<reportElement x="14" y="4" width="524" height="26" uuid="ffe15803-b863-4d80-a988-5616a7d52a81"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12" isBold="false"/>
+				<reportElement x="137" y="27" width="355" height="26" uuid="ffe15803-b863-4d80-a988-5616a7d52a81"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Endorsement of Transfer of Title of Property]]></text>
 			</staticText>
+			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement x="45" y="0" width="55" height="60" uuid="f8cbc2c2-ae88-4ad3-832a-1f0d790ef3c6"/>
+				<imageExpression><![CDATA[$F{ulbLogo}]]></imageExpression>
+			</image>
 		</band>
-	</pageHeader>
-	<columnHeader>
-		<band height="29" splitType="Stretch">
-			<staticText>
-				<reportElement x="14" y="2" width="81" height="26" uuid="a1d86b29-29a7-4ef2-a79e-0cff57a7404c"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12" isBold="false"/>
+	</title>
+	<pageHeader>
+		<band height="350" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="45" y="75" width="478" height="81" uuid="01cc0589-0523-48b3-b077-fe5ff1151a97"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[SUBMITTED:]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="93" y="2" width="444" height="26" uuid="aa600ef0-005b-4de9-8236-2ae2b159c328"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{newOwnerName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["	Sri/Smt.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{newOwnerName}+"</style> S/O <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{newOwnerParentName}+"</style> has submitted an application along with a copy of registered sale deed document bearing No.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{regDocNo}+"</style> dated <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{regDocDate}+"</style> enclosed in the file, where in it was stated that he/she purchased the house from Sri/Smt.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{oldOwnerName}+"</style> S/O <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{oldOwnerParentName}+"</style>. The applicant has submitted the no objection from the vender."]]></textFieldExpression>
 			</textField>
-		</band>
-	</columnHeader>
-	<detail>
-		<band height="238" splitType="Stretch">
-			<staticText>
-				<reportElement x="14" y="135" width="523" height="20" uuid="1fefcb80-d556-4250-aaa6-a0e8471bf883"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="45" y="187" width="478" height="43" uuid="6128368e-c20f-4343-aebe-de561a39d478"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[As per the records of this office the above house stands in the name of]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA["	As per the records of this office the above house stands in the name of Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{newOwnerName}+"</style> S/O <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{newOwnerParentName}+"</style>. The property tax on the said has been paid up to <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{currentInstallment}+"</style>."]]></textFieldExpression>
+			</textField>
 			<staticText>
-				<reportElement x="14" y="215" width="523" height="20" uuid="2a6a7ece-bf37-4150-9cf9-567c8e480434"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
+				<reportElement x="199" y="252" width="195" height="20" uuid="b3b19631-2ad1-4373-9cd9-48039ab9c9b9"/>
 				<text><![CDATA[Hence the Mutation may be effected.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="14" y="20" width="41" height="20" uuid="de87527b-9bb0-469f-b6c5-ffe03724dedc"/>
+				<reportElement x="45" y="26" width="100" height="20" uuid="138db3ba-0ebd-4ee8-85d2-fe75e86a6038"/>
 				<textElement verticalAlignment="Middle">
-					<font size="12"/>
+					<font size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[S/O]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="306" y="20" width="231" height="20" uuid="d4c640e8-fc1e-4a9d-899d-669639eeee44"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[has submitted an application along]]></text>
+				<text><![CDATA[SUBMITTED :]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="55" y="20" width="251" height="20" uuid="45d957f2-b7c5-45d1-9ac2-85e92d0a0a54"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{newOwnerParentName}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="14" y="39" width="367" height="20" uuid="9b898cfc-33ce-4381-954c-2f7709fade84"/>
+				<reportElement x="145" y="26" width="135" height="20" uuid="dab302e0-1483-49dc-95ec-dc68e980de99"/>
 				<textElement verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[with a copy of registered sale deed document bearing No.]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="380" y="39" width="157" height="20" uuid="ab828e21-7665-4d31-8eae-95d707dc7384"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{regDocNo}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="14" y="58" width="41" height="20" uuid="581a4999-ee5c-4362-8d1f-e41e1da97284"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[dated]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="249" y="58" width="288" height="20" uuid="25c4ed80-c7c2-419b-b737-d58c848a17cf"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[enclosed in the file, where in it was stated that]]></text>
-			</staticText>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="55" y="58" width="194" height="20" uuid="ffa01cac-23f3-4f56-9a40-5095b32cab6b"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{regDocDate}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="14" y="77" width="266" height="20" uuid="582091ff-5b7c-40e5-a558-a918cf4c6781"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[he/she purchased the house from Sri/Smt ]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="280" y="77" width="257" height="20" uuid="e53585e4-5df9-4a3d-9362-ebf03ab8691a"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{oldOwnerName}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="14" y="96" width="31" height="20" uuid="ae7cb625-9564-4c08-b7e3-28c9a1554489"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[S/O]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="45" y="96" width="261" height="20" uuid="14363a91-3ef6-4a14-a98e-3400f98d13a6"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{oldOwnerParentName}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="306" y="96" width="231" height="20" uuid="12d41d09-b266-4ee0-abcc-79b9cd73f196"/>
-				<textElement verticalAlignment="Bottom">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="14" y="154" width="53" height="20" uuid="83c1cd0e-4e28-46bd-b2db-1e90ebfe1d99"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[Sri/Smt.]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="67" y="154" width="220" height="20" uuid="d8209b00-1afe-4bed-8054-4077e45b5ad2"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12"/>
+					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{newOwnerName}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="287" y="154" width="37" height="20" uuid="b6b28aaf-d759-4c9f-9de7-85c2eb64dfcb"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[S/O]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="324" y="153" width="213" height="20" uuid="ed5dd122-963b-429e-9432-f5075b982a44"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{newOwnerParentName}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="14" y="173" width="310" height="20" uuid="49e20c25-9bbe-4822-bffb-1c5ac511606b"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[The property tax on the said has been paid up to ]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="324" y="173" width="213" height="20" uuid="60dbb4ac-0685-425d-a966-5d81272db6e0"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{currentInstallment}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="14" y="115" width="523" height="20" uuid="c77a67db-b7fa-49ea-a3aa-ac15351d93f0"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[The applicant has submitted the no objection from the vender.]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="93" y="1" width="444" height="20" uuid="11ef5b57-fc6f-4370-a7f9-41ccee965d34"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{newOwnerName}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="14" y="1" width="79" height="20" uuid="349780ed-c964-402a-be2b-609bf7f407d8"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[Sri/Smt.]]></text>
-			</staticText>
 		</band>
-	</detail>
+	</pageHeader>
 	<columnFooter>
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="22" splitType="Stretch"/>
+		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
 		<band splitType="Stretch"/>

@@ -178,7 +178,7 @@ public class TitleTransferRegisterAction extends BaseFormAction {
         } else{
             boundaryWhrCond=" where pm.state.value='"+PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED+"' ";
         }
-        // Query that retrieves all the properties that has arrears.
+        // Query that retrieves all the properties that has Transfer of owners details.
         query.append("select pm from PropertyMutation pm").append(boundaryWhrCond).append(boundaryCond);
         if(fromDate != null && !fromDate.isEmpty()){
             if(toDate!=null && !toDate.isEmpty())

@@ -42,10 +42,12 @@ public class DemandNoticeInfo {
 	
 	 public String getCityName() {
 	     City cw= getcityWebsite();
-	     return cw!=null?cw.getName():null;
+	     if(cw!=null && cw.getPreferences()!=null)
+	         return cw!=null?cw.getPreferences().getMunicipalityName():null;
+	     return null;    
 	  }
 
-	 public  String getCityLogo() {
+	 public  String getCityLogo() { 
 	     String path=null;
 	     try{
 	         path=reportUtil.logoBasePath();

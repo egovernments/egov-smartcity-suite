@@ -24,16 +24,16 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this 
+ *         Legal Notice.
  * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It 
+ *         is required that all modified versions of this material be marked in 
+ *         reasonable ways as different from the original version.
  * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program 
+ *         with regards to rights under trademark law for use of the trade names 
+ *         or trademarks of eGovernments Foundation.
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
@@ -128,544 +128,532 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
     @Result(name = BillGenerationAction.ACK, location = "billGeneration-ack.jsp")
     })
 public class BillGenerationAction extends PropertyTaxBaseAction {
-	private Logger LOGGER = Logger.getLogger(getClass());
+        private Logger LOGGER = Logger.getLogger(getClass());
 
-	public static final String BILL = "bill";
-	private static final String YES = "Yes";
-	public static final String STATUS_BILLGEN = "billsGenStatus";
-	private static final String STATUS_BILLGEN_BY_PARTNO = "statusByPartNo";
-	public static final String ACK = "ack";
+        public static final String BILL = "bill";
+        private static final String YES = "Yes";
+        public static final String STATUS_BILLGEN = "billsGenStatus";
+        private static final String STATUS_BILLGEN_BY_PARTNO = "statusByPartNo";
+        public static final String ACK = "ack";
 
-	private ReportService reportService;
-	private PersistenceService<BasicProperty, Long> basicPropertyService;
-	private PersistenceService<Property, Long> propertyImplService;
-	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-	private PTBillServiceImpl ptBillServiceImpl;
-	private WorkflowService<PropertyImpl> propertyWorkflowService;
-	private PropertyService propService;
-	private BillService billService;
+        private ReportService reportService;
+        private PersistenceService<BasicProperty, Long> basicPropertyService;
+        private PersistenceService<Property, Long> propertyImplService;
+        private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+        private PTBillServiceImpl ptBillServiceImpl;
+        private WorkflowService<PropertyImpl> propertyWorkflowService;
+        private PropertyService propService;
+        private BillService billService;
 
-	private String indexNumber;
-	private String ackMessage;
-	private Integer reportId = -1;
-	private String billNo;
-	private BasicProperty basicProperty;
-	private PropertyImpl property;
-	private Map<String, Map<String, BigDecimal>> reasonwiseDues;
-	private List<ReportInfo> reportInfos = new ArrayList<ReportInfo>();
-	InputStream billPDF;
-	private String wardNum;
-	@Autowired
-	private WaterChargesIntegrationService waterChargesIntegrationService;
+        private String indexNumber;
+        private String ackMessage;
+        private Integer reportId = -1;
+        private String billNo;
+        private BasicProperty basicProperty;
+        private PropertyImpl property;
+        private Map<String, Map<String, BigDecimal>> reasonwiseDues;
+        private List<ReportInfo> reportInfos = new ArrayList<ReportInfo>();
+        InputStream billPDF;
+        private String wardNum;
 
-	@Autowired
-	private ModuleService moduleDao;
+        @Autowired
+        private ModuleService moduleDao;
 
-	@Autowired
-	private InstallmentDao installmentDAO;
-	
-	@Autowired
-	private BasicPropertyDAO basicPropertyDAO;
-	
-	@Autowired
+        @Autowired
+        private InstallmentDao installmentDAO;
+        
+        @Autowired
+        private BasicPropertyDAO basicPropertyDAO;
+        
+        @Autowired
         @Qualifier("fileStoreService")
         protected FileStoreService fileStoreService;
-	
-	@Autowired
+        
+        @Autowired
         private DemandNoticeInfo demandNoticeInfo;
-	
+        
     @Autowired
     private PropertyDAO propertyDao;
 
-	@Override
-	public StateAware getModel() {
-		return null;
-	}
+        @Override
+        public StateAware getModel() {
+                return null;
+        }
 
-	public BillGenerationAction() {
-	}
+        public BillGenerationAction() {
+        }
 
-	/**
-	 * Called to generate the bill
-	 * 
-	 * @return String
-	 */
-	@Action(value = "/bills/billGeneration-generateBill")
-	public String generateBill() {
-		LOGGER.debug("Entered into generateBill, Index Number :" + indexNumber);
-	  try{	
-		if(basicPropertyDAO!=null){
-		    basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
-		}
-		property = (PropertyImpl) basicProperty.getProperty();
+        /**
+         * Called to generate the bill
+         * 
+         * @return String
+         */
+        @Action(value = "/bills/billGeneration-generateBill")
+        public String generateBill() {
+                LOGGER.debug("Entered into generateBill, Index Number :" + indexNumber);
+          try{  
+                if(basicPropertyDAO!=null){
+                    basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
+                }
+                property = (PropertyImpl) basicProperty.getProperty();
 
-			EgBill egBill = (EgBill) persistenceService.find("FROM EgBill WHERE module = ? "
-					+ "AND egBillType.code = ? AND consumerId = ? AND is_history = 'N'",
-					moduleDao.getModuleByName(PTMODULENAME), BILLTYPE_MANUAL, basicProperty.getUpicNo());
-		ReportOutput reportOutput = null;
+                        EgBill egBill = (EgBill) persistenceService.find("FROM EgBill WHERE module = ? "
+                                        + "AND egBillType.code = ? AND consumerId = ? AND is_history = 'N'",
+                                        moduleDao.getModuleByName(PTMODULENAME), BILLTYPE_MANUAL, basicProperty.getUpicNo());
+                ReportOutput reportOutput = null;
 
-		if (egBill == null) {
-			reportOutput = getBillService().generateBill(basicProperty, 
-					EgovThreadLocals.getUserId().intValue());
-			
-		} else {
-			String query = "SELECT notice FROM EgBill bill, PtNotice notice left join notice.basicProperty bp "
-					+ "WHERE bill.is_History = 'N' "
-					+ "AND bill.egBillType.code = ? "
-					+ "AND bill.billNo = notice.noticeNo "
-					+ "AND notice.noticeType = ? "
-					+ "AND bp = ?";
-			PtNotice ptNotice = (PtNotice) persistenceService.find(query, BILLTYPE_MANUAL,
-					NOTICE_TYPE_BILL, basicProperty);
-			reportOutput = new ReportOutput(); 
-			 
-			//Reading from filestore by passing filestoremapper object
-			if (ptNotice!=null && ptNotice.getFileStore()!=null) {
-			        FileStoreMapper fsm=ptNotice.getFileStore();
-			        File file=fileStoreService.fetch(fsm, PTMODULENAME); 
-			        byte[] bFile =FileUtils.readFileToByteArray(file);
-				reportOutput.setReportOutputData(bFile); 
-				reportOutput.setReportFormat(FileFormat.PDF);
-			} else {
-        	                //To generate Notice having installment and reasonwise balance for a property
-        	                demandNoticeInfo.setBasicProperty(basicProperty);
-        	                demandNoticeInfo.setPropertyWiseConsumptions(propertyTaxUtil.getPropertyWiseConsumptions(basicProperty.getUpicNo()));
-        	                demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty));
-        	                ReportRequest reportRequest = null;	   
-        	                propertyTaxUtil.logoBasePath();
-        	                reportRequest = new ReportRequest(REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION, demandNoticeInfo,new HashMap<String, Object>());
-        	                reportOutput = getReportService().createReport(reportRequest);   
-			}
-	                
-		}
-		getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-		reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
-		LOGGER.debug("generateBill: ReportId: " + reportId);
-		LOGGER.debug("Exit from generateBill");
-			if (property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
-				property.setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
-				propertyImplService.persist(property);
-			}
-    	  } catch (final Exception e) {
-    	      throw new EGOVRuntimeException("Bill Generation Exception : " + e);
-    	  }
-	  return BILL;
-	}
+                if (egBill == null) {
+                        reportOutput = getBillService().generateBill(basicProperty, 
+                                        EgovThreadLocals.getUserId().intValue());
+                        
+                } else {
+                        String query = "SELECT notice FROM EgBill bill, PtNotice notice left join notice.basicProperty bp "
+                                        + "WHERE bill.is_History = 'N' "
+                                        + "AND bill.egBillType.code = ? "
+                                        + "AND bill.billNo = notice.noticeNo "
+                                        + "AND notice.noticeType = ? "
+                                        + "AND bp = ?";
+                        PtNotice ptNotice = (PtNotice) persistenceService.find(query, BILLTYPE_MANUAL,
+                                        NOTICE_TYPE_BILL, basicProperty);
+                        reportOutput = new ReportOutput(); 
+                         
+                        //Reading from filestore by passing filestoremapper object
+                        if (ptNotice!=null && ptNotice.getFileStore()!=null) {
+                                FileStoreMapper fsm=ptNotice.getFileStore();
+                                File file=fileStoreService.fetch(fsm, PTMODULENAME); 
+                                byte[] bFile =FileUtils.readFileToByteArray(file);
+                                reportOutput.setReportOutputData(bFile); 
+                                reportOutput.setReportFormat(FileFormat.PDF);
+                        } 
+                }
+                getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
+                reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+                LOGGER.debug("generateBill: ReportId: " + reportId);
+                LOGGER.debug("Exit from generateBill");
+                        if (property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
+                                property.setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
+                                propertyImplService.persist(property);
+                        }
+          } catch (final Exception e) {
+              throw new EGOVRuntimeException("Bill Generation Exception : " + e);
+          }
+          return BILL;
+        }
 
-	@Action(value = "/bills/billGeneration-billsGenStatus")
-	public String billsGenStatus() {
-		ReportInfo reportInfo;
-		Integer totalProps = 0;
-		Integer totalBillsGen = 0;
-		Installment currInst = installmentDAO.getInsatllmentByModuleForGivenDate(
-				ptBillServiceImpl.getModule(), new Date());
-		StringBuilder billQueryString = new StringBuilder();
-		StringBuilder propQueryString = new StringBuilder();
-		billQueryString
-				.append("select bndry.boundaryNum, count(bndry.boundaryNum) ")
-				.append("from EgBill bill, BoundaryImpl bndry, PtNotice notice left join notice.basicProperty bp ")
-				.append("where bp.propertyID.ward.id=bndry.id ").append("and bp.active = true ")
-				.append("and bill.is_History = 'N' ").append("and :FromDate <= bill.issueDate ")
-				.append("and :ToDate >= bill.issueDate ")
-				.append("and bill.egBillType.code = :BillType ")
-				.append("and bill.billNo = notice.noticeNo ")
-				.append("and notice.noticeType = 'Bill' ")
-				.append("and notice.noticeFile is not null ").append("group by bndry.boundaryNum ")
-				.append("order by bndry.boundaryNum");
+        @Action(value = "/bills/billGeneration-billsGenStatus")
+        public String billsGenStatus() {
+                ReportInfo reportInfo;
+                Integer totalProps = 0;
+                Integer totalBillsGen = 0;
+                Installment currInst = installmentDAO.getInsatllmentByModuleForGivenDate(
+                                ptBillServiceImpl.getModule(), new Date());
+                StringBuilder billQueryString = new StringBuilder();
+                StringBuilder propQueryString = new StringBuilder();
+                billQueryString
+                                .append("select bndry.boundaryNum, count(bndry.boundaryNum) ")
+                                .append("from EgBill bill, BoundaryImpl bndry, PtNotice notice left join notice.basicProperty bp ")
+                                .append("where bp.propertyID.ward.id=bndry.id ").append("and bp.active = true ")
+                                .append("and bill.is_History = 'N' ").append("and :FromDate <= bill.issueDate ")
+                                .append("and :ToDate >= bill.issueDate ")
+                                .append("and bill.egBillType.code = :BillType ")
+                                .append("and bill.billNo = notice.noticeNo ")
+                                .append("and notice.noticeType = 'Bill' ")
+                                .append("and notice.noticeFile is not null ").append("group by bndry.boundaryNum ")
+                                .append("order by bndry.boundaryNum");
 
-		propQueryString.append("select bndry.boundaryNum, count(bndry.boundaryNum) ")
-				.append("from BoundaryImpl bndry, PropertyID pid left join pid.basicProperty bp ")
-				.append("where bp.active = true and pid.ward.id = bndry.id ")
-				.append("group by bndry.boundaryNum ").append("order by bndry.boundaryNum");
-		Query billQuery = getPersistenceService().getSession().createQuery(
-				billQueryString.toString());
-		billQuery.setDate("FromDate", currInst.getFromDate());
-		billQuery.setDate("ToDate", currInst.getToDate());
-		billQuery.setString("BillType", BILLTYPE_MANUAL);
-		List<Object> billList = billQuery.list();
-		LOGGER.info("billList : " + billList);
-		Query propQuery = getPersistenceService().getSession().createQuery(
-				propQueryString.toString());
-		List<Object> propList = propQuery.list();
-		LOGGER.info("propList : " + propList);
+                propQueryString.append("select bndry.boundaryNum, count(bndry.boundaryNum) ")
+                                .append("from BoundaryImpl bndry, PropertyID pid left join pid.basicProperty bp ")
+                                .append("where bp.active = true and pid.ward.id = bndry.id ")
+                                .append("group by bndry.boundaryNum ").append("order by bndry.boundaryNum");
+                Query billQuery = getPersistenceService().getSession().createQuery(
+                                billQueryString.toString());
+                billQuery.setDate("FromDate", currInst.getFromDate());
+                billQuery.setDate("ToDate", currInst.getToDate());
+                billQuery.setString("BillType", BILLTYPE_MANUAL);
+                List<Object> billList = billQuery.list();
+                LOGGER.info("billList : " + billList);
+                Query propQuery = getPersistenceService().getSession().createQuery(
+                                propQueryString.toString());
+                List<Object> propList = propQuery.list();
+                LOGGER.info("propList : " + propList);
 
-		for (Object props : propList) {
-			reportInfo = new ReportInfo();
-			Object[] propObj = (Object[]) props;
-			reportInfo.setWardNo(String.valueOf(propObj[0]));
-			reportInfo.setTotalNoProps(Integer.valueOf(((Long) propObj[1]).toString()));
+                for (Object props : propList) {
+                        reportInfo = new ReportInfo();
+                        Object[] propObj = (Object[]) props;
+                        reportInfo.setWardNo(String.valueOf(propObj[0]));
+                        reportInfo.setTotalNoProps(Integer.valueOf(((Long) propObj[1]).toString()));
 
-			reportInfo.setTotalGenBills(0);
-			String wardNo;
-			for (Object bills : billList) {
-				Object[] billObj = (Object[]) bills;
-				wardNo = String.valueOf(billObj[0]);
-				if (reportInfo.getWardNo().equals(wardNo)) {
-					reportInfo.setTotalGenBills(Integer.valueOf(((Long) billObj[1]).toString()));
-					break;
-				}
-			}
-			totalProps = totalProps + reportInfo.getTotalNoProps();
-			totalBillsGen = totalBillsGen + reportInfo.getTotalGenBills();
-			getReportInfos().add(reportInfo);
-		}
-		ReportInfo reportInfoCount = new ReportInfo();
-		reportInfoCount.setWardNo("Total :");
-		reportInfoCount.setTotalNoProps(totalProps);
-		reportInfoCount.setTotalGenBills(totalBillsGen);
-		getReportInfos().add(reportInfoCount);
+                        reportInfo.setTotalGenBills(0);
+                        String wardNo;
+                        for (Object bills : billList) {
+                                Object[] billObj = (Object[]) bills;
+                                wardNo = String.valueOf(billObj[0]);
+                                if (reportInfo.getWardNo().equals(wardNo)) {
+                                        reportInfo.setTotalGenBills(Integer.valueOf(((Long) billObj[1]).toString()));
+                                        break;
+                                }
+                        }
+                        totalProps = totalProps + reportInfo.getTotalNoProps();
+                        totalBillsGen = totalBillsGen + reportInfo.getTotalGenBills();
+                        getReportInfos().add(reportInfo);
+                }
+                ReportInfo reportInfoCount = new ReportInfo();
+                reportInfoCount.setWardNo("Total :");
+                reportInfoCount.setTotalNoProps(totalProps);
+                reportInfoCount.setTotalGenBills(totalBillsGen);
+                getReportInfos().add(reportInfoCount);
 
-		return STATUS_BILLGEN;
-	}
+                return STATUS_BILLGEN;
+        }
 
-	@Action(value = "/bills/billGeneration-billGenStatusByPartNo")
-	public String billGenStatusByPartNo() {
-		LOGGER.debug("Entered into billGenStatusByPartNo, wardNum=" + wardNum);
+        @Action(value = "/bills/billGeneration-billGenStatusByPartNo")
+        public String billGenStatusByPartNo() {
+                LOGGER.debug("Entered into billGenStatusByPartNo, wardNum=" + wardNum);
 
-		ReportInfo reportInfo;
-		Integer totalProps = 0;
-		Integer totalBillsGen = 0;
-		Installment currInst = propertyTaxUtil.getCurrentInstallment();
+                ReportInfo reportInfo;
+                Integer totalProps = 0;
+                Integer totalBillsGen = 0;
+                Installment currInst = propertyTaxUtil.getCurrentInstallment();
 
-		StringBuilder billQueryString = new StringBuilder();
-		StringBuilder propQueryString = new StringBuilder();
+                StringBuilder billQueryString = new StringBuilder();
+                StringBuilder propQueryString = new StringBuilder();
 
-		billQueryString
-				.append("select bp.partNo, count(bp.partNo) ")
-				.append("from EgBill bill, BoundaryImpl bndry, PtNotice notice left join notice.basicProperty bp ")
-				.append("where bp.propertyID.ward.id=bndry.id ")
-				.append("and bndry.boundaryNum = :bndryNum ").append("and bill.is_History = 'N' ")
-				.append("and :FromDate <= bill.issueDate ")
-				.append("and :ToDate >= bill.issueDate ")
-				.append("and bill.egBillType.code = :BillType ")
-				.append("and bill.billNo = notice.noticeNo ")
-				.append("and notice.noticeType = 'Bill' ")
-				.append("and notice.noticeFile is not null ").append("group by bp.partNo ")
-				.append("order by bp.partNo");
+                billQueryString
+                                .append("select bp.partNo, count(bp.partNo) ")
+                                .append("from EgBill bill, BoundaryImpl bndry, PtNotice notice left join notice.basicProperty bp ")
+                                .append("where bp.propertyID.ward.id=bndry.id ")
+                                .append("and bndry.boundaryNum = :bndryNum ").append("and bill.is_History = 'N' ")
+                                .append("and :FromDate <= bill.issueDate ")
+                                .append("and :ToDate >= bill.issueDate ")
+                                .append("and bill.egBillType.code = :BillType ")
+                                .append("and bill.billNo = notice.noticeNo ")
+                                .append("and notice.noticeType = 'Bill' ")
+                                .append("and notice.noticeFile is not null ").append("group by bp.partNo ")
+                                .append("order by bp.partNo");
 
-		propQueryString.append("select bp.partNo, count(bp.partNo) ")
-				.append("from BoundaryImpl bndry, PropertyID pid left join pid.basicProperty bp ")
-				.append("where bp.active = true and pid.ward.id = bndry.id ")
-				.append("and bndry.boundaryNum = :bndryNum ").append("group by bp.partNo ")
-				.append("order by bp.partNo");
+                propQueryString.append("select bp.partNo, count(bp.partNo) ")
+                                .append("from BoundaryImpl bndry, PropertyID pid left join pid.basicProperty bp ")
+                                .append("where bp.active = true and pid.ward.id = bndry.id ")
+                                .append("and bndry.boundaryNum = :bndryNum ").append("group by bp.partNo ")
+                                .append("order by bp.partNo");
 
-		Query billQuery = getPersistenceService().getSession().createQuery(
-				billQueryString.toString());
-		billQuery.setBigInteger("bndryNum", new BigInteger(wardNum));
-		billQuery.setDate("FromDate", currInst.getFromDate());
-		billQuery.setDate("ToDate", currInst.getToDate());
-		billQuery.setString("BillType", BILLTYPE_MANUAL);
+                Query billQuery = getPersistenceService().getSession().createQuery(
+                                billQueryString.toString());
+                billQuery.setBigInteger("bndryNum", new BigInteger(wardNum));
+                billQuery.setDate("FromDate", currInst.getFromDate());
+                billQuery.setDate("ToDate", currInst.getToDate());
+                billQuery.setString("BillType", BILLTYPE_MANUAL);
 
-		List<Object> billList = billQuery.list();
+                List<Object> billList = billQuery.list();
 
-		Query propQuery = getPersistenceService().getSession().createQuery(
-				propQueryString.toString());
-		propQuery.setBigInteger("bndryNum", new BigInteger(wardNum));
-		List<Object> propList = propQuery.list();
+                Query propQuery = getPersistenceService().getSession().createQuery(
+                                propQueryString.toString());
+                propQuery.setBigInteger("bndryNum", new BigInteger(wardNum));
+                List<Object> propList = propQuery.list();
 
-		for (Object props : propList) {
-			reportInfo = new ReportInfo();
-			Object[] propObj = (Object[]) props;
-			reportInfo.setPartNo(String.valueOf(propObj[0]));
-			reportInfo.setTotalNoProps(Integer.valueOf(((Long) propObj[1]).toString()));
+                for (Object props : propList) {
+                        reportInfo = new ReportInfo();
+                        Object[] propObj = (Object[]) props;
+                        reportInfo.setPartNo(String.valueOf(propObj[0]));
+                        reportInfo.setTotalNoProps(Integer.valueOf(((Long) propObj[1]).toString()));
 
-			reportInfo.setTotalGenBills(0);
-			String partNo;
+                        reportInfo.setTotalGenBills(0);
+                        String partNo;
 
-			for (Object bills : billList) {
+                        for (Object bills : billList) {
 
-				Object[] billObj = (Object[]) bills;
-				partNo = String.valueOf(billObj[0]);
+                                Object[] billObj = (Object[]) bills;
+                                partNo = String.valueOf(billObj[0]);
 
-				if (reportInfo.getPartNo().equals(partNo)) {
-					reportInfo.setTotalGenBills(Integer.valueOf(((Long) billObj[1]).toString()));
-					break;
-				}
-			}
+                                if (reportInfo.getPartNo().equals(partNo)) {
+                                        reportInfo.setTotalGenBills(Integer.valueOf(((Long) billObj[1]).toString()));
+                                        break;
+                                }
+                        }
 
-			totalProps = totalProps + reportInfo.getTotalNoProps();
-			totalBillsGen = totalBillsGen + reportInfo.getTotalGenBills();
-			getReportInfos().add(reportInfo);
-		}
+                        totalProps = totalProps + reportInfo.getTotalNoProps();
+                        totalBillsGen = totalBillsGen + reportInfo.getTotalGenBills();
+                        getReportInfos().add(reportInfo);
+                }
 
-		ReportInfo reportInfoCount = new ReportInfo();
-		reportInfoCount.setPartNo("Total :");
-		reportInfoCount.setTotalNoProps(totalProps);
-		reportInfoCount.setTotalGenBills(totalBillsGen);
-		getReportInfos().add(reportInfoCount);
+                ReportInfo reportInfoCount = new ReportInfo();
+                reportInfoCount.setPartNo("Total :");
+                reportInfoCount.setTotalNoProps(totalProps);
+                reportInfoCount.setTotalGenBills(totalBillsGen);
+                getReportInfos().add(reportInfoCount);
 
-		LOGGER.debug("Exiting from billGenStatusByPartNo");
-		return STATUS_BILLGEN_BY_PARTNO;
-	}
+                LOGGER.debug("Exiting from billGenStatusByPartNo");
+                return STATUS_BILLGEN_BY_PARTNO;
+        }
 
-	@Action(value = "/bills/billGeneration-cancelBill")
-	public String cancelBill() {
-		EgBill egBill = (EgBill) persistenceService.find("FROM EgBill " + "WHERE module = ? "
-				+ "AND egBillType.code = ? "
-				+ "AND SUBSTRING(consumerId, 1, (LOCATE('(', consumerId)-1)) = ? "
-				+ "AND is_history = 'N'", moduleDao.getModuleByName(PTMODULENAME), BILLTYPE_MANUAL,
-				indexNumber);
-		if (egBill == null) {
-			setAckMessage("There is no active Bill exist for index no : " + indexNumber);
-			return ACK;
-		} else {
-			egBill.setIs_History("Y");
-			egBill.setIs_Cancelled("Y");
-			egBill.setModifiedDate(new Date());
-			BasicProperty basicProperty = basicPropertyDAO
-					.getBasicPropertyByPropertyID(indexNumber);
-			basicProperty.setIsBillCreated(PropertyTaxConstants.STATUS_BILL_NOTCREATED);
-			basicProperty.setBillCrtError(STRING_EMPTY);
-			basicPropertyService.update(basicProperty);
-			setAckMessage("Bill successfully cancelled for index no : " + indexNumber);
-		}
-		return ACK;
-	}
+        @Action(value = "/bills/billGeneration-cancelBill")
+        public String cancelBill() {
+                EgBill egBill = (EgBill) persistenceService.find("FROM EgBill " + "WHERE module = ? "
+                                + "AND egBillType.code = ? "
+                                + "AND SUBSTRING(consumerId, 1, (LOCATE('(', consumerId)-1)) = ? "
+                                + "AND is_history = 'N'", moduleDao.getModuleByName(PTMODULENAME), BILLTYPE_MANUAL,
+                                indexNumber);
+                if (egBill == null) {
+                        setAckMessage("There is no active Bill exist for index no : " + indexNumber);
+                        return ACK;
+                } else {
+                        egBill.setIs_History("Y");
+                        egBill.setIs_Cancelled("Y");
+                        egBill.setModifiedDate(new Date());
+                        BasicProperty basicProperty = basicPropertyDAO
+                                        .getBasicPropertyByPropertyID(indexNumber);
+                        basicProperty.setIsBillCreated(PropertyTaxConstants.STATUS_BILL_NOTCREATED);
+                        basicProperty.setBillCrtError(STRING_EMPTY);
+                        basicPropertyService.update(basicProperty);
+                        setAckMessage("Bill successfully cancelled for index no : " + indexNumber);
+                }
+                return ACK;
+        }
 
-	private void startWorkFlow() {
-		LOGGER.debug("Entered into startWorkFlow, UserId: " + EgovThreadLocals.getUserId());
-		LOGGER.debug("startWorkFlow: Workflow is starting for Property: " + property);
-		// Position position =
-		// eisCommonsManager.(Integer.valueOf(EgovThreadLocals.getUserId()));
-		// FIX ME
-		Position position = null;
-		// propertyWorkflowService.start(property, position,
-		// "Property Workflow Started");
-		property.transition(true).start().withSenderName(property.getCreatedBy().getUsername())
-				.withComments("Property Workflow Started").withOwner(position);
+        private void startWorkFlow() {
+                LOGGER.debug("Entered into startWorkFlow, UserId: " + EgovThreadLocals.getUserId());
+                LOGGER.debug("startWorkFlow: Workflow is starting for Property: " + property);
+                // Position position =
+                // eisCommonsManager.(Integer.valueOf(EgovThreadLocals.getUserId()));
+                // FIX ME
+                Position position = null;
+                // propertyWorkflowService.start(property, position,
+                // "Property Workflow Started");
+                property.transition(true).start().withSenderName(property.getCreatedBy().getUsername())
+                                .withComments("Property Workflow Started").withOwner(position);
 
-		LOGGER.debug("Exiting from startWorkFlow, Workflow started");
-	}
+                LOGGER.debug("Exiting from startWorkFlow, Workflow started");
+        }
 
-	/**
-	 * This method ends the workflow. The Property is transitioned to END state.
-	 */
-	private void endWorkFlow() {
-		LOGGER.debug("Enter method endWorkFlow, UserId: " + EgovThreadLocals.getUserId());
-		LOGGER.debug("endWorkFlow: Workflow will end for Property: " + property);
-		// FIX ME
-		// Position position =
-		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
-		Position position = null;
-		/*
-		 * propertyWorkflowService .end(property, position,
-		 * "Property Workflow End");
-		 */
-		property.transition(true).end().withSenderName(property.getCreatedBy().getUsername())
-				.withComments("Property Workflow End").withOwner(position);
-		LOGGER.debug("Exit method endWorkFlow, Workflow ended");
-	}
+        /**
+         * This method ends the workflow. The Property is transitioned to END state.
+         */
+        private void endWorkFlow() {
+                LOGGER.debug("Enter method endWorkFlow, UserId: " + EgovThreadLocals.getUserId());
+                LOGGER.debug("endWorkFlow: Workflow will end for Property: " + property);
+                // FIX ME
+                // Position position =
+                // eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
+                Position position = null;
+                /*
+                 * propertyWorkflowService .end(property, position,
+                 * "Property Workflow End");
+                 */
+                property.transition(true).end().withSenderName(property.getCreatedBy().getUsername())
+                                .withComments("Property Workflow End").withOwner(position);
+                LOGGER.debug("Exit method endWorkFlow, Workflow ended");
+        }
 
-	private void transitionWorkFlow() {
-		if (workflowBean != null) {
-			LOGGER.debug("Entered method : transitionWorkFlow. Action : "
-					+ workflowBean.getActionName() + "Property: " + property);
-		} else {
-			LOGGER.debug("transitionWorkFlow: workflowBean is NULL");
-		}
+        private void transitionWorkFlow() {
+                if (workflowBean != null) {
+                        LOGGER.debug("Entered method : transitionWorkFlow. Action : "
+                                        + workflowBean.getActionName() + "Property: " + property);
+                } else {
+                        LOGGER.debug("transitionWorkFlow: workflowBean is NULL");
+                }
 
-		if (property.getState() == null) {
-			startWorkFlow();
-		}
+                if (property.getState() == null) {
+                        startWorkFlow();
+                }
 
-		Position nextPosition = null;
-		String wflowAction = null;
-		StringBuffer nextStateValue = new StringBuffer();
-		if (workflowBean.getApproverUserId() != null)
-			// FIX ME
-			// nextPosition =
-			// eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
-			nextPosition = null;
-		String beanActionName[] = workflowBean.getActionName().split(":");
-		String actionName = beanActionName[0];
-		if (beanActionName.length > 1) {
-			wflowAction = beanActionName[1];// save or forward or approve
-		}
-		if (WFLOW_ACTION_NAME_CREATE.equals(actionName)) {
-			nextStateValue = nextStateValue.append(WFLOW_ACTION_NAME_CREATE).append(":");
-		} else if (WFLOW_ACTION_NAME_TRANSFER.equals(actionName)) {
-			nextStateValue = nextStateValue.append(WFLOW_ACTION_NAME_TRANSFER).append(":");
-		} else if (WFLOW_ACTION_NAME_DEACTIVATE.equals(actionName)) {
-			nextStateValue = nextStateValue.append(WFLOW_ACTION_NAME_DEACTIVATE).append(":");
-		} else if (WFLOW_ACTION_NAME_MODIFY.equals(actionName)) {
-			nextStateValue = nextStateValue.append(WFLOW_ACTION_NAME_MODIFY).append(":");
-		} else if (WFLOW_ACTION_NAME_BIFURCATE.equals(actionName)) {
-			nextStateValue = nextStateValue.append(WFLOW_ACTION_NAME_BIFURCATE).append(":");
-		} else if (WFLOW_ACTION_NAME_AMALGAMATE.equals(actionName)) {
-			nextStateValue = nextStateValue.append(WFLOW_ACTION_NAME_AMALGAMATE).append(":");
-		} else if (WFLOW_ACTION_NAME_CHANGEADDRESS.equals(actionName)) {
-			nextStateValue = nextStateValue.append(WFLOW_ACTION_NAME_CHANGEADDRESS).append(":");
-		}
-		if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(wflowAction)) {
-			if (WFLOW_ACTION_NAME_DEACTIVATE.equals(actionName)
-					|| WFLOW_ACTION_NAME_CHANGEADDRESS.equals(actionName)) {
-				endWorkFlow();
-			} else {
-				nextStateValue = nextStateValue.append(WF_STATE_NOTICE_GENERATION_PENDING);
-				// FIX ME
-				// nextPosition =
-				// eisCommonsManager.getPositionByUserId(property.getCreatedBy().getId());
-				nextPosition = null;
-				// property.changeState(nextStateValue.toString(), nextPosition,
-				// workflowBean.getComments());
-				property.transition(true).start().withStateValue(nextStateValue.toString())
-						.withOwner(nextPosition).withComments(workflowBean.getComments());
-			}
-		} else if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(wflowAction)) {
-			// FIX ME
-			// nextPosition =
-			// eisCommonsManager.getPositionByUserId(propertyTaxUtil.getLoggedInUser(getSession()).getId());
-			nextPosition = null;
-			if (WFLOW_ACTION_NAME_CREATE.equals(actionName)
-					|| WFLOW_ACTION_NAME_MODIFY.equals(actionName)) {
-				if (property.getBasicProperty().getAllChangesCompleted()) {
-					nextStateValue = nextStateValue.append(WF_STATE_NOTICE_GENERATION_PENDING);
-				} else {
-					nextStateValue = nextStateValue
-							.append(nextPosition.getDeptDesig().getDepartment().getName())
-							.append("_").append(WF_STATE_APPROVAL_PENDING);
-				}
-			} else {
-				nextStateValue = nextStateValue.append(WF_STATE_NOTICE_GENERATION_PENDING);
-			}
-			propertyImplService.persist(property);
-			// property.changeState(nextStateValue.toString(), nextPosition,
-			// workflowBean.getComments());
-			property.transition(true).start().withStateValue(nextStateValue.toString())
-					.withOwner(nextPosition).withComments(workflowBean.getComments());
-		} else if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(wflowAction)) {
-			Designation nextDesn = propertyTaxUtil.getDesignationForUser(workflowBean
-					.getApproverUserId().longValue());
-			nextStateValue = nextStateValue.append(nextDesn.getName()).append("_")
-					.append(WF_STATE_APPROVAL_PENDING);
-			// property.changeState(nextStateValue.toString(), nextPosition,
-			// workflowBean.getComments());
-			property.transition(true).start().withStateValue(nextStateValue.toString())
-					.withOwner(nextPosition).withComments(workflowBean.getComments());
-		} else if (WF_STATE_NOTICE_GENERATED.equalsIgnoreCase(wflowAction)) {
-			endWorkFlow();
-		}
+                Position nextPosition = null;
+                String wflowAction = null;
+                StringBuffer nextStateValue = new StringBuffer();
+                if (workflowBean.getApproverUserId() != null)
+                        // FIX ME
+                        // nextPosition =
+                        // eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
+                        nextPosition = null;
+                String beanActionName[] = workflowBean.getActionName().split(":");
+                String actionName = beanActionName[0];
+                if (beanActionName.length > 1) {
+                        wflowAction = beanActionName[1];// save or forward or approve
+                }
+                if (WFLOW_ACTION_NAME_CREATE.equals(actionName)) {
+                        nextStateValue = nextStateValue.append(WFLOW_ACTION_NAME_CREATE).append(":");
+                } else if (WFLOW_ACTION_NAME_TRANSFER.equals(actionName)) {
+                        nextStateValue = nextStateValue.append(WFLOW_ACTION_NAME_TRANSFER).append(":");
+                } else if (WFLOW_ACTION_NAME_DEACTIVATE.equals(actionName)) {
+                        nextStateValue = nextStateValue.append(WFLOW_ACTION_NAME_DEACTIVATE).append(":");
+                } else if (WFLOW_ACTION_NAME_MODIFY.equals(actionName)) {
+                        nextStateValue = nextStateValue.append(WFLOW_ACTION_NAME_MODIFY).append(":");
+                } else if (WFLOW_ACTION_NAME_BIFURCATE.equals(actionName)) {
+                        nextStateValue = nextStateValue.append(WFLOW_ACTION_NAME_BIFURCATE).append(":");
+                } else if (WFLOW_ACTION_NAME_AMALGAMATE.equals(actionName)) {
+                        nextStateValue = nextStateValue.append(WFLOW_ACTION_NAME_AMALGAMATE).append(":");
+                } else if (WFLOW_ACTION_NAME_CHANGEADDRESS.equals(actionName)) {
+                        nextStateValue = nextStateValue.append(WFLOW_ACTION_NAME_CHANGEADDRESS).append(":");
+                }
+                if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(wflowAction)) {
+                        if (WFLOW_ACTION_NAME_DEACTIVATE.equals(actionName)
+                                        || WFLOW_ACTION_NAME_CHANGEADDRESS.equals(actionName)) {
+                                endWorkFlow();
+                        } else {
+                                nextStateValue = nextStateValue.append(WF_STATE_NOTICE_GENERATION_PENDING);
+                                // FIX ME
+                                // nextPosition =
+                                // eisCommonsManager.getPositionByUserId(property.getCreatedBy().getId());
+                                nextPosition = null;
+                                // property.changeState(nextStateValue.toString(), nextPosition,
+                                // workflowBean.getComments());
+                                property.transition(true).start().withStateValue(nextStateValue.toString())
+                                                .withOwner(nextPosition).withComments(workflowBean.getComments());
+                        }
+                } else if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(wflowAction)) {
+                        // FIX ME
+                        // nextPosition =
+                        // eisCommonsManager.getPositionByUserId(propertyTaxUtil.getLoggedInUser(getSession()).getId());
+                        nextPosition = null;
+                        if (WFLOW_ACTION_NAME_CREATE.equals(actionName)
+                                        || WFLOW_ACTION_NAME_MODIFY.equals(actionName)) {
+                                if (property.getBasicProperty().getAllChangesCompleted()) {
+                                        nextStateValue = nextStateValue.append(WF_STATE_NOTICE_GENERATION_PENDING);
+                                } else {
+                                        nextStateValue = nextStateValue
+                                                        .append(nextPosition.getDeptDesig().getDepartment().getName())
+                                                        .append("_").append(WF_STATE_APPROVAL_PENDING);
+                                }
+                        } else {
+                                nextStateValue = nextStateValue.append(WF_STATE_NOTICE_GENERATION_PENDING);
+                        }
+                        propertyImplService.persist(property);
+                        // property.changeState(nextStateValue.toString(), nextPosition,
+                        // workflowBean.getComments());
+                        property.transition(true).start().withStateValue(nextStateValue.toString())
+                                        .withOwner(nextPosition).withComments(workflowBean.getComments());
+                } else if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(wflowAction)) {
+                        Designation nextDesn = propertyTaxUtil.getDesignationForUser(workflowBean
+                                        .getApproverUserId().longValue());
+                        nextStateValue = nextStateValue.append(nextDesn.getName()).append("_")
+                                        .append(WF_STATE_APPROVAL_PENDING);
+                        // property.changeState(nextStateValue.toString(), nextPosition,
+                        // workflowBean.getComments());
+                        property.transition(true).start().withStateValue(nextStateValue.toString())
+                                        .withOwner(nextPosition).withComments(workflowBean.getComments());
+                } else if (WF_STATE_NOTICE_GENERATED.equalsIgnoreCase(wflowAction)) {
+                        endWorkFlow();
+                }
 
-		LOGGER.debug("transitionWorkFlow: Property transitioned to "
-				+ property.getState().getValue());
-		propertyImplService.persist(property);
+                LOGGER.debug("transitionWorkFlow: Property transitioned to "
+                                + property.getState().getValue());
+                propertyImplService.persist(property);
 
-		LOGGER.debug("Exiting method : transitionWorkFlow");
-	}
+                LOGGER.debug("Exiting method : transitionWorkFlow");
+        }
 
-	public Integer getReportId() {
-		return reportId;
-	}
+        public Integer getReportId() {
+                return reportId;
+        }
 
-	public void setReportId(Integer reportId) {
-		this.reportId = reportId;
-	}
+        public void setReportId(Integer reportId) {
+                this.reportId = reportId;
+        }
 
-	@Override
-	public String getIndexNumber() {
-		return indexNumber;
-	}
+        @Override
+        public String getIndexNumber() {
+                return indexNumber;
+        }
 
-	@Override
-	public void setIndexNumber(String indexNumber) {
-		this.indexNumber = indexNumber;
-	}
+        @Override
+        public void setIndexNumber(String indexNumber) {
+                this.indexNumber = indexNumber;
+        }
 
-	public String getAckMessage() {
-		return ackMessage;
-	}
+        public String getAckMessage() {
+                return ackMessage;
+        }
 
-	public void setAckMessage(String ackMessage) {
-		this.ackMessage = ackMessage;
-	}
+        public void setAckMessage(String ackMessage) {
+                this.ackMessage = ackMessage;
+        }
 
-	public ReportService getReportService() {
-		return reportService;
-	}
+        public ReportService getReportService() {
+                return reportService;
+        }
 
-	public void setReportService(ReportService reportService) {
-		this.reportService = reportService;
-	}
+        public void setReportService(ReportService reportService) {
+                this.reportService = reportService;
+        }
 
-	public String getBillNo() {
-		return billNo;
-	}
+        public String getBillNo() {
+                return billNo;
+        }
 
-	public void setBillNo(String billNo) {
-		this.billNo = billNo;
-	}
+        public void setBillNo(String billNo) {
+                this.billNo = billNo;
+        }
 
-	public PropertyTaxNumberGenerator getPropertyTaxNumberGenerator() {
-		return propertyTaxNumberGenerator;
-	}
+        public PropertyTaxNumberGenerator getPropertyTaxNumberGenerator() {
+                return propertyTaxNumberGenerator;
+        }
 
-	public void setPropertyTaxNumberGenerator(PropertyTaxNumberGenerator propertyTaxNumberGenerator) {
-		this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
-	}
+        public void setPropertyTaxNumberGenerator(PropertyTaxNumberGenerator propertyTaxNumberGenerator) {
+                this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
+        }
 
-	public Map<String, Map<String, BigDecimal>> getReasonwiseDues() {
-		return reasonwiseDues;
-	}
+        public Map<String, Map<String, BigDecimal>> getReasonwiseDues() {
+                return reasonwiseDues;
+        }
 
-	public void setReasonwiseDues(Map<String, Map<String, BigDecimal>> reasonwiseDues) {
-		this.reasonwiseDues = reasonwiseDues;
-	}
+        public void setReasonwiseDues(Map<String, Map<String, BigDecimal>> reasonwiseDues) {
+                this.reasonwiseDues = reasonwiseDues;
+        }
 
-	public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
-		return basicPropertyService;
-	}
+        public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
+                return basicPropertyService;
+        }
 
-	public void setPropertyImplService(PersistenceService<Property, Long> propertyImplService) {
-		this.propertyImplService = propertyImplService;
-	}
+        public void setPropertyImplService(PersistenceService<Property, Long> propertyImplService) {
+                this.propertyImplService = propertyImplService;
+        }
 
-	public void setbasicPropertyService(PersistenceService<BasicProperty, Long> basicPropertyService) {
-		this.basicPropertyService = basicPropertyService;
-	}
+        public void setbasicPropertyService(PersistenceService<BasicProperty, Long> basicPropertyService) {
+                this.basicPropertyService = basicPropertyService;
+        }
 
-	public BasicProperty getBasicProperty() {
-		return basicProperty;
-	}
+        public BasicProperty getBasicProperty() {
+                return basicProperty;
+        }
 
-	public void setBasicProperty(BasicProperty basicProperty) {
-		this.basicProperty = basicProperty;
-	}
+        public void setBasicProperty(BasicProperty basicProperty) {
+                this.basicProperty = basicProperty;
+        }
 
-	public void setPropertyWorkflowService(WorkflowService<PropertyImpl> propertyWorkflowService) {
-		this.propertyWorkflowService = propertyWorkflowService;
-	}
+        public void setPropertyWorkflowService(WorkflowService<PropertyImpl> propertyWorkflowService) {
+                this.propertyWorkflowService = propertyWorkflowService;
+        }
 
-	public PropertyService getPropService() {
-		return propService;
-	}
+        public PropertyService getPropService() {
+                return propService;
+        }
 
-	public void setPropService(PropertyService propService) {
-		this.propService = propService;
-	}
+        public void setPropService(PropertyService propService) {
+                this.propService = propService;
+        }
 
-	public BillService getBillService() {
-		return billService;
-	}
+        public BillService getBillService() {
+                return billService;
+        }
 
-	public void setBillService(BillService billService) {
-		this.billService = billService;
-	}
+        public void setBillService(BillService billService) {
+                this.billService = billService;
+        }
 
-	public List<ReportInfo> getReportInfos() {
-		return reportInfos;
-	}
+        public List<ReportInfo> getReportInfos() {
+                return reportInfos;
+        }
 
-	public void setReportInfos(List<ReportInfo> reportInfos) {
-		this.reportInfos = reportInfos;
-	}
+        public void setReportInfos(List<ReportInfo> reportInfos) {
+                this.reportInfos = reportInfos;
+        }
 
-	public String getWardNum() {
-		return wardNum;
-	}
+        public String getWardNum() {
+                return wardNum;
+        }
 
-	public void setWardNum(String wardNum) {
-		this.wardNum = wardNum;
-	}
+        public void setWardNum(String wardNum) {
+                this.wardNum = wardNum;
+        }
 
         public PTBillServiceImpl getPtBillServiceImpl() {
             return ptBillServiceImpl;

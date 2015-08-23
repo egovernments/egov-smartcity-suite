@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="demandNoticeDetails" language="groovy" pageWidth="660" pageHeight="792" columnWidth="660" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="demandNoticeDetails" language="groovy" pageWidth="660" pageHeight="792" columnWidth="660" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="ee3c3c46-464f-40da-87bf-d9e3ae0fe589">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -43,7 +43,7 @@
 	<columnHeader>
 		<band height="38" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="1" width="91" height="36"/>
+				<reportElement x="0" y="1" width="91" height="36" uuid="6b5370a6-0943-4d60-9e0b-dd5bceb966c2"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -57,7 +57,7 @@
 				<text><![CDATA[From Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="368" y="1" width="95" height="36"/>
+				<reportElement x="368" y="1" width="95" height="36" uuid="963be1cb-8261-4d4e-a2af-b12dec206d6a"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -71,7 +71,7 @@
 				<text><![CDATA[Water Tax]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="91" y="1" width="79" height="36"/>
+				<reportElement x="91" y="1" width="79" height="36" uuid="7de5c3aa-19a3-4e63-866e-743857968544"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -85,7 +85,7 @@
 				<text><![CDATA[To Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="268" y="1" width="99" height="36"/>
+				<reportElement x="268" y="1" width="99" height="36" uuid="56629803-cc77-42ea-89ff-b513de7b003d"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -99,7 +99,7 @@
 				<text><![CDATA[Interest]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="464" y="1" width="97" height="36"/>
+				<reportElement x="464" y="1" width="97" height="36" uuid="747d6350-16ea-4db0-a2fb-0eca053a6fb7"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -114,7 +114,7 @@
 Sewarage Tax]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="562" y="1" width="96" height="36"/>
+				<reportElement x="562" y="1" width="96" height="36" uuid="1bead52b-184b-4260-a72e-3274eee98447"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -128,7 +128,7 @@ Sewarage Tax]]></text>
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="171" y="1" width="97" height="36"/>
+				<reportElement x="171" y="1" width="97" height="36" uuid="cdb00d31-1483-4fa9-8083-512c9250d655"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -146,7 +146,7 @@ Sewarage Tax]]></text>
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="-1" width="91" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="-1" width="91" height="20" uuid="80b7b7a9-6265-428c-b4fe-03a782df989c"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -157,10 +157,10 @@ Sewarage Tax]]></text>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{fromDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fromDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="91" y="-1" width="79" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="91" y="-1" width="79" height="20" uuid="2de6eca6-ef7c-400a-981c-1db0370e4b80"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -171,10 +171,10 @@ Sewarage Tax]]></text>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{toDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{toDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="171" y="-1" width="97" height="20">
+				<reportElement stretchType="RelativeToTallestObject" x="171" y="-1" width="97" height="20" uuid="c430f301-0fb6-483c-9695-b161a7ee0b16">
 					<printWhenExpression><![CDATA[$F{propertyTax}!=0]]></printWhenExpression>
 				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
@@ -187,10 +187,10 @@ Sewarage Tax]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{propertyTax}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{propertyTax}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="268" y="-1" width="99" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="268" y="-1" width="99" height="20" uuid="8c8eec44-266d-43ae-b714-d5c2150a20c1"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -201,10 +201,10 @@ Sewarage Tax]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{penalty}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{penalty}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="368" y="-1" width="95" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="368" y="-1" width="95" height="20" uuid="c8db961f-1b10-462f-8e87-1a83bc5a9825"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -215,10 +215,10 @@ Sewarage Tax]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{waterTax}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{waterTax}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="464" y="-1" width="97" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="464" y="-1" width="97" height="20" uuid="9479dd70-e90e-4ce4-8fbe-8f1a6e797fb1"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -229,10 +229,10 @@ Sewarage Tax]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{drinageSewarageTax}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{drinageSewarageTax}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="562" y="-1" width="96" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="562" y="-1" width="96" height="20" uuid="39562dc4-305e-44cb-9c43-256dc705e5e7"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -243,14 +243,14 @@ Sewarage Tax]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
 	<columnFooter>
 		<band height="90" splitType="Stretch">
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="91" y="-1" width="79" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="91" y="-1" width="79" height="20" uuid="1df0efce-3777-4d0e-80b3-5cae1d047929"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -264,7 +264,7 @@ Sewarage Tax]]></text>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="-1" width="91" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="-1" width="91" height="20" uuid="5db99843-ef4e-406c-9e9a-553a3f7bca6f"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -278,7 +278,7 @@ Sewarage Tax]]></text>
 				<text><![CDATA[Total :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="171" y="-1" width="97" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="171" y="-1" width="97" height="20" uuid="22a06272-0814-452d-b74b-78afc8f44c3a"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -289,10 +289,10 @@ Sewarage Tax]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalPropertyTax}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalPropertyTax}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="268" y="-1" width="99" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="268" y="-1" width="99" height="20" uuid="f33fa997-1908-4bb5-af45-2ce57b70dbcd"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -303,10 +303,10 @@ Sewarage Tax]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalPenalty}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalPenalty}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="368" y="-1" width="95" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="368" y="-1" width="95" height="20" uuid="692836e1-10d1-4706-9310-0ed87bb252d0"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -317,10 +317,10 @@ Sewarage Tax]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalWaterTax}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalWaterTax}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="464" y="-1" width="97" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="464" y="-1" width="97" height="20" uuid="9c0d3c25-8e72-43c8-959f-5ac7d6e3dc57"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -331,10 +331,10 @@ Sewarage Tax]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalDrinageSTax}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalDrinageSTax}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="562" y="-1" width="96" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="562" y="-1" width="96" height="20" uuid="60925b71-b115-4e30-bd51-7ef216121b12"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -345,10 +345,10 @@ Sewarage Tax]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalSum}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalSum}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement positionType="FixRelativeToBottom" x="78" y="55" width="582" height="32"/>
+				<reportElement positionType="FixRelativeToBottom" x="78" y="55" width="582" height="32" uuid="a3ad88d6-17f1-42e5-8c6a-55391f3c2c9c"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -359,10 +359,10 @@ Sewarage Tax]]></text>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[  ReportUtil.amountInWords($V{totalSum})]]></textFieldExpression>
+				<textFieldExpression><![CDATA["    "+ReportUtil.amountInWords($V{totalSum})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="55" width="78" height="32"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="55" width="78" height="32" uuid="221b64f7-2b52-47c9-80c8-eedcd24ec930"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -381,21 +381,21 @@ Words :]]></text>
 	<pageFooter>
 		<band height="72" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="42" width="106" height="20"/>
+				<reportElement x="0" y="42" width="106" height="20" uuid="69e81c4d-da79-47c4-b327-138b699a17fa"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Owner Signature]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="258" y="42" width="135" height="20"/>
+				<reportElement x="258" y="42" width="135" height="20" uuid="a0832569-749c-4f78-a4a7-b1f8782c8fd3"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Bill Collector Signature]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="501" y="42" width="159" height="20"/>
+				<reportElement x="501" y="42" width="159" height="20" uuid="c42dcf88-ba99-4e70-b898-d98e6af6477a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>

@@ -3,6 +3,8 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
 	<field name="ulbName" class="java.lang.String"/>
 	<field name="municipalityName" class="java.lang.String"/>
 	<field name="propertyTransfer" class="java.lang.String"/>
@@ -11,150 +13,79 @@
 	<field name="ownerName" class="java.lang.String"/>
 	<field name="ownerAddress" class="java.lang.String"/>
 	<field name="noOfDays" class="java.lang.String"/>
-	<field name="ulbLogo" class="java.lang.Object"/>
+	<field name="ulbLogo" class="java.lang.String"/>
 	<field name="loggedInUsername" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="79" splitType="Stretch">
-			<image onErrorType="Blank">
-				<reportElement x="90" y="17" width="100" height="50" uuid="a1ff8ba5-d2ae-4a01-9a4a-bcd2dc0345be"/>
-				<imageExpression><![CDATA[]]></imageExpression>
+		<band height="67" splitType="Stretch">
+			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement x="39" y="4" width="60" height="60" uuid="a74eea19-efb6-47cf-8138-fd05dddcc1a9"/>
+				<imageExpression><![CDATA[$F{ulbLogo}]]></imageExpression>
 			</image>
-		</band>
-	</title>
-	<pageHeader>
-		<band height="79" splitType="Stretch">
-			<textField>
-				<reportElement x="13" y="12" width="537" height="26" uuid="0e2ded93-073e-4078-8caf-a3c8910ee077"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="123" y="7" width="355" height="26" uuid="0e2ded93-073e-4078-8caf-a3c8910ee077"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{municipalityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="13" y="38" width="537" height="23" uuid="ed0322e9-56c6-44a1-8a51-3390dcb43468"/>
+				<reportElement x="123" y="33" width="355" height="23" uuid="ed0322e9-56c6-44a1-8a51-3390dcb43468"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Acknowledgement of Transfer of Ownership]]></text>
 			</staticText>
 		</band>
-	</pageHeader>
-	<columnHeader>
-		<band height="61" splitType="Stretch">
-			<textField isBlankWhenNull="true">
-				<reportElement x="14" y="13" width="278" height="30" uuid="81038629-e39d-4926-9f67-d56b40bcedc8"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Application Number " + $F{applicationNo}]]></textFieldExpression>
-			</textField>
+	</title>
+	<pageHeader>
+		<band height="350" splitType="Stretch">
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="291" y="13" width="259" height="30" uuid="9b3978c7-8e31-42c6-9418-1da8c03f7b37"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<reportElement x="437" y="23" width="83" height="18" uuid="8053561c-962f-442e-b0f0-a896c4ece984"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Application Date " + $F{receivedDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{receivedDate}]]></textFieldExpression>
 			</textField>
-		</band>
-	</columnHeader>
-	<detail>
-		<band height="274" splitType="Stretch">
 			<staticText>
-				<reportElement x="14" y="4" width="295" height="20" uuid="d0b74ed8-265d-483c-b6fd-67f6ec8f0b9c"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[This is to acknowledge that an application for]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="14" y="28" width="221" height="20" uuid="c8ad7cf2-3471-462e-87a4-28d4757f8e39"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[has been received from Sri/Smt.]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="14" y="48" width="86" height="20" uuid="1138e6d9-302f-4c2a-9785-e7df19b2e121"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[with address]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="325" y="48" width="95" height="20" uuid="cd47e6e9-48ae-45a5-90c6-5dbc9ebe2ce0"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[is received on]]></text>
-			</staticText>
-			<textField pattern="dd/MM/yyyy">
-				<reportElement x="420" y="48" width="130" height="20" uuid="ae15f1bc-4da8-4ee6-8bfe-34736e67c8eb"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="12" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{receivedDate}+"."]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="308" y="4" width="242" height="20" uuid="cf694a27-752e-4191-b3d6-6aee57807877"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{applicationNo}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="235" y="28" width="315" height="20" uuid="0b30e9a6-bb5b-4c8a-82ba-59d3753f7bc9"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{ownerName}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="125" y="48" width="200" height="20" uuid="aba5f3d3-0b18-4b34-8c11-5bff8355fd14"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{ownerAddress}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="14" y="71" width="536" height="20" uuid="3253d1d3-41c0-418e-8731-85d682e35b66"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA["This will be resolved within  "+ $F{noOfDays} + "  days."]]></textFieldExpression>
-			</textField>
-		</band>
-	</detail>
-	<columnFooter>
-		<band splitType="Stretch"/>
-	</columnFooter>
-	<pageFooter>
-		<band height="129" splitType="Stretch">
-			<staticText>
-				<reportElement x="304" y="-145" width="246" height="20" uuid="592538a9-1346-4fe5-a30e-944f03280984"/>
+				<reportElement x="373" y="201" width="150" height="20" uuid="592538a9-1346-4fe5-a30e-944f03280984"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12"/>
+					<font size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[                                   Signature]]></text>
+				<text><![CDATA[Signature]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="304" y="-107" width="246" height="20" uuid="b2546c69-d2ff-44a2-b1a3-84378eae6833"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="12"/>
+				<reportElement x="312" y="241" width="211" height="20" uuid="b2546c69-d2ff-44a2-b1a3-84378eae6833"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{municipalityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="16" y="-145" width="288" height="58" uuid="36f833e4-ad1c-4d82-be59-65212f0df50a"/>
+				<reportElement x="42" y="203" width="247" height="58" uuid="36f833e4-ad1c-4d82-be59-65212f0df50a"/>
 				<textElement verticalAlignment="Middle">
-					<font size="12"/>
+					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Signature of the receiver]]></text>
 			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement x="373" y="221" width="150" height="20" uuid="f5c217c1-0038-4999-9805-5225e7bafe7e"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{loggedInUsername}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="42" y="60" width="481" height="83" uuid="31f2c4a0-c30d-4844-95df-095199d692d8"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top" markup="styled">
+					<font size="12" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["    This is to acknowledge that an application for <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{applicationNo}+"</style> has been received from Sri/Smt.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerName}+"</style> with address<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerAddress}+"</style> is received on<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{receivedDate}+"</style>. This will be resolved within<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{noOfDays}+"</style> days."]]></textFieldExpression>
+			</textField>
 			<staticText>
-				<reportElement x="53" y="-75" width="497" height="73" uuid="a3b0aacd-1949-4ffb-86df-8c987a1c6357"/>
+				<reportElement x="85" y="284" width="438" height="57" uuid="a3b0aacd-1949-4ffb-86df-8c987a1c6357"/>
 				<textElement verticalAlignment="Top">
 					<font size="10" isBold="false"/>
 				</textElement>
@@ -162,24 +93,46 @@
 2. Compensation will be paid @ Rs. 50/- per day for the delay caused and towards the valuable time lost by the applicant, if the special notice is not given as indicated above in the date fixed.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="13" y="-75" width="40" height="27" uuid="a7502c52-065f-4748-a942-b8ebd6839039"/>
+				<reportElement x="42" y="23" width="113" height="18" uuid="adf5a8f1-7975-491f-abf1-33af2338d84c"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Application No :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="155" y="23" width="155" height="17" uuid="f9da60e0-6979-4604-9117-30261b60ad1c"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{applicationNo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="310" y="23" width="127" height="17" uuid="9433ab5c-fd44-4abd-ad23-900b1e14e1a8"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Application Date :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="42" y="284" width="43" height="27" uuid="a7502c52-065f-4748-a942-b8ebd6839039"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Note:]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="420" y="-126" width="130" height="20" uuid="f5c217c1-0038-4999-9805-5225e7bafe7e"/>
-				<textElement textAlignment="Center">
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{loggedInUsername}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="304" y="-126" width="116" height="19" uuid="1e18ef4e-375d-4e1c-8c22-cd1a5a5f293e"/>
-				<text><![CDATA[]]></text>
-			</staticText>
 		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
 		<band splitType="Stretch"/>

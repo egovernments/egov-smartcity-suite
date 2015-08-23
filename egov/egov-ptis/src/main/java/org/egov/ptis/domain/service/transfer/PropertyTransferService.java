@@ -293,8 +293,10 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
 
     @Transactional
     public ReportOutput generateTransferNotice(final BasicProperty basicProperty,
-            final PropertyMutation propertyMutation) {
+            final PropertyMutation propertyMutation, final String cityName, final String cityLogo) {
         final PropertyAckNoticeInfo noticeBean = new PropertyAckNoticeInfo();
+        noticeBean.setUlbLogo(cityLogo);
+        noticeBean.setMunicipalityName(cityName);
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());
         noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());

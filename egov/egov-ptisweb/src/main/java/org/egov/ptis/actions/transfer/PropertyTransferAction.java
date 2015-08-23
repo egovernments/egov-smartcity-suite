@@ -327,10 +327,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/printAck")
     public String printAck() {
         final HttpServletRequest request = ServletActionContext.getRequest();
-        final String cityLogo = WebUtils.extractRequestDomainURL(request, false)
-                .concat(PropertyTaxConstants.IMAGES_BASE_PATH)
-                .concat(request.getSession().getAttribute("citylogo").toString());
+        
+        final String url = WebUtils.extractRequestDomainURL(request, false);
+        final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
+                        (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("cityname").toString();
+        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
         getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
         reportId = ReportViewerUtil.addReportToSession(
                 transferOwnerService.generateAcknowledgement(basicproperty, propertyMutation, cityName, cityLogo),
@@ -341,8 +343,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @SkipValidation
     @Action(value = "/printNotice")
     public String printNotice() {
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        final String url = WebUtils.extractRequestDomainURL(request, false);
+        final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
+                        (String) request.getSession().getAttribute("citylogo"));
+        final String cityName = request.getSession().getAttribute("cityname").toString();
+        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
         reportId = ReportViewerUtil.addReportToSession(
-                transferOwnerService.generateTransferNotice(basicproperty, propertyMutation), getSession());
+                transferOwnerService.generateTransferNotice(basicproperty, propertyMutation, cityName, cityLogo), getSession());
         return PRINTNOTICE;
     }
 

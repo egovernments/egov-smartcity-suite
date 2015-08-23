@@ -50,6 +50,7 @@ public class PropertyAckNoticeInfo {
     private String currentInstallment;
     private BigDecimal amount = BigDecimal.ZERO;
     private BigDecimal rate = BigDecimal.ZERO;
+    private String assessmentDate;
 
     public String getCreationReason() {
         return creationReason;
@@ -418,5 +419,13 @@ public class PropertyAckNoticeInfo {
 	public void setRate(BigDecimal rate) {
 		this.rate = rate;
 	}
+
+    public String getAssessmentDate() {
+        return assessmentDate;
+    }
+
+    public void setAssessmentDate(String assessmentDate) {
+        this.assessmentDate = assessmentDate;
+    }
     
 }

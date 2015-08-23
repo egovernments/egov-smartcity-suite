@@ -16,7 +16,6 @@ public class DemandNoticeDetailsInfo {
     private BigDecimal drinageSewarageTax = new BigDecimal(0);
     private BigDecimal vacantLandTax = new BigDecimal(0);
     private BigDecimal total = new BigDecimal(0);
-    private boolean currentDemand;
     
     public Installment getInstallment() {
         return installment;
@@ -75,20 +74,21 @@ public class DemandNoticeDetailsInfo {
         this.vacantLandTax = vacantLandTax;
     }
     public BigDecimal getTotal() {
-        return total;
+        return addTotal();
     }
-    public void setTotal(BigDecimal total) {
-        this.total = total;
-    }
-    public boolean getCurrentDemand() {
-        return currentDemand;
-    }
-    public void setCurrentDemand(boolean currentDemand) {
-        this.currentDemand = currentDemand;
-    }
-    
     public BigDecimal addTotal(){
-        return this.propertyTax.add(this.penalty).add(this.vacantLandTax).add(this.waterTax).add(this.drinageSewarageTax);
+        BigDecimal sumAmount = new BigDecimal(0);
+        if(this.propertyTax!=null)
+            sumAmount=sumAmount.add(this.propertyTax);
+        if(this.penalty!=null)
+            sumAmount=sumAmount.add(this.penalty);
+        if(this.waterTax!=null)
+            sumAmount=sumAmount.add(this.waterTax);
+        if(this.vacantLandTax!=null)
+            sumAmount=sumAmount.add(this.vacantLandTax);
+        if(this.drinageSewarageTax!=null)
+            sumAmount=sumAmount.add(this.drinageSewarageTax);
+        return sumAmount;
     }
     public String getFromDate() {
         return fromDate;
