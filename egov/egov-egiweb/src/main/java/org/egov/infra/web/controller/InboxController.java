@@ -38,7 +38,8 @@
  */
 package org.egov.infra.web.controller;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.infstr.utils.StringUtils.escapeSpecialChars;
 
 import java.util.Comparator;
@@ -105,8 +106,8 @@ public class InboxController {
             inboxItem.setSender(state.getSenderName());
             inboxItem.setTask(workflowTypes.getDisplayName());
             final String nextAction = inboxRenderServiceDeligate.getNextAction(state);
-            inboxItem.setStatus(state.getValue() + (EMPTY.equals(nextAction) ? EMPTY : " - " + nextAction));
-            inboxItem.setDetails(stateAware.getStateDetails() == null ? EMPTY : stateAware.getStateDetails());
+            inboxItem.setStatus(state.getValue() + (isBlank(nextAction) ? EMPTY : " - " + nextAction));
+            inboxItem.setDetails(isBlank(stateAware.getStateDetails()) ? EMPTY : stateAware.getStateDetails());
             inboxItem.setLink(workflowTypes.getLink().replace(":ID", stateAware.myLinkId()));
             inboxItems.add(inboxItem);
         }
@@ -123,8 +124,8 @@ public class InboxController {
             inboxHistoryItem.setSender(stateHistory.getSenderName());
             inboxHistoryItem.setTask(workflowTypes.getDisplayName());
             inboxHistoryItem
-                    .setStatus(stateHistory.getValue() + (EMPTY.equals(stateHistory.getNextAction()) ? EMPTY : "~" + stateHistory.getNextAction()));
-            inboxHistoryItem.setDetails(stateHistory.getComments() == null ? EMPTY : escapeSpecialChars(stateHistory.getComments()));
+                    .setStatus(stateHistory.getValue() + (isBlank(stateHistory.getNextAction()) ? EMPTY : "-" + stateHistory.getNextAction()));
+            inboxHistoryItem.setDetails(isBlank(stateHistory.getComments()) ? EMPTY : escapeSpecialChars(stateHistory.getComments()));
             inboxHistoryItem.setLink(EMPTY);
             inboxHistoryItems.add(inboxHistoryItem);
         }
