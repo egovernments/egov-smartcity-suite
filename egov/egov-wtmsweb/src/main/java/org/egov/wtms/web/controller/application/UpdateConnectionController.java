@@ -60,6 +60,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.RoadCategoryService;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
@@ -150,6 +151,11 @@ public class UpdateConnectionController extends GenericConnectionController {
                 .equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)) {
             final ChairPerson chairPerson = chairPersonService.getActiveChairPersonAsOnCurrentDate();
             model.addAttribute("chairPerson", chairPerson);
+        }
+        if(WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {
+            waterConnectionDetails.getConnection().setMeter(null);
+            waterConnectionDetails.getConnection().setInitialReading(null);
+            waterConnectionDetails.getConnection().setMeterSerialNumber("");
         }
 
         appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
@@ -267,7 +273,7 @@ public class UpdateConnectionController extends GenericConnectionController {
             if (null != workFlowAction && !workFlowAction.isEmpty()
                     && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON))
                 return "redirect:/application/workorder?pathVar=" + waterConnectionDetails.getApplicationNumber();
-
+            
             final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                     + waterTaxUtils.getApproverUserName(approvalPosition);
             return "redirect:/application/application-success?pathVars=" + pathVars;

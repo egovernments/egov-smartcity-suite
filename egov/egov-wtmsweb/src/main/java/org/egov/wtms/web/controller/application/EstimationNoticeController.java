@@ -110,8 +110,10 @@ public class EstimationNoticeController {
             if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
                 reportParams.put("applicationType",
                         WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()).toString());
-            else
-                if (WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+            else if (WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+                reportParams.put("applicationType",
+                        WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()).toString());
+            else 
                 reportParams.put("applicationType",
                         WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()).toString());
             reportParams.put("cityName", session.getAttribute("cityname"));

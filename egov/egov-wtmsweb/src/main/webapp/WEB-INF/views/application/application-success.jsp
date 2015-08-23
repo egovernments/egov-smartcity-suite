@@ -51,6 +51,10 @@
 			<div class="panel-heading">
 				<div class="panel-title text-center no-float">
 				<c:choose>
+				<c:when test="${waterConnectionDetails.connection.parentConnection.id!=null && waterConnectionDetails.state.value=='Rejected' && waterConnectionDetails.applicationType.code=='CHANGEOFUSE'}">
+						<spring:message code="msg.changeofuseconnection.rejection.success" />
+						<div >${approverName}</div>
+					</c:when>
 					<c:when test="${waterConnectionDetails.connection.parentConnection.id!=null && waterConnectionDetails.connectionStatus == 'INPROGRESS' && waterConnectionDetails.applicationType.code=='CHANGEOFUSE'}">
 						<spring:message code="msg.changeofuseconnection.ack.msg" />
 						<div ><spring:message code="msg.sussess.forward" />${approverName}</div>
@@ -67,6 +71,9 @@
 							<c:when test="${waterConnectionDetails.egwStatus.code == 'APPROVED' && waterConnectionDetails.connectionStatus == 'INPROGRESS' }">
 							<div><spring:message code="msg.connection.approved.success" />${approverName}</div>
 								<%-- <spring:message code="msg.sussess.forward" /><br>${approvalUser} --%>
+							</c:when>
+							<c:when test="${waterConnectionDetails.connectionStatus== 'INACTIVE' && waterConnectionDetails.applicationType.code=='CHANGEOFUSE' }">
+							<div><spring:message code="msg.changeofuseconnection.cancel.success" /></div>
 							</c:when>
 							<c:when test="${waterConnectionDetails.state.value== 'Rejected' }">
 							<div><spring:message code="msg.newapplication.rejection.success" />${approverName}</div>

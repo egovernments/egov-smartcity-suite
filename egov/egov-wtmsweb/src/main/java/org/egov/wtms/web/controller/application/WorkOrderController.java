@@ -123,7 +123,11 @@ public class WorkOrderController {
             else if (WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())){
                 reportParams.put("conntitle",WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
                 reportParams.put("applicationtype", messageSource.getMessage("msg.add.watertap.conn", null, null));
-            }            
+            }         
+            else {
+                reportParams.put("conntitle",WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
+                reportParams.put("applicationtype", messageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
+            }
             reportParams.put("municipality", session.getAttribute("cityname"));
             reportParams.put("district", session.getAttribute("districtName"));
             reportParams.put("purpose", connectionDetails.getUsageType().getName());

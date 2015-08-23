@@ -106,8 +106,11 @@ public class ChangeOfUseController extends GenericConnectionController {
     public String showForm(WaterConnectionDetails parentConnectionDetails,@ModelAttribute final WaterConnectionDetails changeOfUse, final Model model,
             @PathVariable final String consumerCode) {
         final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
-        parentConnectionDetails = waterConnectionDetailsService
+        if(null!=connectionUnderChange.getConnection().getParentConnection())
+            parentConnectionDetails = waterConnectionDetailsService
                 .getParentConnectionDetails(connectionUnderChange.getConnection().getPropertyIdentifier(), ConnectionStatus.ACTIVE);
+        else
+            parentConnectionDetails = connectionUnderChange;
         if (parentConnectionDetails == null) {
             // TODO - error handling
         } else
@@ -122,8 +125,10 @@ public class ChangeOfUseController extends GenericConnectionController {
             final HttpServletRequest request, final Model model,@RequestParam String  workFlowAction) {
 
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
-        final WaterConnectionDetails parent = waterConnectionDetailsService.findByConnection(changeOfUse
-                .getConnection());
+        final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus
+                (changeOfUse.getConnection().getConsumerCode(), ConnectionStatus.ACTIVE);
+        final WaterConnectionDetails parent = waterConnectionDetailsService
+                .getParentConnectionDetails(connectionUnderChange.getConnection().getPropertyIdentifier(), ConnectionStatus.ACTIVE);
         final String message = changeOfUseService.validateChangeOfUseConnection(parent);
         if (!message.isEmpty() && !"".equals(message))
             return "redirect:/application/changeOfUse/"
