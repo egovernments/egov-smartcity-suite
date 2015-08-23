@@ -39,18 +39,18 @@
 #------------------------------------------------------------------------------- -->
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
 
-			<form:form role="form" method="post"
+			<form:form method="post"
 				modelAttribute="waterConnectionDetails"
 				id="editmeterWaterConnectionform"
-				cssClass="form-horizontal form-groups-bordered">
+				cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 				<div class="page-container" id="page-container">
 					<form:hidden id="mode" path="" name="mode" value="${mode}" />
 					<form:hidden id="meterReadingpriviousObj" path=""
@@ -62,6 +62,7 @@
 						name="currentInstallmentExist" value="${currentInstallmentExist}" />
 					<input type="hidden" id="consumerCode" name="consumerCode"
 						value="${consumerCode}" />
+						
 					<form:hidden path="id" />
 					<div class="panel-heading">
 						<div class="panel-title text-center no-float">

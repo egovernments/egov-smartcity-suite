@@ -95,9 +95,21 @@ public class MeterReadingController {
         waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode);
         return waterConnectionDetails;
     }
-
+    private String loadViewData(final Model model, final HttpServletRequest request,
+            final WaterConnectionDetails waterConnectionDetails) {
+        model.addAttribute("waterConnectionDetails", waterConnectionDetails);
+        model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
+        model.addAttribute("connectionType",
+                waterConnectionDetailsService.getConnectionTypesMap().get(waterConnectionDetails.getConnectionType().name()));
+        model.addAttribute("mode", "meterEntry");
+        model.addAttribute("meterReadingCurrentObj", new MeterReadingConnectionDetails());
+  
+        return "newconnection-meterEntry";
+    }
+    
     @RequestMapping(value = "/meterentry/{consumerCode}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String consumerCode, final HttpServletRequest request) {
+        waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode);
         MeterReadingConnectionDetails meterReadingpriviousObj = null;
         final List<MeterReadingConnectionDetails> meterReadingpriviousObjlist = waterConnectionDetailsRepository
                 .findPreviousMeterReadingReading(waterConnectionDetails.getId());
@@ -111,10 +123,9 @@ public class MeterReadingController {
             else
                 meterReadingpriviousObj.setCurrentReading(0l);
         }
-        model.addAttribute("mode", "meterEntry");
         model.addAttribute("meterReadingpriviousObj", meterReadingpriviousObj);
-        model.addAttribute("meterReadingCurrentObj", new MeterReadingConnectionDetails());
-        return "newconnection-meterEntry";
+        return loadViewData(model, request, waterConnectionDetails);
+             
     }
 
     @RequestMapping(value = "/meterentry/{consumerCode}", method = RequestMethod.POST)
@@ -134,15 +145,9 @@ public class MeterReadingController {
             if (installment.getInstallmentNumber().equals(
                     waterConnectionDetails.getDemand().getEgInstallmentMaster().getInstallmentNumber())) {
                 final Boolean currentInstallmentExist = true;
-                model.addAttribute("currentInstallmentExist", currentInstallmentExist);
-                final String message = "Meter Entry For Selected Month allready Exist";
-                model.addAttribute("message", message);
-                model.addAttribute("consumerCode", waterConnectionDetails.getConnection().getConsumerCode());
-                return "newconnection-meterEntry";
-                /*
-                 * return "redirect:/application/meterdemandnotice?pathVar=" +
-                 * waterConnectionDetails.getConnection().getConsumerCode();
-                 */
+                return "redirect:/application/meterdemandnotice?pathVar=" +
+                 waterConnectionDetails.getConnection().getConsumerCode();
+                 
             }
         final MeterReadingConnectionDetails meterReadingConnectionDeatilObj = new MeterReadingConnectionDetails();
         Long previousReading = 0l;
