@@ -80,6 +80,7 @@ import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -330,6 +331,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 .concat(PropertyTaxConstants.IMAGES_BASE_PATH)
                 .concat(request.getSession().getAttribute("citylogo").toString());
         final String cityName = request.getSession().getAttribute("cityname").toString();
+        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
         reportId = ReportViewerUtil.addReportToSession(
                 transferOwnerService.generateAcknowledgement(basicproperty, propertyMutation, cityName, cityLogo),
                 getSession());
