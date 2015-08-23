@@ -398,7 +398,6 @@ function checkviewforselectedrecord()
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" property="receiptDate" title="Receipt Date" format="{0,date,dd/MM/yyyy}" style="width:8%;text-align: center" />
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Service" style="width:12%;text-align:center" property="service.name" />
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Bill Number" style="width:8%;text-align:center" property="referencenumber" />
-<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Demand Number" style="width:8%;text-align:center" property="receiptChallanNumber" />
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Bill Description" style="width:27%;text-align:center" property="referenceDesc" />
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Amount (Rs.)" property="amount" style="width:8%; text-align: right" format="{0, number, #,##0.00}" />
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Mode of Payment" style="width:8%" >

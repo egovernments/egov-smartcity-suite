@@ -95,7 +95,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ParentPackage("egov")
 @Results({ 
     @Result(name = OnlineReceiptAction.NEW, location = "onlineReceipt-new.jsp"),
-    @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp")
+    @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
+    @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
+    @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp")
 })
 public class OnlineReceiptAction extends BaseFormAction implements ServletRequestAware{
 
@@ -131,8 +133,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private String responseMsg = "";
     private HttpSession session = null;
     private HttpServletRequest request;
-    private static final String RESULT = "result";
-    private static final String RECONRESULT = "reconresult";
+    protected static final String RESULT = "result";
+    protected static final String RECONRESULT = "reconresult";
     private Boolean callbackForApportioning;
     private String receiptNumber;
     private String consumerCode;
@@ -153,7 +155,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     public String newform() {
         return NEW;
     }
-
+    
     public String testOnlinePaytMsg() {
         return "PaytGatewayTest";
     }
@@ -236,6 +238,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
      * @return
      */
     @ValidationErrorPage(value = "result")
+    @Action(value = "/citizen/onlineReceipt-acceptMessageFromPaymentGateway")
     public String acceptMessageFromPaymentGateway() {
 
         /**
@@ -257,9 +260,14 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
         LOGGER.info("responseMsg:	" + responseMsg);
 
-        ServiceDetails paymentService = (ServiceDetails) getPersistenceService().findByNamedQuery(
-                CollectionConstants.QUERY_SERVICE_BY_CODE, getServiceCode());
-
+       /* ServiceDetails paymentService = (ServiceDetails) getPersistenceService().findByNamedQuery(
+                CollectionConstants.QUERY_SERVICE_BY_CODE, getServiceCode());*/
+        ServiceDetails paymentService;
+        if (null != paymentServiceId && paymentServiceId > 0) {
+                paymentService = (ServiceDetails) getPersistenceService().findByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_ID, paymentServiceId.longValue());
+        } else {
+                paymentService = (ServiceDetails) getPersistenceService().findByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICECODE_PGI_BILLDESK);
+        }
         try {
             setPaymentResponse(collectionCommon.createPaymentResponse(paymentService, getMsg()));
         } catch (EGOVRuntimeException egovEx) {
@@ -620,6 +628,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         return CollectionConstants.REPORT;
     }
     
+    @Action(value = "/citizen/onlineReceipt-viewReceipt")
     public String viewReceipt() {
 		LOGGER.debug("::VIEWRECEIPT API:::  ServiceCode: " + getServiceCode() + ", Receipt Number=" + getReceiptNumber() + ", Consumer Code="
 				+ getConsumerCode());
