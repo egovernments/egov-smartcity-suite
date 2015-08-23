@@ -64,7 +64,7 @@ var cashAmount = ${cashAmount};
 var chequeAmount = ${chequeAmount};
 var ddAmount = ${ddAmount};
 var cardAmount = ${cardAmount};
-var listApproveAction = "collectionsWorkflow!listApprove.action"
+var listApproveAction = "collectionsWorkflow-listApprove.action"
 
 // Enable/disable buttons based on user selections
 function enableButtons() {

@@ -119,4 +119,7 @@ public class UserService {
         return userRepository.findByUsernameContainingIgnoreCaseAndTypeAndActiveTrue(username, type);
     }
 
+    public Set<User> getUsersByRoleName(final String roleName) {
+        return userRepository.findUsersByRoleName(roleName);
+    }
 }

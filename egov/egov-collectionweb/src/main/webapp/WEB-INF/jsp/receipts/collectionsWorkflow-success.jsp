@@ -77,12 +77,12 @@ function refreshInbox() {
 	<s:submit type="submit" cssClass="buttonsubmit" id="buttonCashReport"
 			value="%{getText('collectionsWorkflow.submit.report.cash')}"
 			disabled="false"
-			onclick="document.collectionsWorkflowForm.action='collectionsWorkflow!submissionReportCash.action'" /> &nbsp;
+			onclick="document.collectionsWorkflowForm.action='collectionsWorkflow-submissionReportCash.action'" /> &nbsp;
 
 	<s:submit type="submit" cssClass="buttonsubmit" id="buttonChequeReport"
 			value="%{getText('collectionsWorkflow.submit.report.cheque')}"
 			disabled="false"
-			onclick="document.collectionsWorkflowForm.action='collectionsWorkflow!submissionReportCheque.action'" /> &nbsp;
+			onclick="document.collectionsWorkflowForm.action='collectionsWorkflow-submissionReportCheque.action'" /> &nbsp;
 	</s:if>
 	</div>
 </s:form>

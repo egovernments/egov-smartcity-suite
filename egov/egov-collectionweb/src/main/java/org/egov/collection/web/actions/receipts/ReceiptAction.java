@@ -103,6 +103,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.NumberUtil;
@@ -893,7 +894,7 @@ public class ReceiptAction extends BaseFormAction {
 	        receiptHeader.setLocation(collectionsUtil.getLocationOfUser(getSession()));
 	        receiptHeader.setStatus(collectionsUtil.getEgwStatusForModuleAndCode(
 	                CollectionConstants.MODULE_NAME_RECEIPTHEADER,
-	                CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED));
+	                CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED));
 	        receiptHeader.setPaidBy(StringEscapeUtils.unescapeHtml(paidBy));
 
 	        // If this is a new receipt in lieu of cancelling old
@@ -1165,7 +1166,7 @@ public class ReceiptAction extends BaseFormAction {
 		bankCOAList = chartOfAccountsDAO.getBankChartofAccountCodeList();
 		for (ReceiptDetail oldDetail : oldReceiptHeader.getReceiptDetails()) {
 			// debit account heads for revenue accounts should not be considered
-			if (oldDetail.getOrdernumber() != null && !financialsUtil.isRevenueAccountHead(oldDetail.getAccounthead(),bankCOAList)) {
+			if (oldDetail.getOrdernumber() != null && !FinancialsUtil.isRevenueAccountHead(oldDetail.getAccounthead(),bankCOAList)) {
 				ReceiptDetail receiptDetail = new ReceiptDetail(oldDetail.getAccounthead(), oldDetail.getFunction(),
 						oldDetail.getCramount(), oldDetail.getDramount(), oldDetail.getCramount(),
 						oldDetail.getOrdernumber(), oldDetail.getDescription(), oldDetail.getIsActualDemand(),
@@ -1928,7 +1929,8 @@ public class ReceiptAction extends BaseFormAction {
 		this.collectXML = collectXML;
 	}
 
-	public Object getModel() {
+	@Override
+    public Object getModel() {
 		return receiptHeader;
 	}
 
@@ -2045,4 +2047,4 @@ public class ReceiptAction extends BaseFormAction {
 	public void setReceiptHeader(ReceiptHeader receiptHeader) {
 		this.receiptHeader = receiptHeader;
 	}
-}
+ }
