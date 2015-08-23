@@ -56,6 +56,7 @@ import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
+import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
@@ -68,6 +69,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Session;
@@ -130,21 +132,23 @@ public class WaterTaxCollection extends TaxCollection {
     public void updateWaterConnectionDetails(final EgDemand demand) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .getWaterConnectionDetailsByDemand(demand);
-        waterConnectionDetails.setEgwStatus(waterTaxUtils
-                .getStatusByCodeAndModuleType(WaterTaxConstants.APPLICATION_STATUS_FEEPAID, WaterTaxConstants.MODULETYPE));
-        Long approvalPosition = Long.valueOf(0);
-        final WorkFlowMatrix wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails
-                .getStateType(), null, null, WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
-                waterConnectionDetails.getCurrentState().getValue(), null);
-        final Position posobj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation());
-        if (posobj != null)
-            approvalPosition = posobj.getId();
-        waterConnectionDetailsService.createMatrixWorkflowTransition(waterConnectionDetails,
-                approvalPosition, WaterTaxConstants.FEE_COLLECTION_COMMENT, WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
-                null);
-        waterConnectionDetailsService.sendSmsAndEmail(waterConnectionDetails, null);
-        waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
-        waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
+        if (!waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)) {
+            waterConnectionDetails.setEgwStatus(waterTaxUtils
+                    .getStatusByCodeAndModuleType(WaterTaxConstants.APPLICATION_STATUS_FEEPAID, WaterTaxConstants.MODULETYPE));
+            Long approvalPosition = Long.valueOf(0);
+            final WorkFlowMatrix wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails
+                    .getStateType(), null, null, WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
+                    waterConnectionDetails.getCurrentState().getValue(), null);
+            final Position posobj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation());
+            if (posobj != null)
+                approvalPosition = posobj.getId();
+            waterConnectionDetailsService.createMatrixWorkflowTransition(waterConnectionDetails,
+                    approvalPosition, WaterTaxConstants.FEE_COLLECTION_COMMENT, WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
+                    null);
+            waterConnectionDetailsService.sendSmsAndEmail(waterConnectionDetails, null);
+            waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
+            waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
+        }
 
     }
 
@@ -176,7 +180,7 @@ public class WaterTaxCollection extends TaxCollection {
         EgDemandReason dmdRsn = null;
         String installmentDesc = null;
 
-        for (final EgDemandDetails dmdDtls : demandDetailList)
+        for (final EgDemandDetails dmdDtls : demandDetailList) {
             if (dmdDtls.getAmount().compareTo(BigDecimal.ZERO) > 0) {
 
                 dmdRsn = dmdDtls.getEgDemandReason();
@@ -191,7 +195,9 @@ public class WaterTaxCollection extends TaxCollection {
                             .put(dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
             } else if (LOGGER.isDebugEnabled())
                 LOGGER.debug("saveCollectionDetails - demand detail amount is zero " + dmdDtls);
-
+            if (dmdDtls.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
+                demand.addCollected(billRcptInfo.getTotalAmount());
+        }
         EgDemandDetails demandDetail = null;
 
         for (final ReceiptAccountInfo rcptAccInfo : accountDetails)
@@ -220,11 +226,24 @@ public class WaterTaxCollection extends TaxCollection {
     }
 
     public EgDemand getCurrentDemand(final Long billId) {
-
+        EgDemand egDemand = null;
         final EgBill egBill = egBillDAO.findById(billId, false);
-        final EgDemand egDemand = connectionDemandService.getDemandByInstAndApplicationNumber(connectionDemandService
-                .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date()),
-                egBill.getConsumerId());
+        for (final EgBillDetails egBillDetails : egBill.getEgBillDetails())
+            if (!WaterTaxConstants.WATERTAXREASONCODE
+                    .equalsIgnoreCase(egBillDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                egDemand = connectionDemandService.getDemandByInstAndApplicationNumber(connectionDemandService
+                        .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date()),
+                        egBill.getConsumerId());
+            else if (null != egBillDetails.getEgDemandReason().getEgInstallmentMaster().getInstallmentType()
+                    && WaterTaxConstants.WATERTAXREASONCODE
+                            .equalsIgnoreCase(egBillDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                egDemand = connectionDemandService.getDemandByInstAndApplicationNumber(connectionDemandService
+                        .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY, new Date()),
+                        egBill.getConsumerId());
+            else
+                egDemand = connectionDemandService.getDemandByInstAndApplicationNumber(connectionDemandService
+                        .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date()),
+                        egBill.getConsumerId());
         return egDemand;
     }
 
