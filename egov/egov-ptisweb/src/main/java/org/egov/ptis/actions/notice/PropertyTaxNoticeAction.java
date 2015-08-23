@@ -63,6 +63,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -154,6 +155,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         reportInput.setPrintDialogOnOpenReport(true);
         reportInput.setReportFormat(FileFormat.PDF);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
+        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
         reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             NoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());

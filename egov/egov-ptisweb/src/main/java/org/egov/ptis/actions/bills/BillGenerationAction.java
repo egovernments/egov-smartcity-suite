@@ -88,6 +88,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -237,6 +238,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 			}
 	                
 		}
+		getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
 		reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
 		LOGGER.debug("generateBill: ReportId: " + reportId);
 		LOGGER.debug("Exit from generateBill");
