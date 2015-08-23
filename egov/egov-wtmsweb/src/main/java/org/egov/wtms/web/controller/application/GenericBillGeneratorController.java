@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -62,12 +63,14 @@ public class GenericBillGeneratorController {
 
     private final WaterConnectionDetailsService waterConnectionDetailsService;
     private final ConnectionDemandService connectionDemandService;
+    private final WaterTaxUtils waterTaxUtils;
 
     @Autowired
     public GenericBillGeneratorController(final WaterConnectionDetailsService waterConnectionDetailsService,
-            final ConnectionDemandService connectionDemandService) {
+            final ConnectionDemandService connectionDemandService, final WaterTaxUtils waterTaxUtils) {
         this.waterConnectionDetailsService = waterConnectionDetailsService;
         this.connectionDemandService = connectionDemandService;
+        this.waterTaxUtils = waterTaxUtils;
     }
 
     @RequestMapping(value = "/generatebill/{applicationCode}", method = GET)
@@ -86,6 +89,7 @@ public class GenericBillGeneratorController {
                 waterConnectionDetailsService.getConnectionTypesMap().get(
                         waterConnectionDetails.getConnectionType().name()));
         model.addAttribute("mode", "waterTaxCollection");
+        model.addAttribute("checkOperator", waterTaxUtils.checkCollectionOperatorRole());
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
         return new ModelAndView("application/collecttax-view", "waterConnectionDetails", waterConnectionDetails);
     }

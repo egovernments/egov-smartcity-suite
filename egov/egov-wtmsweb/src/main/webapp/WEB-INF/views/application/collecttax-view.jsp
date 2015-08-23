@@ -59,7 +59,11 @@
 	<input id="applicationCode" type="hidden" value="<c:out value="${waterConnectionDetails.connection.consumerCode}" />" /> 
 	<div class="row text-center">
 		<div class="add-margin">
-			<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
+			<c:choose>
+				<c:when test="${null!=mode && mode=='waterTaxCollection' && (waterConnectionDetails.demand.baseDemand-waterConnectionDetails.demand.amtCollected)>0}">
+					<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
+				</c:when>
+			</c:choose>
 			<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 		</div>
 	</div>
