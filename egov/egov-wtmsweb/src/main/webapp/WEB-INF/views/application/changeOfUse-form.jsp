@@ -63,11 +63,12 @@
 				<form:hidden path="applicationType" id="applicationType.id" value="${changeOfUse.applicationType.id}"/>
 				<form:hidden path="connectionStatus" id="connectionStatus" value="${changeOfUse.connectionStatus}"/>
 				<form:hidden path="connection.propertyIdentifier" value="${changeOfUse.connection.propertyIdentifier}"/>
-				<c:if test="${validationMessage==''}">
+				
 					<jsp:include page="commonappdetails-view.jsp"></jsp:include>
-				</c:if>	
 			</div>	
+			<c:if test="${validationMessage==''}">
 					<jsp:include page="connectiondetails-changeofuse.jsp"></jsp:include>	
+			</c:if>
 			<div class="panel panel-primary" data-collapsed="0">
 					<jsp:include page="documentdetails.jsp"></jsp:include>	
 			</div>
