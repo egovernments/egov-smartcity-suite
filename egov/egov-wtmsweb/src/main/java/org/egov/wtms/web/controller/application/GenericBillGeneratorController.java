@@ -78,13 +78,14 @@ public class GenericBillGeneratorController {
     @RequestMapping(value = "/collecttax-view", method = GET)
     public ModelAndView collectTaxView(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final HttpServletRequest request, final Model model) {
-        if (request.getParameter("consumerCode") != null)
+        if (request.getParameter("applicationCode") != null)
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(request
-                    .getParameter("consumerCode"));
+                    .getParameter("applicationCode"));
         model.addAttribute(
                 "connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(
                         waterConnectionDetails.getConnectionType().name()));
+        model.addAttribute("mode", "waterTaxCollection");
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
         return new ModelAndView("application/collecttax-view", "waterConnectionDetails", waterConnectionDetails);
     }

@@ -56,7 +56,7 @@
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 		</div>
 		<jsp:include page="connectiondetails-view.jsp"></jsp:include>
-		<input id="consumerCode" type="hidden" value="<c:out value="${waterConnectionDetails.connection.consumerCode}" />" />  
+	<input id="applicationCode" type="hidden" value="<c:out value="${waterConnectionDetails.connection.consumerCode}" />" /> 
 	<div class="row text-center">
 		<div class="add-margin">
 			<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
