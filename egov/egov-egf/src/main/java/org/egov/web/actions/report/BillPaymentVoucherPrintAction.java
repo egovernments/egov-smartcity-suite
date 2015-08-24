@@ -59,7 +59,8 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CVoucherHeader;
-import org.egov.commons.VoucherDetail;
+
+import org.egov.commons.CGeneralLedger;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.exceptions.EGOVException;
@@ -362,14 +363,14 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction{
 
 	private void generateVoucherReportList() {
 		if(voucher != null){
-			for (VoucherDetail vd : voucher.getVoucherDetail()) {
+			for (CGeneralLedger vd : voucher.getGeneralledger()) {
 				if(BigDecimal.ZERO.equals(vd.getCreditAmount())){
 					VoucherReport voucherReport = new VoucherReport(persistenceService,Integer.valueOf(voucher.getId().toString()),vd);
 					voucherReport.setDepartment(voucher.getVouchermis().getDepartmentid());
 					voucherReportList.add(voucherReport);
 				}
 			}
-			for (VoucherDetail vd : voucher.getVoucherDetail()) {
+			for (CGeneralLedger vd : voucher.getGeneralledger()) {
 				if(BigDecimal.ZERO.equals(vd.getDebitAmount())){
 					VoucherReport voucherReport = new VoucherReport(persistenceService,Integer.valueOf(voucher.getId().toString()),vd);
 					voucherReport.setDepartment(voucher.getVouchermis().getDepartmentid());

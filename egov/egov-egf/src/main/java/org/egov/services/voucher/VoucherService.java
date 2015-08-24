@@ -321,10 +321,10 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                         voucherMap.put("type", voucherheader.getType());
                         voucherMap.put("voucherdate", voucherheader.getVoucherDate());
                         voucherMap.put("fundname", voucherheader.getFundId().getName());
-                        Set<VoucherDetail> vDetailSet =voucherheader.getVoucherDetail();
-                        for(VoucherDetail detail:vDetailSet)
+                        Set<CGeneralLedger> vDetailSet =voucherheader.getGeneralledger();
+                        for(CGeneralLedger detail:vDetailSet)
                         {
-                                amt = amt.add(detail.getDebitAmount());
+                                amt = amt.add(new BigDecimal(detail.getDebitAmount()));
                         }
                         voucherMap.put("amount", amt);
                         if(voucherheader.getStatus() != null){

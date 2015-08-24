@@ -61,6 +61,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.workflow.entity.StateAware;
+
 import org.hibernate.search.annotations.DocumentId;
 
 @Entity
@@ -102,6 +103,18 @@ public class CVoucherHeader extends StateAware {
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinTable(name = "voucherdetail", joinColumns = @JoinColumn(name = "id") , inverseJoinColumns = @JoinColumn(name = "voucherHeaderId") )
     private Set<VoucherDetail> voucherDetail = new HashSet<VoucherDetail>(0);
+    
+   
+//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "voucherHeaderId")
+    
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinTable(name = "generalLedger", joinColumns = @JoinColumn(name = "id") , inverseJoinColumns = @JoinColumn(name = "voucherHeaderId") )
+   
+    private Set<CGeneralLedger> genenralLedger = new HashSet<CGeneralLedger>(0);
+   
+   
+
+    
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy="voucherheaderid")
     private Vouchermis vouchermis;
 
@@ -349,7 +362,10 @@ public class CVoucherHeader extends StateAware {
         return voucherNumber;
     }
 
-    public Set<VoucherDetail> getVoucherDetail() {
+    public Set<CGeneralLedger> getGeneralledger() {
+        return genenralLedger;
+    }
+/*    public Set<VoucherDetail> getVoucherDetail() {
         return voucherDetail;
     }
 
@@ -359,7 +375,7 @@ public class CVoucherHeader extends StateAware {
 
     public void addVoucherDetail(final VoucherDetail voucherdetail) {
         getVoucherDetail().add(voucherdetail);
-    }
+    }*/
 
     public Vouchermis getVouchermis() {
         return vouchermis;

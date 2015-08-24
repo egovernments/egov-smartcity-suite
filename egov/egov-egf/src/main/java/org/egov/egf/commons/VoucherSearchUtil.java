@@ -80,7 +80,7 @@ public class VoucherSearchUtil {
 		boolean modeIsNotBlank = (null != mode && !StringUtils.isBlank(mode));
 		if (modeIsNotBlank) {
 			if ("edit".equalsIgnoreCase(mode)) {
-				sql = sql + " and vh.isConfirmed != 1";
+				sql = sql + " and (vh.isConfirmed is null or vh.isConfirmed != 1)";
 			} else if ("reverse".equalsIgnoreCase(mode)) {
 				sql = sql + " and vh.isConfirmed = 1";
 			}

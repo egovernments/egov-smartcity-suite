@@ -675,7 +675,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
         }
         public String getSourcePath(){
                 String sourcePath;
-                if(voucherHeader.getVoucherDetail().size()>0)
+                if(voucherHeader.getGeneralledger().size()>0)
                 {
                         sourcePath = voucherHeader.getVouchermis().getSourcePath();
                 }else{

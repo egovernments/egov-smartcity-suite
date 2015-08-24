@@ -1,3 +1,4 @@
+<?xml  version="1.0"?>
 <!--
   eGov suite of products aim to improve the internal efficiency,transparency, 
      accountability and the service delivery of the government  organizations.
@@ -37,7 +38,7 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<?xml  version="1.0"?>
+
 <sqlTemplates>
  <sqlTemplate id="schemelist"
   	    template="select id,name from scheme where fundid='@1' order by name">

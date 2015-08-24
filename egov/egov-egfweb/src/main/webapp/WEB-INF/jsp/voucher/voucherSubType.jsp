@@ -94,7 +94,7 @@ function onChangeVSubType(){
 	}else if(vType == 'Fixed Asset'){
 		vsubTypeValue = "fixedassetjv-Supplier Journal";
 	}else if(vType == 'Pension'){
-	vsubTypeValue = "pensionjv-Pension Journal";
+	vsubTypeValue = "pensionjv-Pension Journal";  
 	}
 	var array = vsubTypeValue.split("-");
 	document.getElementById('voucherTypeBean.voucherNumType').value = array[0];
@@ -128,5 +128,5 @@ function onChangeVSubType(){
 		document.getElementById('partyNameDivId').style.display='inline';
 	}
 	
-}
+}      
 </script>

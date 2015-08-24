@@ -57,7 +57,7 @@ import org.egov.web.actions.payment.PaymentAction;
 
 public class VoucherReport {
 	private CGeneralLedger generalLedger = new CGeneralLedger();
-	private VoucherDetail voucherDetail = new VoucherDetail();
+	private CGeneralLedger voucherDetail = new CGeneralLedger();
 	private PersistenceService persistenceService;
 	private Department department;
 	private static final String MULTIPLE = "MULTIPLE";
@@ -67,7 +67,7 @@ public class VoucherReport {
 		this.persistenceService = persistenceService;
 	}
 
-	public VoucherReport(PersistenceService persistenceService,Integer voucherId,VoucherDetail voucherDetail) {
+	public VoucherReport(PersistenceService persistenceService,Integer voucherId,CGeneralLedger voucherDetail) {
 		super();
 		this.persistenceService = persistenceService;
 		this.generalLedger = getGeneralLedger(voucherId,voucherDetail);
@@ -76,7 +76,7 @@ public class VoucherReport {
 	public CGeneralLedger getGeneralLedger() {
 		return generalLedger;
 	}
-	public VoucherDetail getVoucherDetail() {
+	public CGeneralLedger getVoucherDetail() {
 		return voucherDetail;
 	}
 	public String getSlCode() {
@@ -132,9 +132,9 @@ public class VoucherReport {
 		return "";
 	}
 
-	private CGeneralLedger getGeneralLedger(Integer voucherId,VoucherDetail voucherLineId) {
+	private CGeneralLedger getGeneralLedger(Integer voucherId,CGeneralLedger voucherLineId) {
 		persistenceService.setType(CGeneralLedger.class);
-		return (CGeneralLedger) persistenceService.find("from CGeneralLedger where voucherHeaderId.id=? and glcode=? and voucherlineId=?", Long.valueOf(voucherId),voucherLineId.getGlCode(),voucherLineId.getId());
+		return (CGeneralLedger) persistenceService.find("from CGeneralLedger where voucherHeaderId.id=? and glcode=? and voucherlineId=?", Long.valueOf(voucherId),voucherLineId.getGlcode(),voucherLineId.getId());
 	}
 
 	public void setDepartment(Department department) {

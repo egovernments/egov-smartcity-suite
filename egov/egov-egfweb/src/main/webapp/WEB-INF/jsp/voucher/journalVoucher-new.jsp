@@ -242,7 +242,8 @@
 	function validateJV(btnval,name,value)
 	{
 	 // alert("inside validate jv");  
-	// alert(document.getElementById('billDetailTable').size);
+	// alert(document.getElementById('billDetailTable'));
+	
 	   document.getElementById("buttonValue").value=btnval;
 		document.getElementById('lblError').innerHTML ="";
 		var cDate = new Date();

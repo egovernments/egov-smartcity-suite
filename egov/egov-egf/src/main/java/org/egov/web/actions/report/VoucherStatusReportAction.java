@@ -57,6 +57,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgModules;
 import org.egov.commons.Functionary;
@@ -281,9 +282,9 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 			voucherMap.put("name", voucherheader.getName());		
 			voucherMap.put("voucherdate", voucherheader.getVoucherDate());
 			voucherMap.put("deptName", voucherheader.getVouchermis().getDepartmentid().getName());
-			for(VoucherDetail detail:voucherheader.getVoucherDetail())
+			for(CGeneralLedger detail:voucherheader.getGeneralledger())
 			{
-				amt = amt.add(detail.getDebitAmount());
+				amt = amt.add(new BigDecimal(detail.getDebitAmount()));
 			}
 			voucherMap.put("amount", amt);
 			voucherMap.put("status",getVoucherStatus(voucherheader.getStatus()));
@@ -438,9 +439,9 @@ public Map<String, String> getVoucherNameMap(String type) {
 			vhcrRptView.setVoucherName(cVchrHdr.getName());
 			vhcrRptView.setVoucherDate(cVchrHdr.getVoucherDate());
 			vhcrRptView.setSource(getVoucherModule(cVchrHdr.getModuleId()));
-			for(VoucherDetail detail:cVchrHdr.getVoucherDetail())
+			for(CGeneralLedger detail:cVchrHdr.getGeneralledger())
 			{
-				amt = amt.add(detail.getDebitAmount());
+				amt = amt.add(new BigDecimal(detail.getDebitAmount()));
 			}
 			vhcrRptView.setAmount(amt);
 			vhcrRptView.setOwner(getVoucherOwner(cVchrHdr));			

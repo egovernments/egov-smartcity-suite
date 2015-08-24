@@ -63,7 +63,8 @@ import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
-import org.egov.commons.VoucherDetail;
+//import org.egov.commons.VoucherDetail;
+import org.egov.commons.CGeneralLedger;
 import org.egov.commons.Vouchermis;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.commons.VoucherSearchUtil;
@@ -311,11 +312,13 @@ public class VoucherSearchAction extends BaseFormAction
 					{
 						voucherMap.put("source", sourceMap.get(voucherheader.getModuleId()));
 					}
-					for(VoucherDetail detail:voucherheader.getVoucherDetail())
+					/*for(CGeneralLedger detail:voucherheader.getGeneralledger())
 					{
-						amt = amt.add(detail.getDebitAmount());
-					}
-					voucherMap.put("amount", amt);
+						amt = amt.add(new BigDecimal(detail.getDebitAmount()));
+					}*/
+					
+                                        
+					voucherMap.put("amount",amt);
 					voucherMap.put("status",getVoucherStatus(voucherheader.getStatus()));
 					voucherList.add(voucherMap);
 			}
@@ -360,11 +363,11 @@ public class VoucherSearchAction extends BaseFormAction
 				{
 					voucherMap.put("source", sourceMap.get(voucherheader.getModuleId()));
 				}
-				for(VoucherDetail detail:voucherheader.getVoucherDetail())
+				/*for(VoucherDetail detail:voucherheader.getVoucherDetail())
 				{
 					amt = amt.add(detail.getDebitAmount());
-				}
-				voucherMap.put("amount", amt);
+				}*/
+				voucherMap.put("amount", voucherheader.getTotalAmount());
 				voucherMap.put("status",getVoucherStatus(voucherheader.getStatus()));
 				voucherList.add(voucherMap);
 		    }

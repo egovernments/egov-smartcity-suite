@@ -1929,20 +1929,21 @@ public class CreateVoucher {
                                          functionId = functionDAO.getFunctionByCode(accDetailMap.get(VoucherConstant.FUNCTIONCODE).toString()).getId().toString();
                                          if(LOGGER.isDebugEnabled())     LOGGER.debug("functionId>>>>>>>> "+functionId);
                                  }
+                                 CChartOfAccounts chartOfAcc=chartOfAccountsDAO.getCChartOfAccountsByGlCode(glcode);
                                  VoucherDetail voucherDetail = new VoucherDetail();
                                  voucherDetail.setLineId(lineId++);
-                                 voucherDetail.setVoucherHeaderId(vh);
-                                 CChartOfAccounts chartOfAcc=chartOfAccountsDAO.getCChartOfAccountsByGlCode(glcode);
+/*                               voucherDetail.setVoucherHeaderId(vh);
+                                 
                                  voucherDetail.setGlCode(chartOfAcc.getGlcode());
                                  voucherDetail.setAccountName(chartOfAcc.getName());
                                  voucherDetail.setDebitAmount(new BigDecimal(debitAmount));
                                  voucherDetail.setCreditAmount(new BigDecimal(creditAmount));
                                  voucherDetail.setNarration(narration);
 
-                                 // insert into voucher detail.
-                               //  insertIntoVoucherDetail(voucherDetail);
+                                // insert into voucher detail.
+                                 insertIntoVoucherDetail(voucherDetail);
                                  vh.addVoucherDetail(voucherDetail);
-
+*/
                                  Transaxtion transaction = new Transaxtion();
                                  transaction.setGlCode(chartOfAcc.getGlcode());
                                  transaction.setGlName(chartOfAcc.getName());
