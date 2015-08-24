@@ -50,6 +50,9 @@ public class ConsumerSearch implements Indexable {
     @Searchable(name = "connectiontype", group = Searchable.Group.CLAUSES)
     private String connectionType;
 
+    @Searchable(name = "waterTaxDue", group = Searchable.Group.CLAUSES)
+    private BigDecimal waterTaxDue;
+    
     public ConsumerSearch(final String consumerCode, final String mobileNumber, final String usageType,
             final Date createdDate) {
         this.consumerCode = consumerCode;
@@ -232,6 +235,14 @@ public class ConsumerSearch implements Indexable {
 
     public void setConnectionType(final String connectionType) {
         this.connectionType = connectionType;
+    }
+
+    public BigDecimal getWaterTaxDue() {
+        return waterTaxDue;
+    }
+
+    public void setWaterTaxDue(BigDecimal waterTaxDue) {
+        this.waterTaxDue = waterTaxDue;
     }
 
 }

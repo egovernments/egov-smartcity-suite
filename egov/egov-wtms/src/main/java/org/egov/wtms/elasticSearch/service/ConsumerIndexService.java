@@ -68,6 +68,8 @@ public class ConsumerIndexService {
         consumerSearch.setApplicationCode(waterConnectionDetails.getApplicationType().getCode());
         consumerSearch.setStatus(waterConnectionDetails.getConnectionStatus().name());
         consumerSearch.setConnectionType(waterConnectionDetails.getConnectionType().name());
+        consumerSearch.setWaterTaxDue(waterConnectionDetails.getDemand().getBaseDemand()
+                .subtract(waterConnectionDetails.getDemand().getAmtCollected()));
         ownerNameItr = assessmentDetails.getOwnerNames().iterator();
         if (ownerNameItr.hasNext()) {
             consumerSearch.setConsumerName(ownerNameItr.next().getOwnerName());

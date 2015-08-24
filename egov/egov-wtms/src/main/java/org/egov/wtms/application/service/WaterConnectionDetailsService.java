@@ -659,13 +659,11 @@ public class WaterConnectionDetailsService {
 			final String mode) throws ValidationException {
 		applicationStatusChange(waterConnectionDetails, workFlowAction, mode);
 
-		if (ConnectionType.NON_METERED.equals(waterConnectionDetails
-				.getConnectionType())
-				&& WaterTaxConstants.APPLICATION_STATUS_SANCTIONED
-						.equalsIgnoreCase(waterConnectionDetails.getEgwStatus()
-								.getCode()))
-			connectionDemandService
-					.updateDemandForNonmeteredConnection(waterConnectionDetails);
+		if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
+	                && WaterTaxConstants.APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(waterConnectionDetails.getEgwStatus().getCode())){
+	            connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails);
+	            updateIndexes(waterConnectionDetails);
+	        }
 
 		final WaterConnectionDetails updatedWaterConnectionDetails = waterConnectionDetailsRepository
 				.save(waterConnectionDetails);

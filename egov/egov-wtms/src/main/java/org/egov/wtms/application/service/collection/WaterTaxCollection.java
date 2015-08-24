@@ -146,10 +146,9 @@ public class WaterTaxCollection extends TaxCollection {
                     approvalPosition, WaterTaxConstants.FEE_COLLECTION_COMMENT, WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
                     null);
             waterConnectionDetailsService.sendSmsAndEmail(waterConnectionDetails, null);
-            waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
             waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
         }
-
+        waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
     }
 
     private void updateCollForRcptCreate(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
