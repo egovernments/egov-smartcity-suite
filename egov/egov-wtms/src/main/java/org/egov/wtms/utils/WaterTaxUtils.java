@@ -197,7 +197,9 @@ public class WaterTaxUtils {
     }
 
     public String getCityName() {
-        return cityService.getCityByURL(EgovThreadLocals.getDomainName()).getName();
+        return null!=cityService.getCityByURL(EgovThreadLocals.getDomainName()).getPreferences() ?
+                cityService.getCityByURL(EgovThreadLocals.getDomainName()).getPreferences().getMunicipalityName():
+                    cityService.getCityByURL(EgovThreadLocals.getDomainName()).getName();
     }
 
     public String getCityCode() {
