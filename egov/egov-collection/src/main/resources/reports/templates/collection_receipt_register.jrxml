@@ -530,7 +530,7 @@ ORDER BY
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT DEPT_NAME FROM EG_DEPARTMENT WHERE ID_DEPT = " + $P{EGOV_DEPT_ID})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_DEPARTMENT WHERE ID = " + $P{EGOV_DEPT_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="51" y="132" width="79" height="25"/>
@@ -811,7 +811,7 @@ ORDER BY
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT DEPT_NAME FROM EG_DEPARTMENT WHERE ID_DEPT = " + $P{EGOV_DEPT_ID})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_DEPARTMENT WHERE ID = " + $P{EGOV_DEPT_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="30" y="111" width="80" height="20"/>

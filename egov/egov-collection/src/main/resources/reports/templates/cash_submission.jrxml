@@ -1,52 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  eGov suite of products aim to improve the internal efficiency,transparency, 
-     accountability and the service delivery of the government  organizations.
-  
-      Copyright (C) <2015>  eGovernments Foundation
-  
-      The updated version of eGov suite of products as by eGovernments Foundation 
-      is available at http://www.egovernments.org
-  
-      This program is free software: you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation, either version 3 of the License, or
-      any later version.
-  
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
-  
-      You should have received a copy of the GNU General Public License
-      along with this program. If not, see http://www.gnu.org/licenses/ or 
-      http://www.gnu.org/licenses/gpl.html .
-  
-      In addition to the terms of the GPL license to be adhered to in using this
-      program, the following additional terms are to be complied with:
-  
-  	1) All versions of this program, verbatim or modified must carry this 
-  	   Legal Notice.
-  
-  	2) Any misrepresentation of the origin of the material is prohibited. It 
-  	   is required that all modified versions of this material be marked in 
-  	   reasonable ways as different from the original version.
-  
-  	3) This license does not grant any rights to any user of the program 
-  	   with regards to rights under trademark law for use of the trade names 
-  	   or trademarks of eGovernments Foundation.
-  
-    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cash_collection"  language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true">
-	<import value="org.egov.infra.reporting.util.*"/>
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2015-08-24T17:17:02 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cash_collection" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="f9fda7f5-3105-49ec-bb72-ffab202077d3">
 	<import value="java.lang.*"/>
-	<import value="java.math.*"/>
+	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="java.util.*"/>
-	<style name="Title" isDefault="false" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
-	<style name="SubTitle" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="18"/>
-	<style name="Column header" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
-	<style name="Detail" isDefault="false" fontName="Arial" fontSize="12"/>
+	<import value="java.math.*"/>
+	<style name="Title" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
 	<parameter name="EGOV_FROM_DATE" class="java.util.Date">
 		<parameterDescription><![CDATA[From Date]]></parameterDescription>
 		<defaultValueExpression><![CDATA[ReportUtil.getDate(1900, 1, 1)]]></defaultValueExpression>
@@ -83,49 +46,49 @@
 	</parameter>
 	<parameter name="Q_COUNTER_ID" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[Where clause for counter id]]></parameterDescription>
-		<defaultValueExpression><![CDATA[($P{EGOV_COUNTER_ID} == null || $P{EGOV_COUNTER_ID} == -1) ? "" : "AND EG_LOCATION.\"ID\" = " + $P{EGOV_COUNTER_ID}]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_COUNTER_ID} == null || $P{EGOV_COUNTER_ID} == -1) ? "" : "AND EG_LOCATION.ID = " + $P{EGOV_COUNTER_ID}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_COUNTER_OPERATOR_ID" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[Where clause for counter operator id]]></parameterDescription>
-		<defaultValueExpression><![CDATA[($P{EGOV_COUNTER_OPERATOR_ID} == null || $P{EGOV_COUNTER_OPERATOR_ID} == -1) ? "" : "AND EGCL_COLLECTIONHEADER.\"CREATED_BY\" = " + $P{EGOV_COUNTER_OPERATOR_ID}]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_COUNTER_OPERATOR_ID} == null || $P{EGOV_COUNTER_OPERATOR_ID} == -1) ? "" : "AND EGCL_COLLECTIONHEADER.CREATED_BY = " + $P{EGOV_COUNTER_OPERATOR_ID}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_BOUNDARY_ID" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[Where clause for boundary id]]></parameterDescription>
-		<defaultValueExpression><![CDATA[($P{EGOV_BOUNDARY_ID} == null || $P{EGOV_BOUNDARY_ID} == -1) ? "" : "AND EGCL_COLLECTIONMIS.\"ID_BOUNDARY\" = " + $P{EGOV_BOUNDARY_ID}]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_BOUNDARY_ID} == null || $P{EGOV_BOUNDARY_ID} == -1) ? "" : "AND EGCL_COLLECTIONMIS.BOUNDARY = " + $P{EGOV_BOUNDARY_ID}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_RECEIPT_IDS" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[Where clause for receipt header ids]]></parameterDescription>
-		<defaultValueExpression><![CDATA[($P{EGOV_RECEIPT_IDS} == null || $P{EGOV_RECEIPT_IDS}.size() == 0) ? "" : "AND $X{IN, EGCL_COLLECTIONHEADER.\"ID\", EGOV_RECEIPT_IDS}"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_RECEIPT_IDS} == null || $P{EGOV_RECEIPT_IDS}.size() == 0) ? "" : "AND $X{IN, EGCL_COLLECTIONHEADER.ID, EGOV_RECEIPT_IDS}"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT
-     EGCL_COLLECTIONPAYEEDETAILS."PAYEENAME" AS PAYEE_NAME,
-     EG_DEPARTMENT."DEPT_NAME" AS DEPT_NAME,
-     EG_SERVICEDETAILS."SERVICENAME" AS SERVICE_NAME,
-     EGF_INSTRUMENTHEADER."INSTRUMENTAMOUNT" AS INSTRUMENT_AMOUNT,
-     EGCL_COLLECTIONHEADER."ID" AS COLLECTIONHEADER_ID,
-     BANK."NAME" AS REMIT_BANK_NAME,
-     BANKBRANCH."BRANCHNAME" AS REMIT_BRANCH_NAME,
-     BANKACCOUNT."ACCOUNTNUMBER" AS REMIT_ACCOUNT_NUM
+     EGCL_COLLECTIONHEADER.PAYEENAME AS PAYEE_NAME,
+     EG_DEPARTMENT.NAME AS DEPT_NAME,
+     EGCL_SERVICEDETAILS.NAME AS SERVICE_NAME,
+     EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT AS INSTRUMENT_AMOUNT,
+     EGCL_COLLECTIONHEADER.ID AS COLLECTIONHEADER_ID,
+     BANK.NAME AS REMIT_BANK_NAME,
+     BANKBRANCH.BRANCHNAME AS REMIT_BRANCH_NAME,
+     BANKACCOUNT.ACCOUNTNUMBER AS REMIT_ACCOUNT_NUM
 FROM
-     "EGCL_COLLECTIONHEADER" EGCL_COLLECTIONHEADER INNER JOIN "EGCL_COLLECTIONMIS" EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER."ID" = EGCL_COLLECTIONMIS."ID_COLLECTIONHEADER"
-     INNER JOIN "EGCL_COLLECTIONPAYEEDETAILS" EGCL_COLLECTIONPAYEEDETAILS ON EGCL_COLLECTIONHEADER."ID_COLLECTIONPAYEEDETAILS" = EGCL_COLLECTIONPAYEEDETAILS."ID"
-     INNER JOIN "EG_SERVICEDETAILS" EG_SERVICEDETAILS ON EGCL_COLLECTIONHEADER."ID_SERVICE" = EG_SERVICEDETAILS."ID"
-     INNER JOIN "EG_LOCATION" EG_LOCATION ON EGCL_COLLECTIONHEADER."ID_LOCATION" = EG_LOCATION."ID"
-     INNER JOIN "EGCL_COLLECTIONINSTRUMENT" EGCL_COLLECTIONINSTRUMENT ON EGCL_COLLECTIONHEADER."ID" = EGCL_COLLECTIONINSTRUMENT."COLLECTIONHEADERID"
-     INNER JOIN "EGF_INSTRUMENTHEADER" EGF_INSTRUMENTHEADER ON EGCL_COLLECTIONINSTRUMENT."INSTRUMENTMASTERID" = EGF_INSTRUMENTHEADER."ID"
-     INNER JOIN "EGF_INSTRUMENTTYPE" EGF_INSTRUMENTTYPE ON EGF_INSTRUMENTHEADER."INSTRUMENTTYPE" = EGF_INSTRUMENTTYPE."ID"
-     INNER JOIN "EG_DEPARTMENT" EG_DEPARTMENT ON EGCL_COLLECTIONMIS."ID_DEPARTMENT" = EG_DEPARTMENT."ID_DEPT"
-     INNER JOIN "EG_BOUNDARY" EG_BOUNDARY ON EGCL_COLLECTIONMIS."ID_BOUNDARY" = EG_BOUNDARY."ID_BNDRY"
-     LEFT JOIN "CONTRAJOURNALVOUCHER" CONTRAJOURNALVOUCHER ON CONTRAJOURNALVOUCHER."INSTRUMENTHEADERID"=EGF_INSTRUMENTHEADER."ID"
-     LEFT JOIN "BANKACCOUNT" BANKACCOUNT ON BANKACCOUNT."ID" = CONTRAJOURNALVOUCHER."TOBANKACCOUNTID"
-     LEFT JOIN "BANKBRANCH" BANKBRANCH ON BANKBRANCH."ID" = BANKACCOUNT."BRANCHID"
-     LEFT JOIN "BANK" BANK ON BANK."ID" = BANKBRANCH."BANKID"
+     EGCL_COLLECTIONHEADER EGCL_COLLECTIONHEADER INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER
+     INNER JOIN EGCL_SERVICEDETAILS EGCL_SERVICEDETAILS ON EGCL_COLLECTIONHEADER.SERVICEDETAILS = EGCL_SERVICEDETAILS.ID
+     INNER JOIN EG_LOCATION EG_LOCATION ON EGCL_COLLECTIONHEADER.LOCATION = EG_LOCATION.ID
+     INNER JOIN EGCL_COLLECTIONINSTRUMENT EGCL_COLLECTIONINSTRUMENT ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONINSTRUMENT.COLLECTIONHEADER
+     INNER JOIN EGF_INSTRUMENTHEADER EGF_INSTRUMENTHEADER ON EGCL_COLLECTIONINSTRUMENT.INSTRUMENTHEADER = EGF_INSTRUMENTHEADER.ID
+     INNER JOIN EGF_INSTRUMENTTYPE EGF_INSTRUMENTTYPE ON EGF_INSTRUMENTHEADER.INSTRUMENTTYPE = EGF_INSTRUMENTTYPE.ID
+     INNER JOIN EG_DEPARTMENT EG_DEPARTMENT ON EGCL_COLLECTIONMIS.DEPARTMENT = EG_DEPARTMENT.ID
+     INNER JOIN EG_BOUNDARY EG_BOUNDARY ON EGCL_COLLECTIONMIS.BOUNDARY = EG_BOUNDARY.ID
+     LEFT JOIN CONTRAJOURNALVOUCHER CONTRAJOURNALVOUCHER ON CONTRAJOURNALVOUCHER.INSTRUMENTHEADERID=EGF_INSTRUMENTHEADER.ID
+     LEFT JOIN BANKACCOUNT BANKACCOUNT ON BANKACCOUNT.ID = CONTRAJOURNALVOUCHER.TOBANKACCOUNTID
+     LEFT JOIN BANKBRANCH BANKBRANCH ON BANKBRANCH.ID = BANKACCOUNT.BRANCHID
+     LEFT JOIN BANK BANK ON BANK.ID = BANKBRANCH.BANKID
 WHERE
- EGCL_COLLECTIONINSTRUMENT."COLLECTIONHEADERID" = EGCL_COLLECTIONHEADER."ID"
- AND EGF_INSTRUMENTTYPE."TYPE" = $P{EGOV_INSTRUMENT_TYPE}
- AND EGCL_COLLECTIONHEADER."CREATED_DATE" >= $P{EGOV_FROM_DATE}
- AND EGCL_COLLECTIONHEADER."CREATED_DATE" <= $P{EGOV_TO_DATE_PLUS_ONE}
+ EGCL_COLLECTIONINSTRUMENT.COLLECTIONHEADER = EGCL_COLLECTIONHEADER.ID
+ AND EGF_INSTRUMENTTYPE.TYPE = $P{EGOV_INSTRUMENT_TYPE}
+ AND EGCL_COLLECTIONHEADER.CREATEDDATE >= $P{EGOV_FROM_DATE}
+ AND EGCL_COLLECTIONHEADER.CREATEDDATE <= $P{EGOV_TO_DATE_PLUS_ONE}
+ $P!{Q_COUNTER_ID}
  $P!{Q_COUNTER_ID}
  $P!{Q_COUNTER_OPERATOR_ID}
  $P!{Q_BOUNDARY_ID}
@@ -164,7 +127,7 @@ WHERE
 	<title>
 		<band height="137" splitType="Stretch">
 			<staticText>
-				<reportElement x="360" y="66" width="65" height="20"/>
+				<reportElement x="360" y="66" width="65" height="20" uuid="406409e8-65ab-4bfe-b80f-132f7f322f29"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -178,7 +141,7 @@ WHERE
 				<text><![CDATA[Counter:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="360" y="86" width="65" height="20"/>
+				<reportElement x="360" y="86" width="65" height="20" uuid="07cac26c-6cb4-4cba-b159-8f4d76dd3ddf"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -192,7 +155,7 @@ WHERE
 				<text><![CDATA[Operator:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="424" y="86" width="131" height="20"/>
+				<reportElement x="424" y="86" width="131" height="20" uuid="a7c24b72-0ffe-41d2-a284-1aac004b8df9"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -203,10 +166,10 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font pdfFontName="Courier"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($P{EGOV_COUNTER_OPERATOR_ID} == null || $P{EGOV_COUNTER_OPERATOR_ID} == -1) ? "All Users" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT USER_NAME FROM EG_USER WHERE ID_USER = " + $P{EGOV_COUNTER_OPERATOR_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_COUNTER_OPERATOR_ID} == null || $P{EGOV_COUNTER_OPERATOR_ID} == -1) ? "All Users" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_USER WHERE ID = " + $P{EGOV_COUNTER_OPERATOR_ID})]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="424" y="66" width="131" height="20"/>
+				<reportElement x="424" y="66" width="131" height="20" uuid="61f08971-15a2-45af-8f90-80d3b3a5fc4c"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -217,10 +180,10 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font pdfFontName="Courier"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($P{EGOV_COUNTER_ID} == null || $P{EGOV_COUNTER_ID} == -1) ? "All Counters" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_LOCATION WHERE ID = " + $P{EGOV_COUNTER_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_COUNTER_ID} == null || $P{EGOV_COUNTER_ID} == -1) ? "All Counters" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_LOCATION WHERE ID = " + $P{EGOV_COUNTER_ID})]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="81" y="86" width="131" height="20"/>
+				<reportElement x="81" y="86" width="131" height="20" uuid="f018c13b-9829-4156-82de-8499621700ad"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -231,10 +194,10 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font pdfFontName="Courier"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$P{EGOV_TO_DATE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{EGOV_TO_DATE}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="81" y="66" width="131" height="20"/>
+				<reportElement x="81" y="66" width="131" height="20" uuid="cb57c45a-66ec-46fd-8d52-2b0595a13077"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -245,10 +208,10 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font pdfFontName="Courier"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$P{EGOV_FROM_DATE} == null ? "NA" : $P{EGOV_FROM_DATE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{EGOV_FROM_DATE} == null ? "NA" : $P{EGOV_FROM_DATE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="2" y="86" width="80" height="20"/>
+				<reportElement x="2" y="86" width="80" height="20" uuid="6dc6af47-008b-4d56-99b1-43d829effc5d"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -262,7 +225,7 @@ WHERE
 				<text><![CDATA[To Date:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2" y="66" width="80" height="20"/>
+				<reportElement x="2" y="66" width="80" height="20" uuid="1ba59829-bfe9-4a1d-a752-1fb35df85c62"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -276,22 +239,22 @@ WHERE
 				<text><![CDATA[From Date:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Title" x="93" y="17" width="368" height="33"/>
+				<reportElement style="Title" x="93" y="17" width="368" height="33" uuid="f1030aae-6699-4dad-8195-c35681ec5942"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Courier New" pdfFontName="Courier-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Cash Submission Report]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="81" y="106" width="131" height="20"/>
+				<reportElement x="81" y="106" width="131" height="20" uuid="9d7d361b-a5e0-42eb-94da-756e22d2f1c6"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
 					<font pdfFontName="Courier"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($P{EGOV_BOUNDARY_ID} == null || $P{EGOV_BOUNDARY_ID} == -1) ? "All Zones" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT BNDRY_NAME_LOCAL FROM EG_BOUNDARY WHERE ID_BNDRY = " + $P{EGOV_BOUNDARY_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_BOUNDARY_ID} == null || $P{EGOV_BOUNDARY_ID} == -1) ? "All Zones" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT LOCALNAME FROM EG_BOUNDARY WHERE ID = " + $P{EGOV_BOUNDARY_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="2" y="106" width="80" height="20"/>
+				<reportElement x="2" y="106" width="80" height="20" uuid="85e04a74-9b56-44ec-8fa8-d3f26314946c"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
 					<font pdfFontName="Courier"/>
@@ -306,7 +269,7 @@ WHERE
 	<columnHeader>
 		<band height="50" splitType="Stretch">
 			<staticText>
-				<reportElement x="455" y="20" width="100" height="30"/>
+				<reportElement x="455" y="20" width="100" height="30" uuid="84690096-98ec-4d8d-b9f5-74769e7174e4"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -320,7 +283,7 @@ WHERE
 				<text><![CDATA[Cash Amount]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="30" y="20" width="80" height="30"/>
+				<reportElement x="30" y="20" width="80" height="30" uuid="48dbfd93-53a3-455a-9d8d-8eb44a0ea655"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -334,7 +297,7 @@ WHERE
 				<text><![CDATA[Department]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="270" y="20" width="90" height="30"/>
+				<reportElement x="270" y="20" width="90" height="30" uuid="d5c392be-fc6c-4c7d-bdad-99b7164a4766"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -348,7 +311,7 @@ WHERE
 				<text><![CDATA[Nature of Payment]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="110" y="20" width="80" height="30"/>
+				<reportElement x="110" y="20" width="80" height="30" uuid="62eeeefb-e5f6-4af8-a403-33622d7fca85"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -362,7 +325,7 @@ WHERE
 				<text><![CDATA[Function]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="190" y="20" width="80" height="30"/>
+				<reportElement x="190" y="20" width="80" height="30" uuid="a072f49a-594c-40f2-8ddf-19544f6fd250"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -376,7 +339,7 @@ WHERE
 				<text><![CDATA[Account Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="360" y="20" width="95" height="30"/>
+				<reportElement x="360" y="20" width="95" height="30" uuid="46555fe2-9b7b-481f-bcb7-861344755265"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -390,7 +353,7 @@ WHERE
 				<text><![CDATA[Name of the Party]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="30" height="50"/>
+				<reportElement x="0" y="0" width="30" height="50" uuid="3acb260b-66de-4a4f-8ac6-2f2255417503"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -404,7 +367,7 @@ WHERE
 				<text><![CDATA[Sl. No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="30" y="0" width="330" height="20"/>
+				<reportElement x="30" y="0" width="330" height="20" uuid="f3cfbaf7-d93e-49d9-844d-9cc0f4b5e8c3"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -418,7 +381,7 @@ WHERE
 				<text><![CDATA[Payment Made For]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="360" y="0" width="195" height="20"/>
+				<reportElement x="360" y="0" width="195" height="20" uuid="8429e983-8cd5-4e4a-a229-8fd4c258a2fe"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -436,7 +399,7 @@ WHERE
 	<detail>
 		<band height="20" splitType="Prevent">
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="360" y="0" width="95" height="20" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="360" y="0" width="95" height="20" isPrintWhenDetailOverflows="true" uuid="65fdbc87-c891-40e0-a6ff-4e547f9fc821"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -447,10 +410,10 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Courier New" pdfFontName="Courier" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{PAYEE_NAME}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{PAYEE_NAME}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00">
-				<reportElement stretchType="RelativeToTallestObject" x="455" y="0" width="100" height="20" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="455" y="0" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="3d585187-38cf-4174-aa22-c7996893cc97"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -461,10 +424,10 @@ WHERE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Courier New" pdfFontName="Courier" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{INSTRUMENT_AMOUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{INSTRUMENT_AMOUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="30" y="0" width="80" height="20" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="30" y="0" width="80" height="20" isPrintWhenDetailOverflows="true" uuid="8d78fed1-8b79-40ee-83b2-5ceef4c96fa1"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -475,10 +438,10 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Courier New" pdfFontName="Courier" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{DEPT_NAME}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{DEPT_NAME}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="270" y="0" width="90" height="20" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="270" y="0" width="90" height="20" isPrintWhenDetailOverflows="true" uuid="6f4bdeae-b353-4934-9c6c-ab7f37e7bbe5"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -489,18 +452,18 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Courier New" pdfFontName="Courier" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{SERVICE_NAME}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{SERVICE_NAME}]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement stretchType="RelativeToTallestObject" x="110" y="0" width="160" height="20" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="110" y="0" width="160" height="20" isPrintWhenDetailOverflows="true" uuid="8ef860d6-a742-4907-8354-fd2ba846897d"/>
 				<subreportParameter name="EGOV_COLLECTIONHEADER_ID">
 					<subreportParameterExpression><![CDATA[$F{COLLECTIONHEADER_ID}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("collection_accounts.jasper")]]></subreportExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_accounts.jasper")]]></subreportExpression>
 			</subreport>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="30" height="20" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="30" height="20" isPrintWhenDetailOverflows="true" uuid="4de7c4c5-e72e-4bc9-b041-0ca0b89e7fc4"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -511,14 +474,14 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Courier New" pdfFontName="Courier"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
 	<columnFooter>
 		<band height="20">
 			<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="###0.00;-###0.00">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="455" y="0" width="100" height="20"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="455" y="0" width="100" height="20" uuid="9c3439ac-f8a6-48fb-be6d-ec608288ee38"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -529,10 +492,10 @@ WHERE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Courier New" isBold="true" pdfFontName="Courier-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{INSTRUMENT_AMOUNT_SUM}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{INSTRUMENT_AMOUNT_SUM}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="0" width="95" height="20"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="0" width="95" height="20" uuid="546a18ab-8ae1-4a58-afc1-11656515aa82"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -550,39 +513,39 @@ WHERE
 	<pageFooter>
 		<band height="20" splitType="Stretch">
 			<textField pattern="EEEEE dd MMMMM yyyy">
-				<reportElement style="Column header" x="0" y="0" width="197" height="20"/>
+				<reportElement style="Column header" x="0" y="0" width="197" height="20" uuid="59e654d0-f3dd-49d9-b763-35210128203f"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Courier New" size="10" isBold="false" pdfFontName="Courier" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Column header" x="435" y="0" width="80" height="20"/>
+				<reportElement style="Column header" x="435" y="0" width="80" height="20" uuid="c481adfb-cbd5-4638-9df1-8b1db971fa43"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Courier New" size="10" isBold="false" pdfFontName="Courier" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement style="Column header" x="515" y="0" width="40" height="20"/>
+				<reportElement style="Column header" x="515" y="0" width="40" height="20" uuid="c5a1a782-cb95-494c-bf05-7670483f87de"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Courier New" size="10" isBold="false" pdfFontName="Courier" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
 	<noData>
 		<band height="141">
 			<staticText>
-				<reportElement x="93" y="110" width="368" height="31"/>
+				<reportElement x="93" y="110" width="368" height="31" uuid="fa5fee1f-3d39-4a46-baef-c8eac761bb79"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Courier New" size="24" isBold="true" pdfFontName="Courier-Bold"/>
 				</textElement>
 				<text><![CDATA[No data found!]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="81" y="49" width="131" height="20"/>
+				<reportElement x="81" y="49" width="131" height="20" uuid="a190902c-92b7-423d-997d-587a541f79c4"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -593,10 +556,10 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font pdfFontName="Courier"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$P{EGOV_FROM_DATE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{EGOV_FROM_DATE}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="424" y="49" width="131" height="20"/>
+				<reportElement x="424" y="49" width="131" height="20" uuid="7720bfd4-2486-49ad-86bc-3e23af98690a"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -607,10 +570,10 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font pdfFontName="Courier"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($P{EGOV_COUNTER_ID} == null || $P{EGOV_COUNTER_ID} == -1) ? "All Counters" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_LOCATION WHERE ID = " + $P{EGOV_COUNTER_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_COUNTER_ID} == null || $P{EGOV_COUNTER_ID} == -1) ? "All Counters" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_LOCATION WHERE ID = " + $P{EGOV_COUNTER_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="360" y="49" width="65" height="20"/>
+				<reportElement x="360" y="49" width="65" height="20" uuid="0c576786-bf6f-4fc0-9b92-67c03805dd2e"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -624,7 +587,7 @@ WHERE
 				<text><![CDATA[Counter]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="424" y="69" width="131" height="20"/>
+				<reportElement x="424" y="69" width="131" height="20" uuid="48a9117d-ccce-4e62-a55b-ddc5e4da6c73"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -635,10 +598,10 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font pdfFontName="Courier"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($P{EGOV_COUNTER_OPERATOR_ID} == null || $P{EGOV_COUNTER_OPERATOR_ID} == -1) ? "All Users" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT USER_NAME FROM EG_USER WHERE ID_USER = " + $P{EGOV_COUNTER_OPERATOR_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_COUNTER_OPERATOR_ID} == null || $P{EGOV_COUNTER_OPERATOR_ID} == -1) ? "All Users" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_USER WHERE ID = " + $P{EGOV_COUNTER_OPERATOR_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="360" y="69" width="65" height="20"/>
+				<reportElement x="360" y="69" width="65" height="20" uuid="585a64b2-b361-41ab-aca7-1559ae63eb7d"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -652,14 +615,14 @@ WHERE
 				<text><![CDATA[Operator]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Title" x="93" y="0" width="368" height="33"/>
+				<reportElement style="Title" x="93" y="0" width="368" height="33" uuid="073bcf30-ab0c-4561-8e27-19bd158b835f"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Courier New" pdfFontName="Courier-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Cash Submission Report]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="81" y="69" width="131" height="20"/>
+				<reportElement x="81" y="69" width="131" height="20" uuid="f2b69e1f-b540-4cd2-8c0c-48a79be2496a"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -670,10 +633,10 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font pdfFontName="Courier"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$P{EGOV_TO_DATE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{EGOV_TO_DATE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="2" y="69" width="80" height="20"/>
+				<reportElement x="2" y="69" width="80" height="20" uuid="379d6875-62b6-4ec0-9b24-5bcff6a60f05"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -687,7 +650,7 @@ WHERE
 				<text><![CDATA[To Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2" y="49" width="80" height="20"/>
+				<reportElement x="2" y="49" width="80" height="20" uuid="cca4175d-6e0c-4c30-9841-18d8d7bf1c91"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -701,15 +664,15 @@ WHERE
 				<text><![CDATA[From Date]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="81" y="89" width="131" height="20"/>
+				<reportElement x="81" y="89" width="131" height="20" uuid="e7f69fbd-6f7f-4829-a199-1ff73b708a92"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
 					<font pdfFontName="Courier"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($P{EGOV_BOUNDARY_ID} == null || $P{EGOV_BOUNDARY_ID} == -1) ? "All Zones" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT BNDRY_NAME_LOCAL FROM EG_BOUNDARY WHERE ID_BNDRY = " + $P{EGOV_BOUNDARY_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_BOUNDARY_ID} == null || $P{EGOV_BOUNDARY_ID} == -1) ? "All Zones" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT LOCALNAME FROM EG_BOUNDARY WHERE ID = " + $P{EGOV_BOUNDARY_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="2" y="89" width="80" height="20"/>
+				<reportElement x="2" y="89" width="80" height="20" uuid="05f5c855-c046-4523-823c-9a78aa11dd75"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
 					<font pdfFontName="Courier"/>

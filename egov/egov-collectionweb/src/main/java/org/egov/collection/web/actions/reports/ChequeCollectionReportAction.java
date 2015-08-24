@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,27 +18,27 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.collection.web.actions.reports;  
-  
+package org.egov.collection.web.actions.reports;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,6 +51,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
@@ -58,173 +59,171 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-  
-  
-@ParentPackage("egov") 
-@Results({
-    @Result(name=ChequeCollectionReportAction.INDEX,location="chequeCollectionReport-index.jsp"),
-    @Result(name=ChequeCollectionReportAction.REPORT,location="chequeCollectionReport-report.jsp") })
-public class ChequeCollectionReportAction extends BaseFormAction{  
-	
-private static final long serialVersionUID = 1L;
-	
-	public Map<String, Object> critParams = new HashMap<String, Object>();
-	private ReportService reportService;
-	private CollectionsUtil collectionsUtil;
-	private Integer reportId = -1;
-	
-	public static final String REPORT = "report";
-	private static final String EGOV_COUNTER_OPERATOR_ID = "EGOV_COUNTER_OPERATOR_ID";
-	private static final String EGOV_COUNTER_ID = "EGOV_COUNTER_ID";
-	private static final String EGOV_FROM_DATE = "EGOV_FROM_DATE";
-	private static final String EGOV_TO_DATE = "EGOV_TO_DATE";
-	private static final String EGOV_BOUNDARY_ID = "EGOV_BOUNDARY_ID";
-	private static final String EGOV_RECEIPT_IDS = "EGOV_RECEIPT_IDS";
-	private static final String CHEQUE_COLLETION_TEMPLATE = "chequeCollectionReport";
+import org.egov.infstr.utils.HibernateUtil;
 
-	public Object getModel() {
-		return null;
-	}
-	
-	public void setFromDate(Date fromDate) {
-		critParams.put(EGOV_FROM_DATE, fromDate);
-	}
+@ParentPackage("egov")
+@Results({ @Result(name = ChequeCollectionReportAction.INDEX, location = "chequeCollectionReport-index.jsp"),
+        @Result(name = ChequeCollectionReportAction.REPORT, location = "chequeCollectionReport-report.jsp") })
+public class ChequeCollectionReportAction extends BaseFormAction {
 
-	public void setToDate(Date toDate) {
-		critParams.put(EGOV_TO_DATE, toDate);
-	}
+    private static final long serialVersionUID = 1L;
 
-	public void setCounterId(Long counterId) {
-		critParams.put(EGOV_COUNTER_ID, counterId);
-	}
-	
-	public void setUserId(Long userId) {
-		critParams.put(EGOV_COUNTER_OPERATOR_ID, userId);
-	}
-	
-	public void setBoundaryId(Long boundaryId) {
-		critParams.put(EGOV_BOUNDARY_ID, boundaryId);
-	}
+    public Map<String, Object> critParams = new HashMap<String, Object>();
+    private ReportService reportService;
+    private CollectionsUtil collectionsUtil;
+    private Integer reportId = -1;
 
-	public Date getFromDate() {
-		return (Date)critParams.get(EGOV_FROM_DATE);
-	}
+    public static final String REPORT = "report";
+    private static final String EGOV_COUNTER_OPERATOR_ID = "EGOV_COUNTER_OPERATOR_ID";
+    private static final String EGOV_COUNTER_ID = "EGOV_COUNTER_ID";
+    private static final String EGOV_FROM_DATE = "EGOV_FROM_DATE";
+    private static final String EGOV_TO_DATE = "EGOV_TO_DATE";
+    private static final String EGOV_BOUNDARY_ID = "EGOV_BOUNDARY_ID";
+    private static final String EGOV_RECEIPT_IDS = "EGOV_RECEIPT_IDS";
+    private static final String CHEQUE_COLLETION_TEMPLATE = "chequeCollectionReport";
 
-	public Date getToDate() {
-		return (Date)critParams.get(EGOV_TO_DATE);
-	}
+    @Override
+    public Object getModel() {
+        return null;
+    }
 
-	public Long getCounterId() {
-		return (Long)critParams.get(EGOV_COUNTER_ID);
-	}
-	
-	public Long getUserId() {
-		return (Long)critParams.get(EGOV_COUNTER_OPERATOR_ID);
-	}
-	
-	public Long getBoundaryId() {
-		return (Long)critParams.get(EGOV_BOUNDARY_ID);
-	}
+    public void setFromDate(final Date fromDate) {
+        critParams.put(EGOV_FROM_DATE, fromDate);
+    }
 
-	/**
-	 * @return the reportId
-	 */
-	public Integer getReportId() {
-		return reportId;
-	}
+    public void setToDate(final Date toDate) {
+        critParams.put(EGOV_TO_DATE, toDate);
+    }
 
-	private void initializeCriteriaMap() {
-		critParams.clear();
-		critParams.put(EGOV_COUNTER_OPERATOR_ID, Long.valueOf(-1L));
-		critParams.put(EGOV_COUNTER_ID, Long.valueOf(-1L));
-		critParams.put(EGOV_FROM_DATE, new Date());
-		critParams.put(EGOV_TO_DATE, new Date());
-		critParams.put(EGOV_BOUNDARY_ID, Long.valueOf(-1L));
-	}
+    public void setCounterId(final Long counterId) {
+        critParams.put(EGOV_COUNTER_ID, counterId);
+    }
 
-	public void prepare() {
-		super.prepare();
-		setupDropdownDataExcluding();
-		addDropdownData(CollectionConstants.DROPDOWN_DATA_COUNTER_LIST,
-				collectionsUtil.getAllCounters());
-		addDropdownData(CollectionConstants.DROPDOWN_DATA_RECEIPT_CREATOR_LIST,
-				collectionsUtil.getReceiptCreators());
-		addDropdownData(CollectionConstants.DROPDOWN_DATA_RECEIPTZONE_LIST,
-				collectionsUtil.getReceiptZoneList());
-		initializeCriteriaMap();
-	}
+    public void setUserId(final Long userId) {
+        critParams.put(EGOV_COUNTER_OPERATOR_ID, userId);
+    }
 
-	/**
-	 * Action method to create the cheque submission report
-	 * 
-	 * @return report
-	 */
-	public String submissionReport() {
-		Map<String, Object> session = getSession();
-		User user = collectionsUtil.getLoggedInUser();
+    public void setBoundaryId(final Long boundaryId) {
+        critParams.put(EGOV_BOUNDARY_ID, boundaryId);
+    }
 
-		Date today = ReportUtil.today();
-		critParams.put(EGOV_FROM_DATE, today);
-		critParams.put(EGOV_TO_DATE, today);
-		
-		critParams.put(EGOV_COUNTER_OPERATOR_ID, user.getId().longValue());
-		critParams.put(EGOV_COUNTER_ID, collectionsUtil.getLocationOfUser(
-				getSession()).getId().longValue());
-		critParams.put(EGOV_RECEIPT_IDS, Arrays.asList((Long[])session
-				.get(CollectionConstants.SESSION_VAR_RECEIPT_IDS)));
+    public Date getFromDate() {
+        return (Date) critParams.get(EGOV_FROM_DATE);
+    }
 
-		return report();
-	}
+    public Date getToDate() {
+        return (Date) critParams.get(EGOV_TO_DATE);
+    }
 
-	/**
-	 * Action method that creates the report
-	 * 
-	 * @return view
-	 */
-	@Action(value="/reports/chequeCollectionReport-report")
-	public String report() {
-		ReportRequest reportInput = new ReportRequest(CHEQUE_COLLETION_TEMPLATE,
-				critParams, ReportDataSourceType.SQL);
-		ReportOutput reportOutput = reportService.createReport(reportInput);
-		reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
-		return REPORT;
-	}
-	
-	@Action(value="/reports/chequeCollectionReport-criteria")
-	public String criteria() {
-		return INDEX;
-	}
+    public Long getCounterId() {
+        return (Long) critParams.get(EGOV_COUNTER_ID);
+    }
 
-	/**
-	 * @param reportService
-	 *            the reportService to set
-	 */
-	public void setReportService(ReportService reportService) {
-		this.reportService = reportService;
-	}
+    public Long getUserId() {
+        return (Long) critParams.get(EGOV_COUNTER_OPERATOR_ID);
+    }
 
-	/**
-	 * @param critParams the critParams to set
-	 */
-	public void setCritParams(Map<String, Object> critParams) {
-		this.critParams = critParams;
-	}
+    public Long getBoundaryId() {
+        return (Long) critParams.get(EGOV_BOUNDARY_ID);
+    }
 
-	/**
-	 * @return the critParams
-	 */
-	public Map<String, Object> getCritParams() {
-		return critParams;
-	}
-	
-	/**
-	 * @param collectionsUtil
-	 *            the Collections Utility object to set
-	 */
-	public void setCollectionsUtil(CollectionsUtil collectionsUtil) {
-		this.collectionsUtil = collectionsUtil;
-	}
+    /**
+     * @return the reportId
+     */
+    public Integer getReportId() {
+        return reportId;
+    }
 
+    private void initializeCriteriaMap() {
+        critParams.clear();
+        critParams.put(EGOV_COUNTER_OPERATOR_ID, Long.valueOf(-1L));
+        critParams.put(EGOV_COUNTER_ID, Long.valueOf(-1L));
+        critParams.put(EGOV_FROM_DATE, new Date());
+        critParams.put(EGOV_TO_DATE, new Date());
+        critParams.put(EGOV_BOUNDARY_ID, Long.valueOf(-1L));
+    }
 
-	
+    @Override
+    public void prepare() {
+        super.prepare();
+        setupDropdownDataExcluding();
+        addDropdownData(CollectionConstants.DROPDOWN_DATA_COUNTER_LIST, collectionsUtil.getAllCounters());
+        addDropdownData(CollectionConstants.DROPDOWN_DATA_RECEIPT_CREATOR_LIST, collectionsUtil.getReceiptCreators());
+        addDropdownData(CollectionConstants.DROPDOWN_DATA_RECEIPTZONE_LIST, collectionsUtil.getReceiptZoneList());
+        initializeCriteriaMap();
+    }
+
+    /**
+     * Action method to create the cheque submission report
+     * 
+     * @return report
+     */
+    @Action(value = "/reports/chequeCollectionReport-submissionReport")
+    public String submissionReport() {
+        final Map<String, Object> session = getSession();
+        final User user = collectionsUtil.getLoggedInUser();
+
+        final Date today = ReportUtil.today();
+        critParams.put(EGOV_FROM_DATE, today);
+        critParams.put(EGOV_TO_DATE, today);
+
+        critParams.put(EGOV_COUNTER_OPERATOR_ID, user.getId().longValue());
+        critParams.put(EGOV_COUNTER_ID, collectionsUtil.getLocationOfUser(getSession()).getId().longValue());
+        critParams.put(EGOV_RECEIPT_IDS,
+                Arrays.asList((Long[]) session.get(CollectionConstants.SESSION_VAR_RECEIPT_IDS)));
+
+        return report();
+    }
+
+    /**
+     * Action method that creates the report
+     * 
+     * @return view
+     */
+    @Action(value = "/reports/chequeCollectionReport-report")
+    public String report() {
+        final ReportRequest reportInput = new ReportRequest(CHEQUE_COLLETION_TEMPLATE, critParams,
+                ReportDataSourceType.SQL);
+        final ReportOutput reportOutput = reportService.createReport(reportInput);
+        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
+        reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+        return REPORT;
+    }
+
+    @Action(value = "/reports/chequeCollectionReport-criteria")
+    public String criteria() {
+        return INDEX;
+    }
+
+    /**
+     * @param reportService
+     *            the reportService to set
+     */
+    public void setReportService(final ReportService reportService) {
+        this.reportService = reportService;
+    }
+
+    /**
+     * @param critParams
+     *            the critParams to set
+     */
+    public void setCritParams(final Map<String, Object> critParams) {
+        this.critParams = critParams;
+    }
+
+    /**
+     * @return the critParams
+     */
+    public Map<String, Object> getCritParams() {
+        return critParams;
+    }
+
+    /**
+     * @param collectionsUtil
+     *            the Collections Utility object to set
+     */
+    public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
+        this.collectionsUtil = collectionsUtil;
+    }
+
 }
