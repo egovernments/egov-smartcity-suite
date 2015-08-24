@@ -225,9 +225,9 @@ public class MeterReadingController {
                 * (waterRateDetail != null ? waterRateDetail.getUnitRate() : 0d);
         double finalAmountToBePaid = 0d;
         if (noofmonths > 0)
-            finalAmountToBePaid = amountToBeCollectedWithUnitRatePerMonth * noofmonths / 1000;
+            finalAmountToBePaid = amountToBeCollectedWithUnitRatePerMonth * noofmonths ;/// finalAmountToBePaid = amountToBeCollectedWithUnitRatePerMonth * noofmonths /1000;TODO:1000 removing as per discussion with saketh and Satyam
         else
-            finalAmountToBePaid = amountToBeCollectedWithUnitRatePerMonth / 1000;
+           finalAmountToBePaid = amountToBeCollectedWithUnitRatePerMonth;// 1000
         return finalAmountToBePaid;
     }
 
