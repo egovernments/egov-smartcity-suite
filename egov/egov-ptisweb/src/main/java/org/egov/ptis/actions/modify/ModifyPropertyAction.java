@@ -148,6 +148,7 @@ import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
@@ -481,10 +482,8 @@ public class ModifyPropertyAction extends WorkflowAction {
             addActionError(getText(errorKey));
 
         final PropertyTypeMaster oldPropTypeMstr = oldProperty.getPropertyDetail().getPropertyTypeMaster();
-        final PropertyTypeMaster newPropTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
-                "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
-        if (null != newPropTypeMstr && !newPropTypeMstr.getType().equals(oldPropTypeMstr.getType()))
-            if (newPropTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR))
+        if (null != propTypeMstr && !propTypeMstr.getType().equals(oldPropTypeMstr.getType()))
+            if (propTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR))
                 addActionError(getText("error.nonVacantToVacant"));
         if (hasErrors())
             if (REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn))
@@ -730,7 +729,6 @@ public class ModifyPropertyAction extends WorkflowAction {
                 + (amalgPropIds != null ? amalgPropIds.length : "NULL"));
 
         Date propCompletionDate = null;
-        String mutationCode = null;
         final Character status = STATUS_WORKFLOW;
         final PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.findById(Integer.valueOf(propTypeId), false);
         if (!proptypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
@@ -738,26 +736,26 @@ public class ModifyPropertyAction extends WorkflowAction {
                     .getFloorDetailsProxy());
         else
             propCompletionDate = propertyModel.getPropertyDetail().getDateOfCompletion();
+        final PropertyMutationMaster propMutMstr = (PropertyMutationMaster) propService.getPropPerServ().find(
+                "from PropertyMutationMaster PM where upper(PM.code) = ?", modifyRsn);
+        basicProp.setPropertyMutationMaster(propMutMstr);
         // AMALG & BIFUR
         if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)) {
             basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp, getModifyRsn(),
                     propCompletionDate, null, null, null, null));
             if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn))
                 propService.createAmalgPropStatVal(amalgPropIds, basicProp);
-            mutationCode = getModifyRsn();
         } else if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)) { // MODIFY
             basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp,
                     PROPERTY_MODIFY_REASON_ADD_OR_ALTER, propCompletionDate, null, null, null, null));
-            mutationCode = getModifyRsn();
         } else if (PROPERTY_MODIFY_REASON_COURT_RULE.equals(getModifyRsn())) { // COURT_RULE
             basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp,
                     PROPERTY_MODIFY_REASON_ADD_OR_ALTER, propCompletionDate, getCourtOrdNum(),
                     propService.getPropOccupatedDate(getOrderDate()), getJudgmtDetails(), null));
-            mutationCode = getModifyRsn();
         }
         basicProp.setPropOccupationDate(propCompletionDate);
 
-        setProperty(propService.createProperty(propertyModel, getAreaOfPlot(), mutationCode, propTypeId, propUsageId,
+        setProperty(propService.createProperty(propertyModel, getAreaOfPlot(), modifyRsn, propTypeId, propUsageId,
                 propOccId, status, propertyModel.getDocNumber(), null, floorTypeId, roofTypeId, wallTypeId, woodTypeId,
                 taxExemptedReason));
         updatePropertyID(basicProp);
