@@ -73,18 +73,13 @@ public class CityPreferences extends AbstractAuditable {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "gisKML")
-    @Fetch(FetchMode.JOIN) 
+    @Fetch(FetchMode.JOIN)
     private FileStoreMapper gisKML;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "gisShape")
-    @Fetch(FetchMode.JOIN) 
-    private FileStoreMapper gisShape;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "municipalityLogo")
     @NotNull
-    @Fetch(FetchMode.JOIN) 
+    @Fetch(FetchMode.JOIN)
     private FileStoreMapper municipalityLogo;
 
     @NotNull
@@ -140,18 +135,6 @@ public class CityPreferences extends AbstractAuditable {
 
     public boolean kmlExist() {
         return gisKML != null;
-    }
-
-    public FileStoreMapper getGisShape() {
-        return gisShape;
-    }
-
-    public void setGisShape(final FileStoreMapper gisShape) {
-        this.gisShape = gisShape;
-    }
-
-    public boolean shapeExist() {
-        return gisShape != null;
     }
 
     public FileStoreMapper getMunicipalityLogo() {

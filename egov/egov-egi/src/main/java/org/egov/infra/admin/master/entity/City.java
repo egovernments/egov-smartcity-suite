@@ -259,7 +259,6 @@ public class City extends AbstractAuditable {
             cityPrefs.put("citylogo",
                     preferences.logoExist() ? String.format(LOGO_URL, preferences.getMunicipalityLogo().getFileStoreId(), code) : "");
             cityPrefs.put("cityKmlFileStoreId", preferences.kmlExist() ? preferences.getGisKML().getFileStoreId() : "");
-            cityPrefs.put("cityShapeFileStoreId", preferences.shapeExist() ? preferences.getGisShape().getFileStoreId() : "");
             cityPrefs.put("corpAddress", preferences.getMunicipalityAddress());
             cityPrefs.put("corpCallCenterNo", preferences.getMunicipalityCallCenterNo());
             cityPrefs.put("corpContactNo", preferences.getMunicipalityContactNo());

@@ -447,29 +447,6 @@
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
-										code="lbl.city.gis.shape" /></label>
-								<div class="col-sm-6" style="padding-top: 7px">
-									<a target="_blank"
-										href="/egi/downloadfile?fileStoreId=${city.preferences.gisShape.fileStoreId}&moduleName=${sessionScope.cityCode}">${city.preferences.gisShape.fileName}</a>
-									<div class="input-group">
-										<input type="file" name="gisShape" id="gisShape"
-										data-accept="shp"
-										data-errormsg="Please select valid Gis Shape file!"
-										class="form-control" placeholder="" autocomplete="off" />
-									    <span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.city.gisshape" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
-									<form:errors path="preferences.gisShape"
-										cssClass="add-margin error-msg" />
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.city.recaptcha.pri" /><span class="mandatory"></span></label>
 								<div class="col-sm-6" style="padding-top: 7px">
 									<div class="input-group">

@@ -109,9 +109,6 @@ public class CitySetupController {
                     case "gisKML":
                         city.getPreferences().setGisKML(fileStore);
                         break;
-                    case "gisShape":
-                        city.getPreferences().setGisShape(fileStore);
-                        break;
                     case "logo":
                         city.getPreferences().setMunicipalityLogo(fileStore);
                         break;
