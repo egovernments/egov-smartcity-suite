@@ -141,5 +141,27 @@ $(document).ready(function(){
 	}
 	
 	$("#propertytaxdue").addClass("error-msg");
+	$(".btn-primary").hide();
+	$("#waterSourceDropdown").prop("disabled", true);
+	
+	var connectionType = $('#connectionType').val();
+	var usageType = $('#usageType').val();
+	var category = $('#category').val();
+	var propertyType = $('#propertyType').val();
+	var pipeSize = $('#pipeSize').val();
+	
+	$(".btn-primary").click(function (){
+		if(($('#connectionType').val()==connectionType) && ($('#usageType').val()==usageType) 
+				&& ($('#category').val()==category) && ($('#propertyType').val()==propertyType)
+				&& ($('#pipeSize').val()==pipeSize)) {
+			alert("Please modify at least one mandatory field");
+			$(".btn-primary").hide();
+			return false;
+		}
+	});
+	
+	$('#connectionType,#usageType,#category,#propertyType,#pipeSize').change(function (){
+		$(".btn-primary").show();
+	});
 	
 });

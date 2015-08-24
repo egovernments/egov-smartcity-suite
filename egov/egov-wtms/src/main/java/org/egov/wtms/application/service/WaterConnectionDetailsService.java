@@ -617,6 +617,7 @@ public class WaterConnectionDetailsService {
                     connectionToBeDeactivated.setConnectionStatus(ConnectionStatus.INACTIVE);
                     connectionToBeDeactivated.setIsHistory(true);
                     waterConnectionDetailsRepository.save(connectionToBeDeactivated);
+                    updateIndexes(connectionToBeDeactivated);
                 }
                 wfmatrix = waterConnectionWorkflowService.getWfMatrix(
                         waterConnectionDetails.getStateType(), null, null,
@@ -968,8 +969,10 @@ public class WaterConnectionDetailsService {
                         waterConnectionDetails, assessmentDetails);
             if (waterConnectionDetails.getEgwStatus().getCode()
                     .equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)) {
-                waterConnectionDetails
-                        .setConnectionStatus(ConnectionStatus.ACTIVE);
+                if(!waterConnectionDetails.getApplicationType().getCode().equalsIgnoreCase(WaterTaxConstants.CHANGEOFUSE)){
+                    waterConnectionDetails
+                                    .setConnectionStatus(ConnectionStatus.ACTIVE);
+                }
                 consumerIndexService.createConsumerIndex(
                         waterConnectionDetails, assessmentDetails);
             }

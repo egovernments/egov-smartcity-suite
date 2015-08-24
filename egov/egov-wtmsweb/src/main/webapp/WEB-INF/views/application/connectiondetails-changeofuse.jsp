@@ -127,7 +127,7 @@
 			code="lbl.watersourcetype" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
 			<form:select path="waterSource" data-first-option="false"
-						cssClass="form-control" required="required" >
+						cssClass="form-control" required="required" id="waterSourceDropdown">
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
