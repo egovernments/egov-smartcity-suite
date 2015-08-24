@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -58,6 +57,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
@@ -99,12 +99,13 @@ import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.FinancialYear;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
-import org.geotools.data.FeatureSource;
+import org.geotools.factory.FactoryRegistryException;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.Query;
@@ -118,7 +119,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 public class CommonsServiceImpl implements CommonsService {
@@ -256,7 +256,7 @@ public class CommonsServiceImpl implements CommonsService {
 
     /**
      * This method returns the Map Width for given boundaryId
-     * 
+     *
      * @param bndryID
      * @return
      */
@@ -403,8 +403,7 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     /*
-     * @Override public List<EgUom> findAllUom() { return
-     * commonsDAOFactory.getEgUomDAO().findAllUom(); }
+     * @Override public List<EgUom> findAllUom() { return commonsDAOFactory.getEgUomDAO().findAllUom(); }
      */
 
     @Override
@@ -413,13 +412,12 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     /*
-     * @Override public EgUom getUomById(final Integer uomId) { return (EgUom)
-     * commonsDAOFactory.getEgUomDAO().findById(uomId, false); }
+     * @Override public EgUom getUomById(final Integer uomId) { return (EgUom) commonsDAOFactory.getEgUomDAO().findById(uomId,
+     * false); }
      */
 
     /**
-     * @param moduleType
-     *            Module type
+     * @param moduleType Module type
      * @return EgwStatus object for given module type and status code
      */
     @Override
@@ -534,9 +532,8 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     /**
-     * This API will return the transaction no for any type of txn. Input
-     * :Type,transaction date and connection Output :Transaction number in the
-     * format txnType+number+/+month+/+year
+     * This API will return the transaction no for any type of txn. Input :Type,transaction date and connection Output
+     * :Transaction number in the format txnType+number+/+month+/+year
      */
     @Override
     public String getTxnNumber(final String txnType, final String vDate, final Connection con) throws ParseException,
@@ -577,9 +574,8 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     /**
-     * This method returns the active and is active for posting Account records
-     * having classification as '4' , for a given type.
-     * 
+     * This method returns the active and is active for posting Account records having classification as '4' , for a given type.
+     *
      * @param type
      * @return
      */
@@ -590,7 +586,7 @@ public class CommonsServiceImpl implements CommonsService {
 
     /**
      * This method returns all active functionary records.
-     * 
+     *
      * @return
      */
     @Override
@@ -600,7 +596,7 @@ public class CommonsServiceImpl implements CommonsService {
 
     /**
      * This function returns the system date of the database server.
-     * 
+     *
      * @param connection
      * @return @
      */
@@ -766,11 +762,9 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     /*
-     * @Override public EgUom getUomByUom(final String uom) { EgUom egUom =
-     * null; if (uom != null) { final Query qry =
-     * getSession().createQuery("from EgUom uom where uom.uom=:uom");
-     * qry.setString("uom", uom); egUom = (EgUom) qry.uniqueResult(); } return
-     * egUom; }
+     * @Override public EgUom getUomByUom(final String uom) { EgUom egUom = null; if (uom != null) { final Query qry =
+     * getSession().createQuery("from EgUom uom where uom.uom=:uom"); qry.setString("uom", uom); egUom = (EgUom)
+     * qry.uniqueResult(); } return egUom; }
      */
 
     @Override
@@ -872,12 +866,9 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     /**
-     * @param moduleType
-     *            Module type
-     * @param codeList
-     *            List of status codes
-     * @return List of all EgwStatus objects filtered by given module type and
-     *         list of status codes
+     * @param moduleType Module type
+     * @param codeList List of status codes
+     * @return List of all EgwStatus objects filtered by given module type and list of status codes
      */
     @Override
     public List<EgwStatus> getStatusListByModuleAndCodeList(final String moduleType, final List codeList) {
@@ -1007,17 +998,12 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     /*
-     * @Override public List<EgUom> getAllUomsWithinCategoryByUom(final Integer
-     * uomId) throws ValidationException { return
+     * @Override public List<EgUom> getAllUomsWithinCategoryByUom(final Integer uomId) throws ValidationException { return
      * commonsDAOFactory.getEgUomDAO().getAllUomsWithinCategoryByUom(uomId); }
-     * @Override public BigDecimal getConversionFactorByUom(final Integer uomId)
-     * throws ValidationException { return
+     * @Override public BigDecimal getConversionFactorByUom(final Integer uomId) throws ValidationException { return
      * commonsDAOFactory.getEgUomDAO().getConversionFactorByUom(uomId); }
-     * @Override public BigDecimal getConversionFactorByFromUomToUom(final
-     * Integer fromuomId, final Integer touomId) throws ValidationException {
-     * return
-     * commonsDAOFactory.getEgUomDAO().getConversionFactorByFromUomToUom(fromuomId
-     * , touomId); }
+     * @Override public BigDecimal getConversionFactorByFromUomToUom(final Integer fromuomId, final Integer touomId) throws
+     * ValidationException { return commonsDAOFactory.getEgUomDAO().getConversionFactorByFromUomToUom(fromuomId , touomId); }
      */
     @Override
     public List<EgPartytype> getSubPartyTypes(final String code) {
@@ -1031,57 +1017,45 @@ public class CommonsServiceImpl implements CommonsService {
 
     @Override
     public Long getBndryIdFromShapefile(final Double latitude, final Double longitude) {
-        Long boundaryId = 0L;
         try {
+            Long boundaryId = 0L;
             if (latitude != null && longitude != null) {
-                final URL shapefile = Thread.currentThread().getContextClassLoader()
-                        .getResource("shapefiles/coc_wards.shp");
                 final Map<String, URL> map = new HashMap<String, URL>();
-                map.put("url", shapefile);
+                //FIXME TODO This is hard coded now should be replaced with dynamic shape file.
+                map.put("url", Thread.currentThread().getContextClassLoader()
+                        .getResource("shapefiles/tirupathi_wards.shp"));
                 final DataStore dataStore = DataStoreFinder.getDataStore(map);
-                final String typeName = dataStore.getTypeNames()[0];
-                final FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(typeName);
-                final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures();
+                final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = dataStore.getFeatureSource(dataStore.getTypeNames()[0])
+                        .getFeatures();
                 final Iterator<SimpleFeature> iterator = collection.iterator();
-                final GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
-                final Coordinate coord = new Coordinate(longitude, latitude);
-                final Point point = geometryFactory.createPoint(coord);
-                LOG.debug("The selected point lies in (coord): -----" + coord);
+                final Point point = JTSFactoryFinder.getGeometryFactory(null).createPoint(new Coordinate(longitude, latitude));
+                LOG.debug("Fetching boundary data for coordinates lng {}, lat {}", longitude, latitude);
                 try {
                     while (iterator.hasNext()) {
                         final SimpleFeature feature = iterator.next();
                         final Geometry geom = (Geometry) feature.getDefaultGeometry();
                         if (geom.contains(point)) {
-
+                            LOG.debug("Found coordinates in shape file");
                             final Long boundaryNum = (Long) feature.getAttribute("bndrynum");
                             final String bndryType = (String) feature.getAttribute("bndrytype");
-                            LOG.info("(boundaryNum): -----" + feature.getAttribute("bndrynum"));
-                            LOG.info("(bndryType): -----" + feature.getAttribute("bndrytype"));
-                            if (boundaryNum != null && bndryType != null && !bndryType.isEmpty()) {
+                            LOG.debug("Got boundary number {} and boundary type {} from GIS", boundaryNum, bndryType);
+                            if (boundaryNum != null && StringUtils.isNotBlank(bndryType)) {
                                 final BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByName(bndryType);
-                                Boundary boundary = null;
-                                if (boundaryType != null)
-                                    boundary = boundaryService.getBoundaryByTypeAndNo(boundaryType, boundaryNum);
+                                final Boundary boundary = boundaryService.getBoundaryByTypeAndNo(boundaryType, boundaryNum);
                                 if (boundary != null)
                                     boundaryId = boundary.getBndryId();
                             }
-                            LOG.info("The selected point lies in (boundaryId): -----" + boundaryId);
-                            return boundaryId;
+                            break;
                         }
                     }
-                    return null;
                 } finally {
                     collection.close(iterator);
                 }
-
-            } else
-                return null;
-        } catch (final IOException e) {
-            LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Error occurred while getting wardid from shapefile", e);
-        } catch (final Exception e) {
-            LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Error occurred while getting wardid from shapefile", e);
+            }
+            LOG.debug("Found boundary data in GIS with boundary id : {}", boundaryId);
+            return boundaryId;
+        } catch (FactoryRegistryException | IOException e) {
+            throw new EGOVRuntimeException("Error occurred while fetching boundary from GIS data", e);
         }
     }
 
