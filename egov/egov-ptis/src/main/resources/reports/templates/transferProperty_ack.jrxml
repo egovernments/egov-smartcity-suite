@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="transferProperty_ack" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="90410d1d-7197-42e9-8dea-efbd3a8dbb85">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="transferProperty_ack" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="20" uuid="90410d1d-7197-42e9-8dea-efbd3a8dbb85">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -43,35 +43,35 @@
 	<pageHeader>
 		<band height="350" splitType="Stretch">
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="437" y="23" width="83" height="18" uuid="8053561c-962f-442e-b0f0-a896c4ece984"/>
+				<reportElement x="299" y="23" width="220" height="18" uuid="8053561c-962f-442e-b0f0-a896c4ece984"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
+					<font size="12" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{receivedDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Application Date : "+$F{receivedDate}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="373" y="201" width="150" height="20" uuid="592538a9-1346-4fe5-a30e-944f03280984"/>
+				<reportElement x="373" y="181" width="150" height="20" uuid="592538a9-1346-4fe5-a30e-944f03280984"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Signature]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="312" y="241" width="211" height="20" uuid="b2546c69-d2ff-44a2-b1a3-84378eae6833"/>
+				<reportElement x="312" y="221" width="211" height="20" uuid="b2546c69-d2ff-44a2-b1a3-84378eae6833"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{municipalityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="42" y="203" width="247" height="58" uuid="36f833e4-ad1c-4d82-be59-65212f0df50a"/>
+				<reportElement x="42" y="183" width="247" height="58" uuid="36f833e4-ad1c-4d82-be59-65212f0df50a"/>
 				<textElement verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Signature of the receiver]]></text>
 			</staticText>
 			<textField isBlankWhenNull="false">
-				<reportElement x="373" y="221" width="150" height="20" uuid="f5c217c1-0038-4999-9805-5225e7bafe7e"/>
+				<reportElement x="373" y="201" width="150" height="20" uuid="f5c217c1-0038-4999-9805-5225e7bafe7e"/>
 				<textElement textAlignment="Center">
 					<font size="12" isBold="true"/>
 				</textElement>
@@ -85,36 +85,22 @@
 				<textFieldExpression><![CDATA["    This is to acknowledge that an application for <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{applicationNo}+"</style> has been received from Sri/Smt.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerName}+"</style> with address<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerAddress}+"</style> is received on<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{receivedDate}+"</style>. This will be resolved within<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{noOfDays}+"</style> days."]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="85" y="284" width="438" height="57" uuid="a3b0aacd-1949-4ffb-86df-8c987a1c6357"/>
+				<reportElement x="85" y="264" width="438" height="57" uuid="a3b0aacd-1949-4ffb-86df-8c987a1c6357"/>
 				<textElement verticalAlignment="Top">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[1. The applicant can contact the municipal commissioner, immediately if the special notice is not given as indicated above on the date fixed.
 2. Compensation will be paid @ Rs. 50/- per day for the delay caused and towards the valuable time lost by the applicant, if the special notice is not given as indicated above in the date fixed.]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="42" y="23" width="113" height="18" uuid="adf5a8f1-7975-491f-abf1-33af2338d84c"/>
-				<textElement>
-					<font size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Application No :]]></text>
-			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="155" y="23" width="155" height="17" uuid="f9da60e0-6979-4604-9117-30261b60ad1c"/>
+				<reportElement x="42" y="23" width="257" height="17" uuid="f9da60e0-6979-4604-9117-30261b60ad1c"/>
 				<textElement verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
+					<font size="12" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{applicationNo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Application No : "+$F{applicationNo}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="310" y="23" width="127" height="17" uuid="9433ab5c-fd44-4abd-ad23-900b1e14e1a8"/>
-				<textElement>
-					<font size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Application Date :]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="42" y="284" width="43" height="27" uuid="a7502c52-065f-4748-a942-b8ebd6839039"/>
+				<reportElement x="42" y="264" width="43" height="27" uuid="a7502c52-065f-4748-a942-b8ebd6839039"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="true"/>
 				</textElement>
