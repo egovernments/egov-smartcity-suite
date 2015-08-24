@@ -859,15 +859,11 @@ public interface PropertyTaxConstants {
 
     public static final List<String> DEMAND_RSNS_LIST = new ArrayList<String>() {
         {
-            add("GEN_TAX");
-            add("SEWERAGETAX");
-            add("FIRE_SER_TAX");
-            add("LIGHTINGTAX");
-            add("GEN_WATER_TAX");
-            add("EDU_CESS_RESD");
-            add("EMP_GUA_CESS");
-            add("BIG_RESD_TAX");
-            add("EDU_CESS_NONRESD");
+            add(DEMANDRSN_CODE_GENERAL_TAX);
+            add(DEMANDRSN_CODE_VACANT_TAX);
+            add(DEMANDRSN_CODE_LIBRARY_CESS);
+            add(DEMANDRSN_CODE_SEWERAGE_TAX);
+            add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
         }
     };
 

@@ -57,6 +57,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERA
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_UNIT_FLOORNUMBER;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
@@ -230,6 +231,8 @@ public class PropertyService {
     private EmployeeService employeeService;
     @Autowired
     protected AssignmentService assignmentService;
+    @Autowired
+    private PropertyTaxCollection propertyTaxCollection;
 
     public PropertyImpl createProperty(final PropertyImpl property, final String areaOfPlot, final String mutationCode,
             final String propTypeId, final String propUsageId, final String propOccId, final Character status,
@@ -513,13 +516,11 @@ public class PropertyService {
         LOGGER.debug("createDemandForModify: instList: " + instList);
         Ptdemand ptDemandOld = new Ptdemand();
         Ptdemand ptDemandNew = new Ptdemand();
-        moduleDao.getModuleByName(PTMODULENAME);
         final Installment currentInstall = PropertyTaxUtil.getCurrentInstallment();
         final Map<String, Ptdemand> oldPtdemandMap = getPtdemandsAsInstMap(oldProperty.getPtDemandSet());
         ptDemandOld = oldPtdemandMap.get(currentInstall.getDescription());
         final PropertyTypeMaster oldPropTypeMaster = oldProperty.getPropertyDetail().getPropertyTypeMaster();
         final PropertyTypeMaster newPropTypeMaster = newProperty.getPropertyDetail().getPropertyTypeMaster();
-        new HashSet<EgDemandDetails>();
 
         if (!oldProperty.getPropertyDetail().getPropertyTypeMaster().getCode()
                 .equalsIgnoreCase(newProperty.getPropertyDetail().getPropertyTypeMaster().getCode())
@@ -894,12 +895,7 @@ public class PropertyService {
             List<EgDemandDetails> oldEgDmndDtlsList = null;
             List<EgDemandDetails> newEgDmndDtlsList = null;
 
-            /**
-             * When a unit in new property is exempted from tax, tax exemption
-             * made unit level instead of property level with new requirement,
-             * refer card #3427 Modified on 16 October 2014 [Nayeem]
-             */
-            if (newProperty.getIsExemptedFromTax() != null && !newProperty.getIsExemptedFromTax().equals("-1"))
+            if (newProperty.getIsExemptedFromTax())
                 if (!rsn.equalsIgnoreCase(DEMANDRSN_CODE_LIBRARY_CESS)
                         && !rsn.equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS)
                         && !rsn.equalsIgnoreCase(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY))
@@ -1087,6 +1083,8 @@ public class PropertyService {
             final EgDemandReasonMaster dmndRsnMstr = egDmndDtls.getEgDemandReason().getEgDemandReasonMaster();
             if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_GENERAL_TAX))
                 egDemandDetailsMap.put(DEMANDRSN_CODE_GENERAL_TAX, egDmndDtls);
+            else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_VACANT_TAX))
+                egDemandDetailsMap.put(DEMANDRSN_CODE_VACANT_TAX, egDmndDtls);
             else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS))
                 egDemandDetailsMap.put(DEMANDRSN_CODE_EDUCATIONAL_CESS, egDmndDtls);
             else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_LIBRARY_CESS))
@@ -1640,10 +1638,10 @@ public class PropertyService {
          * installment fully then remaining excess collection will be adjusted
          * to the group to which GEN_TAX belongs i.e., demandReasons1[GROUP1]
          */
-        final Set<String> demandReasons1 = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
+        final Set<String> demandReasons1 = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX,
                 DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
 
-        final Set<String> demandReasons2 = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
+        final Set<String> demandReasons2 = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX,
                 DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
 
         final Installment currerntInstallment = PropertyTaxUtil.getCurrentInstallment();
@@ -1684,7 +1682,7 @@ public class PropertyService {
                     if (currentDemandDetail == null) {
                         LOGGER.info("adjustExcessCollectionAmount - Advance demand details is not present, creating.. ");
 
-                        currentDemandDetail = new PropertyTaxCollection().insertAdvanceCollection(
+                        currentDemandDetail = propertyTaxCollection.insertAdvanceCollection(
                                 PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE, excessAmountByDemandReasonForInstallment
                                         .getValue().get(demandReason), currerntInstallment);
                         ptDemand.addEgDemandDetails(currentDemandDetail);

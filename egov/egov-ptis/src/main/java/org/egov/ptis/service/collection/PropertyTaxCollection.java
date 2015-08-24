@@ -95,6 +95,7 @@ import org.springframework.transaction.annotation.Transactional;
  * This class is used to persist Collections .This is used for the integration
  * of Collections and Bills and property tax.
  */
+@Transactional
 public class PropertyTaxCollection extends TaxCollection {
 
     private static final Logger LOGGER = Logger.getLogger(PropertyTaxCollection.class);
@@ -701,9 +702,8 @@ public class PropertyTaxCollection extends TaxCollection {
         EgDemandDetails demandDetail = null;
 
         if (advanceCollectionAmount != null && advanceCollectionAmount.compareTo(BigDecimal.ZERO) > 0) {
-            DemandGenericDao demandGenericDao = new DemandGenericHibDao();
 
-            EgDemandReasonMaster egDemandReasonMaster = demandGenericDao.getDemandReasonMasterByCode(demandReason,
+            EgDemandReasonMaster egDemandReasonMaster = demandGenericDAO.getDemandReasonMasterByCode(demandReason,
                     module());
 
             if (egDemandReasonMaster == null) {
@@ -711,7 +711,7 @@ public class PropertyTaxCollection extends TaxCollection {
                         " Advance Demand reason Master is null in method  insertAdvanceCollection");
             }
 
-            EgDemandReason egDemandReason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
+            EgDemandReason egDemandReason = demandGenericDAO.getDmdReasonByDmdReasonMsterInstallAndMod(
                     egDemandReasonMaster, installment, module());
 
             if (egDemandReason == null) {
