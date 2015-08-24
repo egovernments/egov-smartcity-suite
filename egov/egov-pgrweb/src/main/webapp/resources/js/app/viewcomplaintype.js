@@ -63,9 +63,6 @@ $(document)
 											"mData" : "department",
 											"sTitle" : "Department"
 										}, {
-											"mData" : "locationRequired",
-											"sTitle" : "Location Required"
-										}, {
 											"mData" : "isActive",
 											"sTitle" : "Active"
 										},{

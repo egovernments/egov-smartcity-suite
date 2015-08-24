@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -61,8 +60,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 import org.json.simple.JSONObject;
 
 @Entity
-@Unique(id = "id", tableName = "egpgr_complainttype", fields = { "name", "code" }, columnName = { "name",
-        "code" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "egpgr_complainttype", fields = { "name", "code" }, columnName = { "name", "code" }, enableDfltMsg = true)
 @Table(name = "egpgr_complainttype")
 @Searchable
 @SequenceGenerator(name = ComplaintType.SEQ_COMPLAINTTYPE, sequenceName = ComplaintType.SEQ_COMPLAINTTYPE, allocationSize = 1)
@@ -88,11 +86,8 @@ public class ComplaintType extends AbstractAuditable {
     private String code;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dept_id")
+    @JoinColumn(name = "department")
     private Department department;
-
-    @Column(name = "location_required")
-    private boolean locationRequired;
 
     @Column(name = "isActive")
     private boolean isActive;
@@ -125,14 +120,6 @@ public class ComplaintType extends AbstractAuditable {
 
     public void setDepartment(final Department department) {
         this.department = department;
-    }
-
-    public boolean isLocationRequired() {
-        return locationRequired;
-    }
-
-    public void setLocationRequired(final boolean locationRequired) {
-        this.locationRequired = locationRequired;
     }
 
     public String getCode() {

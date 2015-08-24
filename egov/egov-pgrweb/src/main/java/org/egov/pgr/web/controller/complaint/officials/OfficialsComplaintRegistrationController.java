@@ -82,9 +82,8 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
                 && complaint.getReceivingCenter().isCrnRequired() && complaint.getCrn().isEmpty())
             resultBinder.rejectValue("crn", "crn.mandatory.for.receivingcenter");
 
-        if (complaint.getComplaintType() != null && complaint.getComplaintType().isLocationRequired())
-            if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
-                resultBinder.rejectValue("location", "location.required");
+        if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
+            resultBinder.rejectValue("location", "location.required");
 
         if (resultBinder.hasErrors())
             return "complaint/officials/registration-form";

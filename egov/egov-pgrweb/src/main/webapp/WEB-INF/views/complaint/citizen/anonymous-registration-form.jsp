@@ -87,7 +87,6 @@
 							<input id="complaintTypeName" class="form-control typeahead is_valid_alphabet" placeholder=""
 								autocomplete="off" required="required" value="${complaint.complaintType.name}"/>
 							<form:hidden path="complaintType" id="complaintTypeId" value="0" />
-							<form:hidden path="complaintType.locationRequired" id="locationRequired" disabled="true"/>
 							<form:errors path="complaintType" cssClass="add-margin error-msg" />
 							<c:forEach items="${complaintTypes}" var="complaintType">
 								<a onclick="setComplaintTypeId(<c:out value="${complaintType.id}"/>)" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
@@ -131,7 +130,7 @@
 						</div>
 					</div>
 					
-					<div class="form-group optionalmandate">
+					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintLoc"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
 							<div class="input-group">
@@ -145,7 +144,7 @@
 						</div>
 					</div>
 					
-					<div class="form-group optionalmandate">
+					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.landmark"/></label>
 						<div class="col-sm-6">
 							<form:textarea path="landmarkDetails" class="form-control" id="landmarkDetails" placeholder="" maxlength="200"/>

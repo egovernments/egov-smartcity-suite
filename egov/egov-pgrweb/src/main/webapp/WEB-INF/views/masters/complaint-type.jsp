@@ -100,22 +100,6 @@
 
 						<div class="form-group">
 
-							<label for="field-1" class="col-sm-3 control-label"><spring:message
-									code="lbl.complaintType.loc" /><span class="mandatory"></span>
-							</label>
-
-							<div class="col-sm-1 col-xs-12 add-margin">
-								<form:radiobutton path="locationRequired" id="comp_type_loc_yes" value="yes" checked="true"/>
-								<label>Yes</label>
-							</div>
-							<div class="col-sm-1 col-xs-12 add-margin">
-								<form:radiobutton path="locationRequired" id="comp_type_loc_yno" value="no"/>
-								<label>No</label>
-							</div>
-						</div>
-
-						<div class="form-group">
-
 							<label for="field-1" class="col-sm-3 col-xs-2 control-label"><spring:message
 									code="lbl.isactive"></spring:message></label>
 
@@ -157,7 +141,6 @@
 <script>
 var complaintTypeId = '${complaintType.id}';
 if (complaintTypeId == '') {
- $("#comp_type_loc_yes").prop('checked',true);
  $("#comp_type_isactive").prop('checked',true);
 }
 </script>

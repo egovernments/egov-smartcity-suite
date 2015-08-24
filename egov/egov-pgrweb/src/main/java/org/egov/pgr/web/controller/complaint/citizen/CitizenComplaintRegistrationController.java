@@ -74,8 +74,7 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
     public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
             final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files) {
 
-        if (complaint.getComplaintType() != null && complaint.getComplaintType().isLocationRequired())
-            if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
+        if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
                 resultBinder.rejectValue("location", "location.required");
 
         if (resultBinder.hasErrors())
@@ -102,8 +101,7 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
         if (StringUtils.isBlank(complaint.getComplainant().getName()))
             resultBinder.rejectValue("complainant.name", "complainant.name.ismandatory");
 
-        if (complaint.getComplaintType() != null && complaint.getComplaintType().isLocationRequired())
-            if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
+        if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
                 resultBinder.rejectValue("location", "location.required");
 
         if (resultBinder.hasErrors())

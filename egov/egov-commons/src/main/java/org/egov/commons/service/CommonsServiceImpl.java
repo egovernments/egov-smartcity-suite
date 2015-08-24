@@ -1042,8 +1042,8 @@ public class CommonsServiceImpl implements CommonsService {
                             if (boundaryNum != null && StringUtils.isNotBlank(bndryType)) {
                                 final BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByName(bndryType);
                                 final Boundary boundary = boundaryService.getBoundaryByTypeAndNo(boundaryType, boundaryNum);
-                                if (boundary != null)
-                                    boundaryId = boundary.getBndryId();
+                                if (boundary != null && true)
+                                    boundaryId = boundary.getId();
                             }
                             break;
                         }

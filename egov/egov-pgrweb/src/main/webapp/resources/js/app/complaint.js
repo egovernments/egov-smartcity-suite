@@ -117,43 +117,6 @@ jQuery(document).ready(function($)
 		$("#complaintTypeName").trigger('blur');
 	});
 	
-	/**
-	 *Based on the selected complaint type make Location is required or not 
-	 **/
-	$("#complaintTypeName").blur(function(){
-		if (this.value === '') {
-			 $(".optionalmandate").hide();
-			 $("#location").removeAttr('required');
-			return;
-		} else {
-			$.ajax({
-				type: "GET",
-				url: "isLocationRequired",
-				cache: true,
-				data:{'complaintTypeName' : this.value}
-			}).done(function(value) {
-				 if(value === true) {
-					 $(".optionalmandate").show();
-					 $("#location").attr('required','required');
-				 } else {
-					 $(".optionalmandate").hide();
-					 $("#location").removeAttr('required');
-					 $("#location").val("");
-					 $("#landmarkDetails").val("");
-				 }
-			});
-		}
-	});	
-	
-	
-	if($("#locationRequired").val() === "false") {
-		 $(".optionalmandate").hide();
-		 $("#location").removeAttr('required');
-	} else {
-		 $(".optionalmandate").show();
-		 $("#location").attr('required');
-	}
-	
 	/*complaint through*/
 	$('input:radio[name="receivingMode"]').click(function(e) {
 		$('#receivingCenter').prop('selectedIndex',0);

@@ -113,8 +113,8 @@ public class ComplaintUpdationController {
     public String edit(final Model model, @PathVariable final String crnNo) {
         final Complaint complaint = getComplaint(crnNo);
         model.addAttribute("complaintHistory", complaintService.getHistory(complaint));
-        model.addAttribute("status", complaintStatusMappingService
-                .getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(), complaint.getStatus()));
+        model.addAttribute("status",
+                complaintStatusMappingService.getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(), complaint.getStatus()));
         model.addAttribute("complaint", complaint);
 
         if (securityUtils.currentUserType().equals(UserType.CITIZEN))
@@ -125,10 +125,8 @@ public class ComplaintUpdationController {
             model.addAttribute("ward", Collections.EMPTY_LIST);
             model.addAttribute("zone",
                     boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("ZONE", "ADMINISTRATION"));
-            if (complaint.getComplaintType().isLocationRequired() && null != complaint.getLocation()
-                    && null != complaint.getLocation().getParent())
-                model.addAttribute("ward", boundaryService
-                        .getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
+            if (complaint.getLocation() != null && complaint.getLocation().getParent() != null)
+                model.addAttribute("ward", boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
             return COMPLAINT_EDIT;
         }
     }
@@ -163,13 +161,10 @@ public class ComplaintUpdationController {
             model.addAttribute("complaintHistory", historyTable);
             model.addAttribute("complaintType", complaintTypeService.findAll());
             model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
-            model.addAttribute("zone",
-                    boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("ZONE", "ADMINISTRATION"));
+            model.addAttribute("zone", boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("ZONE", "ADMINISTRATION"));
             model.addAttribute("ward", Collections.EMPTY_LIST);
-            if (null != complaint.getComplaintType() && complaint.getComplaintType().isLocationRequired()
-                    && null != complaint.getLocation() && null != complaint.getLocation().getParent())
-                model.addAttribute("ward", boundaryService
-                        .getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
+            if (complaint.getLocation() != null && complaint.getLocation().getParent() != null)
+                model.addAttribute("ward", boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
             if (securityUtils.currentUserType().equals(UserType.CITIZEN))
                 result = COMPLAINT_CITIZEN_EDIT;
             else

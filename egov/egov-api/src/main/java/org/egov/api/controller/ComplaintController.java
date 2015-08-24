@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+/* eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
  * government organizations.
  * 
  * Copyright (C) <2015> eGovernments Foundation
@@ -183,7 +182,6 @@ public class ComplaintController extends ApiController {
             complaint.setLandmarkDetails(complaintRequest.get("landmarkDetails").toString());
             if (complaintTypeId > 0) {
                 ComplaintType complaintType = complaintTypeService.findBy(complaintTypeId);
-                complaintType.setLocationRequired(true);
                 complaint.setComplaintType(complaintType);
             }
             complaintService.createComplaint(complaint);

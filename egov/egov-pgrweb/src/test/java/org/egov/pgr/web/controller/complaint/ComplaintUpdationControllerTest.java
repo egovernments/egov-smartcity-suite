@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -173,7 +172,6 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
     @Test(expected = NestedServletException.class)
     public void editWithInvalidComplaintId() throws Exception {
         complaint = new Complaint();
-        complaintType.setLocationRequired(false);
         complaint.setComplaintType(complaintType);
         complaint.setDetails("Already Registered complaint");
         mockMvc.perform(get("/complaint-update?id=1")).andReturn();
@@ -182,7 +180,6 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
     @Test
     public void editWithComplaintTypeLocationRequiredFalse() throws Exception {
         complaint = new Complaint();
-        complaintType.setLocationRequired(false);
         complaint.setComplaintType(complaintType);
         complaint.setDetails("Already Registered complaint");
         when(complaintService.getComplaintById(id)).thenReturn(complaint);
@@ -198,7 +195,6 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
     @Test
     public void editWithComplaintTypeLocationRequiredTrue() throws Exception {
         complaint = new Complaint();
-        complaintType.setLocationRequired(true);
         complaint.setComplaintType(complaintType);
         complaint.setDetails("Already Registered complaint");
         id = 2L;
@@ -215,7 +211,6 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
     @Test
     public void editWithBoundary() throws Exception {
         complaint = new Complaint();
-        complaintType.setLocationRequired(true);
         complaint.setComplaintType(complaintType);
         complaint.setDetails("Already Registered complaint");
         final Boundary ward = new Boundary();
@@ -251,7 +246,6 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
     public void updateWithoutComplaintType() throws Exception {
         final ComplaintStatus cs1 = new ComplaintStatus();
         complaint1.setStatus(cs1);
-        complaintType.setLocationRequired(true);
         complaint1.setComplaintType(complaintType);
         complaint1.setDetails("Already Registered complaint");
         id = 2L;
@@ -269,7 +263,6 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         final ComplaintStatus cs = new ComplaintStatus();
         cs.setName("Forwarded");
         complaint1.setStatus(cs);
-        complaintType.setLocationRequired(true);
         complaint1.setComplaintType(complaintType);
         complaint1.setDetails("Already Registered complaint");
         id = 2L;
