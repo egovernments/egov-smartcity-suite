@@ -394,8 +394,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		ReportRequest reportRequest = null;
 
 		if (objection != null) {
-			reportParams.put("logoPath", propertyTaxUtil.logoBasePath());
-			reportParams.put("cityName", ReportUtil.getCityName());
+		  
+		    final HttpServletRequest request = ServletActionContext.getRequest();
+                    final String url = WebUtils.extractRequestDomainURL(request, false);
+                    final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
+                                           (String) request.getSession().getAttribute("citylogo"));
+                    final String cityName = request.getSession().getAttribute("cityname").toString();
+			reportParams.put("logoPath", cityLogo);
+			reportParams.put("cityName", cityName);
 			reportParams.put("recievedBy", objection.getRecievedBy());
 
 			if (objection.getHearings() != null && objection.getHearings().size() > 0
@@ -634,9 +640,15 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			Map<String, BigDecimal> currentDemand = ptDemandDAO.getDemandCollMap(objection.getProperty());
 			Map<String, BigDecimal> earlierDemand = ptDemandDAO.getDemandCollMap(objection.getBasicProperty()
 					.getProperty());
+			 final HttpServletRequest request = ServletActionContext.getRequest();
+			 final String url = WebUtils.extractRequestDomainURL(request, false);
+			 final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
+			                        (String) request.getSession().getAttribute("citylogo"));
+			 final String cityName = request.getSession().getAttribute("cityname").toString();
 
-			reportParams.put("logoPath", propertyTaxUtil.logoBasePath());
-			reportParams.put("cityName", ReportUtil.getCityName());
+			reportParams.put("logoPath", cityLogo);
+			reportParams.put("cityName", cityName);
+			
 			reportParams.put("recievedBy", objection.getRecievedBy());
 			reportParams.put("docNumberObjection", objection.getObjectionNumber());
 
@@ -739,7 +751,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		final String occupancyYear = formatNowYear.format(basicProperty.getPropOccupationDate());
 		ownerInfo.setInstallmentYear(occupancyYear);
 		ownerInfo.setAssessmentNo(basicProperty.getUpicNo());
-		ownerInfo.setAssessmentDate(basicProperty.getAssessmentdate().toString());
+		ownerInfo.setAssessmentDate(sdf.format(basicProperty.getAssessmentdate()).toString());
 		final Ptdemand currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
 		BigDecimal totalTax = BigDecimal.ZERO;
 		for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {

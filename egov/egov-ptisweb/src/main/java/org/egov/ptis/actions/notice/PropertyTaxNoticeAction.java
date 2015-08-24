@@ -103,11 +103,12 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
     private Integer reportId = -1;
     private String noticeType;
-    private InputStream NoticePDF;
+    private InputStream NoticePDF; 
     private Long basicPropId;
     private String noticeMode;
     private PersistenceService<BasicProperty, Long> basicPropertyService;
     private PropertyService propService;
+    final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     @Autowired
     private PtDemandDao ptDemandDAO;
@@ -188,7 +189,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         final String occupancyYear = formatNowYear.format(basicProperty.getPropOccupationDate());
         ownerInfo.setInstallmentYear(occupancyYear);
         ownerInfo.setAssessmentNo(basicProperty.getUpicNo());
-        ownerInfo.setAssessmentDate(basicProperty.getAssessmentdate().toString());
+        ownerInfo.setAssessmentDate(sdf.format(basicProperty.getAssessmentdate()).toString());
         final Ptdemand currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
         BigDecimal totalTax = BigDecimal.ZERO;
 		for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {
