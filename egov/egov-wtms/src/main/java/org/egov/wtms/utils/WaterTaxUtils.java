@@ -283,7 +283,7 @@ public class WaterTaxUtils {
             // We request you to pay the same at the ULB counter,so that we can process
             // your request for work order.\n\nThis is computer generated email and does
             // not need any signature and also please do not reply to this email.\n\nThanks ,\n{4}
-        } else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION)) {
+        } else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION)|| type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEEXECUTION)) {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             if (!WaterTaxConstants.METERED.toUpperCase()
                     .equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString()))
