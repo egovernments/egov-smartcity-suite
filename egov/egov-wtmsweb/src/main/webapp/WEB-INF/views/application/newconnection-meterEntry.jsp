@@ -228,3 +228,4 @@
 		return true;
 	}
 </script>
+<script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
