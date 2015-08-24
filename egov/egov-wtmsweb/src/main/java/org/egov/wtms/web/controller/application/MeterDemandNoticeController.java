@@ -101,7 +101,7 @@ public class MeterDemandNoticeController {
     private final Map<String, Object> reportParams = new HashMap<String, Object>();
     private ReportRequest reportInput = null;
     private ReportOutput reportOutput = null;
-    String errorMessage="";
+    String errorMessage = "";
 
     @Autowired
     private WaterConnectionDetailsRepository waterConnectionDetailsRepository;
@@ -114,9 +114,8 @@ public class MeterDemandNoticeController {
             final HttpSession session) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumberOrConsumerCode(request.getParameter("pathVar"));
-        if(!errorMessage.isEmpty()){
+        if (!errorMessage.isEmpty())
             return redirect();
-        }
         return generateReport(waterConnectionDetails, session);
     }
 
@@ -273,10 +272,12 @@ public class MeterDemandNoticeController {
                 .findByApplicationNumber(applicationNumber);
         return generateReport(waterConnectionDetails, session);
     }
+
     private ResponseEntity<byte[]> redirect() {
-        errorMessage = "<html><body><p style='color:red;border:1px solid gray;padding:15px;'>"+errorMessage+"</p></body></html>";
-        byte[] byteData = errorMessage.getBytes();
-        errorMessage="";
+        errorMessage = "<html><body><p style='color:red;border:1px solid gray;padding:15px;'>" + errorMessage
+                + "</p></body></html>";
+        final byte[] byteData = errorMessage.getBytes();
+        errorMessage = "";
         return new ResponseEntity<byte[]>(byteData, HttpStatus.CREATED);
     }
 }

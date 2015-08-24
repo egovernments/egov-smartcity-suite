@@ -71,7 +71,7 @@ public class SecurityDepositService {
 
     @Transactional
     public void updateSecurityDeposit(final SecurityDeposit securityDeposit) {
-    	securityDepositRepository.save(securityDeposit);
+        securityDepositRepository.save(securityDeposit);
     }
 
     public List<SecurityDeposit> findAll() {
@@ -85,8 +85,8 @@ public class SecurityDepositService {
     public SecurityDeposit load(final Long id) {
         return securityDepositRepository.getOne(id);
     }
-    
-    public SecurityDeposit findByUsageTypeAndNoOfMonths(final UsageType usageType, Long noOfMonths){
+
+    public SecurityDeposit findByUsageTypeAndNoOfMonths(final UsageType usageType, final Long noOfMonths) {
         return securityDepositRepository.findByUsageTypeAndNoOfMonths(usageType, noOfMonths);
     }
 

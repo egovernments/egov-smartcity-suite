@@ -68,8 +68,8 @@ public class PropertyPipeSize extends AbstractPersistable<Long> {
     @ManyToOne
     @JoinColumn(name = "pipesize")
     private PipeSize pipesize;
-    
-    @Column(name="propertytype")
+
+    @Column(name = "propertytype")
     private Long propertyType;
 
     @Override
@@ -81,12 +81,12 @@ public class PropertyPipeSize extends AbstractPersistable<Long> {
     protected void setId(final Long id) {
         this.id = id;
     }
-    
+
     public PipeSize getPipesize() {
         return pipesize;
     }
 
-    public void setPipesize(PipeSize pipesize) {
+    public void setPipesize(final PipeSize pipesize) {
         this.pipesize = pipesize;
     }
 
@@ -94,7 +94,7 @@ public class PropertyPipeSize extends AbstractPersistable<Long> {
         return propertyType;
     }
 
-    public void setPropertyType(Long propertyType) {
+    public void setPropertyType(final Long propertyType) {
         this.propertyType = propertyType;
     }
 

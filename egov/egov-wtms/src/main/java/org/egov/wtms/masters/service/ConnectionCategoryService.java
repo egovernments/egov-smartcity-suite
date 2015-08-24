@@ -73,7 +73,7 @@ public class ConnectionCategoryService {
 
     @Transactional
     public void updateConnectionCategory(final ConnectionCategory connectionCategory) {
-    	connectionCategoryRepository.save(connectionCategory);
+        connectionCategoryRepository.save(connectionCategory);
     }
 
     public List<ConnectionCategory> findAll() {
@@ -98,11 +98,11 @@ public class ConnectionCategoryService {
     }
 
     public ConnectionCategory findByCode(final String code) {
-    	return connectionCategoryRepository.findByCode(code);
+        return connectionCategoryRepository.findByCode(code);
     }
-    
+
     public List<ConnectionCategory> getAllActiveConnectionCategory() {
         return connectionCategoryRepository.findByActiveTrueOrderByNameAsc();
     }
 
- }
+}

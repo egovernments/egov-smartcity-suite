@@ -103,10 +103,10 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
 
     @Autowired
     private DepartmentService departmentService;
-    
+
     @Autowired
     private MeterCostService meterCostService;
-    
+
     public @ModelAttribute("meterCostMasters") List<MeterCost> meterCostMasters() {
         return meterCostService.findAll();
     }
@@ -114,7 +114,7 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
     public @ModelAttribute("waterSourceTypes") List<WaterSource> waterSourceTypes() {
         return waterSourceService.getAllActiveWaterSourceTypes();
     }
-    
+
     public @ModelAttribute("connectionTypes") Map<String, String> connectionTypes() {
         return waterConnectionDetailsService.getConnectionTypesMap();
     }

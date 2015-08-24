@@ -56,7 +56,7 @@ public interface DonationHeaderRepository extends JpaRepository<DonationHeader, 
     List<DonationHeader> findAllByUsageType(UsageType usageType);
 
     List<DonationHeader> findByCategoryAndUsageType(ConnectionCategory category, UsageType usageType);
-      
+
     DonationHeader findByCategoryAndUsageTypeAndMinPipeSize(ConnectionCategory category, UsageType usageType,
             PipeSize pipeSize);
 

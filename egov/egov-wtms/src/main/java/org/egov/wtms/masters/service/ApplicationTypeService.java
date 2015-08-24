@@ -73,7 +73,7 @@ public class ApplicationTypeService {
 
     @Transactional
     public void updateApplicationType(final ApplicationType applicationType) {
-    	applicationTypeRepository.save(applicationType);
+        applicationTypeRepository.save(applicationType);
     }
 
     public List<ApplicationType> findAll() {
@@ -98,7 +98,7 @@ public class ApplicationTypeService {
     }
 
     public ApplicationType findByCode(final String code) {
-    	return applicationTypeRepository.findByCode(code);
+        return applicationTypeRepository.findByCode(code);
     }
 
- }
+}

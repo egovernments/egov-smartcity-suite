@@ -94,10 +94,10 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
 
     WaterConnectionDetails findByConnection_PropertyIdentifierAndConnectionStatusAndConnection_ParentConnectionIsNull(
             String propertyIdentifier, ConnectionStatus connectionStatus);
-    
+
     WaterConnectionDetails findByDemand(EgDemand demand);
 
     @Query("select wcd from MeterReadingConnectionDetails wcd where wcd.waterConnectionDetails.id=:waterConnDetId order by currentReadingDate desc")
-    List<MeterReadingConnectionDetails> findPreviousMeterReadingReading( @Param("waterConnDetId") Long waterConnDetId);
-     
+    List<MeterReadingConnectionDetails> findPreviousMeterReadingReading(@Param("waterConnDetId") Long waterConnDetId);
+
 }

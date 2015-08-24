@@ -48,7 +48,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ApplicationTypeRepository extends JpaRepository<ApplicationType, Long> {
 
-	ApplicationType findByName(String name);
+    ApplicationType findByName(String name);
 
     List<ApplicationType> findByNameContainingIgnoreCase(String name);
 

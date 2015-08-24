@@ -41,7 +41,6 @@ package org.egov.wtms.masters.service;
 
 import java.util.List;
 
-import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.ConnectionCharges;
 import org.egov.wtms.masters.repository.ConnectionChargesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +73,7 @@ public class ConnectionChargesService {
 
     @Transactional
     public void updateConnectionCharges(final ConnectionCharges connectionCharges) {
-    	connectionChargesRepository.save(connectionCharges);
+        connectionChargesRepository.save(connectionCharges);
     }
 
     public List<ConnectionCharges> findAll() {
@@ -93,6 +92,7 @@ public class ConnectionChargesService {
         final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "type");
         return connectionChargesRepository.findAll(pageable);
     }
+
     public ConnectionCharges findByTypeAndDate(final String type) {
         return connectionChargesRepository.findByTypeAndDate(type);
     }

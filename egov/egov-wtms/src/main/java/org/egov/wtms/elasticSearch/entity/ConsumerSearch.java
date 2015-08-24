@@ -52,7 +52,7 @@ public class ConsumerSearch implements Indexable {
 
     @Searchable(name = "waterTaxDue", group = Searchable.Group.CLAUSES)
     private BigDecimal waterTaxDue;
-    
+
     public ConsumerSearch(final String consumerCode, final String mobileNumber, final String usageType,
             final Date createdDate) {
         this.consumerCode = consumerCode;
@@ -69,8 +69,7 @@ public class ConsumerSearch implements Indexable {
     }
 
     /**
-     * @param status
-     *            the status to set
+     * @param status the status to set
      */
     public void setStatus(final String status) {
         this.status = status;
@@ -89,8 +88,7 @@ public class ConsumerSearch implements Indexable {
     }
 
     /**
-     * @param zone
-     *            the zone to set
+     * @param zone the zone to set
      */
     public void setZone(final String zone) {
         this.zone = zone;
@@ -104,8 +102,7 @@ public class ConsumerSearch implements Indexable {
     }
 
     /**
-     * @param ward
-     *            the ward to set
+     * @param ward the ward to set
      */
     public void setWard(final String ward) {
         this.ward = ward;
@@ -126,8 +123,7 @@ public class ConsumerSearch implements Indexable {
     }
 
     /**
-     * @param propertyId
-     *            the propertyId to set
+     * @param propertyId the propertyId to set
      */
     public void setPropertyId(final String propertyId) {
         this.propertyId = propertyId;
@@ -141,8 +137,7 @@ public class ConsumerSearch implements Indexable {
     }
 
     /**
-     * @param bpaId
-     *            the bpaId to set
+     * @param bpaId the bpaId to set
      */
     public void setBpaId(final String bpaId) {
         this.bpaId = bpaId;
@@ -163,8 +158,7 @@ public class ConsumerSearch implements Indexable {
     }
 
     /**
-     * @param consumerName
-     *            the consumerName to set
+     * @param consumerName the consumerName to set
      */
     public void setConsumerName(final String consumerName) {
         this.consumerName = consumerName;
@@ -178,8 +172,7 @@ public class ConsumerSearch implements Indexable {
     }
 
     /**
-     * @param locality
-     *            the locality to set
+     * @param locality the locality to set
      */
     public void setLocality(final String locality) {
         this.locality = locality;
@@ -200,8 +193,7 @@ public class ConsumerSearch implements Indexable {
     }
 
     /**
-     * @param totalDue
-     *            the totalDue to set
+     * @param totalDue the totalDue to set
      */
     public void setTotalDue(final BigDecimal totalDue) {
         this.totalDue = totalDue;
@@ -222,8 +214,7 @@ public class ConsumerSearch implements Indexable {
     }
 
     /**
-     * @param applicationCode
-     *            the applicationCode to set
+     * @param applicationCode the applicationCode to set
      */
     public void setApplicationCode(final String applicationCode) {
         this.applicationCode = applicationCode;
@@ -241,7 +232,7 @@ public class ConsumerSearch implements Indexable {
         return waterTaxDue;
     }
 
-    public void setWaterTaxDue(BigDecimal waterTaxDue) {
+    public void setWaterTaxDue(final BigDecimal waterTaxDue) {
         this.waterTaxDue = waterTaxDue;
     }
 

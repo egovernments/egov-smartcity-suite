@@ -74,7 +74,7 @@ public class MeterCostService {
 
     @Transactional
     public void updateMeterCost(final MeterCost MeterCost) {
-    	meterCostRepository.save(MeterCost);
+        meterCostRepository.save(MeterCost);
     }
 
     public List<MeterCost> findAll() {
@@ -99,7 +99,7 @@ public class MeterCostService {
     }
 
     public MeterCost findByMeterMakeandPipeSize(final String meterMake, final PipeSize pipeSize) {
-    	return meterCostRepository.findByMeterMakeAndPipeSize(meterMake, pipeSize);
+        return meterCostRepository.findByMeterMakeAndPipeSize(meterMake, pipeSize);
     }
 
- }
+}

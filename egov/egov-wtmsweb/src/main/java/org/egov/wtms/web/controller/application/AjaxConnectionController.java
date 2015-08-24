@@ -59,7 +59,7 @@ public class AjaxConnectionController {
     public @ResponseBody String isConnectionPresentForProperty(@RequestParam final String propertyID) {
         return newConnectionService.checkConnectionPresentForProperty(propertyID);
     }
- 
+
     @RequestMapping(value = "/ajax-CategoryTypeByPropertyType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<ConnectionCategory> getAllCategoryTypesByPropertyType(
             @RequestParam final Long propertyType) {

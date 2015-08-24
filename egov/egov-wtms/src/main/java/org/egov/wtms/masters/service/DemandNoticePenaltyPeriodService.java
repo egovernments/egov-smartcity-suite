@@ -74,7 +74,7 @@ public class DemandNoticePenaltyPeriodService {
 
     @Transactional
     public void updateDemandNoticePenaltyPeriod(final DemandNoticePenaltyPeriod demandNoticePenaltyPeriod) {
-    	demandNoticePenaltyPeriodRepository.save(demandNoticePenaltyPeriod);
+        demandNoticePenaltyPeriodRepository.save(demandNoticePenaltyPeriod);
     }
 
     public List<DemandNoticePenaltyPeriod> findAll() {

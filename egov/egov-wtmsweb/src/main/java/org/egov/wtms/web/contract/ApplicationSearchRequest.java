@@ -53,7 +53,7 @@ import org.egov.search.domain.Filters;
 import org.jboss.logging.Logger;
 
 public class ApplicationSearchRequest {
-	private String searchText;
+    private String searchText;
     private String moduleName;
     private String applicationType;
     private String applicationNumber;
@@ -67,7 +67,6 @@ public class ApplicationSearchRequest {
 
     private static final Logger logger = Logger.getLogger(ApplicationSearchRequest.class);
 
-   
     public void setFromDate(final String fromDate) {
         if (null != fromDate)
             try {
@@ -89,84 +88,84 @@ public class ApplicationSearchRequest {
                 e.printStackTrace();
             }
     }
- 
 
-	public String getModuleName() {
-		return moduleName;
-	}
+    public String getModuleName() {
+        return moduleName;
+    }
 
-	public void setModuleName(String moduleName) {
-		this.moduleName = moduleName;
-	}
+    public void setModuleName(final String moduleName) {
+        this.moduleName = moduleName;
+    }
 
-	public String getApplicationType() {
-		return applicationType;
-	}
+    public String getApplicationType() {
+        return applicationType;
+    }
 
-	public void setApplicationType(String applicationType) {
-		this.applicationType = applicationType;
-	}
+    public void setApplicationType(final String applicationType) {
+        this.applicationType = applicationType;
+    }
 
-	public String getApplicationNumber() {
-		return applicationNumber;
-	}
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
 
-	public void setApplicationNumber(String applicationNumber) {
-		this.applicationNumber = applicationNumber;
-	}
+    public void setApplicationNumber(final String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
 
-	public String getApplicationCode() {
-		return applicationCode;
-	}
+    public String getApplicationCode() {
+        return applicationCode;
+    }
 
-	public void setApplicationCode(String applicationCode) {
-		this.applicationCode = applicationCode;
-	}
+    public void setApplicationCode(final String applicationCode) {
+        this.applicationCode = applicationCode;
+    }
 
-	public String getApplicationName() {
-		return applicationName;
-	}
+    public String getApplicationName() {
+        return applicationName;
+    }
 
-	public void setApplicationName(String applicationName) {
-		this.applicationName = applicationName;
-	}
+    public void setApplicationName(final String applicationName) {
+        this.applicationName = applicationName;
+    }
 
-	public String getAppMobileNo() {
-		return appMobileNo;
-	}
+    public String getAppMobileNo() {
+        return appMobileNo;
+    }
 
-	public void setAppMobileNo(String appMobileNo) {
-		this.appMobileNo = appMobileNo;
-	}
+    public void setAppMobileNo(final String appMobileNo) {
+        this.appMobileNo = appMobileNo;
+    }
 
-	public String getFromDate() {
-		return fromDate;
-	}
+    public String getFromDate() {
+        return fromDate;
+    }
 
-	public String getToDate() {
-		return toDate;
-	}
+    public String getToDate() {
+        return toDate;
+    }
 
-	 public void setSearchText(final String searchText) {
-	        this.searchText = searchText;
-	    }
-	   public Filters searchFilters() {
-	        final List<Filter> andFilters = new ArrayList<>(0);
-	        andFilters.add(queryStringFilter("searchable.applicationnumber", applicationNumber));
-	        andFilters.add(termsStringFilter("clauses.modulename", moduleName));
-	        andFilters.add(termsStringFilter("clauses.applicationtype", applicationType));
-	        andFilters.add(queryStringFilter("searchable.applicantname", applicationName));
-	        andFilters.add(queryStringFilter("searchable.consumercode", applicationCode));
-	        andFilters.add(queryStringFilter("searchable.mobilenumber", appMobileNo));
-	        andFilters.add(rangeFilter("searchable.applicationdate", fromDate, toDate));
-	        if (logger.isDebugEnabled())
-	            logger.debug("finished filters");
-	        logger.info("$$$$$$$$$$$$$$$$ Filters : "+andFilters);
-	        return Filters.withAndFilters(andFilters);
-	    }
+    public void setSearchText(final String searchText) {
+        this.searchText = searchText;
+    }
+
+    public Filters searchFilters() {
+        final List<Filter> andFilters = new ArrayList<>(0);
+        andFilters.add(queryStringFilter("searchable.applicationnumber", applicationNumber));
+        andFilters.add(termsStringFilter("clauses.modulename", moduleName));
+        andFilters.add(termsStringFilter("clauses.applicationtype", applicationType));
+        andFilters.add(queryStringFilter("searchable.applicantname", applicationName));
+        andFilters.add(queryStringFilter("searchable.consumercode", applicationCode));
+        andFilters.add(queryStringFilter("searchable.mobilenumber", appMobileNo));
+        andFilters.add(rangeFilter("searchable.applicationdate", fromDate, toDate));
+        if (logger.isDebugEnabled())
+            logger.debug("finished filters");
+        logger.info("$$$$$$$$$$$$$$$$ Filters : " + andFilters);
+        return Filters.withAndFilters(andFilters);
+    }
+
     public String searchQuery() {
         return searchText;
     }
 
-    
 }

@@ -49,59 +49,67 @@ import org.egov.search.domain.Filters;
 import org.jboss.logging.Logger;
 
 public class ConnectionSearchRequest {
-	private String searchText;
-	private String consumerCode;
+    private String searchText;
+    private String consumerCode;
     private String applicationName;
     private String locality;
     private String mobileNumber;
-   
+
     private static final Logger logger = Logger.getLogger(ConnectionSearchRequest.class);
 
- 
+    public String getConsumerCode() {
+        return consumerCode;
+    }
 
-	 public String getConsumerCode() {
-		return consumerCode;
-	}
-	public void setConsumerCode(String consumerCode) {	
-		this.consumerCode = consumerCode;
-	}
-	public String getApplicationName() {
-		return applicationName;
-	}
-	public void setApplicationName(String applicationName) {
-		this.applicationName = applicationName;
-	}
-	public String getLocality() {
-		return locality;
-	}
-	public void setLocality(String locality) {
-		this.locality = locality;
-	}
-	public String getMobileNumber() {
-		return mobileNumber;
-	}
-	public void setMobileNumber(String mobileNumber) {
-		this.mobileNumber = mobileNumber;
-	}
-	public String getSearchText() {
-		return searchText;
-	}
-	public void setSearchText(final String searchText) {
-	        this.searchText = searchText;
-	    }
-	   public Filters searchFilters() {
-	        final List<Filter> andFilters = new ArrayList<>();
-	        andFilters.add(queryStringFilter("searchable.consumername", applicationName));
-	        andFilters.add(queryStringFilter("clauses.consumercode", consumerCode));
-	        andFilters.add(queryStringFilter("searchable.locality", locality));
-	        andFilters.add(queryStringFilter("clauses.mobilenumber", mobileNumber));
-	        if (logger.isDebugEnabled())
-	            logger.debug("finished filters");
-	        return Filters.withAndFilters(andFilters);
-	    }
+    public void setConsumerCode(final String consumerCode) {
+        this.consumerCode = consumerCode;
+    }
+
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    public void setApplicationName(final String applicationName) {
+        this.applicationName = applicationName;
+    }
+
+    public String getLocality() {
+        return locality;
+    }
+
+    public void setLocality(final String locality) {
+        this.locality = locality;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(final String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public String getSearchText() {
+        return searchText;
+    }
+
+    public void setSearchText(final String searchText) {
+        this.searchText = searchText;
+    }
+
+    public Filters searchFilters() {
+        final List<Filter> andFilters = new ArrayList<>();
+        andFilters.add(queryStringFilter("searchable.consumername", applicationName));
+        andFilters.add(queryStringFilter("clauses.consumercode", consumerCode));
+        andFilters.add(queryStringFilter("searchable.locality", locality));
+        andFilters.add(queryStringFilter("clauses.mobilenumber", mobileNumber));
+        if (logger.isDebugEnabled())
+            logger.debug("finished filters");
+        return Filters.withAndFilters(andFilters);
+    }
+
     public String searchQuery() {
         return searchText;
     }
 
-    
 }

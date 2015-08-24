@@ -56,7 +56,6 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.utils.PropertyExtnUtils;
-import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -76,56 +75,52 @@ public class WorkOrderController {
 
     @Autowired
     private ReportService reportService;
-    
+
     @Autowired
     private ResourceBundleMessageSource messageSource;
-    
-    @Autowired
-    private WaterTaxNumberGenerator waterTaxNumberGenerator;
-    
+
     public static final String CONNECTIONWORKORDER = "connectionWorkOrder";
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
     private final Map<String, Object> reportParams = new HashMap<String, Object>();
     private ReportRequest reportInput = null;
     private ReportOutput reportOutput = null;
-    String errorMessage="";
+    String errorMessage = "";
 
     @Autowired
     private WaterConnectionDetailsService wcdService;
-    
+
     @RequestMapping(value = "/workorder", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> createWorkOrderReport(final HttpServletRequest request,final HttpSession session) {
+    public @ResponseBody ResponseEntity<byte[]> createWorkOrderReport(final HttpServletRequest request,
+            final HttpSession session) {
         final WaterConnectionDetails connectionDetails = wcdService.findByApplicationNumber(request.getParameter("pathVar"));
         validateWorkOrder(connectionDetails, true);
-        if(!errorMessage.isEmpty()){
+        if (!errorMessage.isEmpty())
             return redirect();
-        }
-        return generateReport(connectionDetails,session);
+        return generateReport(connectionDetails, session);
     }
 
-    private ResponseEntity<byte[]> generateReport(final WaterConnectionDetails connectionDetails,final HttpSession session) {
-        if(null!=connectionDetails ){
-            final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(connectionDetails.getConnection().getPropertyIdentifier(),
+    private ResponseEntity<byte[]> generateReport(final WaterConnectionDetails connectionDetails, final HttpSession session) {
+        if (null != connectionDetails) {
+            final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+                    connectionDetails.getConnection().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS);
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            String doorno[] = assessmentDetails.getPropertyAddress().split(",");
+            final String doorno[] = assessmentDetails.getPropertyAddress().split(",");
             String ownerName = "";
-            for(OwnerName names:assessmentDetails.getOwnerNames()){
+            for (final OwnerName names : assessmentDetails.getOwnerNames()) {
                 ownerName = names.getOwnerName();
                 break;
             }
-                
-            if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())){
-                reportParams.put("conntitle",WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
+
+            if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
+                reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
                 reportParams.put("applicationtype", messageSource.getMessage("msg.new.watertap.conn", null, null));
-            }
-            else if (WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())){
-                reportParams.put("conntitle",WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
+            } else if (WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
+                reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
                 reportParams.put("applicationtype", messageSource.getMessage("msg.add.watertap.conn", null, null));
-            }         
-            else {
-                reportParams.put("conntitle",WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
+            } else {
+                reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
                 reportParams.put("applicationtype", messageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
             }
             reportParams.put("municipality", session.getAttribute("cityname"));
@@ -145,33 +140,34 @@ public class WorkOrderController {
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
-    public void validateWorkOrder(final WaterConnectionDetails connectionDetails,final Boolean isView ) {
-        
-        if(null!=connectionDetails && connectionDetails.getLegacy()) {
-            errorMessage = messageSource.getMessage("err.validate.workorder.for.legacy", new String[] {""}, null);
-        }
-        else if(isView && null==connectionDetails.getWorkOrderNumber()){
-            errorMessage = messageSource.getMessage("err.validate.workorder.view", new String[] {connectionDetails.getApplicationNumber()}, null);
-        }
-        else if(!isView && !connectionDetails.getEgwStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED)){
-            errorMessage = messageSource.getMessage("err.validate.workorder.view", new String[] {connectionDetails.getApplicationNumber()}, null);
-        }
+    public void validateWorkOrder(final WaterConnectionDetails connectionDetails, final Boolean isView) {
+
+        if (null != connectionDetails && connectionDetails.getLegacy())
+            errorMessage = messageSource.getMessage("err.validate.workorder.for.legacy", new String[] { "" }, null);
+        else if (isView && null == connectionDetails.getWorkOrderNumber())
+            errorMessage = messageSource.getMessage("err.validate.workorder.view",
+                    new String[] { connectionDetails.getApplicationNumber() }, null);
+        else if (!isView && !connectionDetails.getEgwStatus().getCode()
+                .equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED))
+            errorMessage = messageSource.getMessage("err.validate.workorder.view",
+                    new String[] { connectionDetails.getApplicationNumber() }, null);
     }
-    
+
     @RequestMapping(value = "/workorder/view/{applicationNumber}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> viewReport(@PathVariable final String applicationNumber,final HttpSession session) {
+    public @ResponseBody ResponseEntity<byte[]> viewReport(@PathVariable final String applicationNumber,
+            final HttpSession session) {
         final WaterConnectionDetails connectionDetails = wcdService.findByApplicationNumber(applicationNumber);
         validateWorkOrder(connectionDetails, true);
-        if(!errorMessage.isEmpty()){
+        if (!errorMessage.isEmpty())
             return redirect();
-        }
-        return generateReport(connectionDetails,session);
+        return generateReport(connectionDetails, session);
     }
 
     private ResponseEntity<byte[]> redirect() {
-        errorMessage = "<html><body><p style='color:red;border:1px solid gray;padding:15px;'>"+errorMessage+"</p></body></html>";
-        byte[] byteData = errorMessage.getBytes();
-        errorMessage="";
+        errorMessage = "<html><body><p style='color:red;border:1px solid gray;padding:15px;'>" + errorMessage
+                + "</p></body></html>";
+        final byte[] byteData = errorMessage.getBytes();
+        errorMessage = "";
         return new ResponseEntity<byte[]>(byteData, HttpStatus.CREATED);
     }
 }

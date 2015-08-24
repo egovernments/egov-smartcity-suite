@@ -49,10 +49,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MeterCostRepository extends JpaRepository<MeterCost, Long> {
 
-	List<MeterCost> findByMeterMake(String meterMake);
+    List<MeterCost> findByMeterMake(String meterMake);
 
-	List<MeterCost> findByPipeSize(PipeSize pipeSize);
-		
-	MeterCost findByMeterMakeAndPipeSize(String meterMake,PipeSize pipeSize);
+    List<MeterCost> findByPipeSize(PipeSize pipeSize);
+
+    MeterCost findByMeterMakeAndPipeSize(String meterMake, PipeSize pipeSize);
 }
-																																																																																																

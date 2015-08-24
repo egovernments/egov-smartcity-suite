@@ -69,10 +69,10 @@ public class PipeSize extends AbstractAuditable {
     @Length(min = 1, max = 25)
     @Column(name = "code", unique = true)
     private String code = "";
-   
+
     @NotNull
     private double sizeInInch;
-    
+
     @NotNull
     private double sizeInMilimeter;
 

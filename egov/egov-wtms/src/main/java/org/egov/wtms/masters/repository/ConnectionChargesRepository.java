@@ -50,7 +50,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ConnectionChargesRepository extends JpaRepository<ConnectionCharges, Long> {
 
-	List<ConnectionCharges> findByType(String type);
-	@Query("from ConnectionCharges cc where cc.fromDate<=current_date and cc.toDate>=current_date and cc.type =:type")
-	ConnectionCharges findByTypeAndDate(@Param("type") String type);
+    List<ConnectionCharges> findByType(String type);
+
+    @Query("from ConnectionCharges cc where cc.fromDate<=current_date and cc.toDate>=current_date and cc.type =:type")
+    ConnectionCharges findByTypeAndDate(@Param("type") String type);
 }

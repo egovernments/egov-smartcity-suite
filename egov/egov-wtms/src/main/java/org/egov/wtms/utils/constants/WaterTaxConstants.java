@@ -65,17 +65,17 @@ public class WaterTaxConstants {
     public static final String SMSEMAILTYPENEWCONNEXECUTION = "newconnexecutiondate";
     public static final String SMSEMAILTYPENEWCONNESTNOTICE = "newconnestnotice";
     public static final String SMSEMAILTYPEADDCONNESTNOTICE = "addconnestnotice";
-    
+
     public static final String SMSEMAILTYPENEWCONNFEEPAID = "newconnfeepaid";
     public static final String SMSEMAILTYPEADDCONNFEEPAID = "addconnfeepaid";
-    
+
     public static final String SMSEMAILTYPECHANGEOFUSECREATE = "changeofusecreate";
     public static final String SMSEMAILTYPECHANGEOFUSEAPPROVE = "changeofuseapprove";
     public static final String SMSEMAILTYPECHANGEOFUSENOTICE = "changeofusenotice";
     public static final String SMSEMAILTYPECHANGEOFUSEEXECUTION = "changeofuseexecution";
     public static final String SMSEMAILTYPECHANGEOFUSEREJECTION = "changeofuserejection";
     public static final String SMSEMAILTYPECHANGEOFUSEFEEPAID = "changeofusefeepaid";
-    
+
     public static final String CATEGORY_BPL = "BPL";
     public static final String WATERTAX_FIELDINSPECTION_CHARGE = "WTAXFIELDINSPEC";
     // User Roles
@@ -156,8 +156,8 @@ public class WaterTaxConstants {
     public static final String WATERTAXREASONCODE = "WTAXCHARGES";
     public static final String WF_ESTIMATION_NOTICE_BUTTON = "Generate Estimation Notice";
     public static final String WATER_RATES_NONMETERED_PTMODULE = "Property Tax";
-    
-    public static final String CURR_DUE="CurrentDue";
-    public static final String ARR_DUE="ArrearDue";
+
+    public static final String CURR_DUE = "CurrentDue";
+    public static final String ARR_DUE = "ArrearDue";
     public static final String ARR_INSTALFROM_STR = "ARR_INSTALL_FROM";
 }

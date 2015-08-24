@@ -101,10 +101,8 @@ public class ApplicationSearchController {
     }
 
     /*
-     * @ModelAttribute(value = "applicationTypeList") public
-     * List<ApplicationIndex> findApplicationIndexApplicationTypes() { return
-     * applicationSearchService
-     * .findApplicationIndexApplicationTypes(moduleName); }
+     * @ModelAttribute(value = "applicationTypeList") public List<ApplicationIndex> findApplicationIndexApplicationTypes() {
+     * return applicationSearchService .findApplicationIndexApplicationTypes(moduleName); }
      */
 
     @RequestMapping(method = RequestMethod.POST)

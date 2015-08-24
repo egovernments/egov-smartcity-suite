@@ -67,37 +67,34 @@ import com.google.gson.reflect.TypeToken;
 
 @Controller
 public class AjaxWorkFlowController {
-    
-   
+
     @Autowired
     private CustomizedWorkFlowService customizedWorkFlowService;
-    
+
     @Autowired
     private DesignationService designationService;
 
     @Autowired
     private AssignmentService assignmentService;
 
-    
     @RequestMapping(value = "/ajaxWorkFlow-getDesignationsByObjectType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Designation> getDesignationsByObjectType(
-            @ModelAttribute("designations") @RequestParam final String departmentRule,@RequestParam final String currentState,
+            @ModelAttribute("designations") @RequestParam final String departmentRule, @RequestParam final String currentState,
             @RequestParam final String type,
-            @RequestParam final String amountRule,@RequestParam final String additionalRule,
-            @RequestParam final String pendingAction , @RequestParam final Long approvalDepartment) {
-         
-        List<Designation>  designationList = this.customizedWorkFlowService.getNextDesignations(type,
-                departmentRule,null, additionalRule, currentState,
+            @RequestParam final String amountRule, @RequestParam final String additionalRule,
+            @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment) {
+
+        List<Designation> designationList = customizedWorkFlowService.getNextDesignations(type,
+                departmentRule, null, additionalRule, currentState,
                 pendingAction, new Date());
-            if (designationList.isEmpty()) {
-                designationList = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
-                //designationList.forEach(designation -> designation.toString());
-            }
-        
-                return designationList;
-        
+        if (designationList.isEmpty())
+            designationList = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
+        // designationList.forEach(designation -> designation.toString());
+
+        return designationList;
+
     }
-    
+
     @RequestMapping(value = "/ajaxWorkFlow-positionsByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String getWorkFlowPositionByDepartmentAndDesignation(@RequestParam final Long approvalDepartment,
             @RequestParam final Long approvalDesignation, final HttpServletResponse response) {
@@ -113,8 +110,5 @@ public class AjaxWorkFlowController {
         }
         return "[]";
     }
-
-   
-   
 
 }

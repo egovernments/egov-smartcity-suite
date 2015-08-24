@@ -95,6 +95,7 @@ public class MeterReadingController {
         waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode);
         return waterConnectionDetails;
     }
+
     private String loadViewData(final Model model, final HttpServletRequest request,
             final WaterConnectionDetails waterConnectionDetails) {
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
@@ -103,10 +104,10 @@ public class MeterReadingController {
                 waterConnectionDetailsService.getConnectionTypesMap().get(waterConnectionDetails.getConnectionType().name()));
         model.addAttribute("mode", "meterEntry");
         model.addAttribute("meterReadingCurrentObj", new MeterReadingConnectionDetails());
-  
+
         return "newconnection-meterEntry";
     }
-    
+
     @RequestMapping(value = "/meterentry/{consumerCode}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String consumerCode, final HttpServletRequest request) {
         waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode);
@@ -125,7 +126,7 @@ public class MeterReadingController {
         }
         model.addAttribute("meterReadingpriviousObj", meterReadingpriviousObj);
         return loadViewData(model, request, waterConnectionDetails);
-             
+
     }
 
     @RequestMapping(value = "/meterentry/{consumerCode}", method = RequestMethod.POST)
@@ -144,10 +145,9 @@ public class MeterReadingController {
         if (waterConnectionDetails.getDemand() != null && waterConnectionDetails.getDemand().getEgInstallmentMaster() != null)
             if (installment.getInstallmentNumber().equals(
                     waterConnectionDetails.getDemand().getEgInstallmentMaster().getInstallmentNumber())) {
-                final Boolean currentInstallmentExist = true;
                 return "redirect:/application/meterdemandnotice?pathVar=" +
-                 waterConnectionDetails.getConnection().getConsumerCode();
-                 
+                        waterConnectionDetails.getConnection().getConsumerCode();
+
             }
         final MeterReadingConnectionDetails meterReadingConnectionDeatilObj = new MeterReadingConnectionDetails();
         Long previousReading = 0l;
@@ -225,9 +225,13 @@ public class MeterReadingController {
                 * (waterRateDetail != null ? waterRateDetail.getUnitRate() : 0d);
         double finalAmountToBePaid = 0d;
         if (noofmonths > 0)
-            finalAmountToBePaid = amountToBeCollectedWithUnitRatePerMonth * noofmonths ;/// finalAmountToBePaid = amountToBeCollectedWithUnitRatePerMonth * noofmonths /1000;TODO:1000 removing as per discussion with saketh and Satyam
+            finalAmountToBePaid = amountToBeCollectedWithUnitRatePerMonth * noofmonths;/// finalAmountToBePaid =
+                                                                                       /// amountToBeCollectedWithUnitRatePerMonth
+                                                                                       /// * noofmonths /1000;TODO:1000 removing
+                                                                                       /// as per discussion with saketh and
+                                                                                       /// Satyam
         else
-           finalAmountToBePaid = amountToBeCollectedWithUnitRatePerMonth;// 1000
+            finalAmountToBePaid = amountToBeCollectedWithUnitRatePerMonth;// 1000
         return finalAmountToBePaid;
     }
 

@@ -82,17 +82,18 @@ public class AdditionalConnectionService {
             if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
                 validationMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
                         assessmentDetails.getPropertyDetails().getTaxDue().toString(),
-                        parentWaterConnectionDetail.getConnection().getPropertyIdentifier(),"additional" }, null);
+                        parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "additional" }, null);
         } else if (parentWaterConnectionDetail.getDemand().getBaseDemand().doubleValue()
                 - parentWaterConnectionDetail.getDemand().getAmtCollected().doubleValue() > 0) {
             if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(ADDCONNALLOWEDIFWTDUE))
                 validationMessage = messageSource
-                .getMessage("err.validate.primary.connection.watertax.due", null, null);
+                        .getMessage("err.validate.primary.connection.watertax.due", null, null);
         } else if (null != inWorkflow)
             validationMessage = messageSource.getMessage(
                     "err.validate.addconnection.application.inprocess",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
-                            inWorkflow.getApplicationNumber() }, null);
+                            inWorkflow.getApplicationNumber() },
+                    null);
         return validationMessage;
     }
 

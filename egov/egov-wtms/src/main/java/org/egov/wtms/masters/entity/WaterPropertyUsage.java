@@ -68,18 +68,15 @@ public class WaterPropertyUsage extends AbstractPersistable<Long> {
     @ManyToOne
     @JoinColumn(name = "usagetype")
     private UsageType usagetype;
-    
-    @Column(name="propertytype")
+
+    @Column(name = "propertytype")
     private Long propertyType;
 
-   
-
-    
     public Long getPropertyType() {
         return propertyType;
     }
 
-    public void setPropertyType(Long propertyType) {
+    public void setPropertyType(final Long propertyType) {
         this.propertyType = propertyType;
     }
 
@@ -93,7 +90,6 @@ public class WaterPropertyUsage extends AbstractPersistable<Long> {
         this.id = id;
     }
 
-    
     public UsageType getUsagetype() {
         return usagetype;
     }
@@ -101,7 +97,5 @@ public class WaterPropertyUsage extends AbstractPersistable<Long> {
     public void setUsagetype(final UsageType usagetype) {
         this.usagetype = usagetype;
     }
-
-    
 
 }

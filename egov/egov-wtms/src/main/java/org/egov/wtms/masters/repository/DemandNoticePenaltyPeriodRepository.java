@@ -47,6 +47,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DemandNoticePenaltyPeriodRepository extends JpaRepository<DemandNoticePenaltyPeriod, Long> {
 
-	DemandNoticePenaltyPeriod findByIssueOfDamendNotice(DemandNoticeIssueFrequency issueOfDamendNotice);
+    DemandNoticePenaltyPeriod findByIssueOfDamendNotice(DemandNoticeIssueFrequency issueOfDamendNotice);
 
 }

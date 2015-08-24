@@ -87,10 +87,9 @@ public class WaterTaxSearchController {
         String userRole = "";
         final User userObj = userService.getUserById(EgovThreadLocals.getUserId());
         if (userObj != null) {
-            for (final Role role : userObj.getRoles()){
+            for (final Role role : userObj.getRoles())
                 if (role != null)
                     userRole = userRole + "," + role.getName().toString();
-            }
             if (userRole.contains(WaterTaxConstants.CSCOPERTAORROLE))
                 userRole = WaterTaxConstants.CSCOPERTAORROLE;
             else if (userRole.contains(WaterTaxConstants.CLERKULB))

@@ -9,13 +9,12 @@ import org.springframework.stereotype.Service;
 public class PropertyExtnUtils {
 
     @Autowired
-    private PropertyExternalService propertyExternalService; 
-    
-    public AssessmentDetails getAssessmentDetailsForFlag(final String asessmentNumber,final Integer flagDetail )
-    {
+    private PropertyExternalService propertyExternalService;
+
+    public AssessmentDetails getAssessmentDetailsForFlag(final String asessmentNumber, final Integer flagDetail) {
         final AssessmentDetails assessmentDetails = propertyExternalService.loadAssessmentDetails(asessmentNumber,
-            flagDetail);
+                flagDetail);
         return assessmentDetails;
     }
-    
+
 }

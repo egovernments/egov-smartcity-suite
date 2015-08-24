@@ -73,7 +73,7 @@ public class PenaltyService {
 
     @Transactional
     public void updatePenalty(final Penalty penalty) {
-    	penaltyRepository.save(penalty);
+        penaltyRepository.save(penalty);
     }
 
     public List<Penalty> findAll() {
