@@ -225,61 +225,63 @@ public class Installment implements Serializable, Comparable<Installment> {
         result = prime * result + (id == null ? 0 : id.hashCode());
         result = prime * result + (installmentNumber == null ? 0 : installmentNumber.hashCode());
         result = prime * result + (installmentYear == null ? 0 : installmentYear.hashCode());
+        result = prime * result + (installmentType == null ? 0 : installmentType.hashCode());
         result = prime * result + (module == null ? 0 : module.hashCode());
         result = prime * result + (toDate == null ? 0 : toDate.hashCode());
         return result;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final Installment other = (Installment) obj;
-        if (fromDate == null) {
-            if (other.fromDate != null)
-                return false;
-        } else if (!fromDate.equals(other.fromDate))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (installmentNumber == null) {
-            if (other.installmentNumber != null)
-                return false;
-        } else if (!installmentNumber.equals(other.installmentNumber))
-            return false;
-        if (installmentYear == null) {
-            if (other.installmentYear != null)
-                return false;
-        } else if (!installmentYear.equals(other.installmentYear))
-            return false;
-        if (module == null) {
-            if (other.module != null)
-                return false;
-        } else if (!module.equals(other.module))
-            return false;
-        if (toDate == null) {
-            if (other.toDate != null)
-                return false;
-        } else if (!toDate.equals(other.toDate))
-            return false;
-        return true;
-    }
+
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+
+		if (!(obj instanceof Installment))
+			return false;
+
+		Installment inst = (Installment) obj;
+
+		if (this == inst)
+			return true;
+
+		if (this.getId() != null && inst.getId() != null) {
+			if (this.getId().equals(inst.getId()))
+				return true;
+			else
+				return false;
+
+		}
+
+		if (this.fromDate == null || this.toDate == null
+				|| this.installmentNumber == null
+				|| this.installmentYear == null || this.module == null)
+			return false;
+
+		if (inst.fromDate == null || inst.toDate == null
+				|| inst.installmentNumber == null
+				|| inst.installmentYear == null || inst.module == null)
+			return false;
+
+		if (this.fromDate.equals(inst.fromDate)
+				&& this.toDate.equals(inst.toDate)
+				&& this.installmentNumber.equals(inst.installmentNumber)
+				&& this.installmentYear.equals(inst.installmentYear)
+				&& this.module.equals(inst.module)
+				&& ((this.installmentType != null && inst.installmentType != null) && this.installmentType
+						.equals(inst.installmentType)))
+			return true;
+		else
+			return false;
+	}
 
     @Override
-    public int compareTo(final Installment inst) {
-        return new CompareToBuilder()
-                .append(fromDate, inst.getFromDate())
-                .append(id, inst.getId())
-                .append(installmentYear, inst.getInstallmentYear())
-                .append(installmentNumber, inst.getInstallmentNumber())
-                .append(module, inst.getModule())
-                .append(toDate, inst.getToDate()).build();
-    }
+	public int compareTo(final Installment inst) {
+		return new CompareToBuilder().append(fromDate, inst.getFromDate())
+				.append(id, inst.getId())
+				.append(installmentYear, inst.getInstallmentYear())
+				.append(installmentNumber, inst.getInstallmentNumber())
+				.append(installmentType, inst.getInstallmentType())
+				.append(module.getName(), inst.getModule().getName())
+				.append(toDate, inst.getToDate()).build();
+	}
 }
