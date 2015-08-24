@@ -298,7 +298,7 @@ function warningInfo()
 		<div class="buttonbottom">
 		<input name="button32" type="button" class="buttonsubmit" id="button32"  value="Cancel Receipt" onclick="return warningInfo()"/>&nbsp;
 		<input name="button2" type="button" class="button" id="button" onclick="window.close()" value="Close"/>&nbsp;
-		<input name="buttonBack" type="button" class="button" id="buttonBack" value="Back" onclick="history.back()" /> 
+		<input name="buttonBack" type="button" class="button" id="buttonBack" value="Back" onclick="window.location='${pageContext.request.contextPath}/receipts/searchReceipt.action';"  /> 
 		</div>
 	</s:iterator>
 </div>
