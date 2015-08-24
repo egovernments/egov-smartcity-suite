@@ -60,7 +60,6 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
-import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.RoadCategoryService;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
@@ -152,7 +151,7 @@ public class UpdateConnectionController extends GenericConnectionController {
             final ChairPerson chairPerson = chairPersonService.getActiveChairPersonAsOnCurrentDate();
             model.addAttribute("chairPerson", chairPerson);
         }
-        if(WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {
+        if (WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {
             waterConnectionDetails.getConnection().setMeter(null);
             waterConnectionDetails.getConnection().setInitialReading(null);
             waterConnectionDetails.getConnection().setMeterSerialNumber("");
@@ -229,10 +228,8 @@ public class UpdateConnectionController extends GenericConnectionController {
                 if (fsIterator != null && fsIterator.hasNext())
                     waterConnectionDetails.setFileStore(fsIterator.next());
             } else if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WFLOW_ACTION_STEP_REJECT)) {
+                waterConnectionDetailsService.getCurrentSession().evict(waterConnectionDetails);
                 waterConnectionDetails = waterConnectionDetailsService.findBy(waterConnectionDetails.getId());
-                waterConnectionDetails.setFieldInspectionDetails(null);
-                waterConnectionDetails.setEstimationDetails(null);
-                waterConnectionDetails.setFileStore(null);
             }
 
         Long approvalPosition = 0l;
@@ -273,7 +270,7 @@ public class UpdateConnectionController extends GenericConnectionController {
             if (null != workFlowAction && !workFlowAction.isEmpty()
                     && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON))
                 return "redirect:/application/workorder?pathVar=" + waterConnectionDetails.getApplicationNumber();
-            
+
             final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                     + waterTaxUtils.getApproverUserName(approvalPosition);
             return "redirect:/application/application-success?pathVars=" + pathVars;
