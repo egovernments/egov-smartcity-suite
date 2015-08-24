@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="meterDemandNotice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="590cd9f5-da01-41b1-a64e-7f01e9f69f60">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="175"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="applicantName" class="java.lang.String"/>
 	<parameter name="address" class="java.lang.String"/>
 	<parameter name="municipality" class="java.lang.String"/>
@@ -33,16 +33,9 @@
 	<title>
 		<band height="59" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1" y="29" width="555" height="30" uuid="1f0ef8b3-8506-4683-a684-b69304054ad2"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{district}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="1" y="0" width="555" height="29" uuid="58c9c5b4-9c42-4b2d-a530-ade74a956e14"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="11" isBold="true" isUnderline="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
@@ -59,7 +52,7 @@
 				<text><![CDATA[Property owner name]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="162" y="33" width="156" height="36" uuid="01bf00fc-6578-49a9-b0d7-ce9f4be961ff"/>
+				<reportElement stretchType="RelativeToTallestObject" x="131" y="33" width="187" height="36" isPrintWhenDetailOverflows="true" uuid="01bf00fc-6578-49a9-b0d7-ce9f4be961ff"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -67,13 +60,13 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" pdfFontName="Times-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{address}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="1" y="33" width="162" height="36" uuid="351773cf-4e6e-42e8-b8d6-d841296ccce1"/>
+				<reportElement x="1" y="33" width="130" height="36" uuid="351773cf-4e6e-42e8-b8d6-d841296ccce1"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -87,7 +80,7 @@
 				<text><![CDATA[Property Address:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="319" y="33" width="124" height="36" uuid="658e15ab-de80-4a74-b9d1-29d51f1958c2"/>
+				<reportElement x="318" y="0" width="111" height="33" uuid="658e15ab-de80-4a74-b9d1-29d51f1958c2"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -101,7 +94,7 @@
 				<text><![CDATA[Property Asseesment Number::]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="441" y="33" width="114" height="36" uuid="9f9f654a-10b0-451c-b557-0372aa0dd37b"/>
+				<reportElement stretchType="RelativeToTallestObject" x="429" y="0" width="125" height="33" uuid="9f9f654a-10b0-451c-b557-0372aa0dd37b"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -115,7 +108,7 @@
 				<textFieldExpression><![CDATA[$P{propertyassesmentNumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="162" y="0" width="156" height="33" uuid="726950ec-ebf3-4345-be96-aad0d6a62e61"/>
+				<reportElement stretchType="RelativeToTallestObject" x="131" y="0" width="187" height="33" uuid="726950ec-ebf3-4345-be96-aad0d6a62e61"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -129,7 +122,7 @@
 				<textFieldExpression><![CDATA[$P{waterCharges}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="1" y="0" width="162" height="33" uuid="9b71632e-77ff-4d53-9b7a-be49c8c034c4"/>
+				<reportElement x="1" y="0" width="130" height="33" uuid="9b71632e-77ff-4d53-9b7a-be49c8c034c4"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -143,7 +136,7 @@
 				<text><![CDATA[Water charges:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="69" width="162" height="32" uuid="e4974e91-6b35-4995-8fa5-1ff4682bedd1"/>
+				<reportElement x="1" y="69" width="130" height="32" uuid="e4974e91-6b35-4995-8fa5-1ff4682bedd1"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -157,7 +150,7 @@
 				<text><![CDATA[H.S.C Number:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="162" y="69" width="156" height="32" uuid="f60f1e82-a150-41d0-8a9d-c418b8cf6a2d"/>
+				<reportElement stretchType="RelativeToTallestObject" x="131" y="69" width="187" height="32" uuid="f60f1e82-a150-41d0-8a9d-c418b8cf6a2d"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -171,7 +164,7 @@
 				<textFieldExpression><![CDATA[$P{consumerNumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="441" y="69" width="114" height="32" uuid="4d5ba217-0dd1-448f-9ebe-1d4e8a46deb5"/>
+				<reportElement stretchType="RelativeToTallestObject" x="427" y="69" width="128" height="32" uuid="4d5ba217-0dd1-448f-9ebe-1d4e8a46deb5"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -185,7 +178,7 @@
 				<textFieldExpression><![CDATA[$P{pipeSize}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="319" y="69" width="124" height="32" uuid="593c287e-7789-4f5e-8d36-033cba26f69a"/>
+				<reportElement x="318" y="69" width="111" height="32" uuid="593c287e-7789-4f5e-8d36-033cba26f69a"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -199,7 +192,7 @@
 				<text><![CDATA[Pipe Size in Inches:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="162" y="101" width="156" height="32" uuid="c9e07c0d-0740-40d3-95ca-c52f0686e140"/>
+				<reportElement stretchType="RelativeToTallestObject" x="131" y="101" width="187" height="32" uuid="c9e07c0d-0740-40d3-95ca-c52f0686e140"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -213,7 +206,7 @@
 				<textFieldExpression><![CDATA[$P{mterSerialNumber}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="1" y="101" width="162" height="32" uuid="7b3cf9be-1ab9-4136-b80d-6a67f0459ef1"/>
+				<reportElement x="1" y="101" width="130" height="32" uuid="7b3cf9be-1ab9-4136-b80d-6a67f0459ef1"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -227,7 +220,7 @@
 				<text><![CDATA[Meter Serial Number:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="318" y="101" width="124" height="32" uuid="878b26ac-f602-44ca-b694-806eed1007e9"/>
+				<reportElement x="318" y="101" width="111" height="32" uuid="878b26ac-f602-44ca-b694-806eed1007e9"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -241,7 +234,7 @@
 				<text><![CDATA[Bill  For Month:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="441" y="101" width="114" height="32" uuid="16387b73-9208-4f16-9890-8f5c764eb766"/>
+				<reportElement stretchType="RelativeToTallestObject" x="427" y="101" width="128" height="32" uuid="16387b73-9208-4f16-9890-8f5c764eb766"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -255,7 +248,7 @@
 				<textFieldExpression><![CDATA[$P{billMonth}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="317" y="133" width="124" height="32" uuid="722abade-7363-483e-b189-07a5293643bc"/>
+				<reportElement stretchType="RelativeToTallestObject" x="317" y="133" width="111" height="32" isPrintWhenDetailOverflows="true" uuid="722abade-7363-483e-b189-07a5293643bc"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -269,7 +262,7 @@
 				<text><![CDATA[Current Meter Reading Date:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="133" width="162" height="32" uuid="b854371d-851d-495d-802c-ae393af1d1b0"/>
+				<reportElement x="1" y="133" width="130" height="32" uuid="b854371d-851d-495d-802c-ae393af1d1b0"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -283,7 +276,7 @@
 				<text><![CDATA[Current Meter Reading:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="442" y="133" width="113" height="32" uuid="249d244c-3cf9-423d-a2ff-40c21f407dfc"/>
+				<reportElement stretchType="RelativeToTallestObject" x="428" y="133" width="127" height="32" uuid="249d244c-3cf9-423d-a2ff-40c21f407dfc"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -297,7 +290,7 @@
 				<textFieldExpression><![CDATA[$P{currrentReadingDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="162" y="133" width="156" height="32" uuid="31603d42-6de5-4a74-8c3a-4a901fead87a"/>
+				<reportElement stretchType="RelativeToTallestObject" x="131" y="133" width="187" height="32" uuid="31603d42-6de5-4a74-8c3a-4a901fead87a"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -311,7 +304,7 @@
 				<textFieldExpression><![CDATA[$P{currentReading}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="162" y="165" width="156" height="32" uuid="76e3a763-e328-4a33-8441-b6b3004c5de4"/>
+				<reportElement stretchType="RelativeToTallestObject" x="131" y="165" width="187" height="32" uuid="76e3a763-e328-4a33-8441-b6b3004c5de4"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -325,7 +318,7 @@
 				<textFieldExpression><![CDATA[$P{previousReading}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="1" y="165" width="162" height="32" uuid="7f6bc79f-2384-4d0c-b6af-d6a1ac7fb912"/>
+				<reportElement x="1" y="165" width="130" height="32" uuid="7f6bc79f-2384-4d0c-b6af-d6a1ac7fb912"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -339,7 +332,7 @@
 				<text><![CDATA[Previous Meter Reading :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="197" width="162" height="32" uuid="c0529d59-9062-4b6b-a82e-61b38b44c852"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="197" width="130" height="32" isPrintWhenDetailOverflows="true" uuid="c0529d59-9062-4b6b-a82e-61b38b44c852"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -353,7 +346,7 @@
 				<text><![CDATA[Demand Generation Notice Date:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="162" y="197" width="156" height="32" uuid="55e342b4-cf57-4d66-9088-e651c68dca7b"/>
+				<reportElement stretchType="RelativeToTallestObject" x="131" y="197" width="187" height="32" uuid="55e342b4-cf57-4d66-9088-e651c68dca7b"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -378,7 +371,7 @@
 5.   Incase of paying by cheque, should include bank charges also.]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="441" y="0" width="114" height="33" uuid="45e1614f-98a9-40dc-99a6-fa3096175f11"/>
+				<reportElement stretchType="RelativeToTallestObject" x="429" y="33" width="125" height="36" uuid="45e1614f-98a9-40dc-99a6-fa3096175f11"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -392,7 +385,7 @@
 				<textFieldExpression><![CDATA[$P{applicantName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="319" y="0" width="124" height="33" uuid="5b975729-07d0-47a6-92e0-78a8a0994b16"/>
+				<reportElement x="318" y="33" width="111" height="36" uuid="5b975729-07d0-47a6-92e0-78a8a0994b16"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -406,7 +399,7 @@
 				<text><![CDATA[Property Owner Name:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="317" y="165" width="124" height="32" uuid="53e08580-b65b-4a7f-b1a4-0efad77d7e0d"/>
+				<reportElement stretchType="RelativeToTallestObject" x="317" y="165" width="111" height="32" isPrintWhenDetailOverflows="true" uuid="53e08580-b65b-4a7f-b1a4-0efad77d7e0d"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -420,7 +413,7 @@
 				<text><![CDATA[Previous Meter Reading Date:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="442" y="165" width="113" height="32" uuid="39c1f245-20ee-43d4-8e75-ae980bca5f8d"/>
+				<reportElement stretchType="RelativeToTallestObject" x="428" y="165" width="127" height="32" uuid="39c1f245-20ee-43d4-8e75-ae980bca5f8d"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -434,7 +427,7 @@
 				<textFieldExpression><![CDATA[$P{previousReadingDate}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="318" y="197" width="124" height="32" uuid="d445c871-ab7a-4470-9f38-f852d85eec37"/>
+				<reportElement stretchType="RelativeToTallestObject" x="318" y="197" width="111" height="32" isPrintWhenDetailOverflows="true" uuid="d445c871-ab7a-4470-9f38-f852d85eec37"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -442,13 +435,13 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
 					<font fontName="SansSerif" size="10" isBold="false" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Demand Generation Notice:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="442" y="197" width="113" height="32" uuid="7263090e-edd6-4d14-8275-5751c339ecfd"/>
+				<reportElement stretchType="RelativeToTallestObject" x="428" y="197" width="127" height="32" uuid="7263090e-edd6-4d14-8275-5751c339ecfd"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -462,7 +455,7 @@
 				<textFieldExpression><![CDATA[$P{demandNoticeNumber}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="320" y="261" width="124" height="32" uuid="9f9b9208-3d58-437e-9bd3-10f077d06d85"/>
+				<reportElement x="319" y="261" width="111" height="32" uuid="9f9b9208-3d58-437e-9bd3-10f077d06d85"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -476,7 +469,7 @@
 				<text><![CDATA[Monthly Charges:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2" y="229" width="162" height="32" uuid="20c1351d-6e44-497e-b925-3ebacbf786a9"/>
+				<reportElement x="2" y="229" width="130" height="32" uuid="20c1351d-6e44-497e-b925-3ebacbf786a9"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -490,7 +483,7 @@
 				<text><![CDATA[Arrears Due:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="442" y="261" width="113" height="32" uuid="3effbf5e-83d6-438f-a176-0db3260e3aa5"/>
+				<reportElement stretchType="RelativeToTallestObject" x="428" y="261" width="127" height="32" uuid="3effbf5e-83d6-438f-a176-0db3260e3aa5"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -504,7 +497,7 @@
 				<textFieldExpression><![CDATA[$P{currentMonthCharges}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="163" y="229" width="156" height="32" uuid="73243b3c-a6dc-4690-9dfa-d11e0e2059da"/>
+				<reportElement stretchType="RelativeToTallestObject" x="131" y="229" width="188" height="32" uuid="73243b3c-a6dc-4690-9dfa-d11e0e2059da"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -518,7 +511,7 @@
 				<textFieldExpression><![CDATA[$P{totalDueAmount}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="320" y="229" width="124" height="32" uuid="37b869d7-2d1c-431c-b58d-c28a032b2cc6"/>
+				<reportElement stretchType="RelativeToTallestObject" x="319" y="229" width="111" height="32" isPrintWhenDetailOverflows="true" uuid="37b869d7-2d1c-431c-b58d-c28a032b2cc6"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -529,10 +522,10 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="false" pdfFontName="Times-Roman"/>
 				</textElement>
-				<text><![CDATA[Number of Units Consumed]]></text>
+				<text><![CDATA[Number of Units Consumed:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2" y="261" width="162" height="32" uuid="6f256dc6-3d31-4464-8522-26c2b3bdc38d"/>
+				<reportElement x="2" y="261" width="130" height="32" uuid="6f256dc6-3d31-4464-8522-26c2b3bdc38d"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -546,7 +539,7 @@
 				<text><![CDATA[Total Amount :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="442" y="229" width="113" height="32" uuid="bf7afb18-a285-4ab9-be37-b72697eef45d"/>
+				<reportElement stretchType="RelativeToTallestObject" x="428" y="229" width="127" height="32" uuid="bf7afb18-a285-4ab9-be37-b72697eef45d"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -560,7 +553,7 @@
 				<textFieldExpression><![CDATA[$P{noofunitsconsume}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="163" y="261" width="156" height="32" uuid="e645de0a-b9e2-4337-85bd-a887474a14ea"/>
+				<reportElement stretchType="RelativeToTallestObject" x="131" y="261" width="188" height="32" uuid="e645de0a-b9e2-4337-85bd-a887474a14ea"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
