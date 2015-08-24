@@ -111,7 +111,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
             // find all bounced instruments of this receipt
             findBouncedInstruments();
         } else if (CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED.equals(receiptStatus)
-                || CollectionConstants.RECEIPT_STATUS_CODE_APPROVED.equals(receiptStatus))
+                || CollectionConstants.RECEIPT_STATUS_CODE_APPROVED.equals(receiptStatus)
+                || CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED.equals(receiptStatus))
             event = BillingIntegrationService.EVENT_RECEIPT_CREATED;
         else if (CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED.equals(receiptStatus))
             event = BillingIntegrationService.EVENT_RECEIPT_CANCELLED;
