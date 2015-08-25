@@ -105,7 +105,7 @@ public class WaterConnectionDetails extends StateAware {
 
     @ManyToOne
     @JoinColumn(name = "statusid", nullable = false)
-    private EgwStatus egwStatus;
+    private EgwStatus status;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @Valid
@@ -441,12 +441,12 @@ public class WaterConnectionDetails extends StateAware {
         this.estimationDetails = estimationDetails;
     }
 
-    public EgwStatus getEgwStatus() {
-        return egwStatus;
+    public EgwStatus getStatus() {
+        return status;
     }
 
-    public void setEgwStatus(final EgwStatus egwStatus) {
-        this.egwStatus = egwStatus;
+    public void setStatus(final EgwStatus status) {
+        this.status = status;
     }
 
     @Override

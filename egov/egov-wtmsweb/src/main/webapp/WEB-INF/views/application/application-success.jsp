@@ -63,12 +63,12 @@
 						<spring:message code="msg.addconnection.ack.msg" />
 						<div ><spring:message code="msg.sussess.forward" />${approverName}</div>
 					</c:when>
-					<c:when test="${waterConnectionDetails.connection.parentConnection.id!=null && waterConnectionDetails.connectionStatus == 'ACTIVE' && waterConnectionDetails.egwStatus.code == 'SANCTIONED'}">
+					<c:when test="${waterConnectionDetails.connection.parentConnection.id!=null && waterConnectionDetails.connectionStatus == 'ACTIVE' && waterConnectionDetails.status.code == 'SANCTIONED'}">
 					<div>	<spring:message code="msg.addconnection.approved" />${approverName}</div>
 					</c:when>
 					<c:otherwise>
 						<c:choose>
-							<c:when test="${waterConnectionDetails.egwStatus.code == 'APPROVED' && waterConnectionDetails.connectionStatus == 'INPROGRESS' }">
+							<c:when test="${waterConnectionDetails.status.code == 'APPROVED' && waterConnectionDetails.connectionStatus == 'INPROGRESS' }">
 							<div><spring:message code="msg.connection.approved.success" />${approverName}</div>
 								<%-- <spring:message code="msg.sussess.forward" /><br>${approvalUser} --%>
 							</c:when>
@@ -81,7 +81,7 @@
 							<c:when test="${waterConnectionDetails.connectionStatus == 'INACTIVE' }">
 							<div><spring:message code="msg.newapplication.cancel.success" /></div>
 							</c:when>
-							<c:when test="${waterConnectionDetails.egwStatus.code == 'SANCTIONED' && waterConnectionDetails.connectionStatus == 'ACTIVE' }">
+							<c:when test="${waterConnectionDetails.status.code == 'SANCTIONED' && waterConnectionDetails.connectionStatus == 'ACTIVE' }">
 								<spring:message code="msg.connection.sanctioned.success" />
 								<%-- <spring:message code="msg.sussess.forward" /><br>${approvalUser} --%>
 							</c:when>
@@ -101,7 +101,7 @@
 		<div class="panel-body">
 			<div class="row">
 			<c:choose>
-			<c:when test="${waterConnectionDetails.egwStatus.code!='SANCTIONED'}">
+			<c:when test="${waterConnectionDetails.status.code!='SANCTIONED'}">
 				<div class="col-xs-6 add-margin"><spring:message code="lbl.disposal.date" /> : <fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.disposalDate}" /></div>
 				<!-- <div class="col-xs-3 add-margin view-content">
 					
