@@ -213,23 +213,23 @@ function validate()
 {
 	var fromdate=dom.get("fromDate").value;
 	var todate=dom.get("toDate").value;
-	
+	var valSuccess = true;
 	if(fromdate!="" && todate!="" && fromdate!=todate)
 	{
 		if(!checkFdateTdate(fromdate,todate))
 		{
 			dom.get("comparedatemessage").style.display="block";
 			window.scroll(0,0);
-			return false;
+			valSuccess= false;
 		}
 	}
 	else
 	{		
 		dom.get("comparedatemessage").style.display="none";
 		doLoadingMask('#loadingMask');
-		return true;
+		valSuccess= true;
 	}
-	
+	return valSuccess;
 	
 }
 
@@ -284,39 +284,39 @@ function checkviewforselectedrecord()
 </script> 
 </head>
 <body>
-<span align="center" style="display:none" id="pendingreceiptcancellationerror">
+<span align="center" style="display: none" id="pendingreceiptcancellationerror">
   <li>
      <font size="2" color="red"><b><s:text name="error.pendingreceipt.cancellation"/></b></font>
   </li>
 </span>
-<span align="center" style="display:none" id="selectprinterror">
+<span align="center" style="display: none" id="selectprinterror">
   <li>
      <font size="2" color="red"><b><s:text name="error.print.nomultipleprintreceipts"/>  </b></font>
   </li>
 </span>
-<span align="center" style="display:none" id="selectcancelerror">
+<span align="center" style="display: none" id="selectcancelerror">
   <li>
      <font size="2" color="red"><b><s:text name="error.print.nomultiplecancelreceipts"/>  </b></font>
   </li>
 </span>
-<span align="center" style="display:none" id="norecordselectederror">
+<span align="center" style="display: none" id="norecordselectederror">
   <li>
      <font size="2" color="red"><b><s:text name="error.norecordselected"/></b></font>
   </li>
 </span>
-<span align="center" style="display:none" id="selectedcancelledreceiptserror">
+<span align="center" style="display: none" id="selectedcancelledreceiptserror">
   <li>
      <font size="2" color="red"><b><s:text name="error.selectedcancelledreceiptserror"/></b></font>
   </li>
 </span>
-<span align="center" style="display:none" id="invaliddateformat">
+<span align="center" style="display: none" id="invaliddateformat">
   <li>
      <font size="2" color="red"><b>
 		<s:text name="common.dateformat.errormessage"/>
 	</b></font>
   </li>
 </span>
-<span align="center" style="display:none" id="comparedatemessage">
+<span align="center" style="display: none" id="comparedatemessage">
   <li>
      <font size="2" color="red"><b>
 		<s:text name="common.comparedate.errormessage"/>
@@ -341,10 +341,10 @@ function checkviewforselectedrecord()
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.fromdate"/></td>
 		  <s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy"/>
-		  <td width="24%" class="bluebox"><s:textfield id="fromDate" name="fromDate" value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].fromDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width:80px">DD/MM/YYYY</div></td>
+		  <td width="24%" class="bluebox"><s:textfield id="fromDate" name="fromDate" value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].fromDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.todate"/></td>
 	      <s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy"/>
-		  <td width="30%" class="bluebox"><s:textfield id="toDate" name="toDate" value="%{cdFormat1}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width:80px">DD/MM/YYYY</div></td>
+		  <td width="30%" class="bluebox"><s:textfield id="toDate" name="toDate" value="%{cdFormat1}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
 	    </tr>
 	    <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
@@ -371,7 +371,7 @@ function checkviewforselectedrecord()
 	    </tr>
 	    </table>
 </div>
-<div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
+<div id="loadingMask" style="display: none; overflow: hidden; text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
     <div class="buttonbottom">
       <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search" method="search" onclick="return validate();"/></label>&nbsp;
       <label><s:submit type="submit" cssClass="button" value="Reset" method="reset"/></label>&nbsp;
@@ -430,12 +430,12 @@ function checkviewforselectedrecord()
 <logic:empty name="searchResult">
 	<s:if test="target=='searchresult'">
 	
-		<!-- table width="90%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
+		table width="90%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 		<tr> 
 			<div>&nbsp;</div>
 			<div class="subheadnew"><s:text name="searchresult.norecord"/></div>
 		</tr>
-		</table-->
+		</table
 	
 	</s:if>
 </logic:empty>

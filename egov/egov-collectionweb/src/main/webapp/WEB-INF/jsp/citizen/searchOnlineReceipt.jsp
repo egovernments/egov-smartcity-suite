@@ -71,6 +71,7 @@ function validate()
 {
 	var fromdate=document.getElementById('fromDate').value;
 	var todate=document.getElementById('toDate').value;
+	var valSuccess = true;
 	if(fromdate!="" && todate!="" && fromdate!=todate)
 	{
 		if(!checkFdateTdate(fromdate,todate))
@@ -78,14 +79,15 @@ function validate()
 			//dom.get("comparedatemessage").style.display="block";
 			document.getElementById("comparedatemessage").style.display = 'block';
 			window.scroll(0,0);
-			return false;
+			valSuccess= false;
 		}
 	}
 	else
 	{
 		document.getElementById("comparedatemessage").style.display = 'none';
-		return true;
+		valSuccess= true;
 	}
+	return valSuccess;
 }
 
 function transitionStates(){
