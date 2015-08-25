@@ -144,7 +144,7 @@ $(document).ready(function()
 
 	for(var i = 0; i<elements.length; i++){
 	    elements[i].addEventListener('invalid', function () {
-    	off = (elements[0].offsetTop );
+    	off = (elements[0].offsetTop - 150);
     	$('html, body').animate({scrollTop: off }, 0);
 	    });
 	}
