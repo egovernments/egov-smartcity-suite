@@ -477,7 +477,10 @@ public class ModifyPropertyAction extends WorkflowAction {
             propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
                     "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
         propertyModel.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
-        final String errorKey = propService.validationForBifurcation(propertyModel, basicProp, modifyRsn);
+        String errorKey = null;
+        if (!hasErrors()) {
+            errorKey = propService.validationForBifurcation(propertyModel, basicProp, modifyRsn);
+        }
         if (!isBlank(errorKey))
             addActionError(getText(errorKey));
 

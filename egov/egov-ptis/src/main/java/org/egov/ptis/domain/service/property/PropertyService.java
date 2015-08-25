@@ -56,6 +56,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCAT
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
@@ -547,11 +548,19 @@ public class PropertyService {
                 penaltyDmdDtlsList = getEgDemandDetailsListForReason(ptDemandOld.getEgDemandDetails(),
                         DEMANDRSN_CODE_PENALTY_FINES);
                 if (penaltyDmdDtlsList != null && penaltyDmdDtlsList.size() > 0)
-                    ptDemandNew.getEgDemandDetails().addAll(penaltyDmdDtlsList);
+                    for (EgDemandDetails penaltyDmdDet : penaltyDmdDtlsList) {
+                        ptDemandNew.getEgDemandDetails().add(
+                                createDemandDetails(penaltyDmdDet.getAmount(), penaltyDmdDet.getAmtCollected(),
+                                        penaltyDmdDet.getEgDemandReason(), inst));
+                    }
                 penaltyDmdDtlsList = getEgDemandDetailsListForReason(ptDemandOld.getEgDemandDetails(),
                         DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY);
                 if (penaltyDmdDtlsList != null && penaltyDmdDtlsList.size() > 0)
-                    ptDemandNew.getEgDemandDetails().addAll(penaltyDmdDtlsList);
+                    for (EgDemandDetails penaltyDmdDet : penaltyDmdDtlsList) {
+                        ptDemandNew.getEgDemandDetails().add(
+                                createDemandDetails(penaltyDmdDet.getAmount(), penaltyDmdDet.getAmtCollected(),
+                                        penaltyDmdDet.getEgDemandReason(), inst));
+                    }
             }
         }
 
@@ -744,7 +753,9 @@ public class PropertyService {
 
             {
                 add(DEMANDRSN_CODE_GENERAL_TAX);
+                add(DEMANDRSN_CODE_VACANT_TAX);
                 add(DEMANDRSN_CODE_LIBRARY_CESS);
+                add(DEMANDRSN_CODE_SEWERAGE_TAX);
                 add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
             }
         };
@@ -757,7 +768,9 @@ public class PropertyService {
 
             {
                 add(DEMANDRSN_CODE_GENERAL_TAX);
+                add(DEMANDRSN_CODE_VACANT_TAX);
                 add(DEMANDRSN_CODE_LIBRARY_CESS);
+                add(DEMANDRSN_CODE_SEWERAGE_TAX);
                 add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
             }
         };
@@ -770,7 +783,9 @@ public class PropertyService {
 
             {
                 add(DEMANDRSN_CODE_GENERAL_TAX);
+                add(DEMANDRSN_CODE_VACANT_TAX);
                 add(DEMANDRSN_CODE_LIBRARY_CESS);
+                add(DEMANDRSN_CODE_SEWERAGE_TAX);
                 add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
             }
         };
@@ -831,10 +846,10 @@ public class PropertyService {
                             newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, oldPropRsn);
 
                             if (newEgDmndDetails == null) {
-                                if (newPropTypeMaster.getCode().equalsIgnoreCase(PROPTYPE_RESD))
+                                /*if (newPropTypeMaster.getCode().equalsIgnoreCase(PROPTYPE_RESD))*/
                                     newPropRsn = rsnsForNewResProp.get(i);
-                                else if (newPropTypeMaster.getCode().equalsIgnoreCase(PROPTYPE_NON_RESD))
-                                    newPropRsn = rsnsForNewNonResProp.get(i);
+                                /*else if (newPropTypeMaster.getCode().equalsIgnoreCase(PROPTYPE_NON_RESD))
+                                    newPropRsn = rsnsForNewNonResProp.get(i);*/
 
                                 oldEgdmndDetails = getEgDemandDetailsForReason(oldEgDemandDetailsSet, oldPropRsn);
                                 newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, newPropRsn);
