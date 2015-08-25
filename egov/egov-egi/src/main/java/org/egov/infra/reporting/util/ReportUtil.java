@@ -162,14 +162,9 @@ public final class ReportUtil {
 	}
 	
 	
-        //These values should be passed as report parameters to the jrxml not to fetch from the database since it is already in session
-	@Deprecated
+        //Reading from session
 	public static String getCityName() {
-	    try {
-                return (String) HibernateUtil.getCurrentSession().createSQLQuery("SELECT NAME FROM EG_CITY WHERE DOMAINURL = '" + EgovThreadLocals.getDomainName() + "'").list().get(0);
-        } catch (final HibernateException e) {
-                throw new EGOVRuntimeException("Exception in getting city name!", e);
-        }
+	        return ServletActionContext.getRequest().getSession().getAttribute("cityname").toString();
 	}
 
 	/**
