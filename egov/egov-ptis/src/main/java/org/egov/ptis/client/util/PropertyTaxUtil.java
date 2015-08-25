@@ -1577,18 +1577,17 @@ public class PropertyTaxUtil {
         return date.after(dateToCompare) || date.equals(dateToCompare);
     }
 
-    public List<DemandNoticeDetailsInfo> getDemandNoticeDetailsInfo(final BasicProperty basicProperty) {
+    public List<DemandNoticeDetailsInfo> getDemandNoticeDetailsInfo(final BasicProperty basicProperty,PropertyWiseConsumptions propertyWiseConsumptions) {
         final List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo = new LinkedList<DemandNoticeDetailsInfo>();
         final EgDemand egDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
         final Module module = moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME);
         CFinancialYear finYear=financialYearDAO.getFinancialYearByDate(new Date());
         List<DemandNoticeDetailsInfo> tempList = new LinkedList<DemandNoticeDetailsInfo>();
         //General Tax and Penalty
-        tempList=getArrearCurrentDemandbyReasonCode(egDemand, module,DEMANDRSN_CODE_GENERAL_TAX,finYear);
+        tempList=getArrearCurrentDemandbyReasonCode(egDemand, module,finYear);
         if(tempList!=null && !tempList.isEmpty())
             demandNoticeDetailsInfo.addAll(tempList);
         //Water Tax
-        PropertyWiseConsumptions propertyWiseConsumptions= getPropertyWiseConsumptions(basicProperty.getUpicNo().toString());
         if(propertyWiseConsumptions!=null){
             tempList = new LinkedList<DemandNoticeDetailsInfo>();
             tempList = getArrearCurrentDemandforWaterTax(propertyWiseConsumptions);
@@ -1650,15 +1649,14 @@ public class PropertyTaxUtil {
     }
     
     /**
-     * @Description Returns Aggregated list of arrear and current demand amount for specific reasoncode
+     * @Description Returns Aggregated list of arrear and current demand amount for all reasoncodes
      * @param egDemand
      * @param module
      * @param reasonCode
      * @param finYear
      * @return
      */
-    private List<DemandNoticeDetailsInfo> getArrearCurrentDemandbyReasonCode(EgDemand egDemand, Module module, String reasonCode, 
-            CFinancialYear finYear){
+    private List<DemandNoticeDetailsInfo> getArrearCurrentDemandbyReasonCode(EgDemand egDemand, Module module, CFinancialYear finYear){
         List list = new LinkedList();
         String arrearFromDate="";
         String arrearToDate="";
@@ -1672,57 +1670,47 @@ public class PropertyTaxUtil {
         Installment installment;
         List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo = new LinkedList<DemandNoticeDetailsInfo>();
         DemandNoticeDetailsInfo dndi;
-        list = demandGenericDAO.getDCBByReasonCode(egDemand, module,reasonCode);
+        list = demandGenericDAO.getReasonWiseDCB(egDemand, module);
         for (final Object record : list) {
             final Object[] data = (Object[]) record;
             instId = Integer.valueOf(data[5].toString());
             installment = (Installment) installmentDao.findById(instId, false);
-            if(installment.getFromDate().compareTo(finYear.getStartingDate())<0){
+           if(installment.getFromDate().compareTo(finYear.getStartingDate())<0){
                 if(arrearFromDate==""){
-                    arrearFromDate=sdf.format(installment.getFromDate());
+                   arrearFromDate=sdf.format(installment.getFromDate());
                 }
                 arrearToDate=sdf.format(installment.getToDate());
-                arrearAmount=arrearAmount.add(new BigDecimal(data[2].toString()));
+                if(!data[0].toString().equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)) {
+                    arrearAmount=arrearAmount.add(new BigDecimal(data[2].toString()));
+                } else{
+                    pnltyArrearAmount=pnltyArrearAmount.add(new BigDecimal(data[2].toString()));
+                }
             }else{
                 if(currentFromDate==""){
                     currentFromDate=sdf.format(installment.getFromDate());
                 }
                 currentToDate=sdf.format(installment.getToDate());
-                currentAmount=currentAmount.add(new BigDecimal(data[2].toString()));
-            }
-        }
-        // In case of general tax, calculate penalty as well.
-        if(reasonCode.equalsIgnoreCase(DEMANDRSN_CODE_GENERAL_TAX)){
-            list = demandGenericDAO.getDCBByReasonCode(egDemand, module,DEMANDRSN_CODE_PENALTY_FINES);
-            for (final Object record : list) {
-                final Object[] data = (Object[]) record;
-                instId = Integer.valueOf(data[5].toString());
-                installment = (Installment) installmentDao.findById(instId, false);
-                if(installment.getFromDate().compareTo(finYear.getStartingDate())<0){
-                    pnltyArrearAmount=pnltyArrearAmount.add(new BigDecimal(data[2].toString()));
+                if(!data[0].toString().equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)) {
+                    currentAmount=currentAmount.add(new BigDecimal(data[2].toString()));
                 }else{
-                    pnltyCurrentAmount=pnltyCurrentAmount.add(new BigDecimal(data[2].toString()));
+                    pnltyCurrentAmount=pnltyCurrentAmount.add(new BigDecimal(data[2].toString())); 
                 }
-            }
+            } 
         }
         if(arrearFromDate!=""){
             dndi=new DemandNoticeDetailsInfo();
             dndi.setFromDate(arrearFromDate);
             dndi.setToDate(arrearToDate);
-            if(reasonCode.equalsIgnoreCase(DEMANDRSN_CODE_GENERAL_TAX)){
-                dndi.setPropertyTax(arrearAmount);
-                dndi.setPenalty(pnltyArrearAmount);
-            }
+            dndi.setPropertyTax(arrearAmount);
+            dndi.setPenalty(pnltyArrearAmount);
             demandNoticeDetailsInfo.add(dndi);
         }
         if(currentFromDate!=""){
             dndi=new DemandNoticeDetailsInfo();
             dndi.setFromDate(currentFromDate);
             dndi.setToDate(currentToDate);
-            if(reasonCode.equalsIgnoreCase(DEMANDRSN_CODE_GENERAL_TAX)){
-                dndi.setPropertyTax(currentAmount);
-                dndi.setPenalty(pnltyCurrentAmount);
-            }
+            dndi.setPropertyTax(currentAmount);
+            dndi.setPenalty(pnltyCurrentAmount);
             demandNoticeDetailsInfo.add(dndi);
         }
         return demandNoticeDetailsInfo;

@@ -77,6 +77,7 @@ import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.BulkBillGeneration;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.service.notice.NoticeService;
+import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,9 +140,10 @@ public class BillService {
 			demandNoticeInfo.setBillNo(getBillNo());
 			demandNoticeInfo.setLocality(basicProperty.getPropertyID().getLocality().getName());
 			demandNoticeInfo.setBillPeriod(propertyTaxUtil.getCurrentInstallment().getDescription());
-			demandNoticeInfo.setPropertyWiseConsumptions(propertyTaxUtil.getPropertyWiseConsumptions(basicProperty
-					.getUpicNo()));
-			demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty));
+			PropertyWiseConsumptions pwc=propertyTaxUtil.getPropertyWiseConsumptions(basicProperty
+                                .getUpicNo());
+			demandNoticeInfo.setPropertyWiseConsumptions(pwc);
+			demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty,pwc));
 
 			ReportRequest reportRequest = null;
 			reportRequest = new ReportRequest(REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION, demandNoticeInfo,

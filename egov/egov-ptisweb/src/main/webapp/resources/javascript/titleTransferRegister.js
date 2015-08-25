@@ -73,7 +73,7 @@ jQuery(document).ready(function() {
 		var toDate = document.getElementById("toDate").value;
 		var finyearSDate=document.getElementById("finYearStartDate").value;
 		if ((fromDate == null || fromDate == "" || fromDate == 'DD/MM/YYYY') &&
-				(toDate != null || toDate != "" || toDate != 'DD/MM/YYYY')) {
+				(toDate != null && toDate != "" && toDate != 'DD/MM/YYYY')) {
 			alert('Please Enter From Date');
 			return false;
 		}
