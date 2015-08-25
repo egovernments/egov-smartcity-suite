@@ -158,10 +158,6 @@ public class WaterConnectionDetails extends StateAware {
 
     private Long sumpCapacity;
 
-    private Long plotSize;
-
-    private Long plinthArea;
-
     private Integer numberOfPerson;
 
     @Length(max = 1024)
@@ -343,22 +339,6 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setSumpCapacity(final Long sumpCapacity) {
         this.sumpCapacity = sumpCapacity;
-    }
-
-    public Long getPlotSize() {
-        return plotSize;
-    }
-
-    public void setPlotSize(final Long plotSize) {
-        this.plotSize = plotSize;
-    }
-
-    public Long getPlinthArea() {
-        return plinthArea;
-    }
-
-    public void setPlinthArea(final Long plinthArea) {
-        this.plinthArea = plinthArea;
     }
 
     public Integer getNumberOfPerson() {
