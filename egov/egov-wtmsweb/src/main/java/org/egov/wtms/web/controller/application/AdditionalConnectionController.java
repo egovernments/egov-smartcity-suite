@@ -155,7 +155,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
             }
 
         if (addConnection.getState() == null)
-            addConnection.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+            addConnection.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));
 
         if (resultBinder.hasErrors()) {

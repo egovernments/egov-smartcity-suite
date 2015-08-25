@@ -133,7 +133,7 @@ public class WaterTaxCollection extends TaxCollection {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .getWaterConnectionDetailsByDemand(demand);
         if (!waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)) {
-            waterConnectionDetails.setEgwStatus(waterTaxUtils
+            waterConnectionDetails.setStatus(waterTaxUtils
                     .getStatusByCodeAndModuleType(WaterTaxConstants.APPLICATION_STATUS_FEEPAID, WaterTaxConstants.MODULETYPE));
             Long approvalPosition = Long.valueOf(0);
             final WorkFlowMatrix wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails

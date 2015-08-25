@@ -156,7 +156,7 @@ public class ChangeOfUseController extends GenericConnectionController {
             return "changeOfUse-form";
         }
         if (changeOfUse.getState() == null)
-            changeOfUse.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+            changeOfUse.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));
 
         changeOfUse.getApplicationDocs().clear();

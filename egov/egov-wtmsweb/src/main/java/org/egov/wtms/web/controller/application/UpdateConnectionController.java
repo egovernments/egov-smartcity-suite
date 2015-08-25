@@ -146,7 +146,7 @@ public class UpdateConnectionController extends GenericConnectionController {
         model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
 
-        if (waterConnectionDetails.getEgwStatus() != null && waterConnectionDetails.getEgwStatus().getCode()
+        if (waterConnectionDetails.getStatus() != null && waterConnectionDetails.getStatus().getCode()
                 .equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)) {
             final ChairPerson chairPerson = chairPersonService.getActiveChairPersonAsOnCurrentDate();
             model.addAttribute("chairPerson", chairPerson);
@@ -174,11 +174,11 @@ public class UpdateConnectionController extends GenericConnectionController {
         }
         // "edit" mode for AE inbox record FROM CSC and Record from Clerk
         else if (recordCreatedBYNonEmployee && request.getAttribute("mode") == null
-                && waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)
+                && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)
                 && waterConnectionDetails
                         .getState().getHistory() != null
-                || !recordCreatedBYNonEmployee && waterConnectionDetails.getEgwStatus() != null
-                        && waterConnectionDetails.getEgwStatus().getCode()
+                || !recordCreatedBYNonEmployee && waterConnectionDetails.getStatus() != null
+                        && waterConnectionDetails.getStatus().getCode()
                                 .equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)) {
             model.addAttribute("mode", "fieldInspection");
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
@@ -208,7 +208,7 @@ public class UpdateConnectionController extends GenericConnectionController {
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
 
-        if (waterConnectionDetails.getEgwStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_CREATED) &&
+        if (waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_CREATED) &&
                 mode.equalsIgnoreCase("fieldInspection"))
             if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.SUBMITWORKFLOWACTION)) {
                 final ConnectionCategory connectionCategory = connectionCategoryService
@@ -239,9 +239,9 @@ public class UpdateConnectionController extends GenericConnectionController {
             approvalComent = request.getParameter("approvalComent");
 
         if (workFlowAction != null && workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION)
-                && waterConnectionDetails.getEgwStatus() != null
-                && waterConnectionDetails.getEgwStatus().getCode() != null
-                && waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID))
+                && waterConnectionDetails.getStatus() != null
+                && waterConnectionDetails.getStatus().getCode() != null
+                && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID))
             validateSanctionDetails(waterConnectionDetails, resultBinder);
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));

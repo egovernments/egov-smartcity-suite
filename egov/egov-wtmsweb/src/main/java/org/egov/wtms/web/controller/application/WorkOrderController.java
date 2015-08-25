@@ -147,7 +147,7 @@ public class WorkOrderController {
         else if (isView && null == connectionDetails.getWorkOrderNumber())
             errorMessage = messageSource.getMessage("err.validate.workorder.view",
                     new String[] { connectionDetails.getApplicationNumber() }, null);
-        else if (!isView && !connectionDetails.getEgwStatus().getCode()
+        else if (!isView && !connectionDetails.getStatus().getCode()
                 .equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED))
             errorMessage = messageSource.getMessage("err.validate.workorder.view",
                     new String[] { connectionDetails.getApplicationNumber() }, null);
