@@ -539,7 +539,7 @@ public class ModifyPropertyAction extends WorkflowAction {
     }
 
     @SkipValidation
-    @Action(value = "modifyProperty-approve")
+    @Action(value = "/modifyProperty-approve")
     public String approve() {
         LOGGER.debug("Enter method approve");
         amalgPropIds = new String[10];
