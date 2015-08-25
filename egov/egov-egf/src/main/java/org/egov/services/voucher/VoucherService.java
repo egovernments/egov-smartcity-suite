@@ -65,7 +65,6 @@ import org.egov.commons.CGeneralLedgerDetail;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgfRecordStatus;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.VoucherDetail;
 import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionDAO;
@@ -565,9 +564,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         return existingVH;
         }
         
-        public void deleteVDByVHId(final Object voucherHeaderId){
-                voucherHibDAO.deleteVoucherDetailByVHId(voucherHeaderId);
-        }
+      
         public void deleteGLDetailByVHId(final Object voucherHeaderId){
                 voucherHibDAO.deleteGLDetailByVHId(voucherHeaderId);
         }
@@ -587,7 +584,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 try {
                         for (VoucherDetails accountDetails : billDetailslist) {
                                  String glcodeId = accountDetails.getGlcodeIdDetail().toString();
-                                 VoucherDetail voucherDetail = new VoucherDetail();
+                                 /*VoucherDetail voucherDetail = new VoucherDetail();
                                  voucherDetail.setLineId(lineId++);
                                  voucherDetail.setVoucherHeaderId(voucherHeader);
                                  voucherDetail.setGlCode(accountDetails.getGlcodeDetail());
@@ -595,12 +592,12 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                                  voucherDetail.setDebitAmount(accountDetails.getDebitAmountDetail());
                                  voucherDetail.setCreditAmount(accountDetails.getCreditAmountDetail());
                                  voucherDetail.setNarration(voucherHeader.getDescription());
-                                 voucherHibDAO.postInVoucherDetail(voucherDetail);
+                                 voucherHibDAO.postInVoucherDetail(voucherDetail);*/
                                  
                                  Transaxtion transaction = new Transaxtion();
                                  transaction.setGlCode(accountDetails.getGlcodeDetail());
                                  transaction.setGlName(accountDetails.getAccounthead());
-                                 transaction.setVoucherLineId(String.valueOf(voucherDetail.getId()));
+                                 //transaction.setVoucherLineId(String.valueOf(voucherDetail.getId()));
                                  transaction.setVoucherHeaderId(voucherHeader.getId().toString());
                                  transaction.setCrAmount(accountDetails.getCreditAmountDetail().toString());
                                  transaction.setDrAmount(accountDetails.getDebitAmountDetail().toString());

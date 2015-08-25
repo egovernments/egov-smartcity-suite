@@ -288,7 +288,6 @@ public class PayInSlipAction extends BaseVoucherAction {
                                 // edit Payin slip voucher,update the voucher ,then update the instrument ,
                                 voucherHeader = voucherService.updateVoucherHeader(voucherHeader,voucherTypeBean); 
                                 contraService.editInstruments(voucherHeader.getId());
-                                voucherService.deleteVDByVHId(voucherHeader.getId());
                                 voucherService.deleteGLDetailByVHId(voucherHeader.getId());
                                 createLedgerAndPost();
                         }
