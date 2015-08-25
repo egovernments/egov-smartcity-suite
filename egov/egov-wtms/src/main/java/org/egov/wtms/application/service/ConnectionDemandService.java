@@ -498,12 +498,12 @@ public class ConnectionDemandService {
         currInst = getCurrentInstallment(moduleName, null, new Date());
         for (final Object object : dmdCollList) {
             final Object[] listObj = (Object[]) object;
-            instId = Integer.valueOf(listObj[1].toString());
+            instId = Integer.valueOf(listObj[2].toString());
             installment = (Installment) installmentDao.findById(instId, false);
             if (currInst.equals(installment))
-                curDue = new BigDecimal(listObj[5].toString());
+                curDue = new BigDecimal(listObj[6].toString());
             else {
-                arrDue = (BigDecimal) listObj[5];
+                arrDue = (BigDecimal) listObj[6];
                 if (arrDue.signum() > 0)
                     if (null == arrearInstallmentfrom)
                         arrearInstallmentfrom = BigDecimal.valueOf(instId);
@@ -518,13 +518,14 @@ public class ConnectionDemandService {
 
     public List<Object> getDmdCollAmtInstallmentWiseWithIsDmdTrue(final EgDemand egDemand) {
         final StringBuffer strBuf = new StringBuffer(2000);
-        strBuf.append("select dmdResId,installment,amount,amt_collected,amt_rebate,amount-amt_collected as balance,"
-                + "instStartDate from (SELECT dmdRes.id as dmdResId, dmdRes.id_installment as installment,"
+        strBuf.append("SELECT wcdid,dmdResId,installment,amount,amt_collected,amt_rebate,amount-amt_collected AS balance,"
+                + "instStartDate FROM (SELECT wcd.id AS wcdid,dmdRes.id AS dmdResId,dmdRes.id_installment AS installment,"
                 + "SUM(dmdDet.amount) AS amount,SUM(dmdDet.amt_collected) AS amt_collected,SUM(dmdDet.amt_rebate) AS amt_rebate,"
-                + "inst.start_date as inststartdate FROM eg_demand_details dmdDet,eg_demand_reason dmdRes,eg_installment_master inst, "
-                + "eg_demand_reason_master dmdresmas WHERE dmdDet.id_demand_reason=dmdRes.id AND dmdDet.id_demand =:dmdId "
-                + "AND dmdRes.id_installment = inst.id AND dmdresmas.id = dmdres.id_demand_reason_master and "
-                + "dmdresmas.isdemand=true GROUP BY dmdRes.id, dmdRes.id_installment, inst.start_date ORDER BY inst.start_date) as dcb");
+                + "inst.start_date AS inststartdate FROM eg_demand_details dmdDet,eg_demand_reason dmdRes,eg_installment_master inst,"
+                + "eg_demand_reason_master dmdresmas,egwtr_connectiondetails wcd WHERE dmdDet.id_demand_reason=dmdRes.id "
+                + "AND dmdDet.id_demand =:dmdId AND dmdRes.id_installment = inst.id AND dmdresmas.id = dmdres.id_demand_reason_master "
+                + "AND dmdresmas.isdemand=TRUE AND wcd.demand = dmdDet.id_demand GROUP BY dmdRes.id, dmdRes.id_installment,"
+                + "inst.start_date,wcd.id ORDER BY inst.start_date) AS dcb");
         return getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId()).list();
     }
 
@@ -534,6 +535,30 @@ public class ConnectionDemandService {
         else
             return installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                     moduleService.getModuleByName(moduleName), date, installmentType);
+    }
+
+    public Map<String, BigDecimal> getDemandCollMapForBill(final WaterConnectionDetails waterConnectionDetails,
+            final String moduleName,
+            final String installmentType) {
+        final EgDemand currDemand = waterConnectionDetails.getDemand();
+        List<Object> dmdCollList = new ArrayList<Object>();
+        Integer instId = null;
+        Double balance = null;
+        Integer val = null;
+        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
+        if (currDemand != null)
+            dmdCollList = getDmdCollAmtInstallmentWiseWithIsDmdTrue(currDemand);
+        for (final Object object : dmdCollList) {
+            final Object[] listObj = (Object[]) object;
+            balance = (Double) listObj[6];
+            if (BigDecimal.valueOf(balance).signum() > 0) {
+                val = Integer.valueOf(listObj[0].toString());
+                instId = Integer.valueOf(listObj[2].toString());
+                retMap.put("wcdid", BigDecimal.valueOf(val));
+                retMap.put("inst", BigDecimal.valueOf(instId));
+            }
+        }
+        return retMap;
     }
 
 }

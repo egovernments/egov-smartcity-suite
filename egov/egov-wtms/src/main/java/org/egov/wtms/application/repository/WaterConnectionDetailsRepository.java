@@ -100,4 +100,6 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     @Query("select wcd from MeterReadingConnectionDetails wcd where wcd.waterConnectionDetails.id=:waterConnDetId order by currentReadingDate desc")
     List<MeterReadingConnectionDetails> findPreviousMeterReadingReading(@Param("waterConnDetId") Long waterConnDetId);
 
+    WaterConnectionDetails findByConnectionAndConnectionStatusAndIsHistory(WaterConnection waterConnection,
+            ConnectionStatus connectionStatus, Boolean isHistory);
 }

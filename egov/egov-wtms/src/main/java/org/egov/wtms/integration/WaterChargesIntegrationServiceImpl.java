@@ -43,6 +43,7 @@ package org.egov.wtms.integration;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +52,7 @@ import org.egov.commons.dao.InstallmentDao;
 import org.egov.ptis.wtms.ConsumerConsumption;
 import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
+import org.egov.wtms.application.entity.NonMeteredConnBillDetails;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
@@ -79,7 +81,6 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
         BigDecimal currentTotal = BigDecimal.ZERO;
         BigDecimal arrearTotal = BigDecimal.ZERO;
         Installment arrInstal = null;
-        System.out.println();
         final Installment currentInstallment = connectionDemandService.getCurrentInstallment(
                 WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
         final List<WaterConnection> waterConnections = waterConnectionService.findByPropertyIdentifier(propertyId);
@@ -120,10 +121,31 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
     }
 
     @Override
-    public boolean updateBillNo(final String Propertyid, final String Billno) {
-
-        // TODO Iterate through all water connections assosiated with this
-        // propertyid and update the bill no
+    public boolean updateBillNo(final String propertyId, final String billNo) {
+        final List<WaterConnection> waterConnections = waterConnectionService.findByPropertyIdentifier(propertyId);
+        HashSet<NonMeteredConnBillDetails> nonMeteredConnBillDetails = null;
+        for (final WaterConnection waterConnection : waterConnections) {
+            final NonMeteredConnBillDetails nonMeteredConnBillDetail = new NonMeteredConnBillDetails();
+            Installment installment = null;
+            final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                    .getActiveNonHistoryConnectionDetailsByConnection(waterConnection);
+            if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
+                final Map<String, BigDecimal> resultmap = connectionDemandService.getDemandCollMapForBill(
+                        waterConnectionDetails, WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null);
+                if (null != resultmap && !resultmap.isEmpty()) {
+                    nonMeteredConnBillDetails = new HashSet<NonMeteredConnBillDetails>();
+                    final BigDecimal install = resultmap.get("inst");
+                    installment = (Installment) installmentDao.findById(install.intValue(), false);
+                    nonMeteredConnBillDetail.setBillNo(billNo);
+                    nonMeteredConnBillDetail
+                            .setWaterConnectionDetails(waterConnectionDetailsService.findBy(resultmap.get("wcdid").longValue()));
+                    nonMeteredConnBillDetail.setInstallment(installment);
+                    nonMeteredConnBillDetails.add(nonMeteredConnBillDetail);
+                    waterConnectionDetails.setNonmeteredBillDetails(nonMeteredConnBillDetails);
+                    waterConnectionDetailsService.save(waterConnectionDetails);
+                }
+            }
+        }
         return true;
     }
 

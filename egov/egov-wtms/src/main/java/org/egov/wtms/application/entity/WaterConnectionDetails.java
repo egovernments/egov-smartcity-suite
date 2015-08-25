@@ -223,7 +223,7 @@ public class WaterConnectionDetails extends StateAware {
 
     @OrderBy("ID DESC")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private final Set<NonMeteredConnBillDetails> nonmeteredBillDetails = new HashSet<NonMeteredConnBillDetails>(0);
+    private Set<NonMeteredConnBillDetails> nonmeteredBillDetails = new HashSet<NonMeteredConnBillDetails>(0);
 
     public List<MeterReadingConnectionDetails> getMeterConnection() {
         return meterConnection;
@@ -535,4 +535,13 @@ public class WaterConnectionDetails extends StateAware {
     public void setIsHistory(final Boolean isHistory) {
         this.isHistory = isHistory;
     }
+
+    public Set<NonMeteredConnBillDetails> getNonmeteredBillDetails() {
+        return nonmeteredBillDetails;
+    }
+
+    public void setNonmeteredBillDetails(final Set<NonMeteredConnBillDetails> nonmeteredBillDetails) {
+        this.nonmeteredBillDetails = nonmeteredBillDetails;
+    }
+
 }

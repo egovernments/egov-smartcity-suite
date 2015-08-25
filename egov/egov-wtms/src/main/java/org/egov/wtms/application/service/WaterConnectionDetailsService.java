@@ -1379,4 +1379,9 @@ public class WaterConnectionDetailsService {
     public void save(final WaterConnectionDetails detail) {
         waterConnectionDetailsRepository.save(detail);
     }
+    
+    public WaterConnectionDetails getActiveNonHistoryConnectionDetailsByConnection(final WaterConnection waterConnection) {
+        return waterConnectionDetailsRepository.findByConnectionAndConnectionStatusAndIsHistory(waterConnection,
+                ConnectionStatus.ACTIVE,Boolean.FALSE);
+    }
 }
