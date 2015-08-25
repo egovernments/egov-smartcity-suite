@@ -413,7 +413,7 @@
 							<s:set value="basicProperty.property.propertyDetail.floorDetails[#floorsstatus.index]" var="floor" />
 							<td class="blueborderfortd">
 								<div align="center">
-									<s:property default="N/A" value="%{floorNoStr[#floor.floorNo]}" />
+									<s:property default="N/A" value="%{getFloorNoStr(#floor.floorNo)}" />
 								</div>
 							</td>
 							<td class="blueborderfortd">
