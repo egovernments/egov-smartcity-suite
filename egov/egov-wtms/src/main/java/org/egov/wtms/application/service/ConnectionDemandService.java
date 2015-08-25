@@ -41,6 +41,7 @@ package org.egov.wtms.application.service;
 
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -63,7 +64,6 @@ import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
-import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -80,6 +80,8 @@ import org.egov.wtms.application.service.collection.WaterConnectionBillable;
 import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.WaterRatesDetails;
 import org.egov.wtms.masters.entity.WaterRatesHeader;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.DonationDetailsService;
 import org.egov.wtms.masters.service.DonationHeaderService;
 import org.egov.wtms.masters.service.WaterRatesDetailsService;
@@ -360,18 +362,34 @@ public class ConnectionDemandService {
 
     public String generateBill(final String consumerCode) {
         String collectXML = "";
+        final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
+        String currentInstallmentYear = null;
         final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) beanProvider
                 .getBean("waterConnectionBillable");
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumberOrConsumerCode(consumerCode);
+        if (ConnectionStatus.INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
+            currentInstallmentYear = formatYear
+                    .format(getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date())
+                            .getInstallmentYear());
+        else if (ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus())
+                && ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()))
+            currentInstallmentYear = formatYear
+                    .format(getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date())
+                            .getInstallmentYear());
+        else if (ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus())
+                && ConnectionType.METERED.equals(waterConnectionDetails.getConnectionType()))
+            currentInstallmentYear = formatYear
+                    .format(getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY, new Date())
+                            .getInstallmentYear());
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS);
         waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
         waterConnectionBillable.setAssessmentDetails(assessmentDetails);
         waterConnectionBillable.setUserId(EgovThreadLocals.getUserId());
-        waterConnectionBillable.setReferenceNumber(
-                generateBillNumber(assessmentDetails.getBoundaryDetails().getWardNumber().toString()));
+
+        waterConnectionBillable.setReferenceNumber(waterTaxNumberGenerator.generateBillNumber(currentInstallmentYear));
         waterConnectionBillable.setBillType(getBillTypeByCode(WaterTaxConstants.BILLTYPE_AUTO));
 
         final String billXml = connectionBillService.getBillXML(waterConnectionBillable);
@@ -382,19 +400,6 @@ public class ConnectionDemandService {
     public EgBillType getBillTypeByCode(final String typeCode) {
         final EgBillType billType = egBillDAO.getBillTypeByCode(typeCode);
         return billType;
-    }
-
-    public String generateBillNumber(final String wardNo) {
-        final StringBuffer billNo = new StringBuffer();
-        final Module module = moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME);
-        installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(module, new Date(), WaterTaxConstants.YEARLY);
-        // FIX ME
-        /*
-         * String index = sequenceNumberGenerator.getNextNumberWithFormat( BILLGEN_SEQNAME_PREFIX + wardNo, 7, '0',
-         * Long.valueOf(1)) .getFormattedNumber(); billNo.append(wardNo); billNo.append("/"); billNo.append(index);
-         * billNo.append("/"); billNo.append(finYear.getDescription());
-         */
-        return billNo.toString();
     }
 
     public EgDemand getDemandByInstAndApplicationNumber(final Installment installment, final String consumerCode) {

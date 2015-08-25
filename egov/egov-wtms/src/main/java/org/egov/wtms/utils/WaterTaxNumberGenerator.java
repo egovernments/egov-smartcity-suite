@@ -49,6 +49,7 @@ import javax.transaction.Transactional;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -116,6 +117,21 @@ public class WaterTaxNumberGenerator {
             return String.format("%s%06d", "", sequenceNumber);
         } catch (final SQLException e) {
             throw new EGOVRuntimeException("Error occurred while generating meter Generate Number", e);
+        }
+    }
+
+    public String generateBillNumber(final String installmentYear) {
+        try {
+            final String sequenceName = WaterTaxConstants.WATER_CONN_BILLNO_SEQ + installmentYear;
+            Serializable sequenceNumber;
+            try {
+                sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
+            } catch (final SQLGrammarException e) {
+                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
+            }
+            return String.format("%s%06d", "", sequenceNumber);
+        } catch (final SQLException e) {
+            throw new EGOVRuntimeException("Error occurred while generating water connection charges bill Number ", e);
         }
     }
 

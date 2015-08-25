@@ -160,4 +160,7 @@ public class WaterTaxConstants {
     public static final String CURR_DUE = "CurrentDue";
     public static final String ARR_DUE = "ArrearDue";
     public static final String ARR_INSTALFROM_STR = "ARR_INSTALL_FROM";
+
+    public static final String WATER_CONN_BILLNO_SEQ = "SEQ_BILLNO_";
+
 }
