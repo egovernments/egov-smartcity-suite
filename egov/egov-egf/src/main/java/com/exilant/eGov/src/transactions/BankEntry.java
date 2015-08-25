@@ -63,7 +63,6 @@ import com.exilant.eGov.src.common.DataValidator;
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.domain.BankAccount;
 import com.exilant.eGov.src.domain.BankReconciliation;
-import com.exilant.eGov.src.domain.VoucherDetail;
 import com.exilant.eGov.src.domain.VoucherHeader;
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
@@ -320,8 +319,8 @@ public class BankEntry extends AbstractTask{
 		* if Bank Balance < Account Balance then Debit: Account Head, Credit: Bank Account
 		***********************************************/
 		PreparedStatement pstmt=null;
-		VoucherDetail vd = new VoucherDetail();
-		vd.setVoucherHeaderID(voucherHeaderId + "");
+	//	VoucherDetail vd = new VoucherDetail();
+	//	vd.setVoucherHeaderID(voucherHeaderId + "");
 
 		String gridBankEntry[][] = dc.getGrid("gridBankEntry");
    		for(int i=0; i<gridBankEntry.length; i++){
@@ -330,7 +329,7 @@ public class BankEntry extends AbstractTask{
    			gridBankEntry[i][3] = gridBankEntry[i][3].equalsIgnoreCase("")?"0":gridBankEntry[i][3];
 
    			/******************* account code entry ********************/
-   			vd.setGLCode(gridBankEntry[i][0]);
+   			/*vd.setGLCode(gridBankEntry[i][0]);
    			vd.setAccountName(gridBankEntry[i][1]);
    			vd.setDebitAmount(gridBankEntry[i][2]);
    			vd.setCreditAmount(gridBankEntry[i][3]);
@@ -340,7 +339,7 @@ public class BankEntry extends AbstractTask{
    			resultset.next();
    			vd.setLineID(resultset.getInt("LineId") + "");
    			resultset = null;
-   			vd.insert();
+   			vd.insert();*/
 
    			Transaxtion transaction = new Transaxtion();
    			transaction.setGlCode(gridBankEntry[i][0]);
@@ -348,13 +347,13 @@ public class BankEntry extends AbstractTask{
    			transaction.setDrAmount(gridBankEntry[i][2]);
    			transaction.setCrAmount(gridBankEntry[i][3]);
    			transaction.setNarration(gridBankEntry[i][4]);
-   			transaction.setVoucherLineId(String.valueOf(vd.getId()));
+   			//transaction.setVoucherLineId(String.valueOf(vd.getId()));
    			transaction.setVoucherHeaderId(voucherHeaderId+"");
    			transactions.add(transaction);
    			/***********************************************************/
 
    			/******************* bank account entry ********************/
-   			vd.setGLCode(dc.getValue("bankGLCode"));
+/*   			vd.setGLCode(dc.getValue("bankGLCode"));
    			vd.setAccountName(cm.getCodeName(dc.getValue("bankGLCode")));
    			vd.setDebitAmount(gridBankEntry[i][3]);   //debit to bank account
    			vd.setCreditAmount(gridBankEntry[i][2]);  //credit to bank account
@@ -365,7 +364,7 @@ public class BankEntry extends AbstractTask{
    			resultset.next();
    			vd.setLineID(resultset.getInt("LineId") + "");
    			resultset = null;
-   			vd.insert();
+   			vd.insert();*/
 
    			Transaxtion transaction1 = new Transaxtion();
    			transaction1.setGlCode(dc.getValue("bankGLCode"));
@@ -373,7 +372,7 @@ public class BankEntry extends AbstractTask{
    			transaction1.setDrAmount(gridBankEntry[i][3]);
    			transaction1.setCrAmount(gridBankEntry[i][2]);
    			transaction1.setNarration(gridBankEntry[i][4]);
-   			transaction1.setVoucherLineId(String.valueOf(vd.getId()));
+   			//transaction1.setVoucherLineId(String.valueOf(vd.getId()));
    			transaction1.setVoucherHeaderId(voucherHeaderId+"");
    			transactions.add(transaction1);
    			/***********************************************************/

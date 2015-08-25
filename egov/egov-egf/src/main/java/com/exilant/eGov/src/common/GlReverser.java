@@ -60,7 +60,6 @@ import com.exilant.GLEngine.GLAccount;
 import com.exilant.eGov.src.domain.ClosedPeriods;
 import com.exilant.eGov.src.domain.GeneralLedger;
 import com.exilant.eGov.src.domain.GeneralLedgerDetail;
-import com.exilant.eGov.src.domain.VoucherDetail;
 import com.exilant.eGov.src.domain.VoucherHeader;
 import com.exilant.eGov.src.domain.VoucherMIS;
 import com.exilant.eGov.src.domain.egfRecordStatus;
@@ -115,7 +114,7 @@ public void reverse(String cgNo,String newVcno,String effDate,String cgvNo,DataC
 		String newVhId=postInVoucherHeader(cgNo,newVcno,effDate,cgvNo,userId);
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Inserted to VH,VMIS,VR");
 		//postInVoucherDetail(newVhId,con);
-		postInVoucherDetail(newVhId);
+		//postInVoucherDetail(newVhId);
 		postInGeneralLedger(newVhId);
         if(LOGGER.isDebugEnabled())     LOGGER.debug("inserted into vD newVhId="+newVhId);
 	}catch(Exception e){
@@ -149,7 +148,7 @@ public void reverse(String cgNo,String newVcno,String effDate,String cgvNo, int 
 	{
 		loadData(cgNo);
 		String newVhId=postInVoucherHeader(cgNo,newVcno,effDate,cgvNo,Integer.toString(userId));
-		postInVoucherDetail(newVhId);
+		//postInVoucherDetail(newVhId);
         if(LOGGER.isDebugEnabled())     LOGGER.debug("inserted into vD newVhId="+newVhId);
 	}catch(Exception e)
 	{
@@ -188,7 +187,7 @@ private void loadData(String cgNo) throws TaskFailedException{
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("Object for voucherMIS"+vmis);
 			
 	//load voucher detail records for that header
-	vcDetail=de.extractIntoMap(vdSql+vcHID+extraSQL,"id",VoucherDetail.class);
+	//vcDetail=de.extractIntoMap(vdSql+vcHID+extraSQL,"id",VoucherDetail.class);
 	//load General Ledger
 	gLedger=de.extractIntoMap(glSql+vcHID+extraSQL,"voucherLineId",GeneralLedger.class);
 	egfDetail=de.extractIntoMap(egfSql+vcHID,"id",egfRecordStatus.class);
@@ -286,24 +285,7 @@ private String postInVoucherHeader(String cgNo,String newVcNo,String effDate,Str
 	
 	return String.valueOf(vhObj.getId());
 }
-private void postInVoucherDetail(String newVhId) throws TaskFailedException,SQLException{
-	Iterator it=vcDetail.keySet().iterator();
-	String oldVdId="";
-	while(it.hasNext()){
-		VoucherDetail vdObj=(VoucherDetail)vcDetail.get(it.next());
-		if(Double.parseDouble(vdObj.getDebitAmount())>0){
-			vdObj.setCreditAmount(vdObj.getDebitAmount());
-			vdObj.setDebitAmount("0");
-		}else if(Double.parseDouble(vdObj.getCreditAmount())>0){
-			vdObj.setDebitAmount(vdObj.getCreditAmount());
-			vdObj.setCreditAmount("0");
-		}
-		vdObj.setVoucherHeaderID(newVhId);
-		oldVdId=String.valueOf(vdObj.getId());
-		vdObj.insert();
-		//postInGeneralLedger(String.valueOf(vdObj.getId()),oldVdId,newVhId,con);
-	}
-}
+
 private void postInGeneralLedger(String newVdId,String oldVdId,String newVhId)throws TaskFailedException{
 	try{
 		String oldGlId="";
@@ -417,11 +399,11 @@ public void reverseSubLedger(String cgNo,String newVcno,String effDate,String cg
 		String userId=dc.getValue("current_UserID");
 		String newVhId=postInVoucherHeader(cgNo,newVcno,effDate,cgvNo,userId);
 		String reverseType=dc.getValue("reverseType");
-		if(reverseType!=null && (reverseType.equals("cash") || reverseType.length()==0)){
+/*		if(reverseType!=null && (reverseType.equals("cash") || reverseType.length()==0)){
 			postInVoucherDetail(newVhId);
 		}else{
 			postInVoucherDetail(dc.getValue("diffDebit"),newVhId);
-		}
+		}*/
 
 	}catch(Exception e){
 		LOGGER.error("Exp reverse subledger:"+e.toString());
@@ -429,48 +411,7 @@ public void reverseSubLedger(String cgNo,String newVcno,String effDate,String cg
 	}
 
 }
-private void postInVoucherDetail(String diffDebitAmount,String newVhId) throws Exception{
-	Iterator it=vcDetail.keySet().iterator();
-	String oldVdId="";
-//	VoucherDetail diffVoucherDetail=new VoucherDetail();
-	//CodeValidator cv=CodeValidator.getInstance();
-	PreDefinedAccCodes pAccCodes=new PreDefinedAccCodes();
-	GLAccount glAcc=(GLAccount)ChartOfAccounts.getGlAccountCodes().get(pAccCodes.getBankChargeCode());
-	double diffDbAmount=ExilPrecision.convertToDouble(diffDebitAmount,2);
-	while(it.hasNext()){
-		Object tempObj=it.next();
-		VoucherDetail vdObj=(VoucherDetail)vcDetail.get(tempObj);
-		vdObj.setVoucherHeaderID(newVhId);
-		if(Double.parseDouble(vdObj.getDebitAmount())>0){
-			vdObj.setCreditAmount(vdObj.getDebitAmount());
-			vdObj.setDebitAmount("0");
-			oldVdId=String.valueOf(vdObj.getId());
-			vdObj.insert();
-			postInGeneralLedger(String.valueOf(vdObj.getId()),oldVdId,newVhId);
-		}else if(Double.parseDouble(vdObj.getCreditAmount())>0){
-			VoucherDetail diffVoucherDetail=vdObj;
-			if(diffDbAmount>0){
-				diffVoucherDetail.setGLCode(pAccCodes.getBankChargeCode());
-				diffVoucherDetail.setAccountName(glAcc.getName());
-				diffVoucherDetail.setDebitAmount(ExilPrecision.convertToString(diffDebitAmount,2));
-				diffVoucherDetail.setCreditAmount("0");
-				diffVoucherDetail.setVoucherHeaderID(newVhId);
-				oldVdId=String.valueOf(diffVoucherDetail.getId());
-				diffVoucherDetail.insert();
-				postInGeneralLedger(String.valueOf(diffVoucherDetail.getId()),oldVdId,newVhId,diffDbAmount,0);
-			}
-			//reassign with original object as they are replaced
-			vdObj=(VoucherDetail)vcDetail.get(tempObj);
-			vdObj.setDebitAmount(ExilPrecision.convertToString(ExilPrecision.convertToDouble(vdObj.getCreditAmount(),2)
-					 -diffDbAmount,2));
-			vdObj.setCreditAmount("0");
-			vdObj.setVoucherHeaderID(newVhId);
-			oldVdId=String.valueOf(vdObj.getId());
-			vdObj.insert();
-			postInGeneralLedger(String.valueOf(vdObj.getId()),oldVdId,newVhId,diffDbAmount,1);
-		}
-	}
-}
+
 private void postInGeneralLedger(String newVdId,String oldVdId,String newVhId,double diffDbAmount,int usage)throws TaskFailedException,SQLException{
 	String oldGlId="";//,diffGlID="";
 	PreDefinedAccCodes pAccCodes=new PreDefinedAccCodes();

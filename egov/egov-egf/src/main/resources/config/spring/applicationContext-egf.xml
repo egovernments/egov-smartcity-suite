@@ -214,15 +214,16 @@
     	 <constructor-arg ref="voucherService"/>
          <constructor-arg value="org.egov.commons.CVoucherHeader"/>
     </bean> -->
-    <bean id="voucherDetailPersitService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
+  <!--   <bean id="voucherDetailPersitService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="type" value="org.egov.commons.VoucherDetail" />
-	</bean>
+	</bean> -->
+	 
 	<bean id="voucherHeaderPersitService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="type" value="org.egov.commons.CVoucherHeader" />
 	</bean>
     <bean id="voucherHibDAO" class="org.egov.dao.voucher.VoucherHibernateDAO" scope="prototype">
-		<property name="vdPersitSer" ref="voucherDetailPersitService"/>
-	</bean>
+		
+	</bean> 
 	<bean id="billRegisterService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="type" value="org.egov.model.bills.EgBillregister" />
 	</bean>
@@ -230,7 +231,7 @@
 		<property name="type" value="org.egov.commons.CVoucherHeader" />
 		<property name="persistenceService" ref="persistenceService"/>
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO"/>
-		<property name="voucherHibDAO" ref="voucherHibDAO"/>
+		<property name="voucherHibDAO" ref="voucherHibDAO"/> 	
 		<property name="eisCommonService" ref="eisCommonService" />
 		<property name="billRegisterService" ref="billRegisterService"/>
 		<property name="financialYearDAO" ref="financialYearDAO"/>

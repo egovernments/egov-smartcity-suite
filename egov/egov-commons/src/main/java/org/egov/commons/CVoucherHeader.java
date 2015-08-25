@@ -1,41 +1,32 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+ * government organizations.
+ * 
+ * Copyright (C) <2015> eGovernments Foundation
+ * 
+ * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ * 
+ * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
+ * complied with:
+ * 
+ * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ * 
+ * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
+ * material be marked in reasonable ways as different from the original version.
+ * 
+ * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
+ * trade names or trademarks of eGovernments Foundation.
+ * 
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.commons;
 
@@ -99,23 +90,11 @@ public class CVoucherHeader extends StateAware {
     private String voucherSubType;
     @Transient
     private Boolean isRestrictedtoOneFunctionCenter;
-    @Transient
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "voucherdetail", joinColumns = @JoinColumn(name = "id") , inverseJoinColumns = @JoinColumn(name = "voucherHeaderId") )
-    private Set<VoucherDetail> voucherDetail = new HashSet<VoucherDetail>(0);
-    
-   
-//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "voucherHeaderId")
-    
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "generalLedger", joinColumns = @JoinColumn(name = "id") , inverseJoinColumns = @JoinColumn(name = "voucherHeaderId") )
-   
+    @JoinTable(name = "generalLedger", joinColumns = @JoinColumn(name = "id"), inverseJoinColumns = @JoinColumn(name = "voucherHeaderId"))
     private Set<CGeneralLedger> genenralLedger = new HashSet<CGeneralLedger>(0);
-   
-   
 
-    
-    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy="voucherheaderid")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "voucherheaderid")
     private Vouchermis vouchermis;
 
     public Long getId() {
@@ -134,8 +113,7 @@ public class CVoucherHeader extends StateAware {
     }
 
     /**
-     * @param cgn
-     *            The cgn to set.
+     * @param cgn The cgn to set.
      */
     public void setCgn(final String cgn) {
         this.cgn = cgn;
@@ -149,13 +127,11 @@ public class CVoucherHeader extends StateAware {
     }
 
     /**
-     * @param name
-     *            The name to set.
+     * @param name The name to set.
      */
     public void setName(final String name) {
         this.name = name;
     }
-
 
     /**
      * @return Returns the Type.
@@ -166,8 +142,7 @@ public class CVoucherHeader extends StateAware {
     }
 
     /**
-     * @param type
-     *            The type to set.
+     * @param type The type to set.
      */
     public void setType(final String type) {
         this.type = type;
@@ -182,8 +157,7 @@ public class CVoucherHeader extends StateAware {
     }
 
     /**
-     * @param Description
-     *            The Description to set.
+     * @param Description The Description to set.
      */
     public void setDescription(final String description) {
         this.description = description;
@@ -198,8 +172,7 @@ public class CVoucherHeader extends StateAware {
     }
 
     /**
-     * @param effectiveDate
-     *            The effectiveDate to set.
+     * @param effectiveDate The effectiveDate to set.
      */
     public void setEffectiveDate(final Date effectiveDate) {
         this.effectiveDate = effectiveDate;
@@ -213,8 +186,7 @@ public class CVoucherHeader extends StateAware {
     }
 
     /**
-     * @param voucherDate
-     *            The voucherDate to set.
+     * @param voucherDate The voucherDate to set.
      */
     public void setVoucherDate(final Date voucherDate) {
         this.voucherDate = voucherDate;
@@ -228,13 +200,11 @@ public class CVoucherHeader extends StateAware {
     }
 
     /**
-     * @param voucherNumber
-     *            The voucherNumber to set.
+     * @param voucherNumber The voucherNumber to set.
      */
     public void setVoucherNumber(final String voucherNumber) {
         this.voucherNumber = voucherNumber;
     }
-
 
     /**
      * @return Returns the fundId.
@@ -245,8 +215,7 @@ public class CVoucherHeader extends StateAware {
     }
 
     /**
-     * @param fundId
-     *            The fundId to set.
+     * @param fundId The fundId to set.
      */
     public void setFundId(final Fund fundId) {
         this.fundId = fundId;
@@ -261,8 +230,7 @@ public class CVoucherHeader extends StateAware {
     }
 
     /**
-     * @param fiscalPeriodId
-     *            The fiscalPeriodId to set.
+     * @param fiscalPeriodId The fiscalPeriodId to set.
      */
     public void setFiscalPeriodId(final Integer fiscalPeriodId) {
         this.fiscalPeriodId = fiscalPeriodId;
@@ -277,8 +245,7 @@ public class CVoucherHeader extends StateAware {
     }
 
     /**
-     * @param status
-     *            The status to set.
+     * @param status The status to set.
      */
     public void setStatus(final Integer status) {
         this.status = status;
@@ -292,13 +259,11 @@ public class CVoucherHeader extends StateAware {
     }
 
     /**
-     * @param originalvcId
-     *            The originalvcId to set.
+     * @param originalvcId The originalvcId to set.
      */
     public void setOriginalvcId(final Long originalvcId) {
         this.originalvcId = originalvcId;
     }
-
 
     /**
      * @return Returns the isConfirmed.
@@ -309,13 +274,11 @@ public class CVoucherHeader extends StateAware {
     }
 
     /**
-     * @param isConfirmed
-     *            The isConfirmed to set.
+     * @param isConfirmed The isConfirmed to set.
      */
     public void setIsConfirmed(final Integer isConfirmed) {
         this.isConfirmed = isConfirmed;
     }
-
 
     /**
      * @return Returns the refcgNo.
@@ -326,8 +289,7 @@ public class CVoucherHeader extends StateAware {
     }
 
     /**
-     * @param refcgNo
-     *            The refcgNo to set.
+     * @param refcgNo The refcgNo to set.
      */
     public void setRefcgNo(final String refcgNo) {
         this.refcgNo = refcgNo;
@@ -342,8 +304,7 @@ public class CVoucherHeader extends StateAware {
     }
 
     /**
-     * @param cgvn
-     *            The cgvn to set.
+     * @param cgvn The cgvn to set.
      */
     public void setCgvn(final String cgvn) {
         this.cgvn = cgvn;
@@ -365,17 +326,6 @@ public class CVoucherHeader extends StateAware {
     public Set<CGeneralLedger> getGeneralledger() {
         return genenralLedger;
     }
-/*    public Set<VoucherDetail> getVoucherDetail() {
-        return voucherDetail;
-    }
-
-    public void setVoucherDetail(final Set<VoucherDetail> voucherDetail) {
-        this.voucherDetail = voucherDetail;
-    }
-
-    public void addVoucherDetail(final VoucherDetail voucherdetail) {
-        getVoucherDetail().add(voucherdetail);
-    }*/
 
     public Vouchermis getVouchermis() {
         return vouchermis;
@@ -408,8 +358,8 @@ public class CVoucherHeader extends StateAware {
 
     public BigDecimal getTotalAmount() {
         BigDecimal amount = BigDecimal.ZERO;
-        for (final VoucherDetail detail : voucherDetail)
-            amount = amount.add(detail.getDebitAmount());
+        for (final CGeneralLedger detail : genenralLedger)
+            amount = amount.add(new BigDecimal(detail.getDebitAmount()));
         return amount;
     }
 

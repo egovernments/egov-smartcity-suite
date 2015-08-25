@@ -68,7 +68,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 @Transactional(readOnly=true)
 public class GeneralLedger {
 	private String id = null;
-	private String voucherLineId = null;
+	private String voucherLineId = "0";
 	private String effectiveDate = "1-Jan-1900";
 	private String glCodeId = null;
 	private String glCode = null;
@@ -130,7 +130,8 @@ public class GeneralLedger {
 			if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
 			pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 			pst.setBigInteger(0, BigInteger.valueOf(Long.valueOf(id)));
-			pst.setBigInteger(1,voucherLineId.equalsIgnoreCase("null")?BigInteger.ZERO:BigInteger.valueOf(Long.valueOf(voucherLineId)));
+			//pst.setBigInteger(1,voucherLineId.equalsIgnoreCase("null")?BigInteger.ZERO:BigInteger.valueOf(Long.valueOf(voucherLineId)));
+			pst.setBigInteger(1,BigInteger.ZERO);
 			pst.setTimestamp(2, dt);
 			pst.setBigInteger(3, glCodeId.equalsIgnoreCase("null")?null:BigInteger.valueOf(Long.valueOf(glCodeId)));
 			pst.setString(4, glCode);

@@ -80,10 +80,10 @@
 		<property name="instrumentHeaderService" ref="instrumentHeaderService" />
 	</bean>
 	
-	<bean id="vdPersitSer" class="org.egov.infstr.services.PersistenceService" scope="prototype">
+	<!-- <bean id="vdPersitSer" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="type" value="org.egov.commons.VoucherDetail" />
-	</bean>
+	</bean>-->
 	
 	<bean id="contrajournalService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
@@ -100,7 +100,7 @@
 		<property name="persistenceService" ref="persistenceService"/>
 		<property name="contrajournalService" ref="contrajournalService"/>
 		<property name="bankReconService" ref="bankReconService"/>
-		<property name="vdPersitSer" ref="vdPersitSer"/>
+	<!-- 	<property name="vdPersitSer" ref="vdPersitSer"/> -->
 		<property name="instrumentService" ref="instrumentService"/>
 		<property name="employeeServiceOld" ref="employeeServiceOld" />
 		</bean>
