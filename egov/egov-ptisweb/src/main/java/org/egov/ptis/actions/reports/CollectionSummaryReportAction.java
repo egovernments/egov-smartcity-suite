@@ -78,13 +78,13 @@ public class CollectionSummaryReportAction extends SearchFormAction {
         BigDecimal totArrearLibCessAmt = ZERO,grandTotal = ZERO;
         Long prevZone = null,prevWard = null, prevBlock = null, prevLocality = null;
         
-	@Override
-	public Object getModel() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
+        @Override
+        public Object getModel() {
+                // TODO Auto-generated method stub
+                return null;
+        }
+        
+        @Override
         @SuppressWarnings("unchecked")
         public void prepare() {
                 LOGGER.debug("Entered into prepare method");
@@ -99,18 +99,18 @@ public class CollectionSummaryReportAction extends SearchFormAction {
                     finYearStartDate=sdf.format(finyear.getStartingDate());
                 LOGGER.debug("Exit from prepare method");
         }
-	
-	@SkipValidation
+        
+        @SkipValidation
         @Action(value = "/reports/collectionSummaryReport-zoneWise")
         public String zoneWise() {
                 fromDate=finYearStartDate;
                 toDate=sdf.format(new Date());
-	        setMode("zoneWise");
+                setMode("zoneWise");
                 return VIEW;
         }
-	
-	
-	@SkipValidation
+        
+        
+        @SkipValidation
         @Action(value = "/reports/collectionSummaryReport-wardWise")
         public String wardWise() {
                 fromDate=finYearStartDate;
@@ -118,9 +118,9 @@ public class CollectionSummaryReportAction extends SearchFormAction {
                 setMode("wardWise");
                 return VIEW;
         }
-	
-	
-	@SkipValidation
+        
+        
+        @SkipValidation
         @Action(value = "/reports/collectionSummaryReport-blockWise")
         public String blockWise() {
                 fromDate=finYearStartDate;
@@ -128,8 +128,8 @@ public class CollectionSummaryReportAction extends SearchFormAction {
                 setMode("blockWise");
                 return VIEW;
         }
-	
-	@SkipValidation
+        
+        @SkipValidation
         @Action(value = "/reports/collectionSummaryReport-localityWise")
         public String localityWise() {
                 fromDate=finYearStartDate;
@@ -137,9 +137,9 @@ public class CollectionSummaryReportAction extends SearchFormAction {
                 setMode("localityWise");
                 return VIEW;
         }
-	
-	
-	@Override
+        
+        
+        @Override
         public void validate() {
                 LOGGER.debug("Entered into validate method");
                 try {
@@ -160,8 +160,8 @@ public class CollectionSummaryReportAction extends SearchFormAction {
                 }
                 LOGGER.debug("Exit from validate method");
         }
-	
-	@SuppressWarnings("unchecked")
+        
+        @SuppressWarnings("unchecked")
         @ValidationErrorPage(value = "view")
         @Action(value = "/reports/collectionSummaryReport-list")
         public String list() throws ParseException {
@@ -171,99 +171,99 @@ public class CollectionSummaryReportAction extends SearchFormAction {
             setResultList(prepareBndryWiseResultList());
             return VIEW; 
         }
-	
-	  @Override
-	    public SearchQuery prepareQuery(String sortField, String sortOrder) {
-	            String fromDateLocal = "";
-	            String toDateLocal = "";
-	            String srchQryStr="", countQry = "", baseQry = "", orderbyQry="";
+        
+          @Override
+            public SearchQuery prepareQuery(String sortField, String sortOrder) {
+                    String fromDateLocal = "";
+                    String toDateLocal = "";
+                    String srchQryStr="", countQry = "", baseQry = "", orderbyQry="";
                     List<Object> paramList = new ArrayList<Object>();
-	            try {
-	                    String currDate = sdf.format(new Date());
-	                    srchFlag = Boolean.TRUE;
-	                    if (currDate.equals((fromDate)) || currDate.equals(toDate)) {
-	                            dateSelected = CURR_DATE;
-	                    }
-	                    if (ZONEWISE.equalsIgnoreCase(mode)) {
-	                        baseQry = "select * from egpt_mv_c10_report c10, eg_boundary zoneBndry where ";
-	                        countQry = "select count(*) from egpt_mv_c10_report c10, eg_boundary zoneBndry where ";
-	                    } else if (WARDWISE.equalsIgnoreCase(mode)) {
-	                        baseQry = "select * from egpt_mv_c10_report c10, eg_boundary wardBndry where ";
-	                        countQry = "select count(*) from egpt_mv_c10_report c10, eg_boundary wardBndry where ";
-	                    } else if (BLOCKWISE.equalsIgnoreCase(mode)) {
-	                        baseQry = "select * from egpt_mv_c10_report c10, eg_boundary blockBndry where ";
-	                        countQry = "select count(*) from egpt_mv_c10_report c10, eg_boundary blockBndry where ";
-	                    } else if (LOCALITYWISE.equalsIgnoreCase(mode)) {
-	                        baseQry = "select * from egpt_mv_c10_report c10, eg_boundary localityBndry where ";
-	                        countQry = "select count(*) from egpt_mv_c10_report c10, eg_boundary localityBndry where ";
-	                    }
-	                    if (fromDate != null && !fromDate.equals("DD/MM/YYYY") && !fromDate.equals("")) {
-	                            srchQryStr= "receipt_date >= to_date(?, 'DD/MM/YYYY') ";
-	                            paramList.add(fromDate);
-	                    }
-	                    if (toDate != null && !toDate.equals("DD/MM/YYYY") && !toDate.equals("")) {
-	                            srchQryStr=srchQryStr+"and receipt_date <= to_date(?, 'DD/MM/YYYY') ";
-	                            paramList.add(toDate); 
-	                    }
-	                    if (collMode != null && !collMode.equals("") && !collMode.equals("-1")) {
-	                            LOGGER.debug("Collection Mode = " + collMode);
-	                            srchQryStr=srchQryStr+"and collectiontype = ? ";
-	                            paramList.add(collMode);
-	                    }
-	                    if (transMode != null && !transMode.equals("") && !transMode.equals("-1")) {
-	                            LOGGER.debug("Transaction Mode = " + transMode);
-	                            srchQryStr=srchQryStr+"and payment_mode = ? ";
-	                            paramList.add(transMode);
-	                    }
-	                    if (mode.equals(ZONEWISE)) {
-	                            if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
-	                                LOGGER.debug("zoneNo = " + boundaryId);
-	                                srchQryStr=srchQryStr+"and zoneid = ? ";
-	                                paramList.add(Integer.parseInt(boundaryId));
-	                            }
-	                            srchQryStr=srchQryStr+"and zoneid = zoneBndry.id ";
-	                            orderbyQry="order by zoneBndry.boundarynum";
-	                    } else if (mode.equals(WARDWISE)) {
-	                         if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
-	                                 LOGGER.debug("wardNo = " + boundaryId);
-	                                 srchQryStr=srchQryStr+"and wardid = ? ";
-	                                 paramList.add(Integer.parseInt(boundaryId));
-	                         }
-	                         srchQryStr=srchQryStr+"and wardid = wardBndry.id ";
-	                         orderbyQry="order by wardBndry.boundarynum";
-	                    } else if (mode.equals(BLOCKWISE)) {
-	                        if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
-	                            LOGGER.debug("blockNo = " + boundaryId);
-	                            srchQryStr=srchQryStr+"and areaid = ? ";
-	                            paramList.add(Integer.parseInt(boundaryId));
-	                        }
-	                        srchQryStr=srchQryStr+"and areaid = blockBndry.id ";
-	                        orderbyQry="order by blockBndry.boundarynum";
-	                    } else if (mode.equals(LOCALITYWISE)) {
-	                        if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
-	                            LOGGER.debug("localityNo = " + boundaryId);
-	                            srchQryStr=srchQryStr+"and localityid = ? ";
-	                            paramList.add(Integer.parseInt(boundaryId));
-	                        }
-	                        srchQryStr=srchQryStr+"and localityid = localityBndry.id ";
-	                        orderbyQry="order by localityBndry.boundarynum";
-	                    }
-	                    countQry=countQry+srchQryStr;
-	                    srchQryStr=baseQry+srchQryStr+orderbyQry;
-	                    
-	            } catch (Exception e) {
-	                    e.printStackTrace();
-	                    LOGGER.error("Error occured in Class : CollectionSummaryReportAction  Method : list", e);
-	                    throw new EGOVRuntimeException("Error occured in Class : CollectionSummaryReportAction  Method : list "
-	                                    + e.getMessage());
-	            }
-	            LOGGER.debug("Exit from list method");
-	            return new SearchQuerySQL(srchQryStr,countQry, paramList);
-	    }
-	
-	
-	private List<Map<String, Object>> prepareBndryWiseResultList() throws ParseException {
-	    LOGGER.debug("Entered into prepareResultList method");
+                    try {
+                            String currDate = sdf.format(new Date());
+                            srchFlag = Boolean.TRUE;
+                            if (currDate.equals((fromDate)) || currDate.equals(toDate)) {
+                                    dateSelected = CURR_DATE;
+                            }
+                            if (ZONEWISE.equalsIgnoreCase(mode)) {
+                                baseQry = "select * from egpt_mv_c10_report c10, eg_boundary zoneBndry where ";
+                                countQry = "select count(*) from egpt_mv_c10_report c10, eg_boundary zoneBndry where ";
+                            } else if (WARDWISE.equalsIgnoreCase(mode)) {
+                                baseQry = "select * from egpt_mv_c10_report c10, eg_boundary wardBndry where ";
+                                countQry = "select count(*) from egpt_mv_c10_report c10, eg_boundary wardBndry where ";
+                            } else if (BLOCKWISE.equalsIgnoreCase(mode)) {
+                                baseQry = "select * from egpt_mv_c10_report c10, eg_boundary blockBndry where ";
+                                countQry = "select count(*) from egpt_mv_c10_report c10, eg_boundary blockBndry where ";
+                            } else if (LOCALITYWISE.equalsIgnoreCase(mode)) {
+                                baseQry = "select * from egpt_mv_c10_report c10, eg_boundary localityBndry where ";
+                                countQry = "select count(*) from egpt_mv_c10_report c10, eg_boundary localityBndry where ";
+                            }
+                            if (fromDate != null && !fromDate.equals("DD/MM/YYYY") && !fromDate.equals("")) {
+                                    srchQryStr= "(cast(receipt_date as date)) >= to_date(?, 'DD/MM/YYYY') ";
+                                    paramList.add(fromDate);
+                            }
+                            if (toDate != null && !toDate.equals("DD/MM/YYYY") && !toDate.equals("")) {
+                                    srchQryStr=srchQryStr+"and (cast(receipt_date as date)) <= to_date(?, 'DD/MM/YYYY') ";
+                                    paramList.add(toDate); 
+                            }
+                            if (collMode != null && !collMode.equals("") && !collMode.equals("-1")) {
+                                    LOGGER.debug("Collection Mode = " + collMode);
+                                    srchQryStr=srchQryStr+"and collectiontype = ? ";
+                                    paramList.add(collMode);
+                            }
+                            if (transMode != null && !transMode.equals("") && !transMode.equals("-1")) {
+                                    LOGGER.debug("Transaction Mode = " + transMode);
+                                    srchQryStr=srchQryStr+"and payment_mode = ? ";
+                                    paramList.add(transMode);
+                            }
+                            if (mode.equals(ZONEWISE)) {
+                                    if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
+                                        LOGGER.debug("zoneNo = " + boundaryId);
+                                        srchQryStr=srchQryStr+"and zoneid = ? ";
+                                        paramList.add(Integer.parseInt(boundaryId));
+                                    }
+                                    srchQryStr=srchQryStr+"and zoneid = zoneBndry.id ";
+                                    orderbyQry="order by zoneBndry.boundarynum";
+                            } else if (mode.equals(WARDWISE)) {
+                                 if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
+                                         LOGGER.debug("wardNo = " + boundaryId);
+                                         srchQryStr=srchQryStr+"and wardid = ? ";
+                                         paramList.add(Integer.parseInt(boundaryId));
+                                 }
+                                 srchQryStr=srchQryStr+"and wardid = wardBndry.id ";
+                                 orderbyQry="order by wardBndry.boundarynum";
+                            } else if (mode.equals(BLOCKWISE)) {
+                                if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
+                                    LOGGER.debug("blockNo = " + boundaryId);
+                                    srchQryStr=srchQryStr+"and areaid = ? ";
+                                    paramList.add(Integer.parseInt(boundaryId));
+                                }
+                                srchQryStr=srchQryStr+"and areaid = blockBndry.id ";
+                                orderbyQry="order by blockBndry.boundarynum";
+                            } else if (mode.equals(LOCALITYWISE)) {
+                                if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
+                                    LOGGER.debug("localityNo = " + boundaryId);
+                                    srchQryStr=srchQryStr+"and localityid = ? ";
+                                    paramList.add(Integer.parseInt(boundaryId));
+                                }
+                                srchQryStr=srchQryStr+"and localityid = localityBndry.id ";
+                                orderbyQry="order by localityBndry.boundarynum";
+                            }
+                            countQry=countQry+srchQryStr;
+                            srchQryStr=baseQry+srchQryStr+orderbyQry;
+                            
+                    } catch (Exception e) {
+                            e.printStackTrace();
+                            LOGGER.error("Error occured in Class : CollectionSummaryReportAction  Method : list", e);
+                            throw new EGOVRuntimeException("Error occured in Class : CollectionSummaryReportAction  Method : list "
+                                            + e.getMessage());
+                    }
+                    LOGGER.debug("Exit from list method");
+                    return new SearchQuerySQL(srchQryStr,countQry, paramList);
+            }
+        
+        
+        private List<Map<String, Object>> prepareBndryWiseResultList() throws ParseException {
+            LOGGER.debug("Entered into prepareResultList method");
             List<Map<String, Object>> resList = new ArrayList<Map<String, Object>>(); 
             paginatedList = (EgovPaginatedList) searchResult;
             List<CollectionSummary> collSummaryList = new ArrayList<CollectionSummary>();
@@ -376,10 +376,10 @@ public class CollectionSummaryReportAction extends SearchFormAction {
             }
             LOGGER.debug("Exit from prepareResultList method");
             return resList;
-	}
-	
-	private void initializeReasonAmount(CollectionSummary collSummary){
-	    if (mode.equals(ZONEWISE)) {
+        }
+        
+        private void initializeReasonAmount(CollectionSummary collSummary){
+            if (mode.equals(ZONEWISE)) {
                 prevZone = collSummary.getZoneId();
             } else if (mode.equals(WARDWISE)) {
                 prevWard = collSummary.getWardId();
