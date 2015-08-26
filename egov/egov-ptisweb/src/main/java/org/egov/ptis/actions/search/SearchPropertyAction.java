@@ -187,7 +187,7 @@ public class SearchPropertyAction extends BaseFormAction {
             try {
                 final StringBuilder queryStr = new StringBuilder();
                 queryStr.append(
-                        "select pmv from PropertyMaterlizeView pmv, BasicPropertyImpl bp where pmv.basicPropertyID=bp.id ")
+                        "select distinct pmv from PropertyMaterlizeView pmv, BasicPropertyImpl bp where pmv.basicPropertyID=bp.id ")
                         .append("and bp.active='Y' and pmv.zone.id=:ZoneID and pmv.ward.id=:WardID ");
                 if (houseNumBndry != null && !houseNumBndry.trim().isEmpty())
                     queryStr.append("and pmv.houseNo like :HouseNo ");
@@ -232,7 +232,7 @@ public class SearchPropertyAction extends BaseFormAction {
                 && locationId != null && locationId != -1)
             try {
                 final StringBuilder queryStr = new StringBuilder();
-                queryStr.append("select pmv from PropertyMaterlizeView pmv ").append(
+                queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ").append(
                         " where pmv.locality.id=:locationId ");
                 if (houseNumArea != null && !houseNumArea.trim().isEmpty())
                     queryStr.append("and pmv.houseNo like :HouseNo ");
@@ -271,7 +271,7 @@ public class SearchPropertyAction extends BaseFormAction {
             try {
                 final StringBuilder queryStr = new StringBuilder();
                 queryStr.append(
-                        "select pmv from PropertyMaterlizeView pmv where pmv.aggrCurrDmd is not null and pmv.aggrCurrDmd>=:fromDemand ")
+                        "select distinct pmv from PropertyMaterlizeView pmv where pmv.aggrCurrDmd is not null and pmv.aggrCurrDmd>=:fromDemand ")
                         .append("and pmv.aggrCurrDmd<=:toDemand ");
                 final Query query = getPersistenceService().getSession().createQuery(queryStr.toString());
                 query.setBigDecimal("fromDemand", new BigDecimal(fromdemand));
