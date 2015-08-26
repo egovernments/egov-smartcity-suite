@@ -1,40 +1,18 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+ * government organizations. Copyright (C) <2015> eGovernments Foundation The updated version of eGov suite of products as by
+ * eGovernments Foundation is available at http://www.egovernments.org This program is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version
+ * 3 of the License, or any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+ * License for more details. You should have received a copy of the GNU General Public License along with this program. If not,
+ * see http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html . In addition to the terms of the GPL license to be
+ * adhered to in using this program, the following additional terms are to be complied with: 1) All versions of this program,
+ * verbatim or modified must carry this Legal Notice. 2) Any misrepresentation of the origin of the material is prohibited. It is
+ * required that all modified versions of this material be marked in reasonable ways as different from the original version. 3)
+ * This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
+ * trade names or trademarks of eGovernments Foundation. In case of any queries, you can reach eGovernments Foundation at
+ * contact@egovernments.org.
  */
 package org.egov.commons.service;
 
@@ -68,7 +46,6 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CVoucherHeader;
-import org.egov.commons.Chequedetail;
 import org.egov.commons.EgActiondetails;
 import org.egov.commons.EgNumbers;
 import org.egov.commons.EgPartytype;
@@ -768,11 +745,6 @@ public class CommonsServiceImpl implements CommonsService {
      */
 
     @Override
-    public List<Chequedetail> getChequedetailByVoucherheader(final CVoucherHeader voucherHeader) {
-        return commonsDAOFactory.getChequedetailDAO().getChequedetailByVoucherheader(voucherHeader);
-    }
-
-    @Override
     public Bankaccount getBankaccountById(final Integer id) {
         return (Bankaccount) commonsDAOFactory.getBankaccountDAO().findById(id, false);
     }
@@ -843,16 +815,6 @@ public class CommonsServiceImpl implements CommonsService {
             LOG.error(e.getMessage());
             throw new EGOVRuntimeException("Exception in searching CBillDeductionAmtByVhId" + e.getMessage(), e);
         }
-    }
-
-    @Override
-    public List<Chequedetail> getChequedetailFilterBy(final String vhNo, final Date vhDateFrom, final Date vhDateTo,
-            final String chqNo, final String mode, final String pymntType, final String dept, final String functionaryId) {
-        Functionary functionary = null;
-        if (functionaryId != null)
-            functionary = getFunctionaryById(Integer.parseInt(functionaryId));
-        return commonsDAOFactory.getChequedetailDAO().getChequedetailFilterBy(vhNo, vhDateFrom, vhDateTo, chqNo, mode,
-                pymntType, dept, functionary);
     }
 
     @Override
@@ -1021,11 +983,12 @@ public class CommonsServiceImpl implements CommonsService {
             Long boundaryId = 0L;
             if (latitude != null && longitude != null) {
                 final Map<String, URL> map = new HashMap<String, URL>();
-                //FIXME TODO This is hard coded now should be replaced with dynamic shape file.
+                // FIXME TODO This is hard coded now should be replaced with dynamic shape file.
                 map.put("url", Thread.currentThread().getContextClassLoader()
                         .getResource("shapefiles/tirupathi_wards.shp"));
                 final DataStore dataStore = DataStoreFinder.getDataStore(map);
-                final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = dataStore.getFeatureSource(dataStore.getTypeNames()[0])
+                final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = dataStore.getFeatureSource(
+                        dataStore.getTypeNames()[0])
                         .getFeatures();
                 final Iterator<SimpleFeature> iterator = collection.iterator();
                 final Point point = JTSFactoryFinder.getGeometryFactory(null).createPoint(new Coordinate(longitude, latitude));

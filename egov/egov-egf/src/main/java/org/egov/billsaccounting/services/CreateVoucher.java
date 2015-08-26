@@ -60,7 +60,6 @@ import org.egov.commons.CFunction;
 import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CGeneralLedgerDetail;
 import org.egov.commons.CVoucherHeader;
-import org.egov.commons.Chequedetail;
 import org.egov.commons.EgfRecordStatus;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
@@ -248,7 +247,6 @@ public class CreateVoucher {
 
     private MastersService masters;
     CommonMethodsI cmImpl = new CommonMethodsImpl();
-    PersistenceService<Chequedetail, Integer> chequeDetailSer;
     PersistenceService<Bankreconciliation, Integer> bankReconSer;
     PersistenceService<EgBillregistermis, Integer> billMisSer;
     PersistenceService<EgBilldetails, Integer> billDetailSer;

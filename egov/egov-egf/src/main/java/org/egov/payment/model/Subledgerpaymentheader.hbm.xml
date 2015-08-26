@@ -49,9 +49,6 @@
             <param name="sequence">SEQ_SUBLEDGERPAYMENTHEADER</param>
             </generator>
         </id>
-        <many-to-one name="chequedetail" class="org.egov.commons.Chequedetail" fetch="select">
-            <column name="CHEQUEID" precision="22" scale="0" />
-        </many-to-one>
         <many-to-one name="worksdetail" class="org.egov.billsaccounting.model.Worksdetail" fetch="select">
             <column name="WORKSDETAILID" precision="22" scale="0" />
         </many-to-one>

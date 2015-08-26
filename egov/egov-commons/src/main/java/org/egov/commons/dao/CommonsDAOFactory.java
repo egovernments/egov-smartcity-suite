@@ -1,41 +1,32 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation 
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this 
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+ * government organizations.
+ * 
+ * Copyright (C) <2015> eGovernments Foundation
+ * 
+ * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ * 
+ * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
+ * complied with:
+ * 
+ * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ * 
+ * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
+ * material be marked in reasonable ways as different from the original version.
+ * 
+ * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
+ * trade names or trademarks of eGovernments Foundation.
+ * 
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.commons.dao;
 
@@ -54,7 +45,6 @@ import org.egov.commons.CFunction;
 import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.CWard;
-import org.egov.commons.Chequedetail;
 import org.egov.commons.EgActiondetails;
 import org.egov.commons.EgNumbers;
 import org.egov.commons.EgPartytype;
@@ -78,7 +68,7 @@ public class CommonsDAOFactory {
 
     @PersistenceContext
     EntityManager entityManager;
-    
+
     protected Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -91,68 +81,56 @@ public class CommonsDAOFactory {
         return new ObjectHistoryHibernateDAO(ObjectHistory.class, getCurrentSession());
     }
 
-
     public EgwStatusHibernateDAO getEgwStatusDAO() {
         return new EgwStatusHibernateDAO(EgwStatus.class, getCurrentSession());
     }
-
 
     public EgActiondetailsHibernateDAO getEgActiondetailsDAO() {
         return new EgActiondetailsHibernateDAO(EgActiondetails.class, getCurrentSession());
     }
 
-
     public EgwSatuschangeHibernateDAO getEgwSatuschangeDAO() {
         return new EgwSatuschangeHibernateDAO(EgwSatuschange.class, getCurrentSession());
     }
-
 
     public AccountdetailkeyHibernateDAO getAccountdetailkeyDAO() {
         return new AccountdetailkeyHibernateDAO(Accountdetailkey.class, getCurrentSession());
     }
 
-
     public RelationHibernateDAO getRelationDAO() {
         return new RelationHibernateDAO(Relation.class, getCurrentSession());
     }
-
 
     public FinancialYearDAO getFinancialYearDAO() {
         return new FinancialYearHibernateDAO(CFinancialYear.class, getCurrentSession());
     }
 
-
     public BankBranchHibernateDAO getBankbranchDAO() {
         return new BankBranchHibernateDAO(Bankbranch.class, getCurrentSession());
     }
 
-
     public BankHibernateDAO getBankDAO() {
         return new BankHibernateDAO(Bank.class, getCurrentSession());
     }
-
 
     public FundHibernateDAO getFundDAO() {
 
         return new FundHibernateDAO(Fund.class, getCurrentSession());
     }
 
-
     public FiscalPeriodDAO getFiscalPeriodDAO() {
         return new FiscalPeriodHibernateDAO(CFiscalPeriod.class, getCurrentSession());
     }
-
 
     public FunctionDAO getFunctionDAO() {
         return new FunctionHibernateDAO(CFunction.class, getCurrentSession());
     }
 
-
     public BankaccountHibernateDAO getBankaccountDAO() {
         return new BankaccountHibernateDAO(Bankaccount.class, getCurrentSession());
     }
 
-	/* move to org.egov.commons */
+    /* move to org.egov.commons */
 
     public FundSourceHibernateDAO getFundsourceDAO() {
 
@@ -160,27 +138,26 @@ public class CommonsDAOFactory {
     }
 
     /**
-     * This DAO is related to -- > eg_invstatus which is part of the inventory. this table has following column --> ID,STATUS,MODULETYPE
+     * This DAO is related to -- > eg_invstatus which is part of the inventory. this table has following column -->
+     * ID,STATUS,MODULETYPE
      */
 
     public StatusHibernateDAO getStatusDAO() {
         return new StatusHibernateDAO(Status.class, getCurrentSession());
     }
 
-	/*
+    /*
      * public TdsHibernateDAO getTdsDAO() { return new TdsHibernateDAO(Tds.class,getCurrentSession()); }
-	 */
+     */
 
+    /*
+     * public EgUomHibernateDAO getEgUomDAO() { return new EgUomHibernateDAO(EgUom.class, getCurrentSession()); }
+     */
 
-   /* public EgUomHibernateDAO getEgUomDAO() {
-        return new EgUomHibernateDAO(EgUom.class, getCurrentSession());
-    }
-*/
-
-   /* public EgUomcategoryHibernateDAO getEgUomcategoryDAO() {
-        return new EgUomcategoryHibernateDAO(EgUomcategory.class, getCurrentSession());
-    }
-*/
+    /*
+     * public EgUomcategoryHibernateDAO getEgUomcategoryDAO() { return new EgUomcategoryHibernateDAO(EgUomcategory.class,
+     * getCurrentSession()); }
+     */
 
     public ChartOfAccountsDAO getChartOfAccountsDAO() {
         return new ChartOfAccountsHibernateDAO(CChartOfAccounts.class, getCurrentSession());
@@ -190,7 +167,6 @@ public class CommonsDAOFactory {
      * this DAO is related -- > EGF_WARD following column presented in this table -->ID ,NAME
      */
 
-
     public WardDAO getWardDAO() {
         return new WardHibernateDAO(CWard.class, getCurrentSession());
     }
@@ -199,21 +175,17 @@ public class CommonsDAOFactory {
         return new GeneralLedgerHibernateDAO(CGeneralLedger.class, this, getCurrentSession());
     }
 
-
     public VoucherHeaderDAO getVoucherHeaderDAO() {
         return new VoucherHeaderHibernateDAO(CVoucherHeader.class, getCurrentSession());
     }
-
 
     public EgNumbersHibernateDAO getEgNumbersHibernateDAO() {
         return new EgNumbersHibernateDAO(EgNumbers.class, getCurrentSession());
     }
 
-
     public EgwTypeOfWorkHibernateDAO getEgwTypeOfWorkDAO() {
         return new EgwTypeOfWorkHibernateDAO(EgwTypeOfWork.class, getCurrentSession());
     }
-
 
     public EgPartytypeHibernateDAO getEgPartytypeDAO() {
         return new EgPartytypeHibernateDAO(EgPartytype.class, getCurrentSession());
@@ -223,31 +195,21 @@ public class CommonsDAOFactory {
         return new AccountdetailtypeHibernateDAO(Accountdetailtype.class, getCurrentSession());
     }
 
-
-    public ChequedetailHibernateDAO getChequedetailDAO() {
-        return new ChequedetailHibernateDAO(Chequedetail.class, getCurrentSession());
-    }
-
-
     public EgSurrenderedChequesHibernateDAO getEgSurrenderedChequesDAO() {
         return new EgSurrenderedChequesHibernateDAO(EgSurrenderedCheques.class, getCurrentSession());
     }
-
 
     public VouchermisHibernateDAO getVouchermisDAO() {
         return new VouchermisHibernateDAO(Vouchermis.class, getCurrentSession());
     }
 
-
     public FunctionaryHibernateDAO getFunctionaryDAO() {
         return new FunctionaryHibernateDAO(Functionary.class, getCurrentSession());
     }
 
-
     public SchemeHibernateDAO getSchemeDAO() {
         return new SchemeHibernateDAO(Scheme.class, getCurrentSession());
     }
-
 
     public SubSchemeHibernateDAO getSubSchemeDAO() {
         return new SubSchemeHibernateDAO(SubScheme.class, getCurrentSession());
