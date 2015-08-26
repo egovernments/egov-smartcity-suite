@@ -67,7 +67,7 @@
 	<table>
 		<tr>
 			<td>
-		<c:forEach items="${validactionList}" var="validButtons">
+		<c:forEach items="${validActionList}" var="validButtons">
 				<form:button type="submit" id="${validButtons}" class="btn btn-primary"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
 						<c:out value="${validButtons}" /> </form:button>
 			</c:forEach>

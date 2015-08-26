@@ -135,9 +135,9 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
         return propertyTypeService.getAllActivePropertyTypes();
     }
 
-    public @ModelAttribute("approvalDepartmentList") List<Department> approverDepartments() {
+    /*public @ModelAttribute("approvalDepartmentList") List<Department> approverDepartments() {
         return departmentService.getAllDepartments();
-    }
+    }*/
 
     protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
         if (ArrayUtils.isNotEmpty(files))

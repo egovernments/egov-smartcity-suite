@@ -47,7 +47,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnection;
@@ -60,6 +59,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.egov.wtms.web.contract.WorkflowContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -88,8 +88,6 @@ public class AdditionalConnectionController extends GenericConnectionController 
     @Autowired
     private SecurityUtils securityUtils;
 
-    private WaterConnectionDetails addConnection;
-
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails addConnection) {
         addConnection.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION));
@@ -98,11 +96,12 @@ public class AdditionalConnectionController extends GenericConnectionController 
 
     @RequestMapping(value = "/addconnection/{consumerCode}", method = RequestMethod.GET)
     public String showAdditionalApplicationForm(WaterConnectionDetails parentConnectionDetails,
-            @ModelAttribute final WaterConnectionDetails addConnection,
-            final Model model, @PathVariable final String consumerCode) {
+            @ModelAttribute final WaterConnectionDetails addConnection, final Model model,
+            @PathVariable final String consumerCode) {
         final WaterConnection connection = waterConnectionService.findByConsumerCode(consumerCode);
-        parentConnectionDetails = waterConnectionDetailsService
-                .getParentConnectionDetails(connection.getPropertyIdentifier(), ConnectionStatus.ACTIVE);
+        prepareWorkflow(model, addConnection, new WorkflowContainer());
+        parentConnectionDetails = waterConnectionDetailsService.getParentConnectionDetails(
+                connection.getPropertyIdentifier(), ConnectionStatus.ACTIVE);
         loadBasicDetails(addConnection, model, parentConnectionDetails);
         return "addconnection-form";
     }
@@ -117,8 +116,8 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 waterConnectionDetailsService.getConnectionTypesMap().get(
                         parentConnectionDetails.getConnectionType().name()));
         model.addAttribute("addConnection", addConnection);
-        model.addAttribute("currentUser",
-                waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+        model.addAttribute("stateType", parentConnectionDetails.getClass().getSimpleName());
+        model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("additionalRule", addConnection.getApplicationType().getCode());
         model.addAttribute("mode", "addconnection");
         model.addAttribute("validationMessage",
@@ -128,8 +127,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
     @RequestMapping(value = "/addconnection/addConnection-create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final WaterConnectionDetails addConnection,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
-            @RequestParam String workFlowAction,
-            final HttpServletRequest request) {
+            @RequestParam String workFlowAction, final HttpServletRequest request) {
 
         final WaterConnectionDetails parent = waterConnectionDetailsService.findByConnection(addConnection
                 .getConnection().getParentConnection());
@@ -182,12 +180,11 @@ public class AdditionalConnectionController extends GenericConnectionController 
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-        final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils
-                .getCurrentUser());
+        final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser());
 
         if (applicationByOthers != null && applicationByOthers.equals(true)) {
-            final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(addConnection
-                    .getConnection().getPropertyIdentifier());
+            final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(addConnection.getConnection()
+                    .getPropertyIdentifier());
             if (userPosition != null)
                 approvalPosition = userPosition.getId();
         }
@@ -199,10 +196,4 @@ public class AdditionalConnectionController extends GenericConnectionController 
         return "redirect:/application/application-success?pathVars=" + pathVars;
     }
 
-    @Override
-    @ModelAttribute
-    public StateAware getModel() {
-        return addConnection;
-
-    }
 }

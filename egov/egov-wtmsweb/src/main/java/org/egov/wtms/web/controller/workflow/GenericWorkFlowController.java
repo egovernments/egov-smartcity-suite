@@ -44,6 +44,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.workflow.CustomizedWorkFlowService;
@@ -51,6 +52,7 @@ import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.wtms.web.contract.WorkflowContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Controller
@@ -59,11 +61,12 @@ public abstract class GenericWorkFlowController {
     @Autowired
     protected CustomizedWorkFlowService customizedWorkFlowService;
 
-    public abstract StateAware getModel();
+    @Autowired
+    protected DepartmentService departmentService;
 
-    @ModelAttribute(value = "approverDepartmentList")
-    public List<Department> findAllApproverDeparment() {
-        return Collections.emptyList();
+    @ModelAttribute(value = "approvalDepartmentList")
+    public List<Department> addAllDepartments() {
+        return departmentService.getAllDepartments();
     }
 
     @ModelAttribute("workflowcontainer")
@@ -71,48 +74,42 @@ public abstract class GenericWorkFlowController {
         return new WorkflowContainer();
     }
 
-    /**
-     * Used to get valid actions that needs to be performed Based on these value workflow buttons will be rendered
-     */
+    protected void prepareWorkflow(final Model model1, final StateAware model, final WorkflowContainer container) {
+        model1.addAttribute("approverDepartmentList", addAllDepartments());
+        model1.addAttribute("validActionList", getValidActions(model, container));
+        model1.addAttribute("nextAction", getNextAction(model, container));
 
-    @ModelAttribute(value = "validactionList")
-    public List<String> getValidActions(@ModelAttribute("workflowcontainer") final WorkflowContainer container) {
-        List<String> validActions = Collections.emptyList();
-        if (null == getModel() || null == getModel().getId())
-            validActions = Arrays.asList("Forward");
-        else if (null != getModel().getCurrentState())
-            validActions = customizedWorkFlowService.getNextValidActions(getModel()
-                    .getStateType(), container.getWorkFlowDepartment(),
-                    container.getAmountRule(),
-                    container.getAdditionalRule(), getModel().getCurrentState().getValue(),
-                    container.getPendingActions(), getModel().getCreatedDate());
-        else
-            // FIXME This May not work
-            validActions = customizedWorkFlowService.getNextValidActions(getModel()
-                    .getStateType(), container.getWorkFlowDepartment(),
-                    container.getAmountRule(),
-                    container.getAdditionalRule(), State.DEFAULT_STATE_VALUE_CREATED,
-                    container.getPendingActions(), getModel().getCreatedDate());
-        return validActions;
     }
 
-    @ModelAttribute(value = "nextaction")
-    public String getNextAction(@ModelAttribute("workflowcontainer") final WorkflowContainer container) {
+    public String getNextAction(final StateAware model, final WorkflowContainer container) {
 
         WorkFlowMatrix wfMatrix = null;
-        if (null != getModel() && null != getModel().getId())
-            if (null != getModel().getCurrentState())
-                wfMatrix = customizedWorkFlowService.getWfMatrix(getModel().getStateType(),
-                        container.getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(), getModel()
-                                .getCurrentState().getValue(),
-                        container.getPendingActions(), getModel()
-                                .getCreatedDate());
-            else
-                wfMatrix = customizedWorkFlowService.getWfMatrix(getModel().getStateType(),
+        if (null != model && null != model.getId())
+            if (null != model.getCurrentState())
+                wfMatrix = customizedWorkFlowService.getWfMatrix(model.getStateType(),
                         container.getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(),
-                        State.DEFAULT_STATE_VALUE_CREATED, container.getPendingActions(), getModel()
-                                .getCreatedDate());
+                        model.getCurrentState().getValue(), container.getPendingActions(), model.getCreatedDate());
+            else
+                wfMatrix = customizedWorkFlowService.getWfMatrix(model.getStateType(),
+                        container.getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(),
+                        State.DEFAULT_STATE_VALUE_CREATED, container.getPendingActions(), model.getCreatedDate());
         return wfMatrix == null ? "" : wfMatrix.getNextAction();
+    }
+
+    public List<String> getValidActions(final StateAware model, final WorkflowContainer container) {
+        List<String> validActions = Collections.emptyList();
+        if (null == model || null == model.getId())
+            validActions = Arrays.asList("Forward");
+        else if (null != model.getCurrentState())
+            validActions = customizedWorkFlowService.getNextValidActions(model.getStateType(), container
+                    .getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(), model
+                    .getCurrentState().getValue(), container.getPendingActions(), model.getCreatedDate());
+        else
+            // FIXME This May not work
+            validActions = customizedWorkFlowService.getNextValidActions(model.getStateType(),
+                    container.getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(),
+                    State.DEFAULT_STATE_VALUE_CREATED, container.getPendingActions(), model.getCreatedDate());
+        return validActions;
     }
 
 }
