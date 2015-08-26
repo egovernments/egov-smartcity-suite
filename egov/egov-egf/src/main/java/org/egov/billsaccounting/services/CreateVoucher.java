@@ -232,14 +232,14 @@ public class CreateVoucher {
     private static final String REVERSAL_VOUCHER_NUMBER = "Reversal voucher number";
     protected List<String> headerFields = new ArrayList<String>();
     protected List<String> mandatoryFields = new ArrayList<String>();
-    private WorksBillService wm;
+    
     private CbillService cBillmgr;
     @Autowired
     private DepartmentService deptM;
     @Autowired
     private BoundaryService boundary;
 
-    private SalaryBillService salBillMgr;
+   
     @Autowired
     private UserService userMngr;
     @Autowired
