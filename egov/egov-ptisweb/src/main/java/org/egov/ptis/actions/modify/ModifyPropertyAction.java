@@ -313,6 +313,24 @@ public class ModifyPropertyAction extends WorkflowAction {
         LOGGER.debug("Exiting from modifyForm");
         return target;
     }
+    
+    @SkipValidation
+    @Action(value = "/modifyProperty-modifyDataEntry")
+    public String modifyDataEntry() {
+    	
+        LOGGER.debug("Entered into modifyForm, \nIndexNumber: " + indexNumber + ", BasicProperty: " + basicProp
+                + ", OldProperty: " + oldProperty + ", PropertyModel: " + propertyModel);
+        String target = "";
+        target = populateFormData(Boolean.FALSE);
+        LOGGER.debug("modifyForm: IsAuthProp: " + getIsAuthProp() + ", AreaOfPlot: " + getAreaOfPlot()
+                + ", PropTypeId: " + getPropTypeId() + ", PropTypeCategoryId: " + getPropTypeCategoryId()
+                + ", PropUsageId: " + getPropUsageId() + ", PropOccId: " + getPropOccId());
+        LOGGER.debug("Exiting from modifyForm");
+        return target;
+    }
+    
+    
+    
 
     private String populateFormData(final Boolean fromInbox) {
         LOGGER.debug("Entered into populateFormData");

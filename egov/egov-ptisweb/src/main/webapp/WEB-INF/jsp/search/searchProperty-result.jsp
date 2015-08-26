@@ -55,6 +55,9 @@
 				} else if (selectedValue == 'CollectTax') {
 					window.location = "/../ptis/collection/collectPropertyTax-generateBill.action?propertyId=" + assessmentNum;
 				}
+			    else if (selectedValue == 'EDIT_DATAENTRY') {
+						window.location = "../modify/modifyProperty-modifyDataEntry.action?indexNumber=" + assessmentNum;
+					}
 			}
 
 			function gotoSearchForm(){
@@ -129,6 +132,12 @@
 										</option>
 										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) ||
 										roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
+											<s:if test="%{source!='A'}">
+												<option value="EDIT_DATAENTRY">
+													<s:text name="edit_dataentry"></s:text>
+												</option>
+											</s:if>
+											<s:else>
 											<s:if test="%{isDemandActive}">
 												<option value="ADD_OR_ALTER">
 													<s:text name="viewprop.option.alter"></s:text>
@@ -144,6 +153,7 @@
 												<option value="RevisionPetition">
 													<s:text name="revisionPetition"></s:text>
 												</option>
+											</s:else>
 											</s:else>
 										</s:if>
 										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">

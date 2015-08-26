@@ -379,6 +379,7 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("ownerName", basicProperty.getFullOwnerName());
                 searchResultMap.put("address", basicProperty.getAddress().toString());
                 searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
+                searchResultMap.put("source", basicProperty.getSource().toString());
                 searchResultMap.put("arrDemandDue",
                         demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
                 searchResultMap.put("currDemandDue",
