@@ -68,14 +68,33 @@
 					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.sumpCapacity}" /></div>
 				</div>
 				<div class="row add-border">
-					<c:if test="${not empty waterConnectionDetails.numberOfPerson}">
-						<div class="col-xs-3 add-margin"><spring:message code="lbl.no.of.persons" /></div>
-						<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.numberOfPerson}" /></div>
-					</c:if>
-					<c:if test="${not empty waterConnectionDetails.numberOfRooms}">
-						<div class="col-xs-3 add-margin"><spring:message code="lbl.no.of.rooms" /></div>
-						<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.numberOfRooms}" /></div>
-					</c:if>
+				 <c:choose>
+				   <c:when test="${waterConnectionDetails.usageType.name.equals('Lodges')}">
+				      <div class="col-xs-3 add-margin"><spring:message code="lbl.no.of.rooms" /></div>
+				  		<div class="col-xs-3 add-margin view-content">
+						  <c:choose>
+                             <c:when test="${waterConnectionDetails.numberOfRooms != null}">
+                               <c:out value="${waterConnectionDetails.numberOfRooms}" />
+                             </c:when>
+                             <c:otherwise>
+                               <c:out value=" " />
+                             </c:otherwise>     
+                           </c:choose>
+                     </c:when>   
+                  <c:otherwise>
+                   <div class="col-xs-3 add-margin"><spring:message code="lbl.no.of.persons" /></div>
+                   <div class="col-xs-3 add-margin view-content">
+                          <c:choose>
+                            <c:when test="${waterConnectionDetails.numberOfPerson != null}">
+                              <c:out value="${waterConnectionDetails.numberOfPerson}" />
+                            </c:when>
+                            <c:otherwise>
+                              <c:out value=" " />
+                            </c:otherwise>     
+                           </c:choose>
+                  </c:otherwise>          
+				 </c:choose>
+				 </div>   
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.bpl.cardholdername" /></div>
 					<div class="col-xs-3 add-margin view-content">
 					<c:choose>
@@ -88,7 +107,6 @@
                     </c:choose>
                     </div>
 					</div>
-				
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.donationcharge"/></div>  
 					<div class="col-xs-3 add-margin view-content">
