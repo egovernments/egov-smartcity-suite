@@ -51,6 +51,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
@@ -69,6 +70,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.joda.time.DateTime;
@@ -137,11 +139,17 @@ public class PTBillServiceImpl extends BillServiceInterface {
         EgDemandReason reason = null;
         Installment installment = null;
         String reasonMasterCode = null;
-
-        Property activeProperty = billable.getBasicProperty().getProperty();
-        
-        Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = billable.getCalculatedPenalty();
-        billable.setInstTaxBean(installmentPenaltyAndRebate);
+        BasicProperty basicProperty = billable.getBasicProperty();
+        Property activeProperty = basicProperty.getProperty();
+        Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = new TreeMap<Installment, PenaltyAndRebate>();
+        final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(basicProperty.getAssessmentdate(), new Date()) - 1;
+        /**
+         * Not calculating penalty if collection is happening within two months from the assessment date
+         */
+        if (noOfMonths > 2) {
+            installmentPenaltyAndRebate = billable.getCalculatedPenalty();
+            billable.setInstTaxBean(installmentPenaltyAndRebate);
+        }
         
         Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(activeProperty);
         HashMap<String, Integer> orderMap = propertyTaxUtil.generateOrderForDemandDetails(
@@ -175,7 +183,8 @@ public class PTBillServiceImpl extends BillServiceInterface {
                     key = installmentDate.getMonthOfYear() + "/" + installmentDate.getYear() + "-" + DEMANDRSN_CODE_REBATE;
                     
                     billDetailBean = new BillDetailBean(installment, orderMap.get(key), key,
-                            installmentPenaltyAndRebate.get(installment).getRebate(),
+                            installmentPenaltyAndRebate.isEmpty() ? BigDecimal.ZERO : installmentPenaltyAndRebate
+                                    .get(installment).getRebate(),
                             PropertyTaxConstants.GLCODE_FOR_TAXREBATE, DEMANDRSN_CODE_REBATE, Integer.valueOf(0));
 
                     billDetails.add(createBillDet(billDetailBean));

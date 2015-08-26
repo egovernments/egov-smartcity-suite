@@ -49,6 +49,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -83,6 +84,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.RebatePeriod;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.RebatePeriodService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +96,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("propertyTaxBillable")
 public class PropertyTaxBillable extends AbstractBillable implements Billable, LatePayPenaltyCalculator,
-RebateCalculator {
+        RebateCalculator {
 
     private static final String STRING_DEPARTMENT_CODE = "R";
     private static final String STRING_SERVICE_CODE = "PT";
@@ -119,6 +121,8 @@ RebateCalculator {
     private UserService userService;
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+    @Autowired
+    private PropertyService propertyService;
 
     private Boolean isCallbackForApportion = Boolean.TRUE;
     private LPPenaltyCalcType penaltyCalcType = SIMPLE;
@@ -290,8 +294,7 @@ RebateCalculator {
     }
 
     /**
-     * Method Overridden to get all the Demands (including all the history and
-     * non history) for a basicproperty .
+     * Method Overridden to get all the Demands (including all the history and non history) for a basicproperty .
      *
      * @return java.util.List<EgDemand>
      */
@@ -431,9 +434,8 @@ RebateCalculator {
             ptDemand = (Ptdemand) list.get(0);
             for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails())
                 /*
-                 * if
-                 * (dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode
-                 * () .equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES))
+                 * if (dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode ()
+                 * .equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES))
                  */
                 installmentWisePenaltyDemandDetails.put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
         }
@@ -457,6 +459,8 @@ RebateCalculator {
             final EgDemand currentDemand = getCurrentDemand();
             final Installment currentInstall = currentDemand.getEgInstallmentMaster();
             property = getBasicProperty().getProperty();
+            final Installment assessmentEffecInstallment = propertyService.getAssessmentEffectiveInstallment(basicProperty
+                    .getAssessmentdate());
 
             final Map<String, Map<Installment, BigDecimal>> installmentDemandAndCollection = ptUtils
                     .prepareReasonWiseDenandAndCollection(property, currentInstall);
@@ -486,7 +490,10 @@ RebateCalculator {
                     penaltyAndRebate.setRebate(calculateEarlyPayRebate(tax));
 
                     if (existingPenaltyDemandDetail == null)
-                        penaltyAndRebate.setPenalty(calculatePenalty(null, getPenaltyEffectiveDate(installment),
+                        penaltyAndRebate.setPenalty(calculatePenalty(
+                                null,
+                                getPenaltyEffectiveDate(installment, assessmentEffecInstallment,
+                                        basicProperty.getAssessmentdate()),
                                 balance));
                     else
                         penaltyAndRebate.setPenalty(existingPenaltyDemandDetail.getAmount().subtract(
@@ -499,14 +506,24 @@ RebateCalculator {
         return installmentPenaltyAndRebate;
     }
 
-    private Date getPenaltyEffectiveDate(final Installment installment) {
+    private Date getPenaltyEffectiveDate(final Installment installment, final Installment assessmentEffecInstallment,
+            final Date assmentDate) {
         final DateTime installmentDate = new DateTime(installment.getFromDate());
         final DateTime firstHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_FIRST_HALF.toDate())
-        .withYear(installmentDate.getYear());
+                .withYear(installmentDate.getYear());
         final DateTime secondHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_SECOND_HALF.toDate())
-        .withYear(installmentDate.getYear());
-
-        if (propertyTaxUtil.between(firstHalfPeriod.toDate(), installment.getFromDate(), installment.getToDate()))
+                .withYear(installmentDate.getYear());
+        /**
+         * If assessment date falls in the installment on which penalty is being calculated then penalty calculation will be
+         * effective from two months after the assessment date
+         */
+        if (installment.equals(assessmentEffecInstallment)) {
+            final Calendar penalyDate = Calendar.getInstance();
+            penalyDate.setTime(assmentDate);
+            penalyDate.add(Calendar.MONTH, 3);
+            penalyDate.set(Calendar.DAY_OF_MONTH, 1);
+            return penalyDate.getTime();
+        } else if (propertyTaxUtil.between(firstHalfPeriod.toDate(), installment.getFromDate(), installment.getToDate()))
             return firstHalfPeriod.toDate();
         else
             return secondHalfPeriod.toDate();

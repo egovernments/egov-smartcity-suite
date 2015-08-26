@@ -2255,6 +2255,17 @@ public class PropertyService {
 
     }
 
+    /**
+     * Returns the installment in which the assessment date falls
+     * @param assessmentDate
+     * @return
+     */
+    public Installment getAssessmentEffectiveInstallment(Date assessmentDate) {
+        return installmentDao.getInsatllmentByModuleForGivenDate(
+                moduleDao.getModuleByName(PTMODULENAME),
+                assessmentDate);
+    }
+    
     public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {
         return ptDemandDAO.getDemandCollMap(propertyImpl);
     }

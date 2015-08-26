@@ -70,7 +70,6 @@ import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.commons.Installment;
 import org.egov.demand.dao.DemandGenericDao;
-import org.egov.demand.dao.DemandGenericHibDao;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
