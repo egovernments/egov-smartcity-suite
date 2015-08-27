@@ -78,6 +78,7 @@
 					<s:fielderror/>
 				</div>			
 			</s:if>
+			<div style="padding:0 20px;">
 			<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			  <tr> 
 			    <td>
@@ -179,7 +180,8 @@
 			  <tr>
 			 <br/>
 			</tr>
-		</table>	  
+		</table>
+		</div>	  
 		</div>
 	</body>
 </html>

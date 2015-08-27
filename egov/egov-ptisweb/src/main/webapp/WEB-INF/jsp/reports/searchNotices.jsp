@@ -220,6 +220,7 @@
 					<td colspan="2" class="greybox">&nbsp;</td>
 				</tr>
 			</table>
+			<br/>
 		</div>
 		<div class="buttonbottom" align="center">
 			<s:submit name="button32" type="submit" cssClass="buttonsubmit"

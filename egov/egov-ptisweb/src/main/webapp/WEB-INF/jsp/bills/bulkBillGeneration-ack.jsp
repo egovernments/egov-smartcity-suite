@@ -57,7 +57,6 @@
   <s:form name="BillGenerationForm" theme="simple"> 
   <s:token />
   <div class="formmainbox">
-  <div class="formheading"></div>
 		<div class="headingbg"><s:text name="BulkBillAck"/></div>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
@@ -66,11 +65,13 @@
 	        </td>
 		</tr>
 		</table> 
+		<br/>
 	</div>
 	<div class="buttonbottom">
 		<input type="submit" class="buttonsubmit" value="Go Back" id="newform" name="newform" onclick="return goBacktoBulkBillGeneration();" />&nbsp;</td>
 		<input name="buttonClose" type="button" class="button"	id="buttonClose" value="Close" onclick="window.close();" />&nbsp;
 	</div>
+	
   </s:form>
   </body>
 </html>

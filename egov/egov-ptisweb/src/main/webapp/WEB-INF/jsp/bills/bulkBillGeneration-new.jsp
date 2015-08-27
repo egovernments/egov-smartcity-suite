@@ -46,8 +46,6 @@
   <head>
     <title><s:text name='BulkBillNew'/></title>
    <script type="text/javascript">
-
-   paintAlternateColorForRows();
  
    function populateWard() {
 		populatewardId( {
@@ -79,25 +77,16 @@
 	    	<s:actionmessage theme="simple"/>
 	    </div>
 	</s:if>
-  <div class="formheading"></div>
 		<div class="headingbg"><s:text name="BulkBillNew"/></div>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-		</tr>
 		
 		
 		<tr>
-			<td>&nbsp;</td>
-			<td>
+			<td class="greybox" style="width:40%;text-align:right;">
 				<s:text name="Zone" />
 				<span class="mandatory1">*</span> :
 			</td>
-			<td>
+			<td class="greybox" style="width:50%;">
 				<s:select name="zoneId" id="zoneId" list="zoneBndryMap"
 					listKey="key" listValue="value" headerKey="-1"
 					headerValue="%{getText('default.select')}" value="%{zoneId}"
@@ -105,26 +94,22 @@
 				<egov:ajaxdropdown id="wardId" fields="['Text','Value']"
 					dropdownId="wardId" url="common/ajaxCommon-wardByZone.action" />
 			</td>
-			<td>&nbsp;</td>
 			
 		</tr>
 		<tr>
-			<td>&nbsp;</td>
-			<td>
+			<td class="greybox" style="text-align: right;">
 				<s:text name="Ward" /> :
 			</td>
-			<td>
+			<td class="greybox">
 				<s:select name="wardId" id="wardId" list="dropdownData.wardList"
 					listKey="id" listValue="name" headerKey="-1"
 					headerValue="%{getText('default.select')}" value="%{wardId}"/>
 			</td>
-			<td>&nbsp;</td>
 		</tr>
 		
-		<tr>
-			<td colspan="5">&nbsp;</td>
-		</tr>
+		
 		</table>
+		<br/>
 	</div>
 	<div class="buttonbottom">
 		<input type="submit" class="buttonsubmit" value="Generate Bills" id="generateBills" name="generateBills" onclick="return validateFormAndSubmit();" />&nbsp;</td>

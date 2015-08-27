@@ -104,7 +104,7 @@
   
   <s:form name="ChBaseRateAreaForm" action="changeStreetRate-search" theme="simple" method="post">
   <div class="formmainbox">
-  	<div class="formheading"></div>
+  
 	<div class="headingbg"><s:text name="ChBaseRateAreaHeader"/></div>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
@@ -127,6 +127,7 @@
 				</center>
 			</td>
 		</tr>
+		
 		<tr>
 			<td class="bluebox" width="100%" colspan="5">
 				<center>
@@ -167,17 +168,18 @@
 		</tr>		
 	  	<tr>
 	  	<td class="bluebox" colspan="5">
-	  	<div class="mandatory" align="left">
+	  	<div class="mandatory1" align="left">
 	  		<font size="2"><s:text name="mandtryFlds"/></font>
 	  	</div>
 	  	</td>
 	  </tr>
 	  </table>
-	  <div class="buttonsearch" align="center">
+	            	
+	</div>
+	 <div class="buttonsearch" align="center">
 		   	<s:submit cssClass="buttonsubmit" value="Search" method="search"/>
 		   	<input type="button" name="button2" id="button2" value="Close" class="button" onclick="return confirmClose();"/>
-	  </div>           	
-	</div>
+	  </div>
 	</s:form>
 </body>
 </html>
