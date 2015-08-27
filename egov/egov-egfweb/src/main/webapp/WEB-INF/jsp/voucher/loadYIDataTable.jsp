@@ -316,7 +316,7 @@ var loadDetailType = function(index) {
 		var subledgerid=document.getElementById('subLedgerlist['+index+'].glcode.id');
 		var accountCode = subledgerid.options[subledgerid.selectedIndex].text;
 		document.getElementById('subLedgerlist['+index+'].subledgerCode').value =accountCode;
-		var url = path+'/voucher/common!getDetailType.action?accountCode='+accountCode+'&index='+index;
+		var url = path+'/voucher/common-getDetailType.action?accountCode='+accountCode+'&index='+index;
 		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
 };
 var postType = {
