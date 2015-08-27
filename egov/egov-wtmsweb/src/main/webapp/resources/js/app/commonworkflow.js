@@ -99,17 +99,15 @@ $(document).ready(function()
 function callAlertForDepartment() {
     var value=$('#approvalDepartment').val();
 	if(value=="" ||  value=="-1") {
-		alert("Please select the Approver Department");
-		$('#approvalDepartment').focus();
+		bootbox.alert("Please select the Approver Department");
 		return false;
 	}
 }
 
 function callAlertForDesignation() {
-	var value=$('#approverDesignation').val();
+	var value=$('#approvalDesignation').val();
 	if(value=="" || value=="-1") {
-		alert("Please select the approver designation");
-		$('#approverDesignation').focus();
+		bootbox.alert("Please select the approver designation");
 		return false;
 	}
 }
