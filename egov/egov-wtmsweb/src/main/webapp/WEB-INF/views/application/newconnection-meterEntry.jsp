@@ -57,6 +57,7 @@
 						value="${meterReadingpriviousObj}" />
 					<form:hidden id="meterReadingCurrentObj" path=""
 						value="${meterReadingCurrentObj}" />
+						<input type="hidden" name="executionDate" id="executionDate" value="${executionDate}"/>
 
 					<input type="hidden" id="currentInstallmentExist"
 						name="currentInstallmentExist" value="${currentInstallmentExist}" />
@@ -166,66 +167,5 @@
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-
-<script>
-	var currentInstallmentExist = $('#currentInstallmentExist').val();
-	if (currentInstallmentExist) {
-		$('#submitButtonId').hide();
-	}
-	function getUrlToPring() {
-		var consumerCode = $('#consumerCode').val();
-		var url = '/wtms/application/meterdemandnotice?pathVar=' + consumerCode;
-		$('#editmeterWaterConnectionform').attr('method', 'get');
-		$('#editmeterWaterConnectionform').attr('action', url);
-		window.location = url;
-	}
-	function valiateReading() {
-		var previousReading = $('#previousreading').val();
-		var currentReading = $('#metercurrentReading').val();
-		var currentMeterDate = $('#metercurrentReadingDate').val();
-		var previousMeterDate = $('#previousreadingDate').val();
-		if ($('#metercurrentReading').val() == '') {
-			alert('Current Meter Reading is required');
-			return false;
-		}
-		if ((currentReading - previousReading) < 0) {
-			alert('Current Meter Reading should not be less than Previous Meter Reading');
-			$('#metercurrentReading').val('');
-			return false;
-		}
-		document.forms[0].submit;
-		return true;
-		/* if (currentMeterDate != undefined && previousMeterDate != undefined) {
-			if (!validateDateRange(previousMeterDate, currentMeterDate)) {
-				alert("Entered Metered Date allready present in System");
-				$('#metercurrentReadingDate').val('');
-				return false;
-			}
-		} else {
-			document.forms[0].submit;
-			return true;
-		} */
-	}
-
-	function validateDateRange(fromDate, toDate) {
-		if (fromDate != "" && toDate != "") {
-			var stsplit = fromDate.split("/");
-			var ensplit = toDate.split("/");
-
-			startDate = Date.parse(stsplit[1] + "/" + stsplit[0] + "/"
-					+ stsplit[2]);
-			endDate = Date.parse(ensplit[1] + "/" + ensplit[0] + "/"
-					+ ensplit[2]);
-
-			// Check the date range, 86400000 is the number of milliseconds in one day
-			var difference = (endDate - startDate) / (86400000 * 7);
-			if (difference = 0) {
-				return false;
-			} else {
-				return true;
-			}
-		}
-		return true;
-	}
-</script>
+<script src="<c:url value='/resources/js/app/meterEntry.js'/>"></script>
 <script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>

@@ -98,7 +98,9 @@ public class MeterReadingController {
 
     private String loadViewData(final Model model, final HttpServletRequest request,
             final WaterConnectionDetails waterConnectionDetails) {
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
+        model.addAttribute("executionDate", formatter.format(waterConnectionDetails.getExecutionDate()));
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
         model.addAttribute("connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(waterConnectionDetails.getConnectionType().name()));

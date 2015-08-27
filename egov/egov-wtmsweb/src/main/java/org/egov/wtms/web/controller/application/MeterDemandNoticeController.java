@@ -210,9 +210,6 @@ public class MeterDemandNoticeController {
         reportParams.put("demandNoticeDate",
                 billObj != null && billObj.getCreateDate() != null ? formatter.format(billObj.getCreateDate())
                         : null);
-        reportParams.put("totalBilltoCollect", getTotalAmount(waterConnectionDetails));
-        reportParams.put("currentMonthCharges", getCurrentMonthDemandAmount(waterConnectionDetails));
-        reportParams.put("totalDueAmount", getTotalDue(waterConnectionDetails));
         reportParams.put("previousReading", meterReadingpriviousObj.getCurrentReading());
         if (meterReadingpriviousObj.getCurrentReadingDate() != null)
             reportParams.put("previousReadingDate", formatter.format(meterReadingpriviousObj.getCurrentReadingDate()));
@@ -223,6 +220,10 @@ public class MeterDemandNoticeController {
                 formatter.format(waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
         reportParams.put("noofunitsconsume", waterConnectionDetails.getMeterConnection().get(0).getCurrentReading()
                 - meterReadingpriviousObj.getCurrentReading());
+        reportParams.put("totalBilltoCollect", getTotalAmount(waterConnectionDetails));
+        reportParams.put("currentMonthCharges", getCurrentMonthDemandAmount(waterConnectionDetails,waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
+        reportParams.put("totalDueAmount", getTotalDue(waterConnectionDetails,waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
+        
         reportParams.put("address", assessmentDetails.getPropertyAddress());
     }
 
@@ -242,26 +243,27 @@ public class MeterDemandNoticeController {
         return balance;
     }
 
-    public BigDecimal getTotalDue(final WaterConnectionDetails waterConnectionDetails) {
+    public BigDecimal getTotalDue(final WaterConnectionDetails waterConnectionDetails,Date givenDate) {
         BigDecimal balance = BigDecimal.ZERO;
         balance = getTotalAmount(waterConnectionDetails);
-        final BigDecimal demnadDetCurrentamount = getCurrentMonthDemandAmount(waterConnectionDetails);
+        final BigDecimal demnadDetCurrentamount = getCurrentMonthDemandAmount(waterConnectionDetails, givenDate);
         balance = balance.subtract(demnadDetCurrentamount);
         return balance;
     }
 
-    private BigDecimal getCurrentMonthDemandAmount(final WaterConnectionDetails waterConnectionDetails) {
+    private BigDecimal getCurrentMonthDemandAmount(final WaterConnectionDetails waterConnectionDetails,Date givenDate) {
         BigDecimal currentAmount = BigDecimal.ZERO;
         final Installment installment = connectionDemandService.getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
-                WaterTaxConstants.MONTHLY, new Date());
+                WaterTaxConstants.MONTHLY, givenDate);
         final EgDemandReason demandReasonObj = connectionDemandService.getDemandReasonByCodeAndInstallment(
                 WaterTaxConstants.WATERTAXREASONCODE, installment);
         final List<EgDemandDetails> demnadDetList = demandGenericDao.getDemandDetailsForDemandAndReasons(
                 waterConnectionDetails.getDemand(), Arrays.asList(demandReasonObj));
+        if(demnadDetList.size() > 0){
         final int detLength = demnadDetList.size() - 1;
         if (demnadDetList.get(detLength - detLength).getAmount() != null)
             currentAmount = demnadDetList.get(detLength).getAmount();
-
+        }
         return currentAmount;
     }
 
