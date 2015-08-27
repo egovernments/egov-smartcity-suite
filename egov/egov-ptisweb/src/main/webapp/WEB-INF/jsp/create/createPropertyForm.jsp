@@ -153,12 +153,12 @@
    </tr>
 	<tr>
 		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="reg.docno"></s:text> :</td>
+		<td class="greybox"><s:text name="reg.docno"></s:text><span class="mandatory1">*</span> :</td>
 		<td class="greybox"><s:textfield name="basicProperty.regdDocNo" id="regdDocNo"
 				value="%{basicProperty.regdDocNo}" size="12" maxlength="12"
 				onchange="trim(this,this.value);" onblur="checkZero(this);"></s:textfield>
 		</td>
-		<td class="greybox"><s:text name="reg.docdate"></s:text> :</td>
+		<td class="greybox"><s:text name="reg.docdate"></s:text><span class="mandatory1">*</span> :</td>
 		<td class="greybox"><s:date name="basicProperty.regdDocDate" var="docDate" format="dd/MM/yyyy" />
 		 <s:textfield name="basicProperty.regdDocDate" id="basicProperty.regdDocDate" value="%{#docDate}" size="12" autocomplete="off"
 				maxlength="12" cssClass="datepicker"></s:textfield></td>

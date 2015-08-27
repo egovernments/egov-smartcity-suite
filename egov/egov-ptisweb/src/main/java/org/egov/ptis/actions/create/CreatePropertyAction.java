@@ -877,6 +877,12 @@ public class CreatePropertyAction extends WorkflowAction {
         else
             addActionError(getText("mandatory.doorNo"));
 
+        if (null == property.getBasicProperty().getRegdDocDate()) {
+            addActionError(getText("mandatory.regdocdate"));
+        }
+        if(StringUtils.isBlank(property.getBasicProperty().getRegdDocNo())) {
+            addActionError(getText("mandatory.regdocno"));
+        }
         for (final PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfoProxy())
             if (owner != null) {
                 if (StringUtils.isBlank(owner.getOwner().getName()))
