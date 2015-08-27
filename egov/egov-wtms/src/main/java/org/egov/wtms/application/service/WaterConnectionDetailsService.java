@@ -580,6 +580,7 @@ public class WaterConnectionDetailsService {
                 .withDateInfo(currentDate.toDate());
                 sendSmsAndEmailOnRejection(waterConnectionDetails,
                         approvalComent);
+                updateIndexes(waterConnectionDetails);
             } else {
                 final String stateValue = WF_STATE_REJECTED;
                 waterConnectionDetails.transition(true)
@@ -943,6 +944,10 @@ public class WaterConnectionDetailsService {
                             .getStatus()
                             .getCode()
                             .equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
+                            || waterConnectionDetails
+                            .getStatus()
+                            .getCode()
+                            .equals(WaterTaxConstants.APPLICATION_STATUS_CANCELLED)
                             || waterConnectionDetails
                             .getStatus()
                             .getCode()
