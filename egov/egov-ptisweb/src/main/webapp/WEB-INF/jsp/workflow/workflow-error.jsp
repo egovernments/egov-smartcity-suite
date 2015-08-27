@@ -46,22 +46,22 @@
 	</head>
 	<body>
 		<div class="formmainbox">
-			<div class="formheading"></div>
 			<div class="headingbg">
 				<s:text name="workflow.errorAck" />
 			</div>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
 					<td colspan="5"
-						style="background-color: #FDF7F0; font-size: 15px;"
+						style="color:red; font-size: 15px;"
 						align="center"><s:property value="%{wfErrorMsg}"/>
 					</td>
 				</tr>
 			</table>
+			<br/>
 		</div>
 		<div class="buttonbottom" align="center">
 			<input type="button" class="button" name="SearchProperty" id="SearchProperty" value="Search Property" onclick="window.location='${pageContext.request.contextPath}/search/searchProperty-searchForm.action';" />
-			<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
+			&nbsp;<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
 		</div>
 	</body>
 </html>

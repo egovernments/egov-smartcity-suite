@@ -192,7 +192,6 @@
 	</tr>
 	<tr class="bpddetailsheader">
 		<td class="greybox">&nbsp;</td>
-		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
 		<td class="bluebox">
 		 <s:checkbox name="propertyDetail.buildingPlanDetailsChecked" id="buildingPlanDetailsChecked"

@@ -92,6 +92,7 @@
 											method="printAck" cssClass="buttonsubmit" align="center"
 											onclick="return onSubmit('createProperty-printAck.action');" />
 								</s:if>
+								&nbsp;
 								<input type="button" class="button" onclick="window.close();" value="Close">
 							</div>
 						</td>

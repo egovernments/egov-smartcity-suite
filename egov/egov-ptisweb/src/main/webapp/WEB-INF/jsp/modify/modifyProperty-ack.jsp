@@ -88,12 +88,14 @@
 							</td>
 						</tr>
 					</table>
+					<br/>
 			</div>
 			<s:hidden name="modifyRsn" value="%{modifyRsn}"/>
 			<div class="buttonbottom" align="center">
 				<s:if test="%{userDesgn.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_CLERK_DESGN) && !wfInitiatorRejected}">
 					<s:submit value="Print" name="PrintAck" id="PrintAck"  method="printAck" cssClass="buttonsubmit" onclick="return onSubmit();" />
 				</s:if>
+				&nbsp;
 				<input type="button" name="button2" id="button2"
 					value="Close" class="button" onclick="window.close();" />
 			</div>
