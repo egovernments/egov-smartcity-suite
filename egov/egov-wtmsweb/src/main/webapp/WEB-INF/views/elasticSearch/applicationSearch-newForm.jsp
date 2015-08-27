@@ -105,7 +105,7 @@
 										code="lbl1.consumer.number" />
 								</label>
 						<div class="col-sm-3 add-margin">
-							<input type="text" name="applicationCode" class="form-control" id="app-appcodo"
+							<input type="text" name="applicationCode" class="form-control" id="app-appconsumercodo"
 								 />
 						</div>
 								<label for="field-1" class="col-sm-2 control-label"> <spring:message
@@ -139,7 +139,7 @@
 							<a href="javascript:void(0);" class="btn btn-primary" id="searchapplication" 
 								><spring:message code='lbl.search' /></a>
 								
-							<button class="btn btn-danger" type="reset">Reset</button>
+							<button class="btn btn-danger" type="reset" >Reset</button>
 							<a href="javascript:void(0);" id="closeComplaints"
 								class="btn btn-default" onclick="self.close()"><spring:message code='lbl.close' /></a>
 						</div>
@@ -159,13 +159,13 @@
 
 
 
-	<div class="row">
+	<div class="row" >
 					<div class="col-md-6 col-xs-6 table-header">The Search result is</div>
 					<div class="col-md-6 col-xs-6 add-margin text-right">
 						<span class="inline-elem">Search</span>
 						<span class="inline-elem"><input type="text" id="searchapp" class="form-control input-sm"></span>
 					</div>
-	<div class="col-md-12">	
+	<div class="col-md-12" id="searchResultDiv">	
 	<table class="table table-bordered datatable dt-responsive"
 		id="aplicationSearchResults">
 

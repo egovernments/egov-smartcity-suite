@@ -956,6 +956,10 @@ public class WaterConnectionDetailsService {
                                 .getApplicationNumber());
                 applicationIndex.setStatus(waterConnectionDetails
                         .getStatus().getDescription());
+                applicationIndex.setApplicantAddress(assessmentDetails.getPropertyAddress());
+                if(waterConnectionDetails.getConnection().getConsumerCode()!=null){
+                applicationIndex.setConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
+                }
                 applicationIndexService
                 .updateApplicationIndex(applicationIndex);
             }
@@ -988,7 +992,8 @@ public class WaterConnectionDetailsService {
                     consumerName.toString(), waterConnectionDetails
                     .getStatus().getDescription().toString(),
                     "/wtms/application/view/"
-                            + waterConnectionDetails.getApplicationNumber());
+                            + waterConnectionDetails.getApplicationNumber(),
+                            assessmentDetails.getPropertyAddress());
 
             if (waterConnectionDetails.getDisposalDate() != null)
                 applicationIndexBuilder.disposalDate(waterConnectionDetails
@@ -997,6 +1002,7 @@ public class WaterConnectionDetailsService {
             if (ownerNameItr != null && ownerNameItr.hasNext())
                 applicationIndexBuilder.mobileNumber(ownerNameItr.next()
                         .getMobileNumber());
+            
             final ApplicationIndex applicationIndex = applicationIndexBuilder
                     .build();
             applicationIndexService.createApplicationIndex(applicationIndex);

@@ -73,7 +73,7 @@ jQuery(document).ready(function ($) {
 				    	}
 					},
 					{title: 'Applicant Name', data: 'resource.searchable.applicantname'},
-					{title: 'Applicant Address', data: 'resource.common.applicantAddress'},
+					{title: 'Applicant Address', data: 'resource.searchable.applicantAddress'},
 					
 					{title: 'Status', data: 'resource.clauses.status'}
 					
@@ -106,7 +106,7 @@ jQuery(document).ready(function ($) {
 		}
 		
 		$(".btn-primary").click(function(event){
-			
+			$('#searchResultDiv').show();
 			if($('#start_date').val() != '' && $('#end_date').val() != ''){
 					var start = $('#start_date').val();
 					var end = $('#end_date').val();
@@ -132,7 +132,7 @@ jQuery(document).ready(function ($) {
 				event.preventDefault();
 			
 		});
-	
+		
 	$('#searchapp').keyup(function(){
 		tableContainer.fnFilter(this.value);
 	});
@@ -162,7 +162,7 @@ jQuery(document).ready(function ($) {
 			success: function (response) {
 				console.log("success"+response);
 				$('#applicationType').empty();
-				$('#applicationType').append($("<option value=''>Select</option>"));
+				$('#applicationType').append($("<option value=''>Select from below</option>"));
 				$.each(response, function(index, value) {
 					$('#applicationType').append($('<option>').text(value));
 				});
@@ -173,5 +173,11 @@ jQuery(document).ready(function ($) {
 			}
 		});
 	});
-		
+	
+	$(".btn-danger").click(function(event){
+		$('#searchResultDiv').hide();
+	});
+
+	
+	
 });
