@@ -132,7 +132,7 @@
 										</option>
 										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) ||
 										roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
-											<s:if test="%{source!='A'}">
+											<s:if test="%{#attr.currentRowObject.source!='A'}">
 												<option value="EDIT_DATAENTRY">
 													<s:text name="edit_dataentry"></s:text>
 												</option>
