@@ -49,45 +49,45 @@
 		<form:form  id="waterConnectionSuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="waterConnectionDetails" >
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
-				<div class="panel-title text-center no-float">
+				<div class="panel-title text-center">
 				<c:choose>
 				<c:when test="${waterConnectionDetails.connection.parentConnection.id!=null && waterConnectionDetails.state.value=='Rejected' && waterConnectionDetails.applicationType.code=='CHANGEOFUSE'}">
 						<spring:message code="msg.changeofuseconnection.rejection.success" />
-						<div >${approverName}</div>
+						<span>${approverName}</span>
 					</c:when>
 					<c:when test="${waterConnectionDetails.connection.parentConnection.id!=null && waterConnectionDetails.connectionStatus == 'INPROGRESS' && waterConnectionDetails.applicationType.code=='CHANGEOFUSE'}">
 						<spring:message code="msg.changeofuseconnection.ack.msg" />
-						<div ><spring:message code="msg.sussess.forward" />${approverName}</div>
+						<span ><spring:message code="msg.sussess.forward" />${approverName}</span>
 					</c:when>
 					<c:when test="${waterConnectionDetails.connection.parentConnection.id!=null && waterConnectionDetails.connectionStatus == 'INPROGRESS' && waterConnectionDetails.applicationType.code=='ADDNLCONNECTION'}">
 						<spring:message code="msg.addconnection.ack.msg" />
-						<div ><spring:message code="msg.sussess.forward" />${approverName}</div>
+						<span ><spring:message code="msg.sussess.forward" />${approverName}</span>
 					</c:when>
 					<c:when test="${waterConnectionDetails.connection.parentConnection.id!=null && waterConnectionDetails.connectionStatus == 'ACTIVE' && waterConnectionDetails.status.code == 'SANCTIONED'}">
-					<div>	<spring:message code="msg.addconnection.approved" />${approverName}</div>
+					<span>	<spring:message code="msg.addconnection.approved" />${approverName}</span>
 					</c:when>
 					<c:otherwise>
 						<c:choose>
 							<c:when test="${waterConnectionDetails.status.code == 'APPROVED' && waterConnectionDetails.connectionStatus == 'INPROGRESS' }">
-							<div><spring:message code="msg.connection.approved.success" />${approverName}</div>
+							<span><spring:message code="msg.connection.approved.success" />${approverName}</span>
 								<%-- <spring:message code="msg.sussess.forward" /><br>${approvalUser} --%>
 							</c:when>
 							<c:when test="${waterConnectionDetails.connectionStatus== 'INACTIVE' && waterConnectionDetails.applicationType.code=='CHANGEOFUSE' }">
-							<div><spring:message code="msg.changeofuseconnection.cancel.success" /></div>
+							<span><spring:message code="msg.changeofuseconnection.cancel.success" /></span>
 							</c:when>
 							<c:when test="${waterConnectionDetails.state.value== 'Rejected' }">
-							<div><spring:message code="msg.newapplication.rejection.success" />${approverName}</div>
+							<span><spring:message code="msg.newapplication.rejection.success" />${approverName}</span>
 							</c:when>
 							<c:when test="${waterConnectionDetails.connectionStatus == 'INACTIVE' }">
-							<div><spring:message code="msg.newapplication.cancel.success" /></div>
+							<span><spring:message code="msg.newapplication.cancel.success" /></span>
 							</c:when>
 							<c:when test="${waterConnectionDetails.status.code == 'SANCTIONED' && waterConnectionDetails.connectionStatus == 'ACTIVE' }">
 								<spring:message code="msg.connection.sanctioned.success" />
 								<%-- <spring:message code="msg.sussess.forward" /><br>${approvalUser} --%>
 							</c:when>
 							<c:otherwise>
-								<div><spring:message code="msg.newconnection.ack.success" /></div>
-								<div ><spring:message code="msg.sussess.forward" />${approverName}</div>
+								<span><spring:message code="msg.newconnection.ack.success" /></span>
+								<span ><spring:message code="msg.sussess.forward" />${approverName}</span>
 							</c:otherwise>
 						</c:choose>
 					</c:otherwise>

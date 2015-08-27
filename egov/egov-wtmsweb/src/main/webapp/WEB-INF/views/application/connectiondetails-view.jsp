@@ -107,7 +107,7 @@
                     </c:choose>
                     </div>
 					</div>
-				<div class="row add-border">
+				<div class="row">
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.donationcharge"/></div>  
 					<div class="col-xs-3 add-margin view-content">
 						<c:choose>

@@ -49,33 +49,30 @@
 		</div>
 		<form:errors path="connection.propertyIdentifier" id="propertyIdentifierError" cssClass="add-margin error-msg" />
 	</div>
-	<div class="form-group">
-		<label class="col-sm-2 control-label text-right"><spring:message
-				code="lbl.nooffloors" /></label>
-		<div class="col-sm-3 add-margin">
-			<input type="text" class="form-control" id="nooffloors" disabled>
-		</div>
-	</div>
-	
-</div>
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message
+	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.applicantname" /></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control" id="applicantname" disabled> 
 	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.mobilenumber" /></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control" id="mobileNumber" disabled>
 	</div>
-</div>
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message
+	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.email" /></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control" id="email" disabled>
 	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.aadhaar" /></label>
+	<div class="col-sm-3 add-margin">
+		<input type="text" class="form-control text-left" id="aadhaar"  disabled> 
+	</div>	
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.locality" /></label>
 	<div class="col-sm-3 add-margin">
@@ -96,13 +93,14 @@
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.nooffloors" /></label>
+	<div class="col-sm-3 add-margin">
+		<input type="text" class="form-control" id="nooffloors" disabled>
+	</div>
+	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.properttax" /></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control text-right" id="propertytax"  disabled value="0.00"> 
 	</div>	
-	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.aadhaar" /></label>
-	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control text-left" id="aadhaar"  disabled> 
-	</div>	
+	
 </div>					
