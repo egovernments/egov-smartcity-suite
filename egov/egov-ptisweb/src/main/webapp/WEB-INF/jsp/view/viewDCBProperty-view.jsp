@@ -153,7 +153,7 @@
 							<s:text name="OwnerName" /> :
 						</td>
 						<td class="greybox">
-							<span class="bold"> <s:property value="%{ownerName}" /> </span>
+							<span class="bold"> <s:property value="%{viewMap.ownerName}" /> </span>
 						</td>
 					</tr>
 					<tr>
