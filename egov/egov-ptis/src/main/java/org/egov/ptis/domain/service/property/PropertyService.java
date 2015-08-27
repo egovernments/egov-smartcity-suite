@@ -2001,7 +2001,7 @@ public class PropertyService {
             if (null == applicationIndex) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getApplicationNo(), property.getCreatedDate(), applictionType, property
-                                .getBasicProperty().getFullOwnerName(), property.getState().getValue(), url);
+                                .getBasicProperty().getFullOwnerName(), property.getState().getValue(), url,property.getBasicProperty().getAddress().toString());
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
@@ -2018,7 +2018,7 @@ public class PropertyService {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getObjectionNumber(), property.getCreatedDate() != null ? property.getCreatedDate()
                                 : new Date(), applictionType, property.getBasicProperty().getFullOwnerName(), property
-                                .getState().getValue(), url);
+                                .getState().getValue(), url,property.getBasicProperty().getAddress().toString());
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
@@ -2034,7 +2034,7 @@ public class PropertyService {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
                         PTMODULENAME, property.getApplicationNo(),
                         property.getCreatedDate() != null ? property.getCreatedDate() : new Date(), applictionType,
-                        property.getBasicProperty().getFullOwnerName(), property.getState().getValue(), url);
+                        property.getBasicProperty().getFullOwnerName(), property.getState().getValue(), url,property.getBasicProperty().getAddress().toString());
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());

@@ -129,7 +129,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
            final ApplicationIndexBuilder applicationIndexBuilder =
                    new ApplicationIndexBuilder(PropertyTaxConstants.PTMODULENAME, objection.getObjectionNumber(),
                            (objection.getCreatedDate()!=null?objection.getCreatedDate():new Date()), PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION,
-                           objection.getBasicProperty().getFullOwnerName(), objection.getState().getValue(), url);
+                           objection.getBasicProperty().getFullOwnerName(), objection.getState().getValue(), url,objection.getBasicProperty().getAddress().toString());
            applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
          } else {
            applicationIndex.setStatus(objection.getState().getValue());
