@@ -80,9 +80,9 @@ public class ChangeOfUseService {
                 && null != assessmentDetails.getPropertyDetails().getTaxDue()
                 && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0) {
             if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
-                validationMessage = messageSource.getMessage("err.validate.changeofuse.property.taxdue", new String[] {
+                validationMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
                         assessmentDetails.getPropertyDetails().getTaxDue().toString(),
-                        parentWaterConnectionDetail.getConnection().getPropertyIdentifier() }, null);
+                        parentWaterConnectionDetail.getConnection().getPropertyIdentifier(),"changeOfUsage"  }, null);
         } else if (parentWaterConnectionDetail.getDemand().getBaseDemand().doubleValue()
                 - parentWaterConnectionDetail.getDemand().getAmtCollected().doubleValue() > 0) {
             if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE))
