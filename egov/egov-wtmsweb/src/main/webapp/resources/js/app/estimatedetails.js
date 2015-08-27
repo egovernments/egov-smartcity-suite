@@ -70,7 +70,7 @@ $(document).ready(function()
         var table = document.getElementById('estimateDetails');
         var rowCount = table.rows.length;
         if((rowCount-2) >= 5) {
-        	alert("Maximum of only 5 rows are allowed!!");
+        	bootbox.alert("Maximum of only 5 rows are allowed!!");
         	return;
         }
         var row = table.insertRow(rowCount-1);
