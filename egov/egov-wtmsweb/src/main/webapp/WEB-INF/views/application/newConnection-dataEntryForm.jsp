@@ -48,8 +48,7 @@
 		<form:form role="form" action="/wtms/application/newConnection-createExisting" 
 			modelAttribute="waterConnectionDetails" id="newWaterConnectionform"
 			cssClass="form-horizontal form-groups-bordered"
-			enctype="multipart/form-data"
-			data-ajaxsubmit="true">
+			enctype="multipart/form-data">
 			<form:hidden path="applicationType" id="applicationType" value="${waterConnectionDetails.applicationType.id}"/>
 			<form:hidden path="id" id="id" value="${waterConnectionDetails.id}"/>
 			<form:hidden path="legacy" id="legacy" value="true"/>
