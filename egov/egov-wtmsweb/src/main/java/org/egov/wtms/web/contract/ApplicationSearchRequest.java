@@ -59,7 +59,7 @@ public class ApplicationSearchRequest {
     private String applicationNumber;
     private String applicationCode;
     private String applicantName;
-    private String appMobileNo;
+    private String mobileNumber;
     private String fromDate;
     private String toDate;
     SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -129,12 +129,12 @@ public class ApplicationSearchRequest {
         this.applicantName = applicantName;
     }
 
-    public String getAppMobileNo() {
-        return appMobileNo;
+    public String getMobileNumber() {
+        return mobileNumber;
     }
 
-    public void setAppMobileNo(final String appMobileNo) {
-        this.appMobileNo = appMobileNo;
+    public void setMobileNumber(final String mobileNumber) {
+        this.mobileNumber = mobileNumber;
     }
 
     public String getFromDate() {
@@ -156,7 +156,7 @@ public class ApplicationSearchRequest {
         andFilters.add(termsStringFilter("clauses.applicationtype", applicationType));
         andFilters.add(queryStringFilter("searchable.applicantname", applicantName));
         andFilters.add(queryStringFilter("searchable.consumercode", applicationCode));
-        andFilters.add(queryStringFilter("searchable.mobilenumber", appMobileNo));
+        andFilters.add(queryStringFilter("searchable.mobilenumber", mobileNumber));
         andFilters.add(rangeFilter("searchable.applicationdate", fromDate, toDate));
         if (logger.isDebugEnabled())
             logger.debug("finished filters");

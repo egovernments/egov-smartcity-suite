@@ -112,7 +112,7 @@
 										code="lbl.application.mobileNo" />
 								</label>
 							<div class="col-sm-3 add-margin">
-							<input type="text" name="appMobileNo" class="form-control" id="app-appcodo" min="10" maxlength="12" />
+							<input type="text" name="MobileNumber" class="form-control" id="app-appcodo" min="10" maxlength="12" />
 						</div>
 						</div>
 						
