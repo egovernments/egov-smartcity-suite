@@ -127,6 +127,11 @@ $(document).ready(function()
  			    		validateWorkFlowApprover(action);
  			    		document.forms[0].submit(); 
 	    			}
+	    		 }else{
+	    			 setTimeout(function(){ 
+	    				 off = ( $(document).scrollTop() - 140);
+	    				 $('html, body').animate({scrollTop: off }, 0);
+    		    	 }, 100);
 	    		 }	    			 
 			 }
 			 else if(status=='WORKORDERGENERATED' && action=='Tap Execution Date') {
