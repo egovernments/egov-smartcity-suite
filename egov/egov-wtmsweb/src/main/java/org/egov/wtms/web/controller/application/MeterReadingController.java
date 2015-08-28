@@ -167,6 +167,7 @@ public class MeterReadingController {
                 meterReadingConnectionDeatilObj, previousReading, dateFormat);
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
+        waterConnectionDetailsService.updateIndexes(savedWaterConnectionDetails);
         /*
          * redirectAttrs.addFlashAttribute("waterConnectionDetails", savedWaterConnectionDetails); return "newconnection-success";
          */
