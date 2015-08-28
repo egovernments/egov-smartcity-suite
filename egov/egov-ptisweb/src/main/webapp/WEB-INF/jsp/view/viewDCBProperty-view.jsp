@@ -109,7 +109,6 @@
 						</td>
 						<td class="bluebox">
 							<span class="bold">
-								<s:property default="N/A" value="%{viewMap.propID.zone.id}" />-
 								<s:property default="N/A" value="%{viewMap.propID.zone.name}" /> 
 							</span>
 						</td>
@@ -121,11 +120,10 @@
 						</td>
 						<td class="greybox">
 							<span class="bold">
-								<s:property default="N/A" value="%{viewMap.propID.ward.id}" />-
 								<s:property default="N/A" value="%{viewMap.propID.ward.name}" /> 
 							</span>
 						</td>
-					</tr>
+					</tr>   
 					<tr>
 						<td class="greybox" width="10%"></td>
 						<td class="greybox" width="5%">
@@ -133,7 +131,6 @@
 						</td>
 						<td class="greybox">
 							<span class="bold">
-								<s:property default="N/A" value="%{viewMap.propID.area.id}" />-
 								<s:property default="N/A" value="%{viewMap.propID.area.name}" /> 
 							</span>
 						</td>
@@ -153,10 +150,10 @@
 							<s:text name="OwnerName" /> :
 						</td>
 						<td class="greybox">
-							<span class="bold"> <s:property value="%{viewMap.ownerName}" /> </span>
+							<span class="bold"> <s:property value="%{ownerName}" /> </span>
 						</td>
 					</tr>
-					<tr>
+					<tr>   
 						<td class="greybox" width="10%"></td>
 						<td class="greybox">
 							<s:text name="PropertyAddress" /> :
