@@ -127,7 +127,12 @@ public class MeterReadingController {
                 meterReadingpriviousObj.setCurrentReading(0l);
         }
         model.addAttribute("meterReadingpriviousObj", meterReadingpriviousObj);
+        if(meterEntryAllReadyExistForCurrentMonth(waterConnectionDetails, new Date()))
+        {
+            return "redirect:/application/meterdemandnotice?pathVar=" + waterConnectionDetails.getConnection().getConsumerCode();
+        }else{
         return loadViewData(model, request, waterConnectionDetails);
+        }
 
     }
 
@@ -142,15 +147,10 @@ public class MeterReadingController {
         } catch (final ParseException e) {
 
         }
-        final Installment installment = connectionDemandService.getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
-                WaterTaxConstants.MONTHLY, givenDate);
-        if (waterConnectionDetails.getDemand() != null && waterConnectionDetails.getDemand().getEgInstallmentMaster() != null)
-            if (installment.getInstallmentNumber().equals(
-                    waterConnectionDetails.getDemand().getEgInstallmentMaster().getInstallmentNumber())) {
-                return "redirect:/application/meterdemandnotice?pathVar=" +
-                        waterConnectionDetails.getConnection().getConsumerCode();
-
-            }
+        if(meterEntryAllReadyExistForCurrentMonth(waterConnectionDetails, givenDate))
+        {
+            return "redirect:/application/meterdemandnotice?pathVar=" + waterConnectionDetails.getConnection().getConsumerCode();
+        }
         final MeterReadingConnectionDetails meterReadingConnectionDeatilObj = new MeterReadingConnectionDetails();
         Long previousReading = 0l;
         if (errors.hasErrors())
@@ -173,6 +173,19 @@ public class MeterReadingController {
          */
         return "redirect:/application/meterdemandnotice?pathVar="
                 + savedWaterConnectionDetails.getConnection().getConsumerCode();
+    }
+
+    private Boolean meterEntryAllReadyExistForCurrentMonth(WaterConnectionDetails waterConnectionDetails, Date givenDate) {
+        Boolean currrentInstallMentExist=false;
+        final Installment installment = connectionDemandService.getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
+                WaterTaxConstants.MONTHLY, givenDate);
+        if (waterConnectionDetails.getDemand() != null && waterConnectionDetails.getDemand().getEgInstallmentMaster() != null)
+            if (installment.getInstallmentNumber().equals(
+                    waterConnectionDetails.getDemand().getEgInstallmentMaster().getInstallmentNumber())) {
+                currrentInstallMentExist=true;
+
+            }
+        return currrentInstallMentExist;
     }
 
     private WaterConnectionDetails billCalculationAndDemandUpdate(WaterConnectionDetails waterConnectionDetails,

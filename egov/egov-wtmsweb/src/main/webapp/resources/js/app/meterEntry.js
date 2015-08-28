@@ -69,20 +69,17 @@
 		return false;
 
 		}
-		
-		document.forms[0].submit;
-		return true;
-		
-		/* if (currentMeterDate != undefined && previousMeterDate != undefined) {
-			if (!validateDateRange(previousMeterDate, currentMeterDate)) {
-				alert("Entered Metered Date allready present in System");
+		if (currentMeterDate != undefined && previousMeterDate != undefined) {
+			if (!validateCurrentAndExecutionDateRange(previousMeterDate, currentMeterDate)) {
+				alert("Current Meter Reading Date should not be less than Previous Meter Reading Date");
 				$('#metercurrentReadingDate').val('');
 				return false;
 			}
-		} else {
-			document.forms[0].submit;
-			return true;
-		} */
+		}
+		document.forms[0].submit;
+		return true;
+		
+		
 	}
 // this date range validation to check entred date is same as previous date means equal checking
 	function validateDateRange(fromDate, toDate) {
