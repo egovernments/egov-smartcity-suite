@@ -57,7 +57,7 @@ public class ApplicationSearchRequest {
     private String moduleName;
     private String applicationType;
     private String applicationNumber;
-    private String applicationCode;
+    private String consumerCode;
     private String applicantName;
     private String mobileNumber;
     private String fromDate;
@@ -113,12 +113,12 @@ public class ApplicationSearchRequest {
         this.applicationNumber = applicationNumber;
     }
 
-    public String getApplicationCode() {
-        return applicationCode;
+    public String getConsumerCode() {
+        return consumerCode;
     }
 
-    public void setApplicationCode(final String applicationCode) {
-        this.applicationCode = applicationCode;
+    public void setConsumerCode(final String consumerCode) {
+        this.consumerCode = consumerCode;
     }
 
     public String getApplicantName() {
@@ -155,7 +155,7 @@ public class ApplicationSearchRequest {
         andFilters.add(termsStringFilter("clauses.modulename", moduleName));
         andFilters.add(termsStringFilter("clauses.applicationtype", applicationType));
         andFilters.add(queryStringFilter("searchable.applicantname", applicantName));
-        andFilters.add(queryStringFilter("searchable.consumercode", applicationCode));
+        andFilters.add(queryStringFilter("searchable.consumercode", consumerCode));
         andFilters.add(queryStringFilter("searchable.mobilenumber", mobileNumber));
         andFilters.add(rangeFilter("searchable.applicationdate", fromDate, toDate));
         if (logger.isDebugEnabled())

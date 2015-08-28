@@ -105,14 +105,14 @@
 										code="lbl1.consumer.number" />
 								</label>
 						<div class="col-sm-3 add-margin">
-							<input type="text" name="applicationCode" class="form-control" id="app-appconsumercodo"
+							<input type="text" name="consumerCode" class="form-control" id="app-appconsumercodo"
 								 />
 						</div>
 								<label for="field-1" class="col-sm-2 control-label"> <spring:message
 										code="lbl.application.mobileNo" />
 								</label>
 							<div class="col-sm-3 add-margin">
-							<input type="text" name="MobileNumber" class="form-control" id="app-appcodo" min="10" maxlength="12" />
+							<input type="text" name="mobileNumber" class="form-control" id="app-appcodo" min="10" maxlength="12" />
 						</div>
 						</div>
 						
