@@ -99,7 +99,7 @@ public class DocumentNamesService {
     }
 
     public List<DocumentNames> getAllActiveDocumentNamesByApplicationType(final ApplicationType applicationType) {
-        return documentNamesRepository.findByActiveTrueAndApplicationTypeOrderByDocumentNameAsc(applicationType);
+        return documentNamesRepository.findByActiveTrueAndApplicationTypeOrderByIdAsc(applicationType);
     }
 
 }
