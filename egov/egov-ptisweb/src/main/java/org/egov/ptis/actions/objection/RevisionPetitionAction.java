@@ -1482,7 +1482,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 						.getProperty().getPropertyDetail().getSitalArea().getArea().toString() : ""),
 				(objection.getProperty().getPropertyDetail().getDateOfCompletion() != null ? sdf.format(
 						objection.getProperty().getPropertyDetail().getDateOfCompletion()).toString() : ""),
-				taxExemptedReason,
+						eastBoundary,westBoundary,southBoundary,northBoundary,
 				(objection.getProperty().getPropertyDetail().getPropertyTypeMaster() != null ? objection.getProperty()
 						.getPropertyDetail().getPropertyTypeMaster().getId().toString() : null), ownerName, ownerName,
 				(objection.getProperty().getPropertyDetail().getFloorType() != null ? objection.getProperty()

@@ -155,11 +155,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Namespace("/create")
 @ResultPath("/WEB-INF/jsp/")
 @Results({ @Result(name = "new", location = "create/createProperty-new.jsp"),
-    @Result(name = "dataEntry", location = "create/createProperty-dataEntry.jsp"),
-    @Result(name = "ack", location = "create/createProperty-ack.jsp"),
-    @Result(name = "dataEntry-ack", location = "create/createProperty-dataEntryAck.jsp"),
-    @Result(name = "view", location = "create/createProperty-view.jsp"),
-    @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp") })
+        @Result(name = "dataEntry", location = "create/createProperty-dataEntry.jsp"),
+        @Result(name = "ack", location = "create/createProperty-ack.jsp"),
+        @Result(name = "dataEntry-ack", location = "create/createProperty-dataEntryAck.jsp"),
+        @Result(name = "view", location = "create/createProperty-view.jsp"),
+        @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp") })
 public class CreatePropertyAction extends WorkflowAction {
     /**
      *
@@ -529,8 +529,8 @@ public class CreatePropertyAction extends WorkflowAction {
             propertyInitiatedBy = property.getCreatedBy().getName();
         else
             propertyInitiatedBy = assignmentService
-            .getPrimaryAssignmentForPositon(property.getStateHistory().get(0).getOwnerPosition().getId())
-            .getEmployee().getUsername();
+                    .getPrimaryAssignmentForPositon(property.getStateHistory().get(0).getOwnerPosition().getId())
+                    .getEmployee().getUsername();
         setAckMessage("Property Created Successfully in the System and Forwarded to : ");
         setAssessmentNoMessage(" for Notice Genaration with assessment number : ");
         LOGGER.debug("approve: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
@@ -551,8 +551,8 @@ public class CreatePropertyAction extends WorkflowAction {
             propertyInitiatedBy = property.getCreatedBy().getName();
         else
             propertyInitiatedBy = assignmentService
-            .getPrimaryAssignmentForPositon(property.getStateHistory().get(0).getOwnerPosition().getId())
-            .getEmployee().getUsername();
+                    .getPrimaryAssignmentForPositon(property.getStateHistory().get(0).getOwnerPosition().getId())
+                    .getEmployee().getUsername();
         if (property.getState().getValue().equals("Closed")) {
             propertyInitiatedBy = securityUtils.getCurrentUser().getUsername();
             setAckMessage(MSG_REJECT_SUCCESS + " By ");
@@ -693,8 +693,8 @@ public class CreatePropertyAction extends WorkflowAction {
         final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
                 "from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?", PROP_CREATE_RSN, mutationId);
         basicProperty.setPropertyMutationMaster(propertyMutationMaster);
-        basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PROP_CREATE_RSN, null,
-                    null, null, null, getParentIndex()));
+        basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PROP_CREATE_RSN, null, null,
+                null, null, getParentIndex()));
         basicProperty.setBoundary(boundaryService.getBoundaryById(getWardId()));
         basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
         basicPropertyService.createOwners(property, basicProperty, ownerAddress);
@@ -702,8 +702,9 @@ public class CreatePropertyAction extends WorkflowAction {
         property.setPropertyModifyReason(PROP_CREATE_RSN);
 
         /*
-         * isfloorDetailsRequired is used to check if floor details have to be entered for State Govt property or not if
-         * isfloorDetailsRequired - true : no floor details created false : floor details created
+         * isfloorDetailsRequired is used to check if floor details have to be
+         * entered for State Govt property or not if isfloorDetailsRequired -
+         * true : no floor details created false : floor details created
          */
 
         LOGGER.debug("BasicProperty: " + basicProperty + "\nExiting from createBasicProp");
@@ -736,7 +737,8 @@ public class CreatePropertyAction extends WorkflowAction {
     }
 
     /**
-     * Changes the property details from {@link BuiltUpProperty} to {@link VacantProperty}
+     * Changes the property details from {@link BuiltUpProperty} to
+     * {@link VacantProperty}
      *
      * @return vacant property details
      * @see org.egov.ptis.domain.entity.property.VacantProperty
@@ -760,17 +762,17 @@ public class CreatePropertyAction extends WorkflowAction {
                 propertyDetail.getPropertyOccupation(), propertyDetail.getPropertyMutationMaster(),
                 propertyDetail.getComZone(), propertyDetail.getCornerPlot(),
                 propertyDetail.getExtentSite() != null ? propertyDetail.getExtentSite() : 0.0,
-                        propertyDetail.getExtentAppartenauntLand() != null ? propertyDetail.getExtentAppartenauntLand() : 0.0,
-                                propertyDetail.getFloorType(), propertyDetail.getRoofType(), propertyDetail.getWallType(),
-                                propertyDetail.getWoodType(), propertyDetail.isLift(), propertyDetail.isToilets(),
-                                propertyDetail.isWaterTap(), propertyDetail.isStructure(), propertyDetail.isElectricity(),
-                                propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
-                                propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(),
-                                propertyDetail.getCurrentCapitalValue(), propertyDetail.getMarketValue(),
-                                propertyDetail.getCategoryType(), propertyDetail.getOccupancyCertificationNo(),
-                                propertyDetail.getBuildingPermissionNo(), propertyDetail.getBuildingPermissionDate(),
-                                propertyDetail.getDeviationPercentage(), propertyDetail.isAppurtenantLandChecked(),
-                                propertyDetail.isBuildingPlanDetailsChecked(), propertyDetail.isCorrAddressDiff());
+                propertyDetail.getExtentAppartenauntLand() != null ? propertyDetail.getExtentAppartenauntLand() : 0.0,
+                propertyDetail.getFloorType(), propertyDetail.getRoofType(), propertyDetail.getWallType(),
+                propertyDetail.getWoodType(), propertyDetail.isLift(), propertyDetail.isToilets(),
+                propertyDetail.isWaterTap(), propertyDetail.isStructure(), propertyDetail.isElectricity(),
+                propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
+                propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(),
+                propertyDetail.getCurrentCapitalValue(), propertyDetail.getMarketValue(),
+                propertyDetail.getCategoryType(), propertyDetail.getOccupancyCertificationNo(),
+                propertyDetail.getBuildingPermissionNo(), propertyDetail.getBuildingPermissionDate(),
+                propertyDetail.getDeviationPercentage(), propertyDetail.isAppurtenantLandChecked(),
+                propertyDetail.isBuildingPlanDetailsChecked(), propertyDetail.isCorrAddressDiff());
 
         vacantProperty.setManualAlv(propertyDetail.getManualAlv());
         vacantProperty.setOccupierName(propertyDetail.getOccupierName());
@@ -880,7 +882,7 @@ public class CreatePropertyAction extends WorkflowAction {
         if (null == property.getBasicProperty().getRegdDocDate()) {
             addActionError(getText("mandatory.regdocdate"));
         }
-        if(StringUtils.isBlank(property.getBasicProperty().getRegdDocNo())) {
+        if (StringUtils.isBlank(property.getBasicProperty().getRegdDocNo())) {
             addActionError(getText("mandatory.regdocno"));
         }
         for (final PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfoProxy())
@@ -893,8 +895,8 @@ public class CreatePropertyAction extends WorkflowAction {
                     addActionError(getText("mandatory.mobilenumber"));
             }
 
-        validateProperty(property, areaOfPlot, dateOfCompletion, null, propTypeId, propUsageId, propOccId, floorTypeId,
-                roofTypeId, wallTypeId, woodTypeId);
+        validateProperty(property, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
+                northBoundary, propTypeId, propUsageId, propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId);
 
         if (isBlank(pinCode))
             addActionError(getText("mandatory.pincode"));
@@ -944,7 +946,7 @@ public class CreatePropertyAction extends WorkflowAction {
         final HttpServletRequest request = ServletActionContext.getRequest();
         final String url = WebUtils.extractRequestDomainURL(request, false);
         final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
-                        (String) request.getSession().getAttribute("citylogo"));
+                (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("cityname").toString();
         final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
         final Map<String, Object> reportParams = new HashMap<String, Object>();
@@ -1128,7 +1130,8 @@ public class CreatePropertyAction extends WorkflowAction {
     }
 
     /**
-     * This implementation transitions the <code>PropertyImpl</code> to the next workflow state.
+     * This implementation transitions the <code>PropertyImpl</code> to the next
+     * workflow state.
      */
     /*
      * @Override protected PropertyImpl property() { return property; }

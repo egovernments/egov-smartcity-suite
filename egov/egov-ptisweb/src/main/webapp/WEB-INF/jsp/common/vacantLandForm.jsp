@@ -88,10 +88,10 @@
 			<table class="tablebottom" style="width: 100%;" id="boundaryData">
 				<tbody>
 					<tr>
-						<th class="bluebgheadtd"><s:text name="North" /></th>
-						<th class="bluebgheadtd"><s:text name="East" /></th>
-						<th class="bluebgheadtd"><s:text name="West" /></th>
-						<th class="bluebgheadtd"><s:text name="South" /></th>
+						<th class="bluebgheadtd"><s:text name="North" /><span class="mandatory1">*</span></th>
+						<th class="bluebgheadtd"><s:text name="East" /><span class="mandatory1">*</span></th>
+						<th class="bluebgheadtd"><s:text name="West" /><span class="mandatory1">*</span></th>
+						<th class="bluebgheadtd"><s:text name="South" /><span class="mandatory1">*</span></th>
 					</tr>
 					<tr>
 						<td class="blueborderfortd" align="center"><s:textfield name="northBoundary" id="northBoundary" maxlength="64"

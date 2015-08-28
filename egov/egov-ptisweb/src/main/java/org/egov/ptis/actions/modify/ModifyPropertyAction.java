@@ -922,7 +922,7 @@ public class ModifyPropertyAction extends WorkflowAction {
     @Override
     public void validate() {
         LOGGER.debug("Entered into validate, ModifyRsn: " + modifyRsn);
-        validateProperty(propertyModel, areaOfPlot, dateOfCompletion, taxExemptedReason, propTypeId,
+        validateProperty(propertyModel, areaOfPlot, dateOfCompletion, eastBoundary,westBoundary,southBoundary,northBoundary, propTypeId,
                 propUsageId, propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId);
 
         validateApproverDetails();
