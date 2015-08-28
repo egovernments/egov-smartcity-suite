@@ -48,7 +48,8 @@
 		<form:form role="form" action="/wtms/application/newConnection-createExisting" 
 			modelAttribute="waterConnectionDetails" id="newWaterConnectionform"
 			cssClass="form-horizontal form-groups-bordered"
-			enctype="multipart/form-data">
+			enctype="multipart/form-data"
+			data-ajaxsubmit="true">
 			<form:hidden path="applicationType" id="applicationType" value="${waterConnectionDetails.applicationType.id}"/>
 			<form:hidden path="id" id="id" value="${waterConnectionDetails.id}"/>
 			<form:hidden path="legacy" id="legacy" value="true"/>
@@ -105,16 +106,23 @@
 
 		 if($('#connectionType').val()=='METERED')
 		 {
-		 $('#metereddetails').show();
+		   $('#metereddetails').show();
 		 }
 		
-		function validate()		{
+		function validate(){
 			//alert(document.forms[0].action);
 			var radioValue = $("input[name='applicationType']:checked").val();
 		    var ar=document.getElementsByName('applicationType');
             ar[0].value=radioValue;
-         
-			return ture;}
+			return true;
+	    }
+
+		//default ajax callback function
+		function callBackAjax()
+		{
+			//alert('callback function called!');
+			
+		}
 		</script>
 		</form:form>
 	</div>

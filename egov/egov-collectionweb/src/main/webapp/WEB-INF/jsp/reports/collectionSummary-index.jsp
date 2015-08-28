@@ -108,7 +108,7 @@ function validate()
 		<tr>
 			<td width="4%" class="bluebox">&nbsp;</td>
 			<td width="21%" class="bluebox"><s:text
-				name="collectionReport.criteria.fromdate" /><span class="mandatory">*</span></td>
+				name="collectionReport.criteria.fromdate" /><span class="mandatory1">*</span></td>
 			<s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy" />
 			<td width="24%" class="bluebox"><s:textfield id="fromDate"
 				name="fromDate" value="%{cdFormat}"
@@ -122,7 +122,7 @@ function validate()
 			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
 			</td>
 			<td width="21%" class="bluebox"><s:text
-				name="collectionReport.criteria.todate" /><span class="mandatory">*</span></td>
+				name="collectionReport.criteria.todate" /><span class="mandatory1">*</span></td>
 			<s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy" />
 			<td width="30%" class="bluebox"><s:textfield id="toDate"
 				name="toDate" value="%{cdFormat1}"
@@ -154,6 +154,7 @@ function validate()
 		</tr>
 	</table>
 <div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
+    <br/>
 	</div>
 	
 	<div class="buttonbottom">

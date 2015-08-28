@@ -374,7 +374,7 @@ function readOnlyCheckBox() {
 			<br/>
 
 			<table width="50%" border="0" align="center" cellpadding="0"
-				cellspacing="0" class="tablebottom">
+				cellspacing="0" class="tablebottom input-nobackground">
 				<tr>
 					<th class="bluebgheadtd"><b><s:text
 						name="%{getText('collectionsWorkflow.summary.instrumentType')}" /></b></th>
@@ -438,7 +438,7 @@ function readOnlyCheckBox() {
 				
 				<td><s:label>Remarks</s:label></td>
 						
-				<td><s:textarea id="remarks" name="remarks" maxlength="1024" cols="40" ></s:textarea></td>		
+				<td><s:textarea id="remarks" name="remarks" maxlength="1024" cols="40" cssClass="form-control"></s:textarea></td>		
 				
 				</tr>
 				

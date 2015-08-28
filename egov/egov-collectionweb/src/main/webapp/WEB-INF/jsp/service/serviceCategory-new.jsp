@@ -50,7 +50,7 @@ function onSubmit(obj){
 </script>
 </head>  
 	<body>  
-		<div class="subheadnew"><s:text name="add.title.serviceCategory"/></div>
+		
 		<span>
 		<font  style='color: red ; font-weight:bold ' size="2">
                                <s:actionerror/>  
@@ -59,6 +59,8 @@ function onSubmit(obj){
           </span>
 		
 		<s:form action="serviceCategory.action" theme="simple" >  
+		
+		   <div class="subheadnew"><s:text name="add.title.serviceCategory"/></div>
 		
 			<%@ include file='serviceCategory-form.jsp'%>
 				

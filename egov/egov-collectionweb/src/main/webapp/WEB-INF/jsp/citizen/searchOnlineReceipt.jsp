@@ -254,6 +254,7 @@ function transitionStates(){
 	      <td width="30%" class="bluebox2"><s:select id="searchTransactionStatus" name="searchTransactionStatus" headerKey="-1" headerValue="%{getText('searchOnlineReceipts.default.transaction.status')}" cssClass="selectwk" list="%{onlineReceiptStatuses}" value="%{id}" listKey="id" listValue="description" /> </td>
 	    </tr>	    
 	    </table>
+	    <br/>
 </div>
     <div class="buttonbottom">
       <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search" onclick="return validate();"/></label>&nbsp;
