@@ -162,7 +162,7 @@ public class ConnectionDemandService {
         if (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getCode()))
             donationDetails = donationDetailsService.findByDonationHeader(donationHeaderService
                     .findByCategoryandUsageandMinPipeSize(waterConnectionDetails.getCategory(),
-                            waterConnectionDetails.getUsageType(), waterConnectionDetails.getPipeSize()));
+                            waterConnectionDetails.getUsageType(), waterConnectionDetails.getPipeSize().getSizeInInch()));
 
         if (donationDetails != null) {
             feeDetails.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, donationDetails.getAmount());
