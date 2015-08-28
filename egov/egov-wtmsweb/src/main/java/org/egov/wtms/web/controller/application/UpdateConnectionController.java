@@ -123,7 +123,6 @@ public class UpdateConnectionController extends GenericConnectionController {
     @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String applicationNumber, final HttpServletRequest request) {
         final WaterConnectionDetails   waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
-        prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
         return loadViewData(model, request, waterConnectionDetails);
     }
 
@@ -132,7 +131,8 @@ public class UpdateConnectionController extends GenericConnectionController {
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
         model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-
+        prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
+        
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
         model.addAttribute(

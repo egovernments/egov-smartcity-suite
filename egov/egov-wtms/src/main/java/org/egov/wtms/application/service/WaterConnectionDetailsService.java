@@ -1098,7 +1098,10 @@ public class WaterConnectionDetailsService {
                 } else if (WaterTaxConstants.SMSEMAILTYPENEWCONNFEEPAID
                         .equalsIgnoreCase(type)
                         || WaterTaxConstants.SMSEMAILTYPEADDCONNFEEPAID
-                        .equalsIgnoreCase(type)) {
+                        .equalsIgnoreCase(type)
+                        || WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEFEEPAID
+                        .equals(type)) {
+                    //TODO: as off now same message format is using for all 3 connection for fees Paid SMS and Mail
                     flag = Boolean.TRUE;
                     smsMsg = waterTaxUtils.SmsBodyByCodeAndArgsWithType(
                             "msg.newconncetionOnFeesPaid.sms",
@@ -1309,6 +1312,8 @@ public class WaterConnectionDetailsService {
                     else if (WaterTaxConstants.SMSEMAILTYPENEWCONNFEEPAID
                             .equalsIgnoreCase(type)
                             || WaterTaxConstants.SMSEMAILTYPEADDCONNFEEPAID
+                            .equalsIgnoreCase(type)
+                            || WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEFEEPAID
                             .equalsIgnoreCase(type)) {
                         flag = Boolean.TRUE;
                         body = waterTaxUtils.EmailBodyByCodeAndArgsWithType(

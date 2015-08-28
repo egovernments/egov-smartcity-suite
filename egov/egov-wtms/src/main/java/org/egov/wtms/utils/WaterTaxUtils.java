@@ -312,7 +312,8 @@ public class WaterTaxUtils {
         // TODO: while collectinge fees sending message not working with MessageSourse Cos Its not able to find Message.properties
         // so hardcoding sms and Email body
         else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNFEEPAID)
-                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDCONNFEEPAID)) {
+                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDCONNFEEPAID)
+                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEFEEPAID)) {
             final String amountToDisplay = String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges()
                     + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges()));
             final StringBuffer emailBodyBuilder = new StringBuffer().append("Dear ").append(applicantName).append(",")
@@ -442,7 +443,8 @@ public class WaterTaxUtils {
             // will be Rs.{3}/-. We request you to pay the same at the
             // ULB counter,so that we can process your request for work
             // order.\nThanks, {4}
-        } else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION)) {
+        } else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION)
+                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEEXECUTION)) {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             if (!WaterTaxConstants.METERED.toUpperCase()
                     .equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString()))
@@ -465,7 +467,8 @@ public class WaterTaxUtils {
         // demand will be Rs.{3}.00/-.Please pay the tax before the due date
         // to avail uninterrupted service.\nThanks, {4}
         else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNFEEPAID)
-                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDCONNFEEPAID)) {
+                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDCONNFEEPAID)
+                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEFEEPAID)) {
             final String amountToDisplay = String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges()
                     + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges()));
             final StringBuffer smsBody = new StringBuffer().append("Dear ").append(applicantName)
