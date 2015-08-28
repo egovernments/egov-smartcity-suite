@@ -37,7 +37,7 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
-$(document).ready(function(){
+
 	
 	var currentInstallmentExist = $('#currentInstallmentExist').val();
 	if (currentInstallmentExist) {
@@ -140,4 +140,4 @@ $(document).ready(function(){
 			
 		}
 	}
-});
+
