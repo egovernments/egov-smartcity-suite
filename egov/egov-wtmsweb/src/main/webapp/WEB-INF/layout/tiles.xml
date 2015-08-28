@@ -79,7 +79,7 @@
     </definition>
     
 	<definition name="newconnection-edit" extends="base_layout">
-        <put-attribute name="page-title" value="title.editApplication.Workflow" cascade="true"/>
+        <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newConnection-edit.jsp"/> 
     </definition>
     
@@ -127,6 +127,10 @@
      <definition name="newconnection-dataEntryEditForm" extends="base_layout">
         <put-attribute name="page-title" value="title.dataentry" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newConnection-dataEntryEditForm.jsp"/>
+    </definition>
+    <definition name="chairperson-details" extends="base_layout">
+        <put-attribute name="page-title" value="title.chair.person.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/chairperson-details.jsp"/>
     </definition>
     
 </tiles-definitions>

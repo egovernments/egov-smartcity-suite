@@ -77,7 +77,7 @@ public class ChairPerson extends AbstractAuditable {
     @Temporal(value = TemporalType.DATE)
     private Date fromDate;
 
-    @NotNull
+    
     @Temporal(value = TemporalType.DATE)
     private Date toDate;
 

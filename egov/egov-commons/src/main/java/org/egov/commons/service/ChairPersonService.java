@@ -43,7 +43,11 @@ import java.util.List;
 
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.repository.ChairPersonRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,16 +67,6 @@ public class ChairPersonService {
         return chairPersonRepository.findOne(id);
     }
 
-    @Transactional
-    public ChairPerson createConnectionCharges(final ChairPerson chairPerson) {
-        return chairPersonRepository.save(chairPerson);
-    }
-
-    @Transactional
-    public void updateConnectionCharges(final ChairPerson chairPerson) {
-        chairPersonRepository.save(chairPerson);
-    }
-
     public List<ChairPerson> findAll() {
         return chairPersonRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
@@ -83,5 +77,24 @@ public class ChairPersonService {
 
     public ChairPerson getActiveChairPersonAsOnCurrentDate() {
         return chairPersonRepository.findActiveChairPersonAsOnDate();
+    }
+    
+    public ChairPerson getActiveChairPerson() {
+        return chairPersonRepository.findActiveChairPerson();
+    }
+       
+    public Page<ChairPerson> getListOfChairPersons(final Integer pageNumber, final Integer pageSize) {
+        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.DESC, "id");
+        return chairPersonRepository.findAll(pageable);
+    }
+    
+    @Transactional
+    public ChairPerson createChairPerson(final ChairPerson chairPerson) {
+        return chairPersonRepository.save(chairPerson);
+    }
+    
+    @Transactional
+    public void updateChairPerson(final ChairPerson chairPerson) {
+        chairPersonRepository.save(chairPerson);
     }
 }
