@@ -71,7 +71,7 @@ jQuery(document).ready(function($) {
 										if (userrole == "CSC Operator" && full.resource.clauses.waterTaxDue > 0) {
 										return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option><option value="6">Collect Fees</option></select>');
 										}
-										if (userrole == "CSC Operator" ) {
+										else if (userrole == "CSC Operator" ) {
 											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option></select>');
 											}
 										else if (userrole == "ULB Operator" &&  full.resource.clauses.connectiontype =='METERED') {

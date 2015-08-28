@@ -49,8 +49,8 @@
 		<form:form  id="waterConnectionSuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="waterConnectionDetails" >
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
-				<div class="panel-title text-center no-float">
-					<spring:message code="msg.application.fee.collection" />
+				<div class="panel-title">
+					<spring:message  code="lbl.basicdetails"/>
 				</div>
 			</div>
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
