@@ -74,11 +74,12 @@ function enableFieldsForPropType() {
 					tbl.deleteRow(rIndex);
 				}
 			});
-			jQuery("#amenitiesTable tr").each(function() {
+			jQuery("#amenitiesTable tr").find('input:checkbox').each(function() {
 				jQuery(this).prop('checked', false);
 			});
 			jQuery("tr.construction").find('select').each(function() {
 				jQuery(this).prop('selectedIndex', 0);
+				jQuery(this).val("");
 			});
 			jQuery('tr.floordetails').hide();
 			jQuery('tr.vacantlanddetaills').show();
@@ -91,6 +92,8 @@ function enableFieldsForPropType() {
 			jQuery('tr.superStructureRow').hide();
 			jQuery('tr.bpddetailsheader').hide();
 			jQuery('tr.bpddetails').hide();
+			jQuery("#apartment").prop('selectedIndex', 0);
+			jQuery('td.apartmentRow').hide();
 		} else {
 			jQuery('tr.floordetails').show();
 			jQuery("#vacantLandTable tr, #boundaryData tr").find('input').each(function() {
@@ -104,6 +107,7 @@ function enableFieldsForPropType() {
 			jQuery('tr.appurtenant').show();
 			jQuery('tr.superStructureRow').show();
 			jQuery('tr.bpddetailsheader').show();
+			jQuery('td.apartmentRow').show();
 		}
 	}
 }
@@ -1114,6 +1118,8 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 			jQuery('tr.superStructureRow').hide();
 			jQuery('tr.bpddetailsheader').hide();
 			jQuery('tr.bpddetails').hide();
+			jQuery("#apartment").prop('selectedIndex', 0);
+			jQuery('td.apartmentRow').hide();
 		} else {
 			jQuery('tr.floordetails').show();
 			jQuery('tr.vacantlanddetaills').hide();
@@ -1125,6 +1131,7 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 			jQuery('tr.superStructureRow').show();
 			jQuery('tr.bpddetailsheader').show();
 			jQuery('tr.bpddetails').show();
+			jQuery('td.apartmentRow').show();
 			if (appurtenantLandChecked == 'true') {
 				jQuery('tr.vacantlanddetaills').show();
 				jQuery('tr.extentSite').hide();

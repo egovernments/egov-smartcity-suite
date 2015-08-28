@@ -160,9 +160,9 @@
 	
 	<tr id="apartmentRow">
 		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="apartcomplex.name"></s:text> :</td>
-		<td class="greybox"><s:select headerKey=""
-				headerValue="%{getText('default.select')}" 	name="propertyDetail.apartment" id="propertyDetail.apartment.id"
+		<td class="greybox apartmentRow"><s:text name="apartcomplex.name"></s:text> :</td>
+		<td class="greybox apartmentRow"><s:select headerKey=""
+				headerValue="%{getText('default.select')}" 	name="propertyDetail.apartment" id="apartment"
 				listKey="id" listValue="name" value="%{propertyDetail.apartment.id}"
 				list="dropdownData.apartments" cssClass="selectnew" /></td>
 		<td class="greybox" colspan="2">

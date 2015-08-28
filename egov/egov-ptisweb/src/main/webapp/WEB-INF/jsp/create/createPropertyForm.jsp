@@ -29,11 +29,11 @@
 		</td>
 	</tr>
 	
-	<tr id="apartmentRow">
+	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="apartcomplex.name"></s:text> :</td>
-		<td class="greybox" width=""><s:select headerKey=""
-				headerValue="%{getText('default.select')}" 	name="propertyDetail.apartment.id" id="propertyDetail.apartment.id"
+		<td class="greybox apartmentRow" width="25%"><s:text name="apartcomplex.name"></s:text> :</td>
+		<td class="greybox apartmentRow" width=""><s:select headerKey=""
+				headerValue="%{getText('default.select')}" 	name="propertyDetail.apartment" id="apartment"
 				listKey="id" listValue="name" value="%{propertyDetail.apartment.id}"
 				list="dropdownData.apartments" cssClass="selectnew" /></td>
 				

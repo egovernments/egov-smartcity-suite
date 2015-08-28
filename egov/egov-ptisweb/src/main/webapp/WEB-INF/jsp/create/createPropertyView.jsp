@@ -61,8 +61,8 @@
 	</tr>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="20%"><s:text name="apartcomplex.name"></s:text> :</td>
-		<td class="greybox" width="20%"><span class="bold"><s:property
+		<td class="greybox apartmentRow" width="20%"><s:text name="apartcomplex.name"></s:text> :</td>
+		<td class="greybox apartmentRow" width="20%"><span class="bold"><s:property
 					value="%{propertyDetail.apartment.name}" default="N/A" /></span>
 		</td>
 		<td class="greybox" width="20%"><s:text name="exemptioncategory"></s:text>:</td>

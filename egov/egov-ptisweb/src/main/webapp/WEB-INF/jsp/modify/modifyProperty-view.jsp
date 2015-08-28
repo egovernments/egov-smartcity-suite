@@ -119,6 +119,8 @@
 						jQuery('tr.superStructureRow').hide();
 						jQuery('tr.bpddetailsheader').hide();
 						jQuery('tr.bpddetails').hide();
+						jQuery("#apartment").prop('selectedIndex', 0);
+						jQuery('td.apartmentRow').hide();
 					} else {
 						jQuery('tr.floordetails').show();
 						jQuery('tr.vacantlanddetaills').hide();
@@ -130,6 +132,7 @@
 						jQuery('tr.superStructureRow').show();
 						jQuery('tr.bpddetailsheader').show();
 						jQuery('tr.bpddetails').show();
+						jQuery('td.apartmentRow').show();
 					}
 				}
 			}

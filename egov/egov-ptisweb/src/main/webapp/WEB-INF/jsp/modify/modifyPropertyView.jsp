@@ -200,8 +200,8 @@
 	</tr>
 	<tr id="apartmentRow">
 		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="apartcomplex.name"></s:text> :</td>
-		<td class="greybox">
+		<td class="greybox apartmentRow"><s:text name="apartcomplex.name"></s:text> :</td>
+		<td class="greybox apartmentRow">
 			<span class="bold"><s:property value="%{propertyDetail.apartment.name}" default="N/A"/></span>
 		</td>
 		<td class="greybox" colspan="2">

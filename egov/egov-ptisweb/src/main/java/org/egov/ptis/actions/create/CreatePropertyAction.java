@@ -270,7 +270,7 @@ public class CreatePropertyAction extends WorkflowAction {
         this.addRelatedEntity("property.propertyDetail.floorDetails.structureClassification",
                 StructureClassification.class);
         this.addRelatedEntity("property.basicProperty.propertyOwnerInfo.owner", Citizen.class);
-        this.addRelatedEntity("property.propertyDetail.apartment", Apartment.class);
+        this.addRelatedEntity("propertyDetail.apartment", Apartment.class);
         addRelatedEntity("property.propertyDetail.floorType", FloorType.class);
         addRelatedEntity("property.propertyDetail.roofType", RoofType.class);
         addRelatedEntity("property.propertyDetail.wallType", WallType.class);
