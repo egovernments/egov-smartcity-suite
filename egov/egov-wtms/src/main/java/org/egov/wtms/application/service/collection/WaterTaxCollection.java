@@ -195,7 +195,7 @@ public class WaterTaxCollection extends TaxCollection {
             } else if (LOGGER.isDebugEnabled())
                 LOGGER.debug("saveCollectionDetails - demand detail amount is zero " + dmdDtls);
             if (dmdDtls.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
-                demand.addCollected(billRcptInfo.getTotalAmount());
+                demand.setAmtCollected(billRcptInfo.getTotalAmount());
         }
         EgDemandDetails demandDetail = null;
 
