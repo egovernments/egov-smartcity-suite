@@ -39,11 +39,11 @@
 -->
 	<tr class="construction">
 		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="floortype"></s:text> <span class="mandatory1">*</span> :</td>
+		<td class="greybox"><s:text name="floortype"></s:text> :</td>
 		<td class="greybox" width="">
 			<span class="bold"><s:property value="%{propertyDetail.floorType.name}" default = "N/A"/></span> 
 		</td>
-		<td class="greybox"><s:text name="rooftype"></s:text> <span class="mandatory1">*</span> :</td>
+		<td class="greybox"><s:text name="rooftype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"><s:property value="%{propertyDetail.roofType.name}" default = "N/A"/></span>
 		</td>
