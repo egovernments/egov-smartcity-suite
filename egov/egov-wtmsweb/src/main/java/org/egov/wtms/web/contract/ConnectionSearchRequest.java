@@ -51,7 +51,7 @@ import org.jboss.logging.Logger;
 public class ConnectionSearchRequest {
     private String searchText;
     private String consumerCode;
-    private String applicationName;
+    private String applicantName;
     private String locality;
     private String mobileNumber;
 
@@ -65,12 +65,12 @@ public class ConnectionSearchRequest {
         this.consumerCode = consumerCode;
     }
 
-    public String getApplicationName() {
-        return applicationName;
+    public String getApplicantName() {
+        return applicantName;
     }
 
-    public void setApplicationName(final String applicationName) {
-        this.applicationName = applicationName;
+    public void setApplicantName(final String applicantName) {
+        this.applicantName = applicantName;
     }
 
     public String getLocality() {
@@ -99,7 +99,7 @@ public class ConnectionSearchRequest {
 
     public Filters searchFilters() {
         final List<Filter> andFilters = new ArrayList<>();
-        andFilters.add(queryStringFilter("searchable.consumername", applicationName));
+        andFilters.add(queryStringFilter("searchable.consumername", applicantName));
         andFilters.add(queryStringFilter("clauses.consumercode", consumerCode));
         andFilters.add(queryStringFilter("searchable.locality", locality));
         andFilters.add(queryStringFilter("clauses.mobilenumber", mobileNumber));

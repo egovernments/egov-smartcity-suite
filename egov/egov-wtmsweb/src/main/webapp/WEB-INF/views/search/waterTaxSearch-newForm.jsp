@@ -82,7 +82,7 @@
 					<label for="field-1" class="col-md-4 control-label"> <spring:message
 										code="lbl.applicant.name" /></label>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="applicationName" class="form-control" id="app-mobno" />
+							<input type="text" name="applicantName" class="form-control" id="app-mobno" />
 						</div>
 						</div>
 						<div class="form-group">
