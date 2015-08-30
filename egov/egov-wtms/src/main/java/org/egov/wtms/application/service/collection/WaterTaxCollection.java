@@ -60,6 +60,7 @@ import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -122,6 +123,8 @@ public class WaterTaxCollection extends TaxCollection {
 
         if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED))
             updateCollForRcptCreate(demand, billRcptInfo);
+        else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED))
+            updateCollForRcptCancel(demand, billRcptInfo);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("updateDemandDetails : Demand after processed : " + demand);
 
@@ -155,11 +158,6 @@ public class WaterTaxCollection extends TaxCollection {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("updateCollForRcptCreate : Updating Collection Started For Demand : " + demand
                     + " with BillReceiptInfo - " + billRcptInfo);
-        // Not updating demand amount collected for new connection as per the discussion.
-        /*
-         * demand.addCollected(totalAmount); if (demand.getMinAmtPayable() != null &&
-         * demand.getMinAmtPayable().compareTo(BigDecimal.ZERO) > 0) demand.setMinAmtPayable(BigDecimal.ZERO);
-         */
         updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo);
     }
 
@@ -246,4 +244,53 @@ public class WaterTaxCollection extends TaxCollection {
         return egDemand;
     }
 
+    // Receipt cancellation ,updating bill,demanddetails,demand
+
+    private void updateCollForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+        LOGGER.debug("reconcileCollForRcptCancel : Updating Collection Started For Demand : " + demand
+                + " with BillReceiptInfo - " + billRcptInfo);
+        cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
+
+        if (demand.getAmtCollected() != null && demand.getAmtCollected() != BigDecimal.ZERO)
+            demand.setAmtCollected(demand.getAmtCollected().subtract(billRcptInfo.getTotalAmount()));
+
+        updateDmdDetForRcptCancel(demand, billRcptInfo);
+        LOGGER.debug("reconcileCollForRcptCancel : Updating Collection finished For Demand : " + demand);
+    }
+
+    private void cancelBill(final Long billId) {
+        if (billId != null) {
+            final EgBill egBill = egBillDAO.findById(billId, false);
+            egBill.setIs_Cancelled("Y");
+        }
+    }
+
+    private void updateDmdDetForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+        LOGGER.debug("Entering method updateDmdDetForRcptCancel");
+
+        for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
+                    && !rcptAccInfo.getIsRevenueAccount()) {
+                final String[] desc = rcptAccInfo.getDescription().split("-", 2);
+                final String reason = desc[0].trim();
+                final String installment = desc[1].trim();
+
+                for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
+                    if (reason.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster())) {
+                        if (demandDetail.getAmtCollected().compareTo(rcptAccInfo.getCrAmount()) < 0)
+                            throw new EGOVRuntimeException(
+                                    "updateDmdDetForRcptCancel : Exception while updating cancel receipt, "
+                                            + "to be deducted amount " + rcptAccInfo.getCrAmount()
+                                            + " is greater than the collected amount "
+                                            + demandDetail.getAmtCollected() + " for demandDetail " + demandDetail);
+
+                        demandDetail.setAmtCollected(demandDetail.getAmtCollected().subtract(
+                                rcptAccInfo.getCrAmount()));
+                        LOGGER.info("Deducted Collected amount Rs." + rcptAccInfo.getCrAmount() + " for tax : "
+                                + reason + " and installment : " + installment);
+                    }
+            }
+        updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
+        LOGGER.debug("Exiting method updateDmdDetForRcptCancel");
+    }
 }
