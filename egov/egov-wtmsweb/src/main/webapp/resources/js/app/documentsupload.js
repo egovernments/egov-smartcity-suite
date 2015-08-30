@@ -45,7 +45,7 @@ $(document).ready(function(){
 		/*validation for file upload*/
 		myfile= $( this ).val();
 		var ext = myfile.split('.').pop();
-		if($.inArray(ext, fileformatsinclude) > -1){
+		if($.inArray(ext.toLowerCase(), fileformatsinclude) > -1){
 			//do something    
 		}
 		else{
