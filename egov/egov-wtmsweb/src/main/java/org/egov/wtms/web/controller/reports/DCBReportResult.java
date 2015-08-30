@@ -56,7 +56,7 @@ public class DCBReportResult {
 
     private String boundaryName;
     private String boundaryId;
-    private Integer propertyid;
+    private String propertyid;
     private String address;
     private String mode;
     private String selectedModeBndry;
@@ -147,11 +147,11 @@ public class DCBReportResult {
         this.boundaryId = boundaryId;
     }
 
-    public Integer getPropertyid() {
+    public String getPropertyid() {
         return propertyid;
     }
 
-    public void setPropertyid(final Integer propertyid) {
+    public void setPropertyid(final String propertyid) {
         this.propertyid = propertyid;
     }
 

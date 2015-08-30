@@ -228,7 +228,7 @@ public class DCBReportController {
             whereQry.append(" where dcbinfo.locality=boundary.id and dcbinfo.locality in (" + paramList + ")");
         } else if (mode.equalsIgnoreCase(PROPERTY)) {
             selectQry1
-                    .append("select distinct dcbinfo.hscno as hscno,cast(dcbinfo.propertyid as integer) as \"propertyid\" ,dcbinfo.username as \"username\", ");
+                    .append("select distinct dcbinfo.hscno as hscno,dcbinfo.propertyid as \"propertyid\" ,dcbinfo.username as \"username\", ");
             fromQry = new StringBuilder(" from egwtr_mv_dcb_view dcbinfo ");
             groupByQry.append("group by dcbinfo.hscno,dcbinfo.propertyid,dcbinfo.username ");
             whereQry.append(" where dcbinfo.hscno is not null  ");
