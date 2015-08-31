@@ -239,7 +239,8 @@ public class CashCollectionReportAction extends BaseFormAction {
         critParams.put(EGOV_FROM_DATE, today);
         critParams.put(EGOV_TO_DATE, today);
 
-        critParams.put(EGOV_COUNTER_OPERATOR_ID, user.getId().longValue());
+        //critParams.put(EGOV_COUNTER_OPERATOR_ID, user.getId().longValue());
+        critParams.put(EGOV_COUNTER_OPERATOR_ID, Long.valueOf(-1L));
         critParams.put(EGOV_COUNTER_ID, collectionsUtil.getLocationOfUser(getSession()).getId().longValue());
         critParams.put(EGOV_RECEIPT_IDS,
                 Arrays.asList((Long[]) session.get(CollectionConstants.SESSION_VAR_RECEIPT_IDS)));

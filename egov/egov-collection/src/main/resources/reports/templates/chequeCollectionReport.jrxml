@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-08-24T17:17:45 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="chequeCollectionReport" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="edf8ecb0-894a-4bde-87bd-9e2e05b2dc29">
+<!-- 2015-08-28T15:39:51 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="chequeCollectionReport" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="edf8ecb0-894a-4bde-87bd-9e2e05b2dc29">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.lang.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="java.util.*"/>
@@ -59,34 +63,35 @@
 	CH.RECEIPTNUMBER AS RECEIPT_NUMBER,
 	CH.CONSUMERCODE,
      	ED.NAME,
-	ES.NAME,
+	ES.NAME AS SERVICENAME,
 	CH.PAYEENAME,
 	IH.INSTRUMENTAMOUNT,
 	IH.INSTRUMENTNUMBER,
 	IH.INSTRUMENTDATE,
 	BK.NAME AS INSTRUMENTBANK,
+	ED.NAME AS DEPT_NAME,
 	EGCL_CHALLANHEADER.CHALLANNUMBER AS CHALLAN_NUMBER,
-	IH.BANKBRANCHNAME AS INSTRUMENTBRANCH , 
+	IH.BANKBRANCHNAME AS INSTRUMENTBRANCH ,
 	(CASE WHEN CJV.TOBANKACCOUNTID IS NULL THEN ' ' ELSE (SELECT B1.NAME FROM BANK B1,BANKBRANCH BB1,BANKACCOUNT BA1 WHERE B1.ID=BB1.BANKID AND BB1.ID=BA1.BRANCHID AND BA1.ID=CJV.TOBANKACCOUNTID) END) AS REMITBANK,
 	(CASE WHEN CJV.TOBANKACCOUNTID IS NULL THEN ' ' ELSE (SELECT BB2.BRANCHNAME FROM BANKBRANCH BB2,BANKACCOUNT BA2 WHERE BB2.ID=BA2.BRANCHID AND BA2.ID=CJV.TOBANKACCOUNTID) END) AS REMITBRANCH ,
 	(CASE WHEN CJV.TOBANKACCOUNTID IS NULL THEN ' ' ELSE (SELECT BA3.ACCOUNTNUMBER FROM BANKACCOUNT BA3 WHERE BA3.ID=CJV.TOBANKACCOUNTID) END) AS REMITACCOUNT
-FROM 
+FROM
 	EGCL_COLLECTIONHEADER CH left join EGCL_CHALLANHEADER on EGCL_CHALLANHEADER.COLLECTIONHEADER = CH.ID,
 	EGCL_COLLECTIONMIS CM LEFT JOIN EG_BOUNDARY EB on CM.BOUNDARY=EB.ID,
-	
+
 	EG_DEPARTMENT ED,EGCL_SERVICEDETAILS ES,
 	EGCL_COLLECTIONINSTRUMENT CI,
 	EGF_INSTRUMENTHEADER IH left join CONTRAJOURNALVOUCHER CJV on CJV.INSTRUMENTHEADERID=IH.ID,
         BANK BK, EGW_STATUS ST
-WHERE 
+WHERE
 	ED.ID=CM.DEPARTMENT AND CM.COLLECTIONHEADER=CH.ID
 	AND CH.SERVICEDETAILS=ES.ID AND CI.COLLECTIONHEADER=CH.ID
 	AND IH.ID=CI.INSTRUMENTHEADER AND IH.BANKID=BK.ID
 	AND IH.INSTRUMENTTYPE IN (SELECT ID FROM EGF_INSTRUMENTTYPE WHERE TYPE IN ('cheque','dd'))
         AND IH.ID_STATUS = ST.ID
         AND ST.DESCRIPTION != 'Cancelled'
-	AND CH.CREATEDDATE >= $P{EGOV_FROM_DATE}
-	AND CH.CREATEDDATE < $P{EGOV_TO_DATE_PLUS_ONE}
+	AND CH.RECEIPTDATE >= $P{EGOV_FROM_DATE}
+	AND CH.RECEIPTDATE < $P{EGOV_TO_DATE_PLUS_ONE}
 	$P!{Q_COUNTER_ID}
 	$P!{Q_COUNTER_OPERATOR_ID}
 	$P!{Q_BOUNDARY_ID}
@@ -246,7 +251,7 @@ WHERE
 	<columnHeader>
 		<band height="55" splitType="Stretch">
 			<staticText>
-				<reportElement x="320" y="25" width="80" height="30" uuid="f1acaf2e-bcb0-4285-9b96-cc256f7bb62e"/>
+				<reportElement x="350" y="0" width="80" height="30" uuid="f1acaf2e-bcb0-4285-9b96-cc256f7bb62e"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>

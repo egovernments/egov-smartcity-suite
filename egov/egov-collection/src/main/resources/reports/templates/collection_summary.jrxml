@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-08-24T00:26:41 -->
+<!-- 2015-08-26T12:44:36 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_summary" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="db7eaa32-622d-4fd8-a432-187d94fbaded">
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="java.util.*"/>
@@ -59,8 +59,8 @@ FROM
      INNER JOIN EGEIS_ASSIGNMENT EGEIS_ASSIGNMENT ON EGEIS_ASSIGNMENT.EMPLOYEE = EG_EMPLOYEE.ID 
      INNER JOIN EG_DEPARTMENT EG_DEPARTMENT ON EG_DEPARTMENT.ID = EGEIS_ASSIGNMENT.DEPARTMENT
      WHERE
-     EGCL_COLLECTIONHEADER.CREATEDDATE >= $P{EGOV_FROM_DATE}
-     AND EGCL_COLLECTIONHEADER.CREATEDDATE < $P{EGOV_TO_DATE_PLUS_ONE}
+     EGCL_COLLECTIONHEADER.RECEIPTDATE >= $P{EGOV_FROM_DATE}
+     AND EGCL_COLLECTIONHEADER.RECEIPTDATE < $P{EGOV_TO_DATE_PLUS_ONE}
      AND EGW_STATUS.DESCRIPTION != 'Cancelled'
      $P!{Q_PAYMENT_MODES}
      $P!{Q_DEPT_ID}

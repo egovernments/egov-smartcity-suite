@@ -282,7 +282,7 @@ function readOnlyCheckBox() {
 					headerValue="%{getText('collectionsWorkflow.serviceNames.all')}"
 					name="serviceCode" id="serviceCode" cssClass="selectwk"
 					list="dropdownData.serviceList" listKey="code"
-					listValue="serviceName"
+					listValue="name"
 					onchange="return changeServiceCode(this.value)" /></td>
 
 				<td class="blueborderfortd" width="15%" style="border-width: 0px"

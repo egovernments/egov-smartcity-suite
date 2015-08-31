@@ -1,31 +1,31 @@
 /**
  * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
  * government organizations.
- * 
+ *
  * Copyright (C) <2015> eGovernments Foundation
- * 
+ *
  * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the License, or any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
  * complied with:
- * 
+ *
  * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
- * 
+ *
  * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
  * material be marked in reasonable ways as different from the original version.
- * 
+ *
  * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
  * trade names or trademarks of eGovernments Foundation.
- * 
+ *
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.collection.web.actions.receipts;
@@ -46,8 +46,10 @@ import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.lib.security.terminal.model.Location;
+import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -58,9 +60,12 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = CollectionsWorkflowAction.SUCCESS, location = "collectionsWorkflow-success.jsp"),
         @Result(name = CollectionsWorkflowAction.INDEX, location = "collectionsWorkflow-index.jsp"),
         @Result(name = CollectionsWorkflowAction.ERROR, location = "collectionsWorkflow-error.jsp"),
-        @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CASH, location = "collectionsWorkflow-submissionReportCash.jsp"),
-        @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CHEQUE, location = "collectionsWorkflow-submissionReportCheque.jsp")
-})
+        @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CASH, type = "redirectAction", location = "cashCollectionReport-submissionReport.action", params = {
+                "namespace", "/reports" }),
+        @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CHEQUE, type = "redirectAction", location = "chequeCollectionReport-submissionReport.action", params = {
+                "namespace", "/reports" }),
+        @Result(name = "cancel", type = "redirectAction", location = "receipt", params = { "namespace", "/receipts",
+                "method", "cancel" }) })
 public class CollectionsWorkflowAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -76,10 +81,10 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     private Long[] receiptIds;
 
     /**
-     * Map of instrument type wise amounts for all receipts that are eligible for the workflow
+     * Map of instrument type wise amounts for all receipts that are eligible
+     * for the workflow
      */
-    private final Map<String, BigDecimal> instrumentWiseAmounts = new HashMap<String, BigDecimal>(
-            4);
+    private final Map<String, BigDecimal> instrumentWiseAmounts = new HashMap<String, BigDecimal>(4);
 
     /**
      * Total amount of all receipts eligible for the workflow action
@@ -114,44 +119,51 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      * Receipt header service
      */
     private ReceiptHeaderService receiptHeaderService;
-    
+
     @Autowired
     private UserService userservice;
- 
+
     /**
      * Approval/Rejection remarks
      */
     private String remarks;
 
     /**
-     * Workflow action (SUBMIT/APPROVE). Based on this, the JSP can decide to display/hide various buttons
+     * Workflow action (SUBMIT/APPROVE). Based on this, the JSP can decide to
+     * display/hide various buttons
      */
     private String wfAction;
 
-    public void setWfAction(String wfAction) {
+    public void setWfAction(final String wfAction) {
         this.wfAction = wfAction;
     }
 
     /**
-     * Result for cash submission report (redirects to the cash collection report)
+     * Result for cash submission report (redirects to the cash collection
+     * report)
      */
     protected static final String SUBMISSION_REPORT_CASH = "submissionReportCash";
 
     /**
-     * Result for cheque submission report (redirects to the cheque collection report)
+     * Result for cheque submission report (redirects to the cheque collection
+     * report)
      */
     protected static final String SUBMISSION_REPORT_CHEQUE = "submissionReportCheque";
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     /**
-     * This method is called when user clicks on a collections work flow item in the inbox. The inbox item details contains the
-     * next work flow action to be performed, service code, user id and counter id in the following form:
+     * This method is called when user clicks on a collections work flow item in
+     * the inbox. The inbox item details contains the next work flow action to
+     * be performed, service code, user id and counter id in the following form:
      * <next-workflow-action>-servicecode-username-counterid
-     * 
-     * @param inboxItemDetails the id to set
+     *
+     * @param inboxItemDetails
+     *            the id to set
      */
-    public void setInboxItemDetails(String inboxItemDetails) {
-        String params[] = inboxItemDetails.split(
-                CollectionConstants.SEPARATOR_HYPHEN, -1);
+    public void setInboxItemDetails(final String inboxItemDetails) {
+        final String params[] = inboxItemDetails.split(CollectionConstants.SEPARATOR_HYPHEN, -1);
         if (params.length == 4) {
             setWfAction(params[0]);
             setServiceCode(params[1]);
@@ -161,17 +173,18 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @param collectionsUtil the collectionsUtil to set
+     * @param collectionsUtil
+     *            the collectionsUtil to set
      */
-    public void setCollectionsUtil(CollectionsUtil collectionsUtil) {
+    public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
     }
 
     /**
-     * @param workflow the receipt workflow service
+     * @param workflow
+     *            the receipt workflow service
      */
-    public void setReceiptHeaderService(
-            ReceiptHeaderService receiptHeaderService) {
+    public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
         this.receiptHeaderService = receiptHeaderService;
     }
 
@@ -183,15 +196,15 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @return true if partial selection is to be allowed for submission/approval, else false
+     * @return true if partial selection is to be allowed for
+     *         submission/approval, else false
      */
     public Boolean getAllowPartialSelection() {
         // return wfAction.equals(CollectionConstants.WF_ACTION_SUBMIT);
-        if (getIsSubmitAction()) {
+        if (getIsSubmitAction())
             return false;
-        } else {
+        else
             return true;
-        }
     }
 
     /**
@@ -228,9 +241,10 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @param counterId the counter id to be set
+     * @param counterId
+     *            the counter id to be set
      */
-    public void setCounterId(Integer counterId) {
+    public void setCounterId(final Integer counterId) {
         this.counterId = counterId;
     }
 
@@ -242,9 +256,10 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @param userName the user name to set
+     * @param userName
+     *            the user name to set
      */
-    public void setUserName(String userName) {
+    public void setUserName(final String userName) {
         this.userName = userName;
     }
 
@@ -256,9 +271,10 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @param serviceCode the Service Code to set
+     * @param serviceCode
+     *            the Service Code to set
      */
-    public void setServiceCode(String serviceCode) {
+    public void setServiceCode(final String serviceCode) {
         this.serviceCode = serviceCode;
     }
 
@@ -278,201 +294,188 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 
     /**
      * Returns amount for given instrument type
-     * 
-     * @param instrumentType The instrument type
+     *
+     * @param instrumentType
+     *            The instrument type
      * @return amount for given instrument type
      */
-    private BigDecimal getInstrumentTypeAmount(String instrumentType) {
-        BigDecimal amount = instrumentWiseAmounts.get(instrumentType);
+    private BigDecimal getInstrumentTypeAmount(final String instrumentType) {
+        final BigDecimal amount = instrumentWiseAmounts.get(instrumentType);
 
         return amount == null ? BigDecimal.valueOf(0) : amount;
     }
 
     /**
-     * @return Total amount collected as cash amongst all receipts eligible for the workflow action
+     * @return Total amount collected as cash amongst all receipts eligible for
+     *         the workflow action
      */
     public BigDecimal getCashAmount() {
         return getInstrumentTypeAmount(CollectionConstants.INSTRUMENTTYPE_CASH);
     }
 
     /**
-     * @return Total amount collected as cheque amongst all receipts eligible for the workflow action
+     * @return Total amount collected as cheque amongst all receipts eligible
+     *         for the workflow action
      */
     public BigDecimal getChequeAmount() {
         return getInstrumentTypeAmount(CollectionConstants.INSTRUMENTTYPE_CHEQUE);
     }
 
     /**
-     * @return Total amount collected as dd amongst all receipts eligible for the workflow action
+     * @return Total amount collected as dd amongst all receipts eligible for
+     *         the workflow action
      */
     public BigDecimal getDdAmount() {
         return getInstrumentTypeAmount(CollectionConstants.INSTRUMENTTYPE_DD);
     }
 
     /**
-     * @return Total amount collected using card amongst all receipts eligible for the workflow action
+     * @return Total amount collected using card amongst all receipts eligible
+     *         for the workflow action
      */
     public BigDecimal getCardAmount() {
         return getInstrumentTypeAmount(CollectionConstants.INSTRUMENTTYPE_CARD);
     }
 
     /**
-     * @return Total amount collected using bank amongst all receipts eligible for the workflow action
+     * @return Total amount collected using bank amongst all receipts eligible
+     *         for the workflow action
      */
     public BigDecimal getBankAmount() {
         return getInstrumentTypeAmount(CollectionConstants.INSTRUMENTTYPE_BANK);
     }
 
     /**
-     * @param Array of receipt Ids
+     * @param Array
+     *            of receipt Ids
      */
-    public void setReceiptIds(Long[] receiptIds) {
+    public void setReceiptIds(final Long[] receiptIds) {
         this.receiptIds = receiptIds;
     }
 
     /**
-     * @param Submission /Approval/Rejection remarks
+     * @param Submission
+     *            /Approval/Rejection remarks
      */
-    public void setRemarks(String remarks) {
+    public void setRemarks(final String remarks) {
         this.remarks = remarks;
     }
 
     /**
      * Updates the receipt's status by invoking the workflow action
-     * 
-     * @param wfAction Workflow action e.g. submit_for_approval/approve/reject
-     * @param remarks Approval/rejection remarks
+     *
+     * @param wfAction
+     *            Workflow action e.g. submit_for_approval/approve/reject
+     * @param remarks
+     *            Approval/rejection remarks
      * @return SUCCESS/ERROR
      */
-    private String updateReceiptWorkflowStatus(String wfAction, String remarks) {
-        for (Long receiptId : receiptIds) {
+    private String updateReceiptWorkflowStatus(final String wfAction, final String remarks) {
+        for (final Long receiptId : receiptIds) {
             // Get the next receipt that is to be updated
-            ReceiptHeader receiptHeader = receiptHeaderService.findById(receiptId, false);
+            final ReceiptHeader receiptHeader = receiptHeaderService.findById(receiptId, false);
             receiptHeaderService.performWorkflow(wfAction, receiptHeader, remarks);
         }
         // Add the selected receipt ids to sereceiptHeader
         // Need to find a better mechanism to achieve this.
-        getSession().put(CollectionConstants.SESSION_VAR_RECEIPT_IDS,
-                receiptIds);
+        getSession().put(CollectionConstants.SESSION_VAR_RECEIPT_IDS, receiptIds);
         return SUCCESS;
     }
 
     /**
-     * Fetches all receipts for set user-counter combination and given status code. Also sets the work flow action code to given
-     * value, and calculates the various amounts using the fetched receipts.
-     * 
-     * @param statusCode Status code for which receipts are to be fetched
-     * @param workflowAction Work flow action code
+     * Fetches all receipts for set user-counter combination and given status
+     * code. Also sets the work flow action code to given value, and calculates
+     * the various amounts using the fetched receipts.
+     *
+     * @param statusCode
+     *            Status code for which receipts are to be fetched
+     * @param workflowAction
+     *            Work flow action code
      */
-    private void fetchReceipts(String statusCode, String workflowAction) {
-        // Get all receipts that are created by currently logged in user from
-        // his/her current counter and are in TO_BE_SUBMITTED status
-        /*receiptHeaders = receiptHeaderService
-                .findAllByStatusUserCounterService(statusCode, userName,
-                        counterId, serviceCode);*/
+    private void fetchReceipts(final String statusCode, final String workflowAction) {// Get all receipts that are created by currently logged in user from
+        // his/her current counter and are in SUBMITTED status
+        Position position = collectionsUtil.getPositionOfUser(securityUtils.getCurrentUser());
+        receiptHeaders = receiptHeaderService
+                        .findAllByStatusUserCounterService(statusCode, position.getId(),
+                                        counterId, serviceCode);
         
-        //Hack for current AP implementation for the role of CSC Operator
-        receiptHeaders = getAllReceiptsCreated(statusCode, workflowAction);
-
         // Populate the selected receipt IDs with all receipt ids
         int receiptCount = receiptHeaders.size();
         receiptIds = new Long[receiptCount];
-        for (int i = 0; i < receiptCount; i++) {
-            receiptIds[i] = receiptHeaders.get(i).getId();
+        for(int i = 0; i < receiptCount; i++) {
+                receiptIds[i] = receiptHeaders.get(i).getId();
         }
-
+        
         wfAction = workflowAction;
-        calculateAmounts();
-    }
-    
-    //This method returns all the Receipts create by current logged in users as well as all the receipts created by CSC Operators
-    private List<ReceiptHeader> getAllReceiptsCreated(String statusCode, String workflowAction) {
-        List<ReceiptHeader> receiptHeaders = receiptHeaderService
-                .findAllByStatusUserCounterService(statusCode, userName,
-                        counterId, serviceCode);
-        String roleName = collectionsUtil.getThirdPartyUserRoles().get(0).getValue();
-        Set<User> users = userservice.getUsersByRoleName(roleName);
-        for(User user:users)
-        receiptHeaders.addAll(receiptHeaderService
-                .findAllByStatusUserCounterService(statusCode, user.getUsername(),
-                        counterId, serviceCode));
-        return receiptHeaders;
-    }
+        calculateAmounts();}
 
-    /**
-     * Retrieves all receipt headers created by currently logged in user from current counter and in status "To be submitted"
-     * 
+       /**
+     * Retrieves all receipt headers created by currently logged in user from
+     * current counter and in status "To be submitted"
+     *
      * @return Next page to be displayed (index)
      */
     public String listSubmit() {
         userName = collectionsUtil.getLoggedInUserName();
-        Location counter = collectionsUtil.getLocationOfUser(getSession());
-        if (counter != null) {
+        final Location counter = collectionsUtil.getLocationOfUser(getSession());
+        if (counter != null)
             counterId = counter.getId();
-        }
 
         // In SUBMIT mode fetch receipts for ALL billing services
         serviceCode = CollectionConstants.ALL;
 
         // Get all receipt headers to be submitted
-        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED,
-                CollectionConstants.WF_ACTION_SUBMIT);
+        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED, CollectionConstants.WF_ACTION_SUBMIT);
         return INDEX;
     }
 
     /**
-     * Retrieves all receipt headers created by set user from set counter and in status "submitted". Also populates the dropdown
-     * data for counter list and user list.
-     * 
+     * Retrieves all receipt headers created by set user from set counter and in
+     * status "submitted". Also populates the dropdown data for counter list and
+     * user list.
+     *
      * @return Next page to be displayed (index)
      */
     public String listApprove() {
-        if (counterId == null) {
+        if (counterId == null)
             // By default show receipts from all counters
             counterId = -1;
-        }
-        if (userName == null) {
+        if (userName == null)
             // By default show receipts created by all users
             userName = CollectionConstants.ALL;
-        }
-        if (serviceCode == null) {
+        if (serviceCode == null)
             // By default show receipts for all billing services
             serviceCode = CollectionConstants.ALL;
-        }
 
         // Get all receipt headers to be approved
-        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED,
-                CollectionConstants.WF_ACTION_APPROVE);
+        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED, CollectionConstants.WF_ACTION_APPROVE);
 
         // Add counter list and user list to drop down data
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_SERVICE_LIST,
-                collectionsUtil.getCollectionServiceList());
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_COUNTER_LIST,
-                collectionsUtil.getActiveCounters());
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_RECEIPT_CREATOR_LIST,
-                collectionsUtil.getReceiptCreators());
+        addDropdownData(CollectionConstants.DROPDOWN_DATA_SERVICE_LIST, collectionsUtil.getCollectionServiceList());
+        addDropdownData(CollectionConstants.DROPDOWN_DATA_COUNTER_LIST, collectionsUtil.getActiveCounters());
+        addDropdownData(CollectionConstants.DROPDOWN_DATA_RECEIPT_CREATOR_LIST, collectionsUtil.getReceiptCreators());
 
         return INDEX;
     }
 
     /**
-     * Action that will be called from the workflow inbox. The inbox also passes the id of the clicked item which is of the form:
+     * Action that will be called from the workflow inbox. The inbox also passes
+     * the id of the clicked item which is of the form:
      * <next-workflow-action>-servicecode-userid-counterid
-     * 
+     *
      * @return Next page to be displayed (index)
      */
     @Action(value = "/receipts/collectionsWorkflow-listWorkflow")
     public String listWorkflow() {
-        if (wfAction.equals(CollectionConstants.WF_ACTION_APPROVE)) {
+        if (wfAction.equals(CollectionConstants.WF_ACTION_APPROVE))
             return listApprove();
-        } else {
+        else
             return listSubmit();
-        }
     }
 
     /**
      * Action for creating cash submission report
-     * 
+     *
      * @return submissionReport
      */
     @Action(value = "/receipts/collectionsWorkflow-submissionReportCash")
@@ -482,7 +485,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 
     /**
      * Action for creating cash submission report
-     * 
+     *
      * @return submissionReport
      */
     @Action(value = "/receipts/collectionsWorkflow-submissionReportCheque")
@@ -492,7 +495,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 
     /**
      * Action method to submit the selected receipt headers
-     * 
+     *
      * @return SUCCESS/ERROR
      */
     @Action(value = "/receipts/collectionsWorkflow-submitCollections")
@@ -503,7 +506,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 
     /**
      * Action method to approve the selected receipt headers
-     * 
+     *
      * @return SUCCESS/ERROR
      */
     @Action(value = "/receipts/collectionsWorkflow-approveCollections")
@@ -514,7 +517,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 
     /**
      * Action method to reject the selected receipt headers
-     * 
+     *
      * @return SUCCESS/ERROR
      */
     @Action(value = "/receipts/collectionsWorkflow-rejectCollections")
@@ -524,25 +527,24 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * Calculates instrument type wise amounts of all receipts eligible for the workflow
+     * Calculates instrument type wise amounts of all receipts eligible for the
+     * workflow
      */
     private void calculateAmounts() {
         totalAmount = BigDecimal.valueOf(0);
-        for (ReceiptHeader receiptHeader : receiptHeaders) {
-            BigDecimal receiptAmount = receiptHeader.getAmount();
+        for (final ReceiptHeader receiptHeader : receiptHeaders) {
+            final BigDecimal receiptAmount = receiptHeader.getAmount();
 
             // Increment total amount
             totalAmount = totalAmount.add(receiptAmount);
 
             // Increment instrument type wise amount
-            String instrumentType = receiptHeader.getInstrumentType();
-            BigDecimal instrumentAmount = instrumentWiseAmounts
-                    .get(instrumentType);
-            if (instrumentAmount == null) {
+            final String instrumentType = receiptHeader.getInstrumentType();
+            BigDecimal instrumentAmount = instrumentWiseAmounts.get(instrumentType);
+            if (instrumentAmount == null)
                 instrumentAmount = receiptAmount;
-            } else {
+            else
                 instrumentAmount = instrumentAmount.add(receiptAmount);
-            }
             instrumentWiseAmounts.put(instrumentType, instrumentAmount);
         }
     }

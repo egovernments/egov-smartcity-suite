@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-08-24T17:17:02 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cash_collection" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="f9fda7f5-3105-49ec-bb72-ffab202077d3">
+<!-- 2015-08-28T15:47:27 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cash_collection" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="f9fda7f5-3105-49ec-bb72-ffab202077d3">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Postgresql"/>
 	<import value="java.lang.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="java.util.*"/>
@@ -86,8 +90,8 @@ FROM
 WHERE
  EGCL_COLLECTIONINSTRUMENT.COLLECTIONHEADER = EGCL_COLLECTIONHEADER.ID
  AND EGF_INSTRUMENTTYPE.TYPE = $P{EGOV_INSTRUMENT_TYPE}
- AND EGCL_COLLECTIONHEADER.CREATEDDATE >= $P{EGOV_FROM_DATE}
- AND EGCL_COLLECTIONHEADER.CREATEDDATE <= $P{EGOV_TO_DATE_PLUS_ONE}
+ AND EGCL_COLLECTIONHEADER.RECEIPTDATE >= $P{EGOV_FROM_DATE}
+ AND EGCL_COLLECTIONHEADER.RECEIPTDATE <= $P{EGOV_TO_DATE_PLUS_ONE}
  $P!{Q_COUNTER_ID}
  $P!{Q_COUNTER_ID}
  $P!{Q_COUNTER_OPERATOR_ID}

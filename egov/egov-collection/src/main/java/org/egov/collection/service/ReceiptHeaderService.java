@@ -129,18 +129,18 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	 * @return List of all receipts created by given user from given counter id
 	 *         and having given status
 	 */
-	public List<ReceiptHeader> findAllByStatusUserCounterService(String statusCode, String userName, Integer counterId, String serviceCode) {
+	public List<ReceiptHeader> findAllByStatusUserCounterService(String statusCode, Long positionId, Integer counterId, String serviceCode) {
 		StringBuilder query = new StringBuilder("select receipt from org.egov.collection.entity.ReceiptHeader receipt where 1=1");
 
 		boolean allStatuses = (statusCode == null || statusCode.equals(CollectionConstants.ALL));
 		boolean allCounters = (counterId == null || counterId < 0);
-		boolean allUsers = (userName == null || userName.equals(CollectionConstants.ALL));
+		boolean allPositions = (positionId == null || positionId.equals(CollectionConstants.ALL));
 		boolean allServices = (serviceCode == null || serviceCode.equals(CollectionConstants.ALL));
 
 		int argCount = 0;
 		argCount += allStatuses ? 0 : 1;
 		argCount += allCounters ? 0 : 1;
-		argCount += allUsers ? 0 : 1;
+		argCount += allPositions ? 0 : 1;
 		argCount += allServices ? 0 : 1;
 		Object arguments[] = new Object[argCount];
 
@@ -150,9 +150,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 			arguments[argCount++] = statusCode;
 		}
 
-		if (!allUsers) {
-			query.append(" and receipt.createdBy.username = ?");
-			arguments[argCount++] = userName;
+		if (!allPositions) {
+			query.append(" and receipt.state.ownerPosition.id = ?");
+			arguments[argCount++] = positionId;
 		}
 
 		if (!allCounters) {
@@ -1432,6 +1432,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	    }
 	}
 	
+	@Transactional
 	public void perform(ReceiptHeader receiptHeader, String wfState, String newStatusCode,String  nextAction,Position ownerPosition, String remarks) {
 	    receiptHeader.setStatus(collectionsUtil.getReceiptStatusForCode(newStatusCode));
 
@@ -1445,6 +1446,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	        receiptHeader.transition().withSenderName(receiptHeader.getCreatedBy().getName()).withComments(remarks)
 	        .withStateValue(wfState).withOwner(ownerPosition).withDateInfo(new Date()).withNextAction(nextAction);
 	    }
+	    getSession().flush();
 	    persistenceService.persist(receiptHeader);  
 	}
 	
