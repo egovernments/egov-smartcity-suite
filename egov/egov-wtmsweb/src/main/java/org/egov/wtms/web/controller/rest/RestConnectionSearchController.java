@@ -49,7 +49,7 @@ import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
 import org.egov.wtms.web.contract.ConnectionSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -64,9 +64,9 @@ public class RestConnectionSearchController {
     @Autowired
     private SearchService searchService;
 
-    @RequestMapping(value = "rest/watertax/searchconnection/{token}", method = RequestMethod.PUT)
+    @RequestMapping(value = "rest/watertax/searchconnection", method = RequestMethod.POST)
     @ResponseBody
-    public String searchConnection(@ModelAttribute final ConnectionSearchRequest searchRequest) {
+    public String searchConnection(@RequestBody final ConnectionSearchRequest searchRequest) {
         final SearchResult searchResult = searchService.search(asList(Index.WATERTAX.toString()),
                 asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(),
                 searchRequest.searchFilters(), Sort.NULL, Page.NULL);

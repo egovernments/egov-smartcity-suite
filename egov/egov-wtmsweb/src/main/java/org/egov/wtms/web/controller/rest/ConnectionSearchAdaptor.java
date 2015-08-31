@@ -45,6 +45,7 @@ import java.util.HashMap;
 import org.egov.search.domain.Document;
 import org.egov.search.domain.SearchResult;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -54,10 +55,11 @@ public class ConnectionSearchAdaptor implements JsonSerializer<SearchResult> {
 
     @Override
     public JsonElement serialize(final SearchResult searchResult, final Type type, final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
+        final JsonArray jsonArray =  new JsonArray();
         HashMap<String, Object> clausesMap =  new HashMap<String, Object>(0);
         HashMap<String, Object> searchableMap =  new HashMap<String, Object>(0);
         for(Document document:searchResult.getDocuments()) {
+            JsonObject jsonObject = new JsonObject();
             clausesMap = (HashMap)document.getResource().get("clauses");
             jsonObject.addProperty("consumercode", clausesMap.get("consumercode").toString());
             jsonObject.addProperty("propertyid", clausesMap.get("propertyid").toString());
@@ -74,8 +76,9 @@ public class ConnectionSearchAdaptor implements JsonSerializer<SearchResult> {
             jsonObject.addProperty("consumername", searchableMap.get("consumername").toString());
             jsonObject.addProperty("locality", searchableMap.get("locality") != null ? searchableMap.get("locality").toString() : "");
             jsonObject.addProperty("pincode", searchableMap.get("PIN") != null ? searchableMap.get("PIN").toString() : "");
+            jsonArray.add(jsonObject);
         }
-         return jsonObject;
+         return jsonArray;
     }
 
 }
