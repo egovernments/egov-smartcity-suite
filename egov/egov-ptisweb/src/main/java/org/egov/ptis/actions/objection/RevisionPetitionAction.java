@@ -341,29 +341,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		if (objection.getRecievedOn() == null) {
 			addActionMessage(getText("mandatory.fieldvalue.receivedOn"));
 			return NEW;
-		} /*else if (objection.getRecievedOn() != null ) {
-		   
-                    if (objection.getRecievedOn().toString().matches("([0-9]{2})/([0-9]{2})/([0-9]{4})"))
-                     {
-                                    if (objection.getRecievedOn().after(new Date())) {
-                                        addActionMessage(getText("objection.receivedOn.futuredate"));
-                                        return NEW;
-                                    } else if (objection.getBasicProperty() != null
-                                            && objection.getBasicProperty().getAssessmentdate() != null
-                                            && objection.getRecievedOn().before(objection.getBasicProperty().getAssessmentdate())) {
-                    
-                                        addActionMessage(getText("objection.receivedOn.lessthanaccessmentdate", objection
-                                                .getBasicProperty().getAssessmentdate().toString()));
-                                        return NEW;
-                                    }
-                    
-                        } else {
-                            addActionMessage(getText("invalid.fieldvalue.receivedOn"));
-                            return NEW;
-                        }
-   
-		} */
-		//else {
+		} 
 			objection.setObjectionNumber(applicationNumberGenerator.generate());
 
 			objection.getBasicProperty().setStatus(
@@ -592,8 +570,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	@ValidationErrorPage(value = "view")
 	@Action(value = "/revPetition/revPetition-recordObjectionOutcome")
 	public String recordObjectionOutcome() {
-		InputStream endoresementPdf = null;
-		ReportOutput reportOutput = new ReportOutput();
+	    
 		LOGGER.debug("ObjectionAction | recordObjectionOutcome | start " + objection);
 
 		if (hasErrors()) {
@@ -629,24 +606,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		objection.setGenerateSpecialNotice(Boolean.FALSE);
 		if (!objection.getObjectionRejected()) {
 			objection.setGenerateSpecialNotice(Boolean.TRUE);
-			// generateSpecialNotice(objection.getProperty(),(BasicPropertyImpl)
-			// objection.getBasicProperty());
+		
 		}
-
-		/*
-		 * reportOutput = createEndoresement(reportOutput, objection); if
-		 * (reportOutput != null && reportOutput.getReportOutputData() != null)
-		 * { endoresementPdf = new
-		 * ByteArrayInputStream(reportOutput.getReportOutputData()); }
-		 * noticeService.saveNotice( objection.getObjectionNumber().concat(
-		 * PropertyTaxConstants
-		 * .NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT_PREFIX),
-		 * PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT,
-		 * objection.getBasicProperty(), endoresementPdf);
-		 */
-		// propertyImplService.merge(objection.getProperty());
-		// objectionService.update(objection);
-
 		revisionPetitionService.updateRevisionPetition(objection);
 		sendEmailandSms(objection, REVISION_PETITION_ENDORESEMENTGENERATED);
 		addActionMessage(getText("objection.outcome.success"));
@@ -1144,8 +1105,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			}
 			
                         propService.updateIndexes(objection, PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION);
-                        sendEmailandSms(objection, REVISION_PETITION_CREATED);
-
+                       
 		} else if (workFlowAction != null && !"".equals(workFlowAction)
 				&& !WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workFlowAction)) {
 
