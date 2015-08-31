@@ -47,7 +47,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ChairPersonRepository extends JpaRepository<ChairPerson, Long> {
 
-    @Query(" from ChairPerson where active=true and ((fromDate is not null and (current_date between fromDate and toDate)) or (toDate is null and fromDate <= current_date)) ")
+    @Query("select cp from ChairPerson cp where cp.active=true and  ((cp.toDate is not null and current_date between cp.fromDate and cp.toDate) or (cp.toDate is null and cp.fromDate <= current_date))")
     ChairPerson findActiveChairPersonAsOnDate();
 
     @Query("select cp from ChairPerson cp where cp.active=true ")
