@@ -349,7 +349,7 @@ function checkviewforselectedrecord()
 	    <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.receiptno"/></td>
-	      <td width="24%" class="bluebox"><div class="yui-skin-sam"><div id="receiptNumberSearch_autocomplete"><div><s:textfield id="receiptNumberSearch" type="text" name="receiptNumber"/></div><span id="receiptNumberSearchResults"></span></div></div><egov:autocomplete name="receiptNumberSearch" width="15" field="receiptNumberSearch" url="/egi/receipts/receiptNumberSearch-searchAjax.action" queryQuestionMark="true" results="receiptNumberSearchResults" handler="receiptNumberSearchSelectionHandler" forceSelectionHandler="receiptNumberSelectionEnforceHandler"/><span class='warning' id="improperreceiptNumberSelectionWarning"></span></td>
+	      <td width="24%" class="bluebox"><div class="yui-skin-sam"><div id="receiptNumberSearch_autocomplete"><div><s:textfield id="receiptNumberSearch" type="text" name="receiptNumber"/></div><span id="receiptNumberSearchResults"></span></div></div><egov:autocomplete name="receiptNumberSearch" width="15" field="receiptNumberSearch" url="${pageContext.request.contextPath}/receipts/receiptNumberSearch-searchAjax.action" queryQuestionMark="true" results="receiptNumberSearchResults" handler="receiptNumberSearchSelectionHandler" forceSelectionHandler="receiptNumberSelectionEnforceHandler"/><span class='warning' id="improperreceiptNumberSelectionWarning"></span></td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.user"/></td>
 	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.user.select')}" name="userId" id="user" cssClass="selectwk" list="dropdownData.userList" listKey="id" listValue="name" value="%{userId}" /> </td>
 	   
@@ -374,7 +374,7 @@ function checkviewforselectedrecord()
 <div id="loadingMask" style="display: none; overflow: hidden; text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
     <div class="buttonbottom">
       <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search" method="search" onclick="return validate();"/></label>&nbsp;
-      <label><s:submit type="submit" cssClass="button" value="Reset" method="reset"/></label>&nbsp;
+      <label><s:submit type="submit" cssClass="button" value="Reset" onclick="document.searchReceiptForm.action='searchReceipt-reset.action'"/></label>&nbsp;
       <logic:empty name="results">
       	<input name="closebutton" type="button" class="button" id="closebutton" value="Close" onclick="window.close();"/>
       </logic:empty>

@@ -44,22 +44,25 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.springframework.transaction.annotation.Transactional;
 
-@Result(name="success", type="redirectAction", location = "receiptNumberSearch-searchResults")  
+@Results({
+@Result(name = ReceiptNumberSearchAction.SEARCH_RESULTS, location="receiptNumberSearch-searchResults.jsp" ),
+@Result(name = ReceiptNumberSearchAction.MANUALRECEIPTNUMBER_SEARCH_RESULTS, location="receiptNumberSearch-manualReceiptNumberResults.jsp" )
+})
 
 @ParentPackage("egov")  
-@Transactional(readOnly=true)
 public class ReceiptNumberSearchAction extends BaseFormAction {
 	private static final long serialVersionUID = 1L;
 	private ReceiptHeaderService receiptHeaderService;   
-	private static final String SEARCH_RESULTS = "searchResults";
-	private static final String MANUALRECEIPTNUMBER_SEARCH_RESULTS = "manualReceiptNumberResults";
+	protected static final String SEARCH_RESULTS = "searchResults";
+	protected static final String MANUALRECEIPTNUMBER_SEARCH_RESULTS = "manualReceiptNumberResults";
 	private List<ReceiptHeader> receiptNumberList = new ArrayList<ReceiptHeader>();
 	private String query;
 	
@@ -70,7 +73,7 @@ public class ReceiptNumberSearchAction extends BaseFormAction {
 	public void setQuery(String query) {
 		this.query = query;
 	}
-
+	@Action(value = "/receipts/receiptNumberSearch-searchAjax")
 	public String searchAjax(){
 		return SEARCH_RESULTS;
 	}
@@ -78,6 +81,8 @@ public class ReceiptNumberSearchAction extends BaseFormAction {
 	public Object getModel() {
 		return null;
 	}
+	
+	@Action(value = "/receipts/receiptNumberSearch-searchManualReceiptNumberAjax")
 	public String searchManualReceiptNumberAjax()
 	{
 		return MANUALRECEIPTNUMBER_SEARCH_RESULTS;

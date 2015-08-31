@@ -214,6 +214,7 @@ function transitionStates(){
 
 </script> 
 </head>
+<body onLoad="onBodyLoad();" >
 
 <span align="center" style="display:none" id="comparedatemessage">
   <li>
@@ -222,8 +223,6 @@ function transitionStates(){
 	</b></font>
   </li>
 </span>
-
-<body onLoad="onBodyLoad();" >
 <s:form theme="simple" name="searchOnlineReceiptForm" action="searchOnlineReceipt-search">
 <div class="formmainbox"><div class="subheadnew"><s:text name="searchOnlineReceipts.title"/>
 </div>
@@ -258,7 +257,7 @@ function transitionStates(){
 </div>
     <div class="buttonbottom">
       <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search" onclick="return validate();"/></label>&nbsp;
-      <label><s:submit type="submit" cssClass="button" value="Reset" /></label>&nbsp;
+      <label><s:submit type="submit" cssClass="button" value="Reset" onclick="document.searchOnlineReceiptForm.action='searchOnlineReceipt-reset.action'"/></label>&nbsp;
       <logic:empty name="results">
       	<input name="closebutton" type="button" class="button" id="closebutton" value="Close" onclick="window.close();"/>
       </logic:empty>

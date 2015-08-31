@@ -136,6 +136,7 @@ public class SearchReceiptAction extends SearchFormAction {
 		addRelatedEntity("serviceType", ServiceDetails.class,"name");
 	}
 	
+	@Action(value="/receipts/searchReceipt-reset") 
 	public String reset() {
 		setPage(1);
 		serviceTypeId=-1;

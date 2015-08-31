@@ -81,12 +81,14 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
 		addRelatedEntity("serviceType", ServiceDetails.class,"name");
 	}
 	
+	@Action(value="/citizen/searchOnlineReceipt-reset") 
 	public String reset() {
 		results = null;
 		serviceTypeId=Long.valueOf(-1);
 		fromDate=null;
 		toDate=null;
 		searchTransactionStatus=-1;
+		referenceId=null;
 		return SUCCESS;
 	}
 	
