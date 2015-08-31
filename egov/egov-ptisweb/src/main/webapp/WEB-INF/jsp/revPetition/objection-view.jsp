@@ -156,10 +156,10 @@
 							{	
 								if(validateObjectionOutcome())
 								{
-									 if(document.getElementById('approverPositionId').value=="-1") {
+									/*  if(document.getElementById('approverPositionId').value=="-1") {
 									        alert("Please Select the Approver ");
 											return false;
-									    }
+									    } */
 									action = 'revPetition-recordObjectionOutcome.action';
 								}else
 									return false;
@@ -270,7 +270,6 @@
 	  		 --%>
 	  		       
        			 <s:if test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED)  ||
-       			 egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY)  ||    
        					  	egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_FIXED)">
        			 	<%-- <jsp:include page="../workflow/revisionPetition-workflow.jsp"/> --%>
        			 	<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>

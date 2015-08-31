@@ -117,6 +117,9 @@ public interface PropertyTaxConstants {
     public static final String OBJECTION_HEARING_FIXED = "HEARING DATE FIXED";
     public static final String OBJECTION_HEARING_COMPLETED = "HEARING COMPLETED";
     public static final String REVISIONPETITION_HEARINGCOMPLETED = "Revision Petition:Hearing completed";
+    public static final String REVISIONPETITION_INSPECTIONVERIFIED ="Revision Petition:Inspection verified";
+    public static final String REVISIONPETITION_REGISTRATION ="Revision Petition:Registration";
+    public static final String REVISIONPETITION_WF_REGISTERED ="Revision Petition:Registered";
     public static final String REVISIONPETITION_CREATED = "Revision Petition:CREATED";
     public static final String OBJECTION_INSPECTION_COMPLETED = "INSPECTION COMPLETED";
     public static final String OBJECTION_INSPECTION_VERIFY = "INSPECTION VERIFY";

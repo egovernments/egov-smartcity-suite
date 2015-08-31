@@ -49,11 +49,10 @@
 		<script type="text/javascript">
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
-
 			function validateRecordObjection(){
 				document.getElementById("lblError").style.display='none';
 			//	alert(dom.get('recievedOn').value);
-				if(dom.get('recievedOn').value==''){
+			/* 	if(dom.get('recievedOn').value==''){
 					//document.getElementById("lblError").style.display='block';
 					//document.getElementById("lblError").innerHTML  = "Please enter Objection Received Date";
 					alert('Please enter Revision Petition Received Date');
@@ -65,7 +64,7 @@
 					alert('Please enter Revision Petition Received By');
 					return false;
 				}
-				else if(dom.get('details').value==''){
+				else */ if(dom.get('details').value==''){
 					//document.getElementById("lblError").style.display='block';
 					//document.getElementById("lblError").innerHTML  = "Please enter Objection Details";
 					alert('Please enter Revision Petition Details');
@@ -93,7 +92,7 @@
 		<link href="<c:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
 	
 	</head>
-	<body class="yui-skin-sam">
+	<body  class="yui-skin-sam">
 	<s:form action="revPetition" method="post" name="objectionViewForm" theme="simple">
 	<s:push value="model">
 	<s:token />
@@ -132,15 +131,16 @@
             </div>
             </td>
           </tr>
+         <s:if test="%{loggedUserIsEmployee == true}">
           <tr>
             <td>
             <div > 
-         	 <%--	<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
-             		<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>  --%>
+         	 <jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
          		<br/>
             </div>
             </td>
           </tr>
+        </s:if>
 	  </table> 
 	  <div id="loadingMask" style="display:none"><p align="center"><img src="/egi/resources/erp2/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
 	  <div class="buttonbottom" align="center">

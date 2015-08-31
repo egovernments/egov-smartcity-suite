@@ -52,14 +52,15 @@
 			 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
 				<td class="bluebox">&nbsp;</td>
-				<td class="bluebox" width="25%"><s:text name="objection.received.date" /><span class="mandatory1">*</span></td>
-			    <td class="bluebox" width="25%"><s:date name="recievedOn" id="recievedOnId" format="dd/MM/yyyy"  />
-				<s:textfield name="recievedOn" id="recievedOn" value="%{recievedOnId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')" size="10"/>
-				<a href="javascript:show_calendar('objectionViewForm.recievedOn',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+				<td class="bluebox" width="25%"><s:text name="objection.received.date" /></td>
+			    <td class="bluebox" width="20%"><s:date name="recievedOn" var="recievedOnId" format="dd/MM/yyyy" />
+				<div align="left">
+							<s:property default="N/A" value="%{recievedOnId}" />
+						</div>
 				</td>
 			
-				<td class="bluebox" width="25%"><s:text name="objection.received.by"/><span class="mandatory1">*</span></td>
-				<td class="bluebox" width="25%"><s:textfield name="recievedBy" id="recievedBy" onblur="chkReceivedByLen(this);"/></td>
+				<td class="bluebox" width="30%"><s:text name="objection.received.by"/></td>
+				<td class="bluebox" width="25%"><div align="left"><s:property default="N/A" value="%{recievedBy}" /></div></td>
 			</tr>
 			<tr>
 				<td class="greybox">&nbsp;</td>

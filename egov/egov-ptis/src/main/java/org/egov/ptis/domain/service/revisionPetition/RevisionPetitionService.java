@@ -80,7 +80,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
          objection.getBasicProperty().setUnderWorkflow(Boolean.TRUE);
            if (objection.getState() == null) {
                wfmatrix = revisionPetitionWorkFlowService.getWfMatrix(objection.getStateType(), null, null,
-                       null, "Revision Petition:CREATED", null);
+                       null, PropertyTaxConstants.REVISIONPETITION_CREATED, null);
                // Get the default revenue cleark from admin boundary.
                   Designation desig = designationService.getDesignationByName(PropertyTaxConstants.REVENUE_CLERK_DESGN);
                    List<Assignment> assignment = assignmentService.findByDesignationAndBoundary(desig.getId(), objection

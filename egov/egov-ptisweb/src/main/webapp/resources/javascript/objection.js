@@ -99,7 +99,7 @@ function checkLength(obj){
 
 function validateRecordObjections(){
 	document.getElementById("lblError").style.display='none';
-	if(dom.get('recievedOn').value==''){
+	/*if(dom.get('recievedOn').value==''){ 
 		alert('Please enter Revision Petition Received Date');
 		return false;
 	}
@@ -107,7 +107,8 @@ function validateRecordObjections(){
 		alert('Please enter Revision Petition Received By');
 		return false;
 	}
-	else if(dom.get('details').value==''){
+	else */ 
+	if(dom.get('details').value==''){
 		alert('Please enter Revision Petition Details');
 		return false;
 	}
