@@ -5,13 +5,12 @@ $(document).ready(function(){
 	{
 		tableContainer = $("#chairperson-table");
 		tableContainer.dataTable({
-			processing : true,
+			//processing : true,
 			serverSide : true,
 			type : 'GET',
 			sort : true,
 			filter : true,
 			responsive : true,
-			
 			destroy : true,
 			"sPaginationType" : "bootstrap",
 			"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
@@ -31,7 +30,10 @@ $(document).ready(function(){
 				},{
 					"mData" : "status",
 					"sTitle" : "Status"
-				}]
+				}],
+				"fnInitComplete": function(oSettings, json) {
+					$('#chairperson-table tbody tr:eq(0) td:last').addClass('error-msg view-content');
+				}
 		});
 	}
 	//add chairperson
