@@ -55,7 +55,7 @@
 		<param-name>parentContextKey</param-name>
 		<param-value>erpApplicationContext</param-value>
 	</context-param>
-	<!-- Context Params Ends Filter Declaration Starts -->
+<!-- Context Params Ends Filter Declaration Starts -->
 	<filter>
 		<filter-name>CacheControlFilter</filter-name>
 		<filter-class>org.egov.infra.web.filter.CacheControlFilter</filter-class>
@@ -77,7 +77,11 @@
 		<filter-class>net.sf.ehcache.constructs.web.filter.GzipFilter</filter-class>
 	</filter>
 	<filter>
-		<filter-name>threadLocalsHandlerFilter</filter-name>
+		<filter-name>applicationCoreFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter>
+		<filter-name>applicationTenantResolverFilter</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 	<filter>
@@ -90,10 +94,6 @@
 	</filter>
 	<filter>
 		<filter-name>springSessionRepositoryFilter</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	</filter>
-	<filter>
-		<filter-name>sessionAttributeHandlerFilter</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 	<filter>
@@ -135,7 +135,7 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
-		<filter-name>threadLocalsHandlerFilter</filter-name>
+		<filter-name>applicationTenantResolverFilter</filter-name>
 		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
@@ -147,14 +147,9 @@
 		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
-		<filter-name>sessionAttributeHandlerFilter</filter-name>
-		<url-pattern>*.action</url-pattern>
+		<filter-name>applicationCoreFilter</filter-name>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	<filter-mapping>
-		<filter-name>securityFilterChain</filter-name>
-		<url-pattern>*.action</url-pattern>
-	</filter-mapping>
-	
 	<filter-mapping>
 		<filter-name>ResponseOverrideFilter</filter-name>
 		<url-pattern>*.action</url-pattern>
@@ -182,51 +177,6 @@
 		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
 	</listener>
 	<!-- Listeners Ends Servlet Declaration Starts -->
-	
-	<servlet>
-		<servlet-name>reportViewer</servlet-name>
-		<servlet-class>org.egov.infra.reporting.viewer.ReportViewer</servlet-class>
-		<load-on-startup>3</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>action</servlet-name>
-		<url-pattern>*.do</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>reportViewer</servlet-name>
-		<url-pattern>/reportViewer</url-pattern>
-	</servlet-mapping>
-	
-	<!-- Servlet Declaration Ends -->
-	<jsp-config>
-		<taglib>
-			<taglib-uri>http://java.sun.com/jsp/jstl/core</taglib-uri>
-			<taglib-location>/WEB-INF/taglibs/c.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>http://displaytag.sf.net</taglib-uri>
-			<taglib-location>/WEB-INF/taglibs/displaytag.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>http://www.opensymphony.com/sitemesh/decorator</taglib-uri>
-			<taglib-location>/WEB-INF/taglibs/sitemesh-decorator.tld</taglib-location>
- 		</taglib>
- 		<taglib>
-			<taglib-uri>http://www.opensymphony.com/sitemesh/page</taglib-uri>
-			<taglib-location>/WEB-INF/taglibs/sitemesh-page.tld</taglib-location>
- 		</taglib>
-		<jsp-property-group>
-			<url-pattern>*.jsp</url-pattern>
-			<page-encoding>UTF-8</page-encoding>
-		</jsp-property-group>
-	</jsp-config>
-	<welcome-file-list>
-	    <welcome-file>/index.jsp</welcome-file>
-    </welcome-file-list>    
-	<error-page>
-		<error-code>500</error-code>
-		<location>/error/error.jsp</location>
-	</error-page>
 	<session-config>
 		<cookie-config>
 			<path>/</path>
@@ -235,4 +185,33 @@
 		</cookie-config>
 		<tracking-mode>COOKIE</tracking-mode>
 	</session-config>
+	<welcome-file-list>
+		<welcome-file>/index.jsp</welcome-file>
+	</welcome-file-list>
+	<jsp-config>
+		<taglib>
+			<taglib-uri>http://java.sun.com/jsp/jstl/core</taglib-uri>
+			<taglib-location>WEB-INF/tags/c.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>http://displaytag.sf.net</taglib-uri>
+			<taglib-location>WEB-INF/tags/displaytag.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>http://www.opensymphony.com/sitemesh/decorator</taglib-uri>
+			<taglib-location>/WEB-INF/tags/sitemesh-decorator.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>http://www.opensymphony.com/sitemesh/page</taglib-uri>
+			<taglib-location>/WEB-INF/tags/sitemesh-page.tld</taglib-location>
+		</taglib>
+		<jsp-property-group>
+			<url-pattern>*.jsp</url-pattern>
+			<page-encoding>UTF-8</page-encoding>
+		</jsp-property-group>
+	</jsp-config>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/error/error.jsp</location>
+	</error-page>
 </web-app>

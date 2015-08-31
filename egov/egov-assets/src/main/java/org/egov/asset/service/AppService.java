@@ -44,14 +44,16 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class AppService {
     private static final Logger logger = Logger.getLogger(AppService.class);
-    private  AppConfigValueService appConfigValuesService;
+
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     /**
-     * This method will return the value in AppConfigValue table for the given
-     * module and key.
+     * This method will return the value in AppConfigValue table for the given module and key.
      *
      * @param moduleName
      * @param key
@@ -62,8 +64,8 @@ public class AppService {
     }
 
     /**
-     * This method assumes that there will be one value for module and key.
-     * Return value in app config if found, otherwise return null.
+     * This method assumes that there will be one value for module and key. Return value in app config if found, otherwise return
+     * null.
      *
      * @param moduleName
      * @param key
@@ -75,8 +77,8 @@ public class AppService {
     }
 
     /**
-     * This method assumes that there will be one value for Asset module. Return
-     * value in app config if found, otherwise return null.
+     * This method assumes that there will be one value for Asset module. Return value in app config if found, otherwise return
+     * null.
      *
      * @param moduleName
      * @param key
@@ -84,11 +86,6 @@ public class AppService {
      */
     public String getUniqueAppConfigValue(final String key) {
         return getUniqueAppConfigValue("Asset Management", key);
-    }
-
-    // Spring Injection
-    public void setAppConfigValueService(final AppConfigValueService appConfigValueService) {
-        this.appConfigValuesService = appConfigValueService;
     }
 
 }

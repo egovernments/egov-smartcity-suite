@@ -48,10 +48,7 @@
 	<context:component-scan base-package="org.egov.asset" />
 
      <!-- Services for assets -->
-     <bean class="org.egov.infstr.config.dao.AppConfigValuesDAO" id="appConfigValuesDAO" scope="prototype" />
-     
 	 <bean class="org.egov.asset.service.AppService" id="appService" scope="prototype">
-		<property name="appConfigValuesDAO" ref="appConfigValuesDAO"/>
 	</bean>
 	
 	<bean class="org.egov.asset.service.CommonAssetsService" id="commonAssetsService" scope="prototype">
