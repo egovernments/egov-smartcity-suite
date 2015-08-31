@@ -148,27 +148,26 @@ public class RestNewConnectionController {
     public String createNewConnection(
             @Valid @RequestBody final ConnectionInfo connectionInfo,
             @PathVariable final String token){
+        String httpStatus = HttpStatus.OK.getReasonPhrase();
         try {
         System.out.println("newConnection :  " + connectionInfo.toString());
         System.out.println("token : " + token);
         
 
-        final Boolean isAuthenticatedUser = authenticateUser("narasappa", "demo");
+        final Boolean isAuthenticatedUser = authenticateUser("mahesh", "demo");
         final Token tokenObj = validateToken(token);
-        HttpStatus httpStatus = HttpStatus.OK;
-
         if (tokenObj != null) {
             if (isAuthenticatedUser) {
                 populateAndPersistWaterConnectionDetails(connectionInfo);
                 tokenService.redeem(tokenObj);
             } else
-                httpStatus = HttpStatus.NETWORK_AUTHENTICATION_REQUIRED;
+                httpStatus = HttpStatus.UNAUTHORIZED.getReasonPhrase();
         } else
-            httpStatus = HttpStatus.PRECONDITION_FAILED;
+            httpStatus = HttpStatus.PRECONDITION_FAILED.getReasonPhrase();
         }catch (Exception exp) {
             exp.printStackTrace();
         }
-        return SUCCESS;
+        return httpStatus;
     }
 
     private void populateAndPersistWaterConnectionDetails(final ConnectionInfo connectionInfo)
