@@ -60,6 +60,7 @@ import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.joda.time.DateTime;
@@ -231,7 +232,10 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getCollModesNotAllowed() {
-        return "bankchallan";
+        if(ConnectionStatus.ACTIVE.equals(getWaterConnectionDetails().getConnectionStatus()))
+            return "bankchallan";
+        else
+            return "bankchallan,dd,cheque";
     }
 
     @Override
