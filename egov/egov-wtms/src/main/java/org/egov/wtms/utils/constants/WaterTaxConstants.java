@@ -163,4 +163,6 @@ public class WaterTaxConstants {
 
     public static final String WATER_CONN_BILLNO_SEQ = "SEQ_BILLNO_";
 
+    public static final String RESIDENTIAL = "RESIDENTIAL";
+
 }

@@ -160,9 +160,13 @@ public class ConnectionDemandService {
             feeDetails.put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE, fieldInspectionDetails.getEstimationCharges());
 
         if (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getCode()))
-            donationDetails = donationDetailsService.findByDonationHeader(donationHeaderService
-                    .findByCategoryandUsageandMinPipeSize(waterConnectionDetails.getCategory(),
-                            waterConnectionDetails.getUsageType(), waterConnectionDetails.getPipeSize().getSizeInInch()));
+            if (!(WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) &&
+                    (WaterTaxConstants.RESIDENTIAL.equalsIgnoreCase(waterConnectionDetails.getPropertyType().getCode()) ||
+                            ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()))))
+
+                donationDetails = donationDetailsService.findByDonationHeader(donationHeaderService
+                        .findByCategoryandUsageandMinPipeSize(waterConnectionDetails.getCategory(),
+                                waterConnectionDetails.getUsageType(), waterConnectionDetails.getPipeSize().getSizeInInch()));
 
         if (donationDetails != null) {
             feeDetails.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, donationDetails.getAmount());
