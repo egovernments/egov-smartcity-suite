@@ -40,6 +40,7 @@
 package org.egov.wtms.application.service.collection;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +64,7 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
@@ -109,6 +111,7 @@ public class WaterTaxCollection extends TaxCollection {
     }
 
     @Override
+    @Transactional
     public void updateDemandDetails(final BillReceiptInfo billRcptInfo) {
         totalAmount = billRcptInfo.getTotalAmount();
         final EgDemand demand = getCurrentDemand(Long.valueOf(billRcptInfo.getBillReferenceNum()));
@@ -121,14 +124,18 @@ public class WaterTaxCollection extends TaxCollection {
                     + " with receipt no." + billRcptInfo.getReceiptNum());
         }
 
-        if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED))
+        if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED)) {
             updateCollForRcptCreate(demand, billRcptInfo);
-        else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED))
-            updateCollForRcptCancel(demand, billRcptInfo);
+            updateWaterConnectionDetails(demand);
+            updateWaterTaxIndexes(demand);
+        } else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED)) {
+            updateCollectionForRcptCancel(demand, billRcptInfo);
+            updateWaterConnDetailsStatus(demand, billRcptInfo);
+            updateWaterTaxIndexes(demand);
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("updateDemandDetails : Demand after processed : " + demand);
 
-        updateWaterConnectionDetails(demand);
     }
 
     @Transactional
@@ -151,9 +158,9 @@ public class WaterTaxCollection extends TaxCollection {
             waterConnectionDetailsService.sendSmsAndEmail(waterConnectionDetails, null);
             waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
         }
-        waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
     }
 
+    @Transactional
     private void updateCollForRcptCreate(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("updateCollForRcptCreate : Updating Collection Started For Demand : " + demand
@@ -161,6 +168,7 @@ public class WaterTaxCollection extends TaxCollection {
         updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo);
     }
 
+    @Transactional
     private void updateDemandDetailForReceiptCreate(final Set<ReceiptAccountInfo> accountDetails, final EgDemand demand,
             final BillReceiptInfo billRcptInfo) {
 
@@ -246,7 +254,8 @@ public class WaterTaxCollection extends TaxCollection {
 
     // Receipt cancellation ,updating bill,demanddetails,demand
 
-    private void updateCollForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+    @Transactional
+    private void updateCollectionForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("reconcileCollForRcptCancel : Updating Collection Started For Demand : " + demand
                 + " with BillReceiptInfo - " + billRcptInfo);
         cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
@@ -258,6 +267,7 @@ public class WaterTaxCollection extends TaxCollection {
         LOGGER.debug("reconcileCollForRcptCancel : Updating Collection finished For Demand : " + demand);
     }
 
+    @Transactional
     private void cancelBill(final Long billId) {
         if (billId != null) {
             final EgBill egBill = egBillDAO.findById(billId, false);
@@ -265,6 +275,7 @@ public class WaterTaxCollection extends TaxCollection {
         }
     }
 
+    @Transactional
     private void updateDmdDetForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("Entering method updateDmdDetForRcptCancel");
 
@@ -292,5 +303,35 @@ public class WaterTaxCollection extends TaxCollection {
             }
         updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
         LOGGER.debug("Exiting method updateDmdDetForRcptCancel");
+    }
+
+    @Transactional
+    private void updateWaterConnDetailsStatus(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .getWaterConnectionDetailsByDemand(demand);
+        StateHistory stateHistory = null;
+        if (waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)) {
+            waterConnectionDetails.setStatus(waterTaxUtils
+                    .getStatusByCodeAndModuleType(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN,
+                            WaterTaxConstants.MODULETYPE));
+            Long approvalPosition = Long.valueOf(0);
+            if (!waterConnectionDetails.getStateHistory().isEmpty()
+                    && waterConnectionDetails.getStateHistory() != null)
+                Collections.reverse(waterConnectionDetails.getStateHistory());
+            stateHistory = waterConnectionDetails.getStateHistory().get(0);
+            final Position owner = stateHistory.getOwnerPosition();
+            if (owner != null)
+                approvalPosition = owner.getId();
+            waterConnectionDetailsService.createMatrixWorkflowTransition(waterConnectionDetails,
+                    approvalPosition, "Receipt Cancelled", WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
+                    null);
+        }
+
+    }
+
+    private void updateWaterTaxIndexes(final EgDemand demand) {
+        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .getWaterConnectionDetailsByDemand(demand);
+        waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
     }
 }
