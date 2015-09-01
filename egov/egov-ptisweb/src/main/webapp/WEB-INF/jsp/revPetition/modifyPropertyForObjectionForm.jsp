@@ -163,7 +163,6 @@
 		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propTypeId"
 				id="propTypeId" listKey="id" listValue="type" list="dropdownData.PropTypeMaster" value="%{property.propertyDetail.propertyTypeMaster.id}"
 				cssClass="selectnew" onchange="populatePropTypeCategory();toggleFloorDetails();enableFieldsForPropType();" /></td>
-			<s:hidden id="property.propertyDetail.propertyTypeMaster.type" name="property.propertyDetail.propertyTypeMaster.type" value="%{property.propertyDetail.propertyTypeMaster.type}" />
 				
 		<td class="greybox" width="25%"><s:text name="property.type"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>

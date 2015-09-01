@@ -407,7 +407,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     final String cityName = request.getSession().getAttribute("cityname").toString();
 			reportParams.put("logoPath", cityLogo);
 			reportParams.put("cityName", cityName);
-			reportParams.put("recievedBy", objection.getRecievedBy());
+			reportParams.put("recievedBy", objection.getBasicProperty().getFullOwnerName());
 
 			if (objection.getHearings() != null && objection.getHearings().size() > 0
 					&& objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt() != null)
@@ -423,6 +423,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			reportParams.put("HouseNo", objection.getBasicProperty().getProperty().getApplicationNo());
 			reportParams.put("hearingTime", objection.getHearings().get(objection.getHearings().size() - 1)
 					.getHearingTime());
+			reportParams.put("hearingVenue", objection.getHearings().get(objection.getHearings().size() - 1)
+                                .getHearingVenue());
 
 			reportRequest = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_REVISIONPETITION_HEARINGNOTICE,
 					objection, reportParams);
@@ -1009,7 +1011,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			westBoundary = propertyID.getWestBoundary();
 		}
 		populatePropertyTypeCategory();
-
+		          
 		if (objection != null && objection.getProperty() != null) {
 			setReasonForModify(objection.getProperty().getPropertyDetail().getPropertyMutationMaster().getCode());
 			 if (objection.getProperty().getPropertyDetail().getSitalArea() != null)
@@ -1017,6 +1019,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		           
 			if (objection.getProperty().getPropertyDetail().getFloorDetails().size() > 0)
 				setFloorDetails(objection.getProperty());
+			if (objection.getProperty().getPropertyDetail().getPropertyTypeMaster() != null)
+			    propTypeId = objection.getProperty().getPropertyDetail().getPropertyTypeMaster().getId().toString();
 		}
 
 		setOwnerName(objection.getBasicProperty().getProperty());
@@ -1158,8 +1162,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                             if (stateHistoryObj.getValue().equalsIgnoreCase(PropertyTaxConstants.REVISIONPETITION_CREATED)
                                    ) {
                                 position = stateHistoryObj.getOwnerPosition();
-                            //    loggedInUser = eisCommonService.getUserForPosition(position.getId(), new Date());
-                                addActionMessage(getText("objection.forward", new String[] { loggedInUser.getUsername() }));
+                              User  sender  = eisCommonService.getUserForPosition(position.getId(), new Date());
+                              if(sender!=null)
+                                addActionMessage(getText("objection.forward", new String[] { sender.getUsername() }));
         
                                 positionFoundInHistory = true;
                                 break;
@@ -1309,11 +1314,28 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
 	
 	private void modifyBasicProp() {
-		Date propCompletionDate = null;
-		PropertyImpl createdNewProperty = propService.createProperty(objection.getProperty(), 
+	    Date propCompletionDate = null;
+	    final Long oldPropTypeId = objection.getProperty().getPropertyDetail().getPropertyTypeMaster().getId();
+	      
+	    if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1")){
+	        PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
+	                    "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
+	    
+        	    if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+                        propCompletionDate = propService.getLowestDtOfCompFloorWise(objection.getProperty().getPropertyDetail()
+                                .getFloorDetailsProxy());
+                    else
+                        propCompletionDate = objection.getProperty().getPropertyDetail().getDateOfCompletion();
+        	    
+	    }    
+	     if(propCompletionDate!=null)  {
+        	    objection.getBasicProperty().setPropOccupationDate(propCompletionDate);
+        	    objection.getProperty().setEffectiveDate(propCompletionDate);
+	     }
+	    
+	    PropertyImpl createdNewProperty = propService.createProperty(objection.getProperty(), 
 		        ( getAreaOfPlot() != null ? getAreaOfPlot() : ""), reasonForModify,
-				(objection.getProperty().getPropertyDetail().getPropertyTypeMaster() != null ? objection.getProperty()
-						.getPropertyDetail().getPropertyTypeMaster().getId().toString() : null), (objection
+				(propTypeId != null ? propTypeId : null), (objection
 						.getProperty().getPropertyDetail().getPropertyUsage() != null ? objection.getProperty()
 						.getPropertyDetail().getPropertyUsage().getId().toString() : null), (objection.getProperty()
 						.getPropertyDetail().getPropertyOccupation() != null ? objection.getProperty()
@@ -1329,39 +1351,25 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 						.getWoodType().getId() : null), taxExemptedReason);
 
 		updatePropertyID(objection.getBasicProperty());
-		PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
-				"from PropertyTypeMaster ptm where ptm.code = ?", OWNERSHIP_TYPE_VAC_LAND);
+		  final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
+		                "from PropertyTypeMaster ptm where ptm.code = ?", OWNERSHIP_TYPE_VAC_LAND);
+		  
+		        if ((oldPropTypeId == propTypeMstr.getId() && 
+		                Long.parseLong(propTypeId) != propTypeMstr.getId()) || (oldPropTypeId != propTypeMstr
+		                .getId()
+		                && Long.parseLong(propTypeId) == propTypeMstr.getId())
+		                )
+		            if (propTypeMstr != null
+		                    && org.apache.commons.lang.StringUtils.equals(propTypeMstr.getId().toString(), propTypeId))
+		                propService.changePropertyDetail(objection.getProperty(), new VacantProperty(), 0);
+		            else
+		                propService.changePropertyDetail(objection.getProperty(), new BuiltUpProperty(), objection
+                                        .getProperty().getPropertyDetail().getFloorDetails().size());
 
-		if (objection.getProperty().getPropertyDetail().getPropertyTypeMaster() != null
-				&& objection.getProperty().getPropertyDetail().getPropertyTypeMaster().getId() != null) {
-			if ((propTypeMstr != null)
-					&& (propTypeMstr.getId() == objection.getProperty().getPropertyDetail().getPropertyTypeMaster()
-							.getId())) {
-
-				if (objection.getProperty().getPropertyDetail().getFloorDetails() != null
-						&& objection.getProperty().getPropertyDetail().getFloorDetails().size() > 0) {
-					// Mean currently floor details are present. Change to
-					// vacant property type.
-					propService.changePropertyDetail(objection.getProperty(), new VacantProperty(), 0);
-					propCompletionDate = objection.getProperty().getPropertyDetail().getDateOfCompletion();
-				}
-			} else {
-				if (objection.getProperty().getPropertyDetail().getFloorDetails() != null
-						&& objection.getProperty().getPropertyDetail().getFloorDetails().size() == 0) {
-					// Mean currently plot details are present. Change to build
-					// up property type.
-
-					propService.changePropertyDetail(objection.getProperty(), new BuiltUpProperty(), objection
-							.getProperty().getPropertyDetail().getFloorDetails().size());
-					propCompletionDate = propService.getLowestDtOfCompFloorWise(objection.getProperty()
-							.getPropertyDetail().getFloorDetails());
-				}
-
-			}
-			propService
+					propService
 					.modifyDemand(objection.getProperty(), (PropertyImpl) objection.getBasicProperty().getProperty());
 
-		}
+		
 	}
 
 	private void getPropertyView(String propertyId) {
@@ -1389,8 +1397,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 				(objection.getProperty().getPropertyDetail().getDateOfCompletion() != null ? dateformat.format(
 						objection.getProperty().getPropertyDetail().getDateOfCompletion()).toString() : ""),
 						eastBoundary,westBoundary,southBoundary,northBoundary,
-				(objection.getProperty().getPropertyDetail().getPropertyTypeMaster() != null ? objection.getProperty()
-						.getPropertyDetail().getPropertyTypeMaster().getId().toString() : null), ownerName, ownerName,
+				(propTypeId!=null ? propTypeId : null), ownerName, ownerName,
 				(objection.getProperty().getPropertyDetail().getFloorType() != null ? objection.getProperty()
 						.getPropertyDetail().getFloorType().getId() : null), (objection.getProperty()
 						.getPropertyDetail().getRoofType() != null ? objection.getProperty().getPropertyDetail()

@@ -12,6 +12,7 @@
 	<parameter name="currentDate" class="java.lang.String"/>
 	<parameter name="HouseNo" class="java.lang.String"/>
 	<parameter name="hearingTime" class="java.lang.String"/>
+	<parameter name="hearingVenue" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -60,14 +61,14 @@
 	<detail>
 		<band height="199" splitType="Stretch">
 			<textField>
-				<reportElement x="5" y="12" width="566" height="39" uuid="e6dec114-7213-468e-93b3-4396a6134008"/>
+				<reportElement x="5" y="12" width="566" height="51" uuid="e6dec114-7213-468e-93b3-4396a6134008"/>
 				<textElement verticalAlignment="Middle">
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["It is here by noted that revision petition submitted by you dated on "+ $P{receivedOn}+" is considered, and the hearing date is fixed on date " +$P{hearingNoticeDate}+ " and Time "+$P{hearingTime}+ " Hrs. "]]></textFieldExpression>
+				<textFieldExpression><![CDATA["It is here by noted that revision petition submitted by you dated on "+ $P{receivedOn}+" is considered, and the hearing date is fixed on date: " +$P{hearingNoticeDate}+ " at Time: "+$P{hearingTime}+ " Hrs and Venue: "+$P{hearingVenue}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="5" y="64" width="566" height="39" uuid="bfdc75b0-7b9c-4295-88e7-329807b4b01f"/>
+				<reportElement x="5" y="73" width="566" height="39" uuid="bfdc75b0-7b9c-4295-88e7-329807b4b01f"/>
 				<textElement verticalAlignment="Middle">
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>

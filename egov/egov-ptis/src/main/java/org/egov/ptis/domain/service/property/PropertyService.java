@@ -1921,6 +1921,7 @@ public class PropertyService {
         propDetail.setCommBuiltUpArea(propertyDetail.getCommBuiltUpArea());
         propDetail.setPlinthArea(propertyDetail.getPlinthArea());
         propDetail.setCommVacantLand(propertyDetail.getCommVacantLand());
+        propDetail.setCurrentCapitalValue(propertyDetail.getCurrentCapitalValue());
         propDetail.setSurveyNumber(propertyDetail.getSurveyNumber());
         propDetail.setFieldVerified(propertyDetail.getFieldVerified());
         propDetail.setFieldVerificationDate(propertyDetail.getFieldVerificationDate());

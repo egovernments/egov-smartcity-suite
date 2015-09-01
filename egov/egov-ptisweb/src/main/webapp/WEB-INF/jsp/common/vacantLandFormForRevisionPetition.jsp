@@ -60,19 +60,19 @@
 				maxlength="15" value="%{property.propertyDetail.pattaNumber}" />
         </td>
         <td class="blueborderfortd" align="center">
-        	<s:textfield name="property.propertyDetail.sitalArea.area" id="property.propertyDetail.sitalArea.area"
+        	<s:textfield name="property.propertyDetail.sitalArea.area"  id="vacantLandArea"
 				maxlength="15" value="%{property.propertyDetail.sitalArea.area}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'property.propertyDetail.sitalArea.area');checkZero(this,'property.propertyDetail.sitalArea.area');" />
         </td>
         <td class="blueborderfortd" align="center">
-        	<s:textfield name="property.propertyDetail.marketValue" id="property.propertyDetail.marketValue"
+        	<s:textfield name="property.propertyDetail.marketValue" id="marketValue"
 				maxlength="15" value="%{property.propertyDetail.marketValue}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'property.propertyDetail.marketValue');checkZero(this,'property.propertyDetail.marketValue');" />
 		</td>
         
         <td class="blueborderfortd">
         	<s:textfield name="property.propertyDetail.currentCapitalValue"
-				id="property.propertyDetail.currentCapitalValue" maxlength="15"  readOnly="true" value="%{property.propertyDetail.currentCapitalValue}"
+				id="currentCapitalValue" maxlength="15"  readOnly="true" value="%{property.propertyDetail.currentCapitalValue}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'property.propertyDetail.currentCapitalValue');checkZero(this,'property.propertyDetail.currentCapitalValue');" />
         </td>
         

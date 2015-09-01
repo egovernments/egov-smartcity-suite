@@ -248,7 +248,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 				if (applicableTax.equals(DEMANDRSN_CODE_VACANT_TAX)) {
 					taxRatePerc = getTaxRate(DEMANDRSN_CODE_VACANT_TAX);
 				} else {
-					if (floor.getPropertyUsage().getUsageCode().equals(USAGE_RESIDENTIAL)) {
+					if (floor!=null && floor.getPropertyUsage().getUsageCode().equals(USAGE_RESIDENTIAL)) {
 						taxRatePerc = getTaxRate(DEMANDRSN_CODE_GENERAL_TAX + "_RESD");
 					} else {
 						taxRatePerc = getTaxRate(DEMANDRSN_CODE_GENERAL_TAX + "_NR");
