@@ -1096,8 +1096,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 					position = assignment.getPosition();
 			        }
 			    }
-			updateRevisionPetitionStatus(wfmatrix, objection, null);
-
+			updateRevisionPetitionStatus(wfmatrix,objection, PropertyTaxConstants.OBJECTION_CREATED);
+                          
 			if (position != null)
 				user = eisCommonService.getUserForPosition(position.getId(), new Date());
 
@@ -1167,7 +1167,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                             if (stateHistoryObj.getValue().equalsIgnoreCase(
                                             PropertyTaxConstants.REVISIONPETITION_WF_REGISTERED)) {
                                 position = getWorkFlowInitiator(objection, position);
-                                updateRevisionPetitionStatus(wfmatrix,objection, PropertyTaxConstants.OBJECTION_HEARING_FIXED);
+                                 
+                                //First time when commisioner forwarding record from Ulb operator, then only we need to change status.
+                                if(objection.getEgwStatus()!=null && objection.getEgwStatus().getCode().equalsIgnoreCase(PropertyTaxConstants.OBJECTION_CREATED))
+                                    updateRevisionPetitionStatus(wfmatrix,objection, PropertyTaxConstants.OBJECTION_HEARING_FIXED);
+                                
                                 positionFoundInHistory = true;
                                 break;
                             }
@@ -1177,6 +1181,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                                     || objection.getState().getValue()
                                             .equalsIgnoreCase(PropertyTaxConstants.REVISIONPETITION_WF_REGISTERED)) {
                                 positionFoundInHistory = true;
+                                updateRevisionPetitionStatus(wfmatrix,objection, PropertyTaxConstants.OBJECTION_HEARING_FIXED);
                                 position = getWorkFlowInitiator(objection, position);
                             }
         
