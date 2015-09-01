@@ -42,7 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <div class="panel-body history-slide">
-					<div class="row hidden-xs visible-sm visible-md visible-lg view-content header-color">
+					<div class="row add-margin hidden-xs visible-sm visible-md visible-lg header-color">
 						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.date"/></div>
 						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.updatedby"/></div>
 						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.status" /></div>
@@ -53,7 +53,7 @@
 					<c:choose>
 							<c:when test="${!applicationHistory.isEmpty()}">
 								<c:forEach items="${applicationHistory}" var="history">
-								<div class="row  add-border">
+								<div class="row add-margin">
 									<div class="col-sm-2 col-xs-12 add-margin">
 										<fmt:formatDate value="${history.date}" var="historyDate"
 											pattern="dd-MM-yyyy HH:mm a E" />

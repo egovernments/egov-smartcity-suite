@@ -86,10 +86,8 @@
 				</table>
 				<div class="form-group">
 					<div class="row">
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.categoryofroad" />
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.categoryofroad" /></label>
+						<div class="col-sm-3 add-margin">
 							<form:select path="fieldInspectionDetails.roadCategory" data-first-option="false" id="roadCategory"
 								cssClass="form-control" >
 								<form:option value="">
@@ -100,30 +98,22 @@
 							</form:select>
 							<form:errors path="fieldInspectionDetails.roadCategory" cssClass="add-margin error-msg" />
 						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="row">
-						<label class="col-md-3 col-xs-6 add-margin"><spring:message
-								code="lbl.existingpipeline" /><span class="mandatory"></span></label> 
-						<div class="col-md-3 col-xs-6 add-margin">
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.existingpipeline" /><span class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
 							<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" maxlength="10" id="existingPipeline" path="fieldInspectionDetails.existingPipeline" required="required" />
 							<form:errors path="fieldInspectionDetails.existingPipeline" cssClass="add-margin error-msg" />		
 						</div>
-						<label class="col-md-3 col-xs-6 add-margin"><spring:message
-								code="lbl.pipelinedistance" /><span class="mandatory"></span></label> 
-						<div class="col-md-3 col-xs-6 add-margin">
-							<form:input class="form-control patternvalidation text-right" data-pattern="number" maxlength="4" id="pipelineDistance" path="fieldInspectionDetails.pipelineDistance" required="required" />
-							<form:errors path="fieldInspectionDetails.pipelineDistance" cssClass="add-margin error-msg" />		
-						</div>
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="row">
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.estimationcharges" /><span class="mandatory"></span>							
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.pipelinedistance" /><span class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:input class="form-control patternvalidation text-right" data-pattern="number" maxlength="4" id="pipelineDistance" path="fieldInspectionDetails.pipelineDistance" required="required" />
+							<form:errors path="fieldInspectionDetails.pipelineDistance" cssClass="add-margin error-msg" />		
 						</div>
-						<div class="col-md-3 col-xs-6 add-margin"> 
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.estimationcharges" /><span class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin"> 
 							<form:input class="form-control text-right patternvalidation" data-pattern="decimalvalue" maxlength="8" id="estimationCharges" path="fieldInspectionDetails.estimationCharges" required="required" />
 							<form:errors path="fieldInspectionDetails.estimationCharges" cssClass="add-margin error-msg" />
 						</div>
@@ -131,10 +121,8 @@
 				</div>
 				<div class="form-group">
 					<div class="row">
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.attachdocument"/>							
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.attachdocument"/></label>
+						<div class="col-sm-3 add-margin">
 							<input type="file" id="fileStoreId" name="files" class="file-ellipsis upload-file">
 						</div>
 					</div>

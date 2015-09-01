@@ -66,11 +66,9 @@
 <form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>	
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>		
 				<div class="row show-row"  id="approverDetailHeading">
-				<div class="show-row" >
-					<div class="col-md-3 col-xs-6 add-margin">
-						<spring:message code="lbl.approverdepartment"/><span class="mandatory"></span>
-					</div>
-					<div class="col-md-3 col-xs-6 add-margin">
+				<div class="show-row form-group" >
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approverdepartment"/><span class="mandatory"></span></label>
+					<div class="col-sm-3 add-margin">
 						<form:select path="" data-first-option="false"
 							id="approvalDepartment" cssClass="form-control"
 							cssErrorClass="form-control error" required="required">
@@ -81,10 +79,8 @@
 								itemLabel="name" />     
 						</form:select>
 					</div>
-					<div class="col-md-3 col-xs-6 add-margin">
-						<spring:message code="lbl.approverdesignation"/><span class="mandatory"></span>
-					</div>
-					<div class="col-md-3 col-xs-6 add-margin">
+					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.approverdesignation"/><span class="mandatory"></span></label>
+					<div class="col-sm-3 add-margin">
 						<form:select path="" data-first-option="false" 
 							id="approvalDesignation" cssClass="form-control" onfocus="callAlertForDepartment();"
 							cssErrorClass="form-control error" required="required">  
@@ -95,11 +91,9 @@
 						</form:select>					
 					</div>
 				</div>
-				<div class="show-row">
-					<div class="col-md-3 col-xs-6 add-margin">
-						<spring:message code="lbl.approver"/><span class="mandatory"></span>
-					</div>
-					<div class="col-md-3 col-xs-6 add-margin">
+				<div class="show-row form-group">
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approver"/><span class="mandatory"></span></label>
+					<div class="col-md-3 add-margin">
 					<form:select path="" data-first-option="false" 
 						id="approvalPosition" name="approvalPosition" cssClass="form-control" onfocus="callAlertForDesignation();" 
 						cssErrorClass="form-control error" required="required">  
@@ -112,10 +106,8 @@
 				</div>
 			
 				<div class="row">
-					<div class="col-md-3 col-xs-6 add-margin">
-						<spring:message code="lbl.comments"/>
-					</div>
-					<div class="col-md-9 col-xs-6 add-margin">
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments"/></label>
+					<div class="col-sm-8 add-margin">
 						<form:textarea class="form-control" path=""  id="approvalComent" name="approvalComent" />
 					</div>
 				</div>

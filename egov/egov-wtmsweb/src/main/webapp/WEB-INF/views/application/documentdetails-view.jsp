@@ -76,7 +76,7 @@
 			</c:forEach>
 		</c:when>
 		<c:otherwise>
-			<div class="col-md-3 col-xs-6 add-margin">No Documents found</div>
+			<div class="col-md-12 col-xs-6  panel-title">No documents found</div>
 		</c:otherwise>
 	</c:choose>
 </table>
