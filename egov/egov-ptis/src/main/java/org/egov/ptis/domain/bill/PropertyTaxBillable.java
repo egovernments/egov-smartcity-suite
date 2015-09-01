@@ -139,7 +139,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     private String mutationApplicationNo;
 
     private final DateTime PENALTY_EFFECTIVE_DATE_FIRST_HALF = new DateTime().withDayOfMonth(30).withMonthOfYear(06);
-    private final DateTime PENALTY_EFFECTIVE_DATE_SECOND_HALF = new DateTime().withDayOfMonth(31).withMonthOfYear(12);
+    private final DateTime PENALTY_EFFECTIVE_DATE_SECOND_HALF = new DateTime().withMonthOfYear(12).withDayOfMonth(31);
 
     @Autowired
     private RebatePeriodService rebatePeriodService;
