@@ -159,9 +159,9 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
 
     @Autowired
     private CityService cityService;
-    
-	@Autowired
-	private PropertyTaxBillable propertyTaxBillable;
+
+    @Autowired
+    private PropertyTaxBillable propertyTaxBillable;
 
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
@@ -251,22 +251,23 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
     }
 
     public PropertyMutationMaster getPropertyTransferReasonsByCode(String mutationCode) {
-        return propertyMutationMasterDAO.getPropertyMutationMasterByCodeAndType(mutationCode,TRANSFER);
+        return propertyMutationMasterDAO.getPropertyMutationMasterByCodeAndType(mutationCode, TRANSFER);
     }
 
-    
     public PropertyMutation getPropertyMutationByApplicationNo(final String applicationNo) {
         return findByNamedQuery("BY_APPLICATION_NO", applicationNo);
     }
 
     public PropertyMutation getCurrentPropertyMutationByAssessmentNo(final String assessmentNo) {
         PropertyMutation currentPropertyMutation = null;
-        for (final PropertyMutation propertyMutation : getBasicPropertyByUpicNo(assessmentNo).getPropertyMutations())
-            //Checking for mutation object which is in workflow
-            if (!propertyMutation.getState().getValue().equals(WF_STATE_CLOSED)) {
-                currentPropertyMutation = propertyMutation;
-                break;
-            }
+        BasicProperty basicProperty = getBasicPropertyByUpicNo(assessmentNo);
+        if (null != basicProperty)
+            for (final PropertyMutation propertyMutation : basicProperty.getPropertyMutations())
+                // Checking for mutation object which is in workflow
+                if (!propertyMutation.getState().getValue().equals(WF_STATE_CLOSED)) {
+                    currentPropertyMutation = propertyMutation;
+                    break;
+                }
         return currentPropertyMutation;
     }
 
@@ -403,7 +404,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
     public String getCityName() {
         return cityService.getCityByURL(EgovThreadLocals.getDomainName()).getName();
     }
-    
+
     public Designation getUserDesigantion() {
         final Long userId = securityUtils.getCurrentUser().getId();
         final Designation designation = propertyTaxUtil.getDesignationForUser(userId);
