@@ -72,7 +72,7 @@
         
         <td class="blueborderfortd">
         	<s:textfield name="property.propertyDetail.currentCapitalValue"
-				id="property.propertyDetail.currentCapitalValue" maxlength="15"	value="%{property.propertyDetail.currentCapitalValue}"
+				id="property.propertyDetail.currentCapitalValue" maxlength="15"  readOnly="true" value="%{property.propertyDetail.currentCapitalValue}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'property.propertyDetail.currentCapitalValue');checkZero(this,'property.propertyDetail.currentCapitalValue');" />
         </td>
         
@@ -85,13 +85,13 @@
     
    <tr>
 		<td colspan="6"><br />
-			<table class="tablebottom" style="width: 100%;">
+			<table class="tablebottom" style="width: 100%;" id="boundaryData">
 				<tbody>
 					<tr>
-						<th class="bluebgheadtd"><s:text name="North" /></th>
-						<th class="bluebgheadtd"><s:text name="East" /></th>
-						<th class="bluebgheadtd"><s:text name="West" /></th>
-						<th class="bluebgheadtd"><s:text name="South" /></th>
+						<th class="bluebgheadtd"><s:text name="North" /><span class="mandatory1">*</span></th>
+						<th class="bluebgheadtd"><s:text name="East" /><span class="mandatory1">*</span></th>
+						<th class="bluebgheadtd"><s:text name="West" /><span class="mandatory1">*</span></th>
+						<th class="bluebgheadtd"><s:text name="South" /><span class="mandatory1">*</span></th>
 					</tr>
 					<tr>
 						<td class="blueborderfortd" align="center"><s:textfield name="northBoundary" id="northBoundary" maxlength="64"
@@ -110,3 +110,12 @@
 	</tr>
 	
 </table>
+<script type="text/javascript">
+	 jQuery("#marketValue").blur(function() {
+		 var vacantLandArea = jQuery("#vacantLandArea").val();
+		 var marketValue =  jQuery("#marketValue").val();
+		 //1 square yard = 0.836127 sqr mtrs
+		 var capitalValue = vacantLandArea * marketValue * 0.836127;
+		 jQuery("#currentCapitalValue").val(roundoff(capitalValue));
+	 });
+</script>

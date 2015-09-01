@@ -39,8 +39,7 @@
 -->
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-	<tr id="amenitiesRow">
-		<td colspan="5">
+
 			<table width="100%" class="checkbox-section">
 				<tr>
 					<td width="20%" align="right">
@@ -67,5 +66,4 @@
 					<td width="10%"></td>
 				</tr>
 			</table>
-		</td>
-	</tr>
+	

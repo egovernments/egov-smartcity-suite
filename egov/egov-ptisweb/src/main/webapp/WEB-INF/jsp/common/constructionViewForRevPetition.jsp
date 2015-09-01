@@ -37,19 +37,19 @@
  
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-	<tr id="constructionRow1">
+	<tr class="construction">
 		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="floortype"></s:text> <span class="mandatory1">*</span> :</td>
+		<td class="greybox"><s:text name="floortype"></s:text> :</td>
 		<td class="greybox" width="">
 			<span class="bold"><s:property value="%{property.propertyDetail.floorType.name}" default = "N/A"/></span> 
 		</td>
-		<td class="greybox"><s:text name="rooftype"></s:text> <span class="mandatory1">*</span> :</td>
+		<td class="greybox"><s:text name="rooftype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"><s:property value="%{property.propertyDetail.roofType.name}" default = "N/A"/></span>
 		</td>
 	</tr>
 	
-	<tr id="constructionRow2">
+	<tr class="construction">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="walltype"></s:text> :</td>
 		<td class="greybox" width="">

@@ -44,11 +44,28 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 	<head>
+	<link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/javascript/objection.js' context='/ptis'/>"></script>
 		<title><s:text name="objectionView.title" /></title>
 		<script type="text/javascript">
-			jQuery.noConflict();
-			jQuery("#loadingMask").remove();
+		jQuery.noConflict();
+		jQuery("#loadingMask").remove();
+		jQuery(function($) {
+			try {
+				jQuery(".datepicker").datepicker({
+					format : "dd/mm/yyyy"
+				});
+			} catch (e) {
+				console.warn("No Date Picker " + e);
+			}
+
+			jQuery('.datepicker').on('changeDate', function(ev) {
+				jQuery(this).datepicker('hide');
+			});
+		});
+
 		//	document.getElementById('approval_header').style.display='';
 			function loadOnStartUp() {
 				enableFieldsForPropTypeView();
@@ -57,7 +74,28 @@
 				enableOrDisableBPADetails(jQuery('input[name="property.propertyDetail.buildingPlanDetailsChecked"]'));
 				toggleFloorDetailsView();
 			}
-
+			function enableAppartnaumtLandDetailsView() {
+				if (document.forms[0].appurtenantLandChecked.checked == true) {
+					jQuery('tr.vacantlanddetaills').show();
+					jQuery('#appurtenantRow').show();
+					jQuery('tr.floordetails').show();
+					jQuery('tr.extentSite').hide();
+				} else {
+					enableFieldsForPropTypeView();
+				}
+			}
+			function toggleFloorDetailsView() {
+				var propType = '<s:property value="%{property.propertyDetail.propertyTypeMaster.type}"/>';
+				if (propType == "Vacant Land") {
+					jQuery('tr.floordetails').hide();
+				} else {
+					jQuery('tr.floordetails').show();
+				}
+				if (propType == "Apartments") {
+					alert("Please select Apartment/Complex Name");
+				}
+			}
+			
 			function onSubmit() {
 				
 				var actionName = document.getElementById('workFlowAction').value;
@@ -308,67 +346,7 @@
 	
 						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>
 					
-	  <%-- 	<table>
-		<tr>
-			<s:if test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED) &&
-        		state.text1.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_RECORD_SAVED)">
-        				<td><s:submit value="Forward" name="forward" id="forward"  method="updateRecordObjection" cssClass="buttonsubmit" onClick="return validateRecordObjection(this)"/></td>
-		    			<td><s:submit value="Save" name="save" id="save"  method="updateRecordObjection" cssClass="buttonsubmit" onClick="return validateRecordObjection(this)"/></td>
-	
-        		</s:if>
-				<s:elseif test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) && 
-						egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED)">
-		   				<td><s:submit value="Forward" name="forward" id="forward"  method="addHearingDate" cssClass="buttonsubmit" onClick="return validateHearingDate(this)"/></td>
-		    			<td><s:submit value="Save" name="save" id="save"  method="addHearingDate" cssClass="buttonsubmit" onClick="return validateHearingDate(this);"/></td>
-		   		</s:elseif>
-		   		<s:elseif test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
-							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_FIXED)">
-		   				<td><s:submit value="Forward" name="forward" id="forward"  method="generateHearingNotice" cssClass="buttonsubmit" onClick="return validateIsHearningNoticeGenerated(this)"/></td>
-		    			<!-- <td>
-		    			<button type="button" class="btn btn-default" data-dismiss="modal" onclick="alert('Generate Hearing Notice');" >Generate Hearing Notice</button>
-		    			</td> -->
-		    			<td><button type="button" class="btn btn-default" data-dismiss="modal" onclick="return printHearingNotice(this);" >Print HearingNotice</button> </td>
-		
-		    	  		    		
-		   		</s:elseif>
-		   		<s:elseif test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
-							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_RECORD_GENERATEHEARINGNOTICE)">
-		   				<td><s:submit value="Forward" name="forward" id="forward"  method="recordHearingDetails" cssClass="buttonsubmit" onClick="return validateRecordHearing(this)"/></td>
-		    			<td><s:submit value="Save" name="save" id="save"  method="recordHearingDetails" cssClass="buttonsubmit" onClick="return validateRecordHearing(this);"/></td>
-		   	<!-- 					<td><button type="button" class="btn btn-default" data-dismiss="modal" onclick="return printEnodresementNotice(this);" >Print Enodresement Notice</button> </td>
-		<td><button type="button" class="btn btn-default" data-dismiss="modal" onclick="return printHearingNotice(this);" >Print HearingNotice</button> </td>
-			  	 -->
-	 	   		</s:elseif>
-		   		<s:elseif test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
-							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED)
-							&& hearings[hearings.size()-1].inspectionRequired == true">
-		   				<td><s:submit value="Forward" name="forward" id="forward"  method="recordInspectionDetails" cssClass="buttonsubmit" onClick="return validateRecordInspection(this)"/></td>
-		    			<td><s:submit value="Save" name="save" id="save"  method="recordInspectionDetails" cssClass="buttonsubmit" onClick="return validateRecordInspection(this)"/></td>
-		   		</s:elseif>
-		   		<s:elseif test="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
-							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED))
-							|| hearings[hearings.size()-1].inspectionRequired == false">
-		    			<td><s:submit value="Forward" name="forward" id="forward"  method="validateInspectionDetails" cssClass="buttonsubmit" onClick="return validateInspectionDetails(this)"/></td>
-		    	
-		   		</s:elseif>
-		   		<s:elseif test="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
-							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY))
-							|| hearings[hearings.size()-1].inspectionRequired == false">
-		    			<td><s:submit value="Forward" name="save" id="save"  method="recordObjectionOutcome" cssClass="buttonsubmit" onClick="return validateObjectionOutcome(this)"/></td>
-		   				<td><button type="button" class="btn btn-default" data-dismiss="modal" onclick="alert('Hyper link to View Old property detail');" >View Old property detail</button> </td>
-		
-		   		</s:elseif>
-				<s:elseif test="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
-							&& ( egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_REJECTED) ||
-							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED) ))
-							">
-				<!-- 				<td><button type="button" class="btn btn-default" data-dismiss="modal" onclick="return printEnodresementNotice(this);" >Print Enodresement Notice</button> </td>
-		  -->
-		    			<td><s:submit value="Generate Notice" name="save" id="save"  method="recordObjectionOutcome" cssClass="buttonsubmit" onClick="return validateEndoresementNoticeGenerated(this)"/></td>
-		    	</s:elseif>
-		    	<td><input type="button" name="closeButton" id="closeButton" value="Close" class="button" onclick="window.close();"/></td>
-		</tr>             
-		</table> --%></div>      
+	  </div>      
 		<s:hidden name="model.id" id="model.id"/>
 			<s:hidden name="egwStatus.code" id="egwStatuscode" value="%{egwStatus.code}"/>      
 	<%-- 	<s:hidden name="model.property" id="model.property"/>

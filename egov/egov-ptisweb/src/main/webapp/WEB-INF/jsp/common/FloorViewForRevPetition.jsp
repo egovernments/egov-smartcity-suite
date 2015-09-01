@@ -48,7 +48,6 @@
 		<th class="bluebgheadtd"><s:text name="Occupantname"/></th>
 		<th class="bluebgheadtd"><s:text name="constrdate" /></th>
 		<th class="bluebgheadtd"><s:text name="PlinthArea" /></th>
-		<th class="bluebgheadtd"><s:text name="exemptioncategory" /></th>
 		<th class="bluebgheadtd"><s:text name="drainage" /></th>
 		<th class="bluebgheadtd"><s:text name="noOfSeats" /></th>
     </tr>
@@ -88,10 +87,6 @@
 	   
         <td class="blueborderfortd" style="padding: 2px 2px">
 			<span class="bold"><div align="center"><s:property default="N/A" value="%{builtUpArea.area}" /></div></span>
-	    </td>
-	    
-	     <td class="blueborderfortd" style="padding: 2px 2px">
-			<span class="bold"><div align="center"><s:property default="N/A" value="%{taxExemptedReason.name}" /></div></span>
 	    </td>
 	    
 	    <td class="blueborderfortd" style="padding: 2px 2px">

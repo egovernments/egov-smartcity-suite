@@ -41,7 +41,7 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td class="bluebox2" width="5%">
+		<td class="greybox" width="5%">
 			&nbsp;
 		</td>
 		<td class="bluebox" width="20%">
@@ -50,7 +50,7 @@
 		</td>
 		<td class="bluebox" width="15%">
 			<span class="bold"><s:property default="N/A"
-					value="%{basicProp.upicNo}" /> </span>						
+					value="%{basicProperty.upicNo}" /> </span>						
 		</td>
 		<td class="bluebox" width="20%">
 			&nbsp;
@@ -75,11 +75,11 @@
 			<s:text name="MobileNumber" />:
 		</td>
 		<td class="greybox">
-			<span class="bold"><s:property value="%{basicProp.mobileNumber}" default="N/A"/></span>
+			<span class="bold"><s:property value="%{basicProperty.mobileNumber}" default="N/A"/></span>
 		</td>
 	</tr>
 <tr>
-		<td class="bluebox2">
+		<td class="greybox">
 			&nbsp;
 		</td>
 		<td class="bluebox" width="8%">
@@ -88,7 +88,7 @@
 		</td>
 		<td class="bluebox">
 			<span class="bold"><s:property default="N/A"
-					value="%{propAddress}" /> </span>
+					value="%{basicProperty.address}" /> </span>
 		</td>
 		<td class="bluebox">
 			&nbsp;
@@ -106,43 +106,39 @@
 	</tr>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="extent.site"/> :</td>
-		<td class="greybox" width="">
-		   <span class="bold">
-		   <s:hidden id="property.propertyDetail.id" name="property.propertyDetail.id" value="%{property.propertyDetail.id}" />
-			 <s:hidden id="property.id" name="property.id" value="%{property.id}" />
-							
-		   <s:property value="%{property.propertyDetail.extentSite}" default="N/A"/></span>
+		<td class="bluebox" width="25%"><s:text name="reg.docno"/> :</td>
+		<td class="bluebox" width="">
+			<span class="bold"><s:property value="%{basicProperty.regdDocNo}" default="N/A"/></span>
 		</td>
+		<td class="bluebox" width="25%"><s:text name="reg.docdate"/> :</td>
+		<td class="bluebox">
+		<s:date name="basicProperty.regdDocDate" var="regDate" format="dd/MM/yyyy" /> 
+			<span class="bold"><s:property value="%{#regDate}" default="N/A"/></span>
+		</td>
+	</tr>
+	<tr class="extentSite">
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="extent.site"/><span class="mandatory1"> *</span> :</td>
+		<td class="greybox" width=""><s:textfield name="areaOfPlot" id="areaOfPlot" size="12"
+				maxlength="15" value="%{areaOfPlot}"></s:textfield></td>
+		
+		
 		<td class="greybox" width="25%"></td>
 		<td class="greybox">
 		</td>
 	</tr>
-
-	<tr>
-		<td class="bluebox" width="5%">&nbsp;</td>
-		<td class="bluebox" width="25%"><s:text name="reg.docno"/> :</td>
-		<td class="bluebox" width="">
-			<span class="bold"><s:property value="%{basicProp.regdDocNo}" default="N/A"/></span>
-		</td>
-		<td class="bluebox" width="25%"><s:text name="reg.docdate"/> :</td>
-		<td class="bluebox">
-			<span class="bold"><s:property value="%{basicProp.regdDocDate}" default="N/A"/></span>
-		</td>
-	</tr>
 	
-	<tr>
+	<tr class="superStructureRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="superstructure"></s:text> :</td>
 		<td class="greybox">
-			<s:checkbox name="property.propertyDetail.structure" id="property.propertyDetail.structure" disabled="true"/>
-			<s:hidden name="property.propertyDetail.structure" value="%{property.propertyDetail.structure}"/>
+			<s:checkbox name="property.propertyDetail.structure" id="property.propertyDetail.structure"
+				value="%{property.propertyDetail.structure}" onclick="enableOrDisableSiteOwnerDetails(this);" />
+				
 		</td>
-		<td class="greybox siteowner"><s:text name="siteowner"></s:text>:</td>
-		<td class="greybox siteowner">
-			<span class="bold"><s:property value="%{property.propertyDetail.siteOwner}" default="N/A"/></span>
-			<s:hidden name="property.propertyDetail.siteOwner" value="%{property.propertyDetail.siteOwner}"/>
-		</td>
+	<td class="greybox siteowner"><s:text name="siteowner"></s:text><span class="mandatory1"> *</span> :</td>
+		<td class="greybox siteowner"><s:textfield maxlength="64" value="%{property.propertyDetail.siteOwner}"
+				name="property.propertyDetail.siteOwner" id="property.propertyDetail.siteOwner"></s:textfield></td>
 	</tr>
 	
 	<tr>
@@ -181,8 +177,8 @@
 	</tr>
 	<tr id="apartmentRow">
 		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="apartcomplex.name"></s:text> :</td>
-		<td class="greybox"><s:select headerKey=""
+		<td class="greybox apartmentRow"><s:text name="apartcomplex.name"></s:text> :</td>
+		<td class="greybox apartmentRow"><s:select headerKey=""
 				headerValue="%{getText('default.select')}" 	name="property.propertyDetail.apartment" id="property.propertyDetail.apartment.id"
 				listKey="id" listValue="name" value="%{property.propertyDetail.apartment.id}"
 				list="dropdownData.apartments" cssClass="selectnew" /></td>
@@ -208,11 +204,11 @@
 				value="%{property.propertyDetail.extentAppartenauntLand}" size="12"	maxlength="12" onchange="trim(this,this.value);"
 				onblur="validNumber(this);checkZero(this);"></s:textfield>
 		</td>
-		<td class="bluebox" colspan="2">
+		<td class="greybox" colspan="2">
 			&nbsp;
 		</td>
 	</tr>
-	<tr>
+	<tr class="bpddetailsheader">
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
 		<td class="bluebox">
@@ -225,11 +221,11 @@
 	</tr>
 	<tr class="bpddetails">
 		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="building.permNo"></s:text> :</td>
+		<td class="greybox"><s:text name="building.permNo"></s:text><span class="mandatory1"> *</span> :</td>
 		<td class="greybox"><s:textfield name="property.propertyDetail.buildingPermissionNo" id="property.propertyDetail.buildingPermissionNo" size="12" maxlength="12"
 				onchange="trim(this,this.value);" onblur="checkZero(this);" value="%{property.propertyDetail.buildingPermissionNo}"></s:textfield>
 		</td>
-		<td class="greybox"><s:text name="buildingpermdate"></s:text> :</td>
+		<td class="greybox"><s:text name="buildingpermdate"></s:text><span class="mandatory1"> *</span> :</td>
 		<td class="greybox"><s:date name="property.propertyDetail.buildingPermissionDate" var="buildingPermDate" format="dd/MM/yyyy" /> 
 		<s:textfield name="property.propertyDetail.buildingPermissionDate" cssClass="datepicker" value="%{#buildingPermDate}" autocomplete="off"
 				id="property.propertyDetail.buildingPermissionDate" size="12" maxlength="12"></s:textfield>
@@ -238,8 +234,8 @@
 	</tr>
 	
 	  <tr class="bpddetails">
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="deviationper"></s:text> :</td>
+		<td class="greybox">&nbsp;</td>
+		<td class="bluebox"><s:text name="deviationper"></s:text><span class="mandatory1"> *</span> :</td>
 		<td class="bluebox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="property.propertyDetail.deviationPercentage"
 				id="property.propertyDetail.deviationPercentage" listKey="key" listValue="value" list="deviationPercentageMap" value="%{property.propertyDetail.deviationPercentage}"
 				cssClass="selectnew"/>
@@ -310,7 +306,7 @@
 			</div>
 		</td>
 	</tr>
-	 <tr class="vacantlanddetaills">
+	 <tr >
 		<td colspan="5">
 			<%@ include file="../common/DocumentUploadForm.jsp"%>
 		</td>
@@ -322,59 +318,10 @@
 			propTypeId : document.getElementById("propTypeId").value
 		});
 	}
-	function enableAppartnaumtLandDetailsView() {
-		if (document.forms[0].appurtenantLandChecked.checked == true) {
-			jQuery('tr.vacantlanddetaills').show();
-			jQuery('#appurtenantRow').show();
-			jQuery('tr.floordetails').show();
-			jQuery('tr.extentSite').hide();
-		} else {
-			enableFieldsForPropTypeView();
-		}
-	}
-
-	function enableFieldsForPropTypeView() {
-		var propType = '<s:property value="%{property.propertyDetail.propertyTypeMaster.type}"/>';
-		if (propType != "select") {
-			//onChangeOfPropertyTypeFromMixedToOthers(propType);
-			if (propType == "Vacant Land") {
-				
-				jQuery('tr.floordetails').hide();
-				jQuery('tr.vacantlanddetaills').show();
-				jQuery('tr.construction').hide();
-				jQuery('tr.amenities').hide();
-				jQuery('#appurtenantRow').hide();
-				jQuery('tr.extentSite').hide();
-				jQuery('tr.appurtenant').hide();
-			} else {
-				
-				jQuery('tr.floordetails').show();
-				jQuery('tr.vacantlanddetaills').hide();
-				jQuery('tr.construction').show();
-				jQuery('tr.amenities').show();
-				jQuery('#appurtenantRow').hide();
-				jQuery('tr.extentSite').show();
-				jQuery('tr.appurtenant').show();
-			}
-		}
-	}
-
-	function toggleFloorDetailsView() {
-		var propType = '<s:property value="%{property.propertyDetail.propertyTypeMaster.type}"/>';
-		
-		if (propType == "Vacant Land") {
-			jQuery('tr.floordetails').hide();
-		} else {
-			jQuery('tr.floordetails').show();
-		}
-		if (propType == "Apartments") {
-			alert("Please select Apartment/Complex Name");
-		}
-	}
-	
 	//hide rows and columns of fields
 	jQuery('td.siteowner').hide();
 	jQuery('tr.bpddetails').hide();
 	jQuery('tr.vacantlanddetaills').hide();
+    
     
 </script>

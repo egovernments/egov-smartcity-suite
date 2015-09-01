@@ -82,6 +82,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.Area;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.demand.model.EgDemandDetails;
@@ -113,7 +114,6 @@ import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.workflow.WorkFlowMatrix;
-import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.actions.view.ViewPropertyAction;
@@ -193,7 +193,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	private TreeMap<Integer, String> floorNoMap;
 	private Map<String, String> deviationPercentageMap;
 	private TreeMap<String, String> hearingTimingMap;
-
+	private String areaOfPlot;
+	
 	private List<DocumentType> documentTypes = new ArrayList<>();
 	private String northBoundary;
 	private String southBoundary;
@@ -247,6 +248,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
 		addRelatedEntity("basicProperty", BasicPropertyImpl.class);
 		addRelatedEntity("property.propertyDetail.propertyTypeMaster", PropertyTypeMaster.class);
+		addRelatedEntity("property.propertyDetail.sitalArea", Area.class);
+		
 		addRelatedEntity("property", PropertyImpl.class);
 		addRelatedEntity("property.propertyDetail.floorType", FloorType.class);
 		addRelatedEntity("property.propertyDetail.roofType", RoofType.class);
@@ -1009,6 +1012,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
 		if (objection != null && objection.getProperty() != null) {
 			setReasonForModify(objection.getProperty().getPropertyDetail().getPropertyMutationMaster().getCode());
+			 if (objection.getProperty().getPropertyDetail().getSitalArea() != null)
+		                setAreaOfPlot(objection.getProperty().getPropertyDetail().getSitalArea().getArea().toString());
+		           
 			if (objection.getProperty().getPropertyDetail().getFloorDetails().size() > 0)
 				setFloorDetails(objection.getProperty());
 		}
@@ -1146,12 +1152,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     			if (wfmatrix != null && 
     					  ((wfmatrix.getNextStatus() != null && wfmatrix.getNextStatus().equalsIgnoreCase(PropertyTaxConstants.OBJECTION_HEARING_FIXED))
     					        || wfmatrix.getCurrentState().equalsIgnoreCase(PropertyTaxConstants.REVISIONPETITION_INSPECTIONVERIFIED)
+    					            || wfmatrix.getCurrentState().equalsIgnoreCase(PropertyTaxConstants.REVISIONPETITION_WF_REGISTERED)
                         )) {
                          for (StateHistory stateHistoryObj : objection.getState().getHistory()) {
                             if (stateHistoryObj.getValue().equalsIgnoreCase(PropertyTaxConstants.REVISIONPETITION_CREATED)
                                    ) {
                                 position = stateHistoryObj.getOwnerPosition();
-                                loggedInUser = eisCommonService.getUserForPosition(position.getId(), new Date());
+                            //    loggedInUser = eisCommonService.getUserForPosition(position.getId(), new Date());
                                 addActionMessage(getText("objection.forward", new String[] { loggedInUser.getUsername() }));
         
                                 positionFoundInHistory = true;
@@ -1160,6 +1167,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                             if (stateHistoryObj.getValue().equalsIgnoreCase(
                                             PropertyTaxConstants.REVISIONPETITION_WF_REGISTERED)) {
                                 position = getWorkFlowInitiator(objection, position);
+                                updateRevisionPetitionStatus(wfmatrix,objection, PropertyTaxConstants.OBJECTION_HEARING_FIXED);
                                 positionFoundInHistory = true;
                                 break;
                             }
@@ -1297,10 +1305,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	
 	private void modifyBasicProp() {
 		Date propCompletionDate = null;
-		PropertyImpl createdNewProperty = propService.createProperty(objection.getProperty(), (objection.getProperty()
-				.getPropertyDetail().getSitalArea() != null
-				&& objection.getProperty().getPropertyDetail().getSitalArea().getArea() != null ? objection
-				.getProperty().getPropertyDetail().getSitalArea().getArea().toString() : ""), reasonForModify,
+		PropertyImpl createdNewProperty = propService.createProperty(objection.getProperty(), 
+		        ( getAreaOfPlot() != null ? getAreaOfPlot() : ""), reasonForModify,
 				(objection.getProperty().getPropertyDetail().getPropertyTypeMaster() != null ? objection.getProperty()
 						.getPropertyDetail().getPropertyTypeMaster().getId().toString() : null), (objection
 						.getProperty().getPropertyDetail().getPropertyUsage() != null ? objection.getProperty()
@@ -1374,9 +1380,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		}
 		validateProperty(
 				objection.getProperty(),
-				(objection.getProperty().getPropertyDetail().getSitalArea() != null
-						&& objection.getProperty().getPropertyDetail().getSitalArea().getArea() != null ? objection
-						.getProperty().getPropertyDetail().getSitalArea().getArea().toString() : ""),
+				(getAreaOfPlot() != null ? getAreaOfPlot() : ""),
 				(objection.getProperty().getPropertyDetail().getDateOfCompletion() != null ? dateformat.format(
 						objection.getProperty().getPropertyDetail().getDateOfCompletion()).toString() : ""),
 						eastBoundary,westBoundary,southBoundary,northBoundary,
@@ -1658,6 +1662,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     
         public void setLoggedUserIsEmployee(Boolean loggedUserIsEmployee) {
             this.loggedUserIsEmployee = loggedUserIsEmployee;
+        }
+
+        public String getAreaOfPlot() {
+            return areaOfPlot;
+        }
+
+        public void setAreaOfPlot(String areaOfPlot) {
+            this.areaOfPlot = areaOfPlot;
         }
 
 }
