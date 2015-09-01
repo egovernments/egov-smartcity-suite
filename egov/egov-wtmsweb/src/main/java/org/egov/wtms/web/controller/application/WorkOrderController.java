@@ -131,6 +131,7 @@ public class WorkOrderController {
             reportParams.put("applicantname", WordUtils.capitalize(ownerName));
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("doorno", doorno[0]);
+            reportParams.put("applicationDate",formatter.format(connectionDetails.getApplicationDate()));
             reportInput = new ReportRequest(CONNECTIONWORKORDER, connectionDetails, reportParams);
         }
         final HttpHeaders headers = new HttpHeaders();
