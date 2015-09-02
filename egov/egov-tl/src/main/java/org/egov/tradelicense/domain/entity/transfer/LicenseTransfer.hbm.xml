@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.license.domain.entity.transfer.LicenseTransfer" table="EGL_LICENSETRANSFER">
+		<id name="id" type="java.lang.Long">
+			<column name="id" />
+			<generator class="native">
+				<param name="sequence">SEQ_EGL_LICENSETRANSFER</param>
+			</generator>
+		</id>
+		<property name="oldApplicantName" type="string" />
+		<property name="oldApplicationNumber" type="string" />
+		<property name="oldApplicationDate" type="date" />
+		<property name="oldNameOfEstablishment" type="string" />
+		<many-to-one name="boundary" class="org.egov.lib.admbndry.BoundaryImpl" column="ID_ADM_BNDRY" unique="true" />
+		<many-to-one name="license" column="ID_LICENSE" class="org.egov.license.domain.entity.License" cascade="all" />
+		<many-to-one name="oldAddress" column="ID_ADDRESS" class="org.egov.lib.address.model.Address" cascade="all"
+			unique="true" />
+		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+			<column name="STATE_ID" />
+		</many-to-one>
+		<property name="oldPhoneNumber" type="string" />
+		<property name="oldHomePhoneNumber" column="OLDHOME_PHONENUMBER" type="string" />
+		<property name="oldMobileNumber" column="OLDMOBILE_PHONENUMBER" type="string" />
+		<property name="oldEmailId" column="OLDEMAIL_ID" type="string" />
+		<property name="oldUid" column="OLDUNIQUEID" type="string" />
+		<property name="approved" type="boolean" />
+		
+		<property name="createdDate" type="java.util.Date">
+			<column name="CREATEDDATE" not-null="true" />
+		</property>
+		<property name="modifiedDate" type="java.util.Date">
+			<column name="LASTMODIFIEDDATE" not-null="true" />
+		</property>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" not-null="true"
+			fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="LASTMODIFIEDBY" not-null="true"
+			fetch="select" />
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,72 @@
+ #LocalLang_Heading
+		{
+		   /* Font size 5 */
+		     font-family : Tunga;
+		     font-size   : 18pt
+		}
+#LocalLang_form
+              {
+                   /* font size="4" */
+                     font-family  : Tunga;
+                     font-size    : 13.5pt
+             }
+
+#LocalLang_size12pt
+		{
+		   /*Font size 3*/
+		      font-family : Tunga;
+		      font-size   : 12pt
+		}
+		
+#LocalLang_normal
+		{	
+		      font-family : Tunga
+			
+		}		
+		
+		
+#LocalLang_size10pt
+		{   /*Font size 2*/
+			font-family : Tunga;
+			font-size   : 10pt
+		}		
+
+#LocalLang_size12ptRed
+		{	
+			font-family : Tunga;
+			font-size   : 12pt;
+			color       : #ff0000
+			
+		}	
+#LocalLang_size12ptPink
+		{	/* Font size 3 */
+			font-family : Tunga;
+			font-size   : 12pt;
+			color       : #993366
+		}			
+
+#LocalLang_size10ptPink
+		{	/* Font size 2 */
+			font-family : Tunga;
+			font-size   : 10pt;
+			color       : #993366
+		}	
+
+#LocalLang_size12ptBlue
+		{	
+			font-family : Tunga;
+			font-size   : 12pt;
+			color       : #0000ff
+		}
+		
+#LocalLang_size10ptBlue
+		{	
+			font-family : Tunga;
+			font-size   : 10pt;
+			color       : #0000ff
+		}		
+		
+		
+		
+	
+	

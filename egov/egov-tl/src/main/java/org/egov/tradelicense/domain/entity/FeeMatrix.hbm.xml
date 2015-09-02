@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.license.domain.entity.FeeMatrix" table="EGL_MSTR_FEE_MATRIX">
+		<id name="id" type="java.lang.Long">
+			<column name="id" />
+			<generator class="native">
+				<param name="sequence">SEQ_EGL_MSTR_FEE_MATRIX</param>
+			</generator>
+		</id>
+		<many-to-one class="org.egov.license.domain.entity.SubCategory" name="subcategory" fetch="select">
+			<column name="ID_SUB_CATERGORY" not-null="true" />
+		</many-to-one>
+		<many-to-one class="org.egov.license.domain.entity.NatureOfBusiness" name="businessNature" fetch="select">
+			<column name="ID_NATURE" not-null="true" />
+		</many-to-one>
+		<many-to-one class="org.egov.license.domain.entity.LicenseAppType" name="applType" fetch="select">
+			<column name="ID_APP_TYPE" not-null="true" />
+		</many-to-one>
+		<many-to-one class="org.egov.license.domain.entity.FeeType" name="feeType" fetch="select">
+			<column name="ID_FEE_TYPE" not-null="true" />
+		</many-to-one>
+		<property name="amount" type="big_decimal" />
+		<many-to-one class="org.egov.demand.model.EgDemandReasonMaster" name="demandReasonMaster" fetch="select">
+			<column name="id_demand_reason_master" not-null="true" />
+		</many-to-one>
+	</class>
+
+	<query name="FEE_BY_NAME_TYPE_NATURE">
+		<![CDATA[
+     	from org.egov.license.domain.entity.FeeMatrix as fm  where fm.subcategory.id= ? and fm.applType.id= ?  
+    ]]>
+	</query>
+</hibernate-mapping>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.license.domain.entity.LicenseAppType" table="EGL_MSTR_APP_TYPE">
+		<id name="id" column="ID" type="long" unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">SEQ_EGL_MSTR_APP_TYPE</param>
+			</generator>
+		</id>
+
+		<property name="createdDate" type="java.util.Date">
+			<column name="CREATEDDATE" length="7" not-null="true" />
+		</property>
+
+		<property name="modifiedDate" type="java.util.Date">
+			<column name="LASTMODIFIEDDATE" not-null="true" />
+		</property>
+
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" not-null="true"
+			fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="LASTMODIFIEDBY" not-null="true"
+			fetch="select" />
+
+		<property name="name" type="java.lang.String">
+			<column name="NAME" length="256" not-null="true" />
+		</property>
+	</class>
+	<query name="LICENSE_APPTYPE_BY_NAME">
+		<![CDATA[
+     	from LicenseAppType where name = ?   
+    	]]>
+	</query>
+</hibernate-mapping>

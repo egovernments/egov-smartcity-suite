@@ -1,0 +1,15 @@
+/* CSS Document */
+.main
+{
+border:1px solid red; 
+width:500px;
+padding:10px;
+margin-top:150px;
+}
+
+p{
+color:#663300; 
+font-family:Verdana,Arial,Helvetica,sans-serif;
+font-size:15px; 
+font-weight:bold;
+}

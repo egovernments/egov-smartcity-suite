@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="org.egov.license.domain.entity.Licensee" table="EGL_LICENSEE">
+		<id name="id" column="ID" type="java.lang.Long" unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">SEQ_EGL_LICENSEE</param>
+			</generator>
+		</id>
+		<property name="applicantName" column="APPLICANT_NAME" />
+		<property name="nationality" column="NATIONALITY" />
+		<property name="fatherOrSpouseName" column="FATHER_SPOUSE_NAME" />
+		<property name="qualification" column="QUALIFICATION" />
+		<property name="age" column="AGE" />
+		<property name="gender" column="GENDER" />
+		<property name="panNumber" column="PAN_NUM" />
+		<many-to-one name="boundary" class="org.egov.lib.admbndry.BoundaryImpl" column="ID_ADM_BNDRY" unique="true" />
+		<many-to-one name="address" column="ID_ADDRESS" class="org.egov.lib.address.model.Address" cascade="all"
+			unique="true" />
+		<property name="mobilePhoneNumber" column="MOBILE_PHONENUMBER"  />
+		<property name="uid" column="UNIQUEID"  />
+		<property name="emailId" column="EMAIL_ID"  />			
+		<property name="phoneNumber" column="PHONENUMBER"  />
+
+		<property name="createdDate" type="java.util.Date">
+			<column name="CREATEDDATE" not-null="true" />
+		</property>
+
+		<property name="modifiedDate" type="java.util.Date">
+			<column name="LASTMODIFIEDDATE" not-null="true" />
+		</property>
+
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" not-null="true"
+			fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="LASTMODIFIEDBY" not-null="true"
+			fetch="select" />
+
+		<many-to-one name="license" fetch="join" class="org.egov.license.domain.entity.License" column="ID_LICENSE"
+			unique="true" cascade="all" />
+	</class>
+
+</hibernate-mapping>
