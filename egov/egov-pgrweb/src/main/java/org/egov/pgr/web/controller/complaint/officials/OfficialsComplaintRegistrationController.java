@@ -44,6 +44,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ReceivingCenter;
@@ -88,8 +89,12 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
         if (resultBinder.hasErrors())
             return "complaint/officials/registration-form";
 
-        complaint.setSupportDocs(addToFileStore(files));
-        complaintService.createComplaint(complaint);
+        try {
+            complaintService.createComplaint(complaint);
+        } catch (final ValidationException e) {
+            resultBinder.rejectValue("location", e.getMessage());
+            return "complaint/officials/registration-form";
+        }
         redirectAttributes.addFlashAttribute("complaint", complaint);
         return "redirect:/complaint/reg-success?crn=" + complaint.getCrn();
     }

@@ -45,6 +45,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.ValidationException;
 
 import org.egov.commons.service.CommonsService;
 import org.egov.config.search.Index;
@@ -146,7 +147,7 @@ public class ComplaintService {
 
     @Transactional
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
-    public Complaint createComplaint(final Complaint complaint) {
+    public Complaint createComplaint(final Complaint complaint) throws ValidationException {
         if (complaint.getCrn().isEmpty())
             complaint.setCrn(applicationNumberGenerator.generate());
         final User user = securityUtils.getCurrentUser();
@@ -159,10 +160,11 @@ public class ComplaintService {
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
         if (complaint.getLocation() == null && complaint.getLat() != 0.0 && complaint.getLng() != 0.0) {
             final Long bndryId = commonsService.getBndryIdFromShapefile(complaint.getLat(), complaint.getLng());
-            if (bndryId != null) {
+            if (bndryId != null && bndryId != 0) {
                 final Boundary location = boundaryService.getBoundaryById(bndryId);
                 complaint.setLocation(location);
-            }
+            } else
+                throw new ValidationException("location.not.valid");
         }
         final Position assignee = complaintRouterService.getAssignee(complaint);
         complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getName())
@@ -381,8 +383,8 @@ public class ComplaintService {
         final StringBuffer smsBody = new StringBuffer().append("Dear ").append(complaint.getComplainant().getName())
                 .append(", Thank you for registering a complaint (").append(complaint.getCrn())
                 .append("). Please use this number for all future references.");
-            messagingService.sendEmail(complaint.getComplainant().getEmail(), emailSubject.toString(), emailBody.toString());
-            messagingService.sendSMS(complaint.getComplainant().getMobile(), smsBody.toString());
+        messagingService.sendEmail(complaint.getComplainant().getEmail(), emailSubject.toString(), emailBody.toString());
+        messagingService.sendSMS(complaint.getComplainant().getMobile(), smsBody.toString());
 
     }
 

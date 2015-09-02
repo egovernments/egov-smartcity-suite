@@ -43,6 +43,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.validation.ValidatorUtils;
@@ -75,13 +76,18 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
             final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files) {
 
         if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
-                resultBinder.rejectValue("location", "location.required");
+            resultBinder.rejectValue("location", "location.required");
 
         if (resultBinder.hasErrors())
             return "complaint/citizen/registration-form";
 
-        complaint.setSupportDocs(addToFileStore(files));
-        complaintService.createComplaint(complaint);
+        try {
+            complaint.setSupportDocs(addToFileStore(files));
+            complaintService.createComplaint(complaint);
+        } catch (final ValidationException e) {
+            resultBinder.rejectValue("location", e.getMessage());
+            return "complaint/citizen/registration-form";
+        }
         redirectAttributes.addFlashAttribute("complaint", complaint);
         return "redirect:/complaint/reg-success?crn=" + complaint.getCrn();
     }
@@ -102,14 +108,20 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
             resultBinder.rejectValue("complainant.name", "complainant.name.ismandatory");
 
         if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
-                resultBinder.rejectValue("location", "location.required");
+            resultBinder.rejectValue("location", "location.required");
 
         if (resultBinder.hasErrors())
             return "complaint/citizen/anonymous-registration-form";
 
-        complaint.setSupportDocs(addToFileStore(files));
-        complaintService.createComplaint(complaint);
+        try {
+            complaint.setSupportDocs(addToFileStore(files));
+            complaintService.createComplaint(complaint);
+        } catch (final ValidationException e) {
+            resultBinder.rejectValue("location", e.getMessage());
+            return "complaint/citizen/anonymous-registration-form";
+        }
         redirectAttributes.addFlashAttribute("complaint", complaint);
         return "redirect:/complaint/reg-success?crn=" + complaint.getCrn();
+
     }
 }
