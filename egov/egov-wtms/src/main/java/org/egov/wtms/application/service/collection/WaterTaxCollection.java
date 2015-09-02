@@ -41,7 +41,6 @@ package org.egov.wtms.application.service.collection;
 
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +56,6 @@ import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
-import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
@@ -70,7 +68,6 @@ import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
-import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.WaterTaxUtils;
@@ -89,8 +86,6 @@ public class WaterTaxCollection extends TaxCollection {
     private EgBillDao egBillDAO;
     @Autowired
     private ModuleService moduleService;
-    @Autowired
-    private ConnectionDemandService connectionDemandService;
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
@@ -185,7 +180,7 @@ public class WaterTaxCollection extends TaxCollection {
         EgDemandReason dmdRsn = null;
         String installmentDesc = null;
 
-        for (final EgDemandDetails dmdDtls : demandDetailList) {
+        for (final EgDemandDetails dmdDtls : demandDetailList)
             if (dmdDtls.getAmount().compareTo(BigDecimal.ZERO) > 0) {
 
                 dmdRsn = dmdDtls.getEgDemandReason();
@@ -200,9 +195,7 @@ public class WaterTaxCollection extends TaxCollection {
                             .put(dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
             } else if (LOGGER.isDebugEnabled())
                 LOGGER.debug("saveCollectionDetails - demand detail amount is zero " + dmdDtls);
-            if (dmdDtls.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
-                demand.setAmtCollected(billRcptInfo.getTotalAmount());
-        }
+
         EgDemandDetails demandDetail = null;
 
         for (final ReceiptAccountInfo rcptAccInfo : accountDetails)
@@ -214,7 +207,8 @@ public class WaterTaxCollection extends TaxCollection {
 
                     demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
                     demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
-
+                    if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
+                        demand.addCollected(rcptAccInfo.getCrAmount());
                     persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
                             billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
                     if (LOGGER.isDebugEnabled())
@@ -231,25 +225,8 @@ public class WaterTaxCollection extends TaxCollection {
     }
 
     public EgDemand getCurrentDemand(final Long billId) {
-        EgDemand egDemand = null;
         final EgBill egBill = egBillDAO.findById(billId, false);
-        for (final EgBillDetails egBillDetails : egBill.getEgBillDetails())
-            if (!WaterTaxConstants.WATERTAXREASONCODE
-                    .equalsIgnoreCase(egBillDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
-                egDemand = connectionDemandService.getDemandByInstAndApplicationNumber(connectionDemandService
-                        .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date()),
-                        egBill.getConsumerId());
-            else if (null != egBillDetails.getEgDemandReason().getEgInstallmentMaster().getInstallmentType()
-                    && WaterTaxConstants.WATERTAXREASONCODE
-                            .equalsIgnoreCase(egBillDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
-                egDemand = connectionDemandService.getDemandByInstAndApplicationNumber(connectionDemandService
-                        .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY, new Date()),
-                        egBill.getConsumerId());
-            else
-                egDemand = connectionDemandService.getDemandByInstAndApplicationNumber(connectionDemandService
-                        .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date()),
-                        egBill.getConsumerId());
-        return egDemand;
+        return egBill.getEgDemand();
     }
 
     // Receipt cancellation ,updating bill,demanddetails,demand
