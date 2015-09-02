@@ -1866,7 +1866,7 @@ ul.nav-tabs>li.active>a:after {
 
 .inline-main-content{
 	display:inline-block;float:right;padding: 18px; width: calc(100% - 250px);
-	overflow-x: hidden;
+	overflow-x: hidden;padding-bottom: 40px;
 }
 
 .multilevelpushmenu_wrapper h2 {

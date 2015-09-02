@@ -70,48 +70,20 @@
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
 		<style>
-		.clearfix:before,
-		.clearfix:after {
-			content: " ";
-			display: table;
-		}
-		
-		.clearfix:after {
-			clear: both;
-		}
-		
-		.clearfix {
-			*zoom: 1;
-		}
-		
-		       
 		footer {
-			background-color:#f3f4f5;
-			bottom: 0;
-		    clear:both;
-		    position: relative;
-		    height:30px;
+			background-color:#f3f4f5;bottom: 0;clear:both;position: fixed;width:100%;
 		}
 		
-		footer.simple {
-			padding-top: 1px;
-		}
-		
-		footer a, footer strong {
-			color: rgb(116, 101, 101);
-			text-decoration: none;
+		footer a{
+			color: rgb(116, 101, 101);text-decoration: none;
 		}
 		
 		footer span.copyright {
-			float: left;
-			font-size: 11px;
-			padding: 7px;
+			float: left;font-size: 11px;padding: 7px;
 		}
 		
 		footer span.version {
-			float: right;
-			font-size: 11px;
-			padding: 7px;
+			float: right;font-size: 11px;padding: 7px;
 		}
 		    
 		footer span.copyright a {
@@ -119,16 +91,12 @@
 		}
 		
 		footer #legal {
-			clear: left;
-			display: block;
+			clear: left;display: block;
 		}
 		
 		.constrain {
-				padding-left: 10px;
-				padding-right: 10px;
-				margin-bottom:0px;
+				padding-left: 10px;padding-right: 10px;margin-bottom:0px;
 		}
-		
 		</style>
 	</head>
 	<body class="page-body">
@@ -317,7 +285,7 @@
 			<footer class="clearfix simple">
 				<div class="constrain">
 					<div id="legal">
-						<span class="copyright">Copyright &copy; 2015 <a href="http://www.egovernments.org" target="_blank"> eGovernments Foundation.<sup>&reg;</sup></a></span>
+						<span class="copyright">Copyright <span><i class="fa fa-copyright"></i></span> 2015 <a href="http://www.egovernments.org" target="_blank"> eGovernments Foundation.<sup>&reg;</sup></a></span>
 						<span class="version">eGov ERP - ${app_version}_${app_buildno}</span>
 					</div>
 				</div>
