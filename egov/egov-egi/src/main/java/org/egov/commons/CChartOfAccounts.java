@@ -287,7 +287,7 @@ public class CChartOfAccounts extends BaseModel {
 	}
 
 	public int hashCode() {
-		return (Integer.valueOf(glcode));
+		return (Integer.valueOf(glcode!=null?glcode:"0"));
 	}
 
 	public Boolean getBudgetCheckReq() {

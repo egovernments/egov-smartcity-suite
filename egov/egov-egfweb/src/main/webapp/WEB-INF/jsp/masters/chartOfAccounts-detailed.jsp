@@ -37,23 +37,13 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/struts-nested" prefix="nested"%>
 <html>  
 <head>  
     <title>Add Detailed Chart Of Accounts</title>
-    <link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/datatable/assets/skins/sam/datatable.css"/>
-<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/assets/skins/sam/autocomplete.css" />
-<script type="text/javascript" src="/egi/commonyui/yui2.7/animation/animation-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/datasource/datasource-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/autocomplete/autocomplete-min.js"></script>
 	<script type="text/javascript">
-		function validate(){
+		function validateAndSubmit(){
 			if(document.getElementById('glCode').value == null || document.getElementById('glCode').value==''){
 				alert("Please enter Parent GlCode");
 				return false;
@@ -66,6 +56,9 @@
 				alert("Please enter Account Code");
 				return false;
 			}
+			document.chartOfAccountsForm.action = '${pageContext.request.contextPath}/masters/chartOfAccounts-create.action';
+			document.chartOfAccountsForm.submit();
+				
 			return true;
 		}
 
@@ -81,7 +74,7 @@
 			value = document.getElementById('glCode').value;
 			if(value.split("-").length>1){
 			document.getElementById('generatedGlcode').value = value.split("-")[0]; 
-			var transaction = YAHOO.util.Connect.asyncRequest('GET', 'chartOfAccounts!ajaxNextGlCode.action?parentGlcode='+value.split("-")[0], callback, null);
+			var transaction = YAHOO.util.Connect.asyncRequest('GET', 'chartOfAccounts-ajaxNextGlCode.action?parentGlcode='+value.split("-")[0], callback, null);
 			document.getElementById('glCode').readOnly = true
 			}
 			else {
@@ -100,14 +93,14 @@
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" id="chartOfAccountsTable">
 			<tr>
 			    <td width="20%" class="bluebox">&nbsp;</td>
-			    <td width="10%" class="bluebox"><strong><s:text name="chartOfAccount.parent"/>:<span class="mandatory">*</span></strong></td>
+			    <td width="10%" class="bluebox"><strong><s:text name="chartOfAccount.parent"/>:<span class="mandatory1">*</span></strong></td>
 				<td  class="bluebox">
 					<div id="myAutoComplete" style="width:15em;padding-bottom:2em;"> 
 						<input type="text" name="glCode" id="glCode" onblur="generateGlCode();"/>
 						<div id="myContainer"></div> 
 					</div> 
 				</td>
-				<td width="10%" class="bluebox"><strong><s:text name="chartOfAccount.glCode"/>:<span class="mandatory">*</span></strong></td>
+				<td width="10%" class="bluebox"><strong><s:text name="chartOfAccount.glCode"/>:<span class="mandatory1">*</span></strong></td>
 			    <td class="bluebox" width="10%">
 			    	<input type="text" readonly="readonly" name="generatedGlcode" id="generatedGlcode" size="10"/>
 			    	<input type="text" name="newGlcode" id="newGlcode" size="5" maxlength='<s:property value="glCodeLengths[4l]"/>'/>
@@ -115,7 +108,7 @@
 			</tr>
 			<tr>
 			    <td width="20%" class="greybox">&nbsp;</td>
-				<td width="10%" class="greybox"><strong><s:text name="chartOfAccount.name"/>:<span class="mandatory">*</span></strong></td>
+				<td width="10%" class="greybox"><strong><s:text name="chartOfAccount.name"/>:<span class="mandatory1">*</span></strong></td>
 			    <td class="greybox"><input type="text" id="model.name" name="model.name" onKeyDown="textCounter('model.name',100)" onKeyUp="textCounter('model.name',100)" onblur="textCounter('model.name',100)"/></td>
 				<td width="10%" class="greybox"><strong><s:text name="chartOfAccount.description"/>:</strong></td>
 			    <td width="22%" class="greybox"><input type="text" id="model.desc" name="model.desc" onKeyDown="textCounter('model.desc',250)" onKeyUp="textCounter('model.desc',250)" onblur="textCounter('model.desc',250)"/></td>
@@ -142,12 +135,14 @@
 		</table>
 		<br/><br/>
 		<div class="buttonbottom"> 
-			<s:submit name="Save" value="Save" method="create" cssClass="buttonsubmit" onclick="return validate();"/>
-			<s:submit value="Close" onclick="javascript: self.close()" cssClass="buttonsubmit"/>
+		<input type="submit" class="buttonsubmit" value="Save"
+					id="Save" name="Save" onclick="return validateAndSubmit();" />
+			<input type="button" value="Close"
+				onclick="javascript:window.close()" class="button" />
 		</div>
 		<s:token/>
 		</s:form>  
-<script>
+ <script type="text/javascript">
 	var allGlcodes = [];
 	<s:iterator value="allChartOfAccounts">
 		allGlcodes.push("<s:property value="glcode"/>-<s:property value="name.replaceAll('\n',' ')"/>")
@@ -162,7 +157,7 @@
 			oAC.queryDelay = 0;
 		    oAC.useShadow = true;
 			oAC.useIFrame = true; 
-			oAC.maxResultsDisplayed = 15;
+			oAC.maxResultsDisplayed = 10;
 		     
 		    return { 
 		        oDS: oDS, 

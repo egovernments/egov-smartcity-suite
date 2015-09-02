@@ -304,7 +304,7 @@ td.greybox  input.hiddentext {
 }
 
 input.buttonsubmit, input.button {
-	min-width: 133px;
+	width: auto;
 	font-family: semibold;
 	text-align: center;
 	border-style: none;
@@ -455,7 +455,7 @@ div.commontopbreadc {
 
 td.greybox input[type="text"], td.greybox select, td.bluebox input[type="text"], td.bluebox select
 {
-	min-width:180px;
+	width:auto;
     height: 30px;
 	padding: 5px 10px;
 	font-size: 12px;
