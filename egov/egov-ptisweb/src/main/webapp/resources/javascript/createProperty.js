@@ -79,12 +79,12 @@ function enableFieldsForPropType() {
 			});
 			jQuery("tr.construction").find('select').each(function() {
 				jQuery(this).prop('selectedIndex', 0);
-				jQuery(this).val("");
 			});
 			jQuery('tr.floordetails').hide();
 			jQuery('tr.vacantlanddetaills').show();
 			jQuery('tr.construction').hide();
 			jQuery('tr.amenities').hide();
+			jQuery("#appurtenantLandChecked").prop('checked', false);
 			jQuery('#appurtenantRow').hide();
 			jQuery('#areaOfPlot').val("");
 			jQuery('tr.extentSite').hide();
@@ -102,6 +102,7 @@ function enableFieldsForPropType() {
 			jQuery('tr.vacantlanddetaills').hide();
 			jQuery('tr.construction').show();
 			jQuery('tr.amenities').show();
+			jQuery('#extentAppartenauntLand').val("");
 			jQuery('#appurtenantRow').hide();
 			jQuery('tr.extentSite').show();
 			jQuery('tr.appurtenant').show();
@@ -1090,10 +1091,9 @@ function enableOrDisableSiteOwnerDetails(obj) {
 	
 	if (jQuery(obj).is(":checked")) {
 		jQuery('td.siteowner').show();
-		//jQuery('input[name="propertyDetail.siteOwner"]').prop('readonly', false);
 	} else {
-		jQuery('td.siteowner').hide();
-		//jQuery('input[name="propertyDetail.siteOwner"]').prop('readonly', true);
+		jQuery('#siteOwner').val("");
+		jQuery('td.siteowner').hide(); 
 	}
 }
 
@@ -1101,6 +1101,9 @@ function enableOrDisableBPADetails(obj) {
 	if (jQuery(obj).is(":checked")) {
 		jQuery('tr.bpddetails').show();
 	} else {
+		jQuery('#buildingPermissionNo').val("");
+		jQuery('#buildingPermissionDate').val("");
+		jQuery("#deviationPercentage").prop('selectedIndex', 0);
 		jQuery('tr.bpddetails').hide();
 	}
 }

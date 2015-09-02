@@ -238,6 +238,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
                     if (null != propertyDetail)
                         validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary, northBoundary);
+                } else if (null != propertyDetail.isAppurtenantLandChecked()) {
+                    validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary, northBoundary);
+                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot);
                 } else
                     validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot);
                 validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetailsProxy(), property);
