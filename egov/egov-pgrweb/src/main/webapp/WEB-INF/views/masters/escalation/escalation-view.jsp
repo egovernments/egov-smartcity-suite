@@ -85,11 +85,7 @@
 				$("#positionHierarchyToPositionid"+j).attr('class',"form-control positionHierarchyToPositionid"+(j-1));
 				$("#positionHierarchyToPositionid"+j).attr('name',"positionHierarchyList["+(j-1)+"].toPosition.id");
 				$("#positionHierarchyToPositionid"+j).attr('id',"positionHierarchyToPositionid"+(j-1));
-					
-					
 			}
-
-			
 			tb1.deleteRow(curRow);
 			//resetSrNo();
 			return true;
@@ -98,231 +94,213 @@
 </script>		
 <div class="row">
 	<div class="col-md-12">
-			<c:if test="${not empty message}"> 
-                	<div class="alert alert-danger" role="alert">${message}</div>
-           		</c:if>
-           		
-				<form:form id="viewEscalation" method="post" class="form-horizontal form-groups-bordered" modelAttribute="escalationForm">
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading ">
-							<div class="panel-title">
-								<strong><spring:message code="lbl.escalation.heading.view"/></strong>
-							</div>
-						</div> 
-						<div class="panel-body custom-form">
-							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.escalation.position" /><span class="mandatory"></span></label>
-								<div class="col-sm-6">
-								<form:input id="com_position" path="position.name" type="text"
-										class="form-control typeahead is_valid_alphabet"
-										placeholder="" autocomplete="off" required="required" />
-											
-									<input type=hidden id="mode" value="${mode}">
-									<form:hidden path="position.id" id="positionId" 	value="${position.id}" />
-									<form:errors path="position.id"	cssClass="add-margin error-msg" />
-									<div class="error-msg eithererror all-errors display-hide"></div>
-									
-								</div>
-							</div>
-							
-						
-					    <div class="form-group">
-								<div class="text-center">
-									<button type="submit" id="escalationCreateSearch"
-										class="btn btn-primary">
-										<spring:message code="lbl.escalation.button.search" />
-									</button>
-												<a href="javascript:void(0)" class="btn btn-default"
-										onclick="self.close()"> <spring:message code="lbl.close" /></a>
-								</div>
-							</div>
-					    </div>
-					    
+		<c:if test="${not empty message}"> 
+        	<div class="alert alert-danger" role="alert">${message}</div>
+        </c:if>
+		<form:form id="viewEscalation" method="post" class="form-horizontal form-groups-bordered" modelAttribute="escalationForm">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading ">
+					<div class="panel-title">
+						<strong><spring:message code="lbl.escalation.heading.view"/></strong>
 					</div>
-					<div id="noescalationDataFoundDiv" class="row container-msgs">
-						<c:if test="${mode == 'noDataFound'}">
-							<div class="form-group">
-								<div class="text-center">
-									<div class="panel-title view-content">
-										<spring:message code="lbl.escalation.label.NodataFound" />
-									</div>
-									<br>
-									<button type="button" id="escalationnewEscalation"
-										class="btn btn-primary">
-										<spring:message
-											code="lbl.escalation.button.addnewEscalation" />
-									</button>
-								</div>
-							</div>
-						</c:if>
-					</div>
-				</form:form>
-					
-				<form:form id="saveEscalationForm" method="post" class="form-horizontal form-groups-bordered"
-					modelAttribute="escalationForm">
-					<div id="escalationDiv" class="hidden">	
-					
-					<form:hidden path="position.id"
-							id="formpositionId"
-							value="${position.id}" />
-							<form:hidden path="position.name"
-							id="formpositionName"
-							value="${position.name}" />			
-						<table id="escalationTable" table width="100%" border="0"
-							cellpadding="0" cellspacing="0" class="table table-bordered">
-							<thead>
-								<tr>
-									<%-- <th><spring:message code="lbl.escalationTime.button.srNo" /></th> --%>
-									<th><spring:message code="lbl.escalation.heading.fromPosition" /></th>
-									<th><spring:message code="lbl.escalation.complaintType" /></th>
-										<th><spring:message code="lbl.escalation.heading.department" /></th>
-										<th><spring:message code="lbl.escalation.heading.designation" /></th>
-									<th><spring:message code="lbl.escalation.heading.toPosition" /></th>
-								</tr>
-							</thead>
-							<tbody>
-							
-								<c:forEach var="contact" items="${escalationForm.positionHierarchyList}" varStatus="status">
-									<tr>
-										<%-- <td id="">${status.count}</td> --%>
-										<td>
-											
-											<input type=hidden
-											id="positionHierarchyFromPositionId${status.index}"
-											name="positionHierarchyList[${status.index}].fromPosition.id"
-											value="${contact.fromPosition.id}"> 
-											
-									       <input type="text" class="form-control is_valid_alphabet"
-											id="positionHierarchyfromPositionName${status.index}"
-											value="${contact.fromPosition.name}" 
-											name="positionHierarchyList[${status.index}].fromPosition.name"
-											 autocomplete="off" required="required"  readonly="readonly">
-											<%-- 
-											<input type=hidden
-											id="positionHierarchyId${status.index}"
-											name="positionHierarchyList[${status.index}].id"
-											value="${contact.id}">
-											 --%>
-										</td>
-										<td> 	
-										<%-- <form:select path="" data-first-option="false"  value="${contact.objectSubType}"
-												id="positionHierarchySubType${status.index}" cssClass="form-control positionHierarchySubType${status.index}"
-												cssErrorClass="form-control error">
-												<form:option value="">Select </form:option>		
-												   <c:forEach items="${complaintTypes}" var="comType">
-										            <option <c:if test="${comType.code eq contact.objectSubType}">selected="selected"</c:if>    value="${comType.code}">${comType.name} </option>
-										         </c:forEach>
-										       
-										       </form:select>   --%>
-										<select name="positionHierarchyList[${status.index}].objectSubType"  data-optvalue="${contact.objectSubType}"
-											id="positionHierarchySubType${status.index}"  
-											class="form-control positionHierarchySubType${status.index}" >
-												<option value="">Select</option>
-												 <c:forEach items="${complaintTypes}" var="comType">
-										            <option <c:if test="${comType.code eq contact.objectSubType}">selected="selected"</c:if>    value="${comType.code}">${comType.name} </option>
-										         </c:forEach>
-										</select>      
-										       
-										</td>
-									<td>
-										<%-- <input type="hidden"
-											id="positionHierarchySubType${status.index}"
-											class="form-control is_valid_alphanumeric positionHierarchySubType${status.index}"
-											value="${contact.objectSubType}" 
-											name="positionHierarchyList[${status.index}].objectSubType"
-											>
-									 --%>		<input type="hidden"
-											id="positionHierarchyobjectType${status.index}"
-											class="form-control is_valid_alphanumeric positionHierarchyobjectType${status.index}"
-											value="${contact.objectType.id}" 
-											name="positionHierarchyList[${status.index}].objectType.id">		
-											
-											<form:select path="" data-first-option="false"  value="${contact.toPosition.deptDesig.department.id}"
-												id="approvalDepartment${status.index}" cssClass="form-control approvalDepartment${status.index}"
-												cssErrorClass="form-control error">
-												<form:option value="">Select </form:option>		
-												<%-- <form:options items="${approvalDepartmentList}" itemValue="id"
-														itemLabel="name"  value="${contact.toPosition.deptDesig.department.id}"/>     
-												 --%>
-												   <c:forEach items="${approvalDepartmentList}" var="dept">
-										            <option <c:if test="${dept.id eq contact.toPosition.deptDesig.department.id}">selected="selected"</c:if>    value="${dept.id}">${dept.name} </option>
-										         </c:forEach>
-										       
-										       </form:select>  
-											<%-- <select  value="${contact.toPosition.deptDesig.department.id}"
-											name="positionHierarchyList[${status.index}].toPosition.deptDesig.department.id"
-												id="approvalDepartment${status.index}" class="form-control approvalDepartment${status.index}"
-												cssErrorClass="form-control error">
-												<option value="">Select </option>		
-												<c:forEach items="${approvalDepartmentList}" var="dept">
-                       								<option value="${dept.id}"> ${dept.name}</option>
-                       								</c:forEach>
-												</select>
-												
-										 --%>		
-											</td>
-										<td>	
-											<form:select path="" data-first-option="false"  data-optvalue="${contact.toPosition.deptDesig.designation.id}"
-												id="approvalDesignation${status.index}" cssClass="form-control approvalDesignation${status.index}"
-												cssErrorClass="form-control error">  
-												<form:option value="">
-													Select
-												</form:option>
-												<%-- <form:option value="${contact.toPosition.deptDesig.designation.id}">
-													<c:out value="${contact.toPosition.deptDesig.designation.name}"/> 
-												</form:option> --%>
-												<%-- <form:options items="${approvalDesignationList}" itemValue="id"
-													itemLabel="name" /> --%> 
-												   <c:forEach items="${approvalDesignationList}" var="desig">
-										            <option <c:if test="${desig.id eq contact.toPosition.deptDesig.designation.id}">selected="selected"</c:if>    value="${desig.id}">${desig.name} </option>
-										         </c:forEach>
-										         	
-													
-											</form:select>	
-											</td>
-										<td>	
-									<select name="positionHierarchyList[${status.index}].toPosition.id" 
-											id="positionHierarchyToPositionid${status.index}" data-optvalue="${contact.toPosition.id}" 
-											class="form-control positionHierarchyToPositionid${status.index}" required="required">
-												<option value="">Select</option>
-										</select>
-											<script>calltypeahead('${status.count}'-1); 
-											 $(function () {
- 												$('#approvalDepartment'+('${status.count}'-1)).trigger('change');
- 												$('#approvalDesignation'+('${status.count}'-1)).trigger('change');
- 											}); 
-											</script>
-									<%-- 	<input type=hidden
-											id="positionHierarchyToPositionId${status.index}"
-											name="positionHierarchyList[${status.index}].toPosition.id"
-											value="${contact.toPosition.id}">  --%>
-											</td>
-											<td>
-											<button type="button" onclick="deleteRow(this)" id="Add"
-												class="btn btn-primary">Delete</button>
-										</td>
-									</tr>
-								</c:forEach>
-				
-							</tbody>
-						</table>
-						
-					
+				</div> 
+				<div class="panel-body custom-form">
 					<div class="form-group">
-								<div class="text-center">
-								<br><br>
-																					
-									<button type="button" id="btn-add" 
-												class="btn btn-primary btn-add">Add New Row</button>
-										
-										<button type="submit" class="btn btn-primary escalationBtn" onclick="return checkUniqueDesignationSelected();" id="escalationBtn">
-										<spring:message code="lbl.update"/>
-										</button>
-										<a href="javascript:void(0);" onclick="self.close()" class="btn btn-default">Close</a>
-								</div>
+						<label class="col-sm-3 control-label"><spring:message code="lbl.escalation.position" /><span class="mandatory"></span></label>
+						<div class="col-sm-6">
+						<form:input id="com_position" path="position.name" type="text"
+								class="form-control typeahead is_valid_alphabet"
+								placeholder="" autocomplete="off" required="required" />
+									
+							<input type=hidden id="mode" value="${mode}">
+							<form:hidden path="position.id" id="positionId" 	value="${position.id}" />
+							<form:errors path="position.id"	cssClass="add-margin error-msg" />
+							<div class="error-msg eithererror all-errors display-hide"></div>
+							
+						</div>
 					</div>
+					
+				
+			    <div class="form-group">
+						<div class="text-center">
+							<button type="submit" id="escalationCreateSearch"
+								class="btn btn-primary">
+								<spring:message code="lbl.escalation.button.search" />
+							</button>
+										<a href="javascript:void(0)" class="btn btn-default"
+								onclick="self.close()"> <spring:message code="lbl.close" /></a>
+						</div>
+					</div>
+			    </div>
+			    
+			</div>
+			<div id="noescalationDataFoundDiv" class="row container-msgs">
+				<c:if test="${mode == 'noDataFound'}">
+					<div class="form-group">
+						<div class="text-center">
+							<div class="panel-title view-content">
+								<spring:message code="lbl.escalation.label.NodataFound" />
 							</div>
-				</form:form>
+							<br>
+							<button type="button" id="escalationnewEscalation"
+								class="btn btn-primary">
+								<spring:message
+									code="lbl.escalation.button.addnewEscalation" />
+							</button>
+						</div>
+					</div>
+				</c:if>
+			</div>
+		</form:form>
+					
+		<form:form id="saveEscalationForm" method="post" class="form-horizontal form-groups-bordered"
+			modelAttribute="escalationForm">
+			<div id="escalationDiv" class="hidden">	
+				<form:hidden path="position.id"	id="formpositionId"	value="${position.id}" />
+				<form:hidden path="position.name" id="formpositionName" value="${position.name}" />			
+				<table id="escalationTable" table width="100%" border="0" cellpadding="0" cellspacing="0" class="table table-bordered">
+					<thead>
+						<tr>
+							<%-- <th><spring:message code="lbl.escalationTime.button.srNo" /></th> --%>
+							<th><spring:message code="lbl.escalation.heading.fromPosition" /></th>
+							<th><spring:message code="lbl.escalation.complaintType" /></th>
+								<th><spring:message code="lbl.escalation.heading.department" /></th>
+								<th><spring:message code="lbl.escalation.heading.designation" /></th>
+							<th><spring:message code="lbl.escalation.heading.toPosition" /></th>
+						</tr>
+					</thead>
+					<tbody>
+						<c:forEach var="contact" items="${escalationForm.positionHierarchyList}" varStatus="status">
+							<tr>
+								<%-- <td id="">${status.count}</td> --%>
+								<td>
+									<input type=hidden
+									id="positionHierarchyFromPositionId${status.index}"
+									name="positionHierarchyList[${status.index}].fromPosition.id"
+									value="${contact.fromPosition.id}"> 
+
+							       <input type="text" class="form-control is_valid_alphabet"
+									id="positionHierarchyfromPositionName${status.index}"
+									value="${contact.fromPosition.name}" 
+									name="positionHierarchyList[${status.index}].fromPosition.name"
+									 autocomplete="off" required="required"  readonly="readonly">
+									<%-- 
+									<input type=hidden
+									id="positionHierarchyId${status.index}"
+									name="positionHierarchyList[${status.index}].id"
+									value="${contact.id}">
+									 --%>
+								</td>
+								<td> 	
+								<%-- <form:select path="" data-first-option="false"  value="${contact.objectSubType}"
+										id="positionHierarchySubType${status.index}" cssClass="form-control positionHierarchySubType${status.index}"
+										cssErrorClass="form-control error">
+										<form:option value="">Select </form:option>		
+										   <c:forEach items="${complaintTypes}" var="comType">
+								            <option <c:if test="${comType.code eq contact.objectSubType}">selected="selected"</c:if>    value="${comType.code}">${comType.name} </option>
+								         </c:forEach>
+								       
+								       </form:select>   --%>
+									<select name="positionHierarchyList[${status.index}].objectSubType" 
+									 data-optvalue="${contact.objectSubType}" id="positionHierarchySubType${status.index}"  
+										class="form-control positionHierarchySubType${status.index}" >
+											<option value=""><spring:message code="lbl.select" /></option>
+											 <c:forEach items="${complaintTypes}" var="comType">
+									            <option <c:if test="${comType.code eq contact.objectSubType}">selected="selected"</c:if>    value="${comType.code}">${comType.name} </option>
+									         </c:forEach>
+									</select>      
+								</td>
+							<td>
+								<%-- <input type="hidden"
+									id="positionHierarchySubType${status.index}"
+									class="form-control is_valid_alphanumeric positionHierarchySubType${status.index}"
+									value="${contact.objectSubType}" 
+									name="positionHierarchyList[${status.index}].objectSubType"
+									>
+							 --%>		<input type="hidden"
+									id="positionHierarchyobjectType${status.index}"
+									class="form-control is_valid_alphanumeric positionHierarchyobjectType${status.index}"
+									value="${contact.objectType.id}" 
+									name="positionHierarchyList[${status.index}].objectType.id">		
+									
+									<form:select path="" data-first-option="false"  value="${contact.toPosition.deptDesig.department.id}"
+										id="approvalDepartment${status.index}" cssClass="form-control approvalDepartment${status.index}"
+										cssErrorClass="form-control error">
+										<form:option value=""><spring:message code="lbl.select" /></form:option>		
+										<%-- <form:options items="${approvalDepartmentList}" itemValue="id"
+												itemLabel="name"  value="${contact.toPosition.deptDesig.department.id}"/>     
+										 --%>
+										   <c:forEach items="${approvalDepartmentList}" var="dept">
+								            <option <c:if test="${dept.id eq contact.toPosition.deptDesig.department.id}">selected="selected"</c:if>    value="${dept.id}">${dept.name} </option>
+								         </c:forEach>
+								       
+								       </form:select>  
+									<%-- <select  value="${contact.toPosition.deptDesig.department.id}"
+									name="positionHierarchyList[${status.index}].toPosition.deptDesig.department.id"
+										id="approvalDepartment${status.index}" class="form-control approvalDepartment${status.index}"
+										cssErrorClass="form-control error">
+										<option value="">Select </option>		
+										<c:forEach items="${approvalDepartmentList}" var="dept">
+                     								<option value="${dept.id}"> ${dept.name}</option>
+                     								</c:forEach>
+										</select>
+										
+								 --%>		
+									</td>
+								<td>	
+									<form:select path="" data-first-option="false"  data-optvalue="${contact.toPosition.deptDesig.designation.id}"
+										id="approvalDesignation${status.index}" cssClass="form-control approvalDesignation${status.index}"
+										cssErrorClass="form-control error">  
+										<form:option value=""><spring:message code="lbl.select" /></form:option>
+										<%-- <form:option value="${contact.toPosition.deptDesig.designation.id}">
+											<c:out value="${contact.toPosition.deptDesig.designation.name}"/> 
+										</form:option> --%>
+										<%-- <form:options items="${approvalDesignationList}" itemValue="id"
+											itemLabel="name" /> --%> 
+										   <c:forEach items="${approvalDesignationList}" var="desig">
+								            <option <c:if test="${desig.id eq contact.toPosition.deptDesig.designation.id}">selected="selected"</c:if>    value="${desig.id}">${desig.name} </option>
+								         </c:forEach>
+									</form:select>	
+								</td>
+								<td>	
+									<select name="positionHierarchyList[${status.index}].toPosition.id" 
+										id="positionHierarchyToPositionid${status.index}" data-optvalue="${contact.toPosition.id}" 
+										class="form-control positionHierarchyToPositionid${status.index}" required="required">
+										<option value=""><spring:message code="lbl.select" /></option>
+									</select>
+									<script>calltypeahead('${status.count}'-1); 
+									 $(function () {
+											$('#approvalDepartment'+('${status.count}'-1)).trigger('change');
+											$('#approvalDesignation'+('${status.count}'-1)).trigger('change');
+										}); 
+									</script>
+							<%-- 	<input type=hidden
+									id="positionHierarchyToPositionId${status.index}"
+									name="positionHierarchyList[${status.index}].toPosition.id"
+									value="${contact.toPosition.id}">  --%>
+									</td>
+									<td>
+										<button type="button" onclick="deleteRow(this)" id="Add"
+										class="btn btn-primary"><spring:message code="lbl.delete" /></button>
+									</td>
+								</tr>
+						</c:forEach>
+					</tbody>
+				</table>
+				<div class="form-group">
+					<div class="text-center">
+						<br><br>
+						<button type="button" id="btn-add" class="btn btn-primary btn-add"><spring:message code="lbl.add.row"/></button>
+						<button type="submit" class="btn btn-primary escalationBtn" 
+						onclick="return checkUniqueDesignationSelected();" id="escalationBtn">
+							<spring:message code="lbl.update"/>
+						</button>
+						<a href="javascript:void(0);" onclick="self.close()" class="btn btn-default">
+							<spring:message code="lbl.close"/></a>
+					</div>
+				</div>
+			</div>
+		</form:form>
 	</div>
 </div>
 		

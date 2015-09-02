@@ -45,7 +45,7 @@
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
-			<strong>Actions</strong>
+			<strong><spring:message code="lbl.actions"/></strong>
 		</div>
 	</div>
 	<div class="panel-body">

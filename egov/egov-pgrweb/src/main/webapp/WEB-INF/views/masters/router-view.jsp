@@ -58,10 +58,11 @@
 						</div> 
 						<div class="panel-body custom-form">
 							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.router.complaintType" /> 
-								</label>
+								<label class="col-sm-3 control-label">
+								<spring:message code="lbl.router.complaintType" /></label>
 								<div class="col-sm-6">
-									<form:input id="com_type" path="complaintType.name" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" disabled="true"/>
+									<form:input id="com_type" path="complaintType.name" type="text" 
+									class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" disabled="true"/>
 									<form:hidden path="complaintType" id="complaintTypeId"/>
 									<form:errors path="complaintType" cssClass="add-margin error-msg"/>
 									<div class="error-msg eithererror all-errors display-hide"></div>
@@ -72,26 +73,25 @@
 								<div class="col-sm-6 add-margin">
                      				<form:select path="boundary.boundaryType" id="boundary_type_id"
 									cssClass="form-control" cssErrorClass="form-control error" disabled="true" >
-									<form:option value="">
-										<spring:message code="lbl.select" />
-									</form:option>
-									<form:options items="${boundaryTypes}" itemValue="id"
-										itemLabel="name" />
-								</form:select>
+										<form:option value=""><spring:message code="lbl.select" /></form:option>
+										<form:options items="${boundaryTypes}" itemValue="id" itemLabel="name" />
+									</form:select>
 		                   		</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message code="lbl.router.boundary"/>
 								</label>
 								<div class="col-sm-6">
-									<form:input id="com_boundry" path="boundary.name" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" disabled="true"/>
+									<form:input id="com_boundry" path="boundary.name" type="text" 
+									class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" disabled="true"/>
 									<form:hidden path="boundary" id='boundaryId'/>
 									<form:errors path="boundary" cssClass="error-msg"/>
 			                    	<div class="error-msg boundaryerror all-errors display-hide"></div>
 								</div>
 			                 </div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.router.position" /><span class="mandatory"></span></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.router.position" />
+								<span class="mandatory"></span></label>
 								<div class="col-sm-6">
 									<form:input id="com_position" path="position.name" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" disabled="true"/>
 									<form:hidden path="position" id="positionId"/>
@@ -101,7 +101,8 @@
 							</div>
 							<div class="form-group">
 								<div class="text-center">
-									<a href="javascript:void(0);" onclick="self.close()" class="btn btn-default">Close</a>
+									<a href="javascript:void(0);" onclick="self.close()" class="btn btn-default">
+									<spring:message code="lbl.close" /></a>
 								</div>
 							</div>
 						</div>

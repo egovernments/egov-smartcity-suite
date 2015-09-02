@@ -50,87 +50,79 @@
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 	
 <script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
-	
-
 		
 <div class="row">
 	<div class="col-md-12">
-
 		<div class="" data-collapsed="0">
 			<c:if test="${not empty message}">
 				<div class="alert alert-success" role="alert">${message}</div>
 			</c:if>
-				<form:form id="searchEscalationForm" method="post"
-					class="form-horizontal form-groups-bordered"
-					modelAttribute="positionHierarchy">
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading ">
-							<div class="panel-title">
-								<strong><spring:message
-										code="lbl.escalation.heading.search" /></strong>
+			<form:form id="searchEscalationForm" method="post"
+				class="form-horizontal form-groups-bordered"
+				modelAttribute="positionHierarchy">
+				<div class="panel panel-primary" data-collapsed="0">
+					<div class="panel-heading ">
+						<div class="panel-title">
+							<strong><spring:message	code="lbl.escalation.heading.search" /></strong>
+						</div>
+					</div>
+					<div class="panel-body custom-form">
+						<div class="form-group">
+						<label class="col-sm-3 control-label"><spring:message code="lbl.router.complaintType" /> 
+						</label>
+						<div class="col-sm-6">
+							<input id="com_subtype" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" />
+							<form:hidden path="objectSubType" id="objectSubType" />
+							<form:errors path="objectSubType" cssClass="add-margin error-msg"/>
+							<div class="error-msg subtypeerror all-errors display-hide"></div>
+						</div>
+					  </div>
+						
+						<div class="form-group">
+							<label class="col-sm-3 control-label"><spring:message code="lbl.router.position" /></label>
+							<div class="col-sm-6">
+								<input id="com_position" type="text" class="form-control typeahead" placeholder="" autocomplete="off" required="required" />
+								<form:hidden path="fromPosition.id" id="positionId"/>
+								<form:errors path="fromPosition.id" cssClass="error-msg" />
+								<div class="error-msg positionerror all-errors display-hide"></div>
 							</div>
 						</div>
-						<div class="panel-body custom-form">
-							<div class="form-group">
-							<label class="col-sm-3 control-label"><spring:message code="lbl.router.complaintType" /> 
-							</label>
-							<div class="col-sm-6">
-								<input id="com_subtype" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" />
-								<form:hidden path="objectSubType" id="objectSubType" />
-								<form:errors path="objectSubType" cssClass="add-margin error-msg"/>
-								<div class="error-msg subtypeerror all-errors display-hide"></div>
-							</div>
-						  </div>
-							
-							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.router.position" /></label>
-								<div class="col-sm-6">
-									<input id="com_position" type="text" class="form-control typeahead" placeholder="" autocomplete="off" required="required" />
-									<form:hidden path="fromPosition.id" id="positionId"/>
-									<form:errors path="fromPosition.id" cssClass="error-msg" />
-									<div class="error-msg positionerror all-errors display-hide"></div>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="text-center">
-									<button type="button" id="escalationSearch"
-										class="btn btn-primary">
-										<spring:message code="lbl.escalation.button.search" />
-									</button>
-									<a href="javascript:void(0)" class="btn btn-default"
-										onclick="self.close()"> <spring:message code="lbl.close" /></a>
-								</div>
+						<div class="form-group">
+							<div class="text-center">
+								<button type="button" id="escalationSearch"
+									class="btn btn-primary">
+									<spring:message code="lbl.escalation.button.search" />
+								</button>
+								<a href="javascript:void(0)" class="btn btn-default"
+									onclick="self.close()"><spring:message code="lbl.close" /></a>
 							</div>
 						</div>
 					</div>
-					
-				</form:form>
-				<div class="row display-hide report-section">
-						<div class="col-md-6 col-xs-6 table-header">Escalation Details</div>
-						<div class="col-md-12">
-							<table class="table table-bordered datatable nopointer" id="escalation-table">
-							<thead>
-								<th><spring:message code="lbl.escalation.complaintType" /></th>
-								<th><spring:message code="lbl.escalation.heading.fromPosition" /></th>
-								<th><spring:message code="lbl.escalation.heading.toPosition" /></th>
-							</thead>
-						</table>
-						</div>
 				</div>
+			</form:form>
+			<div class="row display-hide report-section">
+					<div class="col-md-6 col-xs-6 table-header"><spring:message code="lbl.escalation.details"/></div>
+				<div class="col-md-12">
+					<table class="table table-bordered datatable nopointer" id="escalation-table">
+						<thead>
+							<th><spring:message code="lbl.escalation.complaintType" /></th>
+							<th><spring:message code="lbl.escalation.heading.fromPosition" /></th>
+							<th><spring:message code="lbl.escalation.heading.toPosition" /></th>
+						</thead>
+					</table>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
-
 
 <link rel="stylesheet" href="<c:url value='/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
 
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
-
 <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>	
-
 <script type="text/javascript" src="<c:url value='/resources/js/app/escalationview.js'/>"></script>

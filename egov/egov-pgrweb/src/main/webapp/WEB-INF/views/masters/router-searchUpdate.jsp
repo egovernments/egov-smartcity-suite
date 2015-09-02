@@ -44,20 +44,18 @@
 
 <div class="row" >
 	<div class="col-md-12">
-		
 		<div class="" data-collapsed="0">
-			
-				<form:form id="searchrouter" method="post" class="form-horizontal form-groups-bordered" modelAttribute="complaintRouter">
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading ">
-							<div class="panel-title">
-								<strong><spring:message code="lbl.router.heading.search"/></strong>
-							</div>
-						</div> 
+			<form:form id="searchrouter" method="post" class="form-horizontal form-groups-bordered" modelAttribute="complaintRouter">
+				<div class="panel panel-primary" data-collapsed="0">
+					<div class="panel-heading ">
+						<div class="panel-title">
+							<strong><spring:message code="lbl.router.heading.search"/></strong>
+						</div>
+					</div> 
 					<div class="panel-body custom-form">
 						<div class="form-group">
-							<label class="col-sm-3 control-label"><spring:message code="lbl.router.complaintType" /> 
-							</label>
+							<label class="col-sm-3 control-label">
+							<spring:message code="lbl.router.complaintType" /></label>
 							<div class="col-sm-6">
 								<input id="com_type" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" />
 								<form:hidden path="complaintType" id="complaintTypeId"/>
@@ -65,16 +63,17 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label"><spring:message code="lbl.router.boundaryType" /></label>
+							<label class="col-sm-3 control-label">
+							<spring:message code="lbl.router.boundaryType" /></label>
 							<div class="col-sm-6 add-margin">
-                   				<select id="boundary_type_id" class="form-control">
-                       				<option value="0"> <spring:message code="lbl.select"/> </option>
-                       				<c:forEach items="${boundaryTypes}" var="boundaryType">
-                       					<option value="${boundaryType.id}"> ${boundaryType.name}</option>
-                       				</c:forEach>
-                   				</select>
-                   					<input type="hidden" id="hiddenBoundaryTypeId" name="boundaryTypeId" value="">
-                   			</div>
+		                 		<select id="boundary_type_id" class="form-control">
+		                     		<option value="0"> <spring:message code="lbl.select"/> </option>
+		                     		<c:forEach items="${boundaryTypes}" var="boundaryType">
+		                     			<option value="${boundaryType.id}"> ${boundaryType.name}</option>
+		                     		</c:forEach>
+		                 		</select>
+		                 		<input type="hidden" id="hiddenBoundaryTypeId" name="boundaryTypeId" value="">
+		                 	</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label"><spring:message code="lbl.router.boundary"/></label>
@@ -96,8 +95,7 @@
 					</div>
 				</div>
 			</form:form>
-		<table class="table table-bordered datatable dt-responsive" id="com_routing_search">
-		</table>
+			<table class="table table-bordered datatable dt-responsive" id="com_routing_search"></table>
 		</div>
 	</div>
 </div>
@@ -107,6 +105,4 @@
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/js/app/complaintrouterupdatesearch.js'/>"></script>
-<!-- <script>
-loadRouterDataTable($.parseJSON('${routerData}'));
-</script> -->
+

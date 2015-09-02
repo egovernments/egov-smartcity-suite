@@ -44,41 +44,40 @@
 
 <div class="row" id="page-content">
     <div class="col-md-12">
-                <c:if test="${not empty message}">
-                    <div class="alert alert-success" role="alert">${message}</div>
-                </c:if>
-
-                <form:form id="viewHierarchyType" method="post"   modelAttribute="complaintType" class="form-horizontal form-groups-bordered">
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading">
-							<div class="panel-title">
-								<strong><spring:message code="title.searchComplaintType"></spring:message></strong>
-							</div>
-						</div> 
+	    <c:if test="${not empty message}">
+	        <div class="alert alert-success" role="alert">${message}</div>
+	    </c:if>
+        <form:form id="viewHierarchyType" method="post"   modelAttribute="complaintType" class="form-horizontal form-groups-bordered">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">
+						<strong><spring:message code="title.searchComplaintType"></spring:message></strong>
+					</div>
+				</div> 
 						
-						<div class="panel-body custom-form">
-							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.complaintType"></spring:message><span class="mandatory"></span></label>
-								<div class="col-sm-6 add-margin">
-	                            <form:select path="name"
-	                                         id="comp_type_dept" cssClass="form-control" cssErrorClass="form-control error" >
-	                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-	                                <form:options items="${complaintTypes}" itemValue="name" itemLabel="name"/>
-	                            </form:select>
-	                            <form:errors path="name" cssClass="error-msg"/>
-	                        </div>
-						</div>
-	                </div>
-	                </div>
+				<div class="panel-body custom-form">
+					<div class="form-group">
+						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintType">
+						</spring:message><span class="mandatory"></span></label>
+						<div class="col-sm-6 add-margin">
+                            <form:select path="name"
+                                         id="comp_type_dept" cssClass="form-control" cssErrorClass="form-control error" >
+                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
+                                <form:options items="${complaintTypes}" itemValue="name" itemLabel="name"/>
+                            </form:select>
+                           	<form:errors path="name" cssClass="error-msg"/>
+                       	</div>
+					</div>
+               	</div>
+	        </div>
 
-                    <div class="form-group">
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>                           
-                            <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-                            <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
-                        </div>
-                    </div>
-                    
-                </form:form>
+            <div class="form-group">
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>                           
+                    <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+                    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
+                </div>
+            </div>
+        </form:form>
     </div>
 </div>

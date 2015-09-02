@@ -54,7 +54,6 @@
 				</div>
 			</div>
 			<div class="panel-body">
-				
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.name" /></div>
 					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-name">
@@ -69,9 +68,8 @@
 							<c:when test="${complaint.complainant.mobile !=null}">
 								<c:out value="${complaint.complainant.mobile}"></c:out>
 							</c:when>
-							<c:otherwise>N/A</c:otherwise>
+							<c:otherwise><spring:message code="msg.not.applicable"/></c:otherwise>
 						</c:choose>
-
 					</div>
 				</div>
 				<div class="row add-border">
@@ -138,12 +136,11 @@
 								</c:forEach>
 							</c:when>
 							<c:otherwise>
-								<div class="col-md-3 col-xs-6 add-margin view-content">No attachments found</div>
+								<div class="col-md-3 col-xs-6 add-margin view-content"><spring:message code="msg.no.attach.found"/></div>
 							</c:otherwise>
 						</c:choose>
 					</div>
 				</div>
-
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.location" />
@@ -151,9 +148,9 @@
 					<div class="col-md-9 col-xs-6 add-margin view-content">
 						<span class="map-tool-class btn-secondary" data-toggle="tooltip"
 							data-placement="top" title="" data-original-title="Locate on map"
-							onclick="jQuery('#complaint-locate').modal('show', {backdrop: 'static'});"><i
-							class="entypo-globe"></i></span> <span id="address_locate"><c:out
-								value="${complaint.location.name}"></c:out></span>
+							onclick="jQuery('#complaint-locate').modal('show', {backdrop: 'static'});">
+							<i class="entypo-globe"></i></span> <span id="address_locate">
+							<c:out value="${complaint.location.name}"></c:out></span>
 					</div>
 				</div>
 				<div class="row">
@@ -165,7 +162,7 @@
 							<c:when test="${complaint.landmarkDetails != null}">
 								<c:out value="${complaint.landmarkDetails}"></c:out>
 							</c:when>
-							<c:otherwise>N/A</c:otherwise>
+							<c:otherwise><spring:message code="msg.not.applicable"/></c:otherwise>
 						</c:choose>
 					</div>
 				</div>
@@ -187,46 +184,44 @@
 				</div>
 				<div class="panel-body history-slide">
 					<div class="row hidden-xs visible-sm visible-md visible-lg view-content header-color">
-						<div class="col-sm-2 col-xs-6 add-margin">Date</div>
-						<div class="col-sm-2 col-xs-6 add-margin">Updated By</div>
-						<div class="col-sm-2 col-xs-6 add-margin">Status</div>
-						<div class="col-sm-2 col-xs-6 add-margin">Current Owner</div>
-						<div class="col-sm-2 col-xs-6 add-margin">Department</div>
-						<div class="col-sm-2 col-xs-6 add-margin">Comments</div>
+						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.date"/></div>
+						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.updated.by"/></div>
+						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.status"/></div>
+						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.curr.owner"/></div>
+						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.department"/></div>
+						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.comments"/></div>
 					</div>
 					<c:choose>
-							<c:when test="${!complaintHistory.isEmpty()}">
-								<c:forEach items="${complaintHistory}" var="history">
-								<div class="row  add-border">
-									<div class="col-sm-2 col-xs-12 add-margin">
-										<fmt:formatDate value="${history.date}" var="historyDate"
-											pattern="dd-MM-yyyy HH:mm a E" />
-										<c:out value="${historyDate}" />
-									</div>
-									<div class="col-sm-2 col-xs-12 add-margin">
-										<c:out value="${history.updatedBy}" />
-									</div>
-									<div class="col-sm-2 col-xs-12 add-margin">
-										<c:out value="${history.status}" />
-									</div>
-									<div class="col-sm-2 col-xs-12 add-margin">
-										<c:out value="${history.user}" />
-									</div>
-									<div class="col-sm-2 col-xs-12 add-margin">
-										<c:out value="${history.department}" />
-									</div>
-									<div class="col-sm-2 col-xs-12 add-margin">
-										<c:out value="${history.comments}" />&nbsp;
-									</div>
+						<c:when test="${!complaintHistory.isEmpty()}">
+							<c:forEach items="${complaintHistory}" var="history">
+							<div class="row  add-border">
+								<div class="col-sm-2 col-xs-12 add-margin">
+									<fmt:formatDate value="${history.date}" var="historyDate"
+										pattern="dd-MM-yyyy HH:mm a E" />
+									<c:out value="${historyDate}" />
 								</div>
-								</c:forEach>
-							</c:when>
-							<c:otherwise>
-								<div class="col-md-3 col-xs-6 add-margin">No history
-									details for complaint</div>
-							</c:otherwise>
-						</c:choose>
-					
+								<div class="col-sm-2 col-xs-12 add-margin">
+									<c:out value="${history.updatedBy}" />
+								</div>
+								<div class="col-sm-2 col-xs-12 add-margin">
+									<c:out value="${history.status}" />
+								</div>
+								<div class="col-sm-2 col-xs-12 add-margin">
+									<c:out value="${history.user}" />
+								</div>
+								<div class="col-sm-2 col-xs-12 add-margin">
+									<c:out value="${history.department}" />
+								</div>
+								<div class="col-sm-2 col-xs-12 add-margin">
+									<c:out value="${history.comments}" />&nbsp;
+								</div>
+							</div>
+							</c:forEach>
+						</c:when>
+						<c:otherwise>
+							<div class="col-md-3 col-xs-6 add-margin"><spring:message code="msg.history.not.found"/></div>
+						</c:otherwise>
+					</c:choose>
 				</div>
 			</div>
 		</div>
@@ -256,7 +251,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="lbl.close"/></button>
 			</div>
 		</div>
 	</div>
@@ -281,10 +276,9 @@
 				<div class="modal-body next"></div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default pull-left prev">
-						<i class="glyphicon glyphicon-chevron-left"></i> Previous
-					</button>
-					<button type="button" class="btn btn-primary next">
-						Next <i class="glyphicon glyphicon-chevron-right"></i>
+						<i class="glyphicon glyphicon-chevron-left"></i><spring:message code="lbl.previous"/></button>
+					<button type="button" class="btn btn-primary next"><spring:message code="lbl.next" />
+					 	<i class="glyphicon glyphicon-chevron-right"></i>
 					</button>
 				</div>
 			</div>

@@ -44,136 +44,113 @@
 		
 <div class="row"> 
 	<div class="col-md-12">
-
 		<div class="" data-collapsed="0">
-			<c:if test="${not empty message}">
-				<div class="alert alert-success" role="alert">${message}</div>
-			</c:if>
+		<c:if test="${not empty message}">
+			<div class="alert alert-success" role="alert">${message}</div>
+		</c:if>
 			<div class="panel-body">
-				<form:form id="drillDownReportForm" method="post"
-					class="form-horizontal form-groups-bordered"
-					modelAttribute="reportHelper">
+				<form:form id="drillDownReportForm" method="post" class="form-horizontal form-groups-bordered" modelAttribute="reportHelper">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">
-								<div class="panel-title">
-							
-						<c:choose>
-							<c:when test="${mode=='ByBoundary'}"> 
-									<strong><spring:message
-										code="lbl.drilldownReportByBndry.heading.search" /></strong>
-							</c:when>
-							<c:otherwise>
-									<strong><spring:message
-										code="lbl.drilldownReportByDept.heading.search" /></strong>
-							</c:otherwise>
-						</c:choose>
+							<div class="panel-title">
+								<c:choose>
+									<c:when test="${mode=='ByBoundary'}"> 
+										<strong><spring:message	code="lbl.drilldownReportByBndry.heading.search" /></strong>
+									</c:when>
+									<c:otherwise>
+										<strong><spring:message	code="lbl.drilldownReportByDept.heading.search" /></strong>
+									</c:otherwise>
+								</c:choose>
 							</div>
 						</div>
-						
 						<div class="panel-body custom-form">
-						<div class="form-group">
-										<label for="field-1" class="col-sm-3 control-label">When </label>
-										
-										<div class="col-sm-4 add-margin">
-										<input type="hidden" id="mode" name="mode" value="${mode}"/> 
-										<input type="hidden" id="deptid" name="deptid" value="${deptid}"/> 
-										<input type="hidden" id="complainttypeid" name="complainttypeid" value="${complainttypeid}"/> 
-										<input type="hidden" id="selecteduserid" name="selecteduserid" value="${selecteduserid}"/> 
-										<input type="hidden" id="boundary" name="boundary" value="${boundary}"/> 
-										<input type="hidden" id="type" name="type" value="${type}"/> 
-											
-											<select name="complaintDateType" id="when_date" class="form-control" data-first-option="false" onchange="showChangeDropdown(this);">
-								                <option value="">Select</option>
-												<option value="all" >All</option>
-												<option value="lastsevendays" selected>In Last 7 days</option>
-												<option value="lastthirtydays">In Last 30 days</option>
-												<option value="lastninetydays">In Last 90 days</option>
-												<option value="custom" data-show=".complaintdur">Custom</option>
-											</select>
-										</div>
-										</div>
-									</div>
-									
-						
-						
-						 <div class="form-group drophide complaintdur" style="display:none;">
 							<div class="form-group">
-							<label class="col-sm-3 control-label"><spring:message code="lbl.drilldownReport.complaintFromDate" /> 
-							</label>
-						<div class="col-sm-2 add-margin">
-									<input type="text" name="reportFromDate" class="form-control datepicker checkdate"
-								id="start_date" data-inputmask="'mask': 'd/m/y'"
-								placeholder="<spring:message code='lbl.fromDate'/>" required="required"/>
+								<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.when" /></label>
+								<div class="col-sm-4 add-margin">
+									<input type="hidden" id="mode" name="mode" value="${mode}"/> 
+									<input type="hidden" id="deptid" name="deptid" value="${deptid}"/> 
+									<input type="hidden" id="complainttypeid" name="complainttypeid" value="${complainttypeid}"/> 
+									<input type="hidden" id="selecteduserid" name="selecteduserid" value="${selecteduserid}"/> 
+									<input type="hidden" id="boundary" name="boundary" value="${boundary}"/> 
+									<input type="hidden" id="type" name="type" value="${type}"/> 
+									<select name="complaintDateType" id="when_date" class="form-control" data-first-option="false" 
+									onchange="showChangeDropdown(this);">
+						                <option value=""><spring:message code="lbl.select" /></option>
+										<option value="all" ><spring:message code="lbl.all"/></option>
+										<option value="lastsevendays" selected><spring:message code="lbl.last.seven.days"/></option>
+										<option value="lastthirtydays"><spring:message code="lbl.last.thirty.days"/></option>
+										<option value="lastninetydays"><spring:message code="lbl.last.ninty.days"/></option>
+										<option value="custom" data-show=".complaintdur"><spring:message code="lbl.custom"/></option>
+									</select>
+								</div>
 							</div>
-						  
+						</div>
+						<div class="form-group drophide complaintdur" style="display:none;">
+							<div class="form-group">
+								<label class="col-sm-3 control-label"><spring:message code="lbl.drilldownReport.complaintFromDate" /></label>
+								<div class="col-sm-2 add-margin">
+									<input type="text" name="reportFromDate" class="form-control datepicker checkdate" id="start_date" 
+									data-inputmask="'mask': 'd/m/y'" placeholder="<spring:message code='lbl.fromDate'/>" required="required"/>
+								</div>
 								<label class="col-sm-3 control-label"><spring:message code="lbl.drilldownReport.complaintToDate" /></label>
-							<div class="col-sm-2 add-margin">
-									<input type="text" name="reportToDate" class="form-control datepicker checkdate"
-								id="end_date" data-inputmask="'mask': 'd/m/y'"
-								placeholder="<spring:message code='lbl.toDate'/>" />
+								<div class="col-sm-2 add-margin">
+									<input type="text" name="reportToDate" class="form-control datepicker checkdate" id="end_date" 
+									data-inputmask="'mask': 'd/m/y'" placeholder="<spring:message code='lbl.toDate'/>" />
 								</div>
 							</div>
 						</div>	
-										
-				<div class="row">
-					<div class="text-center">
-									<button type="button" id="drilldownReportSearch"
-										class="btn btn-success">
-										<spring:message code="lbl.drilldownReport.button.search" />
-									</button>
-									<a href="javascript:void(0)" class="btn btn-default"
-										onclick="self.close()"> <spring:message code="lbl.close" /></a>
-								</div>
+						<div class="row">
+							<div class="text-center">
+								<button type="button" id="drilldownReportSearch" class="btn btn-success">
+									<spring:message code="lbl.drilldownReport.button.search" />
+								</button>
+								<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">
+									<spring:message code="lbl.close" /></a>
 							</div>
 						</div>
 					</div>
-					
 				</form:form>
-				<div class="row display-hide report-section">
-						<div class="col-md-6 col-xs-6 table-header"><spring:message code="lbl.drilldownReport.resultHeader" /> </div>
-						<div class="col-md-12 form-group">
-							<table class="table table-bordered datatable dt-responsive table-hover" id="drilldownReport-table">
-						 	<thead>
+			</div>
+			<div class="row display-hide report-section">
+				<div class="col-md-6 col-xs-6 table-header"><spring:message code="lbl.drilldownReport.resultHeader" /> </div>
+				<div class="col-md-12 form-group">
+					<table class="table table-bordered datatable dt-responsive table-hover" id="drilldownReport-table">
+						<thead>
 							<%--<c:choose>
-							<c:when test="${mode=='ByBoundary'}">
-								<th>	<spring:message code="lbl.drilldownReport.boundary" />	</th>
-							</c:when>
-							<c:otherwise>
-									<th>	<spring:message code="lbl.drilldownReport.department" />	</th>
-							</c:otherwise>
-						</c:choose>
-								
-								
-							
+									<c:when test="${mode=='ByBoundary'}">
+										<th><spring:message code="lbl.drilldownReport.boundary" /></th>
+									</c:when>
+									<c:otherwise>
+										<th><spring:message code="lbl.drilldownReport.department" /></th>
+									</c:otherwise>
+								</c:choose>
 								<th><spring:message code="lbl.drilldownReport.registeredStatus" /></th>
 								<th><spring:message code="lbl.drilldownReport.inprocessStatus" /></th>
 								<th><spring:message code="lbl.drilldownReport.completedStatus" /></th>
 								<th><spring:message code="lbl.drilldownReport.rejectedStatus" /></th>
 								<th><b><spring:message code="lbl.drilldownReport.total" /></b></th>--%>
-							</thead> 
-							<tfoot id="report-footer">
-							   <tr>
-							    <td><b>Total</b></td>
-							    <td></td>
-							    <td></td>
-							    <td></td>
-							    <td></td>
-							    <td></td>
-								</tr>
-							</tfoot>
-						</table>
-						</div>
-						</div>
-				<div id="report-backbutton" class="col-xs-12 text-center">
-				<div class="form-group"> <buttton class="btn btn-primary" id="backButton" > Back</buttton>
-				  </div>
-				  
+						</thead> 
+						<tfoot id="report-footer">
+						   <tr>
+						    <td><b><spring:message code="lbl.total"/></b></td>
+						    <td></td>
+						    <td></td>
+						    <td></td>
+						    <td></td>
+						    <td></td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+			<div id="report-backbutton" class="col-xs-12 text-center">
+				<div class="form-group">
+					<button class="btn btn-primary" id="backButton" ><spring:message code="lbl.back"/></button>
 				</div>
 			</div>
 		</div>
 	</div>
-
-
+</div>
 
 <link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
 
@@ -183,12 +160,9 @@
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
-
 <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>	
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-	type="text/javascript"></script>
+<script	type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/js/app/drillDownReport.js'/>"></script>

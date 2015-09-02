@@ -44,16 +44,14 @@
 
 <div class="row" >
 	<div class="col-md-12">
-		
 		<div class="" data-collapsed="0">
-			
-				<form:form id="searchrouter" method="post" class="form-horizontal form-groups-bordered" modelAttribute="complaintRouter">
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading ">
-							<div class="panel-title">
-								<strong><spring:message code="lbl.router.heading.search"/></strong>
-							</div>
-						</div> 
+			<form:form id="searchrouter" method="post" class="form-horizontal form-groups-bordered" modelAttribute="complaintRouter">
+				<div class="panel panel-primary" data-collapsed="0">
+					<div class="panel-heading ">
+						<div class="panel-title">
+							<strong><spring:message code="lbl.router.heading.search"/></strong>
+						</div>
+					</div> 
 					<div class="panel-body">
 						<div class="form-group">
 							<label class="col-sm-3 control-label"><spring:message code="lbl.router.complaintType" /> 
@@ -73,7 +71,7 @@
                        					<option value="${boundaryType.id}"> ${boundaryType.name}</option>
                        				</c:forEach>
                    				</select>
-                   					<input type="hidden" id="hiddenBoundaryTypeId" name="boundaryTypeId" value="">
+                   				<input type="hidden" id="hiddenBoundaryTypeId" name="boundaryTypeId" value="">
                    			</div>
 						</div>
 						<div class="form-group">
@@ -96,8 +94,7 @@
 					</div>
 				</div>
 			</form:form>
-		<table class="table table-bordered datatable dt-responsive" id="com_routing_search">
-		</table>
+			<table class="table table-bordered datatable dt-responsive" id="com_routing_search"></table>
 		</div>
 	</div>
 </div>

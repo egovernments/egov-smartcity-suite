@@ -45,9 +45,9 @@
 <div class="row">
 	<div class="col-md-12">
 		<form:form  id="complaintRouterSuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="complaintRouter" >
-		 		<c:if test="${not empty message}">
-                    <div class="alert alert-success" role="alert">${message}</div>
-                </c:if>
+	 		<c:if test="${not empty message}">
+                   <div class="alert alert-success" role="alert">${message}</div>
+            </c:if>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -62,7 +62,7 @@
 								<c:when test="${not empty complaintRouter.complaintType.name}">
 									<strong><c:out value="${complaintRouter.complaintType.name}"></c:out></strong>
 								</c:when>
-								<c:otherwise>N/A</c:otherwise>
+								<c:otherwise><spring:message code="msg.not.applicable" /></c:otherwise>
 							</c:choose>
 						</div>
 					</div>
@@ -73,7 +73,7 @@
 								<c:when test="${not empty complaintRouter.boundary.boundaryType.name}">
 									<strong><c:out value="${complaintRouter.boundary.boundaryType.name}"></c:out></strong>
 								</c:when>
-								<c:otherwise>N/A</c:otherwise>
+								<c:otherwise><spring:message code="msg.not.applicable" /></c:otherwise>
 							</c:choose>
 							<input id="routerId" type="hidden" value="<c:out value="${complaintRouter.id}" />" />  
 						</div>
@@ -85,7 +85,7 @@
 								<c:when test="${not empty complaintRouter.boundary.name}">
 									<strong><c:out value="${complaintRouter.boundary.name}"></c:out></strong>
 								</c:when>
-								<c:otherwise>N/A</c:otherwise>
+								<c:otherwise><spring:message code="msg.not.applicable" /></c:otherwise>
 							</c:choose>
 						</div>
 					</div>

@@ -44,55 +44,41 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <div class="row">
 	<div class="col-md-12">
-
 		<div class="panel panel-primary" data-collapsed="0">
-
 			<div class="panel-heading">
 				<div class="panel-title">
 					<strong><spring:message code='title.searchComplaints' />
 					</strong>
 				</div>
-
 			</div>
-
 			<div class="panel-body">
-
-				<form:form  class="form-horizontal form-groups-bordered"
-					id="searchComplaintForm" modelAttribute="complaintSearchRequest" action="">
-
+				<form:form  class="form-horizontal form-groups-bordered" id="searchComplaintForm" 
+				modelAttribute="complaintSearchRequest" action="">
 					<div class="form-group">
-
 						<div class="col-md-6 add-margin">
-							<input type="text" name="searchText" class="form-control"
-								id="ct-search"
+							<input type="text" name="searchText" class="form-control" id="ct-search"
 								placeholder="<spring:message code='lbl.complaint.search.searchText' /> " />
 						</div>
-
 						<div class="col-md-6 add-margin">
 							<input type="text" name="location" class="form-control" id="ct-location"
 								placeholder="<spring:message code='lbl.location'/> " />
 						</div>
 						<div class="col-md-4 add-margin">
-							<input type="hidden" name="employeeposition" class="form-control" id="employeeposition"
-								value="${employeeposition}"/>
+							<input type="hidden" name="employeeposition" class="form-control" id="employeeposition" 
+							value="${employeeposition}"/>
 						</div>
 						<div class="col-md-4 add-margin">
 							<input type="hidden" name="currentLoggedUser" class="form-control" id="currentLoggedUser"
 								 value="${currentLoggedUser}"/>
 						</div>
 						<div class="col-md-4 add-margin">
-							<input type="hidden" name="currentUlb" class="form-control" id="currentUlb"
-								 value="${currentUlb}"/>
+							<input type="hidden" name="currentUlb" class="form-control" id="currentUlb" value="${currentUlb}"/>
 						</div>
 						<div class="col-md-4 add-margin">
-							<input type="hidden" name="isgorole" class="form-control" id="isgorole"
-								 value="${isGrievanceOfficer}"/>
+							<input type="hidden" name="isgorole" class="form-control" id="isgorole" value="${isGrievanceOfficer}"/>
 						</div>
-
 					</div>
-
 					<div class="form-group">
-
 						<div class="col-md-3 add-margin">
 							<label><spring:message code='lbl.when' /> </label>
 						</div>
@@ -101,39 +87,29 @@
 								data-first-option="false">
 								<option value=""><spring:message code='lbl.select' />
 								</option>
-								<option value="all"><spring:message
-										code='lbl.complaint.search.all' /></option>
-								<option value="lastsevendays"><spring:message
-										code='lbl.complaint.search.l7d' /></option>
-								<option value="lastthirtydays"><spring:message
-										code='lbl.complaint.search.l30d' /></option>
-								<option value="lastninetydays"><spring:message
-										code='lbl.complaint.search.l90d' /></option>
+								<option value="all"><spring:message	code='lbl.complaint.search.all' /></option>
+								<option value="lastsevendays"><spring:message code='lbl.complaint.search.l7d' /></option>
+								<option value="lastthirtydays"><spring:message code='lbl.complaint.search.l30d' /></option>
+								<option value="lastninetydays"><spring:message code='lbl.complaint.search.l90d' /></option>
 								<option value="today"><spring:message code='lbl.today' /></option>
 							</select>
 						</div>
 						<div class="col-md-3 add-margin">
-							<input type="text" name="fromDate" class="form-control datepicker checkdate"
-								id="start_date" data-inputmask="'mask': 'd/m/y'"
-								placeholder="<spring:message code='lbl.fromDate'/>" />
+							<input type="text" name="fromDate" class="form-control datepicker checkdate" id="start_date" 
+							data-inputmask="'mask': 'd/m/y'" placeholder="<spring:message code='lbl.fromDate'/>" />
 						</div>
 						<div class="col-md-3 add-margin">
-							<input type="text" name="toDate" class="form-control datepicker checkdate"
-								id="end_date" data-inputmask="'mask': 'd/m/y'"
-								placeholder="<spring:message code='lbl.toDate'/>" />
+							<input type="text" name="toDate" class="form-control datepicker checkdate" id="end_date" 
+							data-inputmask="'mask': 'd/m/y'" placeholder="<spring:message code='lbl.toDate'/>" />
 						</div>
-
 					</div>
-
 					<div class="form-group">
 						<div class="col-md-3 col-xs-12 add-margin">
 							<a href="javascript:void(0);" id="toggle-searchcomp"
 								class="btn btn-secondary"><spring:message code='lbl.more' />..</a>
 						</div>
 					</div>
-
 					<div class="form-group show-searchcomp-more display-hide">
-
 						<div class="col-md-4 add-margin">
 							<input type="text" name="complaintNumber" class="form-control"
 								id="ct-ctno"
@@ -147,11 +123,8 @@
 							<input type="text" name="complainantPhoneNumber" class="form-control" id="ct-mobno"
 								placeholder="<spring:message code='lbl.phoneNumber'/>" />
 						</div>
-
 					</div>
-
 					<div class="form-group show-searchcomp-more display-hide">
-
 						<div class="col-md-4 add-margin">
 							<input type="text" name="complainantEmail" class="form-control" id="ct-email"
 								placeholder="<spring:message code='lbl.email'/>" />
@@ -161,84 +134,44 @@
 								placeholder="<spring:message code='lbl.complaintType'/>" />
 						</div>
 						<div class="col-md-4 add-margin">
-							<form:select name="complaintDepartment" path="" data-first-option="false" 
-								cssClass="form-control" >
-								<form:option value="">
-									<spring:message code="lbl.complaintDepartment" />
-								</form:option>
-								<form:options items="${complaintTypeDepartments}" itemValue="name"
-									itemLabel="name" />  
+							<form:select name="complaintDepartment" path="" data-first-option="false" cssClass="form-control" >
+								<form:option value=""><spring:message code="lbl.complaintDepartment" /></form:option>
+								<form:options items="${complaintTypeDepartments}" itemValue="name" itemLabel="name" />  
 							</form:select>
 						</div>
 					</div>
-
 					<div class="form-group show-searchcomp-more display-hide">
-
 						<div class="col-md-4 add-margin">
-							<form:select name="complaintStatus" path="" data-first-option="false" 
-								cssClass="form-control" >
-								<form:option value="">
-									<spring:message code="lbl.status" />
-								</form:option>
-								<form:options items="${complaintStatuses}" itemValue="name"
-									itemLabel="name" />  
+							<form:select name="complaintStatus" path="" data-first-option="false" cssClass="form-control" >
+								<form:option value=""><spring:message code="lbl.status" /></form:option>
+								<form:options items="${complaintStatuses}" itemValue="name" itemLabel="name" />  
 							</form:select>
-							
 						</div>
 						<div class="col-md-4 add-margin">
-						<form:select name="receivingCenter" path="" data-first-option="false" 
-							cssClass="form-control" >
-							<form:option value="">
-								<spring:message code="lbl.receivingmode" />
-							</form:option>
+						<form:select name="receivingCenter" path="" data-first-option="false" cssClass="form-control" >
+							<form:option value=""><spring:message code="lbl.receivingmode" /></form:option>
 							<form:options items="${complaintReceivingModes}"  />  
 						</form:select>
 						</div>
-						
-						
 					</div>
-
-					<div class="form-group show-searchcomp-more display-hide">
-
-						
-
-
-						
-
-					</div>
-
-
+					<div class="form-group show-searchcomp-more display-hide"></div>
 					<div class="form-group">
 						<div class="text-center">
-							<a href="javascript:void(0);" id="searchComplaints"
-								class="btn btn-primary"><spring:message code='lbl.search' /></a>
-							<button type="reset" class="btn btn-default">
-				<spring:message code="lbl.reset" />
-			</button>
-							<a href="javascript:void(0);" id="closeComplaints"
-								class="btn btn-default" onclick="self.close()"><spring:message code='lbl.close' /></a>
+							<a href="javascript:void(0);" id="searchComplaints" class="btn btn-primary">
+							<spring:message code='lbl.search' /></a>
+							<button type="reset" class="btn btn-default"><spring:message code="lbl.reset" /></button>
+							<a href="javascript:void(0);" id="closeComplaints" class="btn btn-default" onclick="self.close()">
+							<spring:message code='lbl.close' /></a>
 						</div>
 					</div>
-
-
 				</form:form>
-
-
 			</div>
-
-
 		</div>
-
 	</div>
 </div>
-
 <div>
-	<strong class="head-font">The search result is</strong>
-	<table class="table table-bordered datatable dt-responsive"
-		id="complaintSearchResults">
-
-	</table>
-
+	<strong class="head-font"><spring:message code="msg.search.result"/></strong>
+	<table class="table table-bordered datatable dt-responsive" id="complaintSearchResults"></table>
 </div>
 
 <link rel="stylesheet"
@@ -258,11 +191,9 @@
 <script
 	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
 	type="text/javascript"></script>
-
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
-
 <script src="<c:url value='/resources/js/app/search-complaint.js'/>"
 	type="text/javascript"></script>
 <c:if test="${not empty param.crn}">

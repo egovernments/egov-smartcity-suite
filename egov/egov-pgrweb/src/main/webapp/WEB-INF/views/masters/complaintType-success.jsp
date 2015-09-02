@@ -97,7 +97,7 @@
 							id="ct-isactive">
 							<c:choose>
 								<c:when test="${complaintType.description != null}">${complaintType.description}</c:when>
-								<c:otherwise>N/A</c:otherwise>
+								<c:otherwise><spring:message code="msg.not.applicable"/></c:otherwise>
 							</c:choose>
 						</div>
 					</div>
@@ -118,7 +118,6 @@
 					</div>
 				</div>
 			</form:form>
-
 		</div>
 	</div>
 </div>
