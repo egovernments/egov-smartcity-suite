@@ -45,6 +45,10 @@
 		<script type="text/javascript">
 		
 			function loadOnStartup () {
+				var propType = '<s:property value="%{basicProperty.property.propertyDetail.propertyTypeMaster.type}"/>';
+		   		var appurtenantLandChecked = '<s:property value="%{basicProperty.property.propertyDetail.appurtenantLandChecked}"/>';
+		   		alert("appurtenantLandChecked"+appurtenantLandChecked)
+				enableFieldsForPropTypeView(propType,appurtenantLandChecked);
 				var btnCheckbox = document.getElementById('taxEnsureCheckbox');
 				var btnPayTax = document.getElementById('PayTax');
 				var buttorOperatorPayTax = document.getElementById('operatorPayBill');
@@ -80,10 +84,12 @@
 	<body onload="loadOnStartup(); ">
 		<s:form action="searchProperty" method="post" name="indexform"
 				theme="simple" >
+				<s:push value="model">
 			<div class="formmainbox">
 				<div class="headingbg"><s:text name="PropertyDetail" /></div>
 				<br/>
 				<jsp:include page="viewProperty.jsp"/>
+				<br/>
 				<div class="buttonbottom" align="center">
 				<!--From application index search same view page is given, if new property is under work flow and assessment no is not generated then all links are disabled  -->
 				<s:if test="%{basicProperty.upicNo!=null}">
@@ -138,6 +144,7 @@
 				<!-- common buttons ends here -->
 				</div>				
 			</div>
+			</s:push>
 		</s:form>
 	</body>
 </html>

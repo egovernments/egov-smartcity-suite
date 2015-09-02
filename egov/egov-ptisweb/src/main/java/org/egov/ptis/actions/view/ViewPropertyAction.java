@@ -70,6 +70,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -77,8 +78,10 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
@@ -94,7 +97,7 @@ public class ViewPropertyAction extends BaseFormAction {
     private final Logger LOGGER = Logger.getLogger(getClass());
     private String propertyId;
     private BasicProperty basicProperty;
-    private Property property;
+    private PropertyImpl property;
     private String ownerAddress;
     private String currTax;
     private String currTaxDue;
@@ -111,6 +114,7 @@ public class ViewPropertyAction extends BaseFormAction {
     private String parentProps;
     private String applicationNo;
     private String applicationType;
+    private String[] floorNoStr = new String[100];
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -124,7 +128,7 @@ public class ViewPropertyAction extends BaseFormAction {
     private PersistenceService<RevisionPetition, Long> revisionPetitionPersistenceService;
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         return property;
     }
 
@@ -140,7 +144,9 @@ public class ViewPropertyAction extends BaseFormAction {
                 getBasicPropForAppNo(applicationNo, applicationType);
             LOGGER.debug("viewForm : BasicProperty : " + basicProperty);
             Set<PropertyStatusValues> propStatusValSet = new HashSet<PropertyStatusValues>();
-            property = getBasicProperty().getProperty();
+            property = (PropertyImpl) getBasicProperty().getProperty();
+            if (property.getPropertyDetail().getFloorDetails().size() > 0)
+                setFloorDetails(property);
             LOGGER.debug("viewForm : Property : " + property);
             checkIsDemandActive(property);
             if (getBasicProperty().getPropertyOwnerInfo() != null
@@ -232,9 +238,27 @@ public class ViewPropertyAction extends BaseFormAction {
                 setBasicProperty(rp.getBasicProperty());
             }
     }
+    
+    private void setFloorDetails(final Property property) {
+        LOGGER.debug("Entered into setFloorDetails, Property: " + property);
+
+        final List<Floor> floors = property.getPropertyDetail().getFloorDetails();
+        property.getPropertyDetail().setFloorDetailsProxy(floors);
+        int i = 0;
+        for (final Floor flr : floors) {
+            floorNoStr[i] = FLOOR_MAP.get(flr.getFloorNo());
+            i++;
+        }
+
+        LOGGER.debug("Exiting from setFloorDetails: ");
+    }
 
     public String getFloorNoStr(final Integer floorNo) {
         return FLOOR_MAP.get(floorNo);
+    }
+    
+    public List<Floor> getFloorDetails() {
+        return new ArrayList<Floor>(property.getPropertyDetail().getFloorDetails());
     }
 
     public String getPropertyId() {
@@ -391,6 +415,14 @@ public class ViewPropertyAction extends BaseFormAction {
 
     public void setApplicationType(final String applicationType) {
         this.applicationType = applicationType;
+    }
+    
+    public String[] getFloorNoStr() {
+        return floorNoStr;
+    }
+
+    public void setFloorNoStr(final String[] floorNoStr) {
+        this.floorNoStr = floorNoStr;
     }
 
 }
