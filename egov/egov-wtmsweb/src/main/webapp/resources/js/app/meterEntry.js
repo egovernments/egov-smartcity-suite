@@ -38,6 +38,55 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 
+$('#metercurrentReadingDate').on('change', function(){
+	console.log('Got change event');
+		$.ajax({
+				url: "/wtms/ajax-meterReadingEntryExist",     
+					type: "GET",
+					cache: true,
+					data: {
+						givenDate : $('#metercurrentReadingDate').val() ,
+						requestConsumerCode : $('#consumerCode').val() 
+					},
+					dataType: "json",
+			}).done(function(value) {
+				 if(value == true) {
+					 alert('Entered Metered Reading Date Allready Exist');
+					 $('#metercurrentReadingDate').val('');
+					 return false;
+				 } else {
+					 document.forms[0].submit;
+					 return true; 
+				 }
+			});
+		
+	});
+
+	/*$("#metercurrentReadingDate").datepicker({
+	}).on("change", function(e) {
+		$.ajax({
+			url: "/wtms/ajax-meterReadingEntryExist",     
+				type: "GET",
+				cache: true,
+				data: {
+					givenDate : $('#metercurrentReadingDate').val() ,
+					requestConsumerCode : $('#consumerCode').val() 
+				},
+				dataType: "json",
+		}).done(function(value) {
+			 if(value == true) {
+				 alert('Entered Metered Reading Date Allready Exist');
+				 $('#metercurrentReadingDate').val('');
+				 return false;
+			 } else {
+				 document.forms[0].submit;
+				 return true; 
+			 }
+		});
+	  
+	  });*/
+	
+
 	
 	var currentInstallmentExist = $('#currentInstallmentExist').val();
 	if (currentInstallmentExist) {

@@ -62,7 +62,7 @@
 					<input type="hidden" id="currentInstallmentExist"
 						name="currentInstallmentExist" value="${currentInstallmentExist}" />
 					<input type="hidden" id="consumerCode" name="consumerCode"
-						value="${consumerCode}" />
+						value="${waterConnectionDetails.connection.consumerCode}" />
 						
 					<form:hidden path="id" />
 					<div class="panel-heading">

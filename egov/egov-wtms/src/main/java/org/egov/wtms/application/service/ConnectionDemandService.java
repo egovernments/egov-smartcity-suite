@@ -569,5 +569,18 @@ public class ConnectionDemandService {
         }
         return retMap;
     }
+    
+    public Boolean meterEntryAllReadyExistForCurrentMonth(WaterConnectionDetails waterConnectionDetails, Date givenDate) {
+        Boolean currrentInstallMentExist=false;
+        final Installment installment = getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
+                WaterTaxConstants.MONTHLY, givenDate);
+        if (waterConnectionDetails.getDemand() != null && waterConnectionDetails.getDemand().getEgInstallmentMaster() != null)
+            if (installment!=null && installment.getInstallmentNumber().equals(
+                    waterConnectionDetails.getDemand().getEgInstallmentMaster().getInstallmentNumber())) {
+                currrentInstallMentExist=true;
+
+            }
+        return currrentInstallMentExist;
+    }
 
 }
