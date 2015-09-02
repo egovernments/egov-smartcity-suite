@@ -1,5 +1,4 @@
-/*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/*    eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
  *     Copyright (C) <2015>  eGovernments Foundation
@@ -39,12 +38,16 @@
  ******************************************************************************/
 package org.egov.infra.config;
 
+import java.io.IOException;
+import java.util.jar.Manifest;
+
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 
 @Configuration
 public class ApplicationConfiguration {
@@ -59,4 +62,8 @@ public class ApplicationConfiguration {
         return (FileStoreService) context.getBean(applicationProperties.filestoreServiceBeanName());
     }
 
+    @Bean
+    public Manifest manifest() throws IOException {
+        return new Manifest(new ClassPathResource("/META-INF/MANIFEST.MF").getInputStream());
+    }
 }

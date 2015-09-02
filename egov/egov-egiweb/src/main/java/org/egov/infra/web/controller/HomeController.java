@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -42,6 +41,7 @@ package org.egov.infra.web.controller;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.jar.Manifest;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -60,6 +60,7 @@ import org.egov.infra.validation.ValidatorUtils;
 import org.egov.infra.web.support.ui.Menu;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -97,6 +98,10 @@ public class HomeController {
 
     @Autowired
     private CityService cityService;
+
+    @Autowired
+    @Qualifier("manifest")
+    private Manifest manifest;
 
     @RequestMapping
     public String showHome(final HttpSession session, final ModelMap modelData) {
@@ -165,6 +170,8 @@ public class HomeController {
     private String prepareOfficialHomePage(final User user, final HttpSession session, final ModelMap modelData) {
         modelData.addAttribute("menu", prepareApplicationMenu(moduleService.getMenuLinksForRoles(user.getRoles()), user));
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
+        modelData.addAttribute("app_version", manifest.getMainAttributes().getValue("Specification-Version"));
+        modelData.addAttribute("app_buildno", manifest.getMainAttributes().getValue("Implementation-Version"));
         return "home";
     }
 

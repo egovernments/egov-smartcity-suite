@@ -44,6 +44,7 @@
         <hibernate-version>4.3.7.Final</hibernate-version>
         <struts2-version>2.3.24</struts2-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <build.number>Local</build.number>
     </properties>
 
     <repositories>
@@ -1085,18 +1086,41 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-
+			<plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-jar-plugin</artifactId>
+		        <version>2.6</version>
+		        <configuration>
+		          <archive>
+		            <index>true</index>
+		            <manifest>
+		            	<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+		            </manifest>
+		            <manifestEntries>
+		              	<Specification-Title>${project.name}</Specification-Title>
+                        <Specification-Version>${project.version}</Specification-Version>
+                        <Implementation-Version>${build.number}</Implementation-Version>
+		            </manifestEntries>
+		          </archive>
+		        </configuration>
+		    </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                        </manifest>
-                    </archive>
                     <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+                    <manifest>
+                    	<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                    	<addClasspath>true</addClasspath>
+	                </manifest>
+	                <archive>
+	                    <manifestEntries>
+	                        <Specification-Title>${project.name}</Specification-Title>
+	                        <Specification-Version>${project.version}</Specification-Version>
+	                        <Implementation-Version>${build.number}</Implementation-Version>
+	                    </manifestEntries>
+	                </archive>
                 </configuration>
             </plugin>
 			
