@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="description" content="Neon Admin Panel" />
+		<meta name="author" content="" />
+		
+		<title>eGov Urban Portal</title>
+		
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap.css">
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/custom.css">
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/header-custom.css">
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/jquery.js"></script>
+		
+		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		
+	</head>
+    <body class="page-body">
+        
+        <div class="page-container" id="page-container">
+            <header class="navbar navbar-fixed-top"><!-- set fixed position by adding class "navbar-fixed-top" -->
+				
+				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+					<div class="container-fluid">
+						<div class="navbar-header col-md-10 col-xs-10">
+							<a class="navbar-brand" href="javascript:void(0);">
+								<img src="../../../../../../egov-egiweb/src/main/webapp/resources/global/images/chennai_logo.jpg" height="60">
+								<div>
+									
+									<span class="title2">License Fee Calculator</span>
+								</div>
+							</a>
+						</div>
+						
+						<div class="nav-right-menu col-md-2 col-xs-2">
+							<ul class="hr-menu text-right">
+								<li class="ico-menu">
+									<a href="javascript:void(0);">
+										<img src="../../../../../../egov-egiweb/src/main/webapp/resources/global/images/logo@2x.png" title="Powered by eGovernments" height="20px">
+									</a>
+								</li>
+								
+							</ul>
+						</div>
+						
+					</div>
+				</nav>
+				
+			</header>
+            <div class="main-content">
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-primary" data-collapsed="0">
+                            <div class="panel-heading">
+                                <div class="panel-title">
+                                    License Fee Calculator
+                                </div>
+                            </div>
+                            <div class="panel-body custom-form">
+                                <form role="form" class="form-horizontal form-groups-bordered">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 text-right">Trade Name<span class="mandatory"></span></label>
+                                        <div class="col-sm-3 view-content">
+                                            <select class="form-control"><option>Textiles</option></select>
+                                        </div>
+                                        <label class="col-sm-2 text-right">License Application Type<span class="mandatory"></span></label>
+                                        <div class="col-sm-3  view-content">
+                                           <select class="form-control"><option>New</option></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 text-right">Total Area/Weight of Premises (Sqft/Tons)<span class="mandatory"></span></label>
+                                        <div class="col-sm-3 view-content">
+                                            <input type="text" class="form-control">
+                                        </div>
+                                        <label class="col-sm-2 text-right">Is Motor Installed</label>
+                                        <div class="col-sm-3  view-content">
+                                           <input type="checkbox">
+                                        </div>
+                                    </div>
+                                    <div class="panel-heading custom_form_panel_heading">
+                                        <div class="panel-title">
+                                            Horse Power
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <table class="table table-bordered" style="width:75%;margin:0 auto;">
+                                            <thead>
+                                              <tr>
+                                                <th>S.no</th>
+                                                <th>No.of Machines</th>
+                                                <th>Horse Power</th>
+                                                <th>Actions</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              <tr>
+                                                <td>1</td>
+                                                <td><input type="text" class="form-control table-input"></td>
+                                                <td><input type="text" class="form-control table-input"></td>
+                                                <td><span class="add-padding" style="cursor:pointer;"><i class="fa fa-plus"></i></span><span class="add-padding" style="cursor:pointer;"><i class="fa fa-trash"></i></span></td>
+                                              </tr>
+                                              <tr>
+                                                <td></td>
+                                                  <td class="text-right">Total Horse Power<span class="mandatory"></span></td>
+                                                <td><input type="text" class="form-control table-input"></td>
+                                                <td></td>
+                                              </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Calculate</button>
+                                <button class="btn btn-default">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <footer class="main">
+					
+					Powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
+					
+			</footer> 
+        </div>
+        
+        <link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap-datepicker.css">
+        <script src="../../../../../../egov-egiweb/src/main/webapp/resources/global//js/bootstrap/bootstrap.js"></script>
+            <script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap-datepicker.js"></script>
+        <script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
+    </body>
+</html>
