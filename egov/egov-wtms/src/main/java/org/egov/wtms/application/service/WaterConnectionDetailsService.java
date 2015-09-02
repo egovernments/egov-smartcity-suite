@@ -625,6 +625,10 @@ public class WaterConnectionDetailsService {
                         additionalRule, waterConnectionDetails
                                 .getCurrentState().getValue(),
                         null);
+                final AssessmentDetails assessmentDetailsFullFlag = propertyExtnUtils
+                        .getAssessmentDetailsForFlag(waterConnectionDetails
+                                .getConnection().getPropertyIdentifier(),
+                                PropertyExternalService.FLAG_FULL_DETAILS);
                 waterConnectionDetails
                         .setStatus(waterTaxUtils
                                 .getStatusByCodeAndModuleType(
@@ -633,6 +637,8 @@ public class WaterConnectionDetailsService {
 
                 waterConnectionDetails
                         .setConnectionStatus(ConnectionStatus.ACTIVE);
+                consumerIndexService.createConsumerIndex(
+                        waterConnectionDetails, assessmentDetailsFullFlag);
                 updateIndexes(waterConnectionDetails);
                 if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
                     waterConnectionDetails.transition(true).end()

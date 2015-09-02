@@ -141,7 +141,7 @@ $(document).ready(function(){
 	}
 	
 	$("#propertytaxdue").addClass("error-msg");
-	$(".btn-primary").hide();
+	//$(".btn-primary").hide();
 	$("#waterSourceDropdown").prop("disabled", true);
 	
 	var connectionType = $('#connectionType').val();
@@ -155,7 +155,7 @@ $(document).ready(function(){
 				&& ($('#category').val()==category) && ($('#propertyType').val()==propertyType)
 				&& ($('#pipeSize').val()==pipeSize)) {
 			alert("Please modify at least one mandatory field");
-			$(".btn-primary").hide();
+			//$(".btn-primary").hide();
 			return false;
 		}
 	});
