@@ -39,7 +39,7 @@
 #-------------------------------------------------------------------------------
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page import="org.egov.infstr.client.filter.EGOVThreadLocals" %>
+<%@page import="org.egov.infra.utils.EgovThreadLocals" %>
 <html>
 	<head>
 		<title>Document Management</title>

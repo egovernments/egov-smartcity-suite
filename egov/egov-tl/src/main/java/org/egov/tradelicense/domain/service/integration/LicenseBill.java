@@ -1,40 +1,40 @@
 /*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *     accountability and the service delivery of the government  organizations.
- *  
+ *
  *      Copyright (C) <2015>  eGovernments Foundation
- *  
- *      The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *      The updated version of eGov suite of products as by eGovernments Foundation
  *      is available at http://www.egovernments.org
- *  
+ *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
  *      the Free Software Foundation, either version 3 of the License, or
  *      any later version.
- *  
+ *
  *      This program is distributed in the hope that it will be useful,
  *      but WITHOUT ANY WARRANTY; without even the implied warranty of
  *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *      GNU General Public License for more details.
- *  
+ *
  *      You should have received a copy of the GNU General Public License
- *      along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *      along with this program. If not, see http://www.gnu.org/licenses/ or
  *      http://www.gnu.org/licenses/gpl.html .
- *  
+ *
  *      In addition to the terms of the GPL license to be adhered to in using this
  *      program, the following additional terms are to be complied with:
- *  
- *  	1) All versions of this program, verbatim or modified must carry this 
+ *
+ *  	1) All versions of this program, verbatim or modified must carry this
  *  	   Legal Notice.
- *  
- *  	2) Any misrepresentation of the origin of the material is prohibited. It 
- *  	   is required that all modified versions of this material be marked in 
+ *
+ *  	2) Any misrepresentation of the origin of the material is prohibited. It
+ *  	   is required that all modified versions of this material be marked in
  *  	   reasonable ways as different from the original version.
- *  
- *  	3) This license does not grant any rights to any user of the program 
- *  	   with regards to rights under trademark law for use of the trade names 
+ *
+ *  	3) This license does not grant any rights to any user of the program
+ *  	   with regards to rights under trademark law for use of the trade names
  *  	   or trademarks of eGovernments Foundation.
- *  
+ *
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.tradelicense.domain.service.integration;
@@ -54,181 +54,218 @@ import org.egov.demand.interfaces.LatePayPenaltyCalculator;
 import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.tradelicense.domain.entity.License;
 import org.egov.tradelicense.domain.entity.LicenseDemand;
 import org.egov.tradelicense.utils.LicenseUtils;
 
 public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalculator {
 
-	private LicenseUtils licenseUtils;
-	private License license;
-	private String moduleName;
-	private String serviceCode;
-	private EgBillDao billDao;
-	
-	public void setBillDao(EgBillDao billDao) {
-		this.billDao = billDao;
-	}
+    private LicenseUtils licenseUtils;
+    private License license;
+    private String moduleName;
+    private String serviceCode;
+    private EgBillDao billDao;
 
-	public License getLicense() {
-		return this.license;
-	}
+    public void setBillDao(final EgBillDao billDao) {
+        this.billDao = billDao;
+    }
 
-	public void setLicense(License license) {
-		this.license = license;
-	}
+    public License getLicense() {
+        return license;
+    }
 
-	public void setModuleName(String moduleName) {
-		this.moduleName = moduleName;
-	}
+    public void setLicense(final License license) {
+        this.license = license;
+    }
 
-	public void setLicenseUtils(LicenseUtils licenseUtils) {
-		this.licenseUtils = licenseUtils;
-	}
+    public void setModuleName(final String moduleName) {
+        this.moduleName = moduleName;
+    }
 
-	public Module getModule() {
-		return this.licenseUtils.getModule(this.moduleName);
-	}
+    public void setLicenseUtils(final LicenseUtils licenseUtils) {
+        this.licenseUtils = licenseUtils;
+    }
 
-	public String getBillPayee() {
-		return this.license.getLicensee().getApplicantName();
-	}
+    @Override
+    public Module getModule() {
+        return licenseUtils.getModule(moduleName);
+    }
 
-	public String getBillAddress() {
-		return this.license.getLicensee().getAddress().toString()+"\nPh : "+defaultString(this.license.getLicensee().getPhoneNumber());
-	}
+    @Override
+    public String getBillPayee() {
+        return license.getLicensee().getApplicantName();
+    }
 
-	public EgDemand getCurrentDemand() {
-		final Set<LicenseDemand> demands = license.getDemandSet();
-		for (EgDemand demand : demands) {
-			if (demand.getIsHistory().equals("N")) {
-				return demand;
-			}
-		}
-		return null;
-	}
+    @Override
+    public String getBillAddress() {
+        return license.getLicensee().getAddress().toString() + "\nPh : "
+                + defaultString(license.getLicensee().getPhoneNumber());
+    }
 
-	public List<EgDemand> getAllDemands() {
-		return new ArrayList<EgDemand>(license.getDemandSet());
+    @Override
+    public EgDemand getCurrentDemand() {
+        final Set<LicenseDemand> demands = license.getDemandSet();
+        for (final EgDemand demand : demands)
+            if (demand.getIsHistory().equals("N"))
+                return demand;
+        return null;
+    }
 
-	}
+    @Override
+    public List<EgDemand> getAllDemands() {
+        return new ArrayList<EgDemand>(license.getDemandSet());
 
-	public EgBillType getBillType() {
-		return billDao.getBillTypeByCode("AUTO");
+    }
 
-	}
+    @Override
+    public EgBillType getBillType() {
+        return billDao.getBillTypeByCode("AUTO");
 
-	public Date getBillLastDueDate() {
-		Date dueDate = new Date();
-		final Calendar cal = Calendar.getInstance();
-		cal.setTime(dueDate);
-		cal.get(Calendar.MONTH + 1);
-		dueDate = cal.getTime();
-		return dueDate;
+    }
 
-	}
+    @Override
+    public Date getBillLastDueDate() {
+        Date dueDate = new Date();
+        final Calendar cal = Calendar.getInstance();
+        cal.setTime(dueDate);
+        cal.get(Calendar.MONTH + 1);
+        dueDate = cal.getTime();
+        return dueDate;
 
-	public Integer getBoundaryNum() {
-		return this.license.getBoundary().getId();
-	}
+    }
 
-	public String getBoundaryType() {
-		return this.license.getBoundary().getBoundaryType().getName();
-	}
+    @Override
+    public Long getBoundaryNum() {
+        return license.getBoundary().getId();
+    }
 
-	public String getDepartmentCode() {
-		return "CAF";//TODO
-	}
+    @Override
+    public String getBoundaryType() {
+        return license.getBoundary().getBoundaryType().getName();
+    }
 
-	public BigDecimal getFunctionaryCode() {
-		return BigDecimal.ZERO;
-	}
+    @Override
+    public String getDepartmentCode() {
+        return "CAF";// TODO
+    }
 
-	public String getFundCode() {
-		return "45061";//TODO Insert
-	}
+    @Override
+    public BigDecimal getFunctionaryCode() {
+        return BigDecimal.ZERO;
+    }
 
-	public String getFundSourceCode() {
-		return "BOM 637";//TODO
-	}
+    @Override
+    public String getFundCode() {
+        return "45061";// TODO Insert
+    }
 
-	public Date getIssueDate() {
-		return new Date();
-	}
+    @Override
+    public String getFundSourceCode() {
+        return "BOM 637";// TODO
+    }
 
-	public Date getLastDate() {
-		return this.getBillLastDueDate();
-	}
+    @Override
+    public Date getIssueDate() {
+        return new Date();
+    }
 
-	public Boolean getOverrideAccountHeadsAllowed() {
-		return false;
-	}
+    @Override
+    public Date getLastDate() {
+        return getBillLastDueDate();
+    }
 
-	public Boolean getPartPaymentAllowed() {
-		return false;
-	}
+    @Override
+    public Boolean getOverrideAccountHeadsAllowed() {
+        return false;
+    }
 
+    @Override
+    public Boolean getPartPaymentAllowed() {
+        return false;
+    }
 
-	public void setServiceCode(String serviceCode) {
-		this.serviceCode = serviceCode;
-	}
-	
-	public String getServiceCode() {
-		return this.serviceCode;
-	}
+    public void setServiceCode(final String serviceCode) {
+        this.serviceCode = serviceCode;
+    }
 
-	public BigDecimal getTotalAmount() {		
-		return getCurrentDemand().getBaseDemand();
-	}
+    @Override
+    public String getServiceCode() {
+        return serviceCode;
+    }
 
-	public Long getUserId() {
-		return Long.valueOf(EGOVThreadLocals.getUserId());
-	}
+    @Override
+    public BigDecimal getTotalAmount() {
+        return getCurrentDemand().getBaseDemand();
+    }
 
-	public String getDescription() {
-		return  isBlank(this.license.getLicenseNumber()) ? "Application No : "+this.license.getApplicationNumber() : "License No : "+this.license.getLicenseNumber();
-	}
+    @Override
+    public Long getUserId() {
+        return EgovThreadLocals.getUserId();
+    }
 
-	public String getDisplayMessage() {
-		return this.moduleName+" Collection";
-	}
+    @Override
+    public String getDescription() {
+        return isBlank(license.getLicenseNumber()) ? "Application No : " + license.getApplicationNumber()
+                : "License No : " + license.getLicenseNumber();
+    }
 
-	public String getCollModesNotAllowed() {
-		return "";
-	}
+    @Override
+    public String getDisplayMessage() {
+        return moduleName + " Collection";
+    }
 
-	public String getPropertyId() {
-		return defaultString(this.license.getLicenseNumber(),this.license.getApplicationNumber());
-	}
+    @Override
+    public String getCollModesNotAllowed() {
+        return "";
+    }
 
-	public Boolean isCallbackForApportion() {
-		return false;
-	}
+    public String getPropertyId() {
+        return defaultString(license.getLicenseNumber(), license.getApplicationNumber());
+    }
 
-	public void setCallbackForApportion(Boolean b) {
-		
-	}
+    @Override
+    public Boolean isCallbackForApportion() {
+        return false;
+    }
 
-	public BigDecimal getLPPPercentage() {
-		return BigDecimal.ZERO;
-	}
+    @Override
+    public void setCallbackForApportion(final Boolean b) {
 
-	public LPPenaltyCalcType getLPPenaltyCalcType() {
-		return null;
-	}
+    }
 
-	public void setPenaltyCalcType(LPPenaltyCalcType penaltyType) {
+    @Override
+    public BigDecimal getLPPPercentage() {
+        return BigDecimal.ZERO;
+    }
 
-	}
+    @Override
+    public LPPenaltyCalcType getLPPenaltyCalcType() {
+        return null;
+    }
 
-	public BigDecimal calcLPPenaltyForPeriod(Date fromDate, Date toDate, BigDecimal amount) {
-		return null;
-	}
+    @Override
+    public void setPenaltyCalcType(final LPPenaltyCalcType penaltyType) {
 
-	public BigDecimal calcPanalty(Date latestCollectedRcptDate, Date fromDate, BigDecimal amount) {
-		return null;
-	}
-	
+    }
+
+    @Override
+    public String getConsumerId() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public BigDecimal calculateLPPenaltyForPeriod(final Date fromDate, final Date toDate, final BigDecimal amount) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public BigDecimal calculatePenalty(final Date latestCollectedRcptDate, final Date fromDate, final BigDecimal amount) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

@@ -42,7 +42,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-<class name="org.egov.license.domain.entity.FeeType" table="EGL_MSTR_FEE_TYPE">
+<class name="org.egov.tradelicense.domain.entity.FeeType" table="EGL_MSTR_FEE_TYPE">
 <id name="id" type="java.lang.Long">
 <column name="id"/>
 <generator class="native">

@@ -39,12 +39,10 @@
  ******************************************************************************/
 package org.egov.tradelicense.domain.entity;
 
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.models.BaseModel;
-import org.egov.infstr.models.validator.OptionalPattern;
-import org.egov.infstr.models.validator.Required;
-import org.egov.infstr.models.validator.Unique;
-import org.egov.infstr.models.validator.constants.ValidatorConstants;
-import org.hibernate.validator.Length;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * The Class LicenseAppType.
@@ -56,7 +54,7 @@ public class LicenseAppType extends BaseModel {
 	
 	@Required(message = "masters.licenseApplicationType.name.null")
 	@Length(max = 256, message = "masters.licenseApplicationType.name.length")
-	@OptionalPattern(regex = ValidatorConstants.alphaNumericwithSpace, message = "tradelicense.error.licenseapptype.text")
+	//@OptionalPattern(regex = ValidatorConstants.alphaNumericwithSpace, message = "tradelicense.error.licenseapptype.text")
 	private String name;
 
 	public LicenseAppType() {

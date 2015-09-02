@@ -44,7 +44,7 @@
 
 <%@ attribute name="formName" required="true" %>
 <%@ attribute name="workflowServiceName" required="true" %>
-<%@ attribute name="workflowItem" required="true" type="org.egov.infstr.models.StateAware" %>
+<%@ attribute name="workflowItem" required="true" type="org.egov.infra.workflow.entity.StateAware" %>
 
 <%
 ApplicationContext context = RequestContextUtils.getWebApplicationContext(request);

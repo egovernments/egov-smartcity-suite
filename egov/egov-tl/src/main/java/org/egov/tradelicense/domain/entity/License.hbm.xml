@@ -43,7 +43,7 @@
 
 <hibernate-mapping>
 
-	<class name="org.egov.license.domain.entity.License" table="EGL_LICENSE">
+	<class name="org.egov.tradelicense.domain.entity.License" table="EGL_LICENSE">
 		<id name="id" column="ID" type="java.lang.Long" unsaved-value="null">
 			<generator class="native">
 				<param name="sequence">SEQ_EGL_LICENSE</param>
@@ -82,9 +82,9 @@
 			<key>
 				<column name="ID_LICENSE"></column>
 			</key>
-			<one-to-many class="org.egov.license.domain.entity.objection.LicenseObjection" />
+			<one-to-many class="org.egov.tradelicense.domain.entity.objection.LicenseObjection" />
 		</bag>
-		<many-to-one name="address" column="ID_ADDRESS" class="org.egov.lib.address.model.Address" cascade="all"
+		<many-to-one name="address" column="ID_ADDRESS" class="org.egov.infra.persistence.entity.Address" cascade="all"
 			unique="true" />
 
 		<property name="createdDate" type="java.util.Date">
@@ -95,9 +95,9 @@
 			<column name="LASTMODIFIEDDATE" not-null="true" />
 		</property>
 
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" not-null="true"
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true"
 			fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="LASTMODIFIEDBY" not-null="true"
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY" not-null="true"
 			fetch="select" />
 
 
@@ -105,16 +105,16 @@
 
 		<property name="isActive" column="IS_ACTIVE" />
 
-		<many-to-one name="status" class="org.egov.license.domain.entity.LicenseStatus">
+		<many-to-one name="status" class="org.egov.tradelicense.domain.entity.LicenseStatus">
 			<column name="ID_STATUS" />
 		</many-to-one>
 
 		<property name="tinNumber" column="TIN_NUM" />
-		<many-to-one name="boundary" class="org.egov.lib.admbndry.BoundaryImpl" column="ID_ADM_BNDRY" unique="true" />
-		<many-to-one name="tradeName" class="org.egov.license.domain.entity.SubCategory" fetch="select" unique="true">
+		<many-to-one name="boundary" class="org.egov.infra.admin.master.entity.BoundaryImpl" column="ID_ADM_BNDRY" unique="true" />
+		<many-to-one name="tradeName" class="org.egov.tradelicense.domain.entity.SubCategory" fetch="select" unique="true">
 			<column name="ID_SUB_CATEGORY" precision="22" scale="0" />
 		</many-to-one>
-		<many-to-one name="licenseTransfer" class="org.egov.license.domain.entity.transfer.LicenseTransfer" fetch="select"
+		<many-to-one name="licenseTransfer" class="org.egov.tradelicense.domain.entity.transfer.LicenseTransfer" fetch="select"
 			cascade="all">
 			<column name="ID_LICENSETRANSFER" precision="22" scale="0" />
 		</many-to-one>
@@ -135,31 +135,31 @@
 			<key>
 				<column name="ID_LICENSE" precision="22" scale="0" />
 			</key>
-			<one-to-many class="org.egov.license.domain.entity.LicenseDemand" />
+			<one-to-many class="org.egov.tradelicense.domain.entity.LicenseDemand" />
 		</set>
 		<set name="licenseStatusValuesSet" cascade="all" table="EGL_STATUS_VALUES" order-by="CREATED_DATE">
 			<key column="ID_LICENSE" not-null="true" />
-			<one-to-many class="org.egov.license.domain.entity.LicenseStatusValues" />
+			<one-to-many class="org.egov.tradelicense.domain.entity.LicenseStatusValues" />
 		</set>
 		
-		<many-to-one name="egLicense" class="org.egov.license.domain.entity.License" >
+		<many-to-one name="egLicense" class="org.egov.tradelicense.domain.entity.License" >
             <column name="PARENT_ID"  />
         </many-to-one>
         
-        <many-to-one name="licenseSubType" class="org.egov.license.domain.entity.LicenseSubType"
+        <many-to-one name="licenseSubType" class="org.egov.tradelicense.domain.entity.LicenseSubType"
 					cascade="all">
 					<column name="ID_LICENSE_SUB_TYPE" />
 		</many-to-one>
 
-		<one-to-one name="licensee" lazy="proxy" class="org.egov.license.domain.entity.Licensee" property-ref="license"
+		<one-to-one name="licensee" lazy="proxy" class="org.egov.tradelicense.domain.entity.Licensee" property-ref="license"
 			cascade="all" />
 
-		<subclass name="org.egov.license.trade.domain.entity.TradeLicense" discriminator-value="tradelicense">
+		<subclass name="org.egov.tradelicense.trade.domain.entity.TradeLicense" discriminator-value="tradelicense">
 			<bag name="installedMotorList" inverse="true" table="EGL_MOTOR_DETAILS" cascade="all,delete-orphan">
 				<key>
 					<column name="ID_LICENSE"></column>
 				</key>
-				<one-to-many class="org.egov.license.domain.entity.MotorDetails" />
+				<one-to-many class="org.egov.tradelicense.domain.entity.MotorDetails" />
 			</bag>
 
 
@@ -173,14 +173,14 @@
 				<property name="dcpExtinguisher" column="DCP_EXTINGUISHER"  />
 				<property name="nocNumber" column="NOC_NUMBER"/>
 				<property name="isCertificateGenerated" column="ISCERTIFICATEGENERATED"/>
-				<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+				<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
 					<column name="STATE_ID" />
 				</many-to-one>
 
 			</join>
 		</subclass>
 
-		<subclass name="org.egov.license.hospital.domain.entity.HospitalLicense" discriminator-value="hospitallicense">
+		<subclass name="org.egov.tradelicense.hospital.domain.entity.HospitalLicense" discriminator-value="hospitallicense">
 			<join table="EGL_HOSPITAL_LICENSE">
 				<key column="ID" />
 				<property name="briefDescription" column="BRIEF_DESC" />
@@ -193,38 +193,38 @@
 				<property name="licenseCategory" column="LICENSE_CATEGORY" />
 				<property name="hospitalType" column="HOSPITAL_TYPE" />
 				<property name="hospitalSubType" column="HOSPITAL_SUB_TYPE" />
-				<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+				<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
 					<column name="STATE_ID" />
 				</many-to-one>
 
 			</join>
 		</subclass>
-		<subclass name="org.egov.license.hawker.domain.entity.HawkerLicense" discriminator-value="hawkerlicense">
+		<subclass name="org.egov.tradelicense.hawker.domain.entity.HawkerLicense" discriminator-value="hawkerlicense">
 			<join table="EGL_HAWKER_LICENSE">
 				<key column="ID" />
 				<property name="hawkerSpot" column="HAWKER_SPOT"/>
 				<property name="hawkerType" column="HAWKER_TYPE"/>
-				<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+				<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
 					<column name="STATE_ID" />
 				</many-to-one>
 
 			</join>
 		</subclass>
 		
-		<subclass name="org.egov.license.waterworks.domain.entity.WaterworksLicense" discriminator-value="waterworkslicense">
+		<subclass name="org.egov.tradelicense.waterworks.domain.entity.WaterworksLicense" discriminator-value="waterworkslicense">
 			<join table="EGL_WATERWORKS_LICENSE">
 				<key column="ID" />
 				<property name="dateOfBirth" column="DOB"/>
 				<property name="examDate" column="EXAM_DATE" />
 				<property name="examResult" column="EXAM_RESULT" />
 				<property name="technicalQualification" column="TECHNICALQUALIFICATION" />
-				<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+				<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
 					<column name="STATE_ID" />
 				</many-to-one>
 
 			</join>
 		</subclass>
-		<subclass name="org.egov.license.veterinary.domain.entity.VeterinaryLicense" discriminator-value="veterinarylicense">
+		<subclass name="org.egov.tradelicense.veterinary.domain.entity.VeterinaryLicense" discriminator-value="veterinarylicense">
 			<join table="EGL_VETERINARY_LICENSE">
 				<key column="ID" />
 				<property name="animalName" column="ANIMALNAME"/>
@@ -246,13 +246,13 @@
 				<property name="surgeonRegistrationNo" column="SURGEON_REG_NO"/>
 				<property name="vaccineName" column="VACCINE_NAME"/>
 				<property name="hasVaccineCertificate" column="HAS_VACCINE_CERTIFICATE"/>
-				<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+				<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
 					<column name="STATE_ID" />
 				</many-to-one>
 			</join>
 		</subclass>
 		<subclass
-			name="org.egov.license.pwdcontractor.domain.entity.PwdContractorLicense"
+			name="org.egov.tradelicense.pwdcontractor.domain.entity.PwdContractorLicense"
 			discriminator-value="pwdcontractorlicense">
 			<join table="EGL_PWDCONTRACTOR_LICENSE">
 				<key column="ID" />
@@ -260,20 +260,20 @@
 				<property name="solvencyAmount" column="SOLVENCY_AMOUNT"/>
 				<property name="solvencyDate" column="SOLVENCY_DATE"/>
 				<property name="solvencyInformation" column="SOLVENCY_INFORMATION"/>
-				<many-to-one name="state" class="org.egov.infstr.models.State"
+				<many-to-one name="state" class="org.egov.infra.workflow.entity.State"
 					cascade="all">
 					<column name="STATE_ID" />
 				</many-to-one>
 			</join>
 		</subclass>
 		<subclass
-			name="org.egov.license.electricalcontractor.domain.entity.ElectricalContractorLicense"
+			name="org.egov.tradelicense.electricalcontractor.domain.entity.ElectricalContractorLicense"
 			discriminator-value="electricalcontractorlicense">
 			<bag name="majorWorksList" inverse="true" table="EGL_MAJOR_WORKS" cascade="all,delete-orphan">
 				<key>
 					<column name="ID_LICENSE"></column>
 				</key>
-				<one-to-many class="org.egov.license.domain.entity.MajorWorks" />
+				<one-to-many class="org.egov.tradelicense.domain.entity.MajorWorks" />
 			</bag>
 			<join table="EGL_ELECTRICAL_LICENSE">
 				<key column="ID" />
@@ -334,7 +334,7 @@
                 <property name="licnsePermanentPinCodeNumbr" column="LICNSEPERMANENTPINCODENUMBR"/>
                 <property name="commonSolvencyCertificateInfo" column="COMMONSOLVENCYCERTIFICATEINFO"/>
                 <property name="commonSolvencyCertificateDate" column="COMMONSOLVENCYCERTIFICATEDATE"/>
-				<many-to-one name="state" class="org.egov.infstr.models.State"
+				<many-to-one name="state" class="org.egov.infra.workflow.entity.State"
 					cascade="all">
 					<column name="STATE_ID" />
 				</many-to-one>
@@ -342,7 +342,7 @@
 		</subclass>
 	</class>
 	<query name="getLicenseDetailsByApplicationNumber">
-      from org.egov.license.domain.entity.License where applicationNumber=?
+      from org.egov.tradelicense.domain.entity.License where applicationNumber=?
     </query>
     
 </hibernate-mapping>

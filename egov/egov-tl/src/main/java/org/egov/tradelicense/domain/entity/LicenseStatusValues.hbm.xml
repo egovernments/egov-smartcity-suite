@@ -43,7 +43,7 @@
    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="org.egov.license.domain.entity.LicenseStatusValues"
+	<class name="org.egov.tradelicense.domain.entity.LicenseStatusValues"
 		table="EGL_STATUS_VALUES">
 		<id name="id" column="ID_STATUS_VALUES" type="java.lang.Long">
 			<generator class="sequence">
@@ -56,21 +56,21 @@
 		<property name="modifiedDate" type="java.util.Date">
 			<column name="MODIFIED_DATE" not-null="true" />
 		</property>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl"
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
 			cascade="all">
 			<column name="CREATED_BY" />
 		</many-to-one>
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl"
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
 			cascade="all">
 			<column name="MODIFIED_BY" />
 		</many-to-one>
 
 		<many-to-one name="license" column="ID_LICENSE" 
-			class="org.egov.license.domain.entity.License" insert="false"
+			class="org.egov.tradelicense.domain.entity.License" insert="false"
 			update="false" />
 
 		<many-to-one name="licenseStatus" column="ID_STATUS"
-			class="org.egov.license.domain.entity.LicenseStatus" />
+			class="org.egov.tradelicense.domain.entity.LicenseStatus" />
 
 		<property name="reason" column="ID_REASON" />
 		<property name="docNumber" column="DOC_NUM" />
@@ -82,7 +82,7 @@
 		<property name="extraField2" column="EXTRA_FIELD2" />
 		<property name="extraField3" column="EXTRA_FIELD3" />
 		
-<many-to-one name="previousStatusVal"	class="org.egov.license.domain.entity.LicenseStatusValues" column="PARENT_STATUS_VAL"/>
+<many-to-one name="previousStatusVal"	class="org.egov.tradelicense.domain.entity.LicenseStatusValues" column="PARENT_STATUS_VAL"/>
 
 	</class>
 </hibernate-mapping>

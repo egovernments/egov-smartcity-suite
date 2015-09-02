@@ -42,7 +42,8 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping auto-import="false">
-	<class name="org.egov.license.domain.entity.objection.Activity" table="EGL_ACTIVITY" >
+	<class name="org.egov.tradelicense.domain.entity.objection.Activity"
+		table="EGL_ACTIVITY">
 		<id name="id" type="java.lang.Long">
 			<column name="id" />
 			<generator class="native">
@@ -54,14 +55,17 @@
 		<property name="expectedDateOfResponse" type="date" />
 		<property name="remarks" type="string" />
 		<property name="docNumber" type="string" />
-		<many-to-one name="objection" column="ID_OBJECTION" class="org.egov.license.domain.entity.objection.LicenseObjection"
+		<many-to-one name="objection" column="ID_OBJECTION"
+			class="org.egov.tradelicense.domain.entity.objection.LicenseObjection"
 			cascade="all" />
 		<property name="type" type="string" />
 		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
 		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" not-null="true"
-			fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="LASTMODIFIEDBY" not-null="true"
-			fetch="select" />
+		<many-to-one name="createdBy"
+			class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"
+			not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy"
+			class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"
+			not-null="true" fetch="select" />
 	</class>
 </hibernate-mapping>

@@ -41,7 +41,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
                                    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping auto-import="false">
-	<class name="org.egov.license.domain.entity.SubCategory" table="EGL_MSTR_SUB_CATEGORY">
+	<class name="org.egov.tradelicense.domain.entity.SubCategory" table="EGL_MSTR_SUB_CATEGORY">
 		<id column="ID" name="id" type="java.lang.Long">
 			<generator class="native">
 				<param name="sequence">SEQ_EGL_MSTR_SUB_CATEGORY</param>
@@ -53,16 +53,16 @@
 		<property generated="never" lazy="false" name="sectionApplicable" type="java.lang.String">
 			<column length="256" name="SECTION_APPLICABLE" />
 		</property>
-		<many-to-one class="org.egov.license.domain.entity.Schedule" fetch="select" name="scheduleMaster">
+		<many-to-one class="org.egov.tradelicense.domain.entity.Schedule" fetch="select" name="scheduleMaster">
 			<column name="ID_SCHEDULE" />
 		</many-to-one>
-		<many-to-one class="org.egov.license.domain.entity.NatureOfBusiness" fetch="select" name="natureOfBusiness">
+		<many-to-one class="org.egov.tradelicense.domain.entity.NatureOfBusiness" fetch="select" name="natureOfBusiness">
 			<column name="ID_NATURE" />
 		</many-to-one>
-		<many-to-one class="org.egov.license.domain.entity.LicenseCategory" fetch="select" name="category">
+		<many-to-one class="org.egov.tradelicense.domain.entity.LicenseCategory" fetch="select" name="category">
 			<column name="ID_CATEGORY" />
 		</many-to-one>
-		<many-to-one class="org.egov.license.domain.entity.LicenseType" fetch="select" name="licenseType">
+		<many-to-one class="org.egov.tradelicense.domain.entity.LicenseType" fetch="select" name="licenseType">
 			<column name="ID_LICENSE_TYPE" />
 		</many-to-one>
 		<property generated="never" lazy="false" name="approvalrequired" type="java.lang.Boolean">
@@ -86,16 +86,16 @@
 		<property generated="never" lazy="false" name="modifiedDate" type="java.util.Date">
 			<column name="LASTMODIFIEDDATE" not-null="true" />
 		</property>
-		<many-to-one class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" fetch="select" name="createdBy"
+		<many-to-one class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" fetch="select" name="createdBy"
 			not-null="true" />
-		<many-to-one class="org.egov.lib.rjbac.user.UserImpl" column="LASTMODIFIEDBY" fetch="select" name="modifiedBy"
+		<many-to-one class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY" fetch="select" name="modifiedBy"
 			not-null="true" />
-		<many-to-one name="licenseSubType" class="org.egov.license.domain.entity.LicenseSubType"
+		<many-to-one name="licenseSubType" class="org.egov.tradelicense.domain.entity.LicenseSubType"
 			cascade="all">
 			<column name="ID_LICENSE_SUB_TYPE" />
 		</many-to-one>
 	</class>
 	<query name="SUBCATEGORY_BY_NAME">
-		from org.egov.license.domain.entity.SubCategory where name=?
+		from org.egov.tradelicense.domain.entity.SubCategory where name=?
 	</query>
 </hibernate-mapping>

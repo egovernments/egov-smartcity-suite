@@ -41,7 +41,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
                                    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="org.egov.license.domain.entity.LicenseCategory" table="EGL_MSTR_CATEGORY">
+	<class name="org.egov.tradelicense.domain.entity.LicenseCategory" table="EGL_MSTR_CATEGORY">
 		<id column="ID" name="id" type="long">
 			<generator class="native">
 				<param name="sequence">SEQ_EGL_MSTR_CATEGORY</param>
@@ -53,9 +53,9 @@
 		<property generated="never" lazy="false" name="modifiedDate" type="java.util.Date">
 			<column name="LASTMODIFIEDDATE" not-null="true" />
 		</property>
-		<many-to-one class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" fetch="select" name="createdBy"
+		<many-to-one class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" fetch="select" name="createdBy"
 			not-null="true" />
-		<many-to-one class="org.egov.lib.rjbac.user.UserImpl" column="LASTMODIFIEDBY" fetch="select" name="modifiedBy"
+		<many-to-one class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY" fetch="select" name="modifiedBy"
 			not-null="true" />
 		<property generated="never" lazy="false" name="name" type="java.lang.String">
 			<column length="256" name="NAME" not-null="true" />

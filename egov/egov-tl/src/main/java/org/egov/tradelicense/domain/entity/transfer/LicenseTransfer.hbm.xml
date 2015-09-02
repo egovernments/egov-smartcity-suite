@@ -42,7 +42,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="org.egov.license.domain.entity.transfer.LicenseTransfer" table="EGL_LICENSETRANSFER">
+	<class name="org.egov.tradelicense.domain.entity.transfer.LicenseTransfer" table="EGL_LICENSETRANSFER">
 		<id name="id" type="java.lang.Long">
 			<column name="id" />
 			<generator class="native">
@@ -53,11 +53,11 @@
 		<property name="oldApplicationNumber" type="string" />
 		<property name="oldApplicationDate" type="date" />
 		<property name="oldNameOfEstablishment" type="string" />
-		<many-to-one name="boundary" class="org.egov.lib.admbndry.BoundaryImpl" column="ID_ADM_BNDRY" unique="true" />
-		<many-to-one name="license" column="ID_LICENSE" class="org.egov.license.domain.entity.License" cascade="all" />
-		<many-to-one name="oldAddress" column="ID_ADDRESS" class="org.egov.lib.address.model.Address" cascade="all"
+		<many-to-one name="boundary" class="org.egov.infra.admin.master.entity.BoundaryImpl" column="ID_ADM_BNDRY" unique="true" />
+		<many-to-one name="license" column="ID_LICENSE" class="org.egov.tradelicense.domain.entity.License" cascade="all" />
+		<many-to-one name="oldAddress" column="ID_ADDRESS" class="org.egov.infra.persistence.entity.Address" cascade="all"
 			unique="true" />
-		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
 			<column name="STATE_ID" />
 		</many-to-one>
 		<property name="oldPhoneNumber" type="string" />
@@ -73,9 +73,9 @@
 		<property name="modifiedDate" type="java.util.Date">
 			<column name="LASTMODIFIEDDATE" not-null="true" />
 		</property>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" not-null="true"
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true"
 			fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="LASTMODIFIEDBY" not-null="true"
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY" not-null="true"
 			fetch="select" />
 	</class>
 </hibernate-mapping>

@@ -42,7 +42,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="org.egov.license.domain.entity.LicenseSubType" table="EGL_MSTR_LICENSE_SUB_TYPE">
+	<class name="org.egov.tradelicense.domain.entity.LicenseSubType" table="EGL_MSTR_LICENSE_SUB_TYPE">
 		<id name="id" type="java.lang.Long">
 			<column name="id" />
 			<generator class="native">
@@ -51,7 +51,7 @@
 		</id>
 		<property name="name" type="string" column="NAME"/>
 		<property name="code" type="string" column="CODE"/>
-		 <many-to-one name="licenseType" class="org.egov.license.domain.entity.LicenseType" >
+		 <many-to-one name="licenseType" class="org.egov.tradelicense.domain.entity.LicenseType" >
             <column name="ID_LICENSE_TYPE"  not-null="true" />
         </many-to-one>
 	</class>

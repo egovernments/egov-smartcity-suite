@@ -39,19 +39,11 @@
  ******************************************************************************/
 package org.egov.tradelicense.domain.citizen.uploaddocument;
 
-import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.ServletRequestAware;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.lib.rjbac.user.User;
-import org.egov.lib.rjbac.user.dao.UserDAO;
-import org.egov.tradelicense.utils.Constants;
-import org.egov.web.actions.docmgmt.BasicDocumentManagerAction;
-import org.egov.web.annotation.ValidationErrorPage;
-import org.egov.web.annotation.ValidationErrorPageExt;
 
 /**
  * the class upload document
@@ -60,13 +52,13 @@ import org.egov.web.annotation.ValidationErrorPageExt;
  */
 
 @ParentPackage("egov")
-public class UploadDocumentLicenseAction extends BasicDocumentManagerAction implements ServletRequestAware {
+public class UploadDocumentLicenseAction /*extends BasicDocumentManagerAction*/ implements ServletRequestAware {
 	private static final long serialVersionUID = 1L;
 	private HttpSession session = null;
 	private HttpServletRequest request;
 	private Integer userId;
 
-	@Override
+	/*@Override
 	public String execute() {
 		super.execute();
 		setUserDetails();
@@ -78,9 +70,9 @@ public class UploadDocumentLicenseAction extends BasicDocumentManagerAction impl
 	public String addDocument() throws IllegalAccessException, RepositoryException, RuntimeException {
 		setUserDetails();
 		return super.addDocument();
-	}
+	}*/
 	
-	@Override
+	/*@Override
 	public String editDocument() throws RuntimeException {
 		setUserDetails();
 		return super.editDocument();
@@ -98,13 +90,13 @@ public class UploadDocumentLicenseAction extends BasicDocumentManagerAction impl
 	public String updateDocument() throws IllegalAccessException, RepositoryException, RuntimeException {
 		setUserDetails();
 		return super.updateDocument();
-	}
+	}*/
 	@Override
     public void setServletRequest(HttpServletRequest arg0) {
         this.request = arg0;
     }
 	
-	private void setUserDetails() {
+	/*private void setUserDetails() {
 		session = request.getSession();
 		String userName = (String) session.getAttribute("com.egov.user.LoginUserName");
 		final User user;
@@ -116,5 +108,5 @@ public class UploadDocumentLicenseAction extends BasicDocumentManagerAction impl
 		}
 		userId = user.getId();
 		EGOVThreadLocals.setUserId(userId.toString());
-	}
+	}*/
 }

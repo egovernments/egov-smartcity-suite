@@ -42,14 +42,14 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="org.egov.license.domain.entity.MotorDetails" table="EGL_MOTOR_DETAILS">
+	<class name="org.egov.tradelicense.domain.entity.MotorDetails" table="EGL_MOTOR_DETAILS">
 		<id name="id" type="java.lang.Long">
 			<column name="ID" precision="22" scale="0" />
 			<generator class="native">
 				<param name="sequence">SEQ_EGL_MOTOR_DETAILS</param>
 			</generator>
 		</id>
-		<many-to-one name="license" class="org.egov.license.domain.entity.License" fetch="select">
+		<many-to-one name="license" class="org.egov.tradelicense.domain.entity.License" fetch="select">
 			<column name="ID_LICENSE" precision="22" scale="0" not-null="true" />
 		</many-to-one>
 		<property name="hp" type="java.math.BigDecimal">
