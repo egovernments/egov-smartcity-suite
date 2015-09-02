@@ -48,7 +48,7 @@ public class ToString {
 	public static void main(String[] args) {
 		try {
 			boolean x;
-			String pack="org.egov.license.domain.entity.";
+			String pack="org.egov.tradelicense.domain.entity.";
 			String name="Licensee";
 			Class<?> l = Class.forName(pack+name);
 			Field[] declaredFields = l.getDeclaredFields();

@@ -184,7 +184,7 @@ public class ObjectionService extends PersistenceService<LicenseObjection, Long>
         if (objection.getActivities().get(objection.getActivities().size() - 1).getType() != null
                 || workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONAPPROVE)) {
             final Activity activity = objection.getActivities().get(objection.getActivities().size() - 1);
-            objection = this.find("from org.egov.license.domain.entity.objection.LicenseObjection where id=?", objection.getId());
+            objection = this.find("from org.egov.tradelicense.domain.entity.objection.LicenseObjection where id=?", objection.getId());
             activity.setObjection(objection);
             objection.getActivities().add(activity);
             if (objection.getActivities().get(objection.getActivities().size() - 1).getType() != null &&
@@ -200,7 +200,7 @@ public class ObjectionService extends PersistenceService<LicenseObjection, Long>
             persist(objection);
             processWorkflow(objection, workflowBean);
         } else {
-            objection = this.find("from org.egov.license.domain.entity.objection.LicenseObjection where id=?", objection.getId());
+            objection = this.find("from org.egov.tradelicense.domain.entity.objection.LicenseObjection where id=?", objection.getId());
             processWorkflow(objection, workflowBean);
             /*
              * int userId = workflowBean.getApproverUserId(); if (userId == -1) {

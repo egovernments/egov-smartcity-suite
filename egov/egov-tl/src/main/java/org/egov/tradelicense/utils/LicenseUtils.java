@@ -329,7 +329,7 @@ public class LicenseUtils {
      */
     @SuppressWarnings("unchecked")
     public List<SubCategory> getAllTradeNames(final String simpleName) {
-        return persistenceService.findAllBy("from org.egov.license.domain.entity.SubCategory where licenseType.name=?",
+        return persistenceService.findAllBy("from org.egov.tradelicense.domain.entity.SubCategory where licenseType.name=?",
                 simpleName);
     }
 
@@ -351,7 +351,7 @@ public class LicenseUtils {
      */
     @SuppressWarnings("unchecked")
     public List<SubCategory> getAllTradeNamesByLicenseSubType(final String subType) {
-        return persistenceService.findAllBy("from org.egov.license.domain.entity.SubCategory where licenseSubType.code=?",
+        return persistenceService.findAllBy("from org.egov.tradelicense.domain.entity.SubCategory where licenseSubType.code=?",
                 subType);
     }
 
@@ -361,14 +361,14 @@ public class LicenseUtils {
      * @return
      */
     public LicenseStatus getLicenseStatusbyCode(final String statusCode) {
-        return (LicenseStatus) persistenceService.find("FROM org.egov.license.domain.entity.LicenseStatus where statusCode=?",
+        return (LicenseStatus) persistenceService.find("FROM org.egov.tradelicense.domain.entity.LicenseStatus where statusCode=?",
                 statusCode);
     }
 
     public LicenseStatusValues getCurrentStatus(final License license) {
         // Set licenseStatusValSet=license.getLicenseStatusValuesSet();
         return (LicenseStatusValues) persistenceService.find(
-                "from org.egov.license.domain.entity.LicenseStatusValues  where license=? and active=true", license);
+                "from org.egov.tradelicense.domain.entity.LicenseStatusValues  where license=? and active=true", license);
     }
 
     public Map<Integer, String> getCancellationReasonMap() {
@@ -658,7 +658,7 @@ public class LicenseUtils {
         License license = null;
         final Query query = getSession()
                 .createQuery(
-                        "from org.egov.license.domain.entity.License lic where lic.contractorCode is not null and lic.contractorCode=:contrCode and lic.tradeName.licenseType.module.moduleName =:moduleName");
+                        "from org.egov.tradelicense.domain.entity.License lic where lic.contractorCode is not null and lic.contractorCode=:contrCode and lic.tradeName.licenseType.module.moduleName =:moduleName");
         query.setString("contrCode", contractorCode);
         query.setString("moduleName", moduleName);
         final List licenseList = query.list();

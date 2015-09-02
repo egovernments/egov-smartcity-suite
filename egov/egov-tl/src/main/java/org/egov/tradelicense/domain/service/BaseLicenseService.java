@@ -136,7 +136,7 @@ public abstract class BaseLicenseService {
                 runningApplicationNumber, license.getFeeTypeStr(), getModuleName());
         license.getLicensee().setLicense(license);
         final LicenseStatus status = (LicenseStatus) persistenceService.find(
-                "from org.egov.license.domain.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
+                "from org.egov.tradelicense.domain.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
         license.updateStatus(status);
         license = additionalOperations(license, egDemandReasonMasters, installment);
         persistenceService.create(license);
@@ -243,7 +243,7 @@ public abstract class BaseLicenseService {
 
         license.getLicensee().setLicense(license);
         final LicenseStatus status = (LicenseStatus) persistenceService.find(
-                "from org.egov.license.domain.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
+                "from org.egov.tradelicense.domain.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
         license.updateStatus(status);
         license = additionalOperations(license, egDemandReasonMasters, installment);
         license = license.updateCollectedForExisting(license);
@@ -346,7 +346,7 @@ public abstract class BaseLicenseService {
                 final Position position = eisCommonsManager.getPositionByUserId(userID);
                 workflowService().end(license, position);
                 final LicenseStatus activeStatus = (LicenseStatus) persistenceService
-                        .find("from org.egov.license.domain.entity.LicenseStatus where code='REJ'");
+                        .find("from org.egov.tradelicense.domain.entity.LicenseStatus where code='REJ'");
                 license.setStatus(activeStatus);
             }
 
@@ -354,7 +354,7 @@ public abstract class BaseLicenseService {
             final Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
             workflowService().end(license, position);
             final LicenseStatus activeStatus = (LicenseStatus) persistenceService
-                    .find("from org.egov.license.domain.entity.LicenseStatus where code='ACT'");
+                    .find("from org.egov.tradelicense.domain.entity.LicenseStatus where code='ACT'");
             license.setStatus(activeStatus);
         }*/
         return license;
@@ -402,7 +402,7 @@ public abstract class BaseLicenseService {
                 final Position position = eisCommonsManager.getPositionByUserId(userID);
                 workflowService().end(license, position);
                 final LicenseStatus activeStatus = (LicenseStatus) persistenceService
-                        .find("from org.egov.license.domain.entity.LicenseStatus where code='REJ'");
+                        .find("from org.egov.tradelicense.domain.entity.LicenseStatus where code='REJ'");
                 license.setStatus(activeStatus);
             }
 
@@ -410,7 +410,7 @@ public abstract class BaseLicenseService {
             final Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
             workflowService().end(license, position);
             final LicenseStatus activeStatus = (LicenseStatus) persistenceService
-                    .find("from org.egov.license.domain.entity.LicenseStatus where code='ACT'");
+                    .find("from org.egov.tradelicense.domain.entity.LicenseStatus where code='ACT'");
             license.setStatus(activeStatus);
         }*/
         return license;
@@ -431,7 +431,7 @@ public abstract class BaseLicenseService {
             workflowService().start(license, position, workflowBean.getComments());
             license.changeState(Constants.WORKFLOW_STATE_TYPE_CREATENEWLICENSE + "NEW", position, workflowBean.getComments());
             final LicenseStatus underWorkflowStatus = (LicenseStatus) persistenceService
-                    .find("from org.egov.license.domain.entity.LicenseStatus where code='UWF'");
+                    .find("from org.egov.tradelicense.domain.entity.LicenseStatus where code='UWF'");
             license.setStatus(underWorkflowStatus);
             final Module module = license.getTradeName().getLicenseType().getModule();
             if ((module.getName().equals(Constants.ELECTRICALLICENSE_MODULENAME) || module.getName().equals(
@@ -446,7 +446,7 @@ public abstract class BaseLicenseService {
         final Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
         workflowService().start(license, position, workflowBean.getComments());
         final LicenseStatus underWorkflowStatus = (LicenseStatus) persistenceService
-                .find("from org.egov.license.domain.entity.LicenseStatus where code='UWF'");
+                .find("from org.egov.tradelicense.domain.entity.LicenseStatus where code='UWF'");
         license.setStatus(underWorkflowStatus);
     }
 
@@ -464,7 +464,7 @@ public abstract class BaseLicenseService {
         }
         license.changeState(Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE + "NEW", position, workflowBean.getComments());
         final LicenseStatus underWorkflowStatus = (LicenseStatus) persistenceService
-                .find("from org.egov.license.domain.entity.LicenseStatus where code='UWF'");
+                .find("from org.egov.tradelicense.domain.entity.LicenseStatus where code='UWF'");
         license.setStatus(underWorkflowStatus);
     }*/
 
@@ -534,13 +534,13 @@ public abstract class BaseLicenseService {
         persistenceService.update(license);
 
         final LicenseStatus status = (LicenseStatus) persistenceService.find(
-                "from org.egov.license.domain.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
+                "from org.egov.tradelicense.domain.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
         license.updateStatus(status);
     }
 
     public License updateLicenseForFinalApproval(final License license) {
         final LicenseStatus status = (LicenseStatus) persistenceService
-                .find("from org.egov.license.domain.entity.LicenseStatus where code='ACT'");
+                .find("from org.egov.tradelicense.domain.entity.LicenseStatus where code='ACT'");
         license.setStatus(status);
         license.setCreationAndExpiryDateForEnterLicense();
         String feeType = "";

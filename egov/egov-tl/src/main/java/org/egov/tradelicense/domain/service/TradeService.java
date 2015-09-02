@@ -76,7 +76,7 @@ public class TradeService extends BaseLicenseService {
     @Override
     protected NatureOfBusiness getNatureOfBusiness() {
         final NatureOfBusiness natureOfBusiness = (NatureOfBusiness) persistenceService
-                .find("from org.egov.license.domain.entity.NatureOfBusiness where   name='Permanent'");
+                .find("from org.egov.tradelicense.domain.entity.NatureOfBusiness where   name='Permanent'");
         return natureOfBusiness;
     }
 
@@ -92,7 +92,7 @@ public class TradeService extends BaseLicenseService {
     public License additionalOperations(final License license, final Set<EgDemandReasonMaster> egDemandReasonMasters,
             final Installment installment) {
         final TradeLicense tl = (TradeLicense) license;
-        final List<MotorMaster> motorMasterList = persistenceService.findAllBy("from org.egov.license.domain.entity.MotorMaster");
+        final List<MotorMaster> motorMasterList = persistenceService.findAllBy("from org.egov.tradelicense.domain.entity.MotorMaster");
         tl.setMotorMasterList(motorMasterList);
         tl.additionalDemandDetails(egDemandReasonMasters, installment);
         return tl;
@@ -137,7 +137,7 @@ public class TradeService extends BaseLicenseService {
         }
         license.getState().setText2(license.getWorkflowIdentityForTransfer());
         final LicenseStatus underWorkflowStatus = (LicenseStatus) persistenceService
-                .find("from org.egov.license.domain.entity.LicenseStatus where code='UWF'");
+                .find("from org.egov.tradelicense.domain.entity.LicenseStatus where code='UWF'");
         license.setStatus(underWorkflowStatus);
         processWorkFlowForTransfer(license, workflowBean);
         return;
@@ -180,7 +180,7 @@ public class TradeService extends BaseLicenseService {
             final Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
             workflowService().end(license, position);
             final LicenseStatus activeStatus = (LicenseStatus) persistenceService
-                    .find("from org.egov.license.domain.entity.LicenseStatus where code='ACT'");
+                    .find("from org.egov.tradelicense.domain.entity.LicenseStatus where code='ACT'");
             license.setStatus(activeStatus);
         }
         return;
@@ -189,7 +189,7 @@ public class TradeService extends BaseLicenseService {
     @Override
     protected LicenseAppType getLicenseApplicationTypeForRenew() {
         final LicenseAppType appType = (LicenseAppType) persistenceService
-                .find("from org.egov.license.domain.entity.LicenseAppType where   name='Renewal'");
+                .find("from org.egov.tradelicense.domain.entity.LicenseAppType where   name='Renewal'");
         return appType;
     }
 
@@ -201,7 +201,7 @@ public class TradeService extends BaseLicenseService {
     @Override
     protected LicenseAppType getLicenseApplicationType() {
         final LicenseAppType appType = (LicenseAppType) persistenceService
-                .find("from org.egov.license.domain.entity.LicenseAppType where   name='New'");
+                .find("from org.egov.tradelicense.domain.entity.LicenseAppType where   name='New'");
         return appType;
     }
 
@@ -222,7 +222,7 @@ public class TradeService extends BaseLicenseService {
     public List getHotelCategoriesForTrade()
     {
         final List subCategory = persistenceService
-                .findAllBy("select id from org.egov.license.domain.entity.SubCategory where upper(name) like '%HOTEL%' and licenseType.id= (select id from org.egov.license.domain.entity.LicenseType where name='TradeLicense')");
+                .findAllBy("select id from org.egov.tradelicense.domain.entity.SubCategory where upper(name) like '%HOTEL%' and licenseType.id= (select id from org.egov.tradelicense.domain.entity.LicenseType where name='TradeLicense')");
         return subCategory;
     }
 

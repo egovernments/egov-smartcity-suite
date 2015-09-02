@@ -158,7 +158,7 @@
 		<c:set var="trclass" value="greybox" />
 	</c:when>
 </c:choose>
-<s:if test="%{boundary.parent.name.equalsIgnoreCase(@org.egov.license.utils.Constants@CITY_NAME)}">
+<s:if test="%{boundary.parent.name.equalsIgnoreCase(@org.egov.tradelicense.utils.Constants@CITY_NAME)}">
 	<tr>
 		<td class="<c:out value="${trclass}"/>" width="5%">&nbsp;</td>
 		<td class="<c:out value="${trclass}"/>"><b><s:text
@@ -330,7 +330,7 @@
 		<c:set var="trclass" value="greybox" />
 	</c:when>
 </c:choose>
-<s:if test="%{boundary.parent.name.equalsIgnoreCase(@org.egov.license.utils.Constants@CITY_NAME)}">
+<s:if test="%{boundary.parent.name.equalsIgnoreCase(@org.egov.tradelicense.utils.Constants@CITY_NAME)}">
 	<tr>
 		<td class="<c:out value="${trclass}"/>" width="5%">&nbsp;</td>
 		<td class="<c:out value="${trclass}"/>"><b><s:text

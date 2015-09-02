@@ -113,7 +113,7 @@
 						</b></td>
 					</tr>
 					<s:if
-						test="%{boundary.parent.name.equalsIgnoreCase(@org.egov.license.utils.Constants@CITY_NAME)}">
+						test="%{boundary.parent.name.equalsIgnoreCase(@org.egov.tradelicense.utils.Constants@CITY_NAME)}">
 						<tr>
 							<td width="40%"><s:text name="license.zone" /> :</td>
 							<td><b><s:property value="boundary.name" /> </b></td>

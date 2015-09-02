@@ -108,7 +108,7 @@
 	</c:when>
 </c:choose>
 
-<s:if test="%{license.boundary.parent.name.equalsIgnoreCase(@org.egov.license.utils.Constants@CITY_NAME)}">
+<s:if test="%{license.boundary.parent.name.equalsIgnoreCase(@org.egov.tradelicense.utils.Constants@CITY_NAME)}">
 	<tr>
 		<td class="<c:out value="${trclass}"/>" width="5%">&nbsp;</td>
 		<td class="<c:out value="${trclass}"/>"><s:text
