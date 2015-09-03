@@ -32,6 +32,12 @@
 			<version>${project.parent.version}</version>
 			<type>war</type>
 		</dependency>
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-assetsweb</artifactId>
+			<version>${project.parent.version}</version>
+			<type>war</type>
+		</dependency>
 	  	<dependency>
 		    <groupId>org.egov</groupId>
 		    <artifactId>egov-collectionweb</artifactId>
@@ -110,6 +116,11 @@
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-egf</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-assets</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
@@ -217,6 +228,11 @@
 							<groupId>org.egov</groupId>
 							<artifactId>egov-egfweb</artifactId>
 							<contextRoot>/EGF</contextRoot>
+						</webModule>
+						<webModule>
+							<groupId>org.egov</groupId>
+							<artifactId>egov-assetsweb</artifactId>
+							<contextRoot>/egassets</contextRoot>
 						</webModule>
 						<webModule>
 							<groupId>org.egov</groupId>
