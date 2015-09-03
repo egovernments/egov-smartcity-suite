@@ -69,6 +69,7 @@ import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.application.service.WaterConnectionSmsAndEmailService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -97,6 +98,9 @@ public class WaterTaxCollection extends TaxCollection {
 
     @Autowired
     private SimpleWorkflowService<WaterConnectionDetails> waterConnectionWorkflowService;
+    
+    @Autowired
+    private WaterConnectionSmsAndEmailService waterConnectionSmsAndEmailService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -150,7 +154,7 @@ public class WaterTaxCollection extends TaxCollection {
             waterConnectionDetailsService.createMatrixWorkflowTransition(waterConnectionDetails,
                     approvalPosition, WaterTaxConstants.FEE_COLLECTION_COMMENT, WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
                     null);
-            waterConnectionDetailsService.sendSmsAndEmail(waterConnectionDetails, null);
+            waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
             waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
         }
     }

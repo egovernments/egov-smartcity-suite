@@ -185,7 +185,7 @@ public class ChangeOfUseController extends GenericConnectionController {
         }
 
         changeOfUse.setApplicationDate(new Date());
-        waterConnectionDetailsService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent,
+        changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent,
                 changeOfUse.getApplicationType().getCode(), workFlowAction);
         final String pathVars = changeOfUse.getApplicationNumber() + ","
                 + waterTaxUtils.getApproverUserName(approvalPosition);

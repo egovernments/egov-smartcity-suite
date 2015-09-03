@@ -66,8 +66,13 @@ public class ViewConnectionController {
 
     @RequestMapping(value = "/view/{applicationNumber}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String applicationNumber, final HttpServletRequest request) {
-        final WaterConnectionDetails details = waterConnectionDetailsService
-                .findByConsumerCodeAndConnectionStatus(applicationNumber,ConnectionStatus.ACTIVE);
+         WaterConnectionDetails details=null;
+        details = waterConnectionDetailsService
+                .findByConsumerCodeAndConnectionStatus(applicationNumber, ConnectionStatus.ACTIVE);
+        if(details==null){
+        details = waterConnectionDetailsService
+                .findByApplicationNumberOrConsumerCode(applicationNumber);
+        }
         model.addAttribute("waterConnectionDetails", details);
         model.addAttribute("connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(details.getConnectionType().name()));

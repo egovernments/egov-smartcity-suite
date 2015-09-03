@@ -30,8 +30,6 @@
  */
 package org.egov.wtms.utils;
 
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -197,334 +195,13 @@ public class WaterTaxUtils {
     }
 
     public String getCityName() {
-        return null != cityService.getCityByURL(EgovThreadLocals.getDomainName()).getPreferences()
-                ? cityService.getCityByURL(EgovThreadLocals.getDomainName()).getPreferences().getMunicipalityName()
-                : cityService.getCityByURL(EgovThreadLocals.getDomainName()).getName();
+        return null != cityService.getCityByURL(EgovThreadLocals.getDomainName()).getPreferences() ? cityService
+                .getCityByURL(EgovThreadLocals.getDomainName()).getPreferences().getMunicipalityName() : cityService
+                .getCityByURL(EgovThreadLocals.getDomainName()).getName();
     }
 
     public String getCityCode() {
         return cityService.getCityByURL(EgovThreadLocals.getDomainName()).getCode();
-    }
-
-    public String smsAndEmailBodyByCodeAndArgs(final String code, final WaterConnectionDetails waterConnectionDetails,
-            final String applicantName) {
-        final String smsMsg = messageSource.getMessage(code,
-                new String[] { applicantName, waterConnectionDetails.getApplicationNumber(), getCityName() }, null);
-        return smsMsg;
-    }
-
-    public String EmailBodyByCodeAndArgsWithType(final String code,
-            final WaterConnectionDetails waterConnectionDetails, final String applicantName, final String type) {
-        String emailBody = "";
-        final DecimalFormat amountFormat = new DecimalFormat("#.00");
-        if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNCREATE)
-                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDITONALCONNCREATE))
-            emailBody = messageSource.getMessage(code,
-                    new String[] { applicantName, waterConnectionDetails.getApplicationNumber(), getCityName() }, null);
-        // Dear {0},\n\nYour New tap connection application is accepted and the
-        // acknowledgement number is {1}.\n \nPlease use this number
-        // as reference in all your future transactions.\n\nThis is computer
-        // generated Email and does not need any signature and also
-        // please do not reply to this e-mail.\n\nThanks ,\n{2}
-        else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNAPPROVE)
-                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDITONALCONNAPPROVE))
-            emailBody = messageSource.getMessage(code,
-                    new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                            waterConnectionDetails.getConnection().getConsumerCode(), getCityName() },
-                    null);
-        // Dear {0},\n\nThe water tap connection application with
-        // Acknowledgement No. {1} has been approved with Consumer No. {2}
-        // Monthly water tax will be generated after the tap execution.\n
-        // \nPlease keep this Consumer Number for future transactions
-        // on your water tap..\n\nThis is computer generated email and does not
-        // need any signature and also please do not reply
-        // to this e-mail.\n\nRegards,\n{3}
-        else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNESTNOTICE)
-                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDCONNESTNOTICE)) {
-
-            if (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getName()))
-                emailBody = messageSource.getMessage(
-                        code,
-                        new String[] {
-                                applicantName,
-                                waterConnectionDetails.getApplicationNumber(),
-                                String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges())),
-                                String.valueOf(amountFormat
-                                        .format(waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges())),
-                                String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges()
-                                        + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges())),
-                                getCityName() },
-                        null);
-            // Dear {0},\n\nWe have processed your application for new tap
-            // connection with acknowledgement number {1}.and generated an
-            // estimation
-            // notice.\n\n Donation amount and Estimation amount for your
-            // application will be Rs.{2}.00/-and Rs.{3}.00/- respectively .
-            // We request you to pay the amount Rs.{4}.00/- ({2}+{3})at the ULB
-            // counter. so that we can process your request for work
-            // order.\n\nThis is computer generated Email and does not need any
-            // signature and also please do not reply to this e-mail.\n\nThanks
-            // ,\n{5}
-            else
-                emailBody = messageSource.getMessage(
-                        code,
-                        new String[] {
-                                applicantName,
-                                WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails
-                                        .getApplicationType().getCode()) ? "new water" : "additioanl water",
-                                waterConnectionDetails.getApplicationNumber(),
-                                String.valueOf(amountFormat.format(waterConnectionDetails.getFieldInspectionDetails()
-                                        .getEstimationCharges())),
-                                getCityName() },
-                        null);
-            // Dear {0},\n\nWe have processed your application for {1} tap
-            // connection with acknowledgement number {2} and generated an
-            // estimation notice.\n Estimation amount for your application will be Rs.{3}/-.
-            // We request you to pay the same at the ULB counter,so that we can process
-            // your request for work order.\n\nThis is computer generated email and does
-            // not need any signature and also please do not reply to this email.\n\nThanks ,\n{4}
-        } else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION)|| type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEEXECUTION)) {
-            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            if (!WaterTaxConstants.METERED.toUpperCase()
-                    .equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString()))
-                emailBody = messageSource.getMessage(code,
-                        new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
-                                formatter.format(waterConnectionDetails.getExecutionDate()).toString(),
-                                amountFormat.format(waterConnectionDetails.getDemand().getBaseDemand()).toString(),
-                                getCityName() },
-                        null);
-            else
-                emailBody = messageSource.getMessage(code,
-                        new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
-                                formatter.format(waterConnectionDetails.getExecutionDate()).toString(),
-                                getCityName() },
-                        null);
-            // Dear {0},\n\nWater tap connection with H.S.C number {1} is installed at your site on {2} by our Asst engineer.
-            // Please pay the tax before the due date to avail uninterrupted service.\n\nThis is computer generated email and
-            // does not need any signature and also please do not reply to this email.\n\nThanks ,\n{3}
-        }
-        // Dear {0},\n\nWater tap connection with H.S.C number {1} is installed
-        // at your site on {2} by our Asst engineer and your monthly
-        // water tax demand will be Rs.{3}.00/-.Please pay the tax before the
-        // due date to avail uninterrupted service.\n\nThis is computer
-        // generated Email and does not need any signature and also please do
-        // not reply to this e-mail.\n\nThanks ,\n{4}
-        // TODO: while collectinge fees sending message not working with MessageSourse Cos Its not able to find Message.properties
-        // so hardcoding sms and Email body
-        else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNFEEPAID)
-                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDCONNFEEPAID)
-                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEFEEPAID)) {
-            final String amountToDisplay = String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges()
-                    + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges()));
-            final StringBuffer emailBodyBuilder = new StringBuffer().append("Dear ").append(applicantName).append(",")
-                    .append("\n\nWe have received Estimation and donation amount of Rs.").append(amountToDisplay)
-                    .append("/- against your water connection application number ")
-                    .append(waterConnectionDetails.getApplicationNumber())
-                    .append(".We will be now processing your application to issue an work order.\n\nThis is computer generated email and does not need any signature and also please do not reply to this email.\n\nRegards,")
-                    .append("\n").append(getCityName());
-            emailBody = emailBodyBuilder.toString();
-        } else if (WaterTaxConstants.SMSEMAILTYPECHANGEOFUSECREATE.equalsIgnoreCase(type))
-            emailBody = messageSource.getMessage(code,
-                    new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
-                            waterConnectionDetails.getApplicationNumber(), getCityName() },
-                    null);
-        // Dear {0},\nYour application for change of use for the H.S.C number {1} is accepted and the acknowledgement number
-        // is {2}.\n
-        // Please use this number as reference in all your future transactions.\n\nThis is computer generated email and does
-        // not need any
-        // signature and also please do not reply to this email.\n\nThanks ,\n{3}
-        else if (WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEAPPROVE.equalsIgnoreCase(type))
-            emailBody = messageSource.getMessage(code,
-                    new String[] { applicantName, waterConnectionDetails.getApplicationNumber(), getCityName() }, null);
-        // Dear {0},\n\nYour application for change of use is accepted with acknowledgement No. {1} has been approved.
-        // Your water tax will be generated after the tap execution.\n \nPlease keep this Application Number for future
-        // transactions on your water tap..\n\nThis is computer generated email and does not need any signature and
-        // also please do not reply to this email.\n\nRegards,\n{3}
-        else if (WaterTaxConstants.SMSEMAILTYPECHANGEOFUSENOTICE.equalsIgnoreCase(type))
-            if (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getName()))
-                emailBody = messageSource.getMessage(
-                        code,
-                        new String[] {
-                                applicantName,
-                                waterConnectionDetails.getApplicationNumber(),
-                                String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges())),
-                                String.valueOf(amountFormat
-                                        .format(waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges())),
-                                String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges()
-                                        + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges())),
-                                getCityName() },
-                        null);
-            // Dear {0},\nWe have processed your application for change of use request with acknowledgement number {1}.and
-            // generated an
-            // estimation notice.\n\n Donation amount and Estimation amount for your
-            // application will be Rs.{2}.00/-and Rs.{3}.00/- respectively .
-            // We request you to pay the amount Rs.{4}.00/- ({2}+{3})at the ULB
-            // counter. so that we can process your request for work
-            // order.\n\nThis is computer generated Email and does not need any
-            // signature and also please do not reply to this e-mail.\n\nThanks
-            // ,\n{5}
-            else
-                emailBody = messageSource.getMessage(
-                        code,
-                        new String[] {
-                                applicantName,
-                                "change of",
-                                waterConnectionDetails.getApplicationNumber(),
-                                String.valueOf(amountFormat.format(waterConnectionDetails.getFieldInspectionDetails()
-                                        .getEstimationCharges())),
-                                getCityName() },
-                        null);
-        // Dear {0},\n\nWe have processed your application for {1} tap
-        // connection with acknowledgement number {2} and generated an
-        // estimation notice.\n Estimation amount for your application will be Rs.{3}/-.
-        // We request you to pay the same at the ULB counter,so that we can process
-        // your request for work order.\n\nThis is computer generated email and does
-        // not need any signature and also please do not reply to this email.\n\nThanks ,\n{4}
-
-        return emailBody;
-    }
-
-    public String SmsBodyByCodeAndArgsWithType(final String code, final WaterConnectionDetails waterConnectionDetails,
-            final String applicantName, final String type) {
-        String smsMsg = "";
-        final DecimalFormat amountFormat = new DecimalFormat("#.00");
-        if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNCREATE)
-                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDITONALCONNCREATE))
-            smsMsg = messageSource.getMessage(code,
-                    new String[] { applicantName, waterConnectionDetails.getApplicationNumber(), getCityName() }, null);
-        // Dear {0}, Your New tap connection application is accepted and the
-        // acknowledgement number is {1}. Please use this number as
-        // reference in all your future transactions.\nThanks, {2}
-        else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNAPPROVE)
-                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDITONALCONNAPPROVE))
-            smsMsg = messageSource.getMessage(code, new String[] { applicantName,
-                    waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, null);
-        // Dear {0}, Your new water tap connection application processed with
-        // Consumer No.{1}. Monthly water tax will be generated after
-        // the tap execution..\nThanks, {2}
-        else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNESTNOTICE)
-                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDCONNESTNOTICE)) {
-            if (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getName()))
-                smsMsg = messageSource.getMessage(
-                        code,
-                        new String[] {
-                                applicantName,
-                                waterConnectionDetails.getApplicationNumber(),
-                                String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges())),
-                                String.valueOf(amountFormat.format(waterConnectionDetails.getFieldInspectionDetails()
-                                        .getEstimationCharges())),
-                                String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges()
-                                        + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges())),
-                                getCityName() },
-                        null);
-            // --- for NON BPL --
-            // Dear {0}, We have processed your application for new tap
-            // connection with acknowledgement number {1} and generated an estimation
-            // notice.\n Donation amount and Estimation amount for your application will
-            // be Rs.{2}.00/-and Rs.{3}.00/- respectively .We request you to pay
-            // the amount Rs.{4}.00/- ({2}+{3})at the ULB counter. so that we can
-            // process your request for work order.\nThanks, {5}
-            else
-                smsMsg = messageSource.getMessage(
-                        code,
-                        new String[] {
-                                applicantName,
-                                WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails
-                                        .getApplicationType().getCode()) ? "new water" : "additional water",
-                                waterConnectionDetails.getApplicationNumber(),
-                                String.valueOf(amountFormat.format(waterConnectionDetails.getFieldInspectionDetails()
-                                        .getEstimationCharges())),
-                                getCityName() },
-                        null);
-            // -- for BPL --
-            // Dear {0}, We have processed your application for {1} tap
-            // connection with acknowledgement number {2} and generated an
-            // estimation notice.\n\n Estimation amount for your application
-            // will be Rs.{3}/-. We request you to pay the same at the
-            // ULB counter,so that we can process your request for work
-            // order.\nThanks, {4}
-        } else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION)
-                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEEXECUTION)) {
-            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            if (!WaterTaxConstants.METERED.toUpperCase()
-                    .equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString()))
-                smsMsg = messageSource.getMessage(code,
-                        new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
-                                formatter.format(waterConnectionDetails.getExecutionDate()).toString(),
-                                amountFormat.format(waterConnectionDetails.getDemand().getBaseDemand()).toString(),
-                                getCityName() },
-                        null);
-            else
-                smsMsg = messageSource.getMessage(code,
-                        new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
-                                formatter.format(waterConnectionDetails.getExecutionDate()).toString(), getCityName() },
-                        null);
-            // Dear {0}, Water tap connection with H.S.C number {1} is installed at your site on {2} by our Asst engineer.
-            // Please pay the tax before the due date to avail uninterrupted service.\nThanks, {3}
-        }
-        // Dear {0}, Water tap connection with H.S.C number {1} is installed at
-        // your site on {2} by our Asst engineer and your
-        // demand will be Rs.{3}.00/-.Please pay the tax before the due date
-        // to avail uninterrupted service.\nThanks, {4}
-        else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNFEEPAID)
-                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDCONNFEEPAID)
-                || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEFEEPAID)) {
-            final String amountToDisplay = String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges()
-                    + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges()));
-            final StringBuffer smsBody = new StringBuffer().append("Dear ").append(applicantName)
-                    .append(",We have received Estimation and donation amount of Rs.").append(amountToDisplay)
-                    .append("/- against your water connection application number ")
-                    .append(waterConnectionDetails.getApplicationNumber())
-                    .append(".We will be now processing your application to issue an work order..\nThanks,\n")
-                    .append(getCityName());
-            smsMsg = smsBody.toString();
-        } else if (WaterTaxConstants.SMSEMAILTYPECHANGEOFUSECREATE.equalsIgnoreCase(type))
-            smsMsg = messageSource.getMessage(code,
-                    new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
-                            waterConnectionDetails.getApplicationNumber(), getCityName() },
-                    null);
-        else if (WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEAPPROVE.equalsIgnoreCase(type))
-            smsMsg = messageSource.getMessage(code,
-                    new String[] { applicantName, waterConnectionDetails.getApplicationNumber(), getCityName() }, null);
-        // Dear {0}, Your application request for change of use is accepted with acknowledgement No.{1}.
-        // Please use this number in all future communication..\nThanks, {2}
-        else if (WaterTaxConstants.SMSEMAILTYPECHANGEOFUSENOTICE.equalsIgnoreCase(type))
-            if (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getName()))
-                smsMsg = messageSource.getMessage(
-                        code,
-                        new String[] {
-                                applicantName,
-                                waterConnectionDetails.getApplicationNumber(),
-                                String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges())),
-                                String.valueOf(amountFormat.format(waterConnectionDetails.getFieldInspectionDetails()
-                                        .getEstimationCharges())),
-                                String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges()
-                                        + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges())),
-                                getCityName() },
-                        null);
-            // Dear {0}, We have processed your application for change of use request with acknowledgement number {1}
-            // and generated an estimation notice.\n\n Donation amount and Estimation amount for your application will
-            // be Rs.{2}/- and Rs.{3}/- respectively. We request you to pay the amount Rs.{4}/- ({2}+{3}) at the ULB
-            // counter, so that we can process your request for work order.\nThanks, {5}
-            else
-                smsMsg = messageSource.getMessage(
-                        code,
-                        new String[] {
-                                applicantName,
-                                "change of",
-                                waterConnectionDetails.getApplicationNumber(),
-                                String.valueOf(amountFormat.format(waterConnectionDetails.getFieldInspectionDetails()
-                                        .getEstimationCharges())),
-                                getCityName() },
-                        null);
-        // -- for BPL --
-        // Dear {0}, We have processed your application for {1} tap
-        // connection with acknowledgement number {2} and generated an
-        // estimation notice.\n\n Estimation amount for your application
-        // will be Rs.{3}/-. We request you to pay the same at the
-        // ULB counter,so that we can process your request for work
-        // order.\nThanks, {4}
-        return smsMsg;
     }
 
     public String smsAndEmailBodyByCodeAndArgsForRejection(final String code, final String approvalComment,
@@ -538,8 +215,7 @@ public class WaterTaxUtils {
             final WaterConnectionDetails waterConnectionDetails, final String applicantName) {
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                        waterConnectionDetails.getConnection().getConsumerCode(), getCityName() },
-                null);
+                waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, null);
         return smsMsg;
     }
 
@@ -549,11 +225,11 @@ public class WaterTaxUtils {
     }
 
     public void sendSMSOnWaterConnection(final String mobileNumber, final String smsBody) {
-        messagingService.sendSMS(mobileNumber, smsBody);
+        messagingService.sendSMS("8884098688", smsBody);
     }
 
     public void sendEmailOnWaterConnection(final String email, final String emailBody, final String emailSubject) {
-        messagingService.sendEmail(email, emailSubject, emailBody);
+        messagingService.sendEmail("roopa.h@egovernments.org", emailSubject, emailBody);
     }
 
     public Position getCityLevelCommissionerPosition(final String commissionerDesgn) {
