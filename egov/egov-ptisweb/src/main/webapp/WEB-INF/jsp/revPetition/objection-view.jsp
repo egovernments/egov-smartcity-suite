@@ -160,6 +160,7 @@
 						}	
 					else if (actionName=='Save')
 						{
+						
 								if(statusCode=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_RECORD_GENERATEHEARINGNOTICE}"/>')
 								{	if(validateRecordHearing())
 									{

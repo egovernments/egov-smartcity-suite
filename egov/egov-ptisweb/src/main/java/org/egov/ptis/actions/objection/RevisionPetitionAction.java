@@ -436,7 +436,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	@ValidationErrorPage(value = "view")
 	@Action(value = "/revPetition/revPetition-generateHearingNotice")
 	public String generateHearingNotice() {
-
+	        objection.setGenerateSpecialNotice(Boolean.TRUE);
 		updateStateAndStatus(objection);
 		PropertyImpl refNewProperty = propService.creteNewPropertyForObjectionWorkflow(objection.getBasicProperty(),
 				objection.getObjectionNumber(), objection.getRecievedOn(), objection.getCreatedBy(), null,
@@ -594,25 +594,25 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
 		if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction)) {
 
-			if (objection.getObjectionRejected()) {
+		/*	if (objection.getObjectionRejected()) {
 				addActionMessage(getText("objection.rejected"));
 
 				objection.setEgwStatus(egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
 						PropertyTaxConstants.OBJECTION_REJECTED));
 
-			} else {
+			} else {*/
 
 				objection.setEgwStatus(egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
 						PropertyTaxConstants.OBJECTION_ACCEPTED));
 
-			}
+			//}
 		}
 		updateStateAndStatus(objection);
-		objection.setGenerateSpecialNotice(Boolean.FALSE);
-		if (!objection.getObjectionRejected()) {
+		//objection.setGenerateSpecialNotice(Boolean.FALSE);
+		/*if (!objection.getObjectionRejected()) {
 			objection.setGenerateSpecialNotice(Boolean.TRUE);
 		
-		}
+		}*/
 		revisionPetitionService.updateRevisionPetition(objection);
 		sendEmailandSms(objection, REVISION_PETITION_ENDORESEMENTGENERATED);
 		addActionMessage(getText("objection.outcome.success"));
@@ -816,7 +816,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		/*
 		 * Change workflow object as Active property and Active one to history.
 		 */
-		if (objection.getObjectionRejected()) {
+		if (objection.getGenerateSpecialNotice()!=null && !objection.getGenerateSpecialNotice()) {
 			objection.getBasicProperty().setStatus(
 					propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_CODE_ASSESSED));
 			// objection.getBasicProperty().getProperty().setStatus(STATUS_ISHISTORY);
@@ -888,7 +888,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		/*
 		 * End workflow
 		 */
-		if (!objection.getObjectionRejected()) {
+		if (objection.getGenerateSpecialNotice()!=null && objection.getGenerateSpecialNotice()) {
 			objection.getBasicProperty().setStatus(
 					propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_CODE_ASSESSED));
 			objection.getBasicProperty().getProperty().setStatus(STATUS_ISHISTORY);

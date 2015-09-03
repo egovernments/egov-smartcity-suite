@@ -53,13 +53,6 @@
 
 				<tr>
 					<td class="bluebox" width="25%">
-						<s:text name="objection.rejected.button" />
-					</td>
-					<td class="bluebox" width="25%">
-						<s:radio name="objectionRejected"
-							list="#{'true':'Yes','false':'No'}" id="objectionRejected" />
-					</td>
-					<td class="bluebox" width="25%">
 						<s:text name="outcome.date" />
 						<span class="mandatory1">*</span>
 					</td>
@@ -84,14 +77,7 @@
 					<td class="greybox" width="25%">
 						<s:textarea name="remarks" id="outcomeRemarks" cols="40" rows="2" onblur="checkLength(this)"></s:textarea>
 					</td>
-					<%--<td class="greybox" width="25%">
-						<s:text name="objection.upload.document" />
-					</td>
-					 <td class="greybox" width="25%">
-						<input type="button" class="button" value="Upload Document"
-							id="docUploadButton" onclick="showDocumentManager();" />
-						<s:hidden name="docNumberOutcome" id="docNumber" />
-					</td> --%>
+				
 
 				</tr>
 

@@ -60,12 +60,13 @@
 						<s:textarea name="objection.inspections[%{inspectionIdx}].inspectionRemarks"
 							id="inspectionRemarks" cols="40" rows="2" onblur="checkLength(this)"></s:textarea>
 					</td>
-					<%-- <td class="bluebox" width="25%"><s:text name="objection.upload.document"/></td>
 					<td class="bluebox" width="25%">
-						<input type="button" class="button" value="Upload Document"
-							id="docUploadButton" onclick="showDocumentManager();" />
-						<s:hidden name="objection.inspections[%{inspectionIdx}].documentNumber" id="docNumber" />
-					</td> --%>
+						<s:text name="revisionPetition.generateSpecialNotice" />
+					</td>
+					<td class="bluebox" width="25%">
+						<s:radio name="generateSpecialNotice"
+							list="#{'true':'Yes','false':'No'}" id="generateSpecialNotice" value="%{generateSpecialNotice}" />
+					</td>
 
 				</tr>
 				

@@ -138,7 +138,7 @@
 		</td>
 	<td class="greybox siteowner"><s:text name="siteowner"></s:text><span class="mandatory1"> *</span> :</td>
 		<td class="greybox siteowner"><s:textfield maxlength="64" value="%{property.propertyDetail.siteOwner}"
-				name="property.propertyDetail.siteOwner" id="property.propertyDetail.siteOwner"></s:textfield></td>
+				name="property.propertyDetail.siteOwner" id="siteOwner"></s:textfield></td>
 	</tr>
 	
 	<tr>
@@ -160,9 +160,13 @@
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text>
 			<span class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propTypeId"
-				id="propTypeId" listKey="id" listValue="type" list="dropdownData.PropTypeMaster" value="%{property.propertyDetail.propertyTypeMaster.id}"
-				cssClass="selectnew" onchange="populatePropTypeCategory();toggleFloorDetails();enableFieldsForPropType();" /></td>
+		<td class="greybox" width="">
+		   <s:hidden id="property.propertyDetail.id" name="property.propertyDetail.id" value="%{property.propertyDetail.id}" />
+			 <s:hidden id="property.id" name="property.id" value="%{property.id}" />
+			<s:select headerKey="-1" headerValue="%{getText('default.select')}" name="property.propertyDetail.propertyTypeMaster.id"
+				id="property.propertyDetail.propertyTypeMaster.id" listKey="id" listValue="type" list="dropdownData.PropTypeMaster" value="%{property.propertyDetail.propertyTypeMaster.id}"
+				cssClass="selectnew" onchange="populatePropTypeCategory();toggleFloorDetails();enableFieldsForPropType();"  disabled="true"/></td>
+			  <s:hidden id="propTypeId" name="propTypeId" value="%{property.propertyDetail.propertyTypeMaster.id}" />
 				
 		<td class="greybox" width="25%"><s:text name="property.type"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
@@ -199,7 +203,7 @@
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="extent.appurtntland"></s:text>
 			<span class="mandatory1">*</span> :</td>
-		<td class="greybox"><s:textfield name="property.propertyDetail.extentAppartenauntLand" id="property.propertyDetail.extentAppartenauntLand"
+		<td class="greybox"><s:textfield name="property.propertyDetail.extentAppartenauntLand" id="extentAppartenauntLand"
 				value="%{property.propertyDetail.extentAppartenauntLand}" size="12"	maxlength="12" onchange="trim(this,this.value);"
 				onblur="validNumber(this);checkZero(this);"></s:textfield>
 		</td>
@@ -221,13 +225,13 @@
 	<tr class="bpddetails">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="building.permNo"></s:text><span class="mandatory1"> *</span> :</td>
-		<td class="greybox"><s:textfield name="property.propertyDetail.buildingPermissionNo" id="property.propertyDetail.buildingPermissionNo" size="12" maxlength="12"
+		<td class="greybox"><s:textfield name="property.propertyDetail.buildingPermissionNo" id="buildingPermissionNo" size="12" maxlength="12"
 				onchange="trim(this,this.value);" onblur="checkZero(this);" value="%{property.propertyDetail.buildingPermissionNo}"></s:textfield>
 		</td>
 		<td class="greybox"><s:text name="buildingpermdate"></s:text><span class="mandatory1"> *</span> :</td>
 		<td class="greybox"><s:date name="property.propertyDetail.buildingPermissionDate" var="buildingPermDate" format="dd/MM/yyyy" /> 
 		<s:textfield name="property.propertyDetail.buildingPermissionDate" cssClass="datepicker" value="%{#buildingPermDate}" autocomplete="off"
-				id="property.propertyDetail.buildingPermissionDate" size="12" maxlength="12"></s:textfield>
+				id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
 		</td>
 
 	</tr>
@@ -236,7 +240,7 @@
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="deviationper"></s:text><span class="mandatory1"> *</span> :</td>
 		<td class="bluebox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="property.propertyDetail.deviationPercentage"
-				id="property.propertyDetail.deviationPercentage" listKey="key" listValue="value" list="deviationPercentageMap" value="%{property.propertyDetail.deviationPercentage}"
+				id="deviationPercentage" listKey="key" listValue="value" list="deviationPercentageMap" value="%{property.propertyDetail.deviationPercentage}"
 				cssClass="selectnew"/>
 		</td>
 		<td class="bluebox" colspan="2">

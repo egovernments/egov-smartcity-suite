@@ -39,269 +39,164 @@
 #  
 #-------------------------------------------------------------------------------*/
 function onSubmit(obj) {
-	document.forms[0].action=obj; 
+	document.forms[0].action = obj;
 	document.forms[0].submit;
-   return true;
+	return true;
 }
 
+function showPropertyHeaderTab() {
+	document.getElementById('property_header').style.display = '';
+	setCSSClasses('propertyHeaderTab', 'First Active');
+	setCSSClasses('objectionDetailTab', '');
+	hideObjectionHeaderTab();
 
+}
+function showObjectionHeaderTab() {
+	document.getElementById('objection_header').style.display = '';
+	setCSSClasses('propertyHeaderTab', 'First BeforeActive');
+	setCSSClasses('objectionDetailTab', 'Last Active ActiveLast');
+	hidepropertyHeaderTab();
 
-function showPropertyHeaderTab(){
-		document.getElementById('property_header').style.display='';
-		setCSSClasses('propertyHeaderTab','First Active');
-		setCSSClasses('objectionDetailTab','');
-		//setCSSClasses('approvalTab','Last');
-		hideObjectionHeaderTab();
-		//hideApprovalHeaderTab();
-		
-	}
-	function showObjectionHeaderTab(){
-		document.getElementById('objection_header').style.display='';
-		setCSSClasses('propertyHeaderTab','First BeforeActive');
-		setCSSClasses('objectionDetailTab','Last Active ActiveLast');
-	//	setCSSClasses('approvalTab','Last');
-		hidepropertyHeaderTab();
-	//	hideApprovalHeaderTab();
-		
-	}
-	/*
-	function showApprovalTab(){
-		document.getElementById('approval_header').style.display='';
-		setCSSClasses('propertyHeaderTab','First');
-		setCSSClasses('objectionDetailTab','BeforeActive');
-		setCSSClasses('approvalTab','Last Active ActiveLast');
-		hidepropertyHeaderTab();
-		hideObjectionHeaderTab();
-  		
-	} */
-	
-	function setCSSClasses(id,classes){
-    		 document.getElementById(id).setAttribute('class',classes);
-   		    document.getElementById(id).setAttribute('className',classes);
-	}
-	function hidepropertyHeaderTab(){
-			document.getElementById('property_header').style.display='none';
-	}
-	function hideObjectionHeaderTab(){
-			document.getElementById('objection_header').style.display='none';
-	}
-	function hideApprovalHeaderTab(){
-			document.getElementById('approval_header').style.display='none';
-			
-	}
-function checkLength(obj){
-	if(obj.value.length>1024)
-	{
+}
+
+function setCSSClasses(id, classes) {
+	document.getElementById(id).setAttribute('class', classes);
+	document.getElementById(id).setAttribute('className', classes);
+}
+function hidepropertyHeaderTab() {
+	document.getElementById('property_header').style.display = 'none';
+}
+function hideObjectionHeaderTab() {
+	document.getElementById('objection_header').style.display = 'none';
+}
+function hideApprovalHeaderTab() {
+	document.getElementById('approval_header').style.display = 'none';
+
+}
+function checkLength(obj) {
+	if (obj.value.length > 1024) {
 		alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
-		obj.value = obj.value.substring(1,1024);
+		obj.value = obj.value.substring(1, 1024);
 	}
 }
 
-function validateRecordObjections(){
-	document.getElementById("lblError").style.display='none';
-	/*if(dom.get('recievedOn').value==''){ 
-		alert('Please enter Revision Petition Received Date');
-		return false;
-	}
-	else if(dom.get('recievedBy').value==''){
-		alert('Please enter Revision Petition Received By');
-		return false;
-	}
-	else */ 
-	if(dom.get('details').value==''){
+function validateRecordObjections() {
+	document.getElementById("lblError").style.display = 'none';
+
+	if (dom.get('details').value == '') {
 		alert('Please enter Revision Petition Details');
 		return false;
 	}
 	return true;
 }
 
-function validateHearingDate(){
-//	document.getElementById("lblError").style.display='none';
-	//document.getElementById("workflowBean.actionName").value=obj.value;
-	
-	if( dom.get('plannedHearingDt').value == ""){
-		//document.getElementById("lblError").style.display='block';
-		//document.getElementById("lblError").innerHTML ='Please enter Hearing Date';
+function validateHearingDate() {
+
+	if (dom.get('plannedHearingDt').value == "") {
 		alert('Please enter Hearing Date');
 		return false;
-	}else if( dom.get('hearingTime').value == ""){
-	//	document.getElementById("lblError").style.display='block';
-		//document.getElementById("lblError").innerHTML ='Please enter Hearing Time';
+	} else if (dom.get('hearingTime').value == "") {
 		alert('Please enter Hearing time');
 		return false;
-	}else if( dom.get('hearingVenue').value == ""){
-		//document.getElementById("lblError").style.display='block';
-	//	document.getElementById("lblError").innerHTML ='Please enter Venue';
+	} else if (dom.get('hearingVenue').value == "") {
 		alert('Please enter Hearing venue');
 		return false;
 	}
 	return true;
 }
-/*function validateIsHearningNoticeGenerated(obj)
-{  
-	document.getElementById("lblError").style.display='none';
-	document.getElementById("workflowBean.actionName").value=obj.value;
 
-	if(validateApproval(obj))
-		onSubmit('revPetition-generateHearingNotice.action');  
-	else
-		return false;
-}*/
-function printHearingNotice()
-{
+function printHearingNotice() {
 	var url;
-	//alert(document.getElementById("model.id").value);
 	url = "/ptis/revPetition/revPetition-printHearingNotice.action?objectionId="
-		+ document.getElementById("model.id").value ;
-	document.getElementById("lblError").style.display='none';
-	//document.getElementById("workflowBean.actionName").value=obj.value;
+			+ document.getElementById("model.id").value;
+	document.getElementById("lblError").style.display = 'none';
 
-	window.open(url, 'printHearingNotice', 'width=1000,height=400');   
-	
+	window.open(url, 'printHearingNotice', 'width=1000,height=400');
+
 }
 
-function printEnodresementNotice(obj)
-{
+function printEnodresementNotice(obj) {
 	var url;
-	//alert(document.getElementById("model.id").value);
 	url = "/ptis/revPetition/revPetition-printEnodresementNotice.action?objectionId="
-		+ document.getElementById("model.id").value ;
-	document.getElementById("lblError").style.display='none';
-	document.getElementById("workflowBean.actionName").value=obj.value;
+			+ document.getElementById("model.id").value;
+	document.getElementById("lblError").style.display = 'none';
+	document.getElementById("workflowBean.actionName").value = obj.value;
 
-	window.open(url, 'printEnodresementNotice', 'width=1000,height=400');   
-	
+	window.open(url, 'printEnodresementNotice', 'width=1000,height=400');
+
 }
 
-function validateRecordHearing(){
-	
-	//document.getElementById("lblError").style.display='none';
-	//document.getElementById("workflowBean.actionName").value=obj.value;
-	
-	if( dom.get('hearingDetails').value == ""){
-		
-	//	document.getElementById("lblError").style.display='block';
-	//	document.getElementById("lblError").innerHTML ='Please enter Hearing Details';
+function validateRecordHearing() {
+
+	if (dom.get('hearingDetails').value == "") {
 		alert('Please enter Hearing Details');
 		return false;
-	}
-	else if(dom.get('inspectionRequiredtrue').checked == false && dom.get('inspectionRequiredfalse').checked == false ){
-		
-	//	document.getElementById("lblError").style.display='block';
-	//	document.getElementById("lblError").innerHTML ='Please choose if Inspection Required or not';
+	} else if (dom.get('inspectionRequiredtrue').checked == false
+			&& dom.get('inspectionRequiredfalse').checked == false) {
 		alert('Please choose if Inspection Required or not');
 		return false;
 	}
-	/*else { 
-		if(validateApproval(obj))
-		{	
-			onSubmit('revPetition-recordHearingDetails.action');  
-		}
-			else 
-			return false;
-	}*/
+
 	return true;
 }
 
-/*function validateInspectionDetails(obj)
-{
-	document.getElementById("lblError").style.display='none';
-	document.getElementById("workflowBean.actionName").value=obj.value;
-	if(validateApproval(obj))
-	{	
-		onSubmit('revPetition-validateInspectionDetails.action');  
-	}
-		else
-		return false;
-	}*/
-function validateRecordInspection(){
-	
-	//document.getElementById("lblError").style.display='none';
-	//document.getElementById("workflowBean.actionName").value=obj.value;
-	
-	if( dom.get('inspectionRemarks').value == ""){
-		//document.getElementById("lblError").style.display='block';
-	//	document.getElementById("lblError").innerHTML ='Please enter Inspection Remark';
+function validateRecordInspection() {
+
+	/*
+	 if (dom.get('generateSpecialNotice').checked == false) {
+			alert('Please choose whether special Notice to be generate after final approval');
+			return false;
+		}
+	*/	
+	if (dom.get('inspectionRemarks').value == "") {
 		alert('Please enter Inspection Remark');
 		return false;
-	}/*else{ 
-		
-		if(validateApproval(obj))
-		{	
-			onSubmit('revPetition-recordInspectionDetails.action');  
-		}
-			else
-			return false;
-	}*/return true;
-}
-
-/*function validateEndoresementNoticeGenerated(obj)
-{	document.getElementById("lblError").style.display='none';
-document.getElementById("workflowBean.actionName").value=obj.value;
-if(validateApproval(obj))
-{	
-	onSubmit('revPetition-generateEnodresementNotice.action');  
-}
-	else
-	return false;  
-	}*/
-function validateObjectionOutcome(obj){
-	//document.getElementById("lblError").style.display='none';
-	//document.getElementById("workflowBean.actionName").value=obj.value;
-	
-	if(dom.get('objectionRejectedtrue').checked == false && dom.get('objectionRejectedfalse').checked == false ){
-		
-	//	document.getElementById("lblError").style.display='block';
-	//	document.getElementById("lblError").innerHTML ='Please choose if Objection Accepted or Rejected';
-		alert('Please choose if Revision Petition Accepted or Rejected');
+	}
+	 /*if (dom.get('generateSpecialNotice').checked == false) {
+		alert('Please choose whether special Notice to be generate after final approval');
 		return false;
-	}
-	else if(dom.get('dateOfOutcome').value == ''){
-	//	document.getElementById("lblError").style.display='block';
-	//	document.getElementById("lblError").innerHTML ='Please enter Outcome Date';
-		alert('Please enter Outcome Date'); return false;
-	}
-	else if(dom.get('outcomeRemarks').value == ''){
-		//document.getElementById("lblError").style.display='block';
-	//	document.getElementById("lblError").innerHTML ='Please enter Outcome Remarks';
-		alert('Please enter Outcome Remarks'); return false;
-	} 
-	/*else { 
-		if(validateApproval(obj))
-		{	
-			onSubmit('revPetition-recordObjectionOutcome.action');  
-		}
-			else
-			return false;  
 	}*/
 	return true;
 }
 
-function validateApproval(obj){
-	 if(obj.value.toUpperCase()=="REJECT" || obj.value.toUpperCase()=="SAVE" || obj.value.toUpperCase()=="APPROVE" || obj.value.toUpperCase()=="Generate Notice")
-	{
-		return true;
-	}
-	else if(document.getElementById("approverUserId") && document.getElementById("approverUserId").value=="-1")
-	{	
-		document.getElementById("lblError").style.display='block';
-		document.getElementById("lblError").innerHTML ='Please select approver ';
+function validateObjectionOutcome(obj) {
+	
+	if (dom.get('dateOfOutcome').value == '') {
+		alert('Please enter Outcome Date');
 		return false;
-	}else
-	{
-		return true;
+	} else if (dom.get('outcomeRemarks').value == '') {
+		alert('Please enter Outcome Remarks');
+		return false;
 	}
-	
-	
+
+	return true;
 }
 
-function showDocumentManager(){
-		var docNum= document.getElementById("docNumber").value;
-  		var url;
-  		if(docNum==null||docNum==''||docNum=='To be assigned'){
-       			 url="/egi/docmgmt/basicDocumentManager.action?moduleName=ptis";
-  		} else {
-       			 url = "/egi/docmgmt/basicDocumentManager!editDocument.action?docNumber="+docNum+"&moduleName=ptis";
- 		 }
-     		 window.open(url,'docupload','width=1000,height=400');
+function validateApproval(obj) {
+	if (obj.value.toUpperCase() == "REJECT"
+			|| obj.value.toUpperCase() == "SAVE"
+			|| obj.value.toUpperCase() == "APPROVE"
+			|| obj.value.toUpperCase() == "Generate Notice") {
+		return true;
+	} else if (document.getElementById("approverUserId")
+			&& document.getElementById("approverUserId").value == "-1") {
+		document.getElementById("lblError").style.display = 'block';
+		document.getElementById("lblError").innerHTML = 'Please select approver ';
+		return false;
+	} else {
+		return true;
+	}
+
+}
+
+function showDocumentManager() {
+	var docNum = document.getElementById("docNumber").value;
+	var url;
+	if (docNum == null || docNum == '' || docNum == 'To be assigned') {
+		url = "/egi/docmgmt/basicDocumentManager.action?moduleName=ptis";
+	} else {
+		url = "/egi/docmgmt/basicDocumentManager!editDocument.action?docNumber="
+				+ docNum + "&moduleName=ptis";
+	}
+	window.open(url, 'docupload', 'width=1000,height=400');
 }

@@ -259,6 +259,10 @@
 						<th class="bluebgheadtd">
 							<s:text name="objection.status" />
 						</th>
+						<th class="bluebgheadtd">
+							<s:text name="revisionPetition.generateSpecialNotice" />
+						</th>
+			
 					</tr>
 					<s:iterator value="%{inspections}">
 						<tr>
@@ -273,7 +277,10 @@
 									<s:property default="N/A" value="%{egwStatus.description}" />
 								</div>
 							</td>
-							<td class="greybox"></td>
+							<td class="greybox">	<div align="center">
+							<s:if test="%{generateSpecialNotice}">Yes</s:if>
+									<s:else>No</s:else>
+							</div></td>
 						</tr>
 					</s:iterator>
 				</table>
@@ -303,9 +310,6 @@
 						<th class="bluebgheadtd">
 							<s:text name="outcome.date" />
 						</th>
-						<th class="bluebgheadtd">
-							<s:text name="outcome.rejected" />
-						</th>
 						
 						<th class="bluebgheadtd">
 							
@@ -324,14 +328,6 @@
 									<s:property default="N/A" value="%{dateOfOutcomeFmt}" />
 								</div>
 						</td>
-							<td class="greybox">
-								<div align="center">
-									<s:if test="%{objectionRejected}">Yes</s:if>
-									<s:else>No</s:else>
-									
-								</div>
-							</td>	
-							
 						
 						</tr>
 					
