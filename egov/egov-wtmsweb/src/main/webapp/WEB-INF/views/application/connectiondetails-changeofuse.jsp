@@ -77,12 +77,12 @@
 			<label class="col-sm-3 control-label text-right"><spring:message
 					code="lbl.category" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="category" data-first-option="false"
+				<form:select path="category" data-first-option="false" id="connectionCategorie"
 					cssClass="form-control" required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
-					<form:options items="${connectionCategories}" itemValue="id"
+					<form:options items="${connectionCategories}" itemValue="id" 
 						itemLabel="name" />
 				</form:select>
 				<form:errors path="category" cssClass="add-margin error-msg" />
@@ -149,6 +149,7 @@
 			<form:errors path="numberOfPerson" cssClass="add-margin error-msg" />		
 		</div>
 		</div>
+		<form:hidden id="typeOfConnection" path="" value="${typeOfConnection}"/>
 		<div class="form-group">
 				<label class="col-sm-3 control-label text-right"><spring:message
 					code="lbl.reason.changeofuse" /><span class="mandatory"></span></label> 

@@ -217,6 +217,7 @@ public class ChangeOfUseController extends GenericConnectionController {
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("validationMessage",
                 changeOfUseService.validateChangeOfUseConnection(parentConnectionDetails));
+        model.addAttribute("typeOfConnection", WaterTaxConstants.CHANGEOFUSE);
     }
 
 }

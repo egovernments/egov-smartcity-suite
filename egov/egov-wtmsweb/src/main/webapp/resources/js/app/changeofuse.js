@@ -90,7 +90,80 @@ $(document).ready(function(){
 	    	$("#bplCardHolderName").removeAttr('required');
 		}
 	});
+	$('#propertyType').change(function(){
+		 loadPropertyCategories();
+		 loadPropertyUsageTypes();
+		 loadPropertyPipeTypes();
+});
+	function loadPropertyPipeTypes(){
 	
+      $.ajax({
+			url: "/wtms/ajax-PipeSizesByPropertyType",     
+			type: "GET",
+			data: {
+				propertyType: $('#propertyType').val()  
+			},
+			dataType: "json",
+			success: function (response) {
+			    console.log("success"+response);
+				$('#pipeSize').empty();
+				$('#pipeSize').append($("<option value=''>Select from below</option>"));
+				$.each(response, function(index, value) {
+				$('#pipeSize').append($('<option>').text(value.code).attr('value', value.id))
+				});
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
+		
+	}
+	function loadPropertyUsageTypes(){
+		$.ajax({
+			url: "/wtms/ajax-UsageTypeByPropertyType",     
+			type: "GET",
+			data: {
+				propertyType: $('#propertyType').val()  
+			},
+			dataType: "json",
+			success: function (response) {
+				console.log("success"+response);
+				$('#usageType').empty();
+				$('#usageType').append($("<option value=''>Select from below</option>"));
+				$.each(response, function(index, value) {
+					$('#usageType').append($('<option>').text(value.name).attr('value', value.id))
+				});
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
+	}
+	
+	function loadPropertyCategories(){
+		
+	$.ajax({
+		url: "/wtms/ajax-CategoryTypeByPropertyType",     
+		type: "GET",
+		data: {
+			propertyType: $('#propertyType').val() ,
+			connectionType: $('#typeOfConnection').val()
+		},
+		dataType: "json",
+		success: function (response) {
+			console.log("success"+response);
+			$('#connectionCategorie').empty();
+			$('#connectionCategorie').append($("<option value=''>Select from below</option>"));
+			$.each(response, function(index, value) {
+				$('#connectionCategorie').append($('<option>').text(value.name).attr('value', value.id))
+			});
+			
+		}, 
+		error: function (response) {
+			console.log("failed");
+		}
+	});
+	}
 	function loadPropertyDetails() {
 		propertyID=$('#propertyIdentifier').html()
 		if(propertyID != '') {
