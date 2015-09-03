@@ -45,6 +45,7 @@ import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.repository.UsageTypeRepository;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -112,8 +113,19 @@ public class UsageTypeService {
         return usageTypeRepository.getAllUsageTypesByPropertyType(propertyType);
     }
 
-    public List<ConnectionCategory> getAllCategoryTypesByPropertyType(final Long propertyType) {
-        return usageTypeRepository.getAllCategoryTypesByPropertyType(propertyType);
+    public List<ConnectionCategory> getAllCategoryTypesByPropertyType(final Long propertyType, final String connectionType) {
+        if (connectionType.equals(WaterTaxConstants.ADDNLCONNECTION))
+            
+        {
+            System.out.println("came here--->");
+            return usageTypeRepository.getAllCategoryTypesByPropertyTypeNotInBPL(propertyType); 
+           
+        }
+        else
+        {
+            System.out.println("else came here--->");
+            return usageTypeRepository.getAllCategoryTypesByPropertyType(propertyType);
+        }
     }
 
     public List<PipeSize> getAllPipeSizesByPropertyType(final Long propertyType) {

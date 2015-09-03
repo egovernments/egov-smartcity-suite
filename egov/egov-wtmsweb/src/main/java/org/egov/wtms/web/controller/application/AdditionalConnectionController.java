@@ -122,6 +122,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
         model.addAttribute("mode", "addconnection");
         model.addAttribute("validationMessage",
                 additionalConnectionService.validateAdditionalConnection(parentConnectionDetails));
+        model.addAttribute("typeOfConnection", WaterTaxConstants.ADDNLCONNECTION);
     }
 
     @RequestMapping(value = "/addconnection/addConnection-create", method = RequestMethod.POST)

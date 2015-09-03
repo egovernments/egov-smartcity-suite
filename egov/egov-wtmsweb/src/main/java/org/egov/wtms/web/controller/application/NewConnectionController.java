@@ -116,6 +116,7 @@ public class NewConnectionController extends GenericConnectionController {
                 waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
         model.addAttribute("documentName", waterTaxUtils.documentRequiredForBPLCategory());
+        model.addAttribute("typeOfConnection", WaterTaxConstants.NEWCONNECTION);
         return "newconnection-form";
     }
 

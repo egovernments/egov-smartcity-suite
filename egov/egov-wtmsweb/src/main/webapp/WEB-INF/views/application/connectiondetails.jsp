@@ -55,11 +55,13 @@
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
+			
 			<form:options items="${waterSourceTypes}" itemValue="id"
 				itemLabel="waterSourceType" />
 		</form:select>
 		<form:errors path="waterSource" cssClass="add-margin error-msg" />
 	</div>
+	
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.connectiontype" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
@@ -159,7 +161,7 @@
 		<form:errors path="bplCardHolderName" cssClass="add-margin error-msg" />		
 	</div>
 </div>
-
+<form:hidden id="typeOfConnection" path="" value="${typeOfConnection}"/>
 <c:if test="${mode=='addconnection'}">
 <div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message

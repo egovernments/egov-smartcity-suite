@@ -75,9 +75,9 @@ public class AjaxConnectionController {
 
     @RequestMapping(value = "/ajax-CategoryTypeByPropertyType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<ConnectionCategory> getAllCategoryTypesByPropertyType(
-            @RequestParam final Long propertyType) {
+            @RequestParam final Long propertyType,@RequestParam final String connectionType) {
         List<ConnectionCategory> categoryTypes = new ArrayList<ConnectionCategory>(0);
-        categoryTypes = usageTypeService.getAllCategoryTypesByPropertyType(propertyType);
+        categoryTypes = usageTypeService.getAllCategoryTypesByPropertyType(propertyType ,connectionType);
         categoryTypes.forEach(categoryType -> categoryType.toString());
         return categoryTypes;
     }

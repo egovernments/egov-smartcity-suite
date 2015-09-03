@@ -39,6 +39,9 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
 	
+	connectionType: $('#typeOfConnection').val();
+	alert(connectionType);
+	
 	$('#propertyType').change(function(){
 		 loadPropertyCategories();
 		 loadPropertyUsageTypes();
@@ -90,11 +93,14 @@ $(document).ready(function(){
 	}
 	
 	function loadPropertyCategories(){
+		
 	$.ajax({
 		url: "/wtms/ajax-CategoryTypeByPropertyType",     
 		type: "GET",
 		data: {
-			propertyType: $('#propertyType').val()  
+			propertyType: $('#propertyType').val() ,
+			connectionType: $('#typeOfConnection').val()
+			
 		},
 		dataType: "json",
 		success: function (response) {
@@ -104,6 +110,7 @@ $(document).ready(function(){
 			$.each(response, function(index, value) {
 				$('#connectionCategorie').append($('<option>').text(value.name).attr('value', value.id))
 			});
+			$("#connectionCategorie option[value='BPL']").remove();
 		}, 
 		error: function (response) {
 			console.log("failed");
