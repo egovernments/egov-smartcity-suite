@@ -225,7 +225,8 @@ public class AssetAction extends SearchFormAction {
         if (asset.getArea() != null || areaId != null) {
             final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(AREA_BOUNDARY_TYPE,
                     hType);
-            areaList = boundaryService.getAllBoundariesByBoundaryTypeId(bType.getId());
+            if(bType != null)
+                areaList = boundaryService.getAllBoundariesByBoundaryTypeId(bType.getId());
         }
         addDropdownData("areaList", areaList);
         addDropdownData("parentCatList", assetCategoryService.getAllParentAssetCategory());
@@ -484,9 +485,9 @@ public class AssetAction extends SearchFormAction {
     public String list() throws Exception {
         setAssetType(assetType);
         if (departmentId == null && locationId == null && assetType == null
-                && (code == null || code.trim().equalsIgnoreCase(""))
-                && (description == null || description.trim().equalsIgnoreCase(""))
-                && (statusId == null || statusId.isEmpty()) && zoneId == -1) {
+                && (code == null || (code != null && code.trim().equalsIgnoreCase("")))
+                && (description == null || (description != null && description.trim().equalsIgnoreCase("")))
+                && (statusId == null || (statusId != null && statusId.isEmpty())) && zoneId == -1) {
             messageKey = "message.mandatory";
             addActionError(getText(messageKey, "At least one selection is required"));
             return SEARCH;
@@ -951,7 +952,8 @@ public class AssetAction extends SearchFormAction {
 
         if (parentCategoryId != null && parentCategoryId != -1
                 && (subCategoryIds == null || subCategoryIds.size() == 1 && subCategoryIds.get(0) == -1)) {
-            sql.append(" and asset.assetCategory.parent.id = ? ");
+            sql.append(" and (asset.assetCategory.id = ? or asset.assetCategory.parent.id = ?) ");
+            parameters.add(parentCategoryId);
             parameters.add(parentCategoryId);
         } else if (parentCategoryId != null && parentCategoryId != -1 && subCategoryIds != null
                 && !subCategoryIds.isEmpty()) {

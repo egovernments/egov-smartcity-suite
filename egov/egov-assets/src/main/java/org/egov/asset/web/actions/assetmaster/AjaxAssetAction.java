@@ -153,8 +153,8 @@ public class AjaxAssetAction extends BaseFormAction {
             throw new EGOVRuntimeException("Unable to load areas information", e);
         }
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(AREA_BOUNDARY_TYPE, hType);
-        areaList = boundaryService.getAllBoundariesByBoundaryTypeId(bType.getId());
-        LOGGER.info("***********Ajax AreaList: " + areaList.toString());
+        if(bType != null)
+            areaList = boundaryService.getAllBoundariesByBoundaryTypeId(bType.getId());
         return AREAS;
     }
 
