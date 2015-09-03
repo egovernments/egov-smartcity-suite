@@ -47,8 +47,8 @@ import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.service.BaseLicenseService;
 import org.egov.tl.domain.service.LicenseReportService;
-import org.egov.tl.domain.web.BaseLicenseAction;
 import org.egov.tl.utils.Constants;
+import org.egov.tl.web.BaseLicenseAction;
 
 public class TradeLicenseReportsAction extends BaseLicenseAction {
 

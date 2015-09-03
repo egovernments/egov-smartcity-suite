@@ -37,49 +37,52 @@
  *  
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
-package org.egov.tl.domain.web;
+package org.egov.tl.citizen.uploaddocument;
 
-import java.lang.reflect.Field;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
-public class ToString {
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		try {
-			boolean x;
-			String pack="org.egov.tl.domain.entity.";
-			String name="Licensee";
-			Class<?> l = Class.forName(pack+name);
-			Field[] declaredFields = l.getDeclaredFields();
-			StringBuilder strBuilder = new StringBuilder();
-			strBuilder.append("StringBuilder str=new StringBuilder();\n")
-			.append("str.append(\"").append(name).append("={\");");
-					
-			for (Field f : declaredFields) {
-			
-				if(f.getName().equalsIgnoreCase("LOGGER"))
-					continue;
-				//System.out.println(f.getName()+""+f.getClass()+""+f.getName());
-				if (!f.getType().getSimpleName().equalsIgnoreCase("boolean") 
-				&& !f.getType().getSimpleName().equalsIgnoreCase("int")
-				&& !f.getType().getSimpleName().equalsIgnoreCase("long")
-				&& !f.getType().getSimpleName().equalsIgnoreCase("double")
-				) {
-				
-					// strBuilder.append(f==null?"null":"hi");
-					 strBuilder.append("str.append(\"  ").append(f.getName()).append("=\")")
-					 .append(".append(").append(f.getName()).append("==null?").append("\"null\":")
-					 .append(f.getName()).append(".toString());	");
-				} else {
-					strBuilder.append("str.append(\"  ").append(f.getName()).append("=\")").append(".append(").append(f.getName()).append(");    ");
-				}
-			}
-			strBuilder.append("str.append(\"}\");\n return str.toString();");
-			System.out.println(strBuilder.toString());
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+import org.apache.struts2.interceptor.ServletRequestAware;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.tl.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
+
+public class AjaxDocumentDownloadAction /*extends AjaxFileDownloadAction*/ implements ServletRequestAware {
+
+    private static final long serialVersionUID = 1L;
+
+    private HttpSession session = null;
+    private HttpServletRequest request;
+    private Long userId;
+    @Autowired
+    private UserService userService;
+
+    /*@Override
+    public String execute() {
+        super.execute();
+        setUserDetails();
+        return SUCCESS;
+    }*/
+
+    @Override
+    public void setServletRequest(HttpServletRequest arg0) {
+        this.request = arg0;
+    }
+
+    private void setUserDetails() {
+        session = request.getSession();
+        String userName = (String) session.getAttribute("com.egov.user.LoginUserName");
+        final User user;
+        if (userName != null) {
+            user = userService.getUserByUsername(userName);
+        } else {
+            user = userService.getUserByUsername(Constants.CITIZENUSER);
+            session.setAttribute("com.egov.user.LoginUserName", user.getName());
+        }
+        userId = user.getId();
+        EgovThreadLocals.setUserId(userId);
+    }
+
 }

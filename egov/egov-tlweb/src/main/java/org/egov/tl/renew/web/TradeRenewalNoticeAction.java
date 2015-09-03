@@ -44,8 +44,8 @@ import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.TradeLicense;
 import org.egov.tl.domain.service.BaseLicenseService;
 import org.egov.tl.domain.service.TradeService;
-import org.egov.tl.domain.web.BaseLicenseAction;
 import org.egov.tl.utils.Constants;
+import org.egov.tl.web.BaseLicenseAction;
 
 public class TradeRenewalNoticeAction extends BaseLicenseAction {
 

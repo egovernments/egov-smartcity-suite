@@ -55,8 +55,8 @@ import org.egov.tl.domain.entity.MotorDetails;
 import org.egov.tl.domain.entity.TradeLicense;
 import org.egov.tl.domain.service.BaseLicenseService;
 import org.egov.tl.domain.service.TradeService;
-import org.egov.tl.domain.web.BaseLicenseAction;
 import org.egov.tl.utils.Constants;
+import org.egov.tl.web.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.EmailValidator;

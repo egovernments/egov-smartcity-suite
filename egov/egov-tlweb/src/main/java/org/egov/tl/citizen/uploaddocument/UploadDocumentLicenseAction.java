@@ -37,7 +37,7 @@
  *  
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
-package org.egov.tl.domain.citizen.uploaddocument;
+package org.egov.tl.citizen.uploaddocument;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;

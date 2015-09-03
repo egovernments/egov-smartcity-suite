@@ -53,9 +53,9 @@ import org.egov.tl.domain.entity.SubCategory;
 import org.egov.tl.domain.entity.TradeLicense;
 import org.egov.tl.domain.service.BaseLicenseService;
 import org.egov.tl.domain.service.TradeService;
-import org.egov.tl.domain.web.BaseLicenseAction;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
+import org.egov.tl.web.BaseLicenseAction;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;

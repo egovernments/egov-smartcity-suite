@@ -37,7 +37,7 @@
  *
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
-package org.egov.tl.domain.web;
+package org.egov.tl.web;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

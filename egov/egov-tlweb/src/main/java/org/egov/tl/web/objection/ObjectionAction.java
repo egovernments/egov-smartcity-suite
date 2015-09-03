@@ -37,7 +37,7 @@
  *
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
-package org.egov.tl.domain.web.objection;
+package org.egov.tl.web.objection;
 
 import java.util.ArrayList;
 import java.util.Collections;
