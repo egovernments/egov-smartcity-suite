@@ -108,10 +108,10 @@ import com.lowagie.text.pdf.PdfWriter;
 @Namespace("/reports")
 @ResultPath("/WEB-INF/jsp/")
 @Results({
-        @Result(name = SearchNoticesAction.SUCCESS, type = "stream", params = { "contentType", "${contentType}", "inputName",
-                "fileStream", "contentDisposition", "attachment; filename=${fileName}" }),
-        @Result(name = "RENDER_NOTICE", location = "/commons/htmlFileRenderer.jsp"),
-        @Result(name = SearchNoticesAction.INDEX, location = "reports/searchNotices.jsp") })
+    @Result(name = SearchNoticesAction.SUCCESS, type = "stream", params = { "contentType", "${contentType}", "inputName",
+            "fileStream", "contentDisposition", "attachment; filename=${fileName}" }),
+            @Result(name = "RENDER_NOTICE", location = "/commons/htmlFileRenderer.jsp"),
+            @Result(name = SearchNoticesAction.INDEX, location = "reports/searchNotices.jsp") })
 public class SearchNoticesAction extends SearchFormAction {
     private static final Logger LOGGER = Logger.getLogger(SearchNoticesAction.class);
     private static final long serialVersionUID = 1L;

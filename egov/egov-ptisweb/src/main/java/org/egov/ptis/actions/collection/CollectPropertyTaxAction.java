@@ -70,8 +70,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Namespace("/collection")
 @ResultPath("/WEB-INF/jsp/")
 @Results({
-        @Result(name = CollectPropertyTaxAction.RESULT_VIEW, location = "collection/collectPropertyTax-view.jsp"),
-        @Result(name = CollectPropertyTaxAction.RESULT_TAXPAID, location = "collection/collectPropertyTax-taxPaid.jsp")
+    @Result(name = CollectPropertyTaxAction.RESULT_VIEW, location = "collection/collectPropertyTax-view.jsp"),
+    @Result(name = CollectPropertyTaxAction.RESULT_TAXPAID, location = "collection/collectPropertyTax-taxPaid.jsp")
 })
 @ParentPackage("egov")
 public class CollectPropertyTaxAction extends BaseFormAction {

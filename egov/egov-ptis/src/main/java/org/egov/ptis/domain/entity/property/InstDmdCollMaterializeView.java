@@ -1,40 +1,40 @@
 /*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
+ *
+ * 	1) All versions of this program, verbatim or modified must carry this
  * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
+ *
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It
+ * 	   is required that all modified versions of this material be marked in
  * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
+ *
+ * 	3) This license does not grant any rights to any user of the program
+ * 	   with regards to rights under trademark law for use of the trade names
  * 	   or trademarks of eGovernments Foundation.
- * 
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
@@ -46,160 +46,195 @@ import java.util.Date;
 import org.egov.commons.Installment;
 
 public class InstDmdCollMaterializeView implements Serializable {
-    
-   	private PropertyMaterlizeView propMatView;
-	private Installment installment;
-	private BigDecimal generalTax;
-	private BigDecimal libCessTax;
-	private BigDecimal eduCessTax;
-	private BigDecimal unauthPenaltyTax;
-	private BigDecimal penaltyFinesTax;
-	private BigDecimal sewTax;
-	private BigDecimal vacantLandTax;
-	private BigDecimal pubSerChrgTax;
-	
-	private BigDecimal generalTaxColl;
-	private BigDecimal libCessTaxColl;
-	private BigDecimal eduCessTaxColl;
-	private BigDecimal unauthPenaltyTaxColl;
-	private BigDecimal penaltyFinesTaxColl;
-	private BigDecimal sewTaxColl;
-	private BigDecimal vacantLandTaxColl;
-	private BigDecimal pubSerChrgTaxColl;
-	private Date createdDate;
-	
-	
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 3736399639203706920L;
+    private PropertyMaterlizeView propMatView;
+    private Installment installment;
+    private BigDecimal generalTax;
+    private BigDecimal libCessTax;
+    private BigDecimal eduCessTax;
+    private BigDecimal unauthPenaltyTax;
+    private BigDecimal penaltyFinesTax;
+    private BigDecimal sewTax;
+    private BigDecimal vacantLandTax;
+    private BigDecimal pubSerChrgTax;
+
+    private BigDecimal generalTaxColl;
+    private BigDecimal libCessTaxColl;
+    private BigDecimal eduCessTaxColl;
+    private BigDecimal unauthPenaltyTaxColl;
+    private BigDecimal penaltyFinesTaxColl;
+    private BigDecimal sewTaxColl;
+    private BigDecimal vacantLandTaxColl;
+    private BigDecimal pubSerChrgTaxColl;
+    private Date createdDate;
+
     public PropertyMaterlizeView getPropMatView() {
         return propMatView;
     }
-    public void setPropMatView(PropertyMaterlizeView propMatView) {
+
+    public void setPropMatView(final PropertyMaterlizeView propMatView) {
         this.propMatView = propMatView;
     }
+
     public Installment getInstallment() {
         return installment;
     }
-    public void setInstallment(Installment installment) {
+
+    public void setInstallment(final Installment installment) {
         this.installment = installment;
     }
+
     public BigDecimal getGeneralTax() {
         return generalTax;
     }
-    public void setGeneralTax(BigDecimal generalTax) {
+
+    public void setGeneralTax(final BigDecimal generalTax) {
         this.generalTax = generalTax;
     }
+
     public BigDecimal getLibCessTax() {
         return libCessTax;
     }
-    public void setLibCessTax(BigDecimal libCessTax) {
+
+    public void setLibCessTax(final BigDecimal libCessTax) {
         this.libCessTax = libCessTax;
     }
+
     public BigDecimal getEduCessTax() {
         return eduCessTax;
     }
-    public void setEduCessTax(BigDecimal eduCessTax) {
+
+    public void setEduCessTax(final BigDecimal eduCessTax) {
         this.eduCessTax = eduCessTax;
     }
+
     public BigDecimal getUnauthPenaltyTax() {
         return unauthPenaltyTax;
     }
-    public void setUnauthPenaltyTax(BigDecimal unauthPenaltyTax) {
+
+    public void setUnauthPenaltyTax(final BigDecimal unauthPenaltyTax) {
         this.unauthPenaltyTax = unauthPenaltyTax;
     }
+
     public BigDecimal getPenaltyFinesTax() {
         return penaltyFinesTax;
     }
-    public void setPenaltyFinesTax(BigDecimal penaltyFinesTax) {
+
+    public void setPenaltyFinesTax(final BigDecimal penaltyFinesTax) {
         this.penaltyFinesTax = penaltyFinesTax;
     }
+
     public BigDecimal getSewTax() {
         return sewTax;
     }
-    public void setSewTax(BigDecimal sewTax) {
+
+    public void setSewTax(final BigDecimal sewTax) {
         this.sewTax = sewTax;
     }
+
     public BigDecimal getVacantLandTax() {
         return vacantLandTax;
     }
-    public void setVacantLandTax(BigDecimal vacantLandTax) {
+
+    public void setVacantLandTax(final BigDecimal vacantLandTax) {
         this.vacantLandTax = vacantLandTax;
     }
+
     public BigDecimal getPubSerChrgTax() {
         return pubSerChrgTax;
     }
-    public void setPubSerChrgTax(BigDecimal pubSerChrgTax) {
+
+    public void setPubSerChrgTax(final BigDecimal pubSerChrgTax) {
         this.pubSerChrgTax = pubSerChrgTax;
     }
+
     public BigDecimal getGeneralTaxColl() {
         return generalTaxColl;
     }
-    public void setGeneralTaxColl(BigDecimal generalTaxColl) {
+
+    public void setGeneralTaxColl(final BigDecimal generalTaxColl) {
         this.generalTaxColl = generalTaxColl;
     }
+
     public BigDecimal getLibCessTaxColl() {
         return libCessTaxColl;
     }
-    public void setLibCessTaxColl(BigDecimal libCessTaxColl) {
+
+    public void setLibCessTaxColl(final BigDecimal libCessTaxColl) {
         this.libCessTaxColl = libCessTaxColl;
     }
+
     public BigDecimal getEduCessTaxColl() {
         return eduCessTaxColl;
     }
-    public void setEduCessTaxColl(BigDecimal eduCessTaxColl) {
+
+    public void setEduCessTaxColl(final BigDecimal eduCessTaxColl) {
         this.eduCessTaxColl = eduCessTaxColl;
     }
+
     public BigDecimal getUnauthPenaltyTaxColl() {
         return unauthPenaltyTaxColl;
     }
-    public void setUnauthPenaltyTaxColl(BigDecimal unauthPenaltyTaxColl) {
+
+    public void setUnauthPenaltyTaxColl(final BigDecimal unauthPenaltyTaxColl) {
         this.unauthPenaltyTaxColl = unauthPenaltyTaxColl;
     }
+
     public BigDecimal getPenaltyFinesTaxColl() {
         return penaltyFinesTaxColl;
     }
-    public void setPenaltyFinesTaxColl(BigDecimal penaltyFinesTaxColl) {
+
+    public void setPenaltyFinesTaxColl(final BigDecimal penaltyFinesTaxColl) {
         this.penaltyFinesTaxColl = penaltyFinesTaxColl;
     }
+
     public BigDecimal getSewTaxColl() {
         return sewTaxColl;
     }
-    public void setSewTaxColl(BigDecimal sewTaxColl) {
+
+    public void setSewTaxColl(final BigDecimal sewTaxColl) {
         this.sewTaxColl = sewTaxColl;
     }
+
     public BigDecimal getVacantLandTaxColl() {
         return vacantLandTaxColl;
     }
-    public void setVacantLandTaxColl(BigDecimal vacantLandTaxColl) {
+
+    public void setVacantLandTaxColl(final BigDecimal vacantLandTaxColl) {
         this.vacantLandTaxColl = vacantLandTaxColl;
     }
+
     public BigDecimal getPubSerChrgTaxColl() {
         return pubSerChrgTaxColl;
     }
-    public void setPubSerChrgTaxColl(BigDecimal pubSerChrgTaxColl) {
+
+    public void setPubSerChrgTaxColl(final BigDecimal pubSerChrgTaxColl) {
         this.pubSerChrgTaxColl = pubSerChrgTaxColl;
     }
+
     public Date getCreatedDate() {
         return createdDate;
     }
-    public void setCreatedDate(Date createdDate) {
+
+    public void setCreatedDate(final Date createdDate) {
         this.createdDate = createdDate;
     }
-	/*
-	@Override
-	public String toString() {
-		StringBuilder objStr = new StringBuilder();
-
-		objStr.append("|InstallmentId: ").append(getInstallment())
-				.append("|GeneralTax: ").append(getGeneralTax()).append("|EgsTax: ").append(getEgsTax())
-				.append("|EduCessResdTax: ").append(getEduCessResdTax()).append("|EduCessNonResdTax: ").append(getEduCessNonResdTax())
-				.append("|WaterTax: ").append(getWaterTax()).append("|FireTax: ").append(getFireTax())
-				.append("|SewerageTax: ").append(getSewerageTax()).append("|LightTax: ").append(getLightTax())
-				.append("|BigBldgTax: ").append(getBigBldgTax())
-				.append("|GeneralTaxColl: ").append(getGeneralTaxColl())
-				.append("|EgsTaxColl: ").append(getEgsTaxColl()).append("|EduCessResdTaxColl: ").append(getEduCessResdTaxColl())
-				.append("|EduCessNonResdTaxColl: ").append(getEduCessNonResdTaxColl()).append("|WaterTaxColl: ").append(getWaterTaxColl())
-				.append("|FireTaxColl: ").append(getFireTaxColl()).append("|SewerageTaxColl").append(getSewerageTaxColl())
-				.append("|LightTaxColl: ").append(getLightTaxColl()).append("|BigBldgTaxColl: ").append(getBigBldgTaxColl());
-
-		return objStr.toString();
-	}*/
+    /*
+     * @Override public String toString() { StringBuilder objStr = new StringBuilder();
+     * objStr.append("|InstallmentId: ").append(getInstallment())
+     * .append("|GeneralTax: ").append(getGeneralTax()).append("|EgsTax: ").append(getEgsTax())
+     * .append("|EduCessResdTax: ").append(getEduCessResdTax()).append("|EduCessNonResdTax: ").append(getEduCessNonResdTax())
+     * .append("|WaterTax: ").append(getWaterTax()).append("|FireTax: ").append(getFireTax())
+     * .append("|SewerageTax: ").append(getSewerageTax()).append("|LightTax: ").append(getLightTax())
+     * .append("|BigBldgTax: ").append(getBigBldgTax()) .append("|GeneralTaxColl: ").append(getGeneralTaxColl())
+     * .append("|EgsTaxColl: ").append(getEgsTaxColl()).append("|EduCessResdTaxColl: ").append(getEduCessResdTaxColl())
+     * .append("|EduCessNonResdTaxColl: ").append(getEduCessNonResdTaxColl()).append("|WaterTaxColl: ").append(getWaterTaxColl())
+     * .append("|FireTaxColl: ").append(getFireTaxColl()).append("|SewerageTaxColl").append(getSewerageTaxColl())
+     * .append("|LightTaxColl: ").append(getLightTaxColl()).append("|BigBldgTaxColl: ").append(getBigBldgTaxColl()); return
+     * objStr.toString(); }
+     */
 }

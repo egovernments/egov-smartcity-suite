@@ -1,40 +1,40 @@
 /*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
+ *
+ * 	1) All versions of this program, verbatim or modified must carry this
  * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
+ *
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It
+ * 	   is required that all modified versions of this material be marked in
  * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
+ *
+ * 	3) This license does not grant any rights to any user of the program
+ * 	   with regards to rights under trademark law for use of the trade names
  * 	   or trademarks of eGovernments Foundation.
- * 
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
 package org.egov.ptis.domain.dao.demand;
@@ -74,443 +74,412 @@ import org.springframework.stereotype.Repository;
 
 @Repository(value = "ptDemandDAO")
 public class PtDemandHibernateDao implements PtDemandDao {
-	private static final String BILLID_PARAM = "billid";
-	private static final String PROPERTY = "property";
-	@Autowired
-	private ModuleService moduleDao;
-	@Autowired
-	private InstallmentDao installmentDao;
-	@Autowired
-	@Qualifier(value = "demandGenericDAO")
-	private DemandGenericDao demandGenericDAO;
+    private static final String BILLID_PARAM = "billid";
+    private static final String PROPERTY = "property";
+    @Autowired
+    private ModuleService moduleDao;
+    @Autowired
+    private InstallmentDao installmentDao;
+    @Autowired
+    @Qualifier(value = "demandGenericDAO")
+    private DemandGenericDao demandGenericDAO;
 
-	@Autowired
-	private PropertyDAO propertyDAO;
+    @Autowired
+    private PropertyDAO propertyDAO;
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	private Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    private Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	/**
-	 * This method called getCurrentDemandforProperty gets Total Current Demand
-	 * Amount .
-	 * 
-	 * <p>
-	 * This method returns Total Current Demand for given property.
-	 * </p>
-	 * 
-	 * @param org
-	 *            .egov.ptis.property.model.Property property
-	 * 
-	 * @return a BigDecimal.
-	 */
+    /**
+     * This method called getCurrentDemandforProperty gets Total Current Demand Amount .
+     *
+     * <p>
+     * This method returns Total Current Demand for given property.
+     * </p>
+     *
+     * @param org .egov.ptis.property.model.Property property
+     *
+     * @return a BigDecimal.
+     */
 
-	@Override
-	public BigDecimal getCurrentDemandforProperty(Property property) {
+    @Override
+    public BigDecimal getCurrentDemandforProperty(final Property property) {
 
-		BigDecimal currentDemand = BigDecimal.ZERO;
-		Query qry = null;
-		if (property != null) {
-			qry = getCurrentSession()
-					.createQuery(
-							" select sum(DmdDetails.amount) from  EgptPtdemand egDemand left join  egDemand.egDemandDetails DmdDetails where "
-									+ " egDemand.egptProperty =:property  and egDemand.isHistory='N'   ");
-			qry.setEntity(PROPERTY, property);
-			currentDemand = (BigDecimal) qry.uniqueResult();
-		}
+        BigDecimal currentDemand = BigDecimal.ZERO;
+        Query qry = null;
+        if (property != null) {
+            qry = getCurrentSession()
+                    .createQuery(
+                            " select sum(DmdDetails.amount) from  EgptPtdemand egDemand left join  egDemand.egDemandDetails DmdDetails where "
+                                    + " egDemand.egptProperty =:property  and egDemand.isHistory='N'   ");
+            qry.setEntity(PROPERTY, property);
+            currentDemand = (BigDecimal) qry.uniqueResult();
+        }
 
-		return currentDemand;
+        return currentDemand;
 
-	}
+    }
 
-	/**
-	 * This method called WhetherBillExistsForProperty gets Character .
-	 * 
-	 * <p>
-	 * This method returns Character for given Property , billnum and Module.
-	 * </p>
-	 * 
-	 * @param org
-	 *            .egov.ptis.property.model.Property property
-	 * 
-	 * @param java
-	 *            .lang.Integer billnum
-	 * 
-	 * @param org
-	 *            .egov.infstr.commons.Module module
-	 * 
-	 * @return Character of 'Y' or 'N'.
-	 */
+    /**
+     * This method called WhetherBillExistsForProperty gets Character .
+     *
+     * <p>
+     * This method returns Character for given Property , billnum and Module.
+     * </p>
+     *
+     * @param org .egov.ptis.property.model.Property property
+     *
+     * @param java .lang.Integer billnum
+     *
+     * @param org .egov.infstr.commons.Module module
+     *
+     * @return Character of 'Y' or 'N'.
+     */
 
-	@Override
-	public Character whetherBillExistsForProperty(Property property, String billnum, Module module) {
-		Character status = null;
-		Query qry = null;
-		List<EgBill> list;
-		if (property != null && billnum != null) {
-			List<EgBill> egBillList = demandGenericDAO.getBillsByBillNumber(billnum, module);
-			if (egBillList == null || egBillList.isEmpty()) {
-				status = 'N';
-			} else {
-				EgBill egBill = egBillList.get(0);
-				if (egBill == null) {
-					status = 'N';
-				} else {
-					qry = getCurrentSession()
-							.createQuery(
-									"select egBill from  EgptPtdemand egptDem , EgBill egBill  where egptDem.egptProperty =:property and :egBill in elements(egptDem.egBills)   ");
-					qry.setEntity(PROPERTY, property);
-					qry.setEntity("egBill", egBill);
-					list = qry.list();
-					if (list.isEmpty()) {
-						status = 'N';
-					} else {
-						status = 'Y';
-					}
-				}
-			}
-		}
-		return status;
-	}
+    @Override
+    public Character whetherBillExistsForProperty(final Property property, final String billnum, final Module module) {
+        Character status = null;
+        Query qry = null;
+        List<EgBill> list;
+        if (property != null && billnum != null) {
+            final List<EgBill> egBillList = demandGenericDAO.getBillsByBillNumber(billnum, module);
+            if (egBillList == null || egBillList.isEmpty())
+                status = 'N';
+            else {
+                final EgBill egBill = egBillList.get(0);
+                if (egBill == null)
+                    status = 'N';
+                else {
+                    qry = getCurrentSession()
+                            .createQuery(
+                                    "select egBill from  EgptPtdemand egptDem , EgBill egBill  where egptDem.egptProperty =:property and :egBill in elements(egptDem.egBills)   ");
+                    qry.setEntity(PROPERTY, property);
+                    qry.setEntity("egBill", egBill);
+                    list = qry.list();
+                    if (list.isEmpty())
+                        status = 'N';
+                    else
+                        status = 'Y';
+                }
+            }
+        }
+        return status;
+    }
 
-	/**
-	 * This method called getNonHistoryDemandForProperty gets EgptPtdemand
-	 * Object which is NonHistory.
-	 * 
-	 * <p>
-	 * This method returns EgptPtdemand Object for given property .
-	 * </p>
-	 * 
-	 * @param org
-	 *            .egov.ptis.property.model.Property property
-	 * 
-	 * @return EgptPtdemand Object.
-	 * 
-	 */
+    /**
+     * This method called getNonHistoryDemandForProperty gets EgptPtdemand Object which is NonHistory.
+     *
+     * <p>
+     * This method returns EgptPtdemand Object for given property .
+     * </p>
+     *
+     * @param org .egov.ptis.property.model.Property property
+     *
+     * @return EgptPtdemand Object.
+     *
+     */
 
-	@Override
-	public Ptdemand getNonHistoryDemandForProperty(Property property) {
-		Query qry = null;
-		Ptdemand egptPtdemand = null;
+    @Override
+    public Ptdemand getNonHistoryDemandForProperty(final Property property) {
+        Query qry = null;
+        Ptdemand egptPtdemand = null;
 
-		if (property != null) {
-			qry = getCurrentSession().createQuery(
-					"from  Ptdemand egptDem where egptDem.egptProperty =:property   ");
-			qry.setEntity(PROPERTY, property);
-			if (qry.list().size() == 1) {
-				egptPtdemand = (Ptdemand) qry.uniqueResult();
-			} else {
-				egptPtdemand = (Ptdemand) qry.list().get(0);
-			}
-		}
-		return egptPtdemand;
-	}
+        if (property != null) {
+            qry = getCurrentSession().createQuery(
+                    "from  Ptdemand egptDem where egptDem.egptProperty =:property   ");
+            qry.setEntity(PROPERTY, property);
+            if (qry.list().size() == 1)
+                egptPtdemand = (Ptdemand) qry.uniqueResult();
+            else
+                egptPtdemand = (Ptdemand) qry.list().get(0);
+        }
+        return egptPtdemand;
+    }
 
-	/**
-	 * This method called getDmdDetailsByPropertyIdBoundary gets DemandDetails
-	 * List .
-	 * 
-	 * <p>
-	 * This method returns DemandDetails List for given BasicProperty Object &
-	 * Boundary Object(Optional) .
-	 * </p>
-	 * 
-	 * @param org
-	 *            .egov.ptis.property.model.BasicProperty basicProperty
-	 * 
-	 * @param org
-	 *            .egov.lib.admbndry.Boundary divBoundary
-	 * 
-	 * @return DemandDetails List.
-	 * 
-	 */
+    /**
+     * This method called getDmdDetailsByPropertyIdBoundary gets DemandDetails List .
+     *
+     * <p>
+     * This method returns DemandDetails List for given BasicProperty Object & Boundary Object(Optional) .
+     * </p>
+     *
+     * @param org .egov.ptis.property.model.BasicProperty basicProperty
+     *
+     * @param org .egov.lib.admbndry.Boundary divBoundary
+     *
+     * @return DemandDetails List.
+     *
+     */
 
-	// Here divBoundary is used because in some Property Tax Applications(like
-	// COC) propertyId is not unique ,It is unique within the Division Boundary
-	// check the demandReasonMaster list . It is not working
-	@Override
-	public List getDmdDetailsByPropertyIdBoundary(BasicProperty basicProperty, Boundary divBoundary) {
-		String divStatus = "N";
-		List list = new ArrayList();
-		StringBuffer qry = new StringBuffer(50);
-		if (basicProperty != null) {
-			// should check for active
-			qry.append(" select demdet From EgptPtdemand ptdem left join ptdem.egDemandDetails demdet left join "
-					+ "ptdem.egptProperty prop left join  prop.basicProperty bp");
-			if (divBoundary != null) {
-				qry.append(" left join bp.propertyID ppid  ");
-				divStatus = "Y";
-			}
+    // Here divBoundary is used because in some Property Tax Applications(like
+    // COC) propertyId is not unique ,It is unique within the Division Boundary
+    // check the demandReasonMaster list . It is not working
+    @Override
+    public List getDmdDetailsByPropertyIdBoundary(final BasicProperty basicProperty, final Boundary divBoundary) {
+        String divStatus = "N";
+        List list = new ArrayList();
+        final StringBuffer qry = new StringBuffer(50);
+        if (basicProperty != null) {
+            // should check for active
+            qry.append(" select demdet From EgptPtdemand ptdem left join ptdem.egDemandDetails demdet left join "
+                    + "ptdem.egptProperty prop left join  prop.basicProperty bp");
+            if (divBoundary != null) {
+                qry.append(" left join bp.propertyID ppid  ");
+                divStatus = "Y";
+            }
 
-			qry.append(" where ptdem.isHistory='N'  and prop.status='N' and  prop.isDefaultProperty='Y' and bp.active='Y' "
-					+ "and bp =:basicProperty ");
-			if ("Y".equals(divStatus)) {
-				qry.append(" and ppid.wardId =:divBoundary  ");
-			}
+            qry.append(" where ptdem.isHistory='N'  and prop.status='N' and  prop.isDefaultProperty='Y' and bp.active='Y' "
+                    + "and bp =:basicProperty ");
+            if ("Y".equals(divStatus))
+                qry.append(" and ppid.wardId =:divBoundary  ");
 
-			Query query = getCurrentSession().createQuery(qry.toString());
-			query.setEntity("basicProperty", basicProperty);
-			if ("Y".equals(divStatus)) {
-				query.setEntity("divBoundary", divBoundary);
-			}
-			list = query.list();
-		}
-		return list;
-	}
+            final Query query = getCurrentSession().createQuery(qry.toString());
+            query.setEntity("basicProperty", basicProperty);
+            if ("Y".equals(divStatus))
+                query.setEntity("divBoundary", divBoundary);
+            list = query.list();
+        }
+        return list;
+    }
 
-	public List getTransactionByBasicProperty(BasicProperty basicProperty, Installment installment,
-			String is_cancelled) {
-		Query qry = null;
-		List list = new ArrayList(0);
-		if (basicProperty != null && installment != null && is_cancelled != null
-				&& !is_cancelled.equals("")) {
-			qry = getCurrentSession()
-					.createQuery(
-							" select TD from PropertyTaxTxAgent txAgent left join txAgent.myTransactions header "
-									+ " left join header.transactionDetails TD where  header.isCancelled =:is_cancelled and "
-									+ " header.installment =:installment and txAgent.basicProperty =:basicProperty  ");
-			qry.setString("is_cancelled", is_cancelled);
-			qry.setEntity("basicProperty", basicProperty);
-			qry.setEntity("installment", installment);
-			list = qry.list();
-		}
-		return list;
-	}
+    public List getTransactionByBasicProperty(final BasicProperty basicProperty, final Installment installment,
+            final String is_cancelled) {
+        Query qry = null;
+        List list = new ArrayList(0);
+        if (basicProperty != null && installment != null && is_cancelled != null
+                && !is_cancelled.equals("")) {
+            qry = getCurrentSession()
+                    .createQuery(
+                            " select TD from PropertyTaxTxAgent txAgent left join txAgent.myTransactions header "
+                                    + " left join header.transactionDetails TD where  header.isCancelled =:is_cancelled and "
+                                    + " header.installment =:installment and txAgent.basicProperty =:basicProperty  ");
+            qry.setString("is_cancelled", is_cancelled);
+            qry.setEntity("basicProperty", basicProperty);
+            qry.setEntity("installment", installment);
+            list = qry.list();
+        }
+        return list;
+    }
 
-	/**
-	 * This method called getAllDemands gets Map<EgDemandReason,Amount> .
-	 * 
-	 * <p>
-	 * This method returns Map of DemandReason Objects and DemandDetails amount
-	 * for given BasicProperty & divBoundary .
-	 * </p>
-	 * 
-	 * @param org
-	 *            .egov.ptis.property.model.BasicProperty BasicProperty
-	 * 
-	 * @param org
-	 *            .egov.lib.admbndry.Boundary divBoundary
-	 * 
-	 * @return Map<EgDemandReason,Amount>.
-	 */
+    /**
+     * This method called getAllDemands gets Map<EgDemandReason,Amount> .
+     *
+     * <p>
+     * This method returns Map of DemandReason Objects and DemandDetails amount for given BasicProperty & divBoundary .
+     * </p>
+     *
+     * @param org .egov.ptis.property.model.BasicProperty BasicProperty
+     *
+     * @param org .egov.lib.admbndry.Boundary divBoundary
+     *
+     * @return Map<EgDemandReason,Amount>.
+     */
 
-	@Override
-	public Map getAllDemands(BasicProperty basicProperty, Boundary divBoundary) {
-		List<EgDemandDetails> demandDetailsList;
-		BigDecimal amount = BigDecimal.ZERO;
-		demandDetailsList = getDmdDetailsByPropertyIdBoundary(basicProperty, divBoundary);
-		Map<EgDemandReason, BigDecimal> dmdMap = new HashMap<EgDemandReason, BigDecimal>();
-		Iterator iter = demandDetailsList.iterator();
-		while (iter.hasNext()) {
-			EgDemandDetails egDemandDetails = (EgDemandDetails) iter.next();
-			if (egDemandDetails.getEgDemandReason() != null) {
-				if (dmdMap.containsKey(egDemandDetails.getEgDemandReason())) {
-					dmdMap.put(egDemandDetails.getEgDemandReason(), egDemandDetails.getAmount());
-				} else {
-					amount = amount.add(egDemandDetails.getAmount());
-					dmdMap.put(egDemandDetails.getEgDemandReason(), amount);
-				}
-			}
-		}
-		return dmdMap;
-	}
+    @Override
+    public Map getAllDemands(final BasicProperty basicProperty, final Boundary divBoundary) {
+        List<EgDemandDetails> demandDetailsList;
+        BigDecimal amount = BigDecimal.ZERO;
+        demandDetailsList = getDmdDetailsByPropertyIdBoundary(basicProperty, divBoundary);
+        final Map<EgDemandReason, BigDecimal> dmdMap = new HashMap<EgDemandReason, BigDecimal>();
+        final Iterator iter = demandDetailsList.iterator();
+        while (iter.hasNext()) {
+            final EgDemandDetails egDemandDetails = (EgDemandDetails) iter.next();
+            if (egDemandDetails.getEgDemandReason() != null)
+                if (dmdMap.containsKey(egDemandDetails.getEgDemandReason()))
+                    dmdMap.put(egDemandDetails.getEgDemandReason(), egDemandDetails.getAmount());
+                else {
+                    amount = amount.add(egDemandDetails.getAmount());
+                    dmdMap.put(egDemandDetails.getEgDemandReason(), amount);
+                }
+        }
+        return dmdMap;
+    }
 
-	/**
-	 * Gets the current 1) demand amount, 2) collected amount, 3) rebate amount
-	 * for the demand associated with the given bill ID.
-	 */
-	@Override
-	public List<BigDecimal> getCurrentAmountsFromBill(Long billId) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT").append("    SUM(det.amount),").append("    SUM(det.amt_collected),")
-				.append("    SUM(det.amt_rebate)").append(" FROM ").append("    eg_bill bill,")
-				.append("    eg_demand_details det,").append("    eg_demand_reason reas,")
-				.append("    eg_demand_reason_master reasm,")
-				.append("    eg_reason_category reascat,")
-				.append("    eg_installment_master inst,").append("    eg_module module")
-				.append(" WHERE ").append("    bill.id = :").append(BILLID_PARAM).append(" AND")
-				.append("    det.id_demand = bill.id_demand AND")
-				.append("    det.id_demand_reason = reas.id AND")
-				.append("    reas.id_installment = inst.id_installment AND")
-				.append("    reas.id_demand_reason_master = reasm.id AND")
-				.append("    reasm.id_category = reascat.id_type AND")
-				.append("    reascat.code = 'TAX' AND")
-				.append("    inst.start_date <= SYSDATE AND")
-				.append("    inst.end_date   >= SYSDATE AND")
-				.append("    inst.id_module = module.id_module AND")
-				.append("    module.module_name = 'Property Tax'");
-		Query query = getCurrentSession().createSQLQuery(sb.toString());
-		query.setLong(BILLID_PARAM, billId);
-		Object[] results = (Object[]) query.uniqueResult();
-		List<BigDecimal> amounts = new ArrayList<BigDecimal>();
-		amounts.add((BigDecimal) results[0]); // demand
-		amounts.add((BigDecimal) results[1]); // collection
-		amounts.add((BigDecimal) results[2]); // rebate
-		return amounts;
-	}
+    /**
+     * Gets the current 1) demand amount, 2) collected amount, 3) rebate amount for the demand associated with the given bill ID.
+     */
+    @Override
+    public List<BigDecimal> getCurrentAmountsFromBill(final Long billId) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("SELECT").append("    SUM(det.amount),").append("    SUM(det.amt_collected),")
+        .append("    SUM(det.amt_rebate)").append(" FROM ").append("    eg_bill bill,")
+        .append("    eg_demand_details det,").append("    eg_demand_reason reas,")
+        .append("    eg_demand_reason_master reasm,")
+        .append("    eg_reason_category reascat,")
+        .append("    eg_installment_master inst,").append("    eg_module module")
+        .append(" WHERE ").append("    bill.id = :").append(BILLID_PARAM).append(" AND")
+        .append("    det.id_demand = bill.id_demand AND")
+        .append("    det.id_demand_reason = reas.id AND")
+        .append("    reas.id_installment = inst.id_installment AND")
+        .append("    reas.id_demand_reason_master = reasm.id AND")
+        .append("    reasm.id_category = reascat.id_type AND")
+        .append("    reascat.code = 'TAX' AND")
+        .append("    inst.start_date <= SYSDATE AND")
+        .append("    inst.end_date   >= SYSDATE AND")
+        .append("    inst.id_module = module.id_module AND")
+        .append("    module.module_name = 'Property Tax'");
+        final Query query = getCurrentSession().createSQLQuery(sb.toString());
+        query.setLong(BILLID_PARAM, billId);
+        final Object[] results = (Object[]) query.uniqueResult();
+        final List<BigDecimal> amounts = new ArrayList<BigDecimal>();
+        amounts.add((BigDecimal) results[0]); // demand
+        amounts.add((BigDecimal) results[1]); // collection
+        amounts.add((BigDecimal) results[2]); // rebate
+        return amounts;
+    }
 
-	@Override
-	public Map<String, BigDecimal> getDemandCollMap(Property property) {
-		Ptdemand currDemand = getNonHistoryCurrDmdForProperty(property);
-		Installment installment = null;
-		List dmdCollList =new ArrayList();
-		Installment currInst = null;
-		Integer instId = null;
-		BigDecimal currDmd = BigDecimal.ZERO;
-		BigDecimal arrDmd = BigDecimal.ZERO;
-		BigDecimal currCollection = BigDecimal.ZERO;
-		BigDecimal arrColelection = BigDecimal.ZERO;
-		Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
-		
-		 if(currDemand!=null)       
-		     dmdCollList=  propertyDAO.getDmdCollAmtInstWise(currDemand);
-		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-		currInst = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
-		for (Object object : dmdCollList) {
-			Object[] listObj = (Object[]) object;
-			instId = Integer.valueOf(listObj[0].toString());
-			installment = (Installment) installmentDao.findById(instId, false);
-			if (currInst.equals(installment)) {
-				if (listObj[2] != null && !(new BigDecimal((Double) listObj[2])).equals(BigDecimal.ZERO)) {
-					currCollection = currCollection.add(new BigDecimal((Double)listObj[2]));
-				}
-				/*
-				 * adding rebate to collection (commenting this code because,
-				 * the rebate amt is been added to collection amt and is shown
-				 * as a negative amt in 'Current Tax Due' in search results and
-				 * view property screen)
-				 */
-				if (listObj[3] != null && !(new BigDecimal((Double) listObj[3])).equals(BigDecimal.ZERO)) {
-					currCollection = currCollection.add(new BigDecimal((Double)listObj[3]));
-				}
-				currDmd = currDmd.add((BigDecimal) listObj[1]);
-			} else {
-				arrDmd = arrDmd.add((BigDecimal) listObj[1]);
-				if (listObj[2] != null && !(new BigDecimal((Double) listObj[2])).equals(BigDecimal.ZERO)) {
-					arrColelection = arrColelection.add(new BigDecimal((Double) listObj[2]));
-				}
-				/*
-				 * adding rebate to collection (commenting this code because,
-				 * the rebate amt is been added to collection amt and is shown
-				 * as a negative amt in search results and view property screen)
-				 */
-				if (listObj[3] != null && !(new BigDecimal((Double) listObj[3])).equals(BigDecimal.ZERO)) {
-					arrColelection = arrColelection.add(new BigDecimal((Double) listObj[3]));
-				}
-			}
-		}
-		retMap.put(PropertyTaxConstants.CURR_DMD_STR, currDmd);
-		retMap.put(PropertyTaxConstants.ARR_DMD_STR, arrDmd);
-		retMap.put(PropertyTaxConstants.CURR_COLL_STR, currCollection);
-		retMap.put(PropertyTaxConstants.ARR_COLL_STR, arrColelection);
-		return retMap;
-	}
+    @Override
+    public Map<String, BigDecimal> getDemandCollMap(final Property property) {
+        final Ptdemand currDemand = getNonHistoryCurrDmdForProperty(property);
+        Installment installment = null;
+        List dmdCollList = new ArrayList();
+        Installment currInst = null;
+        Integer instId = null;
+        BigDecimal currDmd = BigDecimal.ZERO;
+        BigDecimal arrDmd = BigDecimal.ZERO;
+        BigDecimal currCollection = BigDecimal.ZERO;
+        BigDecimal arrColelection = BigDecimal.ZERO;
+        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
 
-	/**
-	 * This method returns current installment non-history EgptPtdemand
-	 * 
-	 * <p>
-	 * This method returns EgptPtdemand Object for given property .
-	 * </p>
-	 * 
-	 * @param org
-	 *            .egov.ptis.property.model.Property property
-	 * 
-	 * @return EgptPtdemand Object.
-	 * 
-	 */
-	@Override
-	public Ptdemand getNonHistoryCurrDmdForProperty(Property property) {
-		Query qry = null;
-		Ptdemand egptPtdemand = null;
+        if (currDemand != null)
+            dmdCollList = propertyDAO.getDmdCollAmtInstWise(currDemand);
+        final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+        currInst = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
+        for (final Object object : dmdCollList) {
+            final Object[] listObj = (Object[]) object;
+            instId = Integer.valueOf(listObj[0].toString());
+            installment = (Installment) installmentDao.findById(instId, false);
+            if (currInst.equals(installment)) {
+                if (listObj[2] != null && !new BigDecimal((Double) listObj[2]).equals(BigDecimal.ZERO))
+                    currCollection = currCollection.add(new BigDecimal((Double) listObj[2]));
+                /*
+                 * adding rebate to collection (commenting this code because, the rebate amt is been added to collection amt and
+                 * is shown as a negative amt in 'Current Tax Due' in search results and view property screen)
+                 */
+                if (listObj[3] != null && !new BigDecimal((Double) listObj[3]).equals(BigDecimal.ZERO))
+                    currCollection = currCollection.add(new BigDecimal((Double) listObj[3]));
+                currDmd = currDmd.add((BigDecimal) listObj[1]);
+            } else {
+                arrDmd = arrDmd.add((BigDecimal) listObj[1]);
+                if (listObj[2] != null && !new BigDecimal((Double) listObj[2]).equals(BigDecimal.ZERO))
+                    arrColelection = arrColelection.add(new BigDecimal((Double) listObj[2]));
+                /*
+                 * adding rebate to collection (commenting this code because, the rebate amt is been added to collection amt and
+                 * is shown as a negative amt in search results and view property screen)
+                 */
+                if (listObj[3] != null && !new BigDecimal((Double) listObj[3]).equals(BigDecimal.ZERO))
+                    arrColelection = arrColelection.add(new BigDecimal((Double) listObj[3]));
+            }
+        }
+        retMap.put(PropertyTaxConstants.CURR_DMD_STR, currDmd);
+        retMap.put(PropertyTaxConstants.ARR_DMD_STR, arrDmd);
+        retMap.put(PropertyTaxConstants.CURR_COLL_STR, currCollection);
+        retMap.put(PropertyTaxConstants.ARR_COLL_STR, arrColelection);
+        return retMap;
+    }
 
-		if (property != null) {
+    /**
+     * This method returns current installment non-history EgptPtdemand
+     *
+     * <p>
+     * This method returns EgptPtdemand Object for given property .
+     * </p>
+     *
+     * @param org .egov.ptis.property.model.Property property
+     *
+     * @return EgptPtdemand Object.
+     *
+     */
+    @Override
+    public Ptdemand getNonHistoryCurrDmdForProperty(final Property property) {
+        Query qry = null;
+        Ptdemand egptPtdemand = null;
+
+        if (property != null) {
             qry = getCurrentSession()
                     .createQuery(
                             "from  Ptdemand egptDem left join fetch egptDem.egDemandDetails dd left join fetch dd.egDemandReason dr "
-                            + "where egptDem.egptProperty =:property "
-                            + "and (egptDem.egInstallmentMaster.fromDate <= :fromYear and egptDem.egInstallmentMaster.toDate >=:toYear) ");
-			qry.setEntity(PROPERTY, property);
-			qry.setDate("fromYear", new Date());
-			qry.setDate("toYear", new Date());
-			/*if (qry.list().size() == 1) {
-				egptPtdemand = (Ptdemand) qry.uniqueResult();
-			} else {
-				egptPtdemand = (Ptdemand) qry.list().get(0);
-			}*/
-			
-			List<Ptdemand> ptDemandResult=qry.list();
-                        if (ptDemandResult!=null && ptDemandResult.size()>0) {
-                                egptPtdemand = (Ptdemand) ptDemandResult.get(0);
-                        }
-		}
-		return egptPtdemand;
-	}
+                                    + "where egptDem.egptProperty =:property "
+                                    + "and (egptDem.egInstallmentMaster.fromDate <= :fromYear and egptDem.egInstallmentMaster.toDate >=:toYear) ");
+            qry.setEntity(PROPERTY, property);
+            qry.setDate("fromYear", new Date());
+            qry.setDate("toYear", new Date());
+            /*
+             * if (qry.list().size() == 1) { egptPtdemand = (Ptdemand) qry.uniqueResult(); } else { egptPtdemand = (Ptdemand)
+             * qry.list().get(0); }
+             */
 
-	@Override
-	public List findAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+            final List<Ptdemand> ptDemandResult = qry.list();
+            if (ptDemandResult != null && ptDemandResult.size() > 0)
+                egptPtdemand = ptDemandResult.get(0);
+        }
+        return egptPtdemand;
+    }
 
-	@Override
-	public Ptdemand findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public List findAll() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Ptdemand create(Ptdemand ptdemand) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Ptdemand findById(final Integer id, final boolean lock) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public void delete(Ptdemand ptdemand) {
-		// TODO Auto-generated method stub
+    @Override
+    public Ptdemand create(final Ptdemand ptdemand) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	}
+    @Override
+    public void delete(final Ptdemand ptdemand) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public Ptdemand update(Ptdemand ptdemand) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<Object> getPropertyTaxDetails(String assessmentNo) {
-		List<Object> list = new ArrayList<Object>();
-		String selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected, dd.amt_rebate, dd.create_date, dd.modified_date "
-				+ " from egpt_basic_property bp, egpt_property prop, egpt_ptdemand ptd, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
-				+ " where bp.id = prop.id_basic_property and prop.status = 'A' "
-				+ " and prop.id = ptd.id_property and ptd.id_demand = d.id " + " and d.id = dd.id_demand "
-				+ " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
-				+ " and dr.id_installment = inst.id and bp.propertyid =:assessmentNo "
-				+ " and d.id_installment = 81 order by inst.start_date ";
-		Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("assessmentNo", assessmentNo);
-		list = qry.list();
-		return list;
-	}
-	
-	@Override
-	public Set<String> getDemandYears(String assessmentNo) {
-		Set<String> demandYears = new LinkedHashSet<String>();
-		String selectQuery = " select inst.description "
-				+ " from egpt_basic_property bp, egpt_property prop, egpt_ptdemand ptd, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
-				+ " where bp.id = prop.id_basic_property and prop.status = 'A' "
-				+ " and prop.id = ptd.id_property and ptd.id_demand = d.id " + " and d.id = dd.id_demand "
-				+ " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
-				+ " and dr.id_installment = inst.id and bp.propertyid =:assessmentNo "
-				+ " and d.id_installment = 81 order by inst.start_date ";
-		Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("assessmentNo", assessmentNo);
-		for (Object record : qry.list()) {
-			demandYears.add((String) record);
-		}
-		return demandYears;
-	}
+    @Override
+    public Ptdemand update(final Ptdemand ptdemand) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Object> getPropertyTaxDetails(final String assessmentNo) {
+        List<Object> list = new ArrayList<Object>();
+        final String selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected, dd.amt_rebate, dd.create_date, dd.modified_date "
+                + " from egpt_basic_property bp, egpt_property prop, egpt_ptdemand ptd, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
+                + " where bp.id = prop.id_basic_property and prop.status = 'A' "
+                + " and prop.id = ptd.id_property and ptd.id_demand = d.id " + " and d.id = dd.id_demand "
+                + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
+                + " and dr.id_installment = inst.id and bp.propertyid =:assessmentNo "
+                + " and d.id_installment = 81 order by inst.start_date ";
+        final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("assessmentNo", assessmentNo);
+        list = qry.list();
+        return list;
+    }
+
+    @Override
+    public Set<String> getDemandYears(final String assessmentNo) {
+        final Set<String> demandYears = new LinkedHashSet<String>();
+        final String selectQuery = " select inst.description "
+                + " from egpt_basic_property bp, egpt_property prop, egpt_ptdemand ptd, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
+                + " where bp.id = prop.id_basic_property and prop.status = 'A' "
+                + " and prop.id = ptd.id_property and ptd.id_demand = d.id " + " and d.id = dd.id_demand "
+                + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
+                + " and dr.id_installment = inst.id and bp.propertyid =:assessmentNo "
+                + " and d.id_installment = 81 order by inst.start_date ";
+        final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("assessmentNo", assessmentNo);
+        for (final Object record : qry.list())
+            demandYears.add((String) record);
+        return demandYears;
+    }
 
 }

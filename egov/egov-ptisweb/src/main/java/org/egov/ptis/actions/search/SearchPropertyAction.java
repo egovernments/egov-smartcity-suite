@@ -90,7 +90,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @ParentPackage("egov")
 @Validations
 @Results({ @Result(name = NEW, location = "searchProperty-new.jsp"),
-        @Result(name = SearchPropertyAction.TARGET, location = "searchProperty-result.jsp") })
+    @Result(name = SearchPropertyAction.TARGET, location = "searchProperty-result.jsp") })
 public class SearchPropertyAction extends BaseFormAction {
     /**
      *
@@ -130,9 +130,9 @@ public class SearchPropertyAction extends BaseFormAction {
 
     @Autowired
     private PtDemandDao ptDemandDAO;
-    
-	@Autowired
-	private PropertyTaxUtil propertyTaxUtil;
+
+    @Autowired
+    private PropertyTaxUtil propertyTaxUtil;
 
     @Override
     public Object getModel() {

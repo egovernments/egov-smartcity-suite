@@ -1,40 +1,40 @@
 /*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
+ *
+ * 	1) All versions of this program, verbatim or modified must carry this
  * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
+ *
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It
+ * 	   is required that all modified versions of this material be marked in
  * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
+ *
+ * 	3) This license does not grant any rights to any user of the program
+ * 	   with regards to rights under trademark law for use of the trade names
  * 	   or trademarks of eGovernments Foundation.
- * 
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.ptis.actions.citizen.collection;
@@ -74,7 +74,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @Namespace("/citizen/collection")
 @ResultPath("/WEB-INF/jsp/")
-@Results({ 
+@Results({
     @Result(name = CollectionAction.RESULT_COLLECTTAX, location = "citizen/collection/collection-collectTax.jsp"),
     @Result(name = CollectionAction.RESULT_TAXPAID, location = "citizen/collection/collection-taxPaid.jsp")
 })
@@ -82,10 +82,14 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @ParentPackage("egov")
 @Validations
 public class CollectionAction extends BaseFormAction {
+    /**
+     *
+     */
+    private static final long serialVersionUID = -153634114075566642L;
     private final Logger LOGGER = Logger.getLogger(getClass());
     public static final String RESULT_COLLECTTAX = "collectTax";
     public static final String RESULT_TAXPAID = "taxPaid";
-    
+
     private PersistenceService<BasicProperty, Long> basicPropertyService;
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
     private PTBillServiceImpl ptBillServiceImpl;
@@ -97,12 +101,13 @@ public class CollectionAction extends BaseFormAction {
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
     private UserService userService;
-	@Autowired
-	private PropertyTaxBillable propertyTaxBillable;
+    @Autowired
+    private PropertyTaxBillable propertyTaxBillable;
 
+    @Override
     public void prepare() {
         LOGGER.debug("Entered into prepare method");
-        User usr = (User) userService.getUserByUsername(PropertyTaxConstants.CITIZENUSER);
+        final User usr = userService.getUserByUsername(PropertyTaxConstants.CITIZENUSER);
         setUserId(usr.getId().longValue());
         EgovThreadLocals.setUserId(usr.getId());
         LOGGER.debug("Exit from prepare method");
@@ -111,18 +116,18 @@ public class CollectionAction extends BaseFormAction {
     @Action(value = "/collection-generateBill")
     public String generateBill() {
         LOGGER.debug("Entered method generatePropertyTaxBill, assessment Number: " + assessmentNumber);
-        
-        BasicProperty basicProperty = basicPropertyService.findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO, assessmentNumber);
-        
-        LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
-        Map<String, BigDecimal> demandCollMap = propertyTaxUtil.getDemandAndCollection(basicProperty.getProperty());
-        BigDecimal currDue = demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR));
-        BigDecimal arrDue = demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR));
 
-        if (currDue.compareTo(BigDecimal.ZERO) <= 0 && arrDue.compareTo(BigDecimal.ZERO) <= 0) {
+        final BasicProperty basicProperty = basicPropertyService
+                .findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO, assessmentNumber);
+
+        LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
+        final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.getDemandAndCollection(basicProperty.getProperty());
+        final BigDecimal currDue = demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR));
+        final BigDecimal arrDue = demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR));
+
+        if (currDue.compareTo(BigDecimal.ZERO) <= 0 && arrDue.compareTo(BigDecimal.ZERO) <= 0)
             return RESULT_TAXPAID;
-        }
-        
+
         propertyTaxBillable.setBasicProperty(basicProperty);
         propertyTaxBillable.setLevyPenalty(true);
         propertyTaxBillable.setUserId(userId);
@@ -131,7 +136,7 @@ public class CollectionAction extends BaseFormAction {
         propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_AUTO));
         collectXML = URLEncoder.encode(ptBillServiceImpl.getBillXML(propertyTaxBillable));
         LOGGER.info("Exiting method generatePropertyTaxBill, collectXML: " + collectXML);
-        
+
         return RESULT_COLLECTTAX;
     }
 
@@ -139,7 +144,7 @@ public class CollectionAction extends BaseFormAction {
         return basicPropertyService;
     }
 
-    public void setbasicPropertyService(PersistenceService<BasicProperty, Long> basicPropertyService) {
+    public void setbasicPropertyService(final PersistenceService<BasicProperty, Long> basicPropertyService) {
         this.basicPropertyService = basicPropertyService;
     }
 
@@ -147,7 +152,7 @@ public class CollectionAction extends BaseFormAction {
         return propertyTaxNumberGenerator;
     }
 
-    public void setPropertyTaxNumberGenerator(PropertyTaxNumberGenerator propertyTaxNumberGenerator) {
+    public void setPropertyTaxNumberGenerator(final PropertyTaxNumberGenerator propertyTaxNumberGenerator) {
         this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
     }
 
@@ -155,7 +160,7 @@ public class CollectionAction extends BaseFormAction {
         return propertyTaxUtil;
     }
 
-    public void setPropertyTaxUtil(PropertyTaxUtil propertyTaxUtil) {
+    public void setPropertyTaxUtil(final PropertyTaxUtil propertyTaxUtil) {
         this.propertyTaxUtil = propertyTaxUtil;
     }
 
@@ -163,29 +168,29 @@ public class CollectionAction extends BaseFormAction {
         return collectXML;
     }
 
-    public void setCollectXML(String collectXML) {
+    public void setCollectXML(final String collectXML) {
         this.collectXML = collectXML;
     }
 
     @Override
-	public Object getModel() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public Object getModel() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	public String getAssessmentNumber() {
-		return assessmentNumber;
-	}
+    public String getAssessmentNumber() {
+        return assessmentNumber;
+    }
 
-	public void setAssessmentNumber(String assessmentNumber) {
-		this.assessmentNumber = assessmentNumber;
-	}
+    public void setAssessmentNumber(final String assessmentNumber) {
+        this.assessmentNumber = assessmentNumber;
+    }
 
-	public Long getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(final Long userId) {
         this.userId = userId;
     }
 
@@ -193,7 +198,7 @@ public class CollectionAction extends BaseFormAction {
         return ptBillServiceImpl;
     }
 
-    public void setPtBillServiceImpl(PTBillServiceImpl ptBillServiceImpl) {
+    public void setPtBillServiceImpl(final PTBillServiceImpl ptBillServiceImpl) {
         this.ptBillServiceImpl = ptBillServiceImpl;
     }
 

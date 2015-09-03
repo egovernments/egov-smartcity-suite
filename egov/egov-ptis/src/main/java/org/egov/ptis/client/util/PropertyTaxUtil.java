@@ -1577,77 +1577,79 @@ public class PropertyTaxUtil {
         return date.after(dateToCompare) || date.equals(dateToCompare);
     }
 
-    public List<DemandNoticeDetailsInfo> getDemandNoticeDetailsInfo(final BasicProperty basicProperty,PropertyWiseConsumptions propertyWiseConsumptions) {
+    public List<DemandNoticeDetailsInfo> getDemandNoticeDetailsInfo(final BasicProperty basicProperty,
+            final PropertyWiseConsumptions propertyWiseConsumptions) {
         final List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo = new LinkedList<DemandNoticeDetailsInfo>();
         final EgDemand egDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
         final Module module = moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-        CFinancialYear finYear=financialYearDAO.getFinancialYearByDate(new Date());
+        final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
         List<DemandNoticeDetailsInfo> tempList = new LinkedList<DemandNoticeDetailsInfo>();
-        //General Tax and Penalty
-        tempList=getArrearCurrentDemandbyReasonCode(egDemand, module,finYear);
-        if(tempList!=null && !tempList.isEmpty())
+        // General Tax and Penalty
+        tempList = getArrearCurrentDemandbyReasonCode(egDemand, module, finYear);
+        if (tempList != null && !tempList.isEmpty())
             demandNoticeDetailsInfo.addAll(tempList);
-        //Water Tax
-        if(propertyWiseConsumptions!=null){
+        // Water Tax
+        if (propertyWiseConsumptions != null) {
             tempList = new LinkedList<DemandNoticeDetailsInfo>();
             tempList = getArrearCurrentDemandforWaterTax(propertyWiseConsumptions);
-            if(tempList!=null && !tempList.isEmpty())
+            if (tempList != null && !tempList.isEmpty())
                 demandNoticeDetailsInfo.addAll(tempList);
         }
         return demandNoticeDetailsInfo;
     }
-    
+
     /**
      * @Description Returns Aggregated list of arrear and current demand amount for water tax
      * @param propertyWiseConsumptions
      * @return
      */
-    private List<DemandNoticeDetailsInfo> getArrearCurrentDemandforWaterTax(PropertyWiseConsumptions propertyWiseConsumptions){
-        List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo = new LinkedList<DemandNoticeDetailsInfo>();
-        String arrearFromDate="";
-        String arrearToDate="";
-        BigDecimal arrearAmount=  BigDecimal.ZERO;
-        String currentFromDate="";
-        String currentToDate="";
+    private List<DemandNoticeDetailsInfo> getArrearCurrentDemandforWaterTax(
+            final PropertyWiseConsumptions propertyWiseConsumptions) {
+        final List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo = new LinkedList<DemandNoticeDetailsInfo>();
+        String arrearFromDate = "";
+        String arrearToDate = "";
+        BigDecimal arrearAmount = BigDecimal.ZERO;
+        String currentFromDate = "";
+        String currentToDate = "";
         DemandNoticeDetailsInfo dndi;
-        BigDecimal currentAmount= BigDecimal.ZERO;
-        if(propertyWiseConsumptions.getConsumerConsumptions()!=null && propertyWiseConsumptions.getConsumerConsumptions().size()>0){
-             for(ConsumerConsumption cc : propertyWiseConsumptions.getConsumerConsumptions()){
-                 if(cc!=null){
-                     if(cc.getArrearDue()!=null &&  cc.getArrearDue()!= BigDecimal.ZERO){
-                         if(arrearFromDate=="")
-                             arrearFromDate=sdf.format(cc.getArrearFromDate().toDate());
-                         arrearToDate=sdf.format(cc.getArrearToDate().toDate()); 
-                         arrearAmount=arrearAmount.add(cc.getArrearDue());
-                                 
-                     }
-                     if(cc.getCurrentDue()!=null &&  cc.getCurrentDue()!= BigDecimal.ZERO){
-                         if(currentFromDate=="")
-                             currentFromDate=sdf.format(cc.getCurrentFromDate().toDate());
-                         currentToDate=sdf.format(cc.getCurentToDate().toDate()); 
-                         currentAmount=currentAmount.add(cc.getCurrentDue());
-                     }
-                 }
-             }
-             if(arrearFromDate!=""){
-                 dndi=new DemandNoticeDetailsInfo();
-                 dndi.setFromDate(arrearFromDate);
-                 dndi.setToDate(arrearToDate);
-                 dndi.setWaterTax(arrearAmount);
-                 demandNoticeDetailsInfo.add(dndi);
-             }
-             if(currentFromDate!=""){
-                 dndi=new DemandNoticeDetailsInfo();
-                 dndi.setFromDate(currentFromDate);
-                 dndi.setToDate(currentToDate);
-                 dndi.setWaterTax(currentAmount);
-                 demandNoticeDetailsInfo.add(dndi);
-             }
-             return demandNoticeDetailsInfo;
+        BigDecimal currentAmount = BigDecimal.ZERO;
+        if (propertyWiseConsumptions.getConsumerConsumptions() != null
+                && propertyWiseConsumptions.getConsumerConsumptions().size() > 0) {
+            for (final ConsumerConsumption cc : propertyWiseConsumptions.getConsumerConsumptions())
+                if (cc != null) {
+                    if (cc.getArrearDue() != null && cc.getArrearDue() != BigDecimal.ZERO) {
+                        if (arrearFromDate == "")
+                            arrearFromDate = sdf.format(cc.getArrearFromDate().toDate());
+                        arrearToDate = sdf.format(cc.getArrearToDate().toDate());
+                        arrearAmount = arrearAmount.add(cc.getArrearDue());
+
+                    }
+                    if (cc.getCurrentDue() != null && cc.getCurrentDue() != BigDecimal.ZERO) {
+                        if (currentFromDate == "")
+                            currentFromDate = sdf.format(cc.getCurrentFromDate().toDate());
+                        currentToDate = sdf.format(cc.getCurentToDate().toDate());
+                        currentAmount = currentAmount.add(cc.getCurrentDue());
+                    }
+                }
+            if (arrearFromDate != "") {
+                dndi = new DemandNoticeDetailsInfo();
+                dndi.setFromDate(arrearFromDate);
+                dndi.setToDate(arrearToDate);
+                dndi.setWaterTax(arrearAmount);
+                demandNoticeDetailsInfo.add(dndi);
+            }
+            if (currentFromDate != "") {
+                dndi = new DemandNoticeDetailsInfo();
+                dndi.setFromDate(currentFromDate);
+                dndi.setToDate(currentToDate);
+                dndi.setWaterTax(currentAmount);
+                demandNoticeDetailsInfo.add(dndi);
+            }
+            return demandNoticeDetailsInfo;
         }
         return demandNoticeDetailsInfo;
     }
-    
+
     /**
      * @Description Returns Aggregated list of arrear and current demand amount for all reasoncodes
      * @param egDemand
@@ -1656,57 +1658,54 @@ public class PropertyTaxUtil {
      * @param finYear
      * @return
      */
-    private List<DemandNoticeDetailsInfo> getArrearCurrentDemandbyReasonCode(EgDemand egDemand, Module module, CFinancialYear finYear){
+    private List<DemandNoticeDetailsInfo> getArrearCurrentDemandbyReasonCode(final EgDemand egDemand, final Module module,
+            final CFinancialYear finYear) {
         List list = new LinkedList();
-        String arrearFromDate="";
-        String arrearToDate="";
-        BigDecimal arrearAmount=  BigDecimal.ZERO;
-        BigDecimal pnltyArrearAmount=  BigDecimal.ZERO;
-        String currentFromDate="";
-        String currentToDate="";
+        String arrearFromDate = "";
+        String arrearToDate = "";
+        BigDecimal arrearAmount = BigDecimal.ZERO;
+        BigDecimal pnltyArrearAmount = BigDecimal.ZERO;
+        String currentFromDate = "";
+        String currentToDate = "";
         Integer instId = null;
-        BigDecimal currentAmount= BigDecimal.ZERO;
-        BigDecimal pnltyCurrentAmount=  BigDecimal.ZERO;
+        BigDecimal currentAmount = BigDecimal.ZERO;
+        BigDecimal pnltyCurrentAmount = BigDecimal.ZERO;
         Installment installment;
-        List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo = new LinkedList<DemandNoticeDetailsInfo>();
+        final List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo = new LinkedList<DemandNoticeDetailsInfo>();
         DemandNoticeDetailsInfo dndi;
         list = demandGenericDAO.getReasonWiseDCB(egDemand, module);
         for (final Object record : list) {
             final Object[] data = (Object[]) record;
             instId = Integer.valueOf(data[5].toString());
             installment = (Installment) installmentDao.findById(instId, false);
-           if(installment.getFromDate().compareTo(finYear.getStartingDate())<0){
-                if(arrearFromDate==""){
-                   arrearFromDate=sdf.format(installment.getFromDate());
-                }
-                arrearToDate=sdf.format(installment.getToDate());
-                if(!data[0].toString().equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)) {
-                    arrearAmount=arrearAmount.add(new BigDecimal(data[2].toString()));
-                } else{
-                    pnltyArrearAmount=pnltyArrearAmount.add(new BigDecimal(data[2].toString()));
-                }
-            }else{
-                if(currentFromDate==""){
-                    currentFromDate=sdf.format(installment.getFromDate());
-                }
-                currentToDate=sdf.format(installment.getToDate());
-                if(!data[0].toString().equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)) {
-                    currentAmount=currentAmount.add(new BigDecimal(data[2].toString()));
-                }else{
-                    pnltyCurrentAmount=pnltyCurrentAmount.add(new BigDecimal(data[2].toString())); 
-                }
-            } 
+            if (installment.getFromDate().compareTo(finYear.getStartingDate()) < 0) {
+                if (arrearFromDate == "")
+                    arrearFromDate = sdf.format(installment.getFromDate());
+                arrearToDate = sdf.format(installment.getToDate());
+                if (!data[0].toString().equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES))
+                    arrearAmount = arrearAmount.add(new BigDecimal(data[2].toString()));
+                else
+                    pnltyArrearAmount = pnltyArrearAmount.add(new BigDecimal(data[2].toString()));
+            } else {
+                if (currentFromDate == "")
+                    currentFromDate = sdf.format(installment.getFromDate());
+                currentToDate = sdf.format(installment.getToDate());
+                if (!data[0].toString().equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES))
+                    currentAmount = currentAmount.add(new BigDecimal(data[2].toString()));
+                else
+                    pnltyCurrentAmount = pnltyCurrentAmount.add(new BigDecimal(data[2].toString()));
+            }
         }
-        if(arrearFromDate!=""){
-            dndi=new DemandNoticeDetailsInfo();
+        if (arrearFromDate != "") {
+            dndi = new DemandNoticeDetailsInfo();
             dndi.setFromDate(arrearFromDate);
             dndi.setToDate(arrearToDate);
             dndi.setPropertyTax(arrearAmount);
             dndi.setPenalty(pnltyArrearAmount);
             demandNoticeDetailsInfo.add(dndi);
         }
-        if(currentFromDate!=""){
-            dndi=new DemandNoticeDetailsInfo();
+        if (currentFromDate != "") {
+            dndi = new DemandNoticeDetailsInfo();
             dndi.setFromDate(currentFromDate);
             dndi.setToDate(currentToDate);
             dndi.setPropertyTax(currentAmount);
@@ -1715,7 +1714,6 @@ public class PropertyTaxUtil {
         }
         return demandNoticeDetailsInfo;
     }
-
 
     public String logoBasePath() {
         final HttpServletRequest request = ServletActionContext.getRequest();

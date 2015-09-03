@@ -18,152 +18,149 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DemandNoticeInfo {
-	private BasicProperty basicProperty;
-	private String billNo;
-	private String oldAssessmentNo;
-	private String noOfTap;
-	private String sewarageConnectionNo;
-	private String rentPaid;
-	private String locality;
-	private List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo;
-	private ReportUtil reportUtil;
-	private PropertyWiseConsumptions propertyWiseConsumptions;
-	private String billPeriod;
-	
-	@Autowired
-	@Qualifier("cityService")
-	private CityService cityService;
-	
-	// reading cityname and logo from citywebsiteservice to support bulkbillgeneration through schedular
-	public City getcityWebsite(){
-	    City cw= cityService.findAll().get(0);
-            return cw;
-	}
-	
-	 public String getCityName() {
-	     City cw= getcityWebsite();
-	     if(cw!=null && cw.getPreferences()!=null)
-	         return cw!=null?cw.getPreferences().getMunicipalityName():null;
-	     return null;    
-	  }
+    private BasicProperty basicProperty;
+    private String billNo;
+    private String oldAssessmentNo;
+    private String noOfTap;
+    private String sewarageConnectionNo;
+    private String rentPaid;
+    private String locality;
+    private List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo;
+    private ReportUtil reportUtil;
+    private PropertyWiseConsumptions propertyWiseConsumptions;
+    private String billPeriod;
 
-	 public  String getCityLogo() { 
-	     String path=null;
-	     try{
-	         path=reportUtil.logoBasePath();
-	     }catch(final Exception e){
-	         Log.error(e.getMessage());
-	     }
-             return path;
-          }
+    @Autowired
+    @Qualifier("cityService")
+    private CityService cityService;
 
-	public String getWardNo() {
-		return getBasicProperty().getPropertyID().getWard().getBoundaryNum().toString();
-	}
+    // reading cityname and logo from citywebsiteservice to support bulkbillgeneration through schedular
+    public City getcityWebsite() {
+        final City cw = cityService.findAll().get(0);
+        return cw;
+    }
 
-	public String getBillNo() {
-		return billNo;
-	}
+    public String getCityName() {
+        final City cw = getcityWebsite();
+        if (cw != null && cw.getPreferences() != null)
+            return cw != null ? cw.getPreferences().getMunicipalityName() : null;
+            return null;
+    }
 
-	public void setBillNo(String billNo) {
-		this.billNo = billNo;
-	}
+    public String getCityLogo() {
+        String path = null;
+        try {
+            path = ReportUtil.logoBasePath();
+        } catch (final Exception e) {
+            Log.error(e.getMessage());
+        }
+        return path;
+    }
 
-	public String getBillDate() {
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		return dateFormat.format(new Date());
-	}
+    public String getWardNo() {
+        return getBasicProperty().getPropertyID().getWard().getBoundaryNum().toString();
+    }
 
-	public String getName() {
-		return (basicProperty.getFullOwnerName());
-	}
+    public String getBillNo() {
+        return billNo;
+    }
 
-	public String getAssessmentNo() {
-		return getBasicProperty().getUpicNo();
-	}
+    public void setBillNo(final String billNo) {
+        this.billNo = billNo;
+    }
 
-	public String getOldAssessmentNo() {
-		return oldAssessmentNo;
-	}
+    public String getBillDate() {
+        final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        return dateFormat.format(new Date());
+    }
 
-	public void setOldAssessmentNo(String oldAssessmentNo) {
-		this.oldAssessmentNo = oldAssessmentNo;
-	}
+    public String getName() {
+        return basicProperty.getFullOwnerName();
+    }
 
-	public String getWaterConnectionNo() {
-	     String waterConnectionNo="";
-	        if(propertyWiseConsumptions!=null){
-	            if(propertyWiseConsumptions.getConsumerConsumptions()!=null && !propertyWiseConsumptions.getConsumerConsumptions().isEmpty()){
-	                String hscno="";
-	                for(ConsumerConsumption cc:propertyWiseConsumptions.getConsumerConsumptions()){
-	                    if(cc!=null){
-	                        if(hscno!=null && hscno!="")  
-	                            hscno=hscno+cc.getHscno()+",";
-	                    } 
-	                }
-	                if(hscno!="" && hscno!=null)    
-	                    waterConnectionNo=hscno.substring(0,hscno.length()-1); 
-	            }
-	        }
+    public String getAssessmentNo() {
+        return getBasicProperty().getUpicNo();
+    }
 
-	        return waterConnectionNo;
-	}
+    public String getOldAssessmentNo() {
+        return oldAssessmentNo;
+    }
 
-	public String getNoOfTap() {
-    	        if(propertyWiseConsumptions!=null){
-                  if(propertyWiseConsumptions.getConsumerConsumptions()!=null && !propertyWiseConsumptions.getConsumerConsumptions().isEmpty())  
-                      noOfTap=Integer.toString(propertyWiseConsumptions.getConsumerConsumptions().size());
-    	        }
-		return noOfTap;
-	}
+    public void setOldAssessmentNo(final String oldAssessmentNo) {
+        this.oldAssessmentNo = oldAssessmentNo;
+    }
 
+    public String getWaterConnectionNo() {
+        String waterConnectionNo = "";
+        if (propertyWiseConsumptions != null)
+            if (propertyWiseConsumptions.getConsumerConsumptions() != null
+            && !propertyWiseConsumptions.getConsumerConsumptions().isEmpty()) {
+                String hscno = "";
+                for (final ConsumerConsumption cc : propertyWiseConsumptions.getConsumerConsumptions())
+                    if (cc != null)
+                        if (hscno != null && hscno != "")
+                            hscno = hscno + cc.getHscno() + ",";
+                if (hscno != "" && hscno != null)
+                    waterConnectionNo = hscno.substring(0, hscno.length() - 1);
+            }
 
-	public String getSewarageConnectionNo() {
-		return sewarageConnectionNo;
-	}
+        return waterConnectionNo;
+    }
 
-	public void setSewarageConnectionNo(String sewarageConnectionNo) {
-		this.sewarageConnectionNo = sewarageConnectionNo;
-	}
+    public String getNoOfTap() {
+        if (propertyWiseConsumptions != null)
+            if (propertyWiseConsumptions.getConsumerConsumptions() != null
+            && !propertyWiseConsumptions.getConsumerConsumptions().isEmpty())
+                noOfTap = Integer.toString(propertyWiseConsumptions.getConsumerConsumptions().size());
+        return noOfTap;
+    }
 
-	public String getRentPaid() {
-		return rentPaid;
-	}
+    public String getSewarageConnectionNo() {
+        return sewarageConnectionNo;
+    }
 
-	public void setRentPaid(String rentPaid) {
-		this.rentPaid = rentPaid;
-	}
+    public void setSewarageConnectionNo(final String sewarageConnectionNo) {
+        this.sewarageConnectionNo = sewarageConnectionNo;
+    }
 
-	public String getStreetName() {
-		return (basicProperty.getPropertyID().getStreet() != null ? basicProperty.getPropertyID().getStreet().getName()
-				: null);
-	}
+    public String getRentPaid() {
+        return rentPaid;
+    }
 
-	public String getHouseNo() {
-		return getBasicProperty().getAddress().getHouseNoBldgApt();
-	}
+    public void setRentPaid(final String rentPaid) {
+        this.rentPaid = rentPaid;
+    }
 
-	public BasicProperty getBasicProperty() {
-		return basicProperty;
-	}
+    public String getStreetName() {
+        return basicProperty.getPropertyID().getStreet() != null ? basicProperty.getPropertyID().getStreet().getName()
+                : null;
+    }
 
-	public void setBasicProperty(BasicProperty basicProperty) {
-		this.basicProperty = basicProperty;
-	}
+    public String getHouseNo() {
+        return getBasicProperty().getAddress().getHouseNoBldgApt();
+    }
 
-	public List<DemandNoticeDetailsInfo> getDemandNoticeDetailsInfo() {
-		return demandNoticeDetailsInfo;
-	}
+    public BasicProperty getBasicProperty() {
+        return basicProperty;
+    }
 
-	public void setDemandNoticeDetailsInfo(List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo) {
-		this.demandNoticeDetailsInfo = demandNoticeDetailsInfo;
-	}
+    public void setBasicProperty(final BasicProperty basicProperty) {
+        this.basicProperty = basicProperty;
+    }
+
+    public List<DemandNoticeDetailsInfo> getDemandNoticeDetailsInfo() {
+        return demandNoticeDetailsInfo;
+    }
+
+    public void setDemandNoticeDetailsInfo(final List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo) {
+        this.demandNoticeDetailsInfo = demandNoticeDetailsInfo;
+    }
 
     public ReportUtil getReportUtil() {
         return reportUtil;
     }
 
-    public void setReportUtil(ReportUtil reportUtil) {
+    public void setReportUtil(final ReportUtil reportUtil) {
         this.reportUtil = reportUtil;
     }
 
@@ -171,24 +168,24 @@ public class DemandNoticeInfo {
         return propertyWiseConsumptions;
     }
 
-    public void setPropertyWiseConsumptions(PropertyWiseConsumptions propertyWiseConsumptions) {
+    public void setPropertyWiseConsumptions(final PropertyWiseConsumptions propertyWiseConsumptions) {
         this.propertyWiseConsumptions = propertyWiseConsumptions;
     }
 
-	public String getLocality() {
-		return locality;
-	}
+    public String getLocality() {
+        return locality;
+    }
 
-	public void setLocality(String locality) {
-		this.locality = locality;
-	}
+    public void setLocality(final String locality) {
+        this.locality = locality;
+    }
 
-	public String getBillPeriod() {
-		return billPeriod;
-	}
+    public String getBillPeriod() {
+        return billPeriod;
+    }
 
-	public void setBillPeriod(String billPeriod) {
-		this.billPeriod = billPeriod;
-	}
+    public void setBillPeriod(final String billPeriod) {
+        this.billPeriod = billPeriod;
+    }
 
 }

@@ -1,12 +1,11 @@
 package org.egov.ptis.client.model.calculator;
 
 import java.math.BigDecimal;
-import java.util.Map;
 
 import org.egov.commons.Installment;
 
 public class DemandNoticeDetailsInfo {
-    
+
     private Installment installment;
     private String fromDate;
     private String toDate;
@@ -15,91 +14,103 @@ public class DemandNoticeDetailsInfo {
     private BigDecimal waterTax = new BigDecimal(0);
     private BigDecimal drinageSewarageTax = new BigDecimal(0);
     private BigDecimal vacantLandTax = new BigDecimal(0);
-    private BigDecimal total = new BigDecimal(0);
-    
+    private final BigDecimal total = new BigDecimal(0);
+
     public Installment getInstallment() {
         return installment;
     }
-    public void setInstallment(Installment installment) {
+
+    public void setInstallment(final Installment installment) {
         this.installment = installment;
     }
+
     public BigDecimal getPropertyTax() {
-        if(propertyTax.equals(new BigDecimal(0))){
+        if (propertyTax.equals(new BigDecimal(0)))
             return null;
-        }
         else
             return propertyTax;
     }
-    public void setPropertyTax(BigDecimal propertyTax) {
+
+    public void setPropertyTax(final BigDecimal propertyTax) {
         this.propertyTax = propertyTax;
     }
+
     public BigDecimal getPenalty() {
-        if(penalty.equals(new BigDecimal(0))){
+        if (penalty.equals(new BigDecimal(0)))
             return null;
-        }
         else
             return penalty;
     }
-    public void setPenalty(BigDecimal penalty) {
+
+    public void setPenalty(final BigDecimal penalty) {
         this.penalty = penalty;
     }
+
     public BigDecimal getWaterTax() {
-        if(waterTax.equals(new BigDecimal(0))){
+        if (waterTax.equals(new BigDecimal(0)))
             return null;
-        }
         else
-        return waterTax;
+            return waterTax;
     }
-    public void setWaterTax(BigDecimal waterTax) {
+
+    public void setWaterTax(final BigDecimal waterTax) {
         this.waterTax = waterTax;
     }
+
     public BigDecimal getDrinageSewarageTax() {
-        if(drinageSewarageTax.equals(new BigDecimal(0))){
+        if (drinageSewarageTax.equals(new BigDecimal(0)))
             return null;
-        }
         else
-        return drinageSewarageTax;
+            return drinageSewarageTax;
     }
-    public void setDrinageSewarageTax(BigDecimal drinageSewarageTax) {
+
+    public void setDrinageSewarageTax(final BigDecimal drinageSewarageTax) {
         this.drinageSewarageTax = drinageSewarageTax;
     }
+
     public BigDecimal getVacantLandTax() {
-        if(vacantLandTax.equals(new BigDecimal(0))){
+        if (vacantLandTax.equals(new BigDecimal(0)))
             return null;
-        }
         else
-        return vacantLandTax;
+            return vacantLandTax;
     }
-    public void setVacantLandTax(BigDecimal vacantLandTax) {
+
+    public void setVacantLandTax(final BigDecimal vacantLandTax) {
         this.vacantLandTax = vacantLandTax;
     }
+
     public BigDecimal getTotal() {
         return addTotal();
     }
-    public BigDecimal addTotal(){
+
+    public BigDecimal addTotal() {
         BigDecimal sumAmount = new BigDecimal(0);
-        if(this.propertyTax!=null)
-            sumAmount=sumAmount.add(this.propertyTax);
-        if(this.penalty!=null)
-            sumAmount=sumAmount.add(this.penalty);
-        if(this.waterTax!=null)
-            sumAmount=sumAmount.add(this.waterTax);
-        if(this.vacantLandTax!=null)
-            sumAmount=sumAmount.add(this.vacantLandTax);
-        if(this.drinageSewarageTax!=null)
-            sumAmount=sumAmount.add(this.drinageSewarageTax);
+        if (propertyTax != null)
+            sumAmount = sumAmount.add(propertyTax);
+        if (penalty != null)
+            sumAmount = sumAmount.add(penalty);
+        if (waterTax != null)
+            sumAmount = sumAmount.add(waterTax);
+        if (vacantLandTax != null)
+            sumAmount = sumAmount.add(vacantLandTax);
+        if (drinageSewarageTax != null)
+            sumAmount = sumAmount.add(drinageSewarageTax);
         return sumAmount;
     }
+
     public String getFromDate() {
         return fromDate;
     }
-    public void setFromDate(String fromDate) {
+
+    public void setFromDate(final String fromDate) {
         this.fromDate = fromDate;
     }
+
     public String getToDate() {
         return toDate;
     }
-    public void setToDate(String toDate) {
+
+    public void setToDate(final String toDate) {
         this.toDate = toDate;
     }
 
