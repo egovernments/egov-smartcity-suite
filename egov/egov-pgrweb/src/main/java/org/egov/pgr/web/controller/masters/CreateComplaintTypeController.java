@@ -66,7 +66,7 @@ public class CreateComplaintTypeController {
 
     private final DepartmentService departmentService;
     private final ComplaintTypeService complaintTypeService;
-
+    
     @Autowired
     public CreateComplaintTypeController(final DepartmentService departmentService,
             final ComplaintTypeService complaintTypeService) {
@@ -95,9 +95,8 @@ public class CreateComplaintTypeController {
         if (errors.hasErrors())
             return "complaint-type";
         complaintTypeService.createComplaintType(complaintType);
-        final String message = "Complaint Type created Successfully";
         redirectAttrs.addFlashAttribute("complaintType", complaintType);
-        model.addAttribute("message", message);
+        redirectAttrs.addFlashAttribute("message", "msg.comp.type.success");
         return "redirect:/complainttype/success/" + complaintType.getName();
     }
 

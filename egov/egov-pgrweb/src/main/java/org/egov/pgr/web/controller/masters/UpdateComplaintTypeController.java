@@ -95,9 +95,8 @@ public class UpdateComplaintTypeController {
         if (errors.hasErrors())
             return "complaint-type";
         complaintType = complaintTypeService.updateComplaintType(complaintType);
-        final String message = "Complaint Type updated Successfully";
         redirectAttrs.addFlashAttribute("complaintType", complaintType);
-        model.addAttribute("message", message);
+        redirectAttrs.addFlashAttribute("message", "msg.comp.type.update.success");
         return "redirect:" + complaintType.getName() + COMPLAINTTYPE_UPDATE_SUCCESS;
     }
 

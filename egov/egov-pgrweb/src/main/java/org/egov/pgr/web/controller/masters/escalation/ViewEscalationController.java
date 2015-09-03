@@ -118,7 +118,7 @@ public class ViewEscalationController {
     @RequestMapping(value = "/search-view", method = RequestMethod.POST)
     public String searchForm(@ModelAttribute final EscalationForm escalationForm,
             final RedirectAttributes redirectAttrs, final Model model) {
-        if (escalationForm.getPosition() != null && escalationForm.getPosition().getId()!=null) {
+        if (escalationForm.getPosition() != null && escalationForm.getPosition().getId() != null) {
             final ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
 
             List<PositionHierarchy> positionHeirarchyList = positionHierarchyService
@@ -162,14 +162,11 @@ public class ViewEscalationController {
         this.objectTypeService = objectTypeService;
     }
 
-  
-
     @RequestMapping(value = "/update/{id}", method = POST)
     public String saveEscalationForm(@ModelAttribute final EscalationForm escalationForm, final Model model,
             final BindingResult errors, final RedirectAttributes redirectAttrs, @PathVariable final Long id) {
 
-        if(id==null)
-        {
+        if (id == null) {
             redirectAttrs.addFlashAttribute("escalationForm", escalationForm);
             model.addAttribute("message", "Please select position");
             return "escalation-searchView";
@@ -182,7 +179,7 @@ public class ViewEscalationController {
             positionHierarchyService.deleteAllInBatch(existingPosHierarchy);
         for (final PositionHierarchy posHierarchy : escalationForm.getPositionHierarchyList())
             if (posHierarchy.getFromPosition() != null && posHierarchy.getFromPosition().getId() != null
-            && posHierarchy.getToPosition() != null && posHierarchy.getToPosition().getId() != null) {
+                    && posHierarchy.getToPosition() != null && posHierarchy.getToPosition().getId() != null) {
 
                 posHierarchy.setFromPosition(positionMasterService.getPositionById(posHierarchy.getFromPosition()
                         .getId()));
@@ -196,9 +193,8 @@ public class ViewEscalationController {
                 return "escalation-searchView";
             }
 
-        final String message = "Escalation details updated successfully.";
         redirectAttrs.addFlashAttribute("escalationForm", escalationForm);
-        model.addAttribute("message", message);
+        redirectAttrs.addFlashAttribute("message", "msg.escaltion.success");
 
         return "escalation-success";
 

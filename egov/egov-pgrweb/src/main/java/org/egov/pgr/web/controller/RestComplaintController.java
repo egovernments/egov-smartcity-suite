@@ -70,6 +70,7 @@ import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -93,6 +94,8 @@ public class RestComplaintController extends GenericComplaintController {
     private UserService userService;
     @Autowired
     private SearchService searchService;
+    @Autowired
+    private MessageSource messageSource;
 
     @RequestMapping(value = { "rest/showAllcomplaint" }, method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String testInstances(@RequestBody final ComplaintSearchRequest searchRequest) {
@@ -174,8 +177,9 @@ public class RestComplaintController extends GenericComplaintController {
         }
 
         complaint = complaintService.update(complaint, approvalPosition, approvalComent);
-        return "Complaint with tracking number " + complaintno + "updated with Status: " + restComplaint.getStatus()
-                + " to " + restComplaint.getApprovalUserName() + " ";
+        final String fwdmsg = messageSource.getMessage("msg.comp.fwd.usr", new String[] { complaintno, restComplaint.getStatus(),
+                restComplaint.getApprovalUserName() }, null);
+        return fwdmsg;
 
     }
 

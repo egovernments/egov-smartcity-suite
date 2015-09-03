@@ -89,7 +89,7 @@
 						<form:options items="${zone}" itemValue="id"
 							itemLabel="localName" />
 					</form:select>
-					<form:errors path="" cssClass="error-msg" />
+					
 				</div>
 
 				<div class="col-md-3 col-xs-12 add-margin">
@@ -148,6 +148,7 @@
 				<div class="col-md-9 add-margin">
 					<textarea class="form-control" id="inc_messge" placeholder="" required="required"
 						maxlength="400" name="approvalComent"></textarea>
+						<form:errors path="" cssClass="error-msg" />
 				</div>
 			</div>  
 			<div class="form-group">
@@ -183,7 +184,7 @@
 					<button type="reset" class="btn btn-default">
 						<spring:message code="lbl.reset" />
 					</button>
-					<button type="button" class="btn btn-default" onclick="window.close();">Close</button>   
+					<button type="button" class="btn btn-default" onclick="window.close();"><spring:message code="lbl.close" /></button>   
 				</div>
 			</div>
 		</form:form>

@@ -55,7 +55,14 @@
 				<div class="panel-body">
 					<div class="row">
 						<div class="col-md-3 col-xs-6 add-margin">
-							Position: <c:out value="${escalationForm.position.name }"></c:out>
+							<spring:message code="lbl.escalation.position" />
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin view-content" id="posName">
+							<c:out value="${escalationForm.position.name}"></c:out>
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin">
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin view-content">
 						</div>
 					</div>
 					<div class="row text-center">

@@ -61,6 +61,7 @@ import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -93,6 +94,8 @@ public class ComplaintUpdationController {
     private BoundaryService boundaryService;
     @Autowired
     FileStoreService fileStoreService;
+    @Autowired
+    private MessageSource messageSource;
 
     @Autowired
     public ComplaintUpdationController(final ComplaintService complaintService,
@@ -114,7 +117,8 @@ public class ComplaintUpdationController {
         final Complaint complaint = getComplaint(crnNo);
         model.addAttribute("complaintHistory", complaintService.getHistory(complaint));
         model.addAttribute("status",
-                complaintStatusMappingService.getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(), complaint.getStatus()));
+                complaintStatusMappingService.getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(),
+                        complaint.getStatus()));
         model.addAttribute("complaint", complaint);
 
         if (securityUtils.currentUserType().equals(UserType.CITIZEN))
@@ -126,7 +130,8 @@ public class ComplaintUpdationController {
             model.addAttribute("zone",
                     boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("ZONE", "ADMINISTRATION"));
             if (complaint.getLocation() != null && complaint.getLocation().getParent() != null)
-                model.addAttribute("ward", boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
+                model.addAttribute("ward",
+                        boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
             return COMPLAINT_EDIT;
         }
     }
@@ -144,7 +149,7 @@ public class ComplaintUpdationController {
         String approvalComent = "";
         String result = "";
 
-        if (request.getParameter("approvalComent") != null)
+        if (request.getParameter("approvalComent") != null && !request.getParameter("approvalComent").trim().isEmpty())
             approvalComent = request.getParameter("approvalComent");
 
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
@@ -161,10 +166,12 @@ public class ComplaintUpdationController {
             model.addAttribute("complaintHistory", historyTable);
             model.addAttribute("complaintType", complaintTypeService.findAll());
             model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
-            model.addAttribute("zone", boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("ZONE", "ADMINISTRATION"));
+            model.addAttribute("zone",
+                    boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("ZONE", "ADMINISTRATION"));
             model.addAttribute("ward", Collections.EMPTY_LIST);
             if (complaint.getLocation() != null && complaint.getLocation().getParent() != null)
-                model.addAttribute("ward", boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
+                model.addAttribute("ward",
+                        boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
             if (securityUtils.currentUserType().equals(UserType.CITIZEN))
                 result = COMPLAINT_CITIZEN_EDIT;
             else
@@ -181,10 +188,10 @@ public class ComplaintUpdationController {
     private void validateUpdate(final Complaint complaint, final BindingResult errors,
             final HttpServletRequest request) {
         if (complaint.getStatus() == null)
-            errors.addError(new ObjectError("status", "Complaint Status is required"));
+            errors.rejectValue("status", "status.requried");
 
-        if (request.getParameter("approvalComent") == null || request.getParameter("approvalComent").isEmpty())
-            errors.addError(new ObjectError("approvalComent", "Complaint coments Cannot be null"));
+        if (request.getParameter("approvalComent") == null || request.getParameter("approvalComent").trim().isEmpty())
+            errors.addError(new ObjectError("approvalComent", messageSource.getMessage("comment.not.null", null, null)));
     }
 
     protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
@@ -194,7 +201,7 @@ public class ComplaintUpdationController {
                     return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
                             file.getContentType(), PGRConstants.MODULE_NAME);
                 } catch (final Exception e) {
-                    throw new EGOVRuntimeException("Error occurred while getting inputstream", e);
+                    throw new EGOVRuntimeException("err.input.stream", e);
                 }
             }).collect(Collectors.toSet());
         else

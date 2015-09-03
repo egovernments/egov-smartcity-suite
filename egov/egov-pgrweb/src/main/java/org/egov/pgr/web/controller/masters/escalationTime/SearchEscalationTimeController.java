@@ -62,12 +62,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/escalationTime")
 public class SearchEscalationTimeController {
 	public static final String CONTENTTYPE_JSON = "application/json";
-	private static final String ESCALATIONTIMESAVED = "Escalation time successfully created!";
 
 	protected ComplaintTypeService complaintTypeService;
 	protected EscalationService escalationService;
 	protected DesignationService designationService;
-
 	@Autowired
 	public SearchEscalationTimeController(
 			final ComplaintTypeService complaintTypeService,
@@ -161,9 +159,9 @@ public class SearchEscalationTimeController {
 					escalationService.create(escalation);
 				}
 			}
-
+ 
 		}
-		model.addAttribute("message", ESCALATIONTIMESAVED);
+		redirectAttrs.addFlashAttribute("message", "msg.escalate.time.success");
 		return "escalationTime-searchView";
 	}
 

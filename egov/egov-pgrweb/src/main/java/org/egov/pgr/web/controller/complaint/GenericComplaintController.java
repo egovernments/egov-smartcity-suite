@@ -107,7 +107,7 @@ public abstract class GenericComplaintController {
                     return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(), file.getContentType(),
                             PGRConstants.MODULE_NAME);
                 } catch (final Exception e) {
-                    throw new EGOVRuntimeException("Error occurred while getting inputstream", e);
+                    throw new EGOVRuntimeException("err.input.stream", e);
                 }
             }).collect(Collectors.toSet());
         else
