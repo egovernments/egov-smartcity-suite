@@ -91,6 +91,11 @@
 	</filter>
 	
 	<filter>
+		<filter-name>mdcLoggingFilter</filter-name>
+		<filter-class>org.egov.infra.web.filter.MDCLoggingFilter</filter-class>
+	</filter>
+	
+	<filter>
 		<filter-name>applicationTenantResolverFilter</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
@@ -160,6 +165,11 @@
 	
 	<filter-mapping>
 		<filter-name>applicationCoreFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+		<filter-name>mdcLoggingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	

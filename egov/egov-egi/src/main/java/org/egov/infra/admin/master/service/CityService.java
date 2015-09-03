@@ -103,9 +103,11 @@ public class CityService {
     }
 
     public Map<String, Object> cityDataAsMap() {
-        final Map<String, Object> cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
-        if (cityPrefs.isEmpty())
+        Map<String, Object> cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
+        if (cityPrefs.isEmpty()) {
             cityPrefCache.putAll(cityPrefCacheKey(), getCityByURL(EgovThreadLocals.getDomainName()).toMap());
+            cityPrefs =  cityPrefCache.entries(cityPrefCacheKey());
+        }
         return cityPrefs;
     }
 

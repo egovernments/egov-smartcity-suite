@@ -56,6 +56,11 @@
 	</filter>
 
 	<filter>
+		<filter-name>mdcLoggingFilter</filter-name>
+		<filter-class>org.egov.infra.web.filter.MDCLoggingFilter</filter-class>
+	</filter>
+	
+	<filter>
 		<filter-name>openEntityManagerInViewFilter</filter-name>
 		<filter-class>
 			org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter
@@ -110,6 +115,12 @@
 		<filter-name>applicationCoreFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
+	<filter-mapping>
+		<filter-name>mdcLoggingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
 	<filter-mapping>
 		<filter-name>apiFilter</filter-name>
 		<url-pattern>/*</url-pattern>
