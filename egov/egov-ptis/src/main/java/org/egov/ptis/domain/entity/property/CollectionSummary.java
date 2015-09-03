@@ -43,15 +43,18 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.egov.infra.admin.master.entity.Boundary;
+
 public class CollectionSummary implements Serializable {
     private String receiptNumber;
     private Date receiptDate;
+    private Property property;
     private String propertyId;
-    private Long zoneId;
-    private Long wardId;
-    private Long areaId;
-    private Long localityId;
-    private Long streetId;
+    private Boundary zoneId;
+    private Boundary wardId;
+    private Boundary areaId;
+    private Boundary localityId;
+    private Boundary streetId;
     private String payeeName;
     private Character collectionType;
     private String paymentMode;
@@ -81,24 +84,7 @@ public class CollectionSummary implements Serializable {
     public void setPropertyId(String propertyId) {
             this.propertyId = propertyId;
     }
-    public Long getZoneId() {
-            return zoneId;
-    }
-    public void setZoneId(Long zoneId) {
-            this.zoneId = zoneId;
-    }
-    public Long getWardId() {
-            return wardId;
-    }
-    public void setWardId(Long wardId) {
-            this.wardId = wardId;
-    }
-    public Long getStreetId() {
-            return streetId;
-    }
-    public void setStreetId(Long streetId) {
-            this.streetId = streetId;
-    }
+    
     public String getPayeeName() {
             return payeeName;
     }
@@ -159,17 +145,43 @@ public class CollectionSummary implements Serializable {
     public void setArrearLibCessColl(BigDecimal arrearLibCessColl) {
         this.arrearLibCessColl = arrearLibCessColl;
     }
-    public Long getAreaId() {
+   
+    public Boundary getZoneId() {
+        return zoneId;
+    }
+    public void setZoneId(Boundary zoneId) {
+        this.zoneId = zoneId;
+    }
+    public Boundary getWardId() {
+        return wardId;
+    }
+    public void setWardId(Boundary wardId) {
+        this.wardId = wardId;
+    }
+    public Boundary getAreaId() {
         return areaId;
     }
-    public void setAreaId(Long areaId) {
+    public void setAreaId(Boundary areaId) {
         this.areaId = areaId;
     }
-    public Long getLocalityId() {
+    public Boundary getLocalityId() {
         return localityId;
     }
-    public void setLocalityId(Long localityId) {
+    public void setLocalityId(Boundary localityId) {
         this.localityId = localityId;
     }
+    public Boundary getStreetId() {
+        return streetId;
+    }
+    public void setStreetId(Boundary streetId) {
+        this.streetId = streetId;
+    }
+    public Property getProperty() {
+        return property;
+    }
+    public void setProperty(Property property) {
+        this.property = property;
+    }
+    
     
 }

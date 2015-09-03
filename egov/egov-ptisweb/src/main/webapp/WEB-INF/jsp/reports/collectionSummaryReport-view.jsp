@@ -37,151 +37,313 @@
  
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
+<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<%@ include file="/includes/taglibs.jsp" %>
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-	<head>
-		<title><s:text name="collectionsummary.pagetitle"></s:text></title>
-		<script type="text/javascript">
-
-		function validateFormAndSubmit(){
-			if(checkBeforeSubmit()){
-				 document.collSumryform.action='${pageContext.request.contextPath}/reports/collectionSummaryReport-list.action';
-		    	 document.collSumryform.submit();
-			}
-			else
-				return false;
-		}
+<head>
+	<title>
+		<s:if test="%{mode=='zoneWise'}">
+			<s:text name='zoneWiseCollectionReport.search' />
+		</s:if>
+		 <s:elseif test="%{mode=='wardWise'}">
+		 	<s:text name='wardWiseCollectionReport.search' />
+		</s:elseif>
+         <s:elseif test="%{mode=='blockWise'}">	
+         	<s:text name='blockWiseCollectionReport.search' />
+		</s:elseif>
+		<s:elseif test="%{mode=='localityWise'}">
+			<s:text name='localityWiseCollectionReport.search' />
+		</s:elseif>
+		<s:elseif test="%{mode=='usageWise'}">
+			<s:text name='usageWiseCollectionReport.search' />
+		</s:elseif>
 		
-		function checkBeforeSubmit() {
-			var fromDate = document.getElementById("fromDate").value;
-			var toDate = document.getElementById("toDate").value;
-			
-			if (fromDate == null || fromDate == "" || fromDate == 'DD/MM/YYYY') {
-				alert('From Date is mandatory');
-				return false;
-			}
-			if (toDate == null || toDate == "" || toDate == 'DD/MM/YYYY') {
-				alert('To Date is mandatory');
-				return false;
-			}
-			return true;
-		} 
-		</script>
-	</head>
-	<body>
-		<div class="formmainbox">
-		 <s:if test="%{hasErrors()}">
+	</title>
+</head>
+<body>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel-body">
+			<s:if test="%{hasErrors()}">
 				<div align="left">
 					<s:actionerror />
 					<s:fielderror/>
 				</div>			
 			</s:if>
-			<div style="padding:0 20px;">
-			<table border="0" cellspacing="0" cellpadding="0" width="100%">
-			  <tr> 
-			    <td>
-				  <div class="headingbg">					
-					<s:text name="collectionsummary.pagetitle"/>								
-				  </div>
-				</td>
-			  </tr>	
-			  <tr>
-			    <td>
-			    <br/>
-			     <table border="0" cellspacing="0" cellpadding="0" width="100%" style="max-width:960px;margin:0 auto;">
-			       <s:form name="collSumryform" theme="simple" id="collSumryform">
-			       <s:hidden name="mode"/>  
-			       <s:hidden name="srchFlag"/>
-				       <tr>
-				       	<s:if test="%{mode=='zoneWise'}">
-					         <td class="bluebox"><s:text name="collectionsummary.zone" /> :</td>
-					         <td class="bluebox">
-					           <s:select name="boundaryId" id="boundaryId" list="zoneBndryMap" cssStyle="width: 150px;" listKey="key" listValue="value"
-									headerKey="-1" headerValue="%{getText('default.all')}" value="%{boundaryId}" />
-					         </td>
-				         </s:if>
-				         <s:elseif test="%{mode=='wardWise'}">
-					         <td class="bluebox"><s:text name="collectionsummary.ward" /> :</td>
-					         <td class="bluebox">
-					           <s:select name="boundaryId" id="boundaryId" list="wardBndryMap" cssStyle="width: 150px;" listKey="key" listValue="value"
-									headerKey="-1" headerValue="%{getText('default.all')}" value="%{boundaryId}" />
-					         </td>
-				         </s:elseif>
-				         <s:elseif test="%{mode=='blockWise'}">
-					         <td class="bluebox"><s:text name="collectionsummary.block" /> :</td>
-					         <td class="bluebox">
-					           <s:select name="boundaryId" id="boundaryId" list="blockBndryMap" cssStyle="width: 150px;" listKey="key" listValue="value"
-									headerKey="-1" headerValue="%{getText('default.all')}" value="%{boundaryId}" />
-					         </td>
-				         </s:elseif>
-				         <s:elseif test="%{mode=='localityWise'}">
-					         <td class="bluebox"><s:text name="collectionsummary.locality" /> :</td>
-					         <td class="bluebox">
-					           <s:select name="boundaryId" id="boundaryId" list="localityBndryMap" cssStyle="width: 150px;" listKey="key" listValue="value"
-									headerKey="-1" headerValue="%{getText('default.all')}" value="%{boundaryId}" />
-					         </td>
-				         </s:elseif>
-				       </tr>
-				       
-				       <tr>
-				         <td class="bluebox"><s:text name="collectionsummary.fromdate" /> <span class="mandatory1">*</span> :</td>
-				         <s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy" />
-						 <td class="bluebox">
-							<s:textfield id="fromDate"	name="fromDate" value="%{fromDate}"
-							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							placeholder="DD/MM/YYYY"
-							cssClass="datepicker"
-							onblur="validateDateFormat(this);" />
-						</td>
-				        <td class="bluebox"><s:text name="collectionsummary.todate" /> <span class="mandatory1">*</span> :</td>
-				         <s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy" />
-				         <td class="bluebox">
-							<s:textfield id="toDate" name="toDate" value="%{toDate}"
-							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							placeholder="DD/MM/YYYY"
-							cssClass="datepicker"
-							onblur="validateDateFormat(this);" />
-						</td>
-				       </tr>
-				       
-				        <tr>
-				         <td class="bluebox"><s:text name="collectionsummary.collectionmode" /> :</td>
-				         <td class="bluebox">
-				         	<s:select name="collMode" id="collMode" list="collectionModesMap" cssStyle="width: 150px;" listKey="key" listValue="value"
-								headerKey="-1" headerValue="%{getText('default.all')}" value="%{collMode}" />
-				         </td>
-				         <td class="bluebox"><s:text name="collectionsummary.transactionmode" /> :</td>
-				         <td class="bluebox">
-				           <s:select name="transMode" id="transMode" list="dropdownData.instrumentTypeList" cssStyle="width: 150px;" listKey="type" listValue="type"
-								headerKey="-1" headerValue="%{getText('default.all')}" value="%{transMode}" />
-				         </td>
-				       </tr>
-				       
-				       <tr>
-				         <td class="bluebox" colspan="4" align="center">
-				           <div class="buttonbottom" align="center">		   
-							 <input type="submit" id="btnsearch" name="btnsearch" value="Search" class="buttonsubmit" onclick="return validateFormAndSubmit();" /> 
-							 <input type="submit" id="btnclose" name="btnclose" value="Close" class="buttonsubmit normal"onClick="window.close()" />
-						   </div>
-				         </td>
-				       </tr>
-				       
-				       <tr>
-				       <div>
-							<s:include value="collectionSummaryReport-results.jsp" />
+				<s:form name="boundaryWiseCollectionForm" action="collectionSummaryReport" theme="simple"
+					cssClass="form-horizontal form-groups-bordered">
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-heading">
+							<div class="panel-title text-left">
+									<s:if test="%{mode=='zoneWise'}">
+										<s:text name='zoneWiseCollectionReport.search' />
+									</s:if>
+									 <s:elseif test="%{mode=='wardWise'}">
+									 	<s:text name='wardWiseCollectionReport.search' />
+									</s:elseif>
+							         <s:elseif test="%{mode=='blockWise'}">	
+							         	<s:text name='blockWiseCollectionReport.search' />
+									</s:elseif>
+									<s:elseif test="%{mode=='localityWise'}">
+										<s:text name='localityWiseCollectionReport.search' />
+									</s:elseif>
+									<s:elseif test="%{mode=='usageWise'}">
+										<s:text name='usageWiseCollectionReport.search' />
+									</s:elseif>
+							</div>
 						</div>
-				       </tr>
-			       </s:form>
-			     </table> 
-			    </td>
-			  </tr>	
-			  <tr>
-			 <br/>
-			</tr>
-		</table>
-		</div>	  
+						<div class="panel-body custom-form">
+						
+						<s:hidden id="finYearStartDate" name="finYearStartDate" value="%{finYearStartDate}"/> 
+						<s:hidden id="mode" name="mode" value="%{mode}"/> 
+			            
+			            <s:if test="%{mode=='zoneWise'}">
+			            	<div class="form-group">
+								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+											name="collectionsummary.zone" /> :</label>
+								<div class="col-sm-3 add-margin">
+										<s:select headerKey="-1"
+											headerValue="%{getText('default.all')}" name="boundaryId"
+											id="boundaryId" listKey="key" listValue="value"
+											list="zoneBndryMap" cssClass="form-control" value="%{boundaryId}" 
+											/>
+								</div>			
+							</div>
+			            </s:if>
+			            <s:elseif test="%{mode=='wardWise'}">
+			           	 	<div class="form-group">
+								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+											name="collectionsummary.ward" /> :</label>
+								<div class="col-sm-3 add-margin">
+										<s:select headerKey="-1"
+											headerValue="%{getText('default.all')}" name="boundaryId"
+											id="boundaryId" listKey="key" listValue="value"
+											list="wardBndryMap" cssClass="form-control" value="%{boundaryId}" 
+											/>
+								</div>			
+							</div>
+			            </s:elseif>
+			             <s:elseif test="%{mode=='blockWise'}">
+			           	 	<div class="form-group">
+								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+											name="collectionsummary.block" /> :</label>
+								<div class="col-sm-3 add-margin">
+										<s:select headerKey="-1"
+											headerValue="%{getText('default.all')}" name="boundaryId"
+											id="boundaryId" listKey="key" listValue="value"
+											list="blockBndryMap" cssClass="form-control" value="%{boundaryId}" 
+											/>
+								</div>			
+							</div>
+			            </s:elseif>
+			            <s:elseif test="%{mode=='localityWise'}">
+			           	 	<div class="form-group">
+								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+											name="collectionsummary.locality" /> :</label>
+								<div class="col-sm-3 add-margin">
+										<s:select headerKey="-1"
+											headerValue="%{getText('default.all')}" name="boundaryId"
+											id="boundaryId" listKey="key" listValue="value"
+											list="localityBndryMap" cssClass="form-control" value="%{boundaryId}" 
+											/>
+								</div>			
+							</div>
+			            </s:elseif>
+			            <s:elseif test="%{mode=='usageWise'}"> 
+							<div class="form-group">
+								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+											name="property.type" /> :</label>
+								<div class="col-sm-3 add-margin">
+										<s:select headerKey="-1"
+											headerValue="%{getText('default.all')}" name="propTypeCategoryId"
+											id="propTypeCategoryId" listKey="key" listValue="value"
+											list="propTypeCategoryMap" cssClass="form-control" value="%{propTypeCategoryId}" 
+											/>
+								</div>			
+							
+								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+										name="Zone" /> :</label>
+								<div class="col-sm-3 add-margin">
+									<s:select headerKey="-1"
+										headerValue="%{getText('default.all')}" name="zoneId"
+										id="zoneId" listKey="id" listValue="name"
+										list="dropdownData.zoneList" cssClass="form-control" value="%{zoneId}" 
+										onchange="populateWard()"/>
+										<egov:ajaxdropdown id="wardId" fields="['Text','Value']"
+											dropdownId="wardId" url="common/ajaxCommon-wardByZone.action" />
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+										name="Ward" /> :</label>
+								<div class="col-sm-3 add-margin">
+									<s:select headerKey="-1"
+										headerValue="%{getText('default.select')}" name="wardId"
+										id="wardId" listKey="key" listValue="value"
+										list="dropdownData.wardList" cssClass="form-control" value="%{wardId}" 
+										onchange="populateBlock()"/>
+										<egov:ajaxdropdown id="areaId" fields="['Text','Value']"
+											dropdownId="areaId" url="common/ajaxCommon-areaByWard.action" />
+								</div>
+							
+								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+										name="block" /> :</label>
+								<div class="col-sm-3 add-margin">
+									<s:select headerKey="-1"
+										headerValue="%{getText('default.select')}" name="areaId"
+										id="areaId" listKey="key" listValue="value"
+										list="dropdownData.blockList" cssClass="form-control" value="%{areaId}" 
+										/>
+								</div>
+							</div>
+						</s:elseif>	
+							
+							<div class="form-group">
+								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+										name="titleTransferRegReport.fromdate" /><span class="mandatory1" id="prntMandatory">*</span> :</label>
+								 <s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy" />		
+								<div class="col-sm-3 add-margin">
+									<s:textfield id="fromDate"	name="fromDate" value="%{fromDate}"
+										onkeyup="DateFormat(this,this.value,event,false,'3')"
+										placeholder="DD/MM/YYYY"
+										cssClass="form-control datepicker"
+										data-inputmask="'mask': 'd/m/y'"
+										onblur="validateDateFormat(this);" />
+								</div>
+								
+								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+										name="titleTransferRegReport.todate" /><span class="mandatory1" id="prntMandatory">*</span> :</label>
+								 <s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy" />		
+								<div class="col-sm-3 add-margin">
+									<s:textfield id="toDate" name="toDate" value="%{toDate}"
+										onkeyup="DateFormat(this,this.value,event,false,'3')"
+										placeholder="DD/MM/YYYY"
+										cssClass="form-control datepicker"
+										data-inputmask="'mask': 'd/m/y'"
+										onblur="validateDateFormat(this);" />
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+										name="collectionsummary.collectionmode" /> :</label>
+								<div class="col-sm-3 add-margin">
+										<s:select headerKey="-1"
+											headerValue="%{getText('default.all')}" name="collMode"
+											id="collMode" listKey="key" listValue="value"
+											list="collectionModesMap" cssClass="form-control" value="%{collMode}" 
+											/>
+								</div>	
+								
+								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+										name="collectionsummary.transactionmode" /> :</label>
+								<div class="col-sm-3 add-margin">
+										<s:select headerKey="-1"
+											headerValue="%{getText('default.all')}" name="transMode"
+											id="transMode" listKey="type" listValue="type"
+											list="dropdownData.instrumentTypeList" cssClass="form-control" value="%{transMode}" 
+											/>
+								</div>		
+							</div>
+						</div>
+					</div>
+				</s:form>
+
+				<div class="row">
+					<div class="text-center">
+						<button type="button" id="btnsearch" class="btn btn-success">
+							Search</button>
+						<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
+							Close</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="row display-hide report-section">
+				<div class="col-md-12 table-header text-left">
+					<s:if test="%{mode=='zoneWise'}">
+						Zone Wise Collection Report Details
+					</s:if>
+					 <s:elseif test="%{mode=='wardWise'}">
+					 	Ward Wise Collection Report Details
+					</s:elseif>
+			         <s:elseif test="%{mode=='blockWise'}">	
+			         	Block Wise Collection Report Details
+					</s:elseif>
+					<s:elseif test="%{mode=='localityWise'}">
+						Locality Wise Collection Report Details
+					</s:elseif>
+					<s:elseif test="%{mode=='usageWise'}">  
+						Usage Wise Collection Report Details  
+					</s:elseif>
+				</div>
+				<div class="col-md-12 form-group report-table-container">
+					<table class="table table-bordered table-hover multiheadertbl" id="tblCollectionSummary">
+						<thead>
+							<tr> 
+								<s:if test="%{mode=='zoneWise'}">
+									<th>Zone</th> 
+								</s:if>
+								 <s:elseif test="%{mode=='wardWise'}">
+								 	<th>Ward</th> 
+								</s:elseif>
+						         <s:elseif test="%{mode=='blockWise'}">	
+						         	<th>Block</th> 
+								</s:elseif>
+								<s:elseif test="%{mode=='localityWise'}">
+									<th>Locality</th> 
+								</s:elseif> 
+								<s:elseif test="%{mode=='usageWise'}">
+									<th>Property Type</th> 
+								</s:elseif>
+								<th>Arrear Tax Amount</th>
+								<th>Arrear LibraryCess Amount</th>
+								<th>Arrear Total</th>
+								<th>Current Tax Amount</th>
+								<th>Current LibraryCess Amount</th>
+								<th>Current Total</th>
+								<th>Penalty</th>
+								<th>Arrear Penalty Amount</th>
+								<th>Penalty Total</th>
+								<th>Grand Total</th>
+							</tr>
+						</thead>
+						<tfoot id="report-footer">
+							<tr>
+								<td>Total</td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+							</tr>
+						</tfoot> 
+					</table>
+				</div>
+			</div>
 		</div>
-	</body>
+	</div>
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	type="text/javascript"></script>
+<script type="text/javascript" src="<c:url value='/resources/javascript/collectionSummaryReport.js'/>"></script>
 </html>

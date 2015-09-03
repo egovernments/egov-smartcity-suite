@@ -52,21 +52,14 @@
             <property name="propertyId" type="string">
                 <column name="PROPERTYID" length="64" />
             </property>
-            <property name="zoneId" type="java.lang.Long">
-                <column name="ZONEID" precision="12" scale="0" />
-            </property>
-            <property name="wardId" type="java.lang.Long">
-                <column name="WARDID" precision="12" scale="0" />
-            </property>
-            <property name="areaId" type="java.lang.Long">
-                <column name="AREAID" precision="12" scale="0" />
-            </property>
-            <property name="localityId" type="java.lang.Long">
-                <column name="LOCALITYID" precision="12" scale="0" />
-            </property>
-            <property name="streetId" type="java.lang.Long">
-                <column name="STREETID" precision="12" scale="0" />
-            </property>
+            
+			<many-to-one name="property" class="org.egov.ptis.domain.entity.property.PropertyImpl" column="IDPROPERTY"/>
+            <many-to-one name="zoneId" class="org.egov.infra.admin.master.entity.Boundary" column="ZONEID"/>
+            <many-to-one name="wardId" class="org.egov.infra.admin.master.entity.Boundary" column="WARDID"/>
+            <many-to-one name="areaId" class="org.egov.infra.admin.master.entity.Boundary" column="AREAID"/>
+            <many-to-one name="localityId" class="org.egov.infra.admin.master.entity.Boundary" column="LOCALITYID"/>
+            <many-to-one name="streetId" class="org.egov.infra.admin.master.entity.Boundary" column="STREETID"/>
+            
             <property name="payeeName" type="string">
                 <column name="PAYEENAME" length="1024" />
             </property>
