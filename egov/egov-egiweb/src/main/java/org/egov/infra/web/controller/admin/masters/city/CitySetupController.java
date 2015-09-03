@@ -88,12 +88,11 @@ public class CitySetupController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String updateCitySetup(@Valid @ModelAttribute final City city, final BindingResult bindResult,
             @RequestParam(required = false) final MultipartFile gisKML,
-            @RequestParam(required = false) final MultipartFile gisShape,
             @RequestParam(required = false) final MultipartFile logo,
             final RedirectAttributes redirectAttrs) {
         if (bindResult.hasErrors())
             return "city-setup";
-        addToCityFileData(city, Arrays.asList(gisKML, gisShape, logo));
+        addToCityFileData(city, Arrays.asList(gisKML, logo));
         cityService.updateCity(city);
         redirectAttrs.addFlashAttribute("message", "City configuration successfully updated!");
         return "redirect:/city/setup/view";
