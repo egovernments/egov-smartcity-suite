@@ -77,7 +77,7 @@
 		<property name="referenceDate" column="REF_DATE" />
 		<property name="referenceNo" column="REF_NUM" />
 		<property name="remarks" column="REMARKS" />
-		<property name="active" column="IS_ACTIVE" type="yes_no" />
+		<property name="active" column="IS_ACTIVE" type="boolean" />
 		<property name="extraField1" column="EXTRA_FIELD1" />
 		<property name="extraField2" column="EXTRA_FIELD2" />
 		<property name="extraField3" column="EXTRA_FIELD3" />

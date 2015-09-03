@@ -58,7 +58,7 @@
 		<property name="noOfMachines" type="java.lang.Long">
 			<column name="NO_OF_MACHINES" precision="22" scale="0"  />
 		</property>
-		<property name="history" type="java.lang.Boolean">
+		<property name="history" type="boolean">
 			<column name="HISTORY" />
 		</property>
 

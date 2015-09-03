@@ -65,13 +65,13 @@
 		<many-to-one class="org.egov.tl.domain.entity.LicenseType" fetch="select" name="licenseType">
 			<column name="ID_LICENSE_TYPE" />
 		</many-to-one>
-		<property generated="never" lazy="false" name="approvalrequired" type="java.lang.Boolean">
+		<property generated="never" lazy="false" name="approvalrequired" type="boolean">
 			<column name="APPROVAL_REQUIRED" />
 		</property>
-		<property generated="never" lazy="false" name="pfaApplicable" type="java.lang.Boolean">
+		<property generated="never" lazy="false" name="pfaApplicable" type="boolean">
 			<column name="PFA_APPLICABLE" />
 		</property>
-		<property generated="never"  name="nocApplicable" type="java.lang.Boolean">
+		<property generated="never"  name="nocApplicable" type="boolean">
 			<column name="NOC_APPLICABLE" />
 		</property>
 		<property generated="never" lazy="false" name="feeBasedOn" type="java.lang.String">

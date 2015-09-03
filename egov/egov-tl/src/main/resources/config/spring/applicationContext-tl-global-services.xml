@@ -52,7 +52,7 @@
          <constructor-arg index="0" ref="TradeLicensePersistenceService"/>
     </bean>
     
-    <bean id="LicenseTransferPersistenceService" parent="persistenceService">
+    <!-- <bean id="LicenseTransferPersistenceService" parent="persistenceService">
         <property name="type" value="org.egov.tl.domain.entity.LicenseTransfer" />
     </bean>
         
@@ -66,6 +66,6 @@
         
     <bean id="LicenseObjectionInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="LicenseObjectionPersistenceService"/>
-    </bean>
+    </bean> -->
     
 </beans>

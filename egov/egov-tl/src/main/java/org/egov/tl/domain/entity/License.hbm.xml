@@ -103,7 +103,7 @@
 
 		<property name="servicetaxNumber" column="SERVICE_TAX_NUM" />
 
-		<property name="isActive" column="IS_ACTIVE" />
+		<property name="isActive" column="IS_ACTIVE" type="boolean"/>
 
 		<many-to-one name="status" class="org.egov.tl.domain.entity.LicenseStatus">
 			<column name="ID_STATUS" />
@@ -127,7 +127,7 @@
 
 		<property name="companyDetails" column="COMPANY_DETAIL" />
 
-		<property name="rentalAgreement" column="rentalAgreement" />
+		<property name="rentalAgreement" column="rentalAgreement" type="boolean"/>
 
 		<property name="rentPaid" column="RENT_PAID" />
 		<property name="feeTypeStr" column="FEETYPETEXT" />
@@ -172,7 +172,7 @@
 				<property name="waterBuckets" column="WATER_BUCKETS"  />
 				<property name="dcpExtinguisher" column="DCP_EXTINGUISHER"  />
 				<property name="nocNumber" column="NOC_NUMBER"/>
-				<property name="isCertificateGenerated" column="ISCERTIFICATEGENERATED"/>
+				<property name="isCertificateGenerated" column="ISCERTIFICATEGENERATED" type="boolean"/>
 				<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
 					<column name="STATE_ID" />
 				</many-to-one>
