@@ -127,7 +127,7 @@
 		<property name="group" value="TRADELICENSE_JOB_GROUP" />
 		<property name="name" value="Daily Cancel Provisional NOC Trade Job" />
 		<property name="jobClass"
-			value="org.egov.tradelicense.tradescheduler.DailyCancelProvisionalNocTradeJob" />
+			value="org.egov.tl.tradescheduler.DailyCancelProvisionalNocTradeJob" />
 		<property name="requestsRecovery" value="true" />
 		<property name="jobDataAsMap">
 			<map>
@@ -140,7 +140,7 @@
 	</bean>
 
 	<bean id="dailyCancelProvisionalNocTradeJob"
-		class="org.egov.tradelicense.tradescheduler.DailyCancelProvisionalNocTradeJob"
+		class="org.egov.tl.tradescheduler.DailyCancelProvisionalNocTradeJob"
 		lazy-init="true" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="auditEventService" ref="auditEventService" />

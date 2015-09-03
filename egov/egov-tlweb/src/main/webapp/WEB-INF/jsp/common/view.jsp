@@ -39,7 +39,7 @@
 #-------------------------------------------------------------------------------
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ page import="org.egov.tradelicense.Constants"%>
+<%@ page import="org.egov.tl.Constants"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <c:choose>
 	<c:when test="${trclass=='greybox'}">
@@ -158,7 +158,7 @@
 		<c:set var="trclass" value="greybox" />
 	</c:when>
 </c:choose>
-<s:if test="%{boundary.parent.name.equalsIgnoreCase(@org.egov.tradelicense.utils.Constants@CITY_NAME)}">
+<s:if test="%{boundary.parent.name.equalsIgnoreCase(@org.egov.tl.utils.Constants@CITY_NAME)}">
 	<tr>
 		<td class="<c:out value="${trclass}"/>" width="5%">&nbsp;</td>
 		<td class="<c:out value="${trclass}"/>"><b><s:text
@@ -330,7 +330,7 @@
 		<c:set var="trclass" value="greybox" />
 	</c:when>
 </c:choose>
-<s:if test="%{boundary.parent.name.equalsIgnoreCase(@org.egov.tradelicense.utils.Constants@CITY_NAME)}">
+<s:if test="%{boundary.parent.name.equalsIgnoreCase(@org.egov.tl.utils.Constants@CITY_NAME)}">
 	<tr>
 		<td class="<c:out value="${trclass}"/>" width="5%">&nbsp;</td>
 		<td class="<c:out value="${trclass}"/>"><b><s:text
