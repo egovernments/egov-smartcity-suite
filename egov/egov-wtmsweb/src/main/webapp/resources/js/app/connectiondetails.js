@@ -39,8 +39,7 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
 	
-	connectionType: $('#typeOfConnection').val();
-	alert(connectionType);
+	
 	
 	$('#propertyType').change(function(){
 		 loadPropertyCategories();

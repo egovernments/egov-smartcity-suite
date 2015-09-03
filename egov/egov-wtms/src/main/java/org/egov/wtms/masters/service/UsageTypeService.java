@@ -113,19 +113,12 @@ public class UsageTypeService {
         return usageTypeRepository.getAllUsageTypesByPropertyType(propertyType);
     }
 
-    public List<ConnectionCategory> getAllCategoryTypesByPropertyType(final Long propertyType, final String connectionType) {
+    public List<ConnectionCategory> getAllCategoryTypesByPropertyType(final Long propertyType,
+            final String connectionType) {
         if (connectionType.equals(WaterTaxConstants.ADDNLCONNECTION))
-            
-        {
-            System.out.println("came here--->");
-            return usageTypeRepository.getAllCategoryTypesByPropertyTypeNotInBPL(propertyType); 
-           
-        }
+            return usageTypeRepository.getAllCategoryTypesByPropertyTypeNotInBPL(propertyType);
         else
-        {
-            System.out.println("else came here--->");
             return usageTypeRepository.getAllCategoryTypesByPropertyType(propertyType);
-        }
     }
 
     public List<PipeSize> getAllPipeSizesByPropertyType(final Long propertyType) {
