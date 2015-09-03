@@ -154,6 +154,7 @@ public final class CollectionConstants {
     public static final String QUERY_RECEIPT_BY_SERVICE_MANUALRECEIPTNO_AND_DATE = "RECEIPT_BY_SERVICE_MANUALRECEIPTNO_AND_DATE";
     public static final String QUERY_ACTIVE_SERVICES_BY_CODES = "getActiveServiceByCodes";
     public static final String QUERY_ACTIVE_SERVICES_BY_TYPE = "getActiveServiceByType";
+    public static final String QUERY_RECEIPT_BY_ID_AND_CONSUMERCODE = "QUERY_RECEIPT_BY_ID_AND_CONSUMERCODE";
 
     // named queries (other modules)
     public static final String QUERY_ACTIVE_COUNTERS = "getAllActiveCounters";
@@ -452,7 +453,8 @@ public final class CollectionConstants {
     public static final String AXIS_AMOUNT = "vpc_Amount";
     public static final String AXIS_RETURN_URL = "vpc_ReturnURL";
     public static final String AXIS_LOCALE = "vpc_Locale";
-    public static final String AXIS_TICKET_NO = "vpc_TicketNo";
+    public static final String AXIS_TICKET_NO = "vpc_TicketNumber";
+    public static final String AXIS_SECURE_HASH         = "vpc_SecureHash";
 
     public static final String MESSAGEKEY_AXIS_PAYMENT_CLIENT = "axis.payment.client";
     public static final String MESSAGEKEY_AXIS_VERSION = "axis.version";
@@ -461,7 +463,7 @@ public final class CollectionConstants {
     public static final String MESSAGEKEY_AXIS_MERCHANT = "axis.merchant";
     public static final String MESSAGEKEY_AXIS_LOCALE = "axis.locale";
     public static final String MESSAGEKEY_AXIS_TICKET_NO = "axis.ticket.no";
-    public static final String AXIS_SECURE_SECRET = "6A92740F77EFF1C21DFF9281EC53C519";
+    public static final String AXIS_SECURE_SECRET = "60D7AA77F54504B6057CCB7B3AEE86D4";
 
     // This is an array for creating hex chars
     public static final char[] AXIS_HEX_TABLE = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',

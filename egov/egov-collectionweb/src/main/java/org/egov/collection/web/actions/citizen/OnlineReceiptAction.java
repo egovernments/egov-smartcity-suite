@@ -46,15 +46,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -94,9 +98,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({ @Result(name = OnlineReceiptAction.NEW, location = "onlineReceipt-new.jsp"),
-    @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
-    @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
-    @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
+        @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
+        @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
+        @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
 public class OnlineReceiptAction extends BaseFormAction implements ServletRequestAware {
 
     private static final Logger LOGGER = Logger.getLogger(OnlineReceiptAction.class);
@@ -143,6 +147,11 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private EgwStatusHibernateDAO statusDAO;
     @Autowired
     private FundHibernateDAO fundDAO;
+    private String brokenTransactionErrorMessage = "If the amount has been deducted from "
+            + "your account, then no further action is required from you right now. Such transactions are normally "
+            + "resolved within 24 hours so you can check and download the receipt then." + "\n \n"
+            + "If the amount has not been deducted from your account, then please check your "
+            + "internet connection and try to pay again after some time. If the transaction fails again, " + "please contact cell in Corporation.";
 
     @Override
     public Object getModel() {
@@ -282,32 +291,28 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         }
 
         onlinePaymentReceiptHeader = receiptHeaderService.findByNamedQuery(
-                CollectionConstants.QUERY_RECEIPT_BY_RECEIPTID_AND_REFERENCENUMBER,
-                Long.valueOf(paymentResponse.getReceiptId()), paymentResponse.getCustomerId());
+                CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CONSUMERCODE, Long.valueOf(paymentResponse.getReceiptId()),
+                paymentResponse.getAdditionalInfo6());
 
-        // if status code is 0002, ie Bill desk waiting for response from
-        // payment gateway then make transaction in pending state.
-        if (CollectionConstants.PGI_AUTHORISATION_CODE_WAITINGFOR_PAY_GATEWAY_RESPONSE.equals(paymentResponse
-                .getAuthStatus())) {
-            final EgwStatus paymentStatus = statusDAO.getStatusByModuleAndCode(
-                    CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
-                    CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
-            onlinePaymentReceiptHeader.getOnlinePayment().setStatus(paymentStatus);
-            onlinePaymentReceiptHeader.getOnlinePayment().setAuthorisationStatusCode(paymentResponse.getAuthStatus());
+        if (onlinePaymentReceiptHeader != null) {
+            if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
+                processSuccessMsg();
+            else if (paymentService.getCode().equals(CollectionConstants.SERVICECODE_PGI_BILLDESK)
+                    && CollectionConstants.PGI_AUTHORISATION_CODE_WAITINGFOR_PAY_GATEWAY_RESPONSE.equals(paymentResponse.getAuthStatus())
+                   ) {
+                final EgwStatus paymentStatus = statusDAO.getStatusByModuleAndCode(
+                        CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+                        CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
+                onlinePaymentReceiptHeader.getOnlinePayment().setStatus(paymentStatus);
+                onlinePaymentReceiptHeader.getOnlinePayment().setAuthorisationStatusCode(
+                        paymentResponse.getAuthStatus());
+                onlinePaymentReceiptHeader.getOnlinePayment().setRemarks(paymentResponse.getErrorDescription());
+            } else
+                processFailureMsg();
+        } else {
+            errors.add(new ValidationError(brokenTransactionErrorMessage, brokenTransactionErrorMessage));
+            LOGGER.info("onlinePaymentReceiptHeader object is null");
         }
-
-        else if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
-            processSuccessMsg();
-        else
-            processFailureMsg();
-
-        final long elapsedTimeInMillis = System.currentTimeMillis() - startTimeInMilis;
-        LOGGER.info("$$$$$$ Receipt Persisted with Receipt Number: "
-                + onlinePaymentReceiptHeader.getReceiptnumber()
-                + (onlinePaymentReceiptHeader.getConsumerCode() != null ? " and consumer code: "
-                        + onlinePaymentReceiptHeader.getConsumerCode() : "") + "; Time taken(ms) = "
-                        + elapsedTimeInMillis);
-
         return RESULT;
     }
 
@@ -396,7 +401,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
             boolean updateToSystems = true;
 
-            try {
+           /*TODO: Commented for Phoenix implementation uncomment once egf is enabled
+            *  try {
                 receiptHeaderService.createVoucherForReceipt(onlinePaymentReceiptHeader, Boolean.FALSE);
                 LOGGER.debug("Updated financial systems and created voucher.");
             } catch (final EGOVRuntimeException ex) {
@@ -405,16 +411,16 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                         "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state.",
                         "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state."));
                 LOGGER.error("Update to financial systems failed");
-            }
+            }*/
 
             try {
                 final HashSet<BillReceiptInfo> billReceipt = new HashSet<BillReceiptInfo>();
                 billReceipt.add(new BillReceiptInfoImpl(onlinePaymentReceiptHeader));
-                /*
-                 * if (!receiptPayeeDetailsService.updateBillingSystem(
-                 * onlinePaymentReceiptHeader.getService().getCode(),
-                 * billReceipt)) { updateToSystems = false; }
-                 */
+                
+                  if (!receiptHeaderService.updateBillingSystem(
+                 onlinePaymentReceiptHeader.getService().getCode(),
+                 billReceipt)) { updateToSystems = false; }
+                 
             } catch (final EGOVRuntimeException ex) {
                 // Receipt creation is rolled back, and payment continues to be
                 // in
@@ -545,8 +551,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                     errors.add(new ValidationError(
                             "Manual Reconciliation Rolled back as Voucher Creation Failed For Payment Reference ID : "
                                     + receipts[i].getId(),
-                                    "Manual Reconciliation Rolled back as Voucher Creation Failed For Payment Reference ID : "
-                                            + receipts[i].getId()));
+                            "Manual Reconciliation Rolled back as Voucher Creation Failed For Payment Reference ID : "
+                                    + receipts[i].getId()));
                     LOGGER.error("Update to financial systems failed");
                     throw new ValidationException(errors);
                 }
@@ -594,7 +600,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         } catch (final EGOVRuntimeException ex) {
             errors.add(new ValidationError("Manual Reconciliation of Online Payments Rolled back as "
                     + "update to billing system failed.", "Manual Reconciliation of Online Payments Rolled back as "
-                            + "update to billing system failed."));
+                    + "update to billing system failed."));
             LOGGER.error("Update to billing systems failed");
 
             throw new ValidationException(errors);
@@ -902,12 +908,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
      * @return
      */
     public Integer getTotalNoOfAccounts() {
-        final Integer totalNoOfAccounts = 0;
-        /*
-         * for (ReceiptPayeeDetails payee : modelPayeeList) { for (ReceiptHeader
-         * header : payee.getReceiptHeaders()) { totalNoOfAccounts +=
-         * header.getReceiptDetails().size(); } }
-         */
+        final Integer totalNoOfAccounts = receiptHeader.getReceiptDetails().size();
         return totalNoOfAccounts;
     }
 
@@ -983,6 +984,19 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     public String getMsg() {
+        if (responseMsg != null && responseMsg == "") {
+            final HttpServletRequest request = ServletActionContext.getRequest();
+            final Enumeration paramNames = request.getParameterNames();
+            final Map<String, String> responseMap = new HashMap<String, String>(0);
+            while (paramNames.hasMoreElements()) {
+                final String paramName = (String) paramNames.nextElement();
+                final String paramValue = request.getParameter(paramName);
+                if (null != paramValue && !"".equals(paramValue))
+                    responseMap.put(paramName, paramValue);
+            }
+            responseMsg = responseMap.toString();
+        }
+        LOGGER.debug("responseMsg::::::" + responseMsg);
         return responseMsg;
     }
 
