@@ -108,8 +108,8 @@ public class AssignmentService {
     }
 
     /**
-     * Get all assignments for position and given date as given date which is
-     * passed as parameter. Includes both primary and secondary assignments.
+     * Get all assignments for position and given date as given date which is passed as parameter. Includes both primary and
+     * secondary assignments.
      *
      * @param posId
      * @param givenDate
@@ -237,8 +237,7 @@ public class AssignmentService {
     }
 
     /**
-     * Get list of primary assignments for deparment,designation,fromdate and
-     * todate
+     * Get list of primary assignments for deparment,designation,fromdate and todate
      *
      * @param deptId
      * @param desigId
@@ -275,10 +274,9 @@ public class AssignmentService {
     public List<Assignment> findByDesignationAndBoundary(final Long desigId, final Long boundaryId) {
         return assignmentRepository.findByDesignationAndBoundary(desigId, getBoundaries(boundaryId));
     }
-    
+
     /**
-     * Gets all assignments for a particular department,designation and given
-     * boundary or all the employees under that boundary
+     * Gets all assignments for a particular department,designation and given boundary or all the employees under that boundary
      *
      * @param deptId
      * @param desigId
@@ -287,21 +285,25 @@ public class AssignmentService {
      */
     public List<Assignment> findByDepartmentDesignationAndBoundary(final Long deptId, final Long desigId,
             final Long boundaryId) {
-        
+
         List<Assignment> assignments = null;
-        if(null==deptId)
+        if (null == deptId)
             assignments = assignmentRepository.findByDesignationAndBoundary(desigId, getBoundaries(boundaryId));
-        else if(null==desigId)
+        else if (null == desigId)
             assignments = assignmentRepository.findByDepartmentAndBoundary(deptId, getBoundaries(boundaryId));
         else
             assignments = assignmentRepository.findByDepartmentDesignationAndBoundary(deptId, desigId, getBoundaries(boundaryId));
         return assignments;
     }
-    
+
     private Set<Long> getBoundaries(final Long boundaryId) {
         final Set<Long> bndIds = new HashSet<Long>();
         final List<Boundary> boundaries = boundaryService.findActiveChildrenWithParent(boundaryId);
         boundaries.forEach((bndry) -> bndIds.add(bndry.getId()));
         return bndIds;
+    }
+
+    public List<Assignment> getAllActiveAssignments(final Long designationId) {
+        return assignmentRepository.getAllActiveAssignments(designationId);
     }
 }

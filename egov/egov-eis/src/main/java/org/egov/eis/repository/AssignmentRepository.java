@@ -143,4 +143,8 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     public List<Assignment> findByDepartmentAndBoundary(@Param("deptId") final Long deptId,
             @Param("boundaryIds") final Set<Long> boundaryIds);
 
+    @Query(" select ASSIGN from Assignment ASSIGN where ASSIGN.designation.id=:designationId and "
+            + " ASSIGN.employee.active=true and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date ")
+    public List<Assignment> getAllActiveAssignments(@Param("designationId") final Long designationId);
+
 }

@@ -39,8 +39,11 @@
  */
 package org.egov.eis.service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
@@ -49,7 +52,6 @@ import org.egov.eis.repository.HeadOfDepartmentsRepository;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
@@ -58,8 +60,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * This service class provides API(s) which are required by modules depending on
- * EIS
+ * This service class provides API(s) which are required by modules depending on EIS
  *
  * @author Vaibhav.K
  */
@@ -72,9 +73,6 @@ public class EisCommonService {
 
     @Autowired
     private AssignmentService assignmentService;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private PersonalInformationService personalInformationService;
@@ -118,7 +116,7 @@ public class EisCommonService {
      */
     public User getUserForPosition(final Long posId, final Date givenDate) {
         try {
-            return (User)assignmentService.getAssignmentsForPosition(posId, givenDate).get(0).getEmployee();
+            return assignmentService.getAssignmentsForPosition(posId, givenDate).get(0).getEmployee();
         } catch (final NullPointerException e) {
             throw new EGOVRuntimeException("User Not Found");
         } catch (final Exception e) {
@@ -235,6 +233,20 @@ public class EisCommonService {
     @Deprecated
     public Employee getEmployeeForPositionAndDate(final Long posId, final Date givenDate) {
         return assignmentService.getPrimaryAssignmentForPositionAndDate(posId, givenDate).getEmployee();
+    }
+
+    /**
+     * Get all active users by designation as per the current date
+     *
+     * @param designationId
+     * @return List of active users
+     */
+    public List<User> getAllActiveUsersByGivenDesig(final Long designationId) {
+        final Set<User> users = new HashSet<User>();
+        final List<Assignment> assignments = assignmentService.getAllActiveAssignments(designationId);
+        for (final Assignment assign : assignments)
+            users.add(assign.getEmployee());
+        return new ArrayList<User>(users);
     }
 
 }
