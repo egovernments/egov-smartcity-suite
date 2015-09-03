@@ -49,6 +49,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.quartz.QuartzJobBean;
@@ -80,6 +81,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 		try {
 			if (this.isTransactional) {
 				for (final String city : cities) {
+				        MDC.put("ulbcode", city);
 					setTractionalSupport(city);
 					setUserInThreadLocal();
 					executeJob();
@@ -91,6 +93,8 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 		} catch (final Exception ex) {
 			LOGGER.error("Unable to complete execution Scheduler ", ex);
 			throw new JobExecutionException("Unable to execute batch job Scheduler", ex, false);
+		} finally {
+		    MDC.remove("ulbcode");
 		}
 	}
 
