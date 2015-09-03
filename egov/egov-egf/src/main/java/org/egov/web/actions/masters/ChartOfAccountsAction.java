@@ -73,11 +73,11 @@ import com.exilant.exility.common.TaskFailedException;
 
 @ParentPackage("egov")
 @Results({
-    @Result(name = "detailed-code" , location = "chartOfAccounts-detailed-code.jsp"),
-    @Result(name = "detailed" , location = "chartOfAccounts-detailed.jsp"),
-    @Result(name = Constants.EDIT , location = "chartOfAccounts-edit.jsp"),
-    @Result(name = Constants.VIEW , location = "chartOfAccounts-view.jsp"),
-    @Result(name = "generated-glcode", location = "chartOfAccounts-generated-glcode.jsp")})
+        @Result(name = "detailed-code", location = "chartOfAccounts-detailed-code.jsp"),
+        @Result(name = "detailed", location = "chartOfAccounts-detailed.jsp"),
+        @Result(name = Constants.EDIT, location = "chartOfAccounts-edit.jsp"),
+        @Result(name = Constants.VIEW, location = "chartOfAccounts-view.jsp"),
+        @Result(name = "generated-glcode", location = "chartOfAccounts-generated-glcode.jsp") })
 public class ChartOfAccountsAction extends BaseFormAction {
     private static final long serialVersionUID = 3393565721493478018L;
     private static final long LONG_FOUR = 4l;
@@ -116,10 +116,11 @@ public class ChartOfAccountsAction extends BaseFormAction {
     }
 
     public ChartOfAccountsAction() {
-       
-          addRelatedEntity("purpose", AccountCodePurpose.class); addRelatedEntity("chartOfAccountDetails.detailTypeId",
-          AccountCodePurpose.class);
-         
+
+        addRelatedEntity("purpose", AccountCodePurpose.class);
+        addRelatedEntity("chartOfAccountDetails.detailTypeId",
+                AccountCodePurpose.class);
+
     }
 
     @Override
@@ -180,6 +181,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     public boolean shouldAllowCreation() {
         return !Long.valueOf("4").equals(model.getClassification());
     }
+
     @Action(value = "/masters/chartOfAccounts-modify")
     public String modify() throws Exception {
         populateAccountDetailTypeList();
@@ -198,6 +200,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         if (model != null && model.getPurposeId() != null)
             accountcodePurpose = getPurposeCode(model.getPurposeId().intValue());
     }
+
     @Action(value = "/masters/chartOfAccounts-update")
     public String update() throws Exception {
         setPurposeOnCoa();
@@ -217,7 +220,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     private void setPurposeOnCoa() {
         if (accountcodePurpose != null && accountcodePurpose.getId() != null)
             model.setPurposeId(accountcodePurpose.getId().longValue());
-        if (model.getPurposeId()!=null && model.getPurposeId().compareTo(0l) == 0)
+        if (model.getPurposeId() != null && model.getPurposeId().compareTo(0l) == 0)
             model.setPurposeId(null);
     }
 
@@ -364,9 +367,9 @@ public class ChartOfAccountsAction extends BaseFormAction {
     }
 
     private Long findNextGlCode(final CChartOfAccounts parentCoa) {
-        Long glcode = (Long) persistenceService.find("select max(glcode) from CChartOfAccounts where parentId=?",
+        final String glcode = (String) persistenceService.find("select max(glcode) from CChartOfAccounts where parentId=?",
                 parentCoa.getId());
-        return glcode;
+        return glcode != null ? Long.valueOf(glcode) : null;
     }
 
     void setClassification(final CChartOfAccounts parentCoa) {
@@ -397,7 +400,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         detailedCodeLength = Integer.valueOf(getAppConfigValueFor(Constants.EGF, "coa_detailcode_length"));
     }
 
-    void populateGlcode(Long classification) {
+    void populateGlcode(final Long classification) {
         model.setGlcode(StringUtils.leftPad("", glCodeLengths.get(classification), '0'));
     }
 
@@ -448,19 +451,19 @@ public class ChartOfAccountsAction extends BaseFormAction {
     }
 
     public boolean budgetCheckReq() {
-        if (model != null && model.getBudgetCheckReq()!=null && model.getBudgetCheckReq())
+        if (model != null && model.getBudgetCheckReq() != null && model.getBudgetCheckReq())
             return true;
         return false;
     }
 
     public boolean getFunctionReqd() {
-        if (model != null && model.getFunctionReqd()!=null && model.getFunctionReqd())
+        if (model != null && model.getFunctionReqd() != null && model.getFunctionReqd())
             return true;
         return false;
     }
 
     public boolean getIsActiveForPosting() {
-        if (model != null && model.getIsActiveForPosting()!=null && model.getIsActiveForPosting())
+        if (model != null && model.getIsActiveForPosting() != null && model.getIsActiveForPosting())
             return true;
         return false;
     }
@@ -470,6 +473,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         allChartOfAccounts = chartOfAccountService.findAllBy("from CChartOfAccounts where classification=4");
         return "detailed-code";
     }
+
     @SkipValidation
     @Action(value = "/masters/chartOfAccounts-modifySearch")
     public String modifySearch() throws Exception {
@@ -489,6 +493,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
             return detailed();
         }
     }
+
     @SkipValidation
     @Action(value = "/masters/chartOfAccounts-viewSearch")
     public String viewSearch() throws Exception {
@@ -512,12 +517,11 @@ public class ChartOfAccountsAction extends BaseFormAction {
 
     @Action(value = "/masters/chartOfAccounts-addNew")
     public String addNew() throws Exception {
-        allChartOfAccounts = chartOfAccountService.findAllBy("from CChartOfAccounts where classification=4");
         populateCodeLength();
         model = new CChartOfAccounts();
-        model.setClassification(4l);
         return "detailed";
     }
+
     @Action(value = "/masters/chartOfAccounts-create")
     public String create() throws Exception {
         if (glCode != null) {
@@ -603,7 +607,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
 
     void clearCache() {
         try {
-            chartOfAccounts.getInstance().reLoadAccountData();
+            ChartOfAccounts.getInstance().reLoadAccountData();
         } catch (final TaskFailedException e) {
 
             LOGGER.error("Error" + e.getMessage(), e);
@@ -686,9 +690,8 @@ public class ChartOfAccountsAction extends BaseFormAction {
         this.chartOfAccountService = chartOfAccountService;
     }
 
-    public void setModel(CChartOfAccounts model) {
+    public void setModel(final CChartOfAccounts model) {
         this.model = model;
     }
-
 
 }
