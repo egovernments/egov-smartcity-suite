@@ -47,17 +47,14 @@ import org.egov.infstr.services.Page;
 /**
  * Base service class which will talk to PersistenceService
  *
- * @param <T>
- *            type variable
- * @param <ID>
- *            primary key for the type T
+ * @param <T> type variable
+ * @param <ID> primary key for the type T
  */
 public interface BaseService<T, ID extends Serializable> {
 
     /**
-     * Generic method to get an object based on class and identifier. An
-     * ObjectRetrievalFailureException Runtime Exception is thrown if nothing is
-     * found.
+     * Generic method to get an object based on class and identifier. An ObjectRetrievalFailureException Runtime Exception is
+     * thrown if nothing is found.
      *
      * @param id
      * @param lock
@@ -66,8 +63,7 @@ public interface BaseService<T, ID extends Serializable> {
     T findById(ID id, boolean lock);
 
     /**
-     * Generic method used to get all objects of a particular type. This is the
-     * same as lookup up all rows in a table.
+     * Generic method used to get all objects of a particular type. This is the same as lookup up all rows in a table.
      *
      * @return list of objects.
      */

@@ -98,8 +98,7 @@ public abstract class AssetBaseSearchAction extends SearchFormAction {
     }
 
     /**
-     * data loaded by Ajax need to be reloaded again in the screen(specially
-     * required when validaion fails)
+     * data loaded by Ajax need to be reloaded again in the screen(specially required when validaion fails)
      */
     protected void loadPreviousData() {
         if (LOGGER.isDebugEnabled())

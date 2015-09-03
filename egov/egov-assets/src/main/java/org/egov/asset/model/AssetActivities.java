@@ -48,7 +48,9 @@ import javax.persistence.Enumerated;
 import org.egov.asset.util.AssetIdentifier;
 import org.egov.infstr.models.BaseModel;
 
-public class AssetActivities extends BaseModel{
+public class AssetActivities extends BaseModel {
+
+    private static final long serialVersionUID = 2507581475925078858L;
 
     /** The asset. */
     private Asset asset;
@@ -79,8 +81,7 @@ public class AssetActivities extends BaseModel{
     /**
      * Sets the asset.
      *
-     * @param asset
-     *            the new asset
+     * @param asset the new asset
      */
     public void setAsset(final Asset asset) {
         this.asset = asset;
@@ -98,8 +99,7 @@ public class AssetActivities extends BaseModel{
     /**
      * Sets the addition amount.
      *
-     * @param additionAmount
-     *            the new addition amount
+     * @param additionAmount the new addition amount
      */
     public void setAdditionAmount(final BigDecimal additionAmount) {
         this.additionAmount = additionAmount;
@@ -117,8 +117,7 @@ public class AssetActivities extends BaseModel{
     /**
      * Sets the deduction amount.
      *
-     * @param deductionAmount
-     *            the new deduction amount
+     * @param deductionAmount the new deduction amount
      */
     public void setDeductionAmount(final BigDecimal deductionAmount) {
         this.deductionAmount = deductionAmount;
@@ -136,8 +135,7 @@ public class AssetActivities extends BaseModel{
     /**
      * Sets the activity date.
      *
-     * @param activityDate
-     *            the new activity date
+     * @param activityDate the new activity date
      */
     public void setActivityDate(final Date activityDate) {
         this.activityDate = activityDate;

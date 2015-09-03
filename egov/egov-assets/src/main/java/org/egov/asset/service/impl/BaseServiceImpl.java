@@ -61,9 +61,8 @@ public class BaseServiceImpl<T, ID extends Serializable> implements BaseService<
     }
 
     /**
-     * Generic method to get an object based on class and identifier. An
-     * ObjectRetrievalFailureException Runtime Exception is thrown if nothing is
-     * found.
+     * Generic method to get an object based on class and identifier. An ObjectRetrievalFailureException Runtime Exception is
+     * thrown if nothing is found.
      *
      * @param id
      * @param lock
@@ -75,8 +74,7 @@ public class BaseServiceImpl<T, ID extends Serializable> implements BaseService<
     }
 
     /**
-     * Generic method used to get all objects of a particular type. This is the
-     * same as lookup up all rows in a table.
+     * Generic method used to get all objects of a particular type. This is the same as lookup up all rows in a table.
      *
      * @return list of objects.
      */

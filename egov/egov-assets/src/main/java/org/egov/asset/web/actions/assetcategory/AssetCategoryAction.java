@@ -305,8 +305,8 @@ public class AssetCategoryAction extends BaseFormAction {
     }
 
     /**
-     * This method will return list of asset category. Native query is used
-     * instead of HQL to get rid of dirty session issue(InvalidStateException).
+     * This method will return list of asset category. Native query is used instead of HQL to get rid of dirty session
+     * issue(InvalidStateException).
      *
      * @return
      */

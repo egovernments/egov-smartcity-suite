@@ -40,9 +40,8 @@
 package org.egov.asset.util;
 
 /**
- * C ->Capitalized I ->Improvement R ->Revaluation C - Asset Capitalisation I -
- * Asset Improvement. M -Asset Repair/Maintenance.
+ * C ->Capitalized I ->Improvement R ->Revaluation C - Asset Capitalisation I - Asset Improvement. M -Asset Repair/Maintenance.
  */
 public enum AssetIdentifier {
-	C, I, M, R
+    C, I, M, R
 }

@@ -108,8 +108,7 @@ public class CommonAssetsService {
     private BoundaryService boundaryService;
 
     /**
-     * Find the <code>AssetCategory</code> by its ID. Return NULL if
-     * <code>AssetCategory</code> not found.
+     * Find the <code>AssetCategory</code> by its ID. Return NULL if <code>AssetCategory</code> not found.
      *
      * @param categoryId
      * @return <code>AssetCategory</code>
@@ -130,8 +129,7 @@ public class CommonAssetsService {
     /**
      * Get all the List of <code>AssetCategory</code>.
      *
-     * @return List<AssetCategory> - List of <code>AssetCategory</code> (Ordered
-     *         by <tt>name</tt>)
+     * @return List<AssetCategory> - List of <code>AssetCategory</code> (Ordered by <tt>name</tt>)
      * @since v2.1
      */
     public List<AssetCategory> getAllAssetCategory() {
@@ -147,8 +145,7 @@ public class CommonAssetsService {
     }
 
     /**
-     * Find the <code>Asset</code> by its ID. Returns NULL if <code>Asset</code>
-     * not found.
+     * Find the <code>Asset</code> by its ID. Returns NULL if <code>Asset</code> not found.
      *
      * @param assetId
      * @return <code>Asset</code>
@@ -167,8 +164,7 @@ public class CommonAssetsService {
     }
 
     /**
-     * Find the <code>Asset</code> by its Code. Returns NULL if
-     * <code>Asset</code> not found.
+     * Find the <code>Asset</code> by its Code. Returns NULL if <code>Asset</code> not found.
      *
      * @param code
      * @return <code>Asset</code>
@@ -206,8 +202,7 @@ public class CommonAssetsService {
     }
 
     /**
-     * Find the <code>AssetCategory</code> by its Code. Returns NULL if
-     * <code>AssetCategory</code> not found.
+     * Find the <code>AssetCategory</code> by its Code. Returns NULL if <code>AssetCategory</code> not found.
      *
      * @param code
      * @return <code>AssetCategory</code>
@@ -228,8 +223,7 @@ public class CommonAssetsService {
     /**
      * Get all the List of <code>Asset</code>.
      *
-     * @return List<Asset> - List of <code>Asset</code> (Ordered by
-     *         <tt>code</tt>)
+     * @return List<Asset> - List of <code>Asset</code> (Ordered by <tt>code</tt>)
      * @since v2.1
      */
     public List<Asset> getAllAssets() {
@@ -256,45 +250,26 @@ public class CommonAssetsService {
     /**
      * API to create or update an Asset. Expecting a map which will have :
      *
-     * @param ASSET_ID
-     *            (optional) - Long - This param must be pass in case of update
-     *            only. If its not passed the API will create a new asset.
-     * @param ASSET_CODE
-     *            (mandatory) - String
-     * @param ASSET_NAME
-     *            (mandatory) - String
-     * @param ASSET_CATEGORY_ID
-     *            (mandatory) - Long
-     * @param ASSET_STATUS_ID
-     *            (mandatory) - Integer
-     * @param ASSET_AREA_ID
-     *            (optional) - Integer
-     * @param ASSET_LOCATION_ID
-     *            (optional) - Integer
-     * @param ASSET_STREET_ID
-     *            (optional) - Integer
-     * @param ASSET_WARD_ID
-     *            (optional) - Integer
-     * @param ASSET_DETAILS
-     *            (optional) - String
-     * @param ASSET_MODE_OF_ACQUISITION
-     *            (optional) - String
-     * @param ASSET_COMMISSIONING_DATE
-     *            (optional) - Date
-     * @param ASSET_GROSS_VALUE
-     *            (optional) - BigDecimal
-     * @param ASSET_ACCUMULATIVE_DEPRECIATION
-     *            (optional) - BigDecimal
-     * @param ASSET_WRITTEN_DOWN_VALUE
-     *            (optional) - BigDecimal
-     * @param ASSET_DESCRIPTION
-     *            (optional) - String
-     * @param parameters
-     *            - Map holding asset values
-     * @return <code>Asset</code> - if the asset has create or update
-     *         successfully otherwise <code>Null</code>.
-     * @exception ValidationException
-     *                , {@link ClassCastException}
+     * @param ASSET_ID (optional) - Long - This param must be pass in case of update only. If its not passed the API will create a
+     * new asset.
+     * @param ASSET_CODE (mandatory) - String
+     * @param ASSET_NAME (mandatory) - String
+     * @param ASSET_CATEGORY_ID (mandatory) - Long
+     * @param ASSET_STATUS_ID (mandatory) - Integer
+     * @param ASSET_AREA_ID (optional) - Integer
+     * @param ASSET_LOCATION_ID (optional) - Integer
+     * @param ASSET_STREET_ID (optional) - Integer
+     * @param ASSET_WARD_ID (optional) - Integer
+     * @param ASSET_DETAILS (optional) - String
+     * @param ASSET_MODE_OF_ACQUISITION (optional) - String
+     * @param ASSET_COMMISSIONING_DATE (optional) - Date
+     * @param ASSET_GROSS_VALUE (optional) - BigDecimal
+     * @param ASSET_ACCUMULATIVE_DEPRECIATION (optional) - BigDecimal
+     * @param ASSET_WRITTEN_DOWN_VALUE (optional) - BigDecimal
+     * @param ASSET_DESCRIPTION (optional) - String
+     * @param parameters - Map holding asset values
+     * @return <code>Asset</code> - if the asset has create or update successfully otherwise <code>Null</code>.
+     * @exception ValidationException , {@link ClassCastException}
      */
     public Asset createOrUpdateAsset(final Map<String, Object> parameters) {
 
@@ -406,25 +381,16 @@ public class CommonAssetsService {
     }
 
     /**
-     * Search Assets. If the map is empty it will fetch all the assets.
-     * Expecting a map which will have :
+     * Search Assets. If the map is empty it will fetch all the assets. Expecting a map which will have :
      *
-     * @param ASSET_CODE
-     *            (optional) - String
-     * @param ASSET_TYPE_ID
-     *            (optional) - Long
-     * @param ASSET_CATEGORY_ID
-     *            (optional) - Long
-     * @param ASSET_DEPARTMENT_ID
-     *            (optional) - Integer
-     * @param ASSET_WARD_ID
-     *            (optional) - Integer
-     * @param ASSET_STATUS_ID_LIST
-     *            (optional) - List of Integer
-     * @param ASSET_DESCRIPTION
-     *            (optional) - String
-     * @param parameters
-     *            - Map holding asset search criteria
+     * @param ASSET_CODE (optional) - String
+     * @param ASSET_TYPE_ID (optional) - Long
+     * @param ASSET_CATEGORY_ID (optional) - Long
+     * @param ASSET_DEPARTMENT_ID (optional) - Integer
+     * @param ASSET_WARD_ID (optional) - Integer
+     * @param ASSET_STATUS_ID_LIST (optional) - List of Integer
+     * @param ASSET_DESCRIPTION (optional) - String
+     * @param parameters - Map holding asset search criteria
      * @return List of assets for given search criteria
      * @exception ClassCastException
      */
@@ -437,25 +403,16 @@ public class CommonAssetsService {
     }
 
     /**
-     * Search Assets page. If the map is empty it will fetch asset page with.out
-     * ant filter. Expecting a map which will have :
+     * Search Assets page. If the map is empty it will fetch asset page with.out ant filter. Expecting a map which will have :
      *
-     * @param ASSET_CODE
-     *            (optional) - String
-     * @param ASSET_TYPE_ID
-     *            (optional) - Long
-     * @param ASSET_CATEGORY_ID
-     *            (optional) - Long
-     * @param ASSET_DEPARTMENT_ID
-     *            (optional) - Integer
-     * @param ASSET_WARD_ID
-     *            (optional) - Integer+assetId+
-     * @param ASSET_STATUS_ID_LIST
-     *            (optional) - List of Integer
-     * @param ASSET_DESCRIPTION
-     *            (optional) - String
-     * @param parameters
-     *            - Map holding asset search criteria
+     * @param ASSET_CODE (optional) - String
+     * @param ASSET_TYPE_ID (optional) - Long
+     * @param ASSET_CATEGORY_ID (optional) - Long
+     * @param ASSET_DEPARTMENT_ID (optional) - Integer
+     * @param ASSET_WARD_ID (optional) - Integer+assetId+
+     * @param ASSET_STATUS_ID_LIST (optional) - List of Integer
+     * @param ASSET_DESCRIPTION (optional) - String
+     * @param parameters - Map holding asset search criteria
      * @return List of assets for given search criteria
      * @exception ClassCastException
      * @return PaginatedList.
@@ -471,28 +428,17 @@ public class CommonAssetsService {
     }
 
     /**
-     * Search Assets page. If the map is empty it will fetch asset page without
-     * any filter. Expecting a map which will have : * @param ASSET_NAME
-     * (optional) – String
+     * Search Assets page. If the map is empty it will fetch asset page without any filter. Expecting a map which will have :
+     * * @param ASSET_NAME (optional) – String
      *
-     * @param ASSET_CODE
-     *            (optional) – it's free type search. Query is using ' like
-     *            clause' to search.
-     * @param ASSET_TYPE_NAME
-     *            (optional) – String (There can be three values
-     *            :Land,MovableAsset,ImmovableAsset)
-     * @param ASSET_CATEGORY_CODE
-     *            (optional) – String
-     * @param ASSET_DEPARTMENT_CODE
-     *            (optional) – String
-     * @param ASSET_WARD_CODE
-     *            (optional) – String
-     * @param ASSET_STATUS_LIST
-     *            (optional) – List of String
-     * @param ASSET_DESCRIPTION
-     *            (optional) – String
-     * @param parameters
-     *            – Map holding asset search criteria
+     * @param ASSET_CODE (optional) – it's free type search. Query is using ' like clause' to search.
+     * @param ASSET_TYPE_NAME (optional) – String (There can be three values :Land,MovableAsset,ImmovableAsset)
+     * @param ASSET_CATEGORY_CODE (optional) – String
+     * @param ASSET_DEPARTMENT_CODE (optional) – String
+     * @param ASSET_WARD_CODE (optional) – String
+     * @param ASSET_STATUS_LIST (optional) – List of String
+     * @param ASSET_DESCRIPTION (optional) – String
+     * @param parameters – Map holding asset search criteria
      * @return List of assets for given search criteria
      * @return PaginatedList.
      */
@@ -761,8 +707,7 @@ public class CommonAssetsService {
     /**
      * Get the list of <code>EgwStatus</code> related to ASSET module.
      *
-     * @param statusDescList
-     *            - List of status descriptions
+     * @param statusDescList - List of status descriptions
      * @return
      */
     @SuppressWarnings("unchecked")

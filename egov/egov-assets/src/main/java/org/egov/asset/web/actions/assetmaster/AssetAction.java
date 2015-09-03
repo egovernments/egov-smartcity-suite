@@ -225,7 +225,7 @@ public class AssetAction extends SearchFormAction {
         if (asset.getArea() != null || areaId != null) {
             final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(AREA_BOUNDARY_TYPE,
                     hType);
-            if(bType != null)
+            if (bType != null)
                 areaList = boundaryService.getAllBoundariesByBoundaryTypeId(bType.getId());
         }
         addDropdownData("areaList", areaList);
@@ -485,9 +485,9 @@ public class AssetAction extends SearchFormAction {
     public String list() throws Exception {
         setAssetType(assetType);
         if (departmentId == null && locationId == null && assetType == null
-                && (code == null || (code != null && code.trim().equalsIgnoreCase("")))
-                && (description == null || (description != null && description.trim().equalsIgnoreCase("")))
-                && (statusId == null || (statusId != null && statusId.isEmpty())) && zoneId == -1) {
+                && (code == null || code != null && code.trim().equalsIgnoreCase(""))
+                && (description == null || description != null && description.trim().equalsIgnoreCase(""))
+                && (statusId == null || statusId != null && statusId.isEmpty()) && zoneId == -1) {
             messageKey = "message.mandatory";
             addActionError(getText(messageKey, "At least one selection is required"));
             return SEARCH;
@@ -517,8 +517,7 @@ public class AssetAction extends SearchFormAction {
     /**
      * Get the list of <code>EgwStatus</code> related to ASSET module.
      *
-     * @param statusDescList
-     *            - List of status descriptions
+     * @param statusDescList - List of status descriptions
      * @return
      */
     private List<EgwStatus> getStatusList(final List<String> statusDescList) {
@@ -718,8 +717,7 @@ public class AssetAction extends SearchFormAction {
     }
 
     /**
-     * @param parentId
-     *            the parentId to set
+     * @param parentId the parentId to set
      */
     public void setParentId(final Long parentId) {
         this.parentId = parentId;
@@ -733,8 +731,7 @@ public class AssetAction extends SearchFormAction {
     }
 
     /**
-     * @param assetType
-     *            the assetType to set
+     * @param assetType the assetType to set
      */
     public void setAssetType(final String assetType) {
         this.assetType = assetType;
@@ -748,8 +745,7 @@ public class AssetAction extends SearchFormAction {
     }
 
     /**
-     * @param departmentId
-     *            the departmentId to set
+     * @param departmentId the departmentId to set
      */
     public void setDepartmentId(final Long departmentId) {
         this.departmentId = departmentId;
@@ -763,8 +759,7 @@ public class AssetAction extends SearchFormAction {
     }
 
     /**
-     * @param code
-     *            the code to set
+     * @param code the code to set
      */
     public void setCode(final String code) {
         this.code = code;
@@ -778,8 +773,7 @@ public class AssetAction extends SearchFormAction {
     }
 
     /**
-     * @param description
-     *            the description to set
+     * @param description the description to set
      */
     public void setDescription(final String description) {
         this.description = description;
@@ -793,8 +787,7 @@ public class AssetAction extends SearchFormAction {
     }
 
     /**
-     * @param locationId
-     *            the wardId to set for search
+     * @param locationId the wardId to set for search
      */
     public void setLocationId(final Long wardId) {
         locationId = wardId;
@@ -808,8 +801,7 @@ public class AssetAction extends SearchFormAction {
     }
 
     /**
-     * @param messageKey
-     *            the messageKey to set
+     * @param messageKey the messageKey to set
      */
     public void setMessageKey(final String messageKey) {
         this.messageKey = messageKey;
@@ -823,8 +815,7 @@ public class AssetAction extends SearchFormAction {
     }
 
     /**
-     * @param statusId
-     *            the statusId to set
+     * @param statusId the statusId to set
      */
     public void setStatusId(final List<Integer> statusId) {
         this.statusId = statusId;
