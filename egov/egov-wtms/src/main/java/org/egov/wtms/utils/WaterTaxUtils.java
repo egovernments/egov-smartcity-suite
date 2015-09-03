@@ -225,11 +225,11 @@ public class WaterTaxUtils {
     }
 
     public void sendSMSOnWaterConnection(final String mobileNumber, final String smsBody) {
-        messagingService.sendSMS("8884098688", smsBody);
+        messagingService.sendSMS(mobileNumber, smsBody);
     }
 
     public void sendEmailOnWaterConnection(final String email, final String emailBody, final String emailSubject) {
-        messagingService.sendEmail("roopa.h@egovernments.org", emailSubject, emailBody);
+        messagingService.sendEmail(email, emailSubject, emailBody);
     }
 
     public Position getCityLevelCommissionerPosition(final String commissionerDesgn) {
