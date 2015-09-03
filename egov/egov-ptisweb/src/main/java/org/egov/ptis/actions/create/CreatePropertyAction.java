@@ -72,10 +72,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -100,21 +98,14 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
-import org.egov.infra.reporting.engine.ReportConstants;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.utils.DateUtils;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.actions.workflow.WorkflowAction;
-import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.Apartment;
@@ -145,7 +136,6 @@ import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -170,6 +160,7 @@ public class CreatePropertyAction extends WorkflowAction {
     private static final String RESULT_VIEW = "view";
     private static final String MSG_REJECT_SUCCESS = " Property Rejected Successfully ";
     private static final String CREATE = "create";
+    private static final String RESULT_DATAENTRY = "dataEntry";
 
     private final Logger LOGGER = Logger.getLogger(getClass());
     private PropertyImpl property = new PropertyImpl();
@@ -215,7 +206,6 @@ public class CreatePropertyAction extends WorkflowAction {
     private String propOccId;
     private Map<String, String> propTypeCategoryMap;
     private String propTypeCategoryId;
-    FinancialUtil financialUtil = new FinancialUtil();
     private PropertyTypeMaster propTypeMstr;
 
     private String docNumber;
@@ -231,7 +221,6 @@ public class CreatePropertyAction extends WorkflowAction {
     private Date regdDocDate;
     private String mode = CREATE;
     public static final String PRINTACK = "printAck";
-    private ReportService reportService;
     private Integer reportId = -1;
     private boolean approved = false;
     private String northBoundary;
@@ -254,9 +243,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
     @Autowired
     private SecurityUtils securityUtils;
-
-    private static final String CREATE_ACK_TEMPLATE = "createProperty_ack";
-    private static final String RESULT_DATAENTRY = "dataEntry";
 
     public CreatePropertyAction() {
         super();
@@ -700,13 +686,6 @@ public class CreatePropertyAction extends WorkflowAction {
         basicPropertyService.createOwners(property, basicProperty, ownerAddress);
         property.setBasicProperty(basicProperty);
         property.setPropertyModifyReason(PROP_CREATE_RSN);
-
-        /*
-         * isfloorDetailsRequired is used to check if floor details have to be
-         * entered for State Govt property or not if isfloorDetailsRequired -
-         * true : no floor details created false : floor details created
-         */
-
         LOGGER.debug("BasicProperty: " + basicProperty + "\nExiting from createBasicProp");
         return basicProperty;
     }
@@ -948,23 +927,7 @@ public class CreatePropertyAction extends WorkflowAction {
         final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("cityname").toString();
-        final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
-        ackBean.setOwnerName(basicProp.getFullOwnerName());
-        ackBean.setOwnerAddress(basicProp.getAddress().toString());
-        ackBean.setApplicationDate(new SimpleDateFormat("dd/MM/yyyy").format(basicProp.getCreatedDate()));
-        ackBean.setApplicationNo(property.getApplicationNo());
-        ackBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(property.getState().getCreatedDate()));
-        final Date tempNoticeDate = DateUtils.add(property.getState().getCreatedDate(), Calendar.DAY_OF_MONTH, 15);
-        ackBean.setNoticeDueDate(tempNoticeDate);
-        reportParams.put("logoPath", cityLogo);
-        reportParams.put("cityName", cityName);
-        reportParams.put("loggedInUsername", propertyTaxUtil.getLoggedInUser(getSession()).getName());
-        final ReportRequest reportInput = new ReportRequest(CREATE_ACK_TEMPLATE, ackBean, reportParams);
-        reportInput.setReportFormat(FileFormat.PDF);
-        final ReportOutput reportOutput = reportService.createReport(reportInput);
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+        reportId = ReportViewerUtil.addReportToSession(basicPropertyService.propertyAcknowledgement(property,cityLogo,cityName), getSession());
         return PRINTACK;
     }
 
@@ -1429,17 +1392,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
     public void setPropCompletionDate(final Date propCompletionDate) {
         this.propCompletionDate = propCompletionDate;
-    }
-
-    public void setFinancialUtil(final FinancialUtil financialUtil) {
-        this.financialUtil = financialUtil;
-    }
-
-    public void setPropWF(final PropertyImpl propWF) {
-    }
-
-    public void setReportService(final ReportService reportService) {
-        this.reportService = reportService;
     }
 
     public Integer getReportId() {

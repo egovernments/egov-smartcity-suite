@@ -235,14 +235,15 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
             if (propTypeMstr != null) {
                 final PropertyDetail propertyDetail = property.getPropertyDetail();
+                final Date regDocDate = property.getBasicProperty().getRegdDocDate();
                 if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
                     if (null != propertyDetail)
                         validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary, northBoundary);
                 } else if (null != propertyDetail.isAppurtenantLandChecked()) {
                     validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary, northBoundary);
-                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot);
+                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot,regDocDate);
                 } else
-                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot);
+                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot,regDocDate);
                 validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetailsProxy(), property);
             }
         }
@@ -276,13 +277,16 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     }
 
-    private void validateBuiltUpProperty(final PropertyDetail propertyDetail, final Long floorTypeId,
-            final Long roofTypeId, final String areaOfPlot) {
+    private void validateBuiltUpProperty(final PropertyDetail propertyDetail,
+            final Long floorTypeId, final Long roofTypeId, final String areaOfPlot,final Date regDocDate) {
         if (null != propertyDetail.isBuildingPlanDetailsChecked()) {
             if (isBlank(propertyDetail.getBuildingPermissionNo()))
                 addActionError(getText("mandatory.buildingPlanNo"));
             if (null == propertyDetail.getBuildingPermissionDate())
                 addActionError(getText("mandatory.buildingPlanDate"));
+            else if (null != regDocDate
+                    && DateUtils.compareDates(propertyDetail.getBuildingPermissionDate(), regDocDate))
+                addActionError(getText("regDate.greaterThan.buildingPermDate"));
             if (isBlank(propertyDetail.getDeviationPercentage()))
                 addActionError(getText("mandatory.deviationPercentage"));
         }
@@ -362,7 +366,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         // happen for the same houseNo
         if (!qry.list().isEmpty()
                 && (basicProperty == null || basicProperty != null
-                        && !basicProperty.getAddress().getHouseNoBldgApt().equals(houseNo)))
+                && !basicProperty.getAddress().getHouseNoBldgApt().equals(houseNo)))
             addActionError(getText("houseNo.unique"));
     }
 
@@ -397,14 +401,14 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
                 property.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
-                        .withDateInfo(currentDate.toDate());
+                .withDateInfo(currentDate.toDate());
                 property.setStatus(STATUS_CANCELLED);
                 property.getBasicProperty().setUnderWorkflow(FALSE);
             } else {
                 final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
                 property.transition(true).withSenderName(user.getName()).withComments(approverComments)
-                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_REVENUE_CLERK_APPROVAL_PENDING);
+                .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_REVENUE_CLERK_APPROVAL_PENDING);
             }
 
         } else {
@@ -416,17 +420,17 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 final WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
                         null, getAdditionalRule(), currentState, null);
                 property.transition().start().withSenderName(user.getName()).withComments(approverComments)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                .withNextAction(wfmatrix.getNextAction());
             } else if (property.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 property.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
-                        .withDateInfo(currentDate.toDate());
+                .withDateInfo(currentDate.toDate());
             else {
                 final WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
                         null, getAdditionalRule(), property.getCurrentState().getValue(), null);
                 property.transition(true).withSenderName(user.getName()).withComments(approverComments)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                .withNextAction(wfmatrix.getNextAction());
             }
         }
         if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase("----Choose----")) {

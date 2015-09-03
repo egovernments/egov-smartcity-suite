@@ -47,20 +47,10 @@
 		<s:text name='NewProp.title' />
 	</s:if></title>
 <sx:head />
-<!-- <script type="text/javascript" src="/ptis/resources/javascript/unitRentAgreement.js"></script> -->
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"
-	type="text/javascript"></script>
-<link
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
-	rel="stylesheet" type="text/css" />
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-	type="text/javascript"></script>
-<script
-	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"
-	type="text/javascript"></script>
-
+<script	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"type="text/javascript"></script>
+<link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+<script	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>" type="text/javascript"></script>
+<script	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>" type="text/javascript"></script>
 </head>
 
 <body onload="loadOnStartUp();">
@@ -71,14 +61,10 @@
 			</div>
 		</div>
 	</s:if>
-
-	<s:form name="CreatePropertyForm" action="createProperty-create"
+ <s:form name="CreatePropertyForm" action="createProperty-create"
 		theme="simple" enctype="multipart/form-data">
-
 		<s:push value="model">
 			<s:token />
-
-			<!-- The mode value is used in floorform.jsp file to stop from remmoving the rent agreement header icon -->
 			<s:hidden name="mode" id="mode" value="%{mode}" />
 			<s:hidden name="modelId" id="modelId" value="%{modelId}" />
 			<div class="formmainbox">
@@ -88,10 +74,9 @@
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<%@  include file="createPropertyForm.jsp"%>
-						
 					</tr>
 					<tr>
-					  <%@ include file="../common/DocumentUploadForm.jsp"%>
+						<%@ include file="../common/DocumentUploadForm.jsp"%>
 					</tr>
 					<s:if test="%{propertyByEmployee == true}">
 						<tr>
@@ -133,8 +118,6 @@ jQuery(function ($) {
 		$('.datepicker').on('changeDate', function(ev){
 		    $(this).datepicker('hide');
 		});
-		
-    	
 });
 function loadOnStartUp() {
 	document.getElementById('assessmentRow').style.display="none";
@@ -150,63 +133,7 @@ function loadOnStartUp() {
 	}
 	var category = '<s:property value="%{propertyDetail.categoryType}"/>';
 	document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].value = category;
-	/* document.getElementById("plotArea").style.display = ""; */
-	/* document.getElementById("ownerShipRow").style.display = "none";
-	document.getElementById("vacantAreaRow").style.display = "none"; */
-	/* document.getElementById("undivArea").style.display = "none";		
-	document.getElementById("rentBox").className="hiddentext";
-	document.getElementById("bldngCostId").className="hiddentext";
-	document.getElementById("parentIndex").className="hiddentext";
-	document.getElementById("opAlvId").className="hiddentext";
-	document.getElementById("occId").className="hiddentext";
-	document.getElementById("rentBox").readOnly=true;
-	document.getElementById("bldngCostId").readOnly=true;
-	document.getElementById("amenitiesId").disabled=true;
-	document.getElementById("opAlvId").readOnly=true;
-	document.getElementById("occId").readOnly=true;
-	document.getElementById("parentIndex").readOnly=true;
-	document.getElementById("dateOfCompletion").readOnly=true;
-	document.getElementById("dateOfCompletion").className="hiddentext";
-	document.getElementById("floorDetailsConfirm").style.display = "none";
-	document.getElementById("waterRate").style.display = "none"; */
-	
-	//enableFieldsForPropType();
-	//hideAddRmvBtnForResidFlats();
-	//enableCorresAddr();
-	//enableTaxExemptReason();
-	//enableRentBox();
-			
-	/* var complDateStr = document.getElementById("dateOfCompletion").value;
-	if(complDateStr == "" || complDateStr == "DD/MM/YYYY" || complDateStr == undefined)
-	{		
-		waterMarkInitialize('dateOfCompletion','DD/MM/YYYY');
-	}
-	var tbl = document.getElementById('floorDetails');	
-	if(tbl!=null) {
-		resetDetailsForTenantOnload();
-	} */
-	
-	//populateLocationFactors();	
-	//populateFloorConstTypeDropDowns();
-	//toggleForResNonRes();	
-	 toggleFloorDetails();
-	//toggleUnitTypeAndCategory();
-	//prepareUnitTypeCategories();
-	//prepareUsagesForUnitTypes();
-	
-	/* var intervalId = -1;
-	var propTypeMstr = document.getElementById("propTypeMaster");
-	
-	if (propTypeMstr.options[propTypeMstr.selectedIndex].text == 'Mixed') {
-		intervalId = setInterval(doOnValidationErrors, 1000);
-	} 
-	 
-	if (areUnitTypeCatsAndUsagePopulated) {
-		clearInterval(intervalId);
-	} 	
-	
-	document.getElementById("taxExemptRow").style.display = "none";		 */
-	//enableSubmitButton();  
+	toggleFloorDetails();
      var aadhartextboxes = jQuery('.txtaadhar');
      console.log(aadhartextboxes);
      aadhartextboxes.each(function() {
@@ -218,257 +145,14 @@ function loadOnStartUp() {
 }
 
 function onSubmit() { 
-
 	jQuery('#salutation, #gender, #guardianRelation').removeAttr('disabled');
-    
 	document.forms[0].action = 'createProperty-create.action';
 	<s:if test="mode=='edit'">
 	document.forms[0].action = 'createProperty-forward.action';
 	</s:if>
 	document.forms[0].submit;
-	
    return true;
 }
-/* var areUnitTypeCatsAndUsagePopulated = false;
-function doOnValidationErrors() {	
-
-	/* if (!areUnitTypeCatsAndUsagePopulated && isCategoriesPrepared && isUsagesPrepared) {
-		populateUnitTypeCatAndUsageOnValidationErrors();	
-	}  
-}*/
-
-/* function resetFloorDetailsForResdAndNonResd(obj) {
-	var propType = document.forms[0].propTypeMaster.options[document.forms[0].propTypeMaster.selectedIndex].text;
-	var rowIndex = getRow(obj).rowIndex;
-	var tbl = document.getElementById('floorDetails');
-	if (tbl != null && propType == 'Residential & Non-Residential') {
-		var rowo = tbl.rows;
-		var RsdUsg = '<s:property value="@org.egov.ptis.constants.PropertyTaxConstants@USAGES_FOR_RESD"/>';
-		var RsdUsgArray = RsdUsg.split(", "); 
-		var NonRsdUsg = '<s:property value="@org.egov.ptis.constants.PropertyTaxConstants@USAGES_FOR_NON_RESD"/>';
-		var NonRsdUsgArray = NonRsdUsg.split(", ");
-		var selectedUsage = obj.options[obj.selectedIndex].text;
-		indexval = rowIndex-1;
-		var UsageTypeFlag;
-		
-		for (var i = 0; i < RsdUsgArray.length; i++) {
-			if (selectedUsage == RsdUsgArray[i]) {
-				UsageTypeFlag = 'Residential';
-				break;
-			}
-		}
-		if (UsageTypeFlag == null) {
-			for (var j = 0; j < NonRsdUsgArray.length; j++) {
-				if (selectedUsage == NonRsdUsgArray[j]) {
-					UsageTypeFlag = 'Non-Residential';
-					break;
-				}
-			}
-		}
-		if (UsageTypeFlag == 'Residential') {
-			if (indexval == 0) {
-				document.getElementById("width").value = "";
-				document.getElementById("length").value = "";
-				document.getElementById("interWallArea").value = "";
-				document.getElementById("width").className = "hiddentext";
-				document.getElementById("length").className = "hiddentext";
-				document.getElementById("interWallArea").className = "hiddentext";
-				document.getElementById("width").readOnly = true;
-				document.getElementById("length").readOnly = true;
-				document.getElementById("interWallArea").readOnly = true;
-			} else {
-				document.forms[0].width[indexval]
-					.setAttribute(
-						'name',
-						'propertyDetail.floorDetailsProxy[' + indexval + '].extraField4');
-				document.forms[0].length[indexval]
-					.setAttribute(
-						'name',
-						'propertyDetail.floorDetailsProxy[' + indexval + '].extraField5');
-				document.forms[0].interWallArea[indexval]
-					.setAttribute(
-						'name',
-						'propertyDetail.floorDetailsProxy[' + indexval + '].extraField6');
-				document.forms[0].width[indexval].value = "";
-				document.forms[0].length[indexval].value = "";
-				document.forms[0].interWallArea[indexval].value = "";
-				document.forms[0].width[indexval].className = "hiddentext";
-				document.forms[0].length[indexval].className = "hiddentext";
-				document.forms[0].interWallArea[indexval].className = "hiddentext";
-				document.forms[0].width[indexval].readOnly = true;
-				document.forms[0].length[indexval].readOnly = true;
-				document.forms[0].interWallArea[indexval].readOnly = true;
-			}
-		} else if (UsageTypeFlag == 'Non-Residential') {
-			if (indexval == 0) {
-				document.getElementById("width").className = "";
-				document.getElementById("length").className = "";
-				document.getElementById("interWallArea").className = "";
-				document.getElementById("width").readOnly = false;
-				document.getElementById("length").readOnly = false;
-				document.getElementById("interWallArea").readOnly = false;
-			} else {
-				document.forms[0].width[indexval]
-					.setAttribute(
-						'name',
-						'propertyDetail.floorDetailsProxy[' + indexval + '].extraField4');
-				document.forms[0].length[indexval]
-					.setAttribute(
-						'name',
-						'propertyDetail.floorDetailsProxy[' + indexval + '].extraField5');
-				document.forms[0].interWallArea[indexval]
-					.setAttribute(
-						'name',
-						'propertyDetail.floorDetailsProxy[' + indexval + '].extraField6');
-				document.forms[0].width[indexval].className = "";
-				document.forms[0].length[indexval].className = "";
-				document.forms[0].interWallArea[indexval].className = "";
-				document.forms[0].width[indexval].readOnly = false;
-				document.forms[0].length[indexval].readOnly = false;
-				document.forms[0].interWallArea[indexval].readOnly = false;
-			}
-		}
-	}
-}
-
-function resetFloorDetailsForResdAndNonResdOnload() {
-	var tbl = document.getElementById('floorDetails');
-	if (tbl != null) {
-		var rowo = tbl.rows;
-		var RsdUsg = '<s:property value="@org.egov.ptis.constants.PropertyTaxConstants@USAGES_FOR_RESD"/>';
-		var RsdUsgArray = RsdUsg.split(", "); 
-		var NonRsdUsg = '<s:property value="@org.egov.ptis.constants.PropertyTaxConstants@USAGES_FOR_NON_RESD"/>';
-		var NonRsdUsgArray = NonRsdUsg.split(", ");
-		for ( var i = 0; i < rowo.length - 1; i++) {
-			indexval = i;
-			var UsageTypeFlag = null;
-			if (i == 0) {
-				var selectedUsage = document.forms[0].floorUsage.options[document.forms[0].floorUsage.selectedIndex].text;
-			} else {
-				var selectedUsage = eval('document.forms[0].floorUsage' + eval(i-1) + '.options[document.forms[0].floorUsage' + eval(i-1) + '.selectedIndex].text');
-			}
-			if (selectedUsage != '--select--') {
-				for (var j = 0; j < RsdUsgArray.length; j++) {
-					if (selectedUsage == RsdUsgArray[j]) {
-						UsageTypeFlag = 'Residential';
-						break;
-					}
-				}
-				if (UsageTypeFlag == null) {
-					for (var k = 0; k < NonRsdUsgArray.length; k++) {
-						if (selectedUsage == NonRsdUsgArray[k]) {
-							UsageTypeFlag = 'Non-Residential';
-							break;
-						}
-					}
-				}
-			}
-			if (UsageTypeFlag == 'Residential' || selectedUsage == '--select--') {
-				if (i == 0) {
-					document.getElementById("width").value = "";
-					document.getElementById("length").value = "";
-					document.getElementById("interWallArea").value = "";
-					document.getElementById("width").className = "hiddentext";
-					document.getElementById("length").className = "hiddentext";
-					document.getElementById("interWallArea").className = "hiddentext";
-					document.getElementById("width").readOnly = true;
-					document.getElementById("length").readOnly = true;
-					document.getElementById("interWallArea").readOnly = true;
-				} else {
-					document.forms[0].width[indexval]
-						.setAttribute(
-							'name',
-							'propertyDetail.floorDetailsProxy[' + indexval + '].extraField4');
-					document.forms[0].length[indexval]
-						.setAttribute(
-							'name',
-							'propertyDetail.floorDetailsProxy[' + indexval + '].extraField5');
-					document.forms[0].interWallArea[indexval]
-						.setAttribute(
-							'name',
-							'propertyDetail.floorDetailsProxy[' + indexval + '].extraField6');
-					document.forms[0].width[indexval].value = "";
-					document.forms[0].length[indexval].value = "";
-					document.forms[0].interWallArea[indexval].value = "";
-					document.forms[0].width[indexval].className = "hiddentext";
-					document.forms[0].length[indexval].className = "hiddentext";
-					document.forms[0].interWallArea[indexval].className = "hiddentext";
-					document.forms[0].width[indexval].readOnly = true;
-					document.forms[0].length[indexval].readOnly = true;
-					document.forms[0].interWallArea[indexval].readOnly = true;
-				}	
-			} else if (UsageTypeFlag == 'Non-Residential') {
-				if (i == 0) {
-					document.getElementById("width").className = "";
-					document.getElementById("length").className = "";
-					document.getElementById("interWallArea").className = "";
-					document.getElementById("width").readOnly = false;
-					document.getElementById("length").readOnly = false;
-					document.getElementById("interWallArea").readOnly = false;
-				} else {
-					document.forms[0].width[indexval]
-						.setAttribute(
-							'name',
-							'propertyDetail.floorDetailsProxy[' + indexval + '].extraField4');
-					document.forms[0].length[indexval]
-						.setAttribute(
-							'name',
-							'propertyDetail.floorDetailsProxy[' + indexval + '].extraField5');
-					document.forms[0].interWallArea[indexval]
-						.setAttribute(
-							'name',
-							'propertyDetail.floorDetailsProxy[' + indexval + '].extraField6');
-					document.forms[0].width[indexval].className = "";
-					document.forms[0].length[indexval].className = "";
-					document.forms[0].interWallArea[indexval].className = "";
-					document.forms[0].width[indexval].readOnly = false;
-					document.forms[0].length[indexval].readOnly = false;
-					document.forms[0].interWallArea[indexval].readOnly = false;
-				}
-			}
-			if (i==0) {
-				document.getElementById("floorNo").disabled = false;
-				document.getElementById("floorType").disabled = false;	
-				document.forms[0].floorUsage.options.length=0;
-				document.forms[0].floorUsage.options[0] = new Option("select", "-1");
-				document.forms[0].floorUsage.value="-1";
-			} else if (i <= rowo.length - 2){
-				eval('document.forms[0].floorUsage'+(indexval-1)+'.options.length=0');
-				eval('document.forms[0].floorUsage'+(indexval-1)+'.options[0] = new Option("select", "-1")');
-				eval('document.forms[0].floorUsage'+(indexval-1)+'.value="-1"');
-				eval('document.getElementById("floorConstType'+(indexval-1)+'").disabled=false');
-				document.forms[0].constrYear[indexval].disabled = false;
-			}			
-		}
-	}
-}
-
-function enableSubmitButton(){
-	if(document.getElementById("allChngsCmpltd").checked == true) {
-			document.getElementById("Create:Save").disabled = true;
-			document.getElementById("Create:Forward").disabled = false;
-	} else {
-			document.getElementById("Create:Save").disabled = false;
-			document.getElementById("Create:Forward").disabled = true;
-	}
-}
-var allChngsCmpltdLabel = '<s:property value="%{getText(\'allChangesDone\')}"/>';
-function submitMsg(button) {
-	if(document.getElementById("allChngsCmpltd").checked == true) {
-		var action = button.value;
-		alert("Please uncheck the '" + allChngsCmpltdLabel.slice(0, allChngsCmpltdLabel.length-1) + "' to proceed with " + action);
-		return false;
-	}
-}
-
-function finishAllChangesMsg(button) {
-	if(document.getElementById("allChngsCmpltd").checked == false) {
-		var action = button.value;
-		alert("Please check the '" + allChngsCmpltdLabel.slice(0, allChngsCmpltdLabel.length-1) + "' to proceed with " + action);
-		return false;
-	}
-}  */
-
 
 </script>
 </body>
