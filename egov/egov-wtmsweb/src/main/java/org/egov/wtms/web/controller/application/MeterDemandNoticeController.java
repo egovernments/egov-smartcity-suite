@@ -69,6 +69,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,7 +114,7 @@ public class MeterDemandNoticeController {
     public @ResponseBody ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request,
             final HttpSession session) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCode(request.getParameter("pathVar"));
+                .findByConsumerCodeAndConnectionStatus(request.getParameter("pathVar"), ConnectionStatus.ACTIVE);
         if (!errorMessage.isEmpty())
             return redirect();
         return generateReport(waterConnectionDetails, session);

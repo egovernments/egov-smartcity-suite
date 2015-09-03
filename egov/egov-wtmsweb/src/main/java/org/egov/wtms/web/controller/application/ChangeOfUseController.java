@@ -124,11 +124,20 @@ public class ChangeOfUseController extends GenericConnectionController {
         final WaterConnectionDetails parent = waterConnectionDetailsService.getParentConnectionDetails(
                 connectionUnderChange.getConnection().getPropertyIdentifier(), ConnectionStatus.ACTIVE);
         final String message = changeOfUseService.validateChangeOfUseConnection(parent);
-        if (!message.isEmpty() && !"".equals(message))
-            return "redirect:/application/changeOfUse/"
-            + changeOfUse.getConnection().getParentConnection().getConsumerCode();
+        String consumerCode="";
+       if (!message.isEmpty() && !"".equals(message))
+        {
+            if(changeOfUse.getConnection().getParentConnection()!=null)
+            {
+                consumerCode=changeOfUse.getConnection().getParentConnection().getConsumerCode();
+            }
+            else{
+                consumerCode=changeOfUse.getConnection().getConsumerCode(); 
+            }
+            return "redirect:/application/changeOfUse/"+ consumerCode;
+        }
         int i = 0;
-        if (!changeOfUse.getApplicationDocs().isEmpty())
+        if (!changeOfUse.getApplicationDocs().isEmpty()){
             for (final ApplicationDocuments applicationDocument : changeOfUse.getApplicationDocs()) {
                 if (applicationDocument.getDocumentNumber() == null && applicationDocument.getDocumentDate() != null) {
                     final String fieldError = "applicationDocs[" + i + "].documentNumber";
@@ -141,6 +150,7 @@ public class ChangeOfUseController extends GenericConnectionController {
                     applicationDocs.add(applicationDocument);
                 i++;
             }
+        }
 
         if (resultBinder.hasErrors()) {
             final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService

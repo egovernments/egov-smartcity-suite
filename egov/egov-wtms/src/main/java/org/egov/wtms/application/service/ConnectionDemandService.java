@@ -442,7 +442,7 @@ public class ConnectionDemandService {
         final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) beanProvider
                 .getBean("waterConnectionBillable");
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCode(consumerCode);
+                .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS);

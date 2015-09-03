@@ -56,6 +56,7 @@ import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.WaterRatesDetails;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.repository.WaterRatesDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -89,7 +90,7 @@ public class MeterReadingController {
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String consumerCode) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCode(consumerCode);
+                .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
         return waterConnectionDetails;
     }
 
@@ -112,7 +113,7 @@ public class MeterReadingController {
     @RequestMapping(value = "/meterentry/{consumerCode}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String consumerCode, final HttpServletRequest request) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCode(consumerCode);
+                .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
         MeterReadingConnectionDetails meterReadingpriviousObj = null;
         final List<MeterReadingConnectionDetails> meterReadingpriviousObjlist = waterConnectionDetailsRepository
                 .findPreviousMeterReadingReading(waterConnectionDetails.getId());

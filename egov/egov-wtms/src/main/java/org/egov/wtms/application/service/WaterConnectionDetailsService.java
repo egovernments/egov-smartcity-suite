@@ -617,7 +617,7 @@ public class WaterConnectionDetailsService {
                                     waterConnectionDetails.getConnection().getConsumerCode(), ConnectionStatus.ACTIVE);
                     connectionToBeDeactivated.setConnectionStatus(ConnectionStatus.INACTIVE);
                     connectionToBeDeactivated.setIsHistory(true);
-                    waterConnectionDetailsRepository.save(connectionToBeDeactivated);
+                    waterConnectionDetailsRepository.saveAndFlush(connectionToBeDeactivated);
                     updateIndexes(connectionToBeDeactivated);
                 }
                 wfmatrix = waterConnectionWorkflowService.getWfMatrix(
@@ -634,12 +634,13 @@ public class WaterConnectionDetailsService {
                                 .getStatusByCodeAndModuleType(
                                         WaterTaxConstants.APPLICATION_STATUS_SANCTIONED,
                                         WaterTaxConstants.MODULETYPE));
-
-                waterConnectionDetails
-                        .setConnectionStatus(ConnectionStatus.ACTIVE);
-                consumerIndexService.createConsumerIndex(
-                        waterConnectionDetails, assessmentDetailsFullFlag);
                 updateIndexes(waterConnectionDetails);
+                if(waterConnectionDetails.getApplicationType().getCode()
+                        .equalsIgnoreCase(WaterTaxConstants.CHANGEOFUSE)){
+                    waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
+                    consumerIndexService.createConsumerIndex(
+                        waterConnectionDetails, assessmentDetailsFullFlag);
+                }
                 if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
                     waterConnectionDetails.transition(true).end()
                             .withSenderName(user.getName())
@@ -990,9 +991,9 @@ public class WaterConnectionDetailsService {
                         waterConnectionDetails, assessmentDetails);
             if (waterConnectionDetails.getStatus().getCode()
                     .equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)) {
-                if (!waterConnectionDetails.getApplicationType().getCode().equalsIgnoreCase(WaterTaxConstants.CHANGEOFUSE))
-                    waterConnectionDetails
-                            .setConnectionStatus(ConnectionStatus.ACTIVE);
+                if (waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INPROGRESS) && !waterConnectionDetails.getApplicationType().getCode().equalsIgnoreCase(WaterTaxConstants.CHANGEOFUSE)){
+                    waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
+                }
                 consumerIndexService.createConsumerIndex(
                         waterConnectionDetails, assessmentDetails);
             }
