@@ -41,10 +41,10 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="org.egov.tradelicense.domain.entity.MotorMaster" table="EGL_MSTR_MOTOR_FEE_RANGE">
+	<class name="org.egov.tradelicense.domain.entity.MotorMaster" table="EGTL_MSTR_MOTOR_FEE_RANGE">
 		<id name="id" column="ID" type="java.lang.Long" unsaved-value="null">
 			<generator class="native">
-				<param name="sequence">SEQ_EGL_MSTR_MOTOR_FEE_RANGE</param>
+				<param name="sequence">SEQ_EGTL_MSTR_MOTOR_FEE_RANGE</param>
 			</generator>
 		</id>
 		<property name="motorHpFrom" type="java.math.BigDecimal">

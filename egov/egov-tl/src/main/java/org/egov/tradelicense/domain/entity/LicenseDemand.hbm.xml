@@ -42,7 +42,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="org.egov.tradelicense.domain.entity">
-	<joined-subclass name="LicenseDemand" table="EGL_LICENSE_DEMAND" extends="org.egov.demand.model.EgDemand">
+	<joined-subclass name="LicenseDemand" table="EGTL_LICENSE_DEMAND" extends="org.egov.demand.model.EgDemand">
 		<key column="ID_DEMAND"  />
 		<many-to-one name="license" column="ID_LICENSE" not-null="true" class="org.egov.tradelicense.domain.entity.License"/>
 		<many-to-one name="egInstallmentMaster" class="org.egov.commons.Installment" >

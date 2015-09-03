@@ -44,10 +44,10 @@
 
 <hibernate-mapping>
 	<class name="org.egov.tradelicense.domain.entity.LicenseStatusValues"
-		table="EGL_STATUS_VALUES">
+		table="EGTL_STATUS_VALUES">
 		<id name="id" column="ID_STATUS_VALUES" type="java.lang.Long">
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGL_STATUS_VALUES</param>
+				<param name="sequence">SEQ_EGTL_STATUS_VALUES</param>
 			</generator>
 		</id>
 		<property name="createdDate" type="java.util.Date">

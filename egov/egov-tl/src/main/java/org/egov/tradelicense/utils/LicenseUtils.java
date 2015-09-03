@@ -323,7 +323,7 @@ public class LicenseUtils {
     }
 
     /**
-     * @param simpleName Simple name is the name of the license Subclass and same name should be inserted to EGL_MSTR_LICENSE_TYPE
+     * @param simpleName Simple name is the name of the license Subclass and same name should be inserted to EGTL_MSTR_LICENSE_TYPE
      * table
      * @return
      */
@@ -345,7 +345,7 @@ public class LicenseUtils {
     }
 
     /**
-     * @param simpleName Simple name is the name of the license Subclass and same name should be inserted to EGL_MSTR_LICENSE_TYPE
+     * @param simpleName Simple name is the name of the license Subclass and same name should be inserted to EGTL_MSTR_LICENSE_TYPE
      * table
      * @return
      */
@@ -356,7 +356,7 @@ public class LicenseUtils {
     }
 
     /**
-     * @param simpleName Simple name is the name of the license Subclass and same name should be inserted to EGL_MSTR_LICENSE_TYPE
+     * @param simpleName Simple name is the name of the license Subclass and same name should be inserted to EGTL_MSTR_LICENSE_TYPE
      * table
      * @return
      */

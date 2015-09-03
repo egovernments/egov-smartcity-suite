@@ -41,10 +41,10 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
                                    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping auto-import="false">
-	<class name="org.egov.tradelicense.domain.entity.SubCategory" table="EGL_MSTR_SUB_CATEGORY">
+	<class name="org.egov.tradelicense.domain.entity.SubCategory" table="EGTL_MSTR_SUB_CATEGORY">
 		<id column="ID" name="id" type="java.lang.Long">
 			<generator class="native">
-				<param name="sequence">SEQ_EGL_MSTR_SUB_CATEGORY</param>
+				<param name="sequence">SEQ_EGTL_MSTR_SUB_CATEGORY</param>
 			</generator>
 		</id>
 		<property generated="never" lazy="false" name="name" type="java.lang.String">

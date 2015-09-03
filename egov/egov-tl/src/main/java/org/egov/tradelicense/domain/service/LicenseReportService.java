@@ -217,7 +217,7 @@ public class LicenseReportService {
         else if (boundaryType.equalsIgnoreCase(Constants.DIVISION))
             query.append(" boun.id_bndry as bb");
         query.append(
-                " from egl_license lic, egl_mstr_status status,eg_boundary boun  , egl_license_demand ld , eg_demand demand  where lic.id_status=status.id_status ")
+                " from EGTL_license lic, EGTL_mstr_status status,eg_boundary boun  , EGTL_license_demand ld , eg_demand demand  where lic.id_status=status.id_status ")
                 .append
                 (" and  status.status_name in('").append(Constants.LICENSE_STATUS_ACTIVE).append("','")
                 .append(Constants.LICENSE_STATUS_CANCELLED).append
@@ -290,7 +290,7 @@ public class LicenseReportService {
                 (
                         " select NVL(act, 0) AS act, NVL(can, 0) AS can, NVL(obj, 0) AS obj,NVL(ren, 0) AS ren, NVL(totalamount, 0) AS totalamount, scat.trade_name,scat.id from ")
                         .append
-                        (" (select  scateg.name as trade_name,scateg.id from egl_mstr_sub_category scateg ,egl_mstr_license_type ltype")
+                        (" (select  scateg.name as trade_name,scateg.id from EGTL_mstr_sub_category scateg ,EGTL_mstr_license_type ltype")
                         .append
                         (" where scateg.id_license_type= ltype.id  and ltype.name='")
                         .append(type)
@@ -321,8 +321,8 @@ public class LicenseReportService {
                         .append(" then demand.base_demand else 0 end as amount")
                         .append// to get the amount for new and renewed licenses in the current year
                         (" ,subcateg.name as trade_name ,subcateg.id ").append
-                        (" from egl_license lic, egl_mstr_status status , egl_license_demand ld , eg_demand demand ,").append
-                        (" egl_mstr_sub_category subcateg where ").append
+                        (" from EGTL_license lic, EGTL_mstr_status status , EGTL_license_demand ld , eg_demand demand ,").append
+                        (" EGTL_mstr_sub_category subcateg where ").append
                         (" lic.id_status=status.id_status ").append
                         (" and  status.status_name in('").append(Constants.LICENSE_STATUS_ACTIVE).append("','")
                         .append(Constants.LICENSE_STATUS_CANCELLED).append("','")
@@ -403,7 +403,7 @@ public class LicenseReportService {
                 (installment.getId()).append(" then 1 else 0 end as laterenCount, boun.id_bndry as bb");
 
         query.append(
-                " from  egl_license lic, egl_mstr_status status,eg_boundary boun  , egl_license_demand ld  where lic.id_status=status.id_status ")
+                " from  EGTL_license lic, EGTL_mstr_status status,eg_boundary boun  , EGTL_license_demand ld  where lic.id_status=status.id_status ")
                 .append
                 (" and  status.status_name in('").append(Constants.LICENSE_STATUS_ACTIVE).append
                 ("') and lic.license_type='").append(licenseType).append("' and boun.id_bndry= lic.id_adm_bndry").append
@@ -531,7 +531,7 @@ public class LicenseReportService {
                 .append
                 (" (SELECT CASE WHEN ?<dateofexpiry THEN 0 ELSE 1 END AS expired,id_adm_bndry,dateofexpiry, license_type, id_status,id_sub_category ")
                 .append
-                (" FROM egl_license) lic ,egl_mstr_status status,eg_boundary boun ").append
+                (" FROM EGTL_license) lic ,EGTL_mstr_status status,eg_boundary boun ").append
                 (" WHERE lic.id_status=status.id_status AND status.status_name ='").append(Constants.LICENSE_STATUS_ACTIVE)
                 .append("' AND lic.license_type='").append(licenseType).append("' ").append
                 (" AND boun.id_bndry = lic.id_adm_bndry ");

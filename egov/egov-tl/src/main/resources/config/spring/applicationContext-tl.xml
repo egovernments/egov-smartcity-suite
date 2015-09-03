@@ -154,18 +154,18 @@
 		<property name="licenseUtils" ref="licenseUtils" />
 	</bean>
 
-	<bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" />
+	<!-- <bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" /> -->
 
-	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService">
+	<!-- <bean id="persistenceService" class="org.egov.infstr.services.PersistenceService">
 		<property name="sessionFactory" ref="egovSessionFactory" />
-	</bean>
+	</bean> -->
 
-	<bean id="auditEventPersistenceService" parent="persistenceService">
+	<!-- <bean id="auditEventPersistenceService" parent="persistenceService">
 		<property name="type" value="org.egov.infstr.auditing.model.AuditEvent" />
-	</bean>
+	</bean> -->
 
-	<bean id="auditEventService" class="org.egov.infstr.auditing.service.AuditEventService">
+	<!-- <bean id="auditEventService" class="org.egov.infstr.auditing.service.AuditEventService">
 		<property name="auditEventPersistenceService" ref="auditEventPersistenceService" />
-	</bean>
+	</bean> -->
 
 </beans>

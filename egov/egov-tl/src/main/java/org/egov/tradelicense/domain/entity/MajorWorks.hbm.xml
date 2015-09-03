@@ -42,11 +42,11 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="org.egov.tradelicense.domain.entity.MajorWorks" table="EGL_MAJOR_WORKS">
+	<class name="org.egov.tradelicense.domain.entity.MajorWorks" table="EGTL_MAJOR_WORKS">
 		<id name="id" type="java.lang.Long">
 			<column name="ID" precision="22" scale="0" />
 			<generator class="native">
-				<param name="sequence">SEQ_EGL_MAJOR_WORKS</param>
+				<param name="sequence">SEQ_EGTL_MAJOR_WORKS</param>
 			</generator>
 		</id>
 		<many-to-one name="license" class="org.egov.tradelicense.domain.entity.License" fetch="select">

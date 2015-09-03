@@ -43,11 +43,11 @@
    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="org.egov.tradelicense.domain.entity.LicenseStatus" table="EGL_MSTR_STATUS">
+	<class name="org.egov.tradelicense.domain.entity.LicenseStatus" table="EGTL_MSTR_STATUS">
 		<id
 			name="ID" column="ID_STATUS" type="int">
 			<generator class="sequence">
-					<param name="sequence">SEQ_EGL_MSTR_STATUS</param>
+					<param name="sequence">SEQ_EGTL_MSTR_STATUS</param>
 			</generator>
 		</id>
 		<timestamp

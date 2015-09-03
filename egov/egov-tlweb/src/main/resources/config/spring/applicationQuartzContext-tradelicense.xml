@@ -42,7 +42,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-	<bean name="tradelicenseSchedular" id="tradelicenseSchedular"
+	<!-- <bean name="tradelicenseSchedular" id="tradelicenseSchedular"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
 		destroy-method="destroy" lazy-init="false">
 		<property name="overwriteExistingJobs" value="true" />
@@ -60,7 +60,7 @@
 		<property name="applicationContextSchedulerContextKey" value="applicationQuartzContext-tradelicense" />
 		<property name="quartzProperties">
 			<props>
-				<!-- Scheduler Properties -->
+				Scheduler Properties
 				<prop key="org.quartz.scheduler.instanceId">AUTO</prop>
 				<prop key="org.quartz.scheduler.instanceName">eGovScheduler-TL</prop>
 				<prop key="org.quartz.scheduler.wrapJobExecutionInUserTransaction">true</prop>
@@ -68,7 +68,7 @@
 				<prop
 					key="org.quartz.scheduler.threadsInheritContextClassLoaderOfInitializer">true</prop>
 
-				<!-- Job Store and Clustering Properties -->
+				Job Store and Clustering Properties
 				<prop key="org.quartz.jobStore.isClustered">false</prop>
 				<prop key="org.quartz.jobStore.clusterCheckinInterval">60000</prop>
 				<prop key="org.quartz.jobStore.acquireTriggersWithinLock">false</prop>
@@ -85,11 +85,11 @@
 					key="org.quartz.jobStore.dontSetNonManagedTXConnectionAutoCommitFalse">false</prop>
 				<prop key="org.quartz.jobStore.dontSetAutoCommitFalse">true</prop>
 
-				<!-- Datasource Properties -->
+				Datasource Properties
 				<prop key="org.quartz.dataSource.quartzDS.jndiURL">java:/ezgovDatabasePool</prop>
 				<prop key="org.quartz.dataSource.quartzNoTXDS.jndiURL">java:/ezgovDatabasePoolNoTX</prop>
 
-				<!-- Logger Plugin Properties -->
+				Logger Plugin Properties
 				<prop key="org.quartz.plugin.jobHistory.class">org.quartz.plugins.history.LoggingJobHistoryPlugin
 				</prop>
 				<prop key="org.quartz.plugin.jobHistory.jobToBeFiredMessage">Job [{1}.{0}] to be fired by trigger [{4}.{3}],
@@ -111,18 +111,18 @@
 				<prop key="org.quartz.plugin.triggerHistory.triggerMisfiredMessage">Trigger [{1}.{0}] misfired job [{6}.{5}]. Should have
 					fired at: {3, date, dd-MM-yyyy HH:mm:ss.SSS}</prop>
 
-				<!-- Scheduler Shutdown Hook Plugin Properties -->
+				Scheduler Shutdown Hook Plugin Properties
 				<prop key="org.quartz.plugin.shutdownHook.class">org.quartz.plugins.management.ShutdownHookPlugin
 				</prop>
 				<prop key="org.quartz.plugin.shutdownHook.cleanShutdown">true</prop>
 			</props>
 		</property>
 
-	</bean>
+	</bean> -->
 
 	<!-- Add description for dailyCancelProvisionalNocTradeJobBean -->
 
-	<bean name="dailyCancelProvisionalNocTradeJobBean" id="dailyCancelProvisionalNocTradeJobBean"
+	<!-- <bean name="dailyCancelProvisionalNocTradeJobBean" id="dailyCancelProvisionalNocTradeJobBean"
 		class="org.springframework.scheduling.quartz.JobDetailBean">
 		<property name="group" value="TRADELICENSE_JOB_GROUP" />
 		<property name="name" value="Daily Cancel Provisional NOC Trade Job" />
@@ -152,7 +152,7 @@
 		<property name="name" value="Daily Cancel Provisional NOC Trade Trigger" />
 		<property name="cronExpression" value="0 0 1 * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING" />
-	</bean>
+	</bean> -->
 
 	<!-- END dailyCancelProvisionalNocTradeJobBean -->
 </beans>

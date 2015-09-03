@@ -129,7 +129,7 @@ public class ContractorLicenseReportService extends LicenseReportService {
         if (boundaryType.equalsIgnoreCase(Constants.CITY))
             query.append(" boun.id_bndry as bb");
         query.append(
-                " from egl_license lic, egl_mstr_status status,eg_boundary boun  , egl_license_demand ld , eg_demand demand  where lic.id_status=status.id_status ")
+                " from EGTL_license lic, EGTL_mstr_status status,eg_boundary boun  , EGTL_license_demand ld , eg_demand demand  where lic.id_status=status.id_status ")
                 .append
                 (" and  status.status_name in('").append(Constants.LICENSE_STATUS_ACTIVE).append("','")
                 .append(Constants.LICENSE_STATUS_CANCELLED).append
@@ -152,7 +152,7 @@ public class ContractorLicenseReportService extends LicenseReportService {
         .append
         (" (SELECT CASE WHEN sysdate<dateofexpiry THEN 0 ELSE 1 END AS expired,id_adm_bndry,dateofexpiry, license_type, id_status,id_sub_category ")
         .append
-        (" FROM egl_license) lic ,egl_mstr_status status,eg_boundary boun ").append
+        (" FROM EGTL_license) lic ,EGTL_mstr_status status,eg_boundary boun ").append
         (" WHERE lic.id_status=status.id_status AND status.status_name ='").append(Constants.LICENSE_STATUS_ACTIVE)
         .append("' AND lic.license_type='").append(licenseType).append("' ").append
         (" AND boun.id_bndry = lic.id_adm_bndry ");
@@ -218,7 +218,7 @@ public class ContractorLicenseReportService extends LicenseReportService {
         (currentInstallment.getId()).append(" then 1 else 0 end as laterenCount, boun.id_bndry as bb");
 
         query.append(
-                " from  egl_license lic, egl_mstr_status status,eg_boundary boun  , egl_license_demand ld  where lic.id_status=status.id_status ")
+                " from  EGTL_license lic, EGTL_mstr_status status,eg_boundary boun  , EGTL_license_demand ld  where lic.id_status=status.id_status ")
                 .append
                 (" and  status.status_name in('").append(Constants.LICENSE_STATUS_ACTIVE).append
                 ("') and lic.license_type='").append(licenseType).append("' and boun.id_bndry= lic.id_adm_bndry").append

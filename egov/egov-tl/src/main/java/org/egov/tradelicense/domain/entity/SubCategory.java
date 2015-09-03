@@ -48,7 +48,7 @@ import org.hibernate.validator.constraints.Length;
 /**
  * The Class TradeSubCategory.
  */
-@Unique(fields = { "code" }, id = "id", tableName = "EGL_MSTR_SUB_CATEGORY", columnName = { "code" }, message = "masters.code.isunique")
+@Unique(fields = { "code" }, id = "id", tableName = "EGTL_MSTR_SUB_CATEGORY", columnName = { "code" }, message = "masters.code.isunique")
 public class SubCategory extends BaseModel {
     private static final long serialVersionUID = 1L;
     private boolean approvalrequired;
