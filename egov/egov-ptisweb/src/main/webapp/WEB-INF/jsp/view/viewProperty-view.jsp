@@ -47,7 +47,6 @@
 			function loadOnStartup () {
 				var propType = '<s:property value="%{basicProperty.property.propertyDetail.propertyTypeMaster.type}"/>';
 		   		var appurtenantLandChecked = '<s:property value="%{basicProperty.property.propertyDetail.appurtenantLandChecked}"/>';
-		   		alert("appurtenantLandChecked"+appurtenantLandChecked)
 				enableFieldsForPropTypeView(propType,appurtenantLandChecked);
 				var btnCheckbox = document.getElementById('taxEnsureCheckbox');
 				var btnPayTax = document.getElementById('PayTax');

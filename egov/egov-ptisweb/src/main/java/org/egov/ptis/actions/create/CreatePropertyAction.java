@@ -98,6 +98,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
+import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -927,6 +928,7 @@ public class CreatePropertyAction extends WorkflowAction {
         final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("cityname").toString();
+        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
         reportId = ReportViewerUtil.addReportToSession(basicPropertyService.propertyAcknowledgement(property,cityLogo,cityName), getSession());
         return PRINTACK;
     }

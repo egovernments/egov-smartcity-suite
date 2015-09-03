@@ -166,12 +166,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ParentPackage("egov")
 @ResultPath(value = "/WEB-INF/jsp")
 @Results({ @Result(name = ModifyPropertyAction.RESULT_ACK, location = "modify/modifyProperty-ack.jsp"),
-        @Result(name = ModifyPropertyAction.EDIT, location = "modify/modifyProperty-new.jsp"),
-        @Result(name = ModifyPropertyAction.NEW, location = "modify/modifyProperty-new.jsp"),
-        @Result(name = ModifyPropertyAction.VIEW, location = "modify/modifyProperty-view.jsp"),
-        @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
-        @Result(name = ModifyPropertyAction.BALANCE, location = "modify/modifyProperty-balance.jsp"),
-        @Result(name = ModifyPropertyAction.PRINTACK, location = "modify/modifyProperty-printAck.jsp") })
+    @Result(name = ModifyPropertyAction.EDIT, location = "modify/modifyProperty-new.jsp"),
+    @Result(name = ModifyPropertyAction.NEW, location = "modify/modifyProperty-new.jsp"),
+    @Result(name = ModifyPropertyAction.VIEW, location = "modify/modifyProperty-view.jsp"),
+    @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
+    @Result(name = ModifyPropertyAction.BALANCE, location = "modify/modifyProperty-balance.jsp"),
+    @Result(name = ModifyPropertyAction.PRINTACK, location = "modify/modifyProperty-printAck.jsp") })
 @Namespace("/modify")
 public class ModifyPropertyAction extends WorkflowAction {
     private static final String BIFURCATION = "Bifurcation";
@@ -313,11 +313,11 @@ public class ModifyPropertyAction extends WorkflowAction {
         LOGGER.debug("Exiting from modifyForm");
         return target;
     }
-    
+
     @SkipValidation
     @Action(value = "/modifyProperty-modifyDataEntry")
     public String modifyDataEntry() {
-    	
+
         LOGGER.debug("Entered into modifyForm, \nIndexNumber: " + indexNumber + ", BasicProperty: " + basicProp
                 + ", OldProperty: " + oldProperty + ", PropertyModel: " + propertyModel);
         String target = "";
@@ -328,21 +328,17 @@ public class ModifyPropertyAction extends WorkflowAction {
         LOGGER.debug("Exiting from modifyForm");
         return target;
     }
-    
-    
-    
 
     private String populateFormData(final Boolean fromInbox) {
         LOGGER.debug("Entered into populateFormData");
         String target = "";
         PropertyImpl propertyImpl = null;
         if (basicProp.isUnderWorkflow() && !fromInbox) {
-            List<String> msgParams = new ArrayList<String>();
-            if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn)) {
+            final List<String> msgParams = new ArrayList<String>();
+            if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn))
                 msgParams.add("Property Bifurcation");
-            } else {
+            else
                 msgParams.add("Property Alter/Addition");
-            }
             setWfErrorMsg(getText("wf.pending.msg", msgParams));
             target = TARGET_WORKFLOW_ERROR;
         } else {
@@ -496,9 +492,8 @@ public class ModifyPropertyAction extends WorkflowAction {
                     "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
         propertyModel.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
         String errorKey = null;
-        if (!hasErrors()) {
+        if (!hasErrors())
             errorKey = propService.validationForBifurcation(propertyModel, basicProp, modifyRsn);
-        }
         if (!isBlank(errorKey))
             addActionError(getText(errorKey));
 
@@ -581,8 +576,9 @@ public class ModifyPropertyAction extends WorkflowAction {
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
 
         /**
-         * The old property will be made history and the workflow property will be made active only when all the changes are
-         * completed in case of modify reason is 'ADD_OR_ALTER' or 'BIFURCATE'
+         * The old property will be made history and the workflow property will
+         * be made active only when all the changes are completed in case of
+         * modify reason is 'ADD_OR_ALTER' or 'BIFURCATE'
          */
         if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)) {
             propertyModel.setStatus(STATUS_ISACTIVE);
@@ -603,8 +599,7 @@ public class ModifyPropertyAction extends WorkflowAction {
                 propertyModel.getBasicProperty().getUpicNo() }));
         buildEmailandSms(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
         addActionMessage(getText("property.modify.approve.success", new String[] { getModifyReasonString(),
-                propertyModel.getBasicProperty()
-                        .getUpicNo() }));
+                propertyModel.getBasicProperty().getUpicNo() }));
         LOGGER.debug("Exiting approve");
         return RESULT_ACK;
     }
@@ -638,19 +633,18 @@ public class ModifyPropertyAction extends WorkflowAction {
                         : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         String username = "";
-        Assignment userAssignment = assignmentService.getPrimaryAssignmentForPositon(propertyModel.getStateHistory().get(0)
-                .getOwnerPosition().getId());
+        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForPositon(propertyModel
+                .getStateHistory().get(0).getOwnerPosition().getId());
         if (propService.isEmployee(propertyModel.getCreatedBy()))
             username = propertyModel.getCreatedBy().getUsername();
         else
             username = userAssignment.getEmployee().getUsername();
-        Assignment wfInitiator = getWorkflowInitiator(propertyModel);
+        final Assignment wfInitiator = getWorkflowInitiator(propertyModel);
         if (wfInitiator.getEmployee().getUsername().equals(securityUtils.getCurrentUser().getUsername())) {
             wfInitiatorRejected = Boolean.TRUE;
             setAckMessage(getText("property.modify.final.reject.success", new String[] { getModifyReasonString() }));
-        } else {
+        } else
             setAckMessage(getText("property.modify.reject.success", new String[] { getModifyReasonString(), username }));
-        }
 
         buildEmailandSms(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
         LOGGER.debug("reject: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
@@ -766,14 +760,13 @@ public class ModifyPropertyAction extends WorkflowAction {
                     propCompletionDate, null, null, null, null));
             if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn))
                 propService.createAmalgPropStatVal(amalgPropIds, basicProp);
-        } else if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)) { // MODIFY
+        } else if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
             basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp,
                     PROPERTY_MODIFY_REASON_ADD_OR_ALTER, propCompletionDate, null, null, null, null));
-        } else if (PROPERTY_MODIFY_REASON_COURT_RULE.equals(getModifyRsn())) { // COURT_RULE
+        else if (PROPERTY_MODIFY_REASON_COURT_RULE.equals(getModifyRsn()))
             basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp,
                     PROPERTY_MODIFY_REASON_ADD_OR_ALTER, propCompletionDate, getCourtOrdNum(),
                     propService.getPropOccupatedDate(getOrderDate()), getJudgmtDetails(), null));
-        }
         basicProp.setPropOccupationDate(propCompletionDate);
 
         setProperty(propService.createProperty(propertyModel, getAreaOfPlot(), modifyRsn, propTypeId, propUsageId,
@@ -787,14 +780,14 @@ public class ModifyPropertyAction extends WorkflowAction {
         final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
                 "from PropertyTypeMaster ptm where ptm.code = ?", OWNERSHIP_TYPE_VAC_LAND);
         /*
-         * if modifying from OPEN_PLOT to OTHERS or from OTHERS to OPEN_PLOT property type
+         * if modifying from OPEN_PLOT to OTHERS or from OTHERS to OPEN_PLOT
+         * property type
          */
         if ((oldPropTypeId == propTypeMstr.getId() && Long.parseLong(propTypeId) != propTypeMstr.getId() || oldPropTypeId != propTypeMstr
-                .getId()
-                && Long.parseLong(propTypeId) == propTypeMstr.getId())
+                .getId() && Long.parseLong(propTypeId) == propTypeMstr.getId())
                 && !propertyModel.getStatus().equals('W'))
             if (propTypeMstr != null
-                    && org.apache.commons.lang.StringUtils.equals(propTypeMstr.getId().toString(), propTypeId))
+            && org.apache.commons.lang.StringUtils.equals(propTypeMstr.getId().toString(), propTypeId))
                 changePropertyDetail(propertyModel, new VacantProperty(), 0);
             else
                 changePropertyDetail(propertyModel, new BuiltUpProperty(), propertyModel.getPropertyDetail()
@@ -824,12 +817,18 @@ public class ModifyPropertyAction extends WorkflowAction {
     }
 
     /**
-     * Changes the property details to {@link BuiltUpProperty} or {@link VacantProperty}
+     * Changes the property details to {@link BuiltUpProperty} or
+     * {@link VacantProperty}
      *
-     * @param modProperty the property which is getting modified
-     * @param propDetail the {@link PropertyDetail} type, either {@link BuiltUpProperty} or {@link VacantProperty}
-     * @param numOfFloors the no. of floors which is dependent on {@link PropertyDetail}
-     * @see {@link PropertyDetail}, {@link BuiltUpProperty}, {@link VacantProperty}
+     * @param modProperty
+     *            the property which is getting modified
+     * @param propDetail
+     *            the {@link PropertyDetail} type, either
+     *            {@link BuiltUpProperty} or {@link VacantProperty}
+     * @param numOfFloors
+     *            the no. of floors which is dependent on {@link PropertyDetail}
+     * @see {@link PropertyDetail}, {@link BuiltUpProperty},
+     *      {@link VacantProperty}
      */
 
     private void changePropertyDetail(final Property modProperty, final PropertyDetail propDetail,
@@ -922,11 +921,10 @@ public class ModifyPropertyAction extends WorkflowAction {
     @Override
     public void validate() {
         LOGGER.debug("Entered into validate, ModifyRsn: " + modifyRsn);
-        validateProperty(propertyModel, areaOfPlot, dateOfCompletion, eastBoundary,westBoundary,southBoundary,northBoundary, propTypeId,
-                propUsageId, propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId);
-
+        propertyModel.setBasicProperty(basicProp);
+        validateProperty(propertyModel, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
+                northBoundary, propTypeId, propUsageId, propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId);
         validateApproverDetails();
-
         LOGGER.debug("Exiting from validate, BasicProperty: " + getBasicProp());
     }
 
@@ -951,17 +949,17 @@ public class ModifyPropertyAction extends WorkflowAction {
     private void prepareAckMsg() {
         LOGGER.debug("Entered into prepareAckMsg, ModifyRsn: " + modifyRsn);
         final User approverUser = eisCommonService.getUserForPosition(approverPositionId, new Date());
-        String action = getModifyReasonString();
-        setAckMessage(getText("property.modify.forward.success",
-                new String[] { action, approverUser.getUsername(), propertyModel.getApplicationNo() }));
+        final String action = getModifyReasonString();
+        setAckMessage(getText("property.modify.forward.success", new String[] { action, approverUser.getUsername(),
+                propertyModel.getApplicationNo() }));
 
         LOGGER.debug("AckMessage: " + getAckMessage() + "\nExiting from prepareAckMsg");
     }
 
     private String getModifyReasonString() {
-        String action = PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? ALTERATION_OF_ASSESSMENT
-                : (PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn) ? BIFURCATION_OF_ASSESSMENT
-                        : AMALGAMATION_OF_ASSESSMENT);
+        final String action = PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? ALTERATION_OF_ASSESSMENT
+                : PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn) ? BIFURCATION_OF_ASSESSMENT
+                        : AMALGAMATION_OF_ASSESSMENT;
         return action;
     }
 
@@ -1112,7 +1110,8 @@ public class ModifyPropertyAction extends WorkflowAction {
     public String modifyOrDataUpdateForm() {
         LOGGER.debug("Entered into modifyOrDataUpdateForm");
         String resultPage = "";
-        if (PROPERTY_MODIFY_REASON_DATA_UPDATE.equals(modifyRsn) && basicProp.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_APPLICATION)) {
+        if (PROPERTY_MODIFY_REASON_DATA_UPDATE.equals(modifyRsn)
+                && basicProp.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_APPLICATION)) {
             setErrorMessage(" This is not a migrated property ");
             resultPage = RESULT_ERROR;
         } else
@@ -1140,9 +1139,9 @@ public class ModifyPropertyAction extends WorkflowAction {
         final HttpServletRequest request = ServletActionContext.getRequest();
         final String url = WebUtils.extractRequestDomainURL(request, false);
         final String imagePath = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
-                        (String) request.getSession().getAttribute("citylogo"));
+                (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("cityname").toString();
-        
+
         final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         ackBean.setOwnerName(basicProp.getFullOwnerName());
@@ -1176,7 +1175,7 @@ public class ModifyPropertyAction extends WorkflowAction {
         return taxExemptedReason;
     }
 
-    public void setTaxExemptedReason(Long taxExemptedReason) {
+    public void setTaxExemptedReason(final Long taxExemptedReason) {
         this.taxExemptedReason = taxExemptedReason;
     }
 
@@ -1813,7 +1812,7 @@ public class ModifyPropertyAction extends WorkflowAction {
         return wfInitiatorRejected;
     }
 
-    public void setWfInitiatorRejected(Boolean wfInitiatorRejected) {
+    public void setWfInitiatorRejected(final Boolean wfInitiatorRejected) {
         this.wfInitiatorRejected = wfInitiatorRejected;
     }
 
