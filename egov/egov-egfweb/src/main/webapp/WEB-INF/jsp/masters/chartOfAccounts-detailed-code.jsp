@@ -71,18 +71,18 @@
 	<s:actionmessage theme="simple" />
 	<s:actionerror />
 	<s:fielderror />
-	
-		<div class="subheadnew">
-			<s:text name="chartOfAccount.detailed" />
-		</div>
-		<s:form name="chartOfAccountsForm" id="chartOfAccountsForm"
-			action="chartOfAccounts" theme="simple">
-			<div class="formmainbox">
+
+	<div class="subheadnew">
+		<s:text name="chartOfAccount.detailed" />
+	</div>
+	<s:form name="chartOfAccountsForm" id="chartOfAccountsForm"
+		action="chartOfAccounts" theme="simple">
+		<div class="formmainbox">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0"
 				id="chartOfAccountsTable">
 				<tr>
 					<td width="30%" class="bluebox">&nbsp;</td>
-					<td  class="bluebox"  align  = "right"><strong><s:text
+					<td class="bluebox" align="right"><strong><s:text
 								name="chartOfAccount.accountCode" />:</strong><span class="mandatory1">*</span></td>
 					<td class="bluebox">
 						<div id="myAutoComplete" style="width: 20em; padding-bottom: 2em;">
@@ -93,21 +93,20 @@
 					<td width="30%" class="bluebox">&nbsp;</td>
 				</tr>
 			</table>
-			<br />
-			<br />
-			</div>
-			<div class="buttonbottom" style="padding-bottom: 10px;">
-				<input type="submit" class="buttonsubmit" value="Search and Modify"
-					id="Search" name="Search" onclick="return validateAndSubmit(this);" />
-				<input type="submit" class="buttonsubmit" value="Search and View"
-					id="Search" name="Search" onclick="return validateAndSubmit(this);" />
-				<input type="button" name="add" value="Add New" method="addNew"
-					class="buttonsubmit" onClick="return addNew();" /> <input
-					type="button" value="Close" onclick="javascript:window.close()"
-					class="button" />
-			</div>
-		</s:form>
-		<script type="text/javascript">
+			<br /> <br />
+		</div>
+		<div class="buttonbottom" style="padding-bottom: 10px;">
+			<input type="submit" class="buttonsubmit" value="Search and Modify"
+				id="Search" name="Search" onclick="return validateAndSubmit(this);" />
+			<input type="submit" class="buttonsubmit" value="Search and View"
+				id="Search" name="Search" onclick="return validateAndSubmit(this);" />
+			<input type="button" name="add" value="Add New" method="addNew"
+				class="buttonsubmit" onClick="return addNew();" /> <input
+				type="button" value="Close" onclick="javascript:window.close()"
+				class="button" />
+		</div>
+	</s:form>
+	<script type="text/javascript">
 	var allGlcodes = [];
 	<s:iterator value="allChartOfAccounts">
 		allGlcodes.push("<s:property value="glcode"/>-<s:property value="name.replaceAll('\n',' ')"/>")
@@ -130,7 +129,7 @@
 		    }; 
 		}(); 
 </script>
-	
+
 </body>
 
 </html>

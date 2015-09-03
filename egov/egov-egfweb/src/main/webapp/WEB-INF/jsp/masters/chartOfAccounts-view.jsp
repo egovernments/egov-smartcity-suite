@@ -60,8 +60,8 @@
 	<s:actionmessage theme="simple" />
 	<s:actionerror />
 	<s:fielderror />
-	<s:form name="chartOfAccountsForm" id="chartOfAccountsForm"  action="chartOfAccounts"
-		theme="simple">
+	<s:form name="chartOfAccountsForm" id="chartOfAccountsForm"
+		action="chartOfAccounts" theme="simple">
 		<div class="formmainbox">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0"
 				id="chartOfAccountsTable">
@@ -149,8 +149,8 @@
 						cssClass="buttonsubmit"
 						onclick="document.chartOfAccountsForm.action+='?parentId=%{coaId}'" />
 				</s:if>
-				<input type="submit" class="buttonsubmit" value="Modify"
-					id="Modify" name="Modify" onclick="return submitForm();" />
+				<input type="submit" class="buttonsubmit" value="Modify" id="Modify"
+					name="Modify" onclick="return submitForm();" />
 			</s:if>
 			<input type="button" value="Close"
 				onclick="javascript:window.close()" class="button" />
