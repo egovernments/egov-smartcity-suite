@@ -66,9 +66,6 @@
 						<spring:message code="msg.addconnection.ack.msg" />
 						<span ><spring:message code="msg.sussess.forward" />${approverName}</span>
 					</c:when>
-					<c:when test="${waterConnectionDetails.status.code == 'APPROVED' && waterConnectionDetails.applicationType.code=='ADDNLCONNECTION' && waterConnectionDetails.connectionStatus == 'INPROGRESS' }">
-					<span>	<spring:message code="msg.addconnection.approved" />${approverName}</span>
-					</c:when>
 					<c:when test="${waterConnectionDetails.status.code == 'APPROVED' && waterConnectionDetails.connectionStatus == 'INPROGRESS' }">
 							<span><spring:message code="msg.connection.approved.success" />${approverName}</span>
 								<%-- <spring:message code="msg.sussess.forward" /><br>${approvalUser} --%>
