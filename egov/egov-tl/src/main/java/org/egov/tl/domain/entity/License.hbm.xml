@@ -131,13 +131,13 @@
 
 		<property name="rentPaid" column="RENT_PAID" />
 		<property name="feeTypeStr" column="FEETYPETEXT" />
-		<set name="demandSet" cascade="all,delete,delete-orphan" inverse="true">
+		<set name="demandSet" cascade="all,delete,delete-orphan" inverse="true" fetch="select">
 			<key>
 				<column name="ID_LICENSE" precision="22" scale="0" />
 			</key>
 			<one-to-many class="org.egov.tl.domain.entity.LicenseDemand" />
 		</set>
-		<set name="licenseStatusValuesSet" cascade="all" table="EGTL_STATUS_VALUES" order-by="CREATED_DATE">
+		<set name="licenseStatusValuesSet" cascade="all" table="EGTL_STATUS_VALUES" order-by="CREATED_DATE" fetch="select">
 			<key column="ID_LICENSE" not-null="true" />
 			<one-to-many class="org.egov.tl.domain.entity.LicenseStatusValues" />
 		</set>
@@ -155,7 +155,7 @@
 			cascade="all" />
 
 		<subclass name="org.egov.tl.domain.entity.TradeLicense" discriminator-value="tradelicense">
-			<bag name="installedMotorList" inverse="true" table="EGTL_MOTOR_DETAILS" cascade="all,delete-orphan">
+			<bag name="installedMotorList" inverse="true" table="EGTL_MOTOR_DETAILS" cascade="all,delete-orphan" fetch="select">
 				<key>
 					<column name="ID_LICENSE"></column>
 				</key>

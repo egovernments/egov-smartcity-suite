@@ -50,7 +50,7 @@
 			</generator>
 		</id>
 		<property name="name" type="string" />
-		   <many-to-one name="module" class="org.egov.infra.admin.master.entity.Module" >
+		<many-to-one name="module" class="org.egov.infra.admin.master.entity.Module" >
             <column name="id_module"  not-null="true" />
         </many-to-one>
 	</class>

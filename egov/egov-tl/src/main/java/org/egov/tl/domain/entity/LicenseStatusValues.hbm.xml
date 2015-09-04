@@ -82,7 +82,7 @@
 		<property name="extraField2" column="EXTRA_FIELD2" />
 		<property name="extraField3" column="EXTRA_FIELD3" />
 		
-<many-to-one name="previousStatusVal"	class="org.egov.tl.domain.entity.LicenseStatusValues" column="PARENT_STATUS_VAL"/>
+		<many-to-one name="previousStatusVal"	class="org.egov.tl.domain.entity.LicenseStatusValues" column="PARENT_STATUS_VAL"/>
 
 	</class>
 </hibernate-mapping>

@@ -72,14 +72,14 @@
 			class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"
 			not-null="true" fetch="select" />
 		<bag name="activities" cascade="all,all-delete-orphan" table="EGTL_ACTIVITY"
-			inverse="true">
+			inverse="true" fetch="select">
 			<key>
 				<column name="ID_OBJECTION" />
 			</key>
 			<one-to-many class="org.egov.tl.domain.entity.objection.Activity" />
 		</bag>
 		<bag name="notices" cascade="all,all-delete-orphan" table="EGTL_NOTICE"
-			inverse="true">
+			inverse="true" fetch="select">
 			<key>
 				<column name="ID_OBJECTION" />
 			</key>
