@@ -743,7 +743,7 @@ public class WaterConnectionSmsAndEmailService {
                     .append(",We have received Estimation and donation amount of Rs.").append(amountToDisplay)
                     .append("/- against your water connection application number ")
                     .append(waterConnectionDetails.getApplicationNumber())
-                    .append(".We will be now processing your application to issue an work order..\nThanks,\n")
+                    .append(".We will be now processing your application to issue an work order.\nThanks,\n")
                     .append(waterTaxUtils.getCityName());
             smsMsg = smsBody.toString();
         } else if (WaterTaxConstants.SMSEMAILTYPECHANGEOFUSECREATE.equalsIgnoreCase(type))

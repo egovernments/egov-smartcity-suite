@@ -31,10 +31,13 @@
 package org.egov.wtms.application.service;
 
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
+import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
+import org.egov.wtms.application.workflow.ApplicationWorkflowCustomImpl;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.utils.PropertyExtnUtils;
@@ -53,6 +56,9 @@ public class ChangeOfUseService {
 
     @Autowired
     private ResourceBundleMessageSource messageSource;
+    
+    @Autowired
+    private ApplicationContextBeanProvider beanProvider;
 
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
@@ -123,10 +129,10 @@ public class ChangeOfUseService {
         if (appProcessTime != null)
             changeOfUse.setDisposalDate(waterConnectionDetailsService.getDisposalDate(changeOfUse, appProcessTime));
         final WaterConnectionDetails savedChangeOfUse = waterConnectionDetailsRepository.save(changeOfUse);
-
-        waterConnectionDetailsService.createMatrixWorkflowTransition(savedChangeOfUse, approvalPosition, approvalComent, additionalRule,
+        final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = (ApplicationWorkflowCustomDefaultImpl) beanProvider
+                .getBean("applicationWorkflowCustomDefaultImpl");
+        applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedChangeOfUse, approvalPosition, approvalComent, additionalRule,
                 workFlowAction);
-
         waterConnectionDetailsService.updateIndexes(savedChangeOfUse);
         waterConnectionSmsAndEmailService.sendSmsAndEmail(changeOfUse, workFlowAction);
         return savedChangeOfUse;

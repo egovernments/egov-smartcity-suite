@@ -31,7 +31,6 @@
 package org.egov.wtms.application.service;
 
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +49,6 @@ import javax.validation.ValidationException;
 
 import org.egov.commons.EgModules;
 import org.egov.demand.model.EgDemand;
-import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
@@ -63,6 +61,7 @@ import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -71,6 +70,8 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
+import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
+import org.egov.wtms.application.workflow.ApplicationWorkflowCustomImpl;
 import org.egov.wtms.elasticSearch.service.ConsumerIndexService;
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.DocumentNames;
@@ -82,7 +83,6 @@ import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,6 +116,9 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private DocumentNamesService documentNamesService;
+    
+    @Autowired
+    private ApplicationContextBeanProvider beanProvider;
 
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
@@ -192,8 +195,10 @@ public class WaterConnectionDetailsService {
             waterConnectionDetails.setDisposalDate(getDisposalDate(waterConnectionDetails, appProcessTime));
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
-
-        createMatrixWorkflowTransition(savedWaterConnectionDetails, approvalPosition, approvalComent, additionalRule,
+      
+        final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = (ApplicationWorkflowCustomDefaultImpl) beanProvider
+                .getBean("applicationWorkflowCustomDefaultImpl");
+        applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedWaterConnectionDetails, approvalPosition, approvalComent, additionalRule,
                 workFlowAction);
 
         updateIndexes(savedWaterConnectionDetails);
@@ -307,95 +312,6 @@ public class WaterConnectionDetailsService {
         return historyTable;
     }
 
-    public void createMatrixWorkflowTransition(final WaterConnectionDetails waterConnectionDetails,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction) {
-        final User user = securityUtils.getCurrentUser();
-        final DateTime currentDate = new DateTime();
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
-        Position pos = null;
-        Assignment wfInitiator = null;
-        final Boolean recordCreatedBYNonEmployee = waterTaxUtils.getCurrentUserRole(waterConnectionDetails
-                .getCreatedBy());
-        String currState = "";
-        if (recordCreatedBYNonEmployee) {
-            currState = "Created";
-            if (!waterConnectionDetails.getStateHistory().isEmpty())
-                wfInitiator = assignmentService.getPrimaryAssignmentForPositon(waterConnectionDetails.getStateHistory()
-                        .get(0).getOwnerPosition().getId());
-        } else if (null != waterConnectionDetails.getId())
-            wfInitiator = assignmentService.getPrimaryAssignmentForUser(waterConnectionDetails.getCreatedBy().getId());
-        if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
-            if (wfInitiator.equals(userAssignment)) {
-                waterConnectionDetails.setConnectionStatus(ConnectionStatus.INACTIVE);
-                waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
-                        WaterTaxConstants.APPLICATION_STATUS_CANCELLED, WaterTaxConstants.MODULETYPE));
-                waterConnectionDetails.transition(true).end().withSenderName(user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate());
-                waterConnectionSmsAndEmailService.sendSmsAndEmailOnRejection(waterConnectionDetails, approvalComent);
-                updateIndexes(waterConnectionDetails);
-            } else {
-                final String stateValue = WF_STATE_REJECTED;
-                waterConnectionDetails.transition(true).withSenderName(user.getName()).withComments(approvalComent)
-                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction("Application Rejected");
-            }
-        } else {
-            if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
-                pos = positionMasterService.getPositionById(approvalPosition);
-            WorkFlowMatrix wfmatrix = null;
-            if (null == waterConnectionDetails.getState()) {
-                wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
-                        null, additionalRule, currState, null);
-                waterConnectionDetails.transition().start().withSenderName(user.getName()).withComments(approvalComent)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
-            } else if (WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON.equalsIgnoreCase(workFlowAction)) {
-                if (null != workFlowAction
-                        && !workFlowAction.isEmpty()
-                        && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON)
-                        && waterConnectionDetails.getApplicationType().getCode()
-                                .equalsIgnoreCase(WaterTaxConstants.CHANGEOFUSE)) {
-                    final WaterConnectionDetails connectionToBeDeactivated = waterConnectionDetailsRepository
-                            .findByConnection_ConsumerCodeAndConnectionStatus(waterConnectionDetails.getConnection()
-                                    .getConsumerCode(), ConnectionStatus.ACTIVE);
-                    connectionToBeDeactivated.setConnectionStatus(ConnectionStatus.INACTIVE);
-                    connectionToBeDeactivated.setIsHistory(true);
-                    waterConnectionDetailsRepository.saveAndFlush(connectionToBeDeactivated);
-                    updateIndexes(connectionToBeDeactivated);
-                }
-                wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
-                        null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null);
-                final AssessmentDetails assessmentDetailsFullFlag = propertyExtnUtils.getAssessmentDetailsForFlag(
-                        waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                        PropertyExternalService.FLAG_FULL_DETAILS);
-                waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
-                        WaterTaxConstants.APPLICATION_STATUS_SANCTIONED, WaterTaxConstants.MODULETYPE));
-                updateIndexes(waterConnectionDetails);
-                if (waterConnectionDetails.getApplicationType().getCode()
-                        .equalsIgnoreCase(WaterTaxConstants.CHANGEOFUSE)) {
-                    waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
-                    consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetailsFullFlag);
-                }
-                if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
-                    waterConnectionDetails.transition(true).end().withSenderName(user.getName())
-                            .withComments(approvalComent).withDateInfo(currentDate.toDate());
-            } else if (null != approvalComent && "Receipt Cancelled".equalsIgnoreCase(approvalComent)) {
-                wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
-                        null, additionalRule, "Asst engg approved", null);
-                waterConnectionDetails.transition(true).withSenderName(user.getName()).withComments(approvalComent)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
-            } else {
-                wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
-                        null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null);
-                waterConnectionDetails.transition(true).withSenderName(user.getName()).withComments(approvalComent)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
-            }
-
-        }
-    }
 
     @Transactional
     public WaterConnectionDetails updateWaterConnection(final WaterConnectionDetails waterConnectionDetails,
@@ -412,8 +328,9 @@ public class WaterConnectionDetailsService {
 
         final WaterConnectionDetails updatedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
-
-        createMatrixWorkflowTransition(updatedWaterConnectionDetails, approvalPosition, approvalComent, additionalRule,
+        final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = (ApplicationWorkflowCustomDefaultImpl) beanProvider
+                .getBean("applicationWorkflowCustomDefaultImpl");
+        applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(updatedWaterConnectionDetails, approvalPosition, approvalComent, additionalRule,
                 workFlowAction);
         if (!workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, workFlowAction);

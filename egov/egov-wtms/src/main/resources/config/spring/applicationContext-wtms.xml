@@ -52,6 +52,8 @@
     <context:component-scan base-package="org.egov.wtms" />
     <aop:aspectj-autoproxy proxy-target-class="true"/>
     <bean id="waterConnectionBillable" class="org.egov.wtms.application.service.collection.WaterConnectionBillable" scope="prototype" />
+    <bean id="applicationWorkflowCustomDefaultImpl" class="org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl" scope="prototype" />
+    
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="parentMessageSource" ref="parentMessageSource" />
         <property name="basenames">

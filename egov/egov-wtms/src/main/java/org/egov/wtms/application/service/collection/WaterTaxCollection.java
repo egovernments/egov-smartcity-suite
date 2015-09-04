@@ -64,12 +64,15 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionSmsAndEmailService;
+import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
+import org.egov.wtms.application.workflow.ApplicationWorkflowCustomImpl;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -101,6 +104,9 @@ public class WaterTaxCollection extends TaxCollection {
     
     @Autowired
     private WaterConnectionSmsAndEmailService waterConnectionSmsAndEmailService;
+    
+    @Autowired
+    private ApplicationContextBeanProvider beanProvider;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -149,9 +155,12 @@ public class WaterTaxCollection extends TaxCollection {
                     .getStateType(), null, null, WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
                     waterConnectionDetails.getCurrentState().getValue(), null);
             final Position posobj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation());
-            if (posobj != null)
+            if (posobj != null){
                 approvalPosition = posobj.getId();
-            waterConnectionDetailsService.createMatrixWorkflowTransition(waterConnectionDetails,
+            }
+            final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = (ApplicationWorkflowCustomDefaultImpl) beanProvider
+                    .getBean("applicationWorkflowCustomDefaultImpl");
+            applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
                     approvalPosition, WaterTaxConstants.FEE_COLLECTION_COMMENT, WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
                     null);
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
@@ -301,9 +310,12 @@ public class WaterTaxCollection extends TaxCollection {
                 Collections.reverse(waterConnectionDetails.getStateHistory());
             stateHistory = waterConnectionDetails.getStateHistory().get(0);
             final Position owner = stateHistory.getOwnerPosition();
-            if (owner != null)
+            if (owner != null){
                 approvalPosition = owner.getId();
-            waterConnectionDetailsService.createMatrixWorkflowTransition(waterConnectionDetails,
+            }
+            final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = (ApplicationWorkflowCustomDefaultImpl) beanProvider
+                    .getBean("applicationWorkflowCustomDefaultImpl");
+            applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
                     approvalPosition, "Receipt Cancelled", WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
                     null);
         }
