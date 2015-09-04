@@ -71,8 +71,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASO
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_SOURCE;
@@ -179,14 +177,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service class to perform services related to an Assessment
+ *
+ * @author subhash
+ *
+ */
 @Transactional(readOnly = true)
 public class PropertyService {
-
+    private static final Logger LOGGER = Logger.getLogger(PropertyService.class);
     private static final String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
     private static final String PROPERTY_WORKFLOW_STARTED = "Property Workflow Started";
-    private static final Logger LOGGER = Logger.getLogger(PropertyService.class);
     private PersistenceService propPerServ;
     private Installment currentInstall;
+    final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+    protected PersistenceService<BasicProperty, Long> basicPropertyService;
+    private final Map<Installment, Set<EgDemandDetails>> demandDetails = new HashMap<Installment, Set<EgDemandDetails>>();
+    private Map<Installment, Map<String, BigDecimal>> excessCollAmtMap = new LinkedHashMap<Installment, Map<String, BigDecimal>>();
     @Autowired
     private APTaxCalculator taxCalculator;
     private HashMap<Installment, TaxCalculationInfo> instTaxMap;
@@ -200,10 +207,6 @@ public class PropertyService {
     private InstallmentDao installmentDao;
     @Autowired
     private UserService userService;
-    final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-    protected PersistenceService<BasicProperty, Long> basicPropertyService;
-    private final Map<Installment, Set<EgDemandDetails>> demandDetails = new HashMap<Installment, Set<EgDemandDetails>>();
-    private Map<Installment, Map<String, BigDecimal>> excessCollAmtMap = new LinkedHashMap<Installment, Map<String, BigDecimal>>();
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
     @Autowired
@@ -235,6 +238,25 @@ public class PropertyService {
     @Autowired
     private PropertyTaxCollection propertyTaxCollection;
 
+    /**
+     * Creates a new property if property is in transient state else updates persisted property
+     *
+     * @param property
+     * @param areaOfPlot
+     * @param mutationCode
+     * @param propTypeId
+     * @param propUsageId
+     * @param propOccId
+     * @param status
+     * @param docnumber
+     * @param nonResPlotArea
+     * @param floorTypeId
+     * @param roofTypeId
+     * @param wallTypeId
+     * @param woodTypeId
+     * @param taxExemptId
+     * @return Created or Updated property
+     */
     public PropertyImpl createProperty(final PropertyImpl property, final String areaOfPlot, final String mutationCode,
             final String propTypeId, final String propUsageId, final String propOccId, final Character status,
             final String docnumber, final String nonResPlotArea, final Long floorTypeId, final Long roofTypeId,
@@ -318,13 +340,22 @@ public class PropertyService {
         property.setEffectiveDate(currentInstall.getFromDate());
         property.setPropertySource(propertySource);
         property.setDocNumber(docnumber);
-        //TODO move this code out side this api as this dont have to be called every time we create property
+        // TODO move this code out side this api as this dont have to be called every time we create property
         if (property.getApplicationNo() == null)
             property.setApplicationNo(applicationNumberGenerator.generate());
         LOGGER.debug("Exiting from createProperty");
         return property;
     }
 
+    /**
+     * Creates floors for a property by getting list of floors from the property details proxy, by removing the existing floors
+     * from property detail if any
+     *
+     * @param property
+     * @param mutationCode
+     * @param propUsageId
+     * @param propOccId
+     */
     public void createFloors(final Property property, final String mutationCode, final String propUsageId,
             final String propOccId) {
         LOGGER.debug("Entered into createFloors");
@@ -393,6 +424,18 @@ public class PropertyService {
         LOGGER.debug("Exiting from createFloors");
     }
 
+    /**
+     * Creates property status values based on the status code
+     *
+     * @param basicProperty
+     * @param statusCode
+     * @param propCompletionDate
+     * @param courtOrdNum
+     * @param orderDate
+     * @param judgmtDetails
+     * @param parentPropId
+     * @return PropertyImpl
+     */
     public PropertyStatusValues createPropStatVal(final BasicProperty basicProperty, final String statusCode,
             final Date propCompletionDate, final String courtOrdNum, final Date orderDate, final String judgmtDetails,
             final String parentPropId) {
@@ -427,7 +470,7 @@ public class PropertyService {
         if (!statusCode.equals(PROP_CREATE_RSN) && propCompletionDate != null) {
             // persist the DateOfCompletion in case of modify property for
             // future reference
-            final String propCompDateStr = sdf.format(propCompletionDate);
+            final String propCompDateStr = dateFormatter.format(propCompletionDate);
             propStatVal.setExtraField1(propCompDateStr);
         }
         propStatVal.setBasicProperty(basicProperty);
@@ -442,6 +485,13 @@ public class PropertyService {
         return propStatVal;
     }
 
+    /**
+     * Creates installment wise demands for a property
+     *
+     * @param property
+     * @param dateOfCompletion
+     * @return Property with installment wise demand set
+     */
     public Property createDemand(final PropertyImpl property, final Date dateOfCompletion) {
         LOGGER.debug("Entered into createDemand");
         LOGGER.debug("createDemand: Property: " + property + ", dateOfCompletion: " + dateOfCompletion);
@@ -455,22 +505,16 @@ public class PropertyService {
         instList = new ArrayList<Installment>(instTaxMap.keySet());
         LOGGER.debug("createDemand: instList: " + instList);
         currentInstall = PropertyTaxUtil.getCurrentInstallment();
-        property.getPtDemandSet().clear();
+        property.getPtDemandSet().clear(); // clear the existing demand set
         for (final Installment installment : instList) {
             final APTaxCalculationInfo taxCalcInfo = (APTaxCalculationInfo) instTaxMap.get(installment);
             dmdDetailSet = createAllDmdDetails(installment, instList, instTaxMap);
             final PTDemandCalculations ptDmdCalc = new PTDemandCalculations();
             ptDemand = new Ptdemand();
-            ptDemand.setBaseDemand(taxCalcInfo.getTotalTaxPayable()); // shld be
-            // updated
-            // in
-            // create-edit
-            // mode
+            ptDemand.setBaseDemand(taxCalcInfo.getTotalTaxPayable()); // shld be updated in create-edit mode
             ptDemand.setCreateDate(new Date());
             ptDemand.setEgInstallmentMaster(installment);
-            ptDemand.setEgDemandDetails(dmdDetailSet); // clear the exisitng and
-            // recreate the
-            // EgDemandDetails
+            ptDemand.setEgDemandDetails(dmdDetailSet); // clear the existing and recreate the EgDemandDetails
             ptDemand.setIsHistory("N");
             ptDemand.setEgptProperty(property);
             ptDmdSet.add(ptDemand);
@@ -548,19 +592,17 @@ public class PropertyService {
                 penaltyDmdDtlsList = getEgDemandDetailsListForReason(ptDemandOld.getEgDemandDetails(),
                         DEMANDRSN_CODE_PENALTY_FINES);
                 if (penaltyDmdDtlsList != null && penaltyDmdDtlsList.size() > 0)
-                    for (EgDemandDetails penaltyDmdDet : penaltyDmdDtlsList) {
+                    for (final EgDemandDetails penaltyDmdDet : penaltyDmdDtlsList)
                         ptDemandNew.getEgDemandDetails().add(
                                 createDemandDetails(penaltyDmdDet.getAmount(), penaltyDmdDet.getAmtCollected(),
                                         penaltyDmdDet.getEgDemandReason(), inst));
-                    }
                 penaltyDmdDtlsList = getEgDemandDetailsListForReason(ptDemandOld.getEgDemandDetails(),
                         DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY);
                 if (penaltyDmdDtlsList != null && penaltyDmdDtlsList.size() > 0)
-                    for (EgDemandDetails penaltyDmdDet : penaltyDmdDtlsList) {
+                    for (final EgDemandDetails penaltyDmdDet : penaltyDmdDtlsList)
                         ptDemandNew.getEgDemandDetails().add(
                                 createDemandDetails(penaltyDmdDet.getAmount(), penaltyDmdDet.getAmtCollected(),
                                         penaltyDmdDet.getEgDemandReason(), inst));
-                    }
             }
         }
 
@@ -576,6 +618,13 @@ public class PropertyService {
         return newProperty;
     }
 
+    /**
+     * Modifies property active demand and creates arrears demand and performs the excss colletion adjustment
+     *
+     * @param propertyModel
+     * @param oldProperty
+     * @return
+     */
     public Property modifyDemand(final PropertyImpl propertyModel, final PropertyImpl oldProperty) {
         Date propCompletionDate = null;
         if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
@@ -641,6 +690,13 @@ public class PropertyService {
         return modProperty;
     }
 
+    /**
+     * Returns old demand details
+     *
+     * @param oldProperty
+     * @param newProperty
+     * @return set of old demand details
+     */
     private Set<EgDemandDetails> getOldDemandDetails(final Property oldProperty, final Property newProperty) {
 
         final Set<EgDemandDetails> oldDemandDetails = new HashSet<EgDemandDetails>();
@@ -652,6 +708,12 @@ public class PropertyService {
         return oldDemandDetails;
     }
 
+    /**
+     * Prepares map of installment wise demand details set
+     *
+     * @param demandDetailsSet
+     * @return Map of Installment wise demand details set
+     */
     private Map<Installment, Set<EgDemandDetails>> getEgDemandDetailsSetByInstallment(
             final Set<EgDemandDetails> demandDetailsSet) {
         final Map<Installment, Set<EgDemandDetails>> newEgDemandDetailsSetByInstallment = new HashMap<Installment, Set<EgDemandDetails>>();
@@ -672,6 +734,12 @@ public class PropertyService {
         return newEgDemandDetailsSetByInstallment;
     }
 
+    /**
+     * Returns current installment's demand of a property
+     *
+     * @param property
+     * @return
+     */
     private Ptdemand getCurrrentDemand(final Property property) {
         Ptdemand currentDemand = null;
 
@@ -683,12 +751,18 @@ public class PropertyService {
         return currentDemand;
     }
 
+    /**
+     * Returns formatted property occupation date
+     *
+     * @param dateOfCompletion
+     * @return
+     */
     public Date getPropOccupatedDate(final String dateOfCompletion) {
         LOGGER.debug("Entered into getPropOccupatedDate, dateOfCompletion: " + dateOfCompletion);
         Date occupationDate = null;
         try {
             if (dateOfCompletion != null && !"".equals(dateOfCompletion))
-                occupationDate = sdf.parse(dateOfCompletion);
+                occupationDate = dateFormatter.parse(dateOfCompletion);
         } catch (final ParseException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -696,12 +770,20 @@ public class PropertyService {
         return occupationDate;
     }
 
+    /**
+     * Creates installment wise demand details
+     *
+     * @param installment
+     * @param instList
+     * @param instTaxMap
+     * @return
+     */
     private Set<EgDemandDetails> createAllDmdDetails(final Installment installment, final List<Installment> instList,
             final HashMap<Installment, TaxCalculationInfo> instTaxMap) {
         LOGGER.debug("Entered into createAllDmdDeatails");
         /*
-         * LOGGER.debug("createAllDmdDeatails: installment: " + installment +
-         * ", instList: " + instList + ", instTaxMap: " + instTaxMap);
+         * LOGGER.debug("createAllDmdDeatails: installment: " + installment + ", instList: " + instList + ", instTaxMap: " +
+         * instTaxMap);
          */
 
         final Set<EgDemandDetails> dmdDetSet = new HashSet<EgDemandDetails>();
@@ -725,6 +807,15 @@ public class PropertyService {
         return dmdDetSet;
     }
 
+    /**
+     * Modifies demand details of newly created property
+     *
+     * @param oldProperty
+     * @param newProperty
+     * @param installment
+     * @param instList
+     * @param instTaxMap
+     */
     @SuppressWarnings("unchecked")
     private void createAllDmdDetails(final Property oldProperty, final Property newProperty,
             final Installment installment, final List<Installment> instList,
@@ -775,7 +866,7 @@ public class PropertyService {
             }
         };
 
-        final List<String> rsnsForNewNonResProp = new ArrayList<String>() {
+        new ArrayList<String>() {
             /**
              *
              */
@@ -839,17 +930,18 @@ public class PropertyService {
                             String newPropRsn = null;
 
                             /*
-                             * Gives EgDemandDetails from newEgDemandDetailsSet
-                             * for demand reason oldPropRsn, if we dont have
+                             * Gives EgDemandDetails from newEgDemandDetailsSet for demand reason oldPropRsn, if we dont have
                              * EgDemandDetails then doing collection adjustments
                              */
                             newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, oldPropRsn);
 
                             if (newEgDmndDetails == null) {
-                                /*if (newPropTypeMaster.getCode().equalsIgnoreCase(PROPTYPE_RESD))*/
-                                    newPropRsn = rsnsForNewResProp.get(i);
-                                /*else if (newPropTypeMaster.getCode().equalsIgnoreCase(PROPTYPE_NON_RESD))
-                                    newPropRsn = rsnsForNewNonResProp.get(i);*/
+                                /* if (newPropTypeMaster.getCode().equalsIgnoreCase(PROPTYPE_RESD)) */
+                                newPropRsn = rsnsForNewResProp.get(i);
+                                /*
+                                 * else if (newPropTypeMaster.getCode().equalsIgnoreCase(PROPTYPE_NON_RESD)) newPropRsn =
+                                 * rsnsForNewNonResProp.get(i);
+                                 */
 
                                 oldEgdmndDetails = getEgDemandDetailsForReason(oldEgDemandDetailsSet, oldPropRsn);
                                 newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, newPropRsn);
@@ -892,6 +984,17 @@ public class PropertyService {
         LOGGER.debug("Exiting from createAllDmdDeatails");
     }
 
+    /**
+     * Carry forwards collection from the old property to the newly created property
+     *
+     * @param newProperty
+     * @param inst
+     * @param newEgDemandDetailsSet
+     * @param ptDmndOld
+     * @param oldPropTypeMaster
+     * @param newPropTypeMaster
+     * @return
+     */
     private Set<EgDemandDetails> carryForwardCollection(final Property newProperty, final Installment inst,
             final Set<EgDemandDetails> newEgDemandDetailsSet, final Ptdemand ptDmndOld,
             final PropertyTypeMaster oldPropTypeMaster, final PropertyTypeMaster newPropTypeMaster) {
@@ -943,8 +1046,20 @@ public class PropertyService {
         return newEgDemandDetailsSet;
     }
 
+    /**
+     * Calculates and prepares demand reason wise excess collection amount
+     *
+     * @param dmdRsnAmt
+     * @param rsn
+     * @param oldDmndDtls
+     * @param newDmndDtls
+     */
     public void calculateExcessCollection(final Map<String, BigDecimal> dmdRsnAmt, final String rsn,
             final EgDemandDetails oldDmndDtls, final EgDemandDetails newDmndDtls) {
+        /**
+         * If old and new demand details are present then set the old collection amount to the new demand details else if old
+         * demand details are not present then make the new collection amount as Zero
+         */
         if (newDmndDtls != null && oldDmndDtls != null) {
             newDmndDtls.setAmtCollected(newDmndDtls.getAmtCollected().add(oldDmndDtls.getAmtCollected()));
             newDmndDtls.setAmtRebate(newDmndDtls.getAmtRebate().add(oldDmndDtls.getAmtRebate()));
@@ -953,6 +1068,9 @@ public class PropertyService {
             newDmndDtls.setAmtRebate(ZERO);
         }
 
+        /**
+         * prepares reason wise extra collection amount if any of the demand details has
+         */
         if (newDmndDtls != null && !rsn.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE)) {
             // This part of code handles the adjustment of extra collections
             // when there is decrease in tax during property modification.
@@ -966,10 +1084,8 @@ public class PropertyService {
         }
 
         /**
-         * after modify the old demand reason is not there in new property just
-         * take the entire collected amount as excess collection when a unit in
-         * new property is exempted from tax 16-Oct-2014 with new requirement,
-         * refer card #3427
+         * after modify the old demand reason is not there in new property just take the entire collected amount as excess
+         * collection when a unit in new property is exempted from tax 16-Oct-2014 with new requirement, refer card #3427
          */
         if (oldDmndDtls != null && newDmndDtls == null)
             if (oldDmndDtls.getAmtCollected().compareTo(BigDecimal.ZERO) > 0)
@@ -993,8 +1109,7 @@ public class PropertyService {
     }
 
     /**
-     * Called locally to get Map of Installment/EgDemandDetail pair from list of
-     * EgDemandDetails
+     * Called locally to get Map of Installment/EgDemandDetail pair from list of EgDemandDetails
      *
      * @param demandDetailsList
      * @return demandDetailsMap
@@ -1035,8 +1150,7 @@ public class PropertyService {
     }
 
     /**
-     * Called locally to get EgDemandDetails from the egDemandDetailsSet for
-     * demand reason demandReason
+     * Called locally to get EgDemandDetails from the egDemandDetailsSet for demand reason demandReason
      *
      * @param egDemandDetailsSet
      * @param demandReason
@@ -1059,8 +1173,7 @@ public class PropertyService {
     }
 
     /**
-     * Called locally to get EgDemandDetails from the egDemandDetailsSet for
-     * demand reason demandReason
+     * Called locally to get EgDemandDetails from the egDemandDetailsSet for demand reason demandReason
      *
      * @param egDemandDetailsSet
      * @param demandReason
@@ -1081,8 +1194,7 @@ public class PropertyService {
     }
 
     /**
-     * Called locally to get the egDemandDetailsSet as list of maps with demand
-     * reason as key and EgDemandDetails as value
+     * Called locally to get the egDemandDetailsSet as list of maps with demand reason as key and EgDemandDetails as value
      *
      * @param egDemandDetailsSet
      * @param installment
@@ -1161,6 +1273,14 @@ public class PropertyService {
         return new HashSet<EgDemandDetails>(newEgDmndDetails);
     }
 
+    /**
+     * Creates demand details for the demand reason which being passed
+     *
+     * @param amount
+     * @param dmdRsn
+     * @param inst
+     * @return Demand details
+     */
     private EgDemandDetails createDemandDetails(final BigDecimal amount, final EgDemandReason dmdRsn,
             final Installment inst) {
         LOGGER.debug("Entered into createDemandDetails, amount: " + amount + ", dmdRsn: " + dmdRsn + ", inst: " + inst);
@@ -1175,6 +1295,15 @@ public class PropertyService {
         return demandDetail;
     }
 
+    /**
+     * Creates demand details for the demand reason which being passed and sets demand and collection
+     *
+     * @param amount
+     * @param amountCollected
+     * @param dmdRsn
+     * @param inst
+     * @return
+     */
     public EgDemandDetails createDemandDetails(final BigDecimal amount, final BigDecimal amountCollected,
             final EgDemandReason dmdRsn, final Installment inst) {
         LOGGER.debug("Entered into createDemandDetails, amount: " + amount + "amountCollected: " + amountCollected
@@ -1190,6 +1319,14 @@ public class PropertyService {
         return demandDetail;
     }
 
+    /**
+     * Creates Floor wise demand calculations
+     *
+     * @param ptDmdCal
+     * @param floor
+     * @param taxCalcInfo
+     * @return FloorwiseDemandCalculations
+     */
     private FloorwiseDemandCalculations createFloorDmdCalc(final PTDemandCalculations ptDmdCal, final Floor floor,
             final TaxCalculationInfo taxCalcInfo) {
         // LOGGER.debug("Entered into createFloorDmdCalc, ptDmdCal: " + ptDmdCal
@@ -1206,28 +1343,40 @@ public class PropertyService {
         return floorDmdCalc;
     }
 
-	public void setFloorDmdCalTax(final UnitTaxCalculationInfo unitTax, final FloorwiseDemandCalculations floorDmdCalc) {
-		floorDmdCalc.setAlv(unitTax.getNetARV());
-		floorDmdCalc.setMrv(unitTax.getMrv());
-		floorDmdCalc.setCategoryAmt(unitTax.getBaseRate());
-		for (final MiscellaneousTax miscTax : unitTax.getMiscellaneousTaxes())
-			for (final MiscellaneousTaxDetail taxDetail : miscTax.getTaxDetails())
-				if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX.equals(miscTax.getTaxName()))
-					floorDmdCalc.setTax1(floorDmdCalc.getTax1().add(taxDetail.getCalculatedTaxValue()));
-				else if (PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX.equals(miscTax.getTaxName()))
-					floorDmdCalc.setTax2(floorDmdCalc.getTax2().add(taxDetail.getCalculatedTaxValue()));
-				else if (PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS.equals(miscTax.getTaxName()))
-					floorDmdCalc.setTax3(floorDmdCalc.getTax3().add(taxDetail.getCalculatedTaxValue()));
-				else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS.equals(miscTax.getTaxName()))
-					floorDmdCalc.setTax4(floorDmdCalc.getTax4().add(taxDetail.getCalculatedTaxValue()));
-				else if (PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX.equals(miscTax.getTaxName()))
-					floorDmdCalc.setTax4(floorDmdCalc.getTax5().add(taxDetail.getCalculatedTaxValue()));
-				else if (PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY.equals(miscTax.getTaxName()))
-					floorDmdCalc.setTax4(floorDmdCalc.getTax6().add(taxDetail.getCalculatedTaxValue()));
-				else if (PropertyTaxConstants.DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES.equals(miscTax.getTaxName()))
-					floorDmdCalc.setTax4(floorDmdCalc.getTax7().add(taxDetail.getCalculatedTaxValue()));
-	}
+    /**
+     * Sets floor demand calculation taxes
+     *
+     * @param unitTax
+     * @param floorDmdCalc
+     */
+    public void setFloorDmdCalTax(final UnitTaxCalculationInfo unitTax, final FloorwiseDemandCalculations floorDmdCalc) {
+        floorDmdCalc.setAlv(unitTax.getNetARV());
+        floorDmdCalc.setMrv(unitTax.getMrv());
+        floorDmdCalc.setCategoryAmt(unitTax.getBaseRate());
+        for (final MiscellaneousTax miscTax : unitTax.getMiscellaneousTaxes())
+            for (final MiscellaneousTaxDetail taxDetail : miscTax.getTaxDetails())
+                if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX.equals(miscTax.getTaxName()))
+                    floorDmdCalc.setTax1(floorDmdCalc.getTax1().add(taxDetail.getCalculatedTaxValue()));
+                else if (PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX.equals(miscTax.getTaxName()))
+                    floorDmdCalc.setTax2(floorDmdCalc.getTax2().add(taxDetail.getCalculatedTaxValue()));
+                else if (PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS.equals(miscTax.getTaxName()))
+                    floorDmdCalc.setTax3(floorDmdCalc.getTax3().add(taxDetail.getCalculatedTaxValue()));
+                else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS.equals(miscTax.getTaxName()))
+                    floorDmdCalc.setTax4(floorDmdCalc.getTax4().add(taxDetail.getCalculatedTaxValue()));
+                else if (PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX.equals(miscTax.getTaxName()))
+                    floorDmdCalc.setTax4(floorDmdCalc.getTax5().add(taxDetail.getCalculatedTaxValue()));
+                else if (PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY.equals(miscTax.getTaxName()))
+                    floorDmdCalc.setTax4(floorDmdCalc.getTax6().add(taxDetail.getCalculatedTaxValue()));
+                else if (PropertyTaxConstants.DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES.equals(miscTax.getTaxName()))
+                    floorDmdCalc.setTax4(floorDmdCalc.getTax7().add(taxDetail.getCalculatedTaxValue()));
+    }
 
+    /**
+     * Returns least date from the floors
+     *
+     * @param floorList
+     * @return
+     */
     public Date getLowestDtOfCompFloorWise(final List<Floor> floorList) {
         LOGGER.debug("Entered into getLowestDtOfCompFloorWise, floorList: " + floorList);
         Date completionDate = null;
@@ -1246,6 +1395,12 @@ public class PropertyService {
         return completionDate;
     }
 
+    /**
+     * Creates amalgamation property status values
+     *
+     * @param amalgPropIds
+     * @param parentBasicProperty
+     */
     public void createAmalgPropStatVal(final String[] amalgPropIds, final BasicProperty parentBasicProperty) {
         LOGGER.debug("Entered into createAmalgPropStatVal, amalgPropIds(length): "
                 + (amalgPropIds != null ? amalgPropIds.length : ZERO) + ", parentBasicProperty: " + parentBasicProperty);
@@ -1289,6 +1444,14 @@ public class PropertyService {
         LOGGER.debug("Exiting from createAmalgPropStatVal");
     }
 
+    /**
+     * Creates arrears demand for newly created property
+     *
+     * @param oldproperty
+     * @param dateOfCompletion
+     * @param property
+     * @return
+     */
     public Property createArrearsDemand(final Property oldproperty, final Date dateOfCompletion,
             final PropertyImpl property) {
         LOGGER.debug("Entered into createArrearsDemand, oldproperty: " + oldproperty + ", dateOfCompletion: "
@@ -1323,6 +1486,13 @@ public class PropertyService {
         return property;
     }
 
+    /**
+     * Adds arrears demand details to the current demand
+     *
+     * @param ptDmd
+     * @param currPtDmd
+     * @param effectiveInstall
+     */
     private void addArrDmdDetToCurrentDmd(final Ptdemand ptDmd, final Ptdemand currPtDmd,
             final Installment effectiveInstall) {
         LOGGER.debug("Entered into addArrDmdDetToCurrentDmd. ptDmd: " + ptDmd + ", currPtDmd: " + currPtDmd);
@@ -1334,70 +1504,42 @@ public class PropertyService {
     }
 
     /**
-     * The purpose of this api is to initiate modify property workflow once the
-     * objection workflow has ended.
+     * The purpose of this api is to initiate modify property workflow once the objection workflow has ended.
      *
-     * @param propertyId
-     *            (Is the BasicProperty upicNo)
+     * @param propertyId (Is the BasicProperty upicNo)
      * @param objectionNum
      * @param objectionDate
-     * @param objWfInitiator
-     *            (This is the objection workflow initiator, who will be set as
-     *            the initiator of modify property initiator/owner)
+     * @param objWfInitiator (This is the objection workflow initiator, who will be set as the initiator of modify property
+     * initiator/owner)
      */
     /*
-     * public void initiateModifyWfForObjection(Long basicPropId, String
-     * objectionNum, Date objectionDate, User objWfInitiator, String docNumber,
-     * String modifyRsn) {
-     * LOGGER.debug("Entered into initiateModifyWfForObjection, basicPropId: " +
-     * basicPropId + ", objectionNum: " + objectionNum + ", objectionDate: " +
-     * objectionDate + ", objWfInitiator: " + objWfInitiator); // Retrieve
-     * BasicProperty by basicPropId bcoz, upicno will be generated // during
-     * final approval for create property and this // api is used to initiate
-     * modify workflow before upicno is generated BasicProperty basicProperty =
-     * ((BasicProperty) getPropPerServ().findByNamedQuery(
-     * PropertyTaxConstants.QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId));
-     * basicProperty.setAllChangesCompleted(FALSE);
-     * LOGGER.debug("initiateModifyWfForObjection: basicProperty: " +
-     * basicProperty); PropertyImpl oldProperty = ((PropertyImpl)
-     * basicProperty.getProperty()); PropertyImpl newProperty = (PropertyImpl)
-     * oldProperty.createPropertyclone();
-     * LOGGER.debug("initiateModifyWfForObjection: oldProperty: " + oldProperty
-     * + ", newProperty: " + newProperty); List floorProxy = new ArrayList();
-     * String propUsageId = null; String propOccId = null; Date
-     * propCompletionDate = getPropertyCompletionDate(basicProperty,
-     * newProperty); for (Floor floor :
-     * newProperty.getPropertyDetail().getFloorDetails()) { if (floor != null) {
-     * floorProxy.add(floor); } }
+     * public void initiateModifyWfForObjection(Long basicPropId, String objectionNum, Date objectionDate, User objWfInitiator,
+     * String docNumber, String modifyRsn) { LOGGER.debug("Entered into initiateModifyWfForObjection, basicPropId: " + basicPropId
+     * + ", objectionNum: " + objectionNum + ", objectionDate: " + objectionDate + ", objWfInitiator: " + objWfInitiator); //
+     * Retrieve BasicProperty by basicPropId bcoz, upicno will be generated // during final approval for create property and this
+     * // api is used to initiate modify workflow before upicno is generated BasicProperty basicProperty = ((BasicProperty)
+     * getPropPerServ().findByNamedQuery( PropertyTaxConstants.QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId));
+     * basicProperty.setAllChangesCompleted(FALSE); LOGGER.debug("initiateModifyWfForObjection: basicProperty: " + basicProperty);
+     * PropertyImpl oldProperty = ((PropertyImpl) basicProperty.getProperty()); PropertyImpl newProperty = (PropertyImpl)
+     * oldProperty.createPropertyclone(); LOGGER.debug("initiateModifyWfForObjection: oldProperty: " + oldProperty +
+     * ", newProperty: " + newProperty); List floorProxy = new ArrayList(); String propUsageId = null; String propOccId = null;
+     * Date propCompletionDate = getPropertyCompletionDate(basicProperty, newProperty); for (Floor floor :
+     * newProperty.getPropertyDetail().getFloorDetails()) { if (floor != null) { floorProxy.add(floor); } }
      * newProperty.getPropertyDetail().setFloorDetails(floorProxy);
-     * basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty,
-     * PROPERTY_MODIFY_REASON_ADD_OR_ALTER, propCompletionDate, objectionNum,
-     * objectionDate, null, null)); if
-     * (newProperty.getPropertyDetail().getPropertyOccupation() != null) {
-     * propOccId =
-     * newProperty.getPropertyDetail().getPropertyOccupation().getId(
-     * ).toString(); } if (newProperty.getPropertyDetail().getPropertyUsage() !=
-     * null) { propUsageId =
-     * newProperty.getPropertyDetail().getPropertyUsage().getId().toString(); }
-     * newProperty = createProperty(newProperty, null, modifyRsn,
-     * newProperty.getPropertyDetail()
-     * .getPropertyTypeMaster().getId().toString(), propUsageId, propOccId,
-     * STATUS_WORKFLOW, null, null, null, null, null, null);
-     * newProperty.setStatus(STATUS_WORKFLOW); // Setting the property state to
-     * the objection workflow initiator Position owner =
-     * eisCommonsService.getPositionByUserId(objWfInitiator.getId()); String
-     * desigName = owner.getDeptDesig().getDesignation().getName(); String value
-     * = WFLOW_ACTION_NAME_MODIFY + ":" + desigName + "_" +
-     * WF_STATE_APPROVAL_PENDING;
-     * newProperty.transition(true).start().withSenderName
-     * (objWfInitiator.getName())
-     * .withComments(PROPERTY_WORKFLOW_STARTED).withStateValue
-     * (value).withOwner(owner) .withDateInfo(new Date());
-     * newProperty.setBasicProperty(basicProperty);
-     * newProperty.getPtDemandSet().clear(); createDemand(newProperty,
-     * propCompletionDate); createArrearsDemand(oldProperty, propCompletionDate,
-     * newProperty); basicProperty.addProperty(newProperty); basicProperty =
-     * basicPropertyService.update(basicProperty);
+     * basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_ADD_OR_ALTER,
+     * propCompletionDate, objectionNum, objectionDate, null, null)); if (newProperty.getPropertyDetail().getPropertyOccupation()
+     * != null) { propOccId = newProperty.getPropertyDetail().getPropertyOccupation().getId( ).toString(); } if
+     * (newProperty.getPropertyDetail().getPropertyUsage() != null) { propUsageId =
+     * newProperty.getPropertyDetail().getPropertyUsage().getId().toString(); } newProperty = createProperty(newProperty, null,
+     * modifyRsn, newProperty.getPropertyDetail() .getPropertyTypeMaster().getId().toString(), propUsageId, propOccId,
+     * STATUS_WORKFLOW, null, null, null, null, null, null); newProperty.setStatus(STATUS_WORKFLOW); // Setting the property state
+     * to the objection workflow initiator Position owner = eisCommonsService.getPositionByUserId(objWfInitiator.getId()); String
+     * desigName = owner.getDeptDesig().getDesignation().getName(); String value = WFLOW_ACTION_NAME_MODIFY + ":" + desigName +
+     * "_" + WF_STATE_APPROVAL_PENDING; newProperty.transition(true).start().withSenderName (objWfInitiator.getName())
+     * .withComments(PROPERTY_WORKFLOW_STARTED).withStateValue (value).withOwner(owner) .withDateInfo(new Date());
+     * newProperty.setBasicProperty(basicProperty); newProperty.getPtDemandSet().clear(); createDemand(newProperty,
+     * propCompletionDate); createArrearsDemand(oldProperty, propCompletionDate, newProperty);
+     * basicProperty.addProperty(newProperty); basicProperty = basicPropertyService.update(basicProperty);
      * LOGGER.debug("Exiting from initiateModifyWfForObjection"); }
      */
     public PropertyImpl creteNewPropertyForObjectionWorkflow(final BasicProperty basicProperty2,
@@ -1434,10 +1576,8 @@ public class PropertyService {
         // TODO: COPYING EXISTING OWNER AS SET.CLONE OWNER COMMENTED.
 
         /*
-         * Set<PropertyOwnerInfo> newOwnerSet = new
-         * HashSet<PropertyOwnerInfo>(); for (PropertyOwnerInfo owner :
-         * oldProperty.getPropertyOwnerSet()) { newOwnerSet.add(owner); }
-         * newProperty.setPropertyOwnerSet(newOwnerSet);
+         * Set<PropertyOwnerInfo> newOwnerSet = new HashSet<PropertyOwnerInfo>(); for (PropertyOwnerInfo owner :
+         * oldProperty.getPropertyOwnerSet()) { newOwnerSet.add(owner); } newProperty.setPropertyOwnerSet(newOwnerSet);
          */
 
         newProperty.setStatus(STATUS_WORKFLOW);
@@ -1458,6 +1598,13 @@ public class PropertyService {
         return newProperty;
     }
 
+    /**
+     * Returns property completion date based on the property type
+     *
+     * @param basicProperty
+     * @param newProperty
+     * @return
+     */
     private Date getPropertyCompletionDate(final BasicProperty basicProperty, final PropertyImpl newProperty) {
         LOGGER.debug("Entered into getPropertyCompletionDate - basicProperty.upicNo=" + basicProperty.getUpicNo());
         Date propCompletionDate = null;
@@ -1466,14 +1613,14 @@ public class PropertyService {
             for (final PropertyStatusValues propstatval : basicProperty.getPropertyStatusValuesSet())
                 if (propstatval.getExtraField1() != null)
                     try {
-                        propCompletionDate = sdf.parse(propstatval.getExtraField1());
+                        propCompletionDate = dateFormatter.parse(propstatval.getExtraField1());
                     } catch (final ParseException e) {
                         LOGGER.error(e.getMessage(), e);
                     }
                 else
                     propCompletionDate = basicProperty.getPropOccupationDate();
         } else {
-            final List floorList = new ArrayList(newProperty.getPropertyDetail().getFloorDetails());
+            final List<Floor> floorList = newProperty.getPropertyDetail().getFloorDetails();
             propCompletionDate = getLowestDtOfCompFloorWise(floorList);
             if (propCompletionDate == null)
                 propCompletionDate = basicProperty.getPropOccupationDate();
@@ -1511,7 +1658,11 @@ public class PropertyService {
         this.basicPropertyService = basicPropertyService;
     }
 
-    // setting property status values to Basic Property
+    /**
+     * setting property status values to Basic Property
+     *
+     * @param basicProperty
+     */
     public void setWFPropStatValActive(final BasicProperty basicProperty) {
         LOGGER.debug("Entered into setWFPropStatValActive, basicProperty: " + basicProperty);
         for (final PropertyStatusValues psv : basicProperty.getPropertyStatusValuesSet()) {
@@ -1557,29 +1708,25 @@ public class PropertyService {
             }
             if (PROP_CREATE_RSN.equals(psv.getPropertyStatus().getStatusCode())
                     && psv.getIsActive().equals("W"))
-                    psv.setIsActive("Y");
-            
+                psv.setIsActive("Y");
+
         }
         LOGGER.debug("Exitinf from setWFPropStatValActive");
     }
 
     /**
-     * Prepares a map of installment and respective reason wise demand for each
-     * installment
+     * Prepares a map of installment and respective reason wise demand for each installment
      *
      * @param property
-     * @return Map of installment and respective reason wise demand for each
-     *         installment
+     * @return Map of installment and respective reason wise demand for each installment
      */
     public Map<Installment, Map<String, BigDecimal>> populateTaxesForVoucherCreation(final Property property) {
         LOGGER.debug("Entered into populateTaxesForVoucherCreation, property: " + property);
         Map<Installment, Map<String, BigDecimal>> amounts = new HashMap<Installment, Map<String, BigDecimal>>();
         if (instTaxMap != null) {
             /*
-             * for (Map.Entry<Installment, TaxCalculationInfo> instTaxRec :
-             * instTaxMap.entrySet()) { Map<String, BigDecimal> taxMap =
-             * taxCalculator.getMiscTaxesForProp(instTaxRec.getValue()
-             * .getConsolidatedUnitTaxCalculationInfo());
+             * for (Map.Entry<Installment, TaxCalculationInfo> instTaxRec : instTaxMap.entrySet()) { Map<String, BigDecimal>
+             * taxMap = taxCalculator.getMiscTaxesForProp(instTaxRec.getValue() .getConsolidatedUnitTaxCalculationInfo());
              * amounts.put(instTaxRec.getKey(), taxMap); }
              */
         } else
@@ -1589,12 +1736,10 @@ public class PropertyService {
     }
 
     /**
-     * Prepares a map of installment and respective reason wise demand for each
-     * installment
+     * Prepares a map of installment and respective reason wise demand for each installment
      *
      * @param property
-     * @return Map of installment and respective reason wise demand for each
-     *         installment
+     * @return Map of installment and respective reason wise demand for each installment
      */
     public Map<Installment, Map<String, BigDecimal>> prepareRsnWiseDemandForOldProp(final Property property) {
         LOGGER.debug("Entered into prepareRsnWiseDemandForOldProp, property: " + property);
@@ -1618,6 +1763,12 @@ public class PropertyService {
         return instWiseDmd;
     }
 
+    /**
+     * Prepares a map of installment and respective reason wise demand for each installment
+     *
+     * @param property
+     * @return
+     */
     public Map<Installment, Map<String, BigDecimal>> prepareRsnWiseDemandForPropToBeDeactivated(final Property property) {
         LOGGER.debug("Entered into prepareRsnWiseDemandForPropToBeDeactivated, property: " + property);
 
@@ -1633,10 +1784,8 @@ public class PropertyService {
      * <p>
      * Adjusts the excess collection amount to Demand Details
      * </p>
-     * Ex: if there is excess collection for GEN_TAX then adjustments happens
-     * from beginning installment to current installment if still there is
-     * excess collecion remaining then it will be adjust to the group to which
-     * GEN_TAX belongs.
+     * Ex: if there is excess collection for GEN_TAX then adjustments happens from beginning installment to current installment if
+     * still there is excess collecion remaining then it will be adjust to the group to which GEN_TAX belongs.
      *
      * @param installments
      * @param newDemandDetailsByInstallment
@@ -1648,15 +1797,16 @@ public class PropertyService {
                 + ", newDemandDetailsByInstallment.size - " + newDemandDetailsByInstallment.size());
 
         /**
-         * Demand reason groups to adjust the excess collection amount if a
-         * demand reason is collected fully. Ex: if GEN_TAX is collected for the
-         * installment fully then remaining excess collection will be adjusted
-         * to the group to which GEN_TAX belongs i.e., demandReasons1[GROUP1]
+         * Demand reason groups to adjust the excess collection amount if a demand reason is collected fully. Ex: if GEN_TAX is
+         * collected for the installment fully then remaining excess collection will be adjusted to the group to which GEN_TAX
+         * belongs i.e., demandReasons1[GROUP1]
          */
-        final Set<String> demandReasons1 = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX,
+        final Set<String> demandReasons1 = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
+                DEMANDRSN_CODE_VACANT_TAX,
                 DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
 
-        final Set<String> demandReasons2 = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX,
+        final Set<String> demandReasons2 = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
+                DEMANDRSN_CODE_VACANT_TAX,
                 DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
 
         final Installment currerntInstallment = PropertyTaxUtil.getCurrentInstallment();
@@ -1718,6 +1868,19 @@ public class PropertyService {
         LOGGER.debug("Exiting from adjustExcessCollectionAmount");
     }
 
+    /**
+     * Adjusts Excess Collection amount to installment wise demand details
+     *
+     * @param installments
+     * @param newDemandDetailsByInstallment
+     * @param demandReasons1
+     * @param demandReasons2
+     * @param excessAmountByDemandReasonForInstallment
+     * @param demandReason
+     * @param isGroupAdjustment
+     * @param reasonNotExists
+     * @return
+     */
     private Boolean adjustExcessCollection(final List<Installment> installments,
             final Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment,
             final Set<String> demandReasons1, final Set<String> demandReasons2,
@@ -1759,8 +1922,7 @@ public class PropertyService {
                             while (remainingExcessCollection.compareTo(BigDecimal.ZERO) > 0) {
 
                                 /**
-                                 * adjust to next installments in asc order for
-                                 * the reason demandReason
+                                 * adjust to next installments in asc order for the reason demandReason
                                  */
 
                                 final Set<String> oneReason = new LinkedHashSet<String>();
@@ -1774,7 +1936,8 @@ public class PropertyService {
 
                                 if (remainingExcessCollection.compareTo(BigDecimal.ZERO) > 0) {
                                     final Set<String> reasons = demandReasons1.contains(demandReason) ? new LinkedHashSet<String>(
-                                            demandReasons1) : new LinkedHashSet<String>(demandReasons2);
+                                            demandReasons1)
+                                            : new LinkedHashSet<String>(demandReasons2);
                                     reasons.remove(demandReason);
 
                                     remainingExcessCollection = adjustToInstallmentDemandDetails(installments,
@@ -1783,26 +1946,22 @@ public class PropertyService {
                                 }
 
                                 /**
-                                 * There is still remainingExcessCollection
-                                 * after adjusting to demandReason[Installment1]
-                                 * demandReason[Installment2] . . . . . . . . .
-                                 * . . . . . demandReason[CurrentInstallment]
-                                 * So, adjusting the remaining excess collection
-                                 * to demandReason[currentInstallment]
+                                 * There is still remainingExcessCollection after adjusting to demandReason[Installment1]
+                                 * demandReason[Installment2] . . . . . . . . . . . . . . demandReason[CurrentInstallment] So,
+                                 * adjusting the remaining excess collection to demandReason[currentInstallment]
                                  */
                                 if (remainingExcessCollection.compareTo(BigDecimal.ZERO) > 0) {
                                     EgDemandDetails currentDemandDetail = getEgDemandDetailsForReason(
                                             newDemandDetailsByInstallment.get(PropertyTaxUtil.getCurrentInstallment()),
                                             demandReason);
                                     /**
-                                     * if the demand reason does not exist in
-                                     * the current installment then adjusting
-                                     * the remaining excess collection to its
-                                     * group
+                                     * if the demand reason does not exist in the current installment then adjusting the remaining
+                                     * excess collection to its group
                                      */
                                     if (currentDemandDetail == null) {
                                         final Set<String> reasons = demandReasons1.contains(demandReason) ? new LinkedHashSet<String>(
-                                                demandReasons1) : new LinkedHashSet<String>(demandReasons2);
+                                                demandReasons1)
+                                                : new LinkedHashSet<String>(demandReasons2);
                                         reasons.remove(demandReason);
                                         for (final String rsn : reasons) {
                                             currentDemandDetail = getEgDemandDetailsForReason(
@@ -1843,6 +2002,16 @@ public class PropertyService {
         return isDemandDetailExists;
     }
 
+    /**
+     * Adjusts excess amount installment wise demand details
+     *
+     * @param installments
+     * @param newDemandDetailsByInstallment
+     * @param excessAmountByDemandReasonForInstallment
+     * @param remainingExcessCollection
+     * @param reasons
+     * @return
+     */
     private BigDecimal adjustToInstallmentDemandDetails(final List<Installment> installments,
             final Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment,
             final Map.Entry<Installment, Map<String, BigDecimal>> excessAmountByDemandReasonForInstallment,
@@ -1880,6 +2049,12 @@ public class PropertyService {
         return remainingExcessCollection;
     }
 
+    /**
+     * Initiates data entry workflow
+     *
+     * @param basicProperty
+     * @param initiater
+     */
     public void initiateDataEntryWorkflow(BasicProperty basicProperty, final User initiater) {
         LOGGER.debug("Entered into initiateDataEntryWorkflow");
 
@@ -1909,6 +2084,14 @@ public class PropertyService {
 
     }
 
+    /**
+     * Changes property details
+     *
+     * @param modProperty
+     * @param propDetail
+     * @param numOfFloors
+     * @return
+     */
     public PropertyImpl changePropertyDetail(final PropertyImpl modProperty, final PropertyDetail propDetail,
             final Integer numOfFloors) {
 
@@ -1966,6 +2149,11 @@ public class PropertyService {
                 TransactionType.CREATE);
     }
 
+    /**
+     * Stores Documents
+     *
+     * @param documents
+     */
     public void processAndStoreDocument(final List<Document> documents) {
         documents.forEach(document -> {
             if (!(document.getUploads().isEmpty() || document.getUploadsContentType().isEmpty())) {
@@ -1997,12 +2185,13 @@ public class PropertyService {
             final PropertyImpl property = (PropertyImpl) stateAwareObject;
             final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getApplicationNo());
-			final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo()
-					+ "&applicationType=" + applictionType;
+            final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo()
+                    + "&applicationType=" + applictionType;
             if (null == applicationIndex) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getApplicationNo(), property.getCreatedDate(), applictionType, property
-                                .getBasicProperty().getFullOwnerName(), property.getState().getValue(), url,property.getBasicProperty().getAddress().toString());
+                                .getBasicProperty().getFullOwnerName(), property.getState().getValue(), url, property
+                                .getBasicProperty().getAddress().toString());
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
@@ -2013,13 +2202,13 @@ public class PropertyService {
             final RevisionPetition property = (RevisionPetition) stateAwareObject;
             final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getObjectionNumber());
-			final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getObjectionNumber()
-					+ "&applicationType=" + applictionType;
+            final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getObjectionNumber()
+                    + "&applicationType=" + applictionType;
             if (null == applicationIndex) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getObjectionNumber(), property.getCreatedDate() != null ? property.getCreatedDate()
                                 : new Date(), applictionType, property.getBasicProperty().getFullOwnerName(), property
-                                .getState().getValue(), url,property.getBasicProperty().getAddress().toString());
+                                .getState().getValue(), url, property.getBasicProperty().getAddress().toString());
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
@@ -2028,14 +2217,16 @@ public class PropertyService {
 
         } else if (applictionType != null && applictionType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
             final PropertyMutation property = (PropertyMutation) stateAwareObject;
-            final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property.getApplicationNo());
-			final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo()
-					+ "&applicationType=" + applictionType;
+            final ApplicationIndex applicationIndex = applicationIndexService
+                    .findByApplicationNumber(property.getApplicationNo());
+            final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo()
+                    + "&applicationType=" + applictionType;
             if (null == applicationIndex) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
                         PTMODULENAME, property.getApplicationNo(),
                         property.getCreatedDate() != null ? property.getCreatedDate() : new Date(), applictionType,
-                        property.getBasicProperty().getFullOwnerName(), property.getState().getValue(), url,property.getBasicProperty().getAddress().toString());
+                        property.getBasicProperty().getFullOwnerName(), property.getState().getValue(), url, property
+                                .getBasicProperty().getAddress().toString());
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
@@ -2079,15 +2270,11 @@ public class PropertyService {
     }
 
     /**
-     * Method to validate bifurcation of property either using create assessment
-     * or alter assessment
+     * Method to validate bifurcation of property either using create assessment or alter assessment
      *
-     * @param propertyModel
-     *            model object
-     * @param basicProperty
-     *            basic property of the property which is being bifurcated
-     * @param reason
-     *            Reason for creation or Modification
+     * @param propertyModel model object
+     * @param basicProperty basic property of the property which is being bifurcated
+     * @param reason Reason for creation or Modification
      * @return
      */
     public String validationForBifurcation(final PropertyImpl propertyModel, final BasicProperty basicProperty,
@@ -2131,8 +2318,7 @@ public class PropertyService {
     }
 
     /**
-     * Validates parent property area with the bifurcated children and current
-     * property area
+     * Validates parent property area with the bifurcated children and current property area
      *
      * @param propertyModel
      * @param parentProperty
@@ -2183,7 +2369,7 @@ public class PropertyService {
             }
         return propBifurcated;
     }
-    
+
     /**
      * Converting sqr yards to sqr meters
      * @param vacantLandArea
@@ -2213,6 +2399,12 @@ public class PropertyService {
         return area;
     }
 
+    /**
+     * Checks whether user is an employee or not
+     *
+     * @param user
+     * @return
+     */
     public Boolean isEmployee(final User user) {
         for (final Role role : user.getRoles())
             for (final AppConfigValues appconfig : getThirdPartyUserRoles())
@@ -2221,6 +2413,12 @@ public class PropertyService {
         return true;
     }
 
+    /**
+     * Returns User jurisdiction of property zone boundary
+     *
+     * @param basicProperty
+     * @return
+     */
     public Assignment getUserPositionByZone(final BasicProperty basicProperty) {
         final Designation designation = designationService.getDesignationByName(getDesignationForThirdPartyUser());
         final Department department = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
@@ -2229,6 +2427,11 @@ public class PropertyService {
         return assignment.get(0);
     }
 
+    /**
+     * Returns Department for property tax workflow
+     *
+     * @return
+     */
     public String getDepartmentForWorkFlow() {
         String department = "";
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
@@ -2238,6 +2441,11 @@ public class PropertyService {
         return department;
     }
 
+    /**
+     * Returns Designation for third party user
+     *
+     * @return
+     */
     public String getDesignationForThirdPartyUser() {
         String designation = "";
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
@@ -2247,6 +2455,11 @@ public class PropertyService {
         return designation;
     }
 
+    /**
+     * Returns third party user roles
+     *
+     * @return
+     */
     public List<AppConfigValues> getThirdPartyUserRoles() {
 
         final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -2261,12 +2474,12 @@ public class PropertyService {
      * @param assessmentDate
      * @return
      */
-    public Installment getAssessmentEffectiveInstallment(Date assessmentDate) {
+    public Installment getAssessmentEffectiveInstallment(final Date assessmentDate) {
         return installmentDao.getInsatllmentByModuleForGivenDate(
                 moduleDao.getModuleByName(PTMODULENAME),
                 assessmentDate);
     }
-    
+
     public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {
         return ptDemandDAO.getDemandCollMap(propertyImpl);
     }
