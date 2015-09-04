@@ -28,6 +28,14 @@
             <scope>test</scope>
         </dependency>
 
+		<dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>egov-config</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+        
         <!-- VIEWS RELATED END -->
         <dependency>
             <groupId>org.apache.tiles</groupId>

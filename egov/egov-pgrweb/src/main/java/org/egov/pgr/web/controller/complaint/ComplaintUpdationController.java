@@ -114,7 +114,7 @@ public class ComplaintUpdationController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String edit(final Model model, @PathVariable final String crnNo) {
-        final Complaint complaint = getComplaint(crnNo);
+        final Complaint complaint = complaintService.getComplaintByCRN(crnNo);
         model.addAttribute("complaintHistory", complaintService.getHistory(complaint));
         model.addAttribute("status",
                 complaintStatusMappingService.getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(),

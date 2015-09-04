@@ -41,7 +41,6 @@ package org.egov.pgr.web.controller.masters;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -49,7 +48,6 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.text.ParseException;
@@ -64,7 +62,6 @@ import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -73,7 +70,6 @@ import org.springframework.format.support.FormattingConversionService;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-@Ignore
 public class UpdateComplaintTypeControllerTest extends AbstractContextControllerTest<UpdateComplaintTypeController> {
 
     @Mock
@@ -140,10 +136,13 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
  
     @Test
     public void shouldUpdateComplaintType() throws Exception {
+        ComplaintType complaintType = new ComplaintType();
+        complaintType.setName("existing");
+        when(complaintTypeService.updateComplaintType(any(ComplaintType.class))).thenReturn(complaintType);
         this.mockMvc.perform(post("/complainttype/update/existing")
                 .param("name", "existing-complaint-type").param("code", "Test"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(view().name("complaintType-success"));
+                .andExpect(view().name("redirect:existing/complaintType-success"));
 
         ArgumentCaptor<ComplaintType> argumentCaptor = ArgumentCaptor.forClass(ComplaintType.class);
         verify(complaintTypeService).updateComplaintType(argumentCaptor.capture());

@@ -54,8 +54,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import org.egov.infra.security.utils.SecurityUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,6 +63,7 @@ import org.egov.config.search.IndexType;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.service.ComplaintService;
@@ -74,10 +73,9 @@ import org.egov.pgr.web.controller.AbstractContextControllerTest;
 import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
 import org.egov.search.domain.Page;
-import org.egov.search.domain.QueryStringFilter;
-import org.egov.search.domain.TermsStringFilter;
 import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
+import org.egov.search.domain.TermsStringFilter;
 import org.egov.search.service.SearchService;
 import org.egov.search.util.Classpath;
 import org.junit.Before;
@@ -152,10 +150,10 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
         final Filter filter = actualFilters.getAndFilters().get(0);
         assertThat(filter.field(), is("clauses.crn"));
         assertThat(filter, instanceOf(TermsStringFilter.class));
-        //assertThat(((TermsStringFilter) filter).value(), is("CRN123"));
+        assertThat(((TermsStringFilter) filter).values()[0], is("CRN123"));
     }
 
-/*    @Test
+    @Test
     public void shouldSearchForGivenDateRange() throws Exception {
         when(searchService.search(anyList(), anyList(), anyString(), any(Filters.class), eq(Sort.NULL), eq(Page.NULL)))
                 .thenReturn(
@@ -166,14 +164,14 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
 
         final ArgumentCaptor<Filters> filterCaptor = ArgumentCaptor.forClass(Filters.class);
 
-        verify(searchService).search(eq(asList(Index.PGR.toString())), eq(asList(IndexType.COMPLAINT.toString())), null,
+        verify(searchService).search(eq(asList(Index.PGR.toString())), eq(asList(IndexType.COMPLAINT.toString())), eq(null),
                 filterCaptor.capture(), eq(Sort.NULL), eq(Page.NULL));
 
         final Filters actualFilters = filterCaptor.getValue();
         final Filter filter = actualFilters.getAndFilters().get(0);
-        assertThat(filter.field(), is("searchable.crn"));
-        assertThat(filter, instanceOf(QueryStringFilter.class));
-        assertThat(((QueryStringFilter) filter).value(), is("CRN123"));
-    }*/
+        assertThat(filter.field(), is("clauses.crn"));
+        assertThat(filter, instanceOf(TermsStringFilter.class));
+        assertThat(((TermsStringFilter) filter).values()[0], is("CRN123"));
+    }
 
 }

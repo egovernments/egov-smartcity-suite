@@ -61,7 +61,6 @@ import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.controller.admin.masters.role.CreateRoleController;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -104,14 +103,13 @@ public class CreateRoleControllerTest extends AbstractContextControllerTest<Crea
                 .andExpect(view().name("role-form"))
                 .andExpect(status().isOk());
     }
-    //Ignored due to getting error while using @unique - FIX ME
-    @Ignore
+    
     @Test
     public void shouldCreateNewRole() throws Exception {
-        this.mockMvc.perform(post("/create-role")
+        this.mockMvc.perform(post("/role/create")
                 .param("name", "new-role"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(redirectedUrl("view-role/new-role"));
+                .andExpect(redirectedUrl("/role/view/new-role"));
 
         ArgumentCaptor<Role> argumentCaptor = ArgumentCaptor.forClass(Role.class);
         verify(roleService).createRole(argumentCaptor.capture());

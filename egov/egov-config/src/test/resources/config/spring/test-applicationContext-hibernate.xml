@@ -109,4 +109,24 @@
 		class="org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
+	
+	<bean id="entityValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"></bean>
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="100000"/>
+		<property name="maxInMemorySize" value="10000"/>
+    </bean>
+    
+    <bean id="messageSource"
+          class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>messages/labels</value>
+                <value>messages/errors</value>
+                <value>messages/message</value>
+            </list>
+        </property>
+        <!-- Disabling caching since on development-->
+        <property name="cacheSeconds" value="0"/>
+    </bean>
 </beans>

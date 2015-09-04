@@ -58,7 +58,6 @@ import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.controller.admin.masters.role.UpdateRoleController;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -108,14 +107,13 @@ public class UpdateRoleControllerTest extends AbstractContextControllerTest<Upda
         Role existingRole = (Role) result.getModelAndView().getModelMap().get("role");
         assertEquals(role.getName(), existingRole.getName());
     }
-  //Ignored due to getting error while using @unique - FIX ME
-    @Ignore
+ 
     @Test
     public void shouldUpdateRole() throws Exception {
-        this.mockMvc.perform(post("/update-role/existing")
+        this.mockMvc.perform(post("/role/update/existing")
                 .param("name", "existing-role"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(redirectedUrl("/view-role/existing-role"));
+                .andExpect(redirectedUrl("/role/view/existing-role"));
 
         ArgumentCaptor<Role> argumentCaptor = ArgumentCaptor.forClass(Role.class);
         verify(roleService).update(argumentCaptor.capture());
@@ -123,16 +121,15 @@ public class UpdateRoleControllerTest extends AbstractContextControllerTest<Upda
         Role createdRole = argumentCaptor.getValue();
         assertEquals("existing-role", createdRole.getName());
     }
-  //Ignored due to getting error while using @unique - FIX ME
-    @Ignore
+
     @Test
     public void shouldValidateRoleWhileUpdating() throws Exception {
-        this.mockMvc.perform(post("/update-role/existing")
+        this.mockMvc.perform(post("/role/update/existing")
                 .param("name",""))
                 .andExpect(model().hasErrors())
                 .andExpect(model().attributeHasFieldErrors("role", "name"))
                 .andExpect(model().errorCount(1))
-                .andExpect(view().name("update-role/"));
+                .andExpect(view().name("role-update"));
 
         verify(roleService, never()).update(any(Role.class));
     }

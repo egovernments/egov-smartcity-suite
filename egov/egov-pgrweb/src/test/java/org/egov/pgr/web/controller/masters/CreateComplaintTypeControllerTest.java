@@ -57,8 +57,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import javax.persistence.EntityManager;
-
 import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -66,30 +64,19 @@ import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.format.Formatter;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.test.web.servlet.MockMvc;
 
-@Ignore
 public class CreateComplaintTypeControllerTest extends AbstractContextControllerTest<CreateComplaintTypeController> {
 
     @Mock
     private DepartmentService departmentService;
     @Mock
     private ComplaintTypeService complaintTypeService;
-    
-    @Autowired
-    private ConversionService conversionService;
-    
-    @Autowired
-    private EntityManager entityManager;
-    
     
     private MockMvc mockMvc;
 
@@ -145,13 +132,13 @@ public class CreateComplaintTypeControllerTest extends AbstractContextController
         verify(departmentService).getAllDepartments();
     }
 
-   /* @Test
+    @Test
     public void shouldCreateNewComplaintType() throws Exception {
         this.mockMvc.perform(post("/complainttype/create")
                 .param("department", "1")
                 .param("name", "new-complaint-type").param("code", "test"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(view().name("complaintType-success"));
+                .andExpect(view().name("redirect:/complainttype/success/new-complaint-type"));
 
         ArgumentCaptor<ComplaintType> argumentCaptor = ArgumentCaptor.forClass(ComplaintType.class);
         verify(complaintTypeService).createComplaintType(argumentCaptor.capture());
@@ -166,9 +153,8 @@ public class CreateComplaintTypeControllerTest extends AbstractContextController
         this.mockMvc.perform(post("/complainttype/create"))
                 .andExpect(model().hasErrors())
                 .andExpect(model().attributeHasFieldErrors("complaintType", "name"))
-                .andExpect(model().attributeHasFieldErrors("complaintType", "department"))
                 .andExpect(view().name("complaint-type"));
 
         verify(complaintTypeService, never()).createComplaintType(any(ComplaintType.class));
-    }*/
+    }
 }

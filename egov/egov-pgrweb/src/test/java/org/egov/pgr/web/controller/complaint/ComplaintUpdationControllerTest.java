@@ -41,10 +41,9 @@ package org.egov.pgr.web.controller.complaint;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -62,6 +61,8 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
@@ -72,18 +73,17 @@ import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.util.NestedServletException;
 
-@Ignore
 public class ComplaintUpdationControllerTest extends AbstractContextControllerTest<ComplaintUpdationController> {
     @Mock
     private Complaint complaint;
@@ -102,8 +102,8 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
     private SmartValidator smartValidator;
 
     @Autowired
-    private SmartValidator validator;
-
+    private ResourceBundleMessageSource messageSource;
+    
     @Mock
     private DepartmentService departmentService;
 
@@ -125,6 +125,9 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 
     @Mock
     User user;
+    
+    @Mock
+    SecurityUtils securityUtils;
 
     @Override
     protected ComplaintUpdationController initController() {
@@ -134,7 +137,21 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
                 complaintTypeService, complaintStatusMappingService, smartValidator);
         // when(complaintUpdationController.getStatus()).thenReturn(value,
         // values);
-
+        try {
+            Field msgSrc = complaintUpdationController.getClass().getDeclaredField("messageSource");
+            Field secuUtil = complaintUpdationController.getClass().getDeclaredField("securityUtils");
+            Field deptService = complaintUpdationController.getClass().getDeclaredField("departmentService"); 
+            Field bndryService = complaintUpdationController.getClass().getDeclaredField("boundaryService"); 
+            deptService.setAccessible(true);
+            bndryService.setAccessible(true);
+            msgSrc.setAccessible(true);
+            secuUtil.setAccessible(true);
+            msgSrc.set(complaintUpdationController, messageSource);
+            secuUtil.set(complaintUpdationController, securityUtils);
+            deptService.set(complaintUpdationController, departmentService);
+            bndryService.set(complaintUpdationController, boundaryService);
+        } catch (NoSuchFieldException | SecurityException  | IllegalAccessException e) {
+        }
         return complaintUpdationController;
     }
 
@@ -143,15 +160,16 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 
         mockMvc = mvcBuilder.build();
         complaint = new Complaint();
+        complaint.setCrn("CRN-123");
         complaint.setDetails("Already Registered complaint");
         // id = 2L;
         when(complaintService.getComplaintById(id)).thenReturn(complaint);
-
         complaintType = new ComplaintType();
         final List ctList = new ArrayList<ComplaintType>();
         ctList.add(complaintType);
         when(complaintTypeService.findAll()).thenReturn(ctList);
-
+        when(securityUtils.currentUserType()).thenReturn(UserType.CITIZEN);
+        when(securityUtils.getCurrentUser()).thenReturn(new User());
         final List<ComplaintStatus> csList = new ArrayList<ComplaintStatus>();
         final ComplaintStatus cs = new ComplaintStatus();
 
@@ -174,7 +192,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaint = new Complaint();
         complaint.setComplaintType(complaintType);
         complaint.setDetails("Already Registered complaint");
-        mockMvc.perform(get("/complaint-update?id=1")).andReturn();
+        mockMvc.perform(get("/complaint/update/CRN-123")).andReturn();
     }
 
     @Test
@@ -182,9 +200,9 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaint = new Complaint();
         complaint.setComplaintType(complaintType);
         complaint.setDetails("Already Registered complaint");
-        when(complaintService.getComplaintById(id)).thenReturn(complaint);
+        when(complaintService.getComplaintByCRN("CRN-123")).thenReturn(complaint);
 
-        final MvcResult result = mockMvc.perform(get("/complaint-update?id=2")).andExpect(view().name("complaint-edit"))
+        final MvcResult result = mockMvc.perform(get("/complaint/update/CRN-123")).andExpect(view().name("complaint-citizen-edit"))
                 .andExpect(model().attributeExists("complaint")).andReturn();
 
         final Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
@@ -195,13 +213,15 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
     @Test
     public void editWithComplaintTypeLocationRequiredTrue() throws Exception {
         complaint = new Complaint();
+        complaint.setCrn("CRN-124");
         complaint.setComplaintType(complaintType);
         complaint.setDetails("Already Registered complaint");
         id = 2L;
-        when(complaintService.getComplaintById(id)).thenReturn(complaint);
+        when(complaintService.getComplaintByCRN("CRN-124")).thenReturn(complaint);
 
-        final MvcResult result = mockMvc.perform(get("/complaint-update?id=2")).andExpect(status().isOk())
-                .andExpect(view().name("complaint-edit")).andExpect(model().attributeExists("complaint")).andReturn();
+
+        final MvcResult result = mockMvc.perform(get("/complaint/update/CRN-124")).andExpect(status().isOk())
+                .andExpect(view().name("complaint-citizen-edit")).andExpect(model().attributeExists("complaint")).andReturn();
 
         final Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
         assertEquals(complaint.getDetails(), existing.getDetails());
@@ -211,16 +231,17 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
     @Test
     public void editWithBoundary() throws Exception {
         complaint = new Complaint();
+        complaint.setCrn("CRN-124");
         complaint.setComplaintType(complaintType);
         complaint.setDetails("Already Registered complaint");
         final Boundary ward = new Boundary();
         final Boundary zone = new Boundary();
 
         try {
-            Field idField = ward.getClass().getSuperclass().getDeclaredField("id");
+            Field idField = ward.getClass().getDeclaredField("id");
             idField.setAccessible(true);
             idField.set(ward, id);
-            idField = zone.getClass().getSuperclass().getDeclaredField("id");
+            idField = zone.getClass().getDeclaredField("id");
             idField.setAccessible(true);
             idField.set(zone, id);
         } catch (final Exception e) {
@@ -230,12 +251,12 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 
         complaint.setLocation(ward);
         id = 2L;
-        when(complaintService.getComplaintById(id)).thenReturn(complaint);
+        when(complaintService.getComplaintByCRN("CRN-124")).thenReturn(complaint);
         final List<Boundary> wards = new ArrayList<Boundary>();
         when(boundaryService.getChildBoundariesByBoundaryId(ward.getId())).thenReturn(wards);
 
-        final MvcResult result = mockMvc.perform(get("/complaint-update?id=2")).andExpect(status().isOk())
-                .andExpect(view().name("complaint-edit")).andExpect(model().attributeExists("complaint")).andReturn();
+        final MvcResult result = mockMvc.perform(get("/complaint/update/CRN-124")).andExpect(status().isOk())
+                .andExpect(view().name("complaint-citizen-edit")).andExpect(model().attributeExists("complaint")).andReturn();
 
         final Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
         assertEquals(complaint.getDetails(), existing.getDetails());
@@ -249,15 +270,14 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaint1.setComplaintType(complaintType);
         complaint1.setDetails("Already Registered complaint");
         id = 2L;
-        when(complaintService.getComplaintById(id)).thenReturn(complaint1);
-        when(complaint1.getId()).thenReturn(2L);
-        mockMvc.perform(post("/complaint-update").param("id", "2").param("complaintStatus", "2")).andDo(print())
-                .andExpect(status().is3xxRedirection()).andReturn();
+        when(complaintService.getComplaintByCRN("CRN-124")).thenReturn(complaint);
+        when(complaint1.getCrn()).thenReturn("CRN-124");
+        mockMvc.perform(fileUpload("/complaint/update/CRN-124").param("crn", "CRN-124").param("complaintStatus", "2")).andDo(print())
+                .andExpect(status().isOk()).andReturn();
 
     }
 
-    @Ignore
-    // Ignoring test now since domain class conversion is not incorporated
+    @Test
     public void updateWithComplaintType() throws Exception {
 
         final ComplaintStatus cs = new ComplaintStatus();
@@ -266,11 +286,11 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaint1.setComplaintType(complaintType);
         complaint1.setDetails("Already Registered complaint");
         id = 2L;
-        when(complaintService.getComplaintById(id)).thenReturn(complaint1);
+        when(complaintService.getComplaintByCRN("CRN-124")).thenReturn(complaint1);
         when(complaint1.getId()).thenReturn(2L);
         when(complaintTypeService.load(id)).thenReturn(complaintType);
-        mockMvc.perform(post("/complaint-update").param("id", "2").param("complaintStatus", "2").param("complaintType", "2"))
-                .andExpect(flash().attributeExists("message")).andExpect(status().is3xxRedirection()).andReturn();
+        mockMvc.perform(fileUpload("/complaint/update/CRN-124").param("id", "2").param("complaintStatus", "2").param("complaintType", "2"))
+                .andExpect(status().isOk()).andReturn();
 
     }
 
