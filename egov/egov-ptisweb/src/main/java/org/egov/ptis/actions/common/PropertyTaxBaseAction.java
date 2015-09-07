@@ -111,18 +111,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private static Logger LOGGER = Logger.getLogger(PropertyTaxBaseAction.class);
     private static final long serialVersionUID = 1L;
-    protected PropertyTaxUtil propertyTaxUtil;
-    @Autowired
-    private SecurityUtils securityUtils;
-    @Autowired
-    private UserService userService;
-    protected WorkflowBean workflowBean;
-    protected String userDesgn;
+    
     protected Boolean isApprPageReq = Boolean.TRUE;
+    
     protected String indexNumber;
-    String actionName = "";
-    String wflowAction = "";
+    protected String modelId;
     protected String userRole;
+    protected String ackMessage;
+    protected String userDesgn;
+
     @Autowired
     protected AssignmentService assignmentService;
     @Autowired
@@ -143,10 +140,18 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     @Autowired
     private EmployeeService employeeService;
     private SMSEmailService sMSEmailService;
+    protected PropertyTaxUtil propertyTaxUtil;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private UserService userService;
+    private PropertyImpl propertyModel;
+    protected WorkflowBean workflowBean;
+    
     private List<File> uploads = new ArrayList<File>();
     private List<String> uploadFileNames = new ArrayList<String>();
     private List<String> uploadContentTypes = new ArrayList<String>();
-    protected String ackMessage;
+    
     protected Boolean propertyByEmployee = Boolean.TRUE;
 
     public List<File> getUpload() {
@@ -241,9 +246,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary, northBoundary);
                 } else if (null != propertyDetail.isAppurtenantLandChecked()) {
                     validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary, northBoundary);
-                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot,regDocDate);
+                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate);
                 } else
-                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot,regDocDate);
+                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate);
                 validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetailsProxy(), property);
             }
         }
@@ -277,8 +282,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     }
 
-    private void validateBuiltUpProperty(final PropertyDetail propertyDetail,
-            final Long floorTypeId, final Long roofTypeId, final String areaOfPlot,final Date regDocDate) {
+    private void validateBuiltUpProperty(final PropertyDetail propertyDetail, final Long floorTypeId,
+            final Long roofTypeId, final String areaOfPlot, final Date regDocDate) {
         if (null != propertyDetail.isBuildingPlanDetailsChecked()) {
             if (isBlank(propertyDetail.getBuildingPermissionNo()))
                 addActionError(getText("mandatory.buildingPlanNo"));
@@ -366,7 +371,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         // happen for the same houseNo
         if (!qry.list().isEmpty()
                 && (basicProperty == null || basicProperty != null
-                && !basicProperty.getAddress().getHouseNoBldgApt().equals(houseNo)))
+                        && !basicProperty.getAddress().getHouseNoBldgApt().equals(houseNo)))
             addActionError(getText("houseNo.unique"));
     }
 
@@ -401,14 +406,14 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
                 property.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
-                .withDateInfo(currentDate.toDate());
+                        .withDateInfo(currentDate.toDate());
                 property.setStatus(STATUS_CANCELLED);
                 property.getBasicProperty().setUnderWorkflow(FALSE);
             } else {
                 final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
                 property.transition(true).withSenderName(user.getName()).withComments(approverComments)
-                .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_REVENUE_CLERK_APPROVAL_PENDING);
+                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_REVENUE_CLERK_APPROVAL_PENDING);
             }
 
         } else {
@@ -420,17 +425,17 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 final WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
                         null, getAdditionalRule(), currentState, null);
                 property.transition().start().withSenderName(user.getName()).withComments(approverComments)
-                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                .withNextAction(wfmatrix.getNextAction());
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction());
             } else if (property.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 property.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
-                .withDateInfo(currentDate.toDate());
+                        .withDateInfo(currentDate.toDate());
             else {
                 final WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
                         null, getAdditionalRule(), property.getCurrentState().getValue(), null);
                 property.transition(true).withSenderName(user.getName()).withComments(approverComments)
-                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                .withNextAction(wfmatrix.getNextAction());
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction());
             }
         }
         if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase("----Choose----")) {
@@ -639,6 +644,22 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     public void setPropertyByEmployee(final Boolean propertyByEmployee) {
         this.propertyByEmployee = propertyByEmployee;
+    }
+
+    public String getModelId() {
+        return modelId;
+    }
+
+    public void setModelId(String modelId) {
+        this.modelId = modelId;
+    }
+
+    public PropertyImpl getProperty() {
+        return propertyModel;
+    }
+
+    public void setProperty(PropertyImpl property) {
+        this.propertyModel = property;
     }
 
 }

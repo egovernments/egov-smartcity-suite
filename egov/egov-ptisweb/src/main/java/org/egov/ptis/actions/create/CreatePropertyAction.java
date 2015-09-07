@@ -43,7 +43,6 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_CREATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
@@ -70,7 +69,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APP
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -106,7 +104,7 @@ import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.actions.common.CommonServices;
-import org.egov.ptis.actions.workflow.WorkflowAction;
+import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.Apartment;
@@ -151,10 +149,8 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = "dataEntry-ack", location = "create/createProperty-dataEntryAck.jsp"),
         @Result(name = "view", location = "create/createProperty-view.jsp"),
         @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp") })
-public class CreatePropertyAction extends WorkflowAction {
-    /**
-     *
-     */
+public class CreatePropertyAction extends PropertyTaxBaseAction {
+   
     private static final long serialVersionUID = -2329719786287615451L;
     private static final String RESULT_ACK = "ack";
     private static final String RESULT_NEW = "new";
@@ -162,86 +158,81 @@ public class CreatePropertyAction extends WorkflowAction {
     private static final String MSG_REJECT_SUCCESS = " Property Rejected Successfully ";
     private static final String CREATE = "create";
     private static final String RESULT_DATAENTRY = "dataEntry";
+    public static final String PRINTACK = "printAck";
 
     private final Logger LOGGER = Logger.getLogger(getClass());
     private PropertyImpl property = new PropertyImpl();
     @Autowired
     private PropertyPersistenceService basicPropertyService;
+    
     private Long zoneId;
     private Long wardId;
     private Long blockId;
-    private Long electionWardId;
-    private String wardName;
-    private String zoneName;
-    private String blockName;
     private Long locality;
     private Long floorTypeId;
     private Long roofTypeId;
     private Long wallTypeId;
     private Long woodTypeId;
     private Long ownershipType;
+    private Long electionWardId;
+    
+    private String wardName;
+    private String zoneName;
+    private String blockName;
     private String houseNumber;
     private String addressStr;
     private String pinCode;
     private String areaOfPlot;
-    private String applicationDate;
     private String dateOfCompletion;
     private String applicationNo;
-    private TreeMap<Integer, String> floorNoMap;
     private String corrAddress1;
     private String corrAddress2;
     private String corrPinCode;
     private String genWaterRate;
-    private BasicProperty basicProp;
     private String upicNo;
-
-    @Autowired
-    private PropertyService propService;
-    private Long mutationId;
     private String parentIndex;
-    Date propCompletionDate = null;
     private String amenities;
     private String[] floorNoStr = new String[20];
     private String propTypeId;
     private String propUsageId;
     private String propOccId;
-    private Map<String, String> propTypeCategoryMap;
     private String propTypeCategoryId;
-    private PropertyTypeMaster propTypeMstr;
-
     private String docNumber;
     private String nonResPlotArea;
-    private Category propertyCategory;
-    @Autowired
-    private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-
-    final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-    private PropertyImpl newProperty = new PropertyImpl();
-    private Date currDate;
-    private String regdDocNo;
-    private Date regdDocDate;
+    private String applicationNoMessage;
+    private String assessmentNoMessage;
+    private String propertyInitiatedBy;
     private String mode = CREATE;
-    public static final String PRINTACK = "printAck";
-    private Integer reportId = -1;
-    private boolean approved = false;
     private String northBoundary;
     private String southBoundary;
     private String eastBoundary;
     private String westBoundary;
-    private Address ownerAddress;
+    
+    private Long mutationId;
+    
+    private Map<String, String> propTypeCategoryMap;
+    private TreeMap<Integer, String> floorNoMap;
     private Map<String, String> deviationPercentageMap;
     private Map<String, String> guardianRelationMap;
     private List<DocumentType> documentTypes = new ArrayList<>();
-    private String applicationNoMessage;
-    private String assessmentNoMessage;
-    private String propertyInitiatedBy;
-
+    
+    private Integer reportId = -1;
+    private boolean approved = false;
+    
+    private BasicProperty basicProp;
+    @Autowired
+    private PropertyService propService;
+    private PropertyTypeMaster propTypeMstr;
+    private Category propertyCategory;
+    @Autowired
+    private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+    private PropertyImpl newProperty = new PropertyImpl();
+    private Address ownerAddress;
+    Date propCompletionDate = null;
     @Autowired
     private UserService userService;
-
     @Autowired
     private BoundaryService boundaryService;
-
     @Autowired
     private SecurityUtils securityUtils;
 
@@ -278,6 +269,7 @@ public class CreatePropertyAction extends WorkflowAction {
 
     @Action(value = "/createProperty-create")
     public String create() {
+        if (LOGGER.isDebugEnabled()) 
         LOGGER.debug("create: Property creation started, Property: " + property + ", zoneId: " + zoneId + ", wardId: "
                 + wardId + ", blockId: " + blockId + ", areaOfPlot: " + areaOfPlot + ", dateOfCompletion: "
                 + dateOfCompletion + ", propTypeId: " + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: "
@@ -286,9 +278,9 @@ public class CreatePropertyAction extends WorkflowAction {
         final BasicProperty basicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);
         addDemandAndCompleteDate(STATUS_DEMAND_INACTIVE, basicProperty, basicProperty.getPropertyMutationMaster());
         basicProperty.setUnderWorkflow(Boolean.TRUE);
-        LOGGER.debug("create: BasicProperty after creatation: " + basicProperty);
+        if (LOGGER.isDebugEnabled()) 
+        LOGGER.debug("create: BasicProperty after creation: " + basicProperty);
         basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
-        processAndStoreDocumentsWithReason(basicProperty, DOCS_CREATE_PROPERTY);
         // this should be appending to messgae
         transitionWorkFlow(property);
         basicPropertyService.applyAuditing(property.getState());
@@ -299,8 +291,10 @@ public class CreatePropertyAction extends WorkflowAction {
         setAckMessage("Property Data Saved Successfully in the System and forwarded to : ");
         setApplicationNoMessage(" with application number : ");
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+        if (LOGGER.isDebugEnabled())  {
         LOGGER.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
         LOGGER.debug("create: Property creation ended");
+        }
         return RESULT_ACK;
     }
 
@@ -336,8 +330,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
         if (basicProp != null) {
             basicProp.setPropertyOwnerInfoProxy(basicProp.getPropertyOwnerInfo());
-            setRegdDocDate(basicProp.getRegdDocDate());
-            setRegdDocNo(basicProp.getRegdDocNo());
             setMutationId(basicProp.getPropertyMutationMaster().getId());
             final PropertyStatusValues statusValues = (PropertyStatusValues) getPersistenceService().find(
                     "From PropertyStatusValues where basicProperty.id = ?", basicProp.getId());
@@ -390,6 +382,7 @@ public class CreatePropertyAction extends WorkflowAction {
     @SkipValidation
     @Action(value = "/createProperty-view")
     public String view() {
+        if (LOGGER.isDebugEnabled()) 
         LOGGER.debug("Entered into view, BasicProperty: " + basicProp + ", Property: " + property + ", userDesgn: "
                 + userDesgn);
         final String currState = property.getState().getValue();
@@ -405,7 +398,8 @@ public class CreatePropertyAction extends WorkflowAction {
                     if (null != ownerAddress)
                         setCorrAddress1(ownerAddress.toString());
             setDocNumber(property.getDocNumber());
-            LOGGER.debug("IndexNumber: " + indexNumber + " Amenities: " + amenities + "NoOfFloors: "
+            if (LOGGER.isDebugEnabled()) 
+            LOGGER.debug(" Amenities: " + amenities + "NoOfFloors: "
                     + (getFloorDetails() != null ? getFloorDetails().size() : "Floor list is NULL")
                     + " Exiting from view");
             return RESULT_VIEW;
@@ -415,6 +409,9 @@ public class CreatePropertyAction extends WorkflowAction {
     @SkipValidation
     @Action(value = "/createProperty-forward")
     public String forward() {
+        if (LOGGER.isDebugEnabled()) 
+            LOGGER.debug("Entered into forward, BasicProperty: " + basicProp + ", Property: " + property + ", userDesgn: "
+                    + userDesgn);
         if (mode.equalsIgnoreCase(EDIT)) {
             validate();
             if (hasErrors())
@@ -437,13 +434,16 @@ public class CreatePropertyAction extends WorkflowAction {
         basicProp.addProperty(property);
         basicPropertyService.persist(basicProp);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        if(LOGGER.isDebugEnabled())
         LOGGER.debug("forward: Property forward started " + property);
         final long startTimeMillis = System.currentTimeMillis();
         setDocNumber(getDocNumber());
         setApplicationNoMessage(" with application number : ");
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+        if(LOGGER.isDebugEnabled()) {
         LOGGER.debug("forward: Time taken(ms) = " + elapsedTimeMillis);
         LOGGER.debug("forward: Property forward ended");
+        }
         return RESULT_ACK;
     }
 
@@ -493,9 +493,8 @@ public class CreatePropertyAction extends WorkflowAction {
     @SkipValidation
     @Action(value = "/createProperty-approve")
     public String approve() {
-        LOGGER.debug("approve: Property approval started");
-        LOGGER.debug("approve: Property: " + property);
-        LOGGER.debug("approve: BasicProperty: " + basicProp);
+        if(LOGGER.isDebugEnabled())
+        LOGGER.debug("approve: Property approval started for Property: " + property +" BasicProperty: " + basicProp);
         property.setStatus(STATUS_DEMAND_INACTIVE);
         final String assessmentNo = propertyTaxNumberGenerator.generateAssessmentNumber();
         basicProp.setUpicNo(assessmentNo);
@@ -506,7 +505,6 @@ public class CreatePropertyAction extends WorkflowAction {
         propService.setWFPropStatValActive(basicProp);
         approved = true;
         setWardId(basicProp.getPropertyID().getWard().getId());
-        processAndStoreDocumentsWithReason(basicProp, DOCS_CREATE_PROPERTY);
         basicPropertyService.applyAuditing(property.getState());
         basicPropertyService.update(basicProp);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
@@ -520,14 +518,17 @@ public class CreatePropertyAction extends WorkflowAction {
                     .getEmployee().getUsername();
         setAckMessage("Property Created Successfully in the System and Forwarded to : ");
         setAssessmentNoMessage(" for Notice Genaration with assessment number : ");
+        if(LOGGER.isDebugEnabled()) {
         LOGGER.debug("approve: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
         LOGGER.debug("approve: Property approval ended");
+        }
         return RESULT_ACK;
     }
 
     @SkipValidation
     @Action(value = "/createProperty-reject")
     public String reject() {
+        if(LOGGER.isDebugEnabled())
         LOGGER.debug("reject: Property rejection started");
         basicPropertyService.applyAuditing(property.getState());
         basicProp.setUnderWorkflow(true);
@@ -546,12 +547,15 @@ public class CreatePropertyAction extends WorkflowAction {
         } else
             setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : ");
         setApplicationNoMessage(" with application No :");
+        if(LOGGER.isDebugEnabled()) {
         LOGGER.debug("reject: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
         LOGGER.debug("reject: Property rejection ended");
+        }
         return RESULT_ACK;
     }
 
     private void setFloorDetails(final Property property) {
+        if(LOGGER.isDebugEnabled())
         LOGGER.debug("Entered into setFloorDetails, Property: " + property);
         final List<Floor> floorList = property.getPropertyDetail().getFloorDetails();
         property.getPropertyDetail().setFloorDetailsProxy(floorList);
@@ -561,6 +565,7 @@ public class CreatePropertyAction extends WorkflowAction {
             LOGGER.debug("setFloorDetails: floorNoStr[" + i + "]->" + floorNoStr[i]);
             i++;
         }
+        if(LOGGER.isDebugEnabled())
         LOGGER.debug("Exiting from setFloorDetails");
     }
 
@@ -572,19 +577,17 @@ public class CreatePropertyAction extends WorkflowAction {
     @SuppressWarnings("unchecked")
     @SkipValidation
     public void prepare() {
-
+        if(LOGGER.isDebugEnabled())
         LOGGER.debug("Entered into prepare, ModelId: " + getModelId() + ", PropTypeId: " + propTypeId + ", ZoneId: "
                 + zoneId + ", WardId: " + wardId);
-
-        currDate = new Date();
         setUserInfo();
         propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser());
         if (isNotBlank(getModelId())) {
             property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
             basicProp = property.getBasicProperty();
-            LOGGER.debug("prepare: Property by ModelId: " + property);
-            LOGGER.debug("prepare: BasicProperty on property: " + basicProp);
+            if(LOGGER.isDebugEnabled())
+            LOGGER.debug("prepare: Property by ModelId: " + property + "BasicProperty on property: " + basicProp);
         }
         documentTypes = propService.getPropertyCreateDocumentTypes();
         final List<FloorType> floorTypeList = getPersistenceService().findAllBy("from FloorType order by name");
@@ -646,6 +649,7 @@ public class CreatePropertyAction extends WorkflowAction {
         addDropdownData("taxExemptedList", CommonServices.getTaxExemptedList());
 
         super.prepare();
+        if(LOGGER.isDebugEnabled())
         LOGGER.debug("prepare: PropTypeList: "
                 + (propTypeList != null ? propTypeList : "NULL")
                 + ", PropOccuList: "
@@ -664,6 +668,7 @@ public class CreatePropertyAction extends WorkflowAction {
     }
 
     private BasicProperty createBasicProp(final Character status) {
+        if(LOGGER.isDebugEnabled())
         LOGGER.debug("Entered into createBasicProp, Property: " + property + ", status: " + status + ", wardId: "
                 + wardId);
 
@@ -687,6 +692,7 @@ public class CreatePropertyAction extends WorkflowAction {
         basicPropertyService.createOwners(property, basicProperty, ownerAddress);
         property.setBasicProperty(basicProperty);
         property.setPropertyModifyReason(PROP_CREATE_RSN);
+        if(LOGGER.isDebugEnabled())
         LOGGER.debug("BasicProperty: " + basicProperty + "\nExiting from createBasicProp");
         return basicProperty;
     }
@@ -763,6 +769,7 @@ public class CreatePropertyAction extends WorkflowAction {
 
     private void updatePropAddress(final BasicProperty basicProperty) {
 
+        if(LOGGER.isDebugEnabled())
         LOGGER.debug("Entered into createPropAddress, \nAreaId: " + getBlockId() + ", House Number: "
                 + getHouseNumber() + ", OldHouseNo: " + ", AddressStr: " + getAddressStr() + ", PinCode: "
                 + getPinCode());
@@ -797,6 +804,7 @@ public class CreatePropertyAction extends WorkflowAction {
 
     private PropertyAddress createPropAddress() {
 
+        if(LOGGER.isDebugEnabled())
         LOGGER.debug("Entered into createPropAddress, \nAreaId: " + getBlockId() + ", House Number: "
                 + getHouseNumber() + ", OldHouseNo: " + ", AddressStr: " + getAddressStr() + ", PinCode: "
                 + getPinCode());
@@ -821,6 +829,7 @@ public class CreatePropertyAction extends WorkflowAction {
             ownerAddress.setStreetRoadLine(getCorrAddress2());
             ownerAddress.setPinCode(getCorrPinCode());
         }
+        if(LOGGER.isDebugEnabled())
         LOGGER.debug("PropertyAddress: " + propAddr + "\nExiting from createPropAddress");
         return (PropertyAddress) propAddr;
     }
@@ -846,6 +855,7 @@ public class CreatePropertyAction extends WorkflowAction {
 
     @Override
     public void validate() {
+        if(LOGGER.isDebugEnabled())
         LOGGER.debug("Entered into validate\nZoneId: " + zoneId + ", WardId: " + wardId + ", AreadId: " + blockId
                 + ", HouseNumber: " + houseNumber + ", PinCode: " + pinCode + ", MutationId: " + mutationId);
 
@@ -942,6 +952,7 @@ public class CreatePropertyAction extends WorkflowAction {
     @ValidationErrorPage("dataEntry")
     @Action(value = "/createProperty-createDataEntry")
     public String save() {
+        if(LOGGER.isDebugEnabled())
         LOGGER.debug("create: Property creation started, Property: " + property + ", zoneId: " + zoneId + ", wardId: "
                 + wardId + ", blockId: " + blockId + ", areaOfPlot: " + areaOfPlot + ", dateOfCompletion: "
                 + dateOfCompletion + ", taxExemptedReason: " + ", propTypeId: " + propTypeId + ", propUsageId: "
@@ -954,6 +965,7 @@ public class CreatePropertyAction extends WorkflowAction {
         basicProperty.setUpicNo(upicNo);
         addDemandAndCompleteDate(PropertyTaxConstants.STATUS_ISACTIVE, basicProperty,
                 basicProperty.getPropertyMutationMaster());
+        if(LOGGER.isDebugEnabled())
         LOGGER.debug("create: BasicProperty after creatation: " + basicProperty);
         basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
         // basicPropertyService.applyAuditing(property);
@@ -964,9 +976,10 @@ public class CreatePropertyAction extends WorkflowAction {
         setAckMessage("Property data entry saved in the system successfully and created with Assessment No " + upicNo);
         // setApplicationNoMessage(" with application number : ");
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+        if(LOGGER.isDebugEnabled()) {
         LOGGER.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
         LOGGER.debug("create: Property creation ended");
-
+        }
         return "dataEntry-ack";
     }
 
@@ -1074,16 +1087,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
     public void setCorrPinCode(final String corrPinCode) {
         this.corrPinCode = corrPinCode;
-    }
-
-    @Override
-    public String getGenWaterRate() {
-        return genWaterRate;
-    }
-
-    @Override
-    public void setGenWaterRate(final String genWaterRate) {
-        this.genWaterRate = genWaterRate;
     }
 
     public BasicProperty getBasicProp() {
@@ -1234,14 +1237,6 @@ public class CreatePropertyAction extends WorkflowAction {
         this.newProperty = newProperty;
     }
 
-    public Date getCurrDate() {
-        return currDate;
-    }
-
-    public void setCurrDate(final Date currDate) {
-        this.currDate = currDate;
-    }
-
     public Long getLocality() {
         return locality;
     }
@@ -1312,30 +1307,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
     public void setBlockName(final String blockName) {
         this.blockName = blockName;
-    }
-
-    public String getApplicationDate() {
-        return applicationDate;
-    }
-
-    public void setApplicationDate(final String applicationDate) {
-        this.applicationDate = applicationDate;
-    }
-
-    public String getRegdDocNo() {
-        return regdDocNo;
-    }
-
-    public void setRegdDocNo(final String regdDocNo) {
-        this.regdDocNo = regdDocNo;
-    }
-
-    public Date getRegdDocDate() {
-        return regdDocDate;
-    }
-
-    public void setRegdDocDate(final Date regdDocDate) {
-        this.regdDocDate = regdDocDate;
     }
 
     @Override
