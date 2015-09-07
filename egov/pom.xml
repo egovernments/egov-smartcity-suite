@@ -24,7 +24,8 @@
         <module>egov-pgr</module>
 		<module>egov-collection</module>   
         <module>egov-demand</module>
-        <module>egov-ptis</module>       
+        <module>egov-ptis</module>
+        <!-- <module>egov-adtax</module> -->       
        	<module>egov-wtms</module> 
        	<module>egov-tl</module>
        	<module>egov-eisweb</module>
@@ -35,7 +36,8 @@
 		<module>egov-api</module>
         <module>egov-portalweb</module>
       	<module>egov-collectionweb</module>
-        <module>egov-ptisweb</module>        
+        <module>egov-ptisweb</module>
+        <!-- <module>egov-adtaxweb</module> -->        
         <module>egov-wtmsweb</module>
         <module>egov-dashboardweb</module>
         <module>egov-tlweb</module>
