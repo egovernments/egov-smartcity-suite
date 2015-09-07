@@ -77,7 +77,7 @@
 				cssClass="selectnew" onchange="makeMandatory();" /></td>
 		<td class="greybox"><s:text name="prntPropAssessmentNum" /> <span
 			class="mandatory1" id="prntMandatory">*</span> :</td>
-		<td class="greybox"><s:textfield name="parentIndex" id="parentIndex" size="12" maxlength="12"></s:textfield></td>
+		<td class="greybox"><s:textfield name="parentIndex" id="parentIndex" size="12" maxlength="10" onblur="validNumber(this);checkZero(this,'Parent Index');"></s:textfield></td>
 
 	</tr>
 

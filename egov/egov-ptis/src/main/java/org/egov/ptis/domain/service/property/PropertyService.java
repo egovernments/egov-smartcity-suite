@@ -273,18 +273,26 @@ public class PropertyService {
         if (floorTypeId != null && floorTypeId != -1) {
             final FloorType floorType = (FloorType) getPropPerServ().find("From FloorType where id = ?", floorTypeId);
             property.getPropertyDetail().setFloorType(floorType);
+        } else {
+            property.getPropertyDetail().setFloorType(null);
         }
         if (roofTypeId != null && roofTypeId != -1) {
             final RoofType roofType = (RoofType) getPropPerServ().find("From RoofType where id = ?", roofTypeId);
             property.getPropertyDetail().setRoofType(roofType);
+        } else {
+            property.getPropertyDetail().setRoofType(null);
         }
         if (wallTypeId != null && wallTypeId != -1) {
             final WallType wallType = (WallType) getPropPerServ().find("From WallType where id = ?", wallTypeId);
             property.getPropertyDetail().setWallType(wallType);
+        } else {
+            property.getPropertyDetail().setWallType(null);
         }
         if (woodTypeId != null && woodTypeId != -1) {
             final WoodType woodType = (WoodType) getPropPerServ().find("From WoodType where id = ?", woodTypeId);
             property.getPropertyDetail().setWoodType(woodType);
+        } else {
+            property.getPropertyDetail().setWoodType(null);
         }
 
         if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
