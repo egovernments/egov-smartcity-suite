@@ -271,7 +271,7 @@
 									"mutationId" : jQuery("#mutationId").val()
 								}
 							}).done(function(value) {
-								jQuery("#mutationFee").val(value);
+								jQuery("#mutationFee").val(roundoff(value));
 							});
 						});
 		function enableSaleDtls(obj) {

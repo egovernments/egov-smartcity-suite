@@ -180,7 +180,6 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
 
     @Transactional
     public void approvePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
-        checkAllMandatoryDocumentsAttached(propertyMutation);
         final PropertySource propertySource = basicProperty.getPropertyOwnerInfo().get(0).getSource();
         basicProperty.getPropertyOwnerInfo().clear();
         createUserIfNotExist(propertyMutation.getTransfereeInfos());
@@ -308,6 +307,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         noticeBean.setCurrentInstallment(PropertyTaxUtil.getCurrentInstallment().getDescription());
         final ReportRequest reportInput = new ReportRequest("transferProperty_notice", noticeBean, reportParams);
         reportInput.setReportFormat(FileFormat.PDF);
+        approvePropertyTransfer(basicProperty, propertyMutation);
         propertyMutation.transition().end();
         basicProperty.setUnderWorkflow(false);
         basicPropertyService.persist(basicProperty);

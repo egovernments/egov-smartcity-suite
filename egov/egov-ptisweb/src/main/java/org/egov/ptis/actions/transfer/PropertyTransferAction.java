@@ -307,7 +307,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/approve")
     public String approve() {
         transitionWorkFlow(propertyMutation);
-        transferOwnerService.approvePropertyTransfer(basicproperty, propertyMutation);
+        transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
         approverName = "";
         if (propertyService.isEmployee(propertyMutation.getCreatedBy()))
             mutationInitiatedBy = propertyMutation.getCreatedBy().getName();
