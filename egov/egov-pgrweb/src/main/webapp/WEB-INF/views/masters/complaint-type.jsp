@@ -67,12 +67,24 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"> 
 						<spring:message	code="lbl.complaintTypeCode" /></label>
+						<c:choose>
+							<c:when test="${mode != 'update'}">
 						<div class="col-sm-6 add-margin">
 							<form:input path="code" id="comp_type_code"
 								cssClass="form-control is_valid_alphaNumWithsplchar"
 								cssErrorClass="form-control error" />
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
+						</c:when>
+						<c:otherwise>
+							<div class="col-sm-6 add-margin">
+							<form:input path="code" id="comp_type_code"
+								cssClass="form-control is_valid_alphaNumWithsplchar"
+								cssErrorClass="form-control error" disabled="true"/>
+							<form:errors path="code" cssClass="error-msg" />
+						</div>
+						</c:otherwise>
+						</c:choose>
 					</div>
 					
 					<div class="form-group">

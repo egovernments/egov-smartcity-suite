@@ -47,7 +47,7 @@
 	    <c:if test="${not empty message}">
 	        <div class="alert alert-success" role="alert">${message}</div>
 	    </c:if>
-        <form:form id="viewHierarchyType" method="post"   modelAttribute="complaintType" class="form-horizontal form-groups-bordered">
+        <form:form id="searchComplaintType" method="post"   modelAttribute="complaintType" class="form-horizontal form-groups-bordered">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -61,9 +61,9 @@
 						</spring:message><span class="mandatory"></span></label>
 						<div class="col-sm-6 add-margin">
                             <form:select path="name"
-                                         id="comp_type_dept" cssClass="form-control" cssErrorClass="form-control error" >
+                                         id="comp_type" cssClass="form-control" cssErrorClass="form-control error" >
                                 <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-                                <form:options items="${complaintTypes}" itemValue="name" itemLabel="name"/>
+                                <form:options items="${complaintTypes}" itemValue="code" itemLabel="name"/>
                             </form:select>
                            	<form:errors path="name" cssClass="error-msg"/>
                        	</div>

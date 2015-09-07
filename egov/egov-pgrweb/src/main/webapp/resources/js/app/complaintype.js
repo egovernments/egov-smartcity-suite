@@ -53,7 +53,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	$("#buttonEdit").click(function() {
-		var action = '/pgr/complainttype/update/' + $('#compTypeName').val();
+		var action = '/pgr/complainttype/update/' + $('#compTypeCode').val();
 		$('#complaintTypeViewForm').attr('method', 'get');
 		$('#complaintTypeViewForm').attr('action', action);
 	});

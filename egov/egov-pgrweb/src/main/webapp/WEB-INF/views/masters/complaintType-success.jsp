@@ -47,7 +47,7 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title text-center no-float">
-					<strong>${message}</strong>
+					<strong><spring:message code="${message}" /></strong>
 				</div>
 			</div>
 			<form:form id="complaintTypeViewForm" method="post"
@@ -59,8 +59,8 @@
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-name">
 							<c:out value="${complaintType.name }"></c:out>
-							<input id="compTypeName" type="hidden"
-								value="<c:out value="${complaintType.name }" />" />
+							<input id="compTypeCode" type="hidden"
+								value="<c:out value="${complaintType.code}" />" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.complaintTypeCode" />

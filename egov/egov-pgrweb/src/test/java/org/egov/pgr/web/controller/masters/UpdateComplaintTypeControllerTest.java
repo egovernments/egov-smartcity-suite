@@ -78,7 +78,7 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
     private ComplaintTypeService complaintTypeService;
     
     private MockMvc mockMvc;
-    private String name;
+    private String code;
 
     @Override
     protected UpdateComplaintTypeController initController() {
@@ -106,11 +106,11 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
         });
         mvcBuilder.setConversionService(formatterService);
         mockMvc = mvcBuilder.build();
-        name = "existing";
+        code = "existing";
         ComplaintType complaintType = new ComplaintType();
         complaintType.setDepartment(department);
-        complaintType.setName("existing");
-        when(complaintTypeService.findByName(name)).thenReturn(complaintType);
+        complaintType.setCode("existing");
+        when(complaintTypeService.findByCode(code)).thenReturn(complaintType);
     }
 
     @Test
@@ -120,11 +120,11 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
         List<Department> departments = Arrays.asList(department1, department2);
 
         ComplaintType complaintType = new ComplaintType();
-        complaintType.setName("existing");
-        name = "existing";
+        complaintType.setCode("existing");
+        code = "existing";
         when(departmentService.getAllDepartments()).thenReturn(departments);
 
-        MvcResult result = this.mockMvc.perform(get("/complainttype/update/"+name))
+        MvcResult result = this.mockMvc.perform(get("/complainttype/update/"+code))
                 .andExpect(view().name("complaint-type"))
                 .andExpect(model().attribute("departments", departments))
                 .andExpect(model().attributeExists("complaintType"))
@@ -137,7 +137,7 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
     @Test
     public void shouldUpdateComplaintType() throws Exception {
         ComplaintType complaintType = new ComplaintType();
-        complaintType.setName("existing");
+        complaintType.setCode("existing");
         when(complaintTypeService.updateComplaintType(any(ComplaintType.class))).thenReturn(complaintType);
         this.mockMvc.perform(post("/complainttype/update/existing")
                 .param("name", "existing-complaint-type").param("code", "Test"))

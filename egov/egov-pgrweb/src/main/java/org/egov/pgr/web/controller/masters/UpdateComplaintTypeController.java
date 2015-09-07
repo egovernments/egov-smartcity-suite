@@ -59,7 +59,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/complainttype/update/{name}")
+@RequestMapping("/complainttype/update/{code}")
 public class UpdateComplaintTypeController {
 
     private final DepartmentService departmentService;
@@ -79,9 +79,9 @@ public class UpdateComplaintTypeController {
     }
 
     @ModelAttribute
-    public ComplaintType complaintTypeModel(@PathVariable final String name, final Model model) {
+    public ComplaintType complaintTypeModel(@PathVariable final String code, final Model model) {
         model.addAttribute("mode", "update");
-        return complaintTypeService.findByName(name);
+        return complaintTypeService.findByCode(code);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -97,13 +97,13 @@ public class UpdateComplaintTypeController {
         complaintType = complaintTypeService.updateComplaintType(complaintType);
         redirectAttrs.addFlashAttribute("complaintType", complaintType);
         redirectAttrs.addFlashAttribute("message", "msg.comp.type.update.success");
-        return "redirect:" + complaintType.getName() + COMPLAINTTYPE_UPDATE_SUCCESS;
+        return "redirect:" + complaintType.getCode() + COMPLAINTTYPE_UPDATE_SUCCESS;
     }
 
     @RequestMapping(COMPLAINTTYPE_UPDATE_SUCCESS)
-    public ModelAndView successView(@PathVariable final String name,
+    public ModelAndView successView(@PathVariable final String code,
             @ModelAttribute final ComplaintType complaintType) {
         return new ModelAndView("complaintType/complaintType-success", "complaintType",
-                complaintTypeService.findByName(name));
+                complaintTypeService.findByCode(code));
     }
 }
