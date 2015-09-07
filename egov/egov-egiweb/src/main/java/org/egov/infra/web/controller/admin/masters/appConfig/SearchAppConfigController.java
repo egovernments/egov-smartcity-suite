@@ -68,12 +68,12 @@ public class SearchAppConfigController {
     }
 
     @ModelAttribute
-    public AppConfig complaintTypeModel() {
+    public AppConfig appConfigModel() {
         return new AppConfig();
     }
 
     @ModelAttribute(value = "appConfigList")
-    public List<AppConfig> listComplaintTypes() {
+    public List<AppConfig> listAppConfig() {
         return appConfigValueService.findAll();
     }
     @ModelAttribute(value = "modulesList")

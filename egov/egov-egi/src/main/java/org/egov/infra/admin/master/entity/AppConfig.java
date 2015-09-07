@@ -104,7 +104,6 @@ public class AppConfig extends AbstractAuditable {
     @Column(name = "description")
     private String description;
 
-    @OrderBy("id asc")
     @OneToMany(mappedBy = "key", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AppConfigValues> appDataValues = new ArrayList<AppConfigValues>(0);
 

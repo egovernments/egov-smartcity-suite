@@ -70,6 +70,9 @@ public class AppConfigValueService {
 	public List<AppConfigValues> getConfigValuesByModuleAndKey(final String moduleName, final String keyName) {
 		return appConfigValueRepository.findByKey_KeyNameAndKey_Module_Name(keyName, moduleName);
 	}
+	public List<AppConfigValues> getConfigValuesByModuleAndKeyByValueAsc(final String moduleName, final String keyName) {
+            return appConfigValueRepository.findByKey_KeyNameAndKey_Module_NameOrderByValueAsc(keyName, moduleName);
+        }
 
 	public AppConfigValues getAppConfigValueByDate(final String moduleName,final String keyName, final Date effectiveFrom) {
 		final Date[] dateRange = DateUtils.constructDateRange(effectiveFrom,effectiveFrom);

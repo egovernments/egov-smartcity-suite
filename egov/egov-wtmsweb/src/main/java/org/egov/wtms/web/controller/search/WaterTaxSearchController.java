@@ -59,6 +59,7 @@ import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.web.contract.ConnectionSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -84,9 +85,12 @@ public class WaterTaxSearchController {
     public ConnectionSearchRequest searchRequest() {
         return new ConnectionSearchRequest();
     }
+
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection" List Contals 1st Entry "CSC Operator"
-     * @return String if Logged in User is CSC Operattor 
+     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection"
+     * List Contals 1st Entry "CSC Operator" order by value asc
+     * 
+     * @return String if Logged in User is CSC Operattor
      */
     @ModelAttribute("cscUserRole")
     public String getCurrentUserRole() {
@@ -94,15 +98,20 @@ public class WaterTaxSearchController {
         String cscUserRole = "";
         for (final Role userrole : currentUser.getRoles())
             if (userrole != null
-                    && userrole.getName().equals(waterTaxUtils.getUserRolesForLoggedInUser().get(0)!=null?waterTaxUtils.getUserRolesForLoggedInUser().get(0).getValue():"")) {
+            && userrole.getName().equals(
+                            waterTaxUtils.getUserRolesForLoggedInUser().get(0) != null ? waterTaxUtils
+                                    .getUserRolesForLoggedInUser().get(0).getValue() : "")) {
                 cscUserRole = userrole.getName();
                 break;
             }
         return cscUserRole;
     }
+
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection" List Contals 2nd Entry "ULB Operator"
-     * @return String if Logged in User is ULB Operattor 
+     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection"
+     * List Contals 4th Entry "ULB Operator" order by value asc
+     * 
+     * @return String if Logged in User is ULB Operattor
      */
     @ModelAttribute("ulbUserRole")
     public String getUlbOperatorUserRole() {
@@ -110,15 +119,20 @@ public class WaterTaxSearchController {
         final User currentUser = securityUtils.getCurrentUser();
         for (final Role userrole : currentUser.getRoles())
             if (userrole != null
-                    && userrole.getName().equals(waterTaxUtils.getUserRolesForLoggedInUser().get(1)!=null? waterTaxUtils.getUserRolesForLoggedInUser().get(1).getValue():"")) {
+            && userrole.getName().equals(
+                            waterTaxUtils.getUserRolesForLoggedInUser().get(3) != null ? waterTaxUtils
+                                    .getUserRolesForLoggedInUser().get(3).getValue() : "")) {
                 userRole = userrole.getName();
                 break;
             }
         return userRole;
     }
+
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection" List Contals 4th Entry "Super User"
-     * @return String if Logged in User is SUPER USER 
+     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection"
+     * List Contals 2nd Entry "Super User" order by value asc
+     * 
+     * @return String if Logged in User is SUPER USER
      */
     @ModelAttribute("superUserRole")
     public String getSuperUserRole() {
@@ -126,14 +140,19 @@ public class WaterTaxSearchController {
         final User currentUser = securityUtils.getCurrentUser();
         for (final Role userrole : currentUser.getRoles())
             if (userrole != null
-                    && userrole.getName().equals(waterTaxUtils.getUserRolesForLoggedInUser().get(3)!=null ? waterTaxUtils.getUserRolesForLoggedInUser().get(3).getValue():"")) {
+            && userrole.getName().equals(
+                            waterTaxUtils.getUserRolesForLoggedInUser().get(2) != null ? waterTaxUtils
+                                    .getUserRolesForLoggedInUser().get(2).getValue() : "")) {
                 userRole = userrole.getName();
                 break;
             }
         return userRole;
     }
+
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection" List Contals 3rd Entry "Water Tax Approver"
+     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection"
+     * List Contals 3th Entry "Water Tax Approver" order by value asc
+     * 
      * @return String if Logged in User is Water Tax Approver
      */
     @ModelAttribute("approverUserRole")
@@ -142,14 +161,19 @@ public class WaterTaxSearchController {
         final User currentUser = securityUtils.getCurrentUser();
         for (final Role userrole : currentUser.getRoles())
             if (userrole != null
-                    && userrole.getName().equals(waterTaxUtils.getUserRolesForLoggedInUser().get(2)!=null?waterTaxUtils.getUserRolesForLoggedInUser().get(2).getValue():"")) {
+            && userrole.getName().equals(
+                            waterTaxUtils.getUserRolesForLoggedInUser().get(4) != null ? waterTaxUtils
+                                    .getUserRolesForLoggedInUser().get(4).getValue() : "")) {
                 userRole = userrole.getName();
                 break;
             }
         return userRole;
     }
+
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection" List Contals 5th Entry "Operator"
+     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection"
+     * List Contals 5th Entry "Operator"
+     * 
      * @return String if Logged in User is Operator
      */
     @ModelAttribute("operatorRole")
@@ -158,7 +182,9 @@ public class WaterTaxSearchController {
         final User currentUser = securityUtils.getCurrentUser();
         for (final Role userrole : currentUser.getRoles())
             if (userrole != null
-                    && userrole.getName().equals(waterTaxUtils.getUserRolesForLoggedInUser().get(4)!=null ?waterTaxUtils.getUserRolesForLoggedInUser().get(4).getValue():"")) {
+            && userrole.getName().equals(
+                            waterTaxUtils.getUserRolesForLoggedInUser().get(1) != null ? waterTaxUtils
+                                    .getUserRolesForLoggedInUser().get(1).getValue() : "")) {
                 userRole = userrole.getName();
                 break;
             }
@@ -166,7 +192,7 @@ public class WaterTaxSearchController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String newSearchForm() {
+    public String newSearchForm(final Model model) {
         return "waterTaxSearch-newForm";
     }
 

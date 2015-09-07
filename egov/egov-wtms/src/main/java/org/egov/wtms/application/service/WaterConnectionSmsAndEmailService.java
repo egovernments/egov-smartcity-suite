@@ -92,27 +92,23 @@ public class WaterConnectionSmsAndEmailService {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_MOBILE_EMAIL);
-        final String smsMsg = null;
-        final String body = "";
-        final String subject = "";
         final String email = assessmentDetails.getPrimaryEmail();
         final String mobileNumber = assessmentDetails.getPrimaryMobileNo();
         if (waterConnectionDetails != null && waterConnectionDetails.getApplicationType() != null
                 && waterConnectionDetails.getApplicationType().getCode() != null
                 && waterConnectionDetails.getStatus() != null && waterConnectionDetails.getStatus().getCode() != null) {
+            
             getApplicantNameBYAssessmentDetail(waterConnectionDetails);
 
             // SMS and Email for new connection
             if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
-                getSmsAndEmailForNewConnection(waterConnectionDetails, email, mobileNumber, smsMsg, body, subject);
+                getSmsAndEmailForNewConnection(waterConnectionDetails, email, mobileNumber);
             else if (WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType()
                     .getCode()))
-                getSmsAndEmailForAdditionalConnection(waterConnectionDetails, email, mobileNumber, smsMsg, body,
-                        subject);
+                getSmsAndEmailForAdditionalConnection(waterConnectionDetails, email, mobileNumber);
             else if (WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType()
                     .getCode()))
-                getSmsAndEmailForChangeOfUsageConnection(waterConnectionDetails, email, mobileNumber, smsMsg, body,
-                        subject);
+                getSmsAndEmailForChangeOfUsageConnection(waterConnectionDetails, email, mobileNumber);
         }
     }
 
@@ -126,7 +122,11 @@ public class WaterConnectionSmsAndEmailService {
      * @param subject
      */
     private void getSmsAndEmailForChangeOfUsageConnection(final WaterConnectionDetails waterConnectionDetails,
-            final String email, final String mobileNumber, String smsMsg, String body, String subject) {
+            final String email, final String mobileNumber) {
+         String smsMsg = null;
+         String body = "";
+         String subject = "";
+       
         if (waterConnectionDetails.getState().getHistory().isEmpty()
                 && WaterTaxConstants.APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus()
                         .getCode())) {
@@ -211,7 +211,10 @@ public class WaterConnectionSmsAndEmailService {
      * @param subject
      */
     private void getSmsAndEmailForAdditionalConnection(final WaterConnectionDetails waterConnectionDetails,
-            final String email, final String mobileNumber, String smsMsg, String body, String subject) {
+            final String email, final String mobileNumber) {
+        String smsMsg = null;
+        String body = "";
+        String subject = "";
         if (waterConnectionDetails.getState().getHistory().isEmpty()
                 && WaterTaxConstants.APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus()
                         .getCode())) {
@@ -291,8 +294,10 @@ public class WaterConnectionSmsAndEmailService {
      * @param subject
      */
     public void getSmsAndEmailForNewConnection(final WaterConnectionDetails waterConnectionDetails, final String email,
-            final String mobileNumber, String smsMsg, String body, String subject) {
-
+            final String mobileNumber) {
+        String smsMsg = null;
+        String body = "";
+        String subject = "";
         if (waterConnectionDetails.getState().getHistory().isEmpty()
                 && WaterTaxConstants.APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus()
                         .getCode())) {

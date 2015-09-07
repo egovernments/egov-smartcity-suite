@@ -148,11 +148,11 @@ public class WaterTaxUtils {
      * @return appconfigValues List for Keyname='ROLESFORLOGGEDINUSER'
      */
     public List<AppConfigValues> getUserRolesForLoggedInUser() {
-        final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKeyByValueAsc(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ROLESFORLOGGEDINUSER);
-
+        //TODO: this method getting Values by Order By value Asc and based on that returning LoggedInRoles
         return !appConfigValueList.isEmpty() ? appConfigValueList : null;
-    }
+    } 
     
     public Boolean getCurrentUserRole(final User currentUser) {
         Boolean applicationByOthers = false;

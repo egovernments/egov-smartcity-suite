@@ -75,13 +75,13 @@ public class ViewAppConfigController extends MultiActionController {
     }
 
     @RequestMapping(value = "view", method = RequestMethod.GET)
-    public String complaintTypeViewForm(@ModelAttribute AppConfig appConfig, Model model) {
+    public String AppConfigViewForm(@ModelAttribute AppConfig appConfig, Model model) {
         return "view-appconfig";
 
     }
     
     @RequestMapping(value = "/viewList/{id}", method = RequestMethod.GET)
-    public String viewRouterForm(final Model model, @ModelAttribute AppConfig appConfig,@PathVariable final Long id) {
+    public String viewAppConfigForm(final Model model, @ModelAttribute AppConfig appConfig,@PathVariable final Long id) {
     	appConfig=appConfigService.findById(id);
     	model.addAttribute("appConfig", appConfig);
         return "appConfigList-view";
