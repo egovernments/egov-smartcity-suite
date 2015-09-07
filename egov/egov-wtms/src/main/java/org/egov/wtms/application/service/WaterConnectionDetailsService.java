@@ -71,7 +71,6 @@ import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
-import org.egov.wtms.application.workflow.ApplicationWorkflowCustomImpl;
 import org.egov.wtms.elasticSearch.service.ConsumerIndexService;
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.DocumentNames;
@@ -85,6 +84,8 @@ import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -98,6 +99,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class WaterConnectionDetailsService {
 
     protected WaterConnectionDetailsRepository waterConnectionDetailsRepository;
+    private static final Logger LOG = LoggerFactory.getLogger(WaterConnectionDetailsService.class);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -195,15 +197,20 @@ public class WaterConnectionDetailsService {
             waterConnectionDetails.setDisposalDate(getDisposalDate(waterConnectionDetails, appProcessTime));
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
-      
+        if(LOG.isDebugEnabled())
+            LOG.debug(" persisting WaterConnectionDetail object is completed and WorkFlow API Stared ");
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = (ApplicationWorkflowCustomDefaultImpl) beanProvider
                 .getBean("applicationWorkflowCustomDefaultImpl");
+        if(LOG.isDebugEnabled())
+            LOG.debug("applicationWorkflowCustomDefaultImpl initialization is done");
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedWaterConnectionDetails, approvalPosition, approvalComent, additionalRule,
                 workFlowAction);
 
         updateIndexes(savedWaterConnectionDetails);
         waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, workFlowAction);
-
+        if(LOG.isDebugEnabled())
+            LOG.debug("updating water Connection Deatail is complted");
+        
         return savedWaterConnectionDetails;
     }
 
@@ -420,7 +427,9 @@ public class WaterConnectionDetailsService {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS);
-
+        if(LOG.isDebugEnabled())
+            LOG.debug(" updating Indexes Started... ");
+       
         if (waterConnectionDetails.getLegacy()) {
             consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails);
             return;
@@ -466,13 +475,19 @@ public class WaterConnectionDetailsService {
                         && !waterConnectionDetails.getApplicationType().getCode()
                         .equalsIgnoreCase(WaterTaxConstants.CHANGEOFUSE))
                     waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
+                if(LOG.isDebugEnabled())
+                    LOG.debug(" updating Consumer Index Started... ");
                 consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails);
+                if(LOG.isDebugEnabled())
+                    LOG.debug(" updating Consumer Index completed... ");
+               
             }
         } else {
             final String strQuery = "select md from EgModules md where md.name=:name";
             final Query hql = getCurrentSession().createQuery(strQuery);
             hql.setParameter("name", WaterTaxConstants.EGMODULES_NAME);
-
+            if(LOG.isDebugEnabled())
+                LOG.debug(" updating Application Index creation Started... ");
             final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
                     ((EgModules) hql.uniqueResult()).getName(), waterConnectionDetails.getApplicationNumber(),
                     waterConnectionDetails.getApplicationDate(), waterConnectionDetails.getApplicationType().getName(),
@@ -488,6 +503,8 @@ public class WaterConnectionDetailsService {
 
             final ApplicationIndex applicationIndex = applicationIndexBuilder.build();
             applicationIndexService.createApplicationIndex(applicationIndex);
+            if(LOG.isDebugEnabled())
+                LOG.debug(" updating Application Index creation complted... ");
         }
     }
 

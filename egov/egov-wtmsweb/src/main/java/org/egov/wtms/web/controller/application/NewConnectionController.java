@@ -60,6 +60,8 @@ import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.egov.wtms.web.contract.WorkflowContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -76,7 +78,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/application")
 public class NewConnectionController extends GenericConnectionController {
-
+    private static final Logger LOG = LoggerFactory.getLogger(NewConnectionController.class);
     private final WaterConnectionDetailsService waterConnectionDetailsService;
     private final ApplicationTypeService applicationTypeService;
     private final ConnectionDemandService connectionDemandService;
@@ -159,11 +161,13 @@ public class NewConnectionController extends GenericConnectionController {
         if (waterConnectionDetails.getState() == null)
             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));
+        if(LOG.isDebugEnabled())
+            LOG.debug("Model Level Validation occurs = "+ resultBinder);
         if (resultBinder.hasErrors()) {
             model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
             return "newconnection-form";
         }
-
+        
         waterConnectionDetails.getApplicationDocs().clear();
         waterConnectionDetails.setApplicationDocs(applicationDocs);
 
@@ -189,7 +193,8 @@ public class NewConnectionController extends GenericConnectionController {
 
         waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
                 approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
-
+        if(LOG.isDebugEnabled())
+            LOG.debug("createNewWaterConnection is completed ");
         final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                 + waterTaxUtils.getApproverUserName(approvalPosition);
         return "redirect:/application/application-success?pathVars=" + pathVars;

@@ -66,6 +66,8 @@ import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.elasticsearch.common.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -75,6 +77,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 // wise class will this classa as abstract and extends this to respective city
 // class
 public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkflowCustom {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationWorkflowCustomImpl.class);
 
     @Autowired
     private WaterConnectionDetailsRepository waterConnectionDetailsRepository;
@@ -118,7 +122,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
     public void createCommonWorkflowTransition(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) {
-
+        if(LOG.isDebugEnabled())
+            LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
@@ -204,7 +209,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             }
 
         }
-
+        if(LOG.isDebugEnabled())
+            LOG.debug(" WorkFlow Transition Completed  ...");
     }
-
+    
 }
