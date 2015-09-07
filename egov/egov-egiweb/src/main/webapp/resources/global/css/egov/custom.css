@@ -246,6 +246,10 @@ table.dataTable tbody tr:hover
 	border-bottom: 1px solid #ebebeb;
 }
 
+.add-border:last-child {
+    border-bottom:none;
+}
+
 .img-width {
 	width: 260px;
 	height: 180px;

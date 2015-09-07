@@ -102,211 +102,299 @@
 			
 			<div class="main-content">
 				
-				<!-- <div class="main-before-footer"> -->
-				<div class="row">
-					<div class="col-md-12">
-						
-						<div class="panel panel-primary" data-collapsed="0">
-							
-							<div class="panel-heading">
-								<div class="panel-title">
-									Hoarding Master
-								</div>
-								
-							</div>
-							
-							<div class="panel-body custom-form">
-								
-								<form role="form" id="complaintform" class="form-horizontal form-groups-bordered">
-									
-									<div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Hoarding Location<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <select class="form-control"><option>Select from below</option></select>
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Site Number</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-                                        </div>
-
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Number<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Details<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-                                        </div>
-
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Agency Name</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Total Area (Sq.ft)</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-                                        </div>
-
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Asset Code</label>
-                                        <div class="col-sm-3 add-margin">
-                                           <div class="input-group">
-                                                <input id="propertyIdentifier" name="connection.propertyIdentifier" data-pattern="alphanumerichyphenbackslash" min="3" class="form-control patternvalidation" required="required" type="text" value="" maxlength="50"> 
-                                                <span class="input-group-addon"> <i class="fa fa-search specific"></i></span>
+                <div class="row">
+                
+                    <div class="col-md-12">
+                        
+                        <div class="panel panel-primary" data-collapsed="0">
+				           
+                            <div class="panel-heading">
+                                
+                                <ul class="nav nav-tabs" id="settingstab">
+                                    <li class="active"><a data-toggle="tab" href="#hoardingdetails" data-tabidx="0" aria-expanded="false">Hoarding Details</a></li>
+                                    <li class=""><a data-toggle="tab" href="#hoardingattachments" data-tabidx="1" aria-expanded="false">Attachments</a></li>
+                                </ul>
+                                
+                            </div>
+                            
+                            <div class="panel-body custom-form">
+                                <div class="tab-content">
+                                    <div class="tab-pane fade active in" id="hoardingdetails">
+                                        <form role="form" class="form-horizontal form-groups-bordered">
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Application No<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control" required>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Permission No<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control" required>
+                                                </div>
                                             </div>
-
-                                        </div>
-
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Application Date<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control datepicker" required>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Constructed Date<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control datepicker" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Hoarding No<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control" required>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Hoarding Name<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Type<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control" required>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Agency<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Advertiser<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control" required>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Advertisement Particulars<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Property Type<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Property Assessment No</label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control"/>
+                                                        <span class="input-group-addon">
+                                                        <i class="fa fa-search specific"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Owner Details<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control" required>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Hoarding Status<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control" required>
+                                                </div>
+                                            </div>
+                                            <div class="panel-heading custom_form_panel_heading">
+                                                <div class="panel-title">
+                                                   Structure
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Category<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Sub Category<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Measurement (No/SqMt/Sqft/Vol)<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control" required>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">UOM<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Length</label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Width</label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Breadth</label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Total Height of Structure<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Revenue Zone<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Revenue Ward<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Locality<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Address<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <textarea class="form-control"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Zone<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Ward<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Class<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control" required>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">TPBO/RI No</label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Duration of Advertisement<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                            </div>
+                                            <div class="panel-heading custom_form_panel_heading">
+                                                <div class="panel-title">
+                                                   Fee Details
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Tax<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control" required>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Encroachment Fees<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control" required>
+                                                </div>
+                                            </div>
+                                            <div class="panel-heading custom_form_panel_heading">
+                                                <div class="panel-title">
+                                                   Attach Documents
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="file" class="form-control" required>
+                                                </div>
+                                                <div class="col-sm-3 add-margin" style="cursor:pointer;">
+                                                    <div class="rounded-circle add-attachment" style="width: 35px;height:35px;line-height:35px;"><i class="fa fa-plus"></i></div>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
-                                    
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Zone</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <select class="form-control"><option>Select from below</option></select>
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Ward</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <select class="form-control"><option>Select from below</option></select>
-                                        </div>
-
+                                    <div class="tab-pane fade" id="hoardingattachments">
+                                        <form role="form" class="form-horizontal form-groups-bordered">
+                                            <div class="col-sm-12 view-content header-color hidden-xs">
+                                                <div class="col-sm-1 table-div-column">S.no</div>
+                                                <div class="col-sm-5 table-div-column">Document Name</div>
+                                                <div class="col-sm-3 table-div-column">Check List</div>
+                                                <div class="col-sm-3 table-div-column">Attach Document</div>	
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-1 text-center">1</div>
+                                                <div class="col-sm-5 text-center">Document 1</div>
+                                                <div class="col-sm-3 text-center"><input type="checkbox" required></div>
+                                                <div class="col-sm-3 text-center"><input type="file" class="form-control" required></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-1 text-center">2</div>
+                                                <div class="col-sm-5 text-center">Document 2</div>
+                                                <div class="col-sm-3 text-center"><input type="checkbox" required></div>
+                                                <div class="col-sm-3 text-center"><input type="file" class="form-control" required></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-1 text-center">3</div>
+                                                <div class="col-sm-5 text-center">Document 3</div>
+                                                <div class="col-sm-3 text-center"><input type="checkbox" required></div>
+                                                <div class="col-sm-3 text-center"><input type="file" class="form-control" required></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-1 text-center">4</div>
+                                                <div class="col-sm-5 text-center">Document 4</div>
+                                                <div class="col-sm-3 text-center"><input type="checkbox" required></div>
+                                                <div class="col-sm-3 text-center"><input type="file" class="form-control" required></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-1 text-center">5</div>
+                                                <div class="col-sm-5 text-center">Document 5</div>
+                                                <div class="col-sm-3 text-center"><input type="checkbox" required></div>
+                                                <div class="col-sm-3 text-center"><input type="file" class="form-control" required></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-1 text-center">6</div>
+                                                <div class="col-sm-5 text-center">Document 6</div>
+                                                <div class="col-sm-3 text-center"><input type="checkbox" required></div>
+                                                <div class="col-sm-3 text-center"><input type="file" class="form-control" required></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-1 text-center">7</div>
+                                                <div class="col-sm-5 text-center">Document 7</div>
+                                                <div class="col-sm-3 text-center"><input type="checkbox" required></div>
+                                                <div class="col-sm-3 text-center"><input type="file" class="form-control" required></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-1 text-center">8</div>
+                                                <div class="col-sm-5 text-center">Document 8</div>
+                                                <div class="col-sm-3 text-center"><input type="checkbox" required></div>
+                                                <div class="col-sm-3 text-center"><input type="file" class="form-control" required></div>
+                                            </div>
+                                        </form>
                                     </div>
-                                    
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Revenue Zone</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <select class="form-control"><option>Select from below</option></select>
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Revenue Ward</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <select class="form-control"><option>Select from below</option></select>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Revenue Area</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <select class="form-control"><option>Select from below</option></select>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Address</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <textarea class="form-control"></textarea>
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Pin Code</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-                                        </div>
-
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Date of Creation<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control datepicker">
-                                        </div>
-                                    </div>
-									
-									<div class="panel-heading custom_form_panel_heading">
-										<div class="panel-title">
-											Hoarding Details
-										</div>
-										
-									</div>
-									
-									<div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Hoarding Number</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Old Hoarding Number</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-                                        </div>
-
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Hoarding Name</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Hoarding Type<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <select class="form-control"><option>Select from below</option></select>
-                                        </div>
-
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Hoarding Subtype</label>
-                                        <div class="col-sm-3 add-margin">
-                                           <select class="form-control"><option>Select from below</option></select>
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Hoarding Size</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <select class="form-control"><option>Select from below</option></select>
-                                        </div>
-
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Class</label>
-                                        <div class="col-sm-3 add-margin">
-                                           <select class="form-control"><option>Select from below</option></select>
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">T.P.B.O No.</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <select class="form-control"><option>Select from below</option></select>
-                                        </div>
-
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Attach Documents</label>
-                                        <div class="col-sm-3 add-margin">
-                                           <input type="file">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Remarks</label>
-                                        <div class="col-sm-8 add-margin">
-                                           <textarea class="form-control"></textarea>
-                                        </div>
-                                    </div>
-									
-								</form>
-							</div>
-							
-							
-						</div>
-						
-					</div>
-				</div>
-				
-				
-				<div class="row">
-					<div class="text-center">
-						<a href="javascript:void(0);" id="com_submit" class="btn btn-primary">Save</a>
-						<a href="javascript:void(0);" id="com_cancel" class="btn btn-default">Cancel</a>
-					</div>
-				</div>
-				
-				<!-- </div> -->
-				
-				
+                                </div>
+                            </div>
+                               
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">
+                                Submit
+                            </button>
+                            <button type="button" class="btn btn-default" onclick="window.location.reload()">
+                                Reset
+                            </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
+                                Close
+                            </button>
+                        </div>
+                            
+                    </div>
+                    
+                </div>
 				
 			</div>
 			
@@ -323,5 +411,6 @@
 	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global//js/bootstrap/bootstrap.js"></script>
 		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap-datepicker.js"></script>
 	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
+        <script src="../app/js/hoardingmaster.js"></script>
 	</body>
 </html>
