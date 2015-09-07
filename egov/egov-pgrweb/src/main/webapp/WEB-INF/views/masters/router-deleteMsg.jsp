@@ -50,13 +50,13 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<strong>${routerHeading}</strong>
+						<strong><spring:message code="${routerHeading}"/></strong>
 					</div>
 				</div> 
                 <div class="panel-body">
 					<div class="row add-border">
 						<div class="col-md-9 col-xs-6 add-margin" id="ct-name">
-							<strong><c:out value="${message}"></c:out></strong>
+							<strong><spring:message code="${message}"/></strong>
 						</div>
 					</div>
 				</div>

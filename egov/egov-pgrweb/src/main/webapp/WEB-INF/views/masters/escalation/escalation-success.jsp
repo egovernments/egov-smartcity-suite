@@ -47,7 +47,7 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title text-center no-float">
-					<strong>${message}</strong>
+					<strong><spring:message code="${message}"/></strong>
 				</div>
 			</div>
 			<form:form id="searchEscalationForm" method="post" modelAttribute="escalationForm"
