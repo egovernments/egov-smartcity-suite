@@ -168,7 +168,7 @@ public class ViewEscalationController {
 
         if (id == null) {
             redirectAttrs.addFlashAttribute("escalationForm", escalationForm);
-            model.addAttribute("message", "Please select position");
+            model.addAttribute("message", "escalation.pos.required");
             return "escalation-searchView";
         }
         final ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
@@ -189,7 +189,7 @@ public class ViewEscalationController {
                 positionHierarchyService.createPositionHierarchy(posHierarchy);
             } else {
                 redirectAttrs.addFlashAttribute("escalationForm", escalationForm);
-                model.addAttribute("message", "Position from and position to fields are mandatory. Please try again.");
+                model.addAttribute("message", "escaltion.pos.mandatory");
                 return "escalation-searchView";
             }
 

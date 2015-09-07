@@ -55,7 +55,7 @@
 	<div class="col-md-12">
 		<div class="" data-collapsed="0">
 			<c:if test="${not empty message}">
-				<div class="alert alert-success" role="alert">${message}</div>
+				<div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
 			</c:if>
 			<form:form id="searchEscalationForm" method="post"
 				class="form-horizontal form-groups-bordered"
