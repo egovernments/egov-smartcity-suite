@@ -66,10 +66,10 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.actions.workflow.WorkflowAction;
+import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
@@ -84,7 +84,7 @@ import org.springframework.transaction.annotation.Transactional;
 		"/workflow", "method", "workFlowError" }) })
 @Transactional(readOnly = true)
 @Namespace("/modify")
-public class ChangePropertyAddressAction extends WorkflowAction {
+public class ChangePropertyAddressAction extends PropertyTaxBaseAction {
 
 	private BasicProperty basicProperty;
 	private PropertyAddress address = new PropertyAddress();
@@ -414,20 +414,6 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 					+ "property: " + property);
 		}
 
-		workflowAction = propertyTaxUtil.initWorkflowAction(property, workflowBean,
-				EgovThreadLocals.getUserId(), eisCommonService);
-
-		if (workflowAction.isNoWorkflow()) {
-			startWorkFlow();
-		}
-
-		if (workflowAction.isStepRejectAndOwnerNextPositionSame()
-				|| workflowAction.isApproveOrSave()) {
-			endWorkFlow();
-		} else {
-			workflowAction.changeState();
-		}
-
 		LOGGER.debug("transitionWorkFlow: Property transitioned to "
 				+ property.getState().getValue());
 		propertyImplService.persist(property);
@@ -507,5 +493,11 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
+
+    @Override
+    public StateAware getModel() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

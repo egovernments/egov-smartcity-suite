@@ -239,7 +239,7 @@ public class ViewPropertyAction extends BaseFormAction {
             }
     }
     
-    private void setFloorDetails(final Property property) {
+    public void setFloorDetails(final Property property) {
         LOGGER.debug("Entered into setFloorDetails, Property: " + property);
 
         final List<Floor> floors = property.getPropertyDetail().getFloorDetails();

@@ -111,14 +111,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private static Logger LOGGER = Logger.getLogger(PropertyTaxBaseAction.class);
     private static final long serialVersionUID = 1L;
-    
+
     protected Boolean isApprPageReq = Boolean.TRUE;
-    
+
     protected String indexNumber;
     protected String modelId;
     protected String userRole;
     protected String ackMessage;
     protected String userDesgn;
+    protected String wfErrorMsg;
 
     @Autowired
     protected AssignmentService assignmentService;
@@ -147,11 +148,11 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private UserService userService;
     private PropertyImpl propertyModel;
     protected WorkflowBean workflowBean;
-    
+
     private List<File> uploads = new ArrayList<File>();
     private List<String> uploadFileNames = new ArrayList<String>();
     private List<String> uploadContentTypes = new ArrayList<String>();
-    
+
     protected Boolean propertyByEmployee = Boolean.TRUE;
 
     public List<File> getUpload() {
@@ -470,15 +471,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             addActionError(getText("property.workflow.remarks"));
     }
 
-    @Deprecated
-    @SuppressWarnings("unchecked")
-    public void populateWorkflowEntities() {
-        final List<Department> approverDepartmentList = persistenceService.findAllBy("from Department order by name");
-        addDropdownData("approverDepartmentList", approverDepartmentList);
-        addDropdownData("designationList", Collections.EMPTY_LIST);
-        addDropdownData("approverList", Collections.EMPTY_LIST);
-    }
-
     public void buildEmailandSms(final PropertyImpl property, final String applicationType) {
         final User user = property.getBasicProperty().getPrimaryOwner();
         final String mobileNumber = user.getMobileNumber();
@@ -660,6 +652,15 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     public void setProperty(PropertyImpl property) {
         this.propertyModel = property;
+    }
+
+    public String getWfErrorMsg() {
+        return wfErrorMsg;
+    }
+
+    public void setWfErrorMsg(String wfErrorMsg) {
+        this.wfErrorMsg = wfErrorMsg;
+
     }
 
 }

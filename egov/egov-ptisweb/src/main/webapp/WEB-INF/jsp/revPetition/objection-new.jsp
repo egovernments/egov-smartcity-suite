@@ -49,24 +49,16 @@
 		<script type="text/javascript">
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
+			function loadOnStartup () {
+				var propType = '<s:property value="%{basicProperty.property.propertyDetail.propertyTypeMaster.type}"/>';
+				alert("propType"+propType);
+		   		var appurtenantLandChecked = '<s:property value="%{basicProperty.property.propertyDetail.appurtenantLandChecked}"/>';
+		   		alert("appurtenantLandChecked"+appurtenantLandChecked);
+				enableFieldsForPropTypeView(propType,appurtenantLandChecked);
+				}
 			function validateRecordObjection(){
 				document.getElementById("lblError").style.display='none';
-			//	alert(dom.get('recievedOn').value);
-			/* 	if(dom.get('recievedOn').value==''){
-					//document.getElementById("lblError").style.display='block';
-					//document.getElementById("lblError").innerHTML  = "Please enter Objection Received Date";
-					alert('Please enter Revision Petition Received Date');
-					return false;
-				}
-				else if(dom.get('recievedBy').value==''){
-					//document.getElementById("lblError").style.display='block';
-					//document.getElementById("lblError").innerHTML  = "Please enter Objection Received By";
-					alert('Please enter Revision Petition Received By');
-					return false;
-				}
-				else */ if(dom.get('details').value==''){
-					//document.getElementById("lblError").style.display='block';
-					//document.getElementById("lblError").innerHTML  = "Please enter Objection Details";
+			if(dom.get('details').value==''){
 					alert('Please enter Revision Petition Details');
 					return false;
 				}
@@ -92,7 +84,7 @@
 		<link href="<c:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
 	
 	</head>
-	<body  class="yui-skin-sam">
+	<body  class="yui-skin-sam" onload="loadOnStartup(); ">
 	<s:form action="revPetition" method="post" name="objectionViewForm" theme="simple">
 	<s:push value="model">
 	<s:token />

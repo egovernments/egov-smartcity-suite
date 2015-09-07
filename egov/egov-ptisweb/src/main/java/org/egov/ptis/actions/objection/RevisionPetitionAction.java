@@ -1430,6 +1430,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		} else
 			setPropTypeCategoryMap(Collections.emptyMap());
 	}
+	
+	 public List<Floor> getFloorDetails() {
+	        return new ArrayList<Floor>(objection.getProperty().getPropertyDetail().getFloorDetails());
+	    }
+	 
+	 
 
 	public Map<String, String> getPropTypeCategoryMap() {
 		return propTypeCategoryMap;

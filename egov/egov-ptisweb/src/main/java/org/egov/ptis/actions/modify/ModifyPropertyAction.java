@@ -126,11 +126,10 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.ptis.actions.workflow.WorkflowAction;
+import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.client.workflow.WorkflowDetails;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -180,7 +179,7 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = ModifyPropertyAction.BALANCE, location = "modify/modifyProperty-balance.jsp"),
         @Result(name = ModifyPropertyAction.PRINT_ACK, location = "modify/modifyProperty-printAck.jsp") })
 @Namespace("/modify")
-public class ModifyPropertyAction extends WorkflowAction {
+public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private static final String PROPERTY_MODIFY_REJECT_SUCCESS = "property.modify.reject.success";
     private static final String PROPERTY_MODIFY_FINAL_REJECT_SUCCESS = "property.modify.final.reject.success";
     private static final String PROPERTY_MODIFY_APPROVE_SUCCESS = "property.modify.approve.success";
@@ -1648,14 +1647,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 
     public void setPropertyOwners(final List<PropertyOwnerInfo> propertyOwners) {
         this.propertyOwners = propertyOwners;
-    }
-
-    public WorkflowDetails getWorkflowAction() {
-        return workflowAction;
-    }
-
-    public void setWorkflowAction(final WorkflowDetails workflowAction) {
-        this.workflowAction = workflowAction;
     }
 
     public String getPartNo() {

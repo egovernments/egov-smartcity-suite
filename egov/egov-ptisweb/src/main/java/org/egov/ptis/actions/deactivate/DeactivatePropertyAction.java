@@ -77,8 +77,9 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.actions.workflow.WorkflowAction;
+import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
@@ -96,12 +97,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-/*
- * @Results({ @Result(name = "workFlowError", location = "workflow", params = {
- * "namespace", "/workflow", "method", "workFlowError" }) })
- */
+
 @Namespace("/deactivate")
-public class DeactivatePropertyAction extends WorkflowAction {
+public class DeactivatePropertyAction extends PropertyTaxBaseAction {
 
 	private BasicProperty basicProp;
 	private String ownerName;
@@ -473,20 +471,6 @@ public class DeactivatePropertyAction extends WorkflowAction {
 		} else {
 			LOGGER.debug("transitionWorkFlow - action : " + workflowBean.getActionName() + "property: " + property);
 		}
-
-		workflowAction = propertyTaxUtil.initWorkflowAction(property, workflowBean, EgovThreadLocals.getUserId(),
-				eisCommonService);
-
-		if (workflowAction.isNoWorkflow()) {
-			startWorkFlow();
-		}
-
-		if (workflowAction.isStepRejectAndOwnerNextPositionSame() || workflowAction.isApproveOrSave()) {
-			endWorkFlow();
-		} else {
-			workflowAction.changeState();
-		}
-
 		LOGGER.debug("transitionWorkFlow: Property transitioned to " + property.getState().getValue());
 		propertyImplService.persist(property);
 
@@ -620,5 +604,11 @@ public class DeactivatePropertyAction extends WorkflowAction {
 	public void setEisCommonService(EisCommonService eisCommonService) {
 		this.eisCommonService = eisCommonService;
 	}
+
+    @Override
+    public StateAware getModel() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }
