@@ -60,7 +60,11 @@
 
 				<form:form  class="form-horizontal form-groups-bordered"
 					id="waterSearchRequestForm" modelAttribute="connectionSearchRequest" action="">
-<form:hidden id="userRole" value="${userRole}" path=""/>
+					<input type="text" id="superUserRole" value="${superUserRole}" />
+					<input type="text"  id="ulbUserRole" value="${ulbUserRole}" />
+					<input type="text"  id="cscUserRole" value="${cscUserRole}" />
+					<input type="text"  id="approverUserRole" value="${approverUserRole}" />
+					<input type="text"  id="operatorRole" value="${operatorRole}" />
 			
 					<div class="form-group">
 						<label for="field-1" class="col-md-4 control-label"> <spring:message

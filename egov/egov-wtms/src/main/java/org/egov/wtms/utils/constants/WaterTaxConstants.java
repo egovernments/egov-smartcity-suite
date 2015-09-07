@@ -138,6 +138,7 @@ public class WaterTaxConstants {
     public static final String MULTIPLENEWCONNECTIONFORPID = "MULTIPLENEWCONNECTIONFORPID";
     public static final String DOCUMENTREQUIREDFORBPL = "DOCUMENTREQUIREDFORBPL";
     public static final String ROLEFORNONEMPLOYEEINWATERTAX = "ROLEFORNONEMPLOYEEINWATERTAX";
+    public static final String ROLESFORLOGGEDINUSER="RolesForSearchWAterTaxConnection";
 
     // this is just another name to new connection
     public static final String PRIMARYCONNECTION = "Primary Connection";

@@ -49,13 +49,13 @@ import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.search.domain.Document;
 import org.egov.search.domain.Page;
 import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.web.contract.ConnectionSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -69,36 +69,99 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class WaterTaxSearchController {
 
     private final SearchService searchService;
-    private final UserService userService;
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
+
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Autowired
     public WaterTaxSearchController(final SearchService searchService, final UserService userService) {
         this.searchService = searchService;
-        this.userService = userService;
     }
 
     @ModelAttribute
     public ConnectionSearchRequest searchRequest() {
         return new ConnectionSearchRequest();
     }
-
-    @ModelAttribute(value = "userRole")
-    public String findAllModules() {
+    /**
+     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection" List Contals 1st Entry "CSC Operator"
+     * @return String if Logged in User is CSC Operattor 
+     */
+    @ModelAttribute("cscUserRole")
+    public String getCurrentUserRole() {
+        final User currentUser = securityUtils.getCurrentUser();
+        String cscUserRole = "";
+        for (final Role userrole : currentUser.getRoles())
+            if (userrole != null
+                    && userrole.getName().equals(waterTaxUtils.getUserRolesForLoggedInUser().get(0)!=null?waterTaxUtils.getUserRolesForLoggedInUser().get(0).getValue():"")) {
+                cscUserRole = userrole.getName();
+                break;
+            }
+        return cscUserRole;
+    }
+    /**
+     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection" List Contals 2nd Entry "ULB Operator"
+     * @return String if Logged in User is ULB Operattor 
+     */
+    @ModelAttribute("ulbUserRole")
+    public String getUlbOperatorUserRole() {
         String userRole = "";
-        final User userObj = userService.getUserById(EgovThreadLocals.getUserId());
-        if (userObj != null) {
-            for (final Role role : userObj.getRoles())
-                if (role != null)
-                    userRole = userRole + "," + role.getName().toString();
-            if (userRole.contains(WaterTaxConstants.CSCOPERTAORROLE))
-                userRole = WaterTaxConstants.CSCOPERTAORROLE;
-            else if (userRole.contains(WaterTaxConstants.CLERKULB))
-                userRole = WaterTaxConstants.CLERKULB;
-            else if (userRole.contains(WaterTaxConstants.APPROVERROLE))
-                userRole = WaterTaxConstants.APPROVERROLE;
-            else if (userRole.contains(WaterTaxConstants.SUPERUSER))
-                userRole = WaterTaxConstants.SUPERUSER;
-        }
+        final User currentUser = securityUtils.getCurrentUser();
+        for (final Role userrole : currentUser.getRoles())
+            if (userrole != null
+                    && userrole.getName().equals(waterTaxUtils.getUserRolesForLoggedInUser().get(1)!=null? waterTaxUtils.getUserRolesForLoggedInUser().get(1).getValue():"")) {
+                userRole = userrole.getName();
+                break;
+            }
+        return userRole;
+    }
+    /**
+     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection" List Contals 4th Entry "Super User"
+     * @return String if Logged in User is SUPER USER 
+     */
+    @ModelAttribute("superUserRole")
+    public String getSuperUserRole() {
+        String userRole = "";
+        final User currentUser = securityUtils.getCurrentUser();
+        for (final Role userrole : currentUser.getRoles())
+            if (userrole != null
+                    && userrole.getName().equals(waterTaxUtils.getUserRolesForLoggedInUser().get(3)!=null ? waterTaxUtils.getUserRolesForLoggedInUser().get(3).getValue():"")) {
+                userRole = userrole.getName();
+                break;
+            }
+        return userRole;
+    }
+    /**
+     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection" List Contals 3rd Entry "Water Tax Approver"
+     * @return String if Logged in User is Water Tax Approver
+     */
+    @ModelAttribute("approverUserRole")
+    public String getApproverUserRole() {
+        String userRole = "";
+        final User currentUser = securityUtils.getCurrentUser();
+        for (final Role userrole : currentUser.getRoles())
+            if (userrole != null
+                    && userrole.getName().equals(waterTaxUtils.getUserRolesForLoggedInUser().get(2)!=null?waterTaxUtils.getUserRolesForLoggedInUser().get(2).getValue():"")) {
+                userRole = userrole.getName();
+                break;
+            }
+        return userRole;
+    }
+    /**
+     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection" List Contals 5th Entry "Operator"
+     * @return String if Logged in User is Operator
+     */
+    @ModelAttribute("operatorRole")
+    public String getOperatorUserRole() {
+        String userRole = "";
+        final User currentUser = securityUtils.getCurrentUser();
+        for (final Role userrole : currentUser.getRoles())
+            if (userrole != null
+                    && userrole.getName().equals(waterTaxUtils.getUserRolesForLoggedInUser().get(4)!=null ?waterTaxUtils.getUserRolesForLoggedInUser().get(4).getValue():"")) {
+                userRole = userrole.getName();
+                break;
+            }
         return userRole;
     }
 

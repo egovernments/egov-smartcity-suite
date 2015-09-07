@@ -52,6 +52,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -103,6 +104,7 @@ public class AppConfig extends AbstractAuditable {
     @Column(name = "description")
     private String description;
 
+    @OrderBy("id asc")
     @OneToMany(mappedBy = "key", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AppConfigValues> appDataValues = new ArrayList<AppConfigValues>(0);
 
