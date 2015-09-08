@@ -188,8 +188,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private String corrAddress1;
     private String corrAddress2;
     private String corrPinCode;
-    private String genWaterRate;
     private String upicNo;
+    private String taxExemptionId;
     private String parentIndex;
     private String amenities;
     private String[] floorNoStr = new String[20];
@@ -253,7 +253,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         addRelatedEntity("property.propertyDetail.roofType", RoofType.class);
         addRelatedEntity("property.propertyDetail.wallType", WallType.class);
         addRelatedEntity("property.propertyDetail.woodType", WoodType.class);
-        addRelatedEntity("taxExemptedReason", TaxExeptionReason.class);
+        addRelatedEntity("property.taxExemptedReason", TaxExeptionReason.class);
     }
 
     @Override
@@ -300,6 +300,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     private void populateFormData() {
         final PropertyDetail propertyDetail = property.getPropertyDetail();
+		if (property.getTaxExemptedReason() != null)
+			taxExemptionId = property.getTaxExemptedReason().getId().toString();
         if (propertyDetail != null) {
             if (propertyDetail.getFloorDetails().size() > 0)
                 setFloorDetails(property);
@@ -457,7 +459,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicProp.setPropertyMutationMaster(propertyMutationMaster);
         property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(), propTypeId,
                 propUsageId, propOccId, status, getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(),
-                getWallTypeId(), getWoodTypeId(), null);
+                getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId));
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propCompletionDate = propService.getLowestDtOfCompFloorWise(property.getPropertyDetail().getFloorDetails());
         else
@@ -702,7 +704,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
         property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(), propTypeId,
                 propUsageId, propOccId, status, getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(),
-                getWallTypeId(), getWoodTypeId(), null);
+                getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId));
         property.setStatus(status);
 
         LOGGER.debug("createBasicProp: Property after call to PropertyService.createProperty: " + property);
@@ -1483,5 +1485,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     public void setUpicNo(final String upicNo) {
         this.upicNo = upicNo;
     }
+
+	public String getTaxExemptionId() {
+		return taxExemptionId;
+	}
+
+	public void setTaxExemptionId(String taxExemptionId) {
+		this.taxExemptionId = taxExemptionId;
+	}
 
 }

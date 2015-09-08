@@ -46,7 +46,7 @@
 <html>
   <head>
   	  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-      <title><s:text name='nmc.ptis.pay.collection.title'/></title>
+      <title><s:text name='property.tax.collection'/></title>
 	  <script type="text/javascript">
 	  </script>
   </head>
@@ -56,7 +56,7 @@
   <s:token />
   <div class="formmainbox">
   <div class="formheading"></div>
-		<div class="headingbg"><s:text name='nmc.ptis.pay.collection.title'/></div>
+		<div class="headingbg"><s:text name='property.tax.collection'/></div>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
 			<td colspan="5" style="background-color: #FDF7F0;font-size: 15px;" align="center">

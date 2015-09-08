@@ -845,3 +845,13 @@ tbody tr.shown td.details-control {
 	  border: 1px solid #ddd;
 	}
 }
+
+.headermessage
+{
+	padding: 10px;
+	margin: 0 5px;
+	margin: 0px auto;
+	margin-bottom: 15px;
+	color: #F2351F;
+	font-family: semibold;
+}

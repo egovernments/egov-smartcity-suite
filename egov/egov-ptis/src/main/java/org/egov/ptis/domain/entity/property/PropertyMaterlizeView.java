@@ -76,6 +76,8 @@ public class PropertyMaterlizeView implements Serializable {
     private Set<InstDmdCollMaterializeView> instDmdColl;
     /* private Set<CurrFloorDmdCalcMaterializeView> currFloorDmdCalc; */
     private BigDecimal alv;
+    private Boolean isExempted;
+    private Character source;
 
     public Integer getBasicPropertyID() {
         return basicPropertyID;
@@ -286,4 +288,21 @@ public class PropertyMaterlizeView implements Serializable {
     public void setLocality(final Boundary locality) {
         this.locality = locality;
     }
+
+    public Boolean getIsExempted() {
+        return isExempted;
+    }
+
+    public void setIsExempted(Boolean isExempted) {
+        this.isExempted = isExempted;
+    }
+
+    public Character getSource() {
+        return source;
+    }
+
+    public void setSource(Character source) {
+        this.source = source;
+    }
+    
 }

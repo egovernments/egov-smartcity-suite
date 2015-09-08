@@ -86,13 +86,12 @@
 				<s:push value="model">
 			<div class="formmainbox">
 				<div class="headingbg"><s:text name="PropertyDetail" /></div>
-				<br/>
 				<jsp:include page="viewProperty.jsp"/>
 				<br/>
 				<div class="buttonbottom" align="center">
 				<!--From application index search same view page is given, if new property is under work flow and assessment no is not generated then all links are disabled  -->
 				<s:if test="%{basicProperty.upicNo!=null}">
-				<s:if test="%{isCitizen || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
+				<s:if test="%{!property.getIsExemptedFromTax() && (isCitizen || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase()))}">
 					<div align="center">
 						<s:checkbox name="taxEnsureCheckbox" id="taxEnsureCheckbox" onclick="switchPayTaxButton(this);" required="true" />
 						<span style="font-size:15px; color:red ">										
@@ -127,13 +126,15 @@
 							onclick="window.location='../revPetition/revPetition-newForm.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
 					</s:else>
 				</s:if>		
-				<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase())}">
+				<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) && !property.getIsExemptedFromTax()}">
 					<input type="button" name="generateBill" id="generateBill" value="Generate Demand Bill" class="buttonsubmit"
 						onclick="window.location='../bills/billGeneration-generateBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
 				</s:if>
-				<br/><br/> <!-- common buttons starts here -->				
+				<br/><br/> <!-- common buttons starts here -->	
+				<s:if test="%{!property.getIsExemptedFromTax()}">			
 				<input type="button" class="buttonsubmit" name="btnViewDCB" id="btnViewDCB" value="View DCB"
 					onclick="window.location='../view/viewDCBProperty-displayPropInfo.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
+				</s:if>	
 				<input type="button" class="buttonsubmit" name="SearchProperty"
 					id="SearchProperty" value="Search Property" onclick="window.location='../search/searchProperty-searchForm.action';" />
 				</s:if>

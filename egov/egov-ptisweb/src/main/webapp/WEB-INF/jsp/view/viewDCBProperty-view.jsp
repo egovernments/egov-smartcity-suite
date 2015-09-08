@@ -180,7 +180,7 @@
 							<s:text name="CurrentTax" /> :
 						</td>
 						<td class="greybox">
-							<span class="bold">Rs. <s:property default="N/A" value="%{viewMap.currTaxAmount}" />
+							<span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.currTaxAmount" /></s:text>
 							</span>
 						</td>
 					</tr>
@@ -190,7 +190,7 @@
 							<s:text name="CurrentTaxDue" /> :
 						</td>
 						<td class="greybox">
-							<span class="bold">Rs. <s:property default="N/A" value="%{viewMap.currTaxDue}" />
+							<span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.currTaxDue" /></s:text>
 							</span>
 						</td>
 					</tr>
@@ -200,7 +200,7 @@
 							<s:text name="ArrearsDue" /> :
 						</td>
 						<td class="greybox">
-							<span class="bold">Rs. <s:property default="N/A" value="%{viewMap.totalArrDue}" />
+							<span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.totalArrDue" /></s:text>
 							</span>
 						</td>
 					</tr>

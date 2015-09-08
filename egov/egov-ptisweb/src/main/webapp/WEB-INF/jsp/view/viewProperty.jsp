@@ -46,6 +46,11 @@
 
 <table style="width: 100%;">
 	<!-- Body Begins -->
+	<s:if test="%{basicProperty.property.getIsExemptedFromTax()}">
+	<div class="headermessage">
+		This property tax is exempted with reason <span class="bold"><s:property default="N/A" value="%{basicProperty.property.taxExemptedReason.name}" /></span>
+	</div>
+	</s:if>
 	<tr>
 		<td class="greybox" width="5%"></td>
 		<td class="greybox" width="20%"><s:text name="prop.Id" /> :</td>
@@ -56,7 +61,6 @@
 		<td class="greybox" width="25%"><span class="bold"><s:property
 					default="N/A" value="%{viewMap.parentProps}" /> </span></td>
 	</tr>
-
 	<tr>
 		<td class="greybox" width="5%"></td>
 		<td class="greybox"><s:text name="PropertyAddress" /> :</td>
@@ -145,22 +149,20 @@
 	<tr>
 		<td class="greybox" width="5%"></td>
 		<td class="bluebox"><s:text name="annualvalue" /> :</td>
-		<td class="bluebox"><span class="bold"> <s:property
-					default="N/A" value="%{}" />
+		<td class="bluebox"><span class="bold"> Rs. <s:text name="format.money"><s:param value="viewMap.ARV" /></s:text>
 		</span></td>
 	</tr>
 
 	<tr>
 		<td class="greybox" width="5%"></td>
 		<td class="bluebox"><s:text name="effectivedt" /> :</td>
-		<td class="bluebox"><span class="bold"> <s:if
-					test="%{basicProperty.property.propertyDetail.effective_date != null}">
-					<s:date
-						name="%{basicProperty.property.propertyDetail.effective_date}"
-						format="dd/MM/yyyy" />
-				</s:if> <s:else>
+		<td class="bluebox"><span class="bold"> 
+		<s:if test="%{basicProperty.propOccupationDate != null}">
+			<s:date name="%{basicProperty.propOccupationDate}" format="dd/MM/yyyy"/>
+		</s:if> 
+		<s:else>
 					N/A
-				</s:else>
+		</s:else>
 		</span></td>
 	</tr>
 
@@ -320,23 +322,20 @@
 	<tr>
 		<td class="bluebox" width="5%"></td>
 		<td class="greybox" colspan="2"><s:text name="CurrentTax" /> :</td>
-		<td class="greybox" colspan="2"><span class="bold">Rs. <s:property
-					default="N/A" value="%{viewMap.currTax}" />
+		<td class="greybox" colspan="2"><span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.currTax" /></s:text>
 		</span></td>
 	</tr>
 	<tr>
 		<td class="bluebox" width="5%"></td>
 		<td class="bluebox" colspan="2"><s:text name="CurrentTaxDue" />
 			:</td>
-		<td class="bluebox" colspan="2"><span class="bold">Rs. <s:property
-					default="N/A" value="%{viewMap.currTaxDue}" />
+		<td class="bluebox" colspan="2"><span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.currTaxDue" /></s:text>
 		</span></td>
 	</tr>
 	<tr>
 		<td class="greybox" width="5%"></td>
 		<td class="greybox" colspan="2"><s:text name="ArrearsDue" /> :</td>
-		<td class="greybox" colspan="2"><span class="bold">Rs. <s:property
-					default="N/A" value="%{viewMap.totalArrDue}" />
+		<td class="greybox" colspan="2"><span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.totalArrDue" /></s:text>
 		</span></td>
 	</tr>
 

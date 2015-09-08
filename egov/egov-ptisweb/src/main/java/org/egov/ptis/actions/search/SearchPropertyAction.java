@@ -378,12 +378,19 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("assessmentNum", assessmentNumber);
                 searchResultMap.put("ownerName", basicProperty.getFullOwnerName());
                 searchResultMap.put("address", basicProperty.getAddress().toString());
-                searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
-                searchResultMap.put("source", basicProperty.getSource().toString());
-                searchResultMap.put("arrDemandDue",
-                        demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
-                searchResultMap.put("currDemandDue",
-                        demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)).toString());
+				searchResultMap.put("source", basicProperty.getSource().toString());
+
+				if (!property.getIsExemptedFromTax()) {
+					searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
+					searchResultMap.put("arrDemandDue",
+							demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
+					searchResultMap.put("currDemandDue",
+							demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)).toString());
+				} else {
+					searchResultMap.put("currDemand", "0");
+					searchResultMap.put("arrDemandDue", "0");
+					searchResultMap.put("currDemandDue", "0");
+				}
                 LOGGER.debug("Assessment Number : " + searchResultMap.get("assessmentNum") + ", " + "Owner Name : "
                         + searchResultMap.get("ownerName") + ", " + "Parcel id : " + searchResultMap.get("parcelId")
                         + ", " + "Address : " + searchResultMap.get("address") + ", " + "Current Demand : "
@@ -433,9 +440,17 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("ownerName", pmv.getOwnerName());
                 searchResultMap.put("parcelId", pmv.getGisRefNo());
                 searchResultMap.put("address", pmv.getPropertyAddress());
-                searchResultMap.put("currDemand", pmv.getAggrCurrDmd().toString());
-                searchResultMap.put("currDemandDue", pmv.getAggrCurrDmd().subtract(pmv.getAggrCurrColl()).toString());
-                searchResultMap.put("arrDemandDue", pmv.getAggrArrDmd().subtract(pmv.getAggrArrColl()).toString());
+				searchResultMap.put("source", pmv.getSource().toString());
+				if (pmv.getIsExempted()) {
+					searchResultMap.put("currDemand", "0");
+					searchResultMap.put("arrDemandDue", "0");
+					searchResultMap.put("currDemandDue", "0");
+				} else {
+					searchResultMap.put("currDemand", pmv.getAggrCurrDmd().toString());
+					searchResultMap.put("currDemandDue", pmv.getAggrCurrDmd().subtract(pmv.getAggrCurrColl())
+							.toString());
+					searchResultMap.put("arrDemandDue", pmv.getAggrArrDmd().subtract(pmv.getAggrArrColl()).toString());
+				}
                 searchList.add(searchResultMap);
             }
         LOGGER.debug("Search list : " + (searchList != null ? searchList : ZERO));

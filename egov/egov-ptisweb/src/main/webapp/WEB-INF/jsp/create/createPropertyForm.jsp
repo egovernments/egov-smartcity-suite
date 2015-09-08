@@ -36,11 +36,10 @@
 				headerValue="%{getText('default.select')}" 	name="propertyDetail.apartment" id="apartment"
 				listKey="id" listValue="name" value="%{propertyDetail.apartment.id}"
 				list="dropdownData.apartments" cssClass="selectnew" /></td>
-				
 		<td class="greybox" width="25%"><s:text name="exemptioncategory"/> :</td>
 		<td class="greybox">
-		<s:select name="taxExemptedReason" id="taxExemptedReason" headerValue="select"
-				headerKey="" list="dropdownData.taxExemptionReasonList" value="%{taxExemptedReason.id}" 
+		<s:select name="taxExemptionId" id="taxExemptionId" headerValue="select"
+				headerKey="" list="dropdownData.taxExemptionReasonList" value="%{taxExemptionId}" 
 				listKey="id" listValue="name" cssClass="selectnew" data-optional="1">
 			</s:select>
 		</td>

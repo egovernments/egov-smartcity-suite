@@ -41,7 +41,7 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <html>
 	<head>
-		<title><s:text name="nmc.ptis.pay.collection.title" /></title>
+		<title><s:text name="property.tax.collection" /></title>
 		<script type="text/javascript">
 
 	 	jQuery(document).ready( function() {

@@ -166,6 +166,7 @@ import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.domain.entity.property.StructureClassification;
+import org.egov.ptis.domain.entity.property.TaxExeptionReason;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
@@ -294,6 +295,12 @@ public class PropertyService {
         } else {
             property.getPropertyDetail().setWoodType(null);
         }
+		if (taxExemptId != null && taxExemptId != -1) {
+			final TaxExeptionReason taxExemptionReason = (TaxExeptionReason) getPropPerServ().find(
+					"From TaxExeptionReason where id = ?", taxExemptId);
+			property.setTaxExemptedReason(taxExemptionReason);
+			property.setIsExemptedFromTax(Boolean.TRUE);
+		}
 
         if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
             final Area area = new Area();

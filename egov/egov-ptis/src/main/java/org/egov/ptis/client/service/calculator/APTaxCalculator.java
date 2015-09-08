@@ -484,6 +484,8 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 			} else {
 				unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_26_100);
 			}
+		}else {
+		    unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_26_100);
 		}
 		return unAuthPenalty;
 	}
