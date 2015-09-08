@@ -37,5 +37,6 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
+<%@ include file="/includes/taglibs.jsp" %>
+<%@ page language="java"%>
 <s:select name="referenceId" listKey="id" listValue="name" id="referenceId" list="referenceBudgetList"  headerKey="-1"  headerValue="----Select----"  value="%{referenceId}"/>

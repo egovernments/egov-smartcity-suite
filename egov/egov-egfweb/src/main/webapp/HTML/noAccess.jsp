@@ -38,7 +38,8 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <%@page contentType="text/html" %>
-<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ include file="/includes/taglibs.jsp" %>
+<%@ page language="java"%>
 
 
 <html>
@@ -60,6 +61,6 @@
 				</tr>
 			</tbody>
 		</table>
-	<%@ include file = "./egovfooter.html" %>
+	<%@ include file = "/../egovfooter.html" %>
 	</body>
 </html>

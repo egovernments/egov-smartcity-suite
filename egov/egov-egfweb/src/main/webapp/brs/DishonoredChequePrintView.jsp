@@ -37,8 +37,8 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
+<%@ include file="/includes/taglibs.jsp" %>
+<%@ page language="java"%>
 <%@ page import="com.exilant.eGov.src.transactions.brs.DishonoredChequeForm"%>
 
 <html>

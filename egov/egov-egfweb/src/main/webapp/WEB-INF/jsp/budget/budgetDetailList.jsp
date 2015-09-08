@@ -37,7 +37,8 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %> 
+<%@ include file="/includes/taglibs.jsp" %>
+<%@ page language="java"%>
 <div id="detail" style="width:100%;overflow-x:auto; overflow-y:hidden;">
 	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" class="tablebottom" style="border-right:0px solid #C5C5C5;">
 		<tr>

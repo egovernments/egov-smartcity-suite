@@ -37,8 +37,8 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %> 
-<%@ taglib uri="/WEB-INF/tags/struts-html.tld" prefix="html" %>
+<%@ include file="/includes/taglibs.jsp" %>
+<%@ page language="java"%>
 <style type="text/css">
 #container iframe {
 width: 100%;

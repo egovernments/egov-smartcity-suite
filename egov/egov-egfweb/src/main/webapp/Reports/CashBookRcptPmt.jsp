@@ -38,10 +38,9 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
-<%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
-<!-- <%@ page buffer = "16kb" %> -->
 <%@page  import="com.exilant.eGov.src.reports.LongAmountWrapper,org.egov.infstr.utils.EGovConfig,java.io.*,com.exilant.eGov.src.reports.*,java.io.*,java.util.*,java.sql.*,javax.sql.*,javax.naming.InitialContext,com.exilant.GLEngine.*"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
+<%@ include file="/includes/taglibs.jsp" %>
+<%@ page language="java"%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">

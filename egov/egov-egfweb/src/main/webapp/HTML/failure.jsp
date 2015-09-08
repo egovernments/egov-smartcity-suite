@@ -37,10 +37,8 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-nested.tld" prefix="nested" %>
+<%@ include file="/includes/taglibs.jsp" %>
+<%@ page language="java"%>
 <%@ page contentType="text/html; charset=UTF-8" %>
 
 

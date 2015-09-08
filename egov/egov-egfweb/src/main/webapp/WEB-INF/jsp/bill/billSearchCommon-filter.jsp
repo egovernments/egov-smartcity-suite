@@ -37,8 +37,8 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
+<%@ include file="/includes/taglibs.jsp" %>
+<%@ page language="java"%>
 <tr>
 	<td class="bluebox" >&nbsp;</td>
 	<s:if test="%{shouldShowHeaderField('fund')}">

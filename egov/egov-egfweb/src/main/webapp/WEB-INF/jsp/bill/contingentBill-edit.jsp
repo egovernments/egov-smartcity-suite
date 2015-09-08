@@ -38,17 +38,8 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <html>
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib prefix="sx" uri="/WEB-INF/struts-dojo-tags.tld" %>
-
-<%@ taglib prefix="EGF" tagdir="/WEB-INF/tags"%>
+<%@ include file="/includes/taglibs.jsp" %>
 <%@ page language="java"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/struts-nested" prefix="nested"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <head>
 <title><s:text name="contingent.bill"/></title>
 <sx:head/>

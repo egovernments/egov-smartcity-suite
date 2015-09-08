@@ -38,11 +38,11 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
-<%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 <%@ page buffer = "16kb" %>
 <%@page  import="java.text.SimpleDateFormat,com.exilant.eGov.src.reports.LongAmountWrapper,com.exilant.eGov.src.reports.*,java.io.*,java.util.HashMap,java.util.*,javax.naming.InitialContext,com.exilant.GLEngine.*"%>
 <%@ page import="org.apache.log4j.Logger"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
+<%@ include file="/includes/taglibs.jsp" %>
+<%@ page language="java"%>
 <html>
 <head>
 <title>Trial Balance Report</title>

@@ -37,15 +37,12 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/struts-nested" prefix="nested" %>
+<%@ include file="/includes/taglibs.jsp" %>
+<%@ page language="java"%>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="org.apache.struts.action.ActionMessage" %>
 
-<%@ page import=" org.apache.struts.action.ActionMessages"%>
-<html>
+<%@ page import=" org.apache.struts.action.ActionMessages"%><html>
 	<head>
 		<title>eGov  - Error</title>
 		<LINK rel="stylesheet" type="text/css" href="./css/egov.css">

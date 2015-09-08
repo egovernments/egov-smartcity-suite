@@ -1,4 +1,4 @@
-<!--  #-------------------------------------------------------------------------------
+<!-- -------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #      accountability and the service delivery of the government  organizations.
 #   
@@ -37,7 +37,8 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
+<%@ include file="/includes/taglibs.jsp" %>
+<%@ page language="java"%>
 <SCRIPT type="text/javascript">
 var defaultDept = '<s:property value="executingDepartment.id"/>'
 

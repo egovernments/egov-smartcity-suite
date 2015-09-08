@@ -38,8 +38,8 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <%@page contentType="text/html; charset=UTF-8" %>
-<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
-<%@ taglib prefix="html" uri="/tags/struts-html" %>
+<%@ include file="/includes/taglibs.jsp" %>
+<%@ page language="java"%>
 
 <HTML>
 

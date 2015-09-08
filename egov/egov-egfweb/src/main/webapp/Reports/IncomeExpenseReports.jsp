@@ -43,10 +43,10 @@
 	 * Now it is changed to Date wise.
 -->	 
 <!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
-<%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 <%@ page buffer = "16kb" %>
 <%@ page  import="com.exilant.eGov.src.reports.IncomeExpenseReport,java.util.HashMap,org.apache.log4j.Logger,java.text.SimpleDateFormat,java.util.Date"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
+<%@ include file="/includes/taglibs.jsp" %>
+<%@ page language="java"%>
 <html>
 <head>
 <title>INCOME AND EXPENDITURE STATEMENT</title>

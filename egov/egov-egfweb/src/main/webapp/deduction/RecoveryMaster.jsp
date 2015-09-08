@@ -37,11 +37,8 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ page language="java"  %>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-nested" prefix="nested"%>
+<%@ include file="/includes/taglibs.jsp" %>
+<%@ page language="java"%>
 <%@ page import="java.util.*,java.text.SimpleDateFormat,java.text.*,java.math.BigDecimal, 
 		org.apache.log4j.Logger,org.egov.infstr.utils.EgovMasterDataCaching,
 		org.egov.commons.EgPartytype,org.egov.commons.EgwTypeOfWork,
