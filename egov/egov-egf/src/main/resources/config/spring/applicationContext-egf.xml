@@ -221,6 +221,9 @@
 	<bean id="voucherHeaderPersitService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="type" value="org.egov.commons.CVoucherHeader" />
 	</bean>
+	<bean id="accountEntityService" class="org.egov.masters.services.AccountEntityService">
+		<property name="type" value="org.egov.masters.model.AccountEntity" />
+    </bean>
     <bean id="voucherHibDAO" class="org.egov.dao.voucher.VoucherHibernateDAO" scope="prototype">
 		
 	</bean> 
