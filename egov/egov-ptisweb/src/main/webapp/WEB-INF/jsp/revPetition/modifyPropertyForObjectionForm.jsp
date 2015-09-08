@@ -163,10 +163,10 @@
 		<td class="greybox" width="">
 		   <s:hidden id="property.propertyDetail.id" name="property.propertyDetail.id" value="%{property.propertyDetail.id}" />
 			 <s:hidden id="property.id" name="property.id" value="%{property.id}" />
-			<s:select headerKey="-1" headerValue="%{getText('default.select')}" name="property.propertyDetail.propertyTypeMaster.id"
-				id="property.propertyDetail.propertyTypeMaster.id" listKey="id" listValue="type" list="dropdownData.PropTypeMaster" value="%{property.propertyDetail.propertyTypeMaster.id}"
+			<s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propTypeId"
+				id="propTypeId" listKey="id" listValue="type" list="dropdownData.PropTypeMaster" value="%{property.propertyDetail.propertyTypeMaster.id}"
 				cssClass="selectnew" onchange="populatePropTypeCategory();toggleFloorDetails();enableFieldsForPropType();"  disabled="true"/></td>
-			  <s:hidden id="propTypeId" name="propTypeId" value="%{property.propertyDetail.propertyTypeMaster.id}" />
+			  <s:hidden id="propTypeObjId" name="propTypeObjId" value="%{property.propertyDetail.propertyTypeMaster.id}" />
 				
 		<td class="greybox" width="25%"><s:text name="property.type"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>

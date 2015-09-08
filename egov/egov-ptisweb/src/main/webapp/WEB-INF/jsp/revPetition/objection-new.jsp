@@ -51,9 +51,9 @@
 			jQuery("#loadingMask").remove();
 			function loadOnStartup () {
 				var propType = '<s:property value="%{basicProperty.property.propertyDetail.propertyTypeMaster.type}"/>';
-				alert("propType"+propType);
+				//alert("propType"+propType);
 		   		var appurtenantLandChecked = '<s:property value="%{basicProperty.property.propertyDetail.appurtenantLandChecked}"/>';
-		   		alert("appurtenantLandChecked"+appurtenantLandChecked);
+		   	//	alert("appurtenantLandChecked"+appurtenantLandChecked);
 				enableFieldsForPropTypeView(propType,appurtenantLandChecked);
 				}
 			function validateRecordObjection(){
