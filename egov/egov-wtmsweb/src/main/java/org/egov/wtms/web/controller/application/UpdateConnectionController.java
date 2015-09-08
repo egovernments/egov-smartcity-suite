@@ -272,8 +272,11 @@ public class UpdateConnectionController extends GenericConnectionController {
             final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                     + waterTaxUtils.getApproverUserName(approvalPosition);
             return "redirect:/application/application-success?pathVars=" + pathVars;
-        } else
+        } else {
+            if(waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED))
+                model.addAttribute("meterFocus", true);
             return loadViewData(model, request, waterConnectionDetails);
+        }
     }
 
     private void validateSanctionDetails(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {

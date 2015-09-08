@@ -78,7 +78,8 @@ $(document).ready(function()
 		}
 		
 		
-		
+		/*if($('#validationMessage').val()!='')
+			alert($('#validationMessage').val());*/
 		
 		function validateDateRange(fromDate, toDate) {
 			if (fromDate != "" && toDate != "") {
@@ -236,6 +237,7 @@ $(document).ready(function()
 				if(!validateDateRange(applicationDate, executionDate)) {
 					alert("The Execution Date can not be less than the Date of Application.");
 					$('#executionDate').val('');
+					
 					return false;			
 				}
 				else{
@@ -244,4 +246,7 @@ $(document).ready(function()
 				}
 			}
 		}
+		if($('#meterFocus').val()== 'true') {
+			$('#meterSerialNumber').focus();
+			   }
 });

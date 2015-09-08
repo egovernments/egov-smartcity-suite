@@ -50,6 +50,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 	<form:hidden path="" id="statuscode" value="${waterConnectionDetails.status.code}"/>
 	<form:hidden path="" id="wfstate" value="${waterConnectionDetails.state.id}"/> 
 	<input type="hidden" id="currentUser" value="${currentUser}"/>  
+	<input type="hidden" id="meterFocus" value="${meterFocus}"/>
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 	<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
