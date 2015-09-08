@@ -114,7 +114,7 @@
 						<c:when test="${not empty feeDetails.WTAXDONATION}">
 							<c:out value="${feeDetails.WTAXDONATION}" />
 						</c:when>
-						<c:otherwise>Not Applicable</c:otherwise>
+						<c:otherwise>-</c:otherwise>
 					</c:choose></div>
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.estimationcharges"/></div>
 					<div class="col-xs-3 add-margin view-content">
@@ -122,7 +122,7 @@
 						<c:when test="${not empty feeDetails.WTAXFIELDINSPEC}">
 							<c:out value="${feeDetails.WTAXFIELDINSPEC}" />
 						</c:when>
-						<c:otherwise>Not Applicable</c:otherwise>
+						<c:otherwise>-</c:otherwise>
 					</c:choose></div>
 				</div>
 				<c:if test="${waterConnectionDetails.connection.parentConnection.id!=null}">
