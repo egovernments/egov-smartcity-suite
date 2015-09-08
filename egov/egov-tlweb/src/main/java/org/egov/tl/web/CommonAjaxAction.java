@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.tl.web;
 
+import org.apache.struts2.convention.annotation.Action;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Date;
@@ -59,10 +60,9 @@ import org.egov.pims.commons.Designation;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.opensymphony.xwork2.Action;
 
 @Result(
-        name = Action.SUCCESS, type = "redirect", location = "CommonAjaxAction.action")
+        name = "SUCCESS", type = "redirect", location = "CommonAjaxAction.action")
 @Results({ @Result(
         name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain" }) })
 @ParentPackage("egov")
@@ -142,6 +142,7 @@ public class CommonAjaxAction extends BaseFormAction {
      *
      * @return the string
      */
+@Action(value="/web/commonAjax-populateDivisions")
     public String populateDivisions() {
         try {
             final Boundary boundary = boundaryService.getBoundaryById(Long.valueOf(zoneId));
@@ -156,6 +157,7 @@ public class CommonAjaxAction extends BaseFormAction {
         return "ward";
     }
 
+@Action(value="/web/commonAjax-ajaxPopulateDesignationsByDept")
     public String ajaxPopulateDesignationsByDept() {
         try {
 
@@ -170,6 +172,7 @@ public class CommonAjaxAction extends BaseFormAction {
     }
 
     @SuppressWarnings("unchecked")
+@Action(value="/web/commonAjax-ajaxPopulateUsersByDesignation")
     public String ajaxPopulateUsersByDesignation() {
         try {
             //allActiveUsersByGivenDesg = designationService.getAllActiveUsersByGivenDesg(designationId);
