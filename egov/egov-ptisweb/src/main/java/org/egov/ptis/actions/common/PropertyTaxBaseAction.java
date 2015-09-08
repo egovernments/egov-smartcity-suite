@@ -223,12 +223,14 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         LOGGER.debug("Exiting from setupWorkflowDetails | End");
     }
 
+   
     protected void validateProperty(final Property property, final String areaOfPlot, final String dateOfCompletion,
             final String eastBoundary, final String westBoundary, final String southBoundary,
             final String northBoundary, final String propTypeId, final String propUsageId, final String propOccId,
             final Long floorTypeId, final Long roofTypeId, final Long wallTypeId, final Long woodTypeId) {
 
-        LOGGER.debug("Entered into validateProperty");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into validateProperty");
 
         if (propTypeId == null || propTypeId.equals("-1"))
             addActionError(getText("mandatory.propType"));
@@ -254,12 +256,15 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             }
         }
 
-        LOGGER.debug("Exiting from validateProperty");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exiting from validateProperty");
     }
 
     private void validateVacantProperty(final PropertyDetail propertyDetail, final String eastBoundary,
             final String westBoundary, final String southBoundary, final String northBoundary) {
 
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into validateVacantProperty");
         if (isBlank(propertyDetail.getSurveyNumber()))
             addActionError(getText("mandatory.surveyNo"));
         if (isBlank(propertyDetail.getPattaNumber()))
@@ -281,10 +286,17 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (isBlank(northBoundary))
             addActionError(getText("mandatory.northBoundary"));
 
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exiting from validateVacantProperty");
+
     }
 
+    
     private void validateBuiltUpProperty(final PropertyDetail propertyDetail, final Long floorTypeId,
             final Long roofTypeId, final String areaOfPlot, final Date regDocDate) {
+
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Eneterd into validateBuiltUpProperty");
         if (null != propertyDetail.isBuildingPlanDetailsChecked()) {
             if (isBlank(propertyDetail.getBuildingPermissionNo()))
                 addActionError(getText("mandatory.buildingPlanNo"));
@@ -307,12 +319,17 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             addActionError(getText("mandatory.floorType"));
         if (roofTypeId == null || roofTypeId == -1)
             addActionError(getText("mandatory.roofType"));
+
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exiting from validateBuiltUpProperty");
     }
 
+   
     private void validateFloor(final PropertyTypeMaster propTypeMstr, final List<Floor> floorList,
             final Property property) {
-        LOGGER.debug("Entered into validateFloor \nPropertyTypeMaster:" + propTypeMstr + ", No of floors: "
-                + (floorList != null ? floorList : ZERO));
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into validateFloor \nPropertyTypeMaster:" + propTypeMstr + ", No of floors: "
+                    + (floorList != null ? floorList : ZERO));
 
         if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             if (floorList != null && floorList.size() > 0)
@@ -358,9 +375,18 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                             addActionError(getText("mandatory.assbleArea"));
                     }
                 }
-        LOGGER.debug("Exiting from validate");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exiting from validate");
     }
 
+    /**
+     * Validates house number,assuming house number should be unique across ward
+     * boundary
+     * 
+     * @param wardId
+     * @param houseNo
+     * @param basicProperty
+     */
     protected void validateHouseNumber(final Long wardId, final String houseNo, final BasicProperty basicProperty) {
         final Query qry = getPersistenceService()
                 .getSession()
@@ -376,17 +402,28 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             addActionError(getText("houseNo.unique"));
     }
 
+    /**
+     * Get Designation for logged in user
+     */
     public void setUserInfo() {
-        LOGGER.debug("Entered into setUserInfo");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into setUserInfo");
 
         final Long userId = securityUtils.getCurrentUser().getId();
-        LOGGER.debug("setUserInfo: Logged in userId" + userId);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("setUserInfo: Logged in userId" + userId);
         final Designation designation = propertyTaxUtil.getDesignationForUser(userId);
         if (designation != null)
             setUserDesgn(designation.getName());
-        LOGGER.debug("Exit from setUserInfo");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from setUserInfo");
     }
 
+    /**
+     * Workflow for new and addition/alteration of assessment
+     * 
+     * @param property
+     */
     public void transitionWorkFlow(final PropertyImpl property) {
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
@@ -471,6 +508,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             addActionError(getText("property.workflow.remarks"));
     }
 
+    /**
+     * Build SMS and Email for new and addition/alteration assessment
+     * 
+     * @param property
+     * @param applicationType
+     */
     public void buildEmailandSms(final PropertyImpl property, final String applicationType) {
         final User user = property.getBasicProperty().getPrimaryOwner();
         final String mobileNumber = user.getMobileNumber();
@@ -492,7 +535,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.newpropertycreate.sms", args);
                     if (emailid != null) {
-                        emailSubject = getText("msg.newpropertycreate.email.subject",new String[] {property.getApplicationNo()});
+                        emailSubject = getText("msg.newpropertycreate.email.subject",
+                                new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.newpropertycreate.email", args);
                     }
                 } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
@@ -500,7 +544,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.alterAssessmentForward.sms", args);
                     if (emailid != null) {
-                        emailSubject = getText("msg.alterAssessmentForward.email.subject",new String[] {property.getApplicationNo()});
+                        emailSubject = getText("msg.alterAssessmentForward.email.subject",
+                                new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.alterAssessmentForward.email", args);
                     }
                 }
@@ -511,7 +556,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.newpropertyreject.sms", args);
                     if (emailid != null) {
-                        emailSubject = getText("msg.newpropertyreject.email.subject",new String[] {property.getApplicationNo()});
+                        emailSubject = getText("msg.newpropertyreject.email.subject",
+                                new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.newpropertyreject.email", args);
                     }
                 } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
@@ -519,7 +565,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         smsMsg = getText("msg.alterAssessmentReject.sms", args);
 
                     if (emailid != null) {
-                        emailSubject = getText("msg.alterAssessmentReject.email.subject",new String[] {property.getApplicationNo()});
+                        emailSubject = getText("msg.alterAssessmentReject.email.subject",
+                                new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.alterAssessmentReject.email", args);
                     }
                 }
@@ -532,7 +579,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.newpropertyapprove.sms", args);
                     if (emailid != null) {
-                        emailSubject = getText("msg.newpropertyapprove.email.subject",new String[] {property.getBasicProperty().getUpicNo()});
+                        emailSubject = getText("msg.newpropertyapprove.email.subject", new String[] { property
+                                .getBasicProperty().getUpicNo() });
                         emailBody = getText("msg.newpropertyapprove.email", args);
                     }
                 } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {

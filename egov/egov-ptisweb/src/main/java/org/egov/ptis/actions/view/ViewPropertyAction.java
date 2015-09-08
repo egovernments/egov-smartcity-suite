@@ -90,31 +90,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ParentPackage("egov")
 @Results({ @Result(name = "view", location = "viewProperty-view.jsp") })
 public class ViewPropertyAction extends BaseFormAction {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = 4609817011534083012L;
     private final Logger LOGGER = Logger.getLogger(getClass());
+
     private String propertyId;
-    private BasicProperty basicProperty;
-    private PropertyImpl property;
     private String ownerAddress;
     private String currTax;
     private String currTaxDue;
     private String totalArrDue;
-    private Map<String, Object> viewMap;
-    private PropertyTaxUtil propertyTaxUtil;
     private String markedForDeactive = "N";
     private String roleName;
-    private Set<PropertyDocs> propDocsSet;
     private String docNumber;
-    private boolean isDemandActive;
     private String demandEffectiveYear;
-    private Integer noOfDaysForInactiveDemand;
     private String parentProps;
     private String applicationNo;
     private String applicationType;
     private String[] floorNoStr = new String[100];
+
+    private boolean isDemandActive;
+
+    private Integer noOfDaysForInactiveDemand;
+
+    private Set<PropertyDocs> propDocsSet;
+    private Map<String, Object> viewMap;
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -126,28 +125,36 @@ public class ViewPropertyAction extends BaseFormAction {
     private PersistenceService<Property, Long> propertyImplService;
     @Autowired
     private PersistenceService<RevisionPetition, Long> revisionPetitionPersistenceService;
+    private BasicProperty basicProperty;
+    private PropertyImpl property;
+    private PropertyTaxUtil propertyTaxUtil;
 
     @Override
     public StateAware getModel() {
         return property;
     }
 
+    
     @Action(value = "/view/viewProperty-viewForm")
     public String viewForm() {
-        LOGGER.debug("Entered into viewForm method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into viewForm method");
         try {
-            LOGGER.debug("viewForm : propertyId in View Property : " + propertyId);
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("viewForm : propertyId in View Property : " + propertyId);
             viewMap = new HashMap<String, Object>();
             if (propertyId != null && !propertyId.isEmpty())
                 setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
             else if (applicationNo != null && !applicationNo.isEmpty())
                 getBasicPropForAppNo(applicationNo, applicationType);
-            LOGGER.debug("viewForm : BasicProperty : " + basicProperty);
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("viewForm : BasicProperty : " + basicProperty);
             Set<PropertyStatusValues> propStatusValSet = new HashSet<PropertyStatusValues>();
             property = (PropertyImpl) getBasicProperty().getProperty();
             if (property.getPropertyDetail().getFloorDetails().size() > 0)
                 setFloorDetails(property);
-            LOGGER.debug("viewForm : Property : " + property);
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("viewForm : Property : " + property);
             checkIsDemandActive(property);
             if (getBasicProperty().getPropertyOwnerInfo() != null
                     && !getBasicProperty().getPropertyOwnerInfo().isEmpty()) {
@@ -178,10 +185,12 @@ public class ViewPropertyAction extends BaseFormAction {
             getBasicProperty().getObjections();
             propStatusValSet = getBasicProperty().getPropertyStatusValuesSet();
             for (final PropertyStatusValues propStatusVal : propStatusValSet) {
-                LOGGER.debug("viewForm : Property Status Values : " + propStatusVal);
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("viewForm : Property Status Values : " + propStatusVal);
                 if (propStatusVal.getPropertyStatus().getStatusCode().equals(PROPERTY_STATUS_MARK_DEACTIVE))
                     markedForDeactive = "Y";
-                LOGGER.debug("Marked for Deactivation ? : " + markedForDeactive);
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Marked for Deactivation ? : " + markedForDeactive);
             }
             final Long userId = (Long) session().get(SESSIONLOGINID);
             if (userId != null)
@@ -189,11 +198,12 @@ public class ViewPropertyAction extends BaseFormAction {
             if (!getBasicProperty().getPropertyDocsSet().isEmpty() && getBasicProperty().getPropertyDocsSet() != null)
                 for (final PropertyDocs propDocs : getBasicProperty().getPropertyDocsSet())
                     setDocNumber(propDocs.getSupportDoc().getFileStoreId());
-
-            LOGGER.debug("viewForm : Owner Address : " + viewMap.get(ownerAddress) + ", " + "Current Tax : "
-                    + viewMap.get(currTax) + ", " + "Current Tax Due : " + viewMap.get(currTaxDue) + ", "
-                    + "Total Arrears Tax Due : " + viewMap.get(totalArrDue));
-            LOGGER.debug("Exit from method viewForm");
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("viewForm : Owner Address : " + viewMap.get(ownerAddress) + ", " + "Current Tax : "
+                        + viewMap.get(currTax) + ", " + "Current Tax Due : " + viewMap.get(currTaxDue) + ", "
+                        + "Total Arrears Tax Due : " + viewMap.get(totalArrDue));
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Exit from method viewForm");
             return "view";
         } catch (final Exception e) {
             LOGGER.error("Exception in View Property: ", e);
@@ -202,18 +212,23 @@ public class ViewPropertyAction extends BaseFormAction {
     }
 
     private void checkIsDemandActive(final Property property) {
-        LOGGER.debug("Entered into checkIsDemandActive");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into checkIsDemandActive");
         if (property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE))
             isDemandActive = false;
         else
             isDemandActive = true;
-        LOGGER.debug("checkIsDemandActive - Is demand active? : " + isDemandActive);
-        LOGGER.debug("Exiting from checkIsDemandActive");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("checkIsDemandActive - Is demand active? : " + isDemandActive);
+            LOGGER.debug("Exiting from checkIsDemandActive");
+        }
     }
 
     private String getRolesForUserId(final Long userId) {
-        LOGGER.debug("Entered into method getRolesForUserId");
-        LOGGER.debug("User id : " + userId);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into method getRolesForUserId");
+            LOGGER.debug("User id : " + userId);
+        }
         String roleName;
         final List<String> roleNameList = new ArrayList<String>();
         final User user = UserService.getUserById(userId);
@@ -221,15 +236,17 @@ public class ViewPropertyAction extends BaseFormAction {
             roleName = role.getName() != null ? role.getName() : "";
             roleNameList.add(roleName);
         }
-        LOGGER.debug("Exit from method getRolesForUserId with return value : " + roleNameList.toString().toUpperCase());
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from method getRolesForUserId with return value : "
+                    + roleNameList.toString().toUpperCase());
         return roleNameList.toString().toUpperCase();
     }
 
     private void getBasicPropForAppNo(final String appNo, final String appType) {
         if (appType != null && !appType.isEmpty())
             if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
-                    || appType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || appType
-                            .equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)) {
+                    || appType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
+                    || appType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)) {
                 final Property property = propertyImplService.find("from PropertyImpl where applicationNo=?", appNo);
                 setBasicProperty(property.getBasicProperty());
             } else if (appType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
@@ -238,9 +255,10 @@ public class ViewPropertyAction extends BaseFormAction {
                 setBasicProperty(rp.getBasicProperty());
             }
     }
-    
+
     public void setFloorDetails(final Property property) {
-        LOGGER.debug("Entered into setFloorDetails, Property: " + property);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into setFloorDetails, Property: " + property);
 
         final List<Floor> floors = property.getPropertyDetail().getFloorDetails();
         property.getPropertyDetail().setFloorDetailsProxy(floors);
@@ -249,14 +267,14 @@ public class ViewPropertyAction extends BaseFormAction {
             floorNoStr[i] = FLOOR_MAP.get(flr.getFloorNo());
             i++;
         }
-
-        LOGGER.debug("Exiting from setFloorDetails: ");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exiting from setFloorDetails: ");
     }
 
     public String getFloorNoStr(final Integer floorNo) {
         return FLOOR_MAP.get(floorNo);
     }
-    
+
     public List<Floor> getFloorDetails() {
         return new ArrayList<Floor>(property.getPropertyDetail().getFloorDetails());
     }
@@ -416,7 +434,7 @@ public class ViewPropertyAction extends BaseFormAction {
     public void setApplicationType(final String applicationType) {
         this.applicationType = applicationType;
     }
-    
+
     public String[] getFloorNoStr() {
         return floorNoStr;
     }
