@@ -108,7 +108,7 @@
 					<td width="10%" class="greybox"><strong><s:text
 								name="chartOfAccount.accountDetailType" />:</strong></td>
 					<td width="22%" class="greybox"><s:iterator
-							value="chartOfAccounts.chartOfAccountDetails" status="status">
+							value="model.chartOfAccountDetails" status="status">
 							<s:property value="detailTypeId.name" />
 							<s:if test="!#status.last">,</s:if>
 						</s:iterator></td>
