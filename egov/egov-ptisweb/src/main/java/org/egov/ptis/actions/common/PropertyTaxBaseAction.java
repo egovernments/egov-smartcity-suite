@@ -492,7 +492,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.newpropertycreate.sms", args);
                     if (emailid != null) {
-                        emailSubject = getText("msg.newpropertycreate.email.subject");
+                        emailSubject = getText("msg.newpropertycreate.email.subject",new String[] {property.getApplicationNo()});
                         emailBody = getText("msg.newpropertycreate.email", args);
                     }
                 } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
@@ -500,7 +500,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.alterAssessmentForward.sms", args);
                     if (emailid != null) {
-                        emailSubject = getText("msg.alterAssessmentForward.email.subject");
+                        emailSubject = getText("msg.alterAssessmentForward.email.subject",new String[] {property.getApplicationNo()});
                         emailBody = getText("msg.alterAssessmentForward.email", args);
                     }
                 }
@@ -511,7 +511,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.newpropertyreject.sms", args);
                     if (emailid != null) {
-                        emailSubject = getText("msg.newpropertyreject.email.subject");
+                        emailSubject = getText("msg.newpropertyreject.email.subject",new String[] {property.getApplicationNo()});
                         emailBody = getText("msg.newpropertyreject.email", args);
                     }
                 } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
@@ -519,7 +519,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         smsMsg = getText("msg.alterAssessmentReject.sms", args);
 
                     if (emailid != null) {
-                        emailSubject = getText("msg.alterAssessmentReject.email.subject");
+                        emailSubject = getText("msg.alterAssessmentReject.email.subject",new String[] {property.getApplicationNo()});
                         emailBody = getText("msg.alterAssessmentReject.email", args);
                     }
                 }
@@ -532,7 +532,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.newpropertyapprove.sms", args);
                     if (emailid != null) {
-                        emailSubject = getText("msg.newpropertyapprove.email.subject");
+                        emailSubject = getText("msg.newpropertyapprove.email.subject",new String[] {property.getBasicProperty().getUpicNo()});
                         emailBody = getText("msg.newpropertyapprove.email", args);
                     }
                 } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {

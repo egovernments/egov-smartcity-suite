@@ -599,7 +599,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         if (null != propertyMutation && null != propertyMutation.getState()) {
             final State mutationState = propertyMutation.getState();
             if (mutationState.getValue().equals(WF_STATE_REVENUE_CLERK_APPROVED)) {
-                subject = getText("subject.createtransferproperty", propertyMutation.getBasicProperty().getUpicNo());
+                subject = getText("subject.createtransferproperty", new String[] { propertyMutation.getBasicProperty().getUpicNo() });
                 argsForTransferor.add(propertyMutation.getFullTranferorName());
                 argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
                 argsForTransferor.add(transferOwnerService.getCityName());
@@ -629,14 +629,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             } else if (mutationState.getValue().equals(WF_STATE_COMMISSIONER_APPROVED)) {
                 subject = getText("subject.approvetransferproperty");
                 argsForTransferor.add(propertyMutation.getFullTranferorName());
+                argsForTransferor.add(propertyMutation.getFullTranferorName());
                 argsForTransferor.add(propertyMutation.getFullTranfereeName());
                 argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
-                argsForTransferor.add(propertyMutation.getFullTranferorName());
                 argsForTransferor.add(transferOwnerService.getCityName());
+                argsForTransferee.add(propertyMutation.getFullTranfereeName());
                 argsForTransferee.add(propertyMutation.getFullTranferorName());
                 argsForTransferee.add(propertyMutation.getFullTranfereeName());
                 argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
-                argsForTransferee.add(propertyMutation.getFullTranferorName());
                 argsForTransferee.add(transferOwnerService.getCityName());
                 emailBodyTransferor = getText("body.approvetransferproperty", argsForTransferor);
                 emailBodyTransferee = getText("body.approvetransferproperty", argsForTransferee);
