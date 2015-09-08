@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- -------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency,
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,14 +36,9 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/struts-tags"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
-<link href="<egov:url path='/css/works.css'/>" rel="stylesheet" type="text/css" />
-<link href="<egov:url path='/css/commonegov.css'/>" rel="stylesheet" type="text/css" />
+#------------------------------------------------------------------------------- -->
+<%@ include file="/includes/taglibs.jsp" %> 
 <script src="<egov:url path='js/works.js'/>"></script>
-<script src="<egov:url path='js/helper.js'/>"></script>
 <script>
 function validateAndSubmit() {
    if(dom.get('mbStatus').value==-1 && dom.get('contractor').value==-1 && dom.get('workorderNoSearch').value==""

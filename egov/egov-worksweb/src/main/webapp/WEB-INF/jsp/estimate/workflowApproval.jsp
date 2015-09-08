@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- -------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency,
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,7 +36,7 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
 <div class="rbcontent2">
 	<div class="errorstyle" id="approver_error" style="display:none;"></div>	      
 	   <table width="100%" border="0" cellspacing="0" cellpadding="0" >

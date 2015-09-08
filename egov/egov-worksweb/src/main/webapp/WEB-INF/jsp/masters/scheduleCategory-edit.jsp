@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- -------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency,
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,8 +36,8 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/struts-tags" %>  
+#------------------------------------------------------------------------------- -->
+<%@ include file="/includes/taglibs.jsp" %> 
 <html>  
 <head>  
     <title> Edit  Schedule Category</title>  
@@ -45,6 +45,7 @@
 	<body>  
 		<s:actionerror/>  
 		<s:fielderror />   
+		<s:form>  
 			<s:hidden  name="model.id" />
 			<s:submit method="save" value="Save "/>  
 		</s:form>  

@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- -------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency,
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,8 +36,7 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+#------------------------------------------------------------------------------- -->
 <script src="<egov:url path='js/works.js'/>"></script> 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 		 <s:hidden name="tenderRespId" id="tenderRespId"  value="%{tenderRespId}"></s:hidden>

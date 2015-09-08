@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- -------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency,
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,10 +36,7 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/struts-tags"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<!--<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>-->
+#------------------------------------------------------------------------------- -->
 <style type="text/css">
 #yui-dt0-bodytable,#yui-dt1-bodytable,#yui-dt2-bodytable {
 	Width: 100%;

@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- -------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency,
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,9 +36,8 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld" %>  
-<%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
+#------------------------------------------------------------------------------- -->
+<%@ include file="/includes/taglibs.jsp" %> 
 <script type="text/javascript">
 var estimateArr = new Array();
 var selectedFund = "";

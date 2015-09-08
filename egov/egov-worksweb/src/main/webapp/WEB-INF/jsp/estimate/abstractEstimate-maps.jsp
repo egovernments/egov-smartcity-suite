@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- -------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency,
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,13 +36,12 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld" %>  
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
+#------------------------------------------------------------------------------- -->
+<%@ include file="/includes/taglibs.jsp" %> 
 <html>
 <title><s:text name='page.title.estimate'/></title>
 <script src="../js/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
 <script type="text/javascript" src="/egworks/js/gmap3.min.js"></script>
 <script type="text/javascript">
 var MODE = '<s:property value="%{mapMode}" />';

@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- -------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency,
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,10 +36,8 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-<%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator"%>
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld" %>  
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
+#------------------------------------------------------------------------------- -->
+<%@ include file="/includes/taglibs.jsp" %> 
 <html>
 <title><s:text name='page.title.estimate'/></title>
 <body onload="showHideMap();loadWorkType();loadDepositDetails();setCurrentdate();refreshInbox();noBack();" onpageshow="if(event.persisted) noBack();" onunload="" class="yui-skin-sam">
@@ -578,14 +576,7 @@ jq(document).on('click', '#woView', function(){
             </tr>	
             <tr>
                 <td  colspan="4" class="shadowwk"> </td>                  
-            </tr>
-            <s:if test="%{sourcepage=='inbox' && model.egwStatus!=null && model.currentState!=null && model.currentState.nextAction=='Pending Admin Sanction'}" > 
-		  	 <tr>
-		  	 	<td>
-		  	 		<%@ include file="digitalsignature-password.jsp"%>
-		  	 	</td>
-		  	 </tr>
-		   </s:if>
+            </tr>          
                    
          <tr>
             <td><div align="right" class="mandatory" style="font-size:11px;padding-right:20px;">* <s:text name="message.mandatory" /></div></td>
