@@ -47,7 +47,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_A
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -65,10 +64,9 @@ import org.egov.infra.web.struts.actions.ReportFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.bean.PropertyWiseArrearInfo;
 import org.egov.ptis.bean.ReportInfo;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
-import org.hibernate.Query;
-import org.hibernate.criterion.CriteriaSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -93,12 +91,15 @@ public class ArrearRegisterReportAction extends ReportFormAction {
     private BoundaryService boundaryService;
     @Autowired
     private FinancialYearDAO financialYearDAO;
+    @Autowired
+    private PropertyTaxUtil propertyTaxUtil;
     private List<PropertyWiseArrearInfo> propertyWiseInfoList;
 
     @Override
     @SuppressWarnings("unchecked")
     public void prepare() {
-        LOGGER.debug("Entered into prepare method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into prepare method");
         super.prepare();
         final List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 LOCALITY, LOCATION_HIERARCHY_TYPE);
@@ -107,104 +108,95 @@ public class ArrearRegisterReportAction extends ReportFormAction {
         final List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone",
                 ADMIN_HIERARCHY_TYPE);
         addDropdownData("Zone", zoneList);
-        LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
         prepareWardDropDownData(zoneId != null, wardId != null);
         if (wardId == null || wardId.equals(-1))
             addDropdownData("blockList", Collections.EMPTY_LIST);
         prepareBlockDropDownData(wardId != null, areaId != null);
-        LOGGER.debug("Exit from prepare method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from prepare method");
     }
 
+    /**
+     * Loads ward dropdown for selected zone
+     * @param zoneExists
+     * @param wardExists
+     */
     @SuppressWarnings("unchecked")
     private void prepareWardDropDownData(final boolean zoneExists, final boolean wardExists) {
-        LOGGER.debug("Entered into prepareWardDropDownData method");
-        LOGGER.debug("Zone Exists ? : " + zoneExists + ", " + "Ward Exists ? : " + wardExists);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into prepareWardDropDownData method");
+            LOGGER.debug("Zone Exists ? : " + zoneExists + ", " + "Ward Exists ? : " + wardExists);
+        }
         if (zoneExists && wardExists) {
             List<Boundary> wardList = new ArrayList<Boundary>();
             wardList = boundaryService.getActiveChildBoundariesByBoundaryId(getZoneId());
             addDropdownData("wardList", wardList);
         } else
             addDropdownData("wardList", Collections.EMPTY_LIST);
-        LOGGER.debug("Exit from prepareWardDropDownData method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from prepareWardDropDownData method");
     }
 
+    /**
+     * Loads block dropdown for selected ward
+     * @param wardExists
+     * @param blockExists
+     */
     @SuppressWarnings("unchecked")
     private void prepareBlockDropDownData(final boolean wardExists, final boolean blockExists) {
-        LOGGER.debug("Entered into prepareBlockDropDownData method");
-        LOGGER.debug("Ward Exists ? : " + wardExists + ", " + "Block Exists ? : " + blockExists);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into prepareBlockDropDownData method");
+            LOGGER.debug("Ward Exists ? : " + wardExists + ", " + "Block Exists ? : " + blockExists);
+        }
         if (wardExists && blockExists) {
             List<Boundary> blockList = new ArrayList<Boundary>();
             blockList = boundaryService.getActiveChildBoundariesByBoundaryId(getWardId());
             addDropdownData("blockList", blockList);
         } else
             addDropdownData("blockList", Collections.EMPTY_LIST);
-        LOGGER.debug("Exit from prepareWardDropDownData method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from prepareWardDropDownData method");
     }
 
+    /**
+     * @return
+     */
     @SkipValidation
     @Action(value = "/reports/arrearRegisterReport-index")
     public String index() {
         return INDEX;
     }
 
+    /**
+     * Generates Arrear Register Report
+     * 
+     * @return
+     */
     @SuppressWarnings("unchecked")
     @ValidationErrorPage(value = INDEX)
     @Action(value = "/reports/arrearRegisterReport-generateArrearReport")
     public String generateArrearReport() {
         final ReportInfo reportInfo = new ReportInfo();
         propertyWiseInfoList = new ArrayList<PropertyWiseArrearInfo>();
-        // Get current financial year
-        final CFinancialYear finYear = financialYearDAO.getFinYearByDate(new Date());
         String strZoneNum = null, strWardNum = null, strBlockNum = null, strLocalityNum = null;
-        final StringBuffer query = new StringBuffer(300);
-
-        // Query that retrieves all the properties that has arrears.
-        query.append("select distinct pmv from PropertyMaterlizeView pmv,InstDmdCollMaterializeView idc where "
-                + "pmv.basicPropertyID = idc.propMatView.basicPropertyID and idc.installment.fromDate not between  ('"
-                + finYear.getStartingDate() + "') and ('" + finYear.getEndingDate() + "') ");
-
-        if ((localityId == null || localityId == -1) && zoneId != null && zoneId != -1) {
+        if ((localityId == null || localityId == -1) && zoneId != null && zoneId != -1)
             strZoneNum = boundaryService.getBoundaryById(zoneId).getName();
-            query.append(" and pmv.zone.id=? ");
-        } else if (localityId != null && localityId != -1) {
+        else if (localityId != null && localityId != -1) {
             strLocalityNum = boundaryService.getBoundaryById(localityId).getName();
-            query.append(" and pmv.locality.id=? ");
-            if (zoneId != null && zoneId != -1) {
+            if (zoneId != null && zoneId != -1)
                 strZoneNum = boundaryService.getBoundaryById(zoneId).getName();
-                query.append(" and pmv.zone.id=? ");
-            }
         }
-        if (wardId != null && wardId != -1) {
+        if (wardId != null && wardId != -1)
             strWardNum = boundaryService.getBoundaryById(wardId).getName();
-            query.append("  and pmv.ward.id=? ");
-        }
-        if (areaId != null && areaId != -1) {
+        if (areaId != null && areaId != -1)
             strBlockNum = boundaryService.getBoundaryById(areaId).getName();
-            query.append("  and pmv.block.id=? ");
-        }
 
-        query.append(" order by pmv.basicPropertyID ");
-        final Query qry = getPersistenceService().getSession().createQuery(query.toString());
-        if ((localityId == null || localityId == -1) && zoneId != null && zoneId != -1) {
-            if (zoneId != null && zoneId != -1)
-                qry.setParameter(0, zoneId);
-            if (wardId != null && wardId != -1)
-                qry.setParameter(1, wardId);
-            if (areaId != null && areaId != -1)
-                qry.setParameter(2, areaId);
-        } else if (localityId != null && localityId != -1) {
-            qry.setParameter(0, localityId);
-            if (zoneId != null && zoneId != -1)
-                qry.setParameter(1, zoneId);
-            if (wardId != null && wardId != -1)
-                qry.setParameter(2, wardId);
-            if (areaId != null && areaId != -1)
-                qry.setParameter(3, areaId);
-        }
-
-        final List<PropertyMaterlizeView> propertyViewList = qry.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY)
-                .list();
-        LOGGER.debug("PropertyMaterlizeView List Size" + propertyViewList.size());
+        final List<PropertyMaterlizeView> propertyViewList = propertyTaxUtil.prepareQueryforArrearRegisterReport(zoneId, wardId,
+                areaId, localityId);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("PropertyMaterlizeView List Size" + propertyViewList.size());
 
         for (final PropertyMaterlizeView propMatView : propertyViewList)
             // If there is only one Arrear Installment

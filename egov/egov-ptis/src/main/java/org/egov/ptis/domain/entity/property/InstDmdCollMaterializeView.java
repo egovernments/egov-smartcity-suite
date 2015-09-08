@@ -223,18 +223,4 @@ public class InstDmdCollMaterializeView implements Serializable {
     public void setCreatedDate(final Date createdDate) {
         this.createdDate = createdDate;
     }
-    /*
-     * @Override public String toString() { StringBuilder objStr = new StringBuilder();
-     * objStr.append("|InstallmentId: ").append(getInstallment())
-     * .append("|GeneralTax: ").append(getGeneralTax()).append("|EgsTax: ").append(getEgsTax())
-     * .append("|EduCessResdTax: ").append(getEduCessResdTax()).append("|EduCessNonResdTax: ").append(getEduCessNonResdTax())
-     * .append("|WaterTax: ").append(getWaterTax()).append("|FireTax: ").append(getFireTax())
-     * .append("|SewerageTax: ").append(getSewerageTax()).append("|LightTax: ").append(getLightTax())
-     * .append("|BigBldgTax: ").append(getBigBldgTax()) .append("|GeneralTaxColl: ").append(getGeneralTaxColl())
-     * .append("|EgsTaxColl: ").append(getEgsTaxColl()).append("|EduCessResdTaxColl: ").append(getEduCessResdTaxColl())
-     * .append("|EduCessNonResdTaxColl: ").append(getEduCessNonResdTaxColl()).append("|WaterTaxColl: ").append(getWaterTaxColl())
-     * .append("|FireTaxColl: ").append(getFireTaxColl()).append("|SewerageTaxColl").append(getSewerageTaxColl())
-     * .append("|LightTaxColl: ").append(getLightTaxColl()).append("|BigBldgTaxColl: ").append(getBigBldgTaxColl()); return
-     * objStr.toString(); }
-     */
 }

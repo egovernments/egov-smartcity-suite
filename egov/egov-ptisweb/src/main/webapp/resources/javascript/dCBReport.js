@@ -53,9 +53,13 @@ jQuery(document).ready(function() {
 	drillDowntableContainer = jQuery("#tbldcbdrilldown");
 	jQuery('#report-backbutton').hide();
 	jQuery('#btnsearch').click(function(e) {
+		dom.get("dcbError").style.display='none';
+        dom.get("dcbError").innerHTML='';
 		if(jQuery('#zoneId').val()=="-1"){
-			 alert("Please Select Zone");
-			 return false;
+			dom.get("dcbError").style.display='';
+	        dom.get("dcbError").innerHTML='Please Enter Zone';
+	        dom.get('zoneId').focus();
+			return false;
 		}
 		callAjaxByBoundary();
 	});

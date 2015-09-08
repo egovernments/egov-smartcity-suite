@@ -109,6 +109,9 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 		return (BasicProperty) qry.uniqueResult();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.egov.ptis.domain.dao.property.BasicPropertyDAO#getBasicPropertyByPropertyID(java.lang.String)
+	 */
 	@Override
 	public BasicProperty getBasicPropertyByPropertyID(String propertyId) {
 		Query qry = null;
@@ -119,10 +122,12 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 			qry.setString("propertyId", propertyId);
 			basicProperty = (BasicProperty) qry.uniqueResult();
 		}
-		// qry.setMaxResults(1);
 		return basicProperty;
 	}
 
+	/*
+         * By passing propertyId as parameter this method will give BasicProeprty Object.
+         */
 	@Override
 	public BasicProperty getAllBasicPropertyByPropertyID(String propertyId) {
 		Query qry = null;
@@ -133,7 +138,6 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 			qry.setString("propertyId", propertyId);
 			basicProperty = (BasicProperty) qry.uniqueResult();
 		}
-		// qry.setMaxResults(1);
 		return basicProperty;
 	}
 
@@ -260,25 +264,28 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 		return basicPropList;
 	}
 
+	/*
+         * By passing assessmentNo and  parcelID as parameter this method will give BasicProeprty Object.
+         */
 	@Override
-	public BasicProperty getBasicPropertyByIndexNumAndParcelID(String indexNum, String parcelID) {
+	public BasicProperty getBasicPropertyByIndexNumAndParcelID(String assessmentNo, String parcelID) {
 		Query qry = null;
 		BasicProperty basicProperty = null;
-		Boolean indexFound = Boolean.FALSE;
+		Boolean assessmentFound = Boolean.FALSE;
 		boolean parcelFound = Boolean.FALSE;
 		StringBuffer strquery = new StringBuffer(200);
 		strquery.append("from BasicPropertyImpl BP where BP.active='Y' ");
-		if (indexNum != null && !indexNum.equals("")) {
-			indexFound = Boolean.TRUE;
-			strquery.append(" and BP.upicNo=:indexNum");
+		if (assessmentNo != null && !assessmentNo.equals("")) {
+		    assessmentFound = Boolean.TRUE;
+			strquery.append(" and BP.upicNo=:assessmentNo");
 		}
 		if (parcelID != null && !parcelID.equals("")) {
 			parcelFound = Boolean.TRUE;
 			strquery.append(" and BP.gisReferenceNo =:parcelID");
 		}
 		qry = getCurrentSession().createQuery(strquery.toString());
-		if (indexFound) {
-			qry.setString("indexNum", indexNum);
+		if (assessmentFound) {
+			qry.setString("assessmentNo", assessmentNo);
 		}
 		if (parcelFound) {
 			qry.setString("parcelID", parcelID);

@@ -39,7 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.actions.citizen.search;
 
-import static java.math.BigDecimal.ZERO;
 import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
@@ -86,9 +85,10 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 
     private final Logger LOGGER = Logger.getLogger(getClass());
 
-    private String assessmentNum;
+    private String assessmentNum; 
     private String mode;
     private List<Map<String, String>> searchResultList;
+    private HttpServletRequest request;
     private String searchUri;
     private String searchCreteria;
     private String searchValue;
@@ -107,20 +107,27 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
         return null;
     }
 
+    /**
+     * @return to citizen search property screen 
+     */
     @SkipValidation
     @Action(value = "/citizen/search/search-searchForm")
     public String searchForm() {
         return NEW;
     }
 
+    /**
+     * @return to citizen search property result screen
+     */
     @ValidationErrorPage(value = "new")
     @Action(value = "/citizen/search/search-srchByAssessment")
     public String srchByAssessment() {
-        LOGGER.info("Entered into srchByAssessment  method");
-        LOGGER.info("Assessment Number : " + assessmentNum);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into srchByAssessment  method. Assessment Number : " + assessmentNum);
         try {
             final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNum);
-            LOGGER.debug("srchByAssessment : BasicProperty : " + basicProperty);
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("srchByAssessment : BasicProperty : " + basicProperty);
             if (basicProperty != null)
                 setSearchResultList(getSearchResults(basicProperty.getUpicNo()));
             if (assessmentNum != null && !assessmentNum.equals(""))
@@ -132,32 +139,37 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
             LOGGER.error("Exception in Search Property By Assessment ", e);
             throw new EGOVRuntimeException("Exception in Search Property By Assessment ", e);
         }
-        LOGGER.debug("Exit from srchByAssessment method ");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from srchByAssessment method ");
         return TARGET;
     }
 
+    /* (non-Javadoc)
+     * @see com.opensymphony.xwork2.ActionSupport#validate()
+     * @description : validates assessment no. Throw error in case its empty.
+     */
     @Override
     public void validate() {
-        LOGGER.info("Entered into validate method");
         if (org.apache.commons.lang.StringUtils.equals(mode, "assessment"))
             if (org.apache.commons.lang.StringUtils.isEmpty(assessmentNum) || org.apache.commons.lang.StringUtils
                     .isBlank(assessmentNum))
                 addActionError(getText("mandatory.assessmentNo"));
-        LOGGER.debug("Exit from validate method");
     }
 
+    /**
+     * @param assessmentNumber
+     * @return search result based on assessment number.
+     */
     private List<Map<String, String>> getSearchResults(final String assessmentNumber) {
-        LOGGER.debug("Entered into getSearchResults method");
-        LOGGER.debug("Asssessment Number : " + assessmentNumber);
-
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into getSearchResults method. Asssessment Number : " + assessmentNumber);
         if (assessmentNumber != null || org.apache.commons.lang.StringUtils.isNotEmpty(assessmentNumber)) {
 
             final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNumber);
-            LOGGER.debug("BasicProperty : " + basicProperty);
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("BasicProperty : " + basicProperty);
             if (basicProperty != null) {
                 final Property property = basicProperty.getProperty();
-                LOGGER.debug("Property : " + property);
-
                 final Map<String, String> searchResultMap = new HashMap<String, String>();
                 searchResultMap.put("assessmentNum", assessmentNumber);
                 searchResultMap.put("ownerName", basicProperty.getFullOwnerName());
@@ -172,8 +184,8 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                 searchList.add(searchResultMap);
             }
         }
-        LOGGER.debug("Search list : " + (searchList != null ? searchList : ZERO));
-        LOGGER.debug("Exit from getSearchResults method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from getSearchResults method");
         return searchList;
     }
 
@@ -219,7 +231,8 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 
     @Override
     @SkipValidation
-    public void setServletRequest(final HttpServletRequest arg0) {
+    public void setServletRequest(HttpServletRequest arg0) {
+            this.request = arg0;
     }
 
     public String getAssessmentNum() {

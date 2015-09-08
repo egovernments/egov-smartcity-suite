@@ -59,6 +59,7 @@ import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgBill;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -116,6 +117,8 @@ public class BillService {
     private DemandNoticeInfo demandNoticeInfo;
     @Autowired
     private WaterChargesIntegrationService waterChargesIntegrationService;
+    @Autowired
+    private BoundaryService boundaryService;
 
     /**
      * Generates a Demand Notice or the Bill giving the break up of the tax amounts and the <code>EgBill</code>
@@ -125,7 +128,8 @@ public class BillService {
      * @return
      */
     public ReportOutput generateBill(final BasicProperty basicProperty, final Integer userId) {
-        LOGGER.debug("Entered into generateBill BasicProperty : " + basicProperty);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into generateBill BasicProperty : " + basicProperty);
         ReportOutput reportOutput = null;
         try {
             setBillNo(propertyTaxNumberGenerator.generateManualBillNumber(basicProperty.getPropertyID()));
@@ -153,17 +157,22 @@ public class BillService {
             basicProperty.setIsBillCreated(STATUS_BILL_CREATED);
             basicProperty.setBillCrtError(STRING_EMPTY);
             final boolean flag = waterChargesIntegrationService.updateBillNo(basicProperty.getId().toString(), getBillNo());
-            if (flag)
-                LOGGER.debug("Billno updated successfully in water tax");
-            else
-                LOGGER.debug("Failed to updated billno in water tax");
+            if (flag) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Billno updated successfully in water tax");
+            }
+            else {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Failed to updated billno in water tax");
+            }
             noticeService.saveNotice(getBillNo(), NOTICE_TYPE_BILL, basicProperty, billPDF);// Save
-            noticeService.getSession().flush(); // Added as notice was not getting saved
+            noticeService.getSession().flush(); // Added since notice was not getting saved
         } catch (final Exception e) {
             e.printStackTrace();
             throw new EGOVRuntimeException("Bill Generation Exception : " + e);
         }
-        LOGGER.debug("Exiting from generateBill");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exiting from generateBill");
         return reportOutput;
     }
 
@@ -182,8 +191,8 @@ public class BillService {
                         "SELECT COUNT (*) FROM EgBill WHERE module = ? "
                                 + "AND egBillType.code = ? AND consumerId = ? AND is_Cancelled = 'N' "
                                 + "AND issueDate between ? and ? ").setEntity(0, currentInstallment.getModule())
-                                .setString(1, BILLTYPE_MANUAL).setString(2, basicProperty.getUpicNo())
-                                .setDate(3, currentInstallment.getFromDate()).setDate(4, currentInstallment.getToDate()).list().get(0);
+                .setString(1, BILLTYPE_MANUAL).setString(2, basicProperty.getUpicNo())
+                .setDate(3, currentInstallment.getFromDate()).setDate(4, currentInstallment.getToDate()).list().get(0);
         return count.intValue();
     }
 
@@ -278,10 +287,10 @@ public class BillService {
                 if (bbg.getWard() != null) {
                     if (count == bulkBillGeneration.size())
                         wardParamString.append("'").append(bbg.getZone().getId()).append('-')
-                        .append(bbg.getWard().getId()).append("')");
+                                .append(bbg.getWard().getId()).append("')");
                     else
                         wardParamString.append("'").append(bbg.getZone().getId()).append('-')
-                        .append(bbg.getWard().getId()).append("', ");
+                                .append(bbg.getWard().getId()).append("', ");
 
                 } else if (count == bulkBillGeneration.size())
                     zoneParamString.append(bbg.getZone().getId()).append(")");
@@ -298,14 +307,14 @@ public class BillService {
 
             if (wardParamString != null && zoneParamString == null)
                 queryString.append(" AND ").append("bp.propertyID.ward.parent.id||'-'||bp.propertyID.ward.id")
-                .append(" IN ").append(wardParamString.toString());
+                        .append(" IN ").append(wardParamString.toString());
             else if (zoneParamString != null && wardParamString == null)
                 queryString.append(" AND ").append("bp.propertyID.zone.id").append(" IN ")
-                .append(zoneParamString.toString());
+                        .append(zoneParamString.toString());
             else if (wardParamString != null && zoneParamString != null)
                 queryString.append(" AND ").append("(bp.propertyID.ward.parent.id||'-'||bp.propertyID.ward.id")
-                .append(" IN ").append(wardParamString.toString()).append(" OR ")
-                .append("bp.propertyID.zone.id").append(" IN ").append(zoneParamString.toString()).append(')');
+                        .append(" IN ").append(wardParamString.toString()).append(" OR ")
+                        .append("bp.propertyID.zone.id").append(" IN ").append(zoneParamString.toString()).append(')');
         }
         queryString = queryString.append(" AND bp NOT IN (SELECT bp FROM BasicPropertyImpl bp, EgBill b ")
                 .append("WHERE bp.active = true ")
@@ -321,6 +330,44 @@ public class BillService {
         query.setMaxResults(billsCount);
 
         return query;
+    }
+    
+    /**
+     * @param zoneId
+     * @param wardId
+     * @param currentInstallment
+     * @return
+     */
+    public List<BulkBillGeneration> getBulkBill(Long zoneId, Long wardId, Installment currentInstallment){
+        final StringBuilder queryStr = new StringBuilder();
+        queryStr.append("select bbg from BulkBillGeneration bbg ").append(
+                " where bbg.zone.id=:zoneid and bbg.installment.id=:installment ");
+        if (wardId != null && wardId != -1)
+            queryStr.append("and bbg.ward.id=:wardid ");
+        final Query query = getPersistenceService().getSession().createQuery(queryStr.toString());
+        query.setLong("zoneid", zoneId);
+        query.setLong("installment", currentInstallment.getId());
+        if (wardId != null && wardId != -1)
+            query.setLong("wardid", wardId);
+        
+        final List<BulkBillGeneration> bbgList = query.list();
+        return bbgList;
+    }
+    
+    /**
+     * @param zoneId
+     * @param wardId
+     * @param currentInstallment
+     * @return
+     */
+    public BulkBillGeneration saveBulkBill(Long zoneId, Long wardId, Installment currentInstallment){
+        BulkBillGeneration bulkBill = new BulkBillGeneration();
+        bulkBill.setZone(boundaryService.getBoundaryById(zoneId));
+        bulkBill.setWard(boundaryService.getBoundaryById(wardId));
+        bulkBill.setInstallment(currentInstallment);
+        persistenceService.setType(BulkBillGeneration.class);
+        getPersistenceService().persist(bulkBill);
+        return bulkBill;
     }
 
     public ReportService getReportService() {

@@ -81,7 +81,6 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
@@ -176,7 +175,8 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
      */
     @Action(value = "/bills/billGeneration-generateBill")
     public String generateBill() {
-        LOGGER.debug("Entered into generateBill, Index Number :" + indexNumber);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into generateBill, Index Number :" + indexNumber);
         try {
             if (basicPropertyDAO != null)
                 basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
@@ -212,8 +212,10 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
             }
             getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
             reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
-            LOGGER.debug("generateBill: ReportId: " + reportId);
-            LOGGER.debug("Exit from generateBill");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("generateBill: ReportId: " + reportId);
+                LOGGER.debug("Exit from generateBill");
+            }
             if (property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
                 property.setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
                 propertyImplService.persist(property);
@@ -392,39 +394,6 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
             setAckMessage("Bill successfully cancelled for index no : " + indexNumber);
         }
         return ACK;
-    }
-
-    private void startWorkFlow() {
-        LOGGER.debug("Entered into startWorkFlow, UserId: " + EgovThreadLocals.getUserId());
-        LOGGER.debug("startWorkFlow: Workflow is starting for Property: " + property);
-        // Position position =
-        // eisCommonsManager.(Integer.valueOf(EgovThreadLocals.getUserId()));
-        // FIX ME
-        final Position position = null;
-        // propertyWorkflowService.start(property, position,
-        // "Property Workflow Started");
-        property.transition(true).start().withSenderName(property.getCreatedBy().getUsername())
-        .withComments("Property Workflow Started").withOwner(position);
-
-        LOGGER.debug("Exiting from startWorkFlow, Workflow started");
-    }
-
-    /**
-     * This method ends the workflow. The Property is transitioned to END state.
-     */
-    private void endWorkFlow() {
-        LOGGER.debug("Enter method endWorkFlow, UserId: " + EgovThreadLocals.getUserId());
-        LOGGER.debug("endWorkFlow: Workflow will end for Property: " + property);
-        // FIX ME
-        // Position position =
-        // eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
-        final Position position = null;
-        /*
-         * propertyWorkflowService .end(property, position, "Property Workflow End");
-         */
-        property.transition(true).end().withSenderName(property.getCreatedBy().getUsername())
-        .withComments("Property Workflow End").withOwner(position);
-        LOGGER.debug("Exit method endWorkFlow, Workflow ended");
     }
 
     public Integer getReportId() {

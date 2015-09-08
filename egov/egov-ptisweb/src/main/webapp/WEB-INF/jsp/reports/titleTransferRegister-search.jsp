@@ -47,6 +47,7 @@
 	<title><s:text name='titleTransferRegReport.search' /></title>
 </head>
 <body>
+	<div id="titleTransferError" class="errorstyle" style="display:none;"></div>
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel-body">

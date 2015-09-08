@@ -69,21 +69,28 @@ jQuery(document).ready(function() {
 	jQuery(':input').inputmask();
 	drillDowntableContainer = jQuery("#tblCollectionSummary");
 	jQuery('#btnsearch').click(function(e) {
+		dom.get("colSummaryError").style.display='none';
+        dom.get("colSummaryError").innerHTML='';
 		var fromDate = document.getElementById("fromDate").value;
 		var toDate = document.getElementById("toDate").value;
 		var finyearSDate=document.getElementById("finYearStartDate").value;
-		
+
 		if (fromDate == null || fromDate == "" || fromDate == 'DD/MM/YYYY') {
-			alert('From Date is mandatory');
-			return false;
+			dom.get("colSummaryError").style.display='';
+	        dom.get("colSummaryError").innerHTML='From Date is Mandatory';
+	        dom.get("fromDate").focus();
+			return false; 
 		}
 		if (toDate == null || toDate == "" || toDate == 'DD/MM/YYYY') {
-			alert('To Date is mandatory');
+			dom.get("colSummaryError").style.display='';
+	        dom.get("colSummaryError").innerHTML='To Date is Mandatory';
+	        dom.get("toDate").focus();
 			return false;
 		}
 		if ((fromDate != null && fromDate != "" && fromDate != 'DD/MM/YYYY')){
 			if(compareDate(finyearSDate,fromDate)== -1){
-				alert('From Date Should be greater or equal to Current Financial Year Date '+finyearSDate);
+				dom.get("colSummaryError").style.display='';
+		        dom.get("colSummaryError").innerHTML='From Date Should be greater or equal to Current Financial Year Date'+" "+finyearSDate;
 				return false;
 			}
 			
@@ -91,7 +98,8 @@ jQuery(document).ready(function() {
 		if((fromDate != null && fromDate != "" && fromDate != 'DD/MM/YYYY') &&
 				(toDate != null && toDate != "" && toDate != 'DD/MM/YYYY')) {
 			if(compareDate(fromDate,toDate)== -1){
-				alert('To Date Should be greater or equal to From Date');
+				dom.get("colSummaryError").style.display='';
+		        dom.get("colSummaryError").innerHTML='To Date Should be greater or equal to From Date';
 				return false;
 			}
 		}

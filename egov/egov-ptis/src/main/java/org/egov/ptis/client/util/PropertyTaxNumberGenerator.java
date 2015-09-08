@@ -104,6 +104,10 @@ public class PropertyTaxNumberGenerator {
         return billNo.toString();
     }
 
+    /**
+     * @param propertyID
+     * @return billNumber
+     */
     public String generateManualBillNumber(final PropertyID propertyID) {
         final StringBuffer billNo = new StringBuffer();
         try {

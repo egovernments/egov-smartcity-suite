@@ -135,6 +135,7 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
@@ -177,6 +178,8 @@ import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyArrear;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
@@ -188,10 +191,16 @@ import org.egov.ptis.wtms.ConsumerConsumption;
 import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * @author malathi
+ *
+ */
 public class PropertyTaxUtil {
     private static final Logger LOGGER = Logger.getLogger(PropertyTaxUtil.class);
 
@@ -231,6 +240,8 @@ public class PropertyTaxUtil {
     private FinancialYearDAO financialYearDAO;
     @Autowired
     private WaterChargesIntegrationService waterChargesIntegrationService;
+    @Autowired
+    private BoundaryService boundaryService;
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     public void setPersistenceService(final PersistenceService persistenceService) {
@@ -1577,6 +1588,11 @@ public class PropertyTaxUtil {
         return date.after(dateToCompare) || date.equals(dateToCompare);
     }
 
+    /**
+     * @param basicProperty
+     * @param propertyWiseConsumptions
+     * @return list of DemandNoticeDetails having aggregated arrear and current demand tax amounts
+     */
     public List<DemandNoticeDetailsInfo> getDemandNoticeDetailsInfo(final BasicProperty basicProperty,
             final PropertyWiseConsumptions propertyWiseConsumptions) {
         final List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo = new LinkedList<DemandNoticeDetailsInfo>();
@@ -1791,6 +1807,10 @@ public class PropertyTaxUtil {
         return userNameBuilder.toString();
     }
 
+    /**
+     * @param basicPropertyId
+     * @return PropertyWiseConsumptions object having water tax details for a given property
+     */
     public PropertyWiseConsumptions getPropertyWiseConsumptions(final String basicPropertyId) {
         final PropertyWiseConsumptions propertyWiseConsumptions = waterChargesIntegrationService
                 .getPropertyWiseConsumptionsForWaterCharges(basicPropertyId);
@@ -1808,5 +1828,359 @@ public class PropertyTaxUtil {
         }
         sr.close();
         return taxRates;
+    }
+
+    /**
+     * @param fromDate
+     * @param toDate
+     * @param collMode
+     * @param transMode
+     * @param mode
+     * @param boundaryId (used in case of collection summary report other than usagewise)
+     * @param propTypeCategoryId
+     * @param zoneId
+     * @param wardId
+     * @param areaId
+     * @return
+     */
+    public Query prepareQueryforCollectionSummaryReport(final String fromDate, final String toDate, final String collMode,
+            final String transMode,
+            final String mode,
+            final String boundaryId, final String propTypeCategoryId, final Long zoneId, final Long wardId, final Long areaId) {
+        String srchQryStr = "";
+        String baseQry = "", orderbyQry = "";
+        final String ZONEWISE = "zoneWise";
+        final String WARDWISE = "wardWise";
+        final String BLOCKWISE = "blockWise";
+        final String LOCALITYWISE = "localityWise";
+        final String USAGEWISE = "usageWise";
+        new ArrayList<Object>();
+        try {
+            baseQry = "select cs from CollectionSummary cs where ";
+            if (fromDate != null && !fromDate.equals("DD/MM/YYYY") && !fromDate.equals(""))
+                srchQryStr = "(cast(cs.receiptDate as date)) >= to_date('" + fromDate + "', 'DD/MM/YYYY') ";
+            if (toDate != null && !toDate.equals("DD/MM/YYYY") && !toDate.equals(""))
+                srchQryStr = srchQryStr + "and (cast(cs.receiptDate as date)) <= to_date('" + toDate + "', 'DD/MM/YYYY') ";
+            if (collMode != null && !collMode.equals("") && !collMode.equals("-1")) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Collection Mode = " + collMode);
+                srchQryStr = srchQryStr + "and cs.collectionType ='" + collMode + "' ";
+            }
+            if (transMode != null && !transMode.equals("") && !transMode.equals("-1")) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Transaction Mode = " + transMode);
+                srchQryStr = srchQryStr + "and cs.paymentMode ='" + transMode + "' ";
+            }
+            if (mode.equals(USAGEWISE)) {
+                if (propTypeCategoryId != null && !propTypeCategoryId.equals("") && !propTypeCategoryId.equals("-1")) {
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("Transaction Mode = " + transMode);
+                    srchQryStr = srchQryStr + "and cs.property.propertyDetail.categoryType = '" + propTypeCategoryId + "' ";
+                }
+                if (zoneId != null && !zoneId.equals("") && zoneId != -1)
+                    srchQryStr = srchQryStr + " and cs.zoneId.id =" + zoneId;
+                if (wardId != null && !wardId.equals("") && wardId != -1)
+                    srchQryStr = srchQryStr + " and cs.wardId.id =" + wardId;
+                if (areaId != null && !areaId.equals("") && areaId != -1)
+                    srchQryStr = srchQryStr + " and cs.areaId.id =" + areaId;
+                orderbyQry = "order by cs.property.propertyDetail.categoryType";
+            }
+            if (mode.equals(ZONEWISE)) {
+                if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("zoneNo = " + boundaryId);
+                    srchQryStr = srchQryStr + "and cs.zoneId.id =" + boundaryId;
+                }
+                orderbyQry = "order by cs.zoneId.boundaryNum";
+            } else if (mode.equals(WARDWISE)) {
+                if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("wardNo = " + boundaryId);
+                    srchQryStr = srchQryStr + "and cs.wardId.id =" + boundaryId;
+                }
+                orderbyQry = "order by cs.wardId.boundaryNum";
+            } else if (mode.equals(BLOCKWISE)) {
+                if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("blockNo = " + boundaryId);
+                    srchQryStr = srchQryStr + "and cs.areaId.id =" + boundaryId;
+                }
+                orderbyQry = "order by cs.areaId.boundaryNum";
+            } else if (mode.equals(LOCALITYWISE)) {
+                if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("localityNo = " + boundaryId);
+                    srchQryStr = srchQryStr + "and cs.localityId.id =" + boundaryId;
+                }
+                orderbyQry = "order by cs.localityId.boundaryNum";
+            }
+            srchQryStr = baseQry + srchQryStr + orderbyQry;
+
+        } catch (final Exception e) {
+            e.printStackTrace();
+            LOGGER.error("Error occured in Class : CollectionSummaryReportAction  Method : list", e);
+            throw new EGOVRuntimeException("Error occured in Class : CollectionSummaryReportAction  Method : list "
+                    + e.getMessage());
+        }
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from prepareQueryforCollectionSummaryReport method");
+        final Query qry = persistenceService.getSession().createQuery(srchQryStr.toString());
+        return qry;
+    }
+
+    /**
+     *
+     * @ Description - Returns query that retrieves zone/ward/block/propertywise Arrear, Current Demand and Collection Details
+     * Final Query Form : select boundary,arrear,current from (select boundary,arrear,0 as collection group by boundary union
+     * select boundary,0 as arrear, collection group by boundary) group by boundary
+     *
+     * @param boundaryId
+     * @return
+     */
+    public SQLQuery prepareQueryForDCBReport(final Long boundaryId, final String mode) {
+
+        final String ZONEWISE = "zone";
+        final String WARDWISE = "ward";
+        final String BLOCKWISE = "block";
+        final String PROPERTY = "property";
+
+        final StringBuffer queryStr = new StringBuffer("");
+        final StringBuffer unionQueryStr = new StringBuffer("");
+        String arrear_innerCommonQry0 = "", arrear_innerCommonQry1 = "", current_innerCommonQry0 = "", current_innerCommonQry1 = "";
+        String finalCommonQry = "", finalSelectQry = "", finalGrpQry = "", finalWhereQry = "", finalFrmQry = "";
+        String innerSelectQry0 = "", innerSelectQry1 = "", arrearGroupBy = "", whereQry = "", collGroupBy = "";
+        Long param = null;
+
+        if (boundaryId != -1 && boundaryId != null)
+            param = boundaryId;
+        // To retreive Arrear Demand and Collection Details
+        arrear_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "
+                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment "
+                + "and im.start_date not between (select STARTINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE) "
+                + "and  (select ENDINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE)";
+
+        arrear_innerCommonQry1 = "sum(GeneralTax) as arrearGT, sum(LibCessTax) as arrearLC, sum(EduCessTax) as arrearEC,"
+                + "sum(UnauthPenaltyTax) as arrearUPT,sum(PenaltyFinesTax) as arrearPFT,sum(SewTax) as arrearST,"
+                + "sum(VacantLandTax) as arrearVLT,sum(PubSerChrgTax) as arrearPSCT,sum(GeneralTaxColl) as arrearGTColl, "
+                + "sum(LibCessTaxColl) as arrearLCColl, sum(EduCessTaxColl) as arrearECColl,sum(UnauthPenaltyTaxColl) as arrearUPTColl,"
+                + "sum(PenaltyFinesTaxColl) as arrearPFTColl,sum(SewTaxColl) as arrearSTColl,"
+                + "sum(VacantLandTaxColl) as arrearVLTColl,sum(PubSerChrgTaxColl) as arrearPSCTColl,"
+                + "0 as curGT, 0 as curLC, 0 as curEC,0 as curUPT,0 as curPFT,0 as curST,"
+                + "0 as curVLT,0 as curPSCT,0 as curGTColl,0 as curLCColl,0 as curECColl,0 as curUPTColl,"
+                + "0 as curPFTColl,0 as curSTColl, 0 as curVLTColl,0 as curPSCTColl from (";
+
+        // To retreive Current Demand and Collection Details
+        current_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "
+                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment "
+                + "and im.start_date between (select STARTINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE) "
+                + "and  (select ENDINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE)";
+
+        current_innerCommonQry1 = "0 as arrearGT, 0 as arrearLC, 0 as arrearEC,0 as arrearUPT,0 as arrearPFT,0 as arrearST,"
+                + "0 as arrearVLT,0 as arrearPSCT,0 as arrearGTColl,0 as arrearLCColl,0 as arrearECColl,0 as arrearUPTColl,"
+                + "0 as arrearPFTColl,0 as arrearSTColl, 0 as arrearVLTColl,0 as arrearPSCTColl,"
+                + "sum(GeneralTax) as curGT, sum(LibCessTax) as curLC, sum(EduCessTax) as curEC,"
+                + "sum(UnauthPenaltyTax) as curUPT,sum(PenaltyFinesTax) as curPFT,sum(SewTax) as curST,"
+                + "sum(VacantLandTax) as curVLT,sum(PubSerChrgTax) as curPSCT,sum(GeneralTaxColl) as curGTColl, "
+                + "sum(LibCessTaxColl) as curLCColl, sum(EduCessTaxColl) as curECColl,sum(UnauthPenaltyTaxColl) as curUPTColl,"
+                + "sum(PenaltyFinesTaxColl) as curPFTColl,sum(SewTaxColl) as curSTColl,"
+                + "sum(VacantLandTaxColl) as curVLTColl,sum(PubSerChrgTaxColl) as curPSCTColl from (";
+
+        // Final query that retreives both Arrear and Current details from the other two inner queries
+        finalCommonQry = "cast(sum(arrearGT) AS numeric) as \"dmnd_arrearPT\", cast(sum(arrearLC)  AS numeric) as \"dmnd_arrearLC\", cast(sum(arrearEC) AS numeric) as \"dmnd_arrearEC\","
+                + "cast(sum(arrearUPT) AS numeric) as \"dmnd_arrearUPT\",cast(sum(arrearPFT) AS numeric) as \"dmnd_arrearPFT\",cast(sum(arrearST) AS numeric) as \"dmnd_arrearST\","
+                + "cast(sum(arrearVLT) AS numeric) as \"dmnd_arrearVLT\",cast(sum(arrearPSCT) AS numeric) as \"dmnd_arrearPSCT\",cast(SUM(arrearGTColl) AS numeric)  AS \"clctn_arrearPT\", "
+                + "cast(sum(arrearLCColl) AS numeric) as \"clctn_arrearLC\", cast(sum(arrearECColl) AS numeric) as \"clctn_arrearEC\",cast(sum(arrearUPTColl) AS numeric) as \"clctn_arrearUPT\","
+                + "cast(sum(arrearPFTColl) AS numeric) as \"clctn_arrearPFT\",cast(sum(arrearSTColl) AS numeric) as \"clctn_arrearST\","
+                + "cast(sum(arrearVLTColl) AS numeric) as \"clctn_arrearVLT\",cast(sum(arrearPSCTColl) AS numeric) as \"clctn_arrearPSCT\","
+                + "cast(sum(curGT) AS numeric) as \"dmnd_currentPT\", cast(sum(curLC) AS numeric) as \"dmnd_currentLC\", cast(sum(curEC) AS numeric) as \"dmnd_currentEC\","
+                + "cast(sum(curUPT) AS numeric) as \"dmnd_currentUPT\",cast(sum(curUPT) AS numeric) as \"dmnd_currentPFT\",cast(sum(curST) AS numeric) as \"dmnd_currentST\","
+                + "cast(sum(curVLT) AS numeric) as \"dmnd_currentVLT\",CAST(sum(curPSCT) AS numeric) as \"dmnd_currentPSCT\",CAST(sum(curGTColl) AS numeric) as \"clctn_currentPT\", "
+                + "cast(sum(curLCColl) AS numeric) as \"clctn_currentLC\", cast(sum(curECColl) AS numeric) as \"clctn_currentEC\",cast(sum(curUPTColl) AS numeric) as \"clctn_currentUPT\","
+                + "cast(sum(curPFTColl) AS numeric) as \"clctn_currentPFT\",cast(sum(curSTColl) AS numeric) as \"clctn_currentST\","
+                + "cast(sum(curVLTColl) AS numeric) as \"clctn_currentVLT\",cast(sum(curPSCTColl) AS numeric) as \"clctn_currentPSCT\" from (";
+
+        // Conditions to Retrieve data based on selected boundary types
+        if (!mode.equalsIgnoreCase(PROPERTY)) {
+            finalSelectQry = "select cast(id as integer) as \"boundaryId\",boundary.name as \"boundaryName\", ";
+            finalGrpQry = " group by boundary.id,boundary.name order by boundary.name";
+            finalFrmQry = " )as dcbinfo,eg_boundary boundary ";
+        }
+        if (mode.equalsIgnoreCase(ZONEWISE)) {
+            innerSelectQry0 = "select distinct pi.zoneid as zone,";
+            innerSelectQry1 = "select zone as zone,";
+            arrearGroupBy = ") as arrear  group by zone ";
+            collGroupBy = ") as collection  group by zone ";
+            if (param != 0)
+                whereQry = " and pi.zoneid = " + param;
+            finalWhereQry = " where dcbinfo.zone=boundary.id ";
+        } else if (mode.equalsIgnoreCase(WARDWISE)) {
+            innerSelectQry0 = "select distinct pi.wardid as ward,";
+            innerSelectQry1 = "select ward as ward,";
+            arrearGroupBy = ") as arrear group by ward ";
+            collGroupBy = ") as collection  group by ward ";
+            whereQry = " and pi.zoneid = " + param;
+            finalWhereQry = " where dcbinfo.ward=boundary.id ";
+        } else if (mode.equalsIgnoreCase(BLOCKWISE)) {
+            innerSelectQry0 = "select distinct pi.blockid as block,";
+            innerSelectQry1 = "select block as block,";
+            arrearGroupBy = ") as arrear group by block ";
+            collGroupBy = ") as collection  group by block ";
+            whereQry = " and pi.wardid = " + param;
+            finalWhereQry = " where dcbinfo.block=boundary.id ";
+        } else if (mode.equalsIgnoreCase(PROPERTY)) {
+            innerSelectQry0 = "select distinct pi.upicno as upicno,";
+            innerSelectQry1 = "select upicno as upicno,";
+            arrearGroupBy = ") as arrear group by upicno ";
+            collGroupBy = ") as collection  group by upicno ";
+            whereQry = " and pi.blockid = " + param;
+            finalSelectQry = "select COALESCE(upicno,null,'',upicno) as \"assessmentNo\", ";
+            finalFrmQry = " )as dcbinfo ";
+            finalWhereQry = "";
+            finalGrpQry = " group by dcbinfo.upicno order by dcbinfo.upicno ";
+        }
+        // Arrear Demand query union Current Demand query
+        unionQueryStr
+        .append(innerSelectQry1)
+        .append(arrear_innerCommonQry1)
+        .append(innerSelectQry0)
+        .append(arrear_innerCommonQry0)
+        .append(whereQry)
+        .append(arrearGroupBy)
+        .append(" union ")
+        .append(innerSelectQry1)
+        .append(current_innerCommonQry1)
+        .append(innerSelectQry0)
+        .append(current_innerCommonQry0)
+        .append(whereQry)
+        .append(collGroupBy);
+        // Final Query : Retrieves arrear and current for the selected boundary.
+        queryStr
+        .append(finalSelectQry)
+        .append(finalCommonQry)
+        .append(unionQueryStr)
+        .append(finalFrmQry)
+        .append(finalWhereQry)
+        .append(finalGrpQry);
+
+        final SQLQuery query = persistenceService.getSession().createSQLQuery(queryStr.toString());
+        return query;
+    }
+
+    /**
+     * @param zoneId
+     * @param wardId
+     * @param areaId
+     * @param localityId
+     * @return
+     */
+    public List<PropertyMaterlizeView> prepareQueryforArrearRegisterReport(final Long zoneId, final Long wardId,
+            final Long areaId, final Long localityId) {
+        // Get current financial year
+        final CFinancialYear finYear = financialYearDAO.getFinYearByDate(new Date());
+        final StringBuffer query = new StringBuffer(300);
+
+        // Query that retrieves all the properties that has arrears.
+        query.append("select distinct pmv from PropertyMaterlizeView pmv,InstDmdCollMaterializeView idc where "
+                + "pmv.basicPropertyID = idc.propMatView.basicPropertyID and idc.installment.fromDate not between  ('"
+                + finYear.getStartingDate() + "') and ('" + finYear.getEndingDate() + "') ");
+
+        if ((localityId == null || localityId == -1) && zoneId != null && zoneId != -1)
+            query.append(" and pmv.zone.id=? ");
+        else if (localityId != null && localityId != -1) {
+            query.append(" and pmv.locality.id=? ");
+            if (zoneId != null && zoneId != -1)
+                query.append(" and pmv.zone.id=? ");
+        }
+        if (wardId != null && wardId != -1)
+            query.append("  and pmv.ward.id=? ");
+        if (areaId != null && areaId != -1)
+            query.append("  and pmv.block.id=? ");
+
+        query.append(" order by pmv.basicPropertyID ");
+        final Query qry = persistenceService.getSession().createQuery(query.toString());
+        if ((localityId == null || localityId == -1) && zoneId != null && zoneId != -1) {
+            if (zoneId != null && zoneId != -1)
+                qry.setParameter(0, zoneId);
+            if (wardId != null && wardId != -1)
+                qry.setParameter(1, wardId);
+            if (areaId != null && areaId != -1)
+                qry.setParameter(2, areaId);
+        } else if (localityId != null && localityId != -1) {
+            qry.setParameter(0, localityId);
+            if (zoneId != null && zoneId != -1)
+                qry.setParameter(1, zoneId);
+            if (wardId != null && wardId != -1)
+                qry.setParameter(2, wardId);
+            if (areaId != null && areaId != -1)
+                qry.setParameter(3, areaId);
+        }
+        final List<PropertyMaterlizeView> propertyViewList = qry.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY)
+                .list();
+        return propertyViewList;
+    }
+    
+    
+    /**
+     * @param zoneId
+     * @param wardId
+     * @param areaId
+     * @param fromDate
+     * @param toDate
+     * @return
+     */
+    public Query prepareQueryforTitleTransferReport(Long zoneId, Long wardId, Long areaId, String fromDate, String toDate) {
+        final StringBuffer query = new StringBuffer(300);
+        new PropertyMutation();
+        String boundaryCond = "";
+        String boundaryWhrCond = "";
+
+        if (zoneId != null && zoneId != -1)
+            boundaryCond = " and pi.zone.id= " + zoneId;
+        if (wardId != null && wardId != -1)
+            boundaryCond = boundaryCond + " and pi.ward.id= " + wardId;
+        if (areaId != null && areaId != -1)
+            boundaryCond = boundaryCond + " and pi.area.id= " + areaId;
+        if (boundaryCond != "")
+            boundaryWhrCond = ",PropertyID pi where pm.basicProperty.id=pi.basicProperty.id "
+                    + " and pm.state.value='" + PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED + "' ";
+        else
+            boundaryWhrCond = " where pm.state.value='" + PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED + "' ";
+        // Query that retrieves all the properties that has Transfer of owners details.
+        query.append("select pm from PropertyMutation pm").append(boundaryWhrCond).append(boundaryCond);
+        if (fromDate != null && !fromDate.isEmpty())
+            if (toDate != null && !toDate.isEmpty())
+                query.append(" and (cast(pm.createdDate as date)) between to_date('" + fromDate
+                        + "', 'DD/MM/YYYY') and to_date('" + toDate + "','DD/MM/YYYY') ");
+            else
+                query.append(" and (cast(pm.createdDate as date)) between to_date('" + fromDate
+                        + "', 'DD/MM/YYYY') and to_date('" + sdf.format(new Date()) + "','DD/MM/YYYY')  ");
+
+        query.append(" order by pm.basicProperty.id,pm.mutationDate ");
+        final Query qry = persistenceService.getSession().createQuery(query.toString());
+        return qry;
+    }
+    
+    /**
+     * @ Description : gets the property tax arrear amount for a property
+     * @param basicPropId
+     * @param finyear
+     * @return
+     */
+    public BigDecimal getPropertyTaxDetails(final Long basicPropId, final CFinancialYear finyear) {
+        List<Object> list = new ArrayList<Object>();
+
+        final String selectQuery = " select sum(amount) as amount from ("
+                + " select distinct inst.description,dd.amount as amount from egpt_basic_property bp, egpt_property prop, "
+                + " egpt_ptdemand ptd, eg_demand d, "
+                + " eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
+                + " where bp.id = prop.id_basic_property and prop.status = 'A' "
+                + " and prop.id = ptd.id_property and ptd.id_demand = d.id " + " and d.id = dd.id_demand "
+                + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
+                + " and dr.id_installment = inst.id and bp.id =:basicPropId "
+                + " and inst.start_date between '" + finyear.getStartingDate() + "' and '" + finyear.getEndingDate() + "'"
+                + " and drm.code = '" + PropertyTaxConstants.GEN_TAX + "') as genTaxDtls";
+        final Query qry = persistenceService.getSession().createSQLQuery(selectQuery).setLong("basicPropId", basicPropId);
+        list = qry.list();
+        return (BigDecimal) list.get(0);
     }
 }

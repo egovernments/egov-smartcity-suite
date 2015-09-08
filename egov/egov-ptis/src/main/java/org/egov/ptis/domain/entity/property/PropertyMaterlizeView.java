@@ -74,7 +74,6 @@ public class PropertyMaterlizeView implements Serializable {
     private BigDecimal totalDemand;
     private String gisRefNo;
     private Set<InstDmdCollMaterializeView> instDmdColl;
-    /* private Set<CurrFloorDmdCalcMaterializeView> currFloorDmdCalc; */
     private BigDecimal alv;
     private Boolean isExempted;
     private Character source;
@@ -247,11 +246,6 @@ public class PropertyMaterlizeView implements Serializable {
         this.instDmdColl = instDmdColl;
     }
 
-    /*
-     * public Set<CurrFloorDmdCalcMaterializeView> getCurrFloorDmdCalc() { return currFloorDmdCalc; } public void
-     * setCurrFloorDmdCalc(Set<CurrFloorDmdCalcMaterializeView> currFloorDmdCalc) { this.currFloorDmdCalc = currFloorDmdCalc; }
-     */
-
     public BigDecimal getAlv() {
         return alv;
     }
@@ -268,7 +262,6 @@ public class PropertyMaterlizeView implements Serializable {
         .append("|SitalArea: ").append(getSitalArea()).append("|AggCurrDemand: ").append(getAggrCurrDmd())
         .append("|AggArrDemand: ").append(getAggrArrDmd()).append("|AggCurrColl: ").append(getAggrCurrColl())
         .append("|AggArrColl: ").append(getAggrArrColl()).append("|TotalDemand: ").append(getTotalDemand());
-        // .append("|AVAmount: ").append(getAvAmt());
 
         return objStr.toString();
     }

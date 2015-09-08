@@ -113,14 +113,19 @@ public class CollectionAction extends BaseFormAction {
         LOGGER.debug("Exit from prepare method");
     }
 
+    /**
+     * @return
+     */
     @Action(value = "/collection-generateBill")
     public String generateBill() {
-        LOGGER.debug("Entered method generatePropertyTaxBill, assessment Number: " + assessmentNumber);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered method generatePropertyTaxBill, assessment Number: " + assessmentNumber);
 
         final BasicProperty basicProperty = basicPropertyService
                 .findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO, assessmentNumber);
 
-        LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
         final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.getDemandAndCollection(basicProperty.getProperty());
         final BigDecimal currDue = demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR));
         final BigDecimal arrDue = demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR));
@@ -135,7 +140,8 @@ public class CollectionAction extends BaseFormAction {
                 .getWard().getBoundaryNum().toString()));
         propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_AUTO));
         collectXML = URLEncoder.encode(ptBillServiceImpl.getBillXML(propertyTaxBillable));
-        LOGGER.info("Exiting method generatePropertyTaxBill, collectXML: " + collectXML);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.info("Exiting method generatePropertyTaxBill, collectXML: " + collectXML);
 
         return RESULT_COLLECTTAX;
     }

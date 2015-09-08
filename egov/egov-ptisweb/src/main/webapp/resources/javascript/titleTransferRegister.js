@@ -69,17 +69,23 @@ jQuery(document).ready(function() {
 	jQuery(':input').inputmask();
 	drillDowntableContainer = jQuery("#tblTitleTransfer");
 	jQuery('#btnsearch').click(function(e) {
+		dom.get("titleTransferError").style.display='none';
+        dom.get("titleTransferError").innerHTML='';
 		var fromDate = document.getElementById("fromDate").value;
 		var toDate = document.getElementById("toDate").value;
 		var finyearSDate=document.getElementById("finYearStartDate").value;
 		if ((fromDate == null || fromDate == "" || fromDate == 'DD/MM/YYYY') &&
 				(toDate != null && toDate != "" && toDate != 'DD/MM/YYYY')) {
-			alert('Please Enter From Date');
+			dom.get("titleTransferError").style.display='';
+	        dom.get("titleTransferError").innerHTML='Please Enter From Date';
+	        dom.get("fromDate").focus();
 			return false;
 		}
+		
 		if ((fromDate != null && fromDate != "" && fromDate != 'DD/MM/YYYY')){
 			if(compareDate(finyearSDate,fromDate)== -1){
-				alert('From Date Should be greater or equal to Current Financial Year Date '+finyearSDate);
+				dom.get("titleTransferError").style.display='';
+		        dom.get("titleTransferError").innerHTML='From Date Should be greater or equal to Current Financial Year Date'+" "+finyearSDate;;
 				return false;
 			}
 			
@@ -87,7 +93,8 @@ jQuery(document).ready(function() {
 		if((fromDate != null && fromDate != "" && fromDate != 'DD/MM/YYYY') &&
 				(toDate != null && toDate != "" && toDate != 'DD/MM/YYYY')) {
 			if(compareDate(fromDate,toDate)== -1){
-				alert('To Date Should be greater or equal to From Date');
+				dom.get("titleTransferError").style.display='';
+		        dom.get("titleTransferError").innerHTML='To Date Should be greater or equal to From Date';
 				return false;
 			}
 		}

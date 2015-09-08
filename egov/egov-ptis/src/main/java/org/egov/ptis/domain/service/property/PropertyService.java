@@ -156,6 +156,7 @@ import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
@@ -174,6 +175,7 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -295,12 +297,12 @@ public class PropertyService {
         } else {
             property.getPropertyDetail().setWoodType(null);
         }
-		if (taxExemptId != null && taxExemptId != -1) {
-			final TaxExeptionReason taxExemptionReason = (TaxExeptionReason) getPropPerServ().find(
-					"From TaxExeptionReason where id = ?", taxExemptId);
-			property.setTaxExemptedReason(taxExemptionReason);
-			property.setIsExemptedFromTax(Boolean.TRUE);
-		}
+                if (taxExemptId != null && taxExemptId != -1) {
+                        final TaxExeptionReason taxExemptionReason = (TaxExeptionReason) getPropPerServ().find(
+                                        "From TaxExeptionReason where id = ?", taxExemptId);
+                        property.setTaxExemptedReason(taxExemptionReason);
+                        property.setIsExemptedFromTax(Boolean.TRUE);
+                }
 
         if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
             final Area area = new Area();
@@ -2494,6 +2496,80 @@ public class PropertyService {
                 moduleDao.getModuleByName(PTMODULENAME),
                 assessmentDate);
     }
+    
+    /**
+     * @param fromDemand
+     * @param toDemand
+     * @return List of property having demand between fromDemand and toDemand
+     */
+    public List<PropertyMaterlizeView> getPropertyByDemand(final String fromDemand, final String toDemand) {
+        final StringBuilder queryStr = new StringBuilder();
+        queryStr.append(
+                "select distinct pmv from PropertyMaterlizeView pmv where pmv.aggrCurrDmd is not null and pmv.aggrCurrDmd>=:fromDemand ")
+                .append("and pmv.aggrCurrDmd<=:toDemand ");
+        final Query query = propPerServ.getSession().createQuery(queryStr.toString());
+        query.setBigDecimal("fromDemand", new BigDecimal(fromDemand));
+        query.setBigDecimal("toDemand", new BigDecimal(toDemand));
+
+        final List<PropertyMaterlizeView> propertyList = query.list();
+        return propertyList;
+    }
+
+    /**
+     * @param locationId
+     * @param houseNo
+     * @param ownerName
+     * @return List of property matching the input params
+     */
+    public List<PropertyMaterlizeView> getPropertyByLocation(final Integer locationId, final String houseNo,
+            final String ownerName) {
+        final StringBuilder queryStr = new StringBuilder();
+        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ").append(
+                " where pmv.locality.id=:locationId ");
+        if (houseNo != null && !houseNo.trim().isEmpty())
+            queryStr.append("and pmv.houseNo like :HouseNo ");
+        if (ownerName != null && !ownerName.trim().isEmpty())
+            queryStr.append("and trim(pmv.ownerName) like :OwnerName");
+        final Query query = propPerServ.getSession().createQuery(queryStr.toString());
+        query.setLong("locationId", locationId);
+        if (houseNo != null && !houseNo.trim().isEmpty())
+            query.setString("HouseNo", houseNo + "%");
+        if (ownerName != null && !ownerName.trim().isEmpty())
+            query.setString("OwnerName", ownerName + "%");
+
+        final List<PropertyMaterlizeView> propertyList = query.list();
+        return propertyList;
+    }
+
+    /**
+     * @param zoneId
+     * @param wardId
+     * @param ownerName
+     * @param houseNum
+     * @return List of property matching the input params
+     */
+    public List<PropertyMaterlizeView> getPropertyByBoundary(final Long zoneId, final Long wardId, final String ownerName,
+            final String houseNum) {
+        final StringBuilder queryStr = new StringBuilder();
+        queryStr.append(
+                "select distinct pmv from PropertyMaterlizeView pmv, BasicPropertyImpl bp where pmv.basicPropertyID=bp.id ")
+                .append("and bp.active='Y' and pmv.zone.id=:ZoneID and pmv.ward.id=:WardID ");
+        if (houseNum != null && !houseNum.trim().isEmpty())
+            queryStr.append("and pmv.houseNo like :HouseNo ");
+        if (ownerName != null && !ownerName.trim().isEmpty())
+            queryStr.append("and trim(pmv.ownerName) like :OwnerName");
+        final Query query = propPerServ.getSession().createQuery(queryStr.toString());
+        query.setLong("ZoneID", zoneId);
+        query.setLong("WardID", wardId);
+        if (houseNum != null && !houseNum.trim().isEmpty())
+            query.setString("HouseNo", houseNum + "%");
+        if (ownerName != null && !ownerName.trim().isEmpty())
+            query.setString("OwnerName", ownerName + "%");
+
+        final List<PropertyMaterlizeView> propertyList = query.list();
+        return propertyList;
+    }
+
 
     public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {
         return ptDemandDAO.getDemandCollMap(propertyImpl);

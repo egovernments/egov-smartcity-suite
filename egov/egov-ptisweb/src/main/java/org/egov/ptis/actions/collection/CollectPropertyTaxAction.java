@@ -24,16 +24,16 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
@@ -72,139 +72,148 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Namespace("/collection")
 @ResultPath("/WEB-INF/jsp/")
 @Results({ @Result(name = CollectPropertyTaxAction.RESULT_VIEW, location = "collection/collectPropertyTax-view.jsp"),
-		@Result(name = CollectPropertyTaxAction.RESULT_ERROR, location = "collection/collectPropertyTax-error.jsp") })
+    @Result(name = CollectPropertyTaxAction.RESULT_ERROR, location = "collection/collectPropertyTax-error.jsp") })
 @ParentPackage("egov")
 public class CollectPropertyTaxAction extends BaseFormAction {
-	private static final long serialVersionUID = 1L;
-	private static final Logger LOGGER = Logger.getLogger(CollectPropertyTaxAction.class);
-	public static final String RESULT_VIEW = "view";
-	public static final String RESULT_ERROR = "error";
+    private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger.getLogger(CollectPropertyTaxAction.class);
+    public static final String RESULT_VIEW = "view";
+    public static final String RESULT_ERROR = "error";
 
-	private PersistenceService<BasicProperty, Long> basicPropertyService;
-	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-	private PropertyTaxCollection propertyTaxCollection;
-	private PTBillServiceImpl ptBillServiceImpl;
-	private PropertyTaxUtil propertyTaxUtil;
-	private String propertyId;
-	private String collectXML = "";
-	private Boolean levyPenalty = false;
-	private String errorMsg;
-	private Boolean isExempted = Boolean.FALSE;
-	
-	private List<String> args = new ArrayList<String>();
+    private PersistenceService<BasicProperty, Long> basicPropertyService;
+    private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+    private PropertyTaxCollection propertyTaxCollection;
+    private PTBillServiceImpl ptBillServiceImpl;
+    private PropertyTaxUtil propertyTaxUtil;
+    private String propertyId;
+    private String collectXML = "";
+    private Boolean levyPenalty = false;
+    private String errorMsg;
+    private Boolean isExempted = Boolean.FALSE;
 
-	@Autowired
-	private PropertyTaxBillable propertyTaxBillable;
+    private final List<String> args = new ArrayList<String>();
 
-	@Override
-	public Object getModel() {
-		return null;
-	}
+    @Autowired
+    private PropertyTaxBillable propertyTaxBillable;
 
-	@Action(value = "/collectPropertyTax-generateBill")
-	public String generateBill() {
-		LOGGER.info("Entered method generateBill, assessment no : " + propertyId);
+    @Override
+    public Object getModel() {
+        return null;
+    }
 
-		final BasicProperty basicProperty = basicPropertyService.findByNamedQuery(
-				PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, propertyId);
-		LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
+    /**
+     * @return
+     */
+    @Action(value = "/collectPropertyTax-generateBill")
+    public String generateBill() {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered method generatePropertyTaxBill, Generating bill for index no : "
+                    + propertyId);
 
-		if (basicProperty.getProperty().getIsExemptedFromTax()) {
-			args.add(propertyId);
-			setIsExempted(Boolean.TRUE);
-			setErrorMsg(getText("msg.collection.tax.exempted", args));
-			return RESULT_ERROR;
-		}
+        final BasicProperty basicProperty = basicPropertyService.findByNamedQuery(
+                PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, propertyId);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
 
-		final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.getDemandAndCollection(basicProperty
-				.getProperty());
-		final BigDecimal currDue = demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR));
-		final BigDecimal arrDue = demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR));
+        if (basicProperty.getProperty().getIsExemptedFromTax()) {
+            args.add(propertyId);
+            setIsExempted(Boolean.TRUE);
+            setErrorMsg(getText("msg.collection.tax.exempted", args));
+            return RESULT_ERROR;
+        }
 
-		if (currDue.compareTo(BigDecimal.ZERO) <= 0 && arrDue.compareTo(BigDecimal.ZERO) <= 0) {
-			args.add(propertyId);
-			setErrorMsg(getText("msg.collection.fully.paid", args));
-			return RESULT_ERROR;
-		}
-		propertyTaxBillable.setLevyPenalty(true);
-		propertyTaxBillable.setBasicProperty(basicProperty);
-		propertyTaxBillable.setUserId(Long.valueOf(getSession().get("userid").toString()));
-		propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
-				.getPropertyID().getWard().getBoundaryNum().toString()));
-		propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_AUTO));
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
+        final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.getDemandAndCollection(basicProperty.getProperty());
+        final BigDecimal currDue = demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR));
+        final BigDecimal arrDue = demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR));
 
-		final String billXml = ptBillServiceImpl.getBillXML(propertyTaxBillable);
-		collectXML = URLEncoder.encode(billXml);
-		LOGGER.info("Exiting method generatePropertyTaxBill, collectXML (before decode): " + billXml);
-		return RESULT_VIEW;
-	}
+        if (currDue.compareTo(BigDecimal.ZERO) <= 0 && arrDue.compareTo(BigDecimal.ZERO) <= 0) {
+            args.add(propertyId);
+            setErrorMsg(getText("msg.collection.fully.paid", args));
+            return RESULT_ERROR;
+        }
+        propertyTaxBillable.setLevyPenalty(true);
+        propertyTaxBillable.setBasicProperty(basicProperty);
+        propertyTaxBillable.setUserId(Long.valueOf(getSession().get("userid").toString()));
+        propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
+                .getPropertyID().getWard().getBoundaryNum().toString()));
+        propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_AUTO));
 
-	public void setbasicPropertyService(final PersistenceService<BasicProperty, Long> basicPropertyService) {
-		this.basicPropertyService = basicPropertyService;
-	}
+        final String billXml = ptBillServiceImpl.getBillXML(propertyTaxBillable);
+        collectXML = URLEncoder.encode(billXml);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exiting method generatePropertyTaxBill, collectXML (before decode): "
+                    + billXml);
+        return RESULT_VIEW;
+    }
 
-	public String getPropertyId() {
-		return propertyId;
-	}
+    public void setbasicPropertyService(final PersistenceService<BasicProperty, Long> basicPropertyService) {
+        this.basicPropertyService = basicPropertyService;
+    }
 
-	public void setPropertyId(final String propertyId) {
-		this.propertyId = propertyId;
-	}
+    public String getPropertyId() {
+        return propertyId;
+    }
 
-	public String getCollectXML() {
-		return collectXML;
-	}
+    public void setPropertyId(final String propertyId) {
+        this.propertyId = propertyId;
+    }
 
-	public void setCollectXML(final String collectXML) {
-		this.collectXML = collectXML;
-	}
+    public String getCollectXML() {
+        return collectXML;
+    }
 
-	public void setPropertyTaxUtil(final PropertyTaxUtil propertyTaxUtil) {
-		this.propertyTaxUtil = propertyTaxUtil;
-	}
+    public void setCollectXML(final String collectXML) {
+        this.collectXML = collectXML;
+    }
 
-	public PropertyTaxNumberGenerator getPropertyTaxNumberGenerator() {
-		return propertyTaxNumberGenerator;
-	}
+    public void setPropertyTaxUtil(final PropertyTaxUtil propertyTaxUtil) {
+        this.propertyTaxUtil = propertyTaxUtil;
+    }
 
-	public void setPropertyTaxNumberGenerator(final PropertyTaxNumberGenerator propertyTaxNumberGenerator) {
-		this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
-	}
+    public PropertyTaxNumberGenerator getPropertyTaxNumberGenerator() {
+        return propertyTaxNumberGenerator;
+    }
 
-	public Boolean getLevyPenalty() {
-		return levyPenalty;
-	}
+    public void setPropertyTaxNumberGenerator(final PropertyTaxNumberGenerator propertyTaxNumberGenerator) {
+        this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
+    }
 
-	public void setLevyPenalty(final Boolean levyPenalty) {
-		this.levyPenalty = levyPenalty;
-	}
+    public Boolean getLevyPenalty() {
+        return levyPenalty;
+    }
 
-	public PropertyTaxCollection getPropertyTaxCollection() {
-		return propertyTaxCollection;
-	}
+    public void setLevyPenalty(final Boolean levyPenalty) {
+        this.levyPenalty = levyPenalty;
+    }
 
-	public void setPropertyTaxCollection(final PropertyTaxCollection propertyTaxCollection) {
-		this.propertyTaxCollection = propertyTaxCollection;
-	}
+    public PropertyTaxCollection getPropertyTaxCollection() {
+        return propertyTaxCollection;
+    }
 
-	public void setPtBillServiceImpl(final PTBillServiceImpl ptBillServiceImpl) {
-		this.ptBillServiceImpl = ptBillServiceImpl;
-	}
+    public void setPropertyTaxCollection(final PropertyTaxCollection propertyTaxCollection) {
+        this.propertyTaxCollection = propertyTaxCollection;
+    }
 
-	public String getErrorMsg() {
-		return errorMsg;
-	}
+    public void setPtBillServiceImpl(final PTBillServiceImpl ptBillServiceImpl) {
+        this.ptBillServiceImpl = ptBillServiceImpl;
+    }
 
-	public void setErrorMsg(String errorMsg) {
-		this.errorMsg = errorMsg;
-	}
+    public String getErrorMsg() {
+        return errorMsg;
+    }
 
-	public Boolean getIsExempted() {
-		return isExempted;
-	}
+    public void setErrorMsg(final String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
 
-	public void setIsExempted(Boolean isExempted) {
-		this.isExempted = isExempted;
-	}
+    public Boolean getIsExempted() {
+        return isExempted;
+    }
+
+    public void setIsExempted(final Boolean isExempted) {
+        this.isExempted = isExempted;
+    }
 
 }

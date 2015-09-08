@@ -27,6 +27,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.hibernate.Query;
@@ -58,6 +59,8 @@ public class TitleTransferRegisterAction extends BaseFormAction {
     private BoundaryService boundaryService;
     @Autowired
     public FinancialYearDAO financialYearDAO;
+    @Autowired
+    public PropertyTaxUtil propertyTaxUtil;
     private String finYearStartDate;
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -70,48 +73,70 @@ public class TitleTransferRegisterAction extends BaseFormAction {
     @Override
     @SuppressWarnings("unchecked")
     public void prepare() {
-        LOGGER.debug("Entered into prepare method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into prepare method");
         super.prepare();
         final List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone",
                 ADMIN_HIERARCHY_TYPE);
         addDropdownData("zoneList", zoneList);
-        LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
         prepareWardDropDownData(zoneId != null, wardId != null);
         if (wardId == null || wardId.equals(-1))
             addDropdownData("blockList", Collections.EMPTY_LIST);
         prepareBlockDropDownData(wardId != null, areaId != null);
-        LOGGER.debug("Exit from prepare method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from prepare method");
         final CFinancialYear finyear = financialYearDAO.getFinancialYearByDate(new Date());
         if (finyear != null)
             finYearStartDate = sdf.format(finyear.getStartingDate());
     }
 
+    /**
+     * Load ward for selected zone
+     * @param zoneExists
+     * @param wardExists
+     */
     @SuppressWarnings("unchecked")
     private void prepareWardDropDownData(final boolean zoneExists, final boolean wardExists) {
+        if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Entered into prepareWardDropDownData method");
         LOGGER.debug("Zone Exists ? : " + zoneExists + ", " + "Ward Exists ? : " + wardExists);
+        }
         if (zoneExists && wardExists) {
             List<Boundary> wardList = new ArrayList<Boundary>();
             wardList = boundaryService.getActiveChildBoundariesByBoundaryId(getZoneId());
             addDropdownData("wardList", wardList);
         } else
             addDropdownData("wardList", Collections.EMPTY_LIST);
+        if (LOGGER.isDebugEnabled())
         LOGGER.debug("Exit from prepareWardDropDownData method");
     }
 
+    /**
+     * Load Block for selected ward
+     * @param wardExists
+     * @param blockExists
+     */
     @SuppressWarnings("unchecked")
     private void prepareBlockDropDownData(final boolean wardExists, final boolean blockExists) {
+        if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Entered into prepareBlockDropDownData method");
         LOGGER.debug("Ward Exists ? : " + wardExists + ", " + "Block Exists ? : " + blockExists);
+        }
         if (wardExists && blockExists) {
             List<Boundary> blockList = new ArrayList<Boundary>();
             blockList = boundaryService.getActiveChildBoundariesByBoundaryId(getWardId());
             addDropdownData("blockList", blockList);
         } else
             addDropdownData("blockList", Collections.EMPTY_LIST);
+        if (LOGGER.isDebugEnabled())
         LOGGER.debug("Exit from prepareWardDropDownData method");
     }
 
+    /**
+     * @return
+     */
     @SkipValidation
     @Action(value = "/reports/titleTransferRegister-search")
     public String search() {
@@ -120,12 +145,15 @@ public class TitleTransferRegisterAction extends BaseFormAction {
         return SEARCH;
     }
 
+    /**
+     *  Invoked by Title Transfer Register Report. Shows list of ownership transfer happend for a property
+     */
     @SuppressWarnings("unchecked")
     @Action(value = "/titleTransferRegister-getPropertyList")
     public void getPropertyList() {
         List<TitleTransferReportResult> resultList = new ArrayList<TitleTransferReportResult>();
         String result = null;
-        final Query query = prepareQuery();
+        final Query query = propertyTaxUtil.prepareQueryforTitleTransferReport(zoneId, wardId, areaId, fromDate, toDate);
         resultList = prepareOutput(query.list());
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
@@ -150,62 +178,6 @@ public class TitleTransferRegisterAction extends BaseFormAction {
                 new TitleTransferReportHelperAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
-    }
-
-    private Query prepareQuery() {
-        final StringBuffer query = new StringBuffer(300);
-        new PropertyMutation();
-        String boundaryCond = "";
-        String boundaryWhrCond = "";
-
-        if (zoneId != null && zoneId != -1)
-            boundaryCond = " and pi.zone.id= " + zoneId;
-        if (wardId != null && wardId != -1)
-            boundaryCond = boundaryCond + " and pi.ward.id= " + wardId;
-        if (areaId != null && areaId != -1)
-            boundaryCond = boundaryCond + " and pi.area.id= " + areaId;
-        if (boundaryCond != "")
-            boundaryWhrCond = ",PropertyID pi where pm.basicProperty.id=pi.basicProperty.id "
-                    + " and pm.state.value='" + PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED + "' ";
-        else
-            boundaryWhrCond = " where pm.state.value='" + PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED + "' ";
-        // Query that retrieves all the properties that has Transfer of owners details.
-        query.append("select pm from PropertyMutation pm").append(boundaryWhrCond).append(boundaryCond);
-        if (fromDate != null && !fromDate.isEmpty())
-            if (toDate != null && !toDate.isEmpty())
-                query.append(" and (cast(pm.createdDate as date)) between to_date('" + fromDate
-                        + "', 'DD/MM/YYYY') and to_date('" + toDate + "','DD/MM/YYYY') ");
-            else
-                query.append(" and (cast(pm.createdDate as date)) between to_date('" + fromDate
-                        + "', 'DD/MM/YYYY') and to_date('" + sdf.format(new Date()) + "','DD/MM/YYYY')  ");
-
-        query.append(" order by pm.basicProperty.id,pm.mutationDate ");
-        final Query qry = getPersistenceService().getSession().createQuery(query.toString());
-        return qry;
-    }
-
-    /**
-     * @ Description : gets the property tax arrear amount for a property
-     * @param basicPropId
-     * @param finyear
-     * @return
-     */
-    public BigDecimal getPropertyTaxDetails(final Long basicPropId, final CFinancialYear finyear) {
-        List<Object> list = new ArrayList<Object>();
-
-        final String selectQuery = " select sum(amount) as amount from ("
-                + " select distinct inst.description,dd.amount as amount from egpt_basic_property bp, egpt_property prop, "
-                + " egpt_ptdemand ptd, eg_demand d, "
-                + " eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
-                + " where bp.id = prop.id_basic_property and prop.status = 'A' "
-                + " and prop.id = ptd.id_property and ptd.id_demand = d.id " + " and d.id = dd.id_demand "
-                + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
-                + " and dr.id_installment = inst.id and bp.id =:basicPropId "
-                + " and inst.start_date between '" + finyear.getStartingDate() + "' and '" + finyear.getEndingDate() + "'"
-                + " and drm.code = '" + PropertyTaxConstants.GEN_TAX + "') as genTaxDtls";
-        final Query qry = getPersistenceService().getSession().createSQLQuery(selectQuery).setLong("basicPropId", basicPropId);
-        list = qry.list();
-        return (BigDecimal) list.get(0);
     }
 
     /**
@@ -256,7 +228,7 @@ public class TitleTransferRegisterAction extends BaseFormAction {
         ttrObj.setOwnerName(propertyMutation.getBasicProperty().getFullOwnerName());
         ttrObj.setDoorNo(propertyMutation.getBasicProperty().getAddress().getHouseNoBldgApt());
         ttrObj.setLocation(propertyMutation.getBasicProperty().getPropertyID().getLocality().getName());
-        ttrObj.setPropertyTax(getPropertyTaxDetails(propertyMutation.getBasicProperty().getId(), finyear).toString());
+        ttrObj.setPropertyTax(propertyTaxUtil.getPropertyTaxDetails(propertyMutation.getBasicProperty().getId(), finyear).toString());
         if (propertyMutation.getTransferorInfos() != null && propertyMutation.getTransferorInfos().size() > 0) {
             for (final User usr : propertyMutation.getTransferorInfos())
                 ownerName = ownerName + usr.getName() + ",";

@@ -64,6 +64,7 @@
 	</title>
 </head>
 <body>
+	<div id="colSummaryError" class="errorstyle" style="display:none;"></div> 
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel-body">

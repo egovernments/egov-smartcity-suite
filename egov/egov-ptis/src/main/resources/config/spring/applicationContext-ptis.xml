@@ -54,15 +54,6 @@
 	<bean id="floorService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.ptis.domain.entity.property.Floor" />
 	</bean>
-	
-	<!-- <bean id="boundaryDao" class="org.egov.infra.admin.master.entity.BoundaryDAO" scope="prototype"/>
-
-   <bean id="deactivatePropertyDelegate" class="org.egov.ptis.property.delegate.DeactivatePropertyDelegate" scope="prototype">
-     </bean>
-     	
-     <bean id="propertyService" class="org.egov.ptis.property.services.property.PropertyService" scope="prototype">
-     	<property name="deactivatePropertyDelegate" ref="deactivatePropertyDelegate"/>     	
-     </bean>  -->
      
 	<bean id="ActionsBaseWFFilter" class="org.egov.ptis.workflow.filter.ActionsBasedOnWorkFlowFilter" scope="prototype">
     	<property name="actionDao" ref="actionDao" />
@@ -70,31 +61,16 @@
     </bean> 
     
 	<bean id="dcbService" class="org.egov.dcb.service.DCBServiceImpl"  scope="prototype" />
-	
-	 
-  
-    
-    
-    
-    
-   <bean id="workflowBean" class="org.egov.ptis.domain.entity.property.WorkflowBean" scope="prototype" />
+   
+    <bean id="workflowBean" class="org.egov.ptis.domain.entity.property.WorkflowBean" scope="prototype" />
   	
-  	<!-- <bean id="propertyWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
-		<constructor-arg index="0" ref="propertyImplService"/>
-	</bean> -->
 	<bean id="objectionService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.ptis.domain.entity.objection.RevisionPetition" />
 	</bean>
-	<!-- <bean id="objectionWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
-		<constructor-arg index="0" ref="objectionService"/>
-	</bean> -->
 	
 	<bean id="recoveryService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.ptis.domain.entity.recovery.Recovery" />
 	</bean>
-	<!-- <bean id="recoveryWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
-		<constructor-arg index="0" ref="recoveryService"/>
-	</bean> -->
 	
 	<bean id="noticeService" class="org.egov.ptis.domain.service.notice.NoticeService" scope="prototype">
 		<property name="basicPropertyService" ref="basicPropertyService"/>
@@ -120,5 +96,4 @@
 	
 	<bean id="sMSEmailService" class="org.egov.ptis.domain.service.property.SMSEmailService" scope="prototype" >
 	</bean>
-	<!-- <bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" /> -->
 </beans>

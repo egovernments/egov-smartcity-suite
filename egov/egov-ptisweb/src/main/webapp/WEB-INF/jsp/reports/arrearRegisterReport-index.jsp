@@ -150,9 +150,6 @@
 				</tr>
 				
 	</table>
-		<tr>
-        	<font size="2"><div align="left" class="mandatory1" style="padding:5px;"><s:text name="mandtryFlds"/></div></font>
-        </tr>
 	</div>
 	<div class="buttonbottom" align="center">
 		<tr>

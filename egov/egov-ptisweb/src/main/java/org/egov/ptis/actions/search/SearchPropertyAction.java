@@ -24,16 +24,16 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
@@ -46,9 +46,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -82,7 +82,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
-import org.hibernate.Query;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -119,8 +119,8 @@ public class SearchPropertyAction extends BaseFormAction {
     private String markedForDeactive = "N";
     private Map<Long, String> ZoneBndryMap;
     private boolean isDemandActive;
-    private String fromdemand;
-    private String todemand;
+    private String fromDemand;
+    private String toDemand;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -134,25 +134,36 @@ public class SearchPropertyAction extends BaseFormAction {
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
 
+    @Autowired
+    private PropertyService propertyService;
+
     @Override
     public Object getModel() {
         return null;
     }
 
+    /**
+     * @return - Gets forwared to Search Property Screen for officials
+     */
     @SkipValidation
     @Action(value = "/search/searchProperty-searchForm")
     public String searchForm() {
         return NEW;
     }
 
+    /**
+     * @return to official search property result screen
+     * @description searches property based on assessment no
+     */
     @ValidationErrorPage(value = "new")
     @Action(value = "/search/searchProperty-srchByAssessment")
     public String srchByAssessment() {
-        LOGGER.debug("Entered into srchByAssessment  method");
-        LOGGER.debug("Assessment Number : " + assessmentNum);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into srchByAssessment  method. Assessment Number : " + assessmentNum);
         try {
             final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(assessmentNum, null);
-            LOGGER.debug("srchByAssessment : BasicProperty : " + basicProperty);
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("srchByAssessment : BasicProperty : " + basicProperty);
             if (basicProperty != null) {
                 setSearchResultList(getSearchResults(basicProperty.getUpicNo()));
                 checkIsMarkForDeactive(basicProperty);
@@ -169,142 +180,131 @@ public class SearchPropertyAction extends BaseFormAction {
             LOGGER.error("Exception in Search Property By Assessment ", e);
             throw new EGOVRuntimeException("Exception : ", e);
         }
-        LOGGER.debug("Exit from srchByAssessment method ");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from srchByAssessment method ");
         return TARGET;
     }
 
+    /**
+     * @return to official search property result screen
+     * @description searches property based on Boundary : zone and ward
+     */
     @SuppressWarnings("unchecked")
     @ValidationErrorPage(value = "new")
     @Action(value = "/search/searchProperty-srchByBndry")
     public String srchByBndry() {
-        LOGGER.debug("Entered into srchByBndry method");
-        LOGGER.debug("srchByBndry : Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", " + "House Num : "
-                + houseNumBndry + ", " + "Owner Name : " + ownerNameBndry);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into srchByBndry method");
+            LOGGER.debug("srchByBndry : Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", " + "House Num : "
+                    + houseNumBndry + ", " + "Owner Name : " + ownerNameBndry);
+        }
         final String strZoneNum = boundaryService.getBoundaryById(zoneId).getName();
         final String strWardNum = boundaryService.getBoundaryById(wardId).getName();
 
         if (zoneId != null && zoneId != -1 && wardId != null && wardId != -1)
             try {
-                final StringBuilder queryStr = new StringBuilder();
-                queryStr.append(
-                        "select distinct pmv from PropertyMaterlizeView pmv, BasicPropertyImpl bp where pmv.basicPropertyID=bp.id ")
-                        .append("and bp.active='Y' and pmv.zone.id=:ZoneID and pmv.ward.id=:WardID ");
-                if (houseNumBndry != null && !houseNumBndry.trim().isEmpty())
-                    queryStr.append("and pmv.houseNo like :HouseNo ");
-                if (ownerNameBndry != null && !ownerNameBndry.trim().isEmpty())
-                    queryStr.append("and trim(pmv.ownerName) like :OwnerName");
-                final Query query = getPersistenceService().getSession().createQuery(queryStr.toString());
-                query.setLong("ZoneID", zoneId);
-                query.setLong("WardID", wardId);
-                if (houseNumBndry != null && !houseNumBndry.trim().isEmpty())
-                    query.setString("HouseNo", houseNumBndry + "%");
-                if (ownerNameBndry != null && !ownerNameBndry.trim().isEmpty())
-                    query.setString("OwnerName", ownerNameBndry + "%");
-                final List<PropertyMaterlizeView> propertyList = query.list();
+
+                final List<PropertyMaterlizeView> propertyList = propertyService.getPropertyByBoundary(zoneId, wardId,
+                        ownerNameBndry, houseNumBndry);
 
                 for (final PropertyMaterlizeView propMatview : propertyList) {
-                    LOGGER.debug("srchByBndry : Property : " + propMatview);
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("srchByBndry : Property : " + propMatview);
                     setSearchResultList(getResultsFromMv(propMatview));
                 }
                 setSearchUri("../search/searchProperty-srchByBndry.action");
                 setSearchCreteria("Search By Zone, Ward, Plot No/House No, Owner Name");
                 setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum + ", Plot No/House No: "
                         + houseNumBndry + ", Owner Name: " + ownerNameBndry);
-                // target = "result";
             } catch (final Exception e) {
                 LOGGER.error("Exception in Search Property By Bndry ", e);
                 throw new EGOVRuntimeException("Exception : " + e);
             }
-        LOGGER.debug("Exit from srchByBndry method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from srchByBndry method");
         return TARGET;
     }
 
+    /**
+     * @return to official search property result screen
+     * @description searches property based on location boundary
+     */
     @SuppressWarnings("unchecked")
     @ValidationErrorPage(value = "new")
     @Action(value = "/search/searchProperty-srchByLocation")
     public String srchByLocation() {
-
-        LOGGER.debug("Entered into srchByArea  method");
-        LOGGER.debug("srchByArea : Location Id : " + locationId + ", " + "Owner Name : " + ownerName + ", "
-                + "Plot No/House No : " + houseNumArea);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into srchByArea  method");
+            LOGGER.debug("srchByLocation : Location Id : " + locationId + ", " + "Owner Name : " + ownerName + ", "
+                    + "Plot No/House No : " + houseNumArea);
+        }
         final String strLocationNum = boundaryService.getBoundaryById(locationId.longValue()).getName();
         if (null != ownerName && org.apache.commons.lang.StringUtils.isNotEmpty(ownerName)
                 && locationId != null && locationId != -1)
             try {
-                final StringBuilder queryStr = new StringBuilder();
-                queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ").append(
-                        " where pmv.locality.id=:locationId ");
-                if (houseNumArea != null && !houseNumArea.trim().isEmpty())
-                    queryStr.append("and pmv.houseNo like :HouseNo ");
-                if (ownerName != null && !ownerName.trim().isEmpty())
-                    queryStr.append("and trim(pmv.ownerName) like :OwnerName");
-                final Query query = getPersistenceService().getSession().createQuery(queryStr.toString());
-                query.setLong("locationId", locationId);
-                if (houseNumArea != null && !houseNumArea.trim().isEmpty())
-                    query.setString("HouseNo", houseNumArea + "%");
-                if (ownerName != null && !ownerName.trim().isEmpty())
-                    query.setString("OwnerName", ownerName + "%");
-                final List<PropertyMaterlizeView> propertyList = query.list();
+                final List<PropertyMaterlizeView> propertyList = propertyService.getPropertyByLocation(locationId, houseNumArea,
+                        ownerName);
 
                 for (final PropertyMaterlizeView propMatview : propertyList) {
-                    LOGGER.debug("srchByBndry : Property : " + propMatview);
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("srchByLocation : Property : " + propMatview);
                     setSearchResultList(getResultsFromMv(propMatview));
                 }
                 setSearchUri("../search/searchProperty-srchByLocation.action");
                 setSearchCreteria("Search By Location, Owner Name");
                 setSearchValue("Location : " + strLocationNum + ", Owner Name : " + ownerName);
             } catch (final Exception e) {
-                LOGGER.error("Exception in Search Property By Bndry ", e);
+                LOGGER.error("Exception in Search Property By Location ", e);
                 throw new EGOVRuntimeException("Exception : " + e);
             }
-        LOGGER.debug("Exit from srchByArea  method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from srchByArea  method");
         return TARGET;
     }
 
+    /**
+     * @return to official search property result screen
+     * @description searches property based on Demand
+     */
     @SuppressWarnings("unchecked")
     @ValidationErrorPage(value = "new")
     @Action(value = "/search/searchProperty-searchByDemand")
     public String searchByDemand() {
-        LOGGER.debug("Entered into searchByDemand  method");
-        LOGGER.debug("From Demand No : " + fromdemand + ", " + "To Demand No : " + todemand);
-        if (fromdemand != null && fromdemand != "" && todemand != null && todemand != "")
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into searchByDemand  method");
+            LOGGER.debug("From Demand No : " + fromDemand + ", " + "To Demand No : " + toDemand);
+        }
+        if (fromDemand != null && fromDemand != "" && toDemand != null && toDemand != "")
             try {
-                final StringBuilder queryStr = new StringBuilder();
-                queryStr.append(
-                        "select distinct pmv from PropertyMaterlizeView pmv where pmv.aggrCurrDmd is not null and pmv.aggrCurrDmd>=:fromDemand ")
-                        .append("and pmv.aggrCurrDmd<=:toDemand ");
-                final Query query = getPersistenceService().getSession().createQuery(queryStr.toString());
-                query.setBigDecimal("fromDemand", new BigDecimal(fromdemand));
-                query.setBigDecimal("toDemand", new BigDecimal(todemand));
-                final List<PropertyMaterlizeView> propertyList = query.list();
+                final List<PropertyMaterlizeView> propertyList = propertyService.getPropertyByDemand(fromDemand, toDemand);
 
                 for (final PropertyMaterlizeView propMatview : propertyList) {
-                    LOGGER.debug("searchByDemand : Property : " + propMatview);
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("searchByDemand : Property : " + propMatview);
                     setSearchResultList(getResultsFromMv(propMatview));
                 }
                 setSearchUri("../search/searchProperty-searchByDemand.action");
                 setSearchCreteria("Search By FromDemand, ToDemand");
-                setSearchValue("From Demand: " + fromdemand + ", To Demand: " + todemand);
+                setSearchValue("From Demand: " + fromDemand + ", To Demand: " + toDemand);
             } catch (final Exception e) {
-                LOGGER.error("Exception in Search Property By Bndry ", e);
+                LOGGER.error("Exception in Search Property By Demand ", e);
                 throw new EGOVRuntimeException("Exception : " + e);
             }
         return TARGET;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.egov.infra.web.struts.actions.BaseFormAction#prepare()
+     */
     @Override
     @SuppressWarnings("unchecked")
     public void prepare() {
-        LOGGER.debug("Entered into prepare method");
-        LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
-        final List<Boundary> zoneList = getPersistenceService().findAllBy(
-                "from Boundary BI where BI.boundaryType.name=? and BI.boundaryType.hierarchyType.name=? "
-                        + "and BI.isHistory='N' order by BI.id", "Zone", ADMIN_HIERARCHY_TYPE);
-        LOGGER.debug("Zone List : " + (zoneList != null ? zoneList : ZERO));
-        // List<Boundary> streetList = new ArrayList<Boundary>(0);
-        final List<Boundary> locationList = getPersistenceService().findAllBy(
-                "from Boundary BI where BI.boundaryType.name=? and BI.isHistory='N' order by BI.name ", "Locality");
-        LOGGER.debug("Location List : " + (locationList != null ? locationList : ZERO));
+        final List<Boundary> zoneList = boundaryService
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", ADMIN_HIERARCHY_TYPE);
+        final List<Boundary> locationList = boundaryService
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Locality", LOCATION_HIERARCHY_TYPE);
+
         setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
         prepareWardDropDownData(zoneId != null, wardId != null);
         addDropdownData("Location", locationList);
@@ -313,37 +313,38 @@ public class SearchPropertyAction extends BaseFormAction {
         final Long userId = (Long) session().get(SESSIONLOGINID);
         if (userId != null)
             setRoleName(propertyTaxUtil.getRolesForUserId(userId));
-        LOGGER.debug("Exit from prepare method");
     }
 
+    /**
+     * @Description Loads ward dropdown for selected zone
+     * @param zoneExists
+     * @param wardExists
+     */
     @SuppressWarnings("unchecked")
     @SkipValidation
     private void prepareWardDropDownData(final boolean zoneExists, final boolean wardExists) {
-        LOGGER.debug("Entered into prepareWardDropDownData method");
-        LOGGER.debug("Zone exists ? : " + zoneExists + ", " + "Ward exists ? : " + wardExists);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into prepareWardDropDownData method");
+            LOGGER.debug("Zone exists ? : " + zoneExists + ", " + "Ward exists ? : " + wardExists);
+        }
         if (zoneExists && wardExists) {
             List<Boundary> wardNewList = new ArrayList<Boundary>();
-            wardNewList = getPersistenceService()
-                    .findAllBy(
-                            "from Boundary BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.id ",
-                            WARD_BNDRY_TYPE, getZoneId());
+            wardNewList = boundaryService.getActiveChildBoundariesByBoundaryId(getZoneId());
             addDropdownData("wardList", wardNewList);
         } else
             addDropdownData("wardList", Collections.EMPTY_LIST);
-        LOGGER.debug("Exit from prepareWardDropDownData method");
     }
 
     @Override
-    public void validate() {
-        LOGGER.debug("Entered into validate method");
+    public void validate() { 
         if (org.apache.commons.lang.StringUtils.equals(mode, "assessment")) {
             if (org.apache.commons.lang.StringUtils.isEmpty(assessmentNum) || org.apache.commons.lang.StringUtils
                     .isBlank(assessmentNum))
                 addActionError(getText("mandatory.assessmentNo"));
         } else if (org.apache.commons.lang.StringUtils.equals(mode, "bndry")) {
-            if (zoneId == null || zoneId == -1)
+            if (zoneId == null || zoneId == -1) 
                 addActionError(getText("mandatory.zone"));
-            if (wardId == null || wardId == -1)
+            if (wardId == null || wardId == -1)  
                 addActionError(getText("mandatory.ward"));
         } else if (org.apache.commons.lang.StringUtils.equals(mode, "location")) {
             if (locationId == null || locationId == -1)
@@ -351,24 +352,31 @@ public class SearchPropertyAction extends BaseFormAction {
             if (ownerName == null || org.apache.commons.lang.StringUtils.isEmpty(ownerName))
                 addActionError(getText("search.ownerName.null"));
         } else if (org.apache.commons.lang.StringUtils.equals(mode, "demand")) {
-            if (fromdemand == null || org.apache.commons.lang.StringUtils.isEmpty(fromdemand))
+            if (fromDemand == null || org.apache.commons.lang.StringUtils.isEmpty(fromDemand))
                 addActionError(getText("mandatory.fromdemand"));
-            if (todemand == null || org.apache.commons.lang.StringUtils.isEmpty(todemand))
+            if (toDemand == null || org.apache.commons.lang.StringUtils.isEmpty(toDemand))
                 addActionError(getText("mandatory.todemand"));
         }
-        LOGGER.debug("Exit from validate method");
     }
 
+    /**
+     * @param assessmentNumber
+     * @return
+     */
     private List<Map<String, String>> getSearchResults(final String assessmentNumber) {
-        LOGGER.debug("Entered into getSearchResults method");
-        LOGGER.debug("Assessment Number : " + assessmentNumber);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into getSearchResults method");
+            LOGGER.debug("Assessment Number : " + assessmentNumber);
+        }
         if (assessmentNumber != null || org.apache.commons.lang.StringUtils.isNotEmpty(assessmentNumber)) {
 
             final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNumber);
-            LOGGER.debug("BasicProperty : " + basicProperty);
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("BasicProperty : " + basicProperty);
             if (basicProperty != null) {
                 final Property property = basicProperty.getProperty();
-                LOGGER.debug("Property : " + property);
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Property : " + property);
 
                 checkIsDemandActive(property);
 
@@ -378,61 +386,81 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("assessmentNum", assessmentNumber);
                 searchResultMap.put("ownerName", basicProperty.getFullOwnerName());
                 searchResultMap.put("address", basicProperty.getAddress().toString());
-				searchResultMap.put("source", basicProperty.getSource().toString());
+                searchResultMap.put("source", basicProperty.getSource().toString());
 
-				if (!property.getIsExemptedFromTax()) {
-					searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
-					searchResultMap.put("arrDemandDue",
-							demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
-					searchResultMap.put("currDemandDue",
-							demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)).toString());
-				} else {
-					searchResultMap.put("currDemand", "0");
-					searchResultMap.put("arrDemandDue", "0");
-					searchResultMap.put("currDemandDue", "0");
-				}
-                LOGGER.debug("Assessment Number : " + searchResultMap.get("assessmentNum") + ", " + "Owner Name : "
-                        + searchResultMap.get("ownerName") + ", " + "Parcel id : " + searchResultMap.get("parcelId")
-                        + ", " + "Address : " + searchResultMap.get("address") + ", " + "Current Demand : "
-                        + searchResultMap.get("currDemand") + ", " + "Arrears Demand Due : "
-                        + searchResultMap.get("arrDemandDue") + ", " + "Current Demand Due : "
-                        + searchResultMap.get("currDemandDue"));
+                if (!property.getIsExemptedFromTax()) {
+                    searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
+                    searchResultMap.put("arrDemandDue",
+                            demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
+                    searchResultMap.put("currDemandDue",
+                            demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)).toString());
+                } else {
+                    searchResultMap.put("currDemand", "0");
+                    searchResultMap.put("arrDemandDue", "0");
+                    searchResultMap.put("currDemandDue", "0");
+                }
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Assessment Number : " + searchResultMap.get("assessmentNum") + ", " + "Owner Name : "
+                            + searchResultMap.get("ownerName") + ", " + "Parcel id : " + searchResultMap.get("parcelId")
+                            + ", " + "Address : " + searchResultMap.get("address") + ", " + "Current Demand : "
+                            + searchResultMap.get("currDemand") + ", " + "Arrears Demand Due : "
+                            + searchResultMap.get("arrDemandDue") + ", " + "Current Demand Due : "
+                            + searchResultMap.get("currDemandDue"));
                 searchList.add(searchResultMap);
             }
         }
-        LOGGER.debug("Search list : " + (searchList != null ? searchList : ZERO));
-        LOGGER.debug("Exit from getSearchResults method");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Search list : " + (searchList != null ? searchList : ZERO));
+            LOGGER.debug("Exit from getSearchResults method");
+        }
         return searchList;
     }
 
+    /**
+     * @param basicProperty
+     */
     private void checkIsMarkForDeactive(final BasicProperty basicProperty) {
-        LOGGER.debug("Entered into checkIsMarkForDeactive method");
-        LOGGER.debug("BasicProperty : " + basicProperty);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into checkIsMarkForDeactive method");
+            LOGGER.debug("BasicProperty : " + basicProperty);
+        }
         Set<PropertyStatusValues> propStatusValSet = new HashSet<PropertyStatusValues>();
         propStatusValSet = basicProperty.getPropertyStatusValuesSet();
         for (final PropertyStatusValues propStatusVal : propStatusValSet) {
-            LOGGER.debug("Property Status Values : " + propStatusVal);
             if (propStatusVal.getPropertyStatus().getStatusCode().equals(PROPERTY_STATUS_MARK_DEACTIVE))
                 markedForDeactive = "Y";
-            LOGGER.debug("Marked for Deactivation ? : " + markedForDeactive);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Property Status Values : " + propStatusVal);
+                LOGGER.debug("Marked for Deactivation ? : " + markedForDeactive);
+            }
         }
-        LOGGER.debug("Exit from checkIsMarkForDeactive method");
     }
 
+    /**
+     * @param property
+     */
     private void checkIsDemandActive(final Property property) {
-        LOGGER.debug("Entered into checkIsDemandActive");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into checkIsDemandActive");
         if (property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE))
             isDemandActive = false;
         else
             isDemandActive = true;
-        LOGGER.debug("checkIsDemandActive - Is demand active? : " + isDemandActive);
-        LOGGER.debug("Exiting from checkIsDemandActive");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("checkIsDemandActive - Is demand active? : " + isDemandActive);
+            LOGGER.debug("Exiting from checkIsDemandActive");
+        }
     }
 
+    /**
+     * @param pmv
+     * @return
+     */
     private List<Map<String, String>> getResultsFromMv(final PropertyMaterlizeView pmv) {
-        LOGGER.debug("Entered into getSearchResults method");
-        LOGGER.debug("Assessment Number : " + pmv.getPropertyId());
-
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into getSearchResults method");
+            LOGGER.debug("Assessment Number : " + pmv.getPropertyId());
+        }
         if (pmv.getPropertyId() != null || org.apache.commons.lang.StringUtils.isNotEmpty(pmv.getPropertyId()))
             if (pmv != null) {
                 final Map<String, String> searchResultMap = new HashMap<String, String>();
@@ -440,21 +468,23 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("ownerName", pmv.getOwnerName());
                 searchResultMap.put("parcelId", pmv.getGisRefNo());
                 searchResultMap.put("address", pmv.getPropertyAddress());
-				searchResultMap.put("source", pmv.getSource().toString());
-				if (pmv.getIsExempted()) {
-					searchResultMap.put("currDemand", "0");
-					searchResultMap.put("arrDemandDue", "0");
-					searchResultMap.put("currDemandDue", "0");
-				} else {
-					searchResultMap.put("currDemand", pmv.getAggrCurrDmd().toString());
-					searchResultMap.put("currDemandDue", pmv.getAggrCurrDmd().subtract(pmv.getAggrCurrColl())
-							.toString());
-					searchResultMap.put("arrDemandDue", pmv.getAggrArrDmd().subtract(pmv.getAggrArrColl()).toString());
-				}
+                searchResultMap.put("source", pmv.getSource().toString());
+                if (pmv.getIsExempted()) {
+                    searchResultMap.put("currDemand", "0");
+                    searchResultMap.put("arrDemandDue", "0");
+                    searchResultMap.put("currDemandDue", "0");
+                } else {
+                    searchResultMap.put("currDemand", pmv.getAggrCurrDmd().toString());
+                    searchResultMap.put("currDemandDue", pmv.getAggrCurrDmd().subtract(pmv.getAggrCurrColl())
+                            .toString());
+                    searchResultMap.put("arrDemandDue", pmv.getAggrArrDmd().subtract(pmv.getAggrArrColl()).toString());
+                }
                 searchList.add(searchResultMap);
             }
-        LOGGER.debug("Search list : " + (searchList != null ? searchList : ZERO));
-        LOGGER.debug("Exit from getSearchResults method");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Search list : " + (searchList != null ? searchList : ZERO));
+            LOGGER.debug("Exit from getSearchResults method");
+        }
         return searchList;
     }
 
@@ -610,20 +640,20 @@ public class SearchPropertyAction extends BaseFormAction {
         this.locationId = locationId;
     }
 
-    public String getFromdemand() {
-        return fromdemand;
+    public String getFromDemand() {
+        return fromDemand;
     }
 
-    public void setFromdemand(final String fromdemand) {
-        this.fromdemand = fromdemand;
+    public void setFromDemand(final String fromDemand) {
+        this.fromDemand = fromDemand;
     }
 
-    public String getTodemand() {
-        return todemand;
+    public String getToDemand() {
+        return toDemand;
     }
 
-    public void setTodemand(final String todemand) {
-        this.todemand = todemand;
+    public void setToDemand(final String toDemand) {
+        this.toDemand = toDemand;
     }
 
     public String getAssessmentNum() {

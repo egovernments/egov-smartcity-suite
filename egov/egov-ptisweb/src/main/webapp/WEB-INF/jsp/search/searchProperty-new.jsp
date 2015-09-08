@@ -278,9 +278,9 @@
 					  <td class="bluebox" style="text-align:center;" colspan="4">
 					   <br/>
 					    From <span class="mandatory1">*</span>:  &nbsp;&nbsp;&nbsp; 
-					    <s:textfield name="fromdemand"  />
+					    <s:textfield name="fromDemand"  />
 					    &nbsp;&nbsp;&nbsp; To <span class="mandatory1">*</span>: &nbsp;&nbsp;&nbsp;
-					     <s:textfield name="todemand"  />
+					     <s:textfield name="toDemand"  />
 					  </td>
 					</tr>
 					<tr>

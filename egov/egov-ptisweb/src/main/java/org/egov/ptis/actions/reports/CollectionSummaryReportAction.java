@@ -108,7 +108,8 @@ public class CollectionSummaryReportAction extends BaseFormAction {
     @Override
     @SuppressWarnings("unchecked")
     public void prepare() {
-        LOGGER.debug("Entered into prepare method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into prepare method");
         super.prepare();
         setZoneBndryMap(CommonServices.getFormattedBndryMap(boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", ADMIN_HIERARCHY_TYPE)));
@@ -123,49 +124,71 @@ public class CollectionSummaryReportAction extends BaseFormAction {
         final CFinancialYear finyear = financialYearDAO.getFinancialYearByDate(new Date());
         if (finyear != null)
             finYearStartDate = sdf.format(finyear.getStartingDate());
-        LOGGER.debug("Exit from prepare method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from prepare method");
 
         super.prepare();
         final List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone",
                 ADMIN_HIERARCHY_TYPE);
         addDropdownData("zoneList", zoneList);
-        LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
         prepareWardDropDownData(zoneId != null, wardId != null);
         if (wardId == null || wardId.equals(-1))
             addDropdownData("blockList", Collections.EMPTY_LIST);
         prepareBlockDropDownData(wardId != null, areaId != null);
-        LOGGER.debug("Exit from prepare method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from prepare method");
         propTypeCategoryMap.putAll(VAC_LAND_PROPERTY_TYPE_CATEGORY);
         propTypeCategoryMap.putAll(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
         setPropTypeCategoryMap(propTypeCategoryMap);
     }
 
+    /**
+     * Loads ward for a selected Zone
+     * @param zoneExists
+     * @param wardExists
+     */
     @SuppressWarnings("unchecked")
     private void prepareWardDropDownData(final boolean zoneExists, final boolean wardExists) {
-        LOGGER.debug("Entered into prepareWardDropDownData method");
-        LOGGER.debug("Zone Exists ? : " + zoneExists + ", " + "Ward Exists ? : " + wardExists);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into prepareWardDropDownData method");
+            LOGGER.debug("Zone Exists ? : " + zoneExists + ", " + "Ward Exists ? : " + wardExists);
+        }
         if (zoneExists && wardExists) {
             List<Boundary> wardList = new ArrayList<Boundary>();
             wardList = boundaryService.getActiveChildBoundariesByBoundaryId(getZoneId());
             addDropdownData("wardList", wardList);
         } else
             addDropdownData("wardList", Collections.EMPTY_LIST);
-        LOGGER.debug("Exit from prepareWardDropDownData method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from prepareWardDropDownData method");
     }
 
+    /**
+     * Loads block based on selected ward
+     * @param wardExists
+     * @param blockExists
+     */
     @SuppressWarnings("unchecked")
     private void prepareBlockDropDownData(final boolean wardExists, final boolean blockExists) {
-        LOGGER.debug("Entered into prepareBlockDropDownData method");
-        LOGGER.debug("Ward Exists ? : " + wardExists + ", " + "Block Exists ? : " + blockExists);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into prepareBlockDropDownData method");
+            LOGGER.debug("Ward Exists ? : " + wardExists + ", " + "Block Exists ? : " + blockExists);
+        }
         if (wardExists && blockExists) {
             List<Boundary> blockList = new ArrayList<Boundary>();
             blockList = boundaryService.getActiveChildBoundariesByBoundaryId(getWardId());
             addDropdownData("blockList", blockList);
         } else
             addDropdownData("blockList", Collections.EMPTY_LIST);
-        LOGGER.debug("Exit from prepareWardDropDownData method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from prepareWardDropDownData method");
     }
 
+    /**
+     * @return to Zonewise Collection Summary Search Screen
+     */
     @SkipValidation
     @Action(value = "/reports/collectionSummaryReport-zoneWise")
     public String zoneWise() {
@@ -175,6 +198,9 @@ public class CollectionSummaryReportAction extends BaseFormAction {
         return VIEW;
     }
 
+    /**
+     * @return to Wardwise Collection Summary Search Screen
+     */
     @SkipValidation
     @Action(value = "/reports/collectionSummaryReport-wardWise")
     public String wardWise() {
@@ -184,6 +210,9 @@ public class CollectionSummaryReportAction extends BaseFormAction {
         return VIEW;
     }
 
+    /**
+     * @return to Blockwise Collection Summary Search Screen
+     */
     @SkipValidation
     @Action(value = "/reports/collectionSummaryReport-blockWise")
     public String blockWise() {
@@ -193,6 +222,9 @@ public class CollectionSummaryReportAction extends BaseFormAction {
         return VIEW;
     }
 
+    /**
+     * @return to Localitywise Collection Summary Search Screen
+     */
     @SkipValidation
     @Action(value = "/reports/collectionSummaryReport-localityWise")
     public String localityWise() {
@@ -202,6 +234,9 @@ public class CollectionSummaryReportAction extends BaseFormAction {
         return VIEW;
     }
 
+    /**
+     * @return to Property Usagewise Collection Summary Search Screen
+     */
     @SkipValidation
     @Action(value = "/reports/collectionSummaryReport-usageWise")
     public String usageWise() {
@@ -211,6 +246,11 @@ public class CollectionSummaryReportAction extends BaseFormAction {
         return VIEW;
     }
 
+    /**
+     * Invoked from Collection Summary screens to retrieve aggregated collection summary for selected zone / ward / block /
+     * locality or usagetype
+     * @throws ParseException
+     */
     @SuppressWarnings("unchecked")
     @ValidationErrorPage(value = "view")
     @Action(value = "/reports/collectionSummaryReport-list")
@@ -244,81 +284,34 @@ public class CollectionSummaryReportAction extends BaseFormAction {
         return json;
     }
 
+    /**
+     * @return
+     */
     public Query prepareQuery() {
-        String srchQryStr = "";
-        String baseQry = "", orderbyQry = "";
-        new ArrayList<Object>();
         try {
             final String currDate = sdf.format(new Date());
             if (currDate.equals(fromDate) || currDate.equals(toDate))
                 dateSelected = CURR_DATE;
-            baseQry = "select cs from CollectionSummary cs where ";
-            if (fromDate != null && !fromDate.equals("DD/MM/YYYY") && !fromDate.equals(""))
-                srchQryStr = "(cast(cs.receiptDate as date)) >= to_date('" + fromDate + "', 'DD/MM/YYYY') ";
-            if (toDate != null && !toDate.equals("DD/MM/YYYY") && !toDate.equals(""))
-                srchQryStr = srchQryStr + "and (cast(cs.receiptDate as date)) <= to_date('" + toDate + "', 'DD/MM/YYYY') ";
-            if (collMode != null && !collMode.equals("") && !collMode.equals("-1")) {
-                LOGGER.debug("Collection Mode = " + collMode);
-                srchQryStr = srchQryStr + "and cs.collectionType ='" + collMode + "' ";
-            }
-            if (transMode != null && !transMode.equals("") && !transMode.equals("-1")) {
-                LOGGER.debug("Transaction Mode = " + transMode);
-                srchQryStr = srchQryStr + "and cs.paymentMode ='" + transMode + "' ";
-            }
-            if (mode.equals(USAGEWISE)) {
-                if (propTypeCategoryId != null && !propTypeCategoryId.equals("") && !propTypeCategoryId.equals("-1")) {
-                    LOGGER.debug("Transaction Mode = " + transMode);
-                    srchQryStr = srchQryStr + "and cs.property.propertyDetail.categoryType = '" + propTypeCategoryId + "' ";
-                }
-                if (zoneId != null && !zoneId.equals("") && zoneId != -1)
-                    srchQryStr = srchQryStr + " and cs.zoneId.id =" + zoneId;
-                if (wardId != null && !wardId.equals("") && wardId != -1)
-                    srchQryStr = srchQryStr + " and cs.wardId.id =" + wardId;
-                if (areaId != null && !areaId.equals("") && areaId != -1)
-                    srchQryStr = srchQryStr + " and cs.areaId.id =" + areaId;
-                orderbyQry = "order by cs.property.propertyDetail.categoryType";
-            }
-            if (mode.equals(ZONEWISE)) {
-                if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
-                    LOGGER.debug("zoneNo = " + boundaryId);
-                    srchQryStr = srchQryStr + "and cs.zoneId.id =" + boundaryId;
-                }
-                orderbyQry = "order by cs.zoneId.boundaryNum";
-            } else if (mode.equals(WARDWISE)) {
-                if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
-                    LOGGER.debug("wardNo = " + boundaryId);
-                    srchQryStr = srchQryStr + "and cs.wardId.id =" + boundaryId;
-                }
-                orderbyQry = "order by cs.wardId.boundaryNum";
-            } else if (mode.equals(BLOCKWISE)) {
-                if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
-                    LOGGER.debug("blockNo = " + boundaryId);
-                    srchQryStr = srchQryStr + "and cs.areaId.id =" + boundaryId;
-                }
-                orderbyQry = "order by cs.areaId.boundaryNum";
-            } else if (mode.equals(LOCALITYWISE)) {
-                if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
-                    LOGGER.debug("localityNo = " + boundaryId);
-                    srchQryStr = srchQryStr + "and cs.localityId.id =" + boundaryId;
-                }
-                orderbyQry = "order by cs.localityId.boundaryNum";
-            }
-            srchQryStr = baseQry + srchQryStr + orderbyQry;
-
+            return propertyTaxUtil.prepareQueryforCollectionSummaryReport(fromDate, toDate, collMode, transMode, mode,
+                    boundaryId,
+                    propTypeCategoryId, zoneId, wardId, areaId);
         } catch (final Exception e) {
             e.printStackTrace();
             LOGGER.error("Error occured in Class : CollectionSummaryReportAction  Method : list", e);
             throw new EGOVRuntimeException("Error occured in Class : CollectionSummaryReportAction  Method : list "
                     + e.getMessage());
         }
-        LOGGER.debug("Exit from list method");
-        final Query qry = getPersistenceService().getSession().createQuery(srchQryStr.toString());
-        return qry;
     }
 
+    /**
+     * @param collectionSummaryList
+     * @return
+     * @throws ParseException
+     */
     private List<CollectionSummaryReportResult> prepareOutput(final List<CollectionSummary> collectionSummaryList)
             throws ParseException {
-        LOGGER.debug("Entered into prepareResultList method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into prepareResultList method");
         final List<CollectionSummaryReportResult> csrFinalList = new LinkedList<CollectionSummaryReportResult>();
 
         try {
@@ -337,36 +330,36 @@ public class CollectionSummaryReportAction extends BaseFormAction {
                         if (taxAmount != null)
                             taxAmount = collSummary.getTaxColl() != null ? taxAmount.add(collSummary.getTaxColl())
                                     : taxAmount;
-                            else
-                                taxAmount = collSummary.getTaxColl();
+                        else
+                            taxAmount = collSummary.getTaxColl();
                         if (arrearTaxAmount != null)
                             arrearTaxAmount = collSummary.getArrearTaxColl() != null ? arrearTaxAmount.add(collSummary
                                     .getArrearTaxColl())
                                     : arrearTaxAmount;
-                            else
-                                arrearTaxAmount = collSummary.getArrearTaxColl();
+                        else
+                            arrearTaxAmount = collSummary.getArrearTaxColl();
                         if (penaltyAmount != null)
                             penaltyAmount = collSummary.getPenaltyColl() != null ? penaltyAmount.add(collSummary
                                     .getPenaltyColl()) : penaltyAmount;
-                            else
-                                penaltyAmount = collSummary.getPenaltyColl();
+                        else
+                            penaltyAmount = collSummary.getPenaltyColl();
                         if (arrearPenaltyAmount != null)
                             arrearPenaltyAmount = collSummary.getArrearPenaltyColl() != null ? arrearPenaltyAmount
                                     .add(collSummary
                                             .getArrearPenaltyColl()) : arrearPenaltyAmount;
-                                    else
-                                        arrearPenaltyAmount = collSummary.getArrearPenaltyColl();
+                        else
+                            arrearPenaltyAmount = collSummary.getArrearPenaltyColl();
                         if (libCessAmount != null)
                             libCessAmount = collSummary.getLibCessColl() != null ? libCessAmount.add(collSummary
                                     .getLibCessColl()) : libCessAmount;
-                            else
-                                libCessAmount = collSummary.getLibCessColl();
+                        else
+                            libCessAmount = collSummary.getLibCessColl();
                         if (arrearLibCessAmount != null)
                             arrearLibCessAmount = collSummary.getArrearLibCessColl() != null ? arrearLibCessAmount
                                     .add(collSummary
                                             .getArrearLibCessColl()) : arrearLibCessAmount;
-                                    else
-                                        arrearLibCessAmount = collSummary.getArrearLibCessColl();
+                        else
+                            arrearLibCessAmount = collSummary.getArrearLibCessColl();
                     } else {
                         csrFinalList.add(getCalculatedResultMap());
                         initializeReasonAmount(collSummary);
@@ -380,10 +373,14 @@ public class CollectionSummaryReportAction extends BaseFormAction {
             e.printStackTrace();
             throw new EGOVRuntimeException("Exception in prepareBndryWiseResultList method : ", e);
         }
-        LOGGER.debug("Exit from prepareResultList method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from prepareResultList method");
         return csrFinalList;
     }
 
+    /**
+     * @param collSummary
+     */
     private void initializeReasonAmount(final CollectionSummary collSummary) {
         if (mode.equals(ZONEWISE))
             prevZone = collSummary.getZoneId().getId();
@@ -403,6 +400,9 @@ public class CollectionSummaryReportAction extends BaseFormAction {
         arrearLibCessAmount = collSummary.getArrearLibCessColl();
     }
 
+    /**
+     * @return
+     */
     private CollectionSummaryReportResult getCalculatedResultMap() {
         final CollectionSummaryReportResult result = new CollectionSummaryReportResult();
 

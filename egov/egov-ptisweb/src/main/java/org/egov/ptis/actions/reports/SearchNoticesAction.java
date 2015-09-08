@@ -157,19 +157,24 @@ public class SearchNoticesAction extends SearchFormAction {
         return INDEX;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.egov.infra.web.struts.actions.SearchFormAction#search()
+     */
     @Override
     @SuppressWarnings("unchecked")
     @ValidationErrorPage(value = INDEX)
     @Action(value = "/searchNotices-search")
     public String search() {
-        LOGGER.debug("Entered into search method");
 
-        if (LOGGER.isDebugEnabled())
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into search method");
             LOGGER.debug("Owner name : " + ownerName + ", " + "Notice Type : " + noticeType + ", " + "Zone Id : "
                     + zoneId + ", " + "Ward Id : " + wardId + ", " + "Property type :" + propertyType + ", "
                     + "Notice Number : " + noticeNumber + ", " + "Notice FromDate : " + noticeFromDate + ", "
                     + "noticeToDate : " + noticeToDate + ", " + "Property Id : " + indexNumber + ", "
                     + "House Number : " + houseNumber);
+        }
 
         target = "searchresult";
         super.search();
@@ -178,20 +183,29 @@ public class SearchNoticesAction extends SearchFormAction {
             LOGGER.debug("Number of notices before owner name (if input given) filter : " + noticeList.size());
             searchOwnerNamePropType();
         }
-        LOGGER.debug("Number of notices after owner name (if input given) filter : " + noticeList.size());
-        LOGGER.debug("Exit from search method");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Number of notices after owner name (if input given) filter : " + noticeList.size());
+            LOGGER.debug("Exit from search method");
+        }
 
         return INDEX;
     }
 
+    /**
+     * @return
+     * @throws ValidationException
+     */
     @ValidationErrorPage(value = INDEX)
     @Action(value = "/searchNotices-mergeAndDownload")
     public String mergeAndDownload() throws ValidationException {
-        LOGGER.debug("Entered into mergeAndDownload method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into mergeAndDownload method");
         final long startTime = System.currentTimeMillis();
-        LOGGER.debug("mergeAndDownload : Start Time : " + startTime);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("mergeAndDownload : Start Time : " + startTime);
         final List<PtNotice> noticeList = getNoticeBySearchParameter();
-        LOGGER.debug("Number of notices : " + (noticeList != null ? noticeList.size() : ZERO));
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Number of notices : " + (noticeList != null ? noticeList.size() : ZERO));
         if (null == noticeList || noticeList.size() <= 0) {
             addActionError(getText("notice.file.merge.unavailable"));
             return ERROR;
@@ -211,7 +225,8 @@ public class SearchNoticesAction extends SearchFormAction {
                 LOGGER.error("mergeAndDownload : Getting notice failed for notice " + ptNotice, e);
                 continue;
             }
-        LOGGER.debug("Number of pdfs : " + (pdfs != null ? pdfs.size() : ZERO));
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Number of pdfs : " + (pdfs != null ? pdfs.size() : ZERO));
         try {
             final HttpServletResponse response = ServletActionContext.getResponse();
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -226,21 +241,30 @@ public class SearchNoticesAction extends SearchFormAction {
             throw new ValidationException(Arrays.asList(new ValidationError("error", e.getMessage())));
         }
         final long endTime = System.currentTimeMillis();
-        LOGGER.debug("mergeAndDownload : End Time : " + endTime);
-        LOGGER.info("SearchNoticesAction | mergeAndDownload | Time taken(ms) " + (endTime - startTime));
-        LOGGER.debug("Exit from mergeAndDownload method");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("mergeAndDownload : End Time : " + endTime);
+            LOGGER.debug("SearchNoticesAction | mergeAndDownload | Time taken(ms) " + (endTime - startTime));
+            LOGGER.debug("Exit from mergeAndDownload method");
+        }
         return null;
     }
 
+    /**
+     * @return
+     * @throws ValidationException
+     */
     @ValidationErrorPage(value = INDEX)
     @Action(value = "/searchNotices-zipAndDownload")
     public String zipAndDownload() throws ValidationException {
-        LOGGER.debug("Entered into zipAndDownload method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into zipAndDownload method");
         final long startTime = System.currentTimeMillis();
-        LOGGER.debug("zipAndDownload : Start Time : " + startTime);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("zipAndDownload : Start Time : " + startTime);
         final HttpServletResponse response = ServletActionContext.getResponse();
         final List<PtNotice> noticeList = getNoticeBySearchParameter();
-        LOGGER.debug("Number of notices : " + (noticeList != null ? noticeList.size() : ZERO));
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Number of notices : " + (noticeList != null ? noticeList.size() : ZERO));
         try {
             ZipOutputStream zipOutputStream;
             if (null == noticeList || noticeList.size() <= 0) {
@@ -275,15 +299,16 @@ public class SearchNoticesAction extends SearchFormAction {
             throw new ValidationException(Arrays.asList(new ValidationError("error", e.getMessage())));
         }
         final long endTime = System.currentTimeMillis();
-        LOGGER.debug("zipAndDownload : End Time : " + endTime);
-        LOGGER.info("SearchNoticesAction | zipAndDownload | Time taken(ms) " + (endTime - startTime));
-        LOGGER.debug("Exit from zipAndDownload method");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("zipAndDownload : End Time : " + endTime);
+            LOGGER.debug("SearchNoticesAction | zipAndDownload | Time taken(ms) " + (endTime - startTime));
+            LOGGER.debug("Exit from zipAndDownload method");
+        }
         return null;
     }
 
     /**
-     * This method only to show Bills as Bills(file stream) saved into PT system in egpt_notice table notice_file(type blob)
-     * column.
+     * This method only to show Bills as Bills(file stream) saved into PT system in eg_filestoremap table column.
      *
      * @throws IOException
      */
@@ -310,13 +335,18 @@ public class SearchNoticesAction extends SearchFormAction {
         return SUCCESS;
     }
 
+    /**
+     * reset all the values
+     * @return
+     */
     @SkipValidation
     @Action(value = "/searchNotices-reset")
     public String reset() {
-        LOGGER.debug("reset : Before reset values : ownerName : " + ownerName + " zoneId : " + zoneId + " wardId : "
-                + wardId + " propertyType : " + propertyType + " noticeType : " + noticeType + " noticeNumber : "
-                + noticeNumber + " noticeFromDate : " + noticeFromDate + " noticeToDate : " + noticeToDate
-                + " indexNumber : " + indexNumber + " houseNumber : " + houseNumber);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("reset : Before reset values : ownerName : " + ownerName + " zoneId : " + zoneId + " wardId : "
+                    + wardId + " propertyType : " + propertyType + " noticeType : " + noticeType + " noticeNumber : "
+                    + noticeNumber + " noticeFromDate : " + noticeFromDate + " noticeToDate : " + noticeToDate
+                    + " indexNumber : " + indexNumber + " houseNumber : " + houseNumber);
         ownerName = "";
         zoneId = -1l;
         wardId = -1l;
@@ -327,65 +357,85 @@ public class SearchNoticesAction extends SearchFormAction {
         noticeToDate = null;
         indexNumber = "";
         houseNumber = "";
-        LOGGER.debug("Exit from reset method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from reset method");
         return INDEX;
     }
 
     @Override
     public void prepare() {
-        LOGGER.debug("Entered into prepare method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into prepare method");
         super.prepare();
         final List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 ZONE.toUpperCase(),
                 ADMIN_HIERARCHY_TYPE);
         final List<PropertyTypeMaster> propTypeList = propertyTypeMasterDAO.findAll();
         addDropdownData("Zone", zoneList);
-        LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
         prepareWardDropDownData(zoneId != null, wardId != null);
 
         addDropdownData("PropTypeMaster", propTypeList);
         setNoticeTypeMap(CommonServices.getNoticeTypeMstr());
-
-        LOGGER.debug("Zone List : " + (zoneList != null ? zoneList : ZERO));
-        LOGGER.debug("Property type List : " + (propTypeList != null ? propTypeList : ZERO));
-        LOGGER.debug("Notice type map size : " + (noticeTypeMap != null ? noticeTypeMap.size() : ZERO));
-        LOGGER.debug("Exit from prepare method");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Zone List : " + (zoneList != null ? zoneList : ZERO));
+            LOGGER.debug("Property type List : " + (propTypeList != null ? propTypeList : ZERO));
+            LOGGER.debug("Notice type map size : " + (noticeTypeMap != null ? noticeTypeMap.size() : ZERO));
+            LOGGER.debug("Exit from prepare method");
+        }
     }
 
     @SuppressWarnings("unchecked")
     private void prepareWardDropDownData(final boolean zoneExists, final boolean wardExists) {
-        LOGGER.debug("Entered into prepareWardDropDownData method");
-        LOGGER.debug("Zone Exists ? : " + zoneExists + ", " + "Ward Exists ? : " + wardExists);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into prepareWardDropDownData method");
+            LOGGER.debug("Zone Exists ? : " + zoneExists + ", " + "Ward Exists ? : " + wardExists);
+        }
         if (zoneExists && wardExists) {
             List<Boundary> wardNewList = new ArrayList<Boundary>();
-            wardNewList = getPersistenceService()
-                    .findAllBy(
-                            "from Boundary BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.name ",
-                            "Ward", getZoneId());
+            wardNewList = boundaryService.getActiveChildBoundariesByBoundaryId(getZoneId());
             addDropdownData("wardList", wardNewList);
         } else
             addDropdownData("wardList", Collections.EMPTY_LIST);
-        LOGGER.debug("Exit from prepareWardDropDownData method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from prepareWardDropDownData method");
     }
 
+    /**
+     * @param boundaryId
+     * @return boundary name for a given boundary id
+     */
     public String getBoundary(final Long boundaryId) {
-        LOGGER.debug("Entered into getBoundary method");
-        LOGGER.debug("Boundary Id : " + boundaryId);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into getBoundary method");
+            LOGGER.debug("Boundary Id : " + boundaryId);
+        }
         Boundary bndry = null;
         if (boundaryId != null && !boundaryId.equals(-1))
             bndry = boundaryService.getBoundaryById(boundaryId);
-        LOGGER.debug("Boundary : " + bndry);
-        LOGGER.debug("Exit from getBoundary method");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Boundary : " + bndry);
+            LOGGER.debug("Exit from getBoundary method");
+        }
         return bndry.getName();
     }
 
+    /**
+     * @param propertyType
+     * @return
+     */
     public String getPropType(final String propertyType) {
-        LOGGER.debug("Entered into getPropType method");
-        LOGGER.debug("Property type id : " + propertyType);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into getPropType method");
+            LOGGER.debug("Property type id : " + propertyType);
+        }
         final PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO
                 .findById(Integer.valueOf(propertyType), false);
-        LOGGER.debug("Property type : " + propTypeMstr);
-        LOGGER.debug("Exit from getPropType method");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Property type : " + propTypeMstr);
+            LOGGER.debug("Exit from getPropType method");
+        }
         return propTypeMstr.getType();
     }
 
@@ -394,15 +444,18 @@ public class SearchNoticesAction extends SearchFormAction {
      * Type
      */
     private void searchOwnerNamePropType() {
-        LOGGER.debug("Entered into searchOwnerNamePropType method");
-        LOGGER.debug("searchOwnerNamePropType : Owner Name : " + ownerName + ", " + "Property Type : " + propertyType);
-        LOGGER.debug("searchOwnerNamePropType : Number of notices before removal: "
-                + (noticeList != null ? noticeList.size() : ZERO));
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into searchOwnerNamePropType method");
+            LOGGER.debug("searchOwnerNamePropType : Owner Name : " + ownerName + ", " + "Property Type : " + propertyType);
+            LOGGER.debug("searchOwnerNamePropType : Number of notices before removal: "
+                    + (noticeList != null ? noticeList.size() : ZERO));
+        }
         if (ownerName != null && !ownerName.equals("") || propertyType != null && !propertyType.equals("-1")) {
             final List<PtNotice> noticeRmvList = new ArrayList<PtNotice>();
             for (final PtNotice notice : noticeList) {
                 final Property prop = notice.getBasicProperty().getProperty();
-                LOGGER.debug("Property : " + prop);
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Property : " + prop);
                 if (ownerName != null && !ownerName.equals("")) {
                     boolean isOwnerExist = true;
                     // TODO PHOENIX If all owner other than current owner is
@@ -421,43 +474,61 @@ public class SearchNoticesAction extends SearchFormAction {
                             prop.getPropertyDetail().getPropertyTypeMaster().getType()))
                         noticeRmvList.add(notice);
             }
-            LOGGER.debug("searchOwnerNamePropType : Number of notices to be removed : "
-                    + (noticeRmvList != null ? noticeRmvList.size() : ZERO));
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("searchOwnerNamePropType : Number of notices to be removed : "
+                        + (noticeRmvList != null ? noticeRmvList.size() : ZERO));
             noticeList.removeAll(noticeRmvList);
-            LOGGER.debug("searchOwnerNamePropType : Number of notices after removal: "
-                    + (noticeList != null ? noticeList.size() : ZERO));
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("searchOwnerNamePropType : Number of notices after removal: "
+                        + (noticeList != null ? noticeList.size() : ZERO));
             ((EgovPaginatedList) searchResult).setFullListSize(noticeList.size());
         }
-        LOGGER.debug("Exit from searchOwnerNamePropType method");
     }
 
+    /**
+     * @param basicProperty
+     * @return
+     */
     public String getNonHistoryOwnerName(final BasicProperty basicProperty) {
-        LOGGER.debug("Entered into getNonHistoryOwnerName method Basic Property " + basicProperty);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into getNonHistoryOwnerName method Basic Property " + basicProperty);
         final String NonHistoryOwnerName = basicProperty.getFullOwnerName();
-        LOGGER.debug("getNonHistoryOwnerName : Non-History Owner Name : " + NonHistoryOwnerName);
-        LOGGER.debug("Exit from getNonHistoryOwnerName method");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("getNonHistoryOwnerName : Non-History Owner Name : " + NonHistoryOwnerName);
+            LOGGER.debug("Exit from getNonHistoryOwnerName method");
+        }
         return NonHistoryOwnerName;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.egov.infra.web.struts.actions.SearchFormAction#prepareQuery(java.lang.String, java.lang.String)
+     */
     @SuppressWarnings("unchecked")
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortDir) {
-        LOGGER.debug("Entered into prepareQuery method");
-        LOGGER.debug("Sort Field : " + sortField + ", " + "Sort Dir : " + sortDir);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into prepareQuery method");
+            LOGGER.debug("Sort Field : " + sortField + ", " + "Sort Dir : " + sortDir);
+        }
 
         final Map<String, Object> map = getCriteriaString();
 
-        LOGGER.debug("Exit from prepareQuery method");
         return new SearchQueryHQL(prepareSearchQuery(map.get("criteriaString")),
                 prepareCountQuery(map.get("criteriaString")), (ArrayList<Object>) map.get("params"));
     }
 
+    /**
+     * @return
+     */
     private Map<String, Object> getCriteriaString() {
-        LOGGER.debug("Entered into getCriteriaString method");
-        LOGGER.debug("Notice Type : " + noticeType + ", " + "Zone Id : " + zoneId + ", " + "Ward Id : " + wardId + ", "
-                + "Notice Number : " + noticeNumber + ", " + "Notice FromDate : " + noticeFromDate + ", "
-                + "noticeToDate : " + noticeToDate + ", " + "Property Id : " + indexNumber + ", " + "House Number : "
-                + houseNumber);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into getCriteriaString method");
+            LOGGER.debug("Notice Type : " + noticeType + ", " + "Zone Id : " + zoneId + ", " + "Ward Id : " + wardId + ", "
+                    + "Notice Number : " + noticeNumber + ", " + "Notice FromDate : " + noticeFromDate + ", "
+                    + "noticeToDate : " + noticeToDate + ", " + "Property Id : " + indexNumber + ", " + "House Number : "
+                    + houseNumber);
+        }
         final Map<String, Object> map = new HashMap<String, Object>();
         final ArrayList<Object> params = new ArrayList<Object>();
 
@@ -503,8 +574,10 @@ public class SearchNoticesAction extends SearchFormAction {
         }
         map.put("criteriaString", criteriaString);
         map.put("params", params);
-        LOGGER.debug("Criteria String : " + criteriaString);
-        LOGGER.debug("Exit from getCriteriaString method");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Criteria String : " + criteriaString);
+            LOGGER.debug("Exit from getCriteriaString method");
+        }
         return map;
     }
 
@@ -515,7 +588,6 @@ public class SearchNoticesAction extends SearchFormAction {
 
     @Override
     public void validate() {
-        LOGGER.debug("Entered into validate method");
         if (noticeType == null || noticeType.equals("-1"))
             addActionError(getText("mandatory.noticeType"));
         if (noticeFromDate != null && !noticeFromDate.equals("DD/MM/YYYY")
@@ -531,48 +603,70 @@ public class SearchNoticesAction extends SearchFormAction {
         if (noticeFromDate != null && !noticeFromDate.equals("DD/MM/YYYY") && noticeToDate != null
                 && !noticeToDate.equals("DD/MM/YYYY") && noticeToDate.before(noticeFromDate))
             addActionError(getText("mandatory.noticeTodtgtoreqCurr"));
-        LOGGER.debug("Exit from validate method");
     }
 
+    /**
+     * @return
+     */
     @SuppressWarnings("unchecked")
     private List<PtNotice> getNoticeBySearchParameter() {
-        LOGGER.debug("Entered into getNoticeBySearchParameter method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into getNoticeBySearchParameter method");
 
         final Map<String, Object> map = getCriteriaString();
 
         final List<PtNotice> noticeList = persistenceService.findAllBy(prepareSearchQuery(map.get("criteriaString")),
                 ((ArrayList<Object>) map.get("params")).toArray());
-
-        LOGGER.debug("Number of notices : " + (noticeList != null ? noticeList.size() : ZERO));
-        LOGGER.debug("Exit from getNoticeBySearchParameter method");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Number of notices : " + (noticeList != null ? noticeList.size() : ZERO));
+            LOGGER.debug("Exit from getNoticeBySearchParameter method");
+        }
         return noticeList;
     }
 
+    /**
+     * @param criteria
+     * @return query string
+     */
     private String prepareSearchQuery(final Object criteria) {
-        LOGGER.debug("Entered into Search Query, criteria=" + criteria);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into Search Query, criteria=" + criteria);
 
         final StringBuilder searchQuery = new StringBuilder("select notice");
         searchQuery.append(noticeType.equals(NOTICE_TYPE_BILL) ? BILL_FROM_CLAUSE : FROM_CLAUSE);
         searchQuery.append(criteria);
         searchQuery.append(noticeType.equals(NOTICE_TYPE_BILL) ? BILL_ORDER_BY : ORDER_BY);
-        LOGGER.debug("Search Query : " + searchQuery);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Search Query : " + searchQuery);
 
         return searchQuery.toString();
     }
 
+    /**
+     * @param criteria
+     * @return count query
+     */
     private String prepareCountQuery(final Object criteria) {
-        LOGGER.debug("Entered into prepareCountQuery , criteria=" + criteria);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into prepareCountQuery , criteria=" + criteria);
 
         final StringBuilder countQuery = new StringBuilder("select count(notice)");
         countQuery.append(noticeType.equals(NOTICE_TYPE_BILL) ? BILL_FROM_CLAUSE : FROM_CLAUSE);
         countQuery.append(criteria);
-        LOGGER.debug("Count Query : " + countQuery);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Count Query : " + countQuery);
 
         return countQuery.toString();
     }
 
+    /**
+     * @param streamOfPDFFiles
+     * @param outputStream
+     * @return
+     */
     private byte[] concatPDFs(final List<InputStream> streamOfPDFFiles, final ByteArrayOutputStream outputStream) {
-        LOGGER.debug("Entered into concatPDFs method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into concatPDFs method");
         Document document = null;
         try {
             final List<InputStream> pdfs = streamOfPDFFiles;
@@ -629,7 +723,8 @@ public class SearchNoticesAction extends SearchFormAction {
                 ioe.printStackTrace();
             }
         }
-        LOGGER.debug("Exit from concatPDFs method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from concatPDFs method");
         return outputStream.toByteArray();
     }
 
@@ -637,8 +732,15 @@ public class SearchNoticesAction extends SearchFormAction {
         return "inline; filename=report." + fileFormat.toString();
     }
 
+    /**
+     * @param inputStream
+     * @param noticeNo
+     * @param out
+     * @return zip output stream file
+     */
     private ZipOutputStream addFilesToZip(final InputStream inputStream, final String noticeNo, final ZipOutputStream out) {
-        LOGGER.debug("Entered into addFilesToZip method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into addFilesToZip method");
         final byte[] buffer = new byte[1024];
         try {
             out.setLevel(Deflater.DEFAULT_COMPRESSION);
@@ -661,18 +763,27 @@ public class SearchNoticesAction extends SearchFormAction {
             ioe.printStackTrace();
             throw new ValidationException(Arrays.asList(new ValidationError("error", ioe.getMessage())));
         }
-        LOGGER.debug("Exit from addFilesToZip method");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from addFilesToZip method");
         return out;
     }
 
+    /**
+     * @param boundary
+     * @return
+     */
     public String getFormattedBndryStr(final Boundary boundary) {
-        LOGGER.debug("Entered into getFormattedBndryStr method");
-        LOGGER.debug("boundary : " + boundary);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into getFormattedBndryStr method");
+            LOGGER.debug("boundary : " + boundary);
+        }
         final StringBuilder formattedStr = new StringBuilder();
         if (boundary != null)
             formattedStr.append(boundary.getBoundaryNum().toString()).append("-").append(boundary.getName());
-        LOGGER.debug("formattedStr : " + formattedStr.toString());
-        LOGGER.debug("Exit from getFormattedBndryStr method");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("formattedStr : " + formattedStr.toString());
+            LOGGER.debug("Exit from getFormattedBndryStr method");
+        }
         return formattedStr.toString();
     }
 
