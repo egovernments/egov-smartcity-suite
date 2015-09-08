@@ -345,7 +345,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
             } catch (final ParseException e) {
                 throw new EGOVRuntimeException("estimate.pdf.error", e);
             }
-        shouldShowApprovalNumber = estimate.getCreatedDate().toDate().after(dateToCheck);
+        shouldShowApprovalNumber = estimate.getCreatedDate().after(dateToCheck);
     }
 
     private PdfPTable createMultiYearTable(final AbstractEstimate estimate) throws DocumentException {

@@ -64,8 +64,8 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.models.Money;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetGroup;
@@ -98,7 +98,8 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     private DepositWorksUsageService depositWorksUsageService;
 
     private BudgetDetailsDAO budgetDetailsDAO;
-    private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
     @Autowired
     private EmployeeServiceOld employeeService;
     private PersistenceService<TenderResponse, Long> tenderResponseService;
@@ -259,7 +260,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     }
 
     public List<AppConfigValues> getAppConfigValue(final String moduleName, final String key) {
-        return appConfigValuesDAO.getConfigValuesByModuleAndKey(moduleName, key);
+        return appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, key);
     }
 
     public boolean checkForBudgetaryAppropriation(final FinancialDetail financialDetail) throws ValidationException {

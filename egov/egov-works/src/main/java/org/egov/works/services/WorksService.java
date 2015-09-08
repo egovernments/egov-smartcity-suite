@@ -65,9 +65,9 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.masters.dao.AccountdetailtypeHibernateDAO;
 import org.egov.masters.dao.MastersDAOFactory;
@@ -87,7 +87,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class WorksService {
     private static final Logger logger = Logger.getLogger(WorksService.class);
-    private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
     @Autowired
     private EmployeeServiceOld employeeService;
     @Autowired
@@ -105,11 +106,11 @@ public class WorksService {
      * @return
      */
     public List<AppConfigValues> getAppConfigValue(final String moduleName, final String key) {
-        return appConfigValuesDAO.getConfigValuesByModuleAndKey(moduleName, key);
+        return appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, key);
     }
 
     public List<String> getNatureOfWorkAppConfigValues(final String moduleName, final String key) {
-        final List<AppConfigValues> appValuesList = appConfigValuesDAO
+        final List<AppConfigValues> appValuesList = appConfigValuesService
                 .getConfigValuesByModuleAndKey(moduleName, key);
         final List<String> natureOfWorksList = new ArrayList<String>();
         if (appValuesList != null && !appValuesList.isEmpty())

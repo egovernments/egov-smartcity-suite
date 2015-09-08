@@ -313,8 +313,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                     workProgress.setTechSanctionDate(DateUtils.getFormattedDate(techSanctionDate, dateFormat));
                 else
                     workProgress.setTechSanctionDate(null);
-                workProgress.setAdminSanctionDate(DateUtils.getFormattedDate(estimate.getState().getCreatedDate()
-                        .toDate(), dateFormat));
+                workProgress.setAdminSanctionDate(DateUtils.getFormattedDate(estimate.getState().getCreatedDate(), dateFormat));
                 workProgress.setFund(estimate.getFinancialDetails().get(0).getFund().getCode());
                 workProgress.setFunction(estimate.getFinancialDetails().get(0).getFunction().getCode());
                 if (estimate.getFinancialDetails().get(0).getBudgetGroup() != null)

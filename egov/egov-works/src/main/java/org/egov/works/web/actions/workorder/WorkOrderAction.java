@@ -463,7 +463,7 @@ public class WorkOrderAction extends BaseFormAction {
         /* start for customizing workflow message display */
         if (workOrder.getEgwStatus() != null && !"NEW".equalsIgnoreCase(workOrder.getEgwStatus().getCode())) {
             final String result = worksService.getEmpNameDesignation(workOrder.getState().getOwnerPosition(), workOrder
-                    .getState().getCreatedDate().toDate());
+                    .getState().getCreatedDate());
             if (result != null && !"@".equalsIgnoreCase(result)) {
                 final String empName = result.substring(0, result.lastIndexOf('@'));
                 final String designation = result.substring(result.lastIndexOf('@') + 1, result.length());
@@ -484,7 +484,7 @@ public class WorkOrderAction extends BaseFormAction {
                 && TenderResponse.TenderResponseStatus.APPROVED.toString().equals(
                         tenderResponse.getEgwStatus().getCode())
                 && DateConversionUtil.isBeforeByDate(workOrder.getWorkOrderDate(), tenderResponse.getState()
-                        .getCreatedDate().toDate()))
+                        .getCreatedDate()))
             throw new ValidationException(Arrays.asList(new ValidationError(
                     "workorder.workorderDate.lessthan.approvedDate", "workorder.workorderDate.lessthan.approvedDate")));
         else if (getWorkOrderCreationDate() != null && workOrder.getWorkOrderDate() != null
@@ -1440,7 +1440,7 @@ public class WorkOrderAction extends BaseFormAction {
                     validateWOAllocatedToUser();
                     if (contractPeriodCutOffDate != null) {
                         final Date createdDate = workOrder.getCreatedDate() == null ? new Date() : workOrder
-                                .getCreatedDate().toDate();
+                                .getCreatedDate();
                         if (createdDate.after(contractPeriodCutOffDate))
                             validateContractPeriod(contractPrd);
                     }

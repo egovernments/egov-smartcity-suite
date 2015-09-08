@@ -42,7 +42,7 @@ package org.egov.works.models.contractorBill;
 import javax.script.ScriptContext;
 
 import org.egov.commons.CFinancialYear;
-import org.egov.infstr.services.ScriptService;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;

@@ -423,7 +423,7 @@ public class WorksPackageAction extends BaseFormAction {
     public void getDesignation(final WorksPackage wp) {
         if (wp.getEgwStatus() != null && !"NEW".equalsIgnoreCase(wp.getEgwStatus().getCode())) {
             final String result = worksService.getEmpNameDesignation(wp.getState().getOwnerPosition(), wp.getState()
-                    .getCreatedDate().toDate());
+                    .getCreatedDate());
             if (result != null && !"@".equalsIgnoreCase(result)) {
                 final String empName = result.substring(0, result.lastIndexOf('@'));
                 final String designation = result.substring(result.lastIndexOf('@') + 1, result.length());

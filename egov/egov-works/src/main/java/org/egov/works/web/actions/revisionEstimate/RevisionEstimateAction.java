@@ -60,6 +60,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.web.struts.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
@@ -67,7 +68,6 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.Money;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.services.ScriptService;
 import org.egov.pims.commons.Position;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.estimate.AbstractEstimate;
@@ -260,7 +260,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
                 // Don't consider previous REs
                 if (revisionEstimate == null || revisionEstimate.getCreatedDate() == null || revisionEstimate != null
                         && revisionEstimate.getCreatedDate() != null
-                        && re.getCreatedDate().toDate().before(revisionEstimate.getCreatedDate().toDate()))
+                        && re.getCreatedDate().before(revisionEstimate.getCreatedDate()))
                     amnt += re.getTotalAmount().getValue();
             amnt += abstractEstimate.getTotalAmount().getValue();
         } else
@@ -275,7 +275,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
                 // Don't consider previous REs
                 if (revisionEstimate == null || revisionEstimate.getCreatedDate() == null || revisionEstimate != null
                         && revisionEstimate.getCreatedDate() != null
-                        && ae.getCreatedDate().toDate().before(revisionEstimate.getCreatedDate().toDate())) {
+                        && ae.getCreatedDate().before(revisionEstimate.getCreatedDate())) {
                     originalRevisedActivityList.addAll(ae.getActivities());
                     originalTotalAmount = originalTotalAmount + ae.getWorkValue().getValue();
                     originalTotalTax = originalTotalTax + ae.getTotalTax().getValue();
@@ -669,7 +669,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
         if (revisionEstimate.getEgwStatus() != null
                 && !"NEW".equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode())) {
             final String result = worksService.getEmpNameDesignation(revisionEstimate.getState().getOwnerPosition(),
-                    revisionEstimate.getState().getCreatedDate().toDate());
+                    revisionEstimate.getState().getCreatedDate());
             if (result != null && !"@".equalsIgnoreCase(result)) {
                 final String empName = result.substring(0, result.lastIndexOf('@'));
                 final String designation = result.substring(result.lastIndexOf('@') + 1, result.length());

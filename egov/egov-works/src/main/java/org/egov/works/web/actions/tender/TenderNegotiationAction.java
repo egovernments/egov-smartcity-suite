@@ -468,7 +468,7 @@ public class TenderNegotiationAction extends SearchFormAction {
             && abstractEstimate.getCurrentState().getCreatedDate() != null
             && abstractEstimate.getCurrentState().getValue().equalsIgnoreCase(WorksConstants.END)
             && !DateConversionUtil.isBeforeByDate(tenderHeader.getTenderDate(), abstractEstimate
-                    .getCurrentState().getCreatedDate().toDate())
+                    .getCurrentState().getCreatedDate())
                     && !DateConversionUtil.isBeforeByDate(new Date(), tenderHeader.getTenderDate());
         if (worksPackage != null)
             return worksPackage != null
@@ -649,7 +649,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     private void getDesignation(final TenderResponse tenderResponse) {
         if (tenderResponse.getEgwStatus() != null && !"NEW".equalsIgnoreCase(tenderResponse.getEgwStatus().getCode())) {
             final String result = worksService.getEmpNameDesignation(tenderResponse.getState().getOwnerPosition(),
-                    tenderResponse.getState().getCreatedDate().toDate());
+                    tenderResponse.getState().getCreatedDate());
             if (result != null && !"@".equalsIgnoreCase(result)) {
                 final String empName = result.substring(0, result.lastIndexOf('@'));
                 final String designation = result.substring(result.lastIndexOf('@') + 1, result.length());

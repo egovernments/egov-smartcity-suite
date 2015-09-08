@@ -41,7 +41,7 @@ package org.egov.works.models.estimate;
 
 import java.util.Date;
 
-import org.egov.commons.Period;
+import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.models.Money;
 import org.egov.works.models.masters.Overhead;

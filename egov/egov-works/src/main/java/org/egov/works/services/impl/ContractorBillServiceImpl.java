@@ -123,6 +123,8 @@ ContractorBillService {
     public static final String EXEC_DEPT_ID = "EXEC_DEPT_ID";
     public static final String EST_NO = "EST_NO";
     private ContractorAdvanceService contractorAdvanceService;
+    @Autowired
+    private BillsDaoFactory billsDaoFactory;
 
     public ContractorBillServiceImpl(final PersistenceService<ContractorBillRegister, Long> persistenceService) {
         super(persistenceService);
@@ -1111,7 +1113,7 @@ ContractorBillService {
             for (final CChartOfAccounts coa : coaPayableList)
                 if (coa.getId() != null)
                     glcodeIdList.add(new BigDecimal(coa.getId()));
-        final EgBilldetailsDAO ebd = BillsDaoFactory.getDAOFactory().getEgBilldetailsDAO();
+        final EgBilldetailsDAO ebd = billsDaoFactory.getEgBilldetailsDAO();
         final EgBilldetails egbillDetails = ebd.getBillDetails(billId, glcodeIdList);
         netpaybleCode = egbillDetails.getGlcodeid();
         return netpaybleCode;

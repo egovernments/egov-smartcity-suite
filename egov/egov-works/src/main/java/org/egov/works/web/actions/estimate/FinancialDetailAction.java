@@ -315,7 +315,7 @@ public class FinancialDetailAction extends BaseFormAction {
         if (abstractEstimate.getEgwStatus() != null
                 && !"NEW".equalsIgnoreCase(abstractEstimate.getEgwStatus().getCode())) {
             final String result = worksService.getEmpNameDesignation(abstractEstimate.getState().getOwnerPosition(),
-                    abstractEstimate.getState().getCreatedDate().toDate());
+                    abstractEstimate.getState().getCreatedDate());
             if (result != null && !"@".equalsIgnoreCase(result)) {
                 final String empName = result.substring(0, result.lastIndexOf('@'));
                 final String designation = result.substring(result.lastIndexOf('@') + 1, result.length());

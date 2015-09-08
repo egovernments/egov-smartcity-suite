@@ -53,7 +53,7 @@ import org.apache.jackrabbit.core.security.user.UserImpl;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.common.entity.UOM;
-import org.egov.commons.Period;
+import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.ValidationError;
@@ -393,10 +393,10 @@ public class ScheduleOfRateAction extends SearchFormAction {
                    estimateDate = abstractEstimate.getEstimateDate();
                    if(rate != null){	
                    	Period validity = rate.getValidity();
-                   	Date startDate = validity.getStartDate();	                                
+                   	Date startDate = validity.getStartDate().toDate();	                                
                    	Date endDate = null;
                    	if(validity.getEndDate()!=null){	                                
-                   		endDate=validity.getEndDate();	                                	
+                   		endDate=validity.getEndDate().toDate();	                                	
                    	}                                
                    	boolean flag = false;
                    	if(startDate!=null && rate.getId()!=null){
@@ -436,10 +436,10 @@ public class ScheduleOfRateAction extends SearchFormAction {
             	   woDate = parentWO.getWorkOrderDate();
                    if(rate != null){	
                    	Period validity = rate.getValidity();
-                   	Date startDate = validity.getStartDate();	                                
+                   	Date startDate = validity.getStartDate().toDate();	                                
                    	Date endDate = null;
                    	if(validity.getEndDate()!=null){	                                
-                   		endDate=validity.getEndDate();	                                	
+                   		endDate=validity.getEndDate().toDate();	                                	
                    	}                                
                    	boolean flag = false;
                    	if(startDate!=null && rate.getId()!=null){

@@ -85,13 +85,13 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.NumberUtil;
 import org.egov.model.bills.EgBillPayeedetails;
@@ -849,7 +849,7 @@ public class ContractorBillAction extends BaseFormAction {
         if (contractorBillRegister.getCurrentState() != null
                 && !"NEW".equalsIgnoreCase(bill.getCurrentState().getValue())) {
             final String result = worksService.getEmpNameDesignation(contractorBillRegister.getState()
-                    .getOwnerPosition(), contractorBillRegister.getState().getCreatedDate().toDate());
+                    .getOwnerPosition(), contractorBillRegister.getState().getCreatedDate());
             if (result != null && !"@".equalsIgnoreCase(result)) {
                 final String empName = result.substring(0, result.lastIndexOf('@'));
                 final String designation = result.substring(result.lastIndexOf('@') + 1, result.length());

@@ -178,7 +178,7 @@ public class MilestoneTemplateAction extends SearchFormAction{
 	public void getDesignation(MilestoneTemplate template){
 		if(template.getEgwStatus()!= null 
 				&& !(WorksConstants.NEW).equalsIgnoreCase(template.getEgwStatus().getCode())) {
-			String result = worksService.getEmpNameDesignation(template.getState().getOwnerPosition(), template.getState().getCreatedDate().toDate());
+			String result = worksService.getEmpNameDesignation(template.getState().getOwnerPosition(), template.getState().getCreatedDate());
 			if(result != null && !"@".equalsIgnoreCase(result)) {
 				String empName = result.substring(0,result.lastIndexOf('@'));
 				String designation =result.substring(result.lastIndexOf('@')+1,result.length());

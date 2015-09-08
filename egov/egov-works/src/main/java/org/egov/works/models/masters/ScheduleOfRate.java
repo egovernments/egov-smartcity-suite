@@ -50,8 +50,8 @@ import javax.validation.Valid;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.egov.common.entity.UOM;
-import org.egov.commons.Period;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.models.BaseModel;
@@ -254,18 +254,18 @@ public class ScheduleOfRate extends BaseModel {
         int k = 1;
 
         for (int i = 1; i < sorRates.size(); i++) {
-            checkStartDate = sorRates.get(i).getValidity().getStartDate();
-            checkEndDate = sorRates.get(i).getValidity().getEndDate();
+            checkStartDate = sorRates.get(i).getValidity().getStartDate().toDate();
+            checkEndDate = sorRates.get(i).getValidity().getEndDate().toDate();
             checkPeriod1 = new Period(checkStartDate, checkEndDate);
 
             for (int j = 0; j < validDates.size(); j++) {
-                existingStartDate = validDates.get(j).getStartDate();
+                existingStartDate = validDates.get(j).getStartDate().toDate();
                 existingPeriod = validDates.get(j);
 
                 if (validDates.get(j).getEndDate() == null)
                     existingEndDate = null;
                 else
-                    existingEndDate = validDates.get(j).getEndDate();
+                    existingEndDate = validDates.get(j).getEndDate().toDate();
 
                 // check if the period to be checked is within any of the
                 // existing periods.
@@ -369,17 +369,17 @@ public class ScheduleOfRate extends BaseModel {
         int k = 1;
 
         for (int i = 1; i < marketRates.size(); i++) {
-            checkStartDate = marketRates.get(i).getValidity().getStartDate();
-            checkEndDate = marketRates.get(i).getValidity().getEndDate();
+            checkStartDate = marketRates.get(i).getValidity().getStartDate().toDate();
+            checkEndDate = marketRates.get(i).getValidity().getEndDate().toDate();
             checkPeriod1 = new Period(checkStartDate, checkEndDate);
 
             for (int j = 0; j < validDates.size(); j++) {
-                existingStartDate = validDates.get(j).getStartDate();
+                existingStartDate = validDates.get(j).getStartDate().toDate();
                 existingPeriod = validDates.get(j);
                 if (validDates.get(j).getEndDate() == null)
                     existingEndDate = null;
                 else
-                    existingEndDate = validDates.get(j).getEndDate();
+                    existingEndDate = validDates.get(j).getEndDate().toDate();
 
                 // check if the period to be checked is within any of the
                 // existing periods.

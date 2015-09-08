@@ -48,8 +48,8 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.Period;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.models.BaseModel;
@@ -170,11 +170,11 @@ public class Overhead extends BaseModel {
         boolean flag1 = true;
         int k = 1;
         for (int i = 1; i < overheadRates.size(); i++) {
-            checkStartDate = overheadRates.get(i).getValidity().getStartDate();
-            checkEndDate = overheadRates.get(i).getValidity().getEndDate();
+            checkStartDate = overheadRates.get(i).getValidity().getStartDate().toDate();
+            checkEndDate = overheadRates.get(i).getValidity().getEndDate().toDate();
             checkPeriod1 = new Period(checkStartDate, checkEndDate);
             for (int j = 0; j < validDates.size(); j++) {
-                existingStartDate = validDates.get(j).getStartDate();
+                existingStartDate = validDates.get(j).getStartDate().toDate();
                 existingPeriod = validDates.get(0);
 
                 // check if the period to be checked is within any of the

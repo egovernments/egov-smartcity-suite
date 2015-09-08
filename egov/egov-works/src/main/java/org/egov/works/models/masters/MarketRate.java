@@ -44,7 +44,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.egov.commons.Period;
+import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.models.Money;
@@ -101,7 +101,7 @@ public class MarketRate extends BaseModel {
 
         if (validity == null || validity != null && validity.getStartDate() == null)
             validationErrors.add(new ValidationError("validity", "sor.marketrate.startDate__empty"));
-        else if (validity == null || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
+        else if (validity == null || validity != null && !compareDates(validity.getStartDate().toDate(), validity.getEndDate().toDate()))
             validationErrors.add(new ValidationError("validity", "sor.rate.invalid_date_range"));
 
         return validationErrors.isEmpty() ? null : validationErrors;

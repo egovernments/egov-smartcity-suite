@@ -231,7 +231,7 @@ public class ContractorAdvanceRequisitionAction extends BaseFormAction {
         if (contractorAdvanceRequisition.getCurrentState() != null
                 && !"NEW".equalsIgnoreCase(contractorAdvanceRequisition.getCurrentState().getValue())) {
             final String result = worksService.getEmpNameDesignation(contractorAdvanceRequisition.getState()
-                    .getOwnerPosition(), contractorAdvanceRequisition.getState().getCreatedDate().toDate());
+                    .getOwnerPosition(), contractorAdvanceRequisition.getState().getCreatedDate());
             if (result != null && !"@".equalsIgnoreCase(result)) {
                 final String empName = result.substring(0, result.lastIndexOf('@'));
                 final String designation = result.substring(result.lastIndexOf('@') + 1, result.length());

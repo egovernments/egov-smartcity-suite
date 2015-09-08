@@ -249,7 +249,7 @@ public class TrackMilestoneAction extends BaseFormAction {
         if (trackMilestone.getEgwStatus() != null
                 && !WorksConstants.NEW.equalsIgnoreCase(trackMilestone.getEgwStatus().getCode())) {
             final String result = worksService.getEmpNameDesignation(trackMilestone.getState().getOwnerPosition(),
-                    trackMilestone.getState().getCreatedDate().toDate());
+                    trackMilestone.getState().getCreatedDate());
             if (result != null && !"@".equalsIgnoreCase(result)) {
                 final String empName = result.substring(0, result.lastIndexOf('@'));
                 final String designation = result.substring(result.lastIndexOf('@') + 1, result.length());

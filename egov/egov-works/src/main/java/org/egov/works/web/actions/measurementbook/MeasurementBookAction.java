@@ -819,7 +819,7 @@ public class MeasurementBookAction extends BaseFormAction {
         /* start for customizing workflow message display */
         if (mbHeader.getEgwStatus() != null && !WorksConstants.NEW.equalsIgnoreCase(mbHeader.getEgwStatus().getCode())) {
             final String result = worksService.getEmpNameDesignation(mbHeader.getState().getOwnerPosition(), mbHeader
-                    .getState().getCreatedDate().toDate());
+                    .getState().getCreatedDate());
             if (result != null && !"@".equalsIgnoreCase(result)) {
                 final String empName = result.substring(0, result.lastIndexOf('@'));
                 final String designation = result.substring(result.lastIndexOf('@') + 1, result.length());

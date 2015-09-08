@@ -42,8 +42,8 @@ package org.egov.works.models.tender;
 import javax.script.ScriptContext;
 
 import org.egov.commons.CFinancialYear;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 

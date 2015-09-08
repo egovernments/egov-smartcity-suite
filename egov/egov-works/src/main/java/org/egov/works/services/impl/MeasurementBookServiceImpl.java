@@ -56,7 +56,6 @@ import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.services.MeasurementBookService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
-import org.joda.time.DateTime;
 
 /**
  * This class will expose all measurment book related operations. NOTE :::
@@ -512,11 +511,11 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
     @Override
     public double totalEstimatedQuantity(final Long woActivityId, Long mbHeaderId, final Long activityId,
             final WorkOrder workOrder) {
-        DateTime currentTimestamp = null;
+        Date currentTimestamp = null;
         MBHeader mbHeader = null;
         if (mbHeaderId == null) {
             mbHeaderId = -1l;
-            currentTimestamp = new DateTime(new Date());
+            currentTimestamp = new Date();
         } else {
             mbHeader = persistenceService.find(" from MBHeader where id = ?", mbHeaderId);
             currentTimestamp = mbHeader.getCreatedDate();

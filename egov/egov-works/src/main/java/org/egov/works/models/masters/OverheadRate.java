@@ -45,7 +45,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
-import org.egov.commons.Period;
+import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.models.BaseModel;
@@ -145,7 +145,7 @@ public class OverheadRate extends BaseModel {
             validationErrors.add(new ValidationError("percentage",
                     "estimate.overhead.only_one_of_percentage_or_lumpsum_needed"));
 
-        if (validity == null || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
+        if (validity == null || validity != null && !compareDates(validity.getStartDate().toDate(), validity.getEndDate().toDate()))
             validationErrors.add(new ValidationError("validity", "estimate.overhead.invalid_date_range"));
 
         if (!validationErrors.isEmpty())

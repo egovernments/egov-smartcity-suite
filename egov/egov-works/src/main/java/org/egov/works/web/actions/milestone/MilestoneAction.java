@@ -176,7 +176,7 @@ public class MilestoneAction extends BaseFormAction {
         if (milestone.getEgwStatus() != null
                 && !WorksConstants.NEW.equalsIgnoreCase(milestone.getEgwStatus().getCode())) {
             final String result = worksService.getEmpNameDesignation(milestone.getState().getOwnerPosition(), milestone
-                    .getState().getCreatedDate().toDate());
+                    .getState().getCreatedDate());
             if (result != null && !"@".equalsIgnoreCase(result)) {
                 final String empName = result.substring(0, result.lastIndexOf('@'));
                 final String designation = result.substring(result.lastIndexOf('@') + 1, result.length());
