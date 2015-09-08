@@ -58,9 +58,10 @@ import org.egov.works.models.workflow.WorkFlow;
  * @author vikas
  */
 
-@Unique(fields = { "code" }, id = "id", tableName = "EGW_MILESTONE_TEMPLATE", columnName = { "CODE" }, message = "milestonetemplate.code.isunique")
+@Unique(fields = { "code" }, id = "id", tableName = "EGW_MILESTONE_TEMPLATE", columnName = {
+        "CODE" }, message = "milestonetemplate.code.isunique")
 public class MilestoneTemplate extends WorkFlow {
-    
+
     private static final long serialVersionUID = 3503700429117169848L;
 
     public enum MilestoneTemplateStatus {

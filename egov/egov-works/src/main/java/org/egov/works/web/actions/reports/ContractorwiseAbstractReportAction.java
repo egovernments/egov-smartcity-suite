@@ -62,10 +62,10 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CommonsService;
 import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.search.SearchQuerySQL;
@@ -82,21 +82,21 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
-    @Result(name = ContractorwiseAbstractReportAction.PDF, type = "StreamResult.class", location = "reportInputStream", params = {
-            "inputName", "contractorwiseAbstractReport", "contentType", "application/pdf", "contentDisposition",
-    "no-cache;filename=ContractorwiseAbstractReport.pdf" }),
-    @Result(name = ContractorwiseAbstractReportAction.XLS, type = "StreamResult.class", location = "reportInputStream", params = {
-            "inputName", "contractorwiseAbstractReport", "contentType", "application/xls", "contentDisposition",
-    "no-cache;filename=ContractorwiseAbstractReport.xls" }),
-    @Result(name = "estimateXLS", type = "StreamResult.class", location = "reportInputStream", params = {
-            "inputName", "contractorwiseReport_Estimates", "contentType", "application/xls", "contentDisposition",
-    "no-cache;filename=ContractorwiseReport_Estimates.xls" }),
-    @Result(name = "estimatePDF", type = "StreamResult.class", location = "reportInputStream", params = {
-            "inputName", "contractorwiseReport_Estimates", "contentType", "application/pdf", "contentDisposition",
-    "no-cache;filename=ContractorwiseReport_Estimates.pdf" }) })
+        @Result(name = ContractorwiseAbstractReportAction.PDF, type = "StreamResult.class", location = "reportInputStream", params = {
+                "inputName", "contractorwiseAbstractReport", "contentType", "application/pdf", "contentDisposition",
+                "no-cache;filename=ContractorwiseAbstractReport.pdf" }),
+        @Result(name = ContractorwiseAbstractReportAction.XLS, type = "StreamResult.class", location = "reportInputStream", params = {
+                "inputName", "contractorwiseAbstractReport", "contentType", "application/xls", "contentDisposition",
+                "no-cache;filename=ContractorwiseAbstractReport.xls" }),
+        @Result(name = "estimateXLS", type = "StreamResult.class", location = "reportInputStream", params = {
+                "inputName", "contractorwiseReport_Estimates", "contentType", "application/xls", "contentDisposition",
+                "no-cache;filename=ContractorwiseReport_Estimates.xls" }),
+        @Result(name = "estimatePDF", type = "StreamResult.class", location = "reportInputStream", params = {
+                "inputName", "contractorwiseReport_Estimates", "contentType", "application/pdf", "contentDisposition",
+                "no-cache;filename=ContractorwiseReport_Estimates.pdf" }) })
 @ParentPackage("egov")
 public class ContractorwiseAbstractReportAction extends BaseFormAction {
-   
+
     private static final long serialVersionUID = 6545841427307931948L;
     private static final Logger LOGGER = Logger.getLogger(ContractorwiseAbstractReportAction.class);
     private static final String DEPT_WISE = "deptwise";
@@ -191,13 +191,13 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
         addDropdownData(
                 "allDepositCodeCOAList",
                 getPersistenceService()
-                .findAllBy(
-                        "select distinct(fd.coa) from FinancialDetail fd where fd.abstractEstimate in ( select woe.estimate from WorkOrderEstimate woe where woe.workOrder.egwStatus.code='APPROVED' ) order by name  "));
+                        .findAllBy(
+                                "select distinct(fd.coa) from FinancialDetail fd where fd.abstractEstimate in ( select woe.estimate from WorkOrderEstimate woe where woe.workOrder.egwStatus.code='APPROVED' ) order by name  "));
         addDropdownData(
                 "allBudgetHeadList",
                 getPersistenceService()
-                .findAllBy(
-                        "select distinct(fd.budgetGroup) from FinancialDetail fd where fd.abstractEstimate in ( select woe.estimate from WorkOrderEstimate woe where woe.workOrder.egwStatus.code='APPROVED' ) order by name  "));
+                        .findAllBy(
+                                "select distinct(fd.budgetGroup) from FinancialDetail fd where fd.abstractEstimate in ( select woe.estimate from WorkOrderEstimate woe where woe.workOrder.egwStatus.code='APPROVED' ) order by name  "));
         final CFinancialYear financialYear = commonsService.getFinancialYearByDate(new Date());
         if (financialYear != null)
             currentFinancialYearId = financialYear.getId().toString();
@@ -333,8 +333,9 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
         query.append("  WORK_ORDER_CONTRACTOR_NAME ,");
         query.append("  WORK_ORDER_CONTRACTOR_CODE, 0 TAKEN_UP_EST_COUNT  ,0 TAKEN_UP_WO_AMOUNT,");
         query.append("  SUM(EST_COUNT) COMPLETED_EST_COUNT ,");
-        query.append("  SUM(PYMT_RELEASED_AMT) COMPLETED_PYMT_RLSD , 0 IN_PROGRESS_EST_COUNT,0 IN_PROGRESS_NEGO_VAL,0 IN_PROGRESS_PYMT_RLSD,0 NOT_STARTED_EST_COUNT,0 NOT_STARTED_WO_AMT, "
-                + "0 REV_WO_TAKEN_UP_AMT_SUM, 0 REV_WO_IN_PROGRESS_NEG_VAL_SUM, 0 REV_WO_NOT_STARTED_AMT_SUM ");
+        query.append(
+                "  SUM(PYMT_RELEASED_AMT) COMPLETED_PYMT_RLSD , 0 IN_PROGRESS_EST_COUNT,0 IN_PROGRESS_NEGO_VAL,0 IN_PROGRESS_PYMT_RLSD,0 NOT_STARTED_EST_COUNT,0 NOT_STARTED_WO_AMT, "
+                        + "0 REV_WO_TAKEN_UP_AMT_SUM, 0 REV_WO_IN_PROGRESS_NEG_VAL_SUM, 0 REV_WO_NOT_STARTED_AMT_SUM ");
         query.append(" FROM");
         query.append("  (SELECT WORK_ORDER_CONTRACTOR_ID ,");
         query.append("    WORK_ORDER_CONTRACTOR_NAME ,");
@@ -372,9 +373,11 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
     private String getInProgressQuery(final String commonSearchCriteriaQueryStr, final String finalBillType) {
         final StringBuffer query = new StringBuffer("");
         query.append(" SELECT WORK_ORDER_CONTRACTOR_ID , WORK_ORDER_CONTRACTOR_NAME,");
-        query.append(" WORK_ORDER_CONTRACTOR_CODE, 0 TAKEN_UP_EST_COUNT  ,0 TAKEN_UP_WO_AMOUNT, 0 COMPLETED_EST_COUNT,0 COMPLETED_PYMT_RLSD, SUM(EST_COUNT) IN_PROGRESS_EST_COUNT, ");
-        query.append(" SUM(NVL(TENDER_RESP_NEGOTIATED_VALUE,0)) IN_PROGRESS_NEGO_VAL , SUM(PYMT_RELEASED_AMT) IN_PROGRESS_PYMT_RLSD , 0 NOT_STARTED_EST_COUNT,0 NOT_STARTED_WO_AMT,"
-                + " 0 REV_WO_TAKEN_UP_AMT_SUM, SUM(NVL(REV_WO_IN_PROGRESS_NEG_VAL,0)) REV_WO_IN_PROGRESS_NEG_VAL_SUM,0 REV_WO_NOT_STARTED_AMT_SUM  ");
+        query.append(
+                " WORK_ORDER_CONTRACTOR_CODE, 0 TAKEN_UP_EST_COUNT  ,0 TAKEN_UP_WO_AMOUNT, 0 COMPLETED_EST_COUNT,0 COMPLETED_PYMT_RLSD, SUM(EST_COUNT) IN_PROGRESS_EST_COUNT, ");
+        query.append(
+                " SUM(NVL(TENDER_RESP_NEGOTIATED_VALUE,0)) IN_PROGRESS_NEGO_VAL , SUM(PYMT_RELEASED_AMT) IN_PROGRESS_PYMT_RLSD , 0 NOT_STARTED_EST_COUNT,0 NOT_STARTED_WO_AMT,"
+                        + " 0 REV_WO_TAKEN_UP_AMT_SUM, SUM(NVL(REV_WO_IN_PROGRESS_NEG_VAL,0)) REV_WO_IN_PROGRESS_NEG_VAL_SUM,0 REV_WO_NOT_STARTED_AMT_SUM  ");
         query.append(" FROM ");
         query.append(" (");
         query.append(" SELECT WORK_ORDER_CONTRACTOR_ID ,");
@@ -793,7 +796,8 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
         } else if (StringUtils.isNotBlank(contractorName))
             queryBfr.append(" AND WORK_ORDER_CONTRACTOR_NAME like '%" + contractorName + "%'");
         if (gradeId != null && gradeId != -1) {
-            queryBfr.append(" AND WORK_ORDER_CONTRACTOR_ID IN ( SELECT CONTRACTOR_ID FROM EGW_CONTRACTOR_DETAIL WHERE CONTRACTOR_GRADE_ID=? AND CONTRACTOR_ID=WORK_ORDER_CONTRACTOR_ID)");
+            queryBfr.append(
+                    " AND WORK_ORDER_CONTRACTOR_ID IN ( SELECT CONTRACTOR_ID FROM EGW_CONTRACTOR_DETAIL WHERE CONTRACTOR_GRADE_ID=? AND CONTRACTOR_ID=WORK_ORDER_CONTRACTOR_ID)");
             paramList.add(gradeId);
         }
         return queryBfr.toString();

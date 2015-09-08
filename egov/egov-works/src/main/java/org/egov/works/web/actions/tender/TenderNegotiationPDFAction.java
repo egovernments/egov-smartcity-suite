@@ -59,13 +59,13 @@ import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
-    @Result(name = BaseFormAction.SUCCESS, type = "StreamResult.class", location = "tenderResponsePDF", params = {
-            "inputName", "tenderResponsePDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
-            @Result(name = "reportView", type = "StreamResult.class", location = "tenderScrtAbsrtPDF", params = {
-                    "contentType", "application/pdf", "contentDisposition", "attachment; filename=${fileName}" }) })
+        @Result(name = BaseFormAction.SUCCESS, type = "StreamResult.class", location = "tenderResponsePDF", params = {
+                "inputName", "tenderResponsePDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
+        @Result(name = "reportView", type = "StreamResult.class", location = "tenderScrtAbsrtPDF", params = {
+                "contentType", "application/pdf", "contentDisposition", "attachment; filename=${fileName}" }) })
 @ParentPackage("egov")
 public class TenderNegotiationPDFAction extends BaseFormAction {
-   
+
     private static final long serialVersionUID = 3411944565347208419L;
     private Long tenderResponseId;
     private InputStream tenderResponsePDF;

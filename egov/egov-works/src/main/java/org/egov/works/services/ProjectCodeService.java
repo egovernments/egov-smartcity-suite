@@ -54,7 +54,7 @@ import org.egov.works.models.estimate.AssetsForEstimate;
 import org.egov.works.models.estimate.ProjectCode;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ProjectCodeService extends PersistenceService<ProjectCode, Long> implements EntityTypeService {
+public class ProjectCodeService extends PersistenceService<ProjectCode, Long>implements EntityTypeService {
 
     @Autowired
     private PersistenceService<AssetsForEstimate, Long> assetsForEstimateService;

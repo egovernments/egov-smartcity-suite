@@ -125,7 +125,8 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
                                 + " to "
                                 + toPageno
                                 + " \t  \t  \t  \t \t  \t  \t  \t \t  \t  \t  \t \t  \t  \t  \t \t  \t  \t  \t \t  \t  \t "
-                                + pdfLabel.get("mbpdf.date") + sdf.format(mbHeader.getMbDate()), Element.ALIGN_LEFT));
+                                + pdfLabel.get("mbpdf.date") + sdf.format(mbHeader.getMbDate()),
+                        Element.ALIGN_LEFT));
 
             }
             document.add(spacer());
@@ -164,7 +165,7 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
         if (mbHeader != null && mbHeader.getMbDetails() != null && mbHeader.getMbDetails().size() > 0)
             for (final MBDetails mbdetails : mbHeader.getMbDetails())
                 if (mbdetails.getWorkOrderActivity() != null && mbdetails.getWorkOrderActivity().getActivity() != null
-                && mbdetails.getWorkOrderActivity().getActivity().getRevisionType() != null)
+                        && mbdetails.getWorkOrderActivity().getActivity().getRevisionType() != null)
                     includeRevisionTypeColumn = true;
     }
 
@@ -195,17 +196,13 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
                         deptdesig = ad.getOwnerPosition().getDeptDesig();
                         desgName = deptdesig.getDesignation().getName();
                         /*
-                         * } else{ positionId
-                         * =ad.getPrevious().getOwner().getId(); deptdesig=
-                         * ad.getPrevious().getOwner().getDeptDesigId();
-                         * desgName =
-                         * deptdesig.getDesigId().getDesignationName(); }
+                         * } else{ positionId =ad.getPrevious().getOwner().getId(); deptdesig=
+                         * ad.getPrevious().getOwner().getDeptDesigId(); desgName = deptdesig.getDesigId().getDesignationName(); }
                          */
                         final PersonalInformation emp = employeeService.getEmpForPositionAndDate(ad.getCreatedDate(),
                                 Integer.parseInt(positionId.toString()));
                         /*
-                         * if(ad.getValue().equals("END")) code =
-                         * ad.getPrevious().getValue(); else
+                         * if(ad.getValue().equals("END")) code = ad.getPrevious().getValue(); else
                          */
                         code = ad.getValue();
                         final EgwStatus status = (EgwStatus) getPersistenceService().find(
@@ -344,11 +341,11 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
                     mbTable.addCell(makePara(8, ""));
                 if (activity.getRevisionType() != null
                         && activity.getRevisionType().toString()
-                        .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()))
+                                .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()))
                     mbTable.addCell(makePara(8, "Non Tendered"));
                 if (activity.getRevisionType() != null
                         && activity.getRevisionType().toString()
-                        .equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString()))
+                                .equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString()))
                     mbTable.addCell(makePara(8, "Lump Sum"));
             }
 
@@ -391,13 +388,11 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
                     per = activity.getNonSor().getUom().getUom();
                 mbTable.addCell(centerPara(8, per));
                 // end start unit
-            } // end of if activity
+            }   // end of if activity
 
             /*
-             * measurementBookService.prevCumulativeAmount(workOrderActivity.getId
-             * ()); total work completed------->(completed mesurement(col 5) *
-             * rate) here rate is wo.getAprovedrate added uom factor on april4th
-             * 2010
+             * measurementBookService.prevCumulativeAmount(workOrderActivity.getId ()); total work completed------->(completed
+             * mesurement(col 5) * rate) here rate is wo.getAprovedrate added uom factor on april4th 2010
              */
             final double workCompleted = completedMeasurement * approveRateWo * uomFactor;
             mbTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -440,7 +435,7 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
             currentCost = currentMeasurement * approveRateWo * uomFactor;
             mbTable.addCell(rightPara(8, formatter.format(currentCost)));
             // } //end of if mbDetails
-        }// end of for loop
+        }  // end of for loop
         return mbTable;
     }
 

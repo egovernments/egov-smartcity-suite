@@ -52,7 +52,7 @@ import com.opensymphony.xwork2.Action;
 @Result(name = Action.SUCCESS, type = "ServletRedirectResult.class", location = "depositCodeSearch-searchResults")
 @ParentPackage("egov")
 public class DepositCodeSearchAction extends BaseFormAction {
-   
+
     private static final long serialVersionUID = 7203092403134880647L;
     private PersistenceService<DepositCode, Long> depositCodeService;
     private static final String SEARCH_RESULTS = "searchResults";

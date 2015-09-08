@@ -68,7 +68,7 @@ import org.egov.works.models.workflow.WorkFlow;
 import org.hibernate.validator.constraints.Length;
 
 public class WorkOrder extends WorkFlow {
-   
+
     private static final long serialVersionUID = -8549101031204311679L;
     private Contractor contractor;
     @Required(message = "workOrder.workOrderDate.null")
@@ -355,7 +355,7 @@ public class WorkOrder extends WorkFlow {
         for (final WorkOrderEstimate workOrderEstimate : workOrderEstimates)
             for (final WorkOrderActivity woa : workOrderEstimate.getWorkOrderActivities())
                 if (woa.getActivity() != null && woa.getActivity().getRevisionType() != null
-                && woa.getActivity().getRevisionType().equals(RevisionType.REDUCED_QUANTITY))
+                        && woa.getActivity().getRevisionType().equals(RevisionType.REDUCED_QUANTITY))
                     qty -= woa.getApprovedQuantity();
                 else
                     qty += woa.getApprovedQuantity();

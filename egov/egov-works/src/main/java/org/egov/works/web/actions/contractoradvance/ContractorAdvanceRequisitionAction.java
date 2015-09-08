@@ -186,8 +186,9 @@ public class ContractorAdvanceRequisitionAction extends BaseFormAction {
                 final BigDecimal totalEstimateValueIncludingREValue = contractorAdvanceService
                         .getTotalEstimateValueIncludingRE(contractorAdvanceRequisition.getWorkOrderEstimate()
                                 .getEstimate());
-                if (advancePaid.add(contractorAdvanceRequisition.getAdvanceRequisitionAmount()).longValue() > totalEstimateValueIncludingREValue
-                        .longValue())
+                if (advancePaid.add(contractorAdvanceRequisition.getAdvanceRequisitionAmount())
+                        .longValue() > totalEstimateValueIncludingREValue
+                                .longValue())
                     throw new ValidationException(Arrays.asList(new ValidationError(
                             "advancerequisition.validate.advancepaid.estimatevalue",
                             "advancerequisition.validate.advancepaid.estimatevalue")));

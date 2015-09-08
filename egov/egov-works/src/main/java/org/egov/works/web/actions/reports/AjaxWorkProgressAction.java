@@ -77,7 +77,8 @@ public class AjaxWorkProgressAction extends BaseFormAction {
         if (!StringUtils.isEmpty(query)) {
             final StringBuilder strquery = new StringBuilder(300);
             final ArrayList<Object> params = new ArrayList<Object>();
-            strquery.append("select distinct(woe.workOrder.contractor) from WorkOrderEstimate woe where upper(woe.workOrder.contractor.name) like '%'||?||'%'");
+            strquery.append(
+                    "select distinct(woe.workOrder.contractor) from WorkOrderEstimate woe where upper(woe.workOrder.contractor.name) like '%'||?||'%'");
             strquery.append(" or upper(woe.workOrder.contractor.code) like '%'||?||'%'");
             strquery.append(" and woe.workOrder.egwStatus.code='APPROVED'");
             params.add(query.toUpperCase());

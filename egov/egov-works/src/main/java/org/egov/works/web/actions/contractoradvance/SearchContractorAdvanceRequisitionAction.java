@@ -77,270 +77,266 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  */
 @ParentPackage("egov")
-public class SearchContractorAdvanceRequisitionAction extends SearchFormAction { 
+public class SearchContractorAdvanceRequisitionAction extends SearchFormAction {
 
-	private static final long serialVersionUID = 1L;
-	private static final Logger LOGGER = Logger.getLogger(SearchContractorAdvanceRequisitionAction.class);
-	private Integer arfStatus;
-	private String estimateNumber;
-	private Date advanceRequisitionFromDate;
-	private Date advanceRequisitionToDate;
-	private Long contractorId;
-	private String workOrderNumber;
-	private Integer executingDepartmentId = -1;
-	private Integer drawingOfficerId;
-	public static final Locale LOCALE = new Locale("en","IN");
-	public static final SimpleDateFormat  DDMMYYYYFORMATS= new SimpleDateFormat("dd/MM/yyyy",LOCALE);
-	private WorksService worksService;	
-	@Autowired
-	private DepartmentService departmentService;
-	@Autowired
-        private EmployeeServiceOld employeeService;
-	private PersistenceService<Contractor, Long> contractorService;
-	private ContractorAdvanceService contractorAdvanceService;
-	
-	public SearchContractorAdvanceRequisitionAction() {		
-		
-	}
+    private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger.getLogger(SearchContractorAdvanceRequisitionAction.class);
+    private Integer arfStatus;
+    private String estimateNumber;
+    private Date advanceRequisitionFromDate;
+    private Date advanceRequisitionToDate;
+    private Long contractorId;
+    private String workOrderNumber;
+    private Integer executingDepartmentId = -1;
+    private Integer drawingOfficerId;
+    public static final Locale LOCALE = new Locale("en", "IN");
+    public static final SimpleDateFormat DDMMYYYYFORMATS = new SimpleDateFormat("dd/MM/yyyy", LOCALE);
+    private WorksService worksService;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private EmployeeServiceOld employeeService;
+    private PersistenceService<Contractor, Long> contractorService;
+    private ContractorAdvanceService contractorAdvanceService;
 
-	@Override
-	public Object getModel() {	
-		return null;
-	}
-	
-	@Override
-	public void prepare() {
-		super.prepare(); 
-		addDropdownData("statusList", contractorAdvanceService.getAllContractorAdvanceRequisitionStatus());
-		addDropdownData("executingDepartmentList", departmentService.getAllDepartments()); 
-		List<DrawingOfficer> drawingOfficerList = contractorAdvanceService.getAllDrawingOfficerFromARF();
-		if(drawingOfficerList != null)
-			addDropdownData("drawingOfficerList", drawingOfficerList);
-		else
-			addDropdownData("drawingOfficerList", Collections.emptyList());
-	}
-	
-	public String beforeSearch() {		
-		return "search";
-	}
-		
-	private Map getQuery(){
-		StringBuffer query = new StringBuffer(700);
-		List<Object> paramList = new ArrayList<Object>();
-		HashMap<String,Object> queryAndParams=new HashMap<String,Object>();
-		query.append("from ContractorAdvanceRequisition arf where arf.status.code <> ? ");
-		paramList.add(ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.NEW.toString());
-		if(arfStatus != null && arfStatus != -1){
-			query.append(" and arf.status.id = ?");
-			paramList.add(arfStatus);
-		}
-		
-		if(StringUtils.isNotBlank(estimateNumber)){
-			query.append(" and UPPER(arf.workOrderEstimate.estimate.estimateNumber) like '%'||?||'%'");
-			paramList.add(StringUtils.trim(estimateNumber).toUpperCase());
-		}
-		
-		if(advanceRequisitionFromDate!=null && advanceRequisitionToDate!=null && getFieldErrors().isEmpty()){
-			query.append(" and arf.advanceRequisitionDate between ? and ? ");
-			paramList.add(advanceRequisitionFromDate);
-			paramList.add(advanceRequisitionToDate);
-		}
-		
-		if(contractorId != 0 && contractorId != -1){
-			query.append(" and arf.workOrderEstimate.workOrder.contractor.id = ? ");
-			paramList.add(Long.valueOf(contractorId));
-		}
-		
-		if(executingDepartmentId !=0 && executingDepartmentId!= -1){		
-			query.append(" and arf.workOrderEstimate.estimate.executingDepartment.id = ? ");
-			paramList.add(executingDepartmentId);
-		}	
-		
-		if(StringUtils.isNotBlank(workOrderNumber)){
-			query.append(" and UPPER(arf.workOrderEstimate.workOrder.workOrderNumber) like '%'||?||'%'");
-			paramList.add(StringUtils.trim(workOrderNumber).toUpperCase());
-		}
-		
-		if(drawingOfficerId != null && drawingOfficerId != 0 && drawingOfficerId != -1){
-			query.append(" and arf.drawingOfficer.id = ?");
-			paramList.add(drawingOfficerId);
-		}
-		
-		query.append(" order by arf.advanceRequisitionDate");
-		
-		queryAndParams.put("query", query.toString());
-		queryAndParams.put("params", paramList);
-		return queryAndParams;
-	}
+    public SearchContractorAdvanceRequisitionAction() {
 
-	@Override
-	public SearchQuery prepareQuery(String sortField, String sortOrder) {		
-		String query =null;
-		String countQuery = null;
-		Map queryAndParms=null;
-		List<Object> paramList = new ArrayList<Object>();
-			queryAndParms=getQuery();
-			paramList=(List<Object>)queryAndParms.get("params");
-			query=(String) queryAndParms.get("query");
-			countQuery="select count(distinct arf.id) " + query;
-			query="select distinct arf "+query;
-			return new SearchQueryHQL(query, countQuery, paramList);
-	}
-	
-	public String search() 	{
-		return "search";
-	}
-	
-	public String searchList() {
-		getPersistenceService().getSession().setDefaultReadOnly(true);
-		getPersistenceService().getSession().setFlushMode(FlushMode.MANUAL);
-		boolean isError=false;
-		if(advanceRequisitionFromDate!=null && advanceRequisitionToDate==null){
-			addFieldError("advanceRequisitionToDate",getText("search.advanceRequisitionToDate.null"));
-			isError=true;
-		}
-		if(advanceRequisitionToDate!=null && advanceRequisitionFromDate==null){
-			addFieldError("startdate",getText("search.advanceRequisitionFromDate.null"));		
-			isError=true;
-		}
-		
-		if(!DateUtils.compareDates(advanceRequisitionToDate,advanceRequisitionFromDate)){
-			addFieldError("advanceRequisitionToDate",getText("advanceRequisitionFromDate.greaterthan.advanceRequisitionToDate"));
-			isError=true;
-		}
-		
-		if(isError){
-			return "search";
-		}
+    }
 
-		setPageSize(WorksConstants.PAGE_SIZE);
-		super.search();
-		
-		if(searchResult!=null && searchResult.getList()!=null && !searchResult.getList().isEmpty()) {
-			setOwnerName();
-		}
-		return "search";
-	}
-			
-	private void setOwnerName() {
-		List<ContractorAdvanceRequisition> arfList = new LinkedList<ContractorAdvanceRequisition>();
-		
-		Iterator iter = searchResult.getList().iterator();
-		while(iter.hasNext()) {
-			Object row = (Object)iter.next();
-			ContractorAdvanceRequisition arf = (ContractorAdvanceRequisition) row;
-			PersonalInformation emp = employeeService.getEmployeeforPosition(arf.getCurrentState().getOwnerPosition());
-			if(emp!=null){
-				arf.setOwnerName(emp.getUserMaster().getName());
-			}
-			arfList.add(arf);
-		}
-		searchResult.getList().clear();
-		searchResult.getList().addAll(arfList);
-	}
-		
-	public List<String> getActionsList() { 
-		String actions = worksService.getWorksConfigValue("ARF_SHOW_ACTIONS");
-		if(actions!=null)
-		  return Arrays.asList(actions.split(","));
-		return new ArrayList<String>();
-	}
-	
-	public Map<String,Object> getContractorsInARF() {
-		Map<String,Object> contractorsInARFList = new LinkedHashMap<String, Object>();	
-		List<Contractor> contractorList = contractorService.findAllByNamedQuery("getAllContractorsInARF");
-		if(contractorList != null) {
-			for(Contractor contractor :contractorList){
-				contractorsInARFList.put(contractor.getId()+"", contractor.getCode()+" - "+contractor.getName());
-			}			
-		}
-		return contractorsInARFList; 
-	}
+    @Override
+    public Object getModel() {
+        return null;
+    }
 
-	public String getEstimateNumber() {
-		return estimateNumber;
-	}
+    @Override
+    public void prepare() {
+        super.prepare();
+        addDropdownData("statusList", contractorAdvanceService.getAllContractorAdvanceRequisitionStatus());
+        addDropdownData("executingDepartmentList", departmentService.getAllDepartments());
+        final List<DrawingOfficer> drawingOfficerList = contractorAdvanceService.getAllDrawingOfficerFromARF();
+        if (drawingOfficerList != null)
+            addDropdownData("drawingOfficerList", drawingOfficerList);
+        else
+            addDropdownData("drawingOfficerList", Collections.emptyList());
+    }
 
-	public void setEstimateNumber(String estimateNumber) {
-		this.estimateNumber = estimateNumber;
-	}
+    public String beforeSearch() {
+        return "search";
+    }
 
-	public Date getAdvanceRequisitionFromDate() {
-		return advanceRequisitionFromDate;
-	}
+    private Map getQuery() {
+        final StringBuffer query = new StringBuffer(700);
+        final List<Object> paramList = new ArrayList<Object>();
+        final HashMap<String, Object> queryAndParams = new HashMap<String, Object>();
+        query.append("from ContractorAdvanceRequisition arf where arf.status.code <> ? ");
+        paramList.add(ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.NEW.toString());
+        if (arfStatus != null && arfStatus != -1) {
+            query.append(" and arf.status.id = ?");
+            paramList.add(arfStatus);
+        }
 
-	public void setAdvanceRequisitionFromDate(Date advanceRequisitionFromDate) {
-		this.advanceRequisitionFromDate = advanceRequisitionFromDate;
-	}
+        if (StringUtils.isNotBlank(estimateNumber)) {
+            query.append(" and UPPER(arf.workOrderEstimate.estimate.estimateNumber) like '%'||?||'%'");
+            paramList.add(StringUtils.trim(estimateNumber).toUpperCase());
+        }
 
-	public Date getAdvanceRequisitionToDate() {
-		return advanceRequisitionToDate;
-	}
+        if (advanceRequisitionFromDate != null && advanceRequisitionToDate != null && getFieldErrors().isEmpty()) {
+            query.append(" and arf.advanceRequisitionDate between ? and ? ");
+            paramList.add(advanceRequisitionFromDate);
+            paramList.add(advanceRequisitionToDate);
+        }
 
-	public void setAdvanceRequisitionToDate(Date advanceRequisitionToDate) {
-		this.advanceRequisitionToDate = advanceRequisitionToDate;
-	}
+        if (contractorId != 0 && contractorId != -1) {
+            query.append(" and arf.workOrderEstimate.workOrder.contractor.id = ? ");
+            paramList.add(Long.valueOf(contractorId));
+        }
 
-	public Long getContractorId() {
-		return contractorId;
-	}
+        if (executingDepartmentId != 0 && executingDepartmentId != -1) {
+            query.append(" and arf.workOrderEstimate.estimate.executingDepartment.id = ? ");
+            paramList.add(executingDepartmentId);
+        }
 
-	public void setContractorId(Long contractorId) {
-		this.contractorId = contractorId;
-	}
+        if (StringUtils.isNotBlank(workOrderNumber)) {
+            query.append(" and UPPER(arf.workOrderEstimate.workOrder.workOrderNumber) like '%'||?||'%'");
+            paramList.add(StringUtils.trim(workOrderNumber).toUpperCase());
+        }
 
-	public String getWorkOrderNumber() {
-		return workOrderNumber;
-	}
+        if (drawingOfficerId != null && drawingOfficerId != 0 && drawingOfficerId != -1) {
+            query.append(" and arf.drawingOfficer.id = ?");
+            paramList.add(drawingOfficerId);
+        }
 
-	public void setWorkOrderNumber(String workOrderNumber) {
-		this.workOrderNumber = workOrderNumber;
-	}
+        query.append(" order by arf.advanceRequisitionDate");
 
-	public Integer getExecutingDepartmentId() {
-		return executingDepartmentId;
-	}
+        queryAndParams.put("query", query.toString());
+        queryAndParams.put("params", paramList);
+        return queryAndParams;
+    }
 
-	public void setExecutingDepartmentId(Integer executingDepartmentId) {
-		this.executingDepartmentId = executingDepartmentId;
-	}
+    @Override
+    public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
+        String query = null;
+        String countQuery = null;
+        Map queryAndParms = null;
+        List<Object> paramList = new ArrayList<Object>();
+        queryAndParms = getQuery();
+        paramList = (List<Object>) queryAndParms.get("params");
+        query = (String) queryAndParms.get("query");
+        countQuery = "select count(distinct arf.id) " + query;
+        query = "select distinct arf " + query;
+        return new SearchQueryHQL(query, countQuery, paramList);
+    }
 
-	public Integer getDrawingOfficerId() {
-		return drawingOfficerId;
-	}
+    @Override
+    public String search() {
+        return "search";
+    }
 
-	public void setDrawingOfficerId(Integer drawingOfficerId) {
-		this.drawingOfficerId = drawingOfficerId;
-	}
+    public String searchList() {
+        getPersistenceService().getSession().setDefaultReadOnly(true);
+        getPersistenceService().getSession().setFlushMode(FlushMode.MANUAL);
+        boolean isError = false;
+        if (advanceRequisitionFromDate != null && advanceRequisitionToDate == null) {
+            addFieldError("advanceRequisitionToDate", getText("search.advanceRequisitionToDate.null"));
+            isError = true;
+        }
+        if (advanceRequisitionToDate != null && advanceRequisitionFromDate == null) {
+            addFieldError("startdate", getText("search.advanceRequisitionFromDate.null"));
+            isError = true;
+        }
 
-	public void setWorksService(WorksService worksService) {
-		this.worksService = worksService;
-	}
+        if (!DateUtils.compareDates(advanceRequisitionToDate, advanceRequisitionFromDate)) {
+            addFieldError("advanceRequisitionToDate", getText("advanceRequisitionFromDate.greaterthan.advanceRequisitionToDate"));
+            isError = true;
+        }
 
-	public void setDepartmentService(DepartmentService departmentService) {
-		this.departmentService = departmentService;
-	}
+        if (isError)
+            return "search";
 
-	public void setEmployeeService(EmployeeServiceOld employeeService) {
-		this.employeeService = employeeService;
-	}
+        setPageSize(WorksConstants.PAGE_SIZE);
+        super.search();
 
-	public Integer getArfStatus() {
-		return arfStatus;
-	}
+        if (searchResult != null && searchResult.getList() != null && !searchResult.getList().isEmpty())
+            setOwnerName();
+        return "search";
+    }
 
-	public void setArfStatus(Integer arfStatus) {
-		this.arfStatus = arfStatus;
-	}
+    private void setOwnerName() {
+        final List<ContractorAdvanceRequisition> arfList = new LinkedList<ContractorAdvanceRequisition>();
 
-	public void setContractorService(
-			PersistenceService<Contractor, Long> contractorService) {
-		this.contractorService = contractorService;
-	}
+        final Iterator iter = searchResult.getList().iterator();
+        while (iter.hasNext()) {
+            final Object row = iter.next();
+            final ContractorAdvanceRequisition arf = (ContractorAdvanceRequisition) row;
+            final PersonalInformation emp = employeeService.getEmployeeforPosition(arf.getCurrentState().getOwnerPosition());
+            if (emp != null)
+                arf.setOwnerName(emp.getUserMaster().getName());
+            arfList.add(arf);
+        }
+        searchResult.getList().clear();
+        searchResult.getList().addAll(arfList);
+    }
 
-	public void setContractorAdvanceService(
-			ContractorAdvanceService contractorAdvanceService) {
-		this.contractorAdvanceService = contractorAdvanceService;
-	}
+    public List<String> getActionsList() {
+        final String actions = worksService.getWorksConfigValue("ARF_SHOW_ACTIONS");
+        if (actions != null)
+            return Arrays.asList(actions.split(","));
+        return new ArrayList<String>();
+    }
+
+    public Map<String, Object> getContractorsInARF() {
+        final Map<String, Object> contractorsInARFList = new LinkedHashMap<String, Object>();
+        final List<Contractor> contractorList = contractorService.findAllByNamedQuery("getAllContractorsInARF");
+        if (contractorList != null)
+            for (final Contractor contractor : contractorList)
+                contractorsInARFList.put(contractor.getId() + "", contractor.getCode() + " - " + contractor.getName());
+        return contractorsInARFList;
+    }
+
+    public String getEstimateNumber() {
+        return estimateNumber;
+    }
+
+    public void setEstimateNumber(final String estimateNumber) {
+        this.estimateNumber = estimateNumber;
+    }
+
+    public Date getAdvanceRequisitionFromDate() {
+        return advanceRequisitionFromDate;
+    }
+
+    public void setAdvanceRequisitionFromDate(final Date advanceRequisitionFromDate) {
+        this.advanceRequisitionFromDate = advanceRequisitionFromDate;
+    }
+
+    public Date getAdvanceRequisitionToDate() {
+        return advanceRequisitionToDate;
+    }
+
+    public void setAdvanceRequisitionToDate(final Date advanceRequisitionToDate) {
+        this.advanceRequisitionToDate = advanceRequisitionToDate;
+    }
+
+    public Long getContractorId() {
+        return contractorId;
+    }
+
+    public void setContractorId(final Long contractorId) {
+        this.contractorId = contractorId;
+    }
+
+    public String getWorkOrderNumber() {
+        return workOrderNumber;
+    }
+
+    public void setWorkOrderNumber(final String workOrderNumber) {
+        this.workOrderNumber = workOrderNumber;
+    }
+
+    public Integer getExecutingDepartmentId() {
+        return executingDepartmentId;
+    }
+
+    public void setExecutingDepartmentId(final Integer executingDepartmentId) {
+        this.executingDepartmentId = executingDepartmentId;
+    }
+
+    public Integer getDrawingOfficerId() {
+        return drawingOfficerId;
+    }
+
+    public void setDrawingOfficerId(final Integer drawingOfficerId) {
+        this.drawingOfficerId = drawingOfficerId;
+    }
+
+    public void setWorksService(final WorksService worksService) {
+        this.worksService = worksService;
+    }
+
+    public void setDepartmentService(final DepartmentService departmentService) {
+        this.departmentService = departmentService;
+    }
+
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
+        this.employeeService = employeeService;
+    }
+
+    public Integer getArfStatus() {
+        return arfStatus;
+    }
+
+    public void setArfStatus(final Integer arfStatus) {
+        this.arfStatus = arfStatus;
+    }
+
+    public void setContractorService(
+            final PersistenceService<Contractor, Long> contractorService) {
+        this.contractorService = contractorService;
+    }
+
+    public void setContractorAdvanceService(
+            final ContractorAdvanceService contractorAdvanceService) {
+        this.contractorAdvanceService = contractorAdvanceService;
+    }
 
 }

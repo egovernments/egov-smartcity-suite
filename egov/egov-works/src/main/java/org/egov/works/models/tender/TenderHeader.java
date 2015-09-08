@@ -105,8 +105,8 @@ public class TenderHeader extends BaseModel {
         for (final TenderEstimate tenderEstimate : tenderEstimates)
             if (tenderDate != null)
                 if (tenderEstimate.getAbstractEstimate() != null
-                && DateConversionUtil.isBeforeByDate(tenderDate, tenderEstimate.getAbstractEstimate()
-                        .getEstimateDate()))
+                        && DateConversionUtil.isBeforeByDate(tenderDate, tenderEstimate.getAbstractEstimate()
+                                .getEstimateDate()))
                     validationErrors.add(new ValidationError("tenderDate",
                             "tenderEstimate.tenderDate.cannot_greaterthan_estimateDate"));
                 else if (tenderEstimate.getWorksPackage() != null

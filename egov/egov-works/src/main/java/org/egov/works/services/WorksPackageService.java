@@ -59,8 +59,7 @@ public interface WorksPackageService extends BaseService<WorksPackage, Long> {
     public WorksPackage getWorksPackageForAbstractEstimate(AbstractEstimate estimate);
 
     /**
-     * This function returns list of Objects containing worksPackage Id and
-     * worksPackage number. By taking estimateID as paramter.
+     * This function returns list of Objects containing worksPackage Id and worksPackage number. By taking estimateID as paramter.
      *
      * @param estimateID
      * @return List<Object> containing worksPackage Id and worksPackage number.

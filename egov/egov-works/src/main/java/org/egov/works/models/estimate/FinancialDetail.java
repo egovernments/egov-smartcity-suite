@@ -59,14 +59,14 @@ import org.egov.model.budget.BudgetGroup;
 public class FinancialDetail extends BaseModel {
 
     private static final long serialVersionUID = 9007144591203838584L;
-    
+
     private AbstractEstimate abstractEstimate;
     private Fund fund;
     private CFunction function;
     private Functionary functionary;
     private Scheme scheme;
     private SubScheme subScheme;
-    private BudgetGroup budgetGroup;   
+    private BudgetGroup budgetGroup;
     private CChartOfAccounts coa;
     private transient String apprYear;// values will be previous or running
 
@@ -196,11 +196,9 @@ public class FinancialDetail extends BaseModel {
     }
 
     /**
-     * This method is invoked from the script to generate the budget
-     * appropriation number
+     * This method is invoked from the script to generate the budget appropriation number
      *
-     * @return an instance of <code>FinancingSource</code> having the maximum of
-     *         the financial sources selected
+     * @return an instance of <code>FinancingSource</code> having the maximum of the financial sources selected
      */
     public FinancingSource getMaxFinancingSource() {
         double max = 0.0;

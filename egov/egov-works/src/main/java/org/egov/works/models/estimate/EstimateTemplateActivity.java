@@ -51,7 +51,7 @@ import org.egov.infstr.models.Money;
 import org.egov.works.models.masters.ScheduleOfRate;
 
 public class EstimateTemplateActivity extends BaseModel {
-  
+
     private static final long serialVersionUID = 7697746931463590763L;
 
     private EstimateTemplate estimateTemplate;
@@ -109,8 +109,7 @@ public class EstimateTemplateActivity extends BaseModel {
     public List<ValidationError> validate() {
         final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
         /*
-         * if (rate.getValue() <= 0.0) { validationErrors.add(new
-         * ValidationError("estimateTemplateActivity.rate.not.null",
+         * if (rate.getValue() <= 0.0) { validationErrors.add(new ValidationError("estimateTemplateActivity.rate.not.null",
          * "estimateTemplateActivity.rate.not.null")); }
          */
         if (nonSor != null

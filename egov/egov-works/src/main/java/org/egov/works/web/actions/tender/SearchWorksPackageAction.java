@@ -93,8 +93,6 @@ public class SearchWorksPackageAction extends SearchFormAction {
     private String option = "";
     private String estimateOrWpSearchReq;
     public static final String OBJECT_TYPE = "WorksPackage";
-    @Autowired
-    private DepartmentService departmentService;
     private Long wpCancelId;
     private String cancelRemarks;
     private String cancellationReason;
@@ -393,10 +391,11 @@ public class SearchWorksPackageAction extends SearchFormAction {
                     sb.append("from WorksPackage as wp where wp.egwStatus.code= ?  ");
                     paramList.add(getOfflinestatus());
                 } else if (StringUtils.isNotBlank(getOfflinestatus()) && !getOfflinestatus().equals("-1")) {
-                    sb.append("from WorksPackage as wp where wp.egwStatus.code= ? or (wp.egwStatus.code= ? and wp.id in(select stat.objectId from "
-                            + "SetStatus stat where stat.egwStatus.code= ? and stat.id = (select"
-                            + " max(stat1.id) from SetStatus stat1 where wp.id=stat1.objectId and stat1.objectType='"
-                            + OBJECT_TYPE + "' ) and stat.objectType='" + OBJECT_TYPE + "')) ");
+                    sb.append(
+                            "from WorksPackage as wp where wp.egwStatus.code= ? or (wp.egwStatus.code= ? and wp.id in(select stat.objectId from "
+                                    + "SetStatus stat where stat.egwStatus.code= ? and stat.id = (select"
+                                    + " max(stat1.id) from SetStatus stat1 where wp.id=stat1.objectId and stat1.objectType='"
+                                    + OBJECT_TYPE + "' ) and stat.objectType='" + OBJECT_TYPE + "')) ");
                     paramList.add(getOfflinestatus());
                     paramList.add(WorksPackage.WorkPacakgeStatus.APPROVED.toString());
                     paramList.add(getOfflinestatus());
@@ -419,10 +418,11 @@ public class SearchWorksPackageAction extends SearchFormAction {
                         + " wp.id not in (select objectId from SetStatus where objectType='" + OBJECT_TYPE + "')");
                 paramList.add(getStatus());
             } else if (StringUtils.isNotBlank(getStatus()) && !getStatus().equals("-1")) {
-                sb.append("from WorksPackage as wp where wp.egwStatus.code= ? or (wp.egwStatus.code= ? and wp.id in(select stat.objectId from "
-                        + "SetStatus stat where stat.egwStatus.code= ? and stat.id = (select"
-                        + " max(stat1.id) from SetStatus stat1 where wp.id=stat1.objectId and stat1.objectType='"
-                        + OBJECT_TYPE + "' ) and stat.objectType='" + OBJECT_TYPE + "')) ");
+                sb.append(
+                        "from WorksPackage as wp where wp.egwStatus.code= ? or (wp.egwStatus.code= ? and wp.id in(select stat.objectId from "
+                                + "SetStatus stat where stat.egwStatus.code= ? and stat.id = (select"
+                                + " max(stat1.id) from SetStatus stat1 where wp.id=stat1.objectId and stat1.objectType='"
+                                + OBJECT_TYPE + "' ) and stat.objectType='" + OBJECT_TYPE + "')) ");
                 paramList.add(getStatus());
                 paramList.add(WorksPackage.WorkPacakgeStatus.APPROVED.toString());
                 paramList.add(getStatus());
@@ -440,7 +440,8 @@ public class SearchWorksPackageAction extends SearchFormAction {
             paramList.add("%" + worksPackage.getWpNumber() + "%");
         }
         if (StringUtils.isNotBlank(estimateNumber)) {
-            sb.append(" and wp.id in (select wpd.worksPackage.id from WorksPackageDetails wpd where wpd.estimate.estimateNumber like ?) ");
+            sb.append(
+                    " and wp.id in (select wpd.worksPackage.id from WorksPackageDetails wpd where wpd.estimate.estimateNumber like ?) ");
             paramList.add("%" + estimateNumber + "%");
         }
         if (StringUtils.isNotBlank(source) && source.equalsIgnoreCase("cancelWP")) {
@@ -457,8 +458,9 @@ public class SearchWorksPackageAction extends SearchFormAction {
             sb.append(" and wp.id in (select r.worksPackage.id from Retender r where r.worksPackage.id=wp.id ) ");
 
             if (fromDate != null && toDate != null && getFieldErrors().isEmpty()) {
-                sb.append(" and wp.id in (select r.worksPackage.id from Retender r where r.worksPackage.id=wp.id and r.retenderDate between ? and ? "
-                        + "  and r.id=(select max(r1.id) from Retender r1 where r1.worksPackage.id=wp.id )  ) ");
+                sb.append(
+                        " and wp.id in (select r.worksPackage.id from Retender r where r.worksPackage.id=wp.id and r.retenderDate between ? and ? "
+                                + "  and r.id=(select max(r1.id) from Retender r1 where r1.worksPackage.id=wp.id )  ) ");
                 paramList.add(fromDate);
                 paramList.add(toDate);
             }
@@ -503,15 +505,10 @@ public class SearchWorksPackageAction extends SearchFormAction {
         // Need to alternative way to solve this issue.
         // Set the status and workflow state to cancelled
         /***
-         * State oldEndState = worksPackage.getCurrentState(); Position owner =
-         * prsnlInfo.getAssignment(new Date()).getPosition();
-         * oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
-         * oldEndState.setModifiedBy(prsnlInfo.getUserMaster());
-         * oldEndState.setCreatedDate(new Date());
-         * oldEndState.setModifiedDate(new Date()); oldEndState.setOwner(owner);
-         * oldEndState
-         * .setValue(WorksPackage.WorkPacakgeStatus.CANCELLED.toString());
-         * oldEndState.setText1(cancellationText);
+         * State oldEndState = worksPackage.getCurrentState(); Position owner = prsnlInfo.getAssignment(new Date()).getPosition();
+         * oldEndState.setCreatedBy(prsnlInfo.getUserMaster()); oldEndState.setModifiedBy(prsnlInfo.getUserMaster());
+         * oldEndState.setCreatedDate(new Date()); oldEndState.setModifiedDate(new Date()); oldEndState.setOwner(owner);
+         * oldEndState .setValue(WorksPackage.WorkPacakgeStatus.CANCELLED.toString()); oldEndState.setText1(cancellationText);
          * worksPackage.changeState("END", owner, null);
          **/
 
@@ -532,7 +529,6 @@ public class SearchWorksPackageAction extends SearchFormAction {
     }
 
     public void setDepartmentService(final DepartmentService departmentService) {
-        this.departmentService = departmentService;
     }
 
     public void setWpCancelId(final Long wpCancelId) {

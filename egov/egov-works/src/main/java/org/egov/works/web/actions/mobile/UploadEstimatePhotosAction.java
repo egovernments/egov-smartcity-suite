@@ -87,7 +87,8 @@ public class UploadEstimatePhotosAction extends BaseFormAction {
     @SuppressWarnings("unchecked")
     public String searchList() {
         final StringBuffer query = new StringBuffer();
-        query.append(" from AbstractEstimate where id is not null and upper(egwStatus.code) not in ('NEW','CANCELLED') and parent is null ");
+        query.append(
+                " from AbstractEstimate where id is not null and upper(egwStatus.code) not in ('NEW','CANCELLED') and parent is null ");
         if (StringUtils.isNotBlank(abstractEstimate.getEstimateNumber()))
             query.append(" and upper(estimateNumber) like '%" + abstractEstimate.getEstimateNumber().toUpperCase()
                     + "%' ");

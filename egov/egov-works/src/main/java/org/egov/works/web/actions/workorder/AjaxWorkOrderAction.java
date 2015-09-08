@@ -156,9 +156,9 @@ public class AjaxWorkOrderAction extends BaseFormAction {
                 userList = Collections.EMPTY_LIST;
             else
                 userList = persistenceService
-                .findAllBy(
-                        "select distinct woe.workOrder.engineerIncharge from  WorkOrderEstimate woe where woe.estimate.executingDepartment.id=?",
-                        executingDepartment);
+                        .findAllBy(
+                                "select distinct woe.workOrder.engineerIncharge from  WorkOrderEstimate woe where woe.estimate.executingDepartment.id=?",
+                                executingDepartment);
         } catch (final Exception e) {
             throw new EGOVRuntimeException("user.find.error", e);
         }
@@ -171,9 +171,9 @@ public class AjaxWorkOrderAction extends BaseFormAction {
                 userList = Collections.EMPTY_LIST;
             else
                 userList = persistenceService
-                .findAllBy(
-                        "select distinct woe.workOrder.engineerIncharge2 from  WorkOrderEstimate woe where woe.estimate.executingDepartment.id=?",
-                        executingDepartment);
+                        .findAllBy(
+                                "select distinct woe.workOrder.engineerIncharge2 from  WorkOrderEstimate woe where woe.estimate.executingDepartment.id=?",
+                                executingDepartment);
         } catch (final Exception e) {
             throw new EGOVRuntimeException("user.find.error", e);
         }

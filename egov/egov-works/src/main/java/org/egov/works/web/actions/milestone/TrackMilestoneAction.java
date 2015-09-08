@@ -191,8 +191,7 @@ public class TrackMilestoneAction extends BaseFormAction {
         if (mode.equalsIgnoreCase("modify") && trackMilestone.getEgwStatus().getCode().equalsIgnoreCase("APPROVED"))
             trackMilestone.setEgwStatus(commonsService.getStatusByModuleAndCode(TRACK_MILESTONE_MODULE_KEY, "NEW"));
         /*
-         * TODO - check for application for commenting out this line for any
-         * issues
+         * TODO - check for application for commenting out this line for any issues
          */
         // trackMilestone.setState(null);
         if (trackMilestone.getIsProjectCompleted() == null)
@@ -312,11 +311,11 @@ public class TrackMilestoneAction extends BaseFormAction {
         if ((SOURCE_INBOX.equalsIgnoreCase(sourcepage) || MODE_MODIFY.equalsIgnoreCase(mode))
                 && trackMilestone.getEgwStatus() != null
                 && !trackMilestone.getEgwStatus().getCode()
-                .equals(TrackMilestone.TrackMilestoneStatus.APPROVED.toString())
+                        .equals(TrackMilestone.TrackMilestoneStatus.APPROVED.toString())
                 && !trackMilestone.getEgwStatus().getCode()
-                .equals(TrackMilestone.TrackMilestoneStatus.CANCELLED.toString())
+                        .equals(TrackMilestone.TrackMilestoneStatus.CANCELLED.toString())
                 || trackMilestone.getEgwStatus() != null
-                && trackMilestone.getEgwStatus().getCode().equals(WorksConstants.NEW)) {
+                        && trackMilestone.getEgwStatus().getCode().equals(WorksConstants.NEW)) {
             final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
             final boolean isValidUser = worksService.validateWorkflowForUser(trackMilestone, user);
             if (isValidUser)

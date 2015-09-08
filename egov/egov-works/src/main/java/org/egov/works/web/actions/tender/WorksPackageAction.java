@@ -49,8 +49,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -82,6 +80,8 @@ import org.egov.works.services.WorksService;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import net.sf.jasperreports.engine.JRException;
 
 @Transactional(readOnly = true)
 @Result(name = WorksPackageAction.PRINT, type = "StreamResult.class", location = "WorkspackagePDF", params = {
@@ -171,9 +171,9 @@ public class WorksPackageAction extends BaseFormAction {
         } else {
             if (id == null
                     || worksPackage.getEgwStatus() != null
-                    && (worksPackage.getEgwStatus().getCode()
-                            .equals(WorksPackage.WorkPacakgeStatus.REJECTED.toString()) || worksPackage.getEgwStatus()
-                            .getCode().equals("NEW")))
+                            && (worksPackage.getEgwStatus().getCode()
+                                    .equals(WorksPackage.WorkPacakgeStatus.REJECTED.toString()) || worksPackage.getEgwStatus()
+                                            .getCode().equals("NEW")))
                 addDropdownData(DEPARTMENT_LIST, worksService.getAllDeptmentsForLoggedInUser());
             else
                 addDropdownData(DEPARTMENT_LIST, departmentService.getAllDepartments());
@@ -187,12 +187,9 @@ public class WorksPackageAction extends BaseFormAction {
 
     public String newform() {
         /*
-         * PersonalInformation pi = getEmployee(); Assignment assignment =
-         * getAssignment(pi); if(assignment!=null &&
-         * "no".equalsIgnoreCase(getCreatedBy())){
-         * setDesignation(assignment.getDesigId().getDesignationName());
-         * worksPackage.setUserDepartment(assignment.getDeptId());
-         * setEmpId(pi.getId()); }
+         * PersonalInformation pi = getEmployee(); Assignment assignment = getAssignment(pi); if(assignment!=null &&
+         * "no".equalsIgnoreCase(getCreatedBy())){ setDesignation(assignment.getDesigId().getDesignationName());
+         * worksPackage.setUserDepartment(assignment.getDeptId()); setEmpId(pi.getId()); }
          */
 
         return NEW;
@@ -223,11 +220,11 @@ public class WorksPackageAction extends BaseFormAction {
         if (worksPackage.getId() != null
                 && (worksPackage.getEgwStatus().getCode()
                         .equalsIgnoreCase(WorksPackage.WorkPacakgeStatus.REJECTED.toString()) || worksPackage
-                        .getEgwStatus().getCode().equalsIgnoreCase("NEW")))
+                                .getEgwStatus().getCode().equalsIgnoreCase("NEW")))
             worksPackage.getWorksPackageDetails().clear();
         if (worksPackage.getId() == null
                 || worksPackage.getEgwStatus().getCode()
-                .equalsIgnoreCase(WorksPackage.WorkPacakgeStatus.REJECTED.toString())
+                        .equalsIgnoreCase(WorksPackage.WorkPacakgeStatus.REJECTED.toString())
                 || worksPackage.getEgwStatus().getCode().equalsIgnoreCase("NEW"))
             populateEstimatesList(estId);
         if (worksPackage.getId() == null && worksPackage.getEgwStatus() == null) {
@@ -374,8 +371,7 @@ public class WorksPackageAction extends BaseFormAction {
     /**
      * print pdf
      *
-     * @throws JRException
-     *             ,Exception
+     * @throws JRException ,Exception
      */
     @SkipValidation
     public String viewWorksPackagePdf() throws JRException, Exception {
@@ -393,7 +389,7 @@ public class WorksPackageAction extends BaseFormAction {
         final AbstractEstimate estimate = worksPackageDetails.get(0).getEstimate();
         final Boundary b = getTopLevelBoundary(estimate.getWard());
         reportParams
-        .put("financialYear", abstractEstimateService.getCurrentFinancialYear(new Date()).getFinYearRange());
+                .put("financialYear", abstractEstimateService.getCurrentFinancialYear(new Date()).getFinYearRange());
         reportParams.put("total", worksPackage.getTotalAmount());
         reportParams.put("cityName", b == null ? "" : b.getName());
         reportParams.put("workPackageName", worksPackage.getName());

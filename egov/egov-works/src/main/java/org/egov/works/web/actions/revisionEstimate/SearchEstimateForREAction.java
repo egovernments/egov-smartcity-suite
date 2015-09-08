@@ -135,8 +135,9 @@ public class SearchEstimateForREAction extends SearchFormAction {
         final StringBuffer query = new StringBuffer(700);
         final List<Object> paramList = new ArrayList<Object>();
         final HashMap<String, Object> queryAndParams = new HashMap<String, Object>();
-        query.append("from WorkOrderEstimate woe where woe.workOrder.id is not null and woe.workOrder.parent is null and woe.workOrder.egwStatus.code<>? "
-                + "and woe.workOrder.egwStatus.code = ? and woe.estimate.parent is null");
+        query.append(
+                "from WorkOrderEstimate woe where woe.workOrder.id is not null and woe.workOrder.parent is null and woe.workOrder.egwStatus.code<>? "
+                        + "and woe.workOrder.egwStatus.code = ? and woe.estimate.parent is null");
         paramList.add("NEW");
         paramList.add("APPROVED");
         if (getDeptId() != null && getDeptId() != -1) {
@@ -180,7 +181,8 @@ public class SearchEstimateForREAction extends SearchFormAction {
                 + " mbh.egwStatus.code = ? and (mbh.egBillregister.billstatus <> ? and mbh.egBillregister.billtype = ?) and"
                 + " mbh.workOrderEstimate.workOrder.egwStatus.code='APPROVED' and mbh.workOrderEstimate.estimate.egwStatus.code=?) "
                 +
-                // " and woe.workOrder.id not in (select wo1.parent.id from WorkOrder wo1 where wo1.parent is not null and wo1.egwStatus.code not in ('APPROVED','CANCELLED')) "
+                // " and woe.workOrder.id not in (select wo1.parent.id from WorkOrder wo1 where wo1.parent is not null and
+                // wo1.egwStatus.code not in ('APPROVED','CANCELLED')) "
                 // +
                 "and woe.estimate.id not in "
                 + "(select ae.parent.id from AbstractEstimate ae where ae.parent is not null and ae.egwStatus.code not in ('APPROVED','CANCELLED'))");

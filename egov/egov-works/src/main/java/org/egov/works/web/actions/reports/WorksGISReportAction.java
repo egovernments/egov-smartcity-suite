@@ -55,7 +55,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.egov.exceptions.EGOVException;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.models.GeoLatLong;
 import org.egov.infstr.models.GeoLocation;
@@ -72,10 +71,9 @@ import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.services.WorkOrderService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class WorksGISReportAction extends BaseFormAction {
-   
+
     private static final long serialVersionUID = -6987141628565169146L;
     private static final Logger LOGGER = Logger.getLogger(WorksGISReportAction.class);
     private final String AFTER_SEARCH = "afterSearch";
@@ -93,8 +91,6 @@ public class WorksGISReportAction extends BaseFormAction {
     private String estimatenumber;
     private WorksService worksService;
     private List<String> tenderTypeList = null;
-    @Autowired
-    private BoundaryService boundaryService;
 
     public Long getContractorId() {
         return contractorId;
@@ -127,13 +123,11 @@ public class WorksGISReportAction extends BaseFormAction {
     }
 
     /**
-     * Return values in the order - estimate id[0], lat[1], lon[2], estimate
-     * Number[3], name[4], work value[5],overheads[6],wpno[7] tender document
-     * released date[8] , type of work[9], workSubType[10], projcode.id[11] In
-     * case contractor is selected in search criteria, the following work order
-     * related values are returned from this query: work order date[12],
-     * contract period[13], contractor name[14], work commenced date[15]
-     * 
+     * Return values in the order - estimate id[0], lat[1], lon[2], estimate Number[3], name[4], work
+     * value[5],overheads[6],wpno[7] tender document released date[8] , type of work[9], workSubType[10], projcode.id[11] In case
+     * contractor is selected in search criteria, the following work order related values are returned from this query: work order
+     * date[12], contract period[13], contractor name[14], work commenced date[15]
+     *
      * @return
      */
     private String generateQuery() {
@@ -219,7 +213,8 @@ public class WorksGISReportAction extends BaseFormAction {
             LOGGER.info("HQl query RESULT " + findAll.size());
             Long estId, projcodeId, contractPeriod;
             BigDecimal estLat, estLon;
-            String estNumber, estWorkName, wpno, tenderDocReleasedDt, typeOfWork, subTypeOfWork, workOrderDate, contractorName, workCommencedDt;
+            String estNumber, estWorkName, wpno, tenderDocReleasedDt, typeOfWork, subTypeOfWork, workOrderDate, contractorName,
+                    workCommencedDt;
             Money workValue;
             Double ovrheads;
             // Start format and push the data
@@ -411,7 +406,8 @@ public class WorksGISReportAction extends BaseFormAction {
                             final List<TenderResponseActivity> trAct = persistenceService
                                     .findAllBy(
                                             "from TenderResponseActivity trAct where trAct.activity.abstractEstimate.id=? and trAct.tenderResponse.id=? and trAct.tenderResponse.egwStatus.code='"
-                                                    + WorksConstants.APPROVED + "' ", wpd.getEstimate().getId(),
+                                                    + WorksConstants.APPROVED + "' ",
+                                            wpd.getEstimate().getId(),
                                             tr.getId());
 
                             for (final TenderResponseActivity act : trAct)
@@ -422,7 +418,7 @@ public class WorksGISReportAction extends BaseFormAction {
                             if (tr.getTenderEstimate().getTenderType().equals(tenderTypeList.get(0)))
                                 totalAmt += wpd.getEstimate().getWorkValue().getValue()
                                         + wpd.getEstimate().getWorkValue().getValue()
-                                        * tr.getPercNegotiatedAmountRate() / 100;
+                                                * tr.getPercNegotiatedAmountRate() / 100;
                             break;
                         }
         if (totalAmt != 0)

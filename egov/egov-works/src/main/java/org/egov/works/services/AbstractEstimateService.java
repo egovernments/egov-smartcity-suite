@@ -148,13 +148,11 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     }
 
     /**
-     * This method invokes the script service to generate the budget
-     * appropriation number. This method is invoked from the work flow rules.
+     * This method invokes the script service to generate the budget appropriation number. This method is invoked from the work
+     * flow rules.
      *
-     * @param entity
-     *            an instance of <code>AbstractEstimate</code>
-     * @return a <code>String<code> containing the generated the budget
-     * appropriation number.
+     * @param entity an instance of <code>AbstractEstimate</code>
+     * @return a <code>String<code> containing the generated the budget appropriation number.
      */
     public String getBudgetAppropriationNumber(final AbstractEstimate entity) {
         CFinancialYear finYear = null;
@@ -173,14 +171,9 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     /**
      * The method return true if the estimate number has to be re-generated
      *
-     * @param entity
-     *            an instance of <code>AbstractEstimate</code> containing the
-     *            estimate date
-     * @param financialYear
-     *            an instance of <code>CFinancialYear</code> representing the
-     *            financial year for the estimate date.
-     * @return a boolean value indicating if the estimate number change is
-     *         required.
+     * @param entity an instance of <code>AbstractEstimate</code> containing the estimate date
+     * @param financialYear an instance of <code>CFinancialYear</code> representing the financial year for the estimate date.
+     * @return a boolean value indicating if the estimate number change is required.
      */
     private boolean estimateNumberChangeRequired(final AbstractEstimate entity, final CFinancialYear financialYear) {
         final String[] estNum = entity.getEstimateNumber().split("/");
@@ -202,9 +195,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     /**
      * This method generates and set the project code for the estimate
      *
-     * @param entity
-     *            an instance of <code>AbstractEstimate</code> for the project
-     *            code is to be generated.
+     * @param entity an instance of <code>AbstractEstimate</code> for the project code is to be generated.
      */
     @Transactional
     public void setProjectCode(final AbstractEstimate entity) {
@@ -239,13 +230,10 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     }
 
     /**
-     * This method performs the required validations and persists the
-     * <code>FinancialDetail</code> object
+     * This method performs the required validations and persists the <code>FinancialDetail</code> object
      *
-     * @param financialDetail
-     *            the <code>FinancialDetail</code> object to be persisted.
-     * @param estimate
-     *            the parent <code>AbstractEstimate</code> object
+     * @param financialDetail the <code>FinancialDetail</code> object to be persisted.
+     * @param estimate the parent <code>AbstractEstimate</code> object
      * @return the persisted <code>AbstractEstimate</code> object
      */
     @Transactional
@@ -283,7 +271,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
             for (final MultiYearEstimate multiYearEstimate : financialDetail.getAbstractEstimate()
                     .getMultiYearEstimates())
                 if (multiYearEstimate != null && multiYearEstimate.getFinancialYear().getId().compareTo(finyrId) == 0
-                && multiYearEstimate.getPercentage() > 0) {
+                        && multiYearEstimate.getPercentage() > 0) {
                     budgApprAmnt = financialDetail.getAbstractEstimate().getTotalAmount().getValue();
                     final double percAmt = budgApprAmnt * multiYearEstimate.getPercentage() / 100;
                     flag = checkConsumeEncumbranceBudget(financialDetail, finyrId, percAmt, budgetheadid);
@@ -299,18 +287,18 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         final BudgetUsage budgetUsage = budgetDetailsDAO.consumeEncumbranceBudget(
                 financialDetail.getAbstractEstimate().getBudgetApprNo() == null ? null : financialDetail
                         .getAbstractEstimate().getBudgetApprNo(),
-                        finyrId,
-                        Integer.valueOf(11),
-                        financialDetail.getAbstractEstimate().getEstimateNumber(),
-                        Integer.parseInt(financialDetail.getAbstractEstimate().getUserDepartment().getId().toString()),
-                        financialDetail.getFunction() == null ? null : financialDetail.getFunction().getId(),
-                                financialDetail.getFunctionary() == null ? null : financialDetail.getFunctionary().getId(),
-                                        financialDetail.getScheme() == null ? null : financialDetail.getScheme().getId(),
-                                                financialDetail.getSubScheme() == null ? null : financialDetail.getSubScheme().getId(),
-                                                        financialDetail.getAbstractEstimate().getWard() == null ? null : Integer.parseInt(financialDetail
-                                                                .getAbstractEstimate().getWard().getId().toString()),
-                                                                financialDetail.getBudgetGroup() == null ? null : budgetheadid,
-                                                                        financialDetail.getFund() == null ? null : financialDetail.getFund().getId(), budgApprAmnt);
+                finyrId,
+                Integer.valueOf(11),
+                financialDetail.getAbstractEstimate().getEstimateNumber(),
+                Integer.parseInt(financialDetail.getAbstractEstimate().getUserDepartment().getId().toString()),
+                financialDetail.getFunction() == null ? null : financialDetail.getFunction().getId(),
+                financialDetail.getFunctionary() == null ? null : financialDetail.getFunctionary().getId(),
+                financialDetail.getScheme() == null ? null : financialDetail.getScheme().getId(),
+                financialDetail.getSubScheme() == null ? null : financialDetail.getSubScheme().getId(),
+                financialDetail.getAbstractEstimate().getWard() == null ? null : Integer.parseInt(financialDetail
+                        .getAbstractEstimate().getWard().getId().toString()),
+                financialDetail.getBudgetGroup() == null ? null : budgetheadid,
+                financialDetail.getFund() == null ? null : financialDetail.getFund().getId(), budgApprAmnt);
 
         if (budgetUsage != null)
             persistBudgetAppropriationDetails(financialDetail.getAbstractEstimate(), budgetUsage);
@@ -334,19 +322,19 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         budgetUsage = budgetDetailsDAO.releaseEncumbranceBudget(
                 financialDetail.getAbstractEstimate().getBudgetRejectionNo() == null ? null : financialDetail
                         .getAbstractEstimate().getBudgetRejectionNo(),
-                        estimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),
-                        Integer.valueOf(11),
-                        financialDetail.getAbstractEstimate().getEstimateNumber(),
-                        Integer.parseInt(financialDetail.getAbstractEstimate().getUserDepartment().getId().toString()),
-                        financialDetail.getFunction() == null ? null : financialDetail.getFunction().getId(),
-                                financialDetail.getFunctionary() == null ? null : financialDetail.getFunctionary().getId(),
-                                        financialDetail.getScheme() == null ? null : financialDetail.getScheme().getId(),
-                                                financialDetail.getSubScheme() == null ? null : financialDetail.getSubScheme().getId(),
-                                                        financialDetail.getAbstractEstimate().getWard() == null ? null : Integer.parseInt(financialDetail
-                                                                .getAbstractEstimate().getWard().getId().toString()),
-                                                                financialDetail.getBudgetGroup() == null ? null : budgetheadid,
-                                                                        financialDetail.getFund() == null ? null : financialDetail.getFund().getId(), estimateAppropriation
-                                                                                .getBudgetUsage().getConsumedAmount());
+                estimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),
+                Integer.valueOf(11),
+                financialDetail.getAbstractEstimate().getEstimateNumber(),
+                Integer.parseInt(financialDetail.getAbstractEstimate().getUserDepartment().getId().toString()),
+                financialDetail.getFunction() == null ? null : financialDetail.getFunction().getId(),
+                financialDetail.getFunctionary() == null ? null : financialDetail.getFunctionary().getId(),
+                financialDetail.getScheme() == null ? null : financialDetail.getScheme().getId(),
+                financialDetail.getSubScheme() == null ? null : financialDetail.getSubScheme().getId(),
+                financialDetail.getAbstractEstimate().getWard() == null ? null : Integer.parseInt(financialDetail
+                        .getAbstractEstimate().getWard().getId().toString()),
+                financialDetail.getBudgetGroup() == null ? null : budgetheadid,
+                financialDetail.getFund() == null ? null : financialDetail.getFund().getId(), estimateAppropriation
+                        .getBudgetUsage().getConsumedAmount());
 
         if (financialDetail.getAbstractEstimate() != null)
             persistBudgetReleaseDetails(financialDetail.getAbstractEstimate(), budgetUsage);
@@ -573,8 +561,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     }
 
     /**
-     * This method will return budgetary appropriation done estimate list for
-     * budgetHead
+     * This method will return budgetary appropriation done estimate list for budgetHead
      *
      * @param
      */
@@ -845,11 +832,12 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
             budgetheadid.add(financialDetail.getBudgetGroup().getId());
             return budgetDetailsDAO.getPlanningBudgetAvailable(finYearId, Integer.parseInt(estimate.getUserDepartment()
                     .getId().toString()), financialDetail.getFunction() == null ? null : financialDetail.getFunction()
-                            .getId(), null, financialDetail.getScheme() == null ? null : financialDetail.getScheme().getId(),
-                                    financialDetail.getSubScheme() == null ? null : financialDetail.getSubScheme().getId(), Integer
-                                            .parseInt(estimate.getWard().getId().toString()),
-                                            financialDetail.getBudgetGroup() == null ? null : budgetheadid,
-                                                    financialDetail.getFund() == null ? null : financialDetail.getFund().getId());
+                            .getId(),
+                    null, financialDetail.getScheme() == null ? null : financialDetail.getScheme().getId(),
+                    financialDetail.getSubScheme() == null ? null : financialDetail.getSubScheme().getId(), Integer
+                            .parseInt(estimate.getWard().getId().toString()),
+                    financialDetail.getBudgetGroup() == null ? null : budgetheadid,
+                    financialDetail.getFund() == null ? null : financialDetail.getFund().getId());
         } else
             return budgetAvailable;
     }
@@ -906,7 +894,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     public EgovCommon getEgovCommon() {
         return egovCommon;
     }
-    
+
     @Transactional
     public boolean checkForBudgetaryAppropriationForDepositWorks(final FinancialDetail financialDetail)
             throws ValidationException {
@@ -921,7 +909,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 
         final BigDecimal creditBalance = egovCommon.getDepositAmountForDepositCode(new Date(), financialDetail.getCoa()
                 .getGlcode(), financialDetail.getFund().getCode(), accountdetailtype.getId(), financialDetail
-                .getAbstractEstimate().getDepositCode().getId().intValue());
+                        .getAbstractEstimate().getDepositCode().getId().intValue());
         BigDecimal utilizedAmt = depositWorksUsageService.getTotalUtilizedAmountForDepositWorks(financialDetail,
                 appDate);
         BigDecimal balance = BigDecimal.ZERO;
@@ -949,7 +937,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         }
         return flag;
     }
-    
+
     @Transactional
     public boolean releaseDepositWorksAmountOnReject(final FinancialDetail financialDetail) throws ValidationException {
         boolean flag = false;
@@ -960,7 +948,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         // estimateAmount=financialDetail.getAbstractEstimate().getTotalAmount().getValue();
         final BigDecimal creditBalance = egovCommon.getDepositAmountForDepositCode(new Date(), financialDetail.getCoa()
                 .getGlcode(), financialDetail.getFund().getCode(), accountdetailtype.getId(), financialDetail
-                .getAbstractEstimate().getDepositCode().getId().intValue());
+                        .getAbstractEstimate().getDepositCode().getId().intValue());
         final double releaseAmount = estimateAppropriation.getDepositWorksUsage().getConsumedAmount().doubleValue();
         DepositWorksUsage depositWorksUsage = new DepositWorksUsage();
         depositWorksUsage.setTotalDepositAmount(creditBalance);
@@ -985,7 +973,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     public DepositWorksUsageService getDepositWorksUsageService() {
         return depositWorksUsageService;
     }
-    
+
     @Transactional
     private void persistBudgetAppropriationDetails(final AbstractEstimate abstractEstimate,
             final BudgetUsage budgetUsage) {
@@ -1006,7 +994,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         }
         estimateAppropriationService.persist(estimateAppropriation);
     }
-    
+
     @Transactional
     private void persistDepositCodeAppDetails(final DepositWorksUsage depositWorksUsage) {
         AbstractEstimateAppropriation estimateAppropriation = null;
@@ -1035,7 +1023,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         }
         estimateAppropriationService.persist(estimateAppropriation);
     }
-    
+
     @Transactional
     private void persistBudgetReleaseDetails(final AbstractEstimate abstractEstimate, final BudgetUsage budgetUsage) {
         AbstractEstimateAppropriation estimateAppropriation = null;
@@ -1047,7 +1035,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         estimateAppropriation.setBudgetUsage(budgetUsage);
         estimateAppropriationService.persist(estimateAppropriation);
     }
-    
+
     @Transactional
     private void persistReleaseDepositWorksAmountDetails(final DepositWorksUsage depositWorksUsage) {
         AbstractEstimateAppropriation estimateAppropriation = null;
@@ -1064,8 +1052,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     }
 
     /*
-     * This API will return amount to be appropriated for estimate in the given
-     * financial year.
+     * This API will return amount to be appropriated for estimate in the given financial year.
      * @param estimate,finYearId
      * @return 0 if no appropriation required otherwise appropriation amount
      */
@@ -1114,10 +1101,8 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     }
 
     /**
-     * This function returns List of objects containing workOder Id and
-     * WorkOrder number. This method in turn calls getWorkOrderDetails() by
-     * passing estimateId as parameter which runs the query to get the list of
-     * objects.
+     * This function returns List of objects containing workOder Id and WorkOrder number. This method in turn calls
+     * getWorkOrderDetails() by passing estimateId as parameter which runs the query to get the list of objects.
      *
      * @param estimateId
      * @return List<Object> containing workOder Id and WorkOrder number
@@ -1129,10 +1114,8 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     }
 
     /**
-     * This function returns List of objects containing worksPackage Id and
-     * worksPackage number. This method in turn calls getWorksPackageDetails()
-     * by passing estimateId as parameter which runs the query to get the list
-     * of objects.
+     * This function returns List of objects containing worksPackage Id and worksPackage number. This method in turn calls
+     * getWorksPackageDetails() by passing estimateId as parameter which runs the query to get the list of objects.
      *
      * @param estimateId
      * @return List<Object> containing worksPackage Id and worksPackage number

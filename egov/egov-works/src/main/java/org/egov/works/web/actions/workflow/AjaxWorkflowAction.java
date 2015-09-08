@@ -135,13 +135,9 @@ public class AjaxWorkflowAction extends BaseFormAction {
                 scriptContext);
 
         /*
-         * List<Script> scriptList =
-         * persistenceService.findAllByNamedQuery(Script
-         * .BY_NAME,scriptName+".nextDesignation"); if(!scriptList.isEmpty()){
-         * List<String> desglist = (List<String>)
-         * scriptList.get(0).eval(Script.createContext
-         * ("department",departmentName,
-         * "objectId",objectId,"genericService",getPersistenceService()));
+         * List<Script> scriptList = persistenceService.findAllByNamedQuery(Script .BY_NAME,scriptName+".nextDesignation");
+         * if(!scriptList.isEmpty()){ List<String> desglist = (List<String>) scriptList.get(0).eval(Script.createContext
+         * ("department",departmentName, "objectId",objectId,"genericService",getPersistenceService()));
          */
         final List<String> desgListUpper = new ArrayList<String>();
         for (final String desgNames : desglist)

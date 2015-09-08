@@ -71,8 +71,8 @@ import org.springframework.transaction.annotation.Transactional;
  * This class will expose all Revision Estimate related operations.
  */
 @Transactional(readOnly = true)
-public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstractEstimate, Long> implements
-RevisionEstimateService {
+public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstractEstimate, Long>implements
+        RevisionEstimateService {
 
     private AbstractEstimateService abstractEstimateService;
     private WorksService worksService;
@@ -131,7 +131,7 @@ RevisionEstimateService {
             return flag;
         final BigDecimal creditBalance = egovCommon.getDepositAmountForDepositCode(new Date(), financialDetail.getCoa()
                 .getGlcode(), financialDetail.getFund().getCode(), accountdetailtype.getId(), financialDetail
-                .getAbstractEstimate().getDepositCode().getId().intValue());
+                        .getAbstractEstimate().getDepositCode().getId().intValue());
         final double releaseAmount = estimateAppropriation.getDepositWorksUsage().getConsumedAmount().doubleValue();
         DepositWorksUsage depositWorksUsage = new DepositWorksUsage();
         depositWorksUsage.setTotalDepositAmount(creditBalance);
@@ -173,19 +173,19 @@ RevisionEstimateService {
         budgetHeadId.add(financialDetail.getBudgetGroup().getId());
         final BudgetUsage budgetUsage = budgetDetailsDAO.consumeEncumbranceBudget(
                 revisionEstimate.getBudgetApprNo() == null ? null : revisionEstimate.getBudgetApprNo(),
-                        finYearId,
-                        Integer.valueOf(11),
-                        revisionEstimate.getEstimateNumber(),
-                        Integer.parseInt(financialDetail.getAbstractEstimate().getUserDepartment().getId().toString()),
-                        financialDetail.getFunction() == null ? null : financialDetail.getFunction().getId(),
-                                financialDetail.getFunctionary() == null ? null : financialDetail.getFunctionary().getId(),
-                                        financialDetail.getScheme() == null ? null : financialDetail.getScheme().getId(),
-                                                financialDetail.getSubScheme() == null ? null : financialDetail.getSubScheme().getId(),
-                                                        financialDetail.getAbstractEstimate().getWard() == null ? null : Integer.parseInt(financialDetail
-                                                                .getAbstractEstimate().getWard().getId().toString()),
-                                                                financialDetail.getBudgetGroup() == null ? null : budgetHeadId,
-                                                                        financialDetail.getFund() == null ? null : financialDetail.getFund().getId(), revisionEstimate
-                                                                                .getTotalAmount().getValue());
+                finYearId,
+                Integer.valueOf(11),
+                revisionEstimate.getEstimateNumber(),
+                Integer.parseInt(financialDetail.getAbstractEstimate().getUserDepartment().getId().toString()),
+                financialDetail.getFunction() == null ? null : financialDetail.getFunction().getId(),
+                financialDetail.getFunctionary() == null ? null : financialDetail.getFunctionary().getId(),
+                financialDetail.getScheme() == null ? null : financialDetail.getScheme().getId(),
+                financialDetail.getSubScheme() == null ? null : financialDetail.getSubScheme().getId(),
+                financialDetail.getAbstractEstimate().getWard() == null ? null : Integer.parseInt(financialDetail
+                        .getAbstractEstimate().getWard().getId().toString()),
+                financialDetail.getBudgetGroup() == null ? null : budgetHeadId,
+                financialDetail.getFund() == null ? null : financialDetail.getFund().getId(), revisionEstimate
+                        .getTotalAmount().getValue());
         if (budgetUsage == null)
             throw new ValidationException(Arrays.asList(new ValidationError("changeFDHeader.budget.consumption.failed",
                     "Insufficient funds available")));
@@ -229,7 +229,7 @@ RevisionEstimateService {
         final FinancialDetail financialDetail = revisionEstimate.getParent().getFinancialDetails().get(0);
         final BigDecimal creditBalance = egovCommon.getDepositAmountForDepositCode(new Date(), financialDetail.getCoa()
                 .getGlcode(), financialDetail.getFund().getCode(), accountdetailtype.getId(), financialDetail
-                .getAbstractEstimate().getDepositCode().getId().intValue());
+                        .getAbstractEstimate().getDepositCode().getId().intValue());
 
         BigDecimal utilizedAmt = depositWorksUsageService.getTotalUtilizedAmountForDepositWorks(financialDetail,
                 appDate);
@@ -307,19 +307,19 @@ RevisionEstimateService {
 
         budgetUsage = budgetDetailsDAO.releaseEncumbranceBudget(
                 revisionEstimate.getBudgetRejectionNo() == null ? null : revisionEstimate.getBudgetRejectionNo(),
-                        estimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),
-                        Integer.valueOf(11),
-                        revisionEstimate.getEstimateNumber(),
-                        Integer.parseInt(financialDetail.getAbstractEstimate().getUserDepartment().getId().toString()),
-                        financialDetail.getFunction() == null ? null : financialDetail.getFunction().getId(),
-                                financialDetail.getFunctionary() == null ? null : financialDetail.getFunctionary().getId(),
-                                        financialDetail.getScheme() == null ? null : financialDetail.getScheme().getId(),
-                                                financialDetail.getSubScheme() == null ? null : financialDetail.getSubScheme().getId(),
-                                                        financialDetail.getAbstractEstimate().getWard() == null ? null : Integer.parseInt(financialDetail
-                                                                .getAbstractEstimate().getWard().getId().toString()),
-                                                                financialDetail.getBudgetGroup() == null ? null : budgetheadid,
-                                                                        financialDetail.getFund() == null ? null : financialDetail.getFund().getId(), estimateAppropriation
-                                                                                .getBudgetUsage().getConsumedAmount());
+                estimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),
+                Integer.valueOf(11),
+                revisionEstimate.getEstimateNumber(),
+                Integer.parseInt(financialDetail.getAbstractEstimate().getUserDepartment().getId().toString()),
+                financialDetail.getFunction() == null ? null : financialDetail.getFunction().getId(),
+                financialDetail.getFunctionary() == null ? null : financialDetail.getFunctionary().getId(),
+                financialDetail.getScheme() == null ? null : financialDetail.getScheme().getId(),
+                financialDetail.getSubScheme() == null ? null : financialDetail.getSubScheme().getId(),
+                financialDetail.getAbstractEstimate().getWard() == null ? null : Integer.parseInt(financialDetail
+                        .getAbstractEstimate().getWard().getId().toString()),
+                financialDetail.getBudgetGroup() == null ? null : budgetheadid,
+                financialDetail.getFund() == null ? null : financialDetail.getFund().getId(), estimateAppropriation
+                        .getBudgetUsage().getConsumedAmount());
 
         if (financialDetail.getAbstractEstimate() != null)
             persistBudgetReleaseDetails(revisionEstimate, financialDetail.getAbstractEstimate(), budgetUsage);

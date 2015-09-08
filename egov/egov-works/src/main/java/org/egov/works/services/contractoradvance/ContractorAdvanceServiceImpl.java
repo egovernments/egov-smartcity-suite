@@ -77,7 +77,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
-public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorAdvanceRequisition, Long> implements
+public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorAdvanceRequisition, Long>implements
         ContractorAdvanceService {
 
     protected PersistenceService persistenceService;
@@ -136,10 +136,10 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
             if (contractorAdvanceRequisition.getStatus() == null
                     || ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.REJECTED.toString()
                             .equalsIgnoreCase(contractorAdvanceRequisition.getStatus().getCode())
-                    && org.apache.commons.lang.StringUtils.isBlank(contractorAdvanceRequisition.getState()
-                            .getNextAction())
-                            || ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.NEW.toString().equalsIgnoreCase(
-                                    contractorAdvanceRequisition.getStatus().getCode()))
+                            && org.apache.commons.lang.StringUtils.isBlank(contractorAdvanceRequisition.getState()
+                                    .getNextAction())
+                    || ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.NEW.toString().equalsIgnoreCase(
+                            contractorAdvanceRequisition.getStatus().getCode()))
                 shouldAddAdvanceDetails = true;
             if (contractorAdvanceRequisition.getStatus() == null)
                 contractorAdvanceRequisition.setStatus(commonsService.getStatusByModuleAndCode(
@@ -159,26 +159,15 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
             // workflow ended
             /**
              * if(contractorAdvanceRequisition.getCurrentState()!=null &&
-             * contractorAdvanceRequisition.getCurrentState().getValue()!=null
-             * && contractorAdvanceRequisition.getCurrentState().getPrevious()
-             * != null && (ContractorAdvanceRequisition.
-             * ContractorAdvanceRequisitionStatus
-             * .APPROVED.toString().equalsIgnoreCase
-             * (contractorAdvanceRequisition
-             * .getCurrentState().getPrevious().getValue()) ||
-             * ContractorAdvanceRequisition
-             * .ContractorAdvanceRequisitionStatus.CANCELLED
-             * .toString().equalsIgnoreCase
-             * (contractorAdvanceRequisition.getCurrentState
-             * ().getPrevious().getValue()))) {
-             * contractorAdvanceRequisition.setStatus
-             * (commonsService.getStatusByModuleAndCode
-             * (CONTRACTOR_ADVANCE_REQUISITION,
-             * contractorAdvanceRequisition.getCurrentState
-             * ().getPrevious().getValue())); //Source path for view ARF needs
-             * to be set to view from Advance Payment screen
-             * contractorAdvanceRequisition
-             * .getEgAdvanceReqMises().setSourcePath(
+             * contractorAdvanceRequisition.getCurrentState().getValue()!=null &&
+             * contractorAdvanceRequisition.getCurrentState().getPrevious() != null && (ContractorAdvanceRequisition.
+             * ContractorAdvanceRequisitionStatus .APPROVED.toString().equalsIgnoreCase (contractorAdvanceRequisition
+             * .getCurrentState().getPrevious().getValue()) || ContractorAdvanceRequisition
+             * .ContractorAdvanceRequisitionStatus.CANCELLED .toString().equalsIgnoreCase
+             * (contractorAdvanceRequisition.getCurrentState ().getPrevious().getValue()))) {
+             * contractorAdvanceRequisition.setStatus (commonsService.getStatusByModuleAndCode (CONTRACTOR_ADVANCE_REQUISITION,
+             * contractorAdvanceRequisition.getCurrentState ().getPrevious().getValue())); //Source path for view ARF needs to be
+             * set to view from Advance Payment screen contractorAdvanceRequisition .getEgAdvanceReqMises().setSourcePath(
              * "/egworks/contractoradvance/contractorAdvanceRequisition!edit.action?sourcepage=search&id="
              * +contractorAdvanceRequisition.getId()); } else
              **/
@@ -207,7 +196,7 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
 
             if (contractorAdvanceRequisition.getAdvanceRequisitionNumber() == null
                     || contractorAdvanceRequisition.getAdvanceRequisitionNumber() != null
-                    && arfNumberChangeRequired(contractorAdvanceRequisition, financialYear))
+                            && arfNumberChangeRequired(contractorAdvanceRequisition, financialYear))
                 contractorAdvanceRequisition.setAdvanceRequisitionNumber(contractorAdvanceRequisitionNumberGenerator
                         .getARFNumber(contractorAdvanceRequisition, financialYear, persistenceService));
         } catch (final ValidationException exception) {
@@ -222,14 +211,10 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
     /**
      * The method return true if the ARF number has to be re-generated
      *
-     * @param entity
-     *            an instance of <code>ContractorAdvanceRequisition</code>
-     *            containing the Advance Requisition date
-     * @param financialYear
-     *            an instance of <code>CFinancialYear</code> representing the
-     *            financial year for the Advance Requisition date.
-     * @return a boolean value indicating if the Advance Requisition number
-     *         change is required.
+     * @param entity an instance of <code>ContractorAdvanceRequisition</code> containing the Advance Requisition date
+     * @param financialYear an instance of <code>CFinancialYear</code> representing the financial year for the Advance Requisition
+     * date.
+     * @return a boolean value indicating if the Advance Requisition number change is required.
      */
     private boolean arfNumberChangeRequired(final ContractorAdvanceRequisition entity,
             final CFinancialYear financialYear) {
@@ -435,9 +420,10 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
                         || contractorAdvanceRequisition.getCurrentState().getNextAction()
                                 .equalsIgnoreCase(PENDING_FOR_APPROVAL)
                         || contractorAdvanceRequisition.getCurrentState().getNextAction()
-                                .equalsIgnoreCase(PENDING_FOR_RECTIFICATION) || contractorAdvanceRequisition
-                        .getCurrentState().getNextAction().equalsIgnoreCase(PENDING_FOR_CHECK)
-                        && contractorAdvanceRequisition.getCurrentState().getValue().equalsIgnoreCase("REJECTED"))) {
+                                .equalsIgnoreCase(PENDING_FOR_RECTIFICATION)
+                        || contractorAdvanceRequisition
+                                .getCurrentState().getNextAction().equalsIgnoreCase(PENDING_FOR_CHECK)
+                                && contractorAdvanceRequisition.getCurrentState().getValue().equalsIgnoreCase("REJECTED"))) {
             final Functionary func = (Functionary) persistenceService.find(" from  Functionary where upper(name) = ?",
                     "UAC");
             if (func != null)

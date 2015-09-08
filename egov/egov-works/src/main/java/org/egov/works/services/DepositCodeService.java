@@ -51,13 +51,11 @@ import org.egov.works.utils.WorksConstants;
 /**
  * Entity Type Service for deposit code
  */
-public class DepositCodeService extends PersistenceService<DepositCode, Long> implements EntityTypeService {
+public class DepositCodeService extends PersistenceService<DepositCode, Long>implements EntityTypeService {
 
     /*
      * (non-Javadoc)
-     * @see
-     * org.egov.commons.service.EntityTypeService#filterActiveEntities(java.
-     * lang.String, int, java.lang.Integer)
+     * @see org.egov.commons.service.EntityTypeService#filterActiveEntities(java. lang.String, int, java.lang.Integer)
      */
     @Override
     public List<DepositCode> filterActiveEntities(final String filterKey, final int maxRecords,
@@ -73,9 +71,7 @@ public class DepositCodeService extends PersistenceService<DepositCode, Long> im
 
     /*
      * (non-Javadoc)
-     * @see
-     * org.egov.commons.service.EntityTypeService#getAllActiveEntities(java.
-     * lang.Integer)
+     * @see org.egov.commons.service.EntityTypeService#getAllActiveEntities(java. lang.Integer)
      */
     @Override
     public List<DepositCode> getAllActiveEntities(final Integer accountDetailTypeId) {

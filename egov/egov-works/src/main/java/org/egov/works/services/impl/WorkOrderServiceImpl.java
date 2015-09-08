@@ -72,7 +72,7 @@ import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 
-public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> implements WorkOrderService {
+public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long>implements WorkOrderService {
     private static final Logger logger = Logger.getLogger(WorkOrderServiceImpl.class);
 
     private PersistenceService<Contractor, Long> contractorService;
@@ -141,8 +141,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     }
 
     /**
-     * This method will return all the contractors which are having active work
-     * orders.
+     * This method will return all the contractors which are having active work orders.
      *
      * @return List of ContractorDetail
      */
@@ -157,10 +156,8 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     }
 
     /**
-     * This method will search list of WO's for the given criteria and eligible
-     * for MB. CriteriaMap will
-     * have:CONTRACTOR_ID,CREATE_DATE,TENDER_NO,WORKORDER_NO Filter:
-     * 1)isApprovalLimitReachedForWO 2)isMBCreatedAndPendingForWO
+     * This method will search list of WO's for the given criteria and eligible for MB. CriteriaMap will
+     * have:CONTRACTOR_ID,CREATE_DATE,TENDER_NO,WORKORDER_NO Filter: 1)isApprovalLimitReachedForWO 2)isMBCreatedAndPendingForWO
      * 3)isFinalBillApprovedForWO
      *
      * @param criteriaMap
@@ -181,13 +178,10 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     }
 
     /**
-     * This method will search list of WO's for the given criteria and eligible
-     * for MB. CriteriaMap will
-     * have:CONTRACTOR_ID,CREATE_DATE,TENDER_NO,WORKORDER_NO,PROJECT_CODE
-     * Filter: 1)An existing bill with status in "New" or "approval pending" or
-     * "Rejected will NOT be retrieved 2)Work orders for which the final bill is
-     * generated will NOT be retrieved for selection in the search result set.
-     * 2)Work orders with existing bill with status " Approved" with no existing
+     * This method will search list of WO's for the given criteria and eligible for MB. CriteriaMap will
+     * have:CONTRACTOR_ID,CREATE_DATE,TENDER_NO,WORKORDER_NO,PROJECT_CODE Filter: 1)An existing bill with status in "New" or
+     * "approval pending" or "Rejected will NOT be retrieved 2)Work orders for which the final bill is generated will NOT be
+     * retrieved for selection in the search result set. 2)Work orders with existing bill with status " Approved" with no existing
      * bill can be retrieved for selection
      *
      * @param criteriaMap
@@ -207,8 +201,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     }
 
     /**
-     * This method will search list of WO's for the given criteria and eligible
-     * to be view. CriteriaMap may
+     * This method will search list of WO's for the given criteria and eligible to be view. CriteriaMap may
      * have:CONTRACTOR_ID,FROM_DATE,TO_DATE,WORKORDER_NO,STATUS
      *
      * @param criteriaMap
@@ -222,18 +215,13 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     }
 
     /**
-     * Copy of searchWO using for Pagination This method will search list of
-     * WO's for the given criteria. CriteriaMap will
-     * have:CONTRACTOR_ID,CREATE_DATE,TENDER_NO,WORKORDER_NO,PROJECT_CODE Date
-     * of creation ~ WorkOrder.workOrderDate Contractor ~ WorkOrder.contractor
-     * Tender number ~ WorkOrder.abstractEstimate ~ TenderEstimate.tendernumber
-     * Work order number ~ WorkOrder.workOrderNumber Project code ~
-     * WorkOrder.AbstractEstimate.projectCode. approved quantity ~
-     * WorkOrder.WorkOrderActivity.approvedQuantity a pre-defined % ~ APP_CONFIG
-     * line items in a work order ~ WorkOrder.WorkOrderActivity final bill is
-     * approved MB is in a "approval pending" ~ MBHeader.currentStat bill with
-     * status "New" or "approval pending" or "Rejected" final bill is generated
-     * existing bill with status "Approved"
+     * Copy of searchWO using for Pagination This method will search list of WO's for the given criteria. CriteriaMap will
+     * have:CONTRACTOR_ID,CREATE_DATE,TENDER_NO,WORKORDER_NO,PROJECT_CODE Date of creation ~ WorkOrder.workOrderDate Contractor ~
+     * WorkOrder.contractor Tender number ~ WorkOrder.abstractEstimate ~ TenderEstimate.tendernumber Work order number ~
+     * WorkOrder.workOrderNumber Project code ~ WorkOrder.AbstractEstimate.projectCode. approved quantity ~
+     * WorkOrder.WorkOrderActivity.approvedQuantity a pre-defined % ~ APP_CONFIG line items in a work order ~
+     * WorkOrder.WorkOrderActivity final bill is approved MB is in a "approval pending" ~ MBHeader.currentStat bill with status
+     * "New" or "approval pending" or "Rejected" final bill is generated existing bill with status "Approved"
      *
      * @param criteriaMap
      * @return
@@ -382,8 +370,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     }
 
     /**
-     * This method will search list of WO's for the given criteria and eligible
-     * to be view. CriteriaMap may
+     * This method will search list of WO's for the given criteria and eligible to be view. CriteriaMap may
      * have:CONTRACTOR_ID,FROM_DATE,TO_DATE,WORKORDER_NO,STATUS
      *
      * @param criteriaMap
@@ -397,17 +384,13 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     }
 
     /**
-     * This method will search list of WO's for the given criteria. CriteriaMap
-     * will have:CONTRACTOR_ID,CREATE_DATE,TENDER_NO,WORKORDER_NO,PROJECT_CODE
-     * Date of creation ~ WorkOrder.workOrderDate Contractor ~
-     * WorkOrder.contractor Tender number ~ WorkOrder.abstractEstimate ~
-     * TenderEstimate.tendernumber Work order number ~ WorkOrder.workOrderNumber
-     * Project code ~ WorkOrder.AbstractEstimate.projectCode. approved quantity
-     * ~ WorkOrder.WorkOrderActivity.approvedQuantity a pre-defined % ~
-     * APP_CONFIG line items in a work order ~ WorkOrder.WorkOrderActivity final
-     * bill is approved MB is in a "approval pending" ~ MBHeader.currentStat
-     * bill with status "New" or "approval pending" or "Rejected" final bill is
-     * generated existing bill with status "Approved"
+     * This method will search list of WO's for the given criteria. CriteriaMap will
+     * have:CONTRACTOR_ID,CREATE_DATE,TENDER_NO,WORKORDER_NO,PROJECT_CODE Date of creation ~ WorkOrder.workOrderDate Contractor ~
+     * WorkOrder.contractor Tender number ~ WorkOrder.abstractEstimate ~ TenderEstimate.tendernumber Work order number ~
+     * WorkOrder.workOrderNumber Project code ~ WorkOrder.AbstractEstimate.projectCode. approved quantity ~
+     * WorkOrder.WorkOrderActivity.approvedQuantity a pre-defined % ~ APP_CONFIG line items in a work order ~
+     * WorkOrder.WorkOrderActivity final bill is approved MB is in a "approval pending" ~ MBHeader.currentStat bill with status
+     * "New" or "approval pending" or "Rejected" final bill is generated existing bill with status "Approved"
      *
      * @param criteriaMap
      * @return
@@ -554,9 +537,8 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     }
 
     /**
-     * This method will check whether approval limit is already used for all
-     * line item for the WO. Sum of WorkOrder.WorkOrderActivity.approvedQuantity
-     * <= ??Quantity??
+     * This method will check whether approval limit is already used for all line item for the WO. Sum of
+     * WorkOrder.WorkOrderActivity.approvedQuantity <= ??Quantity??
      *
      * @param woId
      * @return
@@ -578,9 +560,8 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     }
 
     /**
-     * This method will search and return list of woactivity based on searched
-     * criteria. Search criteria: WORKORDER_NO,ACTIVITY_DESC,LINEITEM_CODE Story
-     * #567 Search Line item to record measurement
+     * This method will search and return list of woactivity based on searched criteria. Search criteria:
+     * WORKORDER_NO,ACTIVITY_DESC,LINEITEM_CODE Story #567 Search Line item to record measurement
      *
      * @param criteriaMap
      * @return
@@ -616,11 +597,9 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
         }
         // @Todo state not in approved and cancelled
         /*
-         * dynQuery = dynQuery +
-         * "and woa.id not in (select distinct mbd.workOrderActivity.id from MBDetails mbd where "
-         * +
-         * "mbd.mbHeader.state.previous.value not in (?,?) and mbd.workOrderActivity.id = woa.id)"
-         * ; paramList.add(MBHeader.MeasurementBookStatus.APPROVED.toString());
+         * dynQuery = dynQuery + "and woa.id not in (select distinct mbd.workOrderActivity.id from MBDetails mbd where " +
+         * "mbd.mbHeader.state.previous.value not in (?,?) and mbd.workOrderActivity.id = woa.id)" ;
+         * paramList.add(MBHeader.MeasurementBookStatus.APPROVED.toString());
          * paramList.add(MBHeader.MeasurementBookStatus.CANCELLED.toString());
          */
 
@@ -648,10 +627,8 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     }
 
     /**
-     * For the purpose of change quantity in revision estimate Will get work
-     * order activity list for the original work order and subsequent revision
-     * work orders It will not get the activities for which MB is present in
-     * workflow
+     * For the purpose of change quantity in revision estimate Will get work order activity list for the original work order and
+     * subsequent revision work orders It will not get the activities for which MB is present in workflow
      *
      * @param criteriaMap
      * @return
@@ -716,9 +693,8 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     }
 
     /**
-     * This method will search and return list of woactivity from only revision
-     * estimates based on searched criteria. Search criteria:
-     * WORKORDER_NO,ACTIVITY_DESC,LINEITEM_CODE
+     * This method will search and return list of woactivity from only revision estimates based on searched criteria. Search
+     * criteria: WORKORDER_NO,ACTIVITY_DESC,LINEITEM_CODE
      *
      * @param criteriaMap
      * @return
@@ -761,11 +737,9 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
 
         // @Todo state not in approved and cancelled
         /*
-         * dynQuery = dynQuery +
-         * "and woa.id not in (select distinct mbd.workOrderActivity.id from MBDetails mbd where "
-         * +
-         * "mbd.mbHeader.state.previous.value not in (?,?) and mbd.workOrderActivity.id = woa.id)"
-         * ; paramList.add(MBHeader.MeasurementBookStatus.APPROVED.toString());
+         * dynQuery = dynQuery + "and woa.id not in (select distinct mbd.workOrderActivity.id from MBDetails mbd where " +
+         * "mbd.mbHeader.state.previous.value not in (?,?) and mbd.workOrderActivity.id = woa.id)" ;
+         * paramList.add(MBHeader.MeasurementBookStatus.APPROVED.toString());
          * paramList.add(MBHeader.MeasurementBookStatus.CANCELLED.toString());
          */
 
@@ -791,12 +765,9 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
         // /woActivityListOriEst = searchWOActivities(criteriaMap);
         // Remove the SOR items that were present in the original Estimate
         /*
-         * if(woActivityListOriEst !=null && !woActivityListOriEst.isEmpty() &&
-         * woActivityList!=null && !woActivityList.isEmpty()) {
-         * for(WorkOrderActivity woaOri :woActivityListOriEst) {
-         * for(WorkOrderActivity woaRev : woActivityList) {
-         * if(woaOri.getActivity().getId()==woaRev.getActivity().getId()) {
-         * woActivityList.remove(woaRev); } } } }
+         * if(woActivityListOriEst !=null && !woActivityListOriEst.isEmpty() && woActivityList!=null && !woActivityList.isEmpty())
+         * { for(WorkOrderActivity woaOri :woActivityListOriEst) { for(WorkOrderActivity woaRev : woActivityList) {
+         * if(woaOri.getActivity().getId()==woaRev.getActivity().getId()) { woActivityList.remove(woaRev); } } } }
          */
         return woActivityList;
     }
@@ -840,8 +811,8 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     }
 
     /**
-     * This method will check whether MB is created and pending for approval for
-     * the given WO. final bill is not approved for workorder??
+     * This method will check whether MB is created and pending for approval for the given WO. final bill is not approved for
+     * workorder??
      *
      * @param woId
      * @return
@@ -853,8 +824,8 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     // }
 
     /**
-     * This method will check whether final bill is already approved for wo or
-     * not. No MB is in a "approval pending" for the work order.
+     * This method will check whether final bill is already approved for wo or not. No MB is in a "approval pending" for the work
+     * order.
      *
      * @param woId
      * @return
@@ -877,22 +848,15 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     /**
      * The method return true if the work number has to be re-generated
      *
-     * @param entity
-     *            an instance of <code>AbstractEstimate</code> containing the
-     *            estimate date
-     * @param financialYear
-     *            an instance of <code>CFinancialYear</code> representing the
-     *            financial year for the estimate date.
-     * @return a boolean value indicating if the estimate number change is
-     *         required.
+     * @param entity an instance of <code>AbstractEstimate</code> containing the estimate date
+     * @param financialYear an instance of <code>CFinancialYear</code> representing the financial year for the estimate date.
+     * @return a boolean value indicating if the estimate number change is required.
      */
     /*
-     * private boolean workOrderNumberChangeRequired(AbstractEstimate entity,
-     * CFinancialYear financialYear,WorkOrder workOrder){ String[] workOrderNum
-     * = workOrder.getWorkOrderNumber().split("/"); if(entity!=null &&
+     * private boolean workOrderNumberChangeRequired(AbstractEstimate entity, CFinancialYear financialYear,WorkOrder workOrder){
+     * String[] workOrderNum = workOrder.getWorkOrderNumber().split("/"); if(entity!=null &&
      * workOrderNum[0].equals(entity.getExecutingDepartment().getDeptCode()) &&
-     * workOrderNum[2].equals(financialYear.getFinYearRange())) { return false;
-     * } return true; }
+     * workOrderNum[2].equals(financialYear.getFinYearRange())) { return false; } return true; }
      */
 
     // end work order generation logic
@@ -918,8 +882,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     }
 
     /**
-     * Check whether any MB entry is pending for approval for the given
-     * WorkOrder
+     * Check whether any MB entry is pending for approval for the given WorkOrder
      *
      * @param woId
      * @return
@@ -1184,7 +1147,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
                 for (final WorkOrderEstimate workOrderEstimate : workOrder.getWorkOrderEstimates())
                     if (workOrderEstimate != null && workOrderEstimate.getEstimate() != null) {
                         reportParams
-                        .put("deptName", workOrderEstimate.getEstimate().getExecutingDepartment().getName());
+                                .put("deptName", workOrderEstimate.getEstimate().getExecutingDepartment().getName());
                         final Boundary b = getTopLevelBoundary(workOrderEstimate.getEstimate().getWard());
                         reportParams.put("cityName", b == null ? "" : b.getName());
                         // TODO - Department address variable has been removed
@@ -1338,14 +1301,16 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
                                 .getActivity().getParent().getRevisionType().equals(RevisionType.LUMP_SUM_ITEM)))
                     woa = (WorkOrderActivity) genericService.find(
                             "from WorkOrderActivity where activity.id=? and workOrderEstimate.estimate.id=?", detail
-                            .getActivity().getParent().getId(), detail.getActivity().getParent()
-                            .getAbstractEstimate().getId());
+                                    .getActivity().getParent().getId(),
+                            detail.getActivity().getParent()
+                                    .getAbstractEstimate().getId());
                 else
                     // CHANGE_QUANTITY DONE FOR ORIGINAL ESTIMATE ACTIVITIES
                     woa = (WorkOrderActivity) genericService.find(
                             "from WorkOrderActivity where activity.id=? and workOrderEstimate.estimate.id=?", detail
-                            .getActivity().getParent().getId(), workOrderEstimate.getEstimate().getParent()
-                            .getId());
+                                    .getActivity().getParent().getId(),
+                            workOrderEstimate.getEstimate().getParent()
+                                    .getId());
 
                 detail.setParent(woa);
                 lPrevCumlvQuant = measurementBookService.prevCumulativeQuantityIncludingCQ(detail.getId(), null, detail
@@ -1415,8 +1380,9 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     public List<Object> getWorkOrderDetails(final Long estimateId) {
         final List<Object> woDetails = genericService.findAllBy(
                 "select woe.workOrder.id ,woe.workOrder.workOrderNumber from WorkOrderEstimate woe "
-                        + " where woe.estimate.id = ? and woe.workOrder.egwStatus.code not in (?,?) ", estimateId,
-                        WorksConstants.NEW, WorksConstants.CANCELLED_STATUS);
+                        + " where woe.estimate.id = ? and woe.workOrder.egwStatus.code not in (?,?) ",
+                estimateId,
+                WorksConstants.NEW, WorksConstants.CANCELLED_STATUS);
         return woDetails;
     }
 }

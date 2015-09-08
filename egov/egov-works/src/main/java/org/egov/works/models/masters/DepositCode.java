@@ -56,190 +56,228 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
-@Unique(fields={"code"},id="id", tableName="EGW_DEPOSITCODE",columnName={"CODE"},message="depositCode.isUnique")
+@Unique(fields = { "code" }, id = "id", tableName = "EGW_DEPOSITCODE", columnName = { "CODE" }, message = "depositCode.isUnique")
 public class DepositCode extends BaseModel implements EntityType {
-	
-	private String code;
-	@Length(max=1024,message="depositCode.description.length")
-	private String description;
-	private NatureOfWork natureOfWork;
-	
-	@Required(message="depositCode.workName.null")
-	@Length(max=256,message="depositCode.workName.length")
-	private String codeName;
-	private Fund fund;
-	private Functionary functionary;
-	private CFunction function;
-	private Scheme scheme;
-	private SubScheme subScheme;
-	private Department department;
-	private Boundary ward;
-	private Boundary zone;
-	
-	@Required(message="depositCode.finYear.null")
-	private CFinancialYear financialYear;
-	private Fundsource fundSource;
-	private EgwTypeOfWork typeOfWork;
-	private EgwTypeOfWork subTypeOfWork;
-	private Boolean isActive;
-	
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
-		this.code = code;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	public NatureOfWork getNatureOfWork() {
-		return natureOfWork;
-	}
-	public void setNatureOfWork(NatureOfWork natureOfWork) {
-		this.natureOfWork = natureOfWork;
-	}
-	public String getCodeName() {
-		return codeName;
-	}
-	public void setCodeName(String codeName) {
-		this.codeName = codeName;
-	}
-	public Fund getFund() {
-		return fund;
-	}
-	public void setFund(Fund fund) {
-		this.fund = fund;
-	}
-	public Functionary getFunctionary() {
-		return functionary;
-	}
-	public void setFunctionary(Functionary functionary) {
-		this.functionary = functionary;
-	}
-	public CFunction getFunction() {
-		return function;
-	}
-	public void setFunction(CFunction function) {
-		this.function = function;
-	}
-	public Scheme getScheme() {
-		return scheme;
-	}
-	public void setScheme(Scheme scheme) {
-		this.scheme = scheme;
-	}
-	public SubScheme getSubScheme() {
-		return subScheme;
-	}
-	public void setSubScheme(SubScheme subScheme) {
-		this.subScheme = subScheme;
-	}
-	public Department getDepartment() {
-		return department;
-	}
-	public void setDepartment(Department department) {
-		this.department = department;
-	}
-	public Boundary getWard() {
-		return ward;
-	}
-	public void setWard(Boundary ward) {
-		this.ward = ward;
-	}
-	public Boundary getZone() {
-		return zone;
-	}
-	public void setZone(Boundary zone) {
-		this.zone = zone;
-	}
-	public CFinancialYear getFinancialYear() {
-		return financialYear;
-	}
-	public void setFinancialYear(CFinancialYear financialYear) {
-		this.financialYear = financialYear;
-	}
-	public Fundsource getFundSource() {
-		return fundSource;
-	}
-	public void setFundSource(Fundsource fundSource) {
-		this.fundSource = fundSource;
-	}
-	public Boolean getIsActive() {
-		return isActive;
-	}
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
-	public EgwTypeOfWork getTypeOfWork() {
-		return typeOfWork;
-	}
-	public void setTypeOfWork(EgwTypeOfWork typeOfWork) {
-		this.typeOfWork = typeOfWork;
-	}
-	public EgwTypeOfWork getSubTypeOfWork() {
-		return subTypeOfWork;
-	}
-	public void setSubTypeOfWork(EgwTypeOfWork subTypeOfWork) {
-		this.subTypeOfWork = subTypeOfWork;
-	}
-	
-	@Override
-	public String getName() {
-		return codeName;
-	}
-	
-	@Override
-	public String getEntityDescription() {
-		return description;
-	}
-	
-	@Override
-	public Integer getEntityId() {
-		return Integer.valueOf(id.intValue());
-	}
-	
-	@Override
-	public String getIfsccode() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public String getModeofpay() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public String getBankaccount() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public String getBankname() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public String getPanno() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public String getTinno() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public EgwStatus getEgwStatus() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /**
+     *
+     */
+    private static final long serialVersionUID = -6649203487282172205L;
+    private String code;
+    @Length(max = 1024, message = "depositCode.description.length")
+    private String description;
+    private NatureOfWork natureOfWork;
+
+    @Required(message = "depositCode.workName.null")
+    @Length(max = 256, message = "depositCode.workName.length")
+    private String codeName;
+    private Fund fund;
+    private Functionary functionary;
+    private CFunction function;
+    private Scheme scheme;
+    private SubScheme subScheme;
+    private Department department;
+    private Boundary ward;
+    private Boundary zone;
+
+    @Required(message = "depositCode.finYear.null")
+    private CFinancialYear financialYear;
+    private Fundsource fundSource;
+    private EgwTypeOfWork typeOfWork;
+    private EgwTypeOfWork subTypeOfWork;
+    private Boolean isActive;
+
+    @Override
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(final String code) {
+        this.code = code;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    public NatureOfWork getNatureOfWork() {
+        return natureOfWork;
+    }
+
+    public void setNatureOfWork(final NatureOfWork natureOfWork) {
+        this.natureOfWork = natureOfWork;
+    }
+
+    public String getCodeName() {
+        return codeName;
+    }
+
+    public void setCodeName(final String codeName) {
+        this.codeName = codeName;
+    }
+
+    public Fund getFund() {
+        return fund;
+    }
+
+    public void setFund(final Fund fund) {
+        this.fund = fund;
+    }
+
+    public Functionary getFunctionary() {
+        return functionary;
+    }
+
+    public void setFunctionary(final Functionary functionary) {
+        this.functionary = functionary;
+    }
+
+    public CFunction getFunction() {
+        return function;
+    }
+
+    public void setFunction(final CFunction function) {
+        this.function = function;
+    }
+
+    public Scheme getScheme() {
+        return scheme;
+    }
+
+    public void setScheme(final Scheme scheme) {
+        this.scheme = scheme;
+    }
+
+    public SubScheme getSubScheme() {
+        return subScheme;
+    }
+
+    public void setSubScheme(final SubScheme subScheme) {
+        this.subScheme = subScheme;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(final Department department) {
+        this.department = department;
+    }
+
+    public Boundary getWard() {
+        return ward;
+    }
+
+    public void setWard(final Boundary ward) {
+        this.ward = ward;
+    }
+
+    public Boundary getZone() {
+        return zone;
+    }
+
+    public void setZone(final Boundary zone) {
+        this.zone = zone;
+    }
+
+    public CFinancialYear getFinancialYear() {
+        return financialYear;
+    }
+
+    public void setFinancialYear(final CFinancialYear financialYear) {
+        this.financialYear = financialYear;
+    }
+
+    public Fundsource getFundSource() {
+        return fundSource;
+    }
+
+    public void setFundSource(final Fundsource fundSource) {
+        this.fundSource = fundSource;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(final Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public EgwTypeOfWork getTypeOfWork() {
+        return typeOfWork;
+    }
+
+    public void setTypeOfWork(final EgwTypeOfWork typeOfWork) {
+        this.typeOfWork = typeOfWork;
+    }
+
+    public EgwTypeOfWork getSubTypeOfWork() {
+        return subTypeOfWork;
+    }
+
+    public void setSubTypeOfWork(final EgwTypeOfWork subTypeOfWork) {
+        this.subTypeOfWork = subTypeOfWork;
+    }
+
+    @Override
+    public String getName() {
+        return codeName;
+    }
+
+    @Override
+    public String getEntityDescription() {
+        return description;
+    }
+
+    @Override
+    public Integer getEntityId() {
+        return Integer.valueOf(id.intValue());
+    }
+
+    @Override
+    public String getIfsccode() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getModeofpay() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getBankaccount() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getBankname() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getPanno() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getTinno() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public EgwStatus getEgwStatus() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

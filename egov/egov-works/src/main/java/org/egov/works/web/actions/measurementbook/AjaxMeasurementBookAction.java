@@ -70,7 +70,7 @@ import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AjaxMeasurementBookAction extends BaseFormAction {
-  
+
     private static final long serialVersionUID = 3154955519825652739L;
     private static final Logger logger = Logger.getLogger(AjaxMeasurementBookAction.class);
     private static final String USERS_IN_DEPT = "usersInDept";
@@ -148,7 +148,8 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
         } catch (final Exception e) {
             throw new EGOVRuntimeException("user.find.error", e);
         }
-        logger.info("Success ajax call to 'usersInExecutingDepartment' ----------------------------------------------------------");
+        logger.info(
+                "Success ajax call to 'usersInExecutingDepartment' ----------------------------------------------------------");
         return USERS_IN_DEPT;
     }
 
@@ -196,7 +197,7 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
             else
                 totalEstQuantity = measurementBookService.totalEstimatedQuantityForRE(woActivityId, null,
                         workOrderActivity.getActivity().getId(), workOrderActivity.getWorkOrderEstimate()
-                        .getWorkOrder()); // This considers work order
+                                .getWorkOrder()); // This considers work order
             // activities where the
             // associated Est/REs are not
             // cancelled

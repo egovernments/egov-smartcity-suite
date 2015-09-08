@@ -63,7 +63,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 public class EstimateTemplateAction extends SearchFormAction {
-    
+
     private static final long serialVersionUID = 3610026596221473556L;
     private static final String VIEW = "view";
     private EstimateTemplate estimateTemplate = new EstimateTemplate();
@@ -287,10 +287,10 @@ public class EstimateTemplateAction extends SearchFormAction {
         }
         if (StringUtils.isNotBlank(estimateTemplate.getCode().trim()))
             dynQuery = dynQuery + " and UPPER(et.code) like '%" + estimateTemplate.getCode().trim().toUpperCase()
-            + "%'";
+                    + "%'";
         if (StringUtils.isNotBlank(estimateTemplate.getName().trim()))
             dynQuery = dynQuery + " and UPPER(et.name) like '%" + estimateTemplate.getName().trim().toUpperCase()
-            + "%'";
+                    + "%'";
         if (StringUtils.isNotBlank(estimateTemplate.getDescription().trim()))
             dynQuery = dynQuery + " and UPPER(et.description) like '%"
                     + estimateTemplate.getDescription().trim().toUpperCase() + "%'";

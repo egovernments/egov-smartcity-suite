@@ -66,9 +66,8 @@ public class BaseServiceImpl<T, ID extends Serializable> implements BaseService<
     }
 
     /**
-     * Generic method to get an object based on class and identifier. An
-     * ObjectRetrievalFailureException Runtime Exception is thrown if nothing is
-     * found.
+     * Generic method to get an object based on class and identifier. An ObjectRetrievalFailureException Runtime Exception is
+     * thrown if nothing is found.
      *
      * @param id
      * @param lock
@@ -80,8 +79,7 @@ public class BaseServiceImpl<T, ID extends Serializable> implements BaseService<
     }
 
     /**
-     * Generic method used to get all objects of a particular type. This is the
-     * same as lookup up all rows in a table.
+     * Generic method used to get all objects of a particular type. This is the same as lookup up all rows in a table.
      *
      * @return list of objects.
      */
@@ -243,9 +241,7 @@ public class BaseServiceImpl<T, ID extends Serializable> implements BaseService<
     /**
      * This method retrieves the <code>CFinancialYear</code> for the given date.
      *
-     * @param date
-     *            an instance of <code>Date</code> for which the financial year
-     *            is to be retrieved.
+     * @param date an instance of <code>Date</code> for which the financial year is to be retrieved.
      * @return
      */
     @Override
@@ -255,7 +251,8 @@ public class BaseServiceImpl<T, ID extends Serializable> implements BaseService<
                 .getSession()
                 .createQuery(
                         "from CFinancialYear cfinancialyear where ? between "
-                                + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list();
+                                + "cfinancialyear.startingDate and cfinancialyear.endingDate")
+                .setDate(0, date).list();
 
         if (financialYear == null || financialYear != null && financialYear.isEmpty())
             throw new ValidationException(Arrays.asList(new ValidationError("financialyear",

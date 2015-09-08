@@ -74,7 +74,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 public class SearchBillAction extends BaseFormAction {
-   
+
     private static final long serialVersionUID = 1691106236053172675L;
     private String status;
     private String contractor;
@@ -250,15 +250,11 @@ public class SearchBillAction extends BaseFormAction {
         // Need to alternative way to solve this issue.
         // Set the status and workflow state to cancelled
         /*
-         * State oldEndState = contractorBillRegister.getCurrentState();
-         * Position owner = prsnlInfo.getAssignment(new Date()).getPosition();
-         * oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
-         * oldEndState.setLastModifiedBy(prsnlInfo.getUserMaster());
-         * oldEndState.setCreatedDate(new DateTime());
-         * oldEndState.setLastModifiedDate(new DateTime());
-         * oldEndState.setOwner(owner);
-         * oldEndState.setValue(WorksConstants.CANCELLED_STATUS);
-         * oldEndState.setText1(cancellationText);
+         * State oldEndState = contractorBillRegister.getCurrentState(); Position owner = prsnlInfo.getAssignment(new
+         * Date()).getPosition(); oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
+         * oldEndState.setLastModifiedBy(prsnlInfo.getUserMaster()); oldEndState.setCreatedDate(new DateTime());
+         * oldEndState.setLastModifiedDate(new DateTime()); oldEndState.setOwner(owner);
+         * oldEndState.setValue(WorksConstants.CANCELLED_STATUS); oldEndState.setText1(cancellationText);
          * contractorBillRegister.changeState("END", owner, null);
          */
 

@@ -115,8 +115,7 @@ public class WorkProgressAbstractReportService {
     }
 
     /**
-     * Converting given amount to show in Crores with no of decimal points to be
-     * rounded off
+     * Converting given amount to show in Crores with no of decimal points to be rounded off
      *
      * @param amount
      * @param decimalPoints

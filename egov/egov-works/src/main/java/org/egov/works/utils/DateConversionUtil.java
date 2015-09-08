@@ -70,13 +70,11 @@ public class DateConversionUtil {
     }
 
     /**
-     * Check the date is before or not ignoring time parameters. This method is
-     * similar to java.util.Date.before, only it will ignore the timestamp.
+     * Check the date is before or not ignoring time parameters. This method is similar to java.util.Date.before, only it will
+     * ignore the timestamp.
      *
-     * @param actualDate
-     *            - Date that has to check
-     * @param when
-     *            - Date that has to refer as limit
+     * @param actualDate - Date that has to check
+     * @param when - Date that has to refer as limit
      */
     public static boolean isBeforeByDate(final Date actualDate, final Date when) {
         final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy", new Locale("en", "IN"));

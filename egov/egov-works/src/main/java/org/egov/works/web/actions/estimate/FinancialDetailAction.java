@@ -104,7 +104,7 @@ import net.sf.jasperreports.engine.JRException;
 @Result(name = FinancialDetailAction.PRINT, type = "StreamResult.class", location = "budgetFolioPDF", params = {
         "inputName", "budgetFolioPDF", "contentType", "application/pdf", "contentDisposition", "no-cache" })
 public class FinancialDetailAction extends BaseFormAction {
-   
+
     private static final long serialVersionUID = -8120661601900686441L;
     private static final String BUDGET_DETAILS_SAVE = "budget_details_save";
     private static final Logger logger = Logger.getLogger(FinancialDetailAction.class);
@@ -138,8 +138,7 @@ public class FinancialDetailAction extends BaseFormAction {
     private String source = " ";
 
     /*
-     * added by prashanth on 2nd nov 09 for disp user and desgination in success
-     * page
+     * added by prashanth on 2nd nov 09 for disp user and desgination in success page
      */
     String employeeName;
     String designation;
@@ -284,7 +283,7 @@ public class FinancialDetailAction extends BaseFormAction {
             for (final MultiYearEstimate multiYearEstimate : financialDetail.getAbstractEstimate()
                     .getMultiYearEstimates())
                 if (multiYearEstimate != null && multiYearEstimate.getFinancialYear().getId().compareTo(finYearId) == 0
-                && multiYearEstimate.getPercentage() > 0)
+                        && multiYearEstimate.getPercentage() > 0)
                     isApprYearEntry = Boolean.TRUE;
         } else
             isApprYearEntry = Boolean.TRUE;
@@ -585,7 +584,7 @@ public class FinancialDetailAction extends BaseFormAction {
 
         if (totalPerc < 100)
             multiYearErrors
-            .add(new ValidationError("percentage", "multiYearEstimate.percentage.percentage_equals_100"));
+                    .add(new ValidationError("percentage", "multiYearEstimate.percentage.percentage_equals_100"));
 
         if (totalPerc > 100)
             multiYearErrors.add(new ValidationError("percentage",
@@ -685,8 +684,7 @@ public class FinancialDetailAction extends BaseFormAction {
     }
 
     /**
-     * @param employeeName
-     *            the employeeName to set
+     * @param employeeName the employeeName to set
      */
     public void setEmployeeName(final String employeeName) {
         this.employeeName = employeeName;
@@ -700,16 +698,14 @@ public class FinancialDetailAction extends BaseFormAction {
     }
 
     /**
-     * @param designation
-     *            the designation to set
+     * @param designation the designation to set
      */
     public void setDesignation(final String designation) {
         this.designation = designation;
     }
 
     /**
-     * @param worksService
-     *            the worksService to set
+     * @param worksService the worksService to set
      */
     public void setWorksService(final WorksService worksService) {
         this.worksService = worksService;
@@ -800,8 +796,7 @@ public class FinancialDetailAction extends BaseFormAction {
         isEnableSelect = "true";
 
         /*
-         * if(!StringUtils.isBlank(option) &&
-         * "searchDepositWorksFolioDetails".equalsIgnoreCase(option)){
+         * if(!StringUtils.isBlank(option) && "searchDepositWorksFolioDetails".equalsIgnoreCase(option)){
          * viewDepositWorksFolioReport(); }
          */return SEARCH_DEPOSIT_WORKS_FOLIO;
     }
@@ -952,22 +947,17 @@ public class FinancialDetailAction extends BaseFormAction {
     }
 
     /*
-     * public void getTotalGrantAppValue() throws NumberFormatException{
-     * if(StringUtils
+     * public void getTotalGrantAppValue() throws NumberFormatException{ if(StringUtils
      * .isNotBlank(worksService.getWorksConfigValue(PERCENTAGE_GRANT)))
-     * appValue=worksService.getWorksConfigValue(PERCENTAGE_GRANT);
-     * if(StringUtils.isNotBlank(appValue)){ Double
-     * appValueDbl=Double.parseDouble(appValue);
-     * appValueDbl=appValueDbl.doubleValue() *100;
-     * appValueLabel=appValueDbl.toString(); setAppValueLabel(appValueLabel); }
-     * }
+     * appValue=worksService.getWorksConfigValue(PERCENTAGE_GRANT); if(StringUtils.isNotBlank(appValue)){ Double
+     * appValueDbl=Double.parseDouble(appValue); appValueDbl=appValueDbl.doubleValue() *100; appValueLabel=appValueDbl.toString();
+     * setAppValueLabel(appValueLabel); } }
      */
 
     /**
      * print pdf
      *
-     * @throws JRException
-     *             ,Exception
+     * @throws JRException ,Exception
      */
     // @SkipValidation
     public String viewBudgetFolioPdf() throws JRException, Exception {
@@ -1186,18 +1176,18 @@ public class FinancialDetailAction extends BaseFormAction {
                         .startsWith(worksService.getWorksConfigValue(SCHEME_MANDATORYCHECK_BUDGETHEAD))) {
                     if (financialDetail.getScheme() == null || financialDetail.getScheme() != null
                             && financialDetail.getScheme().getId() == null || financialDetail.getScheme() != null
-                            && financialDetail.getScheme().getId() == -1)
+                                    && financialDetail.getScheme().getId() == -1)
                         addActionError(getText("mandatory.scheme"));
                     if (financialDetail.getSubScheme() == null || financialDetail.getSubScheme() != null
                             && financialDetail.getSubScheme().getId() == null || financialDetail.getSubScheme() != null
-                            && financialDetail.getSubScheme().getId() == -1)
+                                    && financialDetail.getSubScheme().getId() == -1)
                         addActionError(getText("mandatory.subScheme"));
                 }
 
         if ("searchdetails".equalsIgnoreCase(option)) {
             if (!StringUtils.isBlank(mandatoryFields.get(Fund))
                     && (financialDetail.getFund() == null || financialDetail.getFund().getId() == null || financialDetail
-                    .getFund().getId() == -1))
+                            .getFund().getId() == -1))
                 addFieldError(Fund, getText("budgetfolio.fund.mandatory"));
             if (!StringUtils.isBlank(mandatoryFields.get("department"))
                     && (userDepartment == null || userDepartment == -1))

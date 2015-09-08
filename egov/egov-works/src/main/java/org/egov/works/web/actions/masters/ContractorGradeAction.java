@@ -59,7 +59,7 @@ import com.opensymphony.xwork2.Action;
 @Result(name = Action.SUCCESS, type = "ServletRedirectResult.class", location = "contractor.action")
 @ParentPackage("egov")
 public class ContractorGradeAction extends SearchFormAction {
-    
+
     private static final long serialVersionUID = 4500128509093695097L;
     private ContractorGrade contractorGrade = new ContractorGrade();
     private PersistenceService<ContractorGrade, Long> contractorGradeService;

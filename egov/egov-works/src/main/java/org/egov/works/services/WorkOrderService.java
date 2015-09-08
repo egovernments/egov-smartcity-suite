@@ -71,16 +71,14 @@ public interface WorkOrderService extends BaseService<WorkOrder, Long> {
     WorkOrder setWorkOrderNumber(AbstractEstimate entity, WorkOrder workOrder, WorksPackage worksPackage);
 
     /**
-     * This method will return all the contractors which are having active work
-     * orders.
+     * This method will return all the contractors which are having active work orders.
      *
      * @return List of ContractorDetail
      */
     List<Contractor> getContractorsWithWO();
 
     /**
-     * This method will search list of WO's for the given criteria and eligible
-     * for MB. CriteriaMap may
+     * This method will search list of WO's for the given criteria and eligible for MB. CriteriaMap may
      * have:CONTRACTOR_ID,CREATE_DATE,TENDER_NO,WORKORDER_NO
      *
      * @param criteriaMap
@@ -89,8 +87,7 @@ public interface WorkOrderService extends BaseService<WorkOrder, Long> {
     List<WorkOrder> searchWOForMB(Map<String, Object> criteriaMap);
 
     /**
-     * This method will search list of WO's for the given criteria and eligible
-     * for MB. CriteriaMap may
+     * This method will search list of WO's for the given criteria and eligible for MB. CriteriaMap may
      * have:CONTRACTOR_ID,CREATE_DATE,TENDER_NO,WORKORDER_NO,PROJECT_CODE
      *
      * @param criteriaMap
@@ -99,8 +96,7 @@ public interface WorkOrderService extends BaseService<WorkOrder, Long> {
     List<WorkOrder> searchWOForBilling(Map<String, Object> criteriaMap);
 
     /**
-     * This method will search list of WO's for the given criteria and eligible
-     * to be view. CriteriaMap may
+     * This method will search list of WO's for the given criteria and eligible to be view. CriteriaMap may
      * have:CONTRACTOR_ID,FROM_DATE,TO_DATE,WORKORDER_NO,STATUS
      *
      * @param criteriaMap
@@ -109,8 +105,7 @@ public interface WorkOrderService extends BaseService<WorkOrder, Long> {
     List<WorkOrder> searchWOToView(Map<String, Object> criteriaMap);
 
     /**
-     * using for pagination This method will search list of WO's for the given
-     * criteria and eligible to be view. CriteriaMap may
+     * using for pagination This method will search list of WO's for the given criteria and eligible to be view. CriteriaMap may
      * have:CONTRACTOR_ID,FROM_DATE,TO_DATE,WORKORDER_NO,STATUS
      *
      * @param criteriaMap
@@ -119,9 +114,8 @@ public interface WorkOrderService extends BaseService<WorkOrder, Long> {
     List<String> searchWOToPaginatedView(Map<String, Object> criteriaMap, List<Object> paramList);
 
     /**
-     * This method will search and return list of woactivity based on searched
-     * criteria. Search criteria: WORKORDER_NO,ACTIVITY_DESC,LINEITEM_CODE Story
-     * #567 Search Line item to record measurement
+     * This method will search and return list of woactivity based on searched criteria. Search criteria:
+     * WORKORDER_NO,ACTIVITY_DESC,LINEITEM_CODE Story #567 Search Line item to record measurement
      *
      * @param criteriaMap
      * @return
@@ -129,10 +123,8 @@ public interface WorkOrderService extends BaseService<WorkOrder, Long> {
     List<WorkOrderActivity> searchWOActivities(Map<String, Object> criteriaMap);
 
     /**
-     * For the purpose of change quantity in revision estimate Will get work
-     * order activity list for the original work order and subsequent revision
-     * work orders It will not get the activities for which MB is present in
-     * workflow
+     * For the purpose of change quantity in revision estimate Will get work order activity list for the original work order and
+     * subsequent revision work orders It will not get the activities for which MB is present in workflow
      *
      * @param criteriaMap
      * @return
@@ -140,9 +132,8 @@ public interface WorkOrderService extends BaseService<WorkOrder, Long> {
     List<WorkOrderActivity> searchWOActivitiesForChangeQuantity(Map<String, Object> criteriaMap);
 
     /**
-     * This method will search and return list of woactivity from only revision
-     * estimates based on searched criteria. Search criteria:
-     * WORKORDER_NO,ACTIVITY_DESC,LINEITEM_CODE
+     * This method will search and return list of woactivity from only revision estimates based on searched criteria. Search
+     * criteria: WORKORDER_NO,ACTIVITY_DESC,LINEITEM_CODE
      *
      * @param criteriaMap
      * @return
@@ -184,8 +175,7 @@ public interface WorkOrderService extends BaseService<WorkOrder, Long> {
     List<Contractor> getAllContractorForWorkOrder();
 
     /**
-     * Check whether any MB entry is pending for approval for the given
-     * WorkOrder
+     * Check whether any MB entry is pending for approval for the given WorkOrder
      *
      * @param woId
      * @return
@@ -258,8 +248,7 @@ public interface WorkOrderService extends BaseService<WorkOrder, Long> {
     public WorkOrderEstimate calculateCumulativeDetailsForRE(WorkOrderEstimate workOrderEstimate);
 
     /**
-     * retruns work commenced date for a particular work order by taking id as
-     * parameter
+     * retruns work commenced date for a particular work order by taking id as parameter
      *
      * @param id
      * @return work commenced date
@@ -285,15 +274,13 @@ public interface WorkOrderService extends BaseService<WorkOrder, Long> {
     /**
      * returns WorkOrderEstimate based on the workorder id and estimate id
      *
-     * @param workOrderId
-     *            ,estimateId
+     * @param workOrderId ,estimateId
      * @return WorkOrderEstimate
      */
     public WorkOrderEstimate getWorkOrderEstimateForWOIdAndEstimateId(Long workOrderId, Long estimateId);
 
     /**
-     * This function returns list of Objects containing workOder Id and
-     * WorkOrder number. By taking estimateID as paramter.
+     * This function returns list of Objects containing workOder Id and WorkOrder number. By taking estimateID as paramter.
      *
      * @param estimateID
      * @return List<Object> containing workOder Id and WorkOrder number.

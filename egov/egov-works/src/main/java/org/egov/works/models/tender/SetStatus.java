@@ -49,7 +49,7 @@ import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class SetStatus extends BaseModel {
-   
+
     private static final long serialVersionUID = -1056415004063322298L;
     @NotEmpty(message = "ws.name.is.null")
     private String objectType;

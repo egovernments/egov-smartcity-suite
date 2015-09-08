@@ -129,9 +129,9 @@ import org.springframework.transaction.annotation.Transactional;
 @ParentPackage("egov")
 @Result(name = ContractorBillAction.PRINT, type = "StreamResult.class", location = "CompletionCertificatePDF", params = {
         "inputName", "CompletionCertificatePDF", "contentType", "application/pdf", "contentDisposition",
-"no-cache;filename=ContractorBill_CompletionCertificate.pdf" })
+        "no-cache;filename=ContractorBill_CompletionCertificate.pdf" })
 public class ContractorBillAction extends BaseFormAction {
-    
+
     private static final long serialVersionUID = -2842467886385709531L;
     private static final Logger logger = Logger.getLogger(ContractorBillAction.class);
     private ContractorBillService contractorBillService;
@@ -301,7 +301,7 @@ public class ContractorBillAction extends BaseFormAction {
 
             if (!isRCEstimate.equalsIgnoreCase(WorksConstants.YES))
                 tenderedItemsAmount = contractorBillService
-                .getApprovedMBAmountOfTenderedItemsForBill(contractorBillRegister);
+                        .getApprovedMBAmountOfTenderedItemsForBill(contractorBillRegister);
         }
         if (workOrderEstimateId != null)
             workOrderEstimate = (WorkOrderEstimate) persistenceService.find("from WorkOrderEstimate where id=?",
@@ -387,10 +387,8 @@ public class ContractorBillAction extends BaseFormAction {
             tenderedItemsAmount = contractorBillService.getApprovedMBAmountOfTenderedItems(workOrderId,
                     workOrderEstimate.getId(), new Date());
         /*
-         * else if(contractorBillRegister!=null &&
-         * workOrderEstimateList.size()>1) {
-         * setBudgetDetails(workOrderId,workOrderEstimateId
-         * ,contractorBillRegister.getBilldate()); }
+         * else if(contractorBillRegister!=null && workOrderEstimateList.size()>1) {
+         * setBudgetDetails(workOrderId,workOrderEstimateId ,contractorBillRegister.getBilldate()); }
          */
         addDropdownData("billTypeList", contractorBillService.getBillType());
         final List<Recovery> statutoryDeductionsList = recoveryService.getAllTdsByPartyType("Contractor");
@@ -408,9 +406,10 @@ public class ContractorBillAction extends BaseFormAction {
                         || contractorBillRegister.getState().getNextAction().equalsIgnoreCase(PENDING_FOR_VALIDATION)
                         || contractorBillRegister.getState().getNextAction().equalsIgnoreCase(PENDING_FOR_APPROVAL)
                         || contractorBillRegister.getState().getNextAction()
-                        .equalsIgnoreCase(PENDING_FOR_RECTIFICATION) || contractorBillRegister.getState()
-                        .getNextAction().equalsIgnoreCase(PENDING_FOR_CHECK)
-                        && contractorBillRegister.getState().getValue().equalsIgnoreCase("REJECTED"))) {
+                                .equalsIgnoreCase(PENDING_FOR_RECTIFICATION)
+                        || contractorBillRegister.getState()
+                                .getNextAction().equalsIgnoreCase(PENDING_FOR_CHECK)
+                                && contractorBillRegister.getState().getValue().equalsIgnoreCase("REJECTED"))) {
             final Functionary func = (Functionary) persistenceService.find(" from  Functionary where upper(name) = ?",
                     "UAC");
             workflowFunctionaryId = func.getId();
@@ -443,8 +442,9 @@ public class ContractorBillAction extends BaseFormAction {
         if (id == null
                 && workOrderEstimateList.size() == 1
                 || contractorBillRegister.getStatus() != null
-                && (contractorBillRegister.getStatus().getCode().equalsIgnoreCase(WorksConstants.NEW) || contractorBillRegister
-                        .getStatus().getCode().equalsIgnoreCase(WorksConstants.REJECTED))) {
+                        && (contractorBillRegister.getStatus().getCode().equalsIgnoreCase(WorksConstants.NEW)
+                                || contractorBillRegister
+                                        .getStatus().getCode().equalsIgnoreCase(WorksConstants.REJECTED))) {
             final Object[] mbDateRefNo = contractorBillService.getLatestMBCreatedDateAndRefNo(workOrderId,
                     workOrderEstimate.getEstimate().getId());
             if (mbDateRefNo != null && mbDateRefNo.length > 0) {
@@ -466,11 +466,12 @@ public class ContractorBillAction extends BaseFormAction {
                     && contractorBillRegister.getStatus() != null
                     && !(contractorBillRegister.getStatus().getCode().equalsIgnoreCase(WorksConstants.NEW)
                             || contractorBillRegister.getStatus().getCode()
-                            .equalsIgnoreCase(ContractorBillRegister.BillStatus.REJECTED.toString())
+                                    .equalsIgnoreCase(ContractorBillRegister.BillStatus.REJECTED.toString())
                             || contractorBillRegister.getStatus().getCode()
-                            .equalsIgnoreCase(ContractorBillRegister.BillStatus.APPROVED.toString()) || contractorBillRegister
-                            .getStatus().getCode()
-                            .equalsIgnoreCase(ContractorBillRegister.BillStatus.CANCELLED.toString())))
+                                    .equalsIgnoreCase(ContractorBillRegister.BillStatus.APPROVED.toString())
+                            || contractorBillRegister
+                                    .getStatus().getCode()
+                                    .equalsIgnoreCase(ContractorBillRegister.BillStatus.CANCELLED.toString())))
                 allowForward = contractorBillService.validateForBudgetHeadInWorkflow(
                         contractorBillRegister.getEgBilldetailes(), workOrderEstimate.getEstimate());
     }
@@ -485,8 +486,9 @@ public class ContractorBillAction extends BaseFormAction {
             try {
                 if (id == null
                         || contractorBillRegister.getStatus() != null
-                        && (contractorBillRegister.getStatus().getCode().equalsIgnoreCase(WorksConstants.NEW) || contractorBillRegister
-                                .getStatus().getCode().equalsIgnoreCase(WorksConstants.REJECTED))) {
+                                && (contractorBillRegister.getStatus().getCode().equalsIgnoreCase(WorksConstants.NEW)
+                                        || contractorBillRegister
+                                                .getStatus().getCode().equalsIgnoreCase(WorksConstants.REJECTED))) {
                     final List<CChartOfAccounts> mappedBudgetHeadList = contractorBillService
                             .getBudgetHeadForDepositCOA(workOrderEstimate.getEstimate());
                     if (mappedBudgetHeadList.isEmpty()) {
@@ -685,7 +687,7 @@ public class ContractorBillAction extends BaseFormAction {
             actionName = parameters.get(ACTION_NAME)[0];
         if (contractorBillRegister.getStatus() == null
                 || WorksConstants.REJECTED.equalsIgnoreCase(contractorBillRegister.getStatus().getCode())
-                && StringUtils.isBlank(contractorBillRegister.getState().getNextAction())
+                        && StringUtils.isBlank(contractorBillRegister.getState().getNextAction())
                 || NEW.equalsIgnoreCase(contractorBillRegister.getStatus().getCode())) {
             contractorBillRegister.getEgBilldetailes().clear();
             contractorBillRegister.getStatutoryDeductionsList().clear();
@@ -735,9 +737,10 @@ public class ContractorBillAction extends BaseFormAction {
         final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
         if (contractorBillRegister.getStatus() == null
                 || contractorBillRegister.getStatus() != null
-                && (contractorBillRegister.getStatus().getCode().equalsIgnoreCase(WorksConstants.NEW) || contractorBillRegister
-                        .getStatus().getCode().equalsIgnoreCase(WorksConstants.REJECTED)
-                        && user == contractorBillRegister.getCreatedBy())) {
+                        && (contractorBillRegister.getStatus().getCode().equalsIgnoreCase(WorksConstants.NEW)
+                                || contractorBillRegister
+                                        .getStatus().getCode().equalsIgnoreCase(WorksConstants.REJECTED)
+                                        && user == contractorBillRegister.getCreatedBy())) {
             if (logger.isDebugEnabled())
                 logger.debug("entered condition for budgetary appropriation >>>>>>>>>>>>>> ");
             isSkipBudgetCheck();
@@ -778,40 +781,32 @@ public class ContractorBillAction extends BaseFormAction {
         // TODO - Need to know alternative for how to find previous when
         // workflow ended
         /*
-         * if(contractorBillRegister.getCurrentState()!=null &&
-         * contractorBillRegister.getCurrentState().getPrevious()!=null &&
-         * contractorBillRegister.getCurrentState().getValue()!=null &&
-         * (APPROVED
-         * .equalsIgnoreCase(contractorBillRegister.getCurrentState().getPrevious
-         * ().getValue()) ||
-         * CANCELLED.equalsIgnoreCase(contractorBillRegister.getCurrentState
-         * ().getPrevious().getValue()))){ messageKey="bill.approved";
-         * contractorBillRegister
-         * .setBillstatus(contractorBillRegister.getCurrentState
-         * ().getPrevious().getValue());
-         * contractorBillRegister.setStatus(commonsService
-         * .getStatusByModuleAndCode(BILL_MODULE_KEY,
-         * contractorBillRegister.getCurrentState().getPrevious().getValue()));
-         * } else
-         */{
-             messageKey = "bill.save.success";
-             contractorBillRegister.setBillstatus(contractorBillRegister.getCurrentState().getValue());
-             contractorBillRegister.setStatus(commonsService.getStatusByModuleAndCode(BILL_MODULE_KEY,
-                     contractorBillRegister.getCurrentState().getValue()));
-         }
-         getPersistenceService().getSession().flush();
-         getPersistenceService().getSession().refresh(contractorBillRegister);
-         contractorBillRegister.getEgBillregistermis().setSourcePath(
-                 "/egworks/contractorBill/contractorBill!edit.action?id=" + contractorBillRegister.getId()
-                 + "&workOrderId=" + workOrderId + "&billnumber=" + contractorBillRegister.getBillnumber()
-                 + "&sourcepage=search");
+         * if(contractorBillRegister.getCurrentState()!=null && contractorBillRegister.getCurrentState().getPrevious()!=null &&
+         * contractorBillRegister.getCurrentState().getValue()!=null && (APPROVED
+         * .equalsIgnoreCase(contractorBillRegister.getCurrentState().getPrevious ().getValue()) ||
+         * CANCELLED.equalsIgnoreCase(contractorBillRegister.getCurrentState ().getPrevious().getValue()))){
+         * messageKey="bill.approved"; contractorBillRegister .setBillstatus(contractorBillRegister.getCurrentState
+         * ().getPrevious().getValue()); contractorBillRegister.setStatus(commonsService
+         * .getStatusByModuleAndCode(BILL_MODULE_KEY, contractorBillRegister.getCurrentState().getPrevious().getValue())); } else
+         */ {
+            messageKey = "bill.save.success";
+            contractorBillRegister.setBillstatus(contractorBillRegister.getCurrentState().getValue());
+            contractorBillRegister.setStatus(commonsService.getStatusByModuleAndCode(BILL_MODULE_KEY,
+                    contractorBillRegister.getCurrentState().getValue()));
+        }
+        getPersistenceService().getSession().flush();
+        getPersistenceService().getSession().refresh(contractorBillRegister);
+        contractorBillRegister.getEgBillregistermis().setSourcePath(
+                "/egworks/contractorBill/contractorBill!edit.action?id=" + contractorBillRegister.getId()
+                        + "&workOrderId=" + workOrderId + "&billnumber=" + contractorBillRegister.getBillnumber()
+                        + "&sourcepage=search");
 
-         addActionMessage(getText(messageKey, messageKey));
-         getDesignation(contractorBillRegister);
+        addActionMessage(getText(messageKey, messageKey));
+        getDesignation(contractorBillRegister);
 
-         if (SAVE_ACTION.equals(actionName))
-             sourcepage = "inbox";
-         return SAVE_ACTION.equals(actionName) ? edit() : SUCCESS;
+        if (SAVE_ACTION.equals(actionName))
+            sourcepage = "inbox";
+        return SAVE_ACTION.equals(actionName) ? edit() : SUCCESS;
     }
 
     private String isSkipBudgetCheck() {
@@ -994,19 +989,12 @@ public class ContractorBillAction extends BaseFormAction {
             // Story# 806 - Application should not check for deposit code
             // appropriation
             /*
-             * String actionName = ""; if (parameters.get(ACTION_NAME) != null
-             * && parameters.get(ACTION_NAME)[0] != null) actionName =
-             * parameters.get(ACTION_NAME)[0]; if(skipBudget &&
-             * ((contractorBillRegister.getStatus()==null &&
-             * !actionName.equalsIgnoreCase("save")) ||
-             * (contractorBillRegister.getStatus()!=null &&
-             * (contractorBillRegister
-             * .getStatus().getCode().equalsIgnoreCase("NEW")||
-             * contractorBillRegister
-             * .getStatus().getCode().equalsIgnoreCase("REJECTED")) &&
-             * (!actionName.equalsIgnoreCase("save") &&
-             * !actionName.equalsIgnoreCase("Cancel"))))){
-             * validateGlcodeBalForDepositWorks(); }
+             * String actionName = ""; if (parameters.get(ACTION_NAME) != null && parameters.get(ACTION_NAME)[0] != null)
+             * actionName = parameters.get(ACTION_NAME)[0]; if(skipBudget && ((contractorBillRegister.getStatus()==null &&
+             * !actionName.equalsIgnoreCase("save")) || (contractorBillRegister.getStatus()!=null && (contractorBillRegister
+             * .getStatus().getCode().equalsIgnoreCase("NEW")|| contractorBillRegister
+             * .getStatus().getCode().equalsIgnoreCase("REJECTED")) && (!actionName.equalsIgnoreCase("save") &&
+             * !actionName.equalsIgnoreCase("Cancel"))))){ validateGlcodeBalForDepositWorks(); }
              */
             if (!checkForCOADuplicatesInAccDet())
                 addFieldError("accountcode", getText("duplicate.accountcode"));
@@ -1016,8 +1004,9 @@ public class ContractorBillAction extends BaseFormAction {
             // mode
             if (id == null
                     || contractorBillRegister.getStatus() != null
-                    && (contractorBillRegister.getStatus().getCode().equalsIgnoreCase(WorksConstants.NEW) || contractorBillRegister
-                            .getStatus().getCode().equalsIgnoreCase(WorksConstants.REJECTED))
+                            && (contractorBillRegister.getStatus().getCode().equalsIgnoreCase(WorksConstants.NEW)
+                                    || contractorBillRegister
+                                            .getStatus().getCode().equalsIgnoreCase(WorksConstants.REJECTED))
                             && StringUtils.isNotBlank(contractorBillRegister.getBilltype())
                             && contractorBillRegister.getBilltype().equalsIgnoreCase(WorksConstants.FINAL_BILL))
                 if (latestMBDate != null && completionDate != null && latestMBDate.after(completionDate))
@@ -1047,7 +1036,7 @@ public class ContractorBillAction extends BaseFormAction {
             throw new ValidationException(Arrays.asList(new ValidationError("arf.workflow.verification.for.bill.msg",
                     getText("arf.workflow.verification.for.bill.msg",
                             new String[] { ajaxContractorBillAction.getAdvanceRequisitionNo(),
-                            ajaxContractorBillAction.getEstimateNo(), ajaxContractorBillAction.getOwner() }))));
+                                    ajaxContractorBillAction.getEstimateNo(), ajaxContractorBillAction.getOwner() }))));
     }
 
     private void validateExpenditureForDepositCode(final String actionName) {
@@ -1055,7 +1044,7 @@ public class ContractorBillAction extends BaseFormAction {
             if (StringUtils.isNotBlank(actionName)
                     && (actionName.equalsIgnoreCase(WorksConstants.ACTION_SUBMIT_FOR_APPROVAL)
                             || actionName.equalsIgnoreCase(WorksConstants.ACTION_APPROVAL) || actionName
-                            .equalsIgnoreCase(WorksConstants.ACTION_APPROVE))) {
+                                    .equalsIgnoreCase(WorksConstants.ACTION_APPROVE))) {
                 final FinancialDetail financialDetails = workOrderEstimate.getEstimate().getFinancialDetails().get(0);
                 if (financialDetails != null) {
                     BigDecimal expenditureAmount = BigDecimal.ZERO;
@@ -1068,7 +1057,7 @@ public class ContractorBillAction extends BaseFormAction {
                             && workOrderEstimate.getEstimate().getDepositCode().getId() != null) {
                         final BigDecimal totalAmountDeposited = egovCommon.getDepositAmountForDepositCode(new Date(),
                                 coa.getGlcode(), fund.getCode(), accountdetailtype.getId(), workOrderEstimate
-                                .getEstimate().getDepositCode().getId().intValue());
+                                        .getEstimate().getDepositCode().getId().intValue());
                         final List<Integer> projectCodeIdsList = contractorBillService
                                 .getProjCodeIdsListForDepositCode(fund.getId(), coa.getId(), workOrderEstimate
                                         .getEstimate().getDepositCode().getId());
@@ -1179,7 +1168,7 @@ public class ContractorBillAction extends BaseFormAction {
             final Set<BigDecimal> coaSet = new HashSet<BigDecimal>();
             for (final EgBilldetails egBilldetails : getCustomDeductionTypes())
                 if (egBilldetails.getGlcodeid() != null
-                && worksService.checkBigDecimalValue(egBilldetails.getGlcodeid(), BigDecimal.valueOf(0))) {
+                        && worksService.checkBigDecimalValue(egBilldetails.getGlcodeid(), BigDecimal.valueOf(0))) {
                     if (coaSet.contains(egBilldetails.getGlcodeid()))
                         return false;
                     coaSet.add(egBilldetails.getGlcodeid());
@@ -1192,7 +1181,7 @@ public class ContractorBillAction extends BaseFormAction {
         boolean shouldAddAccountDetails = false;
         if (contractorBillRegister.getStatus() == null
                 || WorksConstants.REJECTED.equalsIgnoreCase(contractorBillRegister.getStatus().getCode())
-                && StringUtils.isBlank(contractorBillRegister.getState().getNextAction())
+                        && StringUtils.isBlank(contractorBillRegister.getState().getNextAction())
                 || NEW.equalsIgnoreCase(contractorBillRegister.getStatus().getCode()))
             shouldAddAccountDetails = true;
         if (contractorBillRegister.getBillnumber() == null)
@@ -1232,7 +1221,7 @@ public class ContractorBillAction extends BaseFormAction {
                             false));
         for (final EgBilldetails rbillDetails : getRetentionMoneyTypes())
             if (rbillDetails != null
-            && worksService.checkBigDecimalValue(rbillDetails.getGlcodeid(), BigDecimal.valueOf(0))) {
+                    && worksService.checkBigDecimalValue(rbillDetails.getGlcodeid(), BigDecimal.valueOf(0))) {
                 final EgBilldetails egbillDetails = getBillDetailsRegister(contractorBillRegister, fdList, rbillDetails
                         .getGlcodeid().toString(), rbillDetails.getCreditamount(), false, false);
                 egbillDetails.setNarration(rbillDetails.getNarration());
@@ -1240,7 +1229,7 @@ public class ContractorBillAction extends BaseFormAction {
             }
         for (final EgBilldetails billDetails : customDeductions)
             if (billDetails != null
-            && worksService.checkBigDecimalValue(billDetails.getGlcodeid(), BigDecimal.valueOf(0))) {
+                    && worksService.checkBigDecimalValue(billDetails.getGlcodeid(), BigDecimal.valueOf(0))) {
                 final EgBilldetails egbillDetails = getBillDetailsRegister(contractorBillRegister, fdList, billDetails
                         .getGlcodeid().toString(), billDetails.getCreditamount(), false, false);
                 egbillDetails.setNarration(billDetails.getNarration());
@@ -1288,23 +1277,18 @@ public class ContractorBillAction extends BaseFormAction {
                 Accountdetailtype adt1 = null;
                 final Accountdetailtype adt2 = null;
                 Accountdetailtype adt3 = null;
-                if (isDebit) // Story# 806 - Enable code to create an contractor
-                             // bill
-                    // with project code as sub-ledger for the debit COA for
-                    // Deposit Works
-                    /*
-                 * if(skipBudget) { adt2 =
-                 * commonsService.getAccountDetailTypeIdByName (coa.getGlcode(),
-                 * ACCOUNTDETAIL_TYPE_DEPOSITCODE); if(adt2!=null){ if(isTds)
-                 * addTdsDetails(amount, isDebit, isTds, billDetails, adt2,
-                 * Integer.valueOf(workOrderEstimate
-                 * .getEstimate().getDepositCode().getId().toString())); else
-                 * billDetails.getEgBillPaydetailes().add(getEgPayeeDetails
-                 * (billDetails
+                if (isDebit)   // Story# 806 - Enable code to create an contractor
+                // bill
+                // with project code as sub-ledger for the debit COA for
+                // Deposit Works
+                /*
+                 * if(skipBudget) { adt2 = commonsService.getAccountDetailTypeIdByName (coa.getGlcode(),
+                 * ACCOUNTDETAIL_TYPE_DEPOSITCODE); if(adt2!=null){ if(isTds) addTdsDetails(amount, isDebit, isTds, billDetails,
+                 * adt2, Integer.valueOf(workOrderEstimate .getEstimate().getDepositCode().getId().toString())); else
+                 * billDetails.getEgBillPaydetailes().add(getEgPayeeDetails (billDetails
                  * ,adt2.getId(),amount,isDebit,false,null,null,Integer .valueOf
-                 * (workOrderEstimate.getEstimate().getDepositCode().
-                 * getId().toString()))); } } else
-                 */{
+                 * (workOrderEstimate.getEstimate().getDepositCode(). getId().toString()))); } } else
+                 */ {
                     adt3 = commonsService.getAccountDetailTypeIdByName(coa.getGlcode(), ACCOUNTDETAIL_TYPE_PROJECTCODE);
                     if (adt3 != null)
                         if (isTds)
@@ -1349,17 +1333,18 @@ public class ContractorBillAction extends BaseFormAction {
             final EgBilldetails billDetails, final Accountdetailtype adt, final Integer adkId) {
         for (final StatutoryDeductionsForBill payeeDetails : getActionStatutorydetails())
             if (payeeDetails != null
-            && payeeDetails.getEgBillPayeeDtls().getRecovery() != null
-            && payeeDetails.getEgBillPayeeDtls().getRecovery().getId() != null
-            && payeeDetails.getEgBillPayeeDtls().getRecovery().getChartofaccounts() != null
-            && payeeDetails.getEgBillPayeeDtls().getRecovery().getChartofaccounts().getId() != null
-            && payeeDetails.getEgBillPayeeDtls().getRecovery().getChartofaccounts().getId()
-            .equals(Long.valueOf(billDetails.getGlcodeid().toString()))) {
+                    && payeeDetails.getEgBillPayeeDtls().getRecovery() != null
+                    && payeeDetails.getEgBillPayeeDtls().getRecovery().getId() != null
+                    && payeeDetails.getEgBillPayeeDtls().getRecovery().getChartofaccounts() != null
+                    && payeeDetails.getEgBillPayeeDtls().getRecovery().getChartofaccounts().getId() != null
+                    && payeeDetails.getEgBillPayeeDtls().getRecovery().getChartofaccounts().getId()
+                            .equals(Long.valueOf(billDetails.getGlcodeid().toString()))) {
                 // Added for card 1078 : Automatic calculation of statutory
                 // recoveries in bill
                 final EgBillPayeedetails egPayeeDtls = getEgPayeeDetails(billDetails, adt.getId(), amount, isDebit,
                         isTds, payeeDetails.getEgBillPayeeDtls().getRecovery().getId(), payeeDetails
-                                .getEgBillPayeeDtls().getNarration(), adkId);
+                                .getEgBillPayeeDtls().getNarration(),
+                        adkId);
                 billDetails.getEgBillPaydetailes().add(egPayeeDtls);
                 addStatutoryDeductionsForBill(payeeDetails, egPayeeDtls);
             }
@@ -1488,7 +1473,7 @@ public class ContractorBillAction extends BaseFormAction {
                     }
                 } else {
                     debitGlcodeAndAmountMap
-                    .put(deductionBill.getGlcodeid().toString(), deductionBill.getCreditamount());
+                            .put(deductionBill.getGlcodeid().toString(), deductionBill.getCreditamount());
                     coaSet.add(deductionBill.getGlcodeid());
                 }
                 addDeductionTypeBill(deductionBill);
@@ -1513,9 +1498,9 @@ public class ContractorBillAction extends BaseFormAction {
         final Set<Long> coaSet = new HashSet<Long>();
         for (final StatutoryDeductionsForBill bpd : getStatutoryDeductions())
             if (bpd != null && bpd.getEgBillPayeeDtls().getRecovery() != null
-            && bpd.getEgBillPayeeDtls().getRecovery().getId() != null
-            && bpd.getEgBillPayeeDtls().getRecovery().getChartofaccounts() != null
-            && bpd.getEgBillPayeeDtls().getRecovery().getChartofaccounts().getId() != null)
+                    && bpd.getEgBillPayeeDtls().getRecovery().getId() != null
+                    && bpd.getEgBillPayeeDtls().getRecovery().getChartofaccounts() != null
+                    && bpd.getEgBillPayeeDtls().getRecovery().getChartofaccounts().getId() != null)
                 if (coaSet.contains(bpd.getEgBillPayeeDtls().getRecovery().getChartofaccounts().getId())) {
                     if (debitGlcodeAndAmountMap.containsKey(bpd.getEgBillPayeeDtls().getRecovery().getChartofaccounts()
                             .getId().toString())) {

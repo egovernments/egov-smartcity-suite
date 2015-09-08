@@ -58,104 +58,110 @@ import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Result(name=BaseFormAction.SUCCESS,type="StreamResult.class",location="estimatePDF", params={"inputName","estimatePDF","contentType","application/pdf","contentDisposition","no-cache;filename=AbstractEstimatePDF.pdf"})
+@Result(name = BaseFormAction.SUCCESS, type = "StreamResult.class", location = "estimatePDF", params = { "inputName",
+        "estimatePDF", "contentType", "application/pdf", "contentDisposition", "no-cache;filename=AbstractEstimatePDF.pdf" })
 @ParentPackage("egov")
-public class AbstractEstimatePDFAction extends BaseFormAction{
-	private static final Logger logger = Logger.getLogger(AbstractEstimatePDFAction.class);
-	private Long estimateID;
-	private InputStream estimatePDF;
-	private AbstractEstimateService abstractEstimateService;
-	@Autowired
-        private EmployeeServiceOld employeeService;
-	@Autowired
-        private CommonsService commonsService;
-	private WorksService worksService;
-	private BudgetDetailsDAO budgetDetailsDAO;
-	
-	public Object getModel() {
-		return null;
-	}	
-	
-	public String execute(){
-		if(estimateID!=null){
-			AbstractEstimate estimate = getAbstractEstimate();
-				Boundary b = getTopLevelBoundary(estimate.getWard());
-				CFinancialYear financialYear = getCurrentFinancialYear();
-				ByteArrayOutputStream out = new ByteArrayOutputStream(1024*100);
-				EstimatePDFGenerator pdfGenerator =new EstimatePDFGenerator(estimate,b==null?"":b.getName(),financialYear,out);
-				pdfGenerator.setPersistenceService(getPersistenceService());
-				pdfGenerator.setEmployeeService(employeeService);
-				pdfGenerator.setBudgetDetailsDAO(abstractEstimateService.getBudgetDetailsDAO());
-				pdfGenerator.setAbstractEstimateService(abstractEstimateService);
-				pdfGenerator.setWorksService(worksService);
-				try {
-					pdfGenerator.generatePDF();
-				} catch (ValidationException e) {
-					// TODO Auto-generated catch block
-					logger.debug("exception "+e);
-				}
-				
-				estimatePDF=new ByteArrayInputStream(out.toByteArray());
-		}
-		return SUCCESS;
-	}
-		
-	private AbstractEstimate getAbstractEstimate() {
-		return (AbstractEstimate) getPersistenceService().find("from AbstractEstimate e where e.id=?", estimateID);
-	}
+public class AbstractEstimatePDFAction extends BaseFormAction {
+    /**
+     *
+     */
+    private static final long serialVersionUID = 8202192351878784580L;
+    private static final Logger logger = Logger.getLogger(AbstractEstimatePDFAction.class);
+    private Long estimateID;
+    private InputStream estimatePDF;
+    private AbstractEstimateService abstractEstimateService;
+    @Autowired
+    private EmployeeServiceOld employeeService;
+    @Autowired
+    private CommonsService commonsService;
+    private WorksService worksService;
 
-	protected Boundary getTopLevelBoundary(Boundary boundary) {
-		Boundary b = boundary;
-		while(b!=null && b.getParent()!=null){
-			b=b.getParent();
-		}
-		return b;
-	}
+    @Override
+    public Object getModel() {
+        return null;
+    }
 
-	protected CFinancialYear getCurrentFinancialYear() {
-		/**
-		 * for the year end process getCurrentFinancialYear API should return the next CFinancialYear object
-		 */
-		return commonsService.getFinancialYearByFinYearRange(worksService.getWorksConfigValue("FINANCIAL_YEAR_RANGE"));
-		//return (CFinancialYear) getPersistenceService().find("from CFinancialYear cfinancialyear where ? between cfinancialyear.startingDate and cfinancialyear.endingDate",new java.util.Date());
-	}
-	
-	public void setEstimateID(Long estimateID) {
-		this.estimateID = estimateID;
-	}
-	
-	public InputStream getEstimatePDF() {
-		return estimatePDF;
-	}
-	
+    @Override
+    public String execute() {
+        if (estimateID != null) {
+            final AbstractEstimate estimate = getAbstractEstimate();
+            final Boundary b = getTopLevelBoundary(estimate.getWard());
+            final CFinancialYear financialYear = getCurrentFinancialYear();
+            final ByteArrayOutputStream out = new ByteArrayOutputStream(1024 * 100);
+            final EstimatePDFGenerator pdfGenerator = new EstimatePDFGenerator(estimate, b == null ? "" : b.getName(),
+                    financialYear,
+                    out);
+            pdfGenerator.setPersistenceService(getPersistenceService());
+            pdfGenerator.setEmployeeService(employeeService);
+            pdfGenerator.setBudgetDetailsDAO(abstractEstimateService.getBudgetDetailsDAO());
+            pdfGenerator.setAbstractEstimateService(abstractEstimateService);
+            pdfGenerator.setWorksService(worksService);
+            try {
+                pdfGenerator.generatePDF();
+            } catch (final ValidationException e) {
+                // TODO Auto-generated catch block
+                logger.debug("exception " + e);
+            }
 
-	public AbstractEstimateService getAbstractEstimateService() {
-		return abstractEstimateService;
-	}
+            estimatePDF = new ByteArrayInputStream(out.toByteArray());
+        }
+        return SUCCESS;
+    }
 
-	public void setAbstractEstimateService(
-			AbstractEstimateService abstractEstimateService) {
-		this.abstractEstimateService = abstractEstimateService;
-	}
+    private AbstractEstimate getAbstractEstimate() {
+        return (AbstractEstimate) getPersistenceService().find("from AbstractEstimate e where e.id=?", estimateID);
+    }
 
-	public EmployeeServiceOld getemployeeService() {
-		return employeeService;
-	}
+    protected Boundary getTopLevelBoundary(final Boundary boundary) {
+        Boundary b = boundary;
+        while (b != null && b.getParent() != null)
+            b = b.getParent();
+        return b;
+    }
 
-	public void setEmployeeService(EmployeeServiceOld employeeService) {
-		this.employeeService = employeeService;
-	}
+    protected CFinancialYear getCurrentFinancialYear() {
+        /**
+         * for the year end process getCurrentFinancialYear API should return the next CFinancialYear object
+         */
+        return commonsService.getFinancialYearByFinYearRange(worksService.getWorksConfigValue("FINANCIAL_YEAR_RANGE"));
+        // return (CFinancialYear) getPersistenceService().find("from CFinancialYear cfinancialyear where ? between
+        // cfinancialyear.startingDate and cfinancialyear.endingDate",new java.util.Date());
+    }
 
-	public void setCommonsService(CommonsService commonsService) {
-		this.commonsService = commonsService;
-	}
+    public void setEstimateID(final Long estimateID) {
+        this.estimateID = estimateID;
+    }
 
-	public void setWorksService(WorksService worksService) {
-		this.worksService = worksService;
-	}
+    public InputStream getEstimatePDF() {
+        return estimatePDF;
+    }
 
-	public void setBudgetDetailsDAO(BudgetDetailsDAO budgetDetailsDAO) {
-		this.budgetDetailsDAO = budgetDetailsDAO;
-	}
+    public AbstractEstimateService getAbstractEstimateService() {
+        return abstractEstimateService;
+    }
+
+    public void setAbstractEstimateService(
+            final AbstractEstimateService abstractEstimateService) {
+        this.abstractEstimateService = abstractEstimateService;
+    }
+
+    public EmployeeServiceOld getemployeeService() {
+        return employeeService;
+    }
+
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
+        this.employeeService = employeeService;
+    }
+
+    public void setCommonsService(final CommonsService commonsService) {
+        this.commonsService = commonsService;
+    }
+
+    public void setWorksService(final WorksService worksService) {
+        this.worksService = worksService;
+    }
+
+    public void setBudgetDetailsDAO(final BudgetDetailsDAO budgetDetailsDAO) {
+    }
 
 }

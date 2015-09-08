@@ -47,7 +47,6 @@ import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.utils.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
-
 public class MilestoneActivity extends BaseModel {
 
     private static final long serialVersionUID = -622141478386284778L;

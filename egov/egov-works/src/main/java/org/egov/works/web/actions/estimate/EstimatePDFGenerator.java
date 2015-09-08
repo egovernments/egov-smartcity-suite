@@ -155,26 +155,30 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
                         + "\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  "
                         + "\t  \t  \t  \t \t\t  \t  \t  \t \t"
                         + headerText
-                        .concat("\n")
-                        .concat("\t  \t  \t  \t \t \t  \t  \t  \t \t"
-                                + "\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  "
-                                + "\t  \t  \t  \t \t\t  \t  \t  \t \t ABSTRACT ESTIMATE").concat("\n\n")
+                                .concat("\n")
+                                .concat("\t  \t  \t  \t \t \t  \t  \t  \t \t"
+                                        + "\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  "
+                                        + "\t  \t  \t  \t \t\t  \t  \t  \t \t ABSTRACT ESTIMATE")
+                                .concat("\n\n")
                                 .concat("Name of Work: " + estimate.getName()).concat("\n")
                                 .concat("Description: " + estimate.getDescription()).concat("\n")
                                 .concat("Estimate Number: " + estimate.getEstimateNumber()).concat(oldEstNo)
-                                .concat("\n").concat(projectCode)), false);
+                                .concat("\n").concat(projectCode)),
+                        false);
             } else
                 hf = new HeaderFooter(new Phrase("\t  \t  \t  \t \t \t  \t  \t  \t \t \t  \t  \t  \t \t"
                         + "\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  "
                         + "\t  \t  \t  \t \t\t  \t  \t  \t \t"
                         + headerText
-                        .concat("\n")
-                        .concat("\t  \t  \t  \t \t \t  \t  \t  \t \t"
-                                + "\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  "
-                                + "\t  \t  \t  \t \t\t  \t  \t  \t \t ABSTRACT ESTIMATE").concat("\n\n")
+                                .concat("\n")
+                                .concat("\t  \t  \t  \t \t \t  \t  \t  \t \t"
+                                        + "\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  "
+                                        + "\t  \t  \t  \t \t\t  \t  \t  \t \t ABSTRACT ESTIMATE")
+                                .concat("\n\n")
                                 .concat("Name of Work: " + estimate.getName()).concat("\n")
                                 .concat("Description: " + estimate.getDescription()).concat("\n")
-                                .concat("Estimate Number: " + estimate.getEstimateNumber()).concat(oldEstNo)), false);
+                                .concat("Estimate Number: " + estimate.getEstimateNumber()).concat(oldEstNo)),
+                        false);
 
             hf.disableBorderSide(Rectangle.TOP);
             hf.disableBorderSide(Rectangle.BOTTOM);
@@ -293,10 +297,11 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
                             + "\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  "
                             + "\t  \t  \t  \t \t\t  \t  \t  \t \t"
                             + headerText
-                            .concat("\n")
-                            .concat("\t  \t  \t  \t \t \t  \t  \t  \t \t"
-                                    + "\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  "
-                                    + "\t  \t  \t  \t \t\t  \t  \t  \t \t ABSTRACT ESTIMATE").concat("\n\n")));
+                                    .concat("\n")
+                                    .concat("\t  \t  \t  \t \t \t  \t  \t  \t \t"
+                                            + "\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  \t \t\t  \t  \t  "
+                                            + "\t  \t  \t  \t \t\t  \t  \t  \t \t ABSTRACT ESTIMATE")
+                                    .concat("\n\n")));
                     document.add(makePara("File Current Number :" + space1
                             + "\t  \t  \t  \t \t \t  \t  \t  \t \t \t \t \t   " + "Date: \t \t", Element.ALIGN_LEFT));
                     document.add(makePara(space1
@@ -378,154 +383,127 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
     }
 
     /*
-     * 1 Deposit Code Appropriation number,2 Deposit Code,3 Account Code,4
-     * Function Center,5 Department,6 Total Deposit Amount, 7 Amount
-     * Appropriated so far= totalUtilizedAmt- estimate amt 8 Balance on hand =
-     * Amount Appropriated so far - estimat amt 9 Amount of the Estimate =
-     * estimate amt 10 Balance after Appropriation of this estimate =balOnHand -
-     * ESTIMATE AMT
+     * 1 Deposit Code Appropriation number,2 Deposit Code,3 Account Code,4 Function Center,5 Department,6 Total Deposit Amount, 7
+     * Amount Appropriated so far= totalUtilizedAmt- estimate amt 8 Balance on hand = Amount Appropriated so far - estimat amt 9
+     * Amount of the Estimate = estimate amt 10 Balance after Appropriation of this estimate =balOnHand - ESTIMATE AMT
      */
     private PdfPTable createDepositAppropriationTable(final AbstractEstimate estimate) throws DocumentException,
-    EGOVException, ValidationException {
+            EGOVException, ValidationException {
         /*
-         * List<FinancialDetail>
-         * financialdetails=estimate.getFinancialDetails(); String
-         * appropriationNumber=estimate.getBudgetApprNo(); DepositWorksUsage
-         * depositWorksUsage
-         * =depositWorksUsageService.getDepositWorksUsage(estimate,
-         * appropriationNumber);
+         * List<FinancialDetail> financialdetails=estimate.getFinancialDetails(); String
+         * appropriationNumber=estimate.getBudgetApprNo(); DepositWorksUsage depositWorksUsage
+         * =depositWorksUsageService.getDepositWorksUsage(estimate, appropriationNumber);
          */int isReject = -1;
-         depositWorksUsageService = abstractEstimateService.getDepositWorksUsageService();
-         BigDecimal totalUtilizedAmt = BigDecimal.ZERO;
-         BigDecimal amtAppropriatedsofar = BigDecimal.ZERO;
-         BigDecimal totalDepositAmt = BigDecimal.ZERO;
-         BigDecimal balOnHand = BigDecimal.ZERO;
-         BigDecimal balanceAvailable = BigDecimal.ZERO;
-         BigDecimal amtAppropriated = BigDecimal.ZERO;
-         final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName("DEPOSITCODE");
-         estimateAppropriationService = abstractEstimateService.getEstimateAppropriationService();
-         abstractEstimateAppropriationList = estimateAppropriationService
-                 .findAllBy(
-                         "from AbstractEstimateAppropriation aea where aea.abstractEstimate.id=? and aea.depositWorksUsage.id is not null order by id, aea.depositWorksUsage.financialYearId asc",
-                         estimate.getId());
-         final PdfPTable depositWorksAppropriationTable = new PdfPTable(2);
-         depositWorksAppropriationTable.setWidthPercentage(100);
-         depositWorksAppropriationTable.setWidths(new float[] { 2f, 8f });
+        depositWorksUsageService = abstractEstimateService.getDepositWorksUsageService();
+        BigDecimal totalUtilizedAmt = BigDecimal.ZERO;
+        BigDecimal amtAppropriatedsofar = BigDecimal.ZERO;
+        BigDecimal totalDepositAmt = BigDecimal.ZERO;
+        BigDecimal balOnHand = BigDecimal.ZERO;
+        BigDecimal balanceAvailable = BigDecimal.ZERO;
+        BigDecimal amtAppropriated = BigDecimal.ZERO;
+        final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName("DEPOSITCODE");
+        estimateAppropriationService = abstractEstimateService.getEstimateAppropriationService();
+        abstractEstimateAppropriationList = estimateAppropriationService
+                .findAllBy(
+                        "from AbstractEstimateAppropriation aea where aea.abstractEstimate.id=? and aea.depositWorksUsage.id is not null order by id, aea.depositWorksUsage.financialYearId asc",
+                        estimate.getId());
+        final PdfPTable depositWorksAppropriationTable = new PdfPTable(2);
+        depositWorksAppropriationTable.setWidthPercentage(100);
+        depositWorksAppropriationTable.setWidths(new float[] { 2f, 8f });
 
-         if (estimate.getBudgetRejectionNo() != null) {
-             final String budgetRejectionNo = estimate.getBudgetRejectionNo();
-             isReject = budgetRejectionNo.indexOf(estimate.getBudgetApprNo());
-         }
+        if (estimate.getBudgetRejectionNo() != null) {
+            final String budgetRejectionNo = estimate.getBudgetRejectionNo();
+            isReject = budgetRejectionNo.indexOf(estimate.getBudgetApprNo());
+        }
 
-         if (estimate.getBudgetApprNo() != null && estimate.getTotalAmount() != null && isReject == -1) {
-             /*
-              * if(estimate.getBudgetApprNo()!=null &&
-              * estimate.getTotalAmount()!=null){ for(FinancialDetail
-              * financialDetail:financialdetails){
-              * if(financialDetail.getCoa()!=null) {
-              * System.out.println("depositWorksUsage.getAppropriationDate()>>>>"
-              * +depositWorksUsage.getAppropriationDate());
-              * totalUtilizedAmt=depositWorksUsageService
-              * .getTotalUtilizedAmountForDepositWorks
-              * (financialDetail,depositWorksUsage.getCreatedDate());
-              * System.out.println
-              * ("totalUtilizedAmt.doubleValue()>>>"+totalUtilizedAmt
-              * .doubleValue()); if(totalUtilizedAmt == null){
-              * totalUtilizedAmt=BigDecimal.ZERO; } amtAppropriated=new
-              * BigDecimal
-              * (totalUtilizedAmt.doubleValue()-estimate.getTotalAmount(
-              * ).getValue());
-              * totalDepositAmt=depositWorksUsageService.getTotalDepositWorksAmount
-              * (estimate.getDepositCode().getFund(), financialDetail.getCoa(),
-              * accountdetailtype, estimate.getDepositCode().getId(),
-              * depositWorksUsage.getAppropriationDate()); if(totalDepositAmt ==
-              * null){ totalDepositAmt=BigDecimal.ZERO; } balOnHand=new
-              * BigDecimal
-              * (totalDepositAmt.doubleValue()-amtAppropriated.doubleValue());
-              * balAftApropriation=new
-              * BigDecimal(balOnHand.doubleValue()-estimate
-              * .getTotalAmount().getValue());
-              * addRow(depositWorksAppropriationTable,
-              * true,makePara("Deposit Code Appropriation Number"
-              * ),makePara(estimate.getBudgetApprNo()));
-              */addRow(depositWorksAppropriationTable, true, centerPara("Deposit Code"), centerPara(estimate
-                      .getDepositCode().getCode()));
-              addRow(depositWorksAppropriationTable, true, centerPara("Account Code"), centerPara(estimate
-                      .getFinancialDetails().get(0).getCoa().getGlcode()
-                      + "-" + estimate.getFinancialDetails().get(0).getCoa().getName()));
-              addRow(depositWorksAppropriationTable, true, makePara("Function Center"), centerPara(estimate
-                      .getFinancialDetails().get(0).getFunction().getName()));
-              addRow(depositWorksAppropriationTable, true, makePara("Department"), centerPara(estimate
-                      .getUserDepartment().getName()));
-              addRow(depositWorksAppropriationTable, true, makePara("Amount of the Estimate "),
-                      rightPara(toCurrency(estimate.getTotalAmount())));
-              /*
-               * addRow(depositWorksAppropriationTable,
-               * true,makePara("Total Deposit Amount"
-               * ),rightPara(toCurrency(totalDepositAmt.doubleValue())));
-               * addRow(depositWorksAppropriationTable,
-               * true,makePara("Amount Appropriated so far"
-               * ),rightPara(toCurrency(amtAppropriated.doubleValue())));
-               * addRow(depositWorksAppropriationTable,
-               * true,makePara("Balance on Hand"
-               * ),rightPara(toCurrency(balOnHand.doubleValue())));
-               * addRow(depositWorksAppropriationTable,
-               * true,makePara("Balance After Appropriation of this Estimate"
-               * ),rightPara(toCurrency(balAftApropriation.doubleValue())));
-               */// }
+        if (estimate.getBudgetApprNo() != null && estimate.getTotalAmount() != null && isReject == -1) {
+            /*
+             * if(estimate.getBudgetApprNo()!=null && estimate.getTotalAmount()!=null){ for(FinancialDetail
+             * financialDetail:financialdetails){ if(financialDetail.getCoa()!=null) {
+             * System.out.println("depositWorksUsage.getAppropriationDate()>>>>" +depositWorksUsage.getAppropriationDate());
+             * totalUtilizedAmt=depositWorksUsageService .getTotalUtilizedAmountForDepositWorks
+             * (financialDetail,depositWorksUsage.getCreatedDate()); System.out.println
+             * ("totalUtilizedAmt.doubleValue()>>>"+totalUtilizedAmt .doubleValue()); if(totalUtilizedAmt == null){
+             * totalUtilizedAmt=BigDecimal.ZERO; } amtAppropriated=new BigDecimal
+             * (totalUtilizedAmt.doubleValue()-estimate.getTotalAmount( ).getValue());
+             * totalDepositAmt=depositWorksUsageService.getTotalDepositWorksAmount (estimate.getDepositCode().getFund(),
+             * financialDetail.getCoa(), accountdetailtype, estimate.getDepositCode().getId(),
+             * depositWorksUsage.getAppropriationDate()); if(totalDepositAmt == null){ totalDepositAmt=BigDecimal.ZERO; }
+             * balOnHand=new BigDecimal (totalDepositAmt.doubleValue()-amtAppropriated.doubleValue()); balAftApropriation=new
+             * BigDecimal(balOnHand.doubleValue()-estimate .getTotalAmount().getValue()); addRow(depositWorksAppropriationTable,
+             * true,makePara("Deposit Code Appropriation Number" ),makePara(estimate.getBudgetApprNo()));
+             */addRow(depositWorksAppropriationTable, true, centerPara("Deposit Code"), centerPara(estimate
+                    .getDepositCode().getCode()));
+            addRow(depositWorksAppropriationTable, true, centerPara("Account Code"), centerPara(estimate
+                    .getFinancialDetails().get(0).getCoa().getGlcode()
+                    + "-" + estimate.getFinancialDetails().get(0).getCoa().getName()));
+            addRow(depositWorksAppropriationTable, true, makePara("Function Center"), centerPara(estimate
+                    .getFinancialDetails().get(0).getFunction().getName()));
+            addRow(depositWorksAppropriationTable, true, makePara("Department"), centerPara(estimate
+                    .getUserDepartment().getName()));
+            addRow(depositWorksAppropriationTable, true, makePara("Amount of the Estimate "),
+                    rightPara(toCurrency(estimate.getTotalAmount())));
+            /*
+             * addRow(depositWorksAppropriationTable, true,makePara("Total Deposit Amount"
+             * ),rightPara(toCurrency(totalDepositAmt.doubleValue()))); addRow(depositWorksAppropriationTable, true,makePara(
+             * "Amount Appropriated so far" ),rightPara(toCurrency(amtAppropriated.doubleValue())));
+             * addRow(depositWorksAppropriationTable, true,makePara("Balance on Hand"
+             * ),rightPara(toCurrency(balOnHand.doubleValue()))); addRow(depositWorksAppropriationTable, true,makePara(
+             * "Balance After Appropriation of this Estimate" ),rightPara(toCurrency(balAftApropriation.doubleValue())));
+             */// }
               // }
-              final PdfPTable appropriationDetailTable = new PdfPTable(6);
-              addRow(appropriationDetailTable, true, makePara(7f, "Appropriation Number"),
-                      makePara(7f, "Total Deposit Amount"), makePara(7f, "Amount Appropriated so far"),
-                      makePara(7f, "Amount Appropriated"), makePara(7f, "Balance on Hand"),
-                      makePara(7f, "Balance After Appropriation"));
-              for (final AbstractEstimateAppropriation abstractEstimateAppropriation : abstractEstimateAppropriationList)
-                  if (abstractEstimateAppropriation.getDepositWorksUsage().getConsumedAmount().doubleValue() != 0) {
-                      totalDepositAmt = depositWorksUsageService.getTotalDepositWorksAmount(estimate.getDepositCode()
-                              .getFund(), abstractEstimateAppropriation.getAbstractEstimate().getFinancialDetails()
-                              .get(0).getCoa(), accountdetailtype, estimate.getDepositCode().getId(),
-                              abstractEstimateAppropriation.getDepositWorksUsage().getAppropriationDate());
-                      totalUtilizedAmt = depositWorksUsageService.getTotalUtilizedAmountForDepositWorks(
-                              abstractEstimateAppropriation.getAbstractEstimate().getFinancialDetails().get(0),
-                              abstractEstimateAppropriation.getDepositWorksUsage().getCreatedDate());
-                      if (totalUtilizedAmt == null)
-                          totalUtilizedAmt = BigDecimal.ZERO;
-                      amtAppropriatedsofar = totalUtilizedAmt.subtract(abstractEstimateAppropriation
-                              .getDepositWorksUsage().getConsumedAmount());
-                      balOnHand = totalDepositAmt.subtract(amtAppropriatedsofar);
-                      amtAppropriated = abstractEstimateAppropriation.getDepositWorksUsage().getConsumedAmount();
-                      balanceAvailable = new BigDecimal(totalDepositAmt.doubleValue() - totalUtilizedAmt.doubleValue());
-                      addRow(appropriationDetailTable,
-                              true,
-                              makePara(7f, abstractEstimateAppropriation.getDepositWorksUsage().getAppropriationNumber()),
-                              rightPara(7f, toCurrency(totalDepositAmt.doubleValue())),
-                              rightPara(7f, toCurrency(amtAppropriatedsofar.doubleValue())),
-                              rightPara(7f, toCurrency(amtAppropriated.doubleValue())),
-                              rightPara(7f, toCurrency(balOnHand.doubleValue())),
-                              rightPara(7f, toCurrency(balanceAvailable.doubleValue())));
-                  }
+            final PdfPTable appropriationDetailTable = new PdfPTable(6);
+            addRow(appropriationDetailTable, true, makePara(7f, "Appropriation Number"),
+                    makePara(7f, "Total Deposit Amount"), makePara(7f, "Amount Appropriated so far"),
+                    makePara(7f, "Amount Appropriated"), makePara(7f, "Balance on Hand"),
+                    makePara(7f, "Balance After Appropriation"));
+            for (final AbstractEstimateAppropriation abstractEstimateAppropriation : abstractEstimateAppropriationList)
+                if (abstractEstimateAppropriation.getDepositWorksUsage().getConsumedAmount().doubleValue() != 0) {
+                    totalDepositAmt = depositWorksUsageService.getTotalDepositWorksAmount(estimate.getDepositCode()
+                            .getFund(), abstractEstimateAppropriation.getAbstractEstimate().getFinancialDetails()
+                                    .get(0).getCoa(),
+                            accountdetailtype, estimate.getDepositCode().getId(),
+                            abstractEstimateAppropriation.getDepositWorksUsage().getAppropriationDate());
+                    totalUtilizedAmt = depositWorksUsageService.getTotalUtilizedAmountForDepositWorks(
+                            abstractEstimateAppropriation.getAbstractEstimate().getFinancialDetails().get(0),
+                            abstractEstimateAppropriation.getDepositWorksUsage().getCreatedDate());
+                    if (totalUtilizedAmt == null)
+                        totalUtilizedAmt = BigDecimal.ZERO;
+                    amtAppropriatedsofar = totalUtilizedAmt.subtract(abstractEstimateAppropriation
+                            .getDepositWorksUsage().getConsumedAmount());
+                    balOnHand = totalDepositAmt.subtract(amtAppropriatedsofar);
+                    amtAppropriated = abstractEstimateAppropriation.getDepositWorksUsage().getConsumedAmount();
+                    balanceAvailable = new BigDecimal(totalDepositAmt.doubleValue() - totalUtilizedAmt.doubleValue());
+                    addRow(appropriationDetailTable,
+                            true,
+                            makePara(7f, abstractEstimateAppropriation.getDepositWorksUsage().getAppropriationNumber()),
+                            rightPara(7f, toCurrency(totalDepositAmt.doubleValue())),
+                            rightPara(7f, toCurrency(amtAppropriatedsofar.doubleValue())),
+                            rightPara(7f, toCurrency(amtAppropriated.doubleValue())),
+                            rightPara(7f, toCurrency(balOnHand.doubleValue())),
+                            rightPara(7f, toCurrency(balanceAvailable.doubleValue())));
+                }
 
-              final PdfPCell appDetailpdfCell = new PdfPCell(appropriationDetailTable);
-              appDetailpdfCell.setBorderWidth(0);
+            final PdfPCell appDetailpdfCell = new PdfPCell(appropriationDetailTable);
+            appDetailpdfCell.setBorderWidth(0);
 
-              final PdfPCell appDetailRightHeader = new PdfPCell(makePara("Financail Year Wise Appropriation Details"));
-              appDetailRightHeader.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            final PdfPCell appDetailRightHeader = new PdfPCell(makePara("Financail Year Wise Appropriation Details"));
+            appDetailRightHeader.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
-              depositWorksAppropriationTable.addCell(appDetailRightHeader);
-              appropriationDetailTable.setWidthPercentage(100);
-              depositWorksAppropriationTable.addCell(appDetailpdfCell);
-         }
-         return depositWorksAppropriationTable;
+            depositWorksAppropriationTable.addCell(appDetailRightHeader);
+            appropriationDetailTable.setWidthPercentage(100);
+            depositWorksAppropriationTable.addCell(appDetailpdfCell);
+        }
+        return depositWorksAppropriationTable;
     }
 
     /*
-     * 1 Budget head,2 Function Center,3 Department,4 Total grant, 6 Balance on
-     * hand = Budget Available - estimat amt 5 Amount Appropriated=
-     * oneFifthTimesTotGrant-balOnHand 7 Amount of the Estimate = estimate amt 8
-     * Balance after Appropriation =balOnHand - ESTIMATE AMT
+     * 1 Budget head,2 Function Center,3 Department,4 Total grant, 6 Balance on hand = Budget Available - estimat amt 5 Amount
+     * Appropriated= oneFifthTimesTotGrant-balOnHand 7 Amount of the Estimate = estimate amt 8 Balance after Appropriation
+     * =balOnHand - ESTIMATE AMT
      */
     private PdfPTable createBudgetaryAppropriationTable(final AbstractEstimate estimate) throws DocumentException,
-    EGOVException, ValidationException {
+            EGOVException, ValidationException {
         int isReject = -1;
         final List<FinancialDetail> financialdetails = estimate.getFinancialDetails();
         BigDecimal totalGrant = BigDecimal.ZERO;
@@ -567,11 +545,13 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
                         .getAppropriationnumber());
                 totalGrant = abstractEstimateService.getTotalGrantForYearAsOnDate(financialdetails.get(0),
                         abstractEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(), Integer
-                        .parseInt(dept.getId().toString()), abstractEstimateAppropriation.getBudgetUsage()
-                        .getUpdatedTime());
+                                .parseInt(dept.getId().toString()),
+                        abstractEstimateAppropriation.getBudgetUsage()
+                                .getUpdatedTime());
                 final BigDecimal planningBudgetPerc = abstractEstimateService.getPlanningBudgetPercentage(
                         financialdetails.get(0), abstractEstimateAppropriation.getBudgetUsage().getFinancialYearId()
-                        .longValue(), Integer.parseInt(dept.getId().toString()));
+                                .longValue(),
+                        Integer.parseInt(dept.getId().toString()));
                 if (planningBudgetPerc != null && !planningBudgetPerc.equals(0)) {
                     totGrantafterMultiFactor = totalGrant.multiply(planningBudgetPerc.divide(new BigDecimal(100)));
                     appValue = planningBudgetPerc.divide(new BigDecimal(100)).toString();
@@ -709,11 +689,12 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
                                     .getBudgetUsage().getAppropriationnumber());
                             totalGrant = abstractEstimateService.getTotalGrantForYearAsOnDate(estimate
                                     .getFinancialDetails().get(0), latestAbstractEstimateAppropriation.getBudgetUsage()
-                                    .getFinancialYearId().longValue(), Integer.parseInt(dept.getId().toString()),
+                                            .getFinancialYearId().longValue(),
+                                    Integer.parseInt(dept.getId().toString()),
                                     latestAbstractEstimateAppropriation.getBudgetUsage().getUpdatedTime());
                             final BigDecimal planningBudgetPerc = abstractEstimateService.getPlanningBudgetPercentage(
                                     estimate.getFinancialDetails().get(0), latestAbstractEstimateAppropriation
-                                    .getBudgetUsage().getFinancialYearId().longValue(),
+                                            .getBudgetUsage().getFinancialYearId().longValue(),
                                     Integer.parseInt(dept.getId().toString()));
                             if (planningBudgetPerc != null && !planningBudgetPerc.equals(0)) {
                                 totGrantafterMultiFactor = totalGrant.multiply(planningBudgetPerc
@@ -755,11 +736,11 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
                         centerPara("Function "),
                         centerPara(estimate.getFinancialDetails().isEmpty() ? "" : estimate.getFinancialDetails()
                                 .get(0).getFunction().getName()),
-                                centerPara("Deposit COA/Deposit Code"),
-                                centerPara(estimate.getFinancialDetails().isEmpty() ? "" : estimate.getFinancialDetails()
-                                        .get(0).getCoa().getGlcode().concat("-")
-                                        .concat(estimate.getFinancialDetails().get(0).getCoa().getName()).concat(" / ")
-                                        .concat(estimate.getDepositCode().getCode())));
+                        centerPara("Deposit COA/Deposit Code"),
+                        centerPara(estimate.getFinancialDetails().isEmpty() ? "" : estimate.getFinancialDetails()
+                                .get(0).getCoa().getGlcode().concat("-")
+                                .concat(estimate.getFinancialDetails().get(0).getCoa().getName()).concat(" / ")
+                                .concat(estimate.getDepositCode().getCode())));
                 addRow(estBudgetDetailsTable, true, centerPara("Amount Appropriated so far"),
                         centerPara(amtAppropriatedsofar == null ? "" : toCurrency(amtAppropriatedsofar.doubleValue())),
                         centerPara("Estimate Amount"),
@@ -797,9 +778,11 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
                             .doubleValue() != 0) {
                         totalDepositAmt = depositWorksUsageService.getTotalDepositWorksAmount(estimate.getDepositCode()
                                 .getFund(), latestAbstractEstimateAppropriation.getAbstractEstimate()
-                                .getFinancialDetails().get(0).getCoa(), accountdetailtype, estimate.getDepositCode()
-                                .getId(), latestAbstractEstimateAppropriation.getDepositWorksUsage()
-                                .getAppropriationDate());
+                                        .getFinancialDetails().get(0).getCoa(),
+                                accountdetailtype, estimate.getDepositCode()
+                                        .getId(),
+                                latestAbstractEstimateAppropriation.getDepositWorksUsage()
+                                        .getAppropriationDate());
                         totalUtilizedAmt = depositWorksUsageService.getTotalUtilizedAmountForDepositWorks(
                                 latestAbstractEstimateAppropriation.getAbstractEstimate().getFinancialDetails().get(0),
                                 latestAbstractEstimateAppropriation.getDepositWorksUsage().getCreatedDate());
@@ -842,9 +825,8 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
             deptdesig = ad.getOwnerPosition().getDeptDesig();
             desgName = deptdesig.getDesignation().getName();
             /*
-             * } else{ positionId =ad.getPrevious().getOwner().getId();
-             * deptdesig= ad.getPrevious().getOwner().getDeptDesigId(); desgName
-             * = deptdesig.getDesigId().getDesignationName(); }
+             * } else{ positionId =ad.getPrevious().getOwner().getId(); deptdesig= ad.getPrevious().getOwner().getDeptDesigId();
+             * desgName = deptdesig.getDesigId().getDesignationName(); }
              */
             final PersonalInformation emp = employeeService.getEmpForPositionAndDate(ad.getCreatedDate(),
                     Integer.parseInt(positionId.toString()));

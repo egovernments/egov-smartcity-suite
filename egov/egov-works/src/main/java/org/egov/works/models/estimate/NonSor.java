@@ -47,7 +47,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class NonSor extends BaseModel {
-  
+
     private static final long serialVersionUID = 3303219241315381108L;
     private String description;
     private UOM uom;

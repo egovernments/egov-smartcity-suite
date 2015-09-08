@@ -63,15 +63,12 @@ import org.egov.works.models.estimate.DepositWorksUsage;
 import org.egov.works.models.estimate.FinancialDetail;
 import org.egov.works.services.ContractorBillService;
 import org.egov.works.services.DepositWorksUsageService;
-import org.springframework.beans.factory.annotation.Autowired;
 
-public class DepositWorksUsageServiceImpl extends BaseServiceImpl<DepositWorksUsage, Long> implements
-DepositWorksUsageService {
+public class DepositWorksUsageServiceImpl extends BaseServiceImpl<DepositWorksUsage, Long>implements
+        DepositWorksUsageService {
     private static final Logger LOGGER = Logger.getLogger(DepositWorksUsageServiceImpl.class);
     private EgovCommon egovCommon;
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
-    @Autowired
-    private CommonsService commonsService;
     public static final String dateFormat = "dd-MMM-yyyy";
     private ContractorBillService contractorBillService;
 
@@ -129,7 +126,7 @@ DepositWorksUsageService {
                 budgetFolioDetail.setEstimateNo(depositWorksUsage.getAbstractEstimate().getEstimateNumber());
                 budgetFolioDetail.setNameOfWork(depositWorksUsage.getAbstractEstimate().getName());
                 budgetFolioDetail
-                .setEstimateDate(sdf.format(depositWorksUsage.getAbstractEstimate().getEstimateDate()));
+                        .setEstimateDate(sdf.format(depositWorksUsage.getAbstractEstimate().getEstimateDate()));
                 if (!isAppropriationRejected(depositWorksUsage.getAppropriationNumber())) {
                     budgetFolioDetail.setExpensesIncurred(contractorBillService.getTotalActualExpenseForProject(
                             depositWorksUsage.getAbstractEstimate(), appropriationDate));
@@ -154,7 +151,7 @@ DepositWorksUsageService {
             if (depositWorksUsage.getReleasedAmount().compareTo(BigDecimal.ZERO) > 0) {
                 cumulativeTotal = cumulativeTotal - depositWorksUsage.getReleasedAmount().doubleValue();
                 budgetFolioDetail
-                .setWorkValue(depositWorksUsage.getAbstractEstimate().getTotalAmount().getValue() * -1);// to
+                        .setWorkValue(depositWorksUsage.getAbstractEstimate().getTotalAmount().getValue() * -1);// to
                 // display
                 // released
                 // amount
@@ -185,7 +182,7 @@ DepositWorksUsageService {
     public BigDecimal getTotalUtilizedAmountForDepositWorks(final FinancialDetail financialDetail) {
         return (BigDecimal) genericService.findByNamedQuery("getDepositWorksUsageAmount", financialDetail
                 .getAbstractEstimate().getDepositCode().getId(), financialDetail.getFund().getId(), financialDetail
-                .getCoa().getId());
+                        .getCoa().getId());
     }
 
     @Override
@@ -197,7 +194,8 @@ DepositWorksUsageService {
                 .find("select sum(dwu.consumedAmount-dwu.releasedAmount) from DepositWorksUsage dwu where dwu.createdDate<=? and EXISTS (select 'true' from FinancialDetail fd where fd.abstractEstimate.id=dwu.abstractEstimate.id and fd.fund.id=? and fd.abstractEstimate.depositCode.id=? and fd.coa.id=?) "
                         + "and (dwu.abstractEstimate.projectCode.id is null or dwu.abstractEstimate.projectCode.id not in (select proj.id from ProjectCode proj where proj.egwStatus.code='CLOSED'))",
                         appDate, financialDetail.getFund().getId(), financialDetail.getAbstractEstimate()
-                        .getDepositCode().getId(), financialDetail.getCoa().getId());
+                                .getDepositCode().getId(),
+                        financialDetail.getCoa().getId());
         if (utilizedAmountForRunningProject == null)
             utilizedAmountForRunningProject = BigDecimal.ZERO;
         LOGGER.debug("Total Utilized amount for deposit works (Running projects) >>>>Depositcodeid="
@@ -208,7 +206,8 @@ DepositWorksUsageService {
         Double utilizedAmountForClosedProject = (Double) genericService
                 .find("select sum(fd.abstractEstimate.projectCode.projectValue) from FinancialDetail fd where trunc(fd.abstractEstimate.projectCode.completionDate)<=trunc(?) and fd.fund.id=? and fd.abstractEstimate.depositCode.id=? and fd.coa.id=? and fd.abstractEstimate.projectCode.egwStatus.code='CLOSED'",
                         appDate, financialDetail.getFund().getId(), financialDetail.getAbstractEstimate()
-                        .getDepositCode().getId(), financialDetail.getCoa().getId());
+                                .getDepositCode().getId(),
+                        financialDetail.getCoa().getId());
         if (utilizedAmountForClosedProject == null)
             utilizedAmountForClosedProject = 0.0;
         totalUtilizedAmount = utilizedAmountForRunningProject.add(new BigDecimal(utilizedAmountForClosedProject
@@ -229,7 +228,6 @@ DepositWorksUsageService {
     }
 
     public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     @Override

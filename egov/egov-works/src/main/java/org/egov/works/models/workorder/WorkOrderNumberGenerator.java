@@ -61,16 +61,11 @@ public class WorkOrderNumberGenerator {
             final CFinancialYear financialYear, final WorksPackage worksPackage, final WorkOrder workOrder,
             final PersistenceService persistenceService) {
         /*
-         * List<Script> scripts=null; if(worksPackage==null) scripts =
-         * scriptService.findAllByNamedQuery("SCRIPT",
-         * "works.workOrderNumber.generator"); else scripts =
-         * scriptService.findAllByNamedQuery("SCRIPT",
-         * "workordernumber.for.workspackage"); return
-         * scripts.get(0).eval(Script
-         * .createContext("worksPackage",worksPackage,"estimate"
-         * ,abstractEstimate,"finYear",
-         * financialYear,"sequenceGenerator",sequenceGenerator
-         * ,"workOrder",workOrder
+         * List<Script> scripts=null; if(worksPackage==null) scripts = scriptService.findAllByNamedQuery("SCRIPT",
+         * "works.workOrderNumber.generator"); else scripts = scriptService.findAllByNamedQuery("SCRIPT",
+         * "workordernumber.for.workspackage"); return scripts.get(0).eval(Script
+         * .createContext("worksPackage",worksPackage,"estimate" ,abstractEstimate,"finYear",
+         * financialYear,"sequenceGenerator",sequenceGenerator ,"workOrder",workOrder
          * ,"persistenceService",persistenceService)).toString();
          */
         try {

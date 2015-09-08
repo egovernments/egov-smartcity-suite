@@ -43,7 +43,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class BudgetFolioDetail implements Serializable {
-   
+
     private static final long serialVersionUID = -984572211887333131L;
     private Integer srlNo;
     private String budgetApprNo;

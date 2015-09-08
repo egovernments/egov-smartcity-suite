@@ -37,8 +37,8 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.web.actions.masters;  
-  
+package org.egov.works.web.actions.masters;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,182 +57,178 @@ import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.Action;
-  
-  
-@ParentPackage("egov")  
-@Result(name=Action.SUCCESS, type="ServletRedirectResult.class", location = "overhead.action")  
-public class OverheadAction extends BaseFormAction{ 
-	/**
-	 *  An instance of Logger
-	 */
-	private static final Logger logger = Logger.getLogger(OverheadAction.class);
-	/**
-	 * An instance <code>PersistenceService</code>
-	 */  
-	private PersistenceService<Overhead,Long> overheadService;  
-	
-	/**
-	 * An instance of <code>Overhead</code> populated from the view.
-	 */
-	private Overhead overhead= new Overhead();  
-	
-	/**
-	 * A <code>Long</code> value representing the id of the model.
-	 */
-	private Long id;
-	
-	/**
-	 * A <code>List</code> of <code>Overhead</code> objects representing 
-	 * overhead data retrieved from the database.
-	 */
-	private WorksService worksService;
-	
 
-	private List<Overhead> overheadList=null;
-	
-	private List<ExpenditureType> expenditureTypeList=new ArrayList<ExpenditureType>();
-	
-	@Autowired
-        private CommonsService commonsService;
-	
-	/**
-	 * Default constructor
-	 */
-	public OverheadAction() {
-		addRelatedEntity("account", CChartOfAccounts.class);
-	}
+@ParentPackage("egov")
+@Result(name = Action.SUCCESS, type = "ServletRedirectResult.class", location = "overhead.action")
+public class OverheadAction extends BaseFormAction {
+    /**
+     *
+     */
+    private static final long serialVersionUID = 5694568397341403350L;
+    /**
+     * An instance of Logger
+     */
+    private static final Logger logger = Logger.getLogger(OverheadAction.class);
+    /**
+     * An instance <code>PersistenceService</code>
+     */
+    private PersistenceService<Overhead, Long> overheadService;
 
-	/**
-	 * The default action method/
-	 * 
-	 * @return a <code>String</code> representing the value 'INDEX'
-	 */
-	public String execute() { 
-		return list();  
-	}  
-	  
-	/**
-	 * This method is invoked to create a new form.
-	 * 
-	 * @return a <code>String</code> representing the value 'NEW'
-	 */
-	public String newform(){ 
-		return NEW;  
-	}  
-	  
-	/**
-	 * This method is invoked to display the list of over heads.
-	 * @return
-	 */
-	public String list() 
-	{  
-		overheadList = overheadService.findAllBy(" from Overhead o order by name asc");
-		return INDEX;  
-	}  
-  
-	public String edit()
-	{  
-		return EDIT;  
-	}  
-	  
-	public String save()
-	{  
-		overheadService.persist(overhead);
-		return SUCCESS;  
-	}  
-	  
-	public String create()
-	{  
-		overheadService.persist(overhead);
-		addActionMessage(getText("overhead.save.success","The overhead was saved successfully"));
-        return list();  
-	}  
-	  
-	public Object getModel() 
-	{
-		return overhead;  
-	}  
+    /**
+     * An instance of <code>Overhead</code> populated from the view.
+     */
+    private Overhead overhead = new Overhead();
 
-	public void prepare()
-	{
-		if (id != null) {
-			 overhead = overheadService.findById(id, false);
-	    }
-		
-		expenditureTypeList = (List)overheadService.findAllBy("select distinct expenditureType from WorkType");
-		
-		super.prepare();
-		setupDropdownDataExcluding("account");
-		try {
-			
-			List<CChartOfAccounts> accounts = commonsService.getAccountCodeByPurpose(Integer.valueOf(worksService.getWorksConfigValue("OVERHEAD_PURPOSE")));
-			addDropdownData("accountList", accounts);
-			
-		}
-		catch (EGOVException e) {
-			logger.error("Unable to load accountcode :"+e.getMessage());
-			addFieldError("accountcode", "Unable to load accountcode");
-		} 
-		
-		String[] expenditure = parameters.get("expenditure");
-		if(!ArrayUtils.isEmpty(expenditure) && !expenditure[0].equals("-1"))
-		{
-			overhead.setExpenditureType(new ExpenditureType(expenditure[0]));
-		}
-	}
+    /**
+     * A <code>Long</code> value representing the id of the model.
+     */
+    private Long id;
 
-	public List<Overhead> getOverheadList() {  
-		return overheadList;  
-	}  
-	
-	public void setOverheadList(List<Overhead> overheadList) {
-		this.overheadList = overheadList;
-	}
-	
-	public PersistenceService<Overhead, Long> getOverheadService() 
-	{
-		return overheadService;
-	}
-	public void setOverheadService(PersistenceService<Overhead,Long> service) {  
-		this.overheadService= service;  
-	}  
-	
-	public Overhead getOverhead() {
-		return overhead;
-	}
+    /**
+     * A <code>List</code> of <code>Overhead</code> objects representing overhead data retrieved from the database.
+     */
+    private WorksService worksService;
 
-	public void setOverhead(Overhead overhead) {
-		this.overhead = overhead;
-	}
-	
-	public List<ExpenditureType> getExpenditureTypeList() {
-		return expenditureTypeList;
-	}
+    private List<Overhead> overheadList = null;
 
-	public void setExpenditureTypeList(List<ExpenditureType> expenditureTypeList) {
-		this.expenditureTypeList = expenditureTypeList;
-	}
+    private List<ExpenditureType> expenditureTypeList = new ArrayList<ExpenditureType>();
 
-	public Long getId() {
-		return id;
-	}
+    @Autowired
+    private CommonsService commonsService;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /**
+     * Default constructor
+     */
+    public OverheadAction() {
+        addRelatedEntity("account", CChartOfAccounts.class);
+    }
 
-	public CommonsService getCommonsService() {
-		return commonsService;
-	}
+    /**
+     * The default action method/
+     *
+     * @return a <code>String</code> representing the value 'INDEX'
+     */
+    @Override
+    public String execute() {
+        return list();
+    }
 
-	public void setCommonsService(CommonsService commonsService) {
-		this.commonsService = commonsService;
-	}
-	public WorksService getWorksService() {
-		return worksService;
-	}
+    /**
+     * This method is invoked to create a new form.
+     *
+     * @return a <code>String</code> representing the value 'NEW'
+     */
+    public String newform() {
+        return NEW;
+    }
 
-	public void setWorksService(WorksService worksService) {
-		this.worksService = worksService;
-	}
+    /**
+     * This method is invoked to display the list of over heads.
+     * @return
+     */
+    public String list() {
+        overheadList = overheadService.findAllBy(" from Overhead o order by name asc");
+        return INDEX;
+    }
+
+    public String edit() {
+        return EDIT;
+    }
+
+    public String save() {
+        overheadService.persist(overhead);
+        return SUCCESS;
+    }
+
+    public String create() {
+        overheadService.persist(overhead);
+        addActionMessage(getText("overhead.save.success", "The overhead was saved successfully"));
+        return list();
+    }
+
+    @Override
+    public Object getModel() {
+        return overhead;
+    }
+
+    @Override
+    public void prepare() {
+        if (id != null)
+            overhead = overheadService.findById(id, false);
+
+        expenditureTypeList = (List) overheadService.findAllBy("select distinct expenditureType from WorkType");
+
+        super.prepare();
+        setupDropdownDataExcluding("account");
+        try {
+
+            final List<CChartOfAccounts> accounts = commonsService
+                    .getAccountCodeByPurpose(Integer.valueOf(worksService.getWorksConfigValue("OVERHEAD_PURPOSE")));
+            addDropdownData("accountList", accounts);
+
+        } catch (final EGOVException e) {
+            logger.error("Unable to load accountcode :" + e.getMessage());
+            addFieldError("accountcode", "Unable to load accountcode");
+        }
+
+        final String[] expenditure = parameters.get("expenditure");
+        if (!ArrayUtils.isEmpty(expenditure) && !expenditure[0].equals("-1"))
+            overhead.setExpenditureType(new ExpenditureType(expenditure[0]));
+    }
+
+    public List<Overhead> getOverheadList() {
+        return overheadList;
+    }
+
+    public void setOverheadList(final List<Overhead> overheadList) {
+        this.overheadList = overheadList;
+    }
+
+    public PersistenceService<Overhead, Long> getOverheadService() {
+        return overheadService;
+    }
+
+    public void setOverheadService(final PersistenceService<Overhead, Long> service) {
+        overheadService = service;
+    }
+
+    public Overhead getOverhead() {
+        return overhead;
+    }
+
+    public void setOverhead(final Overhead overhead) {
+        this.overhead = overhead;
+    }
+
+    public List<ExpenditureType> getExpenditureTypeList() {
+        return expenditureTypeList;
+    }
+
+    public void setExpenditureTypeList(final List<ExpenditureType> expenditureTypeList) {
+        this.expenditureTypeList = expenditureTypeList;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public CommonsService getCommonsService() {
+        return commonsService;
+    }
+
+    public void setCommonsService(final CommonsService commonsService) {
+        this.commonsService = commonsService;
+    }
+
+    public WorksService getWorksService() {
+        return worksService;
+    }
+
+    public void setWorksService(final WorksService worksService) {
+        this.worksService = worksService;
+    }
 }

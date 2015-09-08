@@ -57,10 +57,10 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQuerySQL;
@@ -74,12 +74,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
-    @Result(name = RetentionMoneyRecoveryRegisterAction.EXPORTPDF, type = "StreamResult.class", location = "pdfInputStream", params = {
-            "inputName", "pdfInputStream", "contentType", "application/pdf", "contentDisposition",
-    "no-cache;filename=RetentionMoneyRecoveryRegister.pdf" }),
-    @Result(name = RetentionMoneyRecoveryRegisterAction.EXPORTEXCEL, type = "StreamResult.class", location = "excelInputStream", params = {
-            "inputName", "excelInputStream", "contentType", "application/xls", "contentDisposition",
-    "no-cache;filename=RetentionMoneyRecoveryRegister.xls" }) })
+        @Result(name = RetentionMoneyRecoveryRegisterAction.EXPORTPDF, type = "StreamResult.class", location = "pdfInputStream", params = {
+                "inputName", "pdfInputStream", "contentType", "application/pdf", "contentDisposition",
+                "no-cache;filename=RetentionMoneyRecoveryRegister.pdf" }),
+        @Result(name = RetentionMoneyRecoveryRegisterAction.EXPORTEXCEL, type = "StreamResult.class", location = "excelInputStream", params = {
+                "inputName", "excelInputStream", "contentType", "application/xls", "contentDisposition",
+                "no-cache;filename=RetentionMoneyRecoveryRegister.xls" }) })
 public class RetentionMoneyRecoveryRegisterAction extends SearchFormAction {
 
     private static final long serialVersionUID = 3137793754124318372L;
@@ -134,22 +134,22 @@ public class RetentionMoneyRecoveryRegisterAction extends SearchFormAction {
         addDropdownData(
                 "budgetHeadList",
                 getPersistenceService()
-                .findAllBy(
-                        "select distinct(bg) from FinancialDetail fd , BudgetGroup bg where "
-                                + "fd.abstractEstimate.egwStatus.code = ? and fd.abstractEstimate.projectCode.id in (select bpd.accountDetailKeyId from EgBillPayeedetails bpd where bpd.accountDetailTypeId = ("
-                                + " select id from Accountdetailtype where name='PROJECTCODE') and bpd.egBilldetailsId.egBillregister.status.code=? "
-                                + " and expendituretype='Works' ) and bg=fd.budgetGroup order by bg.name ",
+                        .findAllBy(
+                                "select distinct(bg) from FinancialDetail fd , BudgetGroup bg where "
+                                        + "fd.abstractEstimate.egwStatus.code = ? and fd.abstractEstimate.projectCode.id in (select bpd.accountDetailKeyId from EgBillPayeedetails bpd where bpd.accountDetailTypeId = ("
+                                        + " select id from Accountdetailtype where name='PROJECTCODE') and bpd.egBilldetailsId.egBillregister.status.code=? "
+                                        + " and expendituretype='Works' ) and bg=fd.budgetGroup order by bg.name ",
                                 AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString(),
                                 ContractorBillRegister.BillStatus.APPROVED.toString()));
 
         addDropdownData(
                 "depositCOAList",
                 getPersistenceService()
-                .findAllBy(
-                        "select distinct(fd.coa) from FinancialDetail fd where "
-                                + "fd.abstractEstimate.egwStatus.code = ? and fd.abstractEstimate.projectCode.id in (select bpd.accountDetailKeyId from EgBillPayeedetails bpd where bpd.accountDetailTypeId = ("
-                                + " select id from Accountdetailtype where name='PROJECTCODE') and bpd.egBilldetailsId.egBillregister.status.code=? "
-                                + " and expendituretype='Works') order by glcode ",
+                        .findAllBy(
+                                "select distinct(fd.coa) from FinancialDetail fd where "
+                                        + "fd.abstractEstimate.egwStatus.code = ? and fd.abstractEstimate.projectCode.id in (select bpd.accountDetailKeyId from EgBillPayeedetails bpd where bpd.accountDetailTypeId = ("
+                                        + " select id from Accountdetailtype where name='PROJECTCODE') and bpd.egBilldetailsId.egBillregister.status.code=? "
+                                        + " and expendituretype='Works') order by glcode ",
                                 AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString(),
                                 ContractorBillRegister.BillStatus.APPROVED.toString()));
     }
@@ -217,7 +217,7 @@ public class RetentionMoneyRecoveryRegisterAction extends SearchFormAction {
 
             if (object[11] != null && Integer.valueOf(object[11].toString()) > 1)
                 retentionMoneyRecoveryRegisterBean
-                .setProjectName(getText("retentionMoneyRecoveryRegister.multiple.label"));
+                        .setProjectName(getText("retentionMoneyRecoveryRegister.multiple.label"));
             else if (object[4] != null)
                 retentionMoneyRecoveryRegisterBean.setProjectName(object[4].toString());
 

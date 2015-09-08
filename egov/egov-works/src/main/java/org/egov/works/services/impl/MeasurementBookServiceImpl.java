@@ -58,10 +58,10 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 
 /**
- * This class will expose all measurment book related operations. NOTE :::
- * Suffix CQ and RE denote Change Quantity and Revision Estimate Respectively
+ * This class will expose all measurment book related operations. NOTE ::: Suffix CQ and RE denote Change Quantity and Revision
+ * Estimate Respectively
  */
-public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> implements MeasurementBookService {
+public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long>implements MeasurementBookService {
 
     private static final Logger logger = Logger.getLogger(MeasurementBookServiceImpl.class);
     public static final String WORKORDER_NO = "WORKORDER_NO";
@@ -85,10 +85,8 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
     }
 
     /**
-     * This method will search list of mbheader based on input criteria. Search
-     * Criteria :
-     * WORKORDER_NO,CONTRACTOR_ID,CREATE_DATE,MB_REF_NO,MB_PAGE_NO,STATUS Story
-     * #436 - Search MB-View MB
+     * This method will search list of mbheader based on input criteria. Search Criteria :
+     * WORKORDER_NO,CONTRACTOR_ID,CREATE_DATE,MB_REF_NO,MB_PAGE_NO,STATUS Story #436 - Search MB-View MB
      *
      * @param criteriaMap
      * @return
@@ -182,9 +180,8 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
     }
 
     /**
-     * Get previous cumulative amount(approved, approval pending and draft
-     * entries) based on workorder activity Id. This will search list of
-     * MBDetail and then get cmulative amount.
+     * Get previous cumulative amount(approved, approval pending and draft entries) based on workorder activity Id. This will
+     * search list of MBDetail and then get cmulative amount.
      *
      * @param woActivityId
      * @return
@@ -222,12 +219,10 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
     }
 
     /**
-     * This is used by RE screens. Get estimated quantity for Change in quantity
-     * of RE for given work order activity. Here work order activities of only
-     * non-cancelled Abstract Estimates/REs are considered
+     * This is used by RE screens. Get estimated quantity for Change in quantity of RE for given work order activity. Here work
+     * order activities of only non-cancelled Abstract Estimates/REs are considered
      *
-     * @param woActivityId
-     *            ,estimateId,activityId
+     * @param woActivityId ,estimateId,activityId
      * @return
      */
     @Override
@@ -261,11 +256,9 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
     }
 
     /**
-     * Similar to totalEstimatedQuantityForRE but will consider only previous
-     * REs and not all REs
+     * Similar to totalEstimatedQuantityForRE but will consider only previous REs and not all REs
      *
-     * @param woActivityId
-     *            ,estimateId,activityId, workOrder
+     * @param woActivityId ,estimateId,activityId, workOrder
      * @return
      */
     @Override
@@ -341,8 +334,8 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
         else
             for (final MBHeader mbh : woe.getMbHeaders())
                 if (mbh.getEgwStatus() != null
-                && mbh.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.CANCELLED.toString())
-                && !woEstimateList.contains(woe))
+                        && mbh.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.CANCELLED.toString())
+                        && !woEstimateList.contains(woe))
                     woEstimateList.add(woe);
     }
 
@@ -350,10 +343,10 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
             final List<WorkOrderEstimate> usedWOEstimateList, final WorkOrderEstimate woe, final MBHeader mbHeader,
             final MBDetails mbDetails) {
         if (// woe.getWorkOrderActivities().contains(mbDetails.getWorkOrderActivity())
-                // &&
-                mbHeader.getEgwStatus() != null
+            // &&
+        mbHeader.getEgwStatus() != null
                 && mbHeader.getEgwStatus().getCode()
-                .equalsIgnoreCase(MBHeader.MeasurementBookStatus.APPROVED.toString())) {
+                        .equalsIgnoreCase(MBHeader.MeasurementBookStatus.APPROVED.toString())) {
             if (!woEstimateList.contains(woe))
                 woEstimateList.add(woe);
         } else if (woEstimateList.contains(woe))
@@ -367,7 +360,7 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
                 && woe.getWorkOrderActivities().contains(mbDetails.getWorkOrderActivity())
                 && mbHeader.getEgwStatus() != null
                 && mbHeader.getEgwStatus().getCode()
-                .equalsIgnoreCase(MBHeader.MeasurementBookStatus.APPROVED.toString())) {
+                        .equalsIgnoreCase(MBHeader.MeasurementBookStatus.APPROVED.toString())) {
             if (!woEstimateList.contains(woe))
                 woEstimateList.add(woe);
         } else if (woEstimateList.contains(woe))
@@ -378,9 +371,9 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
         Double usedQty = usedQuantity;
         for (final MBHeader mbHeader : mbHeaderList)
             if (mbHeader != null
-            && mbHeader.getEgwStatus() != null
-            && !mbHeader.getEgwStatus().getCode()
-            .equalsIgnoreCase(MBHeader.MeasurementBookStatus.CANCELLED.toString()))
+                    && mbHeader.getEgwStatus() != null
+                    && !mbHeader.getEgwStatus().getCode()
+                            .equalsIgnoreCase(MBHeader.MeasurementBookStatus.CANCELLED.toString()))
                 for (final MBDetails mbDetails : mbHeader.getMbDetails())
                     usedQty += mbDetails.getQuantity();
         return usedQty;
@@ -404,14 +397,14 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
                 for (final MBHeader mbHeader : mbHeaderList) {
                     if (mbHeader.getEgBillregister() != null
                             && mbHeader.getEgBillregister().getBillstatus()
-                            .equals(MBHeader.MeasurementBookStatus.CANCELLED.toString())
+                                    .equals(MBHeader.MeasurementBookStatus.CANCELLED.toString())
                             && !woEstimateList.contains(woe))
                         woEstimateList.add(woe);
                     for (final MBDetails mbDetails : mbHeader.getMbDetails())
                         if (woe.getWorkOrderActivities().contains(mbDetails.getWorkOrderActivity())
                                 && mbHeader.getEgwStatus() != null
                                 && mbHeader.getEgwStatus().getCode()
-                                .equalsIgnoreCase(MBHeader.MeasurementBookStatus.APPROVED.toString())
+                                        .equalsIgnoreCase(MBHeader.MeasurementBookStatus.APPROVED.toString())
                                 && mbHeader.getEgBillregister() == null && !woEstimateList.contains(woe))
                             woEstimateList.add(woe);
                 }
@@ -421,8 +414,7 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
     }
 
     /**
-     * This method will return workorderestimates objects pending for Bill , but
-     * it will not consider Legacy MBs
+     * This method will return workorderestimates objects pending for Bill , but it will not consider Legacy MBs
      *
      * @param workOrderEstimateList
      * @param mbHeader
@@ -439,7 +431,7 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
                 for (final MBHeader mbHeader : mbHeaderList) {
                     if (mbHeader.getEgBillregister() != null
                             && mbHeader.getEgBillregister().getBillstatus()
-                            .equals(MBHeader.MeasurementBookStatus.CANCELLED.toString())
+                                    .equals(MBHeader.MeasurementBookStatus.CANCELLED.toString())
                             && !woEstimateList.contains(woe))
                         woEstimateList.add(woe);
                     for (final MBDetails mbDetails : mbHeader.getMbDetails())
@@ -447,7 +439,7 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
                                 .getWorkOrderActivity().getActivity().getRevisionType() != null)
                                 && mbHeader.getEgwStatus() != null
                                 && mbHeader.getEgwStatus().getCode()
-                                .equalsIgnoreCase(MBHeader.MeasurementBookStatus.APPROVED.toString())
+                                        .equalsIgnoreCase(MBHeader.MeasurementBookStatus.APPROVED.toString())
                                 && mbHeader.getEgBillregister() == null && !woEstimateList.contains(woe))
                             woEstimateList.add(woe);
                 }
@@ -470,24 +462,24 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
             if (detail.getWorkOrderActivity().getActivity().getParent() == null) {
                 lPrevCumlvQuant = prevCumulativeQuantityIncludingCQ(detail.getWorkOrderActivity().getId(),
                         mbHeader.getId(), detail.getWorkOrderActivity().getActivity().getId(), detail
-                        .getWorkOrderActivity().getWorkOrderEstimate().getWorkOrder());
+                                .getWorkOrderActivity().getWorkOrderEstimate().getWorkOrder());
                 detail.setTotalEstQuantity(totalEstimatedQuantity(detail.getWorkOrderActivity().getId(),
                         mbHeader.getId(), detail.getWorkOrderActivity().getActivity().getId(), detail
-                        .getWorkOrderActivity().getWorkOrderEstimate().getWorkOrder()));
+                                .getWorkOrderActivity().getWorkOrderEstimate().getWorkOrder()));
             } else {
                 detail.getWorkOrderActivity()
-                .setParent(
-                        (WorkOrderActivity) genericService
-                        .find("from WorkOrderActivity where activity.id=? and (workOrderEstimate.id=? or workOrderEstimate.estimate.parent.id=?)",
-                                detail.getWorkOrderActivity().getActivity().getParent().getId(),
-                                mbHeader.getWorkOrderEstimate().getId(), mbHeader
-                                .getWorkOrderEstimate().getEstimate().getId()));
+                        .setParent(
+                                (WorkOrderActivity) genericService
+                                        .find("from WorkOrderActivity where activity.id=? and (workOrderEstimate.id=? or workOrderEstimate.estimate.parent.id=?)",
+                                                detail.getWorkOrderActivity().getActivity().getParent().getId(),
+                                                mbHeader.getWorkOrderEstimate().getId(), mbHeader
+                                                        .getWorkOrderEstimate().getEstimate().getId()));
                 lPrevCumlvQuant = prevCumulativeQuantityIncludingCQ(detail.getWorkOrderActivity().getId(),
                         mbHeader.getId(), detail.getWorkOrderActivity().getActivity().getParent().getId(), detail
-                        .getWorkOrderActivity().getWorkOrderEstimate().getWorkOrder());
+                                .getWorkOrderActivity().getWorkOrderEstimate().getWorkOrder());
                 detail.setTotalEstQuantity(totalEstimatedQuantity(detail.getWorkOrderActivity().getId(),
                         mbHeader.getId(), detail.getWorkOrderActivity().getActivity().getParent().getId(), detail
-                        .getWorkOrderActivity().getWorkOrderEstimate().getWorkOrder()));
+                                .getWorkOrderActivity().getWorkOrderEstimate().getWorkOrder()));
             }
             detail.setPrevCumlvQuantity(lPrevCumlvQuant);
             detail.setCurrCumlvQuantity(lPrevCumlvQuant + detail.getQuantity());
@@ -499,13 +491,11 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
     }
 
     /**
-     * This is used by MB screens. This returns the estimated quantity for an
-     * work order activity This returns original activity quantity + all change
-     * quantities of the activity for all associated REs Work order activities
-     * of only approved REs are considered
+     * This is used by MB screens. This returns the estimated quantity for an work order activity This returns original activity
+     * quantity + all change quantities of the activity for all associated REs Work order activities of only approved REs are
+     * considered
      *
-     * @param woActivityId
-     *            ,mbHeaderId,activityId, workOrder
+     * @param woActivityId ,mbHeaderId,activityId, workOrder
      * @return
      */
     @Override
@@ -543,8 +533,7 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
     }
 
     /**
-     * @param workOrderNumber
-     *            ,lineItemId
+     * @param workOrderNumber ,lineItemId
      * @return boolean
      */
 
@@ -583,19 +572,14 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
     }
 
     /**
-     * Check if mb entries are within approved limit or not. If Current quantity
-     * + prev cumulative quantity is greater than 100% and less than (100+Extra
-     * percentage)% of work order activity approved quantity, true is returned
-     * If Current quantity + prev cumulative quantity > (100+Extra percentage)%
-     * of work order activity approved quantity, null is returned If Current
-     * quantity + prev cumulative quantity <= 100% work order activity approved
-     * quantity then false is returned. Eg: If Extra percentage=25 If Current
-     * quantity + prev cumulative quantity is greater than 100% and less than
-     * 125% of work order activity approved quantity, true is returned If
-     * Current quantity + prev cumulative quantity > 125% of work order activity
-     * approved quantity, null is returned If Current quantity + prev cumulative
-     * quantity <= 100% work order activity approved quantity then false is
-     * returned.
+     * Check if mb entries are within approved limit or not. If Current quantity + prev cumulative quantity is greater than 100%
+     * and less than (100+Extra percentage)% of work order activity approved quantity, true is returned If Current quantity + prev
+     * cumulative quantity > (100+Extra percentage)% of work order activity approved quantity, null is returned If Current
+     * quantity + prev cumulative quantity <= 100% work order activity approved quantity then false is returned. Eg: If Extra
+     * percentage=25 If Current quantity + prev cumulative quantity is greater than 100% and less than 125% of work order activity
+     * approved quantity, true is returned If Current quantity + prev cumulative quantity > 125% of work order activity approved
+     * quantity, null is returned If Current quantity + prev cumulative quantity <= 100% work order activity approved quantity
+     * then false is returned.
      *
      * @param mbHeader
      * @return
@@ -607,7 +591,8 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
         Double approvedQuantity = 0D;
         final Double approvedQuantityWithoutPercentage = totalEstimatedQuantity(details.getWorkOrderActivity().getId(),
                 details.getMbHeader() == null ? null : details.getMbHeader().getId(), details.getWorkOrderActivity()
-                        .getActivity().getId(), details.getWorkOrderActivity().getWorkOrderEstimate().getWorkOrder());
+                        .getActivity().getId(),
+                details.getWorkOrderActivity().getWorkOrderEstimate().getWorkOrder());
         final Double extraPercentage = worksService.getConfigval();
         if (extraPercentage.doubleValue() > 0)
             approvedQuantity = approvedQuantityWithoutPercentage * (1 + extraPercentage / 100);
@@ -621,8 +606,7 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
     }
 
     /**
-     * List of all approved MB's for which Bill is not generated or bill is
-     * cancelled. NOTE --- THIS WILL NOT CONSIDER LEGACY MBs
+     * List of all approved MB's for which Bill is not generated or bill is cancelled. NOTE --- THIS WILL NOT CONSIDER LEGACY MBs
      *
      * @param workOrderId
      * @param asOnDate
@@ -695,7 +679,7 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
             final String tenderType) {
         final List<MBHeader> mbHeaderList = persistenceService.findAllByNamedQuery("getAllApprovedMBHeaders",
                 WorksConstants.APPROVED, workOrderEstimate.getWorkOrder().getId(), workOrderEstimate.getEstimate()
-                .getId());
+                        .getId());
         BigDecimal tenderedAmount = BigDecimal.ZERO;
         BigDecimal mbAmount = BigDecimal.ZERO;
         BigDecimal tenderedMBAmount = BigDecimal.ZERO;

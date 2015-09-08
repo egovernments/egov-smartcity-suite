@@ -71,350 +71,337 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  */
 @ParentPackage("egov")
-public class MilestoneTemplateAction extends SearchFormAction{
+public class MilestoneTemplateAction extends SearchFormAction {
 
+    private static final long serialVersionUID = 1L;
+    private MilestoneTemplate template = new MilestoneTemplate();
+    private PersistenceService<MilestoneTemplate, Long> milestoneTemplateService;
+    private Long id;
+    private String mode = " ";
+    private WorkflowService<MilestoneTemplate> milestoneTemplateWorkflowService;
+    private static final String SAVE_ACTION = "save";
+    private String messageKey;
+    private static final String MILESTONE_TEMPLATE_MODULE_KEY = "MilestoneTemplate";
+    @Autowired
+    private CommonsService commonsService;
+    private String actionName;
+    private String sourcepage;
+    private String nextEmployeeName;
+    private String nextDesignation;
+    private String designation;
+    private WorksService worksService;
+    @Autowired
+    private UserService userService;
+    private List<MilestoneTemplateActivity> templateActivities = new LinkedList<MilestoneTemplateActivity>();
+    private static final String SOURCE_INBOX = "inbox";
+    private static final String MODE_MODIFY = "modify";
 
-	private static final long serialVersionUID = 1L;
-	private MilestoneTemplate template = new MilestoneTemplate();
-	private PersistenceService<MilestoneTemplate,Long> milestoneTemplateService;
-	private Long id; 
-	private String mode=" ";
-	private WorkflowService<MilestoneTemplate> milestoneTemplateWorkflowService;
-	private static final String SAVE_ACTION = "save";
-	private String messageKey;
-	private static final String MILESTONE_TEMPLATE_MODULE_KEY = "MilestoneTemplate";
-	@Autowired
-        private CommonsService commonsService;
-	private String actionName;
-	private String sourcepage;
-	private String nextEmployeeName;
-	private String nextDesignation;
-	private String designation;
-	private WorksService worksService;
-	@Autowired
-	private UserService userService;
-	private List<MilestoneTemplateActivity> templateActivities = new LinkedList<MilestoneTemplateActivity>();
-	private static final String SOURCE_INBOX = "inbox";
-	private static final String MODE_MODIFY="modify";
-	
+    public MilestoneTemplateAction() {
+        addRelatedEntity("workType", EgwTypeOfWork.class);
+        addRelatedEntity("subType", EgwTypeOfWork.class);
+    }
 
+    @Override
+    public void prepare() {
+        if (id != null)
+            template = milestoneTemplateService.findById(id, false);
+        final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
+        ajaxEstimateAction.setPersistenceService(getPersistenceService());
+        super.prepare();
+        setupDropdownDataExcluding("workType", "subType");
+        addDropdownData("parentCategoryList",
+                getPersistenceService().findAllBy("from EgwTypeOfWork etw where etw.parentid is null"));
+        populateCategoryList(ajaxEstimateAction, template.getWorkType() != null);
+        addDropdownData("executingDepartmentList", getPersistenceService().findAllBy("from Department order by upper(dept)"));
+    }
 
-	public MilestoneTemplateAction() {
-		addRelatedEntity("workType", EgwTypeOfWork.class);
-		addRelatedEntity("subType", EgwTypeOfWork.class);
-	}
+    @Override
+    public Object getModel() {
 
-	public void prepare(){
-		if(id != null){
-			template=milestoneTemplateService.findById(id, false);
-		}
-		AjaxEstimateAction ajaxEstimateAction =new AjaxEstimateAction();
-		ajaxEstimateAction.setPersistenceService(getPersistenceService());
-		super.prepare();
-		setupDropdownDataExcluding("workType","subType");
-		addDropdownData("parentCategoryList",getPersistenceService().findAllBy("from EgwTypeOfWork etw where etw.parentid is null"));
-		populateCategoryList(ajaxEstimateAction, template.getWorkType() != null);
-		addDropdownData("executingDepartmentList",getPersistenceService().findAllBy("from Department order by upper(dept)")); 
-	 }
-	
-	@Override
-	public Object getModel() {
-	
-		return template;
-	}
-	
-	@SkipValidation
-	public String newform(){
-		return "new";
-	}
-	
-	public String save(){
-		String actionName = parameters.get("actionName")[0];
-		
-		if(id==null){
-			template.setEgwStatus(commonsService.getStatusByModuleAndCode(MILESTONE_TEMPLATE_MODULE_KEY,"NEW"));
-		}
-		
-		if((mode.equalsIgnoreCase("modify")) && template.getEgwStatus().getCode().equalsIgnoreCase("APPROVED")){
-			template.setEgwStatus(commonsService.getStatusByModuleAndCode(MILESTONE_TEMPLATE_MODULE_KEY,"NEW"));
-			//TODO - check for application for commenting out this line for any issues
-			//**template.setState(null);
-		}
+        return template;
+    }
 
-		template = milestoneTemplateService.persist(template);
-		milestoneTemplateWorkflowService.transition(actionName, template, template.getWorkflowapproverComments());
-		template = milestoneTemplateService.persist(template);
-		messageKey="milestone.template."+actionName;
-		addActionMessage(getText(messageKey,"The Milestone Template was saved successfully"));
-		getDesignation(template);
-		mode="";
-		
-		if(SAVE_ACTION.equals(actionName)){
-			sourcepage="inbox";
-		}
+    @SkipValidation
+    public String newform() {
+        return "new";
+    }
 
-		return SAVE_ACTION.equals(actionName)?EDIT:SUCCESS;
+    public String save() {
+        final String actionName = parameters.get("actionName")[0];
 
-	}
-	
-	public String cancel(){
-		if(template.getId()!=null){
-			milestoneTemplateWorkflowService.transition(MilestoneTemplate.Actions.CANCEL.toString(), template,template.getWorkflowapproverComments());
-			template=milestoneTemplateService.persist(template);
-		}
-		messageKey="milestone.template.cancel";	
-		getDesignation(template);
-		return SUCCESS;
-	}	
+        if (id == null)
+            template.setEgwStatus(commonsService.getStatusByModuleAndCode(MILESTONE_TEMPLATE_MODULE_KEY, "NEW"));
 
-	public String reject(){
-		milestoneTemplateWorkflowService.transition(MilestoneTemplate.Actions.REJECT.toString(),template,template.getWorkflowapproverComments());
-		template=milestoneTemplateService.persist(template);
-		messageKey="milestone.template.reject";	
-		getDesignation(template);
-		return SUCCESS;
-	}	
+        if (mode.equalsIgnoreCase("modify") && template.getEgwStatus().getCode().equalsIgnoreCase("APPROVED"))
+            template.setEgwStatus(commonsService.getStatusByModuleAndCode(MILESTONE_TEMPLATE_MODULE_KEY, "NEW"));
+        // TODO - check for application for commenting out this line for any issues
+        // **template.setState(null);
 
-	public void getDesignation(MilestoneTemplate template){
-		if(template.getEgwStatus()!= null 
-				&& !(WorksConstants.NEW).equalsIgnoreCase(template.getEgwStatus().getCode())) {
-			String result = worksService.getEmpNameDesignation(template.getState().getOwnerPosition(), template.getState().getCreatedDate());
-			if(result != null && !"@".equalsIgnoreCase(result)) {
-				String empName = result.substring(0,result.lastIndexOf('@'));
-				String designation =result.substring(result.lastIndexOf('@')+1,result.length());
-				setNextEmployeeName(empName);
-				setNextDesignation(designation);
-			}
-		}
-	}
+        template = milestoneTemplateService.persist(template);
+        milestoneTemplateWorkflowService.transition(actionName, template, template.getWorkflowapproverComments());
+        template = milestoneTemplateService.persist(template);
+        messageKey = "milestone.template." + actionName;
+        addActionMessage(getText(messageKey, "The Milestone Template was saved successfully"));
+        getDesignation(template);
+        mode = "";
 
-	public String getActionName() {
-		return actionName;
-	}
+        if (SAVE_ACTION.equals(actionName))
+            sourcepage = "inbox";
 
-	public void setActionName(String actionName) {
-		this.actionName = actionName;
-	}
+        return SAVE_ACTION.equals(actionName) ? EDIT : SUCCESS;
 
-	public String getMessageKey() {
-		return messageKey;
-	}
+    }
 
-	public void setMessageKey(String messageKey) {
-		this.messageKey = messageKey;
-	}
+    public String cancel() {
+        if (template.getId() != null) {
+            milestoneTemplateWorkflowService.transition(MilestoneTemplate.Actions.CANCEL.toString(), template,
+                    template.getWorkflowapproverComments());
+            template = milestoneTemplateService.persist(template);
+        }
+        messageKey = "milestone.template.cancel";
+        getDesignation(template);
+        return SUCCESS;
+    }
 
-	public String getSourcepage() {
-		return sourcepage;
-	}
+    public String reject() {
+        milestoneTemplateWorkflowService.transition(MilestoneTemplate.Actions.REJECT.toString(), template,
+                template.getWorkflowapproverComments());
+        template = milestoneTemplateService.persist(template);
+        messageKey = "milestone.template.reject";
+        getDesignation(template);
+        return SUCCESS;
+    }
 
-	public void setSourcepage(String sourcepage) {
-		this.sourcepage = sourcepage;
-	}
+    public void getDesignation(final MilestoneTemplate template) {
+        if (template.getEgwStatus() != null
+                && !WorksConstants.NEW.equalsIgnoreCase(template.getEgwStatus().getCode())) {
+            final String result = worksService.getEmpNameDesignation(template.getState().getOwnerPosition(),
+                    template.getState().getCreatedDate());
+            if (result != null && !"@".equalsIgnoreCase(result)) {
+                final String empName = result.substring(0, result.lastIndexOf('@'));
+                final String designation = result.substring(result.lastIndexOf('@') + 1, result.length());
+                setNextEmployeeName(empName);
+                setNextDesignation(designation);
+            }
+        }
+    }
 
-	public String getNextEmployeeName() {
-		return nextEmployeeName;
-	}
+    public String getActionName() {
+        return actionName;
+    }
 
-	public void setNextEmployeeName(String nextEmployeeName) {
-		this.nextEmployeeName = nextEmployeeName;
-	}
+    public void setActionName(final String actionName) {
+        this.actionName = actionName;
+    }
 
-	public String getNextDesignation() {
-		return nextDesignation;
-	}
+    public String getMessageKey() {
+        return messageKey;
+    }
 
-	public void setNextDesignation(String nextDesignation) {
-		this.nextDesignation = nextDesignation;
-	}
+    public void setMessageKey(final String messageKey) {
+        this.messageKey = messageKey;
+    }
 
-	public String getDesignation() {
-		return designation;
-	}
+    public String getSourcepage() {
+        return sourcepage;
+    }
 
-	public void setDesignation(String designation) {
-		this.designation = designation;
-	}
+    public void setSourcepage(final String sourcepage) {
+        this.sourcepage = sourcepage;
+    }
 
-	
-	@SkipValidation
-	public String edit(){
-		if(((SOURCE_INBOX.equalsIgnoreCase(sourcepage) || MODE_MODIFY.equalsIgnoreCase(mode)) 
-				&& (template.getEgwStatus()!=null && 
-					(!template.getEgwStatus().getCode().equals(MilestoneTemplate.MilestoneTemplateStatus.APPROVED) 
-							&& !template.getEgwStatus().getCode().equals(MilestoneTemplate.MilestoneTemplateStatus.CANCELLED)))) 
-			|| (template.getEgwStatus()!=null &&
-						template.getEgwStatus().getCode().equals(WorksConstants.NEW))){
-			User user=userService.getUserById(Long.valueOf(EgovThreadLocals.getUserId()));
-			boolean isValidUser=worksService.validateWorkflowForUser(template,user);
-			if(isValidUser){
-					throw new EGOVRuntimeException("Error: Invalid Owner - No permission to view this page.");
-			}
-		}
-		else if(StringUtils.isEmpty(sourcepage)){
-			sourcepage="search";
-		}
+    public String getNextEmployeeName() {
+        return nextEmployeeName;
+    }
 
-		return "edit";
-	}
-	
-	@SkipValidation
-	public String search(){
+    public void setNextEmployeeName(final String nextEmployeeName) {
+        this.nextEmployeeName = nextEmployeeName;
+    }
 
-		return "search";
-	}
+    public String getNextDesignation() {
+        return nextDesignation;
+    }
 
-	@SkipValidation
-	public String searchTemplate(){
-		if("searchForMilestone".equalsIgnoreCase(sourcepage)){
-			template.setStatus(1);
-		}
-		return "search";
-	}
+    public void setNextDesignation(final String nextDesignation) {
+        this.nextDesignation = nextDesignation;
+    }
 
-	
-	@SkipValidation
-	public String searchDetails(){
-		 if(template.getWorkType()==null || template.getWorkType().getId()==-1){
-			 String messageKey = "milestone.template.search.workType.error";
-			 addActionError(getText(messageKey));
-			 return "search";
-		 }
-         setPageSize(WorksConstants.PAGE_SIZE);
-		 super.search();
-		 return "search";
-	 }
-	 
-	public void validate() {
-		populateActivities();
-		
-		if(null == template.getMilestoneTemplateActivities() || template.getMilestoneTemplateActivities().size() ==0){
-			 
-			addFieldError("milestone.activity.missing", "Template Activity is not added");
-		}
-		BigDecimal percentage = BigDecimal.ZERO;
-		for (MilestoneTemplateActivity templateActivities : template.getMilestoneTemplateActivities()) {
-			if(templateActivities.getPercentage()!=null){
-				percentage = percentage.add(templateActivities.getPercentage());
-			}
-		}
-		if(percentage.compareTo(BigDecimal.valueOf(100)) !=0){
-			addFieldError("milestone.activity.total.percentage", "Total activity percentage should be equal to 100%");
-			 
-		}
-	}
-	
-	 protected void populateCategoryList(
-				AjaxEstimateAction ajaxEstimateAction, boolean categoryPopulated) {
-			if (categoryPopulated) {
-				ajaxEstimateAction.setCategory(template.getWorkType().getId());
-				ajaxEstimateAction.subcategories();
-				addDropdownData("categoryList", ajaxEstimateAction.getSubCategories());		
-			}
-			else {
-				addDropdownData("categoryList", Collections.emptyList());
-			}
-		}
+    public String getDesignation() {
+        return designation;
+    }
 
+    public void setDesignation(final String designation) {
+        this.designation = designation;
+    }
 
-	 public void populateActivities(){
-		template.getMilestoneTemplateActivities().clear();
-		for (MilestoneTemplateActivity activity :templateActivities)
-		{
-			if(activity!=null){
-			template.addMilestoneTemplateActivity(activity);
-			}
-		}
-	 }
+    @SkipValidation
+    public String edit() {
+        if ((SOURCE_INBOX.equalsIgnoreCase(sourcepage) || MODE_MODIFY.equalsIgnoreCase(mode))
+                && template.getEgwStatus() != null &&
+                !template.getEgwStatus().getCode().equals(MilestoneTemplate.MilestoneTemplateStatus.APPROVED)
+                && !template.getEgwStatus().getCode()
+                        .equals(MilestoneTemplate.MilestoneTemplateStatus.CANCELLED)
+                || template.getEgwStatus() != null &&
+                        template.getEgwStatus().getCode().equals(WorksConstants.NEW)) {
+            final User user = userService.getUserById(Long.valueOf(EgovThreadLocals.getUserId()));
+            final boolean isValidUser = worksService.validateWorkflowForUser(template, user);
+            if (isValidUser)
+                throw new EGOVRuntimeException("Error: Invalid Owner - No permission to view this page.");
+        } else if (StringUtils.isEmpty(sourcepage))
+            sourcepage = "search";
 
-	@Override
-	public SearchQuery prepareQuery(String sortField, String sortOrder){
-		String dynQuery =" from MilestoneTemplate mt where mt.id is not null and mt.egwStatus.code!='NEW' ";
-		List<Object> paramList = new ArrayList<Object>();
-		if(template.getWorkType()!=null && template.getWorkType().getId()!=-1){
-			dynQuery = dynQuery + " and mt.workType.id = ? ";
-			paramList.add(template.getWorkType().getId());
-		}
-		if(template.getSubType() != null && template.getSubType().getId() !=-1){
-			dynQuery = dynQuery + " and mt.subType.id = ? ";
-			paramList.add(template.getSubType().getId());
-		} 
-		if(StringUtils.isNotBlank(template.getCode().trim())){
-			dynQuery = dynQuery + " and UPPER(mt.code) like '%'||?||'%'";
-			paramList.add(template.getCode().trim().toUpperCase());
-		}
-		if(StringUtils.isNotBlank(template.getName().trim())){
-			dynQuery = dynQuery + " and UPPER(mt.name) like '%'||?||'%'";
-			paramList.add(template.getName().trim().toUpperCase());
-		}
-		if(StringUtils.isNotBlank(template.getDescription().trim())){
-			dynQuery = dynQuery + " and UPPER(mt.description) like '%'||?||'%'";
-			paramList.add(template.getDescription().trim().toUpperCase());
-		}
-		if(template.getStatus()!=null && template.getStatus() !=-1){
-			dynQuery = dynQuery + " and mt.status = ? ";
-			paramList.add(template.getStatus());
-		}
-		String countQuery = "select distinct count(mt) " + dynQuery;
-		return new SearchQueryHQL(dynQuery, countQuery, paramList);
-	}
-		
-	public MilestoneTemplate getTemplate() {
-		return template;
-	}
-	public void setTemplate(MilestoneTemplate template) {
-		this.template = template;
-	}
-	public PersistenceService<MilestoneTemplate, Long> getMilestoneTemplateService() {
-		return milestoneTemplateService;
-	}
-	public void setMilestoneTemplateService(
-			PersistenceService<MilestoneTemplate, Long> milestoneTemplateService) {
-		this.milestoneTemplateService = milestoneTemplateService;
-	}
-	public void setMode(String mode) {
-		this.mode = mode;
-	}
+        return "edit";
+    }
 
-	public String getMode() {
-		return mode;
-	}
+    @Override
+    @SkipValidation
+    public String search() {
 
-	public Long getId() {
-		return id;
-	}
+        return "search";
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public List<org.egov.infstr.workflow.Action> getValidActions(){
-		return milestoneTemplateWorkflowService.getValidActions(template); 		
-	}
-	
-	public void setMilestoneTemplateWorkflowService(WorkflowService<MilestoneTemplate> milestoneTemplateWorkflowService) {
-		this.milestoneTemplateWorkflowService = milestoneTemplateWorkflowService;
-	}
+    @SkipValidation
+    public String searchTemplate() {
+        if ("searchForMilestone".equalsIgnoreCase(sourcepage))
+            template.setStatus(1);
+        return "search";
+    }
 
-	public void setCommonsService(CommonsService commonsService) {
-		this.commonsService = commonsService;
-	}
+    @SkipValidation
+    public String searchDetails() {
+        if (template.getWorkType() == null || template.getWorkType().getId() == -1) {
+            final String messageKey = "milestone.template.search.workType.error";
+            addActionError(getText(messageKey));
+            return "search";
+        }
+        setPageSize(WorksConstants.PAGE_SIZE);
+        super.search();
+        return "search";
+    }
 
-	public void setWorksService(WorksService worksService) {
-		this.worksService = worksService;
-	}
+    @Override
+    public void validate() {
+        populateActivities();
 
-	public List<MilestoneTemplateActivity> getTemplateActivities() {
-		return templateActivities;
-	}
+        if (null == template.getMilestoneTemplateActivities() || template.getMilestoneTemplateActivities().size() == 0)
+            addFieldError("milestone.activity.missing", "Template Activity is not added");
+        BigDecimal percentage = BigDecimal.ZERO;
+        for (final MilestoneTemplateActivity templateActivities : template.getMilestoneTemplateActivities())
+            if (templateActivities.getPercentage() != null)
+                percentage = percentage.add(templateActivities.getPercentage());
+        if (percentage.compareTo(BigDecimal.valueOf(100)) != 0)
+            addFieldError("milestone.activity.total.percentage", "Total activity percentage should be equal to 100%");
+    }
 
-	public void setTemplateActivities(
-			List<MilestoneTemplateActivity> templateActivities) {
-		this.templateActivities = templateActivities;
-	}
+    protected void populateCategoryList(
+            final AjaxEstimateAction ajaxEstimateAction, final boolean categoryPopulated) {
+        if (categoryPopulated) {
+            ajaxEstimateAction.setCategory(template.getWorkType().getId());
+            ajaxEstimateAction.subcategories();
+            addDropdownData("categoryList", ajaxEstimateAction.getSubCategories());
+        } else
+            addDropdownData("categoryList", Collections.emptyList());
+    }
 
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
+    public void populateActivities() {
+        template.getMilestoneTemplateActivities().clear();
+        for (final MilestoneTemplateActivity activity : templateActivities)
+            if (activity != null)
+                template.addMilestoneTemplateActivity(activity);
+    }
+
+    @Override
+    public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
+        String dynQuery = " from MilestoneTemplate mt where mt.id is not null and mt.egwStatus.code!='NEW' ";
+        final List<Object> paramList = new ArrayList<Object>();
+        if (template.getWorkType() != null && template.getWorkType().getId() != -1) {
+            dynQuery = dynQuery + " and mt.workType.id = ? ";
+            paramList.add(template.getWorkType().getId());
+        }
+        if (template.getSubType() != null && template.getSubType().getId() != -1) {
+            dynQuery = dynQuery + " and mt.subType.id = ? ";
+            paramList.add(template.getSubType().getId());
+        }
+        if (StringUtils.isNotBlank(template.getCode().trim())) {
+            dynQuery = dynQuery + " and UPPER(mt.code) like '%'||?||'%'";
+            paramList.add(template.getCode().trim().toUpperCase());
+        }
+        if (StringUtils.isNotBlank(template.getName().trim())) {
+            dynQuery = dynQuery + " and UPPER(mt.name) like '%'||?||'%'";
+            paramList.add(template.getName().trim().toUpperCase());
+        }
+        if (StringUtils.isNotBlank(template.getDescription().trim())) {
+            dynQuery = dynQuery + " and UPPER(mt.description) like '%'||?||'%'";
+            paramList.add(template.getDescription().trim().toUpperCase());
+        }
+        if (template.getStatus() != null && template.getStatus() != -1) {
+            dynQuery = dynQuery + " and mt.status = ? ";
+            paramList.add(template.getStatus());
+        }
+        final String countQuery = "select distinct count(mt) " + dynQuery;
+        return new SearchQueryHQL(dynQuery, countQuery, paramList);
+    }
+
+    public MilestoneTemplate getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(final MilestoneTemplate template) {
+        this.template = template;
+    }
+
+    public PersistenceService<MilestoneTemplate, Long> getMilestoneTemplateService() {
+        return milestoneTemplateService;
+    }
+
+    public void setMilestoneTemplateService(
+            final PersistenceService<MilestoneTemplate, Long> milestoneTemplateService) {
+        this.milestoneTemplateService = milestoneTemplateService;
+    }
+
+    public void setMode(final String mode) {
+        this.mode = mode;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public List<org.egov.infstr.workflow.Action> getValidActions() {
+        return milestoneTemplateWorkflowService.getValidActions(template);
+    }
+
+    public void setMilestoneTemplateWorkflowService(final WorkflowService<MilestoneTemplate> milestoneTemplateWorkflowService) {
+        this.milestoneTemplateWorkflowService = milestoneTemplateWorkflowService;
+    }
+
+    public void setCommonsService(final CommonsService commonsService) {
+        this.commonsService = commonsService;
+    }
+
+    public void setWorksService(final WorksService worksService) {
+        this.worksService = worksService;
+    }
+
+    public List<MilestoneTemplateActivity> getTemplateActivities() {
+        return templateActivities;
+    }
+
+    public void setTemplateActivities(
+            final List<MilestoneTemplateActivity> templateActivities) {
+        this.templateActivities = templateActivities;
+    }
+
+    public void setUserService(final UserService userService) {
+        this.userService = userService;
+    }
 
 }

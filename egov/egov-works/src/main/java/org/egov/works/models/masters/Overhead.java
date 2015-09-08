@@ -124,11 +124,9 @@ public class Overhead extends BaseModel {
     }
 
     /**
-     * This method checks if no overhead rates have been entered for the
-     * Overhead.
+     * This method checks if no overhead rates have been entered for the Overhead.
      *
-     * @return list of <code>ValidationError</code> indicating that at least one
-     *         Overhead Rate should be entered for teh Overhead
+     * @return list of <code>ValidationError</code> indicating that at least one Overhead Rate should be entered for teh Overhead
      */
     private List<ValidationError> checkForNoRatesPresent() {
         if (overheadRates != null && overheadRates.isEmpty())
@@ -197,25 +195,23 @@ public class Overhead extends BaseModel {
     }
 
     /**
-     * This method removes any empty over head rate from the list of over head
-     * rates.
+     * This method removes any empty over head rate from the list of over head rates.
      */
     private void removeEmptyRates() {
         final List<OverheadRate> emptyRateObjs = new LinkedList<OverheadRate>();
 
         for (final OverheadRate overheadRate : overheadRates)
             if (overheadRate.getPercentage() == 0.0
-            && (overheadRate.getLumpsumAmount() == null || overheadRate.getLumpsumAmount().getValue() == 0.0)
-            && (overheadRate.getValidity() == null || overheadRate.getValidity().getStartDate() == null || overheadRate
-            .getValidity().getEndDate() == null))
+                    && (overheadRate.getLumpsumAmount() == null || overheadRate.getLumpsumAmount().getValue() == 0.0)
+                    && (overheadRate.getValidity() == null || overheadRate.getValidity().getStartDate() == null || overheadRate
+                            .getValidity().getEndDate() == null))
                 emptyRateObjs.add(overheadRate);
 
         overheadRates.removeAll(emptyRateObjs);
     }
 
     /**
-     * This method performs the validations for the over head rates entered by
-     * the user.
+     * This method performs the validations for the over head rates entered by the user.
      */
     @Override
     public List<ValidationError> validate() {
@@ -256,7 +252,7 @@ public class Overhead extends BaseModel {
     public String getValidPercentage(final Date estimateDate) {
         for (final OverheadRate overheadRate : overheadRates)
             if (overheadRate != null && isWithin(overheadRate.getValidity(), estimateDate)
-            && overheadRate.getPercentage() > 0.0)
+                    && overheadRate.getPercentage() > 0.0)
                 return String.valueOf(overheadRate.getPercentage());
 
         return "";

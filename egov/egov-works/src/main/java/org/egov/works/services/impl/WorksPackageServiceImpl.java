@@ -57,7 +57,7 @@ import org.egov.works.models.tender.WorksPackageNumberGenerator;
 import org.egov.works.services.WorksPackageService;
 import org.egov.works.utils.WorksConstants;
 
-public class WorksPackageServiceImpl extends BaseServiceImpl<WorksPackage, Long> implements WorksPackageService {
+public class WorksPackageServiceImpl extends BaseServiceImpl<WorksPackage, Long>implements WorksPackageService {
     private WorksPackageNumberGenerator workspackageGenerator;
 
     public WorksPackageServiceImpl(final PersistenceService<WorksPackage, Long> persistenceService) {
@@ -165,8 +165,9 @@ public class WorksPackageServiceImpl extends BaseServiceImpl<WorksPackage, Long>
     public List<Object> getWorksPackageDetails(final Long estimateId) {
         final List<Object> wpDetails = genericService.findAllBy(
                 "select wpd.worksPackage.id, wpd.worksPackage.wpNumber from WorksPackageDetails wpd "
-                        + " where wpd.estimate.id= ? and  wpd.worksPackage.egwStatus.code not in (?,?) ", estimateId,
-                        WorksConstants.NEW, WorksConstants.CANCELLED_STATUS);
+                        + " where wpd.estimate.id= ? and  wpd.worksPackage.egwStatus.code not in (?,?) ",
+                estimateId,
+                WorksConstants.NEW, WorksConstants.CANCELLED_STATUS);
         return wpDetails;
     }
 }

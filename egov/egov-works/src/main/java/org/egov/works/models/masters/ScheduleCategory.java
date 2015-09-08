@@ -53,7 +53,7 @@ import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
 
 @Unique(fields = "code", id = "id", tableName = "EGW_SCHEDULECATEGORY", columnName = "CODE", message = "scheduleCategory.code.isunique")
 public class ScheduleCategory extends BaseModel {
-    
+
     private static final long serialVersionUID = -9168726999209110086L;
     @Length(max = 150, message = "ScheCategory.description.length")
     private String description;

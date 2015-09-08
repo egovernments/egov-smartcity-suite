@@ -66,13 +66,10 @@ public class ProjectCodeGenerator {
             throw sequenceException;
         }
         /*
-         * String projectCode =""; List<Script> scripts =
-         * scriptService.findAllByNamedQuery("SCRIPT",
-         * "works.projectcode.generator"); try{ projectCode =
-         * scripts.get(0).eval(Script.createContext("estimate",estimate,
-         * "finYear",finYear,"sequenceGenerator",sequenceGenerator)).toString();
-         * } catch (ValidationException sequenceException) { throw
-         * sequenceException; } return projectCode;
+         * String projectCode =""; List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT",
+         * "works.projectcode.generator"); try{ projectCode = scripts.get(0).eval(Script.createContext("estimate",estimate,
+         * "finYear",finYear,"sequenceGenerator",sequenceGenerator)).toString(); } catch (ValidationException sequenceException) {
+         * throw sequenceException; } return projectCode;
          */
     }
 
@@ -87,14 +84,10 @@ public class ProjectCodeGenerator {
             throw sequenceException;
         }
         /*
-         * List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT",
-         * "works.subLedgerProjectCode.generator"); try{ return
-         * scripts.get(0).eval
-         * (Script.createContext("projectCode",depositCode,"sequenceGenerator"
-         * ,sequenceGenerator)).toString(); } catch (ValidationException e) {
-         * logger
-         * .error("in project code generation exception>>>>>>>>>>"+e.getErrors
-         * ()); throw e; }
+         * List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT", "works.subLedgerProjectCode.generator"); try{ return
+         * scripts.get(0).eval (Script.createContext("projectCode",depositCode,"sequenceGenerator"
+         * ,sequenceGenerator)).toString(); } catch (ValidationException e) { logger .error(
+         * "in project code generation exception>>>>>>>>>>"+e.getErrors ()); throw e; }
          */
     }
 

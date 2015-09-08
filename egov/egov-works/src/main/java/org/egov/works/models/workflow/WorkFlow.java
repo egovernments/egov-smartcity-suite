@@ -111,7 +111,7 @@ public class WorkFlow extends StateAware {
     }
 
     @Override
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 }

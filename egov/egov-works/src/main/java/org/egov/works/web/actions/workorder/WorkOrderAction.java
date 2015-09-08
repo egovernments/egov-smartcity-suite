@@ -57,8 +57,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRException;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -120,6 +118,8 @@ import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import net.sf.jasperreports.engine.JRException;
 
 @Transactional(readOnly = true)
 @ParentPackage("egov")
@@ -278,7 +278,8 @@ public class WorkOrderAction extends BaseFormAction {
             if (workOrder.getEgwStatus().getCode().equalsIgnoreCase("cancelled"))
                 tenderResponse = tenderResponseService.findByNamedQuery("getTenderFortenderIdCanceledWO", workOrder
                         .getNegotiationNumber(), workOrder.getId(), workOrder.getTenderNumber(), workOrder
-                        .getContractor().getId(), workOrder.getPackageNumber());
+                                .getContractor().getId(),
+                        workOrder.getPackageNumber());
             else
                 tenderResponse = tenderResponseService.findByNamedQuery("getTenderFortenderId",
                         workOrder.getTenderNumber());
@@ -286,18 +287,21 @@ public class WorkOrderAction extends BaseFormAction {
             tenderResponse.setWorkOrderAmount(getWorkOrderAmount());
             tenderResponseContractor = tenderResponseContractorsService.find(
                     "from TenderResponseContractors where contractor.id=? and tenderResponse.id=?", workOrder
-                            .getContractor().getId(), tenderResponse.getId());
+                            .getContractor().getId(),
+                    tenderResponse.getId());
             tenderRespContrId = tenderResponseContractor.getId();
 
             if (workOrder.getEngineerIncharge() != null && getAssignedTo1() == null)
                 setAssignedTo1(Long.valueOf(employeeService
                         .getAssignmentByEmpAndDate(new Date(),
-                                workOrder.getEngineerIncharge().getIdPersonalInformation()).getDesignation()
+                                workOrder.getEngineerIncharge().getIdPersonalInformation())
+                        .getDesignation()
                         .getId()));
             if (workOrder.getEngineerIncharge2() != null && getAssignedTo2() == null)
                 setAssignedTo2(Long.valueOf(employeeService
                         .getAssignmentByEmpAndDate(new Date(),
-                                workOrder.getEngineerIncharge2().getIdPersonalInformation()).getDesignation()
+                                workOrder.getEngineerIncharge2().getIdPersonalInformation())
+                        .getDesignation()
                         .getId()));
 
             setWorkOrderActivities(workOrder);
@@ -511,7 +515,8 @@ public class WorkOrderAction extends BaseFormAction {
         if (workOrder.getEgwStatus().getCode().equalsIgnoreCase("cancelled"))
             tenderResponse = (TenderResponse) persistenceService.findByNamedQuery("getTenderFortenderIdCanceledWO",
                     workOrder.getNegotiationNumber(), workOrder.getId(), workOrder.getTenderNumber(), workOrder
-                            .getContractor().getId(), workOrder.getPackageNumber());
+                            .getContractor().getId(),
+                    workOrder.getPackageNumber());
         else
             tenderResponse = (TenderResponse) persistenceService.findByNamedQuery("getTenderFortenderId",
                     workOrder.getTenderNumber());
@@ -689,7 +694,7 @@ public class WorkOrderAction extends BaseFormAction {
         workOrderActivity.setApprovedQuantity(tenderResponseActivity.getNegotiatedQuantity());
         workOrderActivity.setApprovedAmount(new Money(workOrderActivity.getApprovedRate()
                 * workOrderActivity.getApprovedQuantity() * tenderResponseActivity.getActivity().getConversionFactor())
-                .getValue());
+                        .getValue());
         workOrderActivity.setWorkOrderEstimate(workOrderEstimate);
         workOrderEstimate.addWorkOrderActivity(workOrderActivity);
     }
@@ -1435,7 +1440,8 @@ public class WorkOrderAction extends BaseFormAction {
                 }
                 if (workOrder.getEgwStatus() != null
                         && (workOrder.getEgwStatus().getCode().equalsIgnoreCase("NEW") || workOrder.getEgwStatus()
-                                .getCode().equalsIgnoreCase("REJECTED")) && id != null) {
+                                .getCode().equalsIgnoreCase("REJECTED"))
+                        && id != null) {
                     validateMandatoryFields();
                     validateWOAllocatedToUser();
                     if (contractPeriodCutOffDate != null) {
@@ -1514,8 +1520,8 @@ public class WorkOrderAction extends BaseFormAction {
     private void validateDLP() {
         if (id == null
                 || workOrder.getEgwStatus() != null
-                && (workOrder.getEgwStatus().getCode().equalsIgnoreCase(NEW) || workOrder.getEgwStatus().getCode()
-                        .equalsIgnoreCase(WorksConstants.REJECTED))) {
+                        && (workOrder.getEgwStatus().getCode().equalsIgnoreCase(NEW) || workOrder.getEgwStatus().getCode()
+                                .equalsIgnoreCase(WorksConstants.REJECTED))) {
             if (workOrder.getDefectLiabilityPeriod() == null)
                 addActionError(getText("defectLiabilityPeriod.null"));
             else if (workOrder.getDefectLiabilityPeriod() <= 0.0)
@@ -1556,21 +1562,17 @@ public class WorkOrderAction extends BaseFormAction {
                         .concat(getText("workOrder.cancel.cancelledby")).concat(": ").concat(empName);
             else
                 cancellationReason.concat(". ").concat(getText("workOrder.cancel.cancelledby")).concat(": ")
-                .concat(empName);
+                        .concat(empName);
 
             // TODO - The setter methods of variables in State.java are
             // protected. Need to alternative way to solve this issue.
             // Set the status and workflow state to cancelled
             /****
-             * State oldEndState = workOrder.getCurrentState(); Position owner =
-             * prsnlInfo.getAssignment(new Date()).getPosition();
-             * oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
-             * oldEndState.setModifiedBy(prsnlInfo.getUserMaster());
-             * oldEndState.setCreatedDate(new Date());
-             * oldEndState.setModifiedDate(new Date());
-             * oldEndState.setOwner(owner);
-             * oldEndState.setValue(WorksConstants.CANCELLED_STATUS.toString());
-             * oldEndState.setText1(cancellationText);
+             * State oldEndState = workOrder.getCurrentState(); Position owner = prsnlInfo.getAssignment(new
+             * Date()).getPosition(); oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
+             * oldEndState.setModifiedBy(prsnlInfo.getUserMaster()); oldEndState.setCreatedDate(new Date());
+             * oldEndState.setModifiedDate(new Date()); oldEndState.setOwner(owner);
+             * oldEndState.setValue(WorksConstants.CANCELLED_STATUS.toString()); oldEndState.setText1(cancellationText);
              * workOrder.changeState("END", owner, null);
              ****/
         }
@@ -1581,8 +1583,8 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     /*
-     * Validate is there any Advance Requisition forms created for Estimates in
-     * this work order. If yes then throw proper validation message.
+     * Validate is there any Advance Requisition forms created for Estimates in this work order. If yes then throw proper
+     * validation message.
      */
     private void validateARFForWO(final WorkOrder workOrder) {
         String arfNo = "";

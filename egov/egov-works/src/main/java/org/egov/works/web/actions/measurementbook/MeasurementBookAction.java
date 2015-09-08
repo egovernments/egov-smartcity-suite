@@ -232,8 +232,8 @@ public class MeasurementBookAction extends BaseFormAction {
     private void getWrkCommndAndLatestMBDates() {
         if (id == null
                 || mbHeader.getEgwStatus() != null
-                && (mbHeader.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.NEW) || mbHeader.getEgwStatus()
-                        .getCode().equalsIgnoreCase(WorksConstants.REJECTED))) {
+                        && (mbHeader.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.NEW) || mbHeader.getEgwStatus()
+                                .getCode().equalsIgnoreCase(WorksConstants.REJECTED))) {
             if (id == null)
                 woId = workOrderId;
             else
@@ -312,7 +312,7 @@ public class MeasurementBookAction extends BaseFormAction {
                 ajaxEstimateAction.usersInExecutingDepartment();
                 if (ajaxEstimateAction.getUsersInExecutingDepartment() != null
                         && ajaxEstimateAction.getUsersInExecutingDepartment().size() == 1) {
-                    //TODO: Please check the below 2 lines -- edited by Vaibhav
+                    // TODO: Please check the below 2 lines -- edited by Vaibhav
                     defaultPreparedById = ((List<EmployeeView>) ajaxEstimateAction.getUsersInExecutingDepartment())
                             .get(0).getId().intValue();
                     defaultDesgination = ((List<EmployeeView>) ajaxEstimateAction.getUsersInExecutingDepartment())
@@ -426,8 +426,7 @@ public class MeasurementBookAction extends BaseFormAction {
         if (mbStatus != null && !"".equalsIgnoreCase(mbStatus) && !"-1".equals(mbStatus))
             criteriaMap.put(MeasurementBookServiceImpl.STATUS, mbStatus);
         /*
-         * if(mbStatus != null && "-1".equals(mbStatus))
-         * criteriaMap.put(MeasurementBookServiceImpl.STATUS, mbStatus);
+         * if(mbStatus != null && "-1".equals(mbStatus)) criteriaMap.put(MeasurementBookServiceImpl.STATUS, mbStatus);
          */
         if (execDeptid != null && execDeptid != -1)
             criteriaMap.put(MeasurementBookServiceImpl.DEPT_ID, execDeptid);
@@ -531,7 +530,7 @@ public class MeasurementBookAction extends BaseFormAction {
                 && mbHeader.getCurrentState().getOwnerPosition().getDeptDesig().getDesignation() != null
                 && mbHeader.getCurrentState().getOwnerPosition().getDeptDesig().getDesignation().getName() != null)
             currentDesgination = mbHeader.getCurrentState().getOwnerPosition().getDeptDesig().getDesignation()
-            .getName();
+                    .getName();
         if (designWhoCanModify != null && currentDesgination != null
                 && designWhoCanModify.equalsIgnoreCase(currentDesgination))
             result = true;
@@ -578,8 +577,8 @@ public class MeasurementBookAction extends BaseFormAction {
 
         if (id == null
                 || mbHeader.getEgwStatus() != null
-                && (mbHeader.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.NEW) || mbHeader.getEgwStatus()
-                        .getCode().equalsIgnoreCase(WorksConstants.REJECTED))) {
+                        && (mbHeader.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.NEW) || mbHeader.getEgwStatus()
+                                .getCode().equalsIgnoreCase(WorksConstants.REJECTED))) {
             if (workCommencedDate != null && workCommencedDate.after(mbHeader.getMbDate()))
                 throw new ValidationException(Arrays.asList(new ValidationError("mb.lessThan.wrk.cmmncd.date",
                         getText("mb.lessThan.wrk.cmmncd.date") + " "
@@ -610,11 +609,9 @@ public class MeasurementBookAction extends BaseFormAction {
         }
 
         /*
-         * if(!actionName.equalsIgnoreCase(MBHeader.Actions.APPROVAL.toString())
-         * && workOrderService.isMBInApprovalPendingForWO(workorderNo)) throw
-         * new ValidationException(Arrays.asList(new
-         * ValidationError("measurementbook.approvalpending",
-         * "measurementbook.approvalpending")));
+         * if(!actionName.equalsIgnoreCase(MBHeader.Actions.APPROVAL.toString()) &&
+         * workOrderService.isMBInApprovalPendingForWO(workorderNo)) throw new ValidationException(Arrays.asList(new
+         * ValidationError("measurementbook.approvalpending", "measurementbook.approvalpending")));
          */
 
         // if(measurementBookService.approvalLimitCrossed(mbHeader)){
@@ -865,15 +862,11 @@ public class MeasurementBookAction extends BaseFormAction {
         // Need to alternative way to solve this issue.
         // Set the status and workflow state to cancelled
         /*
-         * State oldEndState = mbHeader.getCurrentState(); Position owner =
-         * prsnlInfo.getAssignment(new Date()).getPosition();
-         * oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
-         * oldEndState.setModifiedBy(prsnlInfo.getUserMaster());
-         * oldEndState.setCreatedDate(new Date());
-         * oldEndState.setModifiedDate(new Date()); oldEndState.setOwner(owner);
-         * oldEndState.setValue(WorksConstants.CANCELLED_STATUS);
-         * oldEndState.setText1(cancellationText); mbHeader.changeState("END",
-         * owner, null);
+         * State oldEndState = mbHeader.getCurrentState(); Position owner = prsnlInfo.getAssignment(new Date()).getPosition();
+         * oldEndState.setCreatedBy(prsnlInfo.getUserMaster()); oldEndState.setModifiedBy(prsnlInfo.getUserMaster());
+         * oldEndState.setCreatedDate(new Date()); oldEndState.setModifiedDate(new Date()); oldEndState.setOwner(owner);
+         * oldEndState.setValue(WorksConstants.CANCELLED_STATUS); oldEndState.setText1(cancellationText);
+         * mbHeader.changeState("END", owner, null);
          */
 
         mbRefNo = mbHeader.getMbRefNo();

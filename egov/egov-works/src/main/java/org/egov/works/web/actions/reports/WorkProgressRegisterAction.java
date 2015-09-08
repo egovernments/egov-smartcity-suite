@@ -72,10 +72,10 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.search.SearchQuery;
@@ -109,12 +109,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
-    @Result(name = WorkProgressRegisterAction.PRINT_PDF, type = "StreamResult.class", location = "workProgressRegisterStream", params = {
-            "inputName", "workProgressRegisterStream", "contentType", "application/pdf", "contentDisposition",
-    "no-cache;filename=WorkProgressRegisterReport.pdf" }),
-    @Result(name = WorkProgressRegisterAction.PRINT_EXCEL, type = "StreamResult.class", location = "workProgressRegisterStream", params = {
-            "inputName", "workProgressRegisterStream", "contentType", "application/xls", "contentDisposition",
-    "no-cache;filename=WorkProgressRegisterReport.xls" }) })
+        @Result(name = WorkProgressRegisterAction.PRINT_PDF, type = "StreamResult.class", location = "workProgressRegisterStream", params = {
+                "inputName", "workProgressRegisterStream", "contentType", "application/pdf", "contentDisposition",
+                "no-cache;filename=WorkProgressRegisterReport.pdf" }),
+        @Result(name = WorkProgressRegisterAction.PRINT_EXCEL, type = "StreamResult.class", location = "workProgressRegisterStream", params = {
+                "inputName", "workProgressRegisterStream", "contentType", "application/xls", "contentDisposition",
+                "no-cache;filename=WorkProgressRegisterReport.xls" }) })
 public class WorkProgressRegisterAction extends SearchFormAction {
 
     private static final long serialVersionUID = -30571718037168928L;
@@ -183,13 +183,13 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         addDropdownData(
                 ASSIGNED_USER_LIST1,
                 getPersistenceService()
-                .findAllBy(
-                        "select distinct wo.engineerIncharge from  WorkOrder wo where wo.engineerIncharge.employeeName is not null"));
+                        .findAllBy(
+                                "select distinct wo.engineerIncharge from  WorkOrder wo where wo.engineerIncharge.employeeName is not null"));
         addDropdownData(
                 ASSIGNED_USER_LIST2,
                 getPersistenceService()
-                .findAllBy(
-                        "select distinct wo.engineerIncharge2 from  WorkOrder wo where wo.engineerIncharge2.employeeName is not null"));
+                        .findAllBy(
+                                "select distinct wo.engineerIncharge2 from  WorkOrder wo where wo.engineerIncharge2.employeeName is not null"));
         addDropdownData("typeList", getPersistenceService().findAllBy("from NatureOfWork dt"));
         addDropdownData("executingDepartmentList",
                 getPersistenceService().findAllBy("from Department order by upper(ame)"));
@@ -205,8 +205,8 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         addDropdownData(
                 "preparedByList",
                 getPersistenceService()
-                .findAllBy(
-                        "select distinct wo.workOrderPreparedBy from WorkOrder wo where wo.workOrderPreparedBy.employeeName is not null"));
+                        .findAllBy(
+                                "select distinct wo.workOrderPreparedBy from WorkOrder wo where wo.workOrderPreparedBy.employeeName is not null"));
         addDropdownData("schemeList",
                 getPersistenceService().findAllBy("from org.egov.commons.Scheme sc where sc.isactive=1"));
         final AjaxWorkProgressAction ajaxWorkProgressAction = new AjaxWorkProgressAction();
@@ -265,7 +265,8 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         super.search();
 
         final List<Object> objects = searchResult.getList();
-        final ArrayList<WorkProgressRegister> workProgressRegisterList = (ArrayList<WorkProgressRegister>) getWorkProgressRegisterList(objects);
+        final ArrayList<WorkProgressRegister> workProgressRegisterList = (ArrayList<WorkProgressRegister>) getWorkProgressRegisterList(
+                objects);
         searchResult.getList().clear();
         searchResult.getList().addAll(workProgressRegisterList);
 
@@ -335,20 +336,20 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                                         .getFinYearRange();
                                 if (apprDetails != null)
                                     apprDetails = apprDetails
-                                    + ", "
-                                    + count
-                                    + ")"
-                                    + finyearRange
-                                    + ", "
-                                    + NumberUtil.formatNumber(new BigDecimal(estimateApp.getBudgetUsage()
-                                            .getConsumedAmount()));
+                                            + ", "
+                                            + count
+                                            + ")"
+                                            + finyearRange
+                                            + ", "
+                                            + NumberUtil.formatNumber(new BigDecimal(estimateApp.getBudgetUsage()
+                                                    .getConsumedAmount()));
                                 else
                                     apprDetails = count
-                                    + ")"
-                                    + finyearRange
-                                    + ", "
-                                    + NumberUtil.formatNumber(new BigDecimal(estimateApp.getBudgetUsage()
-                                            .getConsumedAmount()));
+                                            + ")"
+                                            + finyearRange
+                                            + ", "
+                                            + NumberUtil.formatNumber(new BigDecimal(estimateApp.getBudgetUsage()
+                                                    .getConsumedAmount()));
                             }
                         } else if (estimateApp.getDepositWorksUsage().getConsumedAmount().equals(BigDecimal.ZERO)) {
                             final String finyearRange = commonsService.getFinancialYearById(
@@ -356,20 +357,20 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                                     .getFinYearRange();
                             if (apprDetails != null)
                                 apprDetails = apprDetails
-                                + ", "
-                                + count
-                                + ")"
-                                + finyearRange
-                                + ", "
-                                + NumberUtil.formatNumber(new BigDecimal(estimateApp.getBudgetUsage()
-                                        .getConsumedAmount()));
+                                        + ", "
+                                        + count
+                                        + ")"
+                                        + finyearRange
+                                        + ", "
+                                        + NumberUtil.formatNumber(new BigDecimal(estimateApp.getBudgetUsage()
+                                                .getConsumedAmount()));
                             else
                                 apprDetails = count
-                                + ")"
-                                + finyearRange
-                                + ", "
-                                + NumberUtil.formatNumber(new BigDecimal(estimateApp.getBudgetUsage()
-                                        .getConsumedAmount()));
+                                        + ")"
+                                        + finyearRange
+                                        + ", "
+                                        + NumberUtil.formatNumber(new BigDecimal(estimateApp.getBudgetUsage()
+                                                .getConsumedAmount()));
                         }
                     }
                     workProgress.setApprDetails(apprDetails);
@@ -511,7 +512,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
 
             if (egBillRegister != null)
                 if (egBillRegister.getStatus() != null
-                && egBillRegister.getStatus().getCode().equalsIgnoreCase("APPROVED")) {
+                        && egBillRegister.getStatus().getCode().equalsIgnoreCase("APPROVED")) {
                     paymentDetail.setBillAmount(egBillRegister.getBillamount());
                     paymentDetail.setBillDate(DateUtils.getFormattedDate(egBillRegister.getBilldate(), dateFormat));
                     paymentDetail.setBillNumber(egBillRegister.getBillnumber());
@@ -687,7 +688,8 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         final StringBuilder srchCrit = new StringBuilder(3000);
         final StringBuffer orderQry = new StringBuffer(100);
         srchCrit.append("Report");
-        query.append("from org.egov.works.models.workorder.WorkOrderEstimate as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone ");
+        query.append(
+                "from org.egov.works.models.workorder.WorkOrderEstimate as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone ");
         query.append("where woe.workOrder.parent is null and woe.workOrder.egwStatus.code='APPROVED' ");
         query.append("and milestone.egwStatus.code='APPROVED' and trackMilestone.egwStatus.code='APPROVED' ");
         if (sourcePage == null || StringUtils.isEmpty(sourcePage)) {
@@ -695,13 +697,16 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                 srchCrit.append(" for Work Order Status " + workOrderStatus);
                 if (workOrderStatus.equalsIgnoreCase("APPROVED")) {
                     query.append(" and woe.workOrder.egwStatus.code=?");
-                    query.append(" and woe.workOrder.id not in (select objectId from org.egov.works.models.tender.SetStatus where objectType=?)");
+                    query.append(
+                            " and woe.workOrder.id not in (select objectId from org.egov.works.models.tender.SetStatus where objectType=?)");
                     paramList.add(workOrderStatus);
                     paramList.add(WorkOrder.class.getSimpleName());
                 } else {
                     query.delete(0, query.length() - 1);
-                    query.append("from org.egov.works.models.workorder.WorkOrderEstimate  as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone,org.egov.works.models.tender.SetStatus st");
-                    query.append(" where st.objectId=woe.workOrder.id and st.id=(select max(id) from org.egov.works.models.tender.SetStatus where objectId=woe.workOrder.id and objectType=?) and st.objectType=? and st.egwStatus.code=?");
+                    query.append(
+                            "from org.egov.works.models.workorder.WorkOrderEstimate  as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone,org.egov.works.models.tender.SetStatus st");
+                    query.append(
+                            " where st.objectId=woe.workOrder.id and st.id=(select max(id) from org.egov.works.models.tender.SetStatus where objectId=woe.workOrder.id and objectType=?) and st.objectType=? and st.egwStatus.code=?");
                     query.append(" and woe.workOrder.parent is null and woe.workOrder.egwStatus.code='APPROVED' ");
                     query.append(" and milestone.egwStatus.code='APPROVED' and trackMilestone.egwStatus.code='APPROVED' ");
                     paramList.add(WorkOrder.class.getSimpleName());

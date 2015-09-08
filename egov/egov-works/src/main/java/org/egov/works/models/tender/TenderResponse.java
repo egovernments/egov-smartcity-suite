@@ -123,7 +123,7 @@ public class TenderResponse extends WorkFlow {
     private String formattedTotalAmount;
 
     private double tenderNegotiatedValue;
-    
+
     private Date approvedDate;
 
     private List<String> tenderNegotiationsActions = new ArrayList<String>();
@@ -212,10 +212,10 @@ public class TenderResponse extends WorkFlow {
         final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
         if (!tenderResponseContractors.isEmpty()
                 && (tenderResponseContractors.get(0) != null
-                && tenderResponseContractors.get(0).getContractor() != null
-                && tenderResponseContractors.get(0).getContractor().getId() == null
-                || tenderResponseContractors.get(0).getContractor().getId() == 0 || tenderResponseContractors
-                .get(0).getContractor().getId() == -1))
+                        && tenderResponseContractors.get(0).getContractor() != null
+                        && tenderResponseContractors.get(0).getContractor().getId() == null
+                        || tenderResponseContractors.get(0).getContractor().getId() == 0 || tenderResponseContractors
+                                .get(0).getContractor().getId() == -1))
             validationErrors.add(new ValidationError("contractor", "tenderResponse.contractor.null"));
         else if (tenderResponseContractors == null)
             validationErrors.add(new ValidationError("contractor", "tenderResponse.contractor.null"));
@@ -235,8 +235,7 @@ public class TenderResponse extends WorkFlow {
     }
 
     /**
-     * @param narration
-     *            the narration to set
+     * @param narration the narration to set
      */
     public void setNarration(final String narration) {
         this.narration = narration;
@@ -435,7 +434,7 @@ public class TenderResponse extends WorkFlow {
         return approvedDate;
     }
 
-    public void setApprovedDate(Date approvedDate) {
+    public void setApprovedDate(final Date approvedDate) {
         this.approvedDate = approvedDate;
     }
 

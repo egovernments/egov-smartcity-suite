@@ -48,7 +48,7 @@ import org.egov.works.models.estimate.Activity;
 import org.egov.works.models.revisionEstimate.RevisionType;
 
 public class WorkOrderActivity extends BaseModel {
-    
+
     private static final long serialVersionUID = -5986495021099638251L;
     private WorkOrderEstimate workOrderEstimate;
     private Activity activity;
@@ -137,18 +137,18 @@ public class WorkOrderActivity extends BaseModel {
         else if (workOrderEstimate.getWorkOrder().getParent() != null
                 && workOrderEstimate.getEstimate().getParent() != null
                 && activity.getRevisionType() != null
-                && (activity.getRevisionType().toString().equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString()) || activity
-                        .getRevisionType().toString().equalsIgnoreCase(RevisionType.REDUCED_QUANTITY.toString())))
+                && (activity.getRevisionType().toString().equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString())
+                        || activity
+                                .getRevisionType().toString().equalsIgnoreCase(RevisionType.REDUCED_QUANTITY.toString())))
             return activity.getConversionFactorForRE(workOrderEstimate.getEstimate().getParent().getEstimateDate());
         else
             return activity.getConversionFactor();
     }
 
     /**
-     * This method is used to return the ScheduleOfRate based on if its
-     * AbstractEstimate(estimateDate is used) or RevisionEstimate(original
-     * parent workorderDate is used)
-     * 
+     * This method is used to return the ScheduleOfRate based on if its AbstractEstimate(estimateDate is used) or
+     * RevisionEstimate(original parent workorderDate is used)
+     *
      * @return a double value of sorRate
      */
     public double getScheduleOfRate() {
@@ -168,13 +168,13 @@ public class WorkOrderActivity extends BaseModel {
             if (activity.getRevisionType() != null
                     && (activity.getRevisionType().toString()
                             .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()) || activity.getRevisionType()
-                            .toString().equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString())))
+                                    .toString().equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString())))
                 sorRate = getActivity().getSORRateForDate(workOrderDate).getValue();
             else if (getActivity().getAbstractEstimate().getParent() != null
                     && activity.getRevisionType() != null
                     && (activity.getRevisionType().toString()
                             .equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString()) || activity
-                            .getRevisionType().toString().equalsIgnoreCase(RevisionType.REDUCED_QUANTITY.toString())))
+                                    .getRevisionType().toString().equalsIgnoreCase(RevisionType.REDUCED_QUANTITY.toString())))
                 sorRate = getActivity()
                         .getSORRateForDate(workOrderEstimate.getEstimate().getParent().getEstimateDate()).getValue();
             else

@@ -57,22 +57,18 @@ import org.egov.works.models.workorder.WorkOrderEstimate;
 public interface MeasurementBookService extends BaseService<MBHeader, Long> {
 
     /**
-     * This method will search list of mbheader based on input criteria. Search
-     * Criteria :
-     * WORKORDER_NO,CONTRACTOR_ID,CREATE_DATE,MB_REF_NO,MB_PAGE_NO,STATUS Story
-     * #436 - Search MB-View MB
+     * This method will search list of mbheader based on input criteria. Search Criteria :
+     * WORKORDER_NO,CONTRACTOR_ID,CREATE_DATE,MB_REF_NO,MB_PAGE_NO,STATUS Story #436 - Search MB-View MB
      *
      * @param criteriaMap
-     * @param parameterList
-     *            TODO
+     * @param parameterList TODO
      * @return
      */
     List<String> searchMB(Map<String, Object> criteriaMap, List<Object> parameterList);
 
     /**
-     * Get previous cumulative amount(approved, approval pending and draft
-     * entries) based on workorder activity Id. This will search list of
-     * MBDetail and then get cmulative amount.
+     * Get previous cumulative amount(approved, approval pending and draft entries) based on workorder activity Id. This will
+     * search list of MBDetail and then get cmulative amount.
      *
      * @param woActivityId
      * @return
@@ -106,8 +102,7 @@ public interface MeasurementBookService extends BaseService<MBHeader, Long> {
     List<WorkOrderEstimate> getWorkOrderEstimatesForBill(List<WorkOrderEstimate> workOrderEstimateList);
 
     /**
-     * This method will return workorderestimates objects pending for Bill , but
-     * it will not consider Legacy MBs
+     * This method will return workorderestimates objects pending for Bill , but it will not consider Legacy MBs
      *
      * @param workOrderEstimateList
      * @param mbHeader
@@ -116,8 +111,7 @@ public interface MeasurementBookService extends BaseService<MBHeader, Long> {
     List<WorkOrderEstimate> getWOEstForBillExludingLegacyMB(List<WorkOrderEstimate> workOrderEstimateList);
 
     /**
-     * @param workOrderNumber
-     *            ,lineItemId
+     * @param workOrderNumber ,lineItemId
      * @return boolean
      */
 
@@ -132,8 +126,7 @@ public interface MeasurementBookService extends BaseService<MBHeader, Long> {
     Boolean approvalLimitCrossed(MBDetails mbDetails);
 
     /**
-     * List of all approved MB's for which Bill is not generated or bill is
-     * cancelled.
+     * List of all approved MB's for which Bill is not generated or bill is cancelled.
      *
      * @param workOrderId
      * @param asOnDate
@@ -181,32 +174,26 @@ public interface MeasurementBookService extends BaseService<MBHeader, Long> {
             WorkOrder workOrder);
 
     /**
-     * Similar to totalEstimatedQuantityForRE but will consider only previous
-     * REs and not all REs
+     * Similar to totalEstimatedQuantityForRE but will consider only previous REs and not all REs
      *
-     * @param woActivityId
-     *            ,estimateId,activityId,workOrder
+     * @param woActivityId ,estimateId,activityId,workOrder
      * @return
      */
     double totalEstimatedQuantityForPreviousREs(Long woActivityId, Long estimateId, Long activityId, WorkOrder workOrder);
 
     /**
-     * This is used by MB screens. This returns the estimated quantity for an
-     * work order activity This returns original activity quantity + all change
-     * quantities of the activity for all associated REs
+     * This is used by MB screens. This returns the estimated quantity for an work order activity This returns original activity
+     * quantity + all change quantities of the activity for all associated REs
      *
-     * @param woActivityId
-     *            ,mbHeaderId,activityId,workOrder
+     * @param woActivityId ,mbHeaderId,activityId,workOrder
      * @return
      */
     public double totalEstimatedQuantity(Long woActivityId, Long mbHeaderId, Long activityId, WorkOrder workOrder);
 
     /**
-     * This is used in validating the sum of all MBs against the estimate wise
-     * WO amount This returns sum of all previous MBs
+     * This is used in validating the sum of all MBs against the estimate wise WO amount This returns sum of all previous MBs
      *
-     * @param workOrderEstimate
-     *            ,negoPerc,tenderType
+     * @param workOrderEstimate ,negoPerc,tenderType
      * @return
      */
     public BigDecimal getTotalMBAmountForPrevMBs(WorkOrderEstimate workOrderEstimate, double negoPerc, String tenderType);
@@ -214,8 +201,7 @@ public interface MeasurementBookService extends BaseService<MBHeader, Long> {
     /**
      * This returns sum of MB amount for the passed workOrderId and estimateId
      *
-     * @param workOrderId
-     *            ,estimateId
+     * @param workOrderId ,estimateId
      * @return
      */
     public BigDecimal getTotalMBAmount(Long workOrderId, Long estimateId);
@@ -231,8 +217,7 @@ public interface MeasurementBookService extends BaseService<MBHeader, Long> {
     /**
      * returns last MB created date
      *
-     * @param EstimateId
-     *            , workOrderId
+     * @param EstimateId , workOrderId
      * @return
      */
     public Date getLastMBCreatedDate(Long woId, Long estId);

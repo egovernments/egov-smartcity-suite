@@ -54,10 +54,9 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.model.budget.BudgetGroup;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class AjaxFinancialDetailAction extends BaseFormAction {
-   
+
     private static final long serialVersionUID = 7300734573956975326L;
     private static final Logger logger = Logger.getLogger(AjaxFinancialDetailAction.class);
     private BudgetGroupDAO budgetGroupDAO;
@@ -71,8 +70,6 @@ public class AjaxFinancialDetailAction extends BaseFormAction {
     private Integer fundId;
     private Long functionId;
     private Date estimateDate;
-    @Autowired
-    private CommonsService commonsService;
     private String loadBudgetGroupsValidationError = "";
 
     public Date getEstimateDate() {
@@ -190,7 +187,6 @@ public class AjaxFinancialDetailAction extends BaseFormAction {
     }
 
     public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public String getLoadBudgetGroupsValidationError() {

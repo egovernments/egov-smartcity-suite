@@ -79,7 +79,7 @@ import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AjaxEstimateAction extends BaseFormAction {
-    
+
     private static final long serialVersionUID = 4566034960012106080L;
 
     private static final Logger logger = Logger.getLogger(AjaxEstimateAction.class);
@@ -167,10 +167,8 @@ public class AjaxEstimateAction extends BaseFormAction {
     }
 
     /**
-     * This auto-complete method is used to fetch estimate numbers for which
-     * final bill is not created, and Year end appropriation is not done in the
-     * current financial year and for which Financial sanction is not done in
-     * the current financial year .
+     * This auto-complete method is used to fetch estimate numbers for which final bill is not created, and Year end appropriation
+     * is not done in the current financial year and for which Financial sanction is not done in the current financial year .
      *
      * @return
      */
@@ -331,9 +329,10 @@ public class AjaxEstimateAction extends BaseFormAction {
         if (woNumber.equals("")) {
             wpNumber = (String) getPersistenceService().find(
                     "select wpd.worksPackage.wpNumber from WorksPackageDetails wpd where wpd.estimate.id=? "
-                            + "and wpd.estimate.egwStatus.code=? and wpd.worksPackage.egwStatus.code<>?", estimateId,
-                            AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString(),
-                            WorksPackage.WorkPacakgeStatus.CANCELLED.toString());
+                            + "and wpd.estimate.egwStatus.code=? and wpd.worksPackage.egwStatus.code<>?",
+                    estimateId,
+                    AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString(),
+                    WorksPackage.WorkPacakgeStatus.CANCELLED.toString());
             if (wpNumber == null)
                 wpNumber = "";
             final Long projectCodeId = (Long) getPersistenceService().find(
@@ -396,8 +395,7 @@ public class AjaxEstimateAction extends BaseFormAction {
     }
 
     /**
-     * This method is to validate if the estimate number of the cancelled
-     * estimate has been already copied or not
+     * This method is to validate if the estimate number of the cancelled estimate has been already copied or not
      *
      * @return
      */

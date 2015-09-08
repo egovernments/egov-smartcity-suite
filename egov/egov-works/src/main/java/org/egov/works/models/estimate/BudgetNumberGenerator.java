@@ -64,13 +64,10 @@ public class BudgetNumberGenerator {
             throw sequenceException;
         }
         /*
-         * List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT",
-         * "works.budgetappno.generator"); try{ return
-         * scripts.get(0).eval(Script
-         * .createContext("estimate",estimate,"finYear"
-         * ,financialYear,"sequenceGenerator",sequenceGenerator)).toString(); }
-         * catch (ValidationException sequenceException) { throw
-         * sequenceException; }
+         * List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT", "works.budgetappno.generator"); try{ return
+         * scripts.get(0).eval(Script .createContext("estimate",estimate,"finYear"
+         * ,financialYear,"sequenceGenerator",sequenceGenerator)).toString(); } catch (ValidationException sequenceException) {
+         * throw sequenceException; }
          */
 
     }

@@ -49,7 +49,7 @@ import org.egov.works.models.masters.OverheadRate;
 import org.joda.time.LocalDate;
 
 public class OverheadValue extends BaseModel {
-   
+
     private static final long serialVersionUID = -2562352896664615339L;
     private Overhead overhead;
     private Money amount;

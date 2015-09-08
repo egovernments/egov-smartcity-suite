@@ -149,9 +149,9 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
         addDropdownData(
                 "statusList",
                 persistenceService
-                .findAllBy(
-                        "from EgwStatus s where moduletype=? and code in ('CREATED','REJECTED','RESUBMITTED','CANCELLED','BUDGETARY_APPR_CHECKED','BUDGETARY_APPROPRIATION_DONE','BUDGETARY_APPR_VALIDATED','APPROVED') order by orderId",
-                        AbstractEstimate.class.getSimpleName()));
+                        .findAllBy(
+                                "from EgwStatus s where moduletype=? and code in ('CREATED','REJECTED','RESUBMITTED','CANCELLED','BUDGETARY_APPR_CHECKED','BUDGETARY_APPROPRIATION_DONE','BUDGETARY_APPR_VALIDATED','APPROVED') order by orderId",
+                                AbstractEstimate.class.getSimpleName()));
         addDropdownData("executingDepartmentList", persistenceService.findAllBy("from Department dt"));
         addDropdownData("typeList", persistenceService.findAllBy("from WorkType dt"));
         addDropdownData("parentCategoryList",
@@ -178,7 +178,8 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
         final StringBuffer query = new StringBuffer(300);
         final List<Object> paramList = new ArrayList<Object>();
-        query.append("from WorkOrderEstimate woeP, WorkOrderEstimate woeC where woeP.estimate.id= woeC.estimate.parent.id and woeC.estimate.egwStatus.code!='NEW' ");
+        query.append(
+                "from WorkOrderEstimate woeP, WorkOrderEstimate woeC where woeP.estimate.id= woeC.estimate.parent.id and woeC.estimate.egwStatus.code!='NEW' ");
         if (reStatus != null && reStatus != -1) {
             query.append(" and woeC.estimate.egwStatus.id = ?");
             paramList.add(reStatus);
@@ -218,8 +219,9 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
             paramList.add(workOrderNumber);
         }
         if (source != null && source.equalsIgnoreCase(CANCEL_RE)) {
-            query.append(" and woeC.estimate.id = (select max(absEst.id) from AbstractEstimate absEst where absEst.parent.id = woeP.estimate.id and  "
-                    + " absEst.egwStatus.code!= ? ) ");
+            query.append(
+                    " and woeC.estimate.id = (select max(absEst.id) from AbstractEstimate absEst where absEst.parent.id = woeP.estimate.id and  "
+                            + " absEst.egwStatus.code!= ? ) ");
             paramList.add(WorksConstants.CANCELLED_STATUS);
         }
         LOGGER.debug("SearchRevisionEstimate | prepareQuery | query >>>> " + query.toString());
@@ -295,15 +297,11 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
         // Need to alternative way to solve this issue.
         // Set the status and workflow state to cancelled
         /****
-         * State oldEndState = re.getCurrentState(); Position owner =
-         * prsnlInfo.getAssignment(new Date()).getPosition();
-         * oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
-         * oldEndState.setModifiedBy(prsnlInfo.getUserMaster());
-         * oldEndState.setCreatedDate(new Date());
-         * oldEndState.setModifiedDate(new Date()); oldEndState.setOwner(owner);
-         * oldEndState.setValue(WorksConstants.CANCELLED_STATUS);
-         * oldEndState.setText1(cancellationText); re.changeState("END", owner,
-         * null);
+         * State oldEndState = re.getCurrentState(); Position owner = prsnlInfo.getAssignment(new Date()).getPosition();
+         * oldEndState.setCreatedBy(prsnlInfo.getUserMaster()); oldEndState.setModifiedBy(prsnlInfo.getUserMaster());
+         * oldEndState.setCreatedDate(new Date()); oldEndState.setModifiedDate(new Date()); oldEndState.setOwner(owner);
+         * oldEndState.setValue(WorksConstants.CANCELLED_STATUS); oldEndState.setText1(cancellationText); re.changeState("END",
+         * owner, null);
          ***/
 
         // Release the budget
@@ -325,13 +323,14 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
             // yes then dont allow to cancel
             for (final WorkOrderActivity revWoa : revWoaList)
                 if (revWoa.getActivity().getRevisionType() != null
-                && (revWoa.getActivity().getRevisionType().equals(RevisionType.LUMP_SUM_ITEM) || revWoa
-                        .getActivity().getRevisionType().equals(RevisionType.NON_TENDERED_ITEM))) {
+                        && (revWoa.getActivity().getRevisionType().equals(RevisionType.LUMP_SUM_ITEM) || revWoa
+                                .getActivity().getRevisionType().equals(RevisionType.NON_TENDERED_ITEM))) {
                     mbheaderlist = measurementBookService
                             .findAllBy(
                                     "select distinct mbd.mbHeader from MBDetails mbd where mbd.workOrderActivity.workOrderEstimate.estimate.id=? and mbd.workOrderActivity.workOrderEstimate.workOrder.id=? and  mbd.workOrderActivity.activity.id=? "
-                                            + "and mbd.mbHeader.egwStatus.code<>'CANCELLED'", revEstimate.getId(),
-                                            revWorkOrder.getId(), revWoa.getActivity().getId());
+                                            + "and mbd.mbHeader.egwStatus.code<>'CANCELLED'",
+                                    revEstimate.getId(),
+                                    revWorkOrder.getId(), revWoa.getActivity().getId());
                     if (mbheaderlist != null && !mbheaderlist.isEmpty()) {
                         final StringBuffer mbNos = new StringBuffer();
                         for (final MBHeader mbHdr : mbheaderlist)
@@ -346,7 +345,7 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
             for (final WorkOrderActivity revWoa : revWoaList)
                 // Add only additional quantity items activities
                 if (revWoa.getActivity().getRevisionType() != null
-                && revWoa.getActivity().getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY))
+                        && revWoa.getActivity().getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY))
                     activtityIdList.add(revWoa.getActivity().getParent().getId()); // Passing
             // parent
             // of
@@ -377,7 +376,7 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
                             continue;
                         for (final Object[] activityIdQuantity : activityIdQuantityList)
                             if (Long.parseLong(activityIdQuantity[0].toString()) == revWoa.getActivity().getParent()
-                            .getId().longValue()) {
+                                    .getId().longValue()) {
                                 Long activityId = null;
                                 if (revWoa.getActivity().getParent() == null)
                                     activityId = revWoa.getActivity().getId();
@@ -425,8 +424,7 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
     }
 
     /*
-     * Validate is there any Advance Requisition forms created for the Work
-     * Order Estimate pertaining to this RE
+     * Validate is there any Advance Requisition forms created for the Work Order Estimate pertaining to this RE
      */
     private void validateARFForRE(final RevisionAbstractEstimate revisionEstimate) {
         String arfNo = "";
@@ -441,7 +439,7 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
                             .getCode()
                             .equalsIgnoreCase(
                                     ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED
-                                    .toString())) {
+                                            .toString())) {
                         advanceAmount = advanceAmount.add(arf.getAdvanceRequisitionAmount());
                         if (!arfNo.equals(""))
                             arfNo = arfNo.concat(", ").concat(arf.getAdvanceRequisitionNumber());

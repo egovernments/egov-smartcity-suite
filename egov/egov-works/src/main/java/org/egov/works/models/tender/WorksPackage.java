@@ -70,7 +70,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class WorksPackage extends WorkFlow {
-    
+
     private static final long serialVersionUID = -4874817415037202881L;
 
     public enum WorkPacakgeStatus {
@@ -118,7 +118,7 @@ public class WorksPackage extends WorkFlow {
     private List<String> worksPackageActions = new LinkedList<String>();
     private String worksPackageStatus;
     private Date approvedDate;
-    
+
     private Set<TenderEstimate> tenderEstimateSet = new HashSet<TenderEstimate>();
 
     public Long getDocumentNumber() {
@@ -458,7 +458,7 @@ public class WorksPackage extends WorkFlow {
         return approvedDate;
     }
 
-    public void setApprovedDate(Date approvedDate) {
+    public void setApprovedDate(final Date approvedDate) {
         this.approvedDate = approvedDate;
     }
 }

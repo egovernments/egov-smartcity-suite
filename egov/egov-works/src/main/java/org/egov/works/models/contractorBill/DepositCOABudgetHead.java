@@ -42,7 +42,7 @@ package org.egov.works.models.contractorBill;
 import java.io.Serializable;
 
 public class DepositCOABudgetHead implements Serializable {
-   
+
     private static final long serialVersionUID = -685644837913611998L;
     private Long id;
     private String depositCOA;

@@ -123,14 +123,14 @@ public class SetStatusAction extends BaseFormAction {
         if (worksPackage.getSetStatuses() != null
                 && getWorksPackageSetStatusesLength() == getAllStatus().size()
                 || StringUtils.isNotBlank(setStatus)
-                && setStatus.equalsIgnoreCase("view")
+                        && setStatus.equalsIgnoreCase("view")
                 || worksPackage.getEgwStatus().getCode()
                         .equalsIgnoreCase(WorksPackage.WorkPacakgeStatus.CANCELLED.toString()))
             viewMode = true;
         if (retenderDetails != null && retenderDetails.size() > 0)
             for (int i = 0; i < retenderDetails.size(); i++)
                 if (retenderDetails.get(i).getIterationNumber() != null
-                && retenderDetails.get(i).getIterationNumber() > maxIterations)
+                        && retenderDetails.get(i).getIterationNumber() > maxIterations)
                     maxIterations = retenderDetails.get(i).getIterationNumber();
         if (retenderHistoryDetails != null && retenderHistoryDetails.size() > 0) {
             final Map<Integer, Integer> statusesInDb = new LinkedHashMap<Integer, Integer>();
@@ -186,7 +186,7 @@ public class SetStatusAction extends BaseFormAction {
             iterationCount = 0;
         else
             iterationCount = worksPackage.getRetenderDetails().get(worksPackage.getRetenderDetails().size() - 1)
-            .getIterationNumber();
+                    .getIterationNumber();
         if (appDate != null)
             appDateProperFormat = DateUtils.getDefaultFormattedDate(appDate);
         loadWorksPackageStatuses();
@@ -244,7 +244,8 @@ public class SetStatusAction extends BaseFormAction {
                         final List<EgwStatus> statusList = getAllStatus();
                         final List<SetStatus> alreadyPersistedStatusForWP = persistenceService.findAllBy(
                                 " from SetStatus  " + "  where objectId=? and objectType='" + WORKSPACKAGE
-                                        + "' order by id ", worksPackage.getId());
+                                        + "' order by id ",
+                                worksPackage.getId());
                         for (final SetStatus st : alreadyPersistedStatusForWP) {
                             if (rh.getEgwStatus().getId().intValue() == st.getEgwStatus().getId().intValue())
                                 addFieldError(getText("wp.retender.both.status.duplicate"),
@@ -294,7 +295,7 @@ public class SetStatusAction extends BaseFormAction {
                                     getText("wp.retender.date.less.than.statusdate"));
                         for (final Retender re : worksPackage.getRetenderDetails())
                             if (re != null && re.getRetenderDate() != null
-                            & re.getRetenderDate().after(ret.getRetenderDate()))
+                                    & re.getRetenderDate().after(ret.getRetenderDate()))
                                 addFieldError(getText("wp.retender.increasing.date"),
                                         getText("wp.retender.increasing.date"));
                     }
@@ -378,7 +379,7 @@ public class SetStatusAction extends BaseFormAction {
         }
 
         worksPackage.getRetenderDetails().get(worksPackage.getRetenderDetails().size() - 1).getRetenderHistoryDetails()
-        .addAll(retHistList);
+                .addAll(retHistList);
 
         worksPackage.getRetenderHistoryDetails().addAll(retHistList);
         // Adding the set statuses
@@ -532,7 +533,7 @@ public class SetStatusAction extends BaseFormAction {
                     "status.date.incorrect",
                     getText("status.date.greaterThan.appDate",
                             new String[] { getDescriptionByCode(getStatusCodeList().get(0)).getDescription(),
-                            objectType }));
+                                    objectType }));
         int j = 1;
         for (final Date dateObj : getDateList()) {
             if (getDateList().size() > j && !DateUtils.compareDates(getDateList().get(j), dateObj))

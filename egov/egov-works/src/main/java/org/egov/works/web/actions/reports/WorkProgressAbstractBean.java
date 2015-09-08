@@ -211,99 +211,99 @@ public class WorkProgressAbstractBean {
         return paymentReleased;
     }
 
-    public void setDepartment(String department) {
+    public void setDepartment(final String department) {
         this.department = department;
     }
 
-    public void setEstPreparedValue(BigDecimal estPreparedValue) {
+    public void setEstPreparedValue(final BigDecimal estPreparedValue) {
         this.estPreparedValue = estPreparedValue;
     }
 
-    public void setAdminSancEstimate(Integer adminSancEstimate) {
+    public void setAdminSancEstimate(final Integer adminSancEstimate) {
         this.adminSancEstimate = adminSancEstimate;
     }
 
-    public void setAdminSancEstValue(BigDecimal adminSancEstValue) {
+    public void setAdminSancEstValue(final BigDecimal adminSancEstValue) {
         this.adminSancEstValue = adminSancEstValue;
     }
 
-    public void setEstimateBalance(Integer estimateBalance) {
+    public void setEstimateBalance(final Integer estimateBalance) {
         this.estimateBalance = estimateBalance;
     }
 
-    public void setEstBalanceValue(BigDecimal estBalanceValue) {
+    public void setEstBalanceValue(final BigDecimal estBalanceValue) {
         this.estBalanceValue = estBalanceValue;
     }
 
-    public void setTenderCalledWP(Integer tenderCalledWP) {
+    public void setTenderCalledWP(final Integer tenderCalledWP) {
         this.tenderCalledWP = tenderCalledWP;
     }
 
-    public void setTenderCalledEst(Integer tenderCalledEst) {
+    public void setTenderCalledEst(final Integer tenderCalledEst) {
         this.tenderCalledEst = tenderCalledEst;
     }
 
-    public void setTenderFinalisedWP(Integer tenderFinalisedWP) {
+    public void setTenderFinalisedWP(final Integer tenderFinalisedWP) {
         this.tenderFinalisedWP = tenderFinalisedWP;
     }
 
-    public void setTenderFinalisedEst(Integer tenderFinalisedEst) {
+    public void setTenderFinalisedEst(final Integer tenderFinalisedEst) {
         this.tenderFinalisedEst = tenderFinalisedEst;
     }
 
-    public void setWorkOrderWP(Integer workOrderWP) {
+    public void setWorkOrderWP(final Integer workOrderWP) {
         this.workOrderWP = workOrderWP;
     }
 
-    public void setWorkOrderEst(Integer workOrderEst) {
+    public void setWorkOrderEst(final Integer workOrderEst) {
         this.workOrderEst = workOrderEst;
     }
 
-    public void setWorkOrderAmt(BigDecimal workOrderAmt) {
+    public void setWorkOrderAmt(final BigDecimal workOrderAmt) {
         this.workOrderAmt = workOrderAmt;
     }
 
-    public void setWorkNotStartedEst(Integer workNotStartedEst) {
+    public void setWorkNotStartedEst(final Integer workNotStartedEst) {
         this.workNotStartedEst = workNotStartedEst;
     }
 
-    public void setWorkNotStartedAmt(BigDecimal workNotStartedAmt) {
+    public void setWorkNotStartedAmt(final BigDecimal workNotStartedAmt) {
         this.workNotStartedAmt = workNotStartedAmt;
     }
 
-    public void setWorkStartedEst(Integer workStartedEst) {
+    public void setWorkStartedEst(final Integer workStartedEst) {
         this.workStartedEst = workStartedEst;
     }
 
-    public void setWorkStartedAmt(BigDecimal workStartedAmt) {
+    public void setWorkStartedAmt(final BigDecimal workStartedAmt) {
         this.workStartedAmt = workStartedAmt;
     }
 
-    public void setInProgress25(Integer inProgress25) {
+    public void setInProgress25(final Integer inProgress25) {
         this.inProgress25 = inProgress25;
     }
 
-    public void setInProgress50(Integer inProgress50) {
+    public void setInProgress50(final Integer inProgress50) {
         this.inProgress50 = inProgress50;
     }
 
-    public void setInProgress75(Integer inProgress75) {
+    public void setInProgress75(final Integer inProgress75) {
         this.inProgress75 = inProgress75;
     }
 
-    public void setInProgress99(Integer inProgress99) {
+    public void setInProgress99(final Integer inProgress99) {
         this.inProgress99 = inProgress99;
     }
 
-    public void setWorksCompleted(Integer worksCompleted) {
+    public void setWorksCompleted(final Integer worksCompleted) {
         this.worksCompleted = worksCompleted;
     }
 
-    public void setWorksNotCompleted(Integer worksNotCompleted) {
+    public void setWorksNotCompleted(final Integer worksNotCompleted) {
         this.worksNotCompleted = worksNotCompleted;
     }
 
-    public void setPaymentReleased(BigDecimal paymentReleased) {
+    public void setPaymentReleased(final BigDecimal paymentReleased) {
         this.paymentReleased = paymentReleased;
     }
 
@@ -311,7 +311,7 @@ public class WorkProgressAbstractBean {
         return estimatesPrepared;
     }
 
-    public void setEstimatesPrepared(Integer estimatesPrepared) {
+    public void setEstimatesPrepared(final Integer estimatesPrepared) {
         this.estimatesPrepared = estimatesPrepared;
     }
 
@@ -319,7 +319,7 @@ public class WorkProgressAbstractBean {
         return voucherCount;
     }
 
-    public void setVoucherCount(Integer voucherCount) {
+    public void setVoucherCount(final Integer voucherCount) {
         this.voucherCount = voucherCount;
     }
 
@@ -327,7 +327,7 @@ public class WorkProgressAbstractBean {
         return numberOfCompletedWorks;
     }
 
-    public void setNumberOfCompletedWorks(Integer numberOfCompletedWorks) {
+    public void setNumberOfCompletedWorks(final Integer numberOfCompletedWorks) {
         this.numberOfCompletedWorks = numberOfCompletedWorks;
     }
 
@@ -335,7 +335,7 @@ public class WorkProgressAbstractBean {
         return valueOfCompletedWorks;
     }
 
-    public void setValueOfCompletedWorks(BigDecimal valueOfCompletedWorks) {
+    public void setValueOfCompletedWorks(final BigDecimal valueOfCompletedWorks) {
         this.valueOfCompletedWorks = valueOfCompletedWorks;
     }
 
@@ -343,7 +343,7 @@ public class WorkProgressAbstractBean {
         return siteHandedOverAndWrkNtStrtdCnt;
     }
 
-    public void setSiteHandedOverAndWrkNtStrtdCnt(Integer siteHandedOverAndWrkNtStrtdCnt) {
+    public void setSiteHandedOverAndWrkNtStrtdCnt(final Integer siteHandedOverAndWrkNtStrtdCnt) {
         this.siteHandedOverAndWrkNtStrtdCnt = siteHandedOverAndWrkNtStrtdCnt;
     }
 
@@ -351,7 +351,7 @@ public class WorkProgressAbstractBean {
         return siteHandedOverAndWrkNtStrtdAmt;
     }
 
-    public void setSiteHandedOverAndWrkNtStrtdAmt(BigDecimal siteHandedOverAndWrkNtStrtdAmt) {
+    public void setSiteHandedOverAndWrkNtStrtdAmt(final BigDecimal siteHandedOverAndWrkNtStrtdAmt) {
         this.siteHandedOverAndWrkNtStrtdAmt = siteHandedOverAndWrkNtStrtdAmt;
     }
 
@@ -359,7 +359,7 @@ public class WorkProgressAbstractBean {
         return budgetAmount;
     }
 
-    public void setBudgetAmount(BigDecimal budgetAmount) {
+    public void setBudgetAmount(final BigDecimal budgetAmount) {
         this.budgetAmount = budgetAmount;
     }
 
@@ -367,7 +367,7 @@ public class WorkProgressAbstractBean {
         return spillOverWorkValue;
     }
 
-    public void setSpillOverWorkValue(BigDecimal spillOverWorkValue) {
+    public void setSpillOverWorkValue(final BigDecimal spillOverWorkValue) {
         this.spillOverWorkValue = spillOverWorkValue;
     }
 
@@ -375,7 +375,7 @@ public class WorkProgressAbstractBean {
         return spillOverVoucherCount;
     }
 
-    public void setSpillOverVoucherCount(Integer spillOverVoucherCount) {
+    public void setSpillOverVoucherCount(final Integer spillOverVoucherCount) {
         this.spillOverVoucherCount = spillOverVoucherCount;
     }
 
@@ -383,7 +383,7 @@ public class WorkProgressAbstractBean {
         return spillOverPaymentReleased;
     }
 
-    public void setSpillOverPaymentReleased(BigDecimal spillOverPaymentReleased) {
+    public void setSpillOverPaymentReleased(final BigDecimal spillOverPaymentReleased) {
         this.spillOverPaymentReleased = spillOverPaymentReleased;
     }
 
@@ -391,7 +391,7 @@ public class WorkProgressAbstractBean {
         return totalVoucherCount;
     }
 
-    public void setTotalVoucherCount(Integer totalVoucherCount) {
+    public void setTotalVoucherCount(final Integer totalVoucherCount) {
         this.totalVoucherCount = totalVoucherCount;
     }
 
@@ -399,7 +399,7 @@ public class WorkProgressAbstractBean {
         return totalPaymentReleased;
     }
 
-    public void setTotalPaymentReleased(BigDecimal totalPaymentReleased) {
+    public void setTotalPaymentReleased(final BigDecimal totalPaymentReleased) {
         this.totalPaymentReleased = totalPaymentReleased;
     }
 
@@ -407,7 +407,7 @@ public class WorkProgressAbstractBean {
         return budgetAvailable;
     }
 
-    public void setBudgetAvailable(BigDecimal budgetAvailable) {
+    public void setBudgetAvailable(final BigDecimal budgetAvailable) {
         this.budgetAvailable = budgetAvailable;
     }
 
@@ -415,7 +415,7 @@ public class WorkProgressAbstractBean {
         return spilloverWorksEstimateCount;
     }
 
-    public void setSpilloverWorksEstimateCount(Integer spilloverWorksEstimateCount) {
+    public void setSpilloverWorksEstimateCount(final Integer spilloverWorksEstimateCount) {
         this.spilloverWorksEstimateCount = spilloverWorksEstimateCount;
     }
 
@@ -487,71 +487,71 @@ public class WorkProgressAbstractBean {
         return balanceBudgetForSpillover;
     }
 
-    public void setTenderYetToBeCalledEstimateCount(Integer tenderYetToBeCalledEstimateCount) {
+    public void setTenderYetToBeCalledEstimateCount(final Integer tenderYetToBeCalledEstimateCount) {
         this.tenderYetToBeCalledEstimateCount = tenderYetToBeCalledEstimateCount;
     }
 
-    public void setTenderYetToBeFinalizedWPCount(Integer tenderYetToBeFinalizedWPCount) {
+    public void setTenderYetToBeFinalizedWPCount(final Integer tenderYetToBeFinalizedWPCount) {
         this.tenderYetToBeFinalizedWPCount = tenderYetToBeFinalizedWPCount;
     }
 
-    public void setTenderYetToBeFinalizedEstCount(Integer tenderYetToBeFinalizedEstCount) {
+    public void setTenderYetToBeFinalizedEstCount(final Integer tenderYetToBeFinalizedEstCount) {
         this.tenderYetToBeFinalizedEstCount = tenderYetToBeFinalizedEstCount;
     }
 
-    public void setApprovedMBCount(Integer approvedMBCount) {
+    public void setApprovedMBCount(final Integer approvedMBCount) {
         this.approvedMBCount = approvedMBCount;
     }
 
-    public void setApprovedBillCount(Integer approvedBillCount) {
+    public void setApprovedBillCount(final Integer approvedBillCount) {
         this.approvedBillCount = approvedBillCount;
     }
 
-    public void setMbCoveredByBillsCount(Integer mbCoveredByBillsCount) {
+    public void setMbCoveredByBillsCount(final Integer mbCoveredByBillsCount) {
         this.mbCoveredByBillsCount = mbCoveredByBillsCount;
     }
 
-    public void setBillsYetToBeCreatedCount(Integer billsYetToBeCreatedCount) {
+    public void setBillsYetToBeCreatedCount(final Integer billsYetToBeCreatedCount) {
         this.billsYetToBeCreatedCount = billsYetToBeCreatedCount;
     }
 
-    public void setApprovedCJVCount(Integer approvedCJVCount) {
+    public void setApprovedCJVCount(final Integer approvedCJVCount) {
         this.approvedCJVCount = approvedCJVCount;
     }
 
-    public void setApprovedCJVAmount(BigDecimal approvedCJVAmount) {
+    public void setApprovedCJVAmount(final BigDecimal approvedCJVAmount) {
         this.approvedCJVAmount = approvedCJVAmount;
     }
 
-    public void setConcurrenceVoucherCount(Integer concurrenceVoucherCount) {
+    public void setConcurrenceVoucherCount(final Integer concurrenceVoucherCount) {
         this.concurrenceVoucherCount = concurrenceVoucherCount;
     }
 
-    public void setConcurrencePaymentAmount(BigDecimal concurrencePaymentAmount) {
+    public void setConcurrencePaymentAmount(final BigDecimal concurrencePaymentAmount) {
         this.concurrencePaymentAmount = concurrencePaymentAmount;
     }
 
-    public void setApprovedCJVForSpilloverCount(Integer approvedCJVForSpilloverCount) {
+    public void setApprovedCJVForSpilloverCount(final Integer approvedCJVForSpilloverCount) {
         this.approvedCJVForSpilloverCount = approvedCJVForSpilloverCount;
     }
 
-    public void setApprovedCJVForSpilloverAmount(BigDecimal approvedCJVForSpilloverAmount) {
+    public void setApprovedCJVForSpilloverAmount(final BigDecimal approvedCJVForSpilloverAmount) {
         this.approvedCJVForSpilloverAmount = approvedCJVForSpilloverAmount;
     }
 
-    public void setConcurrenceVoucherForSpilloverCount(Integer concurrenceVoucherForSpilloverCount) {
+    public void setConcurrenceVoucherForSpilloverCount(final Integer concurrenceVoucherForSpilloverCount) {
         this.concurrenceVoucherForSpilloverCount = concurrenceVoucherForSpilloverCount;
     }
 
-    public void setConcurrencePaymentForSpilloverAmount(BigDecimal concurrencePaymentForSpilloverAmount) {
+    public void setConcurrencePaymentForSpilloverAmount(final BigDecimal concurrencePaymentForSpilloverAmount) {
         this.concurrencePaymentForSpilloverAmount = concurrencePaymentForSpilloverAmount;
     }
 
-    public void setBalanceBudget(BigDecimal balanceBudget) {
+    public void setBalanceBudget(final BigDecimal balanceBudget) {
         this.balanceBudget = balanceBudget;
     }
 
-    public void setBalanceBudgetForSpillover(BigDecimal balanceBudgetForSpillover) {
+    public void setBalanceBudgetForSpillover(final BigDecimal balanceBudgetForSpillover) {
         this.balanceBudgetForSpillover = balanceBudgetForSpillover;
     }
 
@@ -559,7 +559,7 @@ public class WorkProgressAbstractBean {
         return approvedBPVCount;
     }
 
-    public void setApprovedBPVCount(Integer approvedBPVCount) {
+    public void setApprovedBPVCount(final Integer approvedBPVCount) {
         this.approvedBPVCount = approvedBPVCount;
     }
 
@@ -575,15 +575,15 @@ public class WorkProgressAbstractBean {
         return approvedBPVForSpilloverAmount;
     }
 
-    public void setApprovedBPVAmount(BigDecimal approvedBPVAmount) {
+    public void setApprovedBPVAmount(final BigDecimal approvedBPVAmount) {
         this.approvedBPVAmount = approvedBPVAmount;
     }
 
-    public void setApprovedBPVForSpilloverCount(Integer approvedBPVForSpilloverCount) {
+    public void setApprovedBPVForSpilloverCount(final Integer approvedBPVForSpilloverCount) {
         this.approvedBPVForSpilloverCount = approvedBPVForSpilloverCount;
     }
 
-    public void setApprovedBPVForSpilloverAmount(BigDecimal approvedBPVForSpilloverAmount) {
+    public void setApprovedBPVForSpilloverAmount(final BigDecimal approvedBPVForSpilloverAmount) {
         this.approvedBPVForSpilloverAmount = approvedBPVForSpilloverAmount;
     }
 
@@ -591,7 +591,7 @@ public class WorkProgressAbstractBean {
         return woYetToBeGivenTNCount;
     }
 
-    public void setWoYetToBeGivenTNCount(Integer woYetToBeGivenTNCount) {
+    public void setWoYetToBeGivenTNCount(final Integer woYetToBeGivenTNCount) {
         this.woYetToBeGivenTNCount = woYetToBeGivenTNCount;
     }
 
@@ -599,7 +599,7 @@ public class WorkProgressAbstractBean {
         return woYetToBeGivenEstimateCount;
     }
 
-    public void setWoYetToBeGivenEstimateCount(Integer woYetToBeGivenEstimateCount) {
+    public void setWoYetToBeGivenEstimateCount(final Integer woYetToBeGivenEstimateCount) {
         this.woYetToBeGivenEstimateCount = woYetToBeGivenEstimateCount;
     }
 
@@ -607,7 +607,7 @@ public class WorkProgressAbstractBean {
         return woYetToBeGivenEstimateValue;
     }
 
-    public void setWoYetToBeGivenEstimateValue(BigDecimal woYetToBeGivenEstimateValue) {
+    public void setWoYetToBeGivenEstimateValue(final BigDecimal woYetToBeGivenEstimateValue) {
         this.woYetToBeGivenEstimateValue = woYetToBeGivenEstimateValue;
     }
 
@@ -615,7 +615,7 @@ public class WorkProgressAbstractBean {
         return billsYetToBeCreatedValue;
     }
 
-    public void setBillsYetToBeCreatedValue(BigDecimal billsYetToBeCreatedValue) {
+    public void setBillsYetToBeCreatedValue(final BigDecimal billsYetToBeCreatedValue) {
         this.billsYetToBeCreatedValue = billsYetToBeCreatedValue;
     }
 
@@ -627,11 +627,11 @@ public class WorkProgressAbstractBean {
         return tenderYetToBeFinalizedEstValue;
     }
 
-    public void setTenderYetToBeCalledEstValue(BigDecimal tenderYetToBeCalledEstValue) {
+    public void setTenderYetToBeCalledEstValue(final BigDecimal tenderYetToBeCalledEstValue) {
         this.tenderYetToBeCalledEstValue = tenderYetToBeCalledEstValue;
     }
 
-    public void setTenderYetToBeFinalizedEstValue(BigDecimal tenderYetToBeFinalizedEstValue) {
+    public void setTenderYetToBeFinalizedEstValue(final BigDecimal tenderYetToBeFinalizedEstValue) {
         this.tenderYetToBeFinalizedEstValue = tenderYetToBeFinalizedEstValue;
     }
 
@@ -639,7 +639,7 @@ public class WorkProgressAbstractBean {
         return tenderCalledEstValue;
     }
 
-    public void setTenderCalledEstValue(BigDecimal tenderCalledEstValue) {
+    public void setTenderCalledEstValue(final BigDecimal tenderCalledEstValue) {
         this.tenderCalledEstValue = tenderCalledEstValue;
     }
 
@@ -647,7 +647,7 @@ public class WorkProgressAbstractBean {
         return tenderFinalizedEstValue;
     }
 
-    public void setTenderFinalizedEstValue(BigDecimal tenderFinalizedEstValue) {
+    public void setTenderFinalizedEstValue(final BigDecimal tenderFinalizedEstValue) {
         this.tenderFinalizedEstValue = tenderFinalizedEstValue;
     }
 
@@ -655,7 +655,7 @@ public class WorkProgressAbstractBean {
         return rcEstimateCount;
     }
 
-    public void setRcEstimateCount(Integer rcEstimateCount) {
+    public void setRcEstimateCount(final Integer rcEstimateCount) {
         this.rcEstimateCount = rcEstimateCount;
     }
 
@@ -663,7 +663,7 @@ public class WorkProgressAbstractBean {
         return rcEstimateValue;
     }
 
-    public void setRcEstimateValue(BigDecimal rcEstimateValue) {
+    public void setRcEstimateValue(final BigDecimal rcEstimateValue) {
         this.rcEstimateValue = rcEstimateValue;
     }
 
@@ -671,7 +671,7 @@ public class WorkProgressAbstractBean {
         return rcWOCount;
     }
 
-    public void setRcWOCount(Integer rcWOCount) {
+    public void setRcWOCount(final Integer rcWOCount) {
         this.rcWOCount = rcWOCount;
     }
 
@@ -679,7 +679,7 @@ public class WorkProgressAbstractBean {
         return totalPaymentReleasedForMonth;
     }
 
-    public void setTotalPaymentReleasedForMonth(BigDecimal totalPaymentReleasedForMonth) {
+    public void setTotalPaymentReleasedForMonth(final BigDecimal totalPaymentReleasedForMonth) {
         this.totalPaymentReleasedForMonth = totalPaymentReleasedForMonth;
     }
 

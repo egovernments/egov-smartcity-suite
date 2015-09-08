@@ -52,7 +52,7 @@ import com.opensymphony.xwork2.Action;
 @Result(name = Action.SUCCESS, type = "ServletRedirectResult.class", location = "wardSearch-searchResults")
 @ParentPackage("egov")
 public class WardSearchAction extends BaseFormAction {
-   
+
     private static final long serialVersionUID = -1549853362997914848L;
     private PersistenceService<Boundary, Integer> boundaryService;
     private static final String SEARCH_RESULTS = "searchResults";

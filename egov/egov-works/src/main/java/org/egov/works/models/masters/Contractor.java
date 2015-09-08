@@ -57,247 +57,254 @@ import org.egov.infstr.models.BaseModel;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 
-@Unique(fields={"code"},id="id",tableName="EGW_CONTRACTOR",columnName={"CODE"},message="contractor.code.isunique")
-public class Contractor  extends BaseModel implements EntityType{
-	
-	@Required(message="contractor.code.null")
-	@Length(max=50,message="contractor.code.length")
-	@OptionalPattern(regex=WorksConstants.alphaNumericwithspecialchar,message="contractor.code.alphaNumeric")  
-	private String code;
-	 	 
-	@Required(message="contractor.name.null") 
-	@Length(max=100,message="contractor.name.length")
-	@OptionalPattern(regex=WorksConstants.alphaNumericwithspecialchar,message="contractor.name.alphaNumeric")
-	private String name;
-	
-	@Length(max=250,message="contractor.correspondenceAddress.length")
-	private String correspondenceAddress;
-	
-	@Length(max=250,message="contractor.paymentAddress.length")
-	private String paymentAddress;
-	
-	@Length(max=100,message="contractor.contactPerson.length")
-	@OptionalPattern(regex=Constants.ALPHANUMERIC_WITHSPACE,message="contractor.contactPerson.alphaNumeric")
-	private String contactPerson;
+@Unique(fields = { "code" }, id = "id", tableName = "EGW_CONTRACTOR", columnName = {
+        "CODE" }, message = "contractor.code.isunique")
+public class Contractor extends BaseModel implements EntityType {
 
-	@OptionalPattern(regex=Constants.EMAIL,message="contractor.email.invalid")
-	@Length(max=100,message="contractor.email.length")
-	private String email;
-	
-	@Length(max=1024,message="contractor.narration.length")
-	private String narration;
-	
-	@Length(max=14,message="contractor.panNumber.length")
-	@OptionalPattern(regex=Constants.ALPHANUMERIC,message="contractor.panNumber.alphaNumeric")
-	private String panNumber;
-	
-	@Length(max=14,message="contractor.tinNumber.length")
-	@OptionalPattern(regex=Constants.ALPHANUMERIC,message="contractor.tinNumber.alphaNumeric")
-	private String tinNumber;
-	
-	private Bank bank;
-	
-	@Length(max=15,message="contractor.ifscCode.length")
-	@OptionalPattern(regex=Constants.ALPHANUMERIC,message="contractor.ifscCode.alphaNumeric")
-	private String ifscCode;
-	
-	@Length(max=22,message="contractor.bankAccount.length")
-	@OptionalPattern(regex=Constants.ALPHANUMERIC,message="contractor.bankAccount.alphaNumeric")
-	private String bankAccount;
-	
-	@Length(max=50,message="contractor.pwdApprovalCode.length")
-	@OptionalPattern(regex=WorksConstants.alphaNumericwithspecialchar,message="contractor.pwdApprovalCode.alphaNumeric")
-	private String pwdApprovalCode;
-	private boolean isEditEnabled;
-	
-	@Valid
-	private List<ContractorDetail> contractorDetails = new LinkedList<ContractorDetail>();
-	
-	
-	public String getCode() {
-		return code;
-	}
+    private static final long serialVersionUID = 6858362239507609219L;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    @Required(message = "contractor.code.null")
+    @Length(max = 50, message = "contractor.code.length")
+    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractor.code.alphaNumeric")
+    private String code;
 
-	public String getName() {
-		return name;
-	}
+    @Required(message = "contractor.name.null")
+    @Length(max = 100, message = "contractor.name.length")
+    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractor.name.alphaNumeric")
+    private String name;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @Length(max = 250, message = "contractor.correspondenceAddress.length")
+    private String correspondenceAddress;
 
-	public String getCorrespondenceAddress() {
-		return correspondenceAddress;
-	}
+    @Length(max = 250, message = "contractor.paymentAddress.length")
+    private String paymentAddress;
 
-	public void setCorrespondenceAddress(String correspondenceAddress) {
-		this.correspondenceAddress = correspondenceAddress;
-	}
+    @Length(max = 100, message = "contractor.contactPerson.length")
+    @OptionalPattern(regex = Constants.ALPHANUMERIC_WITHSPACE, message = "contractor.contactPerson.alphaNumeric")
+    private String contactPerson;
 
-	public String getPaymentAddress() {
-		return paymentAddress;
-	}
+    @OptionalPattern(regex = Constants.EMAIL, message = "contractor.email.invalid")
+    @Length(max = 100, message = "contractor.email.length")
+    private String email;
 
-	public void setPaymentAddress(String paymentAddress) {
-		this.paymentAddress = paymentAddress;
-	}
+    @Length(max = 1024, message = "contractor.narration.length")
+    private String narration;
 
-	public String getContactPerson() {
-		return contactPerson;
-	}
+    @Length(max = 14, message = "contractor.panNumber.length")
+    @OptionalPattern(regex = Constants.ALPHANUMERIC, message = "contractor.panNumber.alphaNumeric")
+    private String panNumber;
 
-	public void setContactPerson(String contactPerson) {
-		this.contactPerson = contactPerson;
-	}
+    @Length(max = 14, message = "contractor.tinNumber.length")
+    @OptionalPattern(regex = Constants.ALPHANUMERIC, message = "contractor.tinNumber.alphaNumeric")
+    private String tinNumber;
 
-	public String getEmail() {
-		return email;
-	}
+    private Bank bank;
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    @Length(max = 15, message = "contractor.ifscCode.length")
+    @OptionalPattern(regex = Constants.ALPHANUMERIC, message = "contractor.ifscCode.alphaNumeric")
+    private String ifscCode;
 
-	public String getNarration() {
-		return narration;
-	}
+    @Length(max = 22, message = "contractor.bankAccount.length")
+    @OptionalPattern(regex = Constants.ALPHANUMERIC, message = "contractor.bankAccount.alphaNumeric")
+    private String bankAccount;
 
-	public void setNarration(String narration) {
-		this.narration = narration;
-	}
+    @Length(max = 50, message = "contractor.pwdApprovalCode.length")
+    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractor.pwdApprovalCode.alphaNumeric")
+    private String pwdApprovalCode;
+    private boolean isEditEnabled;
 
-	public String getPanNumber() {
-		return panNumber;
-	}
+    @Valid
+    private List<ContractorDetail> contractorDetails = new LinkedList<ContractorDetail>();
 
-	public void setPanNumber(String panNumber) {
-		this.panNumber = panNumber;
-	}
+    @Override
+    public String getCode() {
+        return code;
+    }
 
-	public String getTinNumber() {
-		return tinNumber;
-	}
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-	public void setTinNumber(String tinNumber) {
-		this.tinNumber = tinNumber;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	public Bank getBank() {
-		return bank;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public void setBank(Bank bank) {
-		this.bank = bank;
-	}
+    public String getCorrespondenceAddress() {
+        return correspondenceAddress;
+    }
 
-	public String getIfscCode() {
-		return ifscCode;
-	}
+    public void setCorrespondenceAddress(final String correspondenceAddress) {
+        this.correspondenceAddress = correspondenceAddress;
+    }
 
-	public void setIfscCode(String ifscCode) {
-		this.ifscCode = ifscCode;
-	}
+    public String getPaymentAddress() {
+        return paymentAddress;
+    }
 
-	public String getBankAccount() {
-		return bankAccount;
-	}
+    public void setPaymentAddress(final String paymentAddress) {
+        this.paymentAddress = paymentAddress;
+    }
 
-	public void setBankAccount(String bankAccount) {
-		this.bankAccount = bankAccount;
-	}
+    public String getContactPerson() {
+        return contactPerson;
+    }
 
-	public String getPwdApprovalCode() {
-		return pwdApprovalCode;
-	}
+    public void setContactPerson(final String contactPerson) {
+        this.contactPerson = contactPerson;
+    }
 
-	public void setPwdApprovalCode(String pwdApprovalCode) {
-		this.pwdApprovalCode = pwdApprovalCode;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public List<ContractorDetail> getContractorDetails() {
-		return contractorDetails;
-	}
+    public void setEmail(final String email) {
+        this.email = email;
+    }
 
-	public void setContractorDetails(List<ContractorDetail> contractorDetails) {
-		this.contractorDetails = contractorDetails;
-	}
-	
-	public void addContractorDetail(ContractorDetail contractorDetail){
-		this.contractorDetails.add(contractorDetail);
-	}
-	
-	public List<ValidationError> validate()	{
-		List<ValidationError> errorList = null;
-		if(contractorDetails!= null && contractorDetails.isEmpty()) {
-			return Arrays.asList(new ValidationError("contractorDetails","contractor.details.altleastone_details_needed"));
-		}
-		else if(contractorDetails!= null && !contractorDetails.isEmpty()) {			
-			for (ContractorDetail contractorDetail : contractorDetails) {				
-				errorList = contractorDetail.validate();
-				if(errorList!=null)	{
-					return errorList;
-				}
-			}			
-		}
-		return errorList;
-	}
+    public String getNarration() {
+        return narration;
+    }
 
-	public String getBankaccount() {
-		// TODO Auto-generated method stub
-		return this.bankAccount;
-	}
+    public void setNarration(final String narration) {
+        this.narration = narration;
+    }
 
-	public String getBankname() {
-		// TODO Auto-generated method stub
-		if(this.bank==null){
-			return "";
-		}else{
-			return this.bank.getName();
-		}
-	}
+    public String getPanNumber() {
+        return panNumber;
+    }
 
-	public String getIfsccode() {
-		// TODO Auto-generated method stub
-		return this.ifscCode;
-	}
+    public void setPanNumber(final String panNumber) {
+        this.panNumber = panNumber;
+    }
 
-	public String getPanno() {
-		// TODO Auto-generated method stub
-		return this.panNumber;
-	}
+    public String getTinNumber() {
+        return tinNumber;
+    }
 
-	public String getTinno() {
-		// TODO Auto-generated method stub
-		return this.tinNumber;
-	}
+    public void setTinNumber(final String tinNumber) {
+        this.tinNumber = tinNumber;
+    }
 
-	public String getModeofpay() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public Bank getBank() {
+        return bank;
+    }
 
-	@Override
-	public Integer getEntityId() {
-		return Integer.valueOf(id.intValue());
-	}
-	
-	@Override
-	public String getEntityDescription() {
-		
-		return getName();
-	}	
+    public void setBank(final Bank bank) {
+        this.bank = bank;
+    }
 
-	public boolean getIsEditEnabled() {
-		return isEditEnabled;
-	}
+    public String getIfscCode() {
+        return ifscCode;
+    }
 
-	public void setIsEditEnabled(boolean isEditEnabled) {
-		this.isEditEnabled = isEditEnabled;
-	}
+    public void setIfscCode(final String ifscCode) {
+        this.ifscCode = ifscCode;
+    }
+
+    public String getBankAccount() {
+        return bankAccount;
+    }
+
+    public void setBankAccount(final String bankAccount) {
+        this.bankAccount = bankAccount;
+    }
+
+    public String getPwdApprovalCode() {
+        return pwdApprovalCode;
+    }
+
+    public void setPwdApprovalCode(final String pwdApprovalCode) {
+        this.pwdApprovalCode = pwdApprovalCode;
+    }
+
+    public List<ContractorDetail> getContractorDetails() {
+        return contractorDetails;
+    }
+
+    public void setContractorDetails(final List<ContractorDetail> contractorDetails) {
+        this.contractorDetails = contractorDetails;
+    }
+
+    public void addContractorDetail(final ContractorDetail contractorDetail) {
+        contractorDetails.add(contractorDetail);
+    }
+
+    @Override
+    public List<ValidationError> validate() {
+        List<ValidationError> errorList = null;
+        if (contractorDetails != null && contractorDetails.isEmpty())
+            return Arrays.asList(new ValidationError("contractorDetails", "contractor.details.altleastone_details_needed"));
+        else if (contractorDetails != null && !contractorDetails.isEmpty())
+            for (final ContractorDetail contractorDetail : contractorDetails) {
+                errorList = contractorDetail.validate();
+                if (errorList != null)
+                    return errorList;
+            }
+        return errorList;
+    }
+
+    @Override
+    public String getBankaccount() {
+        // TODO Auto-generated method stub
+        return bankAccount;
+    }
+
+    @Override
+    public String getBankname() {
+        // TODO Auto-generated method stub
+        if (bank == null)
+            return "";
+        else
+            return bank.getName();
+    }
+
+    @Override
+    public String getIfsccode() {
+        // TODO Auto-generated method stub
+        return ifscCode;
+    }
+
+    @Override
+    public String getPanno() {
+        // TODO Auto-generated method stub
+        return panNumber;
+    }
+
+    @Override
+    public String getTinno() {
+        // TODO Auto-generated method stub
+        return tinNumber;
+    }
+
+    @Override
+    public String getModeofpay() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Integer getEntityId() {
+        return Integer.valueOf(id.intValue());
+    }
+
+    @Override
+    public String getEntityDescription() {
+
+        return getName();
+    }
+
+    public boolean getIsEditEnabled() {
+        return isEditEnabled;
+    }
+
+    public void setIsEditEnabled(final boolean isEditEnabled) {
+        this.isEditEnabled = isEditEnabled;
+    }
 
     @Override
     public EgwStatus getEgwStatus() {
@@ -305,4 +312,3 @@ public class Contractor  extends BaseModel implements EntityType{
         return null;
     }
 }
-

@@ -233,7 +233,7 @@ public class SearchEstimateAction extends SearchFormAction {
             if (lastestMilestoneObj != null)
                 if (!lastestMilestoneObj.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                         && !lastestMilestoneObj.getEgwStatus().getCode()
-                        .equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
+                                .equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
                     final PersonalInformation emp = employeeService.getEmployeeforPosition(lastestMilestoneObj
                             .getState().getOwnerPosition());
                     if (emp.getUserMaster() != null)
@@ -285,7 +285,7 @@ public class SearchEstimateAction extends SearchFormAction {
             final boolean executingDeptPopulated) {
         if (executingDeptPopulated && execDept != null && execDept > 0) {
             ajaxWorkOrderAction
-            .setDepartmentName(departmentService.getDepartmentById(Long.valueOf(execDept)).getName());
+                    .setDepartmentName(departmentService.getDepartmentById(Long.valueOf(execDept)).getName());
             ajaxWorkOrderAction.getDesignationByDeptId();
             addDropdownData(ASSIGNED_TO_LIST, ajaxWorkOrderAction.getWorkOrderDesigList());
         } else
@@ -398,8 +398,9 @@ public class SearchEstimateAction extends SearchFormAction {
                                     + " (select tr.tenderEstimate.worksPackage.id from TenderResponse tr "
                                     + " where tr.tenderEstimate.abstractEstimate.id=null and  tr.tenderEstimate.worksPackage.id!=null "
                                     + " and tr.egwStatus.code=?))"
-                                    + " and ae.id not in (select wo.abstractEstimate.id from WorkOrder wo)", status,
-                                    status);
+                                    + " and ae.id not in (select wo.abstractEstimate.id from WorkOrder wo)",
+                            status,
+                            status);
             addDropdownData("executingDepartmentList", deptValues);
         } else {
             estimateOrWpSearchReq = worksService.getWorksConfigValue("ESTIMATE_OR_WP_SEARCH_REQ");
@@ -418,10 +419,12 @@ public class SearchEstimateAction extends SearchFormAction {
         if (SEARCH_ESTIMATE_FOR_MILESTONE.equalsIgnoreCase(source)) {
             query.append("from WorkOrderEstimate  as woe where woe.workOrder.parent is null and woe.workOrder.egwStatus.code=? ");
             paramList.add("APPROVED");
-            query.append(" and woe.id not in (select m.workOrderEstimate.id from Milestone as m where m.egwStatus.code not in (?,?))");
+            query.append(
+                    " and woe.id not in (select m.workOrderEstimate.id from Milestone as m where m.egwStatus.code not in (?,?))");
             paramList.add("APPROVED");
             paramList.add("CANCELLED");
-            query.append(" and woe.id not in (select tm.milestone.workOrderEstimate.id from TrackMilestone as tm where tm.egwStatus.code not in (?,?) or (tm.isProjectCompleted=? and tm.egwStatus.code<>?))");
+            query.append(
+                    " and woe.id not in (select tm.milestone.workOrderEstimate.id from TrackMilestone as tm where tm.egwStatus.code not in (?,?) or (tm.isProjectCompleted=? and tm.egwStatus.code<>?))");
             paramList.add("APPROVED");
             paramList.add("CANCELLED");
             paramList.add(Boolean.TRUE);
@@ -429,11 +432,13 @@ public class SearchEstimateAction extends SearchFormAction {
             query.append("and woe.estimate.projectCode.egwStatus.code!=?");
             paramList.add("CLOSED");
         } else if (CANCEL_MILESTONE.equalsIgnoreCase(source)) {
-            query.append("from WorkOrderEstimate  as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone");
+            query.append(
+                    "from WorkOrderEstimate  as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone");
             query.append(" where woe.id in (select workOrderEstimate.id from Milestone m where m.egwStatus.code=?) ");
             paramList.add(getStatus().toUpperCase());
         } else {
-            query.append("from WorkOrderEstimate  as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone where woe.workOrder.egwStatus.code=? ");
+            query.append(
+                    "from WorkOrderEstimate  as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone where woe.workOrder.egwStatus.code=? ");
             paramList.add("APPROVED");
             query.append(" and woe.id in (select workOrderEstimate.id from Milestone m1) ");
         }
@@ -457,11 +462,13 @@ public class SearchEstimateAction extends SearchFormAction {
                     if (StringUtils.isNotBlank(status2) && !status2.equalsIgnoreCase("-1"))
                         if (milestoneStatus.equalsIgnoreCase("Milestone Created")
                                 && !status2.equalsIgnoreCase("CREATED")) {
-                            query.append(" and milestone.egwStatus.code = ? and milestone.id not in (select tm.milestone.id from TrackMilestone tm ) ");
+                            query.append(
+                                    " and milestone.egwStatus.code = ? and milestone.id not in (select tm.milestone.id from TrackMilestone tm ) ");
                             paramList.add(status2);
                         } else if (milestoneStatus.equalsIgnoreCase("Milestone Created")
                                 && status2.equalsIgnoreCase("CREATED"))
-                            query.append(" and milestone.egwStatus.code in ('CREATED','REJECTED','RESUBMITTED') and milestone.id not in (select tm.milestone.id from TrackMilestone tm ) ");
+                            query.append(
+                                    " and milestone.egwStatus.code in ('CREATED','REJECTED','RESUBMITTED') and milestone.id not in (select tm.milestone.id from TrackMilestone tm ) ");
                         else if (milestoneStatus.equalsIgnoreCase("Milestone Tracked")
                                 && !status2.equalsIgnoreCase("CREATED")) {
                             query.append(" and trackMilestone.egwStatus.code = ? ");
@@ -470,7 +477,8 @@ public class SearchEstimateAction extends SearchFormAction {
                                 && status2.equalsIgnoreCase("CREATED"))
                             query.append(" and trackMilestone.egwStatus.code in  ('CREATED','REJECTED','RESUBMITTED') ");
                     if (milestoneStatus.equalsIgnoreCase("Milestone Created") && status2.equalsIgnoreCase("-1")) {
-                        query.append(" and milestone.egwStatus.code in (?,?,?,?,?,?) and milestone.id not in (select tm.milestone.id from TrackMilestone tm )");
+                        query.append(
+                                " and milestone.egwStatus.code in (?,?,?,?,?,?) and milestone.id not in (select tm.milestone.id from TrackMilestone tm )");
                         paramList.add("NEW");
                         paramList.add("CREATED");
                         paramList.add("APPROVED");
@@ -479,7 +487,8 @@ public class SearchEstimateAction extends SearchFormAction {
                         paramList.add("CANCELLED");
                     }
                     if (milestoneStatus.equalsIgnoreCase("Milestone Tracked") && status2.equalsIgnoreCase("-1")) {
-                        query.append(" and trackMilestone.egwStatus.code in (?,?,?,?,?,?) and trackMilestone.isProjectCompleted!=1  ");
+                        query.append(
+                                " and trackMilestone.egwStatus.code in (?,?,?,?,?,?) and trackMilestone.isProjectCompleted!=1  ");
                         paramList.add("NEW");
                         paramList.add("CREATED");
                         paramList.add("APPROVED");
@@ -945,16 +954,16 @@ public class SearchEstimateAction extends SearchFormAction {
             WorksPackage wp = null;
             if ("wp".equals(source) && StringUtils.isNotBlank(getEstimatenumber()))
                 wp = (WorksPackage) persistenceService
-                .find("from WorksPackage wp where wp.id in (select wpd.worksPackage.id from WorksPackageDetails wpd where wpd.estimate.estimateNumber = ? ) and wp.egwStatus.code<>'CANCELLED'",
-                        getEstimatenumber());
+                        .find("from WorksPackage wp where wp.id in (select wpd.worksPackage.id from WorksPackageDetails wpd where wpd.estimate.estimateNumber = ? ) and wp.egwStatus.code<>'CANCELLED'",
+                                getEstimatenumber());
             if (wp != null) {
                 if ("NEW".equalsIgnoreCase(wp.getEgwStatus().getCode())) {
                     final PersonalInformation emp = employeeService.getEmployeeforPosition(wp.getCurrentState()
                             .getOwnerPosition());
                     addFieldError("result not found",
                             "Work package is already created for the Estimate with Work Package No " + wp.getWpNumber()
-                            + " dated on " + DateUtils.getFormattedDate(wp.getPackageDate(), "dd/MM/yyyy")
-                            + " and " + "it is drafts of " + emp.getEmployeeName());
+                                    + " dated on " + DateUtils.getFormattedDate(wp.getPackageDate(), "dd/MM/yyyy")
+                                    + " and " + "it is drafts of " + emp.getEmployeeName());
                 } else
                     addFieldError(
                             "result not found",
@@ -983,10 +992,10 @@ public class SearchEstimateAction extends SearchFormAction {
         final StringBuilder cancelComments = new StringBuilder(200);
         if (cancelRemarks != null && StringUtils.isNotBlank(cancelRemarks))
             cancelComments.append(cancellationReason).append(" : ").append(cancelRemarks).append(". ")
-            .append(getText("milestone.cancel.cancelledby")).append(": ").append(empName);
+                    .append(getText("milestone.cancel.cancelledby")).append(": ").append(empName);
         else
             cancelComments.append(cancellationReason).append(". ").append(getText("milestone.cancel.cancelledby"))
-            .append(": ").append(empName);
+                    .append(": ").append(empName);
 
         for (final String workOrderIdStr : workOrderEstIdsStr) {
             final WorkOrderEstimate woe = (WorkOrderEstimate) getPersistenceService().find(
@@ -1018,19 +1027,15 @@ public class SearchEstimateAction extends SearchFormAction {
                 if (WorksConstants.APPROVED.equalsIgnoreCase(milestone.getEgwStatus().getCode())) {
                     milestone.setEgwStatus(commonsService.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
                             WorksConstants.CANCELLED_STATUS));
-                    // TODO - The setter methods of variables in State.java are
-                    // protected. Need to alternative way to solve this issue.
-                    /*******
-                     * oldEndState = milestone.getCurrentState();
-                     * oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
-                     * oldEndState.setModifiedBy(prsnlInfo.getUserMaster());
-                     * oldEndState.setCreatedDate(new Date());
-                     * oldEndState.setModifiedDate(new Date());
-                     * oldEndState.setOwner(owner);
-                     * oldEndState.setValue(WorksConstants.CANCELLED_STATUS);
-                     * oldEndState.setText1(cancelComments.toString());
-                     * milestone.changeState("END", owner, null);
-                     *******/
+                            // TODO - The setter methods of variables in State.java are
+                            // protected. Need to alternative way to solve this issue.
+                            /*******
+                             * oldEndState = milestone.getCurrentState(); oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
+                             * oldEndState.setModifiedBy(prsnlInfo.getUserMaster()); oldEndState.setCreatedDate(new Date());
+                             * oldEndState.setModifiedDate(new Date()); oldEndState.setOwner(owner);
+                             * oldEndState.setValue(WorksConstants.CANCELLED_STATUS);
+                             * oldEndState.setText1(cancelComments.toString()); milestone.changeState("END", owner, null);
+                             *******/
 
                     for (final TrackMilestone tms : milestone.getTrackMilestone())
                         if (!WorksConstants.CANCELLED_STATUS.equalsIgnoreCase(tms.getEgwStatus().getCode())) {

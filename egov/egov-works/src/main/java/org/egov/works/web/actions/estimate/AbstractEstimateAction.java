@@ -56,8 +56,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.jasperreports.engine.JRException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -79,10 +77,10 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
@@ -109,13 +107,15 @@ import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import net.sf.jasperreports.engine.JRException;
+
 @Transactional(readOnly = true)
 @ParentPackage("egov")
 @Results({ @Result(name = AbstractEstimateAction.PRINT, type = "StreamResult.class", location = "XlsInputStream", params = {
         "inputName", "XlsInputStream", "contentType", "application/xls", "contentDisposition",
-"no-cache;filename=AbstractEstimate-BillOfQuantites.xls" }) })
+        "no-cache;filename=AbstractEstimate-BillOfQuantites.xls" }) })
 public class AbstractEstimateAction extends BaseFormAction {
-   
+
     private static final long serialVersionUID = -4801105778751138267L;
     private static final Logger logger = Logger.getLogger(AbstractEstimateAction.class);
     private static final String CANCEL_ACTION = "cancel";
@@ -162,8 +162,7 @@ public class AbstractEstimateAction extends BaseFormAction {
     private String loggedInUserEmployeeCode;
 
     /*
-     * added by prashanth on 2nd nov 09 for disp user and desgination in success
-     * page
+     * added by prashanth on 2nd nov 09 for disp user and desgination in success page
      */
     String employeeName;
     String designation;
@@ -321,8 +320,9 @@ public class AbstractEstimateAction extends BaseFormAction {
         List<UOM> uomList = getPersistenceService().findAllBy("from UOM  order by upper(uom)");
         if (id == null && abstractEstimate.getEgwStatus() == null || "roadCutDepositWorks".equals(sourcepage)
                 || !SOURCE_SEARCH.equals(sourcepage) && abstractEstimate.getEgwStatus() != null
-                && abstractEstimate.getEgwStatus().getCode().equals("REJECTED") || id != null
-                && abstractEstimate.getEgwStatus() != null && abstractEstimate.getEgwStatus().getCode().equals("NEW"))
+                        && abstractEstimate.getEgwStatus().getCode().equals("REJECTED")
+                || id != null
+                        && abstractEstimate.getEgwStatus() != null && abstractEstimate.getEgwStatus().getCode().equals("NEW"))
             uomList = abstractEstimateService.prepareUomListByExcludingSpecialUoms(uomList);
         addDropdownData("uomList", uomList);
         addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=1"));
@@ -348,7 +348,7 @@ public class AbstractEstimateAction extends BaseFormAction {
         if (abstractEstimate != null
                 && abstractEstimate.getEgwStatus() != null
                 && abstractEstimate.getEgwStatus().getCode()
-                .equals(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()))
+                        .equals(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()))
             getUsersInOldAndNewExecutingDepartment();
         // Estimate Prepared by drop-down will show the logged in user Name
         if (abstractEstimate != null && abstractEstimate.getId() == null
@@ -391,9 +391,9 @@ public class AbstractEstimateAction extends BaseFormAction {
 
         if (!(CANCEL_ACTION.equals(actionName) && abstractEstimate.getId() == null))
             if (abstractEstimate.getEgwStatus() != null
-            && !(abstractEstimate.getEgwStatus().getCode().equals("REJECTED")
+                    && !(abstractEstimate.getEgwStatus().getCode().equals("REJECTED")
                             && (actionName.equals("submit_for_approval") || actionName.equals("save")) || abstractEstimate
-                    .getEgwStatus().getCode().equals("NEW"))) {
+                                    .getEgwStatus().getCode().equals("NEW"))) {
                 // If Estimate is in work flow other than Rejected or in Drafts
                 // case then do nothing(do not delete child tables and insert
                 // again)
@@ -434,7 +434,7 @@ public class AbstractEstimateAction extends BaseFormAction {
                 && abstractEstimate.getType().getExpenditureType() != null
                 && abstractEstimate.getEgwStatus() != null
                 && abstractEstimate.getEgwStatus().getCode()
-                .equals(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()))
+                        .equals(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()))
             try {
                 abstractEstimateService.setProjectCode(abstractEstimate);
                 abstractEstimate.setApprovedDate(new Date());
@@ -460,8 +460,9 @@ public class AbstractEstimateAction extends BaseFormAction {
 
     private void validateForAssetSelection() {
         if (abstractEstimate.getType() != null
-                && !(abstractEstimate.getType().getName().equals(WorksConstants.DEPOSIT_WORKS_THIRDPARTY_ASSET) || abstractEstimate
-                        .getType().getName().equals(WorksConstants.DEPOSIT_WORKS_NO_ASSET_CREATED))) {
+                && !(abstractEstimate.getType().getName().equals(WorksConstants.DEPOSIT_WORKS_THIRDPARTY_ASSET)
+                        || abstractEstimate
+                                .getType().getName().equals(WorksConstants.DEPOSIT_WORKS_NO_ASSET_CREATED))) {
             final String isAssetRequired = worksService.getWorksConfigValue("ASSET_MANDATORY");
             if (isAssetRequired.equals("yes") && actionAssetValues != null) {
                 boolean isAssetPresent = false;
@@ -571,12 +572,12 @@ public class AbstractEstimateAction extends BaseFormAction {
             ajaxEstimateAction.setExecutingDepartment(abstractEstimate.getExecutingDepartment().getId());
             if (id == null
                     || abstractEstimate.getEgwStatus() != null
-                    && (abstractEstimate.getEgwStatus().getCode()
-                            .equals(AbstractEstimate.EstimateStatus.REJECTED.toString()) || abstractEstimate
-                            .getEgwStatus().getCode().equals("NEW")))
+                            && (abstractEstimate.getEgwStatus().getCode()
+                                    .equals(AbstractEstimate.EstimateStatus.REJECTED.toString()) || abstractEstimate
+                                            .getEgwStatus().getCode().equals("NEW")))
                 if (StringUtils.isNotBlank(loggedInUserEmployeeCode)
                         && (estimatePreparedByView == null || loggedInUserEmployeeCode
-                        .equalsIgnoreCase(estimatePreparedByView.getCode())))
+                                .equalsIgnoreCase(estimatePreparedByView.getCode())))
                     // Extra condition is added since estimate can be rejected
                     // in 2 usecases
                     ajaxEstimateAction.setEmployeeCode(loggedInUserEmployeeCode);
@@ -824,7 +825,7 @@ public class AbstractEstimateAction extends BaseFormAction {
                         WorksConstants.CANCELLED_STATUS.toString());
         if (woNumber != null && !woNumber.equals(""))
             messageKey = getText("cancelEstimate.rc.wo.created.message.part1").concat(woNumber).concat(" ")
-            .concat(getText("cancelEstimate.rc.wo.created.message.part2"));
+                    .concat(getText("cancelEstimate.rc.wo.created.message.part2"));
         else {
             final String oldEstimateNo = abstractEstimate.getEstimateNumber();
 
@@ -838,7 +839,7 @@ public class AbstractEstimateAction extends BaseFormAction {
 
             if (cancelRemarks != null && StringUtils.isNotBlank(cancelRemarks))
                 cancellationReason.concat(" : ").concat(cancelRemarks).concat(". ")
-                .concat(getText("estimate.cancel.cancelledby")).concat(": ").concat(empName);
+                        .concat(getText("estimate.cancel.cancelledby")).concat(": ").concat(empName);
             else
                 cancellationReason.concat(". ").concat(getText("estimate.cancel.cancelledby")).concat(": ")
                         .concat(empName);
@@ -853,7 +854,7 @@ public class AbstractEstimateAction extends BaseFormAction {
             // If type is deposit works then release Deposit works amount
             if (isSkipBudgetCheck())
                 abstractEstimateService
-                .releaseDepositWorksAmountOnReject(abstractEstimate.getFinancialDetails().get(0));
+                        .releaseDepositWorksAmountOnReject(abstractEstimate.getFinancialDetails().get(0));
             else {
                 // If it is Budget work then release latest budget consumed
                 abstractEstimateService.releaseBudgetOnReject(abstractEstimate.getFinancialDetails().get(0));
@@ -868,17 +869,12 @@ public class AbstractEstimateAction extends BaseFormAction {
             // protected. Need to alternative way to solve this issue.
             // Set the status and workflow state to cancelled
             /*****
-             * State oldEndState = abstractEstimate.getCurrentState(); Position
-             * owner = prsnlInfo.getAssignment(new Date()).getPosition();
-             * oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
-             * oldEndState.setModifiedBy(prsnlInfo.getUserMaster());
-             * oldEndState.setCreatedDate(new Date());
-             * oldEndState.setModifiedDate(new Date());
-             * oldEndState.setOwner(owner);
-             * oldEndState.setValue(AbstractEstimate
-             * .EstimateStatus.CANCELLED.toString());
-             * oldEndState.setText1(cancellationText);
-             * abstractEstimate.changeState("END", owner, null);
+             * State oldEndState = abstractEstimate.getCurrentState(); Position owner = prsnlInfo.getAssignment(new
+             * Date()).getPosition(); oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
+             * oldEndState.setModifiedBy(prsnlInfo.getUserMaster()); oldEndState.setCreatedDate(new Date());
+             * oldEndState.setModifiedDate(new Date()); oldEndState.setOwner(owner); oldEndState.setValue(AbstractEstimate
+             * .EstimateStatus.CANCELLED.toString()); oldEndState.setText1(cancellationText); abstractEstimate.changeState("END",
+             * owner, null);
              *******/
 
             abstractEstimate.setEgwStatus(commonsService.getStatusByModuleAndCode("AbstractEstimate",
@@ -901,11 +897,11 @@ public class AbstractEstimateAction extends BaseFormAction {
     private void validateDeptForDepositWorks() {
         if (isDepositWorksType())
             if (abstractEstimate.getUserDepartment() != null
-            && abstractEstimate.getUserDepartment().getId() != null
-            && abstractEstimate.getExecutingDepartment() != null
-            && abstractEstimate.getExecutingDepartment().getId() != null
-            && abstractEstimate.getExecutingDepartment().getId() != abstractEstimate.getUserDepartment()
-            .getId()) {
+                    && abstractEstimate.getUserDepartment().getId() != null
+                    && abstractEstimate.getExecutingDepartment() != null
+                    && abstractEstimate.getExecutingDepartment().getId() != null
+                    && abstractEstimate.getExecutingDepartment().getId() != abstractEstimate.getUserDepartment()
+                            .getId()) {
                 abstractEstimate.getActivities().clear();
                 abstractEstimate.getAssetValues().clear();
                 abstractEstimate.getOverheadValues().clear();
@@ -1042,8 +1038,7 @@ public class AbstractEstimateAction extends BaseFormAction {
     }
 
     /**
-     * @param employeeName
-     *            the employeeName to set
+     * @param employeeName the employeeName to set
      */
     public void setEmployeeName(final String employeeName) {
         this.employeeName = employeeName;
@@ -1057,8 +1052,7 @@ public class AbstractEstimateAction extends BaseFormAction {
     }
 
     /**
-     * @param designation
-     *            the designation to set
+     * @param designation the designation to set
      */
     public void setDesignation(final String designation) {
         this.designation = designation;
@@ -1072,8 +1066,7 @@ public class AbstractEstimateAction extends BaseFormAction {
     }
 
     /**
-     * @param worksService
-     *            the worksService to set
+     * @param worksService the worksService to set
      */
     public void setWorksService(final WorksService worksService) {
         this.worksService = worksService;

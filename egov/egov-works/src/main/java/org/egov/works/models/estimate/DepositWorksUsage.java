@@ -48,7 +48,7 @@ import org.egov.infstr.models.BaseModel;
 import org.egov.works.models.masters.DepositCode;
 
 public class DepositWorksUsage extends BaseModel {
-   
+
     private static final long serialVersionUID = 8244011179703999724L;
     private AbstractEstimate abstractEstimate;
     private BigDecimal totalDepositAmount;

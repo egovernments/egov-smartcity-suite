@@ -226,7 +226,7 @@ public class TenderNegotiationAction extends SearchFormAction {
         if (securityDeposit == null)
             try {
                 securityDeposit = new Double(worksService.getWorksConfigValue("SECURITY_DEPOSIT_MULTIPLIER"))
-                .doubleValue() / 100 * abstractEstimate.getWorkValueIncludingTaxes().getValue();
+                        .doubleValue() / 100 * abstractEstimate.getWorkValueIncludingTaxes().getValue();
                 securityDeposit = new Double(formatter.format(securityDeposit));
             } catch (final Exception e) {
                 securityDeposit = 0.0d;
@@ -453,8 +453,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     /**
-     * Method to check for valid Tender date. Tender date should be greater than
-     * Admin approval date and less than current date
+     * Method to check for valid Tender date. Tender date should be greater than Admin approval date and less than current date
      *
      * @return boolean
      */
@@ -463,22 +462,22 @@ public class TenderNegotiationAction extends SearchFormAction {
 
         if (abstractEstimate != null)
             return abstractEstimate != null
-            && tenderHeader != null
-            && tenderHeader.getTenderDate() != null
-            && abstractEstimate.getCurrentState().getCreatedDate() != null
-            && abstractEstimate.getCurrentState().getValue().equalsIgnoreCase(WorksConstants.END)
-            && !DateConversionUtil.isBeforeByDate(tenderHeader.getTenderDate(), abstractEstimate
-                    .getCurrentState().getCreatedDate())
+                    && tenderHeader != null
+                    && tenderHeader.getTenderDate() != null
+                    && abstractEstimate.getCurrentState().getCreatedDate() != null
+                    && abstractEstimate.getCurrentState().getValue().equalsIgnoreCase(WorksConstants.END)
+                    && !DateConversionUtil.isBeforeByDate(tenderHeader.getTenderDate(), abstractEstimate
+                            .getCurrentState().getCreatedDate())
                     && !DateConversionUtil.isBeforeByDate(new Date(), tenderHeader.getTenderDate());
         if (worksPackage != null)
             return worksPackage != null
-            && tenderHeader != null
-            && tenderHeader.getTenderDate() != null
-            && worksPackage.getCurrentState().getCreatedDate() != null
-            && worksPackage.getEgwStatus().getCode()
-            .equalsIgnoreCase(WorksPackage.WorkPacakgeStatus.APPROVED.toString())
-            && !DateConversionUtil.isBeforeByDate(tenderHeader.getTenderDate(), worksPackage.getPackageDate())
-            && !DateConversionUtil.isBeforeByDate(new Date(), tenderHeader.getTenderDate());
+                    && tenderHeader != null
+                    && tenderHeader.getTenderDate() != null
+                    && worksPackage.getCurrentState().getCreatedDate() != null
+                    && worksPackage.getEgwStatus().getCode()
+                            .equalsIgnoreCase(WorksPackage.WorkPacakgeStatus.APPROVED.toString())
+                    && !DateConversionUtil.isBeforeByDate(tenderHeader.getTenderDate(), worksPackage.getPackageDate())
+                    && !DateConversionUtil.isBeforeByDate(new Date(), tenderHeader.getTenderDate());
         return Boolean.TRUE;
     }
 
@@ -486,8 +485,8 @@ public class TenderNegotiationAction extends SearchFormAction {
     public String save() {
         if (tenderResponse != null
                 && (tenderResponse.getEgwStatus() == null
-                || NEW.equalsIgnoreCase(tenderResponse.getEgwStatus().getCode()) || REJECTED
-                .equalsIgnoreCase(tenderResponse.getEgwStatus().getCode())))
+                        || NEW.equalsIgnoreCase(tenderResponse.getEgwStatus().getCode()) || REJECTED
+                                .equalsIgnoreCase(tenderResponse.getEgwStatus().getCode())))
             tenderResponse.getTenderResponseContractors().clear();
         actionTenderResponseContractors = (List) getActionTenderResponseContractorsList();
 
@@ -496,8 +495,8 @@ public class TenderNegotiationAction extends SearchFormAction {
                 && actionTenderResponseContractors.get(0) != null
                 && actionTenderResponseContractors.get(0).getContractor() != null
                 && (actionTenderResponseContractors.get(0).getContractor().getId() == null
-                || actionTenderResponseContractors.get(0).getContractor().getId() == 0 || actionTenderResponseContractors
-                .get(0).getContractor().getId() == -1))
+                        || actionTenderResponseContractors.get(0).getContractor().getId() == 0 || actionTenderResponseContractors
+                                .get(0).getContractor().getId() == -1))
             throw new ValidationException(Arrays.asList(new ValidationError(TENDERRESPONSE_CONTRACTOR,
                     TENDERRESPONSE_CONTRACTOR_NULL)));
         else if (tenderResponse != null && !actionTenderResponseContractors.isEmpty()
@@ -522,8 +521,8 @@ public class TenderNegotiationAction extends SearchFormAction {
         if (tenderResponse != null
                 && tenderResponse.getNegotiationPreparedBy() != null
                 && (tenderResponse.getNegotiationPreparedBy().getIdPersonalInformation() == null
-                || tenderResponse.getNegotiationPreparedBy().getIdPersonalInformation() == 0 || tenderResponse
-                .getNegotiationPreparedBy().getIdPersonalInformation() == -1)) {
+                        || tenderResponse.getNegotiationPreparedBy().getIdPersonalInformation() == 0 || tenderResponse
+                                .getNegotiationPreparedBy().getIdPersonalInformation() == -1)) {
             logger.info("2--- inside save and validation err");
             throw new ValidationException(Arrays.asList(new ValidationError(VALIDATION_PREPAREDBY,
                     VALIDATION_PREPAREDBY_ERROR)));
@@ -613,8 +612,8 @@ public class TenderNegotiationAction extends SearchFormAction {
                 && actionTenderResponseContractors.get(0) != null
                 && actionTenderResponseContractors.get(0).getContractor() != null
                 && (actionTenderResponseContractors.get(0).getContractor().getId() == null
-                || actionTenderResponseContractors.get(0).getContractor().getId() == 0 || actionTenderResponseContractors
-                .get(0).getContractor().getId() == -1))
+                        || actionTenderResponseContractors.get(0).getContractor().getId() == 0 || actionTenderResponseContractors
+                                .get(0).getContractor().getId() == -1))
             throw new ValidationException(Arrays.asList(new ValidationError(TENDERRESPONSE_CONTRACTOR,
                     TENDERRESPONSE_CONTRACTOR_NULL)));
         else if (tenderResponse != null && !actionTenderResponseContractors.isEmpty()
@@ -625,8 +624,8 @@ public class TenderNegotiationAction extends SearchFormAction {
         if (tenderResponse != null
                 && tenderResponse.getNegotiationPreparedBy() != null
                 && (tenderResponse.getNegotiationPreparedBy().getIdPersonalInformation() == null
-                || tenderResponse.getNegotiationPreparedBy().getIdPersonalInformation() == 0 || tenderResponse
-                .getNegotiationPreparedBy().getIdPersonalInformation() == -1))
+                        || tenderResponse.getNegotiationPreparedBy().getIdPersonalInformation() == 0 || tenderResponse
+                                .getNegotiationPreparedBy().getIdPersonalInformation() == -1))
             throw new ValidationException(Arrays.asList(new ValidationError(VALIDATION_PREPAREDBY,
                     VALIDATION_PREPAREDBY_ERROR)));
         else if (tenderResponse != null && tenderResponse.getNegotiationPreparedBy() == null)
@@ -726,16 +725,16 @@ public class TenderNegotiationAction extends SearchFormAction {
                             if (activity.getNonSor() == null) {
                                 tenderResponseQuotes.setQuotedRate(activity.getSORCurrentRate().getValue()
                                         + activity.getSORCurrentRate().getValue() * tenderResponse.getPercQuotedRate()
-                                        / 100);
+                                                / 100);
                                 tenderResponseActivity.setNegotiatedRate(activity.getSORCurrentRate().getValue()
                                         + activity.getSORCurrentRate().getValue()
-                                        * tenderResponse.getPercNegotiatedAmountRate() / 100);
+                                                * tenderResponse.getPercNegotiatedAmountRate() / 100);
                             } else if (activity.getSchedule() == null) {
                                 tenderResponseQuotes.setQuotedRate(activity.getRate().getValue()
                                         + activity.getRate().getValue() * tenderResponse.getPercQuotedRate() / 100);
                                 tenderResponseActivity.setNegotiatedRate(activity.getRate().getValue()
                                         + activity.getRate().getValue() * tenderResponse.getPercNegotiatedAmountRate()
-                                        / 100);
+                                                / 100);
                             }
                             tenderResponseQuotes.setContractor(tenderResponseContractors.getContractor());
                             tenderResponseQuotes.setQuotedQuantity(activity.getQuantity());
@@ -822,7 +821,7 @@ public class TenderNegotiationAction extends SearchFormAction {
         if (entity.getTenderEstimate().getAbstractEstimate() != null
                 && estNum[0]
                         .equals(entity.getTenderEstimate().getAbstractEstimate().getExecutingDepartment().getCode())
-                        && estNum[2].equals(financialYear.getFinYearRange()))
+                && estNum[2].equals(financialYear.getFinYearRange()))
             return false;
         else if (entity.getTenderEstimate().getWorksPackage() != null
                 && estNum[0].equals(entity.getTenderEstimate().getWorksPackage().getDepartment().getCode())
@@ -891,8 +890,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     /**
-     * @param negotiationNumber
-     *            the negotiationNumber to set
+     * @param negotiationNumber the negotiationNumber to set
      */
     public void setNegotiationNumber(final String negotiationNumber) {
         this.negotiationNumber = negotiationNumber;
@@ -906,8 +904,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     /**
-     * @param negotiationDate
-     *            the negotiationDate to set
+     * @param negotiationDate the negotiationDate to set
      */
     public void setNegotiationDate(final Date negotiationDate) {
         this.negotiationDate = negotiationDate;
@@ -921,8 +918,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     /**
-     * @param departmentId
-     *            the departmentId to set
+     * @param departmentId the departmentId to set
      */
     public void setDepartmentId(final Integer departmentId) {
         this.departmentId = departmentId;
@@ -936,8 +932,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     /**
-     * @param estimateNumber
-     *            the estimateNumber to set
+     * @param estimateNumber the estimateNumber to set
      */
     public void setEstimateNumber(final String estimateNumber) {
         this.estimateNumber = estimateNumber;
@@ -951,8 +946,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     /**
-     * @param projectCode
-     *            the projectCode to set
+     * @param projectCode the projectCode to set
      */
     public void setProjectCode(final String projectCode) {
         this.projectCode = projectCode;
@@ -966,8 +960,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     /**
-     * @param mode
-     *            the mode to set
+     * @param mode the mode to set
      */
     public void setMode(final String mode) {
         this.mode = mode;
@@ -1020,8 +1013,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     /**
-     * @param status
-     *            the status to set
+     * @param status the status to set
      */
     public void setStatus(final String status) {
         this.status = status;
@@ -1091,8 +1083,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     /**
-     * @param worksService
-     *            the worksService to set
+     * @param worksService the worksService to set
      */
     public void setWorksService(final WorksService worksService) {
         this.worksService = worksService;
@@ -1106,8 +1097,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     /**
-     * @param employeeName
-     *            the employeeName to set
+     * @param employeeName the employeeName to set
      */
     public void setEmployeeName(final String employeeName) {
         this.employeeName = employeeName;
@@ -1121,8 +1111,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     /**
-     * @param sourcepage
-     *            the sourcepage to set
+     * @param sourcepage the sourcepage to set
      */
     public void setSourcepage(final String sourcepage) {
         this.sourcepage = sourcepage;
@@ -1342,7 +1331,7 @@ public class TenderNegotiationAction extends SearchFormAction {
                         tenderResponse.getTenderEstimate().getWorksPackage().setEmployeeName(emp.getEmployeeName());
                     else
                         tenderResponse.getTenderEstimate().getAbstractEstimate()
-                        .setPositionAndUserName(emp.getEmployeeName());
+                                .setPositionAndUserName(emp.getEmployeeName());
             }
             double totalAmt = 0;
             for (final TenderResponseActivity act : tenderResponse.getTenderResponseActivities()) {
@@ -1362,7 +1351,7 @@ public class TenderNegotiationAction extends SearchFormAction {
                 final TenderResponseContractors tenderResponseCntractrs = (TenderResponseContractors) j.next();
                 if (tenderResponseCntractrs.getTenderResponse().getEgwStatus() != null
                         && tenderResponseCntractrs.getTenderResponse().getEgwStatus().getCode()
-                        .equals(TenderResponse.TenderResponseStatus.APPROVED.toString())) {
+                                .equals(TenderResponse.TenderResponseStatus.APPROVED.toString())) {
                     final SetStatus setStatus = (SetStatus) persistenceService.findByNamedQuery(
                             "getmaxStatusByObjectId_Type", tenderResponseCntractrs.getId(),
                             tenderResponseCntractrs.getId(), TenderResponseContractors.class.getSimpleName(),
@@ -1652,24 +1641,20 @@ public class TenderNegotiationAction extends SearchFormAction {
             empName = empName.concat(" ").concat(prsnlInfo.getEmployeeLastName());
         if (cancelRemarks != null && StringUtils.isNotBlank(cancelRemarks))
             cancellationReason.concat(" : ").concat(cancelRemarks).concat(". ")
-            .concat(getText("tenderNegotiation.cancel.cancelledby")).concat(": ").concat(empName);
+                    .concat(getText("tenderNegotiation.cancel.cancelledby")).concat(": ").concat(empName);
         else
             cancellationReason.concat(". ").concat(getText("tenderNegotiation.cancel.cancelledby")).concat(": ")
-            .concat(empName);
+                    .concat(empName);
 
         // TODO - The setter methods of variables in State.java are protected.
         // Need to alternative way to solve this issue.
         // Set the status and workflow state to cancelled
         /*****
-         * State oldEndState = tenderResponse.getCurrentState(); Position owner
-         * = prsnlInfo.getAssignment(new Date()).getPosition();
-         * oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
-         * oldEndState.setModifiedBy(prsnlInfo.getUserMaster());
-         * oldEndState.setCreatedDate(new Date());
-         * oldEndState.setModifiedDate(new Date()); oldEndState.setOwner(owner);
-         * oldEndState
-         * .setValue(TenderResponse.TenderResponseStatus.CANCELLED.toString());
-         * oldEndState.setText1(cancellationText);
+         * State oldEndState = tenderResponse.getCurrentState(); Position owner = prsnlInfo.getAssignment(new
+         * Date()).getPosition(); oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
+         * oldEndState.setModifiedBy(prsnlInfo.getUserMaster()); oldEndState.setCreatedDate(new Date());
+         * oldEndState.setModifiedDate(new Date()); oldEndState.setOwner(owner); oldEndState
+         * .setValue(TenderResponse.TenderResponseStatus.CANCELLED.toString()); oldEndState.setText1(cancellationText);
          * tenderResponse.changeState("END", owner, null);
          *****/
 

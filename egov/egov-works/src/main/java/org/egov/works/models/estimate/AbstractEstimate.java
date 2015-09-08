@@ -72,7 +72,7 @@ import org.egov.works.models.revisionEstimate.RevisionType;
 import org.hibernate.validator.constraints.Length;
 
 public class AbstractEstimate extends StateAware {
-    
+
     private static final long serialVersionUID = 5010991868891221454L;
 
     public enum EstimateStatus {
@@ -89,7 +89,7 @@ public class AbstractEstimate extends StateAware {
     }
 
     private Long id;
-    
+
     private Boundary ward;
 
     private String name;
@@ -272,12 +272,10 @@ public class AbstractEstimate extends StateAware {
     }
 
     /**
-     * This method returns the grand total of the work value for all the
-     * activities ( both SOR and Non SOR combined)
+     * This method returns the grand total of the work value for all the activities ( both SOR and Non SOR combined)
      *
-     * @return a double value representing the rounded figure of the total of
-     *         the grand total of the work value for all the activities ( both
-     *         SOR and Non SOR combined)
+     * @return a double value representing the rounded figure of the total of the grand total of the work value for all the
+     * activities ( both SOR and Non SOR combined)
      */
     public Money getWorkValueIncludingTaxes() {
         double amt = 0;
@@ -536,11 +534,9 @@ public class AbstractEstimate extends StateAware {
     }
 
     /**
-     * This method returns the least of the financial years chosen from the
-     * multi year estimates
+     * This method returns the least of the financial years chosen from the multi year estimates
      *
-     * @return an instance of <code>CFinancialYear</code> representing the least
-     *         financial year
+     * @return an instance of <code>CFinancialYear</code> representing the least financial year
      */
     public CFinancialYear getLeastFinancialYearForEstimate() {
         CFinancialYear minfinYr = null;
@@ -780,12 +776,12 @@ public class AbstractEstimate extends StateAware {
 
     @Override
     public Long getId() {
-        return this.id;
+        return id;
     }
 
     @Override
-    public void setId(Long id) {
-      this.id = id;
+    public void setId(final Long id) {
+        this.id = id;
     }
 
 }

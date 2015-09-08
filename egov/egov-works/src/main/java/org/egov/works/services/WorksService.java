@@ -98,9 +98,8 @@ public class WorksService {
     private EisUtilService eisService;
 
     /**
-     * This method will return the value in AppConfigValue table for the given
-     * module and key.
-     * 
+     * This method will return the value in AppConfigValue table for the given module and key.
+     *
      * @param moduleName
      * @param key
      * @return
@@ -167,34 +166,25 @@ public class WorksService {
     }
 
     /*
-     * public String getEmpNameDesignation(Position position){ String
-     * empName=""; String designationName="";
-     * //abstractEstimate.getState().getOwner() DeptDesig deptDesig=
-     * position.getDeptDesigId(); DesignationMaster
-     * designationMaster=deptDesig.getDesigId();
-     * designationName=designationMaster.getDesignationName();
-     * PersonalInformation personalInformation=null; try {
-     * personalInformation=employeeService
-     * .getEmpForPositionAndDate(position.getEfferctiveDate(),
-     * position.getId()); } catch (Exception e) { logger.debug("exception "+e);
-     * } if(personalInformation!=null &&
-     * personalInformation.getEmployeeName()!=null)
-     * empName=personalInformation.getEmployeeName(); return
+     * public String getEmpNameDesignation(Position position){ String empName=""; String designationName="";
+     * //abstractEstimate.getState().getOwner() DeptDesig deptDesig= position.getDeptDesigId(); DesignationMaster
+     * designationMaster=deptDesig.getDesigId(); designationName=designationMaster.getDesignationName(); PersonalInformation
+     * personalInformation=null; try { personalInformation=employeeService .getEmpForPositionAndDate(position.getEfferctiveDate(),
+     * position.getId()); } catch (Exception e) { logger.debug("exception "+e); } if(personalInformation!=null &&
+     * personalInformation.getEmployeeName()!=null) empName=personalInformation.getEmployeeName(); return
      * empName+"@"+designationName; }
      */
 
     /**
-     * @param employeeService
-     *            the employeeService to set
+     * @param employeeService the employeeService to set
      */
     public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 
     /**
-     * if the bigdecimal obj1 is greater than or egual to obj2 then it returns
-     * false
-     * 
+     * if the bigdecimal obj1 is greater than or egual to obj2 then it returns false
+     *
      * @param obj1
      * @param obj2
      * @return
@@ -295,23 +285,15 @@ public class WorksService {
     }
 
     /**
-     * NOTE --- THIS API IS USED ONLY FOR WORK PROGRESS ABSTRACT REPORT BY
-     * DEPARTMENT IN WORKS MODULE
-     * 
-     * @description -This method returns the total payment amount and payment
-     *              count made till date for the Project code Ids present in the
-     *              temporary table WorkProgressProjectCode for a particular
-     *              uuid
-     * @param uuid
-     *            - Only project codes ids associated with this uuid are
-     *            considered
-     * @return - List of Maps of department name, total amount of approved
-     *         payments and count made for all the bills made against project
-     *         codes
+     * NOTE --- THIS API IS USED ONLY FOR WORK PROGRESS ABSTRACT REPORT BY DEPARTMENT IN WORKS MODULE
+     *
+     * @description -This method returns the total payment amount and payment count made till date for the Project code Ids
+     * present in the temporary table WorkProgressProjectCode for a particular uuid
+     * @param uuid - Only project codes ids associated with this uuid are considered
+     * @return - List of Maps of department name, total amount of approved payments and count made for all the bills made against
+     * project codes
      * @return - Null is returned in the case of no data
-     * @throws EGOVException
-     *             - If anyone of the parameters is null or the ProjectCode list
-     *             passed is empty.
+     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
     public List<Map<String, Object>> getWorkProgressTotalPayments(final String uuid) throws EGOVException {
         Map<String, Object> result = null;
@@ -344,21 +326,14 @@ public class WorksService {
     }
 
     /**
-     * NOTE --- THIS API IS USED ONLY FOR WORK PROGRESS ABSTRACT REPORT BY
-     * DEPARTMENT IN WORKS MODULE
-     * 
-     * @description -This method returns the total approved voucher count
-     *              created till date for the Project code Ids present in the
-     *              temporary table WorkProgressProjectCode for a particular
-     *              uuid
-     * @param uuid
-     *            - Only project codes ids associated with this uuid are
-     *            considered
+     * NOTE --- THIS API IS USED ONLY FOR WORK PROGRESS ABSTRACT REPORT BY DEPARTMENT IN WORKS MODULE
+     *
+     * @description -This method returns the total approved voucher count created till date for the Project code Ids present in
+     * the temporary table WorkProgressProjectCode for a particular uuid
+     * @param uuid - Only project codes ids associated with this uuid are considered
      * @return - List of Maps of depart name, total approved voucher count
      * @return - Null is returned in the case of no data
-     * @throws EGOVException
-     *             - If anyone of the parameters is null or the ProjectCode list
-     *             passed is empty.
+     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
     public List<Map<String, Object>> getVoucherCounts(final String uuid) throws EGOVException {
         List<Object[]> queryResult;
@@ -389,26 +364,17 @@ public class WorksService {
     }
 
     /**
-     * NOTE --- THIS API IS USED ONLY FOR WORK PROGRESS ABSTRACT REPORT BY
-     * DEPARTMENT IN WORKS MODULE
-     * 
-     * @description -This method returns the approved CJV count and sum of CJVs
-     *              amount for the approved CJVs made till date for a list of
-     *              Project codes for which there is a final bill created for
-     *              it. Project code Ids present in the temporary table
-     *              WorkProgressProjectCode for a particular uuid are only
-     *              considered NOTE --- ASSUMPTION IS THERE WILL BE ONLY 1 FINAL
-     *              BILL FOR AN ESTIMATE
-     * @param uuid
-     *            - Only project codes ids associated with this uuid are
-     *            considered
-     * @return - List of Map of Maps. The outer map's key is the department name
-     *         Inner map's keys "amount" and "count" represent sum of CJVs
-     *         amount and approved CJV count
+     * NOTE --- THIS API IS USED ONLY FOR WORK PROGRESS ABSTRACT REPORT BY DEPARTMENT IN WORKS MODULE
+     *
+     * @description -This method returns the approved CJV count and sum of CJVs amount for the approved CJVs made till date for a
+     * list of Project codes for which there is a final bill created for it. Project code Ids present in the temporary table
+     * WorkProgressProjectCode for a particular uuid are only considered NOTE --- ASSUMPTION IS THERE WILL BE ONLY 1 FINAL BILL
+     * FOR AN ESTIMATE
+     * @param uuid - Only project codes ids associated with this uuid are considered
+     * @return - List of Map of Maps. The outer map's key is the department name Inner map's keys "amount" and "count" represent
+     * sum of CJVs amount and approved CJV count
      * @return - Null is returned in the case of no data
-     * @throws EGOVException
-     *             - If anyone of the parameters is null or the ProjectCode list
-     *             passed is empty.
+     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
     public List<Map<String, Map<String, BigDecimal>>> getTotalCJVCountAndAmounts(final String uuid)
             throws EGOVException {
@@ -498,23 +464,15 @@ public class WorksService {
     }
 
     /**
-     * NOTE --- THIS API IS USED ONLY FOR WORK PROGRESS ABSTRACT REPORT BY
-     * DEPARTMENT IN WORKS MODULE
-     * 
-     * @description -This method returns the total payment amount and payment
-     *              count made till date for the Project code Ids present in the
-     *              temporary table WorkProgressProjectCode for a particular
-     *              uuid
-     * @param uuid
-     *            - Only project codes ids associated with this uuid are
-     *            considered
-     * @return - List of Maps of department name, total amount of approved
-     *         payments and count made for all the bills made against project
-     *         codes
+     * NOTE --- THIS API IS USED ONLY FOR WORK PROGRESS ABSTRACT REPORT BY DEPARTMENT IN WORKS MODULE
+     *
+     * @description -This method returns the total payment amount and payment count made till date for the Project code Ids
+     * present in the temporary table WorkProgressProjectCode for a particular uuid
+     * @param uuid - Only project codes ids associated with this uuid are considered
+     * @return - List of Maps of department name, total amount of approved payments and count made for all the bills made against
+     * project codes
      * @return - Null is returned in the case of no data
-     * @throws EGOVException
-     *             - If anyone of the parameters is null or the ProjectCode list
-     *             passed is empty.
+     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
     public List<Map<String, Object>> getWorkProgressTotal(final String uuid) throws EGOVException {
         Map<String, Object> result = null;
@@ -547,25 +505,16 @@ public class WorksService {
     }
 
     /**
-     * NOTE --- THIS API IS USED ONLY FOR WORK PROGRESS ABSTRACT REPORT 2 BY
-     * DEPARTMENT IN WORKS MODULE
-     * 
-     * @description -This method returns the total payment amount and payment
-     *              count made for given start date and end date for the Project
-     *              code Ids present in the temporary table
-     *              WorkProgressProjectCode for a particular uuid This will also
-     *              return the number of cpncurrence payment given and the total
-     *              amount for which concurrence is given
-     * @param uuid
-     *            - Only project codes ids associated with this uuid are
-     *            considered
-     * @return - List of Maps of department name, total amount of approved
-     *         payments and count made for all the bills made against project
-     *         codes
+     * NOTE --- THIS API IS USED ONLY FOR WORK PROGRESS ABSTRACT REPORT 2 BY DEPARTMENT IN WORKS MODULE
+     *
+     * @description -This method returns the total payment amount and payment count made for given start date and end date for the
+     * Project code Ids present in the temporary table WorkProgressProjectCode for a particular uuid This will also return the
+     * number of cpncurrence payment given and the total amount for which concurrence is given
+     * @param uuid - Only project codes ids associated with this uuid are considered
+     * @return - List of Maps of department name, total amount of approved payments and count made for all the bills made against
+     * project codes
      * @return - Null is returned in the case of no data
-     * @throws EGOVException
-     *             - If anyone of the parameters is null or the ProjectCode list
-     *             passed is empty.
+     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
     public List<Map<String, Object>> getWorkProgressAbstractReport2TotalPayments(final String uuid,
             final Date fromDate, final Date toDate) throws EGOVException {
@@ -632,16 +581,12 @@ public class WorksService {
     }
 
     /**
-     * @description - Similar to getWorkProgressAbstractReport2TotalPaymentsAPI
-     *              except that concurrence payments are not considered Payments
-     *              only for the project code id that is passed to the API are
-     *              considered
-     * @param Project
-     *            code id for which the payment amount should be considered
+     * @description - Similar to getWorkProgressAbstractReport2TotalPaymentsAPI except that concurrence payments are not
+     * considered Payments only for the project code id that is passed to the API are considered
+     * @param Project code id for which the payment amount should be considered
      * @return - Total amount of approved payments
      * @return - Null is returned in the case of no data
-     * @throws EGOVException
-     *             - If the parameter is null
+     * @throws EGOVException - If the parameter is null
      */
     public BigDecimal getTotalPaymentForProjectCode(final Long projcodeId) throws EGOVException {
         List<Object> objForExpense;
@@ -670,21 +615,14 @@ public class WorksService {
     }
 
     /**
-     * NOTE --- THIS API IS USED ONLY FOR WORK PROGRESS ABSTRACT REPORT 2 BY
-     * DEPARTMENT IN WORKS MODULE
-     * 
-     * @description -This method returns the total approved voucher(CJV) count
-     *              and amount for given start date and end date for the Project
-     *              code Ids present in the temporary table
-     *              WorkProgressProjectCode for a particular uuid
-     * @param uuid
-     *            - Only project codes ids associated with this uuid are
-     *            considered
+     * NOTE --- THIS API IS USED ONLY FOR WORK PROGRESS ABSTRACT REPORT 2 BY DEPARTMENT IN WORKS MODULE
+     *
+     * @description -This method returns the total approved voucher(CJV) count and amount for given start date and end date for
+     * the Project code Ids present in the temporary table WorkProgressProjectCode for a particular uuid
+     * @param uuid - Only project codes ids associated with this uuid are considered
      * @return - List of Maps of depart name, total approved voucher count
      * @return - Null is returned in the case of no data
-     * @throws EGOVException
-     *             - If anyone of the parameters is null or the ProjectCode list
-     *             passed is empty.
+     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
     public List<Map<String, Object>> getWorkProgressAbstractReport2VoucherCounts(final String uuid,
             final Date fromDate, final Date toDate) throws EGOVException {
@@ -722,23 +660,15 @@ public class WorksService {
     }
 
     /**
-     * NOTE --- THIS API IS USED ONLY FOR WORK PROGRESS ABSTRACT REPORT BY
-     * DEPARTMENT IN WORKS MODULE
-     * 
-     * @description -This method returns the total payment amount and payment
-     *              count made till date for the Project code Ids present in the
-     *              temporary table WorkProgProjCodeSpillOver for a particular
-     *              uuid
-     * @param uuid
-     *            - Only project codes ids associated with this uuid are
-     *            considered
-     * @return - List of Maps of department name, total amount of approved
-     *         payments and count made for all the bills made against project
-     *         codes
+     * NOTE --- THIS API IS USED ONLY FOR WORK PROGRESS ABSTRACT REPORT BY DEPARTMENT IN WORKS MODULE
+     *
+     * @description -This method returns the total payment amount and payment count made till date for the Project code Ids
+     * present in the temporary table WorkProgProjCodeSpillOver for a particular uuid
+     * @param uuid - Only project codes ids associated with this uuid are considered
+     * @return - List of Maps of department name, total amount of approved payments and count made for all the bills made against
+     * project codes
      * @return - Null is returned in the case of no data
-     * @throws EGOVException
-     *             - If anyone of the parameters is null or the ProjectCode list
-     *             passed is empty.
+     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
     public List<Map<String, Object>> getWorkProgSpillOverTotalPayments(final String uuid, final Date fromDate,
             final Date toDate) throws EGOVException {
@@ -817,21 +747,14 @@ public class WorksService {
     }
 
     /**
-     * NOTE --- THIS API IS USED ONLY FOR WORK PROGRESS ABSTRACT REPORT BY
-     * DEPARTMENT IN WORKS MODULE
-     * 
-     * @description -This method returns the total approved voucher count for
-     *              spill over created before from date for the Project code Ids
-     *              present in the temporary table WorkProgProjCodeSpillOver for
-     *              a particular uuid
-     * @param uuid
-     *            - Only project codes ids associated with this uuid are
-     *            considered
+     * NOTE --- THIS API IS USED ONLY FOR WORK PROGRESS ABSTRACT REPORT BY DEPARTMENT IN WORKS MODULE
+     *
+     * @description -This method returns the total approved voucher count for spill over created before from date for the Project
+     * code Ids present in the temporary table WorkProgProjCodeSpillOver for a particular uuid
+     * @param uuid - Only project codes ids associated with this uuid are considered
      * @return - List of Maps of depart name, total approved voucher count
      * @return - Null is returned in the case of no data
-     * @throws EGOVException
-     *             - If anyone of the parameters is null or the ProjectCode list
-     *             passed is empty.
+     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
     public List<Map<String, Object>> getVoucherCountsForSpillOver(final String uuid, final Date fromDate,
             final Date toDate) throws EGOVException {
@@ -995,18 +918,12 @@ public class WorksService {
     }
 
     /**
-     * @description -This method returns the total payment amount made as on a
-     *              particular date for a list of ProjectCode ids that is
-     *              passed.
-     * @param entityList
-     *            - Object list containing ProjectCode ids.
-     * @param asOnDate
-     *            - The payments are considered from the beginning to asOnDate
-     *            (excluding asOnDate)
+     * @description -This method returns the total payment amount made as on a particular date for a list of ProjectCode ids that
+     * is passed.
+     * @param entityList - Object list containing ProjectCode ids.
+     * @param asOnDate - The payments are considered from the beginning to asOnDate (excluding asOnDate)
      * @return - Total amount as BigDecimal
-     * @throws EGOVException
-     *             - If anyone of the parameters is null or the ProjectCode ids
-     *             list passed is empty.
+     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode ids list passed is empty.
      */
     public BigDecimal getPaymentInfoforProjectCode(final List<Object> projectCodeIdList, final Date asOnDate)
             throws EGOVException {
@@ -1071,10 +988,9 @@ public class WorksService {
     }
 
     /**
-     * Similar to getPaymentInfoforProjectCode() but difference is the sub query
-     * used to generate the list of project code ids is passed as parameter
-     * instead
-     * 
+     * Similar to getPaymentInfoforProjectCode() but difference is the sub query used to generate the list of project code ids is
+     * passed as parameter instead
+     *
      * @param projectCodeIdStr
      * @param asOnDate
      * @return
@@ -1143,9 +1059,8 @@ public class WorksService {
     }
 
     /*
-     * This will split up the list passed into sublists of 1000 The returned
-     * string will be in the format and ( param in(1...1000) or param in
-     * (1001...2000)) etc The purpose of this is for the in clause in queries
+     * This will split up the list passed into sublists of 1000 The returned string will be in the format and ( param in(1...1000)
+     * or param in (1001...2000)) etc The purpose of this is for the in clause in queries
      */
     public String getInSubQuery(final List<Object> idList, final String param, final boolean isApostropheRequired) {
         final StringBuffer inClause = new StringBuffer("");
@@ -1222,26 +1137,17 @@ public class WorksService {
     }
 
     /**
-     * NOTE --- THIS API IS USED ONLY FOR Works Report 2 dashboard BY DEPARTMENT
-     * IN WORKS MODULE
-     * 
-     * @description -This method returns the approved CJV count and sum of CJVs
-     *              amount for the approved CJVs made till date for a list of
-     *              Spill over Project codes for which there is a final bill
-     *              created for it in current year. Project code Ids present in
-     *              the temporary table WorkProgProjCodeSpillOver for a
-     *              particular uuid are only considered NOTE --- ASSUMPTION IS
-     *              THERE WILL BE ONLY 1 FINAL BILL FOR AN ESTIMATE
-     * @param uuid
-     *            - Only spill over project codes ids associated with this uuid
-     *            are considered
-     * @return - List of Map of Maps. The outer map's key is the department name
-     *         Inner map's keys "amount" and "count" represent sum of CJVs
-     *         amount and approved Final CJV count
+     * NOTE --- THIS API IS USED ONLY FOR Works Report 2 dashboard BY DEPARTMENT IN WORKS MODULE
+     *
+     * @description -This method returns the approved CJV count and sum of CJVs amount for the approved CJVs made till date for a
+     * list of Spill over Project codes for which there is a final bill created for it in current year. Project code Ids present
+     * in the temporary table WorkProgProjCodeSpillOver for a particular uuid are only considered NOTE --- ASSUMPTION IS THERE
+     * WILL BE ONLY 1 FINAL BILL FOR AN ESTIMATE
+     * @param uuid - Only spill over project codes ids associated with this uuid are considered
+     * @return - List of Map of Maps. The outer map's key is the department name Inner map's keys "amount" and "count" represent
+     * sum of CJVs amount and approved Final CJV count
      * @return - Null is returned in the case of no data
-     * @throws EGOVException
-     *             - If anyone of the parameters is null or the ProjectCode list
-     *             passed is empty.
+     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
     public List<Map<String, Map<String, BigDecimal>>> getCJVCountAndAmountsForSpillOver(final String uuid,
             final Date fromDate, final Date toDate) throws EGOVException {

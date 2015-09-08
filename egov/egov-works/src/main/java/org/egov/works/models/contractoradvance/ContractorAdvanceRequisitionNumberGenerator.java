@@ -67,15 +67,10 @@ public class ContractorAdvanceRequisitionNumberGenerator {
         return scriptService.executeScript("works.contractor.arfnumber.generator", scriptContext).toString();
 
         /*
-         * List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT",
-         * "works.contractor.arfnumber.generator"); try{ return
-         * scripts.get(0).eval
-         * (Script.createContext("contractorAdvanceRequisition"
-         * ,contractorAdvanceRequisition
-         * ,"finYear",financialYear,"sequenceGenerator"
-         * ,sequenceGenerator,"persistenceService"
-         * ,persistenceService)).toString(); } catch (ValidationException
-         * sequenceException) { throw sequenceException; }
+         * List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT", "works.contractor.arfnumber.generator"); try{ return
+         * scripts.get(0).eval (Script.createContext("contractorAdvanceRequisition" ,contractorAdvanceRequisition
+         * ,"finYear",financialYear,"sequenceGenerator" ,sequenceGenerator,"persistenceService" ,persistenceService)).toString();
+         * } catch (ValidationException sequenceException) { throw sequenceException; }
          */
 
     }

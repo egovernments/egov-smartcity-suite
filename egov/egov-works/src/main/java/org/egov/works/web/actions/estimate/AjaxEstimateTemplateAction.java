@@ -75,7 +75,7 @@ public class AjaxEstimateTemplateAction extends BaseFormAction {
         String strquery = "";
         if (workTypeId > 0)
             strquery = "from EstimateTemplate et where upper(et.code) like '" + query.toUpperCase()
-            + "%' and et.workType.id=" + workTypeId;
+                    + "%' and et.workType.id=" + workTypeId;
         if (subTypeId > 0)
             strquery += " and et.subType.id=" + subTypeId;
         if (status == 1)

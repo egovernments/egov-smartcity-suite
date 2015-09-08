@@ -79,7 +79,7 @@ public class MBHeader extends StateAware {
     }
 
     private Long id;
-    
+
     @Required(message = "mbheader.workorder.null")
     private WorkOrder workOrder;
     @Required(message = "mbheader.mbrefno.null")
@@ -114,14 +114,15 @@ public class MBHeader extends StateAware {
     private boolean isLegacyMB;
     private BigDecimal mbAmount;
     private Date approvedDate;
-    
+
     public List<ValidationError> validate() {
         final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
         if (workOrder != null && (workOrder.getId() == null || workOrder.getId() == 0 || workOrder.getId() == -1))
             validationErrors.add(new ValidationError("workOrder", "mbheader.workorder.null"));
         if (mbPreparedBy != null
-                && (mbPreparedBy.getIdPersonalInformation() == null || mbPreparedBy.getIdPersonalInformation() == 0 || mbPreparedBy
-                        .getIdPersonalInformation() == -1))
+                && (mbPreparedBy.getIdPersonalInformation() == null || mbPreparedBy.getIdPersonalInformation() == 0
+                        || mbPreparedBy
+                                .getIdPersonalInformation() == -1))
             validationErrors.add(new ValidationError("mbPreparedBy", "mbheader.mbPreparedBy.null"));
         if (fromPageNo != null && toPageNo != null && fromPageNo > toPageNo)
             validationErrors.add(new ValidationError("toPageNo", "mbheader.toPageNo.invalid"));
@@ -309,17 +310,17 @@ public class MBHeader extends StateAware {
         return approvedDate;
     }
 
-    public void setApprovedDate(Date approvedDate) {
+    public void setApprovedDate(final Date approvedDate) {
         this.approvedDate = approvedDate;
     }
 
     @Override
     public Long getId() {
-        return this.id;
+        return id;
     }
 
     @Override
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 

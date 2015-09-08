@@ -50,7 +50,7 @@ import org.egov.works.models.contractorBill.ContractorBillRegister;
 import org.egov.works.models.estimate.AbstractEstimate;
 
 public class AjaxRetentionMoneyRecoveryRegisterAction extends BaseFormAction {
-   
+
     private static final long serialVersionUID = 7421372624155467521L;
 
     private static final Logger logger = Logger.getLogger(AjaxRetentionMoneyRecoveryRegisterAction.class);

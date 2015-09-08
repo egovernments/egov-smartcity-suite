@@ -52,7 +52,7 @@ import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.models.Money;
 
 public class OverheadRate extends BaseModel {
-   
+
     private static final long serialVersionUID = 5980950787039146268L;
 
     @Valid
@@ -119,17 +119,15 @@ public class OverheadRate extends BaseModel {
     }
 
     /**
-     * This method validates the overhead rate values. Appropriate validation
-     * error is returned in each of the following scenarios:
+     * This method validates the overhead rate values. Appropriate validation error is returned in each of the following
+     * scenarios:
      * <ol>
      * <li>If percentage is less than zero or greater than 100.</li>
      * <li>If neither of percentage or lump sum amount is present.</li>
-     * <li>If start date is not present, or start date date falls after the end
-     * date.</li>
+     * <li>If start date is not present, or start date date falls after the end date.</li>
      * </ol>
      *
-     * @return a list of <code>ValidationError</code> containing the appropriate
-     *         error messages or null in case of no errors.
+     * @return a list of <code>ValidationError</code> containing the appropriate error messages or null in case of no errors.
      */
     @Override
     public List<ValidationError> validate() {
@@ -145,7 +143,8 @@ public class OverheadRate extends BaseModel {
             validationErrors.add(new ValidationError("percentage",
                     "estimate.overhead.only_one_of_percentage_or_lumpsum_needed"));
 
-        if (validity == null || validity != null && !compareDates(validity.getStartDate().toDate(), validity.getEndDate().toDate()))
+        if (validity == null
+                || validity != null && !compareDates(validity.getStartDate().toDate(), validity.getEndDate().toDate()))
             validationErrors.add(new ValidationError("validity", "estimate.overhead.invalid_date_range"));
 
         if (!validationErrors.isEmpty())

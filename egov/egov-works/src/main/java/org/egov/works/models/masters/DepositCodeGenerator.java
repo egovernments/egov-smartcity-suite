@@ -63,12 +63,9 @@ public class DepositCodeGenerator {
             throw sequenceException;
         }
         /*
-         * List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT",
-         * "works.depositCode.generator"); try{ return
-         * scripts.get(0).eval(Script
-         * .createContext("depositCode",depositCode,"sequenceGenerator"
-         * ,sequenceGenerator)).toString(); } catch (ValidationException e){
-         * throw e; }
+         * List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT", "works.depositCode.generator"); try{ return
+         * scripts.get(0).eval(Script .createContext("depositCode",depositCode,"sequenceGenerator"
+         * ,sequenceGenerator)).toString(); } catch (ValidationException e){ throw e; }
          */
     }
 

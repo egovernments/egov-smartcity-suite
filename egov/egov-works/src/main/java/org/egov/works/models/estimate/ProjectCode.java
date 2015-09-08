@@ -49,7 +49,7 @@ import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
 public class ProjectCode extends BaseModel implements EntityType {
-  
+
     private static final long serialVersionUID = -1569796745047275070L;
     private String code;
     private Set<AbstractEstimate> estimates = new HashSet<AbstractEstimate>();
@@ -143,7 +143,7 @@ public class ProjectCode extends BaseModel implements EntityType {
     public String getEntityDescription() {
         return description;
     }
-    
+
     public Boolean getIsActive() {
         return isActive;
     }

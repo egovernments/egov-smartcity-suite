@@ -54,7 +54,7 @@ import org.egov.works.models.tender.TenderResponseActivity;
 import org.egov.works.utils.WorksConstants;
 
 public class SearchTenderResponseActivitiesAction extends SearchFormAction {
-    
+
     private static final long serialVersionUID = 8616631394931994625L;
     private Long tenderRespContrId;
     private Long tenderRespId;
@@ -95,7 +95,8 @@ public class SearchTenderResponseActivitiesAction extends SearchFormAction {
         else if (tenderEstimate != null && tenderEstimate.getWorksPackage() == null)
             estimateList.add(tenderEstimate.getAbstractEstimate());
         // List<TenderResponseActivity>
-        // tenderResponseList=getPersistenceService().findAllBy("select tra.activity from TenderResponseActivity tra where tra.tenderResponse.id=?",tenderRespId);
+        // tenderResponseList=getPersistenceService().findAllBy("select tra.activity from TenderResponseActivity tra where
+        // tra.tenderResponse.id=?",tenderRespId);
         addDropdownData("estimateList", estimateList);
     }
 

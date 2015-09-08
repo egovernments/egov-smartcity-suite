@@ -80,12 +80,8 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     /**
      * The method return true if the bill number has to be re-generated
      *
-     * @param bill
-     *            an instance of <code>EgBillregister</code> containing the bill
-     *            date
-     * @param financialYear
-     *            an instance of <code>CFinancialYear</code> representing the
-     *            financial year for the estimate date.
+     * @param bill an instance of <code>EgBillregister</code> containing the bill date
+     * @param financialYear an instance of <code>CFinancialYear</code> representing the financial year for the estimate date.
      * @return a boolean value indicating if the bill number change is required.
      */
     boolean contractorBillNumberChangeRequired(EgBillregister bill, WorkOrder workOrder, CFinancialYear financialYear);
@@ -93,20 +89,16 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     /**
      * The method return number if the bill number has to be generated
      *
-     * @param bill
-     *            an instance of <code>EgBillregister</code> containing the bill
-     *            date representing the financial year.
-     * @param workOrder
-     *            an instance of <code>WorkOrder</code> representing the
-     *            executing department.
+     * @param bill an instance of <code>EgBillregister</code> containing the bill date representing the financial year.
+     * @param workOrder an instance of <code>WorkOrder</code> representing the executing department.
      * @return a boolean value indicating if the bill number change is required.
      */
     public String generateContractorBillNumber(EgBillregister bill, WorkOrder workOrder,
             WorkOrderEstimate workOrderEstimate);
 
     /**
-     * Get utilized amount amount for a given workorder, including approved,
-     * unapproved bill(Bill other than cancelled and approved) and approved MB
+     * Get utilized amount amount for a given workorder, including approved, unapproved bill(Bill other than cancelled and
+     * approved) and approved MB
      *
      * @param workOrderId
      * @return
@@ -129,8 +121,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     BigDecimal getUtlizedAmountForUnArrovedBill(Long workOrderId, Date asOnDate);
 
     /**
-     * This method will return cumulative amount for all approved MB for a given
-     * workorder
+     * This method will return cumulative amount for all approved MB for a given workorder
      *
      * @param workOrderId
      * @return
@@ -141,22 +132,18 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     /**
      * The method return BigDecimal
      *
-     * @param totalAdvancePaid
-     *            , billDate, workOrderEstimate
-     * @param workOrder
-     *            an instance of <code>WorkOrder</code>.
-     * @return a BigDecimal value indicating total Advance pending for given
-     *         Work Order Estimate as on bill date before this current bill
+     * @param totalAdvancePaid , billDate, workOrderEstimate
+     * @param workOrder an instance of <code>WorkOrder</code>.
+     * @return a BigDecimal value indicating total Advance pending for given Work Order Estimate as on bill date before this
+     * current bill
      */
     public BigDecimal calculateTotalPendingAdvance(BigDecimal totalAdvancePaid, Date billDate,
             WorkOrderEstimate workOrderEstimate, Long billId);
 
     /**
-     * API will returns the Standard deduction types as key and its mapped COA
-     * as map values
+     * API will returns the Standard deduction types as key and its mapped COA as map values
      *
-     * @return map containing deduction type as key and string array of coa
-     *         glcodes
+     * @return map containing deduction type as key and string array of coa glcodes
      */
     public Map<String, String[]> getStandardDeductionsFromConfig();
 
@@ -174,8 +161,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
      * Get the list of eligible bills based on parameters provided
      *
      * @param paramsMap
-     * @param paramList
-     *            TODO
+     * @param paramList TODO
      * @return
      */
     List<String> searchContractorBill(Map<String, Object> paramsMap, List<Object> paramList);
@@ -188,8 +174,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     public BigDecimal getTotalValueWoForUptoBillDate(Date billDate, Long workOrderId, Long workOrderEstimateId);
 
     /**
-     * API will returns the required order deduction names list from appconfig
-     * based on key such as statutory/standard deduction
+     * API will returns the required order deduction names list from appconfig based on key such as statutory/standard deduction
      *
      * @return List containing statutory deduction names
      */
@@ -240,8 +225,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     public BigDecimal getAdvanceAdjustmentAmountForBill(Long billId, Long workOrderEstimateId);
 
     /**
-     * API will returns the custom deduction list of egbilldetails excluding
-     * glcode
+     * API will returns the custom deduction list of egbilldetails excluding glcode
      *
      * @return BigDecimal
      */
@@ -255,8 +239,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     public BigDecimal getNetPayableAmountForGlCodeId(Long billId) throws NumberFormatException, EGOVException;
 
     /**
-     * API will returns the Total Amount for Statutory deduction for workorder
-     * upto billdate for that dedcution
+     * API will returns the Total Amount for Statutory deduction for workorder upto billdate for that dedcution
      *
      * @return BigDecimal
      */
@@ -264,16 +247,14 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
             StatutoryDeductionsForBill statDeductionBilldetail, Long workOrderEstimateId);
 
     /**
-     * API will returns the Total Amount for advanceAjustment deduction for work
-     * order estimate upto billdate
+     * API will returns the Total Amount for advanceAjustment deduction for work order estimate upto billdate
      *
      * @return BigDecimal
      */
     public BigDecimal getTotAmtForAdvanceAdjustment(Date billDate, Long workOrderId, Long workOrderEstimateId);
 
     /**
-     * API will returns the Total Amount for custom deduction for workorder upto
-     * billdate
+     * API will returns the Total Amount for custom deduction for workorder upto billdate
      *
      * @return BigDecimal
      */
@@ -281,8 +262,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
             Long workOrderEstimateId);
 
     /**
-     * API will returns the Total Amount for custom deduction for workorder upto
-     * billdate
+     * API will returns the Total Amount for custom deduction for workorder upto billdate
      *
      * @return BigDecimal
      */
@@ -292,9 +272,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     /**
      * Get the list of custom dedcution based on glcodes of custom deduction
      *
-     * @param billId
-     *            ,workOrderEstimateId,statutoryList,standardDeductionList,
-     *            retentionMoneyDeductionList
+     * @param billId ,workOrderEstimateId,statutoryList,standardDeductionList, retentionMoneyDeductionList
      * @return List
      * @throws EGOVException
      * @throws NumberFormatException
@@ -304,8 +282,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
             List<EgBilldetails> retentionMoneyDeductionList) throws NumberFormatException, EGOVException;
 
     /**
-     * Get the list of retention money dedcution based on glcodes of retention
-     * deduction
+     * Get the list of retention money dedcution based on glcodes of retention deduction
      *
      * @param ContractorBillRegister
      * @return List
@@ -319,8 +296,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     /**
      * Get the netpayblecode
      *
-     * @param billId
-     *            ,glcodeIdList
+     * @param billId ,glcodeIdList
      * @return BigDecimal
      * @throws EGOVException
      * @throws NumberFormatException
@@ -330,8 +306,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     /**
      * Get the mbList
      *
-     * @param workOrderId
-     *            , billid
+     * @param workOrderId , billid
      * @return List
      */
     public List<MBHeader> getMbListForBillAndWorkordrId(Long workOrderId, Long billId);
@@ -339,8 +314,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     /**
      * Get the mbList
      *
-     * @param workOrderId
-     *            , billid
+     * @param workOrderId , billid
      * @return List
      */
     public List<MBForCancelledBill> getMbListForCancelBill(Long billId);
@@ -348,8 +322,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     /**
      * Get the accountDetails
      *
-     * @param statutoryList
-     *            ,standardDeductionList,customDeductionList,workOrderEstimateId
+     * @param statutoryList ,standardDeductionList,customDeductionList,workOrderEstimateId
      * @return List
      */
     public List<EgBilldetails> getAccountDetailsList(Long billId, Long workOrderEstimateId,
@@ -358,9 +331,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
                     throws NumberFormatException, EGOVException;
 
     /**
-     * @param statutoryList
-     *            ,standardDeductionList,customDeductionList,workOrderEstimateId
-     *            ,workOrderId, id(billId)
+     * @param statutoryList ,standardDeductionList,customDeductionList,workOrderEstimateId ,workOrderId, id(billId)
      * @return
      */
     public void setAllViewLists(Long id, Long workOrderId, Long workOrderEstimateId,
@@ -403,8 +374,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     public BigDecimal getApprovedMBAmountforBill(ContractorBillRegister contractorBillRegister);
 
     /**
-     * This method will return Bill amount for a given BIll considering only
-     * tendered items
+     * This method will return Bill amount for a given BIll considering only tendered items
      *
      * @param billId
      * @return
@@ -412,66 +382,55 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     public BigDecimal getApprovedMBAmountOfTenderedItemsForBill(ContractorBillRegister contractorBillRegister);
 
     /**
-     * This method returns total expense incurred including overheads for the
-     * project if project is closed till asonDate,otherwise sum of all approved
-     * bills for the project till given date.
+     * This method returns total expense incurred including overheads for the project if project is closed till asonDate,otherwise
+     * sum of all approved bills for the project till given date.
      *
      * @author vikas
-     * @param estimate
-     *            ,date
+     * @param estimate ,date
      * @return sum of total expense till date
      */
     public Double getTotalActualExpenseForProject(AbstractEstimate estimate, Date asonDate);
 
     /**
-     * This method will return List of Approved Bill for a given Estimate and
-     * date
+     * This method will return List of Approved Bill for a given Estimate and date
      *
      * @author vikas
-     * @param estimate
-     *            ,date
+     * @param estimate ,date
      * @return List of apporoved bills till date
      */
     public List<EgBillregister> getListOfApprovedBillforEstimate(AbstractEstimate estimate, Date date);
 
     /**
-     * This method will return List of Not cancelled for a given Estimate and
-     * date
+     * This method will return List of Not cancelled for a given Estimate and date
      *
      * @author julian.prabhakar
-     * @param estimate
-     *            ,date
+     * @param estimate ,date
      * @return List of approved bills till date
      */
     public List<EgBillregister> getListOfNonCancelledBillsforEstimate(AbstractEstimate estimate, Date date);
 
     /**
-     * This method returns total billed amount including overheads for the
-     * project till today in the current financial year.
+     * This method returns total billed amount including overheads for the project till today in the current financial year.
      *
      * @author vikas
-     * @param admin
-     *            sanctioned estimate
+     * @param admin sanctioned estimate
      * @return BigDecimal
      */
 
     public BigDecimal getBilledAmount(AbstractEstimate estimate);
 
     /**
-     * This method returns total billed amount including overheads for the
-     * project till asOnDate across financial years.
+     * This method returns total billed amount including overheads for the project till asOnDate across financial years.
      *
      * @author vikas
-     * @param admin
-     *            sanctioned estimate
+     * @param admin sanctioned estimate
      * @return BigDecimal
      */
 
     public BigDecimal getBilledAmountForDate(AbstractEstimate estimate, Date asOnDate);
 
     /**
-     * This method will return cumulative tendered items amount for all approved
-     * MB for a given workorder
+     * This method will return cumulative tendered items amount for all approved MB for a given workorder
      *
      * @param workOrderId
      * @return
@@ -479,8 +438,8 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     public BigDecimal getApprovedMBAmountOfTenderedItems(Long workOrderId, Long workOrderEstimateId, Date billDate);
 
     /**
-     * This method will return the work done budget head from the mapping table,
-     * based on the deposit COA in the financial details of the estimate
+     * This method will return the work done budget head from the mapping table, based on the deposit COA in the financial details
+     * of the estimate
      *
      * @param estimate
      * @return List<CChartOfAccounts>
@@ -488,26 +447,23 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     public List<CChartOfAccounts> getBudgetHeadForDepositCOA(AbstractEstimate estimate);
 
     /**
-     * This method will set the flag which is used to hide the Forward/Approve
-     * buttons for the bills in workflow where the budget heads do not match
+     * This method will set the flag which is used to hide the Forward/Approve buttons for the bills in workflow where the budget
+     * heads do not match
      *
-     * @param Set
-     *            <EgBilldetails> billDetails, estimate
+     * @param Set <EgBilldetails> billDetails, estimate
      * @return string
      */
     public String validateForBudgetHeadInWorkflow(Set<EgBilldetails> billDetails, AbstractEstimate estimate);
 
     /**
-     * @description -This method returns the list of project code ids for a
-     *              fund-coa-deposit code combination
+     * @description -This method returns the list of project code ids for a fund-coa-deposit code combination
      * @param - search fundId, coaId, depositCodeId
      * @return - returns list of project codes
      */
     public List<Integer> getProjCodeIdsListForDepositCode(Integer fundId, Long coaId, Long depositCodeId);
 
     /**
-     * @description -This method returns the total expenditure incurred for the
-     *              project codes
+     * @description -This method returns the total expenditure incurred for the project codes
      * @param - search projectCodeIdsList, accDetailType
      * @return - returns expenditure incurred
      */
@@ -516,8 +472,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     /**
      * returns latest MB created date and its reference no
      *
-     * @param estId
-     *            ,woId
+     * @param estId ,woId
      * @return
      */
     public Object[] getLatestMBCreatedDateAndRefNo(Long woId, Long estId);

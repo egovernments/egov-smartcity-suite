@@ -37,9 +37,8 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.web.actions.masters;  
-  
- 
+package org.egov.works.web.actions.masters;
+
 import java.util.List;
 
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -49,78 +48,83 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.ScheduleCategory;
 
 import com.opensymphony.xwork2.Action;
-  
-@Result(name=Action.SUCCESS, type="ServletRedirectResult.class", location = "scheduleCategory.action")
-@ParentPackage("egov")  
-public class ScheduleCategoryAction extends BaseFormAction{  
-	
-	
-	  
-	private PersistenceService<ScheduleCategory,Long> scheduleCategoryService;  
-	private ScheduleCategory scheduleCategoryInstance = new ScheduleCategory();  
-	private List<ScheduleCategory> scheduleCategoryList=null;  
-	
-	public String execute() {  
-		return list();  
-	}  
-	  
-	public String newform(){  
-		return NEW;  
-	}  
-	  
 
-	public String list() {  
-	scheduleCategoryList= scheduleCategoryService.findAllBy("from ScheduleCategory sc");  
-		return NEW;  
-	}  
-  
-	public String edit(){  
-	scheduleCategoryInstance=scheduleCategoryService.findById(scheduleCategoryInstance.getId(), false);  
-		return EDIT;  
-	}  
-	
-	public void prepare(){
-	scheduleCategoryList= scheduleCategoryService.findAllBy("from ScheduleCategory sc");  
-		super.prepare();
-	}
-	  
-	public String save(){  
-	scheduleCategoryService.update(scheduleCategoryInstance);
-		return SUCCESS;  
-	}  
-	  
-	public String create(){  
-	scheduleCategoryService.create(scheduleCategoryInstance); 
-	addActionMessage("The Category Code for ScheduleCategory was saved successfully");
+@Result(name = Action.SUCCESS, type = "ServletRedirectResult.class", location = "scheduleCategory.action")
+@ParentPackage("egov")
+public class ScheduleCategoryAction extends BaseFormAction {
 
-		return list();  
-	}  
-	  
-	public Object getModel() {  
-		return scheduleCategoryInstance;  
-	}  
-  
-	public List<ScheduleCategory> getScheduleCategoryList() {  
-		return scheduleCategoryList;  
-	}  
-	public void setScheduleCategoryList(List<ScheduleCategory> scheduleCategoryList) {  
-		this.scheduleCategoryList=scheduleCategoryList;  
-	}
-  
-	public void setScheduleCategoryService(PersistenceService<ScheduleCategory,Long> service) {  
-		this.scheduleCategoryService= service;  
-	}  
-	
-	public PersistenceService<ScheduleCategory,Long> getScheduleCategoryService() { 
-		return scheduleCategoryService;  
-	}
+    /**
+     *
+     */
+    private static final long serialVersionUID = 8722637434208106061L;
+    private PersistenceService<ScheduleCategory, Long> scheduleCategoryService;
+    private ScheduleCategory scheduleCategoryInstance = new ScheduleCategory();
+    private List<ScheduleCategory> scheduleCategoryList = null;
 
-	public ScheduleCategory getScheduleCategoryInstance() {
-		return scheduleCategoryInstance;
-	}
+    @Override
+    public String execute() {
+        return list();
+    }
 
-	public void setScheduleCategoryInstance(
-			ScheduleCategory scheduleCategoryInstance) {
-		this.scheduleCategoryInstance = scheduleCategoryInstance;
-	} 
+    public String newform() {
+        return NEW;
+    }
+
+    public String list() {
+        scheduleCategoryList = scheduleCategoryService.findAllBy("from ScheduleCategory sc");
+        return NEW;
+    }
+
+    public String edit() {
+        scheduleCategoryInstance = scheduleCategoryService.findById(scheduleCategoryInstance.getId(), false);
+        return EDIT;
+    }
+
+    @Override
+    public void prepare() {
+        scheduleCategoryList = scheduleCategoryService.findAllBy("from ScheduleCategory sc");
+        super.prepare();
+    }
+
+    public String save() {
+        scheduleCategoryService.update(scheduleCategoryInstance);
+        return SUCCESS;
+    }
+
+    public String create() {
+        scheduleCategoryService.create(scheduleCategoryInstance);
+        addActionMessage("The Category Code for ScheduleCategory was saved successfully");
+
+        return list();
+    }
+
+    @Override
+    public Object getModel() {
+        return scheduleCategoryInstance;
+    }
+
+    public List<ScheduleCategory> getScheduleCategoryList() {
+        return scheduleCategoryList;
+    }
+
+    public void setScheduleCategoryList(final List<ScheduleCategory> scheduleCategoryList) {
+        this.scheduleCategoryList = scheduleCategoryList;
+    }
+
+    public void setScheduleCategoryService(final PersistenceService<ScheduleCategory, Long> service) {
+        scheduleCategoryService = service;
+    }
+
+    public PersistenceService<ScheduleCategory, Long> getScheduleCategoryService() {
+        return scheduleCategoryService;
+    }
+
+    public ScheduleCategory getScheduleCategoryInstance() {
+        return scheduleCategoryInstance;
+    }
+
+    public void setScheduleCategoryInstance(
+            final ScheduleCategory scheduleCategoryInstance) {
+        this.scheduleCategoryInstance = scheduleCategoryInstance;
+    }
 }

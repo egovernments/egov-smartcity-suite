@@ -96,8 +96,8 @@ import org.egov.works.utils.WorksConstants;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillRegister, Long> implements
-ContractorBillService {
+public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillRegister, Long>implements
+        ContractorBillService {
     private static final Logger logger = Logger.getLogger(ContractorBillServiceImpl.class);
 
     private WorksService worksService;
@@ -158,12 +158,8 @@ ContractorBillService {
     /**
      * The method return true if the bill number has to be re-generated
      *
-     * @param bill
-     *            an instance of <code>EgBillregister</code> containing the bill
-     *            date
-     * @param financialYear
-     *            an instance of <code>CFinancialYear</code> representing the
-     *            financial year for the estimate date.
+     * @param bill an instance of <code>EgBillregister</code> containing the bill date
+     * @param financialYear an instance of <code>CFinancialYear</code> representing the financial year for the estimate date.
      * @return a boolean value indicating if the bill number change is required.
      */
     @Override
@@ -172,8 +168,7 @@ ContractorBillService {
         // String[] estNum = bill.getBillnumber().split("/");
 
         /*
-         * if(estNum[0].equals(workOrder.getAbstractEstimate().
-         * getExecutingDepartment().getDeptCode()) &&
+         * if(estNum[0].equals(workOrder.getAbstractEstimate(). getExecutingDepartment().getDeptCode()) &&
          * estNum[2].equals(financialYear.getFinYearRange())){ return false; }
          */
         return true;
@@ -182,12 +177,8 @@ ContractorBillService {
     /**
      * The method return number if the bill number has to be generated
      *
-     * @param bill
-     *            an instance of <code>EgBillregister</code> containing the bill
-     *            date representing the financial year.
-     * @param workOrder
-     *            an instance of <code>WorkOrder</code> representing the
-     *            executing department.
+     * @param bill an instance of <code>EgBillregister</code> containing the bill date representing the financial year.
+     * @param workOrder an instance of <code>WorkOrder</code> representing the executing department.
      * @return a boolean value indicating if the bill number change is required.
      */
     @Override
@@ -202,48 +193,40 @@ ContractorBillService {
     }
 
     /**
-     * Get utilized amount amount for a given workorder, including approved,
-     * unapproved bill(Bill other than cancelled and approved) and approved MB
+     * Get utilized amount amount for a given workorder, including approved, unapproved bill(Bill other than cancelled and
+     * approved) and approved MB
      *
      * @param workOrderId
      * @return
      */
     /*
-     * public BigDecimal getTotalUtilizedAmount(Long workOrderId,Date asOnDate)
-     * { BigDecimal as = getUtilizedAmountForBill(workOrderId,asOnDate)
-     * .add(getUtlizedAmountForUnArrovedBill(workOrderId,asOnDate))
+     * public BigDecimal getTotalUtilizedAmount(Long workOrderId,Date asOnDate) { BigDecimal as =
+     * getUtilizedAmountForBill(workOrderId,asOnDate) .add(getUtlizedAmountForUnArrovedBill(workOrderId,asOnDate))
      * .add(getApprovedMBAmount(workOrderId,asOnDate)); return as; }
      */
 
     /**
-     * Get utilized amount amount for a given workorder, including approved and
-     * unapproved bill(Bill other than cancelled and approved).
+     * Get utilized amount amount for a given workorder, including approved and unapproved bill(Bill other than cancelled and
+     * approved).
      *
      * @return
      */
     /*
-     * public BigDecimal getUtilizedAmountForBill(Long workOrderId,Date
-     * asOnDate){ BigDecimal result = BigDecimal.ZERO; WorkOrder workOrder =
-     * workOrderService.findById(workOrderId, false); Map<String,Object>
-     * searchMap = new HashMap<String, Object>();
-     * //searchMap.put("budgetheadid",
-     * workOrder.getAbstractEstimate().getFinancialDetails
-     * ().get(0).getBudgetGroup().getId()); searchMap.put("asondate", asOnDate);
-     * BigDecimal queryVal = null; try { queryVal =
-     * budgetDetailsDAO.getActualBudgetUtilized(searchMap); }
-     * catch(ValidationException valEx){ logger.error(valEx); } if(queryVal !=
-     * null) result = result.add(queryVal); return result; }
+     * public BigDecimal getUtilizedAmountForBill(Long workOrderId,Date asOnDate){ BigDecimal result = BigDecimal.ZERO; WorkOrder
+     * workOrder = workOrderService.findById(workOrderId, false); Map<String,Object> searchMap = new HashMap<String, Object>();
+     * //searchMap.put("budgetheadid", workOrder.getAbstractEstimate().getFinancialDetails ().get(0).getBudgetGroup().getId());
+     * searchMap.put("asondate", asOnDate); BigDecimal queryVal = null; try { queryVal =
+     * budgetDetailsDAO.getActualBudgetUtilized(searchMap); } catch(ValidationException valEx){ logger.error(valEx); } if(queryVal
+     * != null) result = result.add(queryVal); return result; }
      */
 
     /**
      * The method return BigDecimal
      *
-     * @param totalAdvancePaid
-     *            , billDate, workOrderEstimate
-     * @param workOrder
-     *            an instance of <code>WorkOrder</code>.
-     * @return a BigDecimal value indicating total Advance pending for given
-     *         Work Order Estimate as on bill date before this current bill
+     * @param totalAdvancePaid , billDate, workOrderEstimate
+     * @param workOrder an instance of <code>WorkOrder</code>.
+     * @return a BigDecimal value indicating total Advance pending for given Work Order Estimate as on bill date before this
+     * current bill
      */
     @Override
     public BigDecimal calculateTotalPendingAdvance(final BigDecimal totalAdvancePaid, final Date billDate,
@@ -267,8 +250,8 @@ ContractorBillService {
     }
 
     /**
-     * API will returns the Total Amount for advance Adjusted up to billdate for
-     * specific Work Order Estimate before this current bill
+     * API will returns the Total Amount for advance Adjusted up to billdate for specific Work Order Estimate before this current
+     * bill
      *
      * @return BigDecimal
      */
@@ -291,8 +274,7 @@ ContractorBillService {
     }
 
     /**
-     * API will returns the billId list for the contractor upto billdate, for
-     * giver Work Order Estimate before this current bill
+     * API will returns the billId list for the contractor upto billdate, for giver Work Order Estimate before this current bill
      *
      * @return BigDecimal
      */
@@ -318,7 +300,8 @@ ContractorBillService {
 
         final List<EgBillregister> egBillregisterList = genericService.findAllBy(
                 "select distinct mbh.egBillregister from MBHeader mbh where mbh.workOrderEstimate.id = ? " + " and "
-                        + whereClause, params.toArray());
+                        + whereClause,
+                params.toArray());
         if (!egBillregisterList.isEmpty())
             for (final EgBillregister egBillregister : egBillregisterList)
                 billIdList.add(egBillregister.getId());
@@ -344,8 +327,7 @@ ContractorBillService {
     }
 
     /**
-     * This method will return cumulative amount for all approved MB for a given
-     * workorder
+     * This method will return cumulative amount for all approved MB for a given workorder
      *
      * @param workOrderId
      * @return
@@ -367,8 +349,7 @@ ContractorBillService {
     }
 
     /**
-     * This method will return cumulative amount for all approved MB for a given
-     * workorder
+     * This method will return cumulative amount for all approved MB for a given workorder
      *
      * @param workOrderId
      * @return
@@ -451,8 +432,8 @@ ContractorBillService {
     }
 
     /**
-     * This method will return tendered Items cumulative amount for all approved
-     * MB for a given workorder (Tendered Items don't have a revision type)
+     * This method will return tendered Items cumulative amount for all approved MB for a given workorder (Tendered Items don't
+     * have a revision type)
      *
      * @param workOrderId
      * @return
@@ -540,11 +521,9 @@ ContractorBillService {
     }
 
     /**
-     * API will returns the Standard deduction types as key and its mapped COA
-     * as map values
+     * API will returns the Standard deduction types as key and its mapped COA as map values
      *
-     * @return map containing deduction type as key and string array of coa
-     *         glcodes
+     * @return map containing deduction type as key and string array of coa glcodes
      */
     @Override
     public Map<String, String[]> getStandardDeductionsFromConfig() {
@@ -573,46 +552,28 @@ ContractorBillService {
      * @throws ValidationException
      */
     /*
-     * public BigDecimal getBudgetedAmtForYear(Long workOrderId,Date asOnDate)
-     * throws ValidationException { BigDecimal val = BigDecimal.ZERO;
-     * Map<String,Object> searchMap = new HashMap<String, Object>(); WorkOrder
-     * wo =workOrderService.findById(workOrderId, false); List<FinancialDetail>
-     * fdList=new ArrayList<FinancialDetail>(); List<FinancialDetail> fdList =
-     * financialDetailService
-     * .findAllByNamedQuery("getFinancialDetailByEstimateId",
-     * wo.getAbstractEstimate().getId()); String finyearId =
-     * commonsService.getFinancialYearId
-     * (DateUtils.getFormattedDate(asOnDate,"dd-MMM-yyyy"));
-     * searchMap.put("financialyearid", Long.valueOf(finyearId));
-     * if(fdList!=null && !fdList.isEmpty()){
-     * if(fdList.get(0).getFunction()!=null &&
-     * fdList.get(0).getFunction().getId()!=null) searchMap.put("functionid",
-     * fdList.get(0).getFunction().getId());
-     * if(fdList.get(0).getFunctionary()!=null &&
-     * fdList.get(0).getFunctionary().getId()!=null)
-     * searchMap.put("functionaryid", fdList.get(0).getFunctionary().getId());
-     * if(fdList.get(0).getFund()!=null &&
-     * fdList.get(0).getFund().getId()!=null) searchMap.put("fundid",
-     * fdList.get(0).getFund().getId()); if(fdList.get(0).getBudgetGroup()!=null
-     * && fdList.get(0).getBudgetGroup().getId()!=null)
-     * searchMap.put("budgetheadid", fdList.get(0).getBudgetGroup().getId());
-     * if(fdList.get(0).getScheme()!=null &&
-     * fdList.get(0).getScheme().getId()!=null) searchMap.put("schemeid",
-     * fdList.get(0).getScheme().getId()); if(fdList.get(0).getSubScheme()!=null
-     * && fdList.get(0).getSubScheme().getId()!=null)
-     * searchMap.put("subschemeid", fdList.get(0).getSubScheme().getId());
-     * if(wo.getAbstractEstimate().getExecutingDepartment()!=null)
-     * searchMap.put("deptid",
-     * wo.getAbstractEstimate().getExecutingDepartment().getId()); }
-     * //searchMap.put("boundaryid",
-     * wo.getAbstractEstimate().getWard().getId()); try{ val =
-     * budgetDetailsDAO.getBudgetedAmtForYear(searchMap); }
+     * public BigDecimal getBudgetedAmtForYear(Long workOrderId,Date asOnDate) throws ValidationException { BigDecimal val =
+     * BigDecimal.ZERO; Map<String,Object> searchMap = new HashMap<String, Object>(); WorkOrder wo
+     * =workOrderService.findById(workOrderId, false); List<FinancialDetail> fdList=new ArrayList<FinancialDetail>();
+     * List<FinancialDetail> fdList = financialDetailService .findAllByNamedQuery("getFinancialDetailByEstimateId",
+     * wo.getAbstractEstimate().getId()); String finyearId = commonsService.getFinancialYearId
+     * (DateUtils.getFormattedDate(asOnDate,"dd-MMM-yyyy")); searchMap.put("financialyearid", Long.valueOf(finyearId));
+     * if(fdList!=null && !fdList.isEmpty()){ if(fdList.get(0).getFunction()!=null && fdList.get(0).getFunction().getId()!=null)
+     * searchMap.put("functionid", fdList.get(0).getFunction().getId()); if(fdList.get(0).getFunctionary()!=null &&
+     * fdList.get(0).getFunctionary().getId()!=null) searchMap.put("functionaryid", fdList.get(0).getFunctionary().getId());
+     * if(fdList.get(0).getFund()!=null && fdList.get(0).getFund().getId()!=null) searchMap.put("fundid",
+     * fdList.get(0).getFund().getId()); if(fdList.get(0).getBudgetGroup()!=null && fdList.get(0).getBudgetGroup().getId()!=null)
+     * searchMap.put("budgetheadid", fdList.get(0).getBudgetGroup().getId()); if(fdList.get(0).getScheme()!=null &&
+     * fdList.get(0).getScheme().getId()!=null) searchMap.put("schemeid", fdList.get(0).getScheme().getId());
+     * if(fdList.get(0).getSubScheme()!=null && fdList.get(0).getSubScheme().getId()!=null) searchMap.put("subschemeid",
+     * fdList.get(0).getSubScheme().getId()); if(wo.getAbstractEstimate().getExecutingDepartment()!=null) searchMap.put("deptid",
+     * wo.getAbstractEstimate().getExecutingDepartment().getId()); } //searchMap.put("boundaryid",
+     * wo.getAbstractEstimate().getWard().getId()); try{ val = budgetDetailsDAO.getBudgetedAmtForYear(searchMap); }
      * catch(ValidationException valEx){ logger.error(valEx); } return val; }
      */
 
     /**
-     * for pdf starts here API will returns the Total value for the workorder
-     * upto billdate
+     * for pdf starts here API will returns the Total value for the workorder upto billdate
      *
      * @return Double
      */
@@ -624,7 +585,7 @@ ContractorBillService {
                 .findAllBy(
                         "select distinct mbh.egBillregister from MBHeader mbh where mbh.egBillregister.id in (select egBillRegister.id from org.egov.model.bills.EgBillregister egBillRegister "
                                 + " where egBillRegister.billdate <= ? and egBillRegister.billstatus <>'CANCELLED') and mbh.workOrder.id = ? and mbh.workOrderEstimate.id=?",
-                                billDate, workOrderId, workOrderEstimateId);
+                        billDate, workOrderId, workOrderEstimateId);
         if (!egBillregisterList.isEmpty())
             for (final EgBillregister egBillregister : egBillregisterList)
                 totalWorkValue = totalWorkValue.add(egBillregister.getBillamount());
@@ -682,12 +643,12 @@ ContractorBillService {
     public List<StatutoryDeductionsForBill> getStatutoryListForBill(final Long billId) {
         return genericService.findAllBy(
                 "from StatutoryDeductionsForBill epd where epd.egBillPayeeDtls.egBilldetailsId.egBillregister.id=? "
-                        + "and epd.egBillPayeeDtls.recovery.id is not null", billId);
+                        + "and epd.egBillPayeeDtls.recovery.id is not null",
+                billId);
     }
 
     /*
-     * * API will returns the standard deduction list for a given bill Id and
-     * type
+     * * API will returns the standard deduction list for a given bill Id and type
      * @return List containing Statutory deduction names
      */
     @Override
@@ -714,7 +675,8 @@ ContractorBillService {
         if (advanceCOA != null) {
             final EgBilldetails egBilldetails = (EgBilldetails) genericService.find(
                     "from EgBilldetails ebd where ebd.glcodeid=? and " + "ebd.egBillregister.id=?", new BigDecimal(
-                            advanceCOA.getId()), billId);
+                            advanceCOA.getId()),
+                    billId);
             if (egBilldetails != null && egBilldetails.getCreditamount() != null)
                 advanceAdjustment = egBilldetails.getCreditamount();
         }
@@ -722,8 +684,7 @@ ContractorBillService {
     }
 
     /**
-     * API will returns the custom deduction list of egbilldetails excluding
-     * glcode
+     * API will returns the custom deduction list of egbilldetails excluding glcode
      *
      * @return BigDecimal
      */
@@ -765,8 +726,7 @@ ContractorBillService {
     }
 
     /**
-     * API will returns the Total Amount for advanceAjustment deduction for work
-     * order estimate upto billdate
+     * API will returns the Total Amount for advanceAjustment deduction for work order estimate upto billdate
      *
      * @return BigDecimal
      */
@@ -783,8 +743,7 @@ ContractorBillService {
     }
 
     /**
-     * API will returns the Total Amount for advanceAjustment deduction for work
-     * order estimate upto billdate
+     * API will returns the Total Amount for advanceAjustment deduction for work order estimate upto billdate
      *
      * @return BigDecimal
      */
@@ -807,8 +766,7 @@ ContractorBillService {
     }
 
     /**
-     * API will returns the Total Amount for Statutory deduction for workorder
-     * upto billdate for that dedcution
+     * API will returns the Total Amount for Statutory deduction for workorder upto billdate for that dedcution
      *
      * @return BigDecimal
      */
@@ -832,8 +790,7 @@ ContractorBillService {
     }
 
     /**
-     * API will returns the Total Amount for custom deduction for workorder upto
-     * billdate
+     * API will returns the Total Amount for custom deduction for workorder upto billdate
      *
      * @return BigDecimal
      */
@@ -857,8 +814,7 @@ ContractorBillService {
     }
 
     /**
-     * API will returns the Total Amount for custom deduction for workorder upto
-     * billdate
+     * API will returns the Total Amount for custom deduction for workorder upto billdate
      *
      * @return BigDecimal
      */
@@ -892,17 +848,15 @@ ContractorBillService {
         /*
          * List<EgBillregister> egBillregisterList=genericService.findAllBy(
          * "select distinct mbh.egBillregister from MBHeader mbh " +
-         * "where mbh.egBillregister.id in (select egBillRegister.id from org.egov.model.bills.EgBillregister egBillRegister "
-         * +
-         * " where egBillRegister.billdate <= ?) and mbh.workOrder.id = ?",billDate
-         * ,workOrderId);
+         * "where mbh.egBillregister.id in (select egBillRegister.id from org.egov.model.bills.EgBillregister egBillRegister " +
+         * " where egBillRegister.billdate <= ?) and mbh.workOrder.id = ?",billDate ,workOrderId);
          */
 
         final List<EgBillregister> egBillregisterList = genericService
                 .findAllBy(
                         "select distinct mbh.egBillregister from MBHeader mbh "
                                 + "where mbh.egBillregister.billdate <=? and mbh.egBillregister.billstatus<>'CANCELLED' and mbh.workOrder.id=? and mbh.workOrderEstimate.id=?",
-                                billDate, workOrderId, workOrderEstimateId);
+                        billDate, workOrderId, workOrderEstimateId);
         if (!egBillregisterList.isEmpty())
             for (final EgBillregister egBillregister : egBillregisterList)
                 billIdList.add(egBillregister.getId());
@@ -1053,11 +1007,11 @@ ContractorBillService {
         if (!sortedStatutorySortedList.isEmpty())
             for (final StatutoryDeductionsForBill bpd : sortedStatutorySortedList)
                 if (bpd != null && bpd.getEgBillPayeeDtls().getRecovery() != null
-                && bpd.getEgBillPayeeDtls().getRecovery().getId() != null
-                && bpd.getEgBillPayeeDtls().getRecovery().getChartofaccounts() != null
-                && bpd.getEgBillPayeeDtls().getRecovery().getChartofaccounts().getId() != null)
+                        && bpd.getEgBillPayeeDtls().getRecovery().getId() != null
+                        && bpd.getEgBillPayeeDtls().getRecovery().getChartofaccounts() != null
+                        && bpd.getEgBillPayeeDtls().getRecovery().getChartofaccounts().getId() != null)
                     glcodeIdList
-                    .add(new BigDecimal(bpd.getEgBillPayeeDtls().getRecovery().getChartofaccounts().getId()));
+                            .add(new BigDecimal(bpd.getEgBillPayeeDtls().getRecovery().getChartofaccounts().getId()));
     }
 
     public void addStandardDeductionGlcode(final List<BigDecimal> glcodeIdList,
@@ -1221,7 +1175,7 @@ ContractorBillService {
         final List<WorkCompletionDetailInfo> workCompletionDetailInfoList = new ArrayList<WorkCompletionDetailInfo>();
         final TenderResponse tenderResponse = tenderResponseService.find(
                 "from TenderResponse tr where tr.negotiationNumber=?", workOrderEstimate.getWorkOrder()
-                .getNegotiationNumber());
+                        .getNegotiationNumber());
         final String rebatePremLevel = worksService.getWorksConfigValue("REBATE_PREMIUM_LEVEL");
 
         final List<Object[]> workOrderActivityIdList = genericService.findAllByNamedQuery(
@@ -1336,7 +1290,7 @@ ContractorBillService {
                     Double amount = 0.0;
                     if (mbd.getWorkOrderActivity().getActivity().getNonSor() == null)
                         amount = mbd.getWorkOrderActivity().getApprovedRate() * mbd.getQuantity()
-                        * mbd.getWorkOrderActivity().getConversionFactor();
+                                * mbd.getWorkOrderActivity().getConversionFactor();
                     else
                         amount = mbd.getWorkOrderActivity().getApprovedRate() * mbd.getQuantity();
                     result = result.add(BigDecimal.valueOf(amount));
@@ -1402,7 +1356,7 @@ ContractorBillService {
 
                     if (mbd.getWorkOrderActivity().getActivity().getNonSor() == null)
                         amount = mbd.getWorkOrderActivity().getApprovedRate() * mbd.getQuantity()
-                        * mbd.getWorkOrderActivity().getConversionFactor();
+                                * mbd.getWorkOrderActivity().getConversionFactor();
                     else
                         amount = mbd.getWorkOrderActivity().getApprovedRate() * mbd.getQuantity();
                     if (mbd.getWorkOrderActivity().getActivity().getRevisionType() == null)
@@ -1553,8 +1507,9 @@ ContractorBillService {
 
         if (totalBillAmount == null)
             totalBillAmount = BigDecimal.ZERO;
-        logger.debug("End of getBilledAmountForDate(AbstractEstimate estimate,Date asOnDate) ||returned value is (including voucher amount and contractor bill)"
-                + totalBillAmount.add(totalVoucherAmount));
+        logger.debug(
+                "End of getBilledAmountForDate(AbstractEstimate estimate,Date asOnDate) ||returned value is (including voucher amount and contractor bill)"
+                        + totalBillAmount.add(totalVoucherAmount));
 
         return totalBillAmount.add(totalVoucherAmount);
     }
@@ -1597,8 +1552,9 @@ ContractorBillService {
 
         if (totalBillAmount == null)
             totalBillAmount = BigDecimal.ZERO;
-        logger.debug("End of getBilledAmount(AbstractEstimate estimate) ||returned value is (including voucher amount and contractor bill)"
-                + totalBillAmount.add(totalVoucherAmount));
+        logger.debug(
+                "End of getBilledAmount(AbstractEstimate estimate) ||returned value is (including voucher amount and contractor bill)"
+                        + totalBillAmount.add(totalVoucherAmount));
 
         return totalBillAmount.add(totalVoucherAmount);
     }
@@ -1691,8 +1647,7 @@ ContractorBillService {
     }
 
     /**
-     * @description -This method returns the list of project code ids for a
-     *              fund-coa-deposit code combination
+     * @description -This method returns the list of project code ids for a fund-coa-deposit code combination
      * @param - search fundId, coaId, depositCodeId
      * @return - returns list of project codes
      */
@@ -1703,7 +1658,7 @@ ContractorBillService {
                 .findAllBy(
                         "select distinct fd.abstractEstimate.projectCode.id from FinancialDetail fd where fd.abstractEstimate.egwStatus.code = ?"
                                 + " and fd.abstractEstimate.depositCode.id = ? and fd.fund.id = ? and fd.coa.id = ?",
-                                AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString(), depositCodeId, fundId, coaId);
+                        AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString(), depositCodeId, fundId, coaId);
         final List<Integer> projCodeIds = new ArrayList<Integer>();
         if (pcIds != null && !pcIds.isEmpty())
             for (final Long id : pcIds)
@@ -1712,8 +1667,7 @@ ContractorBillService {
     }
 
     /**
-     * @description -This method returns the total expenditure incurred for the
-     *              project codes
+     * @description -This method returns the total expenditure incurred for the project codes
      * @param - search projectCodeIdsList, accDetailType
      * @return - returns expenditure incurred
      */
@@ -1734,8 +1688,7 @@ ContractorBillService {
     }
 
     /**
-     * @description -This method calculates the sum of bill amount for bills
-     *              where voucher is not present
+     * @description -This method calculates the sum of bill amount for bills where voucher is not present
      * @param - search current date, list of project code ids, accDetailTypeId
      * @return - returns sum of bill amount
      */
@@ -1771,8 +1724,8 @@ ContractorBillService {
                                 + "(select max(mbh.id) from MBHeader mbh where mbh.egwStatus.code = ? and "
                                 + "mbh.workOrder.id= ? and mbh.workOrderEstimate.estimate.id=? and "
                                 + "mbh.workOrderEstimate.estimate.egwStatus.code= ? )")
-                                .setParameter(0, WorksConstants.APPROVED).setParameter(1, woId).setParameter(2, estId)
-                                .setParameter(3, WorksConstants.ADMIN_SANCTIONED_STATUS).uniqueResult();
+                .setParameter(0, WorksConstants.APPROVED).setParameter(1, woId).setParameter(2, estId)
+                .setParameter(3, WorksConstants.ADMIN_SANCTIONED_STATUS).uniqueResult();
         return mbDateRefNo;
     }
 }

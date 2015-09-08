@@ -74,10 +74,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Result(name = BaseFormAction.SUCCESS, type = "StreamResult.class", location = "measurementBookPDF", params = {
         "inputName", "measurementBookPDF", "contentType", "application/pdf", "contentDisposition",
-"no-cache;filename=MeasurementBook.pdf" })
+        "no-cache;filename=MeasurementBook.pdf" })
 @ParentPackage("egov")
 public class MeasurementBookPDFAction extends BaseFormAction {
-   
+
     private static final long serialVersionUID = 3881748750533287264L;
 
     private static final Logger logger = Logger.getLogger(MeasurementBookPDFAction.class);
@@ -145,11 +145,11 @@ public class MeasurementBookPDFAction extends BaseFormAction {
                 mbPDF.setWorkDescription(description);
                 if (activity.getRevisionType() != null
                         && activity.getRevisionType().toString()
-                        .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()))
+                                .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()))
                     mbPDF.setRevisionType("Non Tendered");
                 if (activity.getRevisionType() != null
                         && activity.getRevisionType().toString()
-                        .equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString()))
+                                .equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString()))
                     mbPDF.setRevisionType("Lump Sum");
             }
 
@@ -193,7 +193,7 @@ public class MeasurementBookPDFAction extends BaseFormAction {
                     per = activity.getNonSor().getUom().getUom();
                 mbPDF.setUom(per);
                 // end start unit
-            } // end of if activity
+            }   // end of if activity
 
             final double workCompleted = completedMeasurement * approveRateWo * uomFactor;
             mbPDF.setCompletedCost(workCompleted);
@@ -243,7 +243,7 @@ public class MeasurementBookPDFAction extends BaseFormAction {
         if (mbHeader != null && mbHeader.getMbDetails() != null && mbHeader.getMbDetails().size() > 0)
             for (final MBDetails mbdetails : mbHeader.getMbDetails())
                 if (mbdetails.getWorkOrderActivity() != null && mbdetails.getWorkOrderActivity().getActivity() != null
-                && mbdetails.getWorkOrderActivity().getActivity().getRevisionType() != null)
+                        && mbdetails.getWorkOrderActivity().getActivity().getRevisionType() != null)
                     return true;
         return false;
     }
@@ -272,10 +272,8 @@ public class MeasurementBookPDFAction extends BaseFormAction {
                         desgName = deptdesig.getDesignation().getName();
                         // }
                         /*
-                         * else{ positionId
-                         * =state.getPrevious().getOwner().getId(); deptdesig=
-                         * state.getPrevious().getOwner().getDeptDesigId();
-                         * desgName =
+                         * else{ positionId =state.getPrevious().getOwner().getId(); deptdesig=
+                         * state.getPrevious().getOwner().getDeptDesigId(); desgName =
                          * deptdesig.getDesigId().getDesignationName(); }
                          */
                         final PersonalInformation emp = employeeService.getEmpForPositionAndDate(

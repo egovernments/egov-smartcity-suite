@@ -45,7 +45,7 @@ import java.util.Date;
 import org.egov.infstr.models.BaseModel;
 
 public class EstimatePhotographs extends BaseModel {
-   
+
     private static final long serialVersionUID = -4760202350886149567L;
     private Double latitude;
     private Double longitude;

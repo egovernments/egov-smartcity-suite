@@ -51,85 +51,94 @@ import org.egov.works.models.masters.ScheduleOfRate;
 
 import com.opensymphony.xwork2.Action;
 
-@Result(name=Action.SUCCESS, type="ServletRedirectResult.class", location = "scheduleOfRateSearch-searchResults")  
+@Result(name = Action.SUCCESS, type = "ServletRedirectResult.class", location = "scheduleOfRateSearch-searchResults")
 
-@ParentPackage("egov")  
+@ParentPackage("egov")
 public class ScheduleOfRateSearchAction extends BaseFormAction {
-	private PersistenceService<ScheduleOfRate,Long> scheduleOfRateService;  
-	//private static final String PUNCTUATIONS_AND_SPECIALCHARS = "[^\\w\\d\\.]";
-	private static final String SEARCH_RESULTS = "searchResults";
-	private ScheduleOfRate sor = new ScheduleOfRate();
-	private SORRate currentRate;
-	private String sorID;
-	private Date estimateDate;
-	private String query;	
-	private String scheduleCategoryId;
-	private String estimateId;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3299140283276738474L;
+    private PersistenceService<ScheduleOfRate, Long> scheduleOfRateService;
+    // private static final String PUNCTUATIONS_AND_SPECIALCHARS = "[^\\w\\d\\.]";
+    private static final String SEARCH_RESULTS = "searchResults";
+    private ScheduleOfRate sor = new ScheduleOfRate();
+    private SORRate currentRate;
+    private String sorID;
+    private Date estimateDate;
+    private String query;
+    private String scheduleCategoryId;
+    private String estimateId;
 
-	public void setScheduleCategoryId(String scheduleCategoryId) {
-		this.scheduleCategoryId = scheduleCategoryId;
-	}
+    public void setScheduleCategoryId(final String scheduleCategoryId) {
+        this.scheduleCategoryId = scheduleCategoryId;
+    }
 
-	public void setQuery(String query) {
-		this.query = query;
-	}
+    public void setQuery(final String query) {
+        this.query = query;
+    }
 
-	public String searchAjax(){
-		return SEARCH_RESULTS;
-	}
-	public String findSORAjax(){
-		sor = scheduleOfRateService.findById(Long.parseLong(sorID), false);
-		if(estimateDate!=null) 
-		currentRate = sor.getRateOn(estimateDate);
-		return "SOR";
-	}
+    public String searchAjax() {
+        return SEARCH_RESULTS;
+    }
 
-	public Object getModel() {
-		return sor;
-	}
+    public String findSORAjax() {
+        sor = scheduleOfRateService.findById(Long.parseLong(sorID), false);
+        if (estimateDate != null)
+            currentRate = sor.getRateOn(estimateDate);
+        return "SOR";
+    }
 
-	public void setScheduleOfRateService(
-			PersistenceService<ScheduleOfRate, Long> scheduleOfRateService) {
-		this.scheduleOfRateService = scheduleOfRateService;
-	}
+    @Override
+    public Object getModel() {
+        return sor;
+    }
 
-	public Collection<ScheduleOfRate> getScheduleOfRateList() {
-	    if(estimateId!=null && estimateDate!=null)
-                return scheduleOfRateService.findAllByNamedQuery("SCHEDULEOFRATES_SEARCH_REVISIONESTIMATE", query, query, Long.valueOf(scheduleCategoryId), estimateDate, estimateDate,Long.valueOf(estimateId),Long.valueOf(estimateId));
-            else if(estimateDate!=null)
-                return scheduleOfRateService.findAllByNamedQuery("SCHEDULEOFRATES_SEARCH", query, query, Long.valueOf(scheduleCategoryId), estimateDate, estimateDate);                 
-            else
-                return scheduleOfRateService.findAllByNamedQuery("SCHEDULEOFRATES_SEARCH_ESTIMATETEMPLATE", query, query, Long.valueOf(scheduleCategoryId));
-	
-	}
+    public void setScheduleOfRateService(
+            final PersistenceService<ScheduleOfRate, Long> scheduleOfRateService) {
+        this.scheduleOfRateService = scheduleOfRateService;
+    }
 
+    public Collection<ScheduleOfRate> getScheduleOfRateList() {
+        if (estimateId != null && estimateDate != null)
+            return scheduleOfRateService.findAllByNamedQuery("SCHEDULEOFRATES_SEARCH_REVISIONESTIMATE", query, query,
+                    Long.valueOf(scheduleCategoryId), estimateDate, estimateDate, Long.valueOf(estimateId),
+                    Long.valueOf(estimateId));
+        else if (estimateDate != null)
+            return scheduleOfRateService.findAllByNamedQuery("SCHEDULEOFRATES_SEARCH", query, query,
+                    Long.valueOf(scheduleCategoryId), estimateDate, estimateDate);
+        else
+            return scheduleOfRateService.findAllByNamedQuery("SCHEDULEOFRATES_SEARCH_ESTIMATETEMPLATE", query, query,
+                    Long.valueOf(scheduleCategoryId));
 
-	public void setSorID(String sorID) {
-		this.sorID = sorID;
-	}
+    }
 
-	public void setEstimateDate(Date estimateDate) {
-		this.estimateDate = estimateDate;
-	}
+    public void setSorID(final String sorID) {
+        this.sorID = sorID;
+    }
 
-	public ScheduleOfRate getSor() {
-		return sor;
-	}
+    public void setEstimateDate(final Date estimateDate) {
+        this.estimateDate = estimateDate;
+    }
 
-	public void setSor(ScheduleOfRate scheduleOfRateInstance) {
-		this.sor = scheduleOfRateInstance;
-	}
+    public ScheduleOfRate getSor() {
+        return sor;
+    }
 
-	public SORRate getCurrentRate() {
-		return currentRate;
-	}
+    public void setSor(final ScheduleOfRate scheduleOfRateInstance) {
+        sor = scheduleOfRateInstance;
+    }
 
-	public String getEstimateId() {
-		return estimateId;
-	}
+    public SORRate getCurrentRate() {
+        return currentRate;
+    }
 
-	public void setEstimateId(String estimateId) {
-		this.estimateId = estimateId;
-	}
+    public String getEstimateId() {
+        return estimateId;
+    }
+
+    public void setEstimateId(final String estimateId) {
+        this.estimateId = estimateId;
+    }
 
 }

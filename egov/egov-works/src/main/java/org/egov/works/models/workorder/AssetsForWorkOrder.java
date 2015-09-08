@@ -43,7 +43,7 @@ import org.egov.asset.model.Asset;
 import org.egov.infstr.models.BaseModel;
 
 public class AssetsForWorkOrder extends BaseModel {
-    
+
     private static final long serialVersionUID = 1921548931869645727L;
     private Asset asset;
     private WorkOrderEstimate workOrderEstimate;

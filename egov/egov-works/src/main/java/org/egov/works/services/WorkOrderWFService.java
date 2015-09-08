@@ -40,17 +40,12 @@
 package org.egov.works.services;
 
 import org.egov.infstr.services.PersistenceService;
-import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.workorder.WorkOrder;
-import org.springframework.beans.factory.annotation.Autowired;
 
-public class WorkOrderWFService  extends PersistenceService<WorkOrder,Long> {
-        
-        @Autowired
-        private EmployeeServiceOld employeeService;  
-        
-	public WorkOrderWFService(){
-		setType(WorkOrder.class);
-	}
-	
+public class WorkOrderWFService extends PersistenceService<WorkOrder, Long> {
+
+    public WorkOrderWFService() {
+        setType(WorkOrder.class);
+    }
+
 }

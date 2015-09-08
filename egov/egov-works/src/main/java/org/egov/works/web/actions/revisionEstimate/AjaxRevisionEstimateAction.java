@@ -59,7 +59,7 @@ import org.egov.works.services.WorksService;
 import org.hibernate.Query;
 
 public class AjaxRevisionEstimateAction extends BaseFormAction {
-    
+
     private static final long serialVersionUID = -6192212773360994495L;
     private static final Logger logger = Logger.getLogger(AjaxRevisionEstimateAction.class);
     private static final String ACTIVITY_DETAILS = "activityDetails";
@@ -194,7 +194,8 @@ public class AjaxRevisionEstimateAction extends BaseFormAction {
         List<MBHeader> mbheaderlist = new ArrayList<MBHeader>();
         mbheaderlist = measurementBookService.findAllBy(
                 "select distinct mbd.mbHeader from MBDetails mbd where mbd.workOrderActivity.workOrderEstimate.id=? "
-                        + "and mbd.mbHeader.egwStatus.code<>'CANCELLED'", reWOEstId);
+                        + "and mbd.mbHeader.egwStatus.code<>'CANCELLED'",
+                reWOEstId);
 
         if (mbheaderlist != null && !mbheaderlist.isEmpty())
             approvedMBList.addAll(mbheaderlist);
@@ -223,7 +224,8 @@ public class AjaxRevisionEstimateAction extends BaseFormAction {
                     mbheaderlist = measurementBookService
                             .findAllBy(
                                     "select distinct mbd.mbHeader from MBDetails mbd where mbd.workOrderActivity.workOrderEstimate.estimate.id=? and mbd.workOrderActivity.workOrderEstimate.workOrder.id=? and  mbd.workOrderActivity.activity.id=? "
-                                            + "and mbd.mbHeader.egwStatus.code<>'CANCELLED'", revEstimate.getId(),
+                                            + "and mbd.mbHeader.egwStatus.code<>'CANCELLED'",
+                                    revEstimate.getId(),
                                     revWorkOrder.getId(), revWoa.getActivity().getId());
                     if (mbheaderlist != null && !mbheaderlist.isEmpty()) {
                         final StringBuffer mbNos = new StringBuffer();
@@ -241,21 +243,21 @@ public class AjaxRevisionEstimateAction extends BaseFormAction {
                     if (revWoa.getActivity().getRevisionType() != null
                             && revWoa.getActivity().getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY))
                         activtityIdList.add(revWoa.getActivity().getParent().getId()); // Passing
-                                                                                       // parent
-                                                                                       // of
-                                                                                       // Rev
-                                                                                       // Work
-                                                                                       // order
-                                                                                       // activity,
-                                                                                       // as
-                                                                                       // only
-                                                                                       // these
-                                                                                       // can
-                                                                                       // have
-                                                                                       // MBs
-                                                                                       // created
-                                                                                       // for
-                                                                                       // them
+                // parent
+                // of
+                // Rev
+                // Work
+                // order
+                // activity,
+                // as
+                // only
+                // these
+                // can
+                // have
+                // MBs
+                // created
+                // for
+                // them
                 if (activtityIdList != null && activtityIdList.size() > 0) {
                     final Query qry = getPersistenceService()
                             .getSession()
@@ -322,7 +324,8 @@ public class AjaxRevisionEstimateAction extends BaseFormAction {
     public String getListOfREsForParent() throws Exception {
         estimateNoList = getPersistenceService().findAllBy(
                 "select distinct abs.estimateNumber from AbstractEstimate abs where abs.parent.id=? "
-                        + "and abs.egwStatus.code<>'CANCELLED' order by abs.estimateNumber ", estimateId);
+                        + "and abs.egwStatus.code<>'CANCELLED' order by abs.estimateNumber ",
+                estimateId);
 
         return REV_ESTIMATE_LIST;
     }

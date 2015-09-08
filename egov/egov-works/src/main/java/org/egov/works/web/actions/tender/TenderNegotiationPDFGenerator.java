@@ -142,26 +142,28 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
                 if (getWardList(worksPackage) != null)
                     document.add(makePara(
                             pdfLabel.get("tenderNegotiationpdf.ward") + "/" + pdfLabel.get("tenderNegotiationpdf.zone")
-                            + getWardList(worksPackage), Element.ALIGN_LEFT));
+                                    + getWardList(worksPackage),
+                            Element.ALIGN_LEFT));
             } else {
                 if (tenderResponse != null
                         && tenderResponse.getTenderEstimate() != null
                         && tenderResponse.getTenderEstimate().getAbstractEstimate().getExecutingDepartment() != null
                         && tenderResponse.getTenderEstimate().getAbstractEstimate().getExecutingDepartment().getName() != null)
                     deptName = tenderResponse.getTenderEstimate().getAbstractEstimate().getExecutingDepartment()
-                    .getName();
+                            .getName();
                 document.add(makePara(deptName, Element.ALIGN_RIGHT));
                 if (tenderResponse != null && tenderResponse.getTenderEstimate() != null
                         && tenderResponse.getTenderEstimate().getAbstractEstimate().getWard().getParent() != null
                         && tenderResponse.getTenderEstimate().getAbstractEstimate().getWard() != null)
                     document.add(makePara(
                             pdfLabel.get("tenderNegotiationpdf.ward")
-                            + "/"
-                            + pdfLabel.get("tenderNegotiationpdf.zone")
-                            + tenderResponse.getTenderEstimate().getAbstractEstimate().getWard().getName()
-                            + "/"
-                            + tenderResponse.getTenderEstimate().getAbstractEstimate().getWard().getParent()
-                            .getName(), Element.ALIGN_LEFT));
+                                    + "/"
+                                    + pdfLabel.get("tenderNegotiationpdf.zone")
+                                    + tenderResponse.getTenderEstimate().getAbstractEstimate().getWard().getName()
+                                    + "/"
+                                    + tenderResponse.getTenderEstimate().getAbstractEstimate().getWard().getParent()
+                                            .getName(),
+                            Element.ALIGN_LEFT));
             }
             if (YES.equalsIgnoreCase(worksPackgeReq))
                 document.add(makePara(pdfLabel.get("tenderNegotiationpdf.nameofwork")
@@ -259,8 +261,10 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
                                 Integer.parseInt(previous.getOwnerPosition().getId().toString()));
                         addRow(approvaldetailsTable, true, makePara(status.getDescription()),
                                 makePara(emp.getEmployeeName()), makePara(previous.getOwnerPosition().getDeptDesig()
-                                        .getDesignation().getName()), makePara(getDateInFormat(ad
-                                                .getCreatedDate().toString())), rightPara(ad.getComments()));
+                                        .getDesignation().getName()),
+                                makePara(getDateInFormat(ad
+                                        .getCreatedDate().toString())),
+                                rightPara(ad.getComments()));
                     }
                     previous = ad;
                 }
@@ -295,8 +299,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
             negotiationTable.addCell(pdfLabel.get("tenderNegotiationpdf.quantity"));
 
             /**
-             * start creating tables for Estimate, before negotion, after
-             * negotiation and marketRate
+             * start creating tables for Estimate, before negotion, after negotiation and marketRate
              */
 
             final PdfPTable estimateTable = createAsPerEstimateTable(tenderResponse);
@@ -319,8 +322,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
             marketRateCell.setColspan(2);
             negotiationTable.addCell(marketRateCell);
             /**
-             * end creating tables for before negotion, after negotiation and
-             * marketRate
+             * end creating tables for before negotion, after negotiation and marketRate
              */
             if (YES.equalsIgnoreCase(worksPackgeReq))
                 createNegotiationTableDataForWp(tenderResponse, negotiationTable, contractor);
@@ -851,7 +853,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
 
     /** creating tables for before negotion */
     public PdfPTable createBeforeNegotiationTable(final TenderResponse tenderResponse) throws DocumentException,
-    EGOVException {
+            EGOVException {
         final PdfPTable beforeNegotiationTable = new PdfPTable(2);
         beforeNegotiationTable.getDefaultCell().setBorderWidth(1);
         beforeNegotiationTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -929,7 +931,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
         final Map<String, Object> rateQtyMap = new HashMap<String, Object>();
         for (final EstimateLineItemsForWP lineItem : estimateLinItems)
             if (lineItem.getActivity() != null && lineItem.getActivity().getId() != null
-            && lineItem.getActivity().getId().longValue() == act.getId().longValue()) {
+                    && lineItem.getActivity().getId().longValue() == act.getId().longValue()) {
                 rateQtyMap.put("slno", lineItem.getSrlNo());
                 rateQtyMap.put("desc", lineItem.getDescription());
                 rateQtyMap.put("sorcode", lineItem.getCode());
@@ -946,7 +948,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
         final List<String> wardnameList = new ArrayList<String>();
         for (final AbstractEstimate ae : wp.getAllEstimates())
             if (ae.getWard() != null && ae.getWard().getParent() != null && ae.getWard().getParent().getName() != null
-            && !resultMap.containsKey(ae.getWard().getName())) {
+                    && !resultMap.containsKey(ae.getWard().getName())) {
                 wardnameList.add(ae.getWard().getName() + "/" + ae.getWard().getParent().getName());
                 resultMap.put(ae.getWard().getName(), ae.getWard().getParent().getName());
             }
@@ -995,7 +997,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
                 contractorTable.addCell(centerPara(tenderResponseContractors.getContractor().getCode()));
                 contractorTable.addCell(centerPara(tenderResponseContractors.getContractor().getName()));
                 contractorTable
-                .addCell(centerPara(tenderResponseContractors.getContractor().getCorrespondenceAddress()));
+                        .addCell(centerPara(tenderResponseContractors.getContractor().getCorrespondenceAddress()));
             }
 
         } catch (final Exception e) {
@@ -1013,7 +1015,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
      * @throws EGOVException
      */
     private void createNegotiationTableForContractors(final TenderResponse tenderResponse) throws DocumentException,
-    EGOVException {
+            EGOVException {
         PdfPTable negotiationTable = null;
         int count = 0;
         for (final TenderResponseContractors tenderResponseContractors : tenderResponse.getTenderResponseContractors()) {
