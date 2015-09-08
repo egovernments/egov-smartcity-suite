@@ -67,6 +67,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.Gender;
@@ -325,7 +326,7 @@ public class User extends AbstractAuditable {
     }
 
     public Locale locale() {
-        return new Locale(locale);
+        return LocaleUtils.toLocale(locale);
     }
 
     public void setLocale(final String locale) {

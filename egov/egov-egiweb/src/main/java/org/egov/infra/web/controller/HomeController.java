@@ -43,6 +43,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.jar.Manifest;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -70,7 +72,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.google.gson.GsonBuilder;
 
@@ -104,8 +108,10 @@ public class HomeController {
     private Manifest manifest;
 
     @RequestMapping
-    public String showHome(final HttpSession session, final ModelMap modelData) {
+    public String showHome(final HttpSession session, final HttpServletRequest request,
+            final HttpServletResponse response, final ModelMap modelData) {
         final User user = securityUtils.getCurrentUser();
+        setUserLocale(user, request, response);
         if (securityUtils.currentUserType().equals(UserType.EMPLOYEE))
             return prepareOfficialHomePage(user, session, modelData);
         else
@@ -142,8 +148,10 @@ public class HomeController {
     }
 
     @RequestMapping(value = "feedback/sent")
-    public @ResponseBody boolean sendFeedback(@RequestParam final String subject, @RequestParam final String message, final HttpSession session) {
-        cityService.sentFeedBackMail((String) session.getAttribute("corpContactEmail"), subject, message + " \n Regards \n " + user().getName());
+    public @ResponseBody boolean sendFeedback(@RequestParam final String subject, @RequestParam final String message,
+            final HttpSession session) {
+        cityService.sentFeedBackMail((String) session.getAttribute("corpContactEmail"), subject,
+                message + " \n Regards \n " + user().getName());
         return true;
     }
 
@@ -159,12 +167,19 @@ public class HomeController {
 
     @RequestMapping(value = "profile/edit", method = RequestMethod.POST)
     public String saveProfile(@Valid @ModelAttribute final User user, final BindingResult binder,
-            final RedirectAttributes redirAttrib) {
+            final HttpServletRequest request,
+            final HttpServletResponse response, final RedirectAttributes redirAttrib) {
         if (binder.hasErrors())
             return "profile-edit";
         userService.updateUser(user);
+        setUserLocale(user, request, response);
         redirAttrib.addFlashAttribute("message", "Profile successfully updated");
         return "redirect:/home/profile/edit";
+    }
+
+    private void setUserLocale(final User user, final HttpServletRequest request, final HttpServletResponse response) {
+        final LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
+        localeResolver.setLocale(request, response, user.locale());
     }
 
     private String prepareOfficialHomePage(final User user, final HttpSession session, final ModelMap modelData) {
