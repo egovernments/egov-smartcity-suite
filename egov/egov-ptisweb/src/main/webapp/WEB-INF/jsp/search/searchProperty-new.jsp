@@ -92,7 +92,7 @@
 								</td>
 								
 								<td class="bluebox">
-									<s:textfield name="assessmentNum" id="assessmentNum" value="%{assessmentNum}" maxlength="30"/>
+									<s:textfield name="assessmentNum" id="assessmentNum" value="%{assessmentNum}" maxlength="15"/>
 								</td>
 								<td class="bluebox">&nbsp;</td>
 							</tr>
