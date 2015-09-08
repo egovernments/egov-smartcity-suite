@@ -126,7 +126,6 @@
         <property name="cacheSeconds" value="0"/>
     </bean>
 	
-	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver"/>
  
     <!-- Imports user-defined @Controller beans that process client requests -->
     <context:component-scan base-package="org.egov.infra.web.controller"/>

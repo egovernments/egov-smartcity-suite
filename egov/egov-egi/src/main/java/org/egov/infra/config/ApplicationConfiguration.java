@@ -48,6 +48,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 @Configuration
 public class ApplicationConfiguration {
@@ -65,5 +67,10 @@ public class ApplicationConfiguration {
     @Bean
     public Manifest manifest() throws IOException {
         return new Manifest(new ClassPathResource("/META-INF/MANIFEST.MF").getInputStream());
+    }
+
+    @Bean
+    public LocaleResolver localeResolver() {
+        return new SessionLocaleResolver();
     }
 }
