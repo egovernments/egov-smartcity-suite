@@ -48,6 +48,7 @@ jQuery(document).ready(function($) {
 		var operatorRole = $('#operatorRole').val();
 		
 		$('#searchapprvedapplication').click(function() {
+			$('#searchResultDiv').show();
 			$.post("/wtms/search/waterSearch/",$('#waterSearchRequestForm').serialize())
 			.done(function(searchResult) {
 			console.log(JSON.stringify(searchResult));
@@ -227,6 +228,10 @@ jQuery(document).ready(function($) {
 
 					$('#searchwatertax').keyup(function() {
 						tableContainer.fnFilter(this.value);
+					});
+					
+					$(".btn-danger").click(function(event){
+						$('#searchResultDiv').hide();
 					});
 
 				});

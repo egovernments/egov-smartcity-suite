@@ -62,11 +62,11 @@
 					<c:when test="${waterConnectionDetails.applicationType.code=='ADDNLCONNECTION' && waterConnectionDetails.state.value== 'Rejected'}">
 					<span><spring:message code="msg.additonalconnection.rejection.success" /> ${approverName}</span>
 					</c:when>
-					<c:when test="${ waterConnectionDetails.state.value!= 'Rejected' && waterConnectionDetails.connectionStatus == 'INPROGRESS' && waterConnectionDetails.applicationType.code=='ADDNLCONNECTION'}">
+					<c:when test="${ waterConnectionDetails.state.value!= 'Rejected' &&  waterConnectionDetails.status.code != 'APPROVED' && waterConnectionDetails.connectionStatus == 'INPROGRESS' && waterConnectionDetails.applicationType.code=='ADDNLCONNECTION'}">
 						<spring:message code="msg.addconnection.ack.msg" />
 						<span ><spring:message code="msg.sussess.forward" />${approverName}</span>
 					</c:when>
-					<c:when test="${waterConnectionDetails.status.code == 'APPROVED' && waterConnectionDetails.connectionStatus == 'INPROGRESS' }">
+						<c:when test="${waterConnectionDetails.status.code == 'APPROVED' && waterConnectionDetails.connectionStatus == 'INPROGRESS' }">
 							<span><spring:message code="msg.connection.approved.success" />${approverName}</span>
 								<%-- <spring:message code="msg.sussess.forward" /><br>${approvalUser} --%>
 							</c:when>

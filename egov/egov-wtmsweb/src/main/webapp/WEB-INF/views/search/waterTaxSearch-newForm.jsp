@@ -71,13 +71,13 @@
 										code="lbl.mobilenumber" /></label>
 				
 						<div class="col-md-4 add-margin">
-							<input type="text" name="mobileNumber" class="form-control" id="app-appcodo" min="10" maxlength="12" />
+							<form:input path="" type="text" name="mobileNumber" class="form-control is_valid_number" maxlength="10" data-inputmask="'mask': '9999999999'" id="app-appcodo" min="10"  />
 						</div>
 					</div>
 						<div class="form-group">
-				<label for="field-1" class="col-md-4 control-label">Consumer No</label>
+				<label for="field-1" class="col-md-4 control-label"><spring:message code='lbl1.consumer.number'/></label>
 										  <div class="col-md-4 add-margin">
-							<input type="text" name="consumerCode" class="form-control" id="app-appcodo"/>
+							<input type="text" name="consumerCode" class="form-control is_valid_number" id="app-appcodo"/>
 						</div>
 						</div>
 						
@@ -86,11 +86,11 @@
 					<label for="field-1" class="col-md-4 control-label"> <spring:message
 										code="lbl.applicant.name" /></label>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="applicantName" class="form-control" id="app-mobno" />
+							<input type="text" name="applicantName" class="form-control typeahead is_valid_alphabet" id="app-mobno" />
 						</div>
 						</div>
 						<div class="form-group">
-					<label for="field-1" class="col-md-4 control-label">Locality</label>
+					<label for="field-1" class="col-md-4 control-label"><spring:message code='lbl.locality'/> </label>
 						<div class="col-md-4 add-margin">
 							<input type="text" name="locality" class="form-control" id="app-mobno"
 								/>
@@ -132,7 +132,7 @@
 						<span class="inline-elem">Search</span>
 						<span class="inline-elem"><input type="text" id="searchwatertax" class="form-control input-sm"></span>
 					</div>
-	<div class="col-md-12">
+	<div class="col-md-12" id="searchResultDiv">	
 	<table class="table table-bordered datatable dt-responsive"
 		id="aplicationSearchResults">
 
