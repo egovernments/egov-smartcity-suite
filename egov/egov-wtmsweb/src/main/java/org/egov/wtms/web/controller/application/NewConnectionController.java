@@ -232,8 +232,6 @@ public class NewConnectionController extends GenericConnectionController {
         }
         waterConnectionDetailsService.createExisting(waterConnectionDetails);
         return "redirect:newConnection-existingMessage/" + waterConnectionDetails.getConnection().getConsumerCode();
-        // return
-        // "redirect:/application/view/"+waterConnectionDetails.getConnection().getConsumerCode();
     }
 
     private void validateDocuments(final List<ApplicationDocuments> applicationDocs,

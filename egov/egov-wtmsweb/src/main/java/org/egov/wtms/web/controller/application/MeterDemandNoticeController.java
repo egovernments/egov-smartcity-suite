@@ -196,7 +196,7 @@ public class MeterDemandNoticeController {
                 .getCode()))
             reportParams.put("applicationType",
                     WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()).toString());
-        //
+        
         reportParams.put("municipality", session.getAttribute("cityname"));
         reportParams.put("district", session.getAttribute("districtName"));
         reportParams.put("waterCharges", waterConnectionDetails.getConnectionType().name());

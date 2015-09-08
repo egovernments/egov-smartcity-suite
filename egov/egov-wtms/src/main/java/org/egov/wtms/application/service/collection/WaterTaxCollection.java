@@ -64,7 +64,6 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -72,7 +71,6 @@ import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionSmsAndEmailService;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
-import org.egov.wtms.application.workflow.ApplicationWorkflowCustomImpl;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -101,12 +99,9 @@ public class WaterTaxCollection extends TaxCollection {
 
     @Autowired
     private SimpleWorkflowService<WaterConnectionDetails> waterConnectionWorkflowService;
-    
+
     @Autowired
     private WaterConnectionSmsAndEmailService waterConnectionSmsAndEmailService;
-    
-    @Autowired
-    private ApplicationContextBeanProvider beanProvider;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -143,26 +138,31 @@ public class WaterTaxCollection extends TaxCollection {
 
     }
 
+    /**
+     * @param demand
+     *            Updates WaterConnectionDetails Object once Collection Is done.
+     *            send Record move to Commissioner and Send SMS and Email after
+     *            Collection
+     */
     @Transactional
     public void updateWaterConnectionDetails(final EgDemand demand) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .getWaterConnectionDetailsByDemand(demand);
         if (!waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)) {
-            waterConnectionDetails.setStatus(waterTaxUtils
-                    .getStatusByCodeAndModuleType(WaterTaxConstants.APPLICATION_STATUS_FEEPAID, WaterTaxConstants.MODULETYPE));
+            waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                    WaterTaxConstants.APPLICATION_STATUS_FEEPAID, WaterTaxConstants.MODULETYPE));
             Long approvalPosition = Long.valueOf(0);
             final WorkFlowMatrix wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails
                     .getStateType(), null, null, WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
                     waterConnectionDetails.getCurrentState().getValue(), null);
             final Position posobj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation());
-            if (posobj != null){
+            if (posobj != null)
                 approvalPosition = posobj.getId();
-            }
-            final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = (ApplicationWorkflowCustomDefaultImpl) beanProvider
-                    .getBean("applicationWorkflowCustomDefaultImpl");
+            final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
+                    .getInitialisedWorkFlowBean();
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
-                    approvalPosition, WaterTaxConstants.FEE_COLLECTION_COMMENT, WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
-                    null);
+                    approvalPosition, WaterTaxConstants.FEE_COLLECTION_COMMENT,
+                    WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE, null);
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
             waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
         }
@@ -177,13 +177,13 @@ public class WaterTaxCollection extends TaxCollection {
     }
 
     @Transactional
-    private void updateDemandDetailForReceiptCreate(final Set<ReceiptAccountInfo> accountDetails, final EgDemand demand,
-            final BillReceiptInfo billRcptInfo) {
+    private void updateDemandDetailForReceiptCreate(final Set<ReceiptAccountInfo> accountDetails,
+            final EgDemand demand, final BillReceiptInfo billRcptInfo) {
 
         final StringBuffer query = new StringBuffer(
                 "select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ")
-                        .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
-                        .append("WHERE dmdet.egDemand.id = :demand");
+                .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
+                .append("WHERE dmdet.egDemand.id = :demand");
         final List<EgDemandDetails> demandDetailList = getCurrentSession().createQuery(query.toString())
                 .setLong("demand", demand.getId()).list();
 
@@ -204,8 +204,8 @@ public class WaterTaxCollection extends TaxCollection {
                     demandDetailByReason.put(dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
                     installmentWiseDemandDetailsByReason.put(installmentDesc, demandDetailByReason);
                 } else
-                    installmentWiseDemandDetailsByReason.get(installmentDesc)
-                            .put(dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
+                    installmentWiseDemandDetailsByReason.get(installmentDesc).put(
+                            dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
             } else if (LOGGER.isDebugEnabled())
                 LOGGER.debug("saveCollectionDetails - demand detail amount is zero " + dmdDtls);
 
@@ -271,22 +271,23 @@ public class WaterTaxCollection extends TaxCollection {
 
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-                    && !rcptAccInfo.getIsRevenueAccount()) {
+            && !rcptAccInfo.getIsRevenueAccount()) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
                 final String installment = desc[1].trim();
 
                 for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
-                    if (reason.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster())) {
+                    if (reason.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster()
+                            .getReasonMaster())) {
                         if (demandDetail.getAmtCollected().compareTo(rcptAccInfo.getCrAmount()) < 0)
                             throw new EGOVRuntimeException(
                                     "updateDmdDetForRcptCancel : Exception while updating cancel receipt, "
                                             + "to be deducted amount " + rcptAccInfo.getCrAmount()
-                                            + " is greater than the collected amount "
-                                            + demandDetail.getAmtCollected() + " for demandDetail " + demandDetail);
+                                            + " is greater than the collected amount " + demandDetail.getAmtCollected()
+                                            + " for demandDetail " + demandDetail);
 
-                        demandDetail.setAmtCollected(demandDetail.getAmtCollected().subtract(
-                                rcptAccInfo.getCrAmount()));
+                        demandDetail
+                                .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
                         LOGGER.info("Deducted Collected amount Rs." + rcptAccInfo.getCrAmount() + " for tax : "
                                 + reason + " and installment : " + installment);
                     }
@@ -301,23 +302,19 @@ public class WaterTaxCollection extends TaxCollection {
                 .getWaterConnectionDetailsByDemand(demand);
         StateHistory stateHistory = null;
         if (waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)) {
-            waterConnectionDetails.setStatus(waterTaxUtils
-                    .getStatusByCodeAndModuleType(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN,
-                            WaterTaxConstants.MODULETYPE));
+            waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                    WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN, WaterTaxConstants.MODULETYPE));
             Long approvalPosition = Long.valueOf(0);
-            if (!waterConnectionDetails.getStateHistory().isEmpty()
-                    && waterConnectionDetails.getStateHistory() != null)
+            if (!waterConnectionDetails.getStateHistory().isEmpty() && waterConnectionDetails.getStateHistory() != null)
                 Collections.reverse(waterConnectionDetails.getStateHistory());
             stateHistory = waterConnectionDetails.getStateHistory().get(0);
             final Position owner = stateHistory.getOwnerPosition();
-            if (owner != null){
+            if (owner != null)
                 approvalPosition = owner.getId();
-            }
-            final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = (ApplicationWorkflowCustomDefaultImpl) beanProvider
-                    .getBean("applicationWorkflowCustomDefaultImpl");
+            final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
+                    .getInitialisedWorkFlowBean();
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
-                    approvalPosition, "Receipt Cancelled", WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
-                    null);
+                    approvalPosition, "Receipt Cancelled", WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE, null);
         }
 
     }

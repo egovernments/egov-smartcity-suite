@@ -76,7 +76,17 @@ public class AjaxWorkFlowController {
 
     @Autowired
     private AssignmentService assignmentService;
-
+/**
+ * 
+ * @param departmentRule
+ * @param currentState
+ * @param type
+ * @param amountRule
+ * @param additionalRule
+ * @param pendingAction
+ * @param approvalDepartment
+ * @return List of Designation 
+ */
     @RequestMapping(value = "/ajaxWorkFlow-getDesignationsByObjectType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Designation> getDesignationsByObjectType(
             @ModelAttribute("designations") @RequestParam final String departmentRule, @RequestParam final String currentState,
@@ -89,12 +99,15 @@ public class AjaxWorkFlowController {
                 pendingAction, new Date());
         if (designationList.isEmpty())
             designationList = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
-        // designationList.forEach(designation -> designation.toString());
-
-        return designationList;
+       return designationList;
 
     }
-
+/**
+ * 
+ * @param approvalDepartment
+ * @param approvalDesignation
+ * @return Approver For workflow
+ */
     @RequestMapping(value = "/ajaxWorkFlow-positionsByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String getWorkFlowPositionByDepartmentAndDesignation(@RequestParam final Long approvalDepartment,
             @RequestParam final Long approvalDesignation, final HttpServletResponse response) {

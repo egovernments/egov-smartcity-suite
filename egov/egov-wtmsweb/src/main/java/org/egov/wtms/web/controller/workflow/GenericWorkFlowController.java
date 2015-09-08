@@ -73,14 +73,25 @@ public abstract class GenericWorkFlowController {
     public WorkflowContainer getWorkflowContainer() {
         return new WorkflowContainer();
     }
-
-    protected void prepareWorkflow(final Model model1, final StateAware model, final WorkflowContainer container) {
-        model1.addAttribute("approverDepartmentList", addAllDepartments());
-        model1.addAttribute("validActionList", getValidActions(model, container));
-        model1.addAttribute("nextAction", getNextAction(model, container));
+/**
+ * 
+ * @param prepareModel
+ * @param model
+ * @param container
+ * This method we are calling In GET Method..
+ */
+    protected void prepareWorkflow(final Model prepareModel, final StateAware model, final WorkflowContainer container) {
+        prepareModel.addAttribute("approverDepartmentList", addAllDepartments());
+        prepareModel.addAttribute("validActionList", getValidActions(model, container));
+        prepareModel.addAttribute("nextAction", getNextAction(model, container));
 
     }
-
+/**
+ * 
+ * @param model
+ * @param container
+ * @return NextAction From Matrix With Parameters Type,CurrentState,CreatedDate
+ */
     public String getNextAction(final StateAware model, final WorkflowContainer container) {
 
         WorkFlowMatrix wfMatrix = null;
@@ -95,7 +106,12 @@ public abstract class GenericWorkFlowController {
                         State.DEFAULT_STATE_VALUE_CREATED, container.getPendingActions(), model.getCreatedDate());
         return wfMatrix == null ? "" : wfMatrix.getNextAction();
     }
-
+/**
+ * 
+ * @param model
+ * @param container
+ * @return List of WorkFlow Buttons From Matrix By Passing parametres Type,CurrentState,CreatedDate
+ */
     public List<String> getValidActions(final StateAware model, final WorkflowContainer container) {
         List<String> validActions = Collections.emptyList();
         if (null == model || null == model.getId())

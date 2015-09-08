@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -134,10 +133,6 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
     public @ModelAttribute("propertyTypes") List<PropertyType> propertyTypes() {
         return propertyTypeService.getAllActivePropertyTypes();
     }
-
-    /*public @ModelAttribute("approvalDepartmentList") List<Department> approverDepartments() {
-        return departmentService.getAllDepartments();
-    }*/
 
     protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
         if (ArrayUtils.isNotEmpty(files))

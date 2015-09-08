@@ -167,10 +167,6 @@ public class MeterReadingController {
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
         waterConnectionDetailsService.updateIndexes(savedWaterConnectionDetails);
-        /*
-         * redirectAttrs.addFlashAttribute("waterConnectionDetails",
-         * savedWaterConnectionDetails); return "newconnection-success";
-         */
         return "redirect:/application/meterdemandnotice?pathVar="
         + savedWaterConnectionDetails.getConnection().getConsumerCode();
     }
