@@ -56,31 +56,20 @@
 						<s:text name="outcome.date" />
 						<span class="mandatory1">*</span>
 					</td>
-					<td class="bluebox" width="25%">
-						<s:date name="dateOfOutcome" id="dateOfOutcomeId" format="dd/MM/yyyy" />
-						<s:textfield name="dateOfOutcome" id="dateOfOutcome"
-							value="%{dateOfOutcomeId}" maxlength="10"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" size="10" />
-						<a
-							href="javascript:show_calendar('objectionViewForm.dateOfOutcome',null,null,'DD/MM/YYYY');"
-							style="text-decoration: none">&nbsp;<img
-								src="/egi/resources/erp2/images/calendaricon.gif"
-								border="0" />
-						</a>(dd/mm/yyyy)
-					</td>
-				</tr>
-				<tr>
-					<td class="greybox" width="25%">
+					<td class="bluebox" width="35%">
+						<s:textfield name="dateOfOutcome" cssClass="datepicker" value="%{#dateOfOutcome}" autocomplete="off"
+				id="dateOfOutcome" size="12" maxlength="12"></s:textfield>
+						</td>
+						
+				<td class="greybox" width="15%">
 						<s:text name="outcome.remarks" />
 						<span class="mandatory1">*</span>
 					</td>
 					<td class="greybox" width="25%">
 						<s:textarea name="remarks" id="outcomeRemarks" cols="40" rows="2" onblur="checkLength(this)"></s:textarea>
 					</td>
-				
-
+						
 				</tr>
-
 			</table>
 		</td>
 	</tr>

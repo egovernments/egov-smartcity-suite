@@ -57,17 +57,12 @@
 				
 					<td class="bluebox" width="25%"> <s:text name="objection.planned.hearingDate" />
 						<span class="mandatory1">*</span> &nbsp;
-						<s:date name="objection.hearings[%{hearingIdx}].plannedHearingDt"
-							id="plannedHearingDtId" format="dd/MM/yyyy" />
-						<s:textfield name="objection.hearings[%{hearingIdx}].plannedHearingDt"
-							id="plannedHearingDt" value="%{plannedHearingDtId}" maxlength="10"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" size="10" />
-						<s:hidden name="objection.hearings[%{hearingIdx}].id" id="objection.hearings[%{hearingIdx}].id"/>	
-						<a
-							href="javascript:show_calendar('objectionViewForm.plannedHearingDt',null,null,'DD/MM/YYYY');"
-							style="text-decoration: none">&nbsp;<img
-								src="/egi/resources/erp2/images/calendaricon.gif"
-								border="0" /> </a>(dd/mm/yyyy)
+								<s:hidden name="objection.hearings[%{hearingIdx}].id" id="objection.hearings[%{hearingIdx}].id"/>	
+													
+						<s:textfield name="objection.hearings[%{hearingIdx}].plannedHearingDt" cssClass="datepicker" value="%{#plannedHearingDtId}" autocomplete="off"
+				id="plannedHearingDtId" size="12" maxlength="12"></s:textfield>
+				
+						
 					</td>
 				
 					<td class="bluebox" width="25%" colspan="1">&nbsp;&nbsp;<s:text name="objection.planned.hearingTime" />

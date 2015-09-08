@@ -92,7 +92,7 @@ function validateRecordObjections() {
 
 function validateHearingDate() {
 
-	if (dom.get('plannedHearingDt').value == "") {
+	if (dom.get('plannedHearingDtId').value == "") {
 		alert('Please enter Hearing Date');
 		return false;
 	} else if (dom.get('hearingTime').value == "") {
