@@ -39,6 +39,7 @@
 package org.egov.infra.config;
 
 import java.io.IOException;
+import java.util.Properties;
 import java.util.jar.Manifest;
 
 import org.egov.infra.config.properties.ApplicationProperties;
@@ -48,6 +49,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
@@ -72,5 +74,21 @@ public class ApplicationConfiguration {
     @Bean
     public LocaleResolver localeResolver() {
         return new SessionLocaleResolver();
+    }
+
+    @Bean
+    public JavaMailSenderImpl mailSender() {
+        final JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setPort(applicationProperties.mailPort());
+        mailSender.setHost(applicationProperties.mailHost());
+        mailSender.setProtocol(applicationProperties.mailProtocol());
+        mailSender.setUsername(applicationProperties.mailSenderUsername());
+        mailSender.setPassword(applicationProperties.mailSenderPassword());
+        final Properties mailProperties = new Properties();
+        mailProperties.setProperty("mail.smtps.auth", applicationProperties.mailSMTPSAuth());
+        mailProperties.setProperty("mail.smtps.starttls.enable", applicationProperties.mailStartTLSEnabled());
+        mailProperties.setProperty("mail.smtps.debug", applicationProperties.mailSMTPSDebug());
+        mailSender.setJavaMailProperties(mailProperties);
+        return mailSender;
     }
 }

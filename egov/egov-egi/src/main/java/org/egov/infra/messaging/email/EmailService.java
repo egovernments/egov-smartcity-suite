@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -39,27 +38,17 @@
  */
 package org.egov.infra.messaging.email;
 
-import java.util.Properties;
-
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
 @Service
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 class EmailService {
-
-    public static final String MAILSENDER = "mailSender";
 
     @Autowired
     private JavaMailSenderImpl mailSender;
-
-    @Autowired
-    private SimpleMailMessage mailMessage;
 
     @Autowired
     private ApplicationProperties applicationProperties;
@@ -67,19 +56,7 @@ class EmailService {
     public boolean sendMail(final String toEmail, final String subject, final String mailBody) {
         boolean isSent = false;
         if (applicationProperties.emailEnabled()) {
-
-            mailSender.setPort(applicationProperties.mailPort());
-            mailSender.setHost(applicationProperties.mailHost());
-            mailSender.setProtocol(applicationProperties.mailProtocol());
-
-            mailSender.setUsername(applicationProperties.mailSenderUsername());
-            mailSender.setPassword(applicationProperties.mailSenderPassword());
-
-            final Properties mailProperties = new Properties();
-            mailProperties.setProperty("mail.smtps.auth", applicationProperties.mailSMTPSAuth());
-            mailProperties.setProperty("mail.smtps.starttls.enable", applicationProperties.mailStartTLSEnabled());
-            mailProperties.setProperty("mail.smtps.debug", applicationProperties.mailSMTPSDebug());
-            mailSender.setJavaMailProperties(mailProperties);
+            final SimpleMailMessage mailMessage = new SimpleMailMessage();
             mailMessage.setTo(toEmail);
             mailMessage.setSubject(subject);
             mailMessage.setText(mailBody);

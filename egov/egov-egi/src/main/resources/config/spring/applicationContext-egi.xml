@@ -92,11 +92,6 @@
 
 	<bean id="installmentDao" class="org.egov.commons.dao.InstallmentHibDao" scope="prototype" />
 
-	<bean id="mailMessage" class="org.springframework.mail.SimpleMailMessage" />
-
-	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl" />
-
-
 	<bean id="customizedWorkFlowService" class="org.egov.infstr.workflow.CustomizedWorkFlowService">
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="workflowService" ref="workflowService" />
