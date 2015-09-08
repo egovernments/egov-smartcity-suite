@@ -43,6 +43,7 @@ import java.math.BigDecimal;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -188,6 +189,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
 
     @Override
     @SkipValidation
+    @Action(value="/newtradelicense/web/newTradeLicense-beforeRenew")
     public String beforeRenew() {
         LOGGER
                 .debug("Entering in the beforeRenew method:<<<<<<<<<<>>>>>>>>>>>>>:");

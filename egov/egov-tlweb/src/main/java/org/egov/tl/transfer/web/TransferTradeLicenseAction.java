@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.tl.transfer.web;
 
+import org.apache.struts2.convention.annotation.Action;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -142,6 +143,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
 
     @Override
     @SkipValidation
+@Action(value="/transfer/web/transferTradeLicense-newForm")
     public String newForm() {
         tl = (TradeLicense) ts.getPersistenceService().find("from TradeLicense where id=?", tl.getId());
         tl.setLicenseeZoneId(Long.valueOf(tl.getLicensee().getBoundary().getParent().getId()));
@@ -246,6 +248,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
     }
 
     @SkipValidation
+@Action(value="/transfer/web/transferTradeLicense-beforeEdit")
     public String beforeEdit() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tl);
         showForApproval();
@@ -272,6 +275,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
 
     @Override
     @SkipValidation
+@Action(value="/transfer/web/transferTradeLicense-showForApproval")
     public String showForApproval() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tl);
         Long id = null;

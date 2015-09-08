@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.tl.search.web;
 
+import org.apache.struts2.convention.annotation.Action;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -87,6 +88,7 @@ public class SearchTradeAction extends BaseFormAction {
     private final List<String> noticelist = new ArrayList<String>();
     private String roleName;
 
+@Action(value="/search/web/searchTrade-newForm")
     public String newForm() {
         return BaseFormAction.NEW;
     }
@@ -305,6 +307,7 @@ public class SearchTradeAction extends BaseFormAction {
     }
 
     @SkipValidation
+@Action(value="/search/web/searchTrade-searchPortal")
     public String searchPortal() {
         final HttpServletRequest request = ServletActionContext.getRequest();
         final Criteria criteria = createSearchQueryPortal();

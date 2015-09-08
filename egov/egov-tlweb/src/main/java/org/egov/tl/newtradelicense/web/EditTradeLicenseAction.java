@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.tl.newtradelicense.web;
 
+import org.apache.struts2.convention.annotation.Action;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -131,6 +132,7 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
     }
 
     @SkipValidation
+@Action(value="/newtradelicense/web/editTradeLicense-beforeEdit")
     public String beforeEdit() {
         return Constants.EDIT;
     }

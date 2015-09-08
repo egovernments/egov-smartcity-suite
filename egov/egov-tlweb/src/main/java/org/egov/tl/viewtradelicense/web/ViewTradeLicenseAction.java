@@ -61,6 +61,7 @@ import org.egov.tl.domain.service.TradeService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.struts2.convention.annotation.Action;
 
 @ParentPackage("egov")
 @Result(name = "auditReport", type = "redirect", location = "auditReport", params = { "moduleName", "TL", "namespace",
@@ -108,20 +109,21 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
     }
 
     @Override
+    @Action(value="/viewtradelicense/web/viewTradeLicense-showForApproval")
     public String showForApproval() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
         tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", license().getId());
         LOGGER.debug("Exiting from the showForApproval method:<<<<<<<<<<>>>>>>>>>>>>>:");
         return super.showForApproval();
     }
-
+    @Action(value="/viewtradelicense/web/viewTradeLicense-view")
     public String view() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
         tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", tradeLicense.getId());
         LOGGER.debug("Exiting from the view method:<<<<<<<<<<>>>>>>>>>>>>>:");
         return Constants.VIEW;
     }
-
+    @Action(value="/viewtradelicense/web/viewTradeLicense-viewCitizen")
     public String viewCitizen() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
         session = requestObj.getSession();
@@ -133,7 +135,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
         LOGGER.debug("Exiting from the view Citizen method:<<<<<<<<<<>>>>>>>>>>>>>:");
         return Constants.VIEW;
     }
-
+    @Action(value="/viewtradelicense/web/viewTradeLicense-generateCertificate")
     public String generateCertificate() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
         String certificate = Constants.CNCCERTIFICATE;
@@ -214,6 +216,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
     }
 
     @SkipValidation
+    @Action(value="/viewtradelicense/web/viewTradeLicense-generateRejCertificate")
     public String generateRejCertificate() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
         setLicenseIdIfServletRedirect();
@@ -230,7 +233,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
         LOGGER.debug("Exiting from the certificateForRej method:<<<<<<<<<<>>>>>>>>>>>>>:");
         return "certificateForRej";
     }
-
+    @Action(value="/viewtradelicense/web/viewTradeLicense-duplicateCertificate")
     public String duplicateCertificate() {
         return "duplicate";
     }

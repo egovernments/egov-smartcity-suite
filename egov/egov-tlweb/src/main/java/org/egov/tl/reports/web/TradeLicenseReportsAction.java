@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.tl.reports.web;
 
+import org.apache.struts2.convention.annotation.Action;
 import java.util.List;
 import java.util.Map;
 
@@ -64,6 +65,7 @@ public class TradeLicenseReportsAction extends BaseLicenseAction {
     /* to log errors and debugging information */
     private final Logger LOGGER = Logger.getLogger(getClass());
 
+@Action(value="/reports/web/tradeLicenseReports-showZoneWiseReport")
     public String showZoneWiseReport() {
 
         LOGGER.debug("Trade License Report Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + toString());
@@ -77,6 +79,7 @@ public class TradeLicenseReportsAction extends BaseLicenseAction {
         return Constants.ZONE_WISE_REPORT;
     }
 
+@Action(value="/reports/web/tradeLicenseReports-showWardWiseReport")
     public String showWardWiseReport() {
         LOGGER.debug("Trade License Report Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + toString());
         final String pno = licenseReportService.getParameterValue(Constants.PARAM_PAGE,
@@ -89,6 +92,7 @@ public class TradeLicenseReportsAction extends BaseLicenseAction {
         return Constants.WARD_WISE_REPORT;
     }
 
+@Action(value="/reports/web/tradeLicenseReports-showTradeWiseReport")
     public String showTradeWiseReport() {
         LOGGER.debug("Trade License Report Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + toString());
         final String pno = licenseReportService.getParameterValue(Constants.PARAM_PAGE,
@@ -101,6 +105,7 @@ public class TradeLicenseReportsAction extends BaseLicenseAction {
         return Constants.TRADE_WISE_REPORT;
     }
 
+@Action(value="/reports/web/tradeLicenseReports-showLateRenewalsReport")
     public String showLateRenewalsReport() {
         LOGGER.debug("Trade License Report Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + toString());
         final String pno = licenseReportService.getParameterValue(Constants.PARAM_PAGE,
