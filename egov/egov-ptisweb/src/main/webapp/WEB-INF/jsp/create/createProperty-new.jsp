@@ -111,14 +111,20 @@ jQuery(function ($) {
 		$(".datepicker").datepicker({
 			format: "dd/mm/yyyy"
 		}); 
-		}catch(e){
+		reInitializeDateOnChangeEvent();
+		}catch(e) {
 		console.warn("No Date Picker "+ e);
 	}
-
-		$('.datepicker').on('changeDate', function(ev){
-		    $(this).datepicker('hide');
-		});
 });
+
+function reInitializeDateOnChangeEvent(){
+
+	jQuery(".datepicker").on('changeDate', function(ev){
+		jQuery(this).datepicker('hide');
+	}); 
+	
+}
+
 function loadOnStartUp() {
 	document.getElementById('assessmentRow').style.display="none";
 	enableCorresAddr();

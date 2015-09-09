@@ -1325,8 +1325,8 @@ function addFloor()
 				
 				//re-intialize datepicker fields
 				jQuery(".datepicker").datepicker({format: 'dd/mm/yyyy'});
+				reInitializeDateOnChangeEvent();
 				
-
 		}
 	}
 }
