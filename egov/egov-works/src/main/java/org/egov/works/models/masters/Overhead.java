@@ -65,7 +65,7 @@ public class Overhead extends BaseModel {
     private String name;
     private String description;
 
-    private CChartOfAccounts account;
+    private CChartOfAccounts accountCode;
 
     private ExpenditureType expenditureType;
 
@@ -98,12 +98,12 @@ public class Overhead extends BaseModel {
     }
 
     @NotNull(message = "overhead.account.not.empty")
-    public CChartOfAccounts getAccount() {
-        return account;
+    public CChartOfAccounts getAccountCode() {
+        return accountCode;
     }
 
-    public void setAccount(final CChartOfAccounts account) {
-        this.account = account;
+    public void setAccountCode(final CChartOfAccounts accountCode) {
+        this.accountCode = accountCode;
     }
 
     @NotNull(message = "overhead.expenditure.not.empty")

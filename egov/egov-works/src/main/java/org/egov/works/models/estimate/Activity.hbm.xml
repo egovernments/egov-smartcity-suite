@@ -65,7 +65,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         <many-to-one name="nonSor" class="org.egov.works.models.estimate.NonSor" fetch="join" cascade="all">
             <column name="NONSOR_ID" precision="22" scale="0" />
         </many-to-one>       
-	    <component name="unitRate">
+	    <component name="rate">
 			<property name="value" type="double" column="UNIT_RATE" precision="2" scale="20" not-null="true"/>
 		</component>
 		<component name="sorRate">

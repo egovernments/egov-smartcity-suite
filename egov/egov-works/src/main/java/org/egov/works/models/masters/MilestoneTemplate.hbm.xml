@@ -73,7 +73,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 			class="org.egov.commons.EgwTypeOfWork" fetch="select"> 
 			<column name="WORKSUBTYPE_ID" />
 		</many-to-one>
-		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
 			<column name="STATE_ID" />
 		</many-to-one>
 		<many-to-one name="egwStatus" class="org.egov.commons.EgwStatus" column="STATUS_ID" not-null="true" fetch="select" />

@@ -58,9 +58,6 @@ import org.egov.works.models.revisionEstimate.RevisionType;
 
 public class Activity extends BaseModel {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1276738003131328718L;
 
     private AbstractEstimate abstractEstimate;

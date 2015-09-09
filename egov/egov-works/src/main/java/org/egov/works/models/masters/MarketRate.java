@@ -55,18 +55,18 @@ public class MarketRate extends BaseModel {
      */
     private static final long serialVersionUID = -6785284745222705060L;
 
-    private ScheduleOfRate schedule;
+    private ScheduleOfRate scheduleOfRate;
 
     @Valid
     private Money marketRate;
     private Period validity;
 
-    public ScheduleOfRate getSchedule() {
-        return schedule;
+    public ScheduleOfRate getScheduleOfRate() {
+        return scheduleOfRate;
     }
 
-    public void setSchedule(final ScheduleOfRate schedule) {
-        this.schedule = schedule;
+    public void setScheduleOfRate(final ScheduleOfRate scheduleOfRate) {
+        this.scheduleOfRate = scheduleOfRate;
     }
 
     public Money getMarketRate() {

@@ -59,7 +59,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 		<property name="total" type="java.math.BigDecimal">
             <column name="TOTAL_PERCENTAGE"  precision="5" scale="0"/>
         </property>
-		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
 			<column name="STATE_ID" />
 		</many-to-one>
 		<property name="isProjectCompleted" type="boolean">
