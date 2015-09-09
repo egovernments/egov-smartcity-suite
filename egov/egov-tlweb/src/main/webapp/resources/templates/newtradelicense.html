@@ -64,126 +64,267 @@
                         <div class="text-right error-msg" style="font-size:14px;">Date of Application : 28/08/2015</div>
                         <div class="panel panel-primary" data-collapsed="0">
                             <div class="panel-heading">
-                                <div class="panel-title">
-                                    Trade Owner Details
-                                </div>
+                                <ul class="nav nav-tabs" id="settingstab">
+                                    <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="false">Trade Details</a></li>
+                                    <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false">Enlosed Documents</a></li>
+                                </ul>
                             </div>
                             <div class="panel-body custom-form">
-                                <form role="form" class="form-horizontal form-groups-bordered">
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Applicant Name<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Father/Spouse Name<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-                                        </div>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade active in" id="tradedetails">
+                                        <form role="form" class="form-horizontal form-groups-bordered">
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Aadhaar Number</label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <div class="input-group">
+                                                        <input class="form-control" required="required" type="text"> 
+                                                        <span class="input-group-addon"> <i class="fa fa-search specific"></i></span>
+                                                    </div>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Mobile Number</label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <div class="input-group">
+                                                        <input class="form-control" required="required" type="text"> 
+                                                        <span class="input-group-addon"> <i class="fa fa-search specific"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Applicant Name<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control" required>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Father/Spouse Name<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Email ID<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Address of the Applicant<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <textarea class="form-control"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="panel-heading custom_form_panel_heading">
+                                                <div class="panel-title">
+                                                    Trade Location Details
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Property No.</label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <div class="input-group">
+                                                        <input id="propertyIdentifier" name="connection.propertyIdentifier" data-pattern="alphanumerichyphenbackslash" min="3" class="form-control patternvalidation" required="required" type="text" value="" maxlength="50"> 
+                                                        <span class="input-group-addon"> <i class="fa fa-search specific"></i></span>
+                                                    </div>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Revenue Zone<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Revenue Ward<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Locality<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Zone<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Ward<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Ownership Type<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Address<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <textarea class="form-control"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="panel-heading custom_form_panel_heading">
+                                                <div class="panel-title">
+                                                    Trade Details
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Name of Establishment</label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Trade Type<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Trade Category<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Trade Sub-Category<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Trade Area/Weight of Premises (Sq.ft/Tons)<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">UOM<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Remarks</label>
+                                                <div class="col-sm-8 add-margin">
+                                                    <textarea class="form-control"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Field Inspection Details</label>
+                                                <div class="col-sm-8 add-margin">
+                                                    <textarea class="form-control"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="panel-heading custom_form_panel_heading">
+                                                <div class="panel-title">
+                                                    Fees Details
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Is Motor Installed</label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="checkbox" class="motorcheck">
+                                                </div>
+                                            </div>
+                                            <div class="motorpart display-hide">
+                                            <table class="table table-bordered" style="width:80%;margin:10px auto">
+                                                <thead>
+                                                    <tr>
+                                                        <th>S.no</th>
+                                                        <th>No. of Machines</th>
+                                                        <th>Horse Power</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="">
+                                                    <tr>
+                                                        <td>1</td>
+                                                        <td><input type="text" class="form-control table-input"></td>
+                                                        <td><input type="text" class="form-control table-input"></td>
+                                                        <td><span class="add-padding" style="cursor:pointer;"><i class="fa fa-plus"></i></span><span class="add-padding" style="cursor:pointer;"><i class="fa fa-trash"></i></span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td class="text-right">Total HP</td>
+                                                        <td><input type="text" class="form-control table-input"></td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Workers Capacity<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="panel-heading custom_form_panel_heading">
+                                                <div class="panel-title">
+                                                    Attach Documents
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-3 add-margin">
+                                                    <input type="file" class="form-control" required>
+                                                </div>
+                                                <div class="col-sm-3 add-margin" style="cursor:pointer;">
+                                                    <div class="rounded-circle add-icon-attachment add-attachment"><i class="fa fa-plus"></i></div>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Address of the Applicant<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <textarea class="form-control"></textarea>
-                                        </div>
+                                    <div class="tab-pane fade" id="tradeattachments">
+                                        <form role="form" class="form-horizontal form-groups-bordered">
+                                            <div class="col-sm-12 view-content header-color hidden-xs">
+                                                <div class="col-sm-1 table-div-column">S.no</div>
+                                                <div class="col-sm-5 table-div-column">Document Name</div>
+                                                <div class="col-sm-3 table-div-column">Check List</div>
+                                                <div class="col-sm-3 table-div-column">Attach Document</div>	
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-1 text-center">1</div>
+                                                <div class="col-sm-5 text-center">Document 1</div>
+                                                <div class="col-sm-3 text-center"><input type="checkbox" required></div>
+                                                <div class="col-sm-3 text-center"><input type="file" class="form-control" required></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-1 text-center">2</div>
+                                                <div class="col-sm-5 text-center">Document 2</div>
+                                                <div class="col-sm-3 text-center"><input type="checkbox" required></div>
+                                                <div class="col-sm-3 text-center"><input type="file" class="form-control" required></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-1 text-center">3</div>
+                                                <div class="col-sm-5 text-center">Document 3</div>
+                                                <div class="col-sm-3 text-center"><input type="checkbox" required></div>
+                                                <div class="col-sm-3 text-center"><input type="file" class="form-control" required></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-1 text-center">4</div>
+                                                <div class="col-sm-5 text-center">Document 4</div>
+                                                <div class="col-sm-3 text-center"><input type="checkbox" required></div>
+                                                <div class="col-sm-3 text-center"><input type="file" class="form-control" required></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-1 text-center">5</div>
+                                                <div class="col-sm-5 text-center">Document 5</div>
+                                                <div class="col-sm-3 text-center"><input type="checkbox" required></div>
+                                                <div class="col-sm-3 text-center"><input type="file" class="form-control" required></div>
+                                            </div>
+                                            <div class="panel-heading custom_form_panel_heading">
+                                                <div class="panel-title">
+                                                    Approval Details
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Approval Department<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                                <label class="col-sm-2 control-label text-right">Approval Designation<span class="mandatory"></span></label>
+                                                <div class="col-sm-3 add-margin">
+                                                    <select class="form-control"><option>select from below</option></select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right">Comments<span class="mandatory"></span></label>
+                                                <div class="col-sm-8 add-margin">
+                                                    <textarea class="form-control"></textarea>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
-                                    <div class="panel-heading custom_form_panel_heading">
-                                        <div class="panel-title">
-                                            Trade Location Details
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Zone<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <select class="form-control"><option>select from below</option></select>
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Division<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <select class="form-control"><option>select from below</option></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Building Name/Door No.<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Area<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <select class="form-control"><option>select from below</option></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Location<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <select class="form-control"><option>select from below</option></select>
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Street<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <select class="form-control"><option>select from below</option></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Pincode<span class="mandatory"</span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Property No.</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="panel-heading custom_form_panel_heading">
-                                        <div class="panel-title">
-                                            Trade Details
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Schedule No.<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Trade Name<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <select class="form-control"><option>select from below</option></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Name of Establishment</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Trade Area/Weight of Premises (Sq.ft/Tons)<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Is Motor Installed</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="checkbox">
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Whether Own Building<span class="mandatory"></span></label>
-                                        <div class="col-sm-3 add-margin">
-                                           <label class="radio-inline"><input type="radio" name="optradio">Own Building 1</label>
-                                            <label class="radio-inline"><input type="radio" name="optradio">Rental 2</label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">Remarks</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <textarea class="form-control"></textarea>
-                                        </div>
-                                        <label class="col-sm-2 control-label text-right">Field Inspection Details</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <textarea class="form-control"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right">PTNAN</label>
-                                        <div class="col-sm-3 add-margin">
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                </form>
+                                </div>
+                                
                             </div>
                         </div>
                         <div class="row">
@@ -207,5 +348,6 @@
         <script src="../../../../../../egov-egiweb/src/main/webapp/resources/global//js/bootstrap/bootstrap.js"></script>
             <script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap-datepicker.js"></script>
         <script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
+        <script src="../app/js/newtrade.js"></script>
     </body>
 </html>
