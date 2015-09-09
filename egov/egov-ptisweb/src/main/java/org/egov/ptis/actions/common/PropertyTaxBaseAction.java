@@ -305,8 +305,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             else if (null != regDocDate
                     && DateUtils.compareDates(propertyDetail.getBuildingPermissionDate(), regDocDate))
                 addActionError(getText("regDate.greaterThan.buildingPermDate"));
-            if (isBlank(propertyDetail.getDeviationPercentage()))
-                addActionError(getText("mandatory.deviationPercentage"));
         }
         if (propertyDetail.isStructure())
             if (isBlank(propertyDetail.getSiteOwner()))
