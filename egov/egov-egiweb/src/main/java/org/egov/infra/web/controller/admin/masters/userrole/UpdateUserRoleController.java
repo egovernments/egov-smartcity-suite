@@ -86,7 +86,7 @@ public class UpdateUserRoleController {
         if (errors.hasErrors())
             return "/userrole/update/" + user.getId();
         userService.updateUser(user);
-        redirectAttrs.addFlashAttribute("message", "User Role successfully modified!");
+        redirectAttrs.addFlashAttribute("message", "msg.usr.role.update.success");
         return "redirect:/userrole/view/" + user.getId();
 
     }

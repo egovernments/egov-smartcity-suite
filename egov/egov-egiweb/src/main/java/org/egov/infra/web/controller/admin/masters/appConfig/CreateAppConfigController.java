@@ -100,7 +100,7 @@ public class CreateAppConfigController {
         appConfigValueService.createAppConfigValues(appConfig);
         model.addAttribute("mode", "new");
         redirectAttrs.addFlashAttribute("appConfig", appConfig);
-        model.addAttribute("message", "AppConfig Value Successfully Created!");
+        model.addAttribute("message", "msg.appconfig.create.success");
         return "appConfig-success";
 
     }

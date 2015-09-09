@@ -47,7 +47,7 @@
 <div class="row" id="page-content">
 	<div class="col-md-12">
 				 <c:if test="${not empty message}">
-                    <div class="alert alert-success" role="alert">${message}</div>
+                    <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
                 </c:if>
 		<form:form  method="post" class="form-horizontal form-groups-bordered" modelAttribute="hierarchyType" id="hierarchyTypeViewForm" >
 			<div class="panel panel-primary" data-collapsed="0">

@@ -51,7 +51,7 @@
 
 	<div class="col-md-12">
 				 <c:if test="${not empty message}">
-                    <div id="message" class="success">${message}</div>
+                    <div id="message" class="success"><spring:message code="${message}"/></div>
                 </c:if>
 		<form:form  mothod ="post" class="form-horizontal form-groups-bordered" modelAttribute="appConfig" id="appConfigForm" >
 			<div class="panel panel-primary" data-collapsed="0">

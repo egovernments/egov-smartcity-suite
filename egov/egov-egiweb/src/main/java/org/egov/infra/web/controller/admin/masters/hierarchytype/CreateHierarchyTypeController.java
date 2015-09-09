@@ -63,9 +63,6 @@ public class CreateHierarchyTypeController {
     private HierarchyTypeService hierarchyTypeService;
     
     @Autowired
-    private MessageSource messageSource;
-
-    @Autowired
     public CreateHierarchyTypeController(HierarchyTypeService hierarchyTypeService) {
         this.hierarchyTypeService = hierarchyTypeService;
     }
@@ -89,12 +86,8 @@ public class CreateHierarchyTypeController {
         }
 
         hierarchyTypeService.createHierarchyType(hierarchyType);
-        additionalAttr.addFlashAttribute("message", getMessage("msg.success.hierarchytype.create"));
+        additionalAttr.addFlashAttribute("message", "msg.success.hierarchytype.create");
         
         return REDIRECT_URL_VIEW + hierarchyType.getName();
-    }
-    
-    private String getMessage(String key) {
-        return messageSource.getMessage(key, null, "", null);
     }
 }

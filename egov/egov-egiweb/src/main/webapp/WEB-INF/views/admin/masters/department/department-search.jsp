@@ -45,7 +45,7 @@
 <div class="row" id="page-content">
 	<div class="col-md-12">
 				<c:if test="${not empty message}">
-					<div class="success" id="message">${message}</div>
+					<div class="success" id="message"><spring:message code="${message}"/></div>
 				</c:if>
 				<form:form id="departmentSearchForm" method="post" modelAttribute="department" class="form-horizontal form-groups-bordered">
 					<div class="panel panel-primary" data-collapsed = "0">

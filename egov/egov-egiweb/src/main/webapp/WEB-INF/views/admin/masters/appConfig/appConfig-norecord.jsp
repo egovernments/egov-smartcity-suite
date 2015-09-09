@@ -55,7 +55,7 @@
 							</div></div>
 							<div class="panel-body">
 							<c:if test="${not empty message}">
-                    <div id="message" class="success">${message}</div>
+                    <div id="message" class="success"><spring:message code="${message}"/></div>
                 </c:if></div>
 							
 	                </div>

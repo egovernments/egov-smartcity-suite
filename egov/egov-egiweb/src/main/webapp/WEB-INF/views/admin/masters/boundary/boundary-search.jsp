@@ -48,10 +48,10 @@
         <div class="panel" data-collapsed="0">
             <div class="panel-body">
                 <c:if test="${not empty message}">
-                    <div class="alert alert-success" role="alert">${message}</div>
+                    <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
                 </c:if>
 				<c:if test="${not empty warning}">
-                    <div class="alert alert-danger" role="alert">${warning}</div>
+                    <div class="alert alert-danger" role="alert"><spring:message code="${warning}"/></div>
                 </c:if>
                 <form:form id="boundarySearchForm" method="post" 
                            modelAttribute="boundary" class="form-horizontal form-groups-bordered">

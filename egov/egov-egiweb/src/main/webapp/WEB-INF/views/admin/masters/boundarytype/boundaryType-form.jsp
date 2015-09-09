@@ -47,7 +47,7 @@
 <div class="row" id="page-content">
 	<div class="col-md-12">
 				 <c:if test="${not empty message}">
-                    <div class="alert alert-success" role="alert">${message}</div>
+                    <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
                 </c:if>
                 <c:if test="${empty hierarchyTypes and empty message}">
                     <div class="alert alert-danger" role="alert"><spring:message code="root.boundaryType.exists"/></div>

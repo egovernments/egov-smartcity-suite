@@ -84,7 +84,7 @@ public class CreateBoundaryController {
         boundaryService.createBoundary(boundary);
         
         redirectAttributes.addFlashAttribute("boundary", boundary);
-        redirectAttributes.addFlashAttribute("message", "Boundary successfully created !");
+        redirectAttributes.addFlashAttribute("message", "msg.bndry.create.success");
         
         String pathVars = boundaryType.getHierarchyType().getId() + "," + boundaryType.getId();
 

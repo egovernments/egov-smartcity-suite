@@ -100,7 +100,7 @@ public class CreateBoundaryTypeController {
         
         boundaryTypeService.setHierarchyLevel(boundaryType, "create");
         boundaryTypeService.createBoundaryType(boundaryType);
-        redirectAttrs.addFlashAttribute("message", "Boundary Type created successfully !");
+        redirectAttrs.addFlashAttribute("message", "msg.bndrytype.create.success");
 
         return "redirect:/boundarytype/view/"+boundaryType.getId();
     }

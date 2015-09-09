@@ -97,7 +97,7 @@ public class BoundaryController {
         final BoundaryType boundaryType = (BoundaryType) model.asMap().get("boundaryType");
          
         if (boundaryService.validateBoundary(boundaryType)) {
-            redirectAttributes.addFlashAttribute("warning", "Root Boundary already exists");
+            redirectAttributes.addFlashAttribute("warning", "msg.root.bndry.exists");
             return "redirect:/search-boundary";
         } else{
             if(boundaryType!=null && boundaryType.getParent()!=null)
@@ -138,7 +138,7 @@ public class BoundaryController {
         boundaryService.updateBoundary(boundary);
 
         redirectAttributes.addFlashAttribute("boundary", boundary);
-        redirectAttributes.addFlashAttribute("message", "Boundary successfully updated !");
+        redirectAttributes.addFlashAttribute("message", "err.bndry.update.success");
 
         final String pathVars = boundaryTypeObj.getHierarchyType().getId() + "," + boundaryTypeObj.getId();
 

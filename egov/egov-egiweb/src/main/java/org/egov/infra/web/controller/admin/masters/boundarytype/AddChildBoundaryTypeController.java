@@ -86,18 +86,18 @@ public class AddChildBoundaryTypeController {
             //If child already exists for the boundary type, then show message and do not allow to add
             BoundaryType boundaryType1 = boundaryTypeService.getBoundaryTypeByParent(parentBoundaryTypeId);
             if(boundaryType1!=null){
-                redirectAttrs.addFlashAttribute("errorMessage", "Child boundary type already exists!");
+                redirectAttrs.addFlashAttribute("errorMessage", "err.child.bndrytype.exist");
                 return "redirect:/boundarytype/addchild/"+parentBoundaryTypeId;
             }
             else{
                 if(boundaryType.getParent().getName().equalsIgnoreCase(boundaryType.getName())){
-                    redirectAttrs.addFlashAttribute("errorMessage", "Child and parent boundary types cannot have the same name!");
+                    redirectAttrs.addFlashAttribute("errorMessage", "err.child.parent.same.name");
                     return "redirect:/boundarytype/addchild/"+parentBoundaryTypeId;
                 }
                 else{
                     boundaryTypeService.setHierarchyLevel(boundaryType, "addChild");
                     boundaryTypeService.createBoundaryType(boundaryType);
-                    redirectAttrs.addFlashAttribute("message", "Child Boundary Type added successfully!");
+                    redirectAttrs.addFlashAttribute("message", "msg.child.bndrytype.create.success");
                     return "redirect:/boundarytype/view/"+boundaryType.getId();
                 }
             }

@@ -47,7 +47,7 @@
 		<div class="panel" data-collapsed="0">
 			<div class="panel-body">
 				 <c:if test="${not empty message}">
-                    <div class="alert alert-success" role="alert">${message}</div>
+                    <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
                 </c:if>
 		<form:form  id="updateuserRoleForm" action="${user.id}" method ="post"  modelAttribute="user" commandName="user" class="form-horizontal form-groups-bordered" >
 			<div class="panel panel-primary" data-collapsed="0">

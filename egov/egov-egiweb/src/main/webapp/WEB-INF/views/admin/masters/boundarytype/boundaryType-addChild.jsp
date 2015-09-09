@@ -45,7 +45,7 @@
 <div class="row">
 	<div class="col-md-12">
 			<c:if test="${not empty errorMessage}">
-                    <div class="alert alert-danger" role="alert">${errorMessage}</div>
+                    <div class="alert alert-danger" role="alert"><spring:message code="${errorMessage}"/></div>
             </c:if>
 		<form:form  id="boundaryTypeAddChildform" mothod ="post" 
 		 class="form-horizontal form-groups-bordered" modelAttribute="boundaryType" >

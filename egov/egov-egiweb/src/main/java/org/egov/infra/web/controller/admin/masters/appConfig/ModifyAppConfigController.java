@@ -105,7 +105,7 @@ public class ModifyAppConfigController {
             model.addAttribute("mode", "update");
             return "appConfig-editform";
         } else {
-            model.addAttribute("message", "No record found");
+            model.addAttribute("message", "msg.no.record.found");
             return "appConfig-norecord";
         }
     }
@@ -117,9 +117,8 @@ public class ModifyAppConfigController {
             return "appConfig-editform";
         appConfig = buildAppConfigValueDeatils(appConfig, appConfig.getAppDataValues());
         appConfigValueService.updateAppConfigValues(appConfig);
-        final String message = "AppConfig Value updated Successfully";
         redirectAttrs.addFlashAttribute("appConfig", appConfig);
-        model.addAttribute("message", message);
+        redirectAttrs.addFlashAttribute("message", "msg.appconfig.update.success");
 
         return "appConfig-success";
     }

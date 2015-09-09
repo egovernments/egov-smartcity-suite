@@ -79,7 +79,7 @@ private BoundaryTypeService boundaryTypeService;
             return "boundaryType-update";
 		
 		boundaryTypeService.updateBoundaryType(boundaryType);
-		redirectAttrs.addFlashAttribute("message", "Boundary type updated successfully!");
+		redirectAttrs.addFlashAttribute("message", "msg.bndrytype.update.success");
 		return "redirect:/boundarytype/view/"+boundaryType.getId();
 	}
 }

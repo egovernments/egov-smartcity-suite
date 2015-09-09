@@ -80,7 +80,7 @@ public class CreateRoleController {
             return "role-form";
 
         roleService.createRole(role);
-        redirectAttrs.addFlashAttribute("message", "Role successfully created!");
+        redirectAttrs.addFlashAttribute("message", "msg.role.create.success");
         SUCCESS = "redirect:/role/view/" + role.getName();
 
         return SUCCESS;
