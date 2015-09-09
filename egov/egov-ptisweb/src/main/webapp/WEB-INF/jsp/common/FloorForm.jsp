@@ -105,8 +105,7 @@
 					<s:textfield name="propertyDetail.floorDetailsProxy[0].occupantName"
 						id="occupantName" size="20"
 						value="%{propertyDetail.floorDetailsProxy[0].occupantName}"
-						maxlength="64" cssStyle="width:100%" data-optional="0"
-						data-errormsg="Ocuupancy Name is required!" />
+						maxlength="64" cssStyle="width:100%"/>
 				</div>
 			</td>
 
@@ -232,7 +231,6 @@
 						<s:textfield name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].occupantName"
 							id="occupantname" size="25" maxlength="64" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].occupantName}"
 							cssStyle="width:100%" />
-						
 					</div>
 				</td>
  
