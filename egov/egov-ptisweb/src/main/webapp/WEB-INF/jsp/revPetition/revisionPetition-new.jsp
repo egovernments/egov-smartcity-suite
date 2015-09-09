@@ -119,7 +119,7 @@
             <td>
             <div id="objection_header" style="display:none;"> 
         	
-				<jsp:include page="recordObjection.jsp"/>
+				<jsp:include page="recordRevisionPetition.jsp"/>
             </div>
             </td>
           </tr>
