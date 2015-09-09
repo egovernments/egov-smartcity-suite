@@ -72,8 +72,8 @@
 			
 		<div class="col-xs-3 add-margin"><spring:message code="lbl.mobilenumber"/></div>
 		<div class="col-xs-3 add-margin view-content" id="mobileNumber"></div>
-		<div class="col-xs-3 add-margin">Email</div>
-		<div class="col-xs-3 add-margin view-content"></div>
+		<div class="col-xs-3 add-margin"><spring:message code="lbl.email"/> </div>
+		<div class="col-xs-3 add-margin view-content" id="email" ></div>
 	</div>
 	<div class="row add-border">
 		

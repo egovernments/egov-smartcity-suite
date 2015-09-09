@@ -165,6 +165,9 @@ public class NewConnectionController extends GenericConnectionController {
             LOG.debug("Model Level Validation occurs = "+ resultBinder);
         if (resultBinder.hasErrors()) {
             model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
+            prepareWorkflow(model,waterConnectionDetails,new WorkflowContainer());
+            model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
+            model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
             return "newconnection-form";
         }
         

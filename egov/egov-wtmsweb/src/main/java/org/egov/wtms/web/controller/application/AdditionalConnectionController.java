@@ -161,6 +161,9 @@ public class AdditionalConnectionController extends GenericConnectionController 
             final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                     .getActiveConnectionDetailsByConnection(addConnection.getConnection());
             loadBasicDetails(addConnection, model, parentConnectionDetails);
+            prepareWorkflow(model,addConnection,new WorkflowContainer());
+            model.addAttribute("additionalRule", addConnection.getApplicationType().getCode());
+            model.addAttribute("stateType", addConnection.getClass().getSimpleName());
             return "addconnection-form";
         }
         addConnection.setApplicationDate(new Date());
