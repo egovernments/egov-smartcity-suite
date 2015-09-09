@@ -49,14 +49,15 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     private EisCommonService eisCommonService;
     @Autowired
     private ApplicationIndexService applicationIndexService;
-    private static final String REVISION_PETITION_CREATED="CREATED";
-    
+    private static final String REVISION_PETITION_CREATED = "CREATED";
+
     @Autowired
     private MessagingService messagingService;
     private SMSEmailService sMSEmailService;
-    
+
     /**
      * Create revision petition
+     * 
      * @param objection
      * @return
      */
@@ -64,28 +65,27 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     public RevisionPetition createRevisionPetition(RevisionPetition objection) {
         if (objection.getId() == null)
             objection = persist(objection);
-        else {
+        else
             objection = merge(objection);
-        }
 
         return objection;
 
     }
-  /**
-   * Api to save revision petition using rest api's.
-   * @param objection
-   * @return
-   */
-     @Transactional
+
+    /**
+     * Api to save revision petition using rest api's.
+     * 
+     * @param objection
+     * @return
+     */
+    @Transactional
     public RevisionPetition createRevisionPetitionForRest(RevisionPetition objection) {
         Position position = null;
-        Position inspectionUserPosition = null;
         WorkFlowMatrix wfmatrix = null;
         User user = null;
         if (objection.getId() == null) {
-            if (objection.getObjectionNumber() == null) {
+            if (objection.getObjectionNumber() == null)
                 objection.setObjectionNumber(applicationNumberGenerator.generate());
-            }
             objection.getBasicProperty().setStatus(
                     propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_OBJECTED_STR));
             objection.getBasicProperty().setUnderWorkflow(Boolean.TRUE);
@@ -93,16 +93,17 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                 wfmatrix = revisionPetitionWorkFlowService.getWfMatrix(objection.getStateType(), null, null, null,
                         PropertyTaxConstants.REVISIONPETITION_CREATED, null);
                 // Get the default revenue cleark from admin boundary.
-                Designation desig = designationService.getDesignationByName(PropertyTaxConstants.REVENUE_CLERK_DESGN);
+                final Designation desig = designationService
+                        .getDesignationByName(PropertyTaxConstants.REVENUE_CLERK_DESGN);
                 List<Assignment> assignment = assignmentService.findByDesignationAndBoundary(desig.getId(), objection
                         .getBasicProperty().getPropertyID().getZone().getId());
-                if (assignment.size() > 0) {
+                if (assignment.size() > 0)
                     position = assignment.get(0).getPosition();
-                } else {
+                else {
                     assignment = assignmentService
                             .findPrimaryAssignmentForDesignationName(PropertyTaxConstants.REVENUE_CLERK_DESGN);
                     if (assignment.size() > 0)
-                        position = ((Assignment) assignment.get(0)).getPosition();
+                        position = assignment.get(0).getPosition();
                 }
 
                 updateRevisionPetitionStatus(wfmatrix, objection, null);
@@ -111,9 +112,9 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                     user = eisCommonService.getUserForPosition(position.getId(), new Date());
 
                 objection.start().withNextAction(wfmatrix.getPendingActions())
-                        .withStateValue(wfmatrix.getCurrentState()).withOwner(position)
-                        .withSenderName((user != null && user.getName() != null) ? user.getName() : "").withOwner(user)
-                        .withComments("");
+                .withStateValue(wfmatrix.getCurrentState()).withOwner(position)
+                .withSenderName(user != null && user.getName() != null ? user.getName() : "").withOwner(user)
+                .withComments("");
             }
 
             applyAuditing(objection.getState());
@@ -121,91 +122,97 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             updateIndex(objection);
 
             sendEmailandSms(objection, REVISION_PETITION_CREATED);
-        } else {
+        } else
             objection = merge(objection);
-        }
 
         return objection;
 
     }
+
     /**
      * Update elastic search index
+     * 
      * @param objection
      */
-    private void updateIndex(RevisionPetition objection) {
-        final ApplicationIndex applicationIndex = applicationIndexService
-               .findByApplicationNumber(objection.getObjectionNumber());
-         final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + objection.getObjectionNumber();
-         if (null == applicationIndex) {
-           final ApplicationIndexBuilder applicationIndexBuilder =
-                   new ApplicationIndexBuilder(PropertyTaxConstants.PTMODULENAME, objection.getObjectionNumber(),
-                           (objection.getCreatedDate()!=null?objection.getCreatedDate():new Date()), PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION,
-                           objection.getBasicProperty().getFullOwnerName(), objection.getState().getValue(), url,objection.getBasicProperty().getAddress().toString());
-           applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
-         } else {
-           applicationIndex.setStatus(objection.getState().getValue());
-           applicationIndexService.updateApplicationIndex(applicationIndex);
-         }
+    private void updateIndex(final RevisionPetition objection) {
+        final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(objection
+                .getObjectionNumber());
+        final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + objection.getObjectionNumber();
+        if (null == applicationIndex) {
+            final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
+                    PropertyTaxConstants.PTMODULENAME, objection.getObjectionNumber(),
+                    objection.getCreatedDate() != null ? objection.getCreatedDate() : new Date(),
+                    PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION, objection.getBasicProperty()
+                            .getFullOwnerName(), objection.getState().getValue(), url, objection.getBasicProperty()
+                            .getAddress().toString());
+            applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
+        } else {
+            applicationIndex.setStatus(objection.getState().getValue());
+            applicationIndexService.updateApplicationIndex(applicationIndex);
+        }
     }
+
     /**
-     * 
      * @param wfmatrix
      * @param objection
      * @param status
      */
-    private void updateRevisionPetitionStatus(WorkFlowMatrix wfmatrix, RevisionPetition objection,String status) {
-        
+    private void updateRevisionPetitionStatus(final WorkFlowMatrix wfmatrix, final RevisionPetition objection,
+            final String status) {
+
         EgwStatus egwStatus = null;
-        if(status!=null && !"".equals(status))
-            egwStatus=egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
-                    status);
-        
-        else if (wfmatrix != null && wfmatrix.getNextStatus() != null && objection != null) {
-             egwStatus=egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
+        if (status != null && !"".equals(status))
+            egwStatus = egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE, status);
+
+        else if (wfmatrix != null && wfmatrix.getNextStatus() != null && objection != null)
+            egwStatus = egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
                     wfmatrix.getNextStatus());
-        }
         if (egwStatus != null)
             objection.setEgwStatus(egwStatus);
-        
+
     }
+
     /**
      * Api to update revision petition.
+     * 
      * @param objection
      * @return
      */
-    
+
     @Transactional
     public RevisionPetition updateRevisionPetition(RevisionPetition objection) {
         if (objection.getId() == null)
             objection = persist(objection);
-        else {
+        else
             objection = update(objection);
-        }
 
         return objection;
 
     }
+
     /**
      * Get revision petition by application number
+     * 
      * @param applicationNumber
      * @return
      */
-    public RevisionPetition getRevisionPetitionByApplicationNumber(String applicationNumber) {
-        RevisionPetition revPetitionObject=null;
-        Criteria appCriteria = getSession()
-                .createCriteria(RevisionPetition.class, "revPetiton");
+    public RevisionPetition getRevisionPetitionByApplicationNumber(final String applicationNumber) {
+        RevisionPetition revPetitionObject = null;
+        final Criteria appCriteria = getSession().createCriteria(RevisionPetition.class, "revPetiton");
         appCriteria.add(Restrictions.eq("revPetiton.objectionNumber", applicationNumber));
-        revPetitionObject=(RevisionPetition) appCriteria.uniqueResult();
-                
+        revPetitionObject = (RevisionPetition) appCriteria.uniqueResult();
+
         return revPetitionObject;
     }
+
     /**
      * Api to send EMAIL and SMS.
+     * 
      * @param objection
      * @param applicationType
      */
     public void sendEmailandSms(final RevisionPetition objection, final String applicationType) {
-        
+
         if (objection != null) {
             final User user = objection.getBasicProperty().getPrimaryOwner();
             final String mobileNumber = user.getMobileNumber();
@@ -217,28 +224,31 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             String emailSubject = "";
             String emailBody = "";
 
-            if (applicationType!=null && applicationType.equalsIgnoreCase(REVISION_PETITION_CREATED)) {
+            if (applicationType != null && applicationType.equalsIgnoreCase(REVISION_PETITION_CREATED)) {
 
                 args.add(objection.getObjectionNumber());
                 if (mobileNumber != null)
-                    smsMsg = "Revision petition created. Use " + objection.getObjectionNumber()+" for future reference";
+                    smsMsg = "Revision petition created. Use " + objection.getObjectionNumber()
+                            + " for future reference";
                 if (emailid != null) {
-                    emailSubject =  "Revision petition created." ;
-                    emailBody =  "Revision petition created. Use " + objection.getObjectionNumber()+" for future reference";
+                    emailSubject = "Revision petition created.";
+                    emailBody = "Revision petition created. Use " + objection.getObjectionNumber()
+                            + " for future reference";
                 }
-            } 
+            }
             if (mobileNumber != null && !smsMsg.equals(""))
                 messagingService.sendSMS(mobileNumber, smsMsg);
-            if (emailid != null  && !emailBody.equals(""))
+            if (emailid != null && !emailBody.equals(""))
                 messagingService.sendEmail(emailid, emailSubject, emailBody);
         }
     }
+
     public SMSEmailService getsMSEmailService() {
         return sMSEmailService;
     }
 
-    public void setsMSEmailService(SMSEmailService sMSEmailService) {
+    public void setsMSEmailService(final SMSEmailService sMSEmailService) {
         this.sMSEmailService = sMSEmailService;
-    }   
-    
+    }
+
 }

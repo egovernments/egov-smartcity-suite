@@ -116,8 +116,8 @@ public class RevisionPetitionRestService {
         }
 
     }
+
     /**
-     * 
      * @param accessmentnumber
      * @param username
      * @param password
@@ -133,10 +133,10 @@ public class RevisionPetitionRestService {
     @Path("/restrevisionPetition/createRevisionPetition")
     @Produces(MediaType.APPLICATION_JSON)
     public String createRevisionPetitionFromRest(@FormParam("accessmentnumber") String accessmentnumber,
-             @FormParam("username") String username,
-            @FormParam("password") String password, @FormParam("details") String details,
-            @FormParam("receivedon") String receivedon, @FormParam("recievedBy") String recievedBy)
-            throws JsonGenerationException, JsonMappingException, IOException {
+            @FormParam("username") String username, @FormParam("password") String password,
+            @FormParam("details") String details, @FormParam("receivedon") String receivedon,
+            @FormParam("recievedBy") String recievedBy) throws JsonGenerationException, JsonMappingException,
+            IOException {
 
         String responseJson = new String();
 
@@ -175,14 +175,14 @@ public class RevisionPetitionRestService {
         }
         return responseJson;
     }
-/**
- * 
- * @param accessmentnumber
- * @param details
- * @param receivedon
- * @param recievedBy
- * @return
- */
+
+    /**
+     * @param accessmentnumber
+     * @param details
+     * @param receivedon
+     * @param recievedBy
+     * @return
+     */
     private ErrorDetails validateRevisionPetitionForm(String accessmentnumber, String details, String receivedon,
             String recievedBy) {
         ErrorDetails errorDetails = null;
@@ -221,7 +221,6 @@ public class RevisionPetitionRestService {
     }
 
     /**
-     * 
      * @param object
      * @return
      */
