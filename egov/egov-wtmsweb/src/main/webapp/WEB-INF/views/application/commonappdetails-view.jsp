@@ -119,7 +119,7 @@
 			<div class="col-xs-3 add-margin view-content" id="propertytaxdue"></div>
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.current.due"/></div>
 			<c:choose>
-				<c:when test="${null!=mode && (mode=='meterEntry'  || mode=='search' || mode=='addconnection' || mode=='waterTaxCollection') && (waterConnectionDetails.demand.baseDemand-waterConnectionDetails.demand.amtCollected)>0}">
+				<c:when test="${null!=mode && (mode=='meterEntry'  || mode =='changeOfUse' || mode=='search' || mode=='addconnection' || mode=='waterTaxCollection') && (waterConnectionDetails.demand.baseDemand-waterConnectionDetails.demand.amtCollected)>0}">
 					<div class="col-xs-3 add-margin view-content error-msg"><c:out value="${waterConnectionDetails.demand.baseDemand-waterConnectionDetails.demand.amtCollected}" /></div>
 				</c:when>	
 				<c:otherwise>
