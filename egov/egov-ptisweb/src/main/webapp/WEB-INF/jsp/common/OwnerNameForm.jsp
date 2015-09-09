@@ -60,7 +60,7 @@
 		</td>
 		 <td class="blueborderfortd" align="center">
         	+91 <s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.mobileNumber}" 
-        		onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');" data-idx="0" data-optional="1" data-errormsg="Mobile no is mandatory!"/>
+        		onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');" data-idx="0" data-optional="0" data-errormsg="Mobile no is mandatory!"/>
 		<td class="blueborderfortd" align="center">
            <s:select name="basicProperty.propertyOwnerInfoProxy[0].owner.salutation" id="propertyOwnerInfo[0].owner.salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }" value="%{basicProperty.propertyOwnerInfoProxy[0].owner.salutation}"
 				cssClass="selectwk"></s:select>
@@ -102,7 +102,7 @@
 			  </td>
 			  <td class="blueborderfortd" align="center">
         			+91 <s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.mobileNumber}" 
-        				onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');" data-idx="%{#ownerStatus.index}" data-optional="1" data-errormsg="Mobile no is mandatory!" />
+        				onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');" data-idx="%{#ownerStatus.index}" data-optional="0" data-errormsg="Mobile no is mandatory!" />
         		</td>
 			  <td class="blueborderfortd" align="center">
                <s:select name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.salutation" id="salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.salutation}"
@@ -110,7 +110,7 @@
             </td>
         		<td class="blueborderfortd" align="center">
         			<s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.name" maxlength="64" size="20" id="ownerName" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.name}" 
-        				onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1" data-errormsg="Owner name is mandatory!"/>
+        				onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Owner name is mandatory!"/>
         		</td>
         		<td class="blueborderfortd" align="center"><s:select id="gender" name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.gender" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.gender}"
 				headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()">

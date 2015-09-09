@@ -124,7 +124,7 @@
 					<s:textfield name="propertyDetail.floorDetailsProxy[0].builtUpArea.area" 
 						maxlength="15" size="10" id="propertyDetail.floorDetailsProxy[0].builtUpArea.area" value="%{propertyDetail.floorDetailsProxy[0].builtUpArea.area}"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
-						cssStyle="width:100%" />
+						cssStyle="width:100%" data-optional="0" data-errormsg="Plinth area is mandatory!"/>
 				</div>
 			</td>
 			

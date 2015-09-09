@@ -866,7 +866,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
         if (wardId == null || wardId == -1)
             addActionError(getText("mandatory.ward"));
-        else if (!StringUtils.isBlank(houseNumber))
+        else if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+            if (!StringUtils.isBlank(houseNumber))
             validateHouseNumber(wardId, houseNumber, basicProp);
         else
             addActionError(getText("mandatory.doorNo"));
