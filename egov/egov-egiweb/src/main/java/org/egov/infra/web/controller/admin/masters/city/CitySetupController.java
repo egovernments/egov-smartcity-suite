@@ -94,7 +94,7 @@ public class CitySetupController {
             return "city-setup";
         addToCityFileData(city, Arrays.asList(gisKML, logo));
         cityService.updateCity(city);
-        redirectAttrs.addFlashAttribute("message", "City configuration successfully updated!");
+        redirectAttrs.addFlashAttribute("message", "msg.city.update.success");
         return "redirect:/city/setup/view";
     }
 
@@ -115,7 +115,7 @@ public class CitySetupController {
                         break;
                     }
                 } catch (final Exception e) {
-                    throw new EGOVRuntimeException("Error occurred while adding city related files");
+                    throw new EGOVRuntimeException("err.city.add.files");
                 }
             });
 

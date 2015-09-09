@@ -70,13 +70,12 @@ public class LoginController {
     public String validateAndSendNewPassword(@RequestParam final String token, @RequestParam final String newPassword,
             @RequestParam final String confirmPwd, final RedirectAttributes redirectAttrib) {
         if (!newPassword.equals(confirmPwd)) {
-            redirectAttrib.addAttribute("error", "Password entered is mismatching");
+            redirectAttrib.addAttribute("error", "err.login.pwd.mismatch");
             return "redirect:/login/password/reset?token=" + token;
         }
 
         if (!ValidatorUtils.isValidPassword(newPassword)) {
-            redirectAttrib.addAttribute("error",
-                    "Password must be at least 8 to 32 characters long and must have one or more :- upper case and lower case alphabet,number and special character except [& < > # % \" ' / \\ and space]");
+            redirectAttrib.addAttribute("error", "err.login.pwd.length");
             return "redirect:/login/password/reset?token=" + token;
         }
 

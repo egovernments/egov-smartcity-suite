@@ -173,7 +173,7 @@ public class HomeController {
             return "profile-edit";
         userService.updateUser(user);
         setUserLocale(user, request, response);
-        redirAttrib.addFlashAttribute("message", "Profile successfully updated");
+        redirAttrib.addFlashAttribute("message", "msg.profile.update.success");
         return "redirect:/home/profile/edit";
     }
 

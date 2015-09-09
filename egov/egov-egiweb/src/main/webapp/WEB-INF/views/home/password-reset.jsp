@@ -49,7 +49,7 @@
 			<div class="panel-body custom-form">
 				<form:form id="password-form" cssClass="form-horizontal form-groups-bordered">
 					<c:if test="${not empty param.error}">
-                    	<div id="error-msg" class="error-msg text-center add-margin">${param.error}</div>
+                    	<div id="error-msg" class="error-msg text-center add-margin"><spring:message code="${param.error}"/></div>
                 	</c:if>
 					<div class="form-group">
 						<label class="col-sm-4 control-label">
