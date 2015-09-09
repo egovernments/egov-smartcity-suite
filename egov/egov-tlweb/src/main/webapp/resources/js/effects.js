@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+/*-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #     accountability and the service delivery of the government  organizations.
 #  
@@ -36,7 +36,7 @@
 #  	   or trademarks of eGovernments Foundation.
 #  
 #    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------*/
 // script.aculo.us effects.js v1.8.0, Tue Nov 06 15:01:40 +0300 2007
 
 // Copyright (c) 2005-2007 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)

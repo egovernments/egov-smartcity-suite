@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #     accountability and the service delivery of the government  organizations.
 #  
@@ -36,10 +36,8 @@
 #  	   or trademarks of eGovernments Foundation.
 #  
 #    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------->
 <%@ include file="/includes/taglibs.jsp"%>
-<%@ taglib prefix="sx" uri="/WEB-INF/struts-dojo-tags.tld"%>
-<%@page import="org.egov.lib.admbndry.CityWebsiteDAO,org.egov.lib.admbndry.CityWebsite"%>
 <html>
 	<head>
 		<title>Rejected Trade License</title>
@@ -83,13 +81,13 @@
           	}
       
 		</script>
-		<% 
+		<%-- <% 
 			String cityUrl = (String) session.getAttribute("cityurl");
 		   	CityWebsiteDAO cityWebsiteDAO = new CityWebsiteDAO();
 			CityWebsite cityWebsite = cityWebsiteDAO.getCityWebSiteByURL(cityUrl);
 			String cityName = cityWebsite.getCityName();
 			String logoName = cityWebsite.getLogo();
-		%>
+		%> --%>
 	</head>
 	<body onload="refreshInbox()">
 		<center>

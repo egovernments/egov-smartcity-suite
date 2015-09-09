@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #     accountability and the service delivery of the government  organizations.
 #  
@@ -36,9 +36,8 @@
 #  	   or trademarks of eGovernments Foundation.
 #  
 #    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------->
 <%@ include file="/includes/taglibs.jsp"%>
-<%@ taglib prefix="sx" uri="/WEB-INF/struts-dojo-tags.tld"%>
 <html>
 	<head>
 		<title><s:text name="page.title.newtrade" /></title>
@@ -332,7 +331,7 @@
 													<td class="<c:out value="${trclass}"/>">
 														<s:text name='license.deduction' />
 													</td>
-													<td class="<c:out value="${trclass}"/>" <s:textfield name="deduction"  maxlength="8" onKeyPress="return numbersforamount(this, event)" onBlur="checkLength(this,8),formatCurrency(deduction)" /></td>
+													<td class="<c:out value="${trclass}"/>"> <s:textfield name="deduction"  maxlength="8" onKeyPress="return numbersforamount(this, event)" onBlur="checkLength(this,8),formatCurrency(deduction)" /></td>
 												</tr>
 												<c:choose>
 													<c:when test="${trclass=='greybox'}">

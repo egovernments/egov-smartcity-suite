@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #     accountability and the service delivery of the government  organizations.
 #  
@@ -36,12 +36,10 @@
 #  	   or trademarks of eGovernments Foundation.
 #  
 #    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+#------------------------------------------------------------------------------->
+<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt"%>
-<%@page
-	import="org.egov.lib.admbndry.CityWebsiteDAO,org.egov.lib.admbndry.CityWebsite"%>
 <html>
 <head>
 <title>Rejection Certificate for TradeLicense</title>
@@ -69,14 +67,14 @@
 		}
 	}
 </script>
-<%
+<%-- <%
 	String cityUrl = (String) session.getAttribute("cityurl");
 	CityWebsiteDAO cityWebsiteDAO = new CityWebsiteDAO();
 	CityWebsite cityWebsite = cityWebsiteDAO
 			.getCityWebSiteByURL(cityUrl);
 	String cityName = cityWebsite.getCityName();
 	String logoName = cityWebsite.getLogo();
-%>
+%> --%>
 </head>
 <body onload="refreshInbox();printLicense()">
 	<center>
@@ -88,11 +86,11 @@
 					style="margin-left: 25px">
 					<tr>
 						<td colspan="4" align="center"><img
-							src="/egi/images/<%=logoName%>" width="91" height="90" /></td>
+							src="/egi/images/<%-- <%=logoName%> --%>" width="91" height="90" /></td>
 					</tr>
 					<tr>
 						<td colspan="4" align="center"
-							style="font-size: 15px; font-weight: bolder;"><%=cityName%>
+							style="font-size: 15px; font-weight: bolder;"><%-- <%=cityName%> --%>
 							<br /> <br /></td>
 					</tr>
 					<tr>

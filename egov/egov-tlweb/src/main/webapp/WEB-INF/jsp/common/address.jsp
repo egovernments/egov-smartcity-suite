@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #     accountability and the service delivery of the government  organizations.
 #  
@@ -36,7 +36,7 @@
 #  	   or trademarks of eGovernments Foundation.
 #  
 #    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------->>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
@@ -87,7 +87,9 @@
 	<td class="<c:out value="${trclass}"/>">
 		<s:text name='license.housenumber.old' />
 	</td>
-	<td class="<c:out value="${trclass}"/>" <s:textfield name="address.streetAddress2" maxlength="10" /></td>
+	<td class="<c:out value="${trclass}"/>">
+		<s:textfield name="address.streetAddress2" maxlength="10" />
+	</td>
 </tr>
 <c:choose>
 	<c:when test="${trclass=='greybox'}">
