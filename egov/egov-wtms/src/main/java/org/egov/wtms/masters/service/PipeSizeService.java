@@ -96,5 +96,10 @@ public class PipeSizeService {
     public List<PipeSize> getAllActivePipeSize() {
         return pipeSizeRepository.findByActiveTrueOrderBySizeInInchAsc();
     }
+    
+
+    public List<PipeSize> getAllPipeSizesByPropertyType(final Long propertyType) {
+        return pipeSizeRepository.getAllPipeSizesByPropertyType(propertyType);
+    }
 
 }

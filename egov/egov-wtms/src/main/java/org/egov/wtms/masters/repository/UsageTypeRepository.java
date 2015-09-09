@@ -64,14 +64,5 @@ public interface UsageTypeRepository extends JpaRepository<UsageType, Long> {
 
     @Query("select PU.usagetype from org.egov.wtms.masters.entity.WaterPropertyUsage PU where PU.propertyType=:propertyType ")
     List<UsageType> getAllUsageTypesByPropertyType(@Param("propertyType") Long propertyType);
-
-    @Query("select PC.categorytype from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType=:propertyType ")
-    List<ConnectionCategory> getAllCategoryTypesByPropertyType(@Param("propertyType") Long propertyType);
-
-    @Query("select PC.categorytype from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType=:propertyType and PC.categorytype.name != 'BPL' ")
-    List<ConnectionCategory> getAllCategoryTypesByPropertyTypeNotInBPL(@Param("propertyType") Long propertyType);
-
-    @Query("select PS.pipesize from org.egov.wtms.masters.entity.PropertyPipeSize PS where PS.propertyType=:propertyType ")
-    List<PipeSize> getAllPipeSizesByPropertyType(@Param("propertyType") Long propertyType);
-
+    
 }

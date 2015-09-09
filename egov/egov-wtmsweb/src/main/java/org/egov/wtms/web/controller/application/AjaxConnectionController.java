@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.commons.Installment;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.NewConnectionService;
@@ -42,8 +41,9 @@ import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.UsageType;
+import org.egov.wtms.masters.service.ConnectionCategoryService;
+import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.UsageTypeService;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -61,12 +61,18 @@ public class AjaxConnectionController {
 
     @Autowired
     private UsageTypeService usageTypeService;
-    
+
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
-    
+
     @Autowired
     private ConnectionDemandService connectionDemandService;
+
+    @Autowired
+    private PipeSizeService pipeSizeService;
+
+    @Autowired
+    private ConnectionCategoryService connectionCategoryService;
 
     @RequestMapping(value = "/ajaxconnection/check-primaryconnection-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String isConnectionPresentForProperty(@RequestParam final String propertyID) {
@@ -75,9 +81,9 @@ public class AjaxConnectionController {
 
     @RequestMapping(value = "/ajax-CategoryTypeByPropertyType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<ConnectionCategory> getAllCategoryTypesByPropertyType(
-            @RequestParam final Long propertyType,@RequestParam final String connectionType) {
+            @RequestParam final Long propertyType, @RequestParam final String connectionType) {
         List<ConnectionCategory> categoryTypes = new ArrayList<ConnectionCategory>(0);
-        categoryTypes = usageTypeService.getAllCategoryTypesByPropertyType(propertyType ,connectionType);
+        categoryTypes = connectionCategoryService.getAllCategoryTypesByPropertyType(propertyType, connectionType);
         categoryTypes.forEach(categoryType -> categoryType.toString());
         return categoryTypes;
     }
@@ -93,16 +99,25 @@ public class AjaxConnectionController {
     @RequestMapping(value = "/ajax-PipeSizesByPropertyType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<PipeSize> getAllPipeSizesByPropertyType(@RequestParam final Long propertyType) {
         List<PipeSize> pipesizes = new ArrayList<PipeSize>(0);
-        pipesizes = usageTypeService.getAllPipeSizesByPropertyType(propertyType);
+        pipesizes = pipeSizeService.getAllPipeSizesByPropertyType(propertyType);
         pipesizes.forEach(pipesize -> pipesize.toString());
         return pipesizes;
     }
+    /**
+     * 
+     * @param givenDate
+     * @param requestConsumerCode
+     * @return True or False Based on Entered Date's Month Installment Meter Entry is present
+     */
     @RequestMapping(value = "/ajax-meterReadingEntryExist", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Boolean getMeterReadingEntryExist(
-            @ModelAttribute("waterConnectionDetails") @RequestParam final Date givenDate, @RequestParam final String requestConsumerCode) {
-        WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(requestConsumerCode);
-        Boolean enteredMonthReadingExist =  connectionDemandService.meterEntryAllReadyExistForCurrentMonth(waterConnectionDetails,givenDate);
+            @ModelAttribute("waterConnectionDetails") @RequestParam final Date givenDate,
+            @RequestParam final String requestConsumerCode) {
+        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .findByApplicationNumberOrConsumerCode(requestConsumerCode);
+        final Boolean enteredMonthReadingExist = connectionDemandService.meterEntryAllReadyExistForCurrentMonth(
+                waterConnectionDetails, givenDate);
         return enteredMonthReadingExist;
     }
-   
+
 }

@@ -43,6 +43,8 @@ import java.util.List;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -55,5 +57,11 @@ public interface ConnectionCategoryRepository extends JpaRepository<ConnectionCa
     ConnectionCategory findByCode(String code);
 
     List<ConnectionCategory> findByActiveTrueOrderByNameAsc();
+
+    @Query("select PC.categorytype from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType=:propertyType ")
+    List<ConnectionCategory> getAllCategoryTypesByPropertyType(@Param("propertyType") Long propertyType);
+
+    @Query("select PC.categorytype from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType=:propertyType and PC.categorytype.name != 'BPL' ")
+    List<ConnectionCategory> getAllCategoryTypesByPropertyTypeNotInBPL(@Param("propertyType") Long propertyType);
 
 }

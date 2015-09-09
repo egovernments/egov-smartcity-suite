@@ -168,7 +168,7 @@ public class ConnectionDemandService {
                 donationDetails = donationDetailsService.findByDonationHeader(donationHeaderService
                         .findByCategoryandUsageandMinPipeSize(waterConnectionDetails.getCategory(),
                                 waterConnectionDetails.getUsageType(), waterConnectionDetails.getPipeSize()
-                                        .getSizeInInch()));
+                                .getSizeInInch()));
 
         if (donationDetails != null) {
             feeDetails.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, donationDetails.getAmount());
@@ -223,7 +223,7 @@ public class ConnectionDemandService {
                 if (WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE.equals(detail.getEgDemandReason()
                         .getEgDemandReasonMaster().getCode()))
                     splitAmount
-                            .put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE, detail.getAmount().doubleValue());
+                    .put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE, detail.getAmount().doubleValue());
                 else if (WaterTaxConstants.WATERTAX_DONATION_CHARGE.equals(detail.getEgDemandReason()
                         .getEgDemandReasonMaster().getCode()))
                     splitAmount.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, detail.getAmount().doubleValue());
@@ -410,12 +410,13 @@ public class ConnectionDemandService {
         return waterConnectionDetailsRepository.findByApplicationNumberAndInstallment(installment, consumerCode)
                 .getDemand();
     }
+
     /**
-     * 
      * @param waterConnectionDetails
      * @param billAmount
      * @param currentDate
-     * @return Updates WaterConnectionDetails after Meter Entry Demand Calculettion and Update Previous Bill and Generates New Bill 
+     * @return Updates WaterConnectionDetails after Meter Entry Demand
+     *         Calculettion and Update Previous Bill and Generates New Bill
      */
     @Transactional
     public WaterConnectionDetails updateDemandForMeteredConnection(final WaterConnectionDetails waterConnectionDetails,
@@ -582,6 +583,13 @@ public class ConnectionDemandService {
         return retMap;
     }
 
+    /**
+     * @param waterConnectionDetails
+     * @param givenDate
+     *            It Checks the Meter Entry Exist For the Entred Date Month and
+     *            Returns True if It Exists and checks with Demand Current
+     *            Installment
+     */
     public Boolean meterEntryAllReadyExistForCurrentMonth(final WaterConnectionDetails waterConnectionDetails,
             final Date givenDate) {
         Boolean currrentInstallMentExist = false;
@@ -590,8 +598,8 @@ public class ConnectionDemandService {
         if (waterConnectionDetails.getDemand() != null
                 && waterConnectionDetails.getDemand().getEgInstallmentMaster() != null)
             if (installment != null
-                    && installment.getInstallmentNumber().equals(
-                            waterConnectionDetails.getDemand().getEgInstallmentMaster().getInstallmentNumber()))
+            && installment.getInstallmentNumber().equals(
+                    waterConnectionDetails.getDemand().getEgInstallmentMaster().getInstallmentNumber()))
                 currrentInstallMentExist = true;
         return currrentInstallMentExist;
     }

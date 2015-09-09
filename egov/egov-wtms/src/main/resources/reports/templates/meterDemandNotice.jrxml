@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="meterDemandNotice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="590cd9f5-da01-41b1-a64e-7f01e9f69f60">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="503"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="applicantName" class="java.lang.String"/>
 	<parameter name="address" class="java.lang.String"/>
 	<parameter name="municipality" class="java.lang.String"/>
@@ -51,34 +51,6 @@
 				<reportElement x="-15" y="-249" width="160" height="20" uuid="2cbd7f20-ec42-4d83-87fd-958e7f4879cf"/>
 				<text><![CDATA[Property owner name]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="131" y="33" width="187" height="36" isPrintWhenDetailOverflows="true" uuid="01bf00fc-6578-49a9-b0d7-ce9f4be961ff"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Justified" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" pdfFontName="Times-Bold"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{address}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="1" y="33" width="130" height="36" uuid="351773cf-4e6e-42e8-b8d6-d841296ccce1"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="false" pdfFontName="Times-Roman"/>
-				</textElement>
-				<text><![CDATA[Property Address:]]></text>
-			</staticText>
 			<staticText>
 				<reportElement x="318" y="0" width="111" height="33" uuid="658e15ab-de80-4a74-b9d1-29d51f1958c2"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
@@ -91,22 +63,8 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="false" pdfFontName="Times-Roman"/>
 				</textElement>
-				<text><![CDATA[Property Asseesment Number::]]></text>
+				<text><![CDATA[Property Asseesment Numbr:]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="429" y="0" width="125" height="33" uuid="9f9f654a-10b0-451c-b557-0372aa0dd37b"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" pdfFontName="Times-Bold"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{propertyassesmentNumber}]]></textFieldExpression>
-			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="131" y="0" width="187" height="33" uuid="726950ec-ebf3-4345-be96-aad0d6a62e61"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
@@ -371,7 +329,7 @@
 5.   Incase of paying by cheque, should include bank charges also.]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="429" y="33" width="125" height="36" uuid="45e1614f-98a9-40dc-99a6-fa3096175f11"/>
+				<reportElement stretchType="RelativeToTallestObject" x="130" y="33" width="187" height="36" uuid="45e1614f-98a9-40dc-99a6-fa3096175f11"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -385,7 +343,7 @@
 				<textFieldExpression><![CDATA[$P{applicantName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="318" y="33" width="111" height="36" uuid="5b975729-07d0-47a6-92e0-78a8a0994b16"/>
+				<reportElement x="1" y="33" width="131" height="36" uuid="5b975729-07d0-47a6-92e0-78a8a0994b16"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -566,6 +524,48 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{totalBilltoCollect}]]></textFieldExpression>
 			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="427" y="0" width="128" height="33" uuid="9f9f654a-10b0-451c-b557-0372aa0dd37b"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" pdfFontName="Times-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{propertyassesmentNumber}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="427" y="33" width="128" height="36" isPrintWhenDetailOverflows="true" uuid="01bf00fc-6578-49a9-b0d7-ce9f4be961ff"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" pdfFontName="Times-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{address}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="317" y="33" width="112" height="36" uuid="351773cf-4e6e-42e8-b8d6-d841296ccce1"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false" pdfFontName="Times-Roman"/>
+				</textElement>
+				<text><![CDATA[Property Address:]]></text>
+			</staticText>
 		</band>
 	</detail>
 </jasperReport>

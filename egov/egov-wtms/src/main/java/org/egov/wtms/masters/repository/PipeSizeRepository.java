@@ -43,6 +43,8 @@ import java.util.List;
 
 import org.egov.wtms.masters.entity.PipeSize;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -51,4 +53,8 @@ public interface PipeSizeRepository extends JpaRepository<PipeSize, Long> {
     PipeSize findByCode(String code);
 
     List<PipeSize> findByActiveTrueOrderBySizeInInchAsc();
+
+    @Query("select PS.pipesize from org.egov.wtms.masters.entity.PropertyPipeSize PS where PS.propertyType=:propertyType ")
+    List<PipeSize> getAllPipeSizesByPropertyType(@Param("propertyType") Long propertyType);
+
 }

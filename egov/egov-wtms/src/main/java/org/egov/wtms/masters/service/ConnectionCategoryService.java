@@ -43,6 +43,7 @@ import java.util.List;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.repository.ConnectionCategoryRepository;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -103,6 +104,14 @@ public class ConnectionCategoryService {
 
     public List<ConnectionCategory> getAllActiveConnectionCategory() {
         return connectionCategoryRepository.findByActiveTrueOrderByNameAsc();
+    }
+
+    public List<ConnectionCategory> getAllCategoryTypesByPropertyType(final Long propertyType,
+            final String connectionType) {
+        if (connectionType.equals(WaterTaxConstants.ADDNLCONNECTION))
+            return connectionCategoryRepository.getAllCategoryTypesByPropertyTypeNotInBPL(propertyType);
+        else
+            return connectionCategoryRepository.getAllCategoryTypesByPropertyType(propertyType);
     }
 
 }
