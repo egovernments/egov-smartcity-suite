@@ -53,7 +53,7 @@
 				
 				<c:choose>
 				<c:when test="${ waterConnectionDetails.applicationType.code == 'CHANGEOFUSE' && waterConnectionDetails.state.value=='Rejected' }">
-						<spring:message code="msg.changeofuseconnection.rejection.success" /><span>${approverName}</span>
+						<spring:message code="msg.changeofuseconnection.rejection.success" /><span> ${approverName}</span>
 					</c:when>
 					<c:when test="${ waterConnectionDetails.status.code!='APPROVED' && waterConnectionDetails.status.code!='SANCTIONED' && waterConnectionDetails.connectionStatus == 'INPROGRESS' && waterConnectionDetails.applicationType.code=='CHANGEOFUSE'}">
 						<spring:message code="msg.changeofuseconnection.ack.msg" />

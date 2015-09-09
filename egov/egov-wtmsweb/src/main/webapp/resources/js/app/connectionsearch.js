@@ -61,7 +61,7 @@ jQuery(document).ready(function($) {
 			searchable : true,
 			data : searchResult,
 			columns : [{title : 'Applicant Name',data : 'resource.searchable.consumername'},
-			           {title : 'Consumer No.',class : 'row-detail',data : 'resource.clauses.consumercode'},
+			           {title : 'H.S.C Number',class : 'row-detail',data : 'resource.clauses.consumercode'},
 			           {title : 'Address',data : 'resource.searchable.locality'},
 			           {title : 'apptype',data : 'resource.clauses.applicationcode',"bVisible" : false},
 			           {title : 'Usage Type',data : 'resource.clauses.usage'},
