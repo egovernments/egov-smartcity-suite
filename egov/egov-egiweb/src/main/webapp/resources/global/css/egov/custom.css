@@ -2298,3 +2298,7 @@ body.index, .page-container{
 #wrap .popover {
   min-width:400px;
 }
+
+.add-icon-attachment{
+    width: 35px;height:35px;line-height:35px;
+}
