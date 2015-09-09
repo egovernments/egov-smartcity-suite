@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.Accountdetailkey;
@@ -77,14 +78,10 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.opensymphony.xwork2.Action;
-
-@Result(name = Action.SUCCESS, type = "ServletRedirectResult.class", location = "contractor.action")
 @ParentPackage("egov")
+@Result(name = ContractorAction.NEW, location = "contractor-new.jsp")
 public class ContractorAction extends SearchFormAction {
-    /**
-     *
-     */
+    
     private static final long serialVersionUID = 3167651186547987956L;
 
     private static final Logger logger = Logger.getLogger(ContractorAction.class);
@@ -133,6 +130,7 @@ public class ContractorAction extends SearchFormAction {
         return list();
     }
 
+    @Action(value = "/masters/contractor-newform") 
     public String newform() {
         return NEW;
     }
