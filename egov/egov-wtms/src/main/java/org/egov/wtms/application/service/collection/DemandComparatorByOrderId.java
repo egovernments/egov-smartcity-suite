@@ -49,9 +49,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class DemandComparatorByOrderId implements Comparator<EgDemandDetails> {
     @Override
-    public int compare(final EgDemandDetails d1, final EgDemandDetails d2) {
-        return d1.getEgDemandReason().getEgDemandReasonMaster().getOrderId()
-                .compareTo(d2.getEgDemandReason().getEgDemandReasonMaster().getOrderId());
+    public int compare(final EgDemandDetails demandOne, final EgDemandDetails demandTwo) {
+        return demandOne.getEgDemandReason().getEgDemandReasonMaster().getOrderId()
+                .compareTo(demandTwo.getEgDemandReason().getEgDemandReasonMaster().getOrderId());
     }
 
 }

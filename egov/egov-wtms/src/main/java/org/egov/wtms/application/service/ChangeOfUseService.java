@@ -105,7 +105,7 @@ public class ChangeOfUseService {
                         null, null);
         } else if (null != inWorkflow)
             validationMessage = messageSource.getMessage(
-                    "err.validate.addconnection.application.inprocess",
+                    "err.validate.changeofUse.application.inprocess",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
                             inWorkflow.getApplicationNumber() }, null);
         return validationMessage;
