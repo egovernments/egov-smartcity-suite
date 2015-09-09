@@ -258,7 +258,7 @@
 						</webModule>
 					<!--	<webModule>
 							<groupId>org.egov</groupId>
-							<artifactId>egov-assetsweb</artifactId>
+							<artifactId>egov-worksweb</artifactId>
 							<contextRoot>/egworks</contextRoot>
 						</webModule> -->
 						<webModule>
