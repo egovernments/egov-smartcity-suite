@@ -1,0 +1,291 @@
+/*******************************************************************************
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *     accountability and the service delivery of the government  organizations.
+ *
+ *      Copyright (C) <2015>  eGovernments Foundation
+ *
+ *      The updated version of eGov suite of products as by eGovernments Foundation
+ *      is available at http://www.egovernments.org
+ *
+ *      This program is free software: you can redistribute it and/or modify
+ *      it under the terms of the GNU General Public License as published by
+ *      the Free Software Foundation, either version 3 of the License, or
+ *      any later version.
+ *
+ *      This program is distributed in the hope that it will be useful,
+ *      but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *      GNU General Public License for more details.
+ *
+ *      You should have received a copy of the GNU General Public License
+ *      along with this program. If not, see http://www.gnu.org/licenses/ or
+ *      http://www.gnu.org/licenses/gpl.html .
+ *
+ *      In addition to the terms of the GPL license to be adhered to in using this
+ *      program, the following additional terms are to be complied with:
+ *
+ *  	1) All versions of this program, verbatim or modified must carry this
+ *  	   Legal Notice.
+ *
+ *  	2) Any misrepresentation of the origin of the material is prohibited. It
+ *  	   is required that all modified versions of this material be marked in
+ *  	   reasonable ways as different from the original version.
+ *
+ *  	3) This license does not grant any rights to any user of the program
+ *  	   with regards to rights under trademark law for use of the trade names
+ *  	   or trademarks of eGovernments Foundation.
+ *
+ *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ ******************************************************************************/
+package org.egov.tl.web.actions;
+
+import org.apache.struts2.convention.annotation.Action;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+import org.egov.eis.service.DesignationService;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.pims.commons.Designation;
+import org.egov.tl.utils.LicenseUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+
+
+@Result(
+        name = "SUCCESS", type = "redirect", location = "CommonAjaxAction.action")
+@Results({ @Result(
+        name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain" }) })
+@ParentPackage("egov")
+public class CommonAjaxAction extends BaseFormAction {
+    private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger.getLogger(CommonAjaxAction.class);
+    public static final String LOCATIONS = "locations";
+    public static final String STREETS = "streets";
+    public static final String DIVISIONS = "divisions";
+    public static final String AREAS = "areas";
+    private static final String AREA = "area";
+    private static final String LOCATION = "location";
+
+    // these are Set by Ajax call
+    private int divisionId;
+    private int areaId;
+    private int locationId;
+    private int zoneId;
+    private List<Boundary> locationList = new LinkedList<Boundary>();
+    private List<Boundary> areaList = new LinkedList<Boundary>();
+    private List<Boundary> streetList = new LinkedList<Boundary>();
+    private List<Boundary> divisionList = new LinkedList<Boundary>();
+    private String returnStream = "";
+    private List<Designation> designationList;
+    private Integer departmentId;
+    private Integer designationId;
+    private List<User> allActiveUsersByGivenDesg;
+    protected LicenseUtils licenseUtils;
+    @Autowired
+    private BoundaryService boundaryService;
+    @Autowired
+    private DesignationService designationService;
+
+    public InputStream getReturnStream() {
+        final ByteArrayInputStream is = new ByteArrayInputStream(returnStream.getBytes());
+        return is;
+    }
+
+    @Override
+    public Object getModel() {
+        return null;
+    }
+
+    public String populateLocations() {
+        try {
+            locationList = boundaryService.getChildBoundariesByBoundaryId(Long.valueOf(areaId));
+            final StringBuilder result = new StringBuilder();
+            for (final Boundary boundary : locationList)
+                result.append("Text:").append(boundary.getName()).append("Value:").append(boundary.getId()).append("\n");
+            returnStream = result.toString();
+        } catch (final Exception e) {
+            LOGGER.error("populateLocations() - Error while loading locations." + e.getMessage());
+            addFieldError(CommonAjaxAction.LOCATION, "Unable to load location information");
+            throw new EGOVRuntimeException("Unable to load location information", e);
+        }
+        return "AJAX_RESULT";
+    }
+
+    /**
+     * Populate streets.
+     *
+     * @return the string
+     */
+    public String populateStreets() {
+        try {
+            streetList = boundaryService.getChildBoundariesByBoundaryId(Long.valueOf(locationId));
+        } catch (final Exception e) {
+            LOGGER.error("populateStreets() - Error while loading streets.", e);
+            addFieldError(CommonAjaxAction.LOCATION, "Unable to load street information");
+            throw new EGOVRuntimeException("Unable to load street information", e);
+        }
+        return CommonAjaxAction.STREETS;
+    }
+
+    /**
+     * Populate wards.
+     *
+     * @return the string
+     */
+@Action(value="/web/commonAjax-populateDivisions")
+    public String populateDivisions() {
+        try {
+            final Boundary boundary = boundaryService.getBoundaryById(Long.valueOf(zoneId));
+            final String cityName = licenseUtils.getAllCity().get(0).getName();
+            if (!boundary.getName().equals(cityName))
+                divisionList = boundaryService.getChildBoundariesByBoundaryId(Long.valueOf(zoneId));
+        } catch (final Exception e) {
+            LOGGER.error("populateDivisions() - Error while loading divisions ." + e.getMessage());
+            addFieldError(CommonAjaxAction.LOCATION, "Unable to load division information");
+            throw new EGOVRuntimeException("Unable to load division information", e);
+        }
+        return "ward";
+    }
+
+@Action(value="/web/commonAjax-ajaxPopulateDesignationsByDept")
+    public String ajaxPopulateDesignationsByDept() {
+        try {
+
+            designationList = designationService.getAllDesignationByDepartment(Long.valueOf(departmentId),
+                    new Date());
+        } catch (final Exception e) {
+            LOGGER.error("populateDesignationsByDept() - Error while loading divisions ." + e.getMessage());
+            addFieldError(CommonAjaxAction.LOCATION, "Unable to load Designation information");
+            throw new EGOVRuntimeException("Unable to load Designation information", e);
+        }
+        return "designation";
+    }
+
+    @SuppressWarnings("unchecked")
+@Action(value="/web/commonAjax-ajaxPopulateUsersByDesignation")
+    public String ajaxPopulateUsersByDesignation() {
+        try {
+            //allActiveUsersByGivenDesg = designationService.getAllActiveUsersByGivenDesg(designationId);
+        } catch (final Exception e) {
+            LOGGER.error("populateUsersByDept() - Error while loading divisions ." + e.getMessage());
+            addFieldError(CommonAjaxAction.LOCATION, "Unable to load User information");
+            throw new EGOVRuntimeException("Unable to load User information", e);
+        }
+        return "users";
+    }
+
+    public List<User> getAllActiveUsersByGivenDesg() {
+        return allActiveUsersByGivenDesg;
+    }
+
+    public void setAllActiveUsersByGivenDesg(final List<User> allActiveUsersByGivenDesg) {
+        this.allActiveUsersByGivenDesg = allActiveUsersByGivenDesg;
+    }
+
+    public int getDivisionId() {
+        return divisionId;
+    }
+
+    public void setDivisionId(final int divisionId) {
+        this.divisionId = divisionId;
+    }
+
+    public int getAreaId() {
+        return areaId;
+    }
+
+    public void setAreaId(final int areaId) {
+        this.areaId = areaId;
+    }
+
+    public int getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(final int locationId) {
+        this.locationId = locationId;
+    }
+
+    public int getZoneId() {
+        return zoneId;
+    }
+
+    public void setZoneId(final int zoneId) {
+        this.zoneId = zoneId;
+    }
+
+    public List<Boundary> getLocationList() {
+        return locationList;
+    }
+
+    public void setLocationList(final List<Boundary> locationList) {
+        this.locationList = locationList;
+    }
+
+    public List<Designation> getDesignationList() {
+        return designationList;
+    }
+
+    public void setDesignationList(final List<Designation> designationList) {
+        this.designationList = designationList;
+    }
+
+    public Integer getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(final Integer departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public List<Boundary> getAreaList() {
+        return areaList;
+    }
+
+    public void setAreaList(final List<Boundary> areaList) {
+        this.areaList = areaList;
+    }
+
+    public List<Boundary> getStreetList() {
+        return streetList;
+    }
+
+    public void setStreetList(final List<Boundary> streetList) {
+        this.streetList = streetList;
+    }
+
+    public List<Boundary> getDivisionList() {
+        return divisionList;
+    }
+
+    public void setDivisionList(final List<Boundary> divisionList) {
+        this.divisionList = divisionList;
+    }
+
+    public static String getAREA() {
+        return CommonAjaxAction.AREA;
+    }
+
+    public Integer getDesignationId() {
+        return designationId;
+    }
+
+    public void setDesignationId(final Integer designationId) {
+        this.designationId = designationId;
+    }
+
+    public void setLicenseUtils(final LicenseUtils licenseUtils) {
+        this.licenseUtils = licenseUtils;
+    }
+
+}
