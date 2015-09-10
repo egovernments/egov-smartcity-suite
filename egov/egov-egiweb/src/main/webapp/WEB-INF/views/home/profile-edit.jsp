@@ -55,13 +55,13 @@
 			<div class="panel-body custom-form">
 				<form:form role="form" action="edit" modelAttribute="user" commandName="user" id="user" cssClass="form-horizontal form-groups-bordered" >
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.profile.fullname"/></label>
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.fullname"/></label>
 						<div class="col-sm-2 col-md-1 add-margin">
 							<form:select class="form-control" id="salutation" path="salutation">
 								<form:option value=""></form:option>
-								<form:option value="Mr"><spring:message code="lbl.profile.mr"/></form:option>
-								<form:option value="Mrs"><spring:message code="lbl.profile.mrs"/></form:option>
-								<form:option value="Miss"><spring:message code="lbl.profile.miss"/></form:option>
+								<form:option value="Mr"><spring:message code="lbl.mr"/></form:option>
+								<form:option value="Mrs"><spring:message code="lbl.mrs"/></form:option>
+								<form:option value="Miss"><spring:message code="lbl.miss"/></form:option>
 							</form:select>
 						</div>
 						<div class="col-sm-4 col-md-5 add-margin">
@@ -71,21 +71,21 @@
 					
 					<div class="form-group">
 						
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.profile.gender"/></label>
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.gender"/></label>
 						<div class="col-sm-6 col-xs-12 add-margin dynamic-span capitalize">
 							<form:radiobuttons path="gender" element="span"/>
 						</div>
 					</div>
 					
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.profile.mobile"/></label>
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.mobile"/></label>
 						<div class="col-sm-2 add-margin">
 							<form:input path="mobileNumber" cssClass="form-control" data-inputmask="'mask': '9999999999'" id="mobileNumber" placeholder="Mobile Number" maxlength="10"/>
 							<form:errors path="mobileNumber" cssClass="add-margin error-msg"/>
 						</div>
 						
 						<div class="col-sm-1">
-							<label for="field-1" class="control-label"><spring:message code="lbl.profile.email"/></label>
+							<label for="field-1" class="control-label"><spring:message code="lbl.email"/></label>
 						</div>
 						
 						<div class="col-sm-3">
@@ -95,14 +95,14 @@
 					</div>
 					
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.profil.alt.contct.no"/></label>
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.alt.contct.no"/></label>
 						
 						<div class="col-sm-2 add-margin">
 							<form:input path="altContactNumber" cssClass="form-control" data-inputmask="'mask': '9999999999'" id="altContactNumber" placeholder="8080808080" maxlength="10"/>
 						</div>
 						
 						<div class="col-sm-1">
-							<label for="field-1" class="control-label"><spring:message code="lbl.profile.dob" /></label>
+							<label for="field-1" class="control-label"><spring:message code="lbl.dob" /></label>
 						</div>
 						
 						<div class="col-sm-3 add-margin">
@@ -111,7 +111,7 @@
 					</div>
 					
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.profile.pan"/></label>
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.pan"/></label>
 						
 						<div class="col-sm-2 add-margin">
 							<form:input path="pan" cssClass="form-control" placeholder="AHWPU1117T" maxlength="10"/>
@@ -119,7 +119,7 @@
 						</div>
 						
 						<div class="col-sm-1">
-							<label for="field-1" class="control-label"><spring:message code="lbl.profile.aadhar"/></label>
+							<label for="field-1" class="control-label"><spring:message code="lbl.aadhar"/></label>
 						</div>
 						
 						<div class="col-sm-3 add-margin">
@@ -129,19 +129,19 @@
 					</div>
 					
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.profile.preferred.lang"/></label>
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.preferred.lang"/></label>
 						<div class="col-sm-6 add-margin">
 							<form:select class="form-control" id="locale" path="locale">
 								<form:option value=""></form:option>
-								<form:option value="en_IN"><spring:message code="lbl.profile.eng"/></form:option>
-								<form:option value="hi_IN"><spring:message code="lbl.profile.hindi"/></form:option>
+								<form:option value="en_IN"><spring:message code="lbl.eng"/></form:option>
+								<form:option value="hi_IN"><spring:message code="lbl.hindi"/></form:option>
 							</form:select>
 						</div>
 					</div>
 					
 					<div class="form-group">
 						<div class="text-center">
-							<button type="submit" class="btn btn-primary"><spring:message code="lbl.profile.save"/></button>
+							<button type="submit" class="btn btn-primary"><spring:message code="lbl.save.changes"/></button>
 							<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 						</div>
 					</div>
