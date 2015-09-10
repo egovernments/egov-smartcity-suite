@@ -75,7 +75,7 @@ jQuery(document).ready(function($) {
 			        				   (full.resource.clauses.applicationcode == 'ADDNLCONNECTION' )) {
 			        			   if (full.resource.clauses.status == 'ACTIVE' ) {
 			        				   if (cscUserRole!=null && cscUserRole !=""  && full.resource.clauses.waterTaxDue > 0) {
-			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option><option value="6">Collect Fees</option></select>');
+			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option><option value="6">Collect Tax</option></select>');
 			        				   }
 			        				   else if (cscUserRole!=null && cscUserRole!="") {
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option></select>');

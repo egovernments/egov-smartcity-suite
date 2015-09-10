@@ -571,7 +571,7 @@ public class WaterConnectionSmsAndEmailService {
                             waterTaxUtils.getCityName() }, null);
         else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNAPPROVE)
                 || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDITONALCONNAPPROVE))
-            smsMsg = messageSource.getMessage(code, new String[] { applicantName,
+            smsMsg = messageSource.getMessage(code, new String[] { applicantName,waterConnectionDetails.getApplicationNumber(),
                     waterConnectionDetails.getConnection().getConsumerCode(), waterTaxUtils.getCityName() }, null);
         else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNESTNOTICE)
                 || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDCONNESTNOTICE)) {
