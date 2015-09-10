@@ -44,132 +44,250 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-<table style="width: 100%;">
-	<!-- Body Begins -->
-	<s:if test="%{basicProperty.property.getIsExemptedFromTax()}">
-	<div class="headermessage">
-		This property tax is exempted with reason <span class="bold"><s:property default="N/A" value="%{basicProperty.property.taxExemptedReason.name}" /></span>
+<s:if test="%{basicProperty.property.getIsExemptedFromTax()}">
+<div class="headermessage">
+	This property tax is exempted with reason <span class="bold"><s:property default="N/A" value="%{basicProperty.property.taxExemptedReason.name}" /></span>
+</div>
+</s:if>
+
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+			Property Details
+		</div>
+		
 	</div>
-	</s:if>
-	<tr>
-		<td class="greybox" width="5%"></td>
-		<td class="greybox" width="20%"><s:text name="prop.Id" /> :</td>
-		<td class="greybox" width="25%"><span class="bold"><s:property
-					default="N/A" value="%{basicProperty.upicNo}" /> </span></td>
-		<td class="greybox" width="25"><s:text
-				name="prntPropAssessmentNum" /> :</td>
-		<td class="greybox" width="25%"><span class="bold"><s:property
-					default="N/A" value="%{viewMap.parentProps}" /> </span></td>
-	</tr>
-	<tr>
-		<td class="greybox" width="5%"></td>
-		<td class="greybox"><s:text name="PropertyAddress" /> :</td>
-		<td class="greybox"><span class="bold"> <s:property
-					default="N/A" value="%{basicProperty.address}" />
-		</span></td>
-		<td class="bluebox"><s:text name="CorrAddr" /> :</td>
-		<td class="bluebox"><span class="bold"> <s:property
-					default="N/A" value="%{viewMap.ownerAddress}" />
-		</span></td>
-	</tr>
-
-	<tr>
-		<td class="greybox" width="5%"></td>
-
-		<td class="bluebox" width="20%"><s:text name="Zone" /> :</td>
-		<td class="bluebox"><span class="bold"> <s:property
-					default="N/A" value="%{basicProperty.propertyID.zone.name}" />
-		</span></td>
-		<td class="greybox"><s:text name="Ward" /> :</td>
-		<td class="greybox"><span class="bold"><s:property
-					value="%{basicProperty.propertyID.ward.boundaryNum}" />-<s:property
-					default="N/A" value="%{basicProperty.propertyID.ward.name}" /> </span></td>
-	</tr>
-
-	<tr>
-		<td class="greybox" width="5%"></td>
-
-		<td class="bluebox"><s:text name="block" /> :</td>
-		<td class="bluebox"><span class="bold"> <s:property
-					default="N/A" value="%{basicProperty.propertyID.area.name}" />
-		</span></td>
-
-		<td class="bluebox"><s:text name="locality"></s:text> :</td>
-		<td class="bluebox"><span class="bold"> <s:property
-					default="N/A" value="%{basicProperty.propertyID.locality.name}" />
-		</span></td>
-	</tr>
-	<tr id="appurtenantRow">
-		<td class="greybox" width="5%"></td>
-		<td class="bluebox"><s:text name="extent.site"></s:text> :</td>
-		<td class="bluebox"><span class="bold"> <s:property
+	<div class="panel-body">
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<s:text name="prop.Id" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property default="N/A" value="%{basicProperty.upicNo}" />
+			</div>
+		
+			<div class="col-xs-3 add-margin">
+				<s:text name="prntPropAssessmentNum" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property default="N/A" value="%{viewMap.parentProps}" />
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				Property Type
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				N/A
+			</div>
+			<div class="col-xs-3 add-margin">
+				Exemption
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				N/A
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<s:text name="annualvalue" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				Rs. <s:text name="format.money"><s:param value="viewMap.ARV" /></s:text>
+			</div>
+			<div class="col-xs-3 add-margin">
+				<s:text name="effectivedt" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:if test="%{basicProperty.propOccupationDate != null}">
+					<s:date name="%{basicProperty.propOccupationDate}" format="dd/MM/yyyy"/>
+				</s:if> 
+				<s:else>
+							N/A
+				</s:else>
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<s:text name="ownership.type"></s:text>
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property
+					default="N/A"
+					value="%{basicProperty.property.propertyDetail.propertyTypeMaster.type}" />
+			</div>
+			<div class="col-xs-3 add-margin">
+				<s:text name="apartcomplex.name"></s:text>
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property
+					default="N/A"
+					value="%{basicProperty.property.propertyDetail.apartment.name}" />
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<s:text name="extent.site"></s:text>
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property
 					default="N/A" value="%{basicProperty.property.propertyDetail.sitalArea.area}" />
-		</span></td>
-		<td class="bluebox"><s:text name="extent.appurtntland"></s:text>
-			:</td>
-		<td class="bluebox"><span class="bold"> <s:property
+			</div>
+			<div class="col-xs-3 add-margin">
+				<s:text name="extent.appurtntland"></s:text>
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property
 					default="N/A" value="%{propertyDetail.extentAppartenauntLand}" />
-		</span></td>
-	</tr>
-	<tr>
-		<td class="greybox" width="5%"></td>
-		<td class="bluebox"><s:text name="reg.docno"></s:text> :</td>
-		<td class="bluebox"><span class="bold"> <s:property
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				Super Structure
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				N/A
+			</div>
+			<div class="col-xs-3 add-margin">
+				Site Owner
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				N/A
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<s:text name="reg.docno"></s:text>
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property
 					default="N/A" value="%{basicProperty.regdDocNo}" />
-		</span></td>
-		<td class="bluebox"><s:text name="reg.docdate"></s:text> :</td>
-		<td class="bluebox"><span class="bold"> <s:if
+			</div>
+			<div class="col-xs-3 add-margin">
+				<s:text name="reg.docdate"></s:text>
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:if
 					test="%{basicProperty.regdDocDate != null}">
 					<s:date name="%{basicProperty.regdDocDate}" format="dd/MM/yyyy" />
 				</s:if> <s:else>
 					N/A
 				</s:else>
-		</span></td>
+			</div>
+		</div>
+		
+		
+		
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				BP Number
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				N/A
+			</div>
+			<div class="col-xs-3 add-margin">
+				BP Date
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				N/A
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				% of Deviation
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				N/A
+			</div>
+			<div class="col-xs-3 add-margin">
+				Reason for Creation
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				N/A
+			</div>
+		</div>
+		
+	</div>
+</div>
 
-	</tr>
-	<tr>
-		<td class="greybox" width="5%"></td>
-		<td class="bluebox"><s:text name="ownership.type"></s:text> :</td>
-		<td class="bluebox"><span class="bold"> <s:property
-					default="N/A"
-					value="%{basicProperty.property.propertyDetail.propertyTypeMaster.type}" />
-		</span></td>
-	</tr>
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+			Address Details
+		</div>
+		
+	</div>
+	<div class="panel-body">
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<s:text name="PropertyAddress" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property default="N/A" value="%{basicProperty.address}" />
+			</div>
+		
+			<div class="col-xs-3 add-margin">
+				<s:text name="CorrAddr" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property default="N/A" value="%{viewMap.ownerAddress}" />
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<s:text name="Zone" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property default="N/A" value="%{basicProperty.propertyID.zone.name}" />
+			</div>
+		
+			<div class="col-xs-3 add-margin">
+				<s:text name="Ward" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property
+					value="%{basicProperty.propertyID.ward.boundaryNum}" />-<s:property
+					default="N/A" value="%{basicProperty.propertyID.ward.name}" />
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<s:text name="block" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property
+					default="N/A" value="%{basicProperty.propertyID.area.name}" />
+			</div>
+			<div class="col-xs-3 add-margin">
+				<s:text name="locality"></s:text>
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property
+					default="N/A" value="%{basicProperty.propertyID.locality.name}" />
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				Election Ward
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				N/A
+			</div>
+			<div class="col-xs-3 add-margin">
+				EB Block
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				N/A
+			</div>
+		</div>
+	</div>
+</div>
 
-	<tr>
-		<td class="greybox" width="5%"></td>
-		<td class="bluebox apartmentRow"><s:text name="apartcomplex.name"></s:text>
-			:</td>
-		<td class="bluebox apartmentRow"><span class="bold"> <s:property
-					default="N/A"
-					value="%{basicProperty.property.propertyDetail.apartment.name}" />
-		</span></td>
-	</tr>
-
-	<tr>
-		<td class="greybox" width="5%"></td>
-		<td class="bluebox"><s:text name="annualvalue" /> :</td>
-		<td class="bluebox"><span class="bold"> Rs. <s:text name="format.money"><s:param value="viewMap.ARV" /></s:text>
-		</span></td>
-	</tr>
-
-	<tr>
-		<td class="greybox" width="5%"></td>
-		<td class="bluebox"><s:text name="effectivedt" /> :</td>
-		<td class="bluebox"><span class="bold"> 
-		<s:if test="%{basicProperty.propOccupationDate != null}">
-			<s:date name="%{basicProperty.propOccupationDate}" format="dd/MM/yyyy"/>
-		</s:if> 
-		<s:else>
-					N/A
-		</s:else>
-		</span></td>
-	</tr>
-
+<table style="width: 100%;">
+	
 	<tr>
 		<td colspan="5">
-			<div class="headingsmallbg">
-				<span class="bold"><s:text name="ownerdetails.title"></s:text></span>
+			<div class="headingsmallbg" style="font-size:19px;font-family: regular;">
+				<span><s:text name="ownerdetails.title"></s:text></span>
 			</div>
 		</td>
 	</tr>
@@ -183,8 +301,8 @@
 	</tr>
 	<tr class="amenities">
 		<td colspan="5">
-			<div class="headingsmallbg">
-				<span class="bold"> <s:text name="amenities"></s:text>
+			<div class="headingsmallbg" style="font-size:19px;font-family: regular;">
+				<span> <s:text name="amenities"></s:text>
 				</span>
 			</div>
 		</td>
@@ -202,8 +320,8 @@
 							name="toilets"></s:text></th>
 					<th class="bluebgheadtd" width="11.1111111111%"><s:text
 							name="watertap"></s:text></th>
-					<th class="bluebgheadtd" width="11.1111111111%"><s:text
-							name="superstructure"></s:text></th>
+					<%-- <th class="bluebgheadtd" width="11.1111111111%"><s:text
+							name="superstructure"></s:text></th> --%>
 					<th class="bluebgheadtd" width="11.1111111111%"><s:text
 							name="electricity"></s:text></th>
 					<th class="bluebgheadtd" width="11.1111111111%"><s:text
@@ -224,9 +342,9 @@
 					<td class="blueborderfortd"><s:if
 							test="%{basicProperty.property.propertyDetail.waterTap}">Yes</s:if>
 						<s:else>No</s:else></td>
-					<td class="blueborderfortd"><s:if
+					<%-- <td class="blueborderfortd"><s:if
 							test="%{basicProperty.property.propertyDetail.structure}">Yes</s:if>
-						<s:else>No</s:else></td>
+						<s:else>No</s:else></td> --%>
 					<td class="blueborderfortd"><s:if
 							test="%{basicProperty.property.propertyDetail.electricity}">Yes</s:if>
 						<s:else>No</s:else></td>
@@ -245,52 +363,65 @@
 		</td>
 
 	</tr>
+	
+</table>
 
-	<tr class="construction">
-		<td colspan="5">
-			<div class="headingsmallbg">
-				<span class="bold"><s:text name="title.constructiontypes" /></span>
+<br><br>
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+			<s:text name="title.constructiontypes" />
+		</div>
+		
+	</div>
+	<div class="panel-body">
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<s:text name="floortype"></s:text>
 			</div>
-		</td>
-	</tr>
-
-
-	<tr class="construction">
-		<td class="greybox" width="5%"></td>
-		<td class="greybox"><s:text name="floortype"></s:text> :</td>
-		<td class="greybox"><span class="bold"> <s:property
+			<div class="col-xs-3 add-margin view-content">
+				<s:property
 					default="N/A"
 					value="%{basicProperty.property.propertyDetail.floorType.name}" />
-		</span></td>
-
-		<td class="greybox"><s:text name="rooftype"></s:text> :</td>
-		<td class="greybox"><span class="bold"> <s:property
+			</div>
+		
+			<div class="col-xs-3 add-margin">
+				<s:text name="rooftype"></s:text>
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property
 					default="N/A"
 					value="%{basicProperty.property.propertyDetail.roofType.name}" />
-		</span></td>
-
-	</tr>
-
-	<tr class="construction">
-		<td class="greybox" width="5%"></td>
-		<td class="greybox"><s:text name="walltype"></s:text> :</td>
-		<td class="greybox"><span class="bold"> <s:property
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<s:text name="walltype"></s:text>
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property
 					default="N/A"
 					value="%{basicProperty.property.propertyDetail.wallType.name}" />
-		</span></td>
-
-		<td class="greybox"><s:text name="woodtype"></s:text> :</td>
-		<td class="greybox"><span class="bold"> <s:property
+			</div>
+		
+			<div class="col-xs-3 add-margin">
+				<s:text name="woodtype"></s:text>
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property
 					default="N/A"
 					value="%{basicProperty.property.propertyDetail.woodType.name}" />
-		</span></td>
+			</div>
+		</div>
+	</div>
+</div>
 
-	</tr>
+<table style="width: 100%;">
 	
 	<tr class="floordetails">
 		<td colspan="5" width="5%">
-			<div class="headingsmallbg">
-				<span class="bold"><s:text name="FloorDetailsHeader" /> </span>
+			<div class="headingsmallbg" style="font-size:19px;font-family: regular;">
+				<span><s:text name="FloorDetailsHeader" /> </span>
 			</div>
 		</td>
 	</tr>
@@ -302,16 +433,16 @@
 			</div>
 		</td>
 	</tr>
-	<tr class="vacantlanddetaills">
+	<tr class="vacantlanddetaills-view">
 		<td colspan="5">
-			<div class="headingsmallbg">
-				<span class="bold"><s:text name="VacantLandDetailsHeader" />
+			<div class="headingsmallbg" style="font-size:19px;font-family: regular;">
+				<span><s:text name="VacantLandDetailsHeader" />
 				</span>
 			</div>
 		</td>
 	</tr>
 
-	<tr class="vacantlanddetaills">
+	<tr class="vacantlanddetaills-view">
 		<td colspan="5">
 			<div align="center">
 				<%@ include file="../common/vacantLandView.jsp"%>
@@ -319,29 +450,71 @@
 		</td>
 	</tr>
 
-	<tr>
-		<td class="bluebox" width="5%"></td>
-		<td class="greybox" colspan="2"><s:text name="CurrentTax" /> :</td>
-		<td class="greybox" colspan="2"><span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.currTax" /></s:text>
-		</span></td>
-	</tr>
-	<tr>
-		<td class="bluebox" width="5%"></td>
-		<td class="bluebox" colspan="2"><s:text name="CurrentTaxDue" />
-			:</td>
-		<td class="bluebox" colspan="2"><span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.currTaxDue" /></s:text>
-		</span></td>
-	</tr>
-	<tr>
-		<td class="greybox" width="5%"></td>
-		<td class="greybox" colspan="2"><s:text name="ArrearsDue" /> :</td>
-		<td class="greybox" colspan="2"><span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.totalArrDue" /></s:text>
-		</span></td>
-	</tr>
-
-
 </table>
-<br />
+<br>
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+			Tax Details
+		</div>
+		
+	</div>
+	<div class="panel-body">
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<s:text name="CurrentTax" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				Rs. <s:text name="format.money"><s:param value="viewMap.currTax" /></s:text>
+			</div>
+			<div class="col-xs-3 add-margin">
+				Education Tax
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				N/A
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<s:text name="CurrentTaxDue" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				Rs. <s:text name="format.money"><s:param value="viewMap.currTaxDue" /></s:text>
+			</div>
+			<div class="col-xs-3 add-margin">
+				Library Cess
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				N/A
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<s:text name="ArrearsDue" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				Rs. <s:text name="format.money"><s:param value="viewMap.totalArrDue" /></s:text>
+			</div>
+			<div class="col-xs-3 add-margin">
+				Property Tax
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				N/A
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-6 add-margin">
+			</div>
+			<div class="col-xs-3 add-margin">
+				Total Property Tax
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				N/A
+			</div>
+		</div>
+	</div>
+</div>
+
 <script type="text/javascript">
 	function showDocumentManagerView(indexNum) {
 		var url = "../view/viewProperty!viewDoc.action?propertyId=" + indexNum;

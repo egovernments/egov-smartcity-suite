@@ -84,8 +84,8 @@
 		<s:form action="searchProperty" method="post" name="indexform"
 				theme="simple" >
 				<s:push value="model">
-			<div class="formmainbox">
-				<div class="headingbg"><s:text name="PropertyDetail" /></div>
+			<div class="">
+				<%-- <div class="headingbg"><s:text name="PropertyDetail" /></div> --%>
 				<jsp:include page="viewProperty.jsp"/>
 				<br/>
 				<div class="buttonbottom" align="center">
