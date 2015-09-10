@@ -77,11 +77,11 @@
 		</list> 
 		
 	</joined-subclass>
-	<query name="RetentionMoneyDeductionList">
+	<!-- <query name="RetentionMoneyDeductionList">
 		<![CDATA[
      	from EgBilldetails ebd where ebd.egBillregister.id=? and ebd.glcodeid in(:param_1) and  ebd.creditamount!=null 
     	]]>
-	</query>
+	</query> -->
 	<query name="CustomDeductionList">
 		<![CDATA[
      	from EgBilldetails ebd where ebd.egBillregister.id=? and ebd.glcodeid not in(:param_1) and  ebd.creditamount!=null 

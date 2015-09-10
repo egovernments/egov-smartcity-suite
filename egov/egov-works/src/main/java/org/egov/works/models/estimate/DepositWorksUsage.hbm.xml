@@ -82,16 +82,9 @@
 	</class>
 	<query name="getDepositWorksUsageListForDepositFolio">
 		<![CDATA[
-     	select dwu from DepositWorksUsage dwu inner join dwu.abstractEstimate.financialDetails fd where dwu.abstractEstimate.depositCode.id=? and fd.fund.id=? and fd.coa.id=? and dwu.appropriationDate<=? and dwu.financialYearId=? order by dwu.appropriationDate,dwu.id asc
+     	select dwu from DepositWorksUsage dwu inner join dwu.abstractEstimate.financialDetails fd where dwu.abstractEstimate.depositCode.id=? and fd.fund.id=? and fd.coa.id=? and dwu.appropriationDate<=? and dwu.financialYear=? order by dwu.appropriationDate,dwu.id asc
     	]]>
 	</query>
-<!-- 
- 	<query name="getDepositWorksUsageListForDepositFolio">
-		<![CDATA[
-     	select dwu from DepositWorksUsage dwu where  dwu.financialYearId=? and dwu.appropriationDate <=? and dwu.abstractEstimate.id in (select fd.abstractEstimate.id from FinancialDetail fd where fd.fund.id=? and fd.abstractEstimate.depositCode.id=? and fd.coa.id=?) order by dwu.id asc
-    	]]>
-	</query>
- -->		
 	<query name="getDepositWorksUsageAmount">
 		<![CDATA[
      	select sum(dwu.consumedAmount-dwu.releasedAmount) from DepositWorksUsage dwu inner join dwu.abstractEstimate.financialDetails fd where dwu.abstractEstimate.depositCode.id=? and 
@@ -101,7 +94,7 @@
 	
  	<query name="getDepositWorksUsageAmountUptoDate">
 		<![CDATA[
-     	select sum(dwu.consumedAmount-dwu.releasedAmount) from DepositWorksUsage dwu where  dwu.financialYearId=? and to_date(dwu.appropriationDate,'DD-MM-YYYY') <=to_Date(?,'DD-MM-YYYY') and dwu.abstractEstimate.id in (select fd.abstractEstimate.id from FinancialDetail fd where fd.fund.id=? and fd.abstractEstimate.depositCode.id=? and fd.coa.id=?)
+     	select sum(dwu.consumedAmount-dwu.releasedAmount) from DepositWorksUsage dwu where  dwu.financialYear=? and to_date(dwu.appropriationDate,'DD-MM-YYYY') <=to_Date(?,'DD-MM-YYYY') and dwu.abstractEstimate.id in (select fd.abstractEstimate.id from FinancialDetail fd where fd.fund.id=? and fd.abstractEstimate.depositCode.id=? and fd.coa.id=?)
     	]]>
 	</query>
 	

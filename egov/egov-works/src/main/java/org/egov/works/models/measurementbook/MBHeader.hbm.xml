@@ -97,9 +97,9 @@
 		</property>
 		
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" not-null="true" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select" />
+		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select" />
 		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true"/>	
-		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		<property name="lastModifiedDate" column="MODIFIED_DATE" type="timestamp" />
 			
 		<list name="mbDetails" cascade="all,delete-orphan">
     		<key column="MBHEADER_ID"  not-null="true" />
@@ -123,14 +123,14 @@
 	</query>
 	<query name="getAllBilledMBs">
 		<![CDATA[
-     	select reg.billdate from MBHeader mbh left join mbh.egBillregister as reg where mbh.egwStatus.code = ? and 
-     	mbh.workOrder.id = ? and reg is not null  and  upper(reg.status.code)!='CANCELLED' order by reg.billdate desc LIMIT 1
+     	select eb1.billdate from EgBillregister eb1 where exists(select mbh.egBillregister.id from MBHeader mbh left join mbh.egBillregister as reg where mbh.egwStatus.code = ? and 
+     	mbh.workOrder.id = ? and reg is not null  and  upper(reg.status.code)!='CANCELLED' and eb1.id=mbh.egBillregister.id order by reg.billdate desc) and rownum=1
     	]]>
 	</query>
 	<query name="getAllBilledMBsForWOEstimate">
 		<![CDATA[
-     	select reg.billdate from MBHeader mbh left join mbh.egBillregister as reg where mbh.egwStatus.code = ? and 
-     	mbh.workOrderEstimate.id = ? and reg is not null and  upper(reg.status.code)!='CANCELLED'  order by reg.billdate desc LIMIT 1
+     	select eb1.billdate from EgBillregister eb1 where exists(select mbh.egBillregister.id from MBHeader mbh left join mbh.egBillregister as reg where mbh.egwStatus.code = ? and 
+     	mbh.workOrderEstimate.id = ? and reg is not null and  upper(reg.status.code)!='CANCELLED' and eb1.id=mbh.egBillregister.id order by reg.billdate desc) and rownum=1
     	]]>
 	</query>
 	<query name="getAllMBsForBillId">

@@ -88,9 +88,9 @@
 		</property>
 					
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY" fetch="select"/>
+		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY" fetch="select"/>
 		<property name="createdDate" column="CREATEDDATE" type="timestamp" not-null="true" />	
-		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />
+		<property name="lastModifiedDate" column="MODIFIEDDATE" type="timestamp" /> 
 		
 		<list name="workOrderEstimates" cascade="all,delete-orphan">
 			<key column="WORKORDER_ID" not-null="true" />

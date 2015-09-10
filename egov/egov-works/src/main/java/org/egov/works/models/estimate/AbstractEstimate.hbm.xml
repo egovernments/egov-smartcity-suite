@@ -146,9 +146,9 @@
 		</property>	
 		
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" fetch="select" not-null="true" />
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY" fetch="select"/>
+		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY" fetch="select"/>
 		<property name="createdDate" column="CREATEDDATE" type="timestamp" not-null="true" />
-		<property column="MODIFIEDDATE" name="modifiedDate" type="timestamp" />
+		<property column="MODIFIEDDATE" name="lastModifiedDate" type="timestamp" />
 		
 		<list name="multiYearEstimates" cascade="all,delete-orphan">
 			<key column="abstractestimate_id" not-null="true" />
@@ -199,12 +199,12 @@
 	</query>
 	<query name="MY_APPROVAL_PENDING_ESTIMATES">
 		<![CDATA[
-     	from AbstractEstimate as ae where ae.parent is null and ae.state.owner.id=? and ae.egwStatus.code='CREATED' and ae.state.nextAction!=''
+     	from AbstractEstimate as ae where ae.parent is null and ae.state.ownerPosition.id=? and ae.egwStatus.code='CREATED' and ae.state.nextAction!=''
     ]]>
 	</query>
 	<query name="MY_REJECTED_ESTIMATES">
 		<![CDATA[
-     	from AbstractEstimate as ae where ae.parent is null and ae.state.owner.id=? and ae.egwStatus.code='REJECTED'
+     	from AbstractEstimate as ae where ae.parent is null and ae.state.ownerPosition.id=? and ae.egwStatus.code='REJECTED'
     ]]>
 	</query>
 	<query name="ALL_ESTIMATES_BY_STATUS">
@@ -219,12 +219,12 @@
 	</query>
 	<query name="MY_TECH_SANCTIONED_ESTIMATES">
 		<![CDATA[
-     	from AbstractEstimate as ae where ae.parent is null and ae.state.owner.id=? and ae.egwStatus.code='TECH_SANCTIONED'
+     	from AbstractEstimate as ae where ae.parent is null and ae.state.ownerPosition.id=? and ae.egwStatus.code='TECH_SANCTIONED'
     ]]>
 	</query>
 	<query name="MY_CANCELLED_ESTIMATES">
 		<![CDATA[
-     	from AbstractEstimate as ae where ae.parent is null and ae.state.owner.id=? and ae.egwStatus.code='CANCELLED'
+     	from AbstractEstimate as ae where ae.parent is null and ae.state.ownerPosition.id=? and ae.egwStatus.code='CANCELLED'
     ]]>
 	</query>
 	<query name="getAbEstimateListById">
@@ -235,11 +235,6 @@
 	<query name="REVISION_ESTIMATES_BY_ESTID">
 		<![CDATA[
      	from AbstractEstimate ae where ae.parent.id=? and ae.egwStatus.code='APPROVED' order by ae.id 
-    ]]>
-	</query>
-	<query name="GET_UNCANCELLED_ESTIMATES_FOR_RATECONTRACT">
-		<![CDATA[
-     	from AbstractEstimate where  egwStatus.code!='CANCELLED' and rateContract.id = ? and id!=? and createdDate < ? 
     ]]>
 	</query>
 	<query name="REVISION_ESTIMATES_BY_ESTID_WOID">

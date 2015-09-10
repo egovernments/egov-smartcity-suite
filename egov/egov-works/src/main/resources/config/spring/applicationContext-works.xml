@@ -79,8 +79,6 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="cityWebsiteDAO" class="org.egov.lib.admbndry.CityWebsiteDAO"
-		scope="prototype" />
 	<bean id="scheduleOfRateService" parent="persistenceService"
 		scope="prototype">
 		<property name="type" value="org.egov.works.models.masters.ScheduleOfRate" />

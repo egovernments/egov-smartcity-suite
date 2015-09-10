@@ -58,9 +58,6 @@ import org.egov.infstr.models.BaseModel;
         "CODE" }, message = "estimateTemplate.code.isunique")
 public class EstimateTemplate extends BaseModel {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -1150757466961896868L;
     @Required(message = "estimatetemplate.code.not.null")
     private String code;
@@ -129,7 +126,7 @@ public class EstimateTemplate extends BaseModel {
         return estimateTemplateActivities;
     }
 
-    public void setActivities(final List<EstimateTemplateActivity> estimateTemplateActivities) {
+    public void setEstimateTemplateActivities(final List<EstimateTemplateActivity> estimateTemplateActivities) {
         this.estimateTemplateActivities = estimateTemplateActivities;
     }
 

@@ -91,9 +91,9 @@
 		</property>	
 		
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" not-null="true" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
 		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />	
-		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		<property name="lastModifiedDate" column="MODIFIED_DATE" type="timestamp" />
 		
 		<set name="setStatuses" inverse="true" >
 			<key column="OBJECT_ID" />

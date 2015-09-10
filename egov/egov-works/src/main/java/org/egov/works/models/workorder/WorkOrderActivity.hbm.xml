@@ -94,14 +94,14 @@
     	]]>
 	</query>
 	
-	<query name="getAssignedQuantityForActivityForNewWO">
+	<!-- <query name="getAssignedQuantityForActivityForNewWO">
 		<![CDATA[
      	Select sum(woa.approvedQuantity) from WorkOrderActivity woa where
      	 woa.workOrderEstimate.workOrder.negotiationNumber=? AND 
      	 woa.workOrderEstimate.workOrder.egwStatus.code =? group by woa.activity having woa.activity.id = ?  
      	  
     	]]>
-	</query>
+	</query> -->
 	
 	<query name="getTotalQuantityForWO">
 		<![CDATA[

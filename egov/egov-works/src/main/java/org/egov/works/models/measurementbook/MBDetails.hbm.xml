@@ -159,14 +159,16 @@
             group by woa,woa.activity having (id = ? or activity.id = ?)
    		]]>  
 	</query>
-	<query name="totalEstimatedQuantityForRE"> 
+	<!-- <query name="totalEstimatedQuantityForRE"> 
 		<![CDATA[
-	     	select sum(woa.approvedQuantity*nvl(decode(woa.activity.revisionType,'REDUCED_QUANTITY',-1,'ADDITIONAL_QUANTITY',1,'NON_TENDERED_ITEM',1,'LUMP_SUM_ITEM',1),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code = 'APPROVED' 
+	     	select sum(woa.approvedQuantity*coalesce((CASE WHEN woa.activity.revisionType = 'REDUCED_QUANTITY' THEN -1 
+	     	WHEN woa.activity.revisionType = 'ADDITIONAL_QUANTITY' THEN 1 WHEN woa.activity.revisionType = 'NON_TENDERED_ITEM' THEN 1 
+	     	WHEN woa.activity.revisionType = 'LUMP_SUM_ITEM' THEN 1 END),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code = 'APPROVED' 
 	     	and woa.activity.createdDate < ? and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' 
 	     	and ((woa.activity.parent is null and woa.workOrderEstimate.workOrder = ?) or (woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?)) 
 	     	group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id = ? ) 
     	]]>
-	</query>
+	</query> -->
 	<query name="totalEstimatedQuantityInRE">
 		<![CDATA[            
             select sum(woa.approvedQuantity) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code != 'CANCELLED' and 
@@ -177,7 +179,9 @@
 	</query>
 	<query name="totalEstimatedQuantityForREinRE">
 		<![CDATA[
-     	select sum(woa.approvedQuantity*nvl(decode(woa.activity.revisionType,'REDUCED_QUANTITY',-1,'ADDITIONAL_QUANTITY',1,'NON_TENDERED_ITEM',1,'LUMP_SUM_ITEM',1),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code != 'CANCELLED' 
+     	select sum(woa.approvedQuantity*coalesce((CASE WHEN woa.activity.revisionType = 'REDUCED_QUANTITY' THEN -1 
+	     	WHEN woa.activity.revisionType = 'ADDITIONAL_QUANTITY' THEN 1 WHEN woa.activity.revisionType = 'NON_TENDERED_ITEM' THEN 1 
+	     	WHEN woa.activity.revisionType = 'LUMP_SUM_ITEM' THEN 1 END),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code != 'CANCELLED' 
      	and woa.activity.abstractEstimate.id != ? and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' and (woa.workOrderEstimate.workOrder = ? or 
      	(woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?))
      	group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id = ? ) 
@@ -186,7 +190,9 @@
 	
 		<query name="totalEstimatedQuantityForPreviousREs">
 		<![CDATA[
-     	select sum(woa.approvedQuantity*nvl(decode(woa.activity.revisionType,'REDUCED_QUANTITY',-1,'ADDITIONAL_QUANTITY',1,'NON_TENDERED_ITEM',1,'LUMP_SUM_ITEM',1),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code != 'CANCELLED' 
+     	select sum(woa.approvedQuantity*coalesce((CASE WHEN woa.activity.revisionType = 'REDUCED_QUANTITY' THEN -1 
+	     	WHEN woa.activity.revisionType = 'ADDITIONAL_QUANTITY' THEN 1 WHEN woa.activity.revisionType = 'NON_TENDERED_ITEM' THEN 1 
+	     	WHEN woa.activity.revisionType = 'LUMP_SUM_ITEM' THEN 1 END),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code != 'CANCELLED' 
      	and woa.activity.abstractEstimate.createdDate < (select est.createdDate from AbstractEstimate est where est.id = ?) 
      	and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' and (woa.workOrderEstimate.workOrder = ? 
      	or (woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?))
