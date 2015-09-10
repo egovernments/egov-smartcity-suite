@@ -52,6 +52,7 @@ public class CommonController extends ApiController {
 
         try {
             Citizen citizenCreate = new Citizen();
+            citizenCreate.setUsername(citizen.get("mobileNumber").toString());
             citizenCreate.setMobileNumber(citizen.get("mobileNumber").toString());
             citizenCreate.setName(citizen.get("name").toString());
             citizenCreate.setEmailId(citizen.get("emailId").toString());
