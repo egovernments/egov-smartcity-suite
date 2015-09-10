@@ -191,18 +191,18 @@
 								<div class="col-sm-1 col-xs-12 add-margin">
 									<form:radiobutton path="active" id="active_yes" value="yes"
 										checked="true" />
-									<label>Yes</label>
+									<label><spring:message code="lbl.yes"/></label>
 								</div>
 								<div class="col-sm-1 col-xs-12 add-margin">
 									<form:radiobutton path="active" id="active_no" value="no" />
-									<label>No</label>
+									<label><spring:message code="lbl.no" /></label>
 								</div>
 							</div>
 						</div>
 
 						<div id="preferences" class="tab-pane fade">
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Logo</label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.city.logo"/></label>
 								<div class="col-sm-6" style="padding-top: 7px">
 									<img id="imglogo" height="60" width="60"
 										src="/egi/downloadfile?fileStoreId=${city.preferences.municipalityLogo.fileStoreId}&moduleName=${sessionScope.cityCode}">
