@@ -68,7 +68,7 @@
 			
 					<div class="form-group">
 						<label for="field-1" class="col-md-4 control-label"> <spring:message
-										code="lbl.mobilenumber" /></label>
+										code="lbl.mobileNo" /></label>
 				
 						<div class="col-md-4 add-margin">
 							<form:input path="" type="text" name="mobileNumber" class="form-control is_valid_number" maxlength="10" data-inputmask="'mask': '9999999999'" id="app-appcodo" min="10"  />
@@ -107,7 +107,7 @@
 							<a href="javascript:void(0);" id="searchapprvedapplication"
 								class="btn btn-primary"><spring:message code='lbl.search' /></a>
 								
-							<button class="btn btn-danger" type="reset"><spring:message code='lbl.reset.button'/></button>
+							<button class="btn btn-danger" type="reset"><spring:message code='lbl.reset'/></button>
 							<a href="javascript:void(0);" id="closeComplaints"
 								class="btn btn-default" onclick="self.close()"><spring:message code='lbl.close' /></a>
 						</div>

@@ -210,29 +210,29 @@
 			id="tbldcbdrilldown">
 			<thead>
 				<tr>
-					<th rowspan="2"><spring:message code="lbl.Number" /> </th>
-					<th colspan="1"><spring:message code="lbl.UserName" /> </th>
-					<th colspan="3"><spring:message code="lbl.Demand" /> </th>
-					<th colspan="3"><spring:message code="lbl.Collection" /></th>
-					<th colspan="3"><spring:message code="lbl.Balance" /> </th>
+					<th rowspan="2"><spring:message code="lbl.number" /> </th>
+					<th colspan="1"><spring:message code="lbl.userName" /> </th>
+					<th colspan="3"><spring:message code="lbl.demand" /> </th>
+					<th colspan="3"><spring:message code="lbl.collection" /></th>
+					<th colspan="3"><spring:message code="lbl.balance" /> </th>
 				</tr>
 
 				<tr>
-					<th><spring:message code="lbl.UserName" /> </th>
-					<th><spring:message code="lbl.Arrear" /> </th>
-					<th><spring:message code="lbl.Current" /> </th>
-					<th><spring:message code="lbl.Total" /> </th>
-					<th><spring:message code="lbl.Arrear" /> </th>
-					<th><spring:message code="lbl.Current" /> </th>
-					<th><spring:message code="lbl.Total" /> </th>
-					<th><spring:message code="lbl.Arrear" /> </th>
-					<th><spring:message code="lbl.Current" /> </th>
-					<th><spring:message code="lbl.Total" /> </th>
+					<th><spring:message code="lbl.userName" /> </th>
+					<th><spring:message code="lbl.arrear" /> </th>
+					<th><spring:message code="lbl.current" /> </th>
+					<th><spring:message code="lbl.total" /> </th>
+					<th><spring:message code="lbl.arrear" /> </th>
+					<th><spring:message code="lbl.current" /> </th>
+					<th><spring:message code="lbl.total" /> </th>
+					<th><spring:message code="lbl.arrear" /> </th>
+					<th><spring:message code="lbl.current" /> </th>
+					<th><spring:message code="lbl.total" /> </th>
 				</tr>
 			</thead>
 			<tfoot id="report-footer">
 				<tr>
-					<td colspan="2" align="center"><spring:message code="lbl.Total" /></td>
+					<td colspan="2" align="center"><spring:message code="lbl.total" /></td>
 					<td></td>
 					<td></td>
 					<td></td>
@@ -249,7 +249,7 @@
 </div>
 <div id="report-backbutton" class="col-xs-12 text-center">
 	<div class="form-group">
-		<buttton class="btn btn-primary" id="backButton"> <spring:message code="lbl.back.button" /></buttton>
+		<buttton class="btn btn-primary" id="backButton"> <spring:message code="lbl.back" /></buttton>
 	</div>
 </div>
 <link rel="stylesheet"

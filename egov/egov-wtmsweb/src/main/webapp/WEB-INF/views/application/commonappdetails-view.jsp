@@ -70,14 +70,14 @@
 	</div>
 	<div class="row add-border">
 			
-		<div class="col-xs-3 add-margin"><spring:message code="lbl.mobilenumber"/></div>
+		<div class="col-xs-3 add-margin"><spring:message code="lbl.mobileNo"/></div>
 		<div class="col-xs-3 add-margin view-content" id="mobileNumber"></div>
 		<div class="col-xs-3 add-margin"><spring:message code="lbl.email"/> </div>
 		<div class="col-xs-3 add-margin view-content" id="email" ></div>
 	</div>
 	<div class="row add-border">
 		
-		<div class="col-xs-3 add-margin"><spring:message code="lbl.aadhaar"/></div>
+		<div class="col-xs-3 add-margin"><spring:message code="lbl.aadhar"/></div>
 		<div class="col-xs-3 add-margin view-content" id="aadhaar"></div>
 		<div class="col-xs-3 add-margin"><spring:message code="lbl.locality" /></div>
 		<div class="col-xs-3 add-margin view-content" id="locality"></div>
