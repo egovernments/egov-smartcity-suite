@@ -50,8 +50,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.DeptDesig;
@@ -155,9 +155,9 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
 
             document.close();
         } catch (final DocumentException e) {
-            throw new EGOVRuntimeException(MEASUREMENTBOOK_PDF_ERROR, e);
-        } catch (final EGOVException ex) {
-            throw new EGOVRuntimeException(MEASUREMENTBOOK_PDF_ERROR, ex);
+            throw new ApplicationRuntimeException(MEASUREMENTBOOK_PDF_ERROR, e);
+        } catch (final ApplicationException ex) {
+            throw new ApplicationRuntimeException(MEASUREMENTBOOK_PDF_ERROR, ex);
         }
     }
 
@@ -234,7 +234,7 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
     }
 
     // label row method definition
-    private PdfPTable createMbTable() throws DocumentException, EGOVException {
+    private PdfPTable createMbTable() throws DocumentException, ApplicationException {
         PdfPTable mbTable;
         if (includeRevisionTypeColumn) {
             mbTable = new PdfPTable(12);
@@ -273,15 +273,15 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
             // last column
             mbTable.addCell(new PdfPCell(new Phrase(pdfLabel.get("mbpdf.currentcost"), font)));
         } catch (final DocumentException e) {
-            throw new EGOVRuntimeException(MEASUREMENTBOOK_PDF_ERROR, e);
-        } catch (final EGOVException ex) {
-            throw new EGOVRuntimeException(MEASUREMENTBOOK_PDF_ERROR, ex);
+            throw new ApplicationRuntimeException(MEASUREMENTBOOK_PDF_ERROR, e);
+        } catch (final ApplicationException ex) {
+            throw new ApplicationRuntimeException(MEASUREMENTBOOK_PDF_ERROR, ex);
         }
         return mbTable;
     }
 
     // creating table for previous mb
-    public PdfPTable createPreviousMbTable() throws DocumentException, EGOVException {
+    public PdfPTable createPreviousMbTable() throws DocumentException, ApplicationException {
         final PdfPTable previousMbTable = new PdfPTable(2);
         final Font font = new Font();
         font.setSize(8);
@@ -297,7 +297,7 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
 
     // for creating mbheader data
     private PdfPTable createMbData(final PdfPTable mbTable, final MBHeader mbHeader) throws DocumentException,
-            EGOVException {
+            ApplicationException {
         Integer i = 0;
         double uomFactor = 0.0;
 

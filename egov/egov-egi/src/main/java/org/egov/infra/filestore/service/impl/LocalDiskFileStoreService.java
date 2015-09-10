@@ -49,8 +49,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -84,7 +84,7 @@ public class LocalDiskFileStoreService implements FileStoreService {
             fileMapper.setContentType(mimeType);
             return fileMapper;
         } catch (final IOException e) {
-            throw new EGOVRuntimeException(
+            throw new ApplicationRuntimeException(
                     String.format("Error occurred while storing files at %s/%s/%s", fileStoreBaseDir, EgovThreadLocals.getCityCode(), moduleName), e);
         }
     }
@@ -99,7 +99,7 @@ public class LocalDiskFileStoreService implements FileStoreService {
             sourceFileStream.close();
             return fileMapper;
         } catch (final IOException e) {
-            throw new EGOVRuntimeException(
+            throw new ApplicationRuntimeException(
                     String.format("Error occurred while storing files at %s/%s/%s", fileStoreBaseDir, EgovThreadLocals.getCityCode(), moduleName), e);
         }
     }
@@ -119,7 +119,7 @@ public class LocalDiskFileStoreService implements FileStoreService {
     public File fetch(final String fileStoreId, final String moduleName) {
         final Path path = Paths.get(fileStoreBaseDir + File.separator + EgovThreadLocals.getCityCode() + File.separator + moduleName);
         if (!Files.exists(path))
-            throw new EGOVRuntimeException(String.format("File Store does not exist at Path : %s/%s/%s", fileStoreBaseDir,
+            throw new ApplicationRuntimeException(String.format("File Store does not exist at Path : %s/%s/%s", fileStoreBaseDir,
                     EgovThreadLocals.getCityCode(), moduleName));
         return Paths.get(path.toString() + File.separator + fileStoreId).toFile();
     }

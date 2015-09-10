@@ -48,18 +48,18 @@ import java.util.ArrayList;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.voucher.VoucherSearchAction;
 import org.hibernate.FlushMode;
 import org.springframework.transaction.annotation.Transactional;
-import org.egov.infstr.ValidationException;
 
 import com.exilant.eGov.src.reports.OpeningBalance;
 import com.exilant.eGov.src.reports.OpeningBalanceInputBean;
@@ -121,7 +121,7 @@ public class OpeningBalanceReportAction extends BaseFormAction{
 				throw new ValidationException(e.getErrors());
 		} catch(Exception e)
 		{
-			throw new EGOVRuntimeException(e.getMessage());
+			throw new ApplicationRuntimeException(e.getMessage());
 		}
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("OpeningBalanceReportAction | list | End");
 		heading=getGLHeading();

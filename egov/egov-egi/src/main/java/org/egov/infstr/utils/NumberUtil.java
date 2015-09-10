@@ -43,7 +43,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * Number Utility methods
@@ -85,7 +85,7 @@ public class NumberUtil {
 		case CRORES:
 			return (Math.abs(number.doubleValue()) >= 100000 ? formatNumberCroreFormat(number) : formatNumber(number, AMOUNT_PRECISION_DEFAULT, true));
 		default:
-			throw new EGOVRuntimeException("Invalid number format [" + format + "]");
+			throw new ApplicationRuntimeException("Invalid number format [" + format + "]");
 		}
 	}
 

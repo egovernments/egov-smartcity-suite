@@ -53,7 +53,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
@@ -90,11 +90,11 @@ public class TaxPercentageforDatesHibernateDAO implements TaxPercentageforDatesD
 		} catch (HibernateException e) {
 			LOGGER.info("Exception in  getTaxPercentageforDates--- TaxPercentageforDatesHibernateDao--"
 					+ e.getMessage());
-			throw new EGOVRuntimeException("Hibernate Exception : " + e.getMessage(), e);
+			throw new ApplicationRuntimeException("Hibernate Exception : " + e.getMessage(), e);
 		} catch (Exception e1) {
 			LOGGER.info("Exception in  getTaxPercentageforDates--- TaxPercentageforDatesHibernateDao--"
 					+ e1.getMessage());
-			throw new EGOVRuntimeException("Exception : " + e1.getMessage(), e1);
+			throw new ApplicationRuntimeException("Exception : " + e1.getMessage(), e1);
 		}
 	}
 }

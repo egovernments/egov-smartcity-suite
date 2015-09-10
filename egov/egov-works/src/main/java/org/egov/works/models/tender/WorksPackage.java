@@ -58,7 +58,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
-import org.egov.infstr.ValidationError;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.Money;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.pims.model.PersonalInformation;

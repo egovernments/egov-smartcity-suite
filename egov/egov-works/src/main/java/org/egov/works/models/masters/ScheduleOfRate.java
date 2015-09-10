@@ -50,10 +50,10 @@ import javax.validation.Valid;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.egov.common.entity.UOM;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infstr.ValidationError;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.utils.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -162,11 +162,11 @@ public class ScheduleOfRate extends BaseModel {
 
     public SORRate getRateOn(final Date estimateDate) {
         if (estimateDate == null)
-            throw new EGOVRuntimeException("no.rate.for.date");
+            throw new ApplicationRuntimeException("no.rate.for.date");
         for (final SORRate rate : sorRates)
             if (isWithin(rate.getValidity(), estimateDate))
                 return rate;
-        throw new EGOVRuntimeException("no.rate.for.date");
+        throw new ApplicationRuntimeException("no.rate.for.date");
     }
 
     public boolean isWithin(final Period period, final Date dateTime) {
@@ -190,7 +190,7 @@ public class ScheduleOfRate extends BaseModel {
         try {
             final SORRate rate = getRateOn(estimateDate);
             return rate != null;
-        } catch (final EGOVRuntimeException e) {
+        } catch (final ApplicationRuntimeException e) {
             logger.error("Rate :" + e.getMessage());
             return false;
         }

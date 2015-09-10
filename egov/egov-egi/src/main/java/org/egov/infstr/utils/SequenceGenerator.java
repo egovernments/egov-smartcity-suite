@@ -40,8 +40,8 @@
 package org.egov.infstr.utils;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectTypeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectTypeException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -103,7 +103,7 @@ public class SequenceGenerator {
             }
             return new Sequence(seq.getObjectType(), seq.getNumber(), formattedNumber);
         }
-        throw new EGOVRuntimeException("No row with the given objectType " + objectType + " Found ");
+        throw new ApplicationRuntimeException("No row with the given objectType " + objectType + " Found ");
 
     }
 
@@ -119,7 +119,7 @@ public class SequenceGenerator {
             final String formattedNumber = StringUtils.leftPad(seq.getFormattedNumber(), strLength, valueToAppend.charValue());
             return new Sequence(seq.getObjectType(), seq.getNumber(), formattedNumber);
         }
-        throw new EGOVRuntimeException("No row with the given objectType " + objectType + " Found ");
+        throw new ApplicationRuntimeException("No row with the given objectType " + objectType + " Found ");
 
     }
 
@@ -129,7 +129,7 @@ public class SequenceGenerator {
             final String formattedNumber = StringUtils.leftPad(seq.getFormattedNumber(), strLength, valueToAppend);
             return new Sequence(seq.getObjectType(), seq.getNumber(), formattedNumber);
         }
-        throw new EGOVRuntimeException("No row with the given objectType " + objectType + " Found ");
+        throw new ApplicationRuntimeException("No row with the given objectType " + objectType + " Found ");
 
     }
 
@@ -148,7 +148,7 @@ public class SequenceGenerator {
             final String formattedNumber = StringUtils.leftPad(seq.getFormattedNumber(), strLength, valueToAppend.charValue());
             return new Sequence(seq.getObjectType(), seq.getNumber(), formattedNumber);
         }
-        throw new EGOVRuntimeException("No row with the given objectType " + objectType + " Found ");
+        throw new ApplicationRuntimeException("No row with the given objectType " + objectType + " Found ");
 
     }
 
@@ -178,7 +178,7 @@ public class SequenceGenerator {
     public long discardNumber(final String objectType) {
         final Number current = threadLocal.get();
         if (current == null) {
-            throw new EGOVRuntimeException("discardNumber() can not be called without getNextNumber()");
+            throw new ApplicationRuntimeException("discardNumber() can not be called without getNextNumber()");
         }
         current.setNumber(current.getNumber() - 1);
         getSession().update(current);
@@ -190,13 +190,13 @@ public class SequenceGenerator {
         final Number number = new Number();
         try {
             if (objectType == null) {
-                throw new EGOVRuntimeException("the requested objectType is null");
+                throw new ApplicationRuntimeException("the requested objectType is null");
             }
             number.setNumber(value);
             number.setObjectType(objectType);
             getSession().save(number);
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("the requested objectType" + objectType + "not saved to DB");
+            throw new ApplicationRuntimeException("the requested objectType" + objectType + "not saved to DB");
         }
     }
 

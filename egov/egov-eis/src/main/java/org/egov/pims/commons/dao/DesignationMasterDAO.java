@@ -48,9 +48,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectException;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Designation;
 import org.hibernate.Query;
@@ -72,46 +72,46 @@ public class DesignationMasterDAO
 		return entityManager.unwrap(Session.class);
 	}
 
-    public void createDesignationMaster(Designation designation) throws EGOVException
+    public void createDesignationMaster(Designation designation) throws ApplicationException
     {
             if(designation==null)
             {
-            	throw new EGOVException("designation.master.null");
+            	throw new ApplicationException("designation.master.null");
             }
             getCurrentSession().saveOrUpdate(designation);
     }
 
-    public void updateDesignationMaster(Designation designation) throws EGOVException
+    public void updateDesignationMaster(Designation designation) throws ApplicationException
     {
             if(designation==null)
             {
-            	throw new EGOVException("designation.master.null");
+            	throw new ApplicationException("designation.master.null");
             }
             getCurrentSession().saveOrUpdate(designation);
     }
 
-    public void removeDesignationMaster(Designation designation) throws EGOVException
+    public void removeDesignationMaster(Designation designation) throws ApplicationException
     {
             if(designation==null)
             {
-            	throw new EGOVException("designation.master.null");
+            	throw new ApplicationException("designation.master.null");
             }
             getCurrentSession().delete(designation);
             
     }
 
-    public Designation getDesignationMaster(int desigID) throws EGOVException
+    public Designation getDesignationMaster(int desigID) throws ApplicationException
     {
         	Designation desig = null;
             if(Integer.valueOf(desigID)==null)
             {
-            	throw new EGOVException("designation.id.null");
+            	throw new ApplicationException("designation.id.null");
             }
             desig = (Designation)getCurrentSession().get(Designation.class, Integer.valueOf(desigID));
             return desig;
     }
 
-    public Map getAllDesignationMaster() throws EGOVException
+    public Map getAllDesignationMaster() throws ApplicationException
     {
             Query qry = getCurrentSession().createQuery("from Designation DM ");
             Map retMap = new LinkedHashMap();
@@ -122,7 +122,7 @@ public class DesignationMasterDAO
             }
             if(designation==null)
             {
-            	throw new EGOVException("designation.notFound");
+            	throw new ApplicationException("designation.notFound");
             }
             return retMap;
     }
@@ -133,11 +133,11 @@ public class DesignationMasterDAO
         {
             if(designationName==null)
             {
-            	throw new EGOVException("designation.name.null");
+            	throw new ApplicationException("designation.name.null");
             }
             if(className==null)
             {
-            	throw new EGOVException("className.null");
+            	throw new ApplicationException("className.null");
             }
         	boolean b = false;
             Query qry = getCurrentSession().createQuery((new StringBuilder("from ")).append(className).append(" CA where trim(upper(CA.designationName)) = :designationName ").toString());
@@ -153,7 +153,7 @@ public class DesignationMasterDAO
         }
         catch(Exception e)
         {
-        	throw new EGOVRuntimeException(e.getMessage(),e);
+        	throw new ApplicationRuntimeException(e.getMessage(),e);
         }
     }
     
@@ -169,7 +169,7 @@ public class DesignationMasterDAO
         
     	if(designationName==null)
         {
-        	throw new EGOVRuntimeException("designation.name.null");
+        	throw new ApplicationRuntimeException("designation.name.null");
         }
     	try
         {
@@ -184,7 +184,7 @@ public class DesignationMasterDAO
         }
         catch(Exception e)
         {
-           throw new EGOVRuntimeException(e.getMessage(),e);
+           throw new ApplicationRuntimeException(e.getMessage(),e);
         }
     } 
 }

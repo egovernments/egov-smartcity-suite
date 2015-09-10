@@ -97,10 +97,10 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.dao.SchemeHibernateDAO;
 import org.egov.commons.dao.SubSchemeHibernateDAO;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.models.ServiceCategory;
@@ -672,7 +672,7 @@ public class ReceiptAction extends BaseFormAction {
 					/*for (ReceiptPayeeDetails payee : modelPayeeList) {
 						for (ReceiptHeader receiptHeader : payee.getReceiptHeaders()) {
 							if(receiptDetailList == null || receiptDetailList.isEmpty() || receiptDetailList.size() == 0){
-								throw new EGOVRuntimeException("Receipt could not be created as the apportioned receipt detail list is empty");
+								throw new ApplicationRuntimeException("Receipt could not be created as the apportioned receipt detail list is empty");
 							}else{
 								receiptHeader.setReceiptDetails(new HashSet(receiptDetailList));
 							}	
@@ -1223,7 +1223,7 @@ public class ReceiptAction extends BaseFormAction {
 	 */
 	private String viewReceipts(boolean printReceipts) {
 		if (selectedReceipts == null || selectedReceipts.length == 0) {
-			throw new EGOVRuntimeException("No receipts selected to view!");
+			throw new ApplicationRuntimeException("No receipts selected to view!");
 		}
 
 		receipts = new ReceiptHeader[selectedReceipts.length];
@@ -1240,7 +1240,7 @@ public class ReceiptAction extends BaseFormAction {
 		} catch (Exception e) {
 			String errMsg = "Error during report generation!";
 			LOGGER.error(errMsg, e);
-			throw new EGOVRuntimeException(errMsg, e);
+			throw new ApplicationRuntimeException(errMsg, e);
 		}
 
 		return CollectionConstants.REPORT;

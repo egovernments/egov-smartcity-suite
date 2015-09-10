@@ -63,8 +63,8 @@ import java.util.TreeMap;
 
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.MoneyUtils;
@@ -611,7 +611,7 @@ public class PenaltyCalculationService {
 			pvrDate = dateFormatter.parse((String) columnValues[1]);
 		} catch (ParseException pe) {
 			LOGGER.error("Error while parsing notice/pvr date", pe);
-			throw new EGOVRuntimeException("Error while parsing notice/pvr date", pe);
+			throw new ApplicationRuntimeException("Error while parsing notice/pvr date", pe);
 		}
 
 		Date dateOn22ndDay = DateUtils.add((noticeDate.before(pvrDate) ? pvrDate : noticeDate), Calendar.DAY_OF_MONTH,

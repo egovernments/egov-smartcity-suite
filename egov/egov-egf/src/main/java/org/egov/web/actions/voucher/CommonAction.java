@@ -87,12 +87,12 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.masters.model.LoanGrantBean;
 import org.egov.eis.entity.DrawingOfficer;
 import org.egov.eis.entity.EmployeeView;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.masters.model.AccountEntity;
 import org.egov.model.bills.EgBillSubType;
@@ -838,7 +838,7 @@ public class CommonAction extends BaseFormAction{
 						bankAccount = appConfigVal.getValue();
 							 }
 					} catch (Exception e) {
-						 throw new EGOVRuntimeException("Appconfig value for EB Voucher propartys is not defined in the system");
+						 throw new ApplicationRuntimeException("Appconfig value for EB Voucher propartys is not defined in the system");
 					}
 				accNumList =  (List<Bankaccount>)persistenceService.findAllBy(" from Bankaccount where accountnumber=? and isactive=1 order by chartofaccounts.glcode ", bankAccount);
 			}else{

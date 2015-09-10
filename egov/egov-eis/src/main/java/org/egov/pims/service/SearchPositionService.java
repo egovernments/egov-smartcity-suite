@@ -48,8 +48,8 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.EmployeeView;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.dao.PersonalInformationDAO;
 import org.egov.pims.dao.PersonalInformationHibernateDAO;
@@ -162,7 +162,7 @@ public class SearchPositionService {
 		catch(HibernateException h)
 		{
 			
-			throw new EGOVRuntimeException("Exception:" + h.getMessage(),h);
+			throw new ApplicationRuntimeException("Exception:" + h.getMessage(),h);
 		}
 		return  posList;
 	}

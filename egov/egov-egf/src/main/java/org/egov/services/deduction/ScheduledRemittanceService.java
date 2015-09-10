@@ -68,14 +68,14 @@ import org.egov.deduction.model.EgRemittanceDetail;
 import org.egov.deduction.model.EgRemittanceGldtl;
 import org.egov.eis.entity.DrawingOfficer;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.Miscbilldetail;
@@ -198,7 +198,7 @@ public class ScheduledRemittanceService {
 			if(recovery==null)
 			{
 				LOGGER.error("glcode is not mapped to tds :"+glcode +"\n");
-				throw new EGOVRuntimeException("glcode is not mapped to tds  : "+glcode);
+				throw new ApplicationRuntimeException("glcode is not mapped to tds  : "+glcode);
 			}
 			remitted=recovery.getRemitted();
 			
@@ -381,7 +381,7 @@ public class ScheduledRemittanceService {
 			errorMessage.append(ve.getErrors().toString());
 		
 		}
-		catch (EGOVRuntimeException e) {
+		catch (ApplicationRuntimeException e) {
 			successForAutoRemittance=false;
 			errorMessage.append(e.getMessage()+"\n" );
 		

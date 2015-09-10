@@ -55,14 +55,14 @@ import org.egov.commons.utils.EntityType;
 import org.egov.egf.bills.model.Cbill;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.infstr.workflow.Action;
@@ -158,7 +158,7 @@ public class BaseBillAction extends BaseVoucherAction {
         public void setEisCommonService(EisCommonService eisCommonService) {
                 this.eisCommonService = eisCommonService;
         }
-        public Position getPosition()throws EGOVRuntimeException
+        public Position getPosition()throws ApplicationRuntimeException
         {
                 return  eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
         }

@@ -50,7 +50,7 @@ import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.xml.converter.BillReceiptInfoConverter;
 import org.egov.collection.xml.converter.ReceiptAccountInfoConverter;
 import org.egov.collection.xml.converter.ReceiptInstrumentInfoConverter;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -69,7 +69,7 @@ public class BillingIntegrationServiceStub implements BillingIntegrationService 
     private static final Logger LOGGER = Logger.getLogger(BillingIntegrationServiceStub.class);
 
     @Override
-    public void updateReceiptDetails(final Set<BillReceiptInfo> billReceipts) throws EGOVRuntimeException {
+    public void updateReceiptDetails(final Set<BillReceiptInfo> billReceipts) throws ApplicationRuntimeException {
         // FileOutputStream fos = null;
         try {
             String xml = null;
@@ -92,7 +92,7 @@ public class BillingIntegrationServiceStub implements BillingIntegrationService 
          * + e.getMessage()); return false; }
          */catch (final Exception e) {
              LOGGER.error("Error occrured while updating dishonored cheque status to billing system : " + e.getMessage());
-             throw new EGOVRuntimeException("Exception Occured");
+             throw new ApplicationRuntimeException("Exception Occured");
          }
 
     }

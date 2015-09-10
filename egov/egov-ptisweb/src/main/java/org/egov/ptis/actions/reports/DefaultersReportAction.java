@@ -74,8 +74,8 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
@@ -235,7 +235,7 @@ public class DefaultersReportAction extends BaseFormAction {
 			JasperExportManager.exportReportToPdfStream(jasperPrint, outputBytes);
 		} catch (Exception e) {
 			LOGGER.error("Error while getting pdf stream from Jasper", e);
-			throw new EGOVRuntimeException("Error while getting pdf stream from Jasper", e);
+			throw new ApplicationRuntimeException("Error while getting pdf stream from Jasper", e);
 		}
 		ReportOutput reportOutput = new ReportOutput();
 		reportOutput.setReportOutputData(outputBytes.toByteArray());

@@ -49,7 +49,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.HibernateException;
@@ -105,11 +105,11 @@ public class AssignmentHibernateDAO extends GenericHibernateDAO implements Assig
 			
 	}catch (HibernateException he) {
 		LOGGER.error(he.getMessage());
-		throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+		throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 	} catch (Exception he)
 	{
 		LOGGER.error(he.getMessage());
-		throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+		throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 	}
 			return employeeAssignList;
 }
@@ -131,11 +131,11 @@ public class AssignmentHibernateDAO extends GenericHibernateDAO implements Assig
 		}catch (HibernateException he)
 		{
 			LOGGER.error(he.getMessage());
-			throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+			throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 		} catch (Exception he) 
 		{
 			LOGGER.error(he.getMessage());
-			throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+			throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 		}
 		return assignment;
 	}
@@ -182,11 +182,11 @@ public class AssignmentHibernateDAO extends GenericHibernateDAO implements Assig
 			
 	}catch (HibernateException he) {
 		LOGGER.error(he.getMessage());
-		throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+		throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 	} catch (Exception he)
 	{
 		LOGGER.error(he.getMessage());
-		throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+		throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 	}
 	
 	return employeeAssignList;
@@ -255,11 +255,11 @@ public class AssignmentHibernateDAO extends GenericHibernateDAO implements Assig
 			
 	}catch (HibernateException he) {
 		LOGGER.error(he.getMessage());
-		throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+		throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 	} catch (Exception he)
 	{
 		LOGGER.error(he.getMessage());
-		throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+		throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 	}
 	
 	return employeeAssignList;

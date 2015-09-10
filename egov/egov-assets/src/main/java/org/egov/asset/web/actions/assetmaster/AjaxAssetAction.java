@@ -52,12 +52,12 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.asset.model.AssetCategory;
 import org.egov.asset.service.AssetCategoryService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,7 +150,7 @@ public class AjaxAssetAction extends BaseFormAction {
         } catch (final Exception e) {
             LOGGER.error("Error while loading areas - areas." + e.getMessage());
             addFieldError("areas", "Unable to load areas information");
-            throw new EGOVRuntimeException("Unable to load areas information", e);
+            throw new ApplicationRuntimeException("Unable to load areas information", e);
         }
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(AREA_BOUNDARY_TYPE, hType);
         if (bType != null)
@@ -172,7 +172,7 @@ public class AjaxAssetAction extends BaseFormAction {
         } catch (final Exception e) {
             LOGGER.error("Error while loading locations - locations." + e.getMessage());
             addFieldError("location", "Unable to load location information");
-            throw new EGOVRuntimeException("Unable to load location information", e);
+            throw new ApplicationRuntimeException("Unable to load location information", e);
         }
         LOGGER.info("***********Ajax locationList: " + locationList.toString());
         return LOCATIONS;
@@ -188,7 +188,7 @@ public class AjaxAssetAction extends BaseFormAction {
         } catch (final Exception e) {
             LOGGER.error("Error while loading warda - wards." + e.getMessage());
             addFieldError("location", "Unable to load ward information");
-            throw new EGOVRuntimeException("Unable to load ward information", e);
+            throw new ApplicationRuntimeException("Unable to load ward information", e);
         }
         LOGGER.info("***********Ajax ward: " + locationList.toString());
         return WARDS;
@@ -208,7 +208,7 @@ public class AjaxAssetAction extends BaseFormAction {
         } catch (final Exception e) {
             LOGGER.error("Error while loading Streets." + e.getMessage());
             addFieldError("streets", "Unable to load Streets Information");
-            throw new EGOVRuntimeException("Unable to load Streets information", e);
+            throw new ApplicationRuntimeException("Unable to load Streets information", e);
         }
         final BoundaryType childBoundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType("Street",
                 hType);
@@ -281,7 +281,7 @@ public class AjaxAssetAction extends BaseFormAction {
         } catch (final Exception e) {
             LOGGER.error("Error while loading locations - locations." + e.getMessage());
             addFieldError("location", "Unable to load location information");
-            throw new EGOVRuntimeException("Unable to load location information", e);
+            throw new ApplicationRuntimeException("Unable to load location information", e);
         }
         LOGGER.info("***********Ajax locationList: " + locationList.toString());
         return LOCATIONS;

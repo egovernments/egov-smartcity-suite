@@ -50,7 +50,7 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
@@ -165,7 +165,7 @@ public class ReportViewer extends HttpServlet {
 		} catch (final Exception e) {
 			final String errMsg = "Exception in rendering report with format [" + reportFormat + "]!";
 			LOGGER.error(errMsg, e);
-			throw new EGOVRuntimeException(errMsg, e);
+			throw new ApplicationRuntimeException(errMsg, e);
 		} finally {
 			if (outputStream != null) {
 				outputStream.close();

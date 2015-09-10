@@ -56,10 +56,10 @@ import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.utils.constants.EisConstants;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
@@ -267,9 +267,9 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 			employeeList= criteria.list();
 
 		} catch (HibernateException he) {
-			throw new EGOVRuntimeException("Exception:" + he.getMessage(),he);
+			throw new ApplicationRuntimeException("Exception:" + he.getMessage(),he);
 		} catch (Exception he) {
-			throw new EGOVRuntimeException("Exception:" + he.getMessage(),he);
+			throw new ApplicationRuntimeException("Exception:" + he.getMessage(),he);
 
 		}
 		return employeeList;
@@ -314,9 +314,9 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 				totalSize=((Long)criteria.uniqueResult()).intValue();
 			}
 		} catch (HibernateException he) {
-			throw new EGOVRuntimeException("Exception:" + he.getMessage(),he);
+			throw new ApplicationRuntimeException("Exception:" + he.getMessage(),he);
 		} catch (Exception he) {
-			throw new EGOVRuntimeException("Exception:" + he.getMessage(),he);
+			throw new ApplicationRuntimeException("Exception:" + he.getMessage(),he);
 
 		}
 		return totalSize;
@@ -392,7 +392,7 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 			criteria.addOrder(Order.asc("id"));
 			employeeList = new Page(criteria, pageNo, pageSize).getList();
 		} catch (Exception e) {
-			throw new EGOVRuntimeException("Error occured in searching for employees",e);
+			throw new ApplicationRuntimeException("Error occured in searching for employees",e);
 		}
 		
 		return employeeList;
@@ -460,7 +460,7 @@ public List<EmployeeView> getListOfEmployeeViewBasedOnListOfDesignationAndOtherC
 			criteria.addOrder(Order.asc("id"));
 			employeeList = new Page(criteria, pageNo, pageSize).getList();
 		} catch (Exception e) {
-			throw new EGOVRuntimeException("Error occured in searching for employees",e);
+			throw new ApplicationRuntimeException("Error occured in searching for employees",e);
 		}
 		
 		return employeeList;

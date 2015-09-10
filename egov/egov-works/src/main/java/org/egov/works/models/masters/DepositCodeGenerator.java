@@ -42,7 +42,7 @@ package org.egov.works.models.masters;
 import javax.script.ScriptContext;
 
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 

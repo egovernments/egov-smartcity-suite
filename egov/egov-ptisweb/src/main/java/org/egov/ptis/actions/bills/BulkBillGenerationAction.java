@@ -55,11 +55,11 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.actions.common.CommonServices;
@@ -120,7 +120,7 @@ public class BulkBillGenerationAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Exit from prepare method");
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("Bill Generation Exception : " + e);
+            throw new ApplicationRuntimeException("Bill Generation Exception : " + e);
         }
     }
 

@@ -53,7 +53,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.commons.CChartOfAccounts;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.dao.GenericDAO;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;

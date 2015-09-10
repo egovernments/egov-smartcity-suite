@@ -42,7 +42,7 @@ package org.egov.works.services;
 import java.util.List;
 
 import org.egov.commons.service.EntityTypeService;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.Contractor;
 import org.hibernate.Query;

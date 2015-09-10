@@ -40,7 +40,7 @@
 package org.egov.infstr.utils;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.json.simple.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -100,7 +100,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 		try {
 			return org.apache.commons.lang3.StringUtils.toEncodedString(string.getBytes(), Charset.forName("UTF-8"));
 		} catch (UnsupportedEncodingException e) {
-			throw new EGOVRuntimeException("Exception occured -----> " + e.getMessage());
+			throw new ApplicationRuntimeException("Exception occured -----> " + e.getMessage());
 		}
 	}
 

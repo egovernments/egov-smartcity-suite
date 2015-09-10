@@ -42,9 +42,9 @@ package org.egov.pgr.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.repository.ComplaintRouterRepository;
@@ -125,7 +125,7 @@ public class ComplaintRouterService {
         if (complaintRouter != null)
             position = complaintRouter.getPosition();
         else
-            throw new EGOVRuntimeException("PGR.001");
+            throw new ApplicationRuntimeException("PGR.001");
         return position;
     }
 

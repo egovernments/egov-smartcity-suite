@@ -49,9 +49,9 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +86,7 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction {
         } catch (final Exception e) {
             LOGGER.error("populateDivisions() - Error while loading divisions ." + e.getMessage());
             addFieldError("divisions", "Unable to load division information");
-            throw new EGOVRuntimeException("Unable to load division information", e);
+            throw new ApplicationRuntimeException("Unable to load division information", e);
         }
         return "ward";
     }

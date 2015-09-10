@@ -52,7 +52,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.ParameterAware;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.SessionAware;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -118,7 +118,7 @@ public abstract class BaseFormAction extends ActionSupport
                     setValue(relationshipName, relation);
 
                 } catch (final Exception iae) {
-                    throw new EGOVRuntimeException("Model class does not have getId method", iae);
+                    throw new ApplicationRuntimeException("Model class does not have getId method", iae);
                 }
         }
     }

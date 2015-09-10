@@ -44,7 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
@@ -80,7 +80,7 @@ public class DailyCancelProvisionalNocTradeJob extends AbstractQuartzJob {
             }
         } catch (final Exception e) {
             LOGGER.error("Error while scheduling Cancellation of Provisional NOC Licenses", e);
-            throw new EGOVRuntimeException("Error while scheduling Cancellation of Provisional NOC Licenses", e);
+            throw new ApplicationRuntimeException("Error while scheduling Cancellation of Provisional NOC Licenses", e);
         }
 
     }

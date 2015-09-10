@@ -76,20 +76,20 @@ import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
@@ -374,7 +374,7 @@ public class ContractorBillAction extends BaseFormAction {
             }
             populateOtherDeductionList();
             setRetentionMoneyConfigValues();
-        } catch (final EGOVException v) {
+        } catch (final ApplicationException v) {
             logger.error("Unable to COA for WorkOrder" + v);
             addFieldError("COA.notfound", "Unable to COA for WorkOrder");
         }
@@ -501,7 +501,7 @@ public class ContractorBillAction extends BaseFormAction {
                 } else
                     addDropdownData(COA_LIST, commonsService.getAccountCodeByPurpose(Integer.valueOf(worksService
                             .getWorksConfigValue(KEY_CWIP))));
-            } catch (final EGOVException v) {
+            } catch (final ApplicationException v) {
                 logger.error("Unable to load COA for WorkOrder" + v);
                 addFieldError("COA.notfound", "Unable to load COA for WorkOrder");
             }
@@ -538,7 +538,7 @@ public class ContractorBillAction extends BaseFormAction {
             final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
             final boolean isValidUser = worksService.validateWorkflowForUser(contractorBillRegister, user);
             if (isValidUser)
-                throw new EGOVRuntimeException("Error: Invalid Owner - No permission to view this page.");
+                throw new ApplicationRuntimeException("Error: Invalid Owner - No permission to view this page.");
         } else if (StringUtils.isEmpty(sourcepage))
             sourcepage = "search";
 
@@ -1382,7 +1382,7 @@ public class ContractorBillAction extends BaseFormAction {
         return egBillPaydetail;
     }
 
-    private EgBillregistermis setEgBillregistermis(final List<FinancialDetail> fdList) throws EGOVException {
+    private EgBillregistermis setEgBillregistermis(final List<FinancialDetail> fdList) throws ApplicationException {
         EgBillregistermis egBillRegisterMis = null;
         if (id == null)
             egBillRegisterMis = new EgBillregistermis();
@@ -1518,7 +1518,7 @@ public class ContractorBillAction extends BaseFormAction {
         return debitGlcodeAndAmountMap;
     }
 
-    public void populateOtherDeductionList() throws EGOVException {
+    public void populateOtherDeductionList() throws ApplicationException {
         final char[] charTypes = getBillAccountTypesFromConfig();
         if (charTypes != null)
             for (final char charType : charTypes) {
@@ -1561,7 +1561,7 @@ public class ContractorBillAction extends BaseFormAction {
         // contractorBillService.getBudgetedAmtForYear(workOrderId, billDate);
     }
 
-    public Map<Long, String> getContratorCoaPayableMap() throws NumberFormatException, EGOVException {
+    public Map<Long, String> getContratorCoaPayableMap() throws NumberFormatException, ApplicationException {
         if (StringUtils.isNotBlank(worksService.getWorksConfigValue(WORKS_NETPAYABLE_CODE))) {
             final List<CChartOfAccounts> coaPayableList = commonsService.getAccountCodeByPurpose(Integer
                     .valueOf(worksService.getWorksConfigValue(WORKS_NETPAYABLE_CODE)));

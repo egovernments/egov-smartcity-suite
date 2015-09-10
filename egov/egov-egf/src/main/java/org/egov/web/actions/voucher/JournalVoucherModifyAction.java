@@ -53,14 +53,14 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBillregister;
@@ -182,7 +182,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
                     {
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("Invalid  Owner :return false");
-                        throw new EGOVRuntimeException("Invalid Aceess");
+                        throw new ApplicationRuntimeException("Invalid Aceess");
                     }
                 }
                 else if (voucherHeader.getState().getValue().contains("END")) {
@@ -192,11 +192,11 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("Valid Owner :return true");
                 } else {
-                    throw new EGOVRuntimeException("Invalid Aceess");
+                    throw new ApplicationRuntimeException("Invalid Aceess");
                 }
             }
             setOneFunctionCenterValue();
-        } catch (EGOVRuntimeException e) {
+        } catch (ApplicationRuntimeException e) {
             List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", "Invalid Aceess"));
             throw new ValidationException(errors);
@@ -436,7 +436,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         }
     }
 
-    public Position getPosition() throws EGOVRuntimeException
+    public Position getPosition() throws ApplicationRuntimeException
     {
         Position pos;
         if (LOGGER.isDebugEnabled())

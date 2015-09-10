@@ -48,7 +48,7 @@ package org.egov.ptis.domain.entity.property;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * This class defines the reasons for the New property Creation
@@ -156,7 +156,7 @@ public class PropertyCreationReason implements Serializable {
 	 */
 	public boolean validate() {
 		if (getReasonName() == null)
-			throw new EGOVRuntimeException("PropertyCreationReason.validate. ReasonName is not set, Please Check !!");
+			throw new ApplicationRuntimeException("PropertyCreationReason.validate. ReasonName is not set, Please Check !!");
 
 		return true;
 	}

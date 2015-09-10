@@ -61,14 +61,14 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectException;
-import org.egov.exceptions.TooManyValuesException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectException;
+import org.egov.infra.exception.TooManyValuesException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -195,12 +195,12 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
 
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
         return employeeList;
@@ -277,12 +277,12 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
 
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
         return employeeList;
@@ -368,12 +368,12 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
 
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
         return employeeList;
@@ -508,12 +508,12 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
 
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
         return employeeList;
@@ -561,9 +561,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * qry.setInteger("employeeType",empType); } employeeList =
      * (List)qry.list(); } catch (HibernateException he) { LOGGER.error(he);
      * //HibernateUtil.rollbackTransaction(); throw new
-     * EGOVRuntimeException("Exception:" + he.getMessage(),he); } catch
+     * ApplicationRuntimeException("Exception:" + he.getMessage(),he); } catch
      * (Exception he) { LOGGER.error(he); //HibernateUtil.rollbackTransaction();
-     * throw new EGOVRuntimeException("Exception:" + he.getMessage(),he); }
+     * throw new ApplicationRuntimeException("Exception:" + he.getMessage(),he); }
      * return employeeList; }
      */
 
@@ -648,12 +648,12 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
 
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
         return employeeList;
@@ -701,10 +701,10 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
             LOGGER.error("Exception ===" + he.getMessage());
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception e) {
             LOGGER.error("Exception ===" + e.getMessage());
-            throw new EGOVRuntimeException("Exception:" + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
 
         }
         return employeeList;
@@ -734,12 +734,12 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
 
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
 
@@ -790,7 +790,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
             LOGGER.error(e);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
     }
 
@@ -815,11 +815,11 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return assignment;
     }
@@ -845,11 +845,11 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return assignment;
     }
@@ -875,9 +875,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * (Integer)iter.next(); list.add(getDisciplinaryPunishmentById(desigId)); }
      * } } catch (HibernateException he) { LOGGER.error(he);
      * //HibernateUtil.rollbackTransaction(); throw new
-     * EGOVRuntimeException("Exception:" + he.getMessage(),he); } catch
+     * ApplicationRuntimeException("Exception:" + he.getMessage(),he); } catch
      * (Exception he) { LOGGER.error(he); //HibernateUtil.rollbackTransaction();
-     * throw new EGOVRuntimeException("Exception:" + he.getMessage(),he); }
+     * throw new ApplicationRuntimeException("Exception:" + he.getMessage(),he); }
      * return list; }
      */
 
@@ -914,9 +914,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * addListEmployeeHistory(empId,objArray,list,myGivenDate,stFyDate); } } }
      * catch (HibernateException he) { LOGGER.error(he);
      * //HibernateUtil.rollbackTransaction(); throw new
-     * EGOVRuntimeException("Exception:" + he.getMessage(),he); } catch
+     * ApplicationRuntimeException("Exception:" + he.getMessage(),he); } catch
      * (Exception he) { LOGGER.error(he); //HibernateUtil.rollbackTransaction();
-     * throw new EGOVRuntimeException("Exception:" + he.getMessage(),he); }
+     * throw new ApplicationRuntimeException("Exception:" + he.getMessage(),he); }
      * return list; }
      */
 
@@ -940,9 +940,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * addListEmployeeHistory(empId,objArray,list,givenDate,stFyDate); } } }
      * catch (HibernateException he) { LOGGER.error(he);
      * //HibernateUtil.rollbackTransaction(); throw new
-     * EGOVRuntimeException("Exception:" + he.getMessage(),he); } catch
+     * ApplicationRuntimeException("Exception:" + he.getMessage(),he); } catch
      * (Exception he) { LOGGER.error(he); //HibernateUtil.rollbackTransaction();
-     * throw new EGOVRuntimeException("Exception:" + he.getMessage(),he); }
+     * throw new ApplicationRuntimeException("Exception:" + he.getMessage(),he); }
      * return list; }
      */
 
@@ -963,7 +963,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * valueOf(0),"","",Integer.valueOf(empId),fromdesDate,todesDate)); } } }
      * catch (Exception e) { // TODO Auto-generated catch block LOGGER.error(e);
      * //HibernateUtil.rollbackTransaction(); throw new
-     * EGOVRuntimeException("Exception:" + e.getMessage(),e); } }
+     * ApplicationRuntimeException("Exception:" + e.getMessage(),e); } }
      */
 
     public PersonalInformation getEmployeeforPosition(Position pos) {
@@ -989,11 +989,11 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return personalInformation;
 
@@ -1022,10 +1022,10 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             }
         } catch (HibernateException he) {
             LOGGER.error(he);
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return position;
 
@@ -1060,12 +1060,12 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
 
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
         return b;
@@ -1086,7 +1086,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             // TODO Auto-generated catch block
             LOGGER.error(e);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
     }
 
@@ -1110,7 +1110,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (Exception e) {
             LOGGER.error(e);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
 
         return personalInformation;
@@ -1124,7 +1124,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             // TODO Auto-generated catch block
             LOGGER.error(e);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
     }
 
@@ -1155,7 +1155,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             // TODO Auto-generated catch block
             LOGGER.error(e);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
     }
 
@@ -1166,7 +1166,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             // TODO Auto-generated catch block
             LOGGER.error(e);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
     }
 
@@ -1188,7 +1188,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (Exception e) {
             LOGGER.error(e);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
         return listOfEmpOfSameDept;
     }
@@ -1213,7 +1213,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (Exception e) {
             LOGGER.error(e);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
         return listOfEmpOfSameDesig;
     }
@@ -1240,7 +1240,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             // TODO Auto-generated catch block
             LOGGER.error(e);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
 
     }
@@ -1264,10 +1264,10 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             }
         } catch (NoSuchFieldException nfe) {
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + nfe.getMessage(), nfe);
+            throw new ApplicationRuntimeException("Exception:" + nfe.getMessage(), nfe);
         } catch (IllegalAccessException iac) {
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + iac.getMessage(), iac);
+            throw new ApplicationRuntimeException("Exception:" + iac.getMessage(), iac);
         }
         return retMap;
 
@@ -1297,15 +1297,15 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (IllegalAccessException iac) {
 
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + iac.getMessage(), iac);
+            throw new ApplicationRuntimeException("Exception:" + iac.getMessage(), iac);
         } catch (InvocationTargetException e) {
             LOGGER.error(e);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         } catch (NoSuchMethodException e) {
             LOGGER.error(e);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
         return retMap;
 
@@ -1318,7 +1318,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             // TODO Auto-generated catch block
             LOGGER.error(e);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
     }
 
@@ -1342,12 +1342,12 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
 
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
         return id;
@@ -1376,12 +1376,12 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
 
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
         return String.valueOf(id);
@@ -1443,11 +1443,11 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
         return b;
@@ -1463,11 +1463,11 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return list;
     }
@@ -1481,11 +1481,11 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return list;
     }
@@ -1499,11 +1499,11 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return assignment;
     }
@@ -1529,7 +1529,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             }
 
         } catch (Exception e) {
-            throw new EGOVRuntimeException("system.error", e);
+            throw new ApplicationRuntimeException("system.error", e);
         }
         return personalInformation;
     }
@@ -1557,7 +1557,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             }
 
         } catch (Exception e) {
-            throw new EGOVRuntimeException("system.error", e);
+            throw new ApplicationRuntimeException("system.error", e);
         }
         return personalInformation;
     }
@@ -1581,11 +1581,11 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return assignment;
     }
@@ -1607,7 +1607,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (Exception e) {
 
             LOGGER.error(e);
-            throw new EGOVRuntimeException("Exception:" + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
         return empList;
     }
@@ -1645,10 +1645,10 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
             LOGGER.error(he);
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
 
         return personalInformation;
@@ -1698,10 +1698,10 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
             LOGGER.error(he);
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
 
         return empList;
@@ -1752,7 +1752,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             }
 
         } catch (Exception e) {
-            throw new EGOVRuntimeException("system.error", e);
+            throw new ApplicationRuntimeException("system.error", e);
         }
         return userList;
     }
@@ -1774,9 +1774,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
 
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
 
         return list;
@@ -1801,9 +1801,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
 
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
 
         return list;
@@ -1855,11 +1855,11 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return assignment;
 
@@ -1871,14 +1871,14 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * 
      * @param empId
      *            - Required parameter. If null is passed, the API throws an
-     *            EGOVException
+     *            ApplicationException
      * @param givenDate
      *            . Date as on which the assignments need to be returned. If
      *            this parameter is null, the current date is considered
      * @return List of Assignment Ids
-     * @throws EGOVException
+     * @throws ApplicationException
      */
-    public List<Integer> getAssignmentsForEmp(Integer empId, Date givenDate) throws EGOVException {
+    public List<Integer> getAssignmentsForEmp(Integer empId, Date givenDate) throws ApplicationException {
         List list = null;
         Query query = null;
         try {
@@ -1887,7 +1887,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
                     " select 	ASS_ID  from EG_EIS_EMPLOYEEINFO ev  where ev.ID = :empId");
 
             if (empId == null) {
-                throw new EGOVException("EmployeeId  Not provided");
+                throw new ApplicationException("EmployeeId  Not provided");
             } else if (givenDate == null) {
                 stringbuffer
                         .append(" and ((ev.to_Date is null and ev.from_Date <= SYSDATE ) OR (ev.from_Date <= SYSDATE AND ev.to_Date >= SYSDATE))");
@@ -1906,7 +1906,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException hibException) {
             LOGGER.error(hibException.getMessage());
-            throw new EGOVException("HibernateException:" + hibException.getMessage(), hibException);
+            throw new ApplicationException("HibernateException:" + hibException.getMessage(), hibException);
         }
 
         return query.list();
@@ -1922,10 +1922,10 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * @param date
      *            Will consider current date if date is not provided
      * @return
-     * @throws EGOVException
+     * @throws ApplicationException
      */
 
-    public List<Position> getPositionsForUser(User user, Date date) throws EGOVException {
+    public List<Position> getPositionsForUser(User user, Date date) throws ApplicationException {
 
         // session = HibernateUtil.getCurrentSession();
         List<Position> positionList = new ArrayList<Position>();
@@ -1960,11 +1960,11 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return positionList;
     }
@@ -2014,11 +2014,11 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (HibernateException he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return assignment;
 
@@ -2135,9 +2135,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             employeeList = (List) qry.list();
 
         } catch (HibernateException he) {
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
-            throw new EGOVRuntimeException("Exception:" + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
         return employeeList;
@@ -2174,7 +2174,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            throw new EGOVRuntimeException("Exception:" + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
         return deptList;
     }
@@ -2267,7 +2267,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (Exception e) {
 
             LOGGER.error(e);
-            throw new EGOVRuntimeException("Exception:" + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
         return empUserMapList;
     }

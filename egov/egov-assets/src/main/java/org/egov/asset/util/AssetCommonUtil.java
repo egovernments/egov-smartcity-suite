@@ -47,15 +47,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -77,9 +77,9 @@ public class AssetCommonUtil {
         HierarchyType hType = null;
         try {
             hType = heirarchyTypeDAO.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
-        } catch (final EGOVException e) {
+        } catch (final ApplicationException e) {
             LOGGER.error("Error_While_Loading_HeirarchyType" + e.getMessage());
-            throw new EGOVRuntimeException("Unable_To_Load_Heirarchy_Information", e);
+            throw new ApplicationRuntimeException("Unable_To_Load_Heirarchy_Information", e);
         }
         List<Boundary> zoneList = null;
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(Zone_BOUNDARY_TYPE, hType);
@@ -96,7 +96,7 @@ public class AssetCommonUtil {
             wardList = boundaryService.getChildBoundariesByBoundaryId(zoneId);
         } catch (final Exception e) {
             LOGGER.error("Error while loading warda - wards." + e.getMessage());
-            throw new EGOVRuntimeException("Unable to load ward information", e);
+            throw new ApplicationRuntimeException("Unable to load ward information", e);
         }
         return wardList;
     }
@@ -112,7 +112,7 @@ public class AssetCommonUtil {
             hType = heirarchyTypeDAO.getHierarchyTypeByName(hierarchyTypeName);
         } catch (final Exception e) {
             LOGGER.error("Error while loading areas - areas." + e.getMessage());
-            throw new EGOVRuntimeException("Unable to load areas information", e);
+            throw new ApplicationRuntimeException("Unable to load areas information", e);
         }
         final BoundaryType childBoundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType("Area", hType);
         final Boundary parentBoundary = boundaryService.getBoundaryById(wardId);
@@ -136,7 +136,7 @@ public class AssetCommonUtil {
             hType = heirarchyTypeDAO.getHierarchyTypeByName(hierarchyTypeName);
         } catch (final Exception e) {
             LOGGER.error("Error while loading Streets." + e.getMessage());
-            throw new EGOVRuntimeException("Unable to load Streets information", e);
+            throw new ApplicationRuntimeException("Unable to load Streets information", e);
         }
         final BoundaryType childBoundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType("Street",
                 hType);
@@ -154,7 +154,7 @@ public class AssetCommonUtil {
             locationList = boundaryService.getChildBoundariesByBoundaryId(areaId);
         } catch (final Exception e) {
             LOGGER.error("Error while loading locations - locations." + e.getMessage());
-            throw new EGOVRuntimeException("Unable to load location information", e);
+            throw new ApplicationRuntimeException("Unable to load location information", e);
         }
         LOGGER.info("***********Ajax locationList: " + locationList.toString());
         return locationList;

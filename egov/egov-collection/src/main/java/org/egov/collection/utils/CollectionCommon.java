@@ -87,10 +87,10 @@ import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -196,7 +196,7 @@ public class CollectionCommon {
                     final String errMsg = "Report template [" + templateName
                             + "] not available! Receipt report cannot be generated.";
                     LOGGER.error(errMsg);
-                    throw new EGOVRuntimeException(errMsg);
+                    throw new ApplicationRuntimeException(errMsg);
                 }
             }
             break;
@@ -219,7 +219,7 @@ public class CollectionCommon {
                     final String errMsg = "Report template [" + templateName
                             + "] not available!Miscellaneous Receipt report cannot be generated.";
                     LOGGER.error(errMsg);
-                    throw new EGOVRuntimeException(errMsg);
+                    throw new ApplicationRuntimeException(errMsg);
                 }
             }
             break;
@@ -712,7 +712,7 @@ public class CollectionCommon {
     public InstrumentHeader validateAndConstructCashInstrument(final PaymentInfoCash paytInfoCash) {
         if (paytInfoCash.getInstrumentAmount() == null
                 || paytInfoCash.getInstrumentAmount().compareTo(BigDecimal.ZERO) == 0)
-            throw new EGOVRuntimeException("Invalid Cash Instrument Amount[" + paytInfoCash.getInstrumentAmount() + "]");
+            throw new ApplicationRuntimeException("Invalid Cash Instrument Amount[" + paytInfoCash.getInstrumentAmount() + "]");
 
         final InstrumentHeader instrHeaderCash = new InstrumentHeader();
         instrHeaderCash.setInstrumentType(financialsUtil
@@ -743,7 +743,7 @@ public class CollectionCommon {
      * invalidCardPaytMsg+="Invalid Card Instrument Number[" +
      * paytInfoCard.getInstrumentNumber() + ". \n"; }
      * if(!(CollectionConstants.BLANK.equals(invalidCardPaytMsg))) throw new
-     * EGOVRuntimeException(invalidCardPaytMsg); //Process Card Payment by
+     * ApplicationRuntimeException(invalidCardPaytMsg); //Process Card Payment by
      * invoking BillDesk API MerchantInfo merchantInfo =
      * processCardPayment(paytInfoCard,receiptHeader); InstrumentHeader
      * instrHeaderCard = new InstrumentHeader();
@@ -764,7 +764,7 @@ public class CollectionCommon {
      * sdf.parse(merchantInfo.getTxnDate()); } catch (ParseException e) {
      * LOGGER.error("Error occured in parsing the transaction date [" +
      * merchantInfo.getTxnDate() + "]", e); throw new
-     * EGOVRuntimeException("Error in parsing date"); }
+     * ApplicationRuntimeException("Error in parsing date"); }
      * instrHeaderCard.setTransactionDate(transactionDate); OnlinePayment
      * onlinePayment = new OnlinePayment();
      * onlinePayment.setReceiptHeader(receiptHeader); onlinePayment.setStatus(
@@ -816,7 +816,7 @@ public class CollectionCommon {
         }
 
         if (!CollectionConstants.BLANK.equals(invalidBankPaytMsg))
-            throw new EGOVRuntimeException(invalidBankPaytMsg);
+            throw new ApplicationRuntimeException(invalidBankPaytMsg);
 
         final InstrumentHeader instrHeaderBank = new InstrumentHeader();
 
@@ -868,7 +868,7 @@ public class CollectionCommon {
         }
 
         if (!CollectionConstants.BLANK.equals(invalidChequeDDPaytMsg))
-            throw new EGOVRuntimeException(invalidChequeDDPaytMsg);
+            throw new ApplicationRuntimeException(invalidChequeDDPaytMsg);
 
         final InstrumentHeader instrHeaderChequeDD = new InstrumentHeader();
 
@@ -925,7 +925,7 @@ public class CollectionCommon {
      * if(bank==null){ invalidATMPaytMsg+="No bank present for bank id ["+
      * paytInfoATM.getBankId()+"] \n"; } }
      * if(!(CollectionConstants.BLANK.equals(invalidATMPaytMsg))) throw new
-     * EGOVRuntimeException(invalidATMPaytMsg); InstrumentHeader instrHeaderATM
+     * ApplicationRuntimeException(invalidATMPaytMsg); InstrumentHeader instrHeaderATM
      * = new InstrumentHeader();
      * instrHeaderATM.setInstrumentType(financialsUtil.getInstrumentTypeByType(
      * CollectionConstants.INSTRUMENTTYPE_ATM)); instrHeaderATM.setBankId(bank);

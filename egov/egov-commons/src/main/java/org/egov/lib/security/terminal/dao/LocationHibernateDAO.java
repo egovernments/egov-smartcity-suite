@@ -41,7 +41,7 @@ package org.egov.lib.security.terminal.dao;
 
 import java.util.ArrayList;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.lib.security.terminal.model.Location;
 import org.hibernate.HibernateException;
@@ -80,7 +80,7 @@ public class LocationHibernateDAO extends GenericHibernateDAO implements Locatio
 			return locList;
 		} catch (final Exception e) {
 			LOG.error("Exception in getting Counters By Location", e);
-			throw new EGOVRuntimeException("Exception in getCountersByLocation", e);
+			throw new ApplicationRuntimeException("Exception in getCountersByLocation", e);
 
 		}
 	}
@@ -104,10 +104,10 @@ public class LocationHibernateDAO extends GenericHibernateDAO implements Locatio
 
 		} catch (final HibernateException he) {
 			LOG.error("Exception occurred while check IP Address", he);
-			throw new EGOVRuntimeException("Exception occurred in checkIPAddress", he);
+			throw new ApplicationRuntimeException("Exception occurred in checkIPAddress", he);
 		} catch (final Exception e) {
 			LOG.error("Exception occurred while check IP Address", e);
-			throw new EGOVRuntimeException("Exception occurred in checkIPAddress", e);
+			throw new ApplicationRuntimeException("Exception occurred in checkIPAddress", e);
 		}
 		return b;
 
@@ -132,10 +132,10 @@ public class LocationHibernateDAO extends GenericHibernateDAO implements Locatio
 
 		} catch (final HibernateException he) {
 			LOG.error("Exception occurred while check Counter", he);
-			throw new EGOVRuntimeException("Exception occurred in checkCounter", he);
+			throw new ApplicationRuntimeException("Exception occurred in checkCounter", he);
 		} catch (final Exception e) {
 			LOG.error("Exception occurred while check Counter", e);
-			throw new EGOVRuntimeException("Exception occurred in checkCounter", e);
+			throw new ApplicationRuntimeException("Exception occurred in checkCounter", e);
 		}
 		return b;
 

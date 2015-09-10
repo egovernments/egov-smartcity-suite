@@ -43,9 +43,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -65,7 +65,7 @@ public class ReportEngine {
 	
 	@Autowired  private AppConfigValueService appConfigValuesService;
 	
-	public String	getVouchersListQuery(ReportEngineBean reBean)throws EGOVRuntimeException
+	public String	getVouchersListQuery(ReportEngineBean reBean)throws ApplicationRuntimeException
 	{
 		boolean includeVouchermis=false;
 		boolean includeGeneralLedger=false;  
@@ -205,7 +205,7 @@ public class ReportEngine {
 			}
 			else
 			{
-				throw new EGOVRuntimeException("Exlcude statusses not  are not defined for Reports");
+				throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
 			}
 			reportEngineQry.append(firstParam+"voucher.status not in("+defaultStatusExclude);
 			if(reBean.getExcludeStatuses()!=null && reBean.getExcludeStatuses().size()>0)
@@ -230,7 +230,7 @@ public class ReportEngine {
 			
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
-			throw new EGOVRuntimeException(e.getMessage());
+			throw new ApplicationRuntimeException(e.getMessage());
 		}	
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("-----------------------Engine Query-------------------");
 		if(LOGGER.isDebugEnabled())     LOGGER.debug(reportEngineQry.toString());

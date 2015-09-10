@@ -51,12 +51,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.exceptions.AuthorizationException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ActionService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.AuthorizationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -174,7 +174,7 @@ public class RuleInterceptorFilter implements Filter {
 		final Long objectId = Long.valueOf(httpRequest.getParameter("AUTHRULE_OBJECT_ID"));
 		final List objects = this.daoService.findAllBy("from " + authRule.getObjectType() + " where id=?", objectId);
 		if (objects.isEmpty()) {
-			throw new EGOVRuntimeException("Object id is null to get AuthorizationRule");
+			throw new ApplicationRuntimeException("Object id is null to get AuthorizationRule");
 		}
 		return objects.get(0);
 	}

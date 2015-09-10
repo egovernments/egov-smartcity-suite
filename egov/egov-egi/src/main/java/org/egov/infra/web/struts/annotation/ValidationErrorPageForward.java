@@ -44,7 +44,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationException;
 
 import com.opensymphony.xwork2.validator.ValidationInterceptor;
 

@@ -56,8 +56,8 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgReasonCategory;
 import org.egov.demand.model.EgdmCollectedReceipt;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -550,7 +550,7 @@ public class DemandGenericHibDao implements DemandGenericDao {
 			EgDemandReason dmdRes = this.getDmdReasonByDmdReasonMsterInstallAndMod(dmdResMster,
 					installment, module);
 			if (dmdRes == null) {
-				throw new EGOVRuntimeException("----EgDemand Reason  is null  For EgDemandID--"
+				throw new ApplicationRuntimeException("----EgDemand Reason  is null  For EgDemandID--"
 						+ egDemand.getId() + "--with InstallmentID--" + installment.getId());
 			}
 			List<EgDemandReason> demandReasonList = new ArrayList<EgDemandReason>();
@@ -740,14 +740,14 @@ public class DemandGenericHibDao implements DemandGenericDao {
 		EgDemandReasonMaster egDemandReasonMaster = getDemandReasonMasterByCode(
 				demandReasonMasterCode, module);
 		if (egDemandReasonMaster == null) {
-			throw new EGOVRuntimeException(" EgDemandReasonMaster is null for the CODE"
+			throw new ApplicationRuntimeException(" EgDemandReasonMaster is null for the CODE"
 					+ demandReasonMasterCode);
 		}
 
 		EgDemandReason egDemandReason = getDmdReasonByDmdReasonMsterInstallAndMod(
 				egDemandReasonMaster, installment, module);
 		if (egDemandReason == null) {
-			throw new EGOVRuntimeException(" EgDemandReason is null for the EgDemandReasonMaster"
+			throw new ApplicationRuntimeException(" EgDemandReason is null for the EgDemandReasonMaster"
 					+ egDemandReasonMaster.getId() + "Installment ::" + installment.getFromDate());
 		}
 

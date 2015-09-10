@@ -51,10 +51,10 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgReasonCategory;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.Sequence;
@@ -454,7 +454,7 @@ public abstract class BaseLicenseService {
         final Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
         try {
             workflowService().start(license, position, workflowBean.getComments());
-        } catch (final EGOVRuntimeException e) {
+        } catch (final ApplicationRuntimeException e) {
             if (license.getState().getValue().equalsIgnoreCase("END")) {
                 license.setState(null);
                 persistenceService.persist(license);
@@ -513,7 +513,7 @@ public abstract class BaseLicenseService {
             } else if (isExpired == true && noOfMonths <= 6)
                 installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), renewalDate);
             else
-                throw new EGOVRuntimeException("License already Expired Cant renew");
+                throw new ApplicationRuntimeException("License already Expired Cant renew");
 
         }
 

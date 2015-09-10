@@ -51,9 +51,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.GeoKmlInfo;
 import org.egov.infstr.models.GeoLocation;
 import org.slf4j.Logger;
@@ -139,7 +139,7 @@ public class GeoLocationService {
 		}*/
 		if(null == geoKmlInfo){
 			LOGGER.error("Could not able to retrive kml data  from cache for the key "+kmlDataModelKey);
-			throw new EGOVRuntimeException("Could not able to retrive kml data  from cache for the key "+kmlDataModelKey);
+			throw new ApplicationRuntimeException("Could not able to retrive kml data  from cache for the key "+kmlDataModelKey);
 		}
 		return geoKmlInfo;  
 	}

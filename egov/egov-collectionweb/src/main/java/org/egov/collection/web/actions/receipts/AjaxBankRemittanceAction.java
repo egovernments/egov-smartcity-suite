@@ -49,11 +49,11 @@ import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.Fund;
 import org.egov.eis.entity.EmployeeView;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Designation;
 import org.hibernate.Query;
@@ -150,7 +150,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction{
 				postionUserList=collectionsUtil.getPositionBySearchParameters(null,designationId,approverDeptId,null,null,new Date(),0);
 			}	
 			catch(NoSuchObjectException e){
-				throw new EGOVRuntimeException("Designation Postion not found",e);
+				throw new ApplicationRuntimeException("Designation Postion not found",e);
 			}	
 		}
 		return USERLIST;

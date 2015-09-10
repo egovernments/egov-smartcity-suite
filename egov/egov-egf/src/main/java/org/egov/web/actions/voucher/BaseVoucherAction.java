@@ -70,17 +70,17 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.contra.ContraBean;
@@ -360,7 +360,7 @@ protected HashMap<String, Object> createHeaderAndMisDetails() throws ValidationE
 		} catch (final HibernateException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw new ValidationException(Arrays.asList(new ValidationError(EXCEPTION_WHILE_SAVING_DATA, FAILED)));
-		} catch (final EGOVRuntimeException e) {
+		} catch (final ApplicationRuntimeException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
 		} catch (final ValidationException e) {
@@ -721,7 +721,7 @@ public void loadBankBranchForFund(){
 			if(LOGGER.isInfoEnabled())     LOGGER.info("ERROR in Reversing voucher"+e.getMessage());
 			addActionError(getText(e.getErrors().get(0).getMessage()));
 			return;
-		} catch (EGOVRuntimeException e) {
+		} catch (ApplicationRuntimeException e) {
 			if(LOGGER.isInfoEnabled())     LOGGER.info("ERROR "+e.getMessage());
 			addActionError(getText(e.getMessage()));
 			return;

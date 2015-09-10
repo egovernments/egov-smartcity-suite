@@ -63,12 +63,12 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.CommonsService;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
@@ -137,10 +137,10 @@ public class AssetCategoryAction extends BaseFormAction {
             final List<CChartOfAccounts> assetAccounts = commonsService
                     .getAccountCodeByPurpose(Integer.valueOf(purposeId));
             addDropdownData("assetAccountCodeList", assetAccounts);
-        } catch (final EGOVException e) {
+        } catch (final ApplicationException e) {
             LOGGER.error("Error while loading dropdown data - assetAccountCodeList." + e.getMessage());
             addFieldError("assetAccountCodeList", "Unable to load asset account information");
-            throw new EGOVRuntimeException("Unable to load asset account information", e);
+            throw new ApplicationRuntimeException("Unable to load asset account information", e);
         }
 
         try {
@@ -148,10 +148,10 @@ public class AssetCategoryAction extends BaseFormAction {
             final List<CChartOfAccounts> accumulatedDeps = commonsService
                     .getAccountCodeByPurpose(Integer.valueOf(purposeId));
             addDropdownData("accDepAccountCodeList", accumulatedDeps);
-        } catch (final EGOVException e) {
+        } catch (final ApplicationException e) {
             LOGGER.error("Error while loading dropdown data - accDepAccountCodeList." + e.getMessage());
             addFieldError("accDepAccountCodeList", "Unable to load accumulated depreciation information");
-            throw new EGOVRuntimeException("Unable to load accumulated depreciation information", e);
+            throw new ApplicationRuntimeException("Unable to load accumulated depreciation information", e);
         }
 
         try {
@@ -159,10 +159,10 @@ public class AssetCategoryAction extends BaseFormAction {
             final List<CChartOfAccounts> revAccounts = commonsService
                     .getAccountCodeByPurpose(Integer.valueOf(purposeId));
             addDropdownData("revAccountCodeList", revAccounts);
-        } catch (final EGOVException e) {
+        } catch (final ApplicationException e) {
             LOGGER.error("Error while loading dropdown data - revAccountCodeList." + e.getMessage());
             addFieldError("revAccountCodeList", "Unable to load revaluation account information");
-            throw new EGOVRuntimeException("Unable to load revaluation account information", e);
+            throw new ApplicationRuntimeException("Unable to load revaluation account information", e);
         }
 
         try {
@@ -170,10 +170,10 @@ public class AssetCategoryAction extends BaseFormAction {
             final List<CChartOfAccounts> depExpenseAccounts = commonsService
                     .getAccountCodeByPurpose(Integer.valueOf(purposeId));
             addDropdownData("depExpAccountCodeList", depExpenseAccounts);
-        } catch (final EGOVException e) {
+        } catch (final ApplicationException e) {
             LOGGER.error("Error while loading dropdown data - depExpAccountCodeList." + e.getMessage());
             addFieldError("depExpAccountCodeList", "Unable to load depreciation expense account information");
-            throw new EGOVRuntimeException("Unable to load depreciation expense account information", e);
+            throw new ApplicationRuntimeException("Unable to load depreciation expense account information", e);
         }
     }
 
@@ -261,7 +261,7 @@ public class AssetCategoryAction extends BaseFormAction {
 
     @ValidationErrorPage(value = EDIT)
     @Action(value = "/assetcategory/assetCategory-save")
-    public String save() throws NumberFormatException, EGOVException {
+    public String save() throws NumberFormatException, ApplicationException {
         addDepMetaDatas();
         if (parentId != null && parentId != -1L)
             assetCategory.setParent(assetCategoryService.findById(parentId, false));

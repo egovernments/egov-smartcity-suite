@@ -49,11 +49,11 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFunction;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -140,7 +140,7 @@ public class FunctionAction extends BaseFormAction {
 			setSuccess("no");
 			LOGGER.error("Exception occurred in FunctionAction-create ", e);
              
-            throw new EGOVRuntimeException("Exception occurred in FunctionAction-create ", e);
+            throw new ApplicationRuntimeException("Exception occurred in FunctionAction-create ", e);
 		}
 				return NEW;
 	}
@@ -198,7 +198,7 @@ public class FunctionAction extends BaseFormAction {
 			setSuccess("no");
 			LOGGER.error("Exception occurred in FunctionAction-edit ", e);
              
-            throw new EGOVRuntimeException("Exception occurred in FunctionAction-edit ", e);
+            throw new ApplicationRuntimeException("Exception occurred in FunctionAction-edit ", e);
 		}
 		showMode = "edit";
 		return EDIT;

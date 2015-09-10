@@ -49,7 +49,7 @@ import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.utils.DemandUtils;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +81,7 @@ public abstract class BillServiceInterface {
 	public String getBillXML(Billable billObj) {
 		EgBill bill = null;
 		if (billObj == null) {
-			throw new EGOVRuntimeException("Exception in getBillXML....Billable is null");
+			throw new ApplicationRuntimeException("Exception in getBillXML....Billable is null");
 		} else {
 			bill = generateBill(billObj);
 		}
@@ -90,7 +90,7 @@ public abstract class BillServiceInterface {
 
 	public String generateXML(EgBill bill) {
 		if (bill == null) {
-			throw new EGOVRuntimeException("Exception in generateXML..Bill is null");
+			throw new ApplicationRuntimeException("Exception in generateXML..Bill is null");
 		}
 		String msg = bill.getDisplayMessage();
 		return new DemandUtils().generateBillXML(bill, msg);

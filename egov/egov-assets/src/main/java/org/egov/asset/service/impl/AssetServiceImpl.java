@@ -50,7 +50,7 @@ import org.egov.asset.service.AppService;
 import org.egov.asset.service.AssetService;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -91,7 +91,7 @@ public class AssetServiceImpl extends BaseServiceImpl<Asset, Long>implements Ass
         final SimpleDateFormat simpleDateformat = new SimpleDateFormat("yyyy");
         try {
             financialYear = financialYearDAO.getFinYearByDate(date);
-        } catch (final EGOVRuntimeException ex) {
+        } catch (final ApplicationRuntimeException ex) {
             logger.error(ex.getMessage());
         }
 

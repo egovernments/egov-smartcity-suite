@@ -19,9 +19,9 @@ import java.util.Map;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.CVoucherHeader;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.services.contra.ContraService;
 import org.egov.services.instrument.InstrumentService;
@@ -92,12 +92,12 @@ public class FinancialsUtilTest {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Test(expected = EGOVRuntimeException.class)
+	@Test(expected = ApplicationRuntimeException.class)
 	public void testCreatePreApprovalVoucherWithEgovException() {
 		expect(
 				voucherCreator.createPreApprovedVoucher(isA(HashMap.class),
 						isA(List.class), isA(List.class))).andThrow(
-				new EGOVRuntimeException("test exception"));
+				new ApplicationRuntimeException("test exception"));
 		replay(voucherCreator);
 
 		financialsUtil.createPreApprovalVoucher(new HashMap<String, Object>(),
@@ -107,7 +107,7 @@ public class FinancialsUtilTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testGetReversalVoucher() throws EGOVRuntimeException,
+	public void testGetReversalVoucher() throws ApplicationRuntimeException,
 			ParseException {
 		CVoucherHeader voucherHeaderExpected = createMock(CVoucherHeader.class);
 
@@ -123,9 +123,9 @@ public class FinancialsUtilTest {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Test(expected = EGOVRuntimeException.class)
+	@Test(expected = ApplicationRuntimeException.class)
 	public void testCreatePreApprovalVoucherWithParseException()
-			throws EGOVRuntimeException, ParseException {
+			throws ApplicationRuntimeException, ParseException {
 		expect(voucherCreator.reverseVoucher(isA(List.class))).andThrow(
 				new ParseException("test parse exception", 1));
 		replay(voucherCreator);
@@ -135,11 +135,11 @@ public class FinancialsUtilTest {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Test(expected = EGOVRuntimeException.class)
+	@Test(expected = ApplicationRuntimeException.class)
 	public void testCreatePreApprovalVoucherWithRuntimeException()
-			throws EGOVRuntimeException, ParseException {
+			throws ApplicationRuntimeException, ParseException {
 		expect(voucherCreator.reverseVoucher(isA(List.class))).andThrow(
-				new EGOVRuntimeException("test runtime exception"));
+				new ApplicationRuntimeException("test runtime exception"));
 		replay(voucherCreator);
 		financialsUtil
 				.getReversalVoucher(new ArrayList<HashMap<String, Object>>());
@@ -228,7 +228,7 @@ public class FinancialsUtilTest {
 			financialsUtil.createVoucher(new HashMap<String, Object>(), new ArrayList<HashMap<String, Object>>(), new ArrayList(), Boolean.FALSE,
 					Boolean.FALSE);
 		}
-		catch(EGOVRuntimeException egovEx){
+		catch(ApplicationRuntimeException egovEx){
 			assertEquals(egovEx.getMessage(),"Valid Appconfig value for ISVOUCHERAPPROVED is not defined");
 		}
 

@@ -52,14 +52,14 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
@@ -618,7 +618,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         if(LOGGER.isInfoEnabled())     LOGGER.info("meterialized path for the Budget"+mPath);
         if(mPath==null || mPath.isEmpty())  //if null system is not expecting anything without materialized path
         {
-            throw new EGOVRuntimeException("Materialized path is not set for the Budget "+budget.getName());
+            throw new ApplicationRuntimeException("Materialized path is not set for the Budget "+budget.getName());
         }
         else if(budget.getIsPrimaryBudget() && budget.getIsActiveBudget()) //check for root budget if yes return
         {
@@ -634,7 +634,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
             Budget rootBudget = budgetService.find("from Budget where materializedPath=?",rootPath);
             if(rootBudget==null)
             {
-                throw new EGOVRuntimeException("Materialized path is incorrect please verify for "+rootPath);
+                throw new ApplicationRuntimeException("Materialized path is incorrect please verify for "+rootPath);
             }
             else
                 if(rootBudget.getIsPrimaryBudget() && rootBudget.getIsActiveBudget())

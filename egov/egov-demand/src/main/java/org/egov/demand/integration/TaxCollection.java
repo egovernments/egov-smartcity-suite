@@ -69,8 +69,8 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.demand.utils.DemandConstants;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -121,7 +121,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
                 updateNewReceipt(bri);
             } catch (final Exception e) {
                 LOGGER.error("Exception while updating receipt details in billing system", e);
-                throw new EGOVRuntimeException("", e);
+                throw new ApplicationRuntimeException("", e);
             }
         LOGGER.info("Logs For HandHeldDevice Permance Test : Receipt Details Updating Finished...");
     }
@@ -157,16 +157,16 @@ public abstract class TaxCollection implements BillingIntegrationService {
         LOGGER.debug("-----Start of linkBillToReceipt----------------");
         BillReceipt billRecpt = null;
         if (bri == null)
-            throw new EGOVRuntimeException(" BillReceiptInfo Object is null ");
+            throw new ApplicationRuntimeException(" BillReceiptInfo Object is null ");
         final EgBill egBill = egBillDAO.findById(Long.valueOf(bri.getBillReferenceNum()),
                 false);
         if (egBill == null)
-            throw new EGOVRuntimeException(" EgBill Object is null for the Bill Number"
+            throw new ApplicationRuntimeException(" EgBill Object is null for the Bill Number"
                     + bri.getBillReferenceNum());
         final List<EgBillDetails> billDetList = egBillDetailsDAO.getBillDetailsByBill(egBill);
         final BigDecimal totalCollectedAmt = calculateTotalCollectedAmt(bri, billDetList);
         if (bri.getEvent() == null)
-            throw new EGOVRuntimeException(" Event in BillReceiptInfo Object is Null");
+            throw new ApplicationRuntimeException(" Event in BillReceiptInfo Object is Null");
         if (bri.getEvent().equals(BillingIntegrationService.EVENT_RECEIPT_CREATED)) {
             billRecpt = prepareBillReceiptBean(bri, egBill, totalCollectedAmt);
             egBillReceiptDAO.create(billRecpt);
@@ -225,17 +225,17 @@ public abstract class TaxCollection implements BillingIntegrationService {
             final BigDecimal totalCollectedAmt) {
         BillReceipt billRecpt = null;
         if (bri == null)
-            throw new EGOVRuntimeException(" BillReceiptInfo Object is null ");
+            throw new ApplicationRuntimeException(" BillReceiptInfo Object is null ");
         if (egBill != null && totalCollectedAmt != null) {
             billRecpt = egBillReceiptDAO.getBillReceiptByEgBill(egBill);
             if (billRecpt == null)
-                throw new EGOVRuntimeException(" Bill receipt Object is null for the EgBill "
+                throw new ApplicationRuntimeException(" Bill receipt Object is null for the EgBill "
                         + egBill.getId());
             if (bri.getEvent().equals(BillingIntegrationService.EVENT_RECEIPT_CANCELLED))
                 billRecpt.setIsCancelled(Boolean.TRUE);
             billRecpt.setReceiptAmt(totalCollectedAmt.subtract(billRecpt.getReceiptAmt()));
         } else
-            throw new EGOVRuntimeException(" EgBill Object is null for the Bill Number"
+            throw new ApplicationRuntimeException(" EgBill Object is null for the Bill Number"
                     + bri.getBillReferenceNum() + "in updateBillReceiptForCancellation method");
         return billRecpt;
     }
@@ -255,7 +255,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
         LOGGER.debug("-----Start of updateBillDetails----------------");
         EgBill egBill = null;
         if (bri == null)
-            throw new EGOVRuntimeException(" BillReceiptInfo Object is null ");
+            throw new ApplicationRuntimeException(" BillReceiptInfo Object is null ");
         egBill = egBillDAO.findById(Long.valueOf(bri.getBillReferenceNum()), false);
         final List<EgBillDetails> billDetList = egBillDetailsDAO.getBillDetailsByBill(egBill);
 
@@ -428,8 +428,8 @@ public abstract class TaxCollection implements BillingIntegrationService {
                         throw new InvalidAccountHeadException("GlCode does not exist for "
                                 + billDet.getGlcode());
                 }
-        } catch (final EGOVRuntimeException e) {
-            throw new EGOVRuntimeException("Exception in calculate Total Collected Amt" + e);
+        } catch (final ApplicationRuntimeException e) {
+            throw new ApplicationRuntimeException("Exception in calculate Total Collected Amt" + e);
         }
 
         return totalCollAmt;
@@ -442,7 +442,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
      *
      * @return java.math.BigDecimal balanceAmt
      *
-     * @exception org.egov.EGOVRuntimeException
+     * @exception org.egov.infra.exception.ApplicationRuntimeException
      */
 
     public BigDecimal getTotalChequeAmt(final BillReceiptInfo bri) {
@@ -452,8 +452,8 @@ public abstract class TaxCollection implements BillingIntegrationService {
                 for (final ReceiptInstrumentInfo rctInst : bri.getBouncedInstruments())
                     if (rctInst.getInstrumentAmount() != null)
                         totalCollAmt = totalCollAmt.add(rctInst.getInstrumentAmount());
-        } catch (final EGOVRuntimeException e) {
-            throw new EGOVRuntimeException("Exception in calculate Total Collected Amt" + e);
+        } catch (final ApplicationRuntimeException e) {
+            throw new ApplicationRuntimeException("Exception in calculate Total Collected Amt" + e);
         }
 
         return totalCollAmt;

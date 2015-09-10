@@ -48,7 +48,7 @@ package org.egov.ptis.domain.entity.property;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * <p>
@@ -179,7 +179,7 @@ public class PropertySource implements Serializable {
 	 */
 	public boolean validate() {
 		if (getName() == null)
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					"In PropertySource Validate :'Source Name' Attribute is no set, Please Check !!");
 
 		return true;

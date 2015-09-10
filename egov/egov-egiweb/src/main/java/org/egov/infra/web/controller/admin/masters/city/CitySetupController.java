@@ -43,10 +43,10 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.CityPreferences;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -115,7 +115,7 @@ public class CitySetupController {
                         break;
                     }
                 } catch (final Exception e) {
-                    throw new EGOVRuntimeException("err.city.add.files");
+                    throw new ApplicationRuntimeException("err.city.add.files");
                 }
             });
 

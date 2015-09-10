@@ -47,12 +47,12 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.receipt.ReceiptVoucher;
@@ -66,7 +66,7 @@ public class ReceiptService extends PersistenceService<ReceiptVoucher, Long>{
 	private @Autowired AppConfigValueService appConfigValuesService;
 	 private EmployeeServiceOld employeeServiceOld;		
 	private  PersistenceService persistenceService;
-	public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException
+	public Position getPositionForEmployee(Employee emp)throws ApplicationRuntimeException
 	{
 		return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
 	}

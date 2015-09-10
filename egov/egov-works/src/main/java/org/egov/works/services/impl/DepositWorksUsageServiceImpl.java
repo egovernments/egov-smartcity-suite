@@ -55,7 +55,7 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.BudgetFolioDetail;
@@ -245,7 +245,7 @@ public class DepositWorksUsageServiceImpl extends BaseServiceImpl<DepositWorksUs
     private boolean isAppropriationRejected(final String apprNumber) {
 
         if (apprNumber == null)
-            throw new EGOVRuntimeException("Invalid parameter passed to isAppropriationRejected() ||apprNumber="
+            throw new ApplicationRuntimeException("Invalid parameter passed to isAppropriationRejected() ||apprNumber="
                     + apprNumber);
         final String[] str = apprNumber.split("/");
         if (str.length > 0 && "BC".equalsIgnoreCase(str[0]))

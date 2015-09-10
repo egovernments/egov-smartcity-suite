@@ -56,9 +56,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
@@ -193,7 +193,7 @@ public String getDateTime() throws Exception
 		}
 		else
 		{
-			throw new EGOVRuntimeException("Exlcude statusses not  are not defined for Reports");
+			throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
 		}
 		String query=" SELECT gl.glcode AS \"glcode\" ,coa.name AS \"accountHead\" ,vh.fundid AS \"fundId\",(SUM(debitamount)+SUM((SELECT DECODE(SUM(OPENINGDEBITBALANCE),NULL,0,SUM(OPENINGDEBITBALANCE)) FROM transactionsummary WHERE"
 					+" financialyearid=(SELECT id FROM financialyear WHERE startingdate<='"+endDate+"' AND endingdate>='"+endDate+"')"
@@ -856,7 +856,7 @@ public String getDateTime() throws Exception
 			}
 			else
 			{
-				throw new EGOVRuntimeException("Exlcude statusses not  are not defined for Reports");
+				throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
 			}
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("get Opening balance for all account codes");
 			//get Opening balance for all account codes

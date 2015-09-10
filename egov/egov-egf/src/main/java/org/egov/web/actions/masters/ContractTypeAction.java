@@ -48,7 +48,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.commons.EgPartytype;
@@ -146,7 +146,7 @@ public class ContractTypeAction extends BaseFormAction{
 			setSuccess("no");
 			LOGGER.error("Exception occurred in ContractTypeAction-create ", e);
 			 
-			throw new EGOVRuntimeException("Exception occurred in ContractTypeAction-create ", e);
+			throw new ApplicationRuntimeException("Exception occurred in ContractTypeAction-create ", e);
 		}
 	//	typeOfWork.reset();
 		return NEW;
@@ -201,7 +201,7 @@ public class ContractTypeAction extends BaseFormAction{
 			setSuccess("no");
 			LOGGER.error("Exception occurred in ContractTypeAction-edit ", e);
 			 
-			throw new EGOVRuntimeException("Exception occurred in ContractTypeAction-edit ", e);
+			throw new ApplicationRuntimeException("Exception occurred in ContractTypeAction-edit ", e);
 		}
 		return EDIT;
 	}

@@ -44,11 +44,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.CVoucherHeader;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.voucher.PreApprovedVoucher;
 import org.hibernate.Query;
@@ -77,7 +77,7 @@ public class BillsAccountingService  {
 	 * @return
 	 */
 	@Transactional
-	public long createPreApprovedVoucherFromBill(int billId, String voucherNumber, Date voucherDate)  throws EGOVRuntimeException,ValidationException
+	public long createPreApprovedVoucherFromBill(int billId, String voucherNumber, Date voucherDate)  throws ApplicationRuntimeException,ValidationException
 	{
 		String voucherStatus=null;
 		long vh=-1;
@@ -90,7 +90,7 @@ public class BillsAccountingService  {
 			}
 			else
 			{
-				throw new EGOVRuntimeException("PREAPPROVEDVOUCHERSTATUS"+MISSINGMSG);
+				throw new ApplicationRuntimeException("PREAPPROVEDVOUCHERSTATUS"+MISSINGMSG);
 			}
 			CreateVoucher cv= new CreateVoucher();
 			vh=cv.createVoucherFromBill(billId,voucherStatus, voucherNumber, voucherDate);
@@ -102,7 +102,7 @@ public class BillsAccountingService  {
 		catch (Exception e) 
 		{
 			LOGGER.error(e.getMessage());
-			throw new  EGOVRuntimeException(e.getMessage());
+			throw new  ApplicationRuntimeException(e.getMessage());
 			
 		}
 		return vh;
@@ -115,7 +115,7 @@ public class BillsAccountingService  {
 	 * @return
 	 */
 	@Transactional
-	public long createPreApprovedVoucherFromBillForPJV(int billId,List<PreApprovedVoucher> voucherdetailList,List<PreApprovedVoucher> subLedgerList)throws EGOVRuntimeException
+	public long createPreApprovedVoucherFromBillForPJV(int billId,List<PreApprovedVoucher> voucherdetailList,List<PreApprovedVoucher> subLedgerList)throws ApplicationRuntimeException
 	{
 		String voucherStatus=null;
 		long vh=-1;
@@ -128,14 +128,14 @@ public class BillsAccountingService  {
 			}
 			else
 			{
-				throw new EGOVRuntimeException("PREAPPROVEDVOUCHERSTATUS"+MISSINGMSG);
+				throw new ApplicationRuntimeException("PREAPPROVEDVOUCHERSTATUS"+MISSINGMSG);
 			}
 			CreateVoucher cv= new CreateVoucher();
 			vh=cv.createVoucherFromBillForPJV(billId,voucherStatus,voucherdetailList,subLedgerList);
 		} catch (Exception e) 
 		{
 			LOGGER.error(e.getMessage());
-			throw new  EGOVRuntimeException(e.getMessage());
+			throw new  ApplicationRuntimeException(e.getMessage());
 			
 		}
 		return vh;
@@ -147,7 +147,7 @@ public class BillsAccountingService  {
 	 * @return
 	 */
 	@Transactional
-	public void createVoucherfromPreApprovedVoucher(long vouhcerheaderid)throws EGOVRuntimeException
+	public void createVoucherfromPreApprovedVoucher(long vouhcerheaderid)throws ApplicationRuntimeException
 	{
 		String voucherStatus=null;
 		
@@ -160,16 +160,16 @@ public class BillsAccountingService  {
 				}
 				else
 				{
-					throw new EGOVRuntimeException("APPROVEDVOUCHERSTATUS"+MISSINGMSG);
+					throw new ApplicationRuntimeException("APPROVEDVOUCHERSTATUS"+MISSINGMSG);
 				}
 				
 				CreateVoucher cv= new CreateVoucher();
 				cv.createVoucherFromPreApprovedVoucher(vouhcerheaderid,voucherStatus);
 				
-			} catch (EGOVRuntimeException e) {
+			} catch (ApplicationRuntimeException e) {
 			
 			LOGGER.error(e.getMessage());
-			throw new EGOVRuntimeException(e.getMessage());
+			throw new ApplicationRuntimeException(e.getMessage());
 		}
 		
 		
@@ -180,7 +180,7 @@ public class BillsAccountingService  {
 	 * @return
 	 */
 	@Transactional
-	public long createVoucherFromBill(int billId)throws EGOVRuntimeException
+	public long createVoucherFromBill(int billId)throws ApplicationRuntimeException
 	{
 		try {
 			String voucherStatus=null;
@@ -192,7 +192,7 @@ public class BillsAccountingService  {
 			}
 			else
 			{
-				throw new EGOVRuntimeException("DEFAULTVOUCHERCREATIONSTATUS"+MISSINGMSG);
+				throw new ApplicationRuntimeException("DEFAULTVOUCHERCREATIONSTATUS"+MISSINGMSG);
 			}
 			CreateVoucher cv= new CreateVoucher();
 			long vh=	cv.createVoucherFromBill(billId,voucherStatus, null, null);
@@ -200,12 +200,12 @@ public class BillsAccountingService  {
 		} catch (Exception e) 
 		{
 			LOGGER.error(e.getMessage());
-			throw new EGOVRuntimeException(e.getMessage());
+			throw new ApplicationRuntimeException(e.getMessage());
 		}
 		
 	}
 	@Transactional
-	public void updatePJV(CVoucherHeader vh, List<PreApprovedVoucher> detailList,List<PreApprovedVoucher> subledgerlist)  throws EGOVRuntimeException
+	public void updatePJV(CVoucherHeader vh, List<PreApprovedVoucher> detailList,List<PreApprovedVoucher> subledgerlist)  throws ApplicationRuntimeException
 	{
 		CreateVoucher cv= new CreateVoucher();
 		cv.updatePJV(vh, detailList, subledgerlist);
@@ -217,7 +217,7 @@ public class BillsAccountingService  {
 	 * @return
 	 */
 	@Transactional
-	public CVoucherHeader getPJVNumberForBill(String billNumber) throws EGOVException
+	public CVoucherHeader getPJVNumberForBill(String billNumber) throws ApplicationException
 	{
 		try
 		{
@@ -225,12 +225,12 @@ public class BillsAccountingService  {
 			Query query = session.createQuery("select br.egBillregistermis.voucherHeader from EgBillregister br where br.billnumber=:billNumber");
 			query.setString("billNumber", billNumber);
 			if(null==query.uniqueResult())
-				throw new EGOVException("PJV is not created for this bill number ["+billNumber+"]");
+				throw new ApplicationException("PJV is not created for this bill number ["+billNumber+"]");
 			
 			return (CVoucherHeader) query.uniqueResult();
 		}catch(Exception e)
 		{
-			throw new EGOVException(e.getMessage());
+			throw new ApplicationException(e.getMessage());
 		}
 	}
 }

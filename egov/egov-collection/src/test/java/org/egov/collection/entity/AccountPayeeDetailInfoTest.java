@@ -17,12 +17,12 @@ public class AccountPayeeDetailInfoTest { /* extends AbstractPersistenceServiceT
 		try{
 		AccountPayeeDetailInfo accountPayeeDetailInfo = new AccountPayeeDetailInfo(accountPayeeDetail,egovCommon){
 			public void populateEntityType(AccountPayeeDetail accountPayeeDetail,
-					EgovCommon egovCommon) throws EGOVException{
-					throw new EGOVException("Exception from test case");
+					EgovCommon egovCommon) throws ApplicationException{
+					throw new ApplicationException("Exception from test case");
 			}
 		};
 		}
-		catch(EGOVRuntimeException ex){
+		catch(ApplicationRuntimeException ex){
 			assertEquals("Could not get entity type for account detail type ["
 							+ accountPayeeDetail.getAccountDetailType().getTablename()
 							+ "], account detail key id ["
@@ -32,12 +32,12 @@ public class AccountPayeeDetailInfoTest { /* extends AbstractPersistenceServiceT
 	}
 	
 	@Test
-	public void testCreateAccountPayeeDetailInfo() throws EGOVException
+	public void testCreateAccountPayeeDetailInfo() throws ApplicationException
 	{
 		AccountPayeeDetail accountPayeeDetail = objectFactory.createAccountPayeeDetail();
 		egovCommon = createMock(EgovCommon.class);
 		EasyMock.expect(egovCommon.getEntityType(EasyMock.isA(Accountdetailtype.class), EasyMock.isA(Integer.class))).
-			andThrow(new EGOVException("")).andReturn(null);
+			andThrow(new ApplicationException("")).andReturn(null);
 		AccountPayeeDetailInfo accountPayeeDetailInfo = new AccountPayeeDetailInfo(accountPayeeDetail,egovCommon);
 		
 		assertEquals(accountPayeeDetailInfo.getAccountDetailKey(),accountPayeeDetail.getAccountDetailKey());

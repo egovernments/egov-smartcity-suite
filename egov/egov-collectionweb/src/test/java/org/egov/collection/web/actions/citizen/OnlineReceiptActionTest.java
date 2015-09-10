@@ -405,7 +405,7 @@ public class OnlineReceiptActionTest  { /*extends AbstractPersistenceServiceTest
 		
 		receiptHeaderService = new ReceiptHeaderService(){
 			protected CVoucherHeader createVoucher(ReceiptHeader receiptHeader,Boolean receiptBulkUpload){
-				throw new EGOVRuntimeException("Update to financials Failed!");
+				throw new ApplicationRuntimeException("Update to financials Failed!");
 			}
 		};
 		receiptHeaderService.setType(ReceiptHeader.class);
@@ -451,7 +451,7 @@ public class OnlineReceiptActionTest  { /*extends AbstractPersistenceServiceTest
 			 }
 			 public Integer generateReport(ReceiptHeader[] receipts,
 						Map<String, Object> session, boolean flag){
-					throw new EGOVRuntimeException("Report Gen Failure");
+					throw new ApplicationRuntimeException("Report Gen Failure");
 			 }
 		};
 		
@@ -820,8 +820,8 @@ public class OnlineReceiptActionTest  { /*extends AbstractPersistenceServiceTest
 	public void testReconcileOnlinePaymentSystemsUpdateFailure(){
 		receiptHeaderService = new ReceiptHeaderService(){
 			public CVoucherHeader createVoucherForReceipt(ReceiptHeader receiptHeader,Boolean receiptBulkUpload)
-			throws EGOVRuntimeException {
-				throw new EGOVRuntimeException("Receipt Voucher Creation Exception!");
+			throws ApplicationRuntimeException {
+				throw new ApplicationRuntimeException("Receipt Voucher Creation Exception!");
 			}
 		};
 		receiptHeaderService.setType(ReceiptHeader.class);

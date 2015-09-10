@@ -45,7 +45,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.egov.common.entity.UOM;
-import org.egov.infstr.ValidationError;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.models.Money;
 import org.egov.works.models.masters.ScheduleOfRate;

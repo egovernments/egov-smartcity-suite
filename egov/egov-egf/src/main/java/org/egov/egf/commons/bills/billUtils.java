@@ -48,7 +48,7 @@ package org.egov.egf.commons.bills;
 import org.apache.log4j.Logger;
 import org.egov.commons.Relation;
 import org.egov.commons.dao.RelationHibernateDAO;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * @author sapna
@@ -70,7 +70,7 @@ public class billUtils {
      		if(LOGGER.isInfoEnabled())     LOGGER.info("id == "+id );
 			return (Relation)relationHibernateDAO.findById(id,false);
 		} catch (RuntimeException e) {
-			throw new EGOVRuntimeException(e.getMessage(),e);
+			throw new ApplicationRuntimeException(e.getMessage(),e);
 		}
      }
 	public RelationHibernateDAO getRelationHibernateDAO() {

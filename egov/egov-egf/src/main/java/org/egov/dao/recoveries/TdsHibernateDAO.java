@@ -55,7 +55,7 @@ import java.util.Locale;
 import org.apache.log4j.Logger;
 import org.egov.commons.EgPartytype;
 import org.egov.commons.EgwTypeOfWork;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;

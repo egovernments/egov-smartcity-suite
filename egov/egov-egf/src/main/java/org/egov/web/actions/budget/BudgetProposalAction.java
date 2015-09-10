@@ -63,20 +63,20 @@ import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
@@ -1198,7 +1198,7 @@ int i=0;
 			return eisCommonService.isHod(empAssignment.getId());
 	    }
 	   
-		public Position getPosition()throws EGOVRuntimeException
+		public Position getPosition()throws ApplicationRuntimeException
 		{
 			Position pos;
 		    //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav 

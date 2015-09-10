@@ -49,12 +49,12 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectException;
-import org.egov.exceptions.TooManyValuesException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectException;
+import org.egov.infra.exception.TooManyValuesException;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -84,7 +84,7 @@ public class HeirarchyTypeDAO {
             getSession().save(heirarchyType);
         } catch (final HibernateException e) {
             LOGGER.error("Error occurred in create", e);
-            throw new EGOVRuntimeException("Error occurred in create", e);
+            throw new ApplicationRuntimeException("Error occurred in create", e);
         }
     }
 
@@ -96,7 +96,7 @@ public class HeirarchyTypeDAO {
             getSession().saveOrUpdate(heirarchyType);
         } catch (final HibernateException e) {
             LOGGER.error("Error occurred in update", e);
-            throw new EGOVRuntimeException("Error occurred in update", e);
+            throw new ApplicationRuntimeException("Error occurred in update", e);
         }
 
     }
@@ -109,7 +109,7 @@ public class HeirarchyTypeDAO {
             getSession().delete(heirarchyType);
         } catch (final HibernateException e) {
             LOGGER.error("Error occurred in remove", e);
-            throw new EGOVRuntimeException("Error occurred in remove", e);
+            throw new ApplicationRuntimeException("Error occurred in remove", e);
         }
 
     }
@@ -122,7 +122,7 @@ public class HeirarchyTypeDAO {
             return (HierarchyType) getSession().load(HierarchyType.class, heirarchyTypeId);
         } catch (final HibernateException e) {
             LOGGER.error("Error occurred in getHeirarchyTypeByID", e);
-            throw new EGOVRuntimeException("Error occurred in getHeirarchyTypeByID", e);
+            throw new ApplicationRuntimeException("Error occurred in getHeirarchyTypeByID", e);
         }
     }
 
@@ -135,7 +135,7 @@ public class HeirarchyTypeDAO {
         } catch (final HibernateException e) {
             LOGGER.error("Error occurred in getAllHeirarchyTypes", e);
             // HibernateUtil.rollbackTransaction();
-            throw new EGOVRuntimeException("Error occurred in getAllHeirarchyTypes", e);
+            throw new ApplicationRuntimeException("Error occurred in getAllHeirarchyTypes", e);
         }
     }
 
@@ -143,7 +143,7 @@ public class HeirarchyTypeDAO {
             throws NoSuchObjectException, TooManyValuesException {
 
         if (name == null)
-            throw new EGOVRuntimeException("heirarchyType.name.null");
+            throw new ApplicationRuntimeException("heirarchyType.name.null");
 
         try {
             HierarchyType heirarchyType = null;
@@ -161,7 +161,7 @@ public class HeirarchyTypeDAO {
 
         } catch (final Exception e) {
             LOGGER.error("Error occurred in getHierarchyTypeByName", e);
-            throw new EGOVRuntimeException("system.error", e);
+            throw new ApplicationRuntimeException("system.error", e);
         }
     }
 
@@ -174,7 +174,7 @@ public class HeirarchyTypeDAO {
     public Set getCrossHeirarchyParent(final Boundary childBoundary) {
         final Set parentBoundarySet = new HashSet();
         if (childBoundary == null)
-            throw new EGOVRuntimeException("Childbndry.object.null");
+            throw new ApplicationRuntimeException("Childbndry.object.null");
         else {
             final Query qry = getSession()
                     .createQuery("select CI.parent from CrossHeirarchyImpl CI where CI.child = :childBoundary");
@@ -200,7 +200,7 @@ public class HeirarchyTypeDAO {
     public Set getCrossHeirarchyChildren(final Boundary parentBoundary, final BoundaryType childBoundaryType) {
         final Set childBoundarySet = new HashSet();
         if (parentBoundary == null || childBoundaryType == null)
-            throw new EGOVRuntimeException("parentBoundary.childBoundaryType.object.null");
+            throw new ApplicationRuntimeException("parentBoundary.childBoundaryType.object.null");
         else {
             final Query qry = getSession().createQuery(
                     "select CI.child from CrossHeirarchyImpl CI, Boundary BI where CI.parent = :parentBoundary and CI.child=BI and BI.boundaryType = :childBoundaryType order by BI.name ");

@@ -46,8 +46,8 @@ import java.util.List;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.eis.entity.EmployeeView;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,7 +77,7 @@ public class AjaxChallanApprovalAction extends BaseFormAction{
 				postionUserList=collectionsUtil.getPositionBySearchParameters(null,designationId,approverDeptId,null,null,new Date(),0);
 			}	
 			catch(NoSuchObjectException e){
-				throw new EGOVRuntimeException("Designation Postion not found",e);
+				throw new ApplicationRuntimeException("Designation Postion not found",e);
 			}	
 		}
 		return USERLIST;

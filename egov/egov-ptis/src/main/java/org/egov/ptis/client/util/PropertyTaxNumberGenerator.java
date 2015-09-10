@@ -42,10 +42,10 @@ package org.egov.ptis.client.util;
 import java.util.Date;
 
 import org.egov.commons.dao.InstallmentDao;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -85,7 +85,7 @@ public class PropertyTaxNumberGenerator {
                     noticeNo.append(org.apache.commons.lang.StringUtils.leftPad(index, 6, "0"));
                 }
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("Exception : " + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception : " + e.getMessage(), e);
         }
 
         return noticeNo.toString();
@@ -118,7 +118,7 @@ public class PropertyTaxNumberGenerator {
             final String bill = sequenceNumberGenerator.getNextSequence(SEQ_EG_BILL).toString();
             billNo.append(org.apache.commons.lang.StringUtils.leftPad(bill, 6, "0"));
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("Exception : " + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception : " + e.getMessage(), e);
         }
         return billNo.toString();
     }
@@ -137,7 +137,7 @@ public class PropertyTaxNumberGenerator {
             final String index = sequenceNumberGenerator.getNextSequence(SEQ_EGPT_ASSESSMENT_NUMBER).toString();
             indexNum.append(org.apache.commons.lang.StringUtils.leftPad(index, 6, "0"));
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("Exception : " + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception : " + e.getMessage(), e);
         }
         return indexNum.toString();
     }

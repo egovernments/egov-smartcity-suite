@@ -50,7 +50,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.egov.commons.EgwStatus;
-import org.egov.infstr.ValidationError;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.works.models.workflow.WorkFlow;
 
 public class TrackMilestone extends WorkFlow {

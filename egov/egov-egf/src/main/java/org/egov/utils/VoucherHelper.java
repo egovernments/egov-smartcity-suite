@@ -63,15 +63,15 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.seqgen.DatabaseSequence;
@@ -179,7 +179,7 @@ public class VoucherHelper {
 		}
 		catch (Exception e) {
 			LOGGER.error(e);
-			throw new EGOVRuntimeException("Error occured while executing search instrument query");
+			throw new ApplicationRuntimeException("Error occured while executing search instrument query");
 		}
 		return numDateQuery.toString();
   	}
@@ -265,7 +265,7 @@ public class VoucherHelper {
 		}
 		catch (Exception e) {
 			LOGGER.error(e);
-			throw new EGOVRuntimeException("Error occured while executing search instrument query");
+			throw new ApplicationRuntimeException("Error occured while executing search instrument query");
 		}
 		return numDateQuery.toString();
   	}
@@ -333,7 +333,7 @@ public class VoucherHelper {
 		
 		if(!eGovernCommon.isUniqueVN(fVoucherNumber,vDateTemp, null))
 		{
-			throw new EGOVRuntimeException("Trying to create Duplicate Voucher Number");
+			throw new ApplicationRuntimeException("Trying to create Duplicate Voucher Number");
 		}
 		return fVoucherNumber;
 	}

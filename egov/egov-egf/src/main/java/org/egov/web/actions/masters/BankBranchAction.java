@@ -49,7 +49,7 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankbranch;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.StringUtils;
@@ -79,7 +79,7 @@ public class BankBranchAction extends JQueryGridActionSupport {
                                 sendAJAXResponse(SUCCESS);
                         } catch (RuntimeException e) {
                                 sendAJAXResponse("failed");
-                                throw new EGOVRuntimeException("Error occurred in Bank Branch.", e);
+                                throw new ApplicationRuntimeException("Error occurred in Bank Branch.", e);
                         }
                 } else if ("LIST_BRANCH".equals(mode)) {
                         this.listAllBankBranches();

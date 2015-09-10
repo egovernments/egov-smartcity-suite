@@ -54,10 +54,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
@@ -94,7 +94,7 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
     /**
      * This API will give the list of detailed active for posting chartofaccounts list
      * @return
-     * @throws EGOVException
+     * @throws ApplicationException
      */
     public List<CChartOfAccounts> getDetailedAccountCodeList() {
         return HibernateUtil.getCurrentSession().createQuery("select acc from CChartOfAccounts acc where acc.classification='4' and acc.isActiveForPosting = 1 order by acc.glcode").setCacheable(true).list();
@@ -157,12 +157,12 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
      */
     public Accountdetailtype getAccountDetailTypeIdByName(final String glCode, final String name) {
         if (StringUtils.isBlank(name) || StringUtils.isBlank(glCode)) {
-            throw new EGOVRuntimeException("Account Code or Account Detail Type Name is empty");
+            throw new ApplicationRuntimeException("Account Code or Account Detail Type Name is empty");
         }
         Query query = HibernateUtil.getCurrentSession().createQuery("from CChartOfAccounts where glcode=:glCode");
         query.setString("glCode", glCode);
         if (query.list().isEmpty()) {
-            throw new EGOVRuntimeException("GL Code not found in Chart of Accounts");
+            throw new ApplicationRuntimeException("GL Code not found in Chart of Accounts");
         }
         query = HibernateUtil.getCurrentSession().createQuery("from Accountdetailtype where id in (select cd.detailTypeId from " +
         		"CChartOfAccountDetail  as cd,CChartOfAccounts as c where cd.glCodeId=c.id and c.glcode=:glCode) and name=:name");
@@ -215,11 +215,11 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
         final List<CChartOfAccounts> accountCodeList = new ArrayList<CChartOfAccounts>();
         try {
             if ((purposeId == null) || (purposeId.intValue() == 0)) {
-                throw new EGOVException("Purpose Id is null or zero");
+                throw new ApplicationException("Purpose Id is null or zero");
             }
             Query query = HibernateUtil.getCurrentSession().createQuery(" from EgfAccountcodePurpose purpose where purpose.id="+purposeId+"");
             if (query.list().size() == 0) {
-                throw new EGOVException("Purpose ID provided is not defined in the system");
+                throw new ApplicationException("Purpose ID provided is not defined in the system");
             }
             query = HibernateUtil.getCurrentSession().createQuery(" FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId))) AND classification=4 AND isActiveForPosting=true ");
             query.setLong("purposeId", purposeId);
@@ -235,7 +235,7 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
             accountCodeList.addAll((List<CChartOfAccounts>)query.list());
         } catch (final Exception e) {
             LOG.error(e);
-            throw new EGOVRuntimeException("Error occurred while getting Account Code by purpose", e);
+            throw new ApplicationRuntimeException("Error occurred while getting Account Code by purpose", e);
         }
         return accountCodeList;
     }
@@ -250,7 +250,7 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
             return HibernateUtil.getCurrentSession().createQuery(" from CChartOfAccounts acc where acc.classification=4 and acc.isActiveForPosting=1 and acc.id not in (select cd.glCodeId from CChartOfAccountDetail cd) ").list();
         } catch (final Exception e) {
             LOG.error(e);
-            throw new EGOVRuntimeException("Error occurred while getting Non-Control Code list", e);
+            throw new ApplicationRuntimeException("Error occurred while getting Non-Control Code list", e);
         }
     }
     
@@ -258,18 +258,18 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
      * @description- This method returns a list of detail type object based on the glcode.
      * @param glCode - glcode supplied by the client.
      * @return List<Accountdetailtype> -list of Accountdetailtype object(s).
-     * @throws EGOVException
+     * @throws ApplicationException
      */
     @SuppressWarnings("unchecked")
     public List<Accountdetailtype> getAccountdetailtypeListByGLCode(final String glCode) {
         if (StringUtils.isBlank(glCode)) {
-            throw new EGOVRuntimeException("GL Code is empty ");
+            throw new ApplicationRuntimeException("GL Code is empty ");
         }
         // checking if the glcode is exists in ChartOfAccounts table.
        
         CChartOfAccounts cChartOfAccountsByGlCode = getCChartOfAccountsByGlCode(glCode);
         if (cChartOfAccountsByGlCode==null) {
-            throw new EGOVRuntimeException("GL Code not found in Chart of Accounts");
+            throw new ApplicationRuntimeException("GL Code not found in Chart of Accounts");
         }
         try {
             Query query = HibernateUtil.getCurrentSession().createQuery("from Accountdetailtype where id in (select cd.detailTypeId " +
@@ -279,7 +279,7 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
             return query.list().isEmpty() ? null : query.list(); // NOPMD
         } catch (final Exception e) {
             LOG.error(e);
-            throw new EGOVRuntimeException("Error occured while getting Account Detail Types for GL Code ", e);
+            throw new ApplicationRuntimeException("Error occured while getting Account Detail Types for GL Code ", e);
         }
     }
     

@@ -54,10 +54,10 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFunction;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVException;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
@@ -113,7 +113,7 @@ public class BillViewAction extends BaseFormAction
 	
 
 @Action(value="/bill/billView-view")
-	public String view() throws EGOVException,ParseException
+	public String view() throws ApplicationException,ParseException
 	{
 		loadBillDetails();
 		return Constants.VIEW;
@@ -153,7 +153,7 @@ public class BillViewAction extends BaseFormAction
 					subLedgerTemp = new HashMap<String,Object>();
 					try {
 						subLedgerTemp = getAccountDetails(detailtype,payeeDetails.getAccountDetailKeyId(),subLedgerTemp);
-					} catch (EGOVException e) {
+					} catch (ApplicationException e) {
 						List<ValidationError> errors=new ArrayList<ValidationError>();
 						errors.add(new ValidationError("exp",e.getMessage()));
 						throw new ValidationException(errors);
@@ -175,7 +175,7 @@ public class BillViewAction extends BaseFormAction
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("-----------End of loadBillDetails()-----------");
 	}
 	
-	public Map<String, Object> getAccountDetails(final Accountdetailtype detailtype,final Integer detailkeyid,Map<String,Object> tempMap) throws EGOVException
+	public Map<String, Object> getAccountDetails(final Accountdetailtype detailtype,final Integer detailkeyid,Map<String,Object> tempMap) throws ApplicationException
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("-----------Start of getAccountDetails()-----------");
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("-----------detailtype::" + detailtype.getId());

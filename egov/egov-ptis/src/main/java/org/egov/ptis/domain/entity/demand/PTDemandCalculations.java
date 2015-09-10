@@ -44,7 +44,7 @@ import java.util.Date;
 import java.util.Set;
 
 import org.egov.demand.model.DemandCalculations;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.BaseModel;
 
 /**
@@ -154,11 +154,11 @@ public class PTDemandCalculations extends BaseModel implements DemandCalculation
 	 */
 	public boolean validateDmdCalc() {
 		if (getPtDemand() == null)
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					"In PTDemandCalculations Validate : ptDemand is Not Set, Please Check !!");
 		if (getFlrwiseDmdCalculations() == null
 				|| getFlrwiseDmdCalculations().size() == 0)
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					"In PTDemandCalculations Validate : FloorwiseDmdCalculations is Not Set, Please Check !!");
 		return true;
 	}

@@ -49,7 +49,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVException;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBilldetails;
@@ -151,7 +151,7 @@ EgBilldetailsDAO
 		}catch(Exception e)
 	    {
 	       	logger.error(e.getCause()+" Error in getOtherBillsAmount");
-	       	throw new EGOVException(e.getMessage());
+	       	throw new ApplicationException(e.getMessage());
         }
 	}
 
@@ -170,7 +170,7 @@ EgBilldetailsDAO
 	    }catch(Exception e)
 	    {
 	       	logger.error(e.getCause()+" Error in getBillDetails");
-	       	throw new EGOVException(e.getMessage());
+	       	throw new ApplicationException(e.getMessage());
         }
 		return billdetails;
 	}

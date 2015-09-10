@@ -76,12 +76,12 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
@@ -390,7 +390,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 			}
 		} catch (ParseException pe) {
 			LOGGER.error("Error while parsing Floor Completion / occupation", pe);
-			throw new EGOVRuntimeException("Error while parsing Floor Completion / occupation", pe);
+			throw new ApplicationRuntimeException("Error while parsing Floor Completion / occupation", pe);
 		}
 		Collections.sort(structuralClassifications, new Comparator() {
 			@Override

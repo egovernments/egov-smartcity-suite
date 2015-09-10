@@ -67,16 +67,16 @@ import org.egov.commons.Fund;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.CommonsService;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.utils.DateUtils;
@@ -261,7 +261,7 @@ public class PaymentAction extends BasePaymentAction{
                                         bankCode = appConfigVal.getValue();
                                                  }
                                 } catch (Exception e) {
-                                         throw new EGOVRuntimeException("Appconfig value for EB Voucher propartys is not defined in the system");
+                                         throw new ApplicationRuntimeException("Appconfig value for EB Voucher propartys is not defined in the system");
                                 }
                         addDropdownData("bankbranchList", persistenceService.findAllBy("from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and type in ('RECEIPTS_PAYMENTS','PAYMENTS') ) and br.isactive=1 and br.bank.code = ? order by br.bank.name asc",fund,bankCode));
                 }
@@ -323,7 +323,7 @@ public class PaymentAction extends BasePaymentAction{
                                 propartyAppConfigResultList.put(key, value);
                                          }
                         } catch (Exception e) {
-                                 throw new EGOVRuntimeException("Appconfig value for EB Voucher propartys is not defined in the system");
+                                 throw new ApplicationRuntimeException("Appconfig value for EB Voucher propartys is not defined in the system");
                         }
                 }
                 for(String key:propartyAppConfigResultList.keySet()){
@@ -678,7 +678,7 @@ public class PaymentAction extends BasePaymentAction{
                 }catch(ValidationException e){
                         LOGGER.error(e.getErrors(),e);
                         throw new ValidationException(e.getErrors());
-                }catch(EGOVException e){
+                }catch(ApplicationException e){
                         LOGGER.error(e.getMessage(),e);
                         List<ValidationError> errors=new ArrayList<ValidationError>();
                         errors.add(new ValidationError("exception",e.getMessage()));
@@ -753,7 +753,7 @@ public class PaymentAction extends BasePaymentAction{
                 }catch(ValidationException e){
                         loadApproverUser(voucherHeader.getType());
                         throw new ValidationException(e.getErrors());
-                }catch(EGOVRuntimeException e){
+                }catch(ApplicationRuntimeException e){
                         LOGGER.error(e.getMessage());
                         loadApproverUser(voucherHeader.getType());
                         List<ValidationError> errors=new ArrayList<ValidationError>();
@@ -1126,7 +1126,7 @@ public class PaymentAction extends BasePaymentAction{
                         addDropdownData("bankbranchList", persistenceService.findAllBy("from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? ) and br.isactive=1 order by br.bank.name asc",paymentheader.getVoucherheader().getFundId()));
                         throw new ValidationException(e.getErrors());
                 }
-                catch(EGOVRuntimeException e) 
+                catch(ApplicationRuntimeException e) 
                 {
                         LOGGER.error(e.getMessage(),e);
                         List<ValidationError> errors=new ArrayList<ValidationError>();
@@ -1187,7 +1187,7 @@ public class PaymentAction extends BasePaymentAction{
                 return "advancePaymentView";
         }
         
-        private void validateAdvancePayment()throws ValidationException,EGOVException,ParseException{
+        private void validateAdvancePayment()throws ValidationException,ApplicationException,ParseException{
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting validateAdvancePayment...");
                 if(paymentheader.getVoucherheader().getVoucherDate()==null || paymentheader.getVoucherheader().getVoucherDate().equals(""))
                         throw new ValidationException(Arrays.asList(new ValidationError("payment.voucherdate.empty","payment.voucherdate.empty")));
@@ -1202,7 +1202,7 @@ public class PaymentAction extends BasePaymentAction{
         }
 
 
-        private void validateForUpdate()throws ValidationException,EGOVException,ParseException
+        private void validateForUpdate()throws ValidationException,ApplicationException,ParseException
         {
                 List<PaymentBean> tempBillList=new ArrayList<PaymentBean>();
                 List<String> expenseTypeList=new ArrayList<String>();

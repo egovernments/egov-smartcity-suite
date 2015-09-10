@@ -53,8 +53,8 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.egov.exceptions.EGOVException;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.models.GeoLatLong;
 import org.egov.infstr.models.GeoLocation;
@@ -434,7 +434,7 @@ public class WorksGISReportAction extends BaseFormAction {
                 return NumberUtil.formatNumber(amt, NumberUtil.NumberFormatStyle.CRORES);
             else
                 return null;
-        } catch (final EGOVException e) {
+        } catch (final ApplicationException e) {
             return null;
         }
     }

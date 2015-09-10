@@ -73,15 +73,15 @@ import org.egov.commons.CFunction;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.bills.model.Cbill;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
@@ -280,7 +280,7 @@ public class ContingentBillAction extends BaseBillAction {
                 Cbill cbill=(Cbill) getPersistenceService().find(" from Cbill where id=?", Long.valueOf(parameters.get("billRegisterId")[0]));
                 if(cbill != null && cbill.getState() != null){
                         if(!validateOwner(cbill.getState())){
-                                throw new EGOVRuntimeException("Invalid Aceess");
+                                throw new ApplicationRuntimeException("Invalid Aceess");
                         }
                 }
                 if(null == cbill.getEgBillregistermis().getSourcePath()){
@@ -418,7 +418,7 @@ public class ContingentBillAction extends BaseBillAction {
                         cbill=(Cbill)persistenceService.find("from Cbill where id=?",billRegisterId);
                         if(cbill != null && cbill.getState() != null){
                                 if(!validateOwner(cbill.getState())){
-                                        throw new EGOVRuntimeException("Invalid Aceess");
+                                        throw new ApplicationRuntimeException("Invalid Aceess");
                                 }
                         }
                         voucherHeader.setVoucherDate(commonBean.getBillDate());
@@ -461,7 +461,7 @@ public class ContingentBillAction extends BaseBillAction {
                 cbill=(Cbill)persistenceService.find("from Cbill where id=?",billRegisterId);
                 if(cbill != null && cbill.getState() != null){
                         if(!validateOwner(cbill.getState())){
-                                throw new EGOVRuntimeException("Invalid Aceess");
+                                throw new ApplicationRuntimeException("Invalid Aceess");
                         }
                 }
                 if(parameters.get(ACTION_NAME)[0].contains("reject"))
@@ -669,7 +669,7 @@ public class ContingentBillAction extends BaseBillAction {
                 if(null != parameters.get(MODE) && parameters.get(MODE)[0].equalsIgnoreCase(APPROVE)){
                         if(!validateOwner(cbill.getState())) 
                         {
-                                throw new EGOVRuntimeException("Invalid Aceess");  
+                                throw new ApplicationRuntimeException("Invalid Aceess");  
                         }
                         beforeViewWF(cbill);
                         mode =APPROVE;
@@ -778,7 +778,7 @@ public class ContingentBillAction extends BaseBillAction {
                                                 dataType = method.getReturnType().getSimpleName();
                                         } catch (Exception e) {
                                                 LOGGER.error("prepareForViewModifyReverse"+e.getMessage(), e);
-                                                throw new EGOVRuntimeException(e.getMessage());
+                                                throw new ApplicationRuntimeException(e.getMessage());
                                         }
                                         EntityType entity = null;
                                         if ( dataType.equals("Long") )
@@ -920,7 +920,7 @@ public class ContingentBillAction extends BaseBillAction {
                         super.execute();
                 } catch (Exception e) {
                         LOGGER.error("Inside execute"+e.getMessage(), e);
-                        throw new EGOVRuntimeException(e.getMessage());
+                        throw new ApplicationRuntimeException(e.getMessage());
                 }
                 billDetailslist = new ArrayList<VoucherDetails>();
                 billDetailslist.add(new VoucherDetails());                

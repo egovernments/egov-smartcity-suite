@@ -73,15 +73,15 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBillSubType;
@@ -194,7 +194,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 return paymentheader;
         }
         
-        public Paymentheader createPayment(Map<String,String[]> parameters,List<PaymentBean> billList,EgBillregister billregister) throws EGOVRuntimeException,ValidationException
+        public Paymentheader createPayment(Map<String,String[]> parameters,List<PaymentBean> billList,EgBillregister billregister) throws ApplicationRuntimeException,ValidationException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting createPayment...");
                 Paymentheader paymentheader = null;
@@ -495,7 +495,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed generateMiscBillForSalary.");
         }
         
-        public Paymentheader updatePayment(Map<String,String[]> parameters,List<PaymentBean> billList,Paymentheader payheader)throws EGOVRuntimeException,ValidationException
+        public Paymentheader updatePayment(Map<String,String[]> parameters,List<PaymentBean> billList,Paymentheader payheader)throws ApplicationRuntimeException,ValidationException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting updatePayment...");
                 Paymentheader paymentheader=null;
@@ -737,7 +737,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                  }catch(Exception e)
                  {
                          LOGGER.error("Inside exception deleteMiscBill"+e.getMessage());
-                         throw new EGOVRuntimeException(e.getMessage());
+                         throw new ApplicationRuntimeException(e.getMessage());
                  }
                  if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed deleteMiscBill.");
         }
@@ -747,7 +747,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 return (CGeneralLedger)persistenceService.findByNamedQuery(namedQuery,Long.valueOf(id),glcodeIdList);
         }
         
-        public void getGlcodeIds() throws EGOVRuntimeException{
+        public void getGlcodeIds() throws ApplicationRuntimeException{
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting getGlcodeIds...");
                 try{
                         List<AppConfigValues> appList;
@@ -778,7 +778,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                         }
                 }catch (Exception e){
                         LOGGER.error(e.getMessage());
-                        throw new EGOVRuntimeException(e.getMessage());
+                        throw new ApplicationRuntimeException(e.getMessage());
                 }
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed getGlcodeIds.");
         }
@@ -788,7 +788,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 String value = "";
                 List<AppConfigValues> appConfig = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,"CJV_PAYMENT_MODE_AS_RTGS");
                 if(appConfig == null || appConfig.isEmpty())
-                        throw new EGOVRuntimeException("CJV_PAYMENT_MODE_AS_RTGS is not defined in AppConfig");
+                        throw new ApplicationRuntimeException("CJV_PAYMENT_MODE_AS_RTGS is not defined in AppConfig");
                 for(AppConfigValues app:appConfig)
                         value=app.getValue();
                 return value;
@@ -798,13 +798,13 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 String value = "";
                 List<AppConfigValues> appConfig = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,"DATE_RESTRICTION_FOR_CJV_PAYMENT_MODE_AS_RTGS");
                 if(appConfig == null || appConfig.isEmpty())
-                        throw new EGOVRuntimeException("DATE_RESTRICTION_FOR_CJV_PAYMENT_MODE_AS_RTGS is not defined in AppConfig");
+                        throw new ApplicationRuntimeException("DATE_RESTRICTION_FOR_CJV_PAYMENT_MODE_AS_RTGS is not defined in AppConfig");
                 for(AppConfigValues app:appConfig)
                         value=app.getValue();
                 return value;
         }
         
-        private List<CChartOfAccounts> populateGlCodeIds(String appConfigKey) throws EGOVException {
+        private List<CChartOfAccounts> populateGlCodeIds(String appConfigKey) throws ApplicationException {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting populateGlCodeIds...");
                 List<CChartOfAccounts> glCodeList = new ArrayList<CChartOfAccounts>();
                 List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,appConfigKey);
@@ -940,10 +940,10 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
          * @param bean
          * @param mode
          * @throws ValidationException
-         * @throws EGOVException
+         * @throws ApplicationException
          */
         
-        private void validateCBill(PaymentBean bean,String mode)throws ValidationException,EGOVException
+        private void validateCBill(PaymentBean bean,String mode)throws ValidationException,ApplicationException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting validateCBill...");
                 List<ValidationError> errors=new ArrayList<ValidationError>();
@@ -989,7 +989,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed validateCBill.");
         }
         
-        public void validateForRTGSPayment(List<PaymentBean> billList,String type) throws ValidationException,EGOVException
+        public void validateForRTGSPayment(List<PaymentBean> billList,String type) throws ValidationException,ApplicationException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting validateForRTGSPayment...");
                 getGlcodeIds();
@@ -1033,7 +1033,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 }
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed validateForRTGSPayment.");
         }
-        public void validateForContractorSupplierDetailCodes(List<PaymentBean> billList,String type) throws ValidationException,EGOVException
+        public void validateForContractorSupplierDetailCodes(List<PaymentBean> billList,String type) throws ValidationException,ApplicationException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting validateForRTGSPayment...");
                 getGlcodeIds();
@@ -1077,7 +1077,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 }
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed validateForRTGSPayment.");
         }
-        public void validatePaymentForRTGSAssignment(List<ChequeAssignment> billList,String type) throws ValidationException,EGOVException
+        public void validatePaymentForRTGSAssignment(List<ChequeAssignment> billList,String type) throws ValidationException,ApplicationException
         {
                 Long billId=null;
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting validateForRTGSPayment...");
@@ -1164,10 +1164,10 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
          * @param restrictedDate
          * @return
          * @throws NumberFormatException
-         * @throws EGOVException
+         * @throws ApplicationException
          *  this api check if the voucher contains subledger on credit side and 
          */
-        public boolean CheckForContractorSubledgerCodes(List<PaymentBean> billList,Date restrictedDate) throws NumberFormatException, EGOVException{
+        public boolean CheckForContractorSubledgerCodes(List<PaymentBean> billList,Date restrictedDate) throws NumberFormatException, ApplicationException{
     
                 int billDateFlag=0;
                 String query="Select gld.detailkeyid from generalledger gl,voucherheader vh, generalledgerdetail gld "+
@@ -1199,7 +1199,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 return false;
         }
         
-        public void validateRTGSPaymentForModify(List<PaymentBean> billList) throws ValidationException,EGOVException
+        public void validateRTGSPaymentForModify(List<PaymentBean> billList) throws ValidationException,ApplicationException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting validateRTGSPaymentForModify...");
                 getGlcodeIds(); 
@@ -1242,7 +1242,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed validateRTGSPaymentForModify.");
         }
         
-        public EntityType getEntity(Integer detailTypeId,Serializable detailKeyId)throws EGOVException
+        public EntityType getEntity(Integer detailTypeId,Serializable detailKeyId)throws ApplicationException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting getEntity...");
                 EntityType entity;
@@ -1259,7 +1259,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 }catch(Exception e)
                 {
                         LOGGER.error("Exception to get EntityType="+e.getMessage());
-                        throw new EGOVException("Exception to get EntityType="+e.getMessage());
+                        throw new ApplicationException("Exception to get EntityType="+e.getMessage());
                 }
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed getEntity.");
                 return entity;
@@ -1291,7 +1291,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         }
         //this will be used for  all paymentVouchers 
         //List<ChequeAssignment> chequeList = null;
-        public List<ChequeAssignment> getPaymentVoucherForRTGSInstrument(Map<String,String[]> parameters,CVoucherHeader voucherHeader) throws EGOVException,ParseException
+        public List<ChequeAssignment> getPaymentVoucherForRTGSInstrument(Map<String,String[]> parameters,CVoucherHeader voucherHeader) throws ApplicationException,ParseException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting getPaymentVoucherNotInInstrument...");
                 List<ChequeAssignment> chequeAssignmentList = new ArrayList<ChequeAssignment>();
@@ -1409,7 +1409,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed getPaymentVoucherNotInInstrument.");
                 return chequeAssignmentList; 
         }
-        public List<ChequeAssignment> getPaymentVoucherForTNEBRTGSInstrument(Map<String,String[]> parameters,CVoucherHeader voucherHeader) throws EGOVException,ParseException
+        public List<ChequeAssignment> getPaymentVoucherForTNEBRTGSInstrument(Map<String,String[]> parameters,CVoucherHeader voucherHeader) throws ApplicationException,ParseException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting getPaymentVoucherNotInInstrument...");
                 List<ChequeAssignment> chequeAssignmentList = new ArrayList<ChequeAssignment>();
@@ -1474,7 +1474,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                                         payTo = appConfigVal.getValue();
                                                  }
                                 } catch (Exception e) {
-                                         throw new EGOVRuntimeException("Appconfig value for EB Voucher propartys is not defined in the system");
+                                         throw new ApplicationRuntimeException("Appconfig value for EB Voucher propartys is not defined in the system");
                                 }
                         if(payTo!=null){
                                 payTo = payTo.substring(0,20);
@@ -1534,7 +1534,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed getPaymentVoucherNotInInstrument.");
                 return chequeAssignmentList; 
         }
-        public List<ChequeAssignment> getDirectBankPaymentVoucherForRTGSInstrument(Map<String,String[]> parameters,CVoucherHeader voucherHeader) throws EGOVException,ParseException
+        public List<ChequeAssignment> getDirectBankPaymentVoucherForRTGSInstrument(Map<String,String[]> parameters,CVoucherHeader voucherHeader) throws ApplicationException,ParseException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting getPaymentVoucherNotInInstrument...");
                 List<ChequeAssignment> chequeAssignmentList = new ArrayList<ChequeAssignment>();
@@ -1624,7 +1624,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                          
         //this will be used for  all paymentVouchers 
         List<ChequeAssignment> chequeList = null;
-        public List<ChequeAssignment> getPaymentVoucherNotInInstrument(Map<String,String[]> parameters,CVoucherHeader voucherHeader) throws EGOVException,ParseException
+        public List<ChequeAssignment> getPaymentVoucherNotInInstrument(Map<String,String[]> parameters,CVoucherHeader voucherHeader) throws ApplicationException,ParseException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting getPaymentVoucherNotInInstrument...");
                 List<ChequeAssignment> chequeAssignmentList = new ArrayList<ChequeAssignment>();
@@ -1998,9 +1998,9 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
          * @param list
          * @param ca
          * @param checkDed
-         * @throws EGOVException
+         * @throws ApplicationException
          */
-        private void prepareChequeList(List<Object[]> list,ChequeAssignment ca,boolean checkDed)throws EGOVException
+        private void prepareChequeList(List<Object[]> list,ChequeAssignment ca,boolean checkDed)throws ApplicationException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareChequeList...");
                 Map<String,BigDecimal> dedMap =new HashMap<String,BigDecimal>();
@@ -2066,7 +2066,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 return map;
         }
         
-        public List<InstrumentHeader> createInstrument(List<ChequeAssignment> chequeAssignmentList,String paymentMode,Integer bankaccount,Map<String,String[]> parameters,Department dept)throws EGOVRuntimeException,Exception
+        public List<InstrumentHeader> createInstrument(List<ChequeAssignment> chequeAssignmentList,String paymentMode,Integer bankaccount,Map<String,String[]> parameters,Department dept)throws ApplicationRuntimeException,Exception
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting createInstrument...");
                 List<InstrumentHeader> instHeaderList=new ArrayList<InstrumentHeader>();
@@ -2203,7 +2203,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 return instHeaderList;          
         }
         
-        public List<InstrumentHeader> reassignInstrument(List<ChequeAssignment> chequeAssignmentList,String paymentMode,Integer bankaccount,Map<String,String[]> parameters,Department dept)throws EGOVRuntimeException,Exception
+        public List<InstrumentHeader> reassignInstrument(List<ChequeAssignment> chequeAssignmentList,String paymentMode,Integer bankaccount,Map<String,String[]> parameters,Department dept)throws ApplicationRuntimeException,Exception
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting reassignInstrument...");
                 List<InstrumentHeader> instHeaderList=new ArrayList<InstrumentHeader>();
@@ -2546,7 +2546,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 return paymentheader;
         }
         
-        public List<ChequeAssignment> getPaymentVoucherForRemittanceRTGSInstrument(Map<String,String[]> parameters,CVoucherHeader voucherHeader) throws EGOVException,ParseException
+        public List<ChequeAssignment> getPaymentVoucherForRemittanceRTGSInstrument(Map<String,String[]> parameters,CVoucherHeader voucherHeader) throws ApplicationException,ParseException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting getPaymentVoucherNotInInstrument...");
                 
@@ -2792,7 +2792,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         }
 
         
-        public Position getPosition()throws EGOVRuntimeException
+        public Position getPosition()throws ApplicationRuntimeException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getPosition...");
                 return  eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
@@ -2809,7 +2809,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
                 return eisCommonService.getLatestAssignmentForEmployeeByToDate( EgovThreadLocals.getUserId(),new Date());
         }
-        public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException
+        public Position getPositionForEmployee(Employee emp)throws ApplicationRuntimeException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getPositionForEmployee...");
                 return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
@@ -2819,7 +2819,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getEmpForCurrentUser...");
                 return eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
         }
-        public String getEmployeeNameForPositionId(Position pos)throws EGOVRuntimeException
+        public String getEmployeeNameForPositionId(Position pos)throws ApplicationRuntimeException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getEmployeeNameForPositionId...");
                 Employee pi = eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());

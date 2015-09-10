@@ -42,7 +42,6 @@ package org.egov.web.actions.voucher;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVException;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFunction;
 import org.egov.commons.CGeneralLedger;
@@ -52,6 +51,7 @@ import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.web.actions.payment.PaymentAction;
 
 public class VoucherReport {
@@ -94,7 +94,7 @@ public class VoucherReport {
 				EntityType entityType = null;
 				try {
 					entityType = common.getEntityType((Accountdetailtype) detailType.get(0),detailKeyId);
-				} catch (EGOVException e) {
+				} catch (ApplicationException e) {
 					if(LOGGER.isDebugEnabled())     LOGGER.debug("Error"+e.getMessage(), e);
 				}
 

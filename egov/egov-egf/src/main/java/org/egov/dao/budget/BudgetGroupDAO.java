@@ -54,7 +54,7 @@ package org.egov.dao.budget;
 import java.util.List; 
 
 import org.egov.commons.CChartOfAccounts;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.dao.*;
 import org.egov.model.budget.BudgetGroup;
 

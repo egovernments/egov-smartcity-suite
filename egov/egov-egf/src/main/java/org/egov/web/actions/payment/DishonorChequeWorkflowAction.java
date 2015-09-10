@@ -68,17 +68,17 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.DishonorCheque;
@@ -336,7 +336,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
                          else
                          {
                                  LOGGER.error("Unable to find the Integrated modules service  with name financialIntegrationService in  Web Applicaton context. ");
-                                 throw new EGOVRuntimeException("Integrated modules service not found");
+                                 throw new ApplicationRuntimeException("Integrated modules service not found");
                                  
                          }
                          if(LOGGER.isDebugEnabled())
@@ -543,7 +543,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
                                                         }
                                                 }
                                                 else{
-                                                        throw new EGOVRuntimeException("DishonoredChequeAction |  populatesubledgerDetails | not able to find either debit or credit amount");
+                                                        throw new ApplicationRuntimeException("DishonoredChequeAction |  populatesubledgerDetails | not able to find either debit or credit amount");
                                                 }
                                         }subledgerDetails.add(subledgerMap);
                                 }
@@ -573,7 +573,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
                                                                 }
                                                         }
                                                         else{
-                                                                throw new EGOVRuntimeException("DishonoredChequeAction |  populatesubledgerDetails | not able to find either debit or credit amount");
+                                                                throw new ApplicationRuntimeException("DishonoredChequeAction |  populatesubledgerDetails | not able to find either debit or credit amount");
                                                         }
                                         }subledgerDetails.add(subledgerMap);
                                 }

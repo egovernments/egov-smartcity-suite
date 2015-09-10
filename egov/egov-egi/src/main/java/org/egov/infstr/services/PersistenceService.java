@@ -57,12 +57,12 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser.Operator;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -312,7 +312,7 @@ public class PersistenceService<T, ID extends Serializable> {
             paging.setup(query, pageNumber, pageSize);
             return query.list();
         } catch (final ParseException e) {
-            throw new EGOVRuntimeException("invalid.search.string", e);
+            throw new ApplicationRuntimeException("invalid.search.string", e);
         }
     }
 

@@ -68,15 +68,15 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
@@ -406,7 +406,7 @@ public class ExpenseBillPrintAction extends BaseFormAction{
                                 Map<String,Object> payeeMap = new HashMap<String,Object>();
                                 try {
                                         payeeMap = getAccountDetails(payeeDetails.getAccountDetailTypeId(),payeeDetails.getAccountDetailKeyId(),payeeMap);
-                                } catch (EGOVException e) {
+                                } catch (ApplicationException e) {
                                         LOGGER.error("Error"+ e.getMessage(),e);
                                 }
                                 subledger.setDetailKey(payeeMap.get(Constants.DETAILKEY)+"");
@@ -426,7 +426,7 @@ public class ExpenseBillPrintAction extends BaseFormAction{
                 return payeeDetailsList;
         }
 
-        public Map<String,Object> getAccountDetails(final Integer detailtypeid,final Integer detailkeyid,Map<String,Object> tempMap) throws EGOVException{
+        public Map<String,Object> getAccountDetails(final Integer detailtypeid,final Integer detailkeyid,Map<String,Object> tempMap) throws ApplicationException{
                 Accountdetailtype detailtype = (Accountdetailtype) getPersistenceService().find(ACCDETAILTYPEQUERY,detailtypeid);
                 tempMap.put("detailtype", detailtype.getName());
                 tempMap.put("detailtypeid", detailtype.getId());
@@ -453,7 +453,7 @@ public class ExpenseBillPrintAction extends BaseFormAction{
         }
         
 
-        void loadInboxHistoryData(State states, Map<String, Object> paramMap) throws EGOVRuntimeException {
+        void loadInboxHistoryData(State states, Map<String, Object> paramMap) throws ApplicationRuntimeException {
                 List<String> history = new ArrayList<String>();
                 List<String> workFlowDate = new ArrayList<String>();
         if (states != null) {
@@ -545,7 +545,7 @@ public class ExpenseBillPrintAction extends BaseFormAction{
                                                 dataType = method.getReturnType().getSimpleName();
                                         } catch (Exception e) {
                                                 LOGGER.error(e.getMessage(), e);
-                                                throw new EGOVRuntimeException(e.getMessage());
+                                                throw new ApplicationRuntimeException(e.getMessage());
                                         }
                                         EntityType entity = null;
                                         if ( dataType.equals("Long") ){
@@ -617,7 +617,7 @@ public class ExpenseBillPrintAction extends BaseFormAction{
                                                 dataType = method.getReturnType().getSimpleName();
                                         } catch (Exception e) {
                                                 LOGGER.error(e.getMessage(), e);
-                                                throw new EGOVRuntimeException(e.getMessage());
+                                                throw new ApplicationRuntimeException(e.getMessage());
                                         }
                                         EntityType entity = null;
                                         if ( dataType.equals("Long") ){

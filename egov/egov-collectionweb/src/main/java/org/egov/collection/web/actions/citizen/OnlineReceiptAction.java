@@ -83,15 +83,15 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -286,7 +286,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                     CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICECODE_PGI_BILLDESK);
         try {
             setPaymentResponse(collectionCommon.createPaymentResponse(paymentService, getMsg()));
-        } catch (final EGOVRuntimeException egovEx) {
+        } catch (final ApplicationRuntimeException egovEx) {
             throw new ValidationException(Arrays.asList(new ValidationError(egovEx.getMessage(), egovEx.getMessage())));
         }
 
@@ -405,7 +405,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
             *  try {
                 receiptHeaderService.createVoucherForReceipt(onlinePaymentReceiptHeader, Boolean.FALSE);
                 LOGGER.debug("Updated financial systems and created voucher.");
-            } catch (final EGOVRuntimeException ex) {
+            } catch (final ApplicationRuntimeException ex) {
                 updateToSystems = false;
                 errors.add(new ValidationError(
                         "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state.",
@@ -421,7 +421,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                  onlinePaymentReceiptHeader.getService().getCode(),
                  billReceipt)) { updateToSystems = false; }
                  
-            } catch (final EGOVRuntimeException ex) {
+            } catch (final ApplicationRuntimeException ex) {
                 // Receipt creation is rolled back, and payment continues to be
                 // in
                 // PENDING state.
@@ -547,7 +547,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 try {
                     receiptHeaderService.createVoucherForReceipt(receipts[i], Boolean.FALSE);
                     LOGGER.debug("Updated financial systems and created voucher.");
-                } catch (final EGOVRuntimeException ex) {
+                } catch (final ApplicationRuntimeException ex) {
                     errors.add(new ValidationError(
                             "Manual Reconciliation Rolled back as Voucher Creation Failed For Payment Reference ID : "
                                     + receipts[i].getId(),
@@ -597,7 +597,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                     receiptHeaderService.persist(receiptHeader);
 
                 }
-        } catch (final EGOVRuntimeException ex) {
+        } catch (final ApplicationRuntimeException ex) {
             errors.add(new ValidationError("Manual Reconciliation of Online Payments Rolled back as "
                     + "update to billing system failed.", "Manual Reconciliation of Online Payments Rolled back as "
                     + "update to billing system failed."));
@@ -620,7 +620,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
             setReportId(collectionCommon.generateReport(receipts, getSession(), true));
         } catch (final Exception e) {
             LOGGER.error(CollectionConstants.REPORT_GENERATION_ERROR, e);
-            throw new EGOVRuntimeException(CollectionConstants.REPORT_GENERATION_ERROR, e);
+            throw new ApplicationRuntimeException(CollectionConstants.REPORT_GENERATION_ERROR, e);
         }
         return CollectionConstants.REPORT;
     }

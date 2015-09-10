@@ -47,7 +47,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.WeakHashMap;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +74,7 @@ public class SecurityUtils implements SecurityConstants {
 				while (tokenValue.hasMoreTokens()) {
 					if (tokenValue.nextToken().toLowerCase().equals(blkVal)) {
 						LOG.error("Found SQL Injection attack, Domain Name : {} User ID : {}", EgovThreadLocals.getDomainName(), EgovThreadLocals.getUserId());
-						throw new EGOVRuntimeException("Invalid user input found, possible SQL Injection!");
+						throw new ApplicationRuntimeException("Invalid user input found, possible SQL Injection!");
 					}
 				}
 			}

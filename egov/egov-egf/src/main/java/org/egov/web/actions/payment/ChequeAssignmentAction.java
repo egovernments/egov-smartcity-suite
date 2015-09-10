@@ -77,15 +77,15 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.DrawingOfficer;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.model.instrument.InstrumentHeader;
@@ -325,7 +325,7 @@ private void setTNEBMandatoryFields(){
 				propartyAppConfigResultList.put(key, value);
 					 }
 			} catch (Exception e) {
-				 throw new EGOVRuntimeException("Appconfig value for EB Voucher propartys is not defined in the system");
+				 throw new ApplicationRuntimeException("Appconfig value for EB Voucher propartys is not defined in the system");
 			}
 		}
 		for(String key:propartyAppConfigResultList.keySet()){
@@ -386,7 +386,7 @@ private void setTNEBMandatoryFields(){
 	
 	@ValidationErrorPage(value="remittanceRtgsSearch")
 	@SkipValidation
-	public String searchRemittanceRTGS() throws EGOVException,ParseException            
+	public String searchRemittanceRTGS() throws ApplicationException,ParseException            
 	{    
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting searchRemittanceRTGS...");
 		List<ChequeAssignment> rtgsChequeAssignmentList = null;
@@ -541,7 +541,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 	}
 	@ValidationErrorPage(value="rtgsSearch")
 	@SkipValidation
-	public String searchRTGS() throws EGOVException,ParseException            
+	public String searchRTGS() throws ApplicationException,ParseException            
 	{    
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting searchRTGS...");
 		List<ChequeAssignment> rtgsChequeAssignmentList = null;
@@ -615,7 +615,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 		return "searchRtgsResult";      
 	}
 	@SkipValidation
-	public String searchTNEBRTGS() throws EGOVException,ParseException            
+	public String searchTNEBRTGS() throws ApplicationException,ParseException            
 	{    
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting searchTNEBRTGS...");
 		List<ChequeAssignment> rtgsChequeAssignmentList = null;
@@ -678,7 +678,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 		return "searchRtgsResult";      
 	}
 	@ValidationErrorPage(value="search")         
-	public String search() throws EGOVException,ParseException
+	public String search() throws ApplicationException,ParseException
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting search...");
 		chequeSlNoMap=	loadChequeSerialNo(bankaccount);
@@ -728,7 +728,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 	}
 	
 	@ValidationErrorPage(value="before_salary_search")
-	public String searchForSalaryPayments() throws EGOVException,ParseException
+	public String searchForSalaryPayments() throws ApplicationException,ParseException
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting searchForSalaryPayments...");
 		voucherHeader.setName(FinancialConstants.PAYMENTVOUCHER_NAME_SALARY);
@@ -740,7 +740,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 	}
 	
 	@ValidationErrorPage(value="before_pension_search")
-	public String searchForPensionPayments() throws EGOVException,ParseException
+	public String searchForPensionPayments() throws ApplicationException,ParseException
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting searchForPensionPayments...");
 		voucherHeader.setName(FinancialConstants.PAYMENTVOUCHER_NAME_PENSION);
@@ -809,7 +809,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 	}
 	
 	@ValidationErrorPage(value="before_remittance_search")
-	public String searchChequesOfRemittance() throws EGOVException,ParseException
+	public String searchChequesOfRemittance() throws ApplicationException,ParseException
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting searchChequesOfRemittance...");
 		Recovery recovery=(Recovery)persistenceService.find("from Recovery where id=?",recoveryId);
@@ -852,7 +852,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 	}
 	@ValidationErrorPage(value="searchRtgsResult")
 	@SkipValidation
-	public String update()throws  EGOVException,ParseException
+	public String update()throws  ApplicationException,ParseException
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Start createInstrumentForRTGS");   
 		Map<String,List<ChequeAssignment>> resultMap = new HashMap<String,List<ChequeAssignment>>();
@@ -890,7 +890,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 	}
 	@ValidationErrorPage(value="searchpayment")
 	@SkipValidation
-	public String create()throws EGOVException
+	public String create()throws ApplicationException
 	
 	{
 		            
@@ -1081,7 +1081,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 			accountNoAndRtgsEntryMap=(Map<Bankaccount,List<ChequeAssignment>>)getSession().get("accountNoAndRtgsEntryMap");
 			addFieldError("rtgs.payment.mandatory.details.missing",e.getErrors().get(0).getMessage());    
 					//getMessage("rtgs.payment.mandatory.details.missing"));
-		} catch (EGOVException e) {
+		} catch (ApplicationException e) {
 			accountNoAndRtgsEntryMap=(Map<Bankaccount,List<ChequeAssignment>>)getSession().get("accountNoAndRtgsEntryMap");
 			addFieldError("rtgs.payment.mandatory.details.missing",e.getMessage()); 
 		}
@@ -1091,7 +1091,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 
 	@ValidationErrorPage(value="searchsalpayment")
 	@SkipValidation
-	public String createInstrumentForSalaryPayment()throws EGOVException,ParseException
+	public String createInstrumentForSalaryPayment()throws ApplicationException,ParseException
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting createInstrumentForSalaryPayment...");
 	//	loadBankAndAccount();
@@ -1159,7 +1159,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 	   
 	@ValidationErrorPage(value="searchpensionpayment")
 	@SkipValidation
-	public String createInstrumentForPensionPayment()throws EGOVException,ParseException
+	public String createInstrumentForPensionPayment()throws ApplicationException,ParseException
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting createInstrumentForPensionPayment...");
 	//	loadBankAndAccount();

@@ -55,11 +55,11 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.repository.ScriptRepository;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.cache.LRUCache;
 import org.egov.infstr.utils.DateUtils;
 import org.joda.time.DateTime;
@@ -124,7 +124,7 @@ public class ScriptService  {
     public static ScriptContext createContext(final Object... args) {
         final SimpleScriptContext context = new SimpleScriptContext();
         if (args.length % 2 != 0)
-            throw new EGOVRuntimeException("Number of arguments must be even");
+            throw new ApplicationRuntimeException("Number of arguments must be even");
         for (int i = 0; i < args.length; i += 2)
             context.setAttribute((String) args[i], args[i + 1], ScriptContext.ENGINE_SCOPE);
         return context;
@@ -189,7 +189,7 @@ public class ScriptService  {
             // context as it will keep on growing over a period of time
             final String errMsg = "ScriptContext not passed to executeScript method!";
             LOG.error(errMsg);
-            throw new EGOVRuntimeException(errMsg);
+            throw new ApplicationRuntimeException(errMsg);
         }
 
         Object evalResult = null;
@@ -215,11 +215,11 @@ public class ScriptService  {
             return evalResult == null ? result : evalResult;
         } catch (final ScriptException e) {
             LOG.error("script error for " + script.getType() + ":" + script.getName() + ":" + script.getScript(), e);
-            throw new EGOVRuntimeException("script.error", e);
+            throw new ApplicationRuntimeException("script.error", e);
         }
         catch (final  Exception e) {
             LOG.error("Exception  for " + script.getType() + ":" + script.getName() + ":" + script.getScript(), e);
-            throw new EGOVRuntimeException("script.error", e);
+            throw new ApplicationRuntimeException("script.error", e);
         }
     }
 
@@ -257,12 +257,12 @@ public class ScriptService  {
             } catch (final Exception e) {
                 final String errMsg = "Exception while invoking function [" + functionName + "]";
                 LOG.error(errMsg, e);
-                throw new EGOVRuntimeException(errMsg, e);
+                throw new ApplicationRuntimeException(errMsg, e);
             }
         else {
             final String errMsg = "Script engine [" + engine + "] does not support method execution!";
             LOG.error(errMsg);
-            throw new EGOVRuntimeException(errMsg);
+            throw new ApplicationRuntimeException(errMsg);
         }
         return evalResult;
     }
@@ -297,7 +297,7 @@ public class ScriptService  {
                 final String errMsg = "Could not compile script " + script.getType() + ":" + script.getName() + ":"
                         + script.getScript();
                 LOG.error(errMsg, e);
-                throw new EGOVRuntimeException(errMsg, e);
+                throw new ApplicationRuntimeException(errMsg, e);
             }
 
         return compiledScript;
@@ -310,7 +310,7 @@ public class ScriptService  {
      *            The date against which validity of the script is to be
      *            checked. If null, validity as of current date will be checked.
      * @return Script object for given name
-     * @throws EGOVRuntimeException
+     * @throws ApplicationRuntimeException
      *             if the script is not configured in the system
      */
     private Script getScript(final String scriptName, Date asOnDate) {
@@ -327,7 +327,7 @@ public class ScriptService  {
         
         script = scriptRepository.findByNameAndPeriod(scriptName, currentDate);
         if (script == null)
-            throw new EGOVRuntimeException("Script [" + scriptName + "] not found!");
+            throw new ApplicationRuntimeException("Script [" + scriptName + "] not found!");
 
         // Compile the script if required and possible
         compileScriptIfRequired(script);

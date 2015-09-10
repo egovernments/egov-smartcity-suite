@@ -40,8 +40,8 @@
 package org.egov.infstr.utils;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectTypeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectTypeException;
 import org.egov.infstr.utils.seqgen.DatabaseSequence;
 import org.egov.infstr.utils.seqgen.DatabaseSequenceException;
 import org.hibernate.Session;
@@ -102,7 +102,7 @@ public class SequenceNumberGenerator {
 			}
 			return new Sequence(seq.getObjectType(), seq.getNumber(), formattedNumber);
 		}
-		throw new EGOVRuntimeException("No row with the given objectType " + objectType + " Found ");
+		throw new ApplicationRuntimeException("No row with the given objectType " + objectType + " Found ");
 
 	}
 
@@ -117,7 +117,7 @@ public class SequenceNumberGenerator {
 			final String formattedNumber = StringUtils.leftPad(seq.getFormattedNumber(), strLength, valueToAppend.charValue());
 			return new Sequence(seq.getObjectType(), seq.getNumber(), formattedNumber);
 		}
-		throw new EGOVRuntimeException("No row with the given objectType " + objectType + " Found ");
+		throw new ApplicationRuntimeException("No row with the given objectType " + objectType + " Found ");
 
 	}
 
@@ -127,7 +127,7 @@ public class SequenceNumberGenerator {
 			final String formattedNumber = StringUtils.leftPad(seq.getFormattedNumber(), strLength, valueToAppend);
 			return new Sequence(seq.getObjectType(), seq.getNumber(), formattedNumber);
 		}
-		throw new EGOVRuntimeException("No row with the given objectType " + objectType + " Found ");
+		throw new ApplicationRuntimeException("No row with the given objectType " + objectType + " Found ");
 
 	}
 
@@ -145,7 +145,7 @@ public class SequenceNumberGenerator {
 			final String formattedNumber = StringUtils.leftPad(seq.getFormattedNumber(), strLength, valueToAppend.charValue());
 			return new Sequence(seq.getObjectType(), seq.getNumber(), formattedNumber);
 		}
-		throw new EGOVRuntimeException("No row with the given objectType " + objectType + " Found ");
+		throw new ApplicationRuntimeException("No row with the given objectType " + objectType + " Found ");
 	}
 
 	/**

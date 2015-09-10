@@ -53,7 +53,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVException;
+import org.egov.infra.exception.ApplicationException;
 
 import com.exilant.GLEngine.Transaxtion;
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -81,14 +81,14 @@ public class PostJV
 	 SimpleDateFormat formatter1 = new SimpleDateFormat("dd/MM/yyyy");
 	 Date dt=new Date();
 	 //gets Values from Voucher object and calls Appropiate methods for receipt transaction or Journal transaction
-	/*public String generateVoucher(Voucher v,Connection connection) throws EGOVException,Exception
+	/*public String generateVoucher(Voucher v,Connection connection) throws ApplicationException,Exception
 	{
 		*//**
 		 * implement using create voucher api
 		 *//*
 		return returnVal;
 	}*/
-/*	private void getValuesForJV() throws EGOVException,Exception
+/*	private void getValuesForJV() throws ApplicationException,Exception
 	{
 		if(LOGGER.isInfoEnabled())     LOGGER.info(" inside perform main posting ");
 		createMainRec=new ArrayList();
@@ -105,7 +105,7 @@ public class PostJV
 				if(LOGGER.isInfoEnabled())     LOGGER.info(" gle.getFunction()  "+gle.getFunction());
 				if(LOGGER.isInfoEnabled())     LOGGER.info(" gle.getGlcode()  "+gle.getGlcode());
 				if(gle.getCredit() > 0 && gle.getDebit() > 0 )
-						throw new EGOVException(" GeneralLedgerPosting entry has both debit and credit amount ");
+						throw new ApplicationException(" GeneralLedgerPosting entry has both debit and credit amount ");
 				if(gle.getCredit() > 0)
 					amount=gle.getCredit();
 				if(gle.getDebit() > 0)

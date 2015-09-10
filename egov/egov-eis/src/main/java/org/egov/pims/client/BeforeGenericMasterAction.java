@@ -53,7 +53,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.pims.service.EmployeeServiceOld;
 
@@ -87,7 +87,7 @@ public class BeforeGenericMasterAction extends DispatchAction
         {
             target = STR_ERROR;
             LOGGER.error(e.getMessage());
-            throw new EGOVRuntimeException((new StringBuilder(STR_EXCEPTION)).append(e.getMessage()).toString(), e);
+            throw new ApplicationRuntimeException((new StringBuilder(STR_EXCEPTION)).append(e.getMessage()).toString(), e);
         }
         return mapping.findForward(target);
     }
@@ -110,7 +110,7 @@ public class BeforeGenericMasterAction extends DispatchAction
         {
             target = STR_ERROR;
             LOGGER.error(e.getMessage());
-            throw new EGOVRuntimeException((new StringBuilder(STR_EXCEPTION)).append(e.getMessage()).toString(), e);
+            throw new ApplicationRuntimeException((new StringBuilder(STR_EXCEPTION)).append(e.getMessage()).toString(), e);
         }
         return mapping.findForward(target);
     }
@@ -132,7 +132,7 @@ public class BeforeGenericMasterAction extends DispatchAction
         {
             target = STR_ERROR;
             LOGGER.error(e.getMessage());
-            throw new EGOVRuntimeException((new StringBuilder(STR_EXCEPTION)).append(e.getMessage()).toString(), e);
+            throw new ApplicationRuntimeException((new StringBuilder(STR_EXCEPTION)).append(e.getMessage()).toString(), e);
         }
         return mapping.findForward(target);
     }
@@ -154,7 +154,7 @@ public class BeforeGenericMasterAction extends DispatchAction
         {
             target = STR_ERROR;
             LOGGER.error(e.getMessage());
-            throw new EGOVRuntimeException((new StringBuilder(STR_EXCEPTION)).append(e.getMessage()).toString(), e);
+            throw new ApplicationRuntimeException((new StringBuilder(STR_EXCEPTION)).append(e.getMessage()).toString(), e);
         }
         return mapping.findForward(target);
     }
@@ -177,7 +177,7 @@ public class BeforeGenericMasterAction extends DispatchAction
         {
             target = STR_ERROR;
             LOGGER.error(e.getMessage());
-            throw new EGOVRuntimeException((new StringBuilder(STR_EXCEPTION)).append(e.getMessage()).toString(), e);
+            throw new ApplicationRuntimeException((new StringBuilder(STR_EXCEPTION)).append(e.getMessage()).toString(), e);
         }
         return mapping.findForward(target);
     }
@@ -209,9 +209,9 @@ public class BeforeGenericMasterAction extends DispatchAction
 			genericMap.put("genericTable", getMap());
 			genericMap.put("genericName", getNameMap());
 			req.getSession().setAttribute("genericMap", genericMap);
-		} catch (EGOVRuntimeException e) {
+		} catch (ApplicationRuntimeException e) {
 			LOGGER.error(e.getMessage());
-			throw new EGOVRuntimeException(STR_EXCEPTION + e.getMessage(),e);
+			throw new ApplicationRuntimeException(STR_EXCEPTION + e.getMessage(),e);
 		}
     }
 
@@ -235,7 +235,7 @@ public class BeforeGenericMasterAction extends DispatchAction
 			return m;
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
-			throw new EGOVRuntimeException(STR_EXCEPTION + e.getMessage(),e);
+			throw new ApplicationRuntimeException(STR_EXCEPTION + e.getMessage(),e);
 		}
     }
 
@@ -257,7 +257,7 @@ public class BeforeGenericMasterAction extends DispatchAction
 			return m;
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
-			throw new EGOVRuntimeException(STR_EXCEPTION + e.getMessage(),e);
+			throw new ApplicationRuntimeException(STR_EXCEPTION + e.getMessage(),e);
 		}
     }
 

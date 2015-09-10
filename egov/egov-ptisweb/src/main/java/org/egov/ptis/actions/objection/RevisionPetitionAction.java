@@ -91,9 +91,9 @@ import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.persistence.entity.Address;
@@ -496,7 +496,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 bFile = FileUtils.readFileToByteArray(file);
             } catch (final IOException e) {
                 e.printStackTrace();
-                throw new EGOVRuntimeException("Exception while generating Hearing Notcie : " + e);
+                throw new ApplicationRuntimeException("Exception while generating Hearing Notcie : " + e);
             }
             reportOutput.setReportOutputData(bFile);
             reportOutput.setReportFormat(FileFormat.PDF);
@@ -800,7 +800,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     bFile = FileUtils.readFileToByteArray(file);
                 } catch (final IOException e) {
                     e.printStackTrace();
-                    throw new EGOVRuntimeException("Exception while generating Hearing Notcie : " + e);
+                    throw new ApplicationRuntimeException("Exception while generating Hearing Notcie : " + e);
                 }
                 reportOutput.setReportOutputData(bFile);
                 reportOutput.setReportFormat(FileFormat.PDF);
@@ -874,7 +874,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     bFile = FileUtils.readFileToByteArray(file);
                 } catch (final IOException e) {
                     e.printStackTrace();
-                    throw new EGOVRuntimeException("Exception while generating Hearing Notcie : " + e);
+                    throw new ApplicationRuntimeException("Exception while generating Hearing Notcie : " + e);
                 }
                 reportOutput.setReportOutputData(bFile);
                 reportOutput.setReportFormat(FileFormat.PDF);
@@ -929,7 +929,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     bFile = FileUtils.readFileToByteArray(file);
                 } catch (final IOException e) {
                     e.printStackTrace();
-                    throw new EGOVRuntimeException("Exception while generating Hearing Notcie : " + e);
+                    throw new ApplicationRuntimeException("Exception while generating Hearing Notcie : " + e);
                 }
                 reportOutput.setReportOutputData(bFile);
                 reportOutput.setReportFormat(FileFormat.PDF);

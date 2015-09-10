@@ -53,7 +53,7 @@ import java.util.WeakHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * The Class DateUtils. Utility API's for Date related operation
@@ -219,7 +219,7 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
         try {
             return isNotBlank(date) && isNotBlank(pattern) ? getDateFormatter(pattern).parse(date) : null;
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("Date or Pattern value is not valid", e);
+            throw new ApplicationRuntimeException("Date or Pattern value is not valid", e);
         }
     }
 

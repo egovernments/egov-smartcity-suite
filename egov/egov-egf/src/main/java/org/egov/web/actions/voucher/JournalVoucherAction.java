@@ -55,15 +55,15 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.voucher.VoucherDetails;
@@ -270,7 +270,7 @@ public class JournalVoucherAction extends BaseVoucherAction
 		}
 	}
 	
-	public Position getPosition() throws EGOVRuntimeException
+	public Position getPosition() throws ApplicationRuntimeException
 	{
 		Position pos;
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("getPosition===="+EgovThreadLocals.getUserId());

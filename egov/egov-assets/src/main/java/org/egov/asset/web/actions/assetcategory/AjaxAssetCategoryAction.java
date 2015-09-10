@@ -48,7 +48,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.asset.model.AssetCategory;
 import org.egov.asset.service.AssetCategoryService;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 
 @ParentPackage("egov")
@@ -87,7 +87,7 @@ public class AjaxAssetCategoryAction extends BaseFormAction {
         } catch (final Exception e) {
             LOGGER.error(
                     "Error while loading assetCategoryList in populateParentCategories() method " + e.getMessage());
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
         return PARENT_CATEGORIES;
     }

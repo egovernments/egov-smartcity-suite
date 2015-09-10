@@ -53,7 +53,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.ServletActionContext;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
@@ -96,7 +96,7 @@ public final class ReportUtil {
 			// Still not found. Logger error and throw exception.
 			errMsg = "File [" + filePath + "] could not be loaded from CLASSPATH!";
 			LOGGER.error(errMsg);
-			throw new EGOVRuntimeException(errMsg);
+			throw new ApplicationRuntimeException(errMsg);
 		}
 		return fileInputStream;
 	}
@@ -137,7 +137,7 @@ public final class ReportUtil {
 		try {
 			return getImageAsStream((String) fetchFromDBSql(connection, "SELECT LOGO FROM EG_CITY WHERE DOMAINURL = '" + EgovThreadLocals.getDomainName() + "'"));
 		} catch (final SQLException e) {
-			throw new EGOVRuntimeException("Exception in getting logo image!", e);
+			throw new ApplicationRuntimeException("Exception in getting logo image!", e);
 		}
 	}
 
@@ -151,7 +151,7 @@ public final class ReportUtil {
 		try {
 			return getImageAsStream(fetchLogo());
 		} catch (final HibernateException e) {
-			throw new EGOVRuntimeException("Exception in getting logo image!", e);
+			throw new ApplicationRuntimeException("Exception in getting logo image!", e);
 		}
 	}
 
@@ -188,7 +188,7 @@ public final class ReportUtil {
 		} catch (final IOException e) {
 			LOGGER.warn("Exception while loading report configuration file [" + ReportConstants.REPORT_CONFIG_FILE + "]", e);
 			return null;
-		} catch (final EGOVRuntimeException e) {
+		} catch (final ApplicationRuntimeException e) {
 			LOGGER.warn("Exception while loading report configuration file [" + ReportConstants.REPORT_CONFIG_FILE + "]", e);
 			return null;
 		}
@@ -209,7 +209,7 @@ public final class ReportUtil {
 		} else {
 			final String errMsg = "Query [" + hqlQuery + "] returned multiple rows!";
 			LOGGER.error(errMsg);
-			throw new EGOVRuntimeException(errMsg);
+			throw new ApplicationRuntimeException(errMsg);
 		}
 	}
 
@@ -233,7 +233,7 @@ public final class ReportUtil {
 		} catch (final SQLException e) {
 			final String errMsg = "Exception while executing query [" + sqlQuery + "]";
 			LOGGER.error(errMsg, e);
-			throw new EGOVRuntimeException(errMsg, e);
+			throw new ApplicationRuntimeException(errMsg, e);
 		} finally {
 			if (statement != null) {
 				statement.close();

@@ -61,12 +61,12 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -500,14 +500,14 @@ public class BudgetSearchAction extends BaseFormAction{
 		budgets = budgetDetailService.findApprovedBudgetsForFY(getFinancialYear());
 		return Constants.BUDGETS;
 	}
-	public Position getPosition()throws EGOVRuntimeException
+	public Position getPosition()throws ApplicationRuntimeException
 	{
 		Position pos;
 		try {
 			//TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
 			pos=eisCommonService.getPrimaryAssignmentPositionForEmp(EgovThreadLocals.getUserId());
 			} catch (Exception e) {
-			throw new EGOVRuntimeException("Unable to get Position for the user");
+			throw new ApplicationRuntimeException("Unable to get Position for the user");
 		}
 		return pos;
 	}

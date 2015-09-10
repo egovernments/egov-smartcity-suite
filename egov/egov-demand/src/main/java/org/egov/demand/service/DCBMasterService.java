@@ -44,8 +44,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.egov.demand.dao.DepreciationMasterDao;
 import org.egov.demand.model.DepreciationMaster;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class DCBMasterService {
@@ -78,7 +78,7 @@ public class DCBMasterService {
 			List retList = depreciationMasterDAO.findAll();
 			return retList;
 		} catch (Exception e) {
-			throw new EGOVRuntimeException("Exception in  getAllDepreciationRates", e);
+			throw new ApplicationRuntimeException("Exception in  getAllDepreciationRates", e);
 		}
 
 	}
@@ -109,7 +109,7 @@ public class DCBMasterService {
 		try {
 			return depreciationMasterDAO.findAll();
 		} catch (Exception e) {
-			throw new EGOVRuntimeException("Exception in  getAllDepreciationRates", e);
+			throw new ApplicationRuntimeException("Exception in  getAllDepreciationRates", e);
 		}
 	}
 

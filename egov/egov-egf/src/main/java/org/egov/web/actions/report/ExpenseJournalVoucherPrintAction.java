@@ -51,8 +51,8 @@ import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -233,7 +233,7 @@ public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
     }
 
     public Map<String, Object> getAccountDetails(final Integer detailtypeid, final Integer detailkeyid,
-            Map<String, Object> tempMap) throws EGOVException {
+            Map<String, Object> tempMap) throws ApplicationException {
         Accountdetailtype detailtype = (Accountdetailtype) getPersistenceService().find(ACCDETAILTYPEQUERY, detailtypeid);
         tempMap.put("detailtype", detailtype.getName());
         tempMap.put("detailtypeid", detailtype.getId());
@@ -260,7 +260,7 @@ public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
                 .getVoucherDate());
     }
 
-    void loadInboxHistoryData(State states, Map<String, Object> paramMap) throws EGOVRuntimeException {
+    void loadInboxHistoryData(State states, Map<String, Object> paramMap) throws ApplicationRuntimeException {
         List<String> history = new ArrayList<String>();
         List<String> workFlowDate = new ArrayList<String>();
         if (states != null) {

@@ -61,9 +61,9 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -249,7 +249,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 			setSearchValue(boundary.getName());
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new EGOVRuntimeException("Exception : " + e);
+			throw new ApplicationRuntimeException("Exception : " + e);
 		}
 		LOGGER.debug("Exit from search method");
 

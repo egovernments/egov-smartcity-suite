@@ -53,9 +53,9 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -974,7 +974,7 @@ public class GeneralLedgerReport {
 			}
 			else
 			{
-				throw new EGOVRuntimeException("Exlcude statusses not  are not defined for Reports");
+				throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
 			}
 			
 			if(!accEntityId.equalsIgnoreCase("") && !accEntityKey.equalsIgnoreCase("") ) 

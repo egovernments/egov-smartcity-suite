@@ -62,10 +62,10 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.StateAware;
@@ -177,7 +177,7 @@ public class ViewPropertyAction extends BaseFormAction {
 			return "view";
 		} catch (final Exception e) {
 			LOGGER.error("Exception in View Property: ", e);
-			throw new EGOVRuntimeException("Exception in View Property : " + e);
+			throw new ApplicationRuntimeException("Exception in View Property : " + e);
 		}
 	}
 

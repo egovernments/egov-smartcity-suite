@@ -56,10 +56,10 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.DrawingOfficer;
-import org.egov.exceptions.EGOVException;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.advance.EgAdvanceReqPayeeDetails;
 import org.egov.model.advance.EgAdvanceRequisitionDetails;
@@ -383,7 +383,7 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
             try {
                 coaList = commonsService
                         .getAccountCodeByPurpose(Integer.valueOf(accountCodePurpose.getId().toString()));
-            } catch (final EGOVException e) {
+            } catch (final ApplicationException e) {
                 throw new ValidationException(Arrays.asList(new ValidationError("error",
                         "advancerequisition.advance.accountcode.load.error")));
             }

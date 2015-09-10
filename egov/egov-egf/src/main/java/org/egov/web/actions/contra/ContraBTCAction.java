@@ -55,18 +55,18 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Vouchermis;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.instrument.InstrumentHeader;
@@ -360,7 +360,7 @@ public class ContraBTCAction extends BaseVoucherAction {
 			dt = Constants.DDMMYYYYFORMAT2.parse(contraBean.getChequeDate());
 		} catch (ParseException e) {
 			LOGGER.error("Parse Error" + e.getMessage(), e);
-			throw new EGOVRuntimeException(e.getMessage());
+			throw new ApplicationRuntimeException(e.getMessage());
 		}
 		iMap.put("Instrument date", dt);
 		iMap.put("Instrument amount", Double.valueOf(cBean.getAmount()
@@ -547,7 +547,7 @@ public class ContraBTCAction extends BaseVoucherAction {
 			LOGGER.error(e.getMessage(), e);
 			addActionError(getText(e.getErrors().get(0).getMessage()));
 			return "reverse";
-		} catch (EGOVRuntimeException e) {
+		} catch (ApplicationRuntimeException e) {
 			LOGGER.error(e.getMessage(), e);
 			addActionError(getText(e.getMessage()));
 			return "reverse";

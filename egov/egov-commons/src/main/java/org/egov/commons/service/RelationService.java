@@ -44,7 +44,7 @@ import java.util.List;
 
 import org.egov.commons.Relation;
 import org.egov.commons.utils.EntityType;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 

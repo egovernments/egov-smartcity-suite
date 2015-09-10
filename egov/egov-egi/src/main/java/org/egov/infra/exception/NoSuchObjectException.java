@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.exceptions;
+package org.egov.infra.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * The Class NoSuchObjectException.
  * Checked exception for Object existence
  */
-public class NoSuchObjectException extends EGOVException {
+public class NoSuchObjectException extends ApplicationException {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(NoSuchObjectException.class);

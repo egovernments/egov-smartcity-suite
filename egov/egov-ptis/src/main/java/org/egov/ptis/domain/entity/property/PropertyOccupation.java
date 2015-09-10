@@ -47,7 +47,7 @@ package org.egov.ptis.domain.entity.property;
 
 import java.util.Date;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.BaseModel;
 
 /**
@@ -115,10 +115,10 @@ public class PropertyOccupation extends BaseModel {
 	 */
 	public boolean validatePropOccupation() {
 		if (getOccupation() == null)
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					"In PropertyOccupation Validate :'Occupation' Attribute is no set, Please Check !!");
 		if (getOccupancyFactor() == null)
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					"In PropertyOccupation Validate :'Occupancy Factor' Attribute is no set, Please Check !!");
 
 		return true;

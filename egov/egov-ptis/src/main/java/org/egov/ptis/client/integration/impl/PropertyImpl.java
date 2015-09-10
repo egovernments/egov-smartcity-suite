@@ -44,7 +44,7 @@ import static org.egov.demand.utils.DemandConstants.COLLECTIONTYPE_FIELD;
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.EgBill;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
@@ -105,14 +105,14 @@ public class PropertyImpl extends Property {
 	protected void checkAuthorization() {
 		Long userId = EgovThreadLocals.getUserId();
 		if (userId == null) {
-			throw new EGOVRuntimeException(" User is null.Please check ");
+			throw new ApplicationRuntimeException(" User is null.Please check ");
 		}
 	}
 
 	@Override
 	protected void checkIsActive() {
 		if (!basicProperty.isActive()) {
-			throw new EGOVRuntimeException("Property is Deactivated. Provided propertid : " + getPropertyID());
+			throw new ApplicationRuntimeException("Property is Deactivated. Provided propertid : " + getPropertyID());
 		}
 	}
 

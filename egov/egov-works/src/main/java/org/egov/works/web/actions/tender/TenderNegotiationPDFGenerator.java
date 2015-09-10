@@ -55,8 +55,8 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.model.PersonalInformation;
@@ -230,9 +230,9 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
             }
             document.close();
         } catch (final DocumentException e) {
-            throw new EGOVRuntimeException(TENDER_PDF_ERROR, e);
-        } catch (final EGOVException ex) {
-            throw new EGOVRuntimeException(TENDER_PDF_ERROR, ex);
+            throw new ApplicationRuntimeException(TENDER_PDF_ERROR, e);
+        } catch (final ApplicationException ex) {
+            throw new ApplicationRuntimeException(TENDER_PDF_ERROR, ex);
         }
     }
 
@@ -281,10 +281,10 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
      * @param tenderResponse
      * @return
      * @throws DocumentException
-     * @throws EGOVException
+     * @throws ApplicationException
      */
     private PdfPTable createNegotiationTable(final TenderResponse tenderResponse, final Contractor contractor)
-            throws DocumentException, EGOVException {
+            throws DocumentException, ApplicationException {
         final PdfPTable negotiationTable = new PdfPTable(13);
         negotiationTable.setWidthPercentage(100);
         negotiationTable.setWidths(new float[] { 0.5f, 1f, 3.6f, 1.5f, 1.1f, 0.9f, 1.5f, 1.7f, 1.7f, 1.7f, 1.7f, 1.7f,
@@ -333,9 +333,9 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
             addTotalQuotedFooter(negotiationTable);
             addFinalRow(negotiationTable, tenderResponse);
         } catch (final DocumentException e) {
-            throw new EGOVRuntimeException(TENDER_PDF_ERROR, e);
-        } catch (final EGOVException ex) {
-            throw new EGOVRuntimeException(TENDER_PDF_ERROR, ex);
+            throw new ApplicationRuntimeException(TENDER_PDF_ERROR, e);
+        } catch (final ApplicationException ex) {
+            throw new ApplicationRuntimeException(TENDER_PDF_ERROR, ex);
         }
         return negotiationTable;
     }
@@ -344,7 +344,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
      * view workpackage pdf
      */
     public void createNegotiationTableDataForWp(final TenderResponse tenderResponse, final PdfPTable negotiationTable,
-            final Contractor contractor) throws DocumentException, EGOVException {
+            final Contractor contractor) throws DocumentException, ApplicationException {
         Date asOnDate = null;
         if (tenderResponse.getNegotiationDate() != null)
             asOnDate = tenderResponse.getNegotiationDate();
@@ -462,7 +462,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
      * view estimate pdf
      */
     public void createNegotiationTableData(final TenderResponse tenderResponse, final PdfPTable negotiationTable,
-            final Contractor contractor) throws DocumentException, EGOVException {
+            final Contractor contractor) throws DocumentException, ApplicationException {
 
         Date asOnDate = null;
         if (tenderResponse.getNegotiationDate() != null)
@@ -582,7 +582,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
         }
     }
 
-    public void createNegotiationTableFooter(final PdfPTable negotiationTable) throws DocumentException, EGOVException {
+    public void createNegotiationTableFooter(final PdfPTable negotiationTable) throws DocumentException, ApplicationException {
         negotiationTable.addCell(" ");
         negotiationTable.addCell(" ");
         final PdfPTable tenderTotalTable = createTenderTotalTable();
@@ -601,7 +601,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
     }
 
     // second row for footer
-    public void addRowFooter(final PdfPTable negotiationTable) throws DocumentException, EGOVException {
+    public void addRowFooter(final PdfPTable negotiationTable) throws DocumentException, ApplicationException {
         negotiationTable.addCell(" ");
         negotiationTable.addCell(" ");
         final PdfPTable tenderPercentageTable = createTenderPercentageTable();
@@ -624,7 +624,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
     }
 
     // adding total quoted value footer
-    public void addTotalQuotedFooter(final PdfPTable negotiationTable) throws DocumentException, EGOVException {
+    public void addTotalQuotedFooter(final PdfPTable negotiationTable) throws DocumentException, ApplicationException {
         negotiationTable.addCell(" ");
         negotiationTable.addCell(" ");
         final PdfPTable tenderQuotedTable = createTotalQuotedValueTable();
@@ -804,7 +804,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
     // ends second footer row
 
     public void addFinalRow(final PdfPTable negotiationTable, final TenderResponse tenderResponse)
-            throws DocumentException, EGOVException {
+            throws DocumentException, ApplicationException {
         final PdfPTable tenderNarrationTable = createTenderNarrationTable(tenderResponse);
         final PdfPCell tenderNarrationTableCell = new PdfPCell(tenderNarrationTable);
         tenderNarrationTableCell.setColspan(13);
@@ -838,7 +838,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
     }
 
     public PdfPTable createAsPerEstimateTable(final TenderResponse tenderResponse) throws DocumentException,
-            EGOVException {
+            ApplicationException {
         final PdfPTable estimateTable = new PdfPTable(3);
         estimateTable.getDefaultCell().setBorderWidth(1);
         estimateTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -853,7 +853,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
 
     /** creating tables for before negotion */
     public PdfPTable createBeforeNegotiationTable(final TenderResponse tenderResponse) throws DocumentException,
-            EGOVException {
+            ApplicationException {
         final PdfPTable beforeNegotiationTable = new PdfPTable(2);
         beforeNegotiationTable.getDefaultCell().setBorderWidth(1);
         beforeNegotiationTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -867,7 +867,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
 
     // creating marketRate table
     public PdfPTable createAfterNegotiationTable(final TenderResponse tenderResponse) throws DocumentException,
-            EGOVException {
+            ApplicationException {
         final PdfPTable afterNegotiationTable = new PdfPTable(2);
         afterNegotiationTable.getDefaultCell().setBorderWidth(1);
         afterNegotiationTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -883,7 +883,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
     }
 
     // creating tables for after negotiation
-    public PdfPTable createMarketRateTable(final TenderResponse tenderResponse) throws DocumentException, EGOVException {
+    public PdfPTable createMarketRateTable(final TenderResponse tenderResponse) throws DocumentException, ApplicationException {
         String asOnDate = "";
         if (tenderResponse != null && tenderResponse.getNegotiationDate() != null)
             asOnDate = sdf.format(tenderResponse.getNegotiationDate());
@@ -977,10 +977,10 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
      * @param tenderResponse
      * @return
      * @throws DocumentException
-     * @throws EGOVException
+     * @throws ApplicationException
      */
     private PdfPTable createContractorTable(final TenderResponse tenderResponse) throws DocumentException,
-            EGOVException {
+            ApplicationException {
         final PdfPTable contractorTable = new PdfPTable(3);
         contractorTable.setWidthPercentage(100);
         contractorTable.setWidths(new float[] { 1.6f, 3.6f, 6.6f });
@@ -1012,10 +1012,10 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
      * @param tenderResponse
      * @return void
      * @throws DocumentException
-     * @throws EGOVException
+     * @throws ApplicationException
      */
     private void createNegotiationTableForContractors(final TenderResponse tenderResponse) throws DocumentException,
-            EGOVException {
+            ApplicationException {
         PdfPTable negotiationTable = null;
         int count = 0;
         for (final TenderResponseContractors tenderResponseContractors : tenderResponse.getTenderResponseContractors()) {

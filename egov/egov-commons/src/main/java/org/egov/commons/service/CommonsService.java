@@ -65,10 +65,10 @@ import org.egov.commons.Scheme;
 import org.egov.commons.Status;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.utils.FinancialYear;
 
 public interface CommonsService {
@@ -76,14 +76,14 @@ public interface CommonsService {
      * Returns a installment object identified by its identifier.
      * @return Installment object if found or null refernce if not found in the system.
      * @see Installment.java
-     * @throws EGOVRuntimeException, if it finds a System exception.
+     * @throws ApplicationRuntimeException, if it finds a System exception.
      */
     public Installment getInstallmentByID(Integer id);
 
     /**
      * Persists the Installment passed in. Also rolls back the current transaction, if it fails to create the installment.
      * @param installment
-     * @throws EGOVRuntimeException, if it fails to create.
+     * @throws ApplicationRuntimeException, if it fails to create.
      * @see Installment.java
      */
     public void createInstallment(Installment installment);
@@ -91,7 +91,7 @@ public interface CommonsService {
     /**
      * Deletes the Installment passed in. Also rolls back the current transaction, if it fails to delete the installment.
      * @param installment
-     * @throws EGOVRuntimeException, if it fails to delete.
+     * @throws ApplicationRuntimeException, if it fails to delete.
      * @see Installment.java
      */
 
@@ -100,7 +100,7 @@ public interface CommonsService {
     /**
      * Updates the Installment passed in. Also rolls back the current transaction, if it fails to update the installment.
      * @param installment
-     * @throws EGOVRuntimeException, if it fails to update.
+     * @throws ApplicationRuntimeException, if it fails to update.
      * @see Installment.java
      */
     public void updateInstallment(Installment installment);
@@ -108,7 +108,7 @@ public interface CommonsService {
     /**
      * Returns all the Installments belonging to the passed in module.
      * @param module
-     * @throws EGOVRuntimeException, if it finds a System exception.
+     * @throws ApplicationRuntimeException, if it finds a System exception.
      * @see Installment.java
      * @see Module.java
      */
@@ -118,7 +118,7 @@ public interface CommonsService {
     /**
      * Returns all the Installments belonging to the passed in module and for a particular year.
      * @param module, Date year
-     * @throws EGOVRuntimeException, if it finds a System exception.
+     * @throws ApplicationRuntimeException, if it finds a System exception.
      * @see Installment.java
      * @see Module.java
      */
@@ -128,7 +128,7 @@ public interface CommonsService {
     /**
      * Returns a Installment belonging to the passed in module and for a particular year and having the given number.
      * @param module, Date year, installment number
-     * @throws EGOVRuntimeException, if it finds a System exception.
+     * @throws ApplicationRuntimeException, if it finds a System exception.
      * @see Installment.java
      * @see Module.java
      */
@@ -137,7 +137,7 @@ public interface CommonsService {
 
     /**
      * Returns all the Installments in the system, for all modules and for all years.
-     * @throws EGOVRuntimeException, if it finds a System exception.
+     * @throws ApplicationRuntimeException, if it finds a System exception.
      * @see Installment.java
      */
 
@@ -149,7 +149,7 @@ public interface CommonsService {
      * date.
      * @param module
      * @param Date a particular installment date.
-     * @throws EGOVRuntimeException, if it finds a System exception.
+     * @throws ApplicationRuntimeException, if it finds a System exception.
      * @see Installment.java
      * @see Module.java
      */
@@ -161,7 +161,7 @@ public interface CommonsService {
      * helpful when there are many installments in a given year. So the installment returned will pertain that period of the given
      * date.
      * @param module
-     * @throws EGOVRuntimeException, if it finds a System exception.
+     * @throws ApplicationRuntimeException, if it finds a System exception.
      * @see Installment.java
      * @see Module.java
      */
@@ -634,14 +634,14 @@ public interface CommonsService {
      * @param type
      * @return
      */
-    public List<CChartOfAccounts> getActiveAccountsForType(char type) throws EGOVException;
+    public List<CChartOfAccounts> getActiveAccountsForType(char type) throws ApplicationException;
 
     /**
      * to get the list of chartofaccounts based on the purposeId
      * @param purposeId
      * @return list of COA object(s)
      */
-    public List<CChartOfAccounts> getAccountCodeByPurpose(Integer purposeId) throws EGOVException;
+    public List<CChartOfAccounts> getAccountCodeByPurpose(Integer purposeId) throws ApplicationException;
 
     /**
      * This menthos will list the accoyntdetailtype for the account code and detail type name
@@ -655,39 +655,39 @@ public interface CommonsService {
     /**
      * This method will list the detailed chartofaccounts object that are active for posting
      * @return
-     * @throws EGOVException
+     * @throws ApplicationException
      */
-    public List<CChartOfAccounts> getDetailedAccountCodeList() throws EGOVException;
+    public List<CChartOfAccounts> getDetailedAccountCodeList() throws ApplicationException;
 
     /**
      * This method returns the active and is leaf fund sources.
      * @return a list of <code>Fundsource</code> objects
-     * @throws EGOVException
+     * @throws ApplicationException
      */
-    public List<Fundsource> getAllActiveIsLeafFundSources() throws EGOVException;
+    public List<Fundsource> getAllActiveIsLeafFundSources() throws ApplicationException;
 
     /**
      * to get the function object
      * @param id
      * @return
      */
-    public Functionary getFunctionaryById(Integer id) throws EGOVException;
+    public Functionary getFunctionaryById(Integer id) throws ApplicationException;
 
     /**
      * To get the scheme object
      * @param id
      * @return
-     * @throws EGOVException
+     * @throws ApplicationException
      */
-    public Scheme getSchemeById(Integer id) throws EGOVException;
+    public Scheme getSchemeById(Integer id) throws ApplicationException;
 
     /**
      * To get the scheme object
      * @param id
      * @return
-     * @throws EGOVException
+     * @throws ApplicationException
      */
-    public SubScheme getSubSchemeById(Integer id) throws EGOVException;
+    public SubScheme getSubSchemeById(Integer id) throws ApplicationException;
 
     /**
      * to get the financial year
@@ -702,17 +702,17 @@ public interface CommonsService {
      * This will return the accountdetailkeyid if the object passed is mapped as a subledger type
      * @param master
      * @return accountdetailtypeid in case of subledger, else returns null
-     * @throws EGOVException
+     * @throws ApplicationException
      */
-    public Integer getDetailtypeforObject(Object master) throws EGOVException;
+    public Integer getDetailtypeforObject(Object master) throws ApplicationException;
 
     /**
      * @description - this API returns the detailtypeobject for an account code
      * @param glCode
      * @return List<Accountdetailtype>
-     * @throws EGOVException
+     * @throws ApplicationException
      */
-    public List<Accountdetailtype> getDetailTypeListByGlCode(String glCode) throws EGOVException;
+    public List<Accountdetailtype> getDetailTypeListByGlCode(String glCode) throws ApplicationException;
 
     /**
      * @param fundCode
@@ -756,7 +756,7 @@ public interface CommonsService {
 
     public Functionary getFunctionaryByName(String name);
 
-    public List<Accountdetailtype> getAccountdetailtypeListByGLCode(final String glCode) throws EGOVException;
+    public List<Accountdetailtype> getAccountdetailtypeListByGLCode(final String glCode) throws ApplicationException;
 
     /**
      * @param type

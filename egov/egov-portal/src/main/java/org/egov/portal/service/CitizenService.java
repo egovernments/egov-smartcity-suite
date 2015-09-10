@@ -40,9 +40,9 @@ package org.egov.portal.service;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.repository.CitizenRepository;
@@ -114,7 +114,7 @@ public class CitizenService {
         return citizen;
     }
 
-    public void sendActivationMessage(final Citizen citizen) throws EGOVRuntimeException {
+    public void sendActivationMessage(final Citizen citizen) throws ApplicationRuntimeException {
         messagingService.sendEmail(citizen.getEmailId(), "Portal Activation",
                 String.format("Dear %s,\r\n Your Portal Activation Code is : %s", citizen.getName(), citizen.getActivationCode()));
         messagingService.sendSMS(citizen.getMobileNumber(), "Your Portal Activation Code is : " + citizen.getActivationCode());

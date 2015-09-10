@@ -68,8 +68,8 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgBill;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportConstants;
@@ -221,7 +221,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
                 propertyImplService.persist(property);
             }
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("Bill Generation Exception : " + e);
+            throw new ApplicationRuntimeException("Bill Generation Exception : " + e);
         }
         return BILL;
     }

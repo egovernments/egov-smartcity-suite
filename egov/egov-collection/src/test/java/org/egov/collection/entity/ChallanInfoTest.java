@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 import org.easymock.EasyMock;
 import org.egov.commons.Accountdetailtype;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVException;
+import org.egov.infra.exception.ApplicationException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ public class ChallanInfoTest  { /*extends AbstractPersistenceServiceTest {
 	}
 	
 	@Test
-	public void testChallanInfoWithChildObj() throws EGOVException
+	public void testChallanInfoWithChildObj() throws ApplicationException
 	{
 		ReceiptHeader receiptHeader=objectFactory.createReceiptHeaderForChallan();
 		ReceiptHeader receiptHeaderref=objectFactory.createReceiptHeaderWithChallan();
@@ -60,7 +60,7 @@ public class ChallanInfoTest  { /*extends AbstractPersistenceServiceTest {
 	}
 	
 	@Test
-	public void testChallanInfoWithChallanReceipt() throws EGOVException
+	public void testChallanInfoWithChallanReceipt() throws ApplicationException
 	{
 		ReceiptHeader receiptHeader=objectFactory.createReceiptHeaderWithChallan();
 		EasyMock.expect(egovCommon.getEntityType(EasyMock.isA(Accountdetailtype.class), EasyMock.isA(Integer.class))).

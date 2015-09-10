@@ -42,7 +42,7 @@ package com.exilant.eGov.src.reports;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 public class ReportEngineBean {
 	 private static final Logger LOGGER = Logger.getLogger(ReportEngineBean.class);
@@ -179,7 +179,7 @@ public class ReportEngineBean {
 	public int getFiltersCount() {
 		return filtersCount;
 	}
-	public String getCommaSeperatedValues(final List<String> list) throws EGOVRuntimeException
+	public String getCommaSeperatedValues(final List<String> list) throws ApplicationRuntimeException
 	{
 		StringBuffer commaSeperatedValues=new StringBuffer("");
 		if(!list.isEmpty())
@@ -201,7 +201,7 @@ public class ReportEngineBean {
 		}
 		else
 		{
-			throw new EGOVRuntimeException("List contains 0 items cannot create comma seperate values");
+			throw new ApplicationRuntimeException("List contains 0 items cannot create comma seperate values");
 		}
 		if(LOGGER.isInfoEnabled())     LOGGER.info("*************Comma seprated values");
 		if(LOGGER.isInfoEnabled())     LOGGER.info(commaSeperatedValues);

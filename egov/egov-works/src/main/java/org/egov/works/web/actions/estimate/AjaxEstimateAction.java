@@ -59,9 +59,9 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.models.Money;
@@ -161,7 +161,7 @@ public class AjaxEstimateAction extends BaseFormAction {
         try {
             assignment = employeeService.getLatestAssignmentForEmployee(empID);
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("user.find.error", e);
+            throw new ApplicationRuntimeException("user.find.error", e);
         }
         return DESIGN_FOR_EMP;
     }
@@ -205,7 +205,7 @@ public class AjaxEstimateAction extends BaseFormAction {
             else
                 usersInExecutingDepartment = eisService.getEmployeeInfoList(criteriaParams);
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("user.find.error", e);
+            throw new ApplicationRuntimeException("user.find.error", e);
         }
         return USERS_IN_DEPT;
     }

@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.workflow.entity.StateAware;
@@ -138,7 +138,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
             script = scriptService.getByName(stateAware.getStateType()+ ".workflow");
 
         if (script == null)
-            throw new EGOVRuntimeException("workflow.script.notfound");
+            throw new ApplicationRuntimeException("workflow.script.notfound");
         
         return script;
     }

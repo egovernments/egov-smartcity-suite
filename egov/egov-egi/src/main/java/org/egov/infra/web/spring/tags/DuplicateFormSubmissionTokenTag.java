@@ -45,7 +45,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 public class DuplicateFormSubmissionTokenTag extends BodyTagSupport {
 
@@ -62,7 +62,7 @@ public class DuplicateFormSubmissionTokenTag extends BodyTagSupport {
                 out.println("<input type='hidden' name='" + tokenName + "' value='" + tokenValue + "'/>");
             }
         } catch (final IOException e) {
-            throw new EGOVRuntimeException("Error occurred while adding submission token",e);
+            throw new ApplicationRuntimeException("Error occurred while adding submission token",e);
         }
 
         return SKIP_BODY;

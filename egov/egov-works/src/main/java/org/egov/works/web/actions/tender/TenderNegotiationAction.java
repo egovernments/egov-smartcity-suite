@@ -61,15 +61,15 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
@@ -276,7 +276,7 @@ public class TenderNegotiationAction extends SearchFormAction {
                 final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
                 final boolean isValidUser = worksService.validateWorkflowForUser(tenderResponse, user);
                 if (isValidUser)
-                    throw new EGOVRuntimeException("Error: Invalid Owner - No permission to view this page.");
+                    throw new ApplicationRuntimeException("Error: Invalid Owner - No permission to view this page.");
             }
         } else if (StringUtils.isEmpty(sourcepage))
             sourcepage = "search";

@@ -51,8 +51,8 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
@@ -502,7 +502,7 @@ private void getAppConfigValueForRemoveEntrysWithZeroAmount(){
 			removeEntrysWithZeroAmount = appConfigVal.getValue();
 				 }
 		} catch (Exception e) {
-			 throw new EGOVRuntimeException("Appconfig value for remove entries with zero amount in report is not defined in the system");
+			 throw new ApplicationRuntimeException("Appconfig value for remove entries with zero amount in report is not defined in the system");
 		}
 }
 	public String getRemoveEntrysWithZeroAmount() {

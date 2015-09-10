@@ -37,36 +37,36 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.exceptions;
+package org.egov.infra.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Class EGOVRuntimeException.
- * Generic unchecked exception class
+ * The Class NoSuchObjectTypeException.
+ * Unchecked exception for Object existence.
  */
-public class EGOVRuntimeException extends RuntimeException {
+public class NoSuchObjectTypeException extends ApplicationRuntimeException {
 	
 	private static final long serialVersionUID = 1L;
-	private static final Logger LOG = LoggerFactory.getLogger(EGOVRuntimeException.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(NoSuchObjectTypeException.class);
 	
 	/**
-	 * Instantiates a new eGOV runtime exception.
+	 * Instantiates a new no such object type exception.
 	 * @param msg the msg
 	 */
-	public EGOVRuntimeException(final String msg) {
+	public NoSuchObjectTypeException(final String msg) {
 		super(msg);
-		LOG.error(msg);
+		LOGGER.error(msg);
 	}
 	
 	/**
-	 * Instantiates a new eGOV runtime exception.
+	 * Instantiates a new no such object type exception.
 	 * @param msg the msg
 	 * @param throwable the throwable
 	 */
-	public EGOVRuntimeException(final String msg, final Throwable throwable) {
+	public NoSuchObjectTypeException(final String msg, final Throwable throwable) {
 		super(msg, throwable);
-		LOG.error(msg, throwable);
+		LOGGER.error(msg, throwable);
 	}
 }

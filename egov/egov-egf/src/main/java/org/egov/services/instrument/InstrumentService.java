@@ -51,7 +51,7 @@ import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankreconciliation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.ECSType;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
@@ -126,7 +126,7 @@ public class InstrumentService {
 				throw new IllegalArgumentException(IS_PAYCHECK + IS_NULL);
 			} else if (!instrMap.get(IS_PAYCHECK).equals(FinancialConstants.IS_PAYCHECK_ZERO)
 					&& !instrMap.get(IS_PAYCHECK).equals(FinancialConstants.IS_PAYCHECK_ONE)) {
-				throw new EGOVRuntimeException("value for " + IS_PAYCHECK + "should be either"
+				throw new ApplicationRuntimeException("value for " + IS_PAYCHECK + "should be either"
 						+ FinancialConstants.IS_PAYCHECK_ZERO + "or " + FinancialConstants.IS_PAYCHECK_ONE);
 
 			} else {
@@ -140,7 +140,7 @@ public class InstrumentService {
 			} else {
 				instrumentType = getInstrumentTypeByType(instrMap.get(INSTRUMENT_TYPE).toString());
 				if (instrumentType == null) {
-					throw new EGOVRuntimeException(INSTRUMENT_TYPE + "'" + instrMap.get(INSTRUMENT_TYPE).toString()
+					throw new ApplicationRuntimeException(INSTRUMENT_TYPE + "'" + instrMap.get(INSTRUMENT_TYPE).toString()
 							+ "' is not defined in the system ");
 				} else {
 					instrHeader.setInstrumentType(instrumentType);
@@ -154,7 +154,7 @@ public class InstrumentService {
 					instrHeader.setInstrumentAmount(new BigDecimal((instrMap.get(INSTRUMENT_AMOUNT).toString())));
 				} catch (NumberFormatException e) {
 					LOGGER.error(e.getMessage(), e);
-					throw new EGOVRuntimeException(INSTRUMENT_AMOUNT + "is not numeric");
+					throw new ApplicationRuntimeException(INSTRUMENT_AMOUNT + "is not numeric");
 				}
 
 			}
@@ -183,20 +183,20 @@ public class InstrumentService {
 				if (instrMap.get(BANK_CODE) != null) {
 					Bank bank = getBank(instrMap.get(BANK_CODE).toString());
 					if (bank == null) {
-						throw new EGOVRuntimeException(BANK_CODE + "'" + instrMap.get(BANK_CODE).toString()
+						throw new ApplicationRuntimeException(BANK_CODE + "'" + instrMap.get(BANK_CODE).toString()
 								+ "' is not defined in the system ");
 					} else {
 						instrHeader.setBankId(bank);
 					}
 				} else {
-					throw new EGOVRuntimeException(BANK_CODE + IS_NULL);
+					throw new ApplicationRuntimeException(BANK_CODE + IS_NULL);
 				}
 
 				// applicable for payment
 				if (instrMap.get(BANKACCOUNTID) != null) {
 					Bankaccount bankaccount = getBankaccount(instrMap.get(BANKACCOUNTID).toString());
 					if (bankaccount == null) {
-						throw new EGOVRuntimeException(BANKACCOUNTID + "'" + instrMap.get(BANKACCOUNTID).toString()
+						throw new ApplicationRuntimeException(BANKACCOUNTID + "'" + instrMap.get(BANKACCOUNTID).toString()
 								+ "' is not defined in the system ");
 					} else {
 						instrHeader.setBankAccountId(bankaccount);
@@ -245,7 +245,7 @@ public class InstrumentService {
 				if (instrMap.get(BANK_CODE) != null) {
 					Bank bank = getBank(instrMap.get(BANK_CODE).toString());
 					if (bank == null) {
-						throw new EGOVRuntimeException(BANK_CODE + "'" + instrMap.get(BANK_CODE).toString()
+						throw new ApplicationRuntimeException(BANK_CODE + "'" + instrMap.get(BANK_CODE).toString()
 								+ "' is not defined in the system ");
 					} else {
 						instrHeader.setBankId(bank);
@@ -275,7 +275,7 @@ public class InstrumentService {
 				if (instrMap.get(BANKACCOUNTID) != null) {
 					Bankaccount bankaccount = getBankaccount(instrMap.get(BANKACCOUNTID).toString());
 					if (bankaccount == null) {
-						throw new EGOVRuntimeException(BANKACCOUNTID + "'" + instrMap.get(BANKACCOUNTID).toString()
+						throw new ApplicationRuntimeException(BANKACCOUNTID + "'" + instrMap.get(BANKACCOUNTID).toString()
 								+ "' is not defined in the system ");
 					} else {
 						instrHeader.setBankAccountId(bankaccount);
@@ -305,7 +305,7 @@ public class InstrumentService {
 				if (instrMap.get(BANKACCOUNTID) != null) {
 					Bankaccount bankaccount = getBankaccount(instrMap.get(BANKACCOUNTID).toString());
 					if (bankaccount == null) {
-						throw new EGOVRuntimeException(BANKACCOUNTID + "'" + instrMap.get(BANKACCOUNTID).toString()
+						throw new ApplicationRuntimeException(BANKACCOUNTID + "'" + instrMap.get(BANKACCOUNTID).toString()
 								+ "' is not defined in the system ");
 					} else {
 						instrHeader.setBankAccountId(bankaccount);
@@ -322,7 +322,7 @@ public class InstrumentService {
 				if (instrMap.get(BANKACCOUNTID) != null) {
 					Bankaccount bankaccount = getBankaccount(instrMap.get(BANKACCOUNTID).toString());
 					if (bankaccount == null) {
-						throw new EGOVRuntimeException(BANKACCOUNTID + "'" + instrMap.get(BANKACCOUNTID).toString()
+						throw new ApplicationRuntimeException(BANKACCOUNTID + "'" + instrMap.get(BANKACCOUNTID).toString()
 								+ "' is not defined in the system ");
 					} else {
 						instrHeader.setBankAccountId(bankaccount);
@@ -331,7 +331,7 @@ public class InstrumentService {
 				if (instrMap.get(BANK_CODE) != null) {
 					Bank bank = getBank(instrMap.get(BANK_CODE).toString());
 					if (bank == null) {
-						throw new EGOVRuntimeException(BANK_CODE + "'" + instrMap.get(BANK_CODE).toString()
+						throw new ApplicationRuntimeException(BANK_CODE + "'" + instrMap.get(BANK_CODE).toString()
 								+ "' is not defined in the system ");
 					} else {
 						instrHeader.setBankId(bank);
@@ -355,7 +355,7 @@ public class InstrumentService {
 				if (instrMap.get(ECSTYPE) != null) {
 					ECSType ecsType = getECSType(instrMap.get(ECSTYPE).toString());
 					if (ecsType == null) {
-						throw new EGOVRuntimeException(ECSTYPE + "'" + instrMap.get(ECSTYPE).toString()
+						throw new ApplicationRuntimeException(ECSTYPE + "'" + instrMap.get(ECSTYPE).toString()
 								+ "' is not defined in the system ");
 					} else {
 						instrHeader.setECSType(ecsType);
@@ -435,12 +435,12 @@ public class InstrumentService {
 		for (Map<String, Object> iVoucherMap : paramList) {
 			InstrumentVoucher iVoucher = new InstrumentVoucher();
 			if (iVoucherMap.get(INSTRUMENT_HEADER) == null) {
-				throw new EGOVRuntimeException(INSTRUMENT_HEADER + IS_NULL);
+				throw new ApplicationRuntimeException(INSTRUMENT_HEADER + IS_NULL);
 			} else {
 				iVoucher.setInstrumentHeaderId((InstrumentHeader) iVoucherMap.get(INSTRUMENT_HEADER));
 			}
 			if (iVoucherMap.get(VOUCHER_HEADER) == null) {
-				throw new EGOVRuntimeException(VOUCHER_HEADER + IS_NULL);
+				throw new ApplicationRuntimeException(VOUCHER_HEADER + IS_NULL);
 			} else {
 				iVoucher.setVoucherHeaderId((CVoucherHeader) iVoucherMap.get(VOUCHER_HEADER));
 			}
@@ -473,12 +473,12 @@ public class InstrumentService {
 		for (Map<String, Object> iVoucherMap : paramList) {
 			InstrumentVoucher iVoucher = new InstrumentVoucher();
 			if (iVoucherMap.get(INSTRUMENT_HEADER) == null) {
-				throw new EGOVRuntimeException(INSTRUMENT_HEADER + IS_NULL);
+				throw new ApplicationRuntimeException(INSTRUMENT_HEADER + IS_NULL);
 			} else {
 				iVoucher.setInstrumentHeaderId((InstrumentHeader) iVoucherMap.get(INSTRUMENT_HEADER));
 			}
 			if (iVoucherMap.get(VOUCHER_HEADER) == null) {
-				throw new EGOVRuntimeException(VOUCHER_HEADER + IS_NULL);
+				throw new ApplicationRuntimeException(VOUCHER_HEADER + IS_NULL);
 			} else {
 				iVoucher.setVoucherHeaderId((CVoucherHeader) iVoucherMap.get(VOUCHER_HEADER));
 			}
@@ -502,10 +502,10 @@ public class InstrumentService {
 	 * @param vouherHeader
 	 * @param instrumentHeader
 	 * @return Bankreconciliation
-	 * @throws EGOVRuntimeException
+	 * @throws ApplicationRuntimeException
 	 */
 	public Bankreconciliation addToBankReconcilation(CVoucherHeader vouherHeader, InstrumentHeader instrumentHeader)
-			throws EGOVRuntimeException {
+			throws ApplicationRuntimeException {
 		EgwStatus instrumentReconciledStatus = (EgwStatus) persistenceService.find(
 				"from EgwStatus where upper(moduletype)=upper('Instrument') and upper(description)=upper(?)",
 				FinancialConstants.INSTRUMENT_RECONCILED_STATUS);
@@ -517,13 +517,13 @@ public class InstrumentService {
  * @param instrumentHeader
  * @param instrumentReconciledStatus
  * @return
- * @throws EGOVRuntimeException
+ * @throws ApplicationRuntimeException
  * instrumentReconciledStatus is used for INSTRUMENT_TYPE_BANK and INSTRUMENT_TYPE_BANK_TO_BANK 
  * since they are reconciled on voucher creation itself . 
  * Others will be in deposited status
  */
 	public Bankreconciliation addToBankReconcilationWithLoop(CVoucherHeader vouherHeader,
-			InstrumentHeader instrumentHeader, EgwStatus instrumentReconciledStatus) throws EGOVRuntimeException {
+			InstrumentHeader instrumentHeader, EgwStatus instrumentReconciledStatus) throws ApplicationRuntimeException {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("addToBankReconcilation | Start");
 		if (vouherHeader == null) {
 			throw new IllegalArgumentException("voucherHeader" + IS_NULL);
@@ -556,7 +556,7 @@ public class InstrumentService {
 			// instrumentHeader.setStatusId(status);
 		}
 		if (instrumentHeader.getIsPayCheque() == null) {
-			throw new EGOVRuntimeException(IS_PAYCHECK + IS_NULL
+			throw new ApplicationRuntimeException(IS_PAYCHECK + IS_NULL
 					+ " in Instrument Header cannot update Transactiontype in BankReconciliation ");
 		} else if (instrumentHeader.getIsPayCheque().equals(FinancialConstants.IS_PAYCHECK_ONE)) {
 			bankreconciliation.setTransactiontype("Cr");
@@ -589,14 +589,14 @@ public class InstrumentService {
 	 */
 
 	public List<InstrumentOtherDetails> updateInstrumentOtherDetails(List<Map<String, Object>> paramList)
-			throws EGOVRuntimeException {
+			throws ApplicationRuntimeException {
 		InstrumentHeader iHeader = null;
 		InstrumentOtherDetails iOtherDetails = null;
 		List<InstrumentOtherDetails> iOtherDetailsList = new ArrayList<InstrumentOtherDetails>();
 		for (Map<String, Object> iOtherDetailsMap : paramList) {
 
 			if (iOtherDetailsMap.get(INSTRUMENT_HEADER) == null) {
-				throw new EGOVRuntimeException(INSTRUMENT_HEADER + IS_NULL);
+				throw new ApplicationRuntimeException(INSTRUMENT_HEADER + IS_NULL);
 			} else {
 				iHeader = (InstrumentHeader) iOtherDetailsMap.get(INSTRUMENT_HEADER);
 				iOtherDetails = instrumentOtherDetailsService.find(
@@ -607,7 +607,7 @@ public class InstrumentService {
 				}
 				if (iOtherDetailsMap.get(PAYIN_SLIP_ID) == null) {
 					if(LOGGER.isDebugEnabled())     LOGGER.debug("PayinSlip Id is null");
-					// throw new EGOVRuntimeException(PAYIN_SLIP_ID+IS_NULL);
+					// throw new ApplicationRuntimeException(PAYIN_SLIP_ID+IS_NULL);
 				} else {
 					iOtherDetails.setPayinslipId((CVoucherHeader) (iOtherDetailsMap.get(PAYIN_SLIP_ID)));
 				}
@@ -621,7 +621,7 @@ public class InstrumentService {
 					iOtherDetails.setReconciledAmount((BigDecimal) (iOtherDetailsMap.get(RECONCILED_AMOUNT)));
 				}
 				if (iOtherDetailsMap.get(STATUS_ID) == null) {
-					throw new EGOVRuntimeException("Required Object Status is not Found in the Map ");
+					throw new ApplicationRuntimeException("Required Object Status is not Found in the Map ");
 
 				} else {
 					iHeader.setStatusId((EgwStatus) iOtherDetailsMap.get(STATUS_ID));
@@ -645,7 +645,7 @@ public class InstrumentService {
 		return iOtherDetailsList;
 	}
 
-	public boolean cancelInstrument(InstrumentHeader ih) throws EGOVRuntimeException {
+	public boolean cancelInstrument(InstrumentHeader ih) throws ApplicationRuntimeException {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Cancelling " + ih);
 		boolean result = false;
 		try {
@@ -657,10 +657,10 @@ public class InstrumentService {
 			result = true;
 		} catch (HibernateException e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new EGOVRuntimeException(e.getMessage());
+			throw new ApplicationRuntimeException(e.getMessage());
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new EGOVRuntimeException(e.getMessage());
+			throw new ApplicationRuntimeException(e.getMessage());
 		}
 		return result;
 	}
@@ -688,9 +688,9 @@ public class InstrumentService {
 	 * @return List of InstrumentVouchers
 	 */
 	public List<InstrumentVoucher> getReconciledCheques(Date reconcilationFromDate, Date reconcilationToDate)
-			throws EGOVRuntimeException {
+			throws ApplicationRuntimeException {
 		if (reconcilationFromDate == null || reconcilationToDate == null) {
-			throw new EGOVRuntimeException("reconcilationFromDate and reconcilationToDate should not be null");
+			throw new ApplicationRuntimeException("reconcilationFromDate and reconcilationToDate should not be null");
 		}
 		Query qry = HibernateUtil.getCurrentSession()
 				.createQuery(
@@ -712,9 +712,9 @@ public class InstrumentService {
 	 * @return List of InstrumentVouchers
 	 */
 	public List<InstrumentVoucher> getBouncedCheques(Date dishonoredFromDate, Date dishonoredToDate)
-			throws EGOVRuntimeException {
+			throws ApplicationRuntimeException {
 		if (dishonoredFromDate == null || dishonoredToDate == null) {
-			throw new EGOVRuntimeException("dishonoredFromDate and dishonoredToDate should not be null");
+			throw new ApplicationRuntimeException("dishonoredFromDate and dishonoredToDate should not be null");
 		}
 		Query qry = 
 				HibernateUtil.getCurrentSession()
@@ -727,22 +727,22 @@ public class InstrumentService {
 		return qry.list();
 	}
 
-	public InstrumentType getInstrumentTypeById(Long id) throws EGOVRuntimeException {
+	public InstrumentType getInstrumentTypeById(Long id) throws ApplicationRuntimeException {
 		InstrumentType iType = null;
 		if (id == null) {
-			throw new EGOVRuntimeException(INSTRUMENT_TYPE + " id " + IS_NULL);
+			throw new ApplicationRuntimeException(INSTRUMENT_TYPE + " id " + IS_NULL);
 		} else {
 			iType = instrumentTypeService.findById(id, false);
 		}
 		return iType;
 	}
 
-	public InstrumentType getInstrumentTypeByType(String type) throws EGOVRuntimeException {
+	public InstrumentType getInstrumentTypeByType(String type) throws ApplicationRuntimeException {
 		InstrumentType iType = null;
 		if (type == null) {
-			throw new EGOVRuntimeException(INSTRUMENT_TYPE + IS_NULL);
+			throw new ApplicationRuntimeException(INSTRUMENT_TYPE + IS_NULL);
 		} else if (type.isEmpty()) {
-			throw new EGOVRuntimeException(INSTRUMENT_TYPE + "is empty");
+			throw new ApplicationRuntimeException(INSTRUMENT_TYPE + "is empty");
 		} else {
 			String qry = "";
 			try {

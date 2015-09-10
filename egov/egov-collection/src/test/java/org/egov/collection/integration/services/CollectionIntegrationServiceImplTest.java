@@ -513,7 +513,7 @@ public class CollectionIntegrationServiceImplTest { /*extends
 		try{
 		collectionIntegrationService.createReceipt(billColl, paytInfoList);
 		}
-		catch(EGOVRuntimeException ex){
+		catch(ApplicationRuntimeException ex){
 			assertEquals("Department not present for the department code [testDeptCode].",ex.getMessage());
 		}
 	}
@@ -531,7 +531,7 @@ public class CollectionIntegrationServiceImplTest { /*extends
 		try{
 		collectionIntegrationService.createReceipt(billColl, paytInfoList);
 		}
-		catch(EGOVRuntimeException ex){
+		catch(ApplicationRuntimeException ex){
 			assertEquals("Fund not present for the fund code [testFundCode].",ex.getMessage());
 		}
 		

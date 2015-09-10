@@ -37,37 +37,36 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.exceptions;
+package org.egov.infra.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Class TooManyValuesException.
- * Checked exception for values.
+ * The Class AuthorizationException.
+ * For Capturing Authorization Related Exception 
  */
-public class TooManyValuesException extends EGOVException {
-
+public class AuthorizationException extends RuntimeException {
+	
 	private static final long serialVersionUID = 1L;
-	private static final Logger LOGGER = LoggerFactory.getLogger(TooManyValuesException.class);
-
+	private static final Logger LOG = LoggerFactory.getLogger(AuthorizationException.class);
+	
 	/**
-	 * Instantiates a new too many values exception.
-	 * @param msg the msg
+	 * Instantiates a new authorization exception.
+	 * @param msg the message
 	 */
-	public TooManyValuesException(final String msg) {
+	public AuthorizationException(final String msg) {
 		super(msg);
-		LOGGER.error(msg);
+		LOG.error(msg);
 	}
-
+	
 	/**
-	 * Instantiates a new too many values exception.
-	 * @param msg the msg
-	 * @param e the e
+	 * Instantiates a new authorization exception.
+	 * @param msg the message
+	 * @param throwable the Throwable
 	 */
-	public TooManyValuesException(final String msg, final Throwable e) {
-		super(msg, e);
-		LOGGER.error(msg, e);
+	public AuthorizationException(final String msg, final Throwable throwable) {
+		super(msg, throwable);
+		LOG.error(msg, throwable);
 	}
-
 }

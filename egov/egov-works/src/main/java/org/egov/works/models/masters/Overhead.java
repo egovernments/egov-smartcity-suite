@@ -48,10 +48,10 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.CChartOfAccounts;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infstr.ValidationError;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
@@ -260,7 +260,7 @@ public class Overhead extends BaseModel {
 
     public OverheadRate getOverheadRateOn(final Date estimateDate) {
         if (estimateDate == null)
-            throw new EGOVRuntimeException("no.rate.for.date");
+            throw new ApplicationRuntimeException("no.rate.for.date");
 
         for (final OverheadRate overheadRate : overheadRates)
             if (overheadRate != null && isWithin(overheadRate.getValidity(), estimateDate))

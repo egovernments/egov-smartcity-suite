@@ -81,14 +81,14 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
@@ -1274,7 +1274,7 @@ public class DishonoredChequeAction extends DispatchAction {
                                                         }
                                                 }
                                         }else{
-                                                throw new EGOVRuntimeException("DishonoredChequeAction |  populatesubledgerDetails | not able to find either debit or " +
+                                                throw new ApplicationRuntimeException("DishonoredChequeAction |  populatesubledgerDetails | not able to find either debit or " +
                                                                 "credit amount");
                                         }
 
@@ -1316,7 +1316,7 @@ public class DishonoredChequeAction extends DispatchAction {
                                         }
                                 }
                         }else{
-                                throw new EGOVRuntimeException("DishonoredChequeAction |  populatesubledgerDetails | not able to find either debit or " +
+                                throw new ApplicationRuntimeException("DishonoredChequeAction |  populatesubledgerDetails | not able to find either debit or " +
                                                 "credit amount");
                         }
 

@@ -595,7 +595,7 @@ public class VacantProperty extends AbstractProperty {
         /*
          * if(getPropertyUsage() == null) throw newEGOVRuntimeException(
          * "VacantProperty.validate : PropertyUsage is NULL, Please Check !!"); else if(getPropertyUsage().validate() == false)
-         * throw new EGOVRuntimeException( "VacantProperty.validate : PropertyUsage Validate() failed, Please Check !!" );
+         * throw new ApplicationRuntimeException( "VacantProperty.validate : PropertyUsage Validate() failed, Please Check !!" );
          */
         return true;
     }

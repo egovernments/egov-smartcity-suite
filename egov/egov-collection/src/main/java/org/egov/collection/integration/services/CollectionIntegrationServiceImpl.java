@@ -30,11 +30,11 @@ import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsServiceImpl;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.ValidationError;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.model.instrument.InstrumentHeader;
@@ -197,13 +197,13 @@ CollectionIntegrationService {
         LOGGER.info("Logs For HandHeldDevice Permance Test : Receipt Creation Started....");
         final Fund fund = commonsServiceImpl.fundByCode(bill.getFundCode());
         if (fund == null)
-            throw new EGOVRuntimeException("Fund not present for the fund code [" + bill.getFundCode() + "].");
+            throw new ApplicationRuntimeException("Fund not present for the fund code [" + bill.getFundCode() + "].");
 
         final Department dept = (Department) persistenceService.findByNamedQuery(
                 CollectionConstants.QUERY_DEPARTMENT_BY_CODE, bill.getDepartmentCode());
 
         if (dept == null)
-            throw new EGOVRuntimeException("Department not present for the department code ["
+            throw new ApplicationRuntimeException("Department not present for the department code ["
                     + bill.getDepartmentCode() + "].");
         final ReceiptHeader receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(bill, fund, dept);
 
@@ -304,7 +304,7 @@ CollectionIntegrationService {
          * try { receiptHeaderService.createVoucherForReceipt(receiptHeader,
          * Boolean.FALSE);
          * LOGGER.debug("Updated financial systems and created voucher."); }
-         * catch (EGOVRuntimeException ex) { errors.add(new ValidationError(
+         * catch (ApplicationRuntimeException ex) { errors.add(new ValidationError(
          * "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state."
          * ,
          * "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state."
@@ -364,13 +364,13 @@ CollectionIntegrationService {
         LOGGER.info("Logs For Miscellaneous Receipt : Receipt Creation Started....");
         final Fund fund = commonsServiceImpl.fundByCode(bill.getFundCode());
         if (fund == null)
-            throw new EGOVRuntimeException("Fund not present for the fund code [" + bill.getFundCode() + "].");
+            throw new ApplicationRuntimeException("Fund not present for the fund code [" + bill.getFundCode() + "].");
 
         final Department dept = (Department) persistenceService.findByNamedQuery(
                 CollectionConstants.QUERY_DEPARTMENT_BY_CODE, bill.getDepartmentCode());
 
         if (dept == null)
-            throw new EGOVRuntimeException("Department not present for the department code ["
+            throw new ApplicationRuntimeException("Department not present for the department code ["
                     + bill.getDepartmentCode() + "].");
 
         final ReceiptHeader receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(bill, fund, dept);
@@ -444,7 +444,7 @@ CollectionIntegrationService {
         try {
             receiptHeaderService.createVoucherForReceipt(receiptHeader, Boolean.FALSE);
             LOGGER.debug("Updated financial systems and created voucher.");
-        } catch (final EGOVRuntimeException ex) {
+        } catch (final ApplicationRuntimeException ex) {
             errors.add(new ValidationError(
                     "Miscellaneous Receipt creation transaction rolled back as update to financial system failed.",
                     "Miscellaneous Receipt creation transaction rolled back as update to financial system failed."));

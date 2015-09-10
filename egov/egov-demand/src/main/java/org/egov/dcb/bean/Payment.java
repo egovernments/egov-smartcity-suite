@@ -46,7 +46,7 @@ import org.apache.log4j.Logger;
 import org.egov.commons.Bank;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.CommonsDAOFactory;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 public abstract class Payment {
 	public final static String CHEQUE = "cheque";
@@ -113,7 +113,7 @@ public abstract class Payment {
 
 	private static void validate(String type, Map<String, String> paymentInfo) {
 		if (type == null || type.isEmpty() || paymentInfo == null) { 
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 				" Either the type or PaymentInfo Map is null .Please Check " + type + " "
 						+ paymentInfo); }
 

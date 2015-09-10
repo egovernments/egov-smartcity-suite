@@ -48,7 +48,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.service.CommonsService;
-import org.egov.exceptions.EGOVException;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.ExpenditureType;
@@ -166,7 +166,7 @@ public class OverheadAction extends BaseFormAction {
                     .getAccountCodeByPurpose(Integer.valueOf(worksService.getWorksConfigValue("OVERHEAD_PURPOSE")));
             addDropdownData("accountList", accounts);
 
-        } catch (final EGOVException e) {
+        } catch (final ApplicationException e) {
             logger.error("Unable to load accountcode :" + e.getMessage());
             addFieldError("accountcode", "Unable to load accountcode");
         }

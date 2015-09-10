@@ -41,7 +41,7 @@ package org.egov.infra.search.elastic.entity;
 
 import java.util.Date;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * Builder class for Application Index
@@ -86,25 +86,25 @@ public class ApplicationIndexBuilder {
         return this;
     }
 
-    public ApplicationIndex build() throws EGOVRuntimeException {
+    public ApplicationIndex build() throws ApplicationRuntimeException {
         validate();
         return applicationIndex;
     }
 
-    private void validate() throws EGOVRuntimeException {
+    private void validate() throws ApplicationRuntimeException {
         if (applicationIndex.getModuleName() == null)
-            throw new EGOVRuntimeException("Module Name is mandatory");
+            throw new ApplicationRuntimeException("Module Name is mandatory");
         if (applicationIndex.getApplicationNumber() == null)
-            throw new EGOVRuntimeException("Application Number is mandatory");
+            throw new ApplicationRuntimeException("Application Number is mandatory");
         if (applicationIndex.getApplicationDate() == null)
-            throw new EGOVRuntimeException("Application Date is mandatory");
+            throw new ApplicationRuntimeException("Application Date is mandatory");
         if (applicationIndex.getApplicationType() == null)
-            throw new EGOVRuntimeException("Application Type is mandatory");
+            throw new ApplicationRuntimeException("Application Type is mandatory");
         if (applicationIndex.getApplicantName() == null)
-            throw new EGOVRuntimeException("Applicant Name is mandatory");
+            throw new ApplicationRuntimeException("Applicant Name is mandatory");
         if (applicationIndex.getStatus() == null)
-            throw new EGOVRuntimeException("Application Status is mandatory");
+            throw new ApplicationRuntimeException("Application Status is mandatory");
         if (applicationIndex.getUrl() == null)
-            throw new EGOVRuntimeException("URL is required");
+            throw new ApplicationRuntimeException("URL is required");
     }
 }

@@ -58,10 +58,10 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
 import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.exceptions.EGOVException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.EgovPaginatedList;
@@ -254,7 +254,7 @@ public class VoucherStatusReportAction extends BaseFormAction
     }
 
     @ValidationErrorPage(value = "search")
-    public String search() throws EGOVException, ParseException
+    public String search() throws ApplicationException, ParseException
     {
         voucherList = new ArrayList<Map<String, Object>>();
         Map<String, Object> voucherMap = null;
@@ -390,7 +390,7 @@ public class VoucherStatusReportAction extends BaseFormAction
         return query;
     }
 
-    private String getVoucherModule(Integer vchrModuleId) throws EGOVException
+    private String getVoucherModule(Integer vchrModuleId) throws ApplicationException
     {
         if (vchrModuleId == null)
             return "Internal";
@@ -399,7 +399,7 @@ public class VoucherStatusReportAction extends BaseFormAction
             EgModules egModuleObj;
             egModuleObj = (EgModules) persistenceService.find("from EgModules m where m.id=?", vchrModuleId);
             if (egModuleObj == null)
-                throw new EGOVException("INCORRECT MODULE ID");
+                throw new ApplicationException("INCORRECT MODULE ID");
             else
                 return egModuleObj.getName();
         }
@@ -428,7 +428,7 @@ public class VoucherStatusReportAction extends BaseFormAction
     }
 
     @SuppressWarnings("unchecked")
-    private void populateData() throws ParseException, EGOVException {
+    private void populateData() throws ParseException, ApplicationException {
         List<CVoucherHeader> list = new ArrayList();
         list.addAll(voucherSearchQuery().list());
         BigDecimal amt = BigDecimal.ZERO;

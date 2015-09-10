@@ -50,7 +50,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.commons.Installment;
-import org.egov.infstr.ValidationError;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 
 /**

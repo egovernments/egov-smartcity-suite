@@ -41,7 +41,7 @@ package org.egov.tl.domain.entity;
 
 import java.util.Date;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.BaseModel;
 
 public class LicenseStatusValues extends BaseModel {
@@ -126,10 +126,10 @@ public class LicenseStatusValues extends BaseModel {
      */
     public boolean validatePropStatusValues() {
         if (getLicense() == null)
-            throw new EGOVRuntimeException(
+            throw new ApplicationRuntimeException(
                     "In PropertyStatusValues Validate : 'ID_Property' Attribute is Not Set, Please Check !!");
         if (getLicenseStatus() == null)
-            throw new EGOVRuntimeException(
+            throw new ApplicationRuntimeException(
                     "In PropertyStatusValues Validate : 'ID_Status' Attribute is Not Set, Please Check !!");
         return true;
     }

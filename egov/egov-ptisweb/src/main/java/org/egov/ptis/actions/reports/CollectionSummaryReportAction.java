@@ -32,9 +32,9 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.actions.common.CommonServices;
@@ -298,7 +298,7 @@ public class CollectionSummaryReportAction extends BaseFormAction {
         } catch (final Exception e) {
             e.printStackTrace();
             LOGGER.error("Error occured in Class : CollectionSummaryReportAction  Method : list", e);
-            throw new EGOVRuntimeException("Error occured in Class : CollectionSummaryReportAction  Method : list "
+            throw new ApplicationRuntimeException("Error occured in Class : CollectionSummaryReportAction  Method : list "
                     + e.getMessage());
         }
     }
@@ -371,7 +371,7 @@ public class CollectionSummaryReportAction extends BaseFormAction {
         } catch (final Exception e) {
             LOGGER.error("Exception in prepareBndryWiseResultList method : " + e.getMessage());
             e.printStackTrace();
-            throw new EGOVRuntimeException("Exception in prepareBndryWiseResultList method : ", e);
+            throw new ApplicationRuntimeException("Exception in prepareBndryWiseResultList method : ", e);
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exit from prepareResultList method");

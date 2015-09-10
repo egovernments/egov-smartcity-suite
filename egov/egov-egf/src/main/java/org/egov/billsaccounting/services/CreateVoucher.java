@@ -84,9 +84,6 @@ import org.egov.dao.bills.BillsDaoFactory;
 import org.egov.dao.bills.EgBillRegisterHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectException;
-import org.egov.exceptions.TooManyValuesException;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -97,10 +94,13 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectException;
+import org.egov.infra.exception.TooManyValuesException;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
@@ -286,7 +286,7 @@ public class CreateVoucher {
         } catch (Exception e)
         {
             LOGGER.error("Exception in CreateVoucher", e);
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Initialization completed");
@@ -304,13 +304,13 @@ public class CreateVoucher {
      * @param billId
      * @param voucherDate TODO
      * @return voucherheaderId long
-     * @throws EGOVRuntimeException
+     * @throws ApplicationRuntimeException
      * @throws SQLException
      * @throws Exception
      */
 
     public long createVoucherFromBill(int billId, String voucherStatus, String voucherNumber, Date voucherDate)
-            throws EGOVRuntimeException, SQLException, TaskFailedException {
+            throws ApplicationRuntimeException, SQLException, TaskFailedException {
         CVoucherHeader vh = null;
         try {
             this.vStatus = voucherStatus;
@@ -334,11 +334,11 @@ public class CreateVoucher {
                             "select vh from CVoucherHeader vh where vh.id = ? and vh.status!=?", billMis.getVoucherHeader()
                                     .getId(), FinancialConstants.CANCELLEDVOUCHERSTATUS);
                     if (result != null) {
-                        throw new EGOVRuntimeException("Voucher " + result.getVoucherNumber() + " already exists for this bill ");
+                        throw new ApplicationRuntimeException("Voucher " + result.getVoucherNumber() + " already exists for this bill ");
                     }
                 }
             } catch (Exception e) {
-                throw new EGOVRuntimeException(e.getMessage());
+                throw new ApplicationRuntimeException(e.getMessage());
             }
             Integer fundId = null;
             Integer fundSrcId = null;
@@ -346,7 +346,7 @@ public class CreateVoucher {
             if (fund == null)
             {
                 LOGGER.error(FUNDMISSINGMSG);
-                throw new EGOVRuntimeException(FUNDMISSINGMSG);
+                throw new ApplicationRuntimeException(FUNDMISSINGMSG);
             }
             else
             {
@@ -357,7 +357,7 @@ public class CreateVoucher {
             {
                 if (billMis.getEgDepartment() == null)
                 {
-                    throw new EGOVRuntimeException(DEPTMISSINGMSG);
+                    throw new ApplicationRuntimeException(DEPTMISSINGMSG);
                 }
             }
 
@@ -464,7 +464,7 @@ public class CreateVoucher {
                     purposeValueVN = appConfigVal.getValue();
                 }
             } catch (Exception e) {
-                throw new EGOVRuntimeException("Appconfig value for VOUCHERDATE_FROM_UI is not defined in the system");
+                throw new ApplicationRuntimeException("Appconfig value for VOUCHERDATE_FROM_UI is not defined in the system");
             }
             if (purposeValueVN.equals("Y")) {
                 if (voucherDate == null)
@@ -490,7 +490,7 @@ public class CreateVoucher {
                         purposeValueVN = appConfigVal.getValue();
                     }
                 } catch (Exception e) {
-                    throw new EGOVRuntimeException(
+                    throw new ApplicationRuntimeException(
                             "Appconfig value for USE BILLDATE IN CREATE VOUCHER FROM BILL is not defined in the system");
                 }
                 if (purposeValue.equals("Y")) {
@@ -571,7 +571,7 @@ public class CreateVoucher {
         } catch (Exception e)
         {
             LOGGER.error("Error in create voucher from bill" + e.getMessage());
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
         return vh.getId().longValue();
     }
@@ -580,13 +580,13 @@ public class CreateVoucher {
      * creates voucher From billId
      * @param billId
      * @return voucherheaderId long
-     * @throws EGOVRuntimeException
+     * @throws ApplicationRuntimeException
      * @throws SQLException
      * @throws Exception
      */
 
     public long createVoucherFromBillForPJV(int billId, String voucherStatus, List<PreApprovedVoucher> voucherdetailList,
-            List<PreApprovedVoucher> subLedgerList) throws EGOVRuntimeException, SQLException, TaskFailedException {
+            List<PreApprovedVoucher> subLedgerList) throws ApplicationRuntimeException, SQLException, TaskFailedException {
         CVoucherHeader vh = null;
         try
         {
@@ -607,7 +607,7 @@ public class CreateVoucher {
             if (fund == null)
             {
                 LOGGER.error(FUNDMISSINGMSG);
-                throw new EGOVRuntimeException(FUNDMISSINGMSG);
+                throw new ApplicationRuntimeException(FUNDMISSINGMSG);
             }
             else
             {
@@ -618,7 +618,7 @@ public class CreateVoucher {
             {
                 if (billMis.getEgDepartment() == null)
                 {
-                    throw new EGOVRuntimeException(DEPTMISSINGMSG);
+                    throw new ApplicationRuntimeException(DEPTMISSINGMSG);
                 }
             }
 
@@ -692,7 +692,7 @@ public class CreateVoucher {
         } catch (Exception e)
         {
             LOGGER.error("Error in createVoucherFromBillForPJV " + e.getMessage());
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
         return vh.getId().longValue();
     }
@@ -704,7 +704,7 @@ public class CreateVoucher {
      * @return void - This method does not return anything as its only create the vouchers for the preapproved vouchers.s
      */
 
-    public void createVoucherFromPreApprovedVoucher(long vouhcerheaderid, String status) throws EGOVRuntimeException {
+    public void createVoucherFromPreApprovedVoucher(long vouhcerheaderid, String status) throws ApplicationRuntimeException {
         try {
             VoucherHeader vh = new VoucherHeader();
             vh.setId(String.valueOf(vouhcerheaderid));
@@ -714,7 +714,7 @@ public class CreateVoucher {
         } catch (Exception e)
         {
             LOGGER.error(e.getMessage());
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
 
         }
 
@@ -786,18 +786,18 @@ public class CreateVoucher {
      * detailkey (mandatory) <tdsid> - This is the id from the recovery master.If the glcode used is mapped in the recovery master
      * then this data is mandatory.
      * @return voucherheader object in case of success and null in case of fail.
-     * @throws EGOVRuntimeException
+     * @throws ApplicationRuntimeException
      */
     public CVoucherHeader createPreApprovedVoucher(HashMap<String, Object> headerdetails,
             List<HashMap<String, Object>> accountcodedetails, List<HashMap<String, Object>> subledgerdetails)
-            throws EGOVRuntimeException, ValidationException {
+            throws ApplicationRuntimeException, ValidationException {
         AppConfig appConfig = appConfigService.findBykeyName("PREAPPROVEDVOUCHERSTATUS");
         if (null != appConfig && null != appConfig.getAppDataValues()) {
             for (AppConfigValues appConfigVal : appConfig.getAppDataValues()) {
                 headerdetails.put(VoucherConstant.STATUS, (Integer.valueOf(appConfigVal.getValue())));
             }
         } else
-            throw new EGOVRuntimeException("Appconfig value for PREAPPROVEDVOUCHERSTATUS is not defined in the system");
+            throw new ApplicationRuntimeException("Appconfig value for PREAPPROVEDVOUCHERSTATUS is not defined in the system");
         CVoucherHeader vh;
         try
         {
@@ -810,7 +810,7 @@ public class CreateVoucher {
             throw ve;
         } catch (Exception e) {
             LOGGER.error(ERR, e);
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
         return vh;
     }
@@ -1038,7 +1038,7 @@ public class CreateVoucher {
             LOGGER.debug("Completed Contra Journal Voucher Workflow.......");
     }
 
-    public Position getPosition() throws EGOVRuntimeException
+    public Position getPosition() throws ApplicationRuntimeException
     {
         Position pos;
         if (LOGGER.isDebugEnabled())
@@ -1121,11 +1121,11 @@ public class CreateVoucher {
      * detailkey (mandatory) <tdsid> - This is the id from the recovery master.If the glcode used is mapped in the recovery master
      * then this data is mandatory.
      * @return voucherheader object in case of success and null in case of fail.
-     * @throws EGOVRuntimeException
+     * @throws ApplicationRuntimeException
      */
     // @Transactional(propagation=Propagation.REQUIRED)
     public CVoucherHeader createVoucher(HashMap<String, Object> headerdetails, List<HashMap<String, Object>> accountcodedetails,
-            List<HashMap<String, Object>> subledgerdetails) throws EGOVRuntimeException {
+            List<HashMap<String, Object>> subledgerdetails) throws ApplicationRuntimeException {
         CVoucherHeader vh;
         Vouchermis mis;
         if (LOGGER.isDebugEnabled())
@@ -1151,7 +1151,7 @@ public class CreateVoucher {
             SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
             if (!engine.postTransaxtions(txnList, formatter.format(vh.getVoucherDate())))
             {
-                throw new EGOVRuntimeException("Voucher creation Failed");
+                throw new ApplicationRuntimeException("Voucher creation Failed");
             }
         }
 
@@ -1161,7 +1161,7 @@ public class CreateVoucher {
             throw ve;
         } catch (Exception e) {
             LOGGER.error(ERR, e);
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("End | createVoucher API");
@@ -1321,7 +1321,7 @@ public class CreateVoucher {
 
     // used for reversal
 
-    protected void insertIntoVoucherHeader(CVoucherHeader vh) throws EGOVRuntimeException {
+    protected void insertIntoVoucherHeader(CVoucherHeader vh) throws ApplicationRuntimeException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("start | insertIntoVoucherHeader");
         Connection conn = null;
@@ -1331,10 +1331,10 @@ public class CreateVoucher {
         try {
             fiscalPeriod = cm.getFiscalPeriod(vdt);
         } catch (TaskFailedException e) {
-            throw new EGOVRuntimeException("error while getting fiscal period");
+            throw new ApplicationRuntimeException("error while getting fiscal period");
         }
         if (null == fiscalPeriod) {
-            throw new EGOVRuntimeException(
+            throw new ApplicationRuntimeException(
                     "Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "
                             + fiscalPeriod);
         }
@@ -1352,10 +1352,10 @@ public class CreateVoucher {
             eg_voucher = voucherHelper.getEg_Voucher(vType, fiscalPeriod);
         } catch (TaskFailedException e) {
             LOGGER.error(ERR, e);
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         } catch (SQLException e) {
             LOGGER.error(ERR, e);
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -1375,7 +1375,7 @@ public class CreateVoucher {
                         "Duplicate Voucher Number")));
         } catch (Exception e) {
             LOGGER.error(ERR, e);
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
         vh.setCreatedBy(userMngr.getUserById(Long.valueOf(EgovThreadLocals.getUserId())));
         if (LOGGER.isInfoEnabled())
@@ -1441,9 +1441,9 @@ public class CreateVoucher {
      * This method will validate all the master data that are passed. This will also check if the data send are correct with
      * respect to the inter master dependency.
      * @param headerdetails
-     * @throws EGOVRuntimeException
+     * @throws ApplicationRuntimeException
      */
-    public void validateVoucherMIS(final HashMap<String, Object> headerdetails) throws EGOVRuntimeException {
+    public void validateVoucherMIS(final HashMap<String, Object> headerdetails) throws ApplicationRuntimeException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("START | validateVoucherMIS");
         // Validate Department.
@@ -1452,14 +1452,14 @@ public class CreateVoucher {
                 && null != headerdetails.get(VoucherConstant.DEPARTMENTCODE)) {
             dept = deptM.getDepartmentByCode(headerdetails.get(VoucherConstant.DEPARTMENTCODE).toString());
             if (dept == null)
-                throw new EGOVRuntimeException("not a valid Department");
+                throw new ApplicationRuntimeException("not a valid Department");
         }
 
         if (null != headerdetails.get(VoucherConstant.FUNCTIONARYCODE)) {
             Functionary functionary = functionaryDAO.getFunctionaryByCode(BigDecimal.valueOf(Long.
                     valueOf(headerdetails.get(VoucherConstant.FUNCTIONARYCODE).toString())));
             if (null == functionary) {
-                throw new EGOVRuntimeException("not a valid functionary");
+                throw new ApplicationRuntimeException("not a valid functionary");
             }
         }
         // validate fund.
@@ -1469,10 +1469,10 @@ public class CreateVoucher {
             fundCode = headerdetails.get(VoucherConstant.FUNDCODE).toString();
             fund = fundDAO.fundByCode(fundCode);
             if (null == fund) {
-                throw new EGOVRuntimeException("not a valid fund");
+                throw new ApplicationRuntimeException("not a valid fund");
             }
         } else {
-            throw new EGOVRuntimeException("fund value is missing");
+            throw new ApplicationRuntimeException("fund value is missing");
         }
         // validate Scheme
         Scheme scheme = null;
@@ -1480,10 +1480,10 @@ public class CreateVoucher {
             String schemecode = headerdetails.get(VoucherConstant.SCHEMECODE).toString();
             scheme = schemeDAO.getSchemeByCode(schemecode);
             if (null == scheme) {
-                throw new EGOVRuntimeException("not a valid scheme");
+                throw new ApplicationRuntimeException("not a valid scheme");
             }
             if (!(fund.getId().equals(scheme.getFund().getId()))) {
-                throw new EGOVRuntimeException("This scheme does not belong to this fund");
+                throw new ApplicationRuntimeException("This scheme does not belong to this fund");
             }
         }
         // validate subscheme
@@ -1492,10 +1492,10 @@ public class CreateVoucher {
             String subSchemeCode = headerdetails.get(VoucherConstant.SUBSCHEMECODE).toString();
             subScheme = subSchemeDAO.getSubSchemeByCode(subSchemeCode);
             if (null == subScheme) {
-                throw new EGOVRuntimeException("not a valid subscheme");
+                throw new ApplicationRuntimeException("not a valid subscheme");
             }
             if (!(subScheme.getScheme().getId().equals(scheme.getId()))) {
-                throw new EGOVRuntimeException("This subscheme does not belong to this scheme");
+                throw new ApplicationRuntimeException("This subscheme does not belong to this scheme");
             }
         }
         // validate fundsource
@@ -1504,14 +1504,14 @@ public class CreateVoucher {
             Fundsource fundsource = fundSourceDAO.getFundSourceByCode(headerdetails.get(VoucherConstant.FUNDSOURCECODE)
                     .toString());
             if (null == fundsource) {
-                throw new EGOVRuntimeException("not a valid fund source");
+                throw new ApplicationRuntimeException("not a valid fund source");
             }
         }
 
         if (headerdetails.containsKey(VoucherConstant.DIVISIONID) && null != headerdetails.get(VoucherConstant.DIVISIONID)) {
 
             if (null == boundary.getBoundaryById(Long.parseLong(headerdetails.get(VoucherConstant.DIVISIONID).toString()))) {
-                throw new EGOVRuntimeException("not a valid divisionid");
+                throw new ApplicationRuntimeException("not a valid divisionid");
             }
         }
         if (LOGGER.isDebugEnabled())
@@ -1547,11 +1547,11 @@ public class CreateVoucher {
             }
         }
         if (!typeFound)
-            throw new EGOVRuntimeException("Voucher type is not valid");
+            throw new ApplicationRuntimeException("Voucher type is not valid");
     }
 
     @SuppressWarnings("deprecation")
-    public CVoucherHeader createVoucherHeader(final HashMap<String, Object> headerdetails) throws EGOVRuntimeException, Exception {
+    public CVoucherHeader createVoucherHeader(final HashMap<String, Object> headerdetails) throws ApplicationRuntimeException, Exception {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("START | createVoucherHeader");
         // Connection con = null;
@@ -1648,7 +1648,7 @@ public class CreateVoucher {
                 query = HibernateUtil.getCurrentSession().createQuery("from CVoucherHeader where id=:id");
                 query.setLong("id", origionalVId);
                 if (query.list().size() == 0) {
-                    throw new EGOVRuntimeException("Not a valid origional voucherheader id");
+                    throw new ApplicationRuntimeException("Not a valid origional voucherheader id");
                 } else {
                     cVoucherHeader.setOriginalvcId(origionalVId);
                 }
@@ -1789,7 +1789,7 @@ public class CreateVoucher {
 
     }
 
-    public Vouchermis createVouchermis(final HashMap<String, Object> headerdetails) throws EGOVRuntimeException {
+    public Vouchermis createVouchermis(final HashMap<String, Object> headerdetails) throws ApplicationRuntimeException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("START | createVouchermis");
         Vouchermis vouchermis = new Vouchermis();
@@ -1843,7 +1843,7 @@ public class CreateVoucher {
     }
 
     public void validateTransaction(List<HashMap<String, Object>> accountcodedetails,
-            List<HashMap<String, Object>> subledgerdetails) throws EGOVRuntimeException, Exception {
+            List<HashMap<String, Object>> subledgerdetails) throws ApplicationRuntimeException, Exception {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("START | validateTransaction");
         // List<Transaxtion> transaxtionList = new ArrayList<Transaxtion>();
@@ -1862,21 +1862,21 @@ public class CreateVoucher {
             if (accDetailMap.containsKey(VoucherConstant.GLCODE) && null != accDetailMap.get(VoucherConstant.GLCODE)) {
                 glcode = accDetailMap.get(VoucherConstant.GLCODE).toString();
                 if (null == chartOfAccountsDAO.getCChartOfAccountsByGlCode(glcode)) {
-                    throw new EGOVRuntimeException("Not a valid account code" + glcode);
+                    throw new ApplicationRuntimeException("Not a valid account code" + glcode);
                 }
             } else {
-                throw new EGOVRuntimeException("glcode is missing or null");
+                throw new ApplicationRuntimeException("glcode is missing or null");
             }
             if (!debitAmount.equals(BigDecimal.valueOf(0)) && !creditAmount.equals(BigDecimal.valueOf(0))) {
-                throw new EGOVRuntimeException("Both debit amount and credit amount cannot be greater than zero");
+                throw new ApplicationRuntimeException("Both debit amount and credit amount cannot be greater than zero");
             }
             if (debitAmount.equals(BigDecimal.valueOf(0)) && creditAmount.equals(BigDecimal.valueOf(0))) {
-                throw new EGOVRuntimeException("debit and credit both amount is Zero");
+                throw new ApplicationRuntimeException("debit and credit both amount is Zero");
             }
             if (null != accDetailMap.get(VoucherConstant.FUNCTIONCODE) && "" != accDetailMap.get(VoucherConstant.FUNCTIONCODE)) {
                 String functionCode = accDetailMap.get(VoucherConstant.FUNCTIONCODE).toString();
                 if (null == functionDAO.getFunctionByCode(functionCode)) {
-                    throw new EGOVRuntimeException("not a valid function code");
+                    throw new ApplicationRuntimeException("not a valid function code");
                 }
             }
             if (!debitAmount.equals(BigDecimal.valueOf(0))) {
@@ -1908,7 +1908,7 @@ public class CreateVoucher {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Total Credit amount after round off :" + totalcreditAmount);
         if (totaldebitAmount.compareTo(totalcreditAmount) != 0) {
-            throw new EGOVRuntimeException("total debit and total credit amount is not matching");
+            throw new ApplicationRuntimeException("total debit and total credit amount is not matching");
         }
         Map<String, BigDecimal> subledAmtmap = new HashMap<String, BigDecimal>();
         for (HashMap<String, Object> subdetailDetailMap : subledgerdetails) {
@@ -1918,10 +1918,10 @@ public class CreateVoucher {
             if (null != subdetailDetailMap.get(VoucherConstant.GLCODE)) {
                 glcode = subdetailDetailMap.get(VoucherConstant.GLCODE).toString();
                 if (null == chartOfAccountsDAO.getCChartOfAccountsByGlCode(glcode)) {
-                    throw new EGOVRuntimeException("not a valid glcode");
+                    throw new ApplicationRuntimeException("not a valid glcode");
                 }
             } else {
-                throw new EGOVRuntimeException("glcode is missing");
+                throw new ApplicationRuntimeException("glcode is missing");
             }
             Query querytds = HibernateUtil.getCurrentSession().createQuery("select t.id from Recovery t where " +
                     "t.chartofaccounts.glcode=:glcode");
@@ -1931,10 +1931,10 @@ public class CreateVoucher {
                     null != subdetailDetailMap.get(VoucherConstant.CREDITAMOUNT)
                     && !new BigDecimal((subdetailDetailMap.get(VoucherConstant.CREDITAMOUNT).toString())).equals(BigDecimal.ZERO)) {
                 /*
-                 * Commenting out throw EGOVRuntimeException since we are using the same API for create Journal Voucher. There we
+                 * Commenting out throw ApplicationRuntimeException since we are using the same API for create Journal Voucher. There we
                  * are not setting the TDS id..
                  */
-                // throw new EGOVRuntimeException("Recovery detail is missing for glcode :"+glcode);
+                // throw new ApplicationRuntimeException("Recovery detail is missing for glcode :"+glcode);
             }
             // validate the glcode is a subledger code or not.
 
@@ -1945,7 +1945,7 @@ public class CreateVoucher {
             query.setString(VoucherConstant.GLCODE, glcode);
             query.setCacheable(true);
             if (null == query.list() || query.list().size() == 0) {
-                throw new EGOVRuntimeException("This code is not a control code" + glcode);
+                throw new ApplicationRuntimeException("This code is not a control code" + glcode);
             }
 
             // validate subledger Detailtypeid
@@ -1959,10 +1959,10 @@ public class CreateVoucher {
                 qry.setString("detailTypeId", detailtypeid);
                 qry.setCacheable(true);
                 if (null == qry.list() || qry.list().size() == 0) {
-                    throw new EGOVRuntimeException("The subledger type mapped to this account code is not correct " + glcode);
+                    throw new ApplicationRuntimeException("The subledger type mapped to this account code is not correct " + glcode);
                 }
             } else {
-                throw new EGOVRuntimeException("Subledger type value is missing for account code " + glcode);
+                throw new ApplicationRuntimeException("Subledger type value is missing for account code " + glcode);
             }
             // validate detailkey id.
 
@@ -1975,10 +1975,10 @@ public class CreateVoucher {
                 qry.setString("detailkey", detailKeyId);
                 qry.setCacheable(true);
                 if (null == qry.list() || qry.list().size() == 0) {
-                    throw new EGOVRuntimeException("Subledger data is not valid for account code " + glcode);
+                    throw new ApplicationRuntimeException("Subledger data is not valid for account code " + glcode);
                 }
             } else {
-                throw new EGOVRuntimeException("detailkeyid is missing");
+                throw new ApplicationRuntimeException("detailkeyid is missing");
             }
 
             if (null != subdetailDetailMap.get(VoucherConstant.DEBITAMOUNT)
@@ -2003,7 +2003,7 @@ public class CreateVoucher {
 
             }
             else {
-                throw new EGOVRuntimeException("Incorrect Sub ledger amount supplied for glcode : " + glcode);
+                throw new ApplicationRuntimeException("Incorrect Sub ledger amount supplied for glcode : " + glcode);
             }
 
         }
@@ -2016,7 +2016,7 @@ public class CreateVoucher {
                 // changed since equals does considers decimal values eg 20.0 is not equal to 2
                 if (subledAmtmap.get(VoucherConstant.DEBIT + glcode).compareTo(accDetAmtMap.get(VoucherConstant.DEBIT + glcode)) != 0) {
 
-                    throw new EGOVRuntimeException("Total of subleger debit amount is not matching with the account code amount "
+                    throw new ApplicationRuntimeException("Total of subleger debit amount is not matching with the account code amount "
                             + glcode);
                 }
             }
@@ -2025,7 +2025,7 @@ public class CreateVoucher {
                 if (subledAmtmap.get(VoucherConstant.CREDIT + glcode)
                         .compareTo(accDetAmtMap.get(VoucherConstant.CREDIT + glcode)) != 0) {
 
-                    throw new EGOVRuntimeException(
+                    throw new ApplicationRuntimeException(
                             "Total of subleger credit amount is not matching with the account code amount " + glcode);
                 }
             }
@@ -2038,7 +2038,7 @@ public class CreateVoucher {
 
     public List<Transaxtion> createTransaction(HashMap<String, Object> headerdetails,
             List<HashMap<String, Object>> accountcodedetails, List<HashMap<String, Object>> subledgerdetails, CVoucherHeader vh)
-            throws EGOVRuntimeException {
+            throws ApplicationRuntimeException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Start | createTransaction ");
         List<Transaxtion> transaxtionList = new ArrayList<Transaxtion>();
@@ -2141,7 +2141,7 @@ public class CreateVoucher {
             }
         } catch (Exception e) {
             LOGGER.error("Exception occured while posting data into voucher detail and transaction");
-            throw new EGOVRuntimeException("Exception occured while posting data into voucher detail and transaction"
+            throw new ApplicationRuntimeException("Exception occured while posting data into voucher detail and transaction"
                     + e.getMessage());
         }
         if (LOGGER.isDebugEnabled())
@@ -2161,25 +2161,25 @@ public class CreateVoucher {
 
     public void validateVoucherHeader(CVoucherHeader voucherHeader) {
         if (null == voucherHeader) {
-            throw new EGOVRuntimeException("voucherHeader object passed is null");
+            throw new ApplicationRuntimeException("voucherHeader object passed is null");
         }
         if (null == voucherHeader.getType() || !voucherHeader.getType().equalsIgnoreCase(voucherTypeEnum.RECEIPT.toString())) {
 
-            throw new EGOVRuntimeException("Voucher type is not Receipt");
+            throw new ApplicationRuntimeException("Voucher type is not Receipt");
         }
     }
 
     public void validateReceiptDetails(final HashMap<String, Object> receiptdetails) {
         String modeofcollection = null;
         if (null == receiptdetails) {
-            throw new EGOVRuntimeException("receiptdetails is null");
+            throw new ApplicationRuntimeException("receiptdetails is null");
         }
         if (null == receiptdetails.get(VoucherConstant.MODEOFCOLLECTION)) {
-            throw new EGOVRuntimeException("modeofcollection is null");
+            throw new ApplicationRuntimeException("modeofcollection is null");
         } else {
             modeofcollection = chkModeOfCollection(receiptdetails.get(VoucherConstant.MODEOFCOLLECTION).toString());
             if (null == modeofcollection) {
-                throw new EGOVRuntimeException("Not a valid modeofcollection");
+                throw new ApplicationRuntimeException("Not a valid modeofcollection");
             }
         }
         if (VoucherConstant.BANK.equalsIgnoreCase(modeofcollection)) {
@@ -2187,7 +2187,7 @@ public class CreateVoucher {
         }
 
         if (null == receiptdetails.get(VoucherConstant.NETAMOUNT)) {
-            throw new EGOVRuntimeException("Net amount is null");
+            throw new ApplicationRuntimeException("Net amount is null");
         }
     }
 
@@ -2196,20 +2196,20 @@ public class CreateVoucher {
         String bankBranchCode = null;
         String bankAccNumber = null;
         if (null == receiptdetails.get(VoucherConstant.BANKCODE)) {
-            throw new EGOVRuntimeException("Bank Code is null");
+            throw new ApplicationRuntimeException("Bank Code is null");
         }
         if (null == receiptdetails.get(VoucherConstant.BANKBRANCHCODE)) {
-            throw new EGOVRuntimeException("Bank branch code  is null");
+            throw new ApplicationRuntimeException("Bank branch code  is null");
         }
         if (null == receiptdetails.get(VoucherConstant.BANKACCOUNTNUMBER)) {
-            throw new EGOVRuntimeException("Bank Account number is null");
+            throw new ApplicationRuntimeException("Bank Account number is null");
         }
         bankCode = receiptdetails.get(VoucherConstant.BANKCODE).toString();
         bankBranchCode = receiptdetails.get(VoucherConstant.BANKBRANCHCODE).toString();
         bankAccNumber = receiptdetails.get(VoucherConstant.BANKACCOUNTNUMBER).toString();
         Bankaccount bankAccount = bankAccountDAO.getBankAccountByAccBranchBank(bankAccNumber, bankBranchCode, bankCode);
         if (null == bankAccount) {
-            throw new EGOVRuntimeException("not a valid bank account number");
+            throw new ApplicationRuntimeException("not a valid bank account number");
         } else {
             receiptdetails.put(VoucherConstant.BANKACCID, bankAccount.getId());
         }
@@ -2225,13 +2225,13 @@ public class CreateVoucher {
         BigDecimal chequeAmounts = BigDecimal.valueOf(0);
         for (HashMap<String, Object> instrumentdetails : instrumentdetailsList) {
             if (null == instrumentdetails.get(VoucherConstant.INSTRUMENTNO)) {
-                throw new EGOVRuntimeException("Cheque number is null");
+                throw new ApplicationRuntimeException("Cheque number is null");
             }
             if (null == instrumentdetails.get(VoucherConstant.INSTRUMENTDATE)) {
-                throw new EGOVRuntimeException("Cheque date is null");
+                throw new ApplicationRuntimeException("Cheque date is null");
             }
             if (null == instrumentdetails.get(VoucherConstant.INSTRUMENTAMOUNT)) {
-                throw new EGOVRuntimeException("Cheque amount is null");
+                throw new ApplicationRuntimeException("Cheque amount is null");
             } else {
                 chequeAmounts = chequeAmounts.add(new BigDecimal(instrumentdetails.get(VoucherConstant.INSTRUMENTAMOUNT)
                         .toString()));
@@ -2239,12 +2239,12 @@ public class CreateVoucher {
             if (null != instrumentdetails.get(VoucherConstant.BANKCODE)) {
                 bankCode = instrumentdetails.get(VoucherConstant.BANKCODE).toString();
                 if (null == bankDAO.getBankByCode(bankCode)) {
-                    throw new EGOVRuntimeException("not a valid bank code");
+                    throw new ApplicationRuntimeException("not a valid bank code");
                 }
             }
         }
         if (!chequeAmounts.equals(receiptdetails.get(VoucherConstant.NETAMOUNT))) {
-            throw new EGOVRuntimeException("total cheque amount is not matching with net amount");
+            throw new ApplicationRuntimeException("total cheque amount is not matching with net amount");
         }
 
     }
@@ -2296,14 +2296,14 @@ public class CreateVoucher {
             }
         } catch (Exception e) {
             LOGGER.error(ERR, e);
-            throw new EGOVRuntimeException("Not a valid modeofcollection");
+            throw new ApplicationRuntimeException("Not a valid modeofcollection");
         }
 
         return collectionMode;
     }
 
     public EgBillregister createBill(HashMap<String, Object> supplierBillDetails, List<HashMap<String, Object>> ledgerlist)
-            throws EGOVRuntimeException, Exception {
+            throws ApplicationRuntimeException, Exception {
         EgBillregister billregister = new EgBillregister();
 
         postInBillRegister(supplierBillDetails, billregister);
@@ -2316,7 +2316,7 @@ public class CreateVoucher {
     }
 
     public void postInBillRegister(HashMap<String, Object> supplierBillDetails, EgBillregister billregister)
-            throws EGOVRuntimeException, Exception {
+            throws ApplicationRuntimeException, Exception {
 
         billregister.setWorksdetailId(supplierBillDetails.get("worksdetailid").toString());
         billregister.setBilldate((Date) supplierBillDetails.get("billdate"));
@@ -2388,7 +2388,7 @@ public class CreateVoucher {
     }
 
     public void updatePJV(CVoucherHeader vh, List<PreApprovedVoucher> detailList, List<PreApprovedVoucher> subledgerlist)
-            throws EGOVRuntimeException
+            throws ApplicationRuntimeException
     {
         try
         {
@@ -2438,16 +2438,16 @@ public class CreateVoucher {
             SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
             if (!engine.postTransaxtions(txnList, formatter.format(vh.getVoucherDate())))
             {
-                throw new EGOVRuntimeException("Voucher creation Failed");
+                throw new ApplicationRuntimeException("Voucher creation Failed");
             }
         } catch (Exception e)
         {
             LOGGER.error("Inside exception updatePJV" + e.getMessage());
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
     }
 
-    public void deleteVoucherdetailAndGL(CVoucherHeader vh) throws SQLException, EGOVRuntimeException
+    public void deleteVoucherdetailAndGL(CVoucherHeader vh) throws SQLException, ApplicationRuntimeException
     {
         try
         {
@@ -2497,7 +2497,7 @@ public class CreateVoucher {
         } catch (Exception e)
         {
             LOGGER.error("Inside exception deleteVoucherdetailAndGL" + e.getMessage());
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
     }
 
@@ -2517,7 +2517,7 @@ public class CreateVoucher {
      * @return
      */
 
-    public CVoucherHeader reverseVoucher(List<HashMap<String, Object>> paramList) throws EGOVRuntimeException, ParseException
+    public CVoucherHeader reverseVoucher(List<HashMap<String, Object>> paramList) throws ApplicationRuntimeException, ParseException
     {
         // -- Reversal Voucher date check ----
         CVoucherHeader reversalVoucherObj = new CVoucherHeader();
@@ -2530,7 +2530,7 @@ public class CreateVoucher {
                 try {
                     originalVocher = (CVoucherHeader) voucherHeaderDAO.findById(((Long) paramMap.get(VOUCHER_HEADER_ID)), false);
                 } catch (Exception e) {
-                    throw new EGOVRuntimeException("cannot find " + VOUCHER_HEADER_ID + "in the system");
+                    throw new ApplicationRuntimeException("cannot find " + VOUCHER_HEADER_ID + "in the system");
                 }
                 reversalVoucherObj.setOriginalvcId(originalVocher.getId());
             }
@@ -2624,7 +2624,7 @@ public class CreateVoucher {
             // SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
             if (!engine.postTransaxtions(txnList, formatter.format(reversalVoucher.getVoucherDate())))
             {
-                throw new EGOVRuntimeException("Voucher Reversal Failed");
+                throw new ApplicationRuntimeException("Voucher Reversal Failed");
             }
         } catch (ValidationException e) {
             LOGGER.error(ERR, e);
@@ -2632,13 +2632,13 @@ public class CreateVoucher {
                     .getMessage())));
         } catch (HibernateException e) {
             LOGGER.error(ERR, e);
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         } catch (TaskFailedException e) {
             LOGGER.error(ERR, e);
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(ERR, e);
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
 
         return reversalVoucher;
@@ -2714,7 +2714,7 @@ public class CreateVoucher {
             originalVoucher.setStatus(FinancialConstants.REVERSEDVOUCHERSTATUS);
         } catch (HibernateException e) {
             LOGGER.error(ERR, e);
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
 
         } catch (ValidationException e) {
             LOGGER.error(ERR, e);
@@ -2722,7 +2722,7 @@ public class CreateVoucher {
 
         } catch (Exception e) {
             LOGGER.error(ERR, e);
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
 
         return reversalVoucher;
@@ -2743,7 +2743,7 @@ public class CreateVoucher {
                 try {
                     originalVoucher = (CVoucherHeader) voucherHeaderDAO.findById(((Long) paramMap.get(VOUCHER_HEADER_ID)), false);
                 } catch (Exception e) {
-                    throw new EGOVRuntimeException("cannot find " + VOUCHER_HEADER_ID + "in the system");
+                    throw new ApplicationRuntimeException("cannot find " + VOUCHER_HEADER_ID + "in the system");
                 }
                 reversalVoucher.setOriginalvcId(originalVoucher.getId());
 

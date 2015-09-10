@@ -50,12 +50,12 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
@@ -114,7 +114,7 @@ public class EisUtilService implements EISServeable {
 
         } catch (Exception e) {
             LOGGER.error("Exception while getting the getPositionsForUser=" + e.getMessage());
-            throw new EGOVRuntimeException(e.getMessage(), e);
+            throw new ApplicationRuntimeException(e.getMessage(), e);
 
         }
         return positionList;
@@ -144,7 +144,7 @@ public class EisUtilService implements EISServeable {
 
         } catch (Exception e) {
             LOGGER.error("Exception while getting the getPrimaryPositionForUser=" + e.getMessage());
-            throw new EGOVRuntimeException(e.getMessage(), e);
+            throw new ApplicationRuntimeException(e.getMessage(), e);
 
         }
         return position;
@@ -166,7 +166,7 @@ public class EisUtilService implements EISServeable {
             user = (User) getPersistenceService().find(mainStr, positionId, date, date, date);
         } catch (Exception e) {
             LOGGER.error("Exception while getting the getUserForPosition=" + e.getMessage());
-            throw new EGOVRuntimeException(e.getMessage(), e);
+            throw new ApplicationRuntimeException(e.getMessage(), e);
 
         }
         return user;

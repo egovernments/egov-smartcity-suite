@@ -45,8 +45,8 @@ import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * The AccountPayeeDetail information class. Provides details of a
@@ -60,15 +60,15 @@ public class AccountPayeeDetailInfo {
         this.accountPayeeDetail = accountPayeeDetail;
         try {
             populateEntityType(accountPayeeDetail, egovCommon);
-        } catch (final EGOVException e) {
-            throw new EGOVRuntimeException("Could not get entity type for account detail type ["
+        } catch (final ApplicationException e) {
+            throw new ApplicationRuntimeException("Could not get entity type for account detail type ["
                     + accountPayeeDetail.getAccountDetailType().getTablename() + "], account detail key id ["
                     + accountPayeeDetail.getAccountDetailKey().getId() + "]", e);
         }
     }
 
     public void populateEntityType(final AccountPayeeDetail accountPayeeDetail, final EgovCommon egovCommon)
-            throws EGOVException {
+            throws ApplicationException {
         entityType = egovCommon.getEntityType(accountPayeeDetail.getAccountDetailType(), accountPayeeDetail
                 .getAccountDetailKey().getDetailkey());
     }

@@ -57,10 +57,10 @@ import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgBill;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -169,7 +169,7 @@ public class BillService {
             noticeService.getSession().flush(); // Added since notice was not getting saved
         } catch (final Exception e) {
             e.printStackTrace();
-            throw new EGOVRuntimeException("Bill Generation Exception : " + e);
+            throw new ApplicationRuntimeException("Bill Generation Exception : " + e);
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exiting from generateBill");

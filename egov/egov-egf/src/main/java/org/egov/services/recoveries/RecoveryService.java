@@ -49,8 +49,8 @@ import org.egov.commons.EgPartytype;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.dao.recoveries.EgDeductionDetailsHibernateDAO;
 import org.egov.dao.recoveries.TdsHibernateDAO;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.recoveries.EgDeductionDetails;
 import org.egov.model.recoveries.Recovery;
@@ -70,14 +70,14 @@ public class RecoveryService extends PersistenceService<Recovery,Long> {
 		return (Recovery)tdsHibernateDAO.findById(tdsId,false);
     }
     
-    public List<Recovery> findByEstDate(String estimateDate)throws EGOVRuntimeException
+    public List<Recovery> findByEstDate(String estimateDate)throws ApplicationRuntimeException
     {
         try {
 			return tdsHibernateDAO.findByEstDate(estimateDate);
 		} catch (Exception e) {
 			//
 			//EgovUtils.rollBackTransaction();
-			throw new EGOVRuntimeException("Exception in searching Tds by estimate Date"+ e.getMessage(), e);
+			throw new ApplicationRuntimeException("Exception in searching Tds by estimate Date"+ e.getMessage(), e);
 		}
     }
     
@@ -132,7 +132,7 @@ public class RecoveryService extends PersistenceService<Recovery,Long> {
 			catch(Exception e)
 			{
 				//EgovUtils.rollBackTransaction();
-				throw new EGOVRuntimeException("Exception in Deleting EgDeductionDetails."+e.getMessage(),e);
+				throw new ApplicationRuntimeException("Exception in Deleting EgDeductionDetails."+e.getMessage(),e);
 			}
 	}
    

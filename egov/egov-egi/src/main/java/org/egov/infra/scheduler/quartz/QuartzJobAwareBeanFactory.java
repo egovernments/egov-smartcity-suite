@@ -41,7 +41,7 @@ package org.egov.infra.scheduler.quartz;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.quartz.JobDataMap;
 import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
@@ -116,10 +116,10 @@ public class QuartzJobAwareBeanFactory extends SpringBeanJobFactory {
 			return bw.getWrappedInstance();
 		} catch (BeansException e) {
 			LOGGER.error("Error occurred while initializing Scheduler Job Beans, cause : ",e);
-			throw new  EGOVRuntimeException("Error occurred while initializing Scheduler Job Beans, cause : ",e);
+			throw new  ApplicationRuntimeException("Error occurred while initializing Scheduler Job Beans, cause : ",e);
 		} catch (SchedulerException e) {
 			LOGGER.error("Error occurred while initializing Scheduler Job Beans, cause : ",e);
-			throw new  EGOVRuntimeException("Error occurred while initializing Scheduler, cause : ",e);
+			throw new  ApplicationRuntimeException("Error occurred while initializing Scheduler, cause : ",e);
 		}
 	}
 }

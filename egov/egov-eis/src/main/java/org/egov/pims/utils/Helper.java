@@ -74,7 +74,7 @@ public  class Helper {
 					statusId=statusType.getId();
 				}
 			}
-		} catch (EGOVRuntimeException e) {
+		} catch (ApplicationRuntimeException e) {
 			throw e;
 		}
 		

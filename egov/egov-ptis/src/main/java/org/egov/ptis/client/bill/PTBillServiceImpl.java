@@ -61,9 +61,9 @@ import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -96,7 +96,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
     @Override
     public String getBillXML(final Billable billObj) {
         if (billObj == null)
-            throw new EGOVRuntimeException("Exception in getBillXML....Billable is null");
+            throw new ApplicationRuntimeException("Exception in getBillXML....Billable is null");
         return super.getBillXML(billObj);
     }
 
@@ -251,7 +251,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
         LOGGER.debug("Entered into createBillDet, billDetailBean=" + billDetailBean);
 
         if (billDetailBean.invalidData())
-            throw new EGOVRuntimeException("Invalid bill details...");
+            throw new ApplicationRuntimeException("Invalid bill details...");
 
         final EgBillDetails billdetail = new EgBillDetails();
         billdetail.setOrderNo(billDetailBean.getOrderNo());

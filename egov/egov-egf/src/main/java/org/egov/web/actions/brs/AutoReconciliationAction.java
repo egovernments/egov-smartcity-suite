@@ -72,12 +72,12 @@ import org.egov.commons.Bankbranch;
 import org.egov.commons.Bankreconciliation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.brs.AutoReconcileBean;
 import org.egov.utils.Constants;
@@ -788,9 +788,9 @@ private void markForProcessing(String type) {
 		try {
 			bankBookBalance = cm.getAccountBalance(dateFormatter.format(toDate),accountId.toString()).setScale(2, BigDecimal.ROUND_HALF_UP);
 		} catch (HibernateException e) {
-			throw new EGOVRuntimeException(e.getMessage());
+			throw new ApplicationRuntimeException(e.getMessage());
 		} catch (TaskFailedException e) {
-			throw new EGOVRuntimeException(e.getMessage());
+			throw new ApplicationRuntimeException(e.getMessage());
 		}
 		bankAccount= (Bankaccount)persistenceService.find("from Bankaccount ba where id=?",accountId);
 		String statmentsNotInBankBookStr="select id,txDate,instrumentNo,debit,credit,narration,type,action as \"errorCode\",errorMessage from "+TABLENAME+" where accountId=:accountId and txdate>=:fromDate " +
@@ -1066,7 +1066,7 @@ public void setRowCount(int rowCount) {
 				int noOfRowsUpdated = receiptDuplicateUpdate.executeUpdate();
 			}
 		} catch (HibernateException e) {
-		   throw new EGOVRuntimeException("Failed while processing autoreconciliation ");  
+		   throw new ApplicationRuntimeException("Failed while processing autoreconciliation ");  
 		}    
 
 	}

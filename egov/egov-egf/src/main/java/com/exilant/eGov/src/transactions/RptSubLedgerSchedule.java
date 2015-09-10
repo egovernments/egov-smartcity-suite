@@ -58,9 +58,9 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.utils.EntityType;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
@@ -176,7 +176,7 @@ public class RptSubLedgerSchedule
                 }
                 else
                 {
-                        throw new EGOVRuntimeException("Exlcude statusses not  are not defined for Reports");
+                        throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
                 }
 
                 String query;// DEFINED STUFF startDate endDate fundId defaultStatusExclude glCode accEntityId

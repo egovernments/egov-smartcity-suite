@@ -57,7 +57,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,7 +92,7 @@ public class RecoverySetupAction extends DispatchAction {
 			target = "error";
 			LOGGER.error("Exception encountered in toView", ex);
 			 
-			throw new EGOVRuntimeException("Exception encountered in toView", ex);
+			throw new ApplicationRuntimeException("Exception encountered in toView", ex);
 			
 		}
 		return mapping.findForward(target);
@@ -108,7 +108,7 @@ public class RecoverySetupAction extends DispatchAction {
 			target = "error";
 			LOGGER.error("Exception encountered in toModify", ex);
 			 
-			throw new EGOVRuntimeException("Exception encountered in toModify", ex);
+			throw new ApplicationRuntimeException("Exception encountered in toModify", ex);
 			
 		}
 		return mapping.findForward(target);
@@ -128,7 +128,7 @@ public class RecoverySetupAction extends DispatchAction {
 			target = "error";
 			LOGGER.error("Exception encountered in viewRecoveryMaster", ex);
 			 
-			throw new EGOVRuntimeException("Exception encountered in viewRecoveryMaster", ex);
+			throw new ApplicationRuntimeException("Exception encountered in viewRecoveryMaster", ex);
 			
 		}
 		return mapping.findForward(target);
@@ -148,7 +148,7 @@ public class RecoverySetupAction extends DispatchAction {
 			target = "error";
 			LOGGER.error("Exception encountered in beforeModifyRecoveryMaster", ex);
 			 
-			throw new EGOVRuntimeException("Exception encountered in beforeModifyRecoveryMaster", ex);
+			throw new ApplicationRuntimeException("Exception encountered in beforeModifyRecoveryMaster", ex);
 			
 		}
 		return mapping.findForward(target);
@@ -178,7 +178,7 @@ public class RecoverySetupAction extends DispatchAction {
 			target = "error";
 			LOGGER.error("Exception encountered in createRecoveryMaster", ex);
 			 
-			throw new EGOVRuntimeException("Exception encountered in createRecoveryMaster", ex);
+			throw new ApplicationRuntimeException("Exception encountered in createRecoveryMaster", ex);
 			
 		}
 		req.setAttribute("alertMessage", alertMessage);
@@ -209,7 +209,7 @@ public class RecoverySetupAction extends DispatchAction {
 			target = "error";
 			LOGGER.error("Exception encountered in modifyRecoveryMaster", ex);
 			 
-			throw new EGOVRuntimeException("Exception encountered in modifyRecoveryMaster", ex);
+			throw new ApplicationRuntimeException("Exception encountered in modifyRecoveryMaster", ex);
 			
 		}
 		req.setAttribute("alertMessage", alertMessage);

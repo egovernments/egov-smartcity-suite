@@ -57,10 +57,10 @@ import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -369,7 +369,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 		BudgetReAppropriationMisc  misc = (BudgetReAppropriationMisc) persistenceService.find("from BudgetReAppropriationMisc where id=?", budgetReAppropriation.getReAppropriationMisc().getId());
 		if(!validateOwner(misc.getState()))
 		{
-			throw new EGOVRuntimeException("Invalid Access");
+			throw new ApplicationRuntimeException("Invalid Access");
 		}       
 		workFlowItem = misc;
 		setEnablingAmounts(misc);

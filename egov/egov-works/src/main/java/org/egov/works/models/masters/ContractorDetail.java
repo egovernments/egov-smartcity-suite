@@ -49,7 +49,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infstr.ValidationError;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;

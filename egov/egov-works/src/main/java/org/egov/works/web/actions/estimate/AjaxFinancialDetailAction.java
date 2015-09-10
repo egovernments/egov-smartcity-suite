@@ -50,9 +50,9 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.service.CommonsService;
 import org.egov.dao.budget.BudgetGroupDAO;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.model.budget.BudgetGroup;
 
 public class AjaxFinancialDetailAction extends BaseFormAction {

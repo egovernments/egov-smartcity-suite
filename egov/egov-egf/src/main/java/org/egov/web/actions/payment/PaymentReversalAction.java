@@ -57,13 +57,13 @@ import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.commons.VoucherSearchUtil;
-import org.egov.exceptions.EGOVException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.payment.Paymentheader;
 import org.egov.web.actions.voucher.BaseVoucherAction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,7 +128,7 @@ public class PaymentReversalAction extends BaseVoucherAction{
 	public String vouchersForReversal(){
 		return "reversalVouchers";
 	}
-	public String searchVouchersForReversal() throws EGOVException, ParseException{
+	public String searchVouchersForReversal() throws ApplicationException, ParseException{
 		voucherHeader.setType("Payment");
 		voucherHeaderList = voucherSearchUtil.search(voucherHeader, getFromDate(), getToDate(), "reverse");
 		String query = formQuery(voucherHeaderList);

@@ -49,12 +49,12 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.egov.dao.recoveries.TdsHibernateDAO;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.deduction.DepartmentDOMapping;
@@ -111,7 +111,7 @@ public class AutoRemittanceAction extends BaseFormAction {
 			{
 				lastRunDateMap.put((String)ob[0],(String) ob[1]);
 			}
-		} catch (EGOVRuntimeException e) {
+		} catch (ApplicationRuntimeException e) {
 			addActionError("failed");
 		} catch (HibernateException e) {
 			addActionError("failed");

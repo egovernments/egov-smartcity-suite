@@ -41,7 +41,7 @@ package org.egov.infra.web.spring.handler;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -68,8 +68,8 @@ public class GlobalExceptionHandler {
         return createErrorMV(req, e);
     }
 
-    @ExceptionHandler(value = EGOVRuntimeException.class)
-    public RedirectView egovErrorHandler(final HttpServletRequest req, final EGOVRuntimeException e) throws Exception {
+    @ExceptionHandler(value = ApplicationRuntimeException.class)
+    public RedirectView egovErrorHandler(final HttpServletRequest req, final ApplicationRuntimeException e) throws Exception {
         return createErrorMV(req, e);
     }
 

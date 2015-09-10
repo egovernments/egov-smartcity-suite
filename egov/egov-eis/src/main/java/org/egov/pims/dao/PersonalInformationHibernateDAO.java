@@ -52,11 +52,11 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Jurisdiction;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectException;
-import org.egov.exceptions.TooManyValuesException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectException;
+import org.egov.infra.exception.TooManyValuesException;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryTypeDAO;
@@ -124,7 +124,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 		}
 		catch (Exception e)
 		{
-				throw new EGOVRuntimeException("Hibernate Exception : "+e.getMessage(),e);
+				throw new ApplicationRuntimeException("Hibernate Exception : "+e.getMessage(),e);
 		}
 	}
 
@@ -331,7 +331,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 		}
 		 catch(Exception e)
         {
-           throw new EGOVRuntimeException(e.getMessage(),e);
+           throw new ApplicationRuntimeException(e.getMessage(),e);
         }
 
 
@@ -430,7 +430,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 		 catch(Exception e)
         {
 			
-           throw new EGOVRuntimeException(e.getMessage(),e);
+           throw new ApplicationRuntimeException(e.getMessage(),e);
         }
 
 
@@ -494,7 +494,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 			 catch(Exception e)
 		        {
 					
-		           throw new EGOVRuntimeException("system.error", e);
+		           throw new ApplicationRuntimeException("system.error", e);
 		        }
 			 
 
@@ -514,7 +514,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 						
 					
 				} catch (RuntimeException e) {
-					throw new EGOVRuntimeException("Exception while getting users for given designation",e);
+					throw new ApplicationRuntimeException("Exception while getting users for given designation",e);
 					
 				}
 		

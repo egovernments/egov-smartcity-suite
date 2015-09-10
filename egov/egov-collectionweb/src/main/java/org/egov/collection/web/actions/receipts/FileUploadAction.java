@@ -90,8 +90,8 @@ import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
-import org.egov.exceptions.EGOVException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
@@ -755,7 +755,7 @@ public class FileUploadAction extends BaseFormAction{
 	 * @param receiptHeader
 	 * @param functionName
 	 * @return
-	 * @throws EGOVException 
+	 * @throws ApplicationException 
 	 */
 	private ReceiptHeader saveChallan(ReceiptHeader receipt,
 			String functionName){

@@ -581,7 +581,7 @@ public class BuiltUpProperty extends AbstractProperty {
         /*
          * if(getPropertyAddress() == null) throw newEGOVRuntimeException(
          * "BuiltUpProperty.validate : PropertyAddress is NULL, Please Check !!" ); else if(getPropertyAddress().validate() ==
-         * false) throw new EGOVRuntimeException( "BuiltUpProperty.validate : PropertyAddress Validate() failed, Please Check !!"
+         * false) throw new ApplicationRuntimeException( "BuiltUpProperty.validate : PropertyAddress Validate() failed, Please Check !!"
          * );
          */
         if (getProperty() == null)
@@ -610,7 +610,7 @@ public class BuiltUpProperty extends AbstractProperty {
         /*
          * if(getPropertyUsage() == null) throw newEGOVRuntimeException(
          * "BuiltUpProperty.validate : PropertyUsage is NULL, Please Check !!"); else if(getPropertyUsage().validate() == false)
-         * throw new EGOVRuntimeException( "BuiltUpProperty.validate : PropertyUsage Validate() failed, Please Check !!" );
+         * throw new ApplicationRuntimeException( "BuiltUpProperty.validate : PropertyUsage Validate() failed, Please Check !!" );
          */
         return true;
     }

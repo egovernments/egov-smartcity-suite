@@ -61,16 +61,16 @@ import org.egov.commons.Fund;
 import org.egov.commons.Vouchermis;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -199,7 +199,7 @@ public class AdvancePaymentAction extends BasePaymentAction{
 		 catch (NumberFormatException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw e;
-		} catch (EGOVRuntimeException e) {
+		} catch (ApplicationRuntimeException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw e;			
 		}
@@ -377,7 +377,7 @@ public class AdvancePaymentAction extends BasePaymentAction{
 		} catch (final HibernateException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw new ValidationException(Arrays.asList(new ValidationError(EXCEPTION_WHILE_SAVING_DATA, FAILED)));
-		} catch (final EGOVRuntimeException e) {
+		} catch (final ApplicationRuntimeException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
 		} catch (final ValidationException e) {
@@ -575,7 +575,7 @@ public class AdvancePaymentAction extends BasePaymentAction{
 							if(entity==null) {
 								throw new ValidationException(Arrays.asList(new ValidationError("no.entity.for.detailkey", getText("no.entity.for.detailkey", new String[] {entity.getCode()+"-"+entity.getName()}))));
 							}
-						} catch (EGOVException e) {
+						} catch (ApplicationException e) {
 							throw new ValidationException(Arrays.asList(new ValidationError("Exception to get EntityType  ", e.getMessage())));
 						}
 					

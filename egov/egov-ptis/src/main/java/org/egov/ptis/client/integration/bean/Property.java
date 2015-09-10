@@ -53,7 +53,7 @@ import org.egov.dcb.service.DCBService;
 import org.egov.dcb.service.DCBServiceImpl;
 import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.EgBill;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.client.integration.impl.PropertyImpl;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
@@ -234,10 +234,10 @@ public abstract class Property {
 
 	private void validate() {
 		if ((propertyID == null || propertyID.trim().equals(""))) {
-			throw new EGOVRuntimeException("PropertyID was null or empty!");
+			throw new ApplicationRuntimeException("PropertyID was null or empty!");
 		}
 		if (isReceiptInfoRequested() && (receiptNo == null || receiptNo.equals(""))) {
-			throw new EGOVRuntimeException("receiptNo was null or empty!");
+			throw new ApplicationRuntimeException("receiptNo was null or empty!");
 		}
 	}
 

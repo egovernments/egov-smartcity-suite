@@ -46,8 +46,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.workflow.entity.State.StateStatus;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.FetchMode;
@@ -217,9 +217,9 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
                         query.setString("identifier2", betweenVal[1]);
                     }
                 } catch (final ParseException e) {
-                    throw new EGOVRuntimeException("Invalid identifier date range entered", e);
+                    throw new ApplicationRuntimeException("Invalid identifier date range entered", e);
                 } catch (final NoSuchFieldException e) {
-                    throw new EGOVRuntimeException("Invalid identifier rage entered", e);
+                    throw new ApplicationRuntimeException("Invalid identifier rage entered", e);
                 }
 
             }

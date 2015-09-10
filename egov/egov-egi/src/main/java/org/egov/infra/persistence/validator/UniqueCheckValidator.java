@@ -47,7 +47,7 @@ import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -116,7 +116,7 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
                     return propertyDescriptor.getReadMethod().invoke(target);
             return null;
         } catch (final Exception e) {
-            throw new EGOVRuntimeException(e.getMessage(), e);
+            throw new ApplicationRuntimeException(e.getMessage(), e);
         }
     }
 

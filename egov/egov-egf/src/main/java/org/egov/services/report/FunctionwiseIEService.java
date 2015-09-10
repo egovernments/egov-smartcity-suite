@@ -50,9 +50,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
@@ -79,7 +79,7 @@ public class FunctionwiseIEService
 	private String capExpCodeCond = "";
 	private String capExpCodesWithQuotesCond = "";
 	
-	public String getFilterQueryVoucher(ReportSearch reportSearch) throws EGOVException,ParseException
+	public String getFilterQueryVoucher(ReportSearch reportSearch) throws ApplicationException,ParseException
 	{
 		
 		String excludeStatus = appConfigValuesService.getConfigValuesByModuleAndKey("finance","statusexcludeReport").get(0).getValue();
@@ -91,7 +91,7 @@ public class FunctionwiseIEService
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("appendQry=="+appendQry);
 		return appendQry;
 	}
-	public String getFilterQueryVoucherAsOnDate(ReportSearch reportSearch) throws EGOVException,ParseException
+	public String getFilterQueryVoucherAsOnDate(ReportSearch reportSearch) throws ApplicationException,ParseException
 	{
 		
 		String excludeStatus = appConfigValuesService.getConfigValuesByModuleAndKey("finance","statusexcludeReport").get(0).getValue();
@@ -103,7 +103,7 @@ public class FunctionwiseIEService
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("appendQry=="+appendQry);
 		return appendQry;
 	}
-	public String getFilterQueryVoucherAsOnPreviousYearDate(ReportSearch reportSearch) throws EGOVException,ParseException
+	public String getFilterQueryVoucherAsOnPreviousYearDate(ReportSearch reportSearch) throws ApplicationException,ParseException
 	{
 		
 		String excludeStatus = appConfigValuesService.getConfigValuesByModuleAndKey("finance","statusexcludeReport").get(0).getValue();
@@ -145,7 +145,7 @@ public class FunctionwiseIEService
 		return appendQry;
 	}
 	
-	public void getMajorCodeList(final FunctionwiseIE functionwiseIE,ReportSearch reportSearch) throws EGOVException,ParseException
+	public void getMajorCodeList(final FunctionwiseIE functionwiseIE,ReportSearch reportSearch) throws ApplicationException,ParseException
 	{
 		
 		List<String> majorCodeList = new ArrayList<String>();
@@ -160,7 +160,7 @@ public class FunctionwiseIEService
 		}
 		functionwiseIE.setMajorCodeList(majorCodeList);
 	}
-	public List<String> getMinorCodeList(ReportSearch reportSearch) throws EGOVException,ParseException
+	public List<String> getMinorCodeList(ReportSearch reportSearch) throws ApplicationException,ParseException
 	{
 		List<String> minorCodeList = new ArrayList<String>();
 		String filterQuery=getFilterQueryVoucher(reportSearch);
@@ -178,12 +178,12 @@ public class FunctionwiseIEService
 	 * 
 	 * @param reportSearch
 	 * @return
-	 * @throws EGOVException
+	 * @throws ApplicationException
 	 * @throws ParseException
 	 * for Main report getMajor Code and Minor Code
 	 * for Sub  Report get only minor code
 	 */
-	public List<CommonReportBean> getMinorAndMajorCodeList(ReportSearch reportSearch) throws EGOVException,ParseException
+	public List<CommonReportBean> getMinorAndMajorCodeList(ReportSearch reportSearch) throws ApplicationException,ParseException
 	{
 		String sql="";
 		if(reportSearch.getByDepartment() && reportSearch.getByDetailCode())
@@ -231,12 +231,12 @@ public class FunctionwiseIEService
 	 * 
 	 * @param reportSearch
 	 * @return
-	 * @throws EGOVException
+	 * @throws ApplicationException
 	 * @throws ParseException
 	 * for Main report getMajor Code and Minor Code
 	 * for Sub  Report get only minor code
 	 */
-	public List<CommonReportBean> getMinorAndMajorCodeListForCapitalExp(ReportSearch reportSearch) throws EGOVException,ParseException
+	public List<CommonReportBean> getMinorAndMajorCodeListForCapitalExp(ReportSearch reportSearch) throws ApplicationException,ParseException
 	{
 		String sql="";
 		if(reportSearch.getByDepartment() && reportSearch.getByDetailCode())
@@ -280,7 +280,7 @@ public class FunctionwiseIEService
 		
 		
 	}
-	public List<CommonReportBean> getIncomeMinorAndMajorCodeList(ReportSearch reportSearch) throws EGOVException,ParseException
+	public List<CommonReportBean> getIncomeMinorAndMajorCodeList(ReportSearch reportSearch) throws ApplicationException,ParseException
 	{
 		String sql="";
 		if(reportSearch.getByDepartment() && reportSearch.getByDetailCode())
@@ -325,7 +325,7 @@ public class FunctionwiseIEService
 		
 	}
 	
-	public void getAmountList(final FunctionwiseIE functionwiseIE,ReportSearch reportSearch) throws EGOVException,ParseException
+	public void getAmountList(final FunctionwiseIE functionwiseIE,ReportSearch reportSearch) throws ApplicationException,ParseException
 	{
 		
 		String sql="SELECT fn.code,fn.name,CONCAT(CONCAT(coa.majorcode,'-'),coa.name),DECODE('"+reportSearch.getIncExp()+"','I',(SUM(gl.creditamount)-SUM(gl.debitamount)),'E', (SUM(gl.debitamount)-SUM(gl.creditamount))) AS amt " +
@@ -406,7 +406,7 @@ public class FunctionwiseIEService
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<CommonReportBean>  getAmountListForMinorCode(final FunctionwiseIE functionwiseIE,ReportSearch reportSearch) throws EGOVException,ParseException
+	public List<CommonReportBean>  getAmountListForMinorCode(final FunctionwiseIE functionwiseIE,ReportSearch reportSearch) throws ApplicationException,ParseException
 	{
 		
 		String sql="";
@@ -503,7 +503,7 @@ public class FunctionwiseIEService
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<CommonReportBean>  getPreviousYearAmountListForMinorCode(final FunctionwiseIE functionwiseIE,ReportSearch reportSearch) throws EGOVException,ParseException
+	public List<CommonReportBean>  getPreviousYearAmountListForMinorCode(final FunctionwiseIE functionwiseIE,ReportSearch reportSearch) throws ApplicationException,ParseException
 	{
 		
 		String sql="",sql2="",sql3="";
@@ -574,13 +574,13 @@ public class FunctionwiseIEService
 		return list;
 		  
 	}
-	public void populateData(final FunctionwiseIE functionwiseIE,ReportSearch reportSearch)throws EGOVException,ParseException
+	public void populateData(final FunctionwiseIE functionwiseIE,ReportSearch reportSearch)throws ApplicationException,ParseException
 	{
 		getMajorCodeList(functionwiseIE,reportSearch);
 		getAmountList(functionwiseIE,reportSearch);
 	}
 
-	public  List<CommonReportBean> populateDataWithBudget(final FunctionwiseIE functionwiseIE,ReportSearch reportSearch)throws EGOVException,ParseException
+	public  List<CommonReportBean> populateDataWithBudget(final FunctionwiseIE functionwiseIE,ReportSearch reportSearch)throws ApplicationException,ParseException
 	{
 		String capExpCode =appConfigValuesService.getConfigValuesByModuleAndKey
 		(Constants.EGF, FinancialConstants.APPCONFIG_COA_MAJORCODE_CAPITAL_EXP_FIE_REPORT).get(0).getValue();
@@ -762,7 +762,7 @@ public class FunctionwiseIEService
 		return minorAndMajorCodeList;
 	}
 
-	public  List<CommonReportBean> populateIncomeDataWithBudget(final FunctionwiseIE functionwiseIE,ReportSearch reportSearch)throws EGOVException,ParseException
+	public  List<CommonReportBean> populateIncomeDataWithBudget(final FunctionwiseIE functionwiseIE,ReportSearch reportSearch)throws ApplicationException,ParseException
 	{
 
 		List<CommonReportBean> minorAndMajorCodeList = getIncomeMinorAndMajorCodeList(reportSearch);

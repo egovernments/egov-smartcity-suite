@@ -43,9 +43,9 @@ import java.text.DecimalFormat;
 import java.text.FieldPosition;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.egov.exceptions.EGOVRuntimeException;
 
 interface DefinePlace {
 	long ZEROS = 0;
@@ -104,7 +104,7 @@ public class NumberToWord {
 	 */
 	public static String numberToString(final String strNumberToConvert) {
 		if (StringUtils.contains(strNumberToConvert, ".")) {
-			throw new EGOVRuntimeException("Can not pass decimal values");
+			throw new ApplicationRuntimeException("Can not pass decimal values");
 		} else {
 			return NumberToWord.convertToWord(strNumberToConvert).replace("Rupees", "").replace("Only", "");
 		}
@@ -146,7 +146,7 @@ public class NumberToWord {
 			num = Long.parseLong(number);
 		} catch (final NumberFormatException e) {
 			LOGGER.error("Invalid Number, Please enter a valid Number.");
-			throw new EGOVRuntimeException("Exception occurred in convertToWord", e);
+			throw new ApplicationRuntimeException("Exception occurred in convertToWord", e);
 		}
 
 		Long subNum = 0L;

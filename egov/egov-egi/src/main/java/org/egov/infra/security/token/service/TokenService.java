@@ -42,8 +42,8 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.token.entity.Token;
 import org.egov.infra.security.token.repository.TokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,7 +145,7 @@ public class TokenService {
     public void redeem(final String tokenNumber, final String service) {
         final Token token = tokenRepository.findByTokenNumberAndService(tokenNumber, service);
         if (token == null)
-            throw new EGOVRuntimeException("Token " + tokenNumber + " does not exist!");
+            throw new ApplicationRuntimeException("Token " + tokenNumber + " does not exist!");
         redeem(token);
     }
 
@@ -168,7 +168,7 @@ public class TokenService {
                                                         // is in secs.
         final long now = new Date().getTime();
         if (now - tokenDate.getTime() > tokenTTL)
-            throw new EGOVRuntimeException("Token " + token.getTokenNumber() + " has expired!");
+            throw new ApplicationRuntimeException("Token " + token.getTokenNumber() + " has expired!");
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("checkIsRedeemable() for token " + token.getTokenNumber() + " passed, token created time was "
@@ -183,7 +183,7 @@ public class TokenService {
     public Token checkIsRedeemable(final String tokenNumber, final String service) {
         final Token token = findByTokenNumberandService(tokenNumber, service);
         if (token == null)
-            throw new EGOVRuntimeException("Token " + tokenNumber + " for service " + service + " does not exist!");
+            throw new ApplicationRuntimeException("Token " + tokenNumber + " for service " + service + " does not exist!");
         return checkIsRedeemable(token);
     }
 }

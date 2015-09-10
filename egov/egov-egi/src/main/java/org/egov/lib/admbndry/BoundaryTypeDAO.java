@@ -45,11 +45,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectException;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -83,7 +83,7 @@ public class BoundaryTypeDAO {
             return (BoundaryType) qry.uniqueResult();
         } catch (final HibernateException e) {
             LOGGER.error("Exception occurred in getBoundaryType", e);
-            throw new EGOVRuntimeException("Exception occurred in getBoundaryType", e);
+            throw new ApplicationRuntimeException("Exception occurred in getBoundaryType", e);
         }
     }
 
@@ -107,7 +107,7 @@ public class BoundaryTypeDAO {
             return boundaryList;
         } catch (final Exception e) {
             LOGGER.error("Exception occurred in getParentBoundaryList", e);
-            throw new EGOVRuntimeException("system.error", e);
+            throw new ApplicationRuntimeException("system.error", e);
         }
     }
 
@@ -115,7 +115,7 @@ public class BoundaryTypeDAO {
     // heirarchy type.
     // Filtered boundary types, if their parent is null.
     public List<BoundaryType> getParentBoundaryTypeByHirarchy(final HierarchyType hierarchyType)
-            throws EGOVRuntimeException {
+            throws ApplicationRuntimeException {
         try {
             List<BoundaryType> boundaryTypeList = new ArrayList<BoundaryType>();
 
@@ -129,7 +129,7 @@ public class BoundaryTypeDAO {
 
         } catch (final Exception e) {
             LOGGER.error("Exception occurred in getParentBoundaryTypeByHirarchy", e);
-            throw new EGOVRuntimeException("system.error", e);
+            throw new ApplicationRuntimeException("system.error", e);
         }
     }
 
@@ -141,7 +141,7 @@ public class BoundaryTypeDAO {
      * boundaries.
      */
     public Map<String, List<Boundary>> getSecondLevelBoundaryByPassingHeirarchy(final HierarchyType hierarchyType)
-            throws EGOVRuntimeException {
+            throws ApplicationRuntimeException {
         try {
             List<Boundary> boundaryList = new ArrayList<Boundary>();
             final Map<String, List<Boundary>> retSet = new HashMap<String, List<Boundary>>();
@@ -174,7 +174,7 @@ public class BoundaryTypeDAO {
 
         } catch (final Exception e) {
             LOGGER.error("Exception occurred in getParentBoundaryTypeByHirarchy", e);
-            throw new EGOVRuntimeException("system.error", e);
+            throw new ApplicationRuntimeException("system.error", e);
         }
     }
 }

@@ -42,7 +42,7 @@ package org.egov.infstr.utils.seqgen;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.JDBCException;
 import org.hibernate.Query;
@@ -158,7 +158,7 @@ public class DatabaseSequence {
         } else if (isExceptionDueToNameTooLong(jdbce)) {
             throw new DatabaseSequenceException("DatabaseSequenceException: Sequence name is too long: " + name, jdbce);
         }
-        throw new EGOVRuntimeException("EGOVRuntimeException: Could not find/call sequence: " + name, jdbce);
+        throw new ApplicationRuntimeException("ApplicationRuntimeException: Could not find/call sequence: " + name, jdbce);
     }
     
     private void createAndFail() {

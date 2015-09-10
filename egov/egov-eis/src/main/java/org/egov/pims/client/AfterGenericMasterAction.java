@@ -53,7 +53,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.dao.GenericMasterDAO;
@@ -92,7 +92,7 @@ public class AfterGenericMasterAction extends DispatchAction {
 					&& !genericForm.getName().equals("")) {
 				String code = genericForm.getName().trim().toUpperCase();
 				if (employeeService.checkDuplication(code, className)) {
-					throw new EGOVRuntimeException((new StringBuilder(
+					throw new ApplicationRuntimeException((new StringBuilder(
 							"duplicate ")).append(className).toString());
 				}
 			}
@@ -116,16 +116,16 @@ public class AfterGenericMasterAction extends DispatchAction {
 			alertMessage = "Executed successfully";
 		}
 
-		catch (EGOVRuntimeException e) {
+		catch (ApplicationRuntimeException e) {
 			target = ERROR;
 			LOGGER.error(e.getMessage());
-			EGOVRuntimeException er = new EGOVRuntimeException(e.getMessage());
+			ApplicationRuntimeException er = new ApplicationRuntimeException(e.getMessage());
 			er.initCause(e);
 			//throw er;
 		} catch (ClassNotFoundException e) {
 			target = ERROR;
 			LOGGER.error(e.getMessage());
-			EGOVRuntimeException er = new EGOVRuntimeException(
+			ApplicationRuntimeException er = new ApplicationRuntimeException(
 					(new StringBuilder("class not found Exception : ")).append(
 							e.getMessage()).toString());
 			er.initCause(e);
@@ -135,7 +135,7 @@ public class AfterGenericMasterAction extends DispatchAction {
 			target = ERROR;
 			   LOGGER.error(ex.getMessage());
 			   //HibernateUtil.rollbackTransaction();
-			   throw new EGOVRuntimeException(EXCEPTION + ex.getMessage(),ex);
+			   throw new ApplicationRuntimeException(EXCEPTION + ex.getMessage(),ex);
 		}
 		req.setAttribute("alertMessage", alertMessage);
 		return mapping.findForward(target);
@@ -178,7 +178,7 @@ public class AfterGenericMasterAction extends DispatchAction {
 				target = ERROR;
 			   LOGGER.error(ex.getMessage());
 			   //HibernateUtil.rollbackTransaction();
-			   throw new EGOVRuntimeException(EXCEPTION + ex.getMessage(),ex);
+			   throw new ApplicationRuntimeException(EXCEPTION + ex.getMessage(),ex);
 		}
 		req.setAttribute("alertMessage", alertMessage);
 		req.getSession().setAttribute(STR_VIEWMODE, "create");
@@ -214,7 +214,7 @@ public class AfterGenericMasterAction extends DispatchAction {
 			alertMessage = "This can't be deleted";
 			LOGGER.error(ex.getMessage());
 			//HibernateUtil.rollbackTransaction();
-			throw new EGOVRuntimeException(EXCEPTION + ex.getMessage(),ex);
+			throw new ApplicationRuntimeException(EXCEPTION + ex.getMessage(),ex);
 		}
 		req.setAttribute("alertMessage", alertMessage);
 		req.getSession().setAttribute(STR_VIEWMODE, "create");
@@ -227,10 +227,10 @@ public class AfterGenericMasterAction extends DispatchAction {
 			String tagName = (new StringBuilder("egEmp-")).append(className.trim())
 					.toString();
 			EgovMasterDataCaching.getInstance().removeFromCache(tagName);
-		} catch (EGOVRuntimeException e) {
+		} catch (ApplicationRuntimeException e) {
 			// Exception Handled
 			LOGGER.error(e.getMessage());
-			throw new EGOVRuntimeException(EXCEPTION + e.getMessage(),e);
+			throw new ApplicationRuntimeException(EXCEPTION + e.getMessage(),e);
 		}
 	}
 
@@ -241,7 +241,7 @@ public class AfterGenericMasterAction extends DispatchAction {
 			d = dateFormat.parse(dateString);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
-			throw new EGOVRuntimeException(EXCEPTION + e.getMessage(),e);
+			throw new ApplicationRuntimeException(EXCEPTION + e.getMessage(),e);
 		}
 		return d;
 	}

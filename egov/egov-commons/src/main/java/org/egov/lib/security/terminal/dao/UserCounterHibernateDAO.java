@@ -39,7 +39,7 @@
  */
 package org.egov.lib.security.terminal.dao;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
@@ -103,7 +103,7 @@ public class UserCounterHibernateDAO extends GenericHibernateDAO<UserCounterMap,
 			EgovMasterDataCaching.getInstance().removeFromCache("egi-usercountermap");
 		} catch (final Exception e) {			
 			LOG.error(" Exception in deleteCounters", e);
-			throw new EGOVRuntimeException("Exception in deleteCounters", e);
+			throw new ApplicationRuntimeException("Exception in deleteCounters", e);
 
 		}
 	}
@@ -117,7 +117,7 @@ public class UserCounterHibernateDAO extends GenericHibernateDAO<UserCounterMap,
 			return qry.list();
 		} catch (final Exception e) {			
 			LOG.error(" Exception in getUserCounterMapForCurrentDate", e);
-			throw new EGOVRuntimeException("Exception in getUserCounterMapForCurrentDate", e);
+			throw new ApplicationRuntimeException("Exception in getUserCounterMapForCurrentDate", e);
 
 		}
 
@@ -133,7 +133,7 @@ public class UserCounterHibernateDAO extends GenericHibernateDAO<UserCounterMap,
 
 		} catch (final Exception e) {			
 			LOG.error(" Exception in getTerminalBasedUserCounterMapForCurrentDate", e);
-			throw new EGOVRuntimeException("Exception in getTerminalBasedUserCounterMapForCurrentDate", e);
+			throw new ApplicationRuntimeException("Exception in getTerminalBasedUserCounterMapForCurrentDate", e);
 
 		}
 	}
@@ -147,7 +147,7 @@ public class UserCounterHibernateDAO extends GenericHibernateDAO<UserCounterMap,
 
 		} catch (final Exception e) {			
 			LOG.error(" Exception in getUserCounterMapForLocationId", e);
-			throw new EGOVRuntimeException("Exception in getUserCounterMapForLocationId", e);
+			throw new ApplicationRuntimeException("Exception in getUserCounterMapForLocationId", e);
 
 		}
 
@@ -162,7 +162,7 @@ public class UserCounterHibernateDAO extends GenericHibernateDAO<UserCounterMap,
 
 		} catch (final Exception e) {			
 			LOG.error(" Exception in getUserCounterMapForTerminalId", e);
-			throw new EGOVRuntimeException("Exception in getUserCounterMapForTerminalId", e);
+			throw new ApplicationRuntimeException("Exception in getUserCounterMapForTerminalId", e);
 		}
 
 	}
@@ -176,7 +176,7 @@ public class UserCounterHibernateDAO extends GenericHibernateDAO<UserCounterMap,
 
 		} catch (final Exception e) {			
 			LOG.error(" Exception in getUserCounterMapForUserId", e);
-			throw new EGOVRuntimeException("Exception in getUserCounterMapForUserId", e);
+			throw new ApplicationRuntimeException("Exception in getUserCounterMapForUserId", e);
 
 		}
 
@@ -225,9 +225,9 @@ public class UserCounterHibernateDAO extends GenericHibernateDAO<UserCounterMap,
 			}
 
 		} catch (final HibernateException he) {
-			throw new EGOVRuntimeException("Exception in checkUserCounter", he);
+			throw new ApplicationRuntimeException("Exception in checkUserCounter", he);
 		} catch (final Exception he) {
-			throw new EGOVRuntimeException("Exception in checkUserCounter", he);
+			throw new ApplicationRuntimeException("Exception in checkUserCounter", he);
 		}
 		return b;
 

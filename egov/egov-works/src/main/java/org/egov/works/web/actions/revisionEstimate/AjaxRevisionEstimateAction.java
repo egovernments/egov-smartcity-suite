@@ -45,7 +45,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.measurementbook.MBDetails;
@@ -119,7 +119,7 @@ public class AjaxRevisionEstimateAction extends BaseFormAction {
             totalEstQuantity = measurementBookService.totalEstimatedQuantityForRE(woActivityId, null, workOrderActivity
                     .getActivity().getId(), workOrderActivity.getWorkOrderEstimate().getWorkOrder());
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("activity.find.error", e);
+            throw new ApplicationRuntimeException("activity.find.error", e);
         }
 
         return ACTIVITY_DETAILS;

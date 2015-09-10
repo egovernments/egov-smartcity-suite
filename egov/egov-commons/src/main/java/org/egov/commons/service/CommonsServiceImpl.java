@@ -69,15 +69,15 @@ import org.egov.commons.dao.CommonsDAOFactory;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.dao.ObjectTypeDAO;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.FinancialYear;
 import org.geotools.data.DataStore;
@@ -130,7 +130,7 @@ public class CommonsServiceImpl implements CommonsService {
             commonsDAOFactory.getInstallmentDao().create(installment);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in creating Installment.", e);
+            throw new ApplicationRuntimeException("Exception in creating Installment.", e);
         }
     }
 
@@ -140,7 +140,7 @@ public class CommonsServiceImpl implements CommonsService {
             commonsDAOFactory.getInstallmentDao().delete(installment);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in deleting Installment.", e);
+            throw new ApplicationRuntimeException("Exception in deleting Installment.", e);
         }
     }
 
@@ -150,7 +150,7 @@ public class CommonsServiceImpl implements CommonsService {
             commonsDAOFactory.getInstallmentDao().update(installment);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in updating Installment.", e);
+            throw new ApplicationRuntimeException("Exception in updating Installment.", e);
         }
     }
 
@@ -160,7 +160,7 @@ public class CommonsServiceImpl implements CommonsService {
             return commonsDAOFactory.getInstallmentDao().getInsatllmentByModule(module);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in searching Installment by module.", e);
+            throw new ApplicationRuntimeException("Exception in searching Installment by module.", e);
         }
     }
 
@@ -170,7 +170,7 @@ public class CommonsServiceImpl implements CommonsService {
             return commonsDAOFactory.getInstallmentDao().getInsatllmentByModule(module, year);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in searching Installment by module and year.", e);
+            throw new ApplicationRuntimeException("Exception in searching Installment by module and year.", e);
         }
     }
 
@@ -180,7 +180,7 @@ public class CommonsServiceImpl implements CommonsService {
             return commonsDAOFactory.getInstallmentDao().getInsatllmentByModule(module, year, installmentNumber);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in searching Installment by module,year and installment number.",
+            throw new ApplicationRuntimeException("Exception in searching Installment by module,year and installment number.",
                     e);
         }
     }
@@ -191,7 +191,7 @@ public class CommonsServiceImpl implements CommonsService {
             return commonsDAOFactory.getInstallmentDao().findAll();
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in getting all installments.", e);
+            throw new ApplicationRuntimeException("Exception in getting all installments.", e);
         }
     }
 
@@ -201,7 +201,7 @@ public class CommonsServiceImpl implements CommonsService {
             return commonsDAOFactory.getInstallmentDao().getInsatllmentByModuleForGivenDate(module, installmentDate);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in searching Installment by module for a given date.", e);
+            throw new ApplicationRuntimeException("Exception in searching Installment by module for a given date.", e);
         }
     }
 
@@ -211,7 +211,7 @@ public class CommonsServiceImpl implements CommonsService {
             return commonsDAOFactory.getInstallmentDao().getInsatllmentByModuleForGivenDate(module, new Date());
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in searching Installment by module for current date.", e);
+            throw new ApplicationRuntimeException("Exception in searching Installment by module for current date.", e);
         }
     }
 
@@ -227,7 +227,7 @@ public class CommonsServiceImpl implements CommonsService {
             return new SimpleDateFormat("yyyy", Locale.ENGLISH).format(insYear);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in getting Current Installment year.", e);
+            throw new ApplicationRuntimeException("Exception in getting Current Installment year.", e);
         }
     }
 
@@ -276,17 +276,17 @@ public class CommonsServiceImpl implements CommonsService {
             return (EgwStatus) commonsDAOFactory.getEgwStatusDAO().findById(statusId, false);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in searching status by status id", e);
+            throw new ApplicationRuntimeException("Exception in searching status by status id", e);
         }
     }
 
     @Override
-    public EgwStatus getEgwStatusByCode(final String code) throws EGOVRuntimeException {
+    public EgwStatus getEgwStatusByCode(final String code) throws ApplicationRuntimeException {
         try {
             return commonsDAOFactory.getEgwStatusDAO().getEgwStatusByCode(code);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in searching status by status Code", e);
+            throw new ApplicationRuntimeException("Exception in searching status by status Code", e);
         }
     }
 
@@ -296,7 +296,7 @@ public class CommonsServiceImpl implements CommonsService {
             return commonsDAOFactory.getFundDAO().findAllActiveFunds();
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in searching Funds", e);
+            throw new ApplicationRuntimeException("Exception in searching Funds", e);
         }
     }
 
@@ -306,17 +306,17 @@ public class CommonsServiceImpl implements CommonsService {
             return commonsDAOFactory.getFundDAO().findAllActiveIsLeafFunds();
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in searching active and is leaf Funds", e);
+            throw new ApplicationRuntimeException("Exception in searching active and is leaf Funds", e);
         }
     }
 
     @Override
-    public List<Fundsource> getAllFundSource() throws EGOVRuntimeException {
+    public List<Fundsource> getAllFundSource() throws ApplicationRuntimeException {
         try {
             return commonsDAOFactory.getFundsourceDAO().findAll();
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in searching Fundsource", e);
+            throw new ApplicationRuntimeException("Exception in searching Fundsource", e);
         }
     }
 
@@ -328,7 +328,7 @@ public class CommonsServiceImpl implements CommonsService {
                     moduleType);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in searching Actiondetails", e);
+            throw new ApplicationRuntimeException("Exception in searching Actiondetails", e);
         }
     }
 
@@ -340,7 +340,7 @@ public class CommonsServiceImpl implements CommonsService {
                     moduleType);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in searching ActiondetailsByWorksdetailId", e);
+            throw new ApplicationRuntimeException("Exception in searching ActiondetailsByWorksdetailId", e);
         }
     }
 
@@ -350,7 +350,7 @@ public class CommonsServiceImpl implements CommonsService {
             commonsDAOFactory.getEgActiondetailsDAO().create(egActiondetails);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in creating Action Details ", e);
+            throw new ApplicationRuntimeException("Exception in creating Action Details ", e);
         }
     }
 
@@ -360,7 +360,7 @@ public class CommonsServiceImpl implements CommonsService {
             commonsDAOFactory.getEgActiondetailsDAO().update(egActiondetails);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in Updating   Action details", e);
+            throw new ApplicationRuntimeException("Exception in Updating   Action details", e);
         }
     }
 
@@ -443,7 +443,7 @@ public class CommonsServiceImpl implements CommonsService {
             return (CFinancialYear) commonsDAOFactory.getFinancialYearDAO().findById(finYrId, false);
         } catch (final RuntimeException e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException(e.getMessage(), e);
+            throw new ApplicationRuntimeException(e.getMessage(), e);
         }
     }
 
@@ -479,7 +479,7 @@ public class CommonsServiceImpl implements CommonsService {
             return commonsDAOFactory.getGeneralLedgerDAO().findCGeneralLedgerByVoucherHeaderId(voucherHeaderId);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Error occurred while getting GL", e);
+            throw new ApplicationRuntimeException("Error occurred while getting GL", e);
         }
     }
 
@@ -525,7 +525,7 @@ public class CommonsServiceImpl implements CommonsService {
         String finYear = "";
         String fiscalPeriod = "";
         if (result == null || result.length == 0)
-            throw new EGOVRuntimeException("Year is not defined in the system");
+            throw new ApplicationRuntimeException("Year is not defined in the system");
         else {
             finYear = result[0].toString();
             fiscalPeriod = result[1].toString();
@@ -557,7 +557,7 @@ public class CommonsServiceImpl implements CommonsService {
      * @return
      */
     @Override
-    public List<CChartOfAccounts> getActiveAccountsForType(final char type) throws EGOVException {
+    public List<CChartOfAccounts> getActiveAccountsForType(final char type) throws ApplicationException {
         return commonsDAOFactory.getChartOfAccountsDAO().getActiveAccountsForType(type);
     }
 
@@ -694,7 +694,7 @@ public class CommonsServiceImpl implements CommonsService {
             commonsDAOFactory.getEgPartytypeDAO().create(egPartytype);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in creating party type", e);
+            throw new ApplicationRuntimeException("Exception in creating party type", e);
         }
     }
 
@@ -724,7 +724,7 @@ public class CommonsServiceImpl implements CommonsService {
             return commonsDAOFactory.getVoucherHeaderDAO().getVoucherHeadersByStatus(status);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Error occurred while getting Voucher Header by Status", e);
+            throw new ApplicationRuntimeException("Error occurred while getting Voucher Header by Status", e);
         }
     }
 
@@ -734,7 +734,7 @@ public class CommonsServiceImpl implements CommonsService {
             return commonsDAOFactory.getVoucherHeaderDAO().getVoucherHeadersByStatusAndType(status, type);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Error occurred while getting Voucher Header by Status and Type", e);
+            throw new ApplicationRuntimeException("Error occurred while getting Voucher Header by Status and Type", e);
         }
     }
 
@@ -813,7 +813,7 @@ public class CommonsServiceImpl implements CommonsService {
             return commonsDAOFactory.getGeneralLedgerDAO().getCBillDeductionAmtByVhId(voucherHeaderId);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Exception in searching CBillDeductionAmtByVhId" + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Exception in searching CBillDeductionAmtByVhId" + e.getMessage(), e);
         }
     }
 
@@ -848,12 +848,12 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     @Override
-    public List<CChartOfAccounts> getAccountCodeByPurpose(final Integer purposeId) throws EGOVException {
+    public List<CChartOfAccounts> getAccountCodeByPurpose(final Integer purposeId) throws ApplicationException {
         return commonsDAOFactory.getChartOfAccountsDAO().getAccountCodeByPurpose(purposeId);
     }
 
     @Override
-    public List<CChartOfAccounts> getDetailedAccountCodeList() throws EGOVException {
+    public List<CChartOfAccounts> getDetailedAccountCodeList() throws ApplicationException {
         return commonsDAOFactory.getChartOfAccountsDAO().getDetailedAccountCodeList();
     }
 
@@ -863,22 +863,22 @@ public class CommonsServiceImpl implements CommonsService {
             return commonsDAOFactory.getChartOfAccountsDAO().getAccountDetailTypeIdByName(glCode, name);
         } catch (final Exception e) {
             LOG.error(e.getMessage());
-            throw new EGOVRuntimeException("Error occurred while getting Account Detail Type ID by Name", e);
+            throw new ApplicationRuntimeException("Error occurred while getting Account Detail Type ID by Name", e);
         }
     }
 
     @Override
-    public List<Fundsource> getAllActiveIsLeafFundSources() throws EGOVException {
+    public List<Fundsource> getAllActiveIsLeafFundSources() throws ApplicationException {
         return commonsDAOFactory.getFundsourceDAO().findAllActiveIsLeafFundSources();
     }
 
     @Override
-    public Scheme getSchemeById(final Integer id) throws EGOVException {
+    public Scheme getSchemeById(final Integer id) throws ApplicationException {
         return commonsDAOFactory.getSchemeDAO().getSchemeById(id);
     }
 
     @Override
-    public SubScheme getSubSchemeById(final Integer id) throws EGOVException {
+    public SubScheme getSubSchemeById(final Integer id) throws ApplicationException {
         return commonsDAOFactory.getSubSchemeDAO().getSubSchemeById(id);
     }
 
@@ -893,12 +893,12 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     @Override
-    public Integer getDetailtypeforObject(final Object master) throws EGOVException {
+    public Integer getDetailtypeforObject(final Object master) throws ApplicationException {
         return commonsDAOFactory.getaccountdetailtypeHibernateDAO().getDetailtypeforObject(master);
     }
 
     @Override
-    public List<Accountdetailtype> getDetailTypeListByGlCode(final String glCode) throws EGOVException {
+    public List<Accountdetailtype> getDetailTypeListByGlCode(final String glCode) throws ApplicationException {
         return commonsDAOFactory.getChartOfAccountsDAO().getAccountdetailtypeListByGLCode(glCode);
     }
 
@@ -940,7 +940,7 @@ public class CommonsServiceImpl implements CommonsService {
     }
 
     @Override
-    public List<Accountdetailtype> getAccountdetailtypeListByGLCode(final String glCode) throws EGOVException {
+    public List<Accountdetailtype> getAccountdetailtypeListByGLCode(final String glCode) throws ApplicationException {
         return commonsDAOFactory.getChartOfAccountsDAO().getAccountdetailtypeListByGLCode(glCode);
     }
 
@@ -1018,7 +1018,7 @@ public class CommonsServiceImpl implements CommonsService {
             LOG.debug("Found boundary data in GIS with boundary id : {}", boundaryId);
             return boundaryId;
         } catch (FactoryRegistryException | IOException e) {
-            throw new EGOVRuntimeException("Error occurred while fetching boundary from GIS data", e);
+            throw new ApplicationRuntimeException("Error occurred while fetching boundary from GIS data", e);
         }
     }
 

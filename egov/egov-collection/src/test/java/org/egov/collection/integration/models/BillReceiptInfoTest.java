@@ -74,7 +74,7 @@ public class BillReceiptInfoTest {/* extends AbstractPersistenceServiceTest<Rece
 	}
 	
 	@Test
-	public void testConstructBillReceiptInfoFromChallanReceiptHeader() throws EGOVException{
+	public void testConstructBillReceiptInfoFromChallanReceiptHeader() throws ApplicationException{
 		ReceiptHeader receiptHeader=objectFactory.createReceiptHeaderForChallan();
 		ReceiptHeader receiptHeaderref=objectFactory.createReceiptHeaderWithChallan();
 		EasyMock.expect(egovCommon.getEntityType(EasyMock.isA(Accountdetailtype.class), EasyMock.isA(Integer.class))).andReturn(null).anyTimes();

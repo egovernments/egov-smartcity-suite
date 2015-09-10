@@ -39,7 +39,7 @@
  */
 package org.egov.infstr.search;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Criteria;
@@ -54,7 +54,7 @@ public class SearchQueryCriteria implements SearchQuery {
 
 	public SearchQueryCriteria(final Criteria searchCriteria, final Criteria countCriteria) {
 		if (searchCriteria == countCriteria) {
-			throw new EGOVRuntimeException("Search Criteria cannot be same as Count Criteria. Please pass different objects!");
+			throw new ApplicationRuntimeException("Search Criteria cannot be same as Count Criteria. Please pass different objects!");
 		}
 
 		this.searchCriteria = searchCriteria;

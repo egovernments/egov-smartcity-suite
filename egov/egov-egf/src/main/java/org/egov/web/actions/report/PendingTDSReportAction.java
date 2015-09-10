@@ -64,9 +64,9 @@ import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.deduction.model.EgRemittanceDetail;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -342,7 +342,7 @@ public class PendingTDSReportAction extends BaseFormAction{
 						" AND ergl.gldtlid =gld.id  AND gl.id = gld.generalledgerid  AND gl.voucherheaderid     =vh.id  AND er.fundid =f.id"+
 						" AND f.id ="+fund.getId() + " AND vh.status =0 AND vh.voucherDate <= to_date('"+ Constants.DDMMYYYYFORMAT2.format(asOnDate)+"','dd/MM/yyyy') and "+" vh.voucherDate >= to_date('"+Constants.DDMMYYYYFORMAT2.format(financialYearDAO.getFinancialYearByDate(asOnDate).getStartingDate())+"','dd/MM/yyyy') "+deptQuery+partyNameQuery+")group by type,month";
 			resultTolDeduction = HibernateUtil.getCurrentSession().createSQLQuery(qryTolDeduction).list();
-		}catch(EGOVRuntimeException e) {
+		}catch(ApplicationRuntimeException e) {
 			message = e.getMessage();
 			return;
 		}catch (Exception e) {
@@ -412,7 +412,7 @@ public class PendingTDSReportAction extends BaseFormAction{
 		EntityType entityType = null;
 		try {
 			entityType = common.getEntityType(entry.getEgRemittanceGldtl().getGeneralledgerdetail().getAccountdetailtype(),detailKeyId);
-		} catch (EGOVException e) {
+		} catch (ApplicationException e) {
 			e.printStackTrace();
 		}
 		return entityType;

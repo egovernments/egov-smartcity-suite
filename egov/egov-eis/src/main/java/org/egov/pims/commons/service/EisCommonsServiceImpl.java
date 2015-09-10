@@ -49,10 +49,10 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.EmployeeView;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.dao.PositionMasterDAO;
@@ -103,7 +103,7 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 		catch(Exception e)
 		{
 			
-			throw new EGOVRuntimeException("Exception in deleting Installment."+e.getMessage(),e);
+			throw new ApplicationRuntimeException("Exception in deleting Installment."+e.getMessage(),e);
 		}
 
 	}
@@ -123,7 +123,7 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 		catch(Exception e)
 		{
 			
-			throw new EGOVRuntimeException("Exception in deleting Installment."+e.getMessage(),e);
+			throw new ApplicationRuntimeException("Exception in deleting Installment."+e.getMessage(),e);
 		}
 
 	}
@@ -159,10 +159,10 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 		}
 		catch (HibernateException he) {
 				
-				throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+				throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 			} catch (Exception he)
 			{
-				throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+				throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 			}
 			return userPosition;
  
@@ -195,10 +195,10 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 			}
 		}
 		catch (HibernateException he) {
-				throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+				throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 			} catch (Exception he)
 			{
-				throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+				throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 			}
 			return userPosition;
 
@@ -229,10 +229,10 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 			}
 		}
 		catch (HibernateException he) {
-				throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+				throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 			} catch (Exception he)
 			{
-				throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+				throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 			}
 			return uerImpl;
 
@@ -266,11 +266,11 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 		 }
 		 catch (HibernateException he) {
 				
-				throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+				throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 			} catch (Exception he)
 			{
 				
-				throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+				throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 			}
 		 return checkEmpCode;
 	 }
@@ -292,10 +292,10 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 				
 			 }
 			 catch (HibernateException he) {
-					throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+					throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 				} catch (Exception he)
 				{
-					throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+					throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 				}
 				
 		 }
@@ -320,7 +320,7 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 		}catch(Exception e)
 		{
 			
-			throw new EGOVRuntimeException("Exception in getCurrentPositionByUser :"+e.getMessage(),e);
+			throw new ApplicationRuntimeException("Exception in getCurrentPositionByUser :"+e.getMessage(),e);
 		}
 		return position;
 	}
@@ -353,10 +353,10 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 			}
 		}
 		catch (HibernateException he) {
-				throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+				throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 			} catch (Exception he)
 			{
-				throw new EGOVRuntimeException(STR_EXCEPTION + he.getMessage(),he);
+				throw new ApplicationRuntimeException(STR_EXCEPTION + he.getMessage(),he);
 			}
 			return user;
 		
@@ -411,7 +411,7 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 			}
 			catch(Exception e){
 				
-				throw new EGOVRuntimeException(e.getMessage(),e);
+				throw new ApplicationRuntimeException(e.getMessage(),e);
 			}
 			return desgMstr;
 			

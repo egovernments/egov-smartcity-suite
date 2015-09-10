@@ -74,10 +74,10 @@ import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgDemandReasonDetails;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.model.TaxDetail;
 import org.egov.ptis.client.model.calculator.APMiscellaneousTaxDetail;
@@ -188,7 +188,7 @@ public class PropertyNoticeService {
 		} catch (Exception e) {
 			String errorMsg = "Error in Tax XML migration for " + basicProperty.getUpicNo();
 			LOGGER.error(errorMsg, e);
-			throw new EGOVRuntimeException(errorMsg, e);
+			throw new ApplicationRuntimeException(errorMsg, e);
 		}
 		LOGGER.debug("Exiting from migrateTaxXML");
 	}
@@ -558,7 +558,7 @@ public class PropertyNoticeService {
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error while parsing unit tax instDate", e);
-			throw new EGOVRuntimeException("Error while parsing unit tax instDate", e);
+			throw new ApplicationRuntimeException("Error while parsing unit tax instDate", e);
 		}
 
 		LOGGER.debug("createUnitCalculationDetail - unitCalculationDetails=" + unitCalculationDetails);

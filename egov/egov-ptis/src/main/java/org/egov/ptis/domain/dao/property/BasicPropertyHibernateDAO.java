@@ -48,9 +48,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyID;
@@ -190,15 +190,15 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 			if (resultSet.next()) {
 				regNum = resultSet.getInt(1);
 			} else {
-				throw new EGOVRuntimeException("Could not generate Reg Num. Result is empty.");
+				throw new ApplicationRuntimeException("Could not generate Reg Num. Result is empty.");
 			}
 
 		} catch (SQLException e) {
 			LOGGER.info("Exception in getRegNum()--- BasicPropertyHibernateDAO---" + e.getMessage());
-			throw new EGOVRuntimeException("Could not generate Reg Num, " + e);
+			throw new ApplicationRuntimeException("Could not generate Reg Num, " + e);
 		} catch (Exception e) {
 			LOGGER.info("Exception in getRegNum()--- BasicPropertyHibernateDAO---" + e);
-			throw new EGOVRuntimeException("Could not generate Reg Num, " + e);
+			throw new ApplicationRuntimeException("Could not generate Reg Num, " + e);
 		} finally {
 			try {
 				resultSet.close();
@@ -220,17 +220,17 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 			if (resultSet.next()) {
 				voucherNum = resultSet.getInt(1);
 			} else {
-				throw new EGOVRuntimeException("Could not generate Voucher Num. Result is empty.");
+				throw new ApplicationRuntimeException("Could not generate Voucher Num. Result is empty.");
 			}
 
 		} catch (SQLException e) {
 			LOGGER.info("Exception in getVoucherNum()--- BasicPropertyHibernateDAO---"
 					+ e.getMessage());
-			throw new EGOVRuntimeException("Could not generate Voucher Num, " + e);
+			throw new ApplicationRuntimeException("Could not generate Voucher Num, " + e);
 		} catch (Exception e) {
 			LOGGER.info("Exception in getVoucherNum()--- BasicPropertyHibernateDAO---"
 					+ e.getMessage());
-			throw new EGOVRuntimeException("Could not generate Voucher Num, " + e);
+			throw new ApplicationRuntimeException("Could not generate Voucher Num, " + e);
 		}
 		return voucherNum;
 	}

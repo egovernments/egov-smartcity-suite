@@ -70,7 +70,7 @@ import org.egov.dcb.bean.Payment;
 import org.egov.dcb.service.EgovSpringBeanDefinition;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
@@ -110,7 +110,7 @@ public class CollectionHelper {
 	 */
 	public BillReceiptInfo executeCollection(Payment payment) {
 		if (!isCollectionPermitted()) {
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					"Collection is not allowed - current balance is zero and advance coll exists.");
 		}
 
@@ -124,7 +124,7 @@ public class CollectionHelper {
 
 	public BillReceiptInfo generateMiscReceipt(Payment payment) {
 		if (!isCollectionPermitted()) {
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					"Collection is not allowed - current balance is zero and advance coll exists.");
 		}
 		List<PaymentInfo> paymentInfoList = preparePaymentInfo(payment);

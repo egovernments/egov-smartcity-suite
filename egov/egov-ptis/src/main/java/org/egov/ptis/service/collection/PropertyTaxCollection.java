@@ -77,9 +77,9 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.MoneyUtils;
 import org.egov.ptis.client.service.CollectionApportioner;
@@ -367,7 +367,7 @@ public class PropertyTaxCollection extends TaxCollection {
                             }
 
                             if (demandDetail.getAmtCollected().compareTo(rcptAccInfo.getCrAmount()) < 0) {
-                                throw new EGOVRuntimeException(
+                                throw new ApplicationRuntimeException(
                                         "updateDmdDetForRcptCancel : Exception while updating cancel receipt, "
                                                 + "to be deducted amount " + rcptAccInfo.getCrAmount()
                                                 + " is greater than the collected amount "
@@ -585,7 +585,7 @@ public class PropertyTaxCollection extends TaxCollection {
      *
      * @param billRcptInfo
      * @return Total Cheque amount
-     * @exception EGOVRuntimeException
+     * @exception ApplicationRuntimeException
      */
 
     @Override
@@ -599,8 +599,8 @@ public class PropertyTaxCollection extends TaxCollection {
                     }
                 }
             }
-        } catch (EGOVRuntimeException e) {
-            throw new EGOVRuntimeException("Exception in calculate Total Collected Amt" + e);
+        } catch (ApplicationRuntimeException e) {
+            throw new ApplicationRuntimeException("Exception in calculate Total Collected Amt" + e);
         }
 
         return totalCollAmt;
@@ -636,14 +636,14 @@ public class PropertyTaxCollection extends TaxCollection {
                     ptModule);
             
             if (egDemandReasonMaster == null) {
-                throw new EGOVRuntimeException(" Penalty Demand reason Master is null in method  insertPenalty");
+                throw new ApplicationRuntimeException(" Penalty Demand reason Master is null in method  insertPenalty");
             }
             
             EgDemandReason egDemandReason = demandGenericDAO.getDmdReasonByDmdReasonMsterInstallAndMod(
                     egDemandReasonMaster, inst, ptModule);
             
             if (egDemandReason == null) {
-                throw new EGOVRuntimeException(" Penalty Demand reason is null in method  insertPenalty ");
+                throw new ApplicationRuntimeException(" Penalty Demand reason is null in method  insertPenalty ");
             }
             
             demandDetail = createDemandDetails(egDemandReason, BigDecimal.ZERO, penaltyAmount);
@@ -706,7 +706,7 @@ public class PropertyTaxCollection extends TaxCollection {
                     module());
 
             if (egDemandReasonMaster == null) {
-                throw new EGOVRuntimeException(
+                throw new ApplicationRuntimeException(
                         " Advance Demand reason Master is null in method  insertAdvanceCollection");
             }
 
@@ -714,7 +714,7 @@ public class PropertyTaxCollection extends TaxCollection {
                     egDemandReasonMaster, installment, module());
 
             if (egDemandReason == null) {
-                throw new EGOVRuntimeException(" Advance Demand reason is null in method  insertAdvanceCollection ");
+                throw new ApplicationRuntimeException(" Advance Demand reason is null in method  insertAdvanceCollection ");
             }
 
             demandDetail = createDemandDetails(egDemandReason, advanceCollectionAmount, BigDecimal.ZERO);

@@ -72,17 +72,17 @@ package org.egov.ptis.domain.entity.demand;
 			catch (InstantiationException e)
 			{
 				e.printStackTrace();
-				throw new EGOVRuntimeException("PTDCBBroker Unable to load the class ",  e);
+				throw new ApplicationRuntimeException("PTDCBBroker Unable to load the class ",  e);
 			} 
 			catch (IllegalAccessException e)
 			{
 				e.printStackTrace();
-				throw new EGOVRuntimeException("PTDCBBroker Unable to load the class ",  e);
+				throw new ApplicationRuntimeException("PTDCBBroker Unable to load the class ",  e);
 			}
 			catch (ClassNotFoundException e)
 			{
 				e.printStackTrace();
-				throw new EGOVRuntimeException("PTDCBBroker Unable to load the class ",  e);
+				throw new ApplicationRuntimeException("PTDCBBroker Unable to load the class ",  e);
 			} 
 	}*/
 	/*public DiscountCalculator getDiscountCalculator()

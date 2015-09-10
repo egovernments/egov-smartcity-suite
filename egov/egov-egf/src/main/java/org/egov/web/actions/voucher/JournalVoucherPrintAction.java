@@ -67,8 +67,6 @@ import org.egov.commons.Fund;
 import org.egov.commons.CGeneralLedger;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -78,6 +76,8 @@ import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.pims.commons.Position;
@@ -269,7 +269,7 @@ public class JournalVoucherPrintAction extends BaseFormAction{
 		return paramMap;
 	}
 	
-	public Map<String,Object> getAccountDetails(final Integer detailtypeid,final Integer detailkeyid,Map<String,Object> tempMap) throws EGOVException{
+	public Map<String,Object> getAccountDetails(final Integer detailtypeid,final Integer detailkeyid,Map<String,Object> tempMap) throws ApplicationException{
 		Accountdetailtype detailtype = (Accountdetailtype) getPersistenceService().find(ACCDETAILTYPEQUERY,detailtypeid);
 		tempMap.put("detailtype", detailtype.getName());
 		tempMap.put("detailtypeid", detailtype.getId());
@@ -307,7 +307,7 @@ public class JournalVoucherPrintAction extends BaseFormAction{
     	    return null;// inboxService.getPrimaryPositionForUser(state.getCreatedBy().getId(), state.getCreatedDate());
         }*/
 
-   private void loadInboxHistoryData(State states) throws EGOVRuntimeException {
+   private void loadInboxHistoryData(State states) throws ApplicationRuntimeException {
     	if (states != null) {
     	    List<StateHistory> stateHistory = states.getHistory();
     	    Collections.reverse(stateHistory);

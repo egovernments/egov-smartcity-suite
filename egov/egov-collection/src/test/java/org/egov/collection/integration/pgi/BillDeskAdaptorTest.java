@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -61,7 +61,7 @@ public class BillDeskAdaptorTest {
 		
 		try {
 			billDeskAdaptor.parsePaymentResponse(response);
-		} catch (EGOVRuntimeException e) {
+		} catch (ApplicationRuntimeException e) {
 			assertEquals(e.getMessage(),"AdditionalInfo5-OnlinePaytServiceCode.pgi.AdditionalInfo4-PaytServiceCode.transactiondate.parse.error");
 		}
 	}
@@ -76,7 +76,7 @@ public class BillDeskAdaptorTest {
 		
 		try {
 			billDeskAdaptor.parsePaymentResponse(response);
-		} catch (EGOVRuntimeException e) {
+		} catch (ApplicationRuntimeException e) {
 			assertEquals(e.getMessage(),"AdditionalInfo5-OnlinePaytServiceCode.pgi.AdditionalInfo4-PaytServiceCode.checksum.mismatch");
 		}
 	}*/

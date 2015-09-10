@@ -39,9 +39,9 @@
  */
 package org.egov.infstr.utils.seqgen;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
-public class DatabaseSequenceException extends EGOVRuntimeException {
+public class DatabaseSequenceException extends ApplicationRuntimeException {
     private static final long serialVersionUID = 1L;
     
     public DatabaseSequenceException(String string, Throwable t) {

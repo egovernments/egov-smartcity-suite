@@ -203,7 +203,7 @@ public class ChallanUploadTest {/* extends AbstractPersistenceServiceTest<Challa
 		
 		receiptHeaderService = new ReceiptHeaderService(){
 			public void startWorkflow(Collection<ReceiptHeader> receiptHeaders)
-			throws EGOVRuntimeException {
+			throws ApplicationRuntimeException {
 				
 			}
 		};
@@ -561,7 +561,7 @@ String[] inputArrayCheque = new String[21];
 	}
 	
 	//@Test
-	public void testSaveChallanReceipt() throws EGOVException, ParseException{
+	public void testSaveChallanReceipt() throws ApplicationException, ParseException{
 		initialiseInputArray();
 		
 		for (String[] inputArray : inputList) 
@@ -625,7 +625,7 @@ String[] inputArrayCheque = new String[21];
         }
 		catch (CreateException e) {
             
-			throw new EGOVRuntimeException(e.getMessage(),e);
+			throw new ApplicationRuntimeException(e.getMessage(),e);
         }
 		catch (ServiceLocatorException serviceLocatorEx) {
 			// TODO Auto-generated catch block

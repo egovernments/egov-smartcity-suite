@@ -48,7 +48,7 @@ import java.util.Locale;
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.utils.EGovConfig;
 
@@ -160,7 +160,7 @@ public class BillDeskAdaptor implements PaymentGatewayAdaptor {
         final String errorKeyPrefix = messages[20] + ".pgi." + messages[19];
         if (!isValidChecksum(response.substring(0, response.lastIndexOf('|')), messages[25])) {
             LOGGER.error("Error occured due to check sum mismatch");
-            throw new EGOVRuntimeException(errorKeyPrefix + ".checksum.mismatch");
+            throw new ApplicationRuntimeException(errorKeyPrefix + ".checksum.mismatch");
         }
 
         final PaymentResponse billDeskResponse = new DefaultPaymentResponse();
@@ -176,7 +176,7 @@ public class BillDeskAdaptor implements PaymentGatewayAdaptor {
         } catch (final ParseException e) {
             LOGGER.error("Error occured in parsing the transaction date [" + messages[13] + "]", e);
 
-            throw new EGOVRuntimeException(errorKeyPrefix + ".transactiondate.parse.error", e);
+            throw new ApplicationRuntimeException(errorKeyPrefix + ".transactiondate.parse.error", e);
         }
         billDeskResponse.setTxnDate(transactionDate);
 

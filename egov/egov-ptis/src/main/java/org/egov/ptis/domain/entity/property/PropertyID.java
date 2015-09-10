@@ -49,9 +49,9 @@ package org.egov.ptis.domain.entity.property;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infstr.ValidationError;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 
 /**
@@ -107,7 +107,7 @@ public class PropertyID extends BaseModel {
 
 	public boolean validatePropertID() {
 		if (getBasicProperty() == null) {
-			throw new EGOVRuntimeException("PropertyID.validate : BasicProperty is not set, Please Check !!");
+			throw new ApplicationRuntimeException("PropertyID.validate : BasicProperty is not set, Please Check !!");
 		}
 		return true;
 	}

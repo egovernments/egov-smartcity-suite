@@ -72,9 +72,9 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
@@ -272,7 +272,7 @@ public class DeactivatePropertyAction extends PropertyTaxBaseAction {
 			LOGGER.debug("Exit from save method");
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new EGOVRuntimeException("Exception : " + e);
+			throw new ApplicationRuntimeException("Exception : " + e);
 		}
 		return ACK;
 	}
@@ -343,7 +343,7 @@ public class DeactivatePropertyAction extends PropertyTaxBaseAction {
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new EGOVRuntimeException("Exception : " + e);
+			throw new ApplicationRuntimeException("Exception : " + e);
 		}
 		LOGGER.debug("Ack message: " + ackMessage);
 		return FORWARD_ACK;
@@ -379,7 +379,7 @@ public class DeactivatePropertyAction extends PropertyTaxBaseAction {
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new EGOVRuntimeException("Exception : " + e);
+			throw new ApplicationRuntimeException("Exception : " + e);
 		}
 		LOGGER.debug("Exit from approve");
 		return ACK;

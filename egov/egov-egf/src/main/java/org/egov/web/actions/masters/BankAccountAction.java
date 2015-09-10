@@ -57,8 +57,8 @@ import org.egov.commons.Bankbranch;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.Fund;
 import org.egov.commons.utils.BankAccountType;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.StringUtils;
@@ -92,7 +92,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
 				sendAJAXResponse(SUCCESS);
 			} catch (RuntimeException e) {
 				sendAJAXResponse("failed");
-				throw new EGOVRuntimeException("Error occurred in Bank Account.", e);
+				throw new ApplicationRuntimeException("Error occurred in Bank Account.", e);
 			}
 		} else if ("LIST_BRANCH_ACC".equals(mode)) {
 			listAllBankBranchAccounts();

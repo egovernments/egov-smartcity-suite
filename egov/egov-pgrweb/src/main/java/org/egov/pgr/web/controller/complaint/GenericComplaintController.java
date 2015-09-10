@@ -48,7 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.FileStoreUtils;
@@ -107,7 +107,7 @@ public abstract class GenericComplaintController {
                     return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(), file.getContentType(),
                             PGRConstants.MODULE_NAME);
                 } catch (final Exception e) {
-                    throw new EGOVRuntimeException("err.input.stream", e);
+                    throw new ApplicationRuntimeException("err.input.stream", e);
                 }
             }).collect(Collectors.toSet());
         else

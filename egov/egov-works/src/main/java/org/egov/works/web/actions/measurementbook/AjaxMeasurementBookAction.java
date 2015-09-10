@@ -51,9 +51,9 @@ import javax.script.ScriptContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Assignment;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
@@ -131,7 +131,7 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
         try {
             assignment = employeeService.getLatestAssignmentForEmployee(empID);
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("user.find.error", e);
+            throw new ApplicationRuntimeException("user.find.error", e);
         }
         return DESIGN_FOR_EMP;
     }
@@ -146,7 +146,7 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
                 usersInExecutingDepartment = personalInformationService.getListOfEmployeeViewBasedOnCriteria(
                         criteriaParams, -1, -1);
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("user.find.error", e);
+            throw new ApplicationRuntimeException("user.find.error", e);
         }
         logger.info(
                 "Success ajax call to 'usersInExecutingDepartment' ----------------------------------------------------------");
@@ -167,7 +167,7 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
                             criteriaParams, -1, -1);
             }
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("workorder.find.error", e);
+            throw new ApplicationRuntimeException("workorder.find.error", e);
         }
         logger.info("Success ajax call to 'workOrderDetails' ----------------------------------------------------------");
         return WORK_ORDER_DETAILS;
@@ -207,7 +207,7 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
             if (revWorkOrderActivity != null)
                 activityRemarks = CHANGE_QUANTITY;
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("activity.find.error", e);
+            throw new ApplicationRuntimeException("activity.find.error", e);
         }
 
         return ACTIVITY_DETAILS;

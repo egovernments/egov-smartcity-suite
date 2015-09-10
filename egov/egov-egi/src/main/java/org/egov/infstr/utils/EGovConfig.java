@@ -46,7 +46,7 @@ import java.util.Properties;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,13 +83,13 @@ public final class EGovConfig {
 				return configuration;
 			} catch (final ConfigurationException cex) {
 				LOGGER.error("Error occurred in initializeClassVariable", cex);
-				throw new EGOVRuntimeException("Exception in initializeClassVariable", cex);
+				throw new ApplicationRuntimeException("Exception in initializeClassVariable", cex);
 			} catch (final Exception exp) {
 				LOGGER.error("Error occurred in initializeClassVariable", exp);
-				throw new EGOVRuntimeException("Exception in initializeClassVariable", exp);
+				throw new ApplicationRuntimeException("Exception in initializeClassVariable", exp);
 			} catch (final Error exp) {
 				LOGGER.error("Error occurred in initializeClassVariable", exp);
-				throw new EGOVRuntimeException("Exception in initializeClassVariable", exp);
+				throw new ApplicationRuntimeException("Exception in initializeClassVariable", exp);
 			}
 		}
 
@@ -131,7 +131,7 @@ public final class EGovConfig {
 			return output == null ? defaultValue : output;
 		} catch (final Exception exp) {
 			LOGGER.error("Error occurred in while getting property from given xml file", exp);
-			throw new EGOVRuntimeException("Error occurred in while getting property from given xml file", exp);
+			throw new ApplicationRuntimeException("Error occurred in while getting property from given xml file", exp);
 		}
 
 	}

@@ -46,7 +46,7 @@ import java.util.List;
 import javax.validation.constraints.Min;
 
 import org.egov.commons.Fundsource;
-import org.egov.infstr.ValidationError;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 
 public class FinancingSource extends BaseModel {

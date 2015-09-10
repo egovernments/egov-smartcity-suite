@@ -49,9 +49,9 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.service.CommonsService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -241,7 +241,7 @@ public class MilestoneAction extends BaseFormAction {
             final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
             final boolean isValidUser = worksService.validateWorkflowForUser(milestone, user);
             if (isValidUser)
-                throw new EGOVRuntimeException("Error: Invalid Owner - No permission to view this page.");
+                throw new ApplicationRuntimeException("Error: Invalid Owner - No permission to view this page.");
         } else if (StringUtils.isEmpty(sourcepage))
             sourcepage = "search";
 

@@ -58,9 +58,9 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFiscalPeriod;
-import org.egov.exceptions.EGOVException;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
@@ -796,7 +796,7 @@ public class EGovernCommon extends AbstractTask{
 				rs = pst.list();
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("Query:::"+sql);
 				for(Object[] element : rs){
-					throw new EGOVException("Error: duplicate Cheque number");
+					throw new ApplicationException("Error: duplicate Cheque number");
 				}
 				if(rs == null || rs.size() == 0) {
 					isUnique = true;
@@ -1913,7 +1913,7 @@ public BigDecimal getAccountBalance(String recDate,String bankAccountId) throws 
 					if((count<noChqs) || (availChqNo>Integer.parseInt(toCheqeNo)))
 					{ 
 						//datacol.addValue("success",false); datacol.addMessage("eGovFailure","Sufficient no.of cheques are not available"); 
-						throw new EGOVException("Sufficient no.of cheques are not available for this account");
+						throw new ApplicationException("Sufficient no.of cheques are not available for this account");
 					}
 				}
 			}

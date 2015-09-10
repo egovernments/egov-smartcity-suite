@@ -44,7 +44,7 @@ import java.io.Serializable;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.model.StatusMaster;
 import org.hibernate.Query;
@@ -76,7 +76,7 @@ public class StatusMasterDAO implements Serializable
 		catch (Exception e)
 		{
 			
-			throw new EGOVRuntimeException(STR_HIB_EXP+e.getMessage(),e);
+			throw new ApplicationRuntimeException(STR_HIB_EXP+e.getMessage(),e);
 		}
 
 	}
@@ -90,7 +90,7 @@ public class StatusMasterDAO implements Serializable
 		catch (Exception e)
 		{
 			
-			throw new EGOVRuntimeException(STR_HIB_EXP+e.getMessage(),e);
+			throw new ApplicationRuntimeException(STR_HIB_EXP+e.getMessage(),e);
 		}
 
 	}
@@ -107,7 +107,7 @@ public class StatusMasterDAO implements Serializable
 		catch (Exception e)
 		{
 			
-			throw new EGOVRuntimeException(STR_HIB_EXP+e.getMessage(),e);
+			throw new ApplicationRuntimeException(STR_HIB_EXP+e.getMessage(),e);
 		}
 
 	}
@@ -124,7 +124,7 @@ public class StatusMasterDAO implements Serializable
 		catch (Exception e)
 		{
 				
-			throw new EGOVRuntimeException(STR_HIB_EXP+e.getMessage(),e);
+			throw new ApplicationRuntimeException(STR_HIB_EXP+e.getMessage(),e);
 		}
 
 
@@ -140,7 +140,7 @@ public class StatusMasterDAO implements Serializable
 			}
 			catch (Exception e)
 			{
-					throw new EGOVRuntimeException(STR_HIB_EXP+e.getMessage(),e);
+					throw new ApplicationRuntimeException(STR_HIB_EXP+e.getMessage(),e);
 			}
 
 

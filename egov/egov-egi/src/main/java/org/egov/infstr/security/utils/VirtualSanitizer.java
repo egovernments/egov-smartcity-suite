@@ -41,7 +41,7 @@ package org.egov.infstr.security.utils;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
@@ -79,12 +79,12 @@ public final class VirtualSanitizer {
 			final CleanResults cr = getAntiSamy().scan(input, policy);
 			if (cr.getErrorMessages().size() > 0) {
 				LOG.error(cr.getErrorMessages().toString());
-				throw new EGOVRuntimeException("Found security threat in user input : " + cr.getErrorMessages());
+				throw new ApplicationRuntimeException("Found security threat in user input : " + cr.getErrorMessages());
 			}
 			return input;
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
-			throw new EGOVRuntimeException("Error occurred while validating inputs", e);
+			throw new ApplicationRuntimeException("Error occurred while validating inputs", e);
 		}
 
 	}

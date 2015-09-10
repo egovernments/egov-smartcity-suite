@@ -49,14 +49,14 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.model.budget.Budget;
@@ -93,7 +93,7 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 		return (User) ((PersistenceService)this).find(" from User where id=?",EgovThreadLocals.getUserId());
 	}
 	
-	public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException
+	public Position getPositionForEmployee(Employee emp)throws ApplicationRuntimeException
 	{   
 		return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
 	}
@@ -103,22 +103,22 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 	 * will work for only leaf budget not for non leaf budgets
 	 * @param budget
 	 * @return Department
-	 * @throws EGOVRuntimeException
+	 * @throws ApplicationRuntimeException
 	 */
-	public Department getDepartmentForBudget(Budget budget)throws EGOVRuntimeException
+	public Department getDepartmentForBudget(Budget budget)throws ApplicationRuntimeException
 	{
 		
 		Department dept=null;
 		List<BudgetDetail> detailList = (List<BudgetDetail>) (((PersistenceService)this).findAllBy("from  BudgetDetail budgetDetail where budgetDetail.budget=?",budget));
 		if(detailList.isEmpty() || detailList.size()==0)
 		{
-			throw new EGOVRuntimeException("Details not found for the Budget"+budget.getName());
+			throw new ApplicationRuntimeException("Details not found for the Budget"+budget.getName());
 		}
 		else
 		{
 			if(detailList.get(0).getExecutingDepartment()==null)
 			{
-				throw new EGOVRuntimeException("Department not found for the Budget"+budget.getName());
+				throw new ApplicationRuntimeException("Department not found for the Budget"+budget.getName());
 			}
 			else
 			{
@@ -142,10 +142,10 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 			return (Department)dept;
 		}catch(NullPointerException ne)
 		{
-			throw new EGOVRuntimeException(ne.getMessage());
+			throw new ApplicationRuntimeException(ne.getMessage());
 		}
 		catch (Exception e) {
-			throw new EGOVRuntimeException("Error while getting Department fort the employee"+emp.getName());
+			throw new ApplicationRuntimeException("Error while getting Department fort the employee"+emp.getName());
 		}
 	}
 	
@@ -314,7 +314,7 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 	}
 	
 	
-	public String getEmployeeNameAndDesignationForPosition(Position pos)throws EGOVRuntimeException{
+	public String getEmployeeNameAndDesignationForPosition(Position pos)throws ApplicationRuntimeException{
 		Employee pi =eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());
 		Assignment assignment = eisCommonService.getLatestAssignmentForEmployee(pi.getId());
 		return pi.getName()+" ("+assignment.getDesignation().getName()+")";

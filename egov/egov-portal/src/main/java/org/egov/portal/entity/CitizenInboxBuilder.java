@@ -41,9 +41,9 @@ package org.egov.portal.entity;
 
 import java.util.Date;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.portal.entity.enums.MessageType;
 import org.egov.portal.entity.enums.Priority;
@@ -94,30 +94,30 @@ public class CitizenInboxBuilder {
 		return this;
 	}
 
-	public CitizenInbox build() throws EGOVRuntimeException {
+	public CitizenInbox build() throws ApplicationRuntimeException {
 		validate();
 		citizenInbox.setRead(false);
 		return citizenInbox;
 	}
 
-	private void validate() throws EGOVRuntimeException {
+	private void validate() throws ApplicationRuntimeException {
 		if (citizenInbox.getMessageType() == null) {
-			throw new EGOVRuntimeException("Message Type is mandatory");
+			throw new ApplicationRuntimeException("Message Type is mandatory");
 		}
 		if (citizenInbox.getHeaderMessage() == null) {
-			throw new EGOVRuntimeException("Header Message is mandatory");
+			throw new ApplicationRuntimeException("Header Message is mandatory");
 		}
 		if (citizenInbox.getDetailedMessage() == null) {
-			throw new EGOVRuntimeException("Detailed Message is mandatory");
+			throw new ApplicationRuntimeException("Detailed Message is mandatory");
 		}
 		if (citizenInbox.getMessageDate() == null) {
-			throw new EGOVRuntimeException("Message Date is mandatory");
+			throw new ApplicationRuntimeException("Message Date is mandatory");
 		}
 		if (citizenInbox.getAssignedToCitizen() == null) {
-			throw new EGOVRuntimeException("Assigned To Citizen is mandatory");
+			throw new ApplicationRuntimeException("Assigned To Citizen is mandatory");
 		}
 		if (citizenInbox.getPriority() == null) {
-			throw new EGOVRuntimeException("Priority is mandatory");
+			throw new ApplicationRuntimeException("Priority is mandatory");
 		}
 	}
 

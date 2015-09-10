@@ -43,8 +43,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * This class represents an Installment. Every installment has an year, it should start from the current financial year, and it is
@@ -187,19 +187,19 @@ public class Installment implements Serializable, Comparable<Installment> {
 
     public boolean validate() {
         if (fromDate == null || toDate == null)
-            throw new EGOVRuntimeException("From Date or To Date is null in installemnt.");
+            throw new ApplicationRuntimeException("From Date or To Date is null in installemnt.");
 
         if (fromDate.compareTo(toDate) >= 0)
-            throw new EGOVRuntimeException("From Date greater than or equal to 'ToDate' in installemnt.");
+            throw new ApplicationRuntimeException("From Date greater than or equal to 'ToDate' in installemnt.");
 
         if (module == null)
-            throw new EGOVRuntimeException("Module not specified in installemnt.");
+            throw new ApplicationRuntimeException("Module not specified in installemnt.");
 
         if (installmentYear == null)
-            throw new EGOVRuntimeException("Installment year not specified in installemnt.");
+            throw new ApplicationRuntimeException("Installment year not specified in installemnt.");
 
         if (installmentNumber == 0)
-            throw new EGOVRuntimeException("Installment Number cannot be zero in a installemnt.");
+            throw new ApplicationRuntimeException("Installment Number cannot be zero in a installemnt.");
 
         return true;
     }

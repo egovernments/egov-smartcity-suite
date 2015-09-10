@@ -46,12 +46,12 @@ import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CGeneralLedgerDetail;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.utils.EntityType;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
@@ -77,7 +77,7 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
     private AppConfigValueService appConfigValuesService;
 
     public List<CVoucherHeader> getVoucherList(final CVoucherHeader voucherHeader,
-            final Map<String, Object> searchFilterMap) throws EGOVException, ParseException {
+            final Map<String, Object> searchFilterMap) throws ApplicationException, ParseException {
 
         StringBuffer sql = new StringBuffer(500);
         sql.append(" and vh.type='Journal Voucher' ");
@@ -213,8 +213,8 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
      * =HibernateUtil.getCurrentSession().createQuery("delete from VoucherDetail where voucherHeaderId.id=:vhid");
      * qry.setLong("vhid", Long.parseLong(voucherHeaderId.toString())); qry.executeUpdate(); } catch (HibernateException e) {
      * throw new HibernateException("exception in voucherHibDao while deleting from voucher detail"+e); }catch
-     * (EGOVRuntimeException e) { throw new
-     * EGOVRuntimeException("exception in voucherHibDao while deleting from voucher detail"+e); } }
+     * (ApplicationRuntimeException e) { throw new
+     * ApplicationRuntimeException("exception in voucherHibDao while deleting from voucher detail"+e); } }
      */
     @Transactional
     @SuppressWarnings("unchecked")
@@ -251,8 +251,8 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
 
         } catch (HibernateException e) {
             throw new HibernateException("exception in voucherHibDao while deleting from general ledger" + e);
-        } catch (EGOVRuntimeException e) {
-            throw new EGOVRuntimeException("exception in voucherHibDao while deleting from general ledger" + e);
+        } catch (ApplicationRuntimeException e) {
+            throw new ApplicationRuntimeException("exception in voucherHibDao while deleting from general ledger" + e);
         }
 
     }

@@ -45,8 +45,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.exceptions.NoSuchObjectException;
-import org.egov.exceptions.TooManyValuesException;
+import org.egov.infra.exception.NoSuchObjectException;
+import org.egov.infra.exception.TooManyValuesException;
 import org.egov.pims.model.PersonalInformation;
 
 

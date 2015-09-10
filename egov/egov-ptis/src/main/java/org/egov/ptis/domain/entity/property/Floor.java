@@ -50,7 +50,7 @@ import java.util.Date;
 
 import org.egov.commons.Area;
 import org.egov.demand.model.DepreciationMaster;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infstr.models.BaseModel;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
@@ -351,7 +351,7 @@ public class Floor extends BaseModel implements Auditable {
 
 	public boolean validateFloor() {
 		if (getFloorNo() == null)
-			throw new EGOVRuntimeException("In Floor Validate : FloorNumber is Not Set, Please Check !!");
+			throw new ApplicationRuntimeException("In Floor Validate : FloorNumber is Not Set, Please Check !!");
 
 		return true;
 	}

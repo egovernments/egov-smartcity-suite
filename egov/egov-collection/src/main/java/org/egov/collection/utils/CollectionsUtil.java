@@ -62,8 +62,6 @@ import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
@@ -74,9 +72,11 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infstr.ValidationError;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
@@ -231,13 +231,13 @@ public class CollectionsUtil {
             location = (Location) HibernateUtil.getCurrentSession().createQuery("from Location where id = 2").list()
                     .get(0);
             if (location == null)
-                throw new EGOVRuntimeException("Unable to fetch the location of the logged in user ["
+                throw new ApplicationRuntimeException("Unable to fetch the location of the logged in user ["
                         + (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME) + "]");
         } catch (final Exception exp) {
             final String errorMsg = "Unable to fetch the location of the logged in user ["
                     + (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME) + "]";
             LOGGER.error(errorMsg, exp);
-            throw new EGOVRuntimeException(errorMsg, exp);
+            throw new ApplicationRuntimeException(errorMsg, exp);
         }
         return location;
     }
@@ -469,7 +469,7 @@ public class CollectionsUtil {
         } catch (final BeansException e) {
             final String errorMsg = "Could not locate bean [" + beanName + "]";
             LOGGER.error(errorMsg, e);
-            throw new EGOVRuntimeException(errorMsg, e);
+            throw new ApplicationRuntimeException(errorMsg, e);
         }
         return bean;
     }
@@ -568,7 +568,7 @@ public class CollectionsUtil {
         } catch (final Exception e) {
             final String errorMsg = "Could not get PersonalInformation";
             LOGGER.error("Could not get PersonalInformation", e);
-            throw new EGOVRuntimeException(errorMsg, e);
+            throw new ApplicationRuntimeException(errorMsg, e);
         }
         return personalInformation;
     }

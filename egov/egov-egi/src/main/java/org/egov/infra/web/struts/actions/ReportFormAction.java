@@ -42,7 +42,7 @@ package org.egov.infra.web.struts.actions;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -197,7 +197,7 @@ public abstract class ReportFormAction extends BaseFormAction {
 		if (this.dataSourceType == ReportDataSourceType.JAVABEAN) {
 			// Array/Collection of objects
 			if (this.reportData == null) {
-				throw new EGOVRuntimeException("Report Data not set!");
+				throw new ApplicationRuntimeException("Report Data not set!");
 			}
 			reportInput = new ReportRequest(reportTemplateName, this.reportData, this.reportParams);
 		} else {

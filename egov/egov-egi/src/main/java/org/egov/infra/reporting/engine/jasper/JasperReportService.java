@@ -74,7 +74,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.AbstractReportService;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -160,7 +160,7 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
 			break;
 
 		default:
-			throw new EGOVRuntimeException("Invalid report format [" + reportInput.getReportFormat() + "]");
+			throw new ApplicationRuntimeException("Invalid report format [" + reportInput.getReportFormat() + "]");
 		}
 
 		// Set common exporter parameters
@@ -187,7 +187,7 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
 		} catch (final Exception e) {
 			final String errMessage = "Exception in report creation!";
 			LOGGER.error(errMessage, e);
-			throw new EGOVRuntimeException(errMessage, e);
+			throw new ApplicationRuntimeException(errMessage, e);
 		}
 	}
 
@@ -206,7 +206,7 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
 		} catch (final Exception e) {
 			final String errMessage = "Exception in report creation!";
 			LOGGER.error(errMessage, e);
-			throw new EGOVRuntimeException(errMessage, e);
+			throw new ApplicationRuntimeException(errMessage, e);
 		}
 	}
 
@@ -230,7 +230,7 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
 		} catch (final Exception e) {
 			final String errMsg = "Exception in export report!";
 			LOGGER.error(errMsg, e);
-			throw new EGOVRuntimeException(errMsg, e);
+			throw new ApplicationRuntimeException(errMsg, e);
 		}
 	}
 
@@ -279,7 +279,7 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
 		} catch (final Exception e) {
 			final String errMessage = "Exception in report creation!";
 			LOGGER.error(errMessage, e);
-			throw new EGOVRuntimeException(errMessage, e);
+			throw new ApplicationRuntimeException(errMessage, e);
 		}
 	}
 
@@ -294,7 +294,7 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
 		} catch (final JRException e) {
 			final String errMsg = "Exception while loading jasperreport template from inpust stream!";
 			LOGGER.error(errMsg, e);
-			throw new EGOVRuntimeException(errMsg, e);
+			throw new ApplicationRuntimeException(errMsg, e);
 		}
 	}
 }

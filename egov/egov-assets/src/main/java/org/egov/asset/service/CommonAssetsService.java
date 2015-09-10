@@ -53,14 +53,14 @@ import org.egov.asset.model.AssetCategory;
 import org.egov.asset.model.ModeOfAcquisition;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.utils.EgovPaginatedList;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.security.utils.SecurityUtils;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
@@ -120,7 +120,7 @@ public class CommonAssetsService {
             assetCategory = assetCategoryService.findById(categoryId, false);
         } catch (final HibernateException he) {
             LOGGER.error("Error while getting AssetCategoryById.");
-            throw new EGOVRuntimeException("Hibernate Exception : getting AssetCategoryById." + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Hibernate Exception : getting AssetCategoryById." + he.getMessage(), he);
         }
 
         return assetCategory;
@@ -138,7 +138,7 @@ public class CommonAssetsService {
             assetCategoryList = assetCategoryService.findAll("name");
         } catch (final HibernateException he) {
             LOGGER.error("Error while getting AllAssetCategoryList.");
-            throw new EGOVRuntimeException("Hibernate Exception : getting AllAssetCategoryList." + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Hibernate Exception : getting AllAssetCategoryList." + he.getMessage(), he);
         }
 
         return assetCategoryList;
@@ -157,7 +157,7 @@ public class CommonAssetsService {
             asset = assetService.findById(assetId, false);
         } catch (final HibernateException he) {
             LOGGER.error("Error while getting AssetById.");
-            throw new EGOVRuntimeException("Hibernate Exception : getting AssetById." + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Hibernate Exception : getting AssetById." + he.getMessage(), he);
         }
 
         return asset;
@@ -176,7 +176,7 @@ public class CommonAssetsService {
             asset = assetService.getAssetByCode(code);
         } catch (final HibernateException he) {
             LOGGER.error("Error while getting AssetByCode.");
-            throw new EGOVRuntimeException("Hibernate Exception : getting AssetByCode." + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Hibernate Exception : getting AssetByCode." + he.getMessage(), he);
         }
 
         return asset;
@@ -195,7 +195,7 @@ public class CommonAssetsService {
             assetList = assetService.getAssetsByCategoryId(categoryId);
         } catch (final HibernateException he) {
             LOGGER.error("Error while getting AssetsByCategoryId.");
-            throw new EGOVRuntimeException("Hibernate Exception : getting AssetsByCategoryId." + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Hibernate Exception : getting AssetsByCategoryId." + he.getMessage(), he);
         }
 
         return assetList;
@@ -214,7 +214,7 @@ public class CommonAssetsService {
             assetCategory = assetCategoryService.getAssetCategoryByCode(code);
         } catch (final HibernateException he) {
             LOGGER.error("Error while getting AssetCategoryByCode.");
-            throw new EGOVRuntimeException("Hibernate Exception : getting AssetCategoryByCode." + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Hibernate Exception : getting AssetCategoryByCode." + he.getMessage(), he);
         }
 
         return assetCategory;
@@ -232,7 +232,7 @@ public class CommonAssetsService {
             assetList = assetService.findAll("code");
         } catch (final HibernateException he) {
             LOGGER.error("Error while getting AllAssetList.");
-            throw new EGOVRuntimeException("Hibernate Exception : getting AllAssetList." + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Hibernate Exception : getting AllAssetList." + he.getMessage(), he);
         }
 
         return assetList;
@@ -374,7 +374,7 @@ public class CommonAssetsService {
 
         } catch (final HibernateException he) {
             LOGGER.error("Error while creating Asset through API.");
-            throw new EGOVRuntimeException("Hibernate Exception : in createAsset." + he.getMessage(), he);
+            throw new ApplicationRuntimeException("Hibernate Exception : in createAsset." + he.getMessage(), he);
         }
 
         return asset;

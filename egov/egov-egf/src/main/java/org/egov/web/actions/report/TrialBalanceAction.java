@@ -67,11 +67,11 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
@@ -201,7 +201,7 @@ public class TrialBalanceAction extends BaseFormAction {
 				removeEntrysWithZeroAmount = appConfigVal.getValue();
 					 }
 			} catch (Exception e) {
-				 throw new EGOVRuntimeException("Appconfig value for remove entries with zero amount in report is not defined in the system");
+				 throw new ApplicationRuntimeException("Appconfig value for remove entries with zero amount in report is not defined in the system");
 			}
 		if(rb.getReportType().equalsIgnoreCase("daterange"))
 		{
@@ -283,7 +283,7 @@ public class TrialBalanceAction extends BaseFormAction {
 		}
 		else
 		{
-			throw new EGOVRuntimeException("Exlcude statusses not  are not defined for Reports");
+			throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
 		}
 		String query=" SELECT gl.glcode AS \"accCode\" ,coa.name AS \"accName\" ,vh.fundid AS \"fundId\",(SUM(debitamount)+SUM((SELECT DECODE(SUM(OPENINGDEBITBALANCE),NULL,0,SUM(OPENINGDEBITBALANCE)) FROM transactionsummary WHERE"
 					+" financialyearid=(SELECT id FROM financialyear WHERE startingdate<=:toDate AND endingdate>=:toDate)"
@@ -561,7 +561,7 @@ public class TrialBalanceAction extends BaseFormAction {
 	}
 	else
 	{
-		throw new EGOVRuntimeException("Exlcude statusses not  are not defined for Reports");
+		throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
 	}
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("get Opening balance for all account codes");
 	//get Opening balance for all account codes

@@ -42,7 +42,7 @@ package org.egov.infra.script.service;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.cache.LRUCache;
 import org.springframework.stereotype.Component;
 
@@ -83,7 +83,7 @@ public class ScriptEngineProvider {
             engine = m.getEngineByName(scriptType);
             if (engine == null)
                 // Engine could not be created. throw exception
-                throw new EGOVRuntimeException("Could not get script engine for [" + scriptType + "]");
+                throw new ApplicationRuntimeException("Could not get script engine for [" + scriptType + "]");
             SCRIPT_ENGINE_CACHE.put(scriptType, engine);
         }
 

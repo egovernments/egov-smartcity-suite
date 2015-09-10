@@ -72,8 +72,6 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -82,9 +80,11 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBillregister;
@@ -431,8 +431,8 @@ public class EgovCommon {
          * @return IMPORTANT - IF THERE ARE NO INSTRUMENTS ASSOCIATED WITH VOUCHERS FOR SUBLEDGER THEN NULL IS RETURNED
          *                 List<Map> is returned since there can be multiple instruments associated
          *                 Note - The keys for the map are type, number, date, amount
-         * @throws EGOVRuntimeException  accountdetailType or accountdetailkey parameter is null
-         *                 EGOVRuntimeException  if any other exception
+         * @throws ApplicationRuntimeException  accountdetailType or accountdetailkey parameter is null
+         *                 ApplicationRuntimeException  if any other exception
          * @author julian.prabhakar
          */
         @SuppressWarnings("unchecked")
@@ -440,9 +440,9 @@ public class EgovCommon {
         {
                 StringBuffer query = new StringBuffer(500);
                 if(accountdetailType==null )
-                        throw new EGOVRuntimeException("AccountDetailType cannot be null");
+                        throw new ApplicationRuntimeException("AccountDetailType cannot be null");
                 if( accountdetailKey==null )
-                        throw new EGOVRuntimeException("AccountDetailKey cannot be null");
+                        throw new ApplicationRuntimeException("AccountDetailKey cannot be null");
                 if(voucherToDate==null)
                         voucherToDate = new Date();
                 List<Map<String, Object>> resultList = null;
@@ -483,7 +483,7 @@ public class EgovCommon {
                         }
                 } catch (Exception e) {
                         LOGGER.error("Exception occured while getting Instrument details-"+ e.getMessage(), e);
-                        throw new EGOVRuntimeException("Exception occured while getting Instrument details-"+ e.getMessage());
+                        throw new ApplicationRuntimeException("Exception occured while getting Instrument details-"+ e.getMessage());
                 }
 
                 return ((resultList==null||resultList.isEmpty())?null:resultList);
@@ -536,27 +536,27 @@ public class EgovCommon {
          *
          * @return BigDecimal value, if there are no voucher created  for the  zero is returned
          *
-         * @throws EGOVRuntimeException glcode, subledger or accountdetailkey  or ToDate parameter is null
-         *                  EGOVRuntimeException  if chartofaccounts or accountdetailkey doesnot exist in system
+         * @throws ApplicationRuntimeException glcode, subledger or accountdetailkey  or ToDate parameter is null
+         *                  ApplicationRuntimeException  if chartofaccounts or accountdetailkey doesnot exist in system
          * @author shamili.gupta
          */
 
 
         public BigDecimal getSumOfBillAmount(String glcode,String subledgerType ,Long accountdetailkeyId,Date toBillDate)
-                        throws EGOVRuntimeException,ValidationException{
+                        throws ApplicationRuntimeException,ValidationException{
                 StringBuffer query = new StringBuffer(500);
                 Session session =HibernateUtil.getCurrentSession();
                 BigDecimal passedAmount=BigDecimal.ZERO;
 
                 if(LOGGER.isDebugEnabled())     LOGGER.debug(" Inside getSumOfBillCreated -Glcode :"+glcode+" subledgerType: "+subledgerType+" accountdetailkeyId: "+accountdetailkeyId+" toBillDate: "+toBillDate);
                 if(glcode==null )
-                        throw new EGOVRuntimeException("Glcode cannot be null");
+                        throw new ApplicationRuntimeException("Glcode cannot be null");
                 if( subledgerType==null )
-                        throw new EGOVRuntimeException("SubledgerType cannot be null");
+                        throw new ApplicationRuntimeException("SubledgerType cannot be null");
                 if( accountdetailkeyId==null )
-                        throw new EGOVRuntimeException("AccountdetailkeyId cannot be null");
+                        throw new ApplicationRuntimeException("AccountdetailkeyId cannot be null");
                 if(toBillDate==null)
-                        throw new EGOVRuntimeException("To Date cannot be null");
+                        throw new ApplicationRuntimeException("To Date cannot be null");
 
                  Query qry = session.createQuery("from CChartOfAccounts c where c.glcode=:glcode and c.classification=4 ");
                  qry.setString("glcode",glcode);
@@ -752,7 +752,7 @@ public class EgovCommon {
         }
 
         public EntityType getEntityType(Accountdetailtype accountdetailtype,
-                        Serializable detailkey) throws EGOVException {
+                        Serializable detailkey) throws ApplicationException {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("EgovCommon | getEntityType| Start");
                 EntityType entity = null;
                 try {
@@ -769,10 +769,10 @@ public class EgovCommon {
 
                 } catch (ClassCastException e) {
                         LOGGER.error(e);
-                        throw new EGOVException(e.getMessage());
+                        throw new ApplicationException(e.getMessage());
                 } catch (Exception e) {
                         LOGGER.error("Exception to get EntityType=" + e.getMessage(), e);
-                        throw new EGOVException(e.getMessage());
+                        throw new ApplicationException(e.getMessage());
                 }
                 return entity;
         }
@@ -842,7 +842,7 @@ public class EgovCommon {
                         } catch (Exception e) {
                                 LOGGER.error("Exception occuerd while getting  "
                                                 + e.getMessage(), e);
-                                throw new EGOVRuntimeException(e.getMessage());
+                                throw new ApplicationRuntimeException(e.getMessage());
                         }
 
                 } else {
@@ -1990,14 +1990,14 @@ public class EgovCommon {
 
         /**
          * return the AccountCodePurpose object if name matches else returns null
-         * throws EGOVRuntimeException if name is null or empty
+         * throws ApplicationRuntimeException if name is null or empty
          *
          * @param name
          * @return AccountCodePurpose
          */
         public AccountCodePurpose getAccountCodePurposeByName(String name) {
                 if (name == null || name.isEmpty())
-                        throw new EGOVRuntimeException("Name is Null Or Empty");
+                        throw new ApplicationRuntimeException("Name is Null Or Empty");
 
                 return (AccountCodePurpose) persistenceService.find(
                                 "from AccountCodePurpose where upper(name)=upper(?)", name);
@@ -2016,15 +2016,15 @@ public class EgovCommon {
          *            (including asOnDate)
          * @return -A Map containing the total count and total amount. keys are
          *         'count' , 'amount'
-         * @throws EGOVException
+         * @throws ApplicationException
          *             - If anyone of the parameters is null or the ProjectCode ids
          *             list passed is empty. - If any id passed is wrong.
          */
-        public Map<String, BigDecimal> getPaymentInfoforProjectCode(List<Long> projectCodeIdList, Date asOnDate) throws EGOVException {
+        public Map<String, BigDecimal> getPaymentInfoforProjectCode(List<Long> projectCodeIdList, Date asOnDate) throws ApplicationException {
                 if (projectCodeIdList == null || projectCodeIdList.size() == 0)
-                        throw new EGOVException("ProjectCode Id list is null or empty");
+                        throw new ApplicationException("ProjectCode Id list is null or empty");
                 if (asOnDate == null)
-                        throw new EGOVException("asOnDate is null");
+                        throw new ApplicationException("asOnDate is null");
                 String strAsOnDate = Constants.DDMMYYYYFORMAT1.format(asOnDate);
                 Map<String, BigDecimal> result = new HashMap<String, BigDecimal>();
                 List<String> commaSeperatedEntitiesList = new ArrayList<String>();
@@ -2078,7 +2078,7 @@ public class EgovCommon {
                         }
                 }
                 if (incorrectEntityIds.size() != 0)
-                        throw new EGOVException("Incorrect detail key Ids - "+ incorrectEntityIds);
+                        throw new ApplicationException("Incorrect detail key Ids - "+ incorrectEntityIds);
                 if(LOGGER.isDebugEnabled())     LOGGER.debug(" Validation Succeded ");
                 String qryForExpense = "";
                 String qryForNonExpense = "";
@@ -2127,12 +2127,12 @@ public class EgovCommon {
          * @param entityList
          *            - Integer list containing ProjectCode ids.
          * @return - Map of total amount of approved payments and count made for all the bills made against the project codes send.
-         * @throws EGOVException
+         * @throws ApplicationException
          *             - If anyone of the parameters is null or the ProjectCode list passed is empty. 
          */
-        public  Map<String, BigDecimal> getTotalPaymentforProjectCode(List<Long> projectCodeIdList) throws EGOVException {
+        public  Map<String, BigDecimal> getTotalPaymentforProjectCode(List<Long> projectCodeIdList) throws ApplicationException {
                 if (projectCodeIdList == null || projectCodeIdList.size() == 0)
-                        throw new EGOVException("ProjectCode Id list is null or empty");
+                        throw new ApplicationException("ProjectCode Id list is null or empty");
                 if(LOGGER.isDebugEnabled())     LOGGER.debug(" Size of entityIdList-" + projectCodeIdList.size());
                 
                 Map<String, BigDecimal> result = new HashMap<String, BigDecimal>();
@@ -2207,15 +2207,15 @@ public class EgovCommon {
          *            (including asOnDate)
          * @return -A Map containing the total count and total amount department wise. keys are
          *         'count' , 'amount', 'department'
-         * @throws EGOVException
+         * @throws ApplicationException
          *             - If anyone of the parameters is null or the ProjectCode ids
          *             list passed is empty. - If any id passed is wrong.
          */
-        public Map<String, String> getPaymentInfoforProjectCodeByDepartment(List<Long> projectCodeIdList, Date asOnDate) throws EGOVException {
+        public Map<String, String> getPaymentInfoforProjectCodeByDepartment(List<Long> projectCodeIdList, Date asOnDate) throws ApplicationException {
                 if (projectCodeIdList == null || projectCodeIdList.size() == 0)
-                        throw new EGOVException("ProjectCode Id list is null or empty");
+                        throw new ApplicationException("ProjectCode Id list is null or empty");
                 if (asOnDate == null)
-                        throw new EGOVException("asOnDate is null");
+                        throw new ApplicationException("asOnDate is null");
                 String strAsOnDate = Constants.DDMMYYYYFORMAT1.format(asOnDate);
                 Map<String, String> result = new HashMap<String, String>();
                 
@@ -2276,7 +2276,7 @@ public class EgovCommon {
                         }
                 
                 if (incorrectEntityIds.size() != 0)
-                        throw new EGOVException("Incorrect detail key Ids - "+ incorrectEntityIds);
+                        throw new ApplicationException("Incorrect detail key Ids - "+ incorrectEntityIds);
                 if(LOGGER.isDebugEnabled())     LOGGER.debug(" Validation Succeded in method..");*/
                 String qryForExpense = "";
                 String qryForNonExpense = "";
@@ -2335,19 +2335,19 @@ public class EgovCommon {
          * @param billId
          *            - this is the EgBillregister id.
          * @return - 0 is returned if no payments are made for the bill.
-         * @throws EGOVException
+         * @throws ApplicationException
          *             - If parameter passed is null. - billId passed is incorrect.
          *             - Bill is cancelled.
          */
-        public BigDecimal getPaymentAmount(Long billId) throws EGOVException {
+        public BigDecimal getPaymentAmount(Long billId) throws ApplicationException {
                 if (billId == null)
-                        throw new EGOVException("Parameter passed is null.");
+                        throw new ApplicationException("Parameter passed is null.");
                 EgBillregister billRegister = (EgBillregister) HibernateUtil.getCurrentSession().load(EgBillregister.class, billId);
                 if (billRegister == null)
-                        throw new EGOVException("Incorrect billId - " + billId);
+                        throw new ApplicationException("Incorrect billId - " + billId);
                 EgwStatus billStatus = billRegister.getStatus();
                 if (billStatus.getDescription().equalsIgnoreCase("Cancelled"))
-                        throw new EGOVException("Bill with id - " + billId
+                        throw new ApplicationException("Bill with id - " + billId
                                         + " is cancelled.");
                 String sqlQuery = "SELECT nvl(sum(misc.paidamount),0) FROM eg_billregister br, eg_billregistermis bmis, voucherheader bvh, "
                                 + " miscbilldetail misc, voucherheader pvh WHERE br.id="
@@ -2424,21 +2424,21 @@ public class EgovCommon {
          * @param projectCodeId
          * @param asOnDate
          * @return List<Map<String, String>>
-         * @throws EGOVRuntimeException
+         * @throws ApplicationRuntimeException
          */
         public List<Map<String, String>> getExpenditureDetailsforProject(
-                        Long projectCodeId, Date asOnDate) throws EGOVRuntimeException {
+                        Long projectCodeId, Date asOnDate) throws ApplicationRuntimeException {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting getExpenditureDetailsforProject .....");
                 if (projectCodeId.equals(Long.valueOf(0)))
-                        throw new EGOVRuntimeException("ProjectCode is null or empty");
+                        throw new ApplicationRuntimeException("ProjectCode is null or empty");
                 if (asOnDate == null || asOnDate.equals(null))
-                        throw new EGOVRuntimeException("asOnDate is null");
+                        throw new ApplicationRuntimeException("asOnDate is null");
                 Accountdetailkey adk = (Accountdetailkey) persistenceService
                                 .find(
                                                 "FROM Accountdetailkey where accountdetailtype.name='PROJECTCODE' and detailkey=?",
                                                 projectCodeId.intValue());
                 if (adk == null || adk.equals(null))
-                        throw new EGOVRuntimeException("There is no project code");
+                        throw new ApplicationRuntimeException("There is no project code");
 
                 List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 
@@ -2484,21 +2484,21 @@ public class EgovCommon {
          * @param depositCodeId
          * @param asOnDate
          * @return List<Map<String, String>>
-         * @throws EGOVRuntimeException
+         * @throws ApplicationRuntimeException
          */
         public List<Map<String, String>> getExpenditureDetailsforDepositCode(
-                        Long depositCodeId, Date asOnDate) throws EGOVRuntimeException {
+                        Long depositCodeId, Date asOnDate) throws ApplicationRuntimeException {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting getExpenditureDetailsforDepositCode .....");
                 if (depositCodeId.equals(Long.valueOf(0)))
-                        throw new EGOVRuntimeException("DepositCode is null or empty");
+                        throw new ApplicationRuntimeException("DepositCode is null or empty");
                 if (asOnDate == null || asOnDate.equals(null))
-                        throw new EGOVRuntimeException("asOnDate is null");
+                        throw new ApplicationRuntimeException("asOnDate is null");
                 Accountdetailkey adk = (Accountdetailkey) persistenceService
                                 .find(
                                                 "FROM Accountdetailkey where accountdetailtype.name='DEPOSITCODE' and detailkey=?",
                                                 depositCodeId.intValue());
                 if (adk == null || adk.equals(null))
-                        throw new EGOVRuntimeException("There is no such Deposit code");
+                        throw new ApplicationRuntimeException("There is no such Deposit code");
 
                 List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 
@@ -2544,22 +2544,22 @@ public class EgovCommon {
          * @param projectCodeId
          * @param asOnDate
          * @return
-         * @throws EGOVRuntimeException
+         * @throws ApplicationRuntimeException
          */
         public List<Map<String, String>> getExpenditureDetailsforProjectforFinYear(
-                        Long projectCodeId, Date asOnDate) throws EGOVRuntimeException {
+                        Long projectCodeId, Date asOnDate) throws ApplicationRuntimeException {
                 LOGGER
                                 .debug("Starting getExpenditureDetailsforProjectforFinYear .....");
                 if (projectCodeId.equals(Long.valueOf(0)))
-                        throw new EGOVRuntimeException("ProjectCode is null or empty");
+                        throw new ApplicationRuntimeException("ProjectCode is null or empty");
                 if (asOnDate == null || asOnDate.equals(null))
-                        throw new EGOVRuntimeException("asOnDate is null");
+                        throw new ApplicationRuntimeException("asOnDate is null");
                 Accountdetailkey adk = (Accountdetailkey) persistenceService
                                 .find(
                                                 "FROM Accountdetailkey where accountdetailtype.name='PROJECTCODE' and detailkey=?",
                                                 projectCodeId.intValue());
                 if (adk == null || adk.equals(null))
-                        throw new EGOVRuntimeException("There is no project code");
+                        throw new ApplicationRuntimeException("There is no project code");
 
                 CFinancialYear finYear = finDao.getFinancialYearByDate(asOnDate);
                 Date startDate = finYear.getStartingDate();

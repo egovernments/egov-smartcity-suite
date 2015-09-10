@@ -55,8 +55,8 @@ import java.util.TreeMap;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CommonsService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pims.commons.service.EisCommonsService;
 import org.egov.pims.commons.service.EisCommonsServiceImpl;
 import org.egov.pims.service.EmployeeServiceImpl;
@@ -137,7 +137,7 @@ public class EisManagersUtill {
 		} catch (RuntimeException e) {
 			
 			
-			throw new EGOVRuntimeException("Exception:" + e.getMessage(),e);
+			throw new ApplicationRuntimeException("Exception:" + e.getMessage(),e);
 		}
 	}
 

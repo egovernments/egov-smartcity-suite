@@ -59,7 +59,7 @@ import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -142,7 +142,7 @@ public class ConnectionBillService extends BillServiceInterface {
     EgBillDetails createBillDet(final Integer orderNo, final BigDecimal billDetAmt, final String glCode,
             final String description, final Integer addlFlag) {
         if (orderNo == null || billDetAmt == null || glCode == null)
-            throw new EGOVRuntimeException("Exception in createBillDet....");
+            throw new ApplicationRuntimeException("Exception in createBillDet....");
         final EgBillDetails billdetail = new EgBillDetails();
         billdetail.setFunctionCode("FUNCTION_CODE");
         billdetail.setOrderNo(orderNo);

@@ -46,7 +46,7 @@ import java.sql.SQLException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.jasper.JasperReportService;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infstr.cache.LRUCache;
@@ -134,7 +134,7 @@ public abstract class AbstractReportService<T> implements ReportService {
 		case HQL:
 			return createReportFromHql(reportInput);
 		default:
-			throw new EGOVRuntimeException("Invalid report data source type [" + reportInput.getReportDataSourceType() + "]");
+			throw new ApplicationRuntimeException("Invalid report data source type [" + reportInput.getReportDataSourceType() + "]");
 		}
 	}
 
@@ -173,12 +173,12 @@ public abstract class AbstractReportService<T> implements ReportService {
 				if (reportTemplate == null) {
 					errMsg = "Report template [" + templateName + "] could not be loaded";
 					LOGGER.error(errMsg);
-					throw new EGOVRuntimeException(errMsg);
+					throw new ApplicationRuntimeException(errMsg);
 				}
 			} catch (final Exception e) {
 				errMsg = "Exception in getting report template [" + templateName + "]";
 				LOGGER.error(errMsg, e);
-				throw new EGOVRuntimeException(errMsg, e);
+				throw new ApplicationRuntimeException(errMsg, e);
 			}
 		}
 		return reportTemplate;

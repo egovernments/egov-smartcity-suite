@@ -127,7 +127,7 @@ public class TradeService extends BaseLicenseService {
         final Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
         try {
             tradeLicenseWorkflowService.start(license, position, workflowBean.getComments());
-        } catch (final EGOVRuntimeException e) {
+        } catch (final ApplicationRuntimeException e) {
             if (license.getState().getValue().equalsIgnoreCase("END")) {
                 license.setState(null);
                 persistenceService.persist(license);

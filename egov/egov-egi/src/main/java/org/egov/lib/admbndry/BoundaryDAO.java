@@ -45,10 +45,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -79,7 +79,7 @@ public class BoundaryDAO {
             return (Boundary) qry.uniqueResult();
         } catch (final HibernateException e) {
             LOGGER.error("Error occurred in getBoundary", e);
-            throw new EGOVRuntimeException("Error occurred in getBoundary", e);
+            throw new ApplicationRuntimeException("Error occurred in getBoundary", e);
         }
 
     }
@@ -91,7 +91,7 @@ public class BoundaryDAO {
             return (Boundary) qry.uniqueResult();
         } catch (final HibernateException e) {
             LOGGER.error("Error occurred in getBoundary", e);
-            throw new EGOVRuntimeException("Error occurred in getBoundary", e);
+            throw new ApplicationRuntimeException("Error occurred in getBoundary", e);
         }
 
     }
@@ -104,7 +104,7 @@ public class BoundaryDAO {
             return (Boundary) qry.uniqueResult();
         } catch (final HibernateException e) {
             LOGGER.error("Error occurred in getBoundaryById", e);
-            throw new EGOVRuntimeException("Error occurred in getBoundaryById", e);
+            throw new ApplicationRuntimeException("Error occurred in getBoundaryById", e);
         }
 
     }
@@ -118,7 +118,7 @@ public class BoundaryDAO {
             return qry.list();
         } catch (final HibernateException e) {
             LOGGER.error("Error occurred in getAllBoundariesByBndryTypeId", e);
-            throw new EGOVRuntimeException("Error occurred in getAllBoundariesByBndryTypeId", e);
+            throw new ApplicationRuntimeException("Error occurred in getAllBoundariesByBndryTypeId", e);
         }
     }
 
@@ -136,7 +136,7 @@ public class BoundaryDAO {
 
         } catch (final HibernateException e) {
             LOGGER.error("Error occurred in getTopBoundary", e);
-            throw new EGOVRuntimeException("Error occurred in getTopBoundary", e);
+            throw new ApplicationRuntimeException("Error occurred in getTopBoundary", e);
         }
 
     }
@@ -150,7 +150,7 @@ public class BoundaryDAO {
     public Set getCrossHeirarchyParent(final Boundary childBoundary) {
         final Set parentBoundarySet = new HashSet();
         if (childBoundary == null)
-            throw new EGOVRuntimeException("Childbndry.object.null");
+            throw new ApplicationRuntimeException("Childbndry.object.null");
         else {
             final Query qry = getSession().createQuery(
                     "select CI.parent from CrossHeirarchyImpl CI where CI.child = :childBoundary");
@@ -176,7 +176,7 @@ public class BoundaryDAO {
     public Set getCrossHeirarchyChildren(final Boundary parentBoundary, final BoundaryType childBoundaryType) {
         final Set childBoundarySet = new HashSet();
         if (parentBoundary == null || childBoundaryType == null)
-            throw new EGOVRuntimeException("parentBoundary.childBoundaryType.object.null");
+            throw new ApplicationRuntimeException("parentBoundary.childBoundaryType.object.null");
         else {
             final Query qry = getSession()
                     .createQuery(
@@ -277,7 +277,7 @@ public class BoundaryDAO {
             return childBoundaries;
         } catch (final HibernateException e) {
             LOGGER.error("Error occurred in getAllBoundariesByBndryTypeId", e);
-            throw new EGOVRuntimeException("Error occurred in getAllBoundariesByBndryTypeId", e);
+            throw new ApplicationRuntimeException("Error occurred in getAllBoundariesByBndryTypeId", e);
         }
     }
 
@@ -330,7 +330,7 @@ public class BoundaryDAO {
             return qry.list();
         } catch (final HibernateException e) {
             LOGGER.error("Error occurred in getHistAndNonHistBndriesByBndryTypeId", e);
-            throw new EGOVRuntimeException("Error occurred in getHistAndNonHistBndriesByBndryTypeId", e);
+            throw new ApplicationRuntimeException("Error occurred in getHistAndNonHistBndriesByBndryTypeId", e);
         }
     }
 
@@ -364,7 +364,7 @@ public class BoundaryDAO {
             return qry.list();
         } catch (final Exception e) {
             LOGGER.error("Error occurred while getting Child Boundaries for Parent Boundary : " + parentBoundaryId, e);
-            throw new EGOVRuntimeException("Error occurred while getting Child Boundaries", e);
+            throw new ApplicationRuntimeException("Error occurred while getting Child Boundaries", e);
         }
 
     }
@@ -383,7 +383,7 @@ public class BoundaryDAO {
             return (Boundary) qry.uniqueResult();
         } catch (final HibernateException e) {
             LOGGER.error("Error occurred in getBoundaryforHxAndNonHxBndryById", e);
-            throw new EGOVRuntimeException("Error occurred in getBoundaryforHxAndNonHxBndryById", e);
+            throw new ApplicationRuntimeException("Error occurred in getBoundaryforHxAndNonHxBndryById", e);
         }
     }
 

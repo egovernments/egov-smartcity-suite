@@ -47,7 +47,7 @@ package org.egov.ptis.domain.entity.property;
 
 import java.util.Date;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * This class defines the reasons for the change of property particulars
@@ -154,7 +154,7 @@ public class PropertyModifyReason {
 	 */
 	public boolean validate() {
 		if (getReasonName() == null)
-			throw new EGOVRuntimeException("PropertyModifyReason.validate. ReasonName is not set, Please Check !!");
+			throw new ApplicationRuntimeException("PropertyModifyReason.validate. ReasonName is not set, Please Check !!");
 
 		return true;
 	}

@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.commons.Installment;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 

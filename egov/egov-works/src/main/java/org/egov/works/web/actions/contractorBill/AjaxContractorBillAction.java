@@ -64,11 +64,11 @@ import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.service.CommonsService;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.pims.model.PersonalInformation;
@@ -335,7 +335,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
         return ADVANCE_AJUSTMENT;
     }
 
-    public String billCheckListDetails() throws NumberFormatException, EGOVException {
+    public String billCheckListDetails() throws NumberFormatException, ApplicationException {
         final WorkOrderEstimate workOrderEstimate = (WorkOrderEstimate) persistenceService.find(
                 "from WorkOrderEstimate where id=?",
                 workOrderEstimateId);
@@ -530,7 +530,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
                     } else
                         coaList = Collections.EMPTY_LIST;
             }
-        } catch (final EGOVException v) {
+        } catch (final ApplicationException v) {
             logger.error("Unable to COA for WorkOrder" + v.getMessage());
             addFieldError("COA.notfound", "Unable to COA for WorkOrder-Estimate");
         }

@@ -51,7 +51,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infstr.ValidationError;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 
 @Unique(fields = { "code" }, id = "id", tableName = "EGW_ESTIMATE_TEMPLATE", columnName = {

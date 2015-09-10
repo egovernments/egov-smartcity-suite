@@ -69,19 +69,19 @@ import org.egov.commons.SubScheme;
 import org.egov.commons.service.CommonsService;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.model.budget.BudgetGroup;
@@ -228,7 +228,7 @@ public class FinancialDetailAction extends BaseFormAction {
             final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
             final boolean isValidUser = worksService.validateWorkflowForUser(abstractEstimate, user);
             if (isValidUser)
-                throw new EGOVRuntimeException("Error: Invalid Owner - No permission to view this page.");
+                throw new ApplicationRuntimeException("Error: Invalid Owner - No permission to view this page.");
         } else if (StringUtils.isEmpty(sourcepage))
             sourcepage = "search";
 
@@ -241,7 +241,7 @@ public class FinancialDetailAction extends BaseFormAction {
             final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
             final boolean isValidUser = worksService.validateWorkflowForUser(abstractEstimate, user);
             if (isValidUser)
-                throw new EGOVRuntimeException("Error: Invalid Owner - No permission to view this page.");
+                throw new ApplicationRuntimeException("Error: Invalid Owner - No permission to view this page.");
         } else if (StringUtils.isEmpty(sourcepage))
             sourcepage = "search";
 
@@ -409,7 +409,7 @@ public class FinancialDetailAction extends BaseFormAction {
                     financialDetail.getAbstractEstimate() != null);
             populateBudgetHeadList(ajaxFinancialDetailAction, financialDetail.getFunction() != null,
                     getReportDate() != null);
-        } catch (final EGOVException e) {
+        } catch (final ApplicationException e) {
             logger.error("---Budgetunavailable: Unable to load budget data---" + e.getMessage());
             addFieldError("budgetunavailable", "Unable to load budget data");
         } catch (final Exception e) {
@@ -421,7 +421,7 @@ public class FinancialDetailAction extends BaseFormAction {
 
         try {
             fundSourceList = commonsService.getAllActiveIsLeafFundSources();
-        } catch (final EGOVException e) {
+        } catch (final ApplicationException e) {
             logger.error("---fundsourceunavailable :Unable to load fund source information---" + e.getMessage());
             addFieldError("fundsourceunavailable", "Unable to load fund source information");
         }
@@ -435,7 +435,7 @@ public class FinancialDetailAction extends BaseFormAction {
                             .getWorksConfigValue(KEY_DEPOSIT))));
                 else
                     addDropdownData(COA_LIST, Collections.EMPTY_LIST);
-            } catch (final EGOVException v) {
+            } catch (final ApplicationException v) {
                 logger.error("Unable to load Account Codes for Deposit Works" + v.getMessage());
                 addFieldError("accountcodes.notfound", "abstractEstimate.deposit.accountcodes.error");
             }
@@ -468,7 +468,7 @@ public class FinancialDetailAction extends BaseFormAction {
                             .getWorksConfigValue(KEY_DEPOSIT))));
                 else
                     addDropdownData(COA_LIST, Collections.EMPTY_LIST);
-            } catch (final EGOVException v) {
+            } catch (final ApplicationException v) {
                 logger.error("---Unable to Load GL Codes for Deposit works---" + v.getMessage());
                 addFieldError("accountcodes.notfound", "depositWorksFolioReport.loadAccountCodes.error");
             }
@@ -526,7 +526,7 @@ public class FinancialDetailAction extends BaseFormAction {
         } else if (!functionPopulated)
             try {
                 addDropdownData(BUDGET_GROUP_LIST, budgetGroupDAO.getBudgetGroupList());
-            } catch (final EGOVRuntimeException e) {
+            } catch (final ApplicationRuntimeException e) {
                 logger.error("---Unable to load budget head---" + e.getMessage());
                 addFieldError("budgetheadexception", "Unable to load budget head ");
             }
@@ -881,7 +881,7 @@ public class FinancialDetailAction extends BaseFormAction {
             CFinancialYear finyear = null;
             try {
                 finyear = abstractEstimateService.getCurrentFinancialYear(getReportDate());
-            } catch (final EGOVRuntimeException noFinYearExp) {
+            } catch (final ApplicationRuntimeException noFinYearExp) {
                 if (noFinYearExp.getMessage().equals("Financial Year Id does not exist."))
                     throw new ValidationException(Arrays.asList(new ValidationError(noFinYearExp.getMessage(),
                             noFinYearExp.getMessage())));

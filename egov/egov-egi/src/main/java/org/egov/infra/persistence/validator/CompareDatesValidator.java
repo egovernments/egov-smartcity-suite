@@ -46,7 +46,7 @@ import java.util.Date;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.CompareDates;
 
 public class CompareDatesValidator implements ConstraintValidator<CompareDates, Date> {
@@ -84,7 +84,7 @@ public class CompareDatesValidator implements ConstraintValidator<CompareDates, 
                     return (Date) propertyDescriptor.getReadMethod().invoke(target);
             return null;
         } catch (final Exception e) {
-            throw new EGOVRuntimeException(e.getMessage(), e);
+            throw new ApplicationRuntimeException(e.getMessage(), e);
         }
     }
 }

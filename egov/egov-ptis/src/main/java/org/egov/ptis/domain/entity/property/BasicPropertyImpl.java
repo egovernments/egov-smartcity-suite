@@ -49,10 +49,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infstr.ValidationError;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
@@ -201,13 +201,13 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     @Override
     public boolean validateBasicProp() {
         if (getAddress() == null)
-            throw new EGOVRuntimeException("BasicProperty validation failed: Address is not set, Please Check !!");
+            throw new ApplicationRuntimeException("BasicProperty validation failed: Address is not set, Please Check !!");
 
         if (getCreatedBy() == null)
-            throw new EGOVRuntimeException("BasicProperty validation failed: CreatedBy is not set, Please Check !!");
+            throw new ApplicationRuntimeException("BasicProperty validation failed: CreatedBy is not set, Please Check !!");
 
         if (getPropertyID() == null)
-            throw new EGOVRuntimeException("BasicProperty validation failed: PropertyID is not set, Please Check !!");
+            throw new ApplicationRuntimeException("BasicProperty validation failed: PropertyID is not set, Please Check !!");
 
         return true;
     }

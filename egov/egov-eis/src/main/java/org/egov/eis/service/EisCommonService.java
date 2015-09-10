@@ -49,9 +49,9 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.eis.repository.HeadOfDepartmentsRepository;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
@@ -118,9 +118,9 @@ public class EisCommonService {
         try {
             return assignmentService.getAssignmentsForPosition(posId, givenDate).get(0).getEmployee();
         } catch (final NullPointerException e) {
-            throw new EGOVRuntimeException("User Not Found");
+            throw new ApplicationRuntimeException("User Not Found");
         } catch (final Exception e) {
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
     }
 

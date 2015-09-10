@@ -44,8 +44,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.works.models.estimate.ProjectCode;
@@ -74,7 +74,7 @@ public class AjaxSubledgerCodeAction extends BaseFormAction {
         } catch (final Exception e) {
             LOGGER.error("Error while loading warda - wards." + e.getMessage());
             addFieldError("location", getText("slCode.wardLoad.failure"));
-            throw new EGOVRuntimeException("Unable to load ward information", e);
+            throw new ApplicationRuntimeException("Unable to load ward information", e);
         }
         return WARDS;
     }

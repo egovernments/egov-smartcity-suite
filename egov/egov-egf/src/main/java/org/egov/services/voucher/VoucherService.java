@@ -79,9 +79,6 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -89,11 +86,14 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
@@ -161,7 +161,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         {
                 return new EgovCommon().getBoundaryForUser(rv.getCreatedBy());
         }
-        public String getEmployeeNameForPositionId(Position pos)throws EGOVRuntimeException
+        public String getEmployeeNameForPositionId(Position pos)throws ApplicationRuntimeException
         {
                 Employee pi = eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());
                 Assignment assignment = eisCommonService.getLatestAssignmentForEmployee(pi.getId());
@@ -303,7 +303,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 vh.setStatus(Integer.valueOf(approvedVoucherStatus));
         }
         @SuppressWarnings("unchecked")
-        public  List<Map<String, Object>> getJournalVouchers(final CVoucherHeader voucherHeader,Map<String, Object> searchFilterMap) throws EGOVException,ParseException{
+        public  List<Map<String, Object>> getJournalVouchers(final CVoucherHeader voucherHeader,Map<String, Object> searchFilterMap) throws ApplicationException,ParseException{
                 
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("VoucherService | getJournalVouchers | Start");
                 List<CVoucherHeader> vouchers=  voucherHibDAO.getVoucherList(voucherHeader, searchFilterMap);
@@ -454,10 +454,10 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 } catch (HibernateException e) {
                                 LOGGER.error(e);
                                 throw new HibernateException("Exception occured in voucher service while updating voucher header"+e);
-                }catch (EGOVRuntimeException e) {
+                }catch (ApplicationRuntimeException e) {
                         LOGGER.error(e);
 
-                        throw new EGOVRuntimeException("Exception occured in voucher service while updating voucher header"+e);
+                        throw new ApplicationRuntimeException("Exception occured in voucher service while updating voucher header"+e);
                 }
                 return existingVH;
         }
@@ -498,7 +498,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 try {
                         String fiscalPeriodIdStr = eGovernCommon.getFiscalPeriod(sdf.format(voucherHeader.getVoucherDate()));
                         if(null == fiscalPeriodIdStr){
-                                 throw new EGOVRuntimeException("Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "+ fiscalPeriodIdStr);
+                                 throw new ApplicationRuntimeException("Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "+ fiscalPeriodIdStr);
                          }
                         voucherHeader.setFiscalPeriodId(Integer.parseInt(fiscalPeriodIdStr));
                         if( !voucherHeader.getFundId().equals(existingVH.getFundId())){
@@ -558,7 +558,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 }
                 catch (Exception e) {
                         LOGGER.error(e);
-                        throw new EGOVRuntimeException("Exception occured while getting upadetd voucher number and cgvn number"+e);
+                        throw new ApplicationRuntimeException("Exception occured while getting upadetd voucher number and cgvn number"+e);
         }
         
         return existingVH;
@@ -644,7 +644,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                         }
                 } catch (Exception e) {
                         LOGGER.error("Exception occured while posting data into voucher detail and transaction");
-                        throw new EGOVRuntimeException("Exception occured while posting data into voucher detail and transaction"+e.getMessage());
+                        throw new ApplicationRuntimeException("Exception occured while posting data into voucher detail and transaction"+e.getMessage());
                 }
         
                 return transaxtionList;
@@ -703,7 +703,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                          String fiscalPeriod=null;
                          fiscalPeriod=cm.getFiscalPeriod(vdt);
                          if(null == fiscalPeriod){
-                                        throw new EGOVRuntimeException("Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "+ fiscalPeriod);
+                                        throw new ApplicationRuntimeException("Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "+ fiscalPeriod);
                                 }
                          voucherHeader.setFiscalPeriodId(Integer.valueOf(fiscalPeriod));  
                          String cgn=voucherTypeBean.getCgnType()+cm.getCGNumber();      
@@ -721,7 +721,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                          voucherHeader.setCgvn(cgNum);
                          voucherHeader.setEffectiveDate(new Date());
                          if(!cm.isUniqueVN(voucherHeader.getVoucherNumber(),vdt)) 
-                                        throw new EGOVRuntimeException("Duplicate Voucher Number"); 
+                                        throw new ApplicationRuntimeException("Duplicate Voucher Number"); 
                         // vh.setCreatedBy(userMngr.getUserById(Integer.valueOf(EgovThreadLocals.getUserId())));
                          voucherHeader.getVouchermis().setVoucherheaderid(voucherHeader);
                          voucherHeader.setStatus(FinancialConstants.PREAPPROVEDVOUCHERSTATUS);
@@ -741,13 +741,13 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                          }
                         
                 }
-                catch (EGOVRuntimeException e) {   
+                catch (ApplicationRuntimeException e) {   
                         LOGGER.error(e);
-                        throw new EGOVRuntimeException(e.getMessage());
+                        throw new ApplicationRuntimeException(e.getMessage());
                 }
                 catch (Exception e) {
                         LOGGER.error(e);
-                        throw new EGOVRuntimeException(e.getMessage());
+                        throw new ApplicationRuntimeException(e.getMessage());
                 }
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("End | insertIntoVoucherHeader");
                 return voucherHeader;
@@ -1245,7 +1245,7 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
         public void setPersistenceService(PersistenceService persistenceService) {
                 this.persistenceService = persistenceService;
         }
-        public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException
+        public Position getPositionForEmployee(Employee emp)throws ApplicationRuntimeException
         {
                 return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
         }

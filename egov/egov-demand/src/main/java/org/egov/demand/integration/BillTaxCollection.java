@@ -52,7 +52,7 @@ import org.egov.demand.dao.EgBillReceiptDao;
 import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -102,8 +102,8 @@ public class BillTaxCollection {
 				billRecpt.setModifiedDate(new Date());
 				egBillReceiptDAO.create(billRecpt);
 			}
-		} catch (EGOVRuntimeException e) {
-			throw new EGOVRuntimeException("Exception in linkBillToReceipt" + e);
+		} catch (ApplicationRuntimeException e) {
+			throw new ApplicationRuntimeException("Exception in linkBillToReceipt" + e);
 		}
 		return billRecpt;
 	}
@@ -150,8 +150,8 @@ public class BillTaxCollection {
 
 				egBillDAO.update(egBill);
 			}
-		} catch (EGOVRuntimeException e) {
-			throw new EGOVRuntimeException("Exception in updateBillDetails" + e);
+		} catch (ApplicationRuntimeException e) {
+			throw new ApplicationRuntimeException("Exception in updateBillDetails" + e);
 		}
 		return egBill;
 	}
@@ -175,8 +175,8 @@ public class BillTaxCollection {
 					}
 				}
 			}
-		} catch (EGOVRuntimeException e) {
-			throw new EGOVRuntimeException("Exception in calculate Total Collected Amt" + e);
+		} catch (ApplicationRuntimeException e) {
+			throw new ApplicationRuntimeException("Exception in calculate Total Collected Amt" + e);
 		}
 
 		return totalCollAmt;

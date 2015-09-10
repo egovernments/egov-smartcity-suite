@@ -54,9 +54,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.exceptions.AuthorizationException;
 import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.service.ActionService;
+import org.egov.infra.exception.AuthorizationException;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;

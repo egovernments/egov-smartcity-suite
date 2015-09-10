@@ -51,7 +51,7 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -158,7 +158,7 @@ public class PropertyFloorDetailsInfo implements Comparable<PropertyFloorDetails
 		try {
 			unitTaxDate = dateformatter.parse(unit.getInstDate());			
 		} catch (ParseException pe) {
-			throw new EGOVRuntimeException("Error while parsing unit effective date", pe);
+			throw new ApplicationRuntimeException("Error while parsing unit effective date", pe);
 		}
 		
 		for (MiscellaneousTax miscTax : unitDetail.getMiscellaneousTaxes()) {
@@ -655,7 +655,7 @@ public class PropertyFloorDetailsInfo implements Comparable<PropertyFloorDetails
 			otherDate = dateFormat.parse(o.getInstDate());
 		} catch (ParseException e) {
 			LOGGER.error("Error while parsing property floor details inst date", e);
-			throw new EGOVRuntimeException("Error while parsing property floor details inst date", e);
+			throw new ApplicationRuntimeException("Error while parsing property floor details inst date", e);
 		}
 		
 		result = thisDate.compareTo(otherDate); 

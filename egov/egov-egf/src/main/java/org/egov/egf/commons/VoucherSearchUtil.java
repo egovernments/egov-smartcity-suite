@@ -48,9 +48,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.exceptions.EGOVException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
@@ -67,7 +67,7 @@ public class VoucherSearchUtil {
 	private FinancialYearDAO financialYearDAO;
 
 
-	public List<CVoucherHeader> search(CVoucherHeader voucherHeader,Date fromDate, Date toDate, String mode) throws EGOVException,
+	public List<CVoucherHeader> search(CVoucherHeader voucherHeader,Date fromDate, Date toDate, String mode) throws ApplicationException,
 	ParseException {
 
 		System.out.println("Inside search ----- in voucher util");

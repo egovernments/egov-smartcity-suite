@@ -74,16 +74,16 @@ import org.egov.commons.Relation;
 import org.egov.commons.Vouchermis;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -265,7 +265,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 		 catch (NumberFormatException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw e;
-		} catch (EGOVRuntimeException e) {
+		} catch (ApplicationRuntimeException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw e;
 			
@@ -373,7 +373,7 @@ public String nonBillPayment()
 			java.lang.reflect.Method method = aClass.getMethod("getId");
 			dataType = method.getReturnType().getSimpleName();
 		} catch (Exception e) {
-			throw new EGOVRuntimeException(e.getMessage());
+			throw new ApplicationRuntimeException(e.getMessage());
 		}
 		EntityType entity = null;
 		if ( dataType.equals("Long") ){
@@ -416,7 +416,7 @@ public String nonBillPayment()
 					{
 						throw new ValidationException(Arrays.asList(new ValidationError("No.entity.for.detailkey", "There is no entity defined for"+ voucherDetail.getDetailCode(),new String [] {voucherDetail.getDetailCode()})));
 					}
-					} catch (EGOVException e) {
+					} catch (ApplicationException e) {
 						throw new ValidationException(Arrays.asList(new ValidationError("Exception to get EntityType  ", e.getMessage())));
 					}
 					voucherDetail.setDetailType((Accountdetailtype) HibernateUtil.getCurrentSession().load(Accountdetailtype.class, voucherDetail.getDetailType()
@@ -645,7 +645,7 @@ public String nonBillPayment()
 		reversalList.add(reversalVoucherMap);
 		try {
 			reversalVoucher = cv.reverseVoucher(reversalList);
-		} catch (final EGOVRuntimeException e) {
+		} catch (final ApplicationRuntimeException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw new ValidationException(Arrays.asList(new ValidationError(FAILED_WHILE_REVERSING, FAILED_WHILE_REVERSING)));
 		} catch (final ParseException e) {
@@ -721,7 +721,7 @@ public String nonBillPayment()
 		} catch (final HibernateException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw new ValidationException(Arrays.asList(new ValidationError(EXCEPTION_WHILE_SAVING_DATA, FAILED)));
-		} catch (final EGOVRuntimeException e) {
+		} catch (final ApplicationRuntimeException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
 		} catch (final ValidationException e) {
@@ -826,7 +826,7 @@ public String nonBillPayment()
 		} catch (DatabaseConnectionException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw new ValidationException(Arrays.asList(new ValidationError(EXCEPTION_WHILE_SAVING_DATA, FAILED)));
-		} catch (EGOVRuntimeException e) {
+		} catch (ApplicationRuntimeException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw new ValidationException(Arrays.asList(new ValidationError(EXCEPTION_WHILE_SAVING_DATA, FAILED)));
 		} catch (SQLException e) {
@@ -916,7 +916,7 @@ public String nonBillPayment()
 					{
 						throw new ValidationException(Arrays.asList(new ValidationError("No.entity.for.detailkey", "There is no entity defined for"+ voucherDetail.getDetailCode(),new String [] {voucherDetail.getDetailCode()})));
 					}
-					} catch (EGOVException e) {
+					} catch (ApplicationException e) {
 						throw new ValidationException(Arrays.asList(new ValidationError("Exception to get EntityType  ", e.getMessage())));
 					}
 					voucherDetail.setDetailType((Accountdetailtype) HibernateUtil.getCurrentSession().load(Accountdetailtype.class, voucherDetail.getDetailType()

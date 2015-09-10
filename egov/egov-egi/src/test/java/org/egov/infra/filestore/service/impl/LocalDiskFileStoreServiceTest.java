@@ -57,8 +57,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -127,7 +127,7 @@ public class LocalDiskFileStoreServiceTest {
 	assertNotNull(map.getFileStoreId());
     }
 
-    @Test(expected = EGOVRuntimeException.class)
+    @Test(expected = ApplicationRuntimeException.class)
     public final void testUploadFileFail() throws IOException {
 	final File newFile = new File("file.txt");
 	diskFileService.store(newFile, "fileName", "testmodule", "text/plain");
@@ -178,7 +178,7 @@ public class LocalDiskFileStoreServiceTest {
 	deleteTempFiles(newFile, map);
     }
 
-    @Test(expected = EGOVRuntimeException.class)
+    @Test(expected = ApplicationRuntimeException.class)
     public final void testFetchFailNonExisting() throws IOException {
         final FileStoreMapper map = new FileStoreMapper(UUID.randomUUID().toString(), "fileName");
         diskFileService.fetch(map, "testmoduleNo");

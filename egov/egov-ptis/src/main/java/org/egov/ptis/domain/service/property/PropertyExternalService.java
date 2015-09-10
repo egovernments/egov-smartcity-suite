@@ -72,13 +72,13 @@ import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.dcb.bean.Payment;
 import org.egov.demand.model.EgBill;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.Address;
@@ -214,10 +214,10 @@ public class PropertyExternalService {
 
 	private void validate() {
 		if ((assessmentDetail.getPropertyID() == null || assessmentDetail.getPropertyID().trim().equals(""))) {
-			throw new EGOVRuntimeException("PropertyID is null or empty!");
+			throw new ApplicationRuntimeException("PropertyID is null or empty!");
 		}
 		if ((assessmentDetail.getFlag() == null || assessmentDetail.getFlag() > 3)) {
-			throw new EGOVRuntimeException("Invalid Flag");
+			throw new ApplicationRuntimeException("Invalid Flag");
 		}
 	}
 

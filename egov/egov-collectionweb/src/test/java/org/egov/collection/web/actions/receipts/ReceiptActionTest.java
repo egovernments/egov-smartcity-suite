@@ -1122,7 +1122,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		assertEquals(action.getReceipts()[0].getId(),action.getSelectedReceipts()[0]);
 	}
 	
-	@Test(expected = EGOVRuntimeException.class)
+	@Test(expected = ApplicationRuntimeException.class)
 	public void testViewReceiptsWithNoSelection(){
 		action.setSelectedReceipts(new Long[]{});
 		String result =action.viewReceipts();
@@ -1155,7 +1155,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		assertEquals("report",result);
 	}
 	
-	@Test(expected = EGOVRuntimeException.class)
+	@Test(expected = ApplicationRuntimeException.class)
 	public void testPrintReceiptsWithNoSelection(){
 		action.setSelectedReceipts(new Long[]{});
 		String result =action.printReceipts();

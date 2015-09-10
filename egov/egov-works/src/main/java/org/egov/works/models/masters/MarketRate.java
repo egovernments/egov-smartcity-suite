@@ -45,7 +45,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.egov.infra.persistence.entity.component.Period;
-import org.egov.infstr.ValidationError;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.models.Money;
 

@@ -56,16 +56,16 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.common.entity.UOM;
 import org.egov.commons.service.CommonsService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.Money;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
@@ -173,7 +173,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
             final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
             final boolean isValidUser = worksService.validateWorkflowForUser(revisionEstimate, user);
             if (isValidUser)
-                throw new EGOVRuntimeException("Error: Invalid Owner - No permission to view this page.");
+                throw new ApplicationRuntimeException("Error: Invalid Owner - No permission to view this page.");
         } else if (StringUtils.isEmpty(sourcepage))
             sourcepage = "search";
 

@@ -46,8 +46,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pims.commons.Position;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -87,13 +87,13 @@ public class PositionMasterDAO
         {
             if(position==null)
             {
-            	throw new EGOVException("position.master.null");
+            	throw new ApplicationException("position.master.null");
             }
             getCurrentSession().delete(position);
         }
         catch(Exception e)
         {
-        	throw new EGOVRuntimeException(e.getMessage(),e);
+        	throw new ApplicationRuntimeException(e.getMessage(),e);
         }
     }
 
@@ -107,7 +107,7 @@ public class PositionMasterDAO
         }
         catch(Exception e)
         {
-        	throw new EGOVRuntimeException(e.getMessage(),e);
+        	throw new ApplicationRuntimeException(e.getMessage(),e);
         }
     }
 
@@ -129,7 +129,7 @@ public class PositionMasterDAO
         }
         catch(Exception e)
         {
-        	throw new EGOVRuntimeException(e.getMessage(),e);
+        	throw new ApplicationRuntimeException(e.getMessage(),e);
         }
     }
     
@@ -152,7 +152,7 @@ public class PositionMasterDAO
         }
         catch(Exception e)
         {
-        	throw new EGOVRuntimeException(e.getMessage(),e);
+        	throw new ApplicationRuntimeException(e.getMessage(),e);
         }
     }
     

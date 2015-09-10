@@ -55,12 +55,12 @@ import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFinancialYear;
 import org.egov.dao.budget.BudgetDetailsDAO;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.model.budget.BudgetUsage;
@@ -334,9 +334,9 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
 
             document.close();
         } catch (final DocumentException e) {
-            throw new EGOVRuntimeException("estimate.pdf.error", e);
-        } catch (final EGOVException ex) {
-            throw new EGOVRuntimeException("estimate.pdf.error", ex);
+            throw new ApplicationRuntimeException("estimate.pdf.error", e);
+        } catch (final ApplicationException ex) {
+            throw new ApplicationRuntimeException("estimate.pdf.error", ex);
         }
     }
 
@@ -348,7 +348,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
             try {
                 dateToCheck = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).parse(configList.get(0).getValue());
             } catch (final ParseException e) {
-                throw new EGOVRuntimeException("estimate.pdf.error", e);
+                throw new ApplicationRuntimeException("estimate.pdf.error", e);
             }
         shouldShowApprovalNumber = estimate.getCreatedDate().after(dateToCheck);
     }
@@ -388,7 +388,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
      * Amount of the Estimate = estimate amt 10 Balance after Appropriation of this estimate =balOnHand - ESTIMATE AMT
      */
     private PdfPTable createDepositAppropriationTable(final AbstractEstimate estimate) throws DocumentException,
-            EGOVException, ValidationException {
+            ApplicationException, ValidationException {
         /*
          * List<FinancialDetail> financialdetails=estimate.getFinancialDetails(); String
          * appropriationNumber=estimate.getBudgetApprNo(); DepositWorksUsage depositWorksUsage
@@ -503,7 +503,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
      * =balOnHand - ESTIMATE AMT
      */
     private PdfPTable createBudgetaryAppropriationTable(final AbstractEstimate estimate) throws DocumentException,
-            EGOVException, ValidationException {
+            ApplicationException, ValidationException {
         int isReject = -1;
         final List<FinancialDetail> financialdetails = estimate.getFinancialDetails();
         BigDecimal totalGrant = BigDecimal.ZERO;
@@ -590,19 +590,19 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
     private Department getDeptFromBudgtAppropriationNo(final String number) {
         if (StringUtils.isBlank(number)) {
             logger.error("Empty Ban Number");
-            throw new EGOVRuntimeException("Exception in getDeptFromBudgtAppropriationNo ");
+            throw new ApplicationRuntimeException("Exception in getDeptFromBudgtAppropriationNo ");
         } else {
             final String[] strArr = number.split("/");
             if (strArr == null || strArr.length == 0) {
                 logger.error("Department prefix not present in ban no--" + number);
-                throw new EGOVRuntimeException("Exception in getDeptFromBudgtAppropriationNo ");
+                throw new ApplicationRuntimeException("Exception in getDeptFromBudgtAppropriationNo ");
             } else {
                 final String deptCode = strArr[0];
                 final Department dept = (Department) persistenceService.find(" from Department where deptCode=?",
                         deptCode);
                 if (dept == null) {
                     logger.error("No department found with prefix--" + deptCode);
-                    throw new EGOVRuntimeException("Exception in getDeptFromBudgtAppropriationNo ");
+                    throw new ApplicationRuntimeException("Exception in getDeptFromBudgtAppropriationNo ");
                 } else
                     return dept;
             }
@@ -639,7 +639,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
             }
             return approvaldetailsTable;
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("Exception occured while getting approval details " + e);
+            throw new ApplicationRuntimeException("Exception occured while getting approval details " + e);
         }
     }
 
@@ -656,7 +656,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
 
             return estimateDetailsTable1;
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("Exception occured while estimate details method1 " + e);
+            throw new ApplicationRuntimeException("Exception occured while estimate details method1 " + e);
         }
     }
 
@@ -749,7 +749,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
 
             return estBudgetDetailsTable;
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("Exception occured while estimate details method 2 " + e);
+            throw new ApplicationRuntimeException("Exception occured while estimate details method 2 " + e);
         }
     }
 
@@ -803,7 +803,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
 
             return estimateDetailsTable2;
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("Exception occured while estimate and budget details method 3" + e);
+            throw new ApplicationRuntimeException("Exception occured while estimate and budget details method 3" + e);
         }
     }
 

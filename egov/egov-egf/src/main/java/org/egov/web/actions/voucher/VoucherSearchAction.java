@@ -68,17 +68,17 @@ import org.egov.commons.CGeneralLedger;
 import org.egov.commons.Vouchermis;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.commons.VoucherSearchUtil;
-import org.egov.exceptions.EGOVException;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.EgovPaginatedList;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.Page;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.utils.Constants;
@@ -251,7 +251,7 @@ public class VoucherSearchAction extends BaseFormAction
 	}
 	@ValidationErrorPage(value=SEARCH)
 	@Action(value="/voucher/voucherSearch-search")
-	public String search() throws EGOVException,ParseException
+	public String search() throws ApplicationException,ParseException
 	{
 		boolean ismodifyJv=false;
 		voucherList = new ArrayList<Map<String,Object>>(); 

@@ -54,7 +54,7 @@ import org.displaytag.export.PdfView;
 import org.displaytag.model.*;
 import org.displaytag.model.Row;
 import org.displaytag.util.TagConstants;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 import javax.servlet.jsp.JspException;
 import java.awt.*;
@@ -325,10 +325,10 @@ public class EGovPdfView implements BinaryExportView {
 				helv = BaseFont.createFont("Helvetica", BaseFont.WINANSI, false);
 			} catch (final DocumentException e) {
 				e.printStackTrace();
-				throw new EGOVRuntimeException("Exception occured -----> " + e.getMessage());
+				throw new ApplicationRuntimeException("Exception occured -----> " + e.getMessage());
 			} catch (final IOException e) {
 				e.printStackTrace();
-				throw new EGOVRuntimeException("Exception occured -----> " + e.getMessage());
+				throw new ApplicationRuntimeException("Exception occured -----> " + e.getMessage());
 			}
 			final PdfContentByte cb = writer.getDirectContent();
 			cb.saveState();

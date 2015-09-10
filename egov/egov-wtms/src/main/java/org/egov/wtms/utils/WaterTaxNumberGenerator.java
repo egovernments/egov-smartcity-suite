@@ -46,7 +46,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -84,7 +84,7 @@ public class WaterTaxNumberGenerator {
             }
             return String.format("%s%06d", waterTaxUtils.getCityCode(), sequenceNumber);
         } catch (final SQLException e) {
-            throw new EGOVRuntimeException("Error occurred while generating Consumer Number", e);
+            throw new ApplicationRuntimeException("Error occurred while generating Consumer Number", e);
         }
     }
 
@@ -100,7 +100,7 @@ public class WaterTaxNumberGenerator {
             }
             return String.format("%s%06d", "", sequenceNumber);
         } catch (final SQLException e) {
-            throw new EGOVRuntimeException("Error occurred while generating Consumer Number", e);
+            throw new ApplicationRuntimeException("Error occurred while generating Consumer Number", e);
         }
     }
 
@@ -116,7 +116,7 @@ public class WaterTaxNumberGenerator {
             }
             return String.format("%s%06d", "", sequenceNumber);
         } catch (final SQLException e) {
-            throw new EGOVRuntimeException("Error occurred while generating meter Generate Number", e);
+            throw new ApplicationRuntimeException("Error occurred while generating meter Generate Number", e);
         }
     }
 
@@ -131,7 +131,7 @@ public class WaterTaxNumberGenerator {
             }
             return String.format("%s%06d", "", sequenceNumber);
         } catch (final SQLException e) {
-            throw new EGOVRuntimeException("Error occurred while generating water connection charges bill Number ", e);
+            throw new ApplicationRuntimeException("Error occurred while generating water connection charges bill Number ", e);
         }
     }
 

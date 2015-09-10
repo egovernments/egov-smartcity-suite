@@ -44,7 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.AbstractEstimate;
@@ -63,7 +63,7 @@ public class TenderResponseService extends PersistenceService<TenderResponse, Lo
             criteriaParams.put("isPrimary", "Y");
             approvedByList = personalInformationService.getListOfEmployeeViewBasedOnCriteria(criteriaParams, -1, -1);
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("user.find.error", e);
+            throw new ApplicationRuntimeException("user.find.error", e);
         }
         return approvedByList;
     }

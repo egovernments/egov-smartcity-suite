@@ -45,7 +45,7 @@ import java.util.Set;
 
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * This interface needs to be implemented by any billing application that
@@ -100,7 +100,7 @@ public interface BillingIntegrationService {
      * @return a <code>Boolean</code> indicating if the update has taken place
      *         successfully
      */
-    public void updateReceiptDetails(Set<BillReceiptInfo> billReceipts) throws EGOVRuntimeException;
+    public void updateReceiptDetails(Set<BillReceiptInfo> billReceipts) throws ApplicationRuntimeException;
 
     /**
      * Collection system will invoke this method when the billing system send

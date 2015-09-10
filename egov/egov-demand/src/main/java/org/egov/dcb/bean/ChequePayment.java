@@ -45,7 +45,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 public class ChequePayment extends Payment {
 
@@ -76,7 +76,7 @@ public class ChequePayment extends Payment {
 			this.setInstrumentDate(CHEQUE_DATE_FORMAT.parse(paymentInfo
 					.get(INSTRUMENTDATE)));
 		} catch (ParseException e) {
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					"InstrumentDate-Date Format should be dd-MM-yyyy", e);
 		}
 		if (paymentInfo.get(BANKID) == null) {
@@ -100,7 +100,7 @@ public class ChequePayment extends Payment {
 
 	public void validate(Map<String, String> paymentInfo) {
 		if (paymentInfo != null && paymentInfo.isEmpty()) {
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					" paymentInfo is null.Please check. ");
 		}
 	}

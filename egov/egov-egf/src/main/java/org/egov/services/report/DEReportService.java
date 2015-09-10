@@ -49,9 +49,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
@@ -114,7 +114,7 @@ public class DEReportService {
 		ArrayList list= (ArrayList)query.list();
 	    if(list.size()>0)
 	    	cFinancialYear=(CFinancialYear)list.get(0);
-	    if(null == cFinancialYear) throw new EGOVRuntimeException("Financial Year Id does not exist.");
+	    if(null == cFinancialYear) throw new ApplicationRuntimeException("Financial Year Id does not exist.");
 	    return cFinancialYear.getStartingDate();
 	}
 

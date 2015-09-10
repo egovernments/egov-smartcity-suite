@@ -65,7 +65,7 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
@@ -128,7 +128,7 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 			return "calsheet";
 		} catch (Exception e) {
 			LOGGER.error("Exception in Generate Cal Sheet: ", e);
-			throw new EGOVRuntimeException("Exception : " + e);
+			throw new ApplicationRuntimeException("Exception : " + e);
 		}
 	}
 

@@ -67,11 +67,11 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -531,7 +531,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                     try {
                         paymentDetail.setReleasedAmount(egovCommon.getPaymentAmount(egBillRegister.getId()));
                         netPayableAmt = contractorBillService.getNetPayableAmountForGlCodeId(egBillRegister.getId());
-                    } catch (final EGOVException egovExp) {
+                    } catch (final ApplicationException egovExp) {
                         logger.error("Error: Getting payment for a contractor bill", egovExp);
                         paymentDetail.setReleasedAmount(BigDecimal.ZERO);
                     }

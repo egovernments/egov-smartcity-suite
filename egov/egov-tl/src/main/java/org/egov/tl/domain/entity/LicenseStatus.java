@@ -41,7 +41,7 @@ package org.egov.tl.domain.entity;
 
 import java.util.Date;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 public class LicenseStatus implements java.io.Serializable {
 
@@ -198,7 +198,7 @@ public class LicenseStatus implements java.io.Serializable {
     public boolean validate()
     {
         if (getName() == null)
-            throw new EGOVRuntimeException("In LicenseStatus Validate : 'Status Name' Attribute is Not Set, Please Check !!");
+            throw new ApplicationRuntimeException("In LicenseStatus Validate : 'Status Name' Attribute is Not Set, Please Check !!");
         return true;
     }
 

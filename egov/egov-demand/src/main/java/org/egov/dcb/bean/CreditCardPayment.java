@@ -42,7 +42,7 @@ package org.egov.dcb.bean;
 import java.util.Map;
 
 import org.egov.collection.integration.models.PaymentInfoCard.CARDTYPE;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 public class CreditCardPayment extends Payment {
 	public final static String CREDITCARDNO = "creditCardNo";
@@ -86,7 +86,7 @@ public class CreditCardPayment extends Payment {
 
 	public void validate(Map<String, String> paymentInfo) {
 		if (paymentInfo == null || paymentInfo.isEmpty()) {
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					" paymentInfo is null.Please check. ");
 		}
 	}

@@ -65,9 +65,9 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.actions.common.CommonServices;
@@ -137,7 +137,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
                     + "/ajaxtiledviewersample.jsp?DomainName=" + GISCITY + "&mode=PTIS"));
         } catch (final IOException e) {
             LOGGER.error("Exception in Gis Search Property : ", e);
-            throw new EGOVRuntimeException("Exception : " + e);
+            throw new ApplicationRuntimeException("Exception : " + e);
         }
         LOGGER.debug("Exit from gisFormRedirect method");
     }
@@ -226,7 +226,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
                 target = "result";
             } catch (final Exception e) {
                 LOGGER.error("Exception in Search Property By Bndry ", e);
-                throw new EGOVRuntimeException("Exception : " + e);
+                throw new ApplicationRuntimeException("Exception : " + e);
             }
         LOGGER.debug("Exit from srchByBndry method");
         return target;
@@ -294,7 +294,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
                 target = "result";
             } catch (final Exception e) {
                 LOGGER.error("Exception in Search Property By Property Type ", e);
-                throw new EGOVRuntimeException("Exception : " + e);
+                throw new ApplicationRuntimeException("Exception : " + e);
             }
         LOGGER.debug("Exit from srchByPropType  methods");
         return target;
@@ -370,7 +370,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
                 target = "result";
             } catch (final Exception e) {
                 LOGGER.error("Exception in Search Property By Demand ", e);
-                throw new EGOVRuntimeException("Exception : " + e);
+                throw new ApplicationRuntimeException("Exception : " + e);
             }
         LOGGER.debug("Exit from srchByDemand method");
         return target;
@@ -446,7 +446,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
                 target = "result";
             } catch (final Exception e) {
                 LOGGER.error("Exception in Search Property By Defaulter ", e);
-                throw new EGOVRuntimeException("Exception : " + e);
+                throw new ApplicationRuntimeException("Exception : " + e);
             }
         LOGGER.debug("Exit from srchByDefaulter method");
         return target;

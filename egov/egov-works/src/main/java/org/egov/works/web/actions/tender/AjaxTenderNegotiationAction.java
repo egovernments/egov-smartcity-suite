@@ -50,7 +50,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Assignment;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
@@ -188,7 +188,7 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
         try {
             assignment = employeeService.getLatestAssignmentForEmployee(empID);
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("user.find.error", e);
+            throw new ApplicationRuntimeException("user.find.error", e);
         }
         return DESIGN_FOR_EMP;
     }
@@ -217,7 +217,7 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
                 usersInExecutingDepartment = personalInformationService.getListOfEmployeeViewBasedOnCriteria(
                         criteriaParams, -1, -1);
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("user.find.error", e);
+            throw new ApplicationRuntimeException("user.find.error", e);
         }
         return USERS_IN_DEPT;
     }

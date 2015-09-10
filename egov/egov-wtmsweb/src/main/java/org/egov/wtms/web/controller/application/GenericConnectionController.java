@@ -46,8 +46,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.wtms.application.entity.ApplicationDocuments;
@@ -145,7 +145,7 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
                             return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
                                     file.getContentType(), WaterTaxConstants.MODULE_NAME);
                         } catch (final Exception e) {
-                            throw new EGOVRuntimeException("Error occurred while getting inputstream", e);
+                            throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
                         }
                     }).collect(Collectors.toSet());
         else

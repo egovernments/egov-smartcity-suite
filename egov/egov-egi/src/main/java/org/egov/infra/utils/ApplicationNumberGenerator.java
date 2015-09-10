@@ -48,7 +48,7 @@ import java.sql.SQLException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.hibernate.exception.SQLGrammarException;
@@ -85,7 +85,7 @@ public class ApplicationNumberGenerator {
             return String.format("%s-%s-%05d", DateTimeFormat.forPattern("ddMMyy").print(currentDate),
                     upperCase(randomAlphabetic(2)), sequenceNumber);
         } catch (final SQLException e) {
-            throw new EGOVRuntimeException("Error occurred while generating Application Number", e);
+            throw new ApplicationRuntimeException("Error occurred while generating Application Number", e);
         }
     }
 

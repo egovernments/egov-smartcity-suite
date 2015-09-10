@@ -41,7 +41,7 @@ package org.egov.dcb.bean;
 
 import java.util.Map;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 public class AtmPayment extends Payment {
     public final static String TRANSACTIONNUMBER = "transactionNumber";
@@ -73,7 +73,7 @@ public class AtmPayment extends Payment {
 
     public void validate(Map<String, String> paymentInfo) {
         if (paymentInfo == null || paymentInfo.isEmpty()) {
-            throw new EGOVRuntimeException(" paymentInfo is null.Please check. ");
+            throw new ApplicationRuntimeException(" paymentInfo is null.Please check. ");
         }
     }
 

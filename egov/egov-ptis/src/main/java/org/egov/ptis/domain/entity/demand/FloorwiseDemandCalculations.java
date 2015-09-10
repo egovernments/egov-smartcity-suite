@@ -42,7 +42,7 @@ package org.egov.ptis.domain.entity.demand;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.entity.property.Floor;
 
 /**
@@ -480,9 +480,9 @@ public class FloorwiseDemandCalculations {
 	 */
 	public boolean validate() {
 		if (getFloor() == null)
-			throw new EGOVRuntimeException("In  Validate : Property is Not Set, Please Check !!");
+			throw new ApplicationRuntimeException("In  Validate : Property is Not Set, Please Check !!");
 		if (getPTDemandCalculations() == null)
-			throw new EGOVRuntimeException("In  Validate : PTDemandCalculations is Not Set, Please Check !!");
+			throw new ApplicationRuntimeException("In  Validate : PTDemandCalculations is Not Set, Please Check !!");
 
 		return true;
 	}

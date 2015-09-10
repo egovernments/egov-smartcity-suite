@@ -42,7 +42,7 @@ package org.egov.dcb.bean;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 public class OnlinePayment extends Payment {
 
@@ -71,7 +71,7 @@ public class OnlinePayment extends Payment {
 
 	public void validate(Map<String, String> paymentInfo) {
 		if (paymentInfo != null && paymentInfo.isEmpty()) {
-			throw new EGOVRuntimeException(" paymentInfo is null.Please check. ");
+			throw new ApplicationRuntimeException(" paymentInfo is null.Please check. ");
 		}
 	}
 	

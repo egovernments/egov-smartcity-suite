@@ -48,9 +48,9 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.enums.UserType;
@@ -201,7 +201,7 @@ public class ComplaintUpdationController {
                     return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
                             file.getContentType(), PGRConstants.MODULE_NAME);
                 } catch (final Exception e) {
-                    throw new EGOVRuntimeException("err.input.stream", e);
+                    throw new ApplicationRuntimeException("err.input.stream", e);
                 }
             }).collect(Collectors.toSet());
         else

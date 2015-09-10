@@ -48,8 +48,8 @@ import javax.validation.constraints.Min;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.regex.Constants;
-import org.egov.infstr.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 

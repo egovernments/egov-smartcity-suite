@@ -77,7 +77,7 @@
 <global-exceptions>
 	<exception
 	key="error.generic"
-	type="org.egov.exceptions.EGOVException"
+	type="org.egov.infra.exception.ApplicationException"
 	path="/error/error.jsp"/>
 </global-exceptions>
 <action-mappings>

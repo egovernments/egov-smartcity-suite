@@ -53,13 +53,13 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
@@ -392,7 +392,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
                 preapprovalStatus = Integer.valueOf(appConfigVal.getValue());
             }
         } else
-            throw new EGOVRuntimeException("Appconfig value for PREAPPROVEDVOUCHERSTATUS is not defined in the system");
+            throw new ApplicationRuntimeException("Appconfig value for PREAPPROVEDVOUCHERSTATUS is not defined in the system");
 
         CVoucherHeader payIn = (CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?", payInId);
         // Bankaccount depositedBankAccount=(Bankaccount)
@@ -443,7 +443,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         return new EgovCommon().getBoundaryForUser(rv.getCreatedBy());
     }
 
-    public Position getPositionForEmployee(Employee emp) throws EGOVRuntimeException
+    public Position getPositionForEmployee(Employee emp) throws ApplicationRuntimeException
     {
         return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
     }
@@ -578,12 +578,12 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
     /**
      * 
      * @param instrumentDetailsMap
-     * @throws EGOVRuntimeException
+     * @throws ApplicationRuntimeException
      * 
      * Will update bank reconcilation and set isreconciled to true for the type 1. cash 2.ECS 3. bank challan 4. bank
      */
     public void addToBankReconcilationSQL(Map instrumentDetailsMap)
-            throws EGOVRuntimeException {
+            throws ApplicationRuntimeException {
         String brsSql = "Insert into bankreconciliation (ID,BANKACCOUNTID,AMOUNT,TRANSACTIONTYPE,INSTRUMENTHEADERID) values " +
                 " (seq_bankreconciliation.nextVal,:bankAccId,:amount,:trType,:ihId)";
         SQLQuery brsSQLQuery = HibernateUtil.getCurrentSession().createSQLQuery(brsSql);

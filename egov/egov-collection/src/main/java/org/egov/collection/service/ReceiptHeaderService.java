@@ -76,12 +76,12 @@ import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EmployeeService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.contra.ContraJournalVoucher;
@@ -315,7 +315,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	 * @return The created voucher header
 	 */
 	@Transactional
-	public CVoucherHeader createVoucherForReceipt(ReceiptHeader receiptHeader, Boolean receiptBulkUpload) throws EGOVRuntimeException {
+	public CVoucherHeader createVoucherForReceipt(ReceiptHeader receiptHeader, Boolean receiptBulkUpload) throws ApplicationRuntimeException {
 		CVoucherHeader voucherheader = null;
 
 		// Additional check for challan Based Receipt, if the receipt cancelled
@@ -364,7 +364,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	 *            receipt headers for which vouchers are to be created
 	 */
 	@Transactional
-	public void createVouchers(ReceiptHeader receiptHeader, Boolean receiptBulkUpload) throws EGOVRuntimeException {
+	public void createVouchers(ReceiptHeader receiptHeader, Boolean receiptBulkUpload) throws ApplicationRuntimeException {
 			createVoucherForReceipt(receiptHeader, receiptBulkUpload);
 	}
 
@@ -378,7 +378,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	 *            set of receipt headers on which workflow is to be started
 	 * @param receiptBulkUpload
 	 */
-	public void startWorkflow(ReceiptHeader receiptHeader, Boolean receiptBulkUpload) throws EGOVRuntimeException {
+	public void startWorkflow(ReceiptHeader receiptHeader, Boolean receiptBulkUpload) throws ApplicationRuntimeException {
 	    //Boolean createVoucherForBillingService = Boolean.TRUE;
 	    //createVoucherForBillingService = receiptHeader.getService().getVoucherCreation() ? Boolean.FALSE : receiptHeader.getService().getVoucherCreation();
 
@@ -1255,7 +1255,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 				String errMsg = "Exception while updating billing system ["
 					+ serviceCode + "] with receipt details!";
 				LOGGER.error(errMsg, e);
-				throw new EGOVRuntimeException(errMsg, e);
+				throw new ApplicationRuntimeException(errMsg, e);
 			}
 		}
 	}

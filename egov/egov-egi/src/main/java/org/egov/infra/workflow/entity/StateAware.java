@@ -49,8 +49,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.pims.commons.Position;
@@ -136,7 +136,7 @@ public abstract class StateAware extends AbstractAuditable {
 
     public final StateAware start() {
         if (hasState())
-            throw new EGOVRuntimeException("Workflow already started state.");
+            throw new ApplicationRuntimeException("Workflow already started state.");
         else {
             state = new State();
             state.setType(getStateType());
@@ -150,7 +150,7 @@ public abstract class StateAware extends AbstractAuditable {
 
     public final StateAware end() {
         if (stateIsEnded())
-            throw new EGOVRuntimeException("Workflow already ended state.");
+            throw new ApplicationRuntimeException("Workflow already ended state.");
         else {
             state.setValue(State.DEFAULT_STATE_VALUE_CLOSED);
             state.setStatus(StateStatus.ENDED);
@@ -168,7 +168,7 @@ public abstract class StateAware extends AbstractAuditable {
             if (!clone)
                 resetState();
         } else
-            throw new EGOVRuntimeException("Workflow not ended.");
+            throw new ApplicationRuntimeException("Workflow not ended.");
         return this;
     }
 

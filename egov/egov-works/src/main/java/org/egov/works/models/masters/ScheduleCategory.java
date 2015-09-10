@@ -44,7 +44,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infstr.ValidationError;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;

@@ -58,14 +58,14 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.workflow.Action;
 import org.egov.model.advance.EgAdvanceReqPayeeDetails;
@@ -163,7 +163,7 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction{
 			LOGGER.error("ERROR"+e.getMessage(),e);
 			populateData();
 			throw new ValidationException(e.getErrors());
-		}catch(EGOVRuntimeException e){
+		}catch(ApplicationRuntimeException e){
 			LOGGER.error("ERROR"+e.getMessage(),e);
 			populateData();
 			List<ValidationError> errors=new ArrayList<ValidationError>();

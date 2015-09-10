@@ -67,9 +67,9 @@ import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Fund;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.model.budget.BudgetProposalBean;
 import org.egov.model.report.ReportBean;
 import org.egov.web.actions.report.BudgetReAppReportBean;
@@ -169,7 +169,7 @@ public class ReportHelper {
 			closeStream(reportStream);
 		} catch (JRException e) {
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Error" + e.getMessage());
-			throw new EGOVRuntimeException("report.exception", e);
+			throw new ApplicationRuntimeException("report.exception", e);
 		}
 		return inputStream;
 	}
@@ -183,7 +183,7 @@ public class ReportHelper {
 			closeStream(reportStream);
 		} catch (JRException e) {
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Error" + e.getMessage());
-			throw new EGOVRuntimeException("report.exception", e);
+			throw new ApplicationRuntimeException("report.exception", e);
 		}
 		return inputStream;
 	}
@@ -196,7 +196,7 @@ public class ReportHelper {
 			closeStream(reportStream);
 		} catch (JRException e) {
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Error" + e.getMessage());
-			throw new EGOVRuntimeException("report.exception", e);
+			throw new ApplicationRuntimeException("report.exception", e);
 		}
 		return inputStream;
 	}

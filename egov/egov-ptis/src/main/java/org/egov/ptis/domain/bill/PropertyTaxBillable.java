@@ -68,10 +68,10 @@ import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.MoneyUtils;
 import org.egov.ptis.client.model.PenaltyAndRebate;
@@ -174,7 +174,7 @@ RebateCalculator {
         try {
             bp = getBasicProperty();
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("Property does not exist" + e);
+            throw new ApplicationRuntimeException("Property does not exist" + e);
         }
         return ptDemandDAO.getNonHistoryCurrDmdForProperty(bp.getProperty());
     }

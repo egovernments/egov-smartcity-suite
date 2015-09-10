@@ -9,8 +9,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Path.Node;
 
 import org.egov.collection.repository.ServiceCategoryRepository;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -127,7 +127,6 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
@@ -138,6 +137,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.utils.DateUtils;
@@ -1395,7 +1395,7 @@ public class PropertyTaxUtil {
             earliestModificationDate = PropertyTaxConstants.DATEFORMATTER_DDMMYYYY.parse((String) result.get(0));
         } catch (final ParseException e) {
             LOGGER.error("Error while parsing effective date", e);
-            throw new EGOVRuntimeException("Error while parsing effective date", e);
+            throw new ApplicationRuntimeException("Error while parsing effective date", e);
         }
 
         return earliestModificationDate;
@@ -1413,7 +1413,7 @@ public class PropertyTaxUtil {
         try {
             waterTaxEffectiveDate = PropertyTaxConstants.DATEFORMATTER_DDMMYYYY.parse(PENALTY_WATERTAX_EFFECTIVE_DATE);
         } catch (final ParseException pe) {
-            throw new EGOVRuntimeException("Error while parsing Water Tax Effective Date for Penalty Calculation", pe);
+            throw new ApplicationRuntimeException("Error while parsing Water Tax Effective Date for Penalty Calculation", pe);
         }
 
         LOG.debug("getWaterTaxEffectiveDateForPenalty - waterTaxEffectiveDate = {} ", waterTaxEffectiveDate);
@@ -1824,7 +1824,7 @@ public class PropertyTaxUtil {
         try {
             taxRates.load(sr);
         } catch (final IOException e) {
-            throw new EGOVRuntimeException("Could not decipher Tax rates from string" + s, e);
+            throw new ApplicationRuntimeException("Could not decipher Tax rates from string" + s, e);
         }
         sr.close();
         return taxRates;
@@ -1919,7 +1919,7 @@ public class PropertyTaxUtil {
         } catch (final Exception e) {
             e.printStackTrace();
             LOGGER.error("Error occured in Class : CollectionSummaryReportAction  Method : list", e);
-            throw new EGOVRuntimeException("Error occured in Class : CollectionSummaryReportAction  Method : list "
+            throw new ApplicationRuntimeException("Error occured in Class : CollectionSummaryReportAction  Method : list "
                     + e.getMessage());
         }
         if (LOGGER.isDebugEnabled())

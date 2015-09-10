@@ -51,10 +51,10 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.eis.service.DesignationService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
 import org.egov.tl.utils.LicenseUtils;
@@ -116,7 +116,7 @@ public class CommonAjaxAction extends BaseFormAction {
         } catch (final Exception e) {
             LOGGER.error("populateLocations() - Error while loading locations." + e.getMessage());
             addFieldError(CommonAjaxAction.LOCATION, "Unable to load location information");
-            throw new EGOVRuntimeException("Unable to load location information", e);
+            throw new ApplicationRuntimeException("Unable to load location information", e);
         }
         return "AJAX_RESULT";
     }
@@ -132,7 +132,7 @@ public class CommonAjaxAction extends BaseFormAction {
         } catch (final Exception e) {
             LOGGER.error("populateStreets() - Error while loading streets.", e);
             addFieldError(CommonAjaxAction.LOCATION, "Unable to load street information");
-            throw new EGOVRuntimeException("Unable to load street information", e);
+            throw new ApplicationRuntimeException("Unable to load street information", e);
         }
         return CommonAjaxAction.STREETS;
     }
@@ -152,7 +152,7 @@ public class CommonAjaxAction extends BaseFormAction {
         } catch (final Exception e) {
             LOGGER.error("populateDivisions() - Error while loading divisions ." + e.getMessage());
             addFieldError(CommonAjaxAction.LOCATION, "Unable to load division information");
-            throw new EGOVRuntimeException("Unable to load division information", e);
+            throw new ApplicationRuntimeException("Unable to load division information", e);
         }
         return "ward";
     }
@@ -166,7 +166,7 @@ public class CommonAjaxAction extends BaseFormAction {
         } catch (final Exception e) {
             LOGGER.error("populateDesignationsByDept() - Error while loading divisions ." + e.getMessage());
             addFieldError(CommonAjaxAction.LOCATION, "Unable to load Designation information");
-            throw new EGOVRuntimeException("Unable to load Designation information", e);
+            throw new ApplicationRuntimeException("Unable to load Designation information", e);
         }
         return "designation";
     }
@@ -179,7 +179,7 @@ public class CommonAjaxAction extends BaseFormAction {
         } catch (final Exception e) {
             LOGGER.error("populateUsersByDept() - Error while loading divisions ." + e.getMessage());
             addFieldError(CommonAjaxAction.LOCATION, "Unable to load User information");
-            throw new EGOVRuntimeException("Unable to load User information", e);
+            throw new ApplicationRuntimeException("Unable to load User information", e);
         }
         return "users";
     }

@@ -66,13 +66,13 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -178,7 +178,7 @@ public class SearchPropertyAction extends BaseFormAction {
             throw new ValidationException(Arrays.asList(new ValidationError(msg, msg)));
         } catch (final Exception e) {
             LOGGER.error("Exception in Search Property By Assessment ", e);
-            throw new EGOVRuntimeException("Exception : ", e);
+            throw new ApplicationRuntimeException("Exception : ", e);
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exit from srchByAssessment method ");
@@ -218,7 +218,7 @@ public class SearchPropertyAction extends BaseFormAction {
                         + houseNumBndry + ", Owner Name: " + ownerNameBndry);
             } catch (final Exception e) {
                 LOGGER.error("Exception in Search Property By Bndry ", e);
-                throw new EGOVRuntimeException("Exception : " + e);
+                throw new ApplicationRuntimeException("Exception : " + e);
             }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exit from srchByBndry method");
@@ -255,7 +255,7 @@ public class SearchPropertyAction extends BaseFormAction {
                 setSearchValue("Location : " + strLocationNum + ", Owner Name : " + ownerName);
             } catch (final Exception e) {
                 LOGGER.error("Exception in Search Property By Location ", e);
-                throw new EGOVRuntimeException("Exception : " + e);
+                throw new ApplicationRuntimeException("Exception : " + e);
             }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exit from srchByArea  method");
@@ -288,7 +288,7 @@ public class SearchPropertyAction extends BaseFormAction {
                 setSearchValue("From Demand: " + fromDemand + ", To Demand: " + toDemand);
             } catch (final Exception e) {
                 LOGGER.error("Exception in Search Property By Demand ", e);
-                throw new EGOVRuntimeException("Exception : " + e);
+                throw new ApplicationRuntimeException("Exception : " + e);
             }
         return TARGET;
     }

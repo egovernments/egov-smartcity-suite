@@ -65,13 +65,13 @@ import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
@@ -129,7 +129,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	@Override
 	public SearchResult getBasicPropertyByRegNum(String regNum) throws PropertyNotFoundException {
 		if (regNum == null || regNum.equals("")) {
-			throw new EGOVRuntimeException("Reg Num /Folio No is not Set during PropertySearch !!");
+			throw new ApplicationRuntimeException("Reg Num /Folio No is not Set during PropertySearch !!");
 		}
 		LOGGER.debug("getBasicPropertyByRegNum : regNum : " + regNum);
 		BasicProperty basicProperty = null;
@@ -160,7 +160,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			throw new PropertyNotFoundException("Exception in  getBasicPropertyByRegNum");
 		} catch (Exception e) {
 			LOGGER.error("Exception in  getBasicPropertyByRegNum : " + e.getMessage());
-			throw new EGOVRuntimeException("Exception in  getBasicPropertyByRegNum");
+			throw new ApplicationRuntimeException("Exception in  getBasicPropertyByRegNum");
 		}
 
 		return retSearchResult;
@@ -169,7 +169,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	@Override
 	public SearchResult getPropertyByPropertyId(String propertyId) throws PropertyNotFoundException {
 		if (propertyId == null || propertyId.trim().equals("")) {
-			throw new EGOVRuntimeException("propertyId  is not Set during PropertySearch !!");
+			throw new ApplicationRuntimeException("propertyId  is not Set during PropertySearch !!");
 		}
 		BasicProperty basicProperty = null;
 		PropertyImpl property = null;
@@ -225,7 +225,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			throw exception;
 		} catch (Exception e) {
 			LOGGER.error("Exception in  getPropertyByPropertyId : " + e.getMessage());
-			throw new EGOVRuntimeException("Exception in  getPropertyByPropertyId");
+			throw new ApplicationRuntimeException("Exception in  getPropertyByPropertyId");
 		}
 
 		return retSearchResult;
@@ -239,7 +239,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	@Override
 	public List getPropertyByBoundry(Integer zoneID, Integer wardID, Integer colonyID) throws PropertyNotFoundException {
 		if (zoneID == null || wardID == null || colonyID == null) {
-			throw new EGOVRuntimeException("Parameters not Set during PropertySearch based on Boundry!!");
+			throw new ApplicationRuntimeException("Parameters not Set during PropertySearch based on Boundry!!");
 		}
 		LOGGER.info(">>>>>>>>>>>>>colonyId" + colonyID);
 		BasicProperty basicProperty = null;
@@ -291,7 +291,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			throw new PropertyNotFoundException("Exception in  getPropertyByBoundry");
 		} catch (Exception e) {
 			LOGGER.error("Exception in  getPropertyByBoundry : " + e.getMessage());
-			throw new EGOVRuntimeException("Exception in  getPropertyByBoundry");
+			throw new ApplicationRuntimeException("Exception in  getPropertyByBoundry");
 		}
 		return retList;
 	}
@@ -306,7 +306,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	public List getPropertyIDByBoundryForWardBlockStreet(Integer wardID, Integer blockID, Integer streetID)
 			throws PropertyNotFoundException {
 		if (wardID == null || blockID == null || streetID == null) {
-			throw new EGOVRuntimeException("Parameters not Set during PropertySearch based on Boundry!!");
+			throw new ApplicationRuntimeException("Parameters not Set during PropertySearch based on Boundry!!");
 		}
 		LOGGER.info(">>>>>>>>>>>>>streetID" + streetID);
 		LOGGER.info("inside ward block street ");
@@ -360,7 +360,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			throw new PropertyNotFoundException("Exception in  getPropertyByBoundry");
 		} catch (Exception e) {
 			LOGGER.error("Exception in  getPropertyByBoundry : " + e.getMessage());
-			throw new EGOVRuntimeException("Exception in  getPropertyByBoundry");
+			throw new ApplicationRuntimeException("Exception in  getPropertyByBoundry");
 		}
 		return retList;
 	}
@@ -376,7 +376,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	public SearchResult getPropertyByBoundryAndMunNo(Integer zoneID, Integer wardID, Integer colonyID, Integer munNo)
 			throws PropertyNotFoundException {
 		if (zoneID == null || wardID == null || colonyID == null || munNo == null) {
-			throw new EGOVRuntimeException("Parameters not Set during PropertySearch based on Boundry!!");
+			throw new ApplicationRuntimeException("Parameters not Set during PropertySearch based on Boundry!!");
 		}
 
 		BasicProperty basicProperty = null;
@@ -416,7 +416,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			throw new PropertyNotFoundException("Exception in  getPropertyByBoundry");
 		} catch (Exception e) {
 			LOGGER.error("Exception in  getPropertyByBoundryAndMunNo : " + e.getMessage());
-			throw new EGOVRuntimeException("Exception in  getPropertyByBoundryAndMunNo");
+			throw new ApplicationRuntimeException("Exception in  getPropertyByBoundryAndMunNo");
 		}
 		return retSearchResult;
 	}
@@ -439,7 +439,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	public List getPropertyByBoundryAndOwnerName(Integer boundryID, String ownerName, String phNumber)
 			throws PropertyNotFoundException {
 		if (boundryID == null) {
-			throw new EGOVRuntimeException("Parameters not Set during PropertySearch based on Boundry!!");
+			throw new ApplicationRuntimeException("Parameters not Set during PropertySearch based on Boundry!!");
 		}
 
 		Query qry;
@@ -518,7 +518,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			throw new PropertyNotFoundException("Exception in  getPropertyByBoundryAndOwnerName");
 		} catch (Exception e) {
 			LOGGER.error("Exception in  getPropertyByBoundryAndOwnerName : " + e.getMessage());
-			throw new EGOVRuntimeException("Exception in  getPropertyByBoundryAndOwnerName");
+			throw new ApplicationRuntimeException("Exception in  getPropertyByBoundryAndOwnerName");
 		}
 	}
 
@@ -536,7 +536,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	@Override
 	public List getPropertyByOldMuncipalNo(String oldMuncipalNo) throws PropertyNotFoundException {
 		if (oldMuncipalNo == null || oldMuncipalNo.trim().equals("")) {
-			throw new EGOVRuntimeException("oldMuncipalNo  is not Set during PropertySearch !!");
+			throw new ApplicationRuntimeException("oldMuncipalNo  is not Set during PropertySearch !!");
 		}
 		LOGGER.info(">>>>>>>>>>>>>oldMuncipalNo" + oldMuncipalNo);
 		BasicProperty basicProperty = null;
@@ -581,7 +581,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			throw new PropertyNotFoundException("Exception in  getPropertyByOldMuncipalNo");
 		} catch (Exception e) {
 			LOGGER.error("Exception in  getPropertyByOldMuncipalNo : " + e.getMessage());
-			throw new EGOVRuntimeException("Exception in  getPropertyByOldMuncipalNo");
+			throw new ApplicationRuntimeException("Exception in  getPropertyByOldMuncipalNo");
 		}
 		return retList;
 	}
@@ -698,7 +698,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	@Override
 	public SearchResult getPropertyByKhataNumber(String khataNumber) throws PropertyNotFoundException {
 		if (khataNumber == null || khataNumber.trim().equals("")) {
-			throw new EGOVRuntimeException("khataNumber  is not Set during PropertySearch !!");
+			throw new ApplicationRuntimeException("khataNumber  is not Set during PropertySearch !!");
 		}
 		LOGGER.info(">>>>>>>>>>>>>khataNumber" + khataNumber);
 		BasicProperty basicProperty = null;
@@ -734,7 +734,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			throw new PropertyNotFoundException("Exception in  getPropertyByKhataNumber");
 		} catch (Exception e) {
 			LOGGER.error("Exception in  getPropertyByKhataNumber : " + e.getMessage());
-			throw new EGOVRuntimeException("Exception in  getPropertyByKhataNumber");
+			throw new ApplicationRuntimeException("Exception in  getPropertyByKhataNumber");
 		}
 		return retSearchResult;
 	}
@@ -744,7 +744,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			throws PropertyNotFoundException {
 		LOGGER.info(">>>>>>>>>>inside getPropertyByRvAmout>>>>>>>>>>>>>>");
 		if (RvSel == null || RvSel.equals("")) {
-			throw new EGOVRuntimeException("RV amout selection was not Set during PropertySearch based on Boundry!!");
+			throw new ApplicationRuntimeException("RV amout selection was not Set during PropertySearch based on Boundry!!");
 		}
 		LOGGER.info("after query execution--------------RvSel--" + RvSel.charValue() + "---------lowVal----------"
 				+ lowVal + "--------HighVal--------" + HighVal);
@@ -824,7 +824,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			}
 		} catch (Exception e) {
 			LOGGER.info("Excetion in getPropertyByRvAmout----------------" + e);
-			throw new EGOVRuntimeException("Error in getPropertyByRvAmout", e);
+			throw new ApplicationRuntimeException("Error in getPropertyByRvAmout", e);
 		}
 	}
 
@@ -869,7 +869,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			}
 		} catch (Exception e) {
 			LOGGER.info("Excetion in getPropertyByDmdAmout---------" + e);
-			throw new EGOVRuntimeException("Error in getPropertyByDmdAmout", e);
+			throw new ApplicationRuntimeException("Error in getPropertyByDmdAmout", e);
 		}
 	}
 
@@ -1014,7 +1014,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			throw new PropertyNotFoundException("Exception in  getInActivePropertyByBoundary");
 		} catch (Exception e) {
 			LOGGER.error("Exception in  getInActivePropertyByBoundary : " + e.getMessage());
-			throw new EGOVRuntimeException("Exception in  getInActivePropertyByBoundary");
+			throw new ApplicationRuntimeException("Exception in  getInActivePropertyByBoundary");
 		}
 	}
 
@@ -1051,7 +1051,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			}
 		} catch (Exception e) {
 			LOGGER.error("Exception in  getPropertyByMobileNumber : " + e.getMessage());
-			throw new EGOVRuntimeException("Exception in  getPropertyByMobileNumber");
+			throw new ApplicationRuntimeException("Exception in  getPropertyByMobileNumber");
 		}
 		return propList;
 	}
@@ -1088,7 +1088,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			}
 		} catch (Exception e) {
 			LOGGER.error("Exception in  getPropertyByBillNumber : " + e.getMessage());
-			throw new EGOVRuntimeException("Exception in  getPropertyByBillNumber");
+			throw new ApplicationRuntimeException("Exception in  getPropertyByBillNumber");
 		}
 		return propList;
 	}
@@ -1194,7 +1194,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 
 			return propertyList;
 		} catch (Exception e) {
-			throw new EGOVRuntimeException("Error in getPropertyByBoundryAndOwnerNameAndHouseNo", e);
+			throw new ApplicationRuntimeException("Error in getPropertyByBoundryAndOwnerNameAndHouseNo", e);
 		}
 
 	}
@@ -1386,7 +1386,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			}
 			return propertyList;
 		} catch (Exception e) {
-			throw new EGOVRuntimeException("Error in getPropertyByBoundryAndOwnerNameAndHouseNo", e);
+			throw new ApplicationRuntimeException("Error in getPropertyByBoundryAndOwnerNameAndHouseNo", e);
 		}
 
 	}

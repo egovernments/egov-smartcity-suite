@@ -88,7 +88,7 @@ import org.egov.dcb.service.DCBServiceImpl;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.bean.DemandDetail;
@@ -211,7 +211,7 @@ public class EditDemandAction extends BaseFormAction {
 		try {
 			allInstallments = propertyTaxUtil.getInstallmentListByStartDate(dateFormat.parse("01/04/1963"));
 		} catch (ParseException e) {
-			throw new EGOVRuntimeException("Error while getting all installments from start date", e);
+			throw new ApplicationRuntimeException("Error while getting all installments from start date", e);
 		}
 
 		allInstallments.removeAll(propertyInstallments);

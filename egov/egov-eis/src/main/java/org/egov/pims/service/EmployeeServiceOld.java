@@ -49,10 +49,10 @@ import java.util.Map;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.NoSuchObjectException;
-import org.egov.exceptions.TooManyValuesException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.NoSuchObjectException;
+import org.egov.infra.exception.TooManyValuesException;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.EmployeeNamePoJo;
@@ -137,14 +137,14 @@ public interface EmployeeServiceOld
 
 	public abstract List getEmpTempAssignment(String code,Date givenDate,Integer posId);
 
-	 public List<Integer> getAssignmentsForEmp(Integer empId,Date givenDate) throws EGOVException;
+	 public List<Integer> getAssignmentsForEmp(Integer empId,Date givenDate) throws ApplicationException;
 
 	 /**
 	  * API that will return all positions for a user(temporary and permanent) for a date.
 	  * consider system date if date is not provided
 	  */
 
-	 public List<Position> getPositionsForUser(User user, Date date)throws EGOVException;
+	 public List<Position> getPositionsForUser(User user, Date date)throws ApplicationException;
 
 	 public abstract List getEmpPrimaryAssignment(String code,Date givenDate,Integer posId);
 	 public  List searchEmployee(Integer status,Date fromDate,Date toDate)throws Exception;

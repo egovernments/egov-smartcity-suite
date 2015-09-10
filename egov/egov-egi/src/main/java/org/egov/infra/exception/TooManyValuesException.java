@@ -37,36 +37,37 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.exceptions;
+package org.egov.infra.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Class NoSuchObjectTypeException.
- * Unchecked exception for Object existence.
+ * The Class TooManyValuesException.
+ * Checked exception for values.
  */
-public class NoSuchObjectTypeException extends EGOVRuntimeException {
-	
+public class TooManyValuesException extends ApplicationException {
+
 	private static final long serialVersionUID = 1L;
-	private static final Logger LOGGER = LoggerFactory.getLogger(NoSuchObjectTypeException.class);
-	
+	private static final Logger LOGGER = LoggerFactory.getLogger(TooManyValuesException.class);
+
 	/**
-	 * Instantiates a new no such object type exception.
+	 * Instantiates a new too many values exception.
 	 * @param msg the msg
 	 */
-	public NoSuchObjectTypeException(final String msg) {
+	public TooManyValuesException(final String msg) {
 		super(msg);
 		LOGGER.error(msg);
 	}
-	
+
 	/**
-	 * Instantiates a new no such object type exception.
+	 * Instantiates a new too many values exception.
 	 * @param msg the msg
-	 * @param throwable the throwable
+	 * @param e the e
 	 */
-	public NoSuchObjectTypeException(final String msg, final Throwable throwable) {
-		super(msg, throwable);
-		LOGGER.error(msg, throwable);
+	public TooManyValuesException(final String msg, final Throwable e) {
+		super(msg, e);
+		LOGGER.error(msg, e);
 	}
+
 }

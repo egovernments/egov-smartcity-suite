@@ -42,7 +42,7 @@ package org.egov.works.utils;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.Money;
 
 import com.lowagie.text.Document;
@@ -70,7 +70,7 @@ public class AbstractPDFGenerator {
             PdfWriter.getInstance(document, out);
             document.open();
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("estimate.pdf.error", e);
+            throw new ApplicationRuntimeException("estimate.pdf.error", e);
         }
     }
 

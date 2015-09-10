@@ -67,9 +67,9 @@ import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -200,13 +200,13 @@ public class FinancialUtil {
 					accountDetList, new ArrayList<HashMap<String, Object>>());
 			if (cvh == null) {
 				LOGGER.error("Voucher Creation failed. CVoucherHeader is null.");
-				throw new EGOVRuntimeException("Voucher Creation failed.");
+				throw new ApplicationRuntimeException("Voucher Creation failed.");
 			}
 			LOGGER.info("createVoucherForPTIS(): Voucher is created for PTIS with the voucher number : "
 					+ cvh.getVoucherNumber());
 		} catch (Throwable t) {
 			LOGGER.error(t.getMessage(), t);
-			throw new EGOVRuntimeException("Unable to create a voucher.", t);
+			throw new ApplicationRuntimeException("Unable to create a voucher.", t);
 		}
 	}
 

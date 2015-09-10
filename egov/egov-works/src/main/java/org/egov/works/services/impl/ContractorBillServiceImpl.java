@@ -62,9 +62,9 @@ import org.egov.commons.service.CommonsService;
 import org.egov.dao.bills.BillsDaoFactory;
 import org.egov.dao.bills.EgBilldetailsDAO;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.infstr.services.PersistenceService;
@@ -705,11 +705,11 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      * API will returns the Net Payable Amount for netpayable code coaId
      *
      * @return BigDecimal
-     * @throws EGOVException
+     * @throws ApplicationException
      * @throws NumberFormatException
      */
     @Override
-    public BigDecimal getNetPayableAmountForGlCodeId(final Long billId) throws NumberFormatException, EGOVException {
+    public BigDecimal getNetPayableAmountForGlCodeId(final Long billId) throws NumberFormatException, ApplicationException {
         BigDecimal netPayableAmount = BigDecimal.ZERO;
         final List<CChartOfAccounts> coaPayableList = commonsService.getAccountCodeByPurpose(Integer
                 .valueOf(worksService.getWorksConfigValue(WORKS_NETPAYABLE_CODE)));
@@ -949,14 +949,14 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      *
      * @param ContractorBillRegister
      * @return List
-     * @throws EGOVException
+     * @throws ApplicationException
      * @throws NumberFormatException
      */
     @Override
     public List<EgBilldetails> getCustomDeductionList(final Long billId, final Long workOrderEstimateId,
             final List<StatutoryDeductionsForBill> statutoryList,
             final List<DeductionTypeForBill> standardDeductionList,
-            final List<EgBilldetails> retentionMoneyDeductionList) throws NumberFormatException, EGOVException {
+            final List<EgBilldetails> retentionMoneyDeductionList) throws NumberFormatException, ApplicationException {
         final List<BigDecimal> glcodeIdList = new ArrayList<BigDecimal>();
         addStatutoryDeductionGlcode(glcodeIdList, statutoryList);
         addStandardDeductionGlcode(glcodeIdList, standardDeductionList);
@@ -975,7 +975,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     @Override
     public List<EgBilldetails> getRetentionMoneyDeductionList(final Long billId,
             final List<StatutoryDeductionsForBill> statutoryList, final List<DeductionTypeForBill> standardDeductionList)
-                    throws NumberFormatException, EGOVException {
+                    throws NumberFormatException, ApplicationException {
         final List<BigDecimal> retentionGlcodeIdList = new ArrayList<BigDecimal>();
         getAllRetentionMoneyGlcodeList(retentionGlcodeIdList);
         return getRetentionMoneyListforglcodes(retentionGlcodeIdList, billId);
@@ -985,7 +985,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     public List<EgBilldetails> getAccountDetailsList(final Long billId, final Long workOrderEstimateId,
             final List<StatutoryDeductionsForBill> statutoryList,
             final List<DeductionTypeForBill> standardDeductionList, final List<EgBilldetails> customDeductionList,
-            final List<EgBilldetails> retentionMoneyDeductionList) throws NumberFormatException, EGOVException {
+            final List<EgBilldetails> retentionMoneyDeductionList) throws NumberFormatException, ApplicationException {
         final List<BigDecimal> glcodeIdList = new ArrayList<BigDecimal>();
         addStatutoryDeductionGlcode(glcodeIdList, statutoryList);
         addStandardDeductionGlcode(glcodeIdList, standardDeductionList);
@@ -1030,7 +1030,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
                     glcodeIdList.add(deductionTypeForBill.getGlcodeid());
     }
 
-    private void getAllRetentionMoneyGlcodeList(final List<BigDecimal> retentionGlcodeIdList) throws EGOVException {
+    private void getAllRetentionMoneyGlcodeList(final List<BigDecimal> retentionGlcodeIdList) throws ApplicationException {
 
         if (StringUtils.isNotBlank(worksService.getWorksConfigValue(RETENTION_MONEY_PURPOSE))) {
             final List<CChartOfAccounts> tempAllRetAccList = commonsService.getAccountCodeByPurpose(Integer
@@ -1048,7 +1048,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
                     glcodeIdList.add(deductionTypeForBill.getGlcodeid());
     }
 
-    public void addGlCodeForNetPayable(final List<BigDecimal> glcodeIdList) throws NumberFormatException, EGOVException {
+    public void addGlCodeForNetPayable(final List<BigDecimal> glcodeIdList) throws NumberFormatException, ApplicationException {
         final List<CChartOfAccounts> coaPayableList = commonsService.getAccountCodeByPurpose(Integer
                 .valueOf(worksService.getWorksConfigValue(WORKS_NETPAYABLE_CODE)));
         if (coaPayableList != null)
@@ -1094,7 +1094,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
             final List<StatutoryDeductionsForBill> actionStatutorydetails,
             final List<DeductionTypeForBill> standardDeductions, final List<EgBilldetails> customDeductions,
             final List<EgBilldetails> retentionMoneyDeductions, final List<AssetForBill> accountDetailsForBill)
-                    throws NumberFormatException, EGOVException {
+                    throws NumberFormatException, ApplicationException {
         actionStatutorydetails.clear();
         actionStatutorydetails.addAll(getStatutoryListForBill(id));
         standardDeductions.clear();
@@ -1128,7 +1128,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     }
 
     @Override
-    public List<EgChecklists> getEgcheckList(final Long billId) throws NumberFormatException, EGOVException {
+    public List<EgChecklists> getEgcheckList(final Long billId) throws NumberFormatException, ApplicationException {
         return checklistService.findAllBy("from EgChecklists egChecklists  where egChecklists.objectid=?", billId);
     }
 
@@ -1400,7 +1400,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     public Double getTotalActualExpenseForProject(final AbstractEstimate estimate, final Date asonDate) {
         Double totalExpense = 0.0;
         if (estimate == null || asonDate == null)
-            throw new EGOVRuntimeException("Invalid Arguments passed to getTotalActualExpenseForProject()");
+            throw new ApplicationRuntimeException("Invalid Arguments passed to getTotalActualExpenseForProject()");
         else
             logger.debug("Start of getTotalActualExpenseForProject() ||estimate=" + estimate.getEstimateNumber()
                     + "||asonDate=||" + asonDate);
@@ -1431,7 +1431,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         List<EgBillregister> egBillRegisterList = null;
         Query query = null;
         if (estimate == null || date == null)
-            throw new EGOVRuntimeException("Invalid Arguments passed to getApprovedBillAmountforEstimate()");
+            throw new ApplicationRuntimeException("Invalid Arguments passed to getApprovedBillAmountforEstimate()");
         else
             logger.debug("Arguments passed to getListOfApprovedBillforEstimate() ||estimate "
                     + estimate.getEstimateNumber() + "||date=" + date);
@@ -1472,7 +1472,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     public BigDecimal getBilledAmountForDate(final AbstractEstimate estimate, final Date asOnDate) {
         logger.debug("<<<<<<<<<<<<<<< Start of getBilledAmountForDate(AbstractEstimate estimate,Date asOnDate >>>>>>>>>>>>>");
         if (estimate == null || asOnDate == null)
-            throw new EGOVRuntimeException("Invalid Arguments passed to getApprovedBillAmountforEstimate()");
+            throw new ApplicationRuntimeException("Invalid Arguments passed to getApprovedBillAmountforEstimate()");
         else
             logger.debug("Arguments passed to getBilledAmountForDate(AbstractEstimate estimate,Date asOnDate) ||estimate "
                     + estimate + "||asOnDate=" + asOnDate);
@@ -1517,7 +1517,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     @Override
     public BigDecimal getBilledAmount(final AbstractEstimate estimate) {
         if (estimate == null)
-            throw new EGOVRuntimeException("Invalid Arguments passed to getApprovedBillAmountforEstimate()");
+            throw new ApplicationRuntimeException("Invalid Arguments passed to getApprovedBillAmountforEstimate()");
         logger.debug("Arguments passed to getBilledAmount(AbstractEstimate estimate) ||estimate "
                 + estimate.getEstimateNumber() + "||today date=" + new Date());
         final List<Map<String, String>> voucherDetails = egovCommon.getExpenditureDetailsforProjectforFinYear(estimate
@@ -1564,7 +1564,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         List<EgBillregister> egBillRegisterList = null;
         Query query = null;
         if (estimate == null || date == null)
-            throw new EGOVRuntimeException("Invalid Arguments passed to getApprovedBillAmountforEstimate()");
+            throw new ApplicationRuntimeException("Invalid Arguments passed to getApprovedBillAmountforEstimate()");
         else
             logger.debug("Arguments passed to getListOfApprovedBillforEstimate() ||estimate "
                     + estimate.getEstimateNumber() + "||date=" + date);

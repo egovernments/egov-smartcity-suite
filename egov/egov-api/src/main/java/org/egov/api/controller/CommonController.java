@@ -6,10 +6,10 @@ import org.egov.api.adapter.UserAdapter;
 import org.egov.api.controller.core.ApiController;
 import org.egov.api.controller.core.ApiResponse;
 import org.egov.api.controller.core.ApiUrl;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.common.service.IdentityRecoveryService;
 import org.egov.infra.admin.master.entity.Device;
 import org.egov.infra.admin.master.repository.DeviceRepository;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.service.CitizenService;
 import org.json.simple.JSONObject;
@@ -68,7 +68,7 @@ public class CommonController extends ApiController {
             citizenService.create(citizenCreate);
             citizenService.sendActivationMessage(citizenCreate);
             return res.setDataAdapter(new UserAdapter()).success(citizenCreate, this.getMessage("msg.citizen.reg.success"));
-        } catch (EGOVRuntimeException e) {
+        } catch (ApplicationRuntimeException e) {
             msg = e.getMessage();
         }
         return res.error(msg);

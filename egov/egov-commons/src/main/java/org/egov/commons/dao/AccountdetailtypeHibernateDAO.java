@@ -41,7 +41,7 @@ package org.egov.commons.dao;
 
 import java.lang.reflect.Field;
 
-import org.egov.exceptions.EGOVException;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -60,11 +60,11 @@ public class AccountdetailtypeHibernateDAO extends GenericHibernateDAO {
 	 * this will be checked against accountdetailtype.tablename.
 	 * @param master
 	 * @return
-	 * @throws EGOVException
+	 * @throws ApplicationException
 	 */
-	public Integer getDetailtypeforObject(final Object master) throws EGOVException {
+	public Integer getDetailtypeforObject(final Object master) throws ApplicationException {
 		if (null == master) {
-			throw new EGOVException("The object supplied is null");
+			throw new ApplicationException("The object supplied is null");
 		}
 		try {
 			final Field tableNameField = Class.forName(master.getClass().getName()).getDeclaredField("tablename");
@@ -79,7 +79,7 @@ public class AccountdetailtypeHibernateDAO extends GenericHibernateDAO {
 		} catch (final NoSuchFieldException e) {
 			return null;// return the null if the object passed doesnot have the instance variable tablename.
 		} catch (final Exception e) {
-			throw new EGOVException("Exception occured while getting detailtypeid ", e);
+			throw new ApplicationException("Exception occured while getting detailtypeid ", e);
 		}
 
 	}

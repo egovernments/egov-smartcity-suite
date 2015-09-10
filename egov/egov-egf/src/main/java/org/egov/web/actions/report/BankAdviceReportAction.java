@@ -69,8 +69,8 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -548,12 +548,12 @@ public class BankAdviceReportAction extends BaseFormAction {
 		List<Long> glcodeIds  = (List<Long>) persistenceService.findAllBy("select distinct gl.glcodeId.id from CGeneralLedger gl, CVoucherHeader vh, InstrumentVoucher iv" +
 				" where iv.voucherHeaderId=vh and gl.voucherHeaderId= vh and gl.debitAmount>0 and iv.instrumentHeaderId=?",ih);
 		if(glcodeIds.size()>1){
-			 throw new  EGOVRuntimeException("Multiple Recovery codes are used in RTGS Assignement");
+			 throw new  ApplicationRuntimeException("Multiple Recovery codes are used in RTGS Assignement");
 			}
 			recovery = (Recovery) persistenceService.find("select r  from Recovery r where r.chartofaccounts.id = ? ",glcodeIds.get(0));
 		
 		} catch (Exception e) {
-				throw new  EGOVRuntimeException(e.getMessage());
+				throw new  ApplicationRuntimeException(e.getMessage());
 			}
 		
 		

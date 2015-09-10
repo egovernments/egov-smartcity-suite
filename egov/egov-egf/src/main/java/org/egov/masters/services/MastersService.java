@@ -50,7 +50,7 @@ import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
 import org.egov.commons.service.CommonsService;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.masters.dao.AccountEntityHibernateDAO;
 import org.egov.masters.dao.AccountdetailtypeHibernateDAO;
 import org.egov.masters.dao.MastersDAOFactory;
@@ -110,7 +110,7 @@ public class MastersService
                 {
                         LOGGER.error("Exp="+ex.getMessage());
                         // 
-                        throw new EGOVRuntimeException("Exception: " +ex.getMessage());
+                        throw new ApplicationRuntimeException("Exception: " +ex.getMessage());
                 }               
         }
         @Transactional

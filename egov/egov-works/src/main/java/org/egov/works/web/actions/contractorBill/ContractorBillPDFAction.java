@@ -49,8 +49,8 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.service.CommonsService;
-import org.egov.exceptions.EGOVException;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.contractorBill.ContractorBillRegister;
@@ -109,7 +109,7 @@ public class ContractorBillPDFAction extends BaseFormAction {
             pdfGenerator.setContractorAdvanceService(contractorAdvanceService);
             try {
                 pdfGenerator.generatePDF();
-            } catch (final EGOVException e) {
+            } catch (final ApplicationException e) {
                 // TODO Auto-generated catch block
                 logger.debug("exception " + e);
             }

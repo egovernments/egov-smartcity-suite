@@ -49,15 +49,15 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.Licensee;
 import org.egov.tl.domain.entity.TradeLicense;
@@ -175,7 +175,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
              * if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONAPPROVE)) doAuditing(AuditModule.TL,
              * AuditEntity.TL_LIC, "TRANSFER LICENSE", tl.getAuditDetails());
              */
-        } catch (final EGOVRuntimeException e) {
+        } catch (final ApplicationRuntimeException e) {
             throw new ValidationException(Arrays.asList(new ValidationError("license.workflow.already.Started",
                     "File is some other workflow cannot proceed with the action")));
         }

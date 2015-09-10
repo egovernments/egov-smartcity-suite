@@ -45,12 +45,12 @@ package org.egov.services.cheque;
 import java.util.Arrays;
 import java.util.List;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Bankaccount;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.cheque.AccountCheques;
 
 /**
@@ -125,7 +125,7 @@ public class ChequeService extends PersistenceService<AccountCheques, Long> {
 					  chq=(AccountCheques)chqList.get(i);
 					  }else
 					  {  
-						  throw new EGOVRuntimeException(REQUIRED_NUMBER_OF_CHEQUES_ARE_NOT_AVAILABLE);  
+						  throw new ApplicationRuntimeException(REQUIRED_NUMBER_OF_CHEQUES_ARE_NOT_AVAILABLE);  
 					  }
 					  
 				  }
@@ -138,7 +138,7 @@ public class ChequeService extends PersistenceService<AccountCheques, Long> {
 			  }
 			  else if(i<noChqs)
 			  {
-				  throw new EGOVRuntimeException(REQUIRED_NUMBER_OF_CHEQUES_ARE_NOT_AVAILABLE);
+				  throw new ApplicationRuntimeException(REQUIRED_NUMBER_OF_CHEQUES_ARE_NOT_AVAILABLE);
 			  }
 				  
 			  

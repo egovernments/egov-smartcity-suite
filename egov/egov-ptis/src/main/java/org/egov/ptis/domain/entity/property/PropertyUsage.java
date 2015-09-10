@@ -47,7 +47,7 @@ package org.egov.ptis.domain.entity.property;
 
 import java.util.Date;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.BaseModel;
 
 /**
@@ -125,10 +125,10 @@ public class PropertyUsage extends BaseModel {
 	public boolean validatePropUsage() {
 
 		if (getUsageName() == null)
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					"In PropertyUsage Validate :Attribute 'Usage Name' is not set, Please Check !!");
 		if (getUsagePercentage() == null)
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					"In PropertyUsage Validate :Attribute 'Usage Percentage / Factor' is not set, Please Check !!");
 		return true;
 	}

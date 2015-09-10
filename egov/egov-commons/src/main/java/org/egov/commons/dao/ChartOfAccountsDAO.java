@@ -45,8 +45,8 @@ import java.util.List;
 
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
-import org.egov.exceptions.EGOVException;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.dao.GenericDAO;
 
 public interface ChartOfAccountsDAO extends GenericDAO{
@@ -63,12 +63,12 @@ public interface ChartOfAccountsDAO extends GenericDAO{
 	@Deprecated
 	public int getDetailTypeIdByName(String glCode,Connection connection,String name) throws Exception;
 	public List getGlcode(String minGlcode,String maxGlcode,String majGlcode) throws Exception;
-	public List<CChartOfAccounts> getActiveAccountsForType(char c)throws EGOVException;
-	public List<CChartOfAccounts> getAccountCodeByPurpose(Integer purposeId) throws EGOVException;
-	public List<CChartOfAccounts> getNonControlCodeList() throws EGOVException;
-	public List<Accountdetailtype> getAccountdetailtypeListByGLCode(final String glCode) throws EGOVException;
+	public List<CChartOfAccounts> getActiveAccountsForType(char c)throws ApplicationException;
+	public List<CChartOfAccounts> getAccountCodeByPurpose(Integer purposeId) throws ApplicationException;
+	public List<CChartOfAccounts> getNonControlCodeList() throws ApplicationException;
+	public List<Accountdetailtype> getAccountdetailtypeListByGLCode(final String glCode) throws ApplicationException;
 	public Accountdetailtype getAccountDetailTypeIdByName(String glCode,String name) throws Exception;
-	public List<CChartOfAccounts> getDetailedAccountCodeList()throws EGOVException;
+	public List<CChartOfAccounts> getDetailedAccountCodeList()throws ApplicationException;
 	public List<CChartOfAccounts> getActiveAccountsForTypes(char[] type)throws ValidationException;
 	public List<CChartOfAccounts> getAccountCodeByListOfPurposeId(Integer[] purposeId) throws ValidationException;
 	public List<CChartOfAccounts> getListOfDetailCode(final String glCode) throws ValidationException;

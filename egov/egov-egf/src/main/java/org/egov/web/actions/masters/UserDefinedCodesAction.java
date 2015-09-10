@@ -49,13 +49,13 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.masters.model.AccountEntity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -116,7 +116,7 @@ public class UserDefinedCodesAction extends BaseFormAction{
 			setSuccess("no");
         	LOGGER.error("Exception occurred in UserDefinedCodesAction-create ", e);
              
-            throw new EGOVRuntimeException("Exception occurred in UserDefinedCodesAction-create ", e);
+            throw new ApplicationRuntimeException("Exception occurred in UserDefinedCodesAction-create ", e);
 		}
 		
 		clearValues = true;
@@ -156,7 +156,7 @@ public class UserDefinedCodesAction extends BaseFormAction{
 			setSuccess("no");
         	LOGGER.error("Exception occurred in UserDefinedCodesAction-edit ", e);
              
-            throw new EGOVRuntimeException("Exception occurred in UserDefinedCodesAction-edit ", e);
+            throw new ApplicationRuntimeException("Exception occurred in UserDefinedCodesAction-edit ", e);
 		}
 		
 		showMode = "view";

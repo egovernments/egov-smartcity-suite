@@ -59,10 +59,10 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.utils.EntityType;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.payment.ChequeAssignment;
@@ -112,7 +112,7 @@ public class ChequeAssignmentService {
                 setStatusValues();
         }
         // This method returns the Direct Bank Payments and Bill Payments for Expense, Contractor and Supplier bills for mode Cheque
-        public List<ChequeAssignment> getPaymentVoucherNotInInstrument(Map<String,String[]> parameters) throws EGOVException, ParseException
+        public List<ChequeAssignment> getPaymentVoucherNotInInstrument(Map<String,String[]> parameters) throws ApplicationException, ParseException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting getPaymentVoucherNotInInstrument...");
                 finalChequeAssignmentList.addAll(getExpenseBillPayments());
@@ -122,7 +122,7 @@ public class ChequeAssignmentService {
                 return finalChequeAssignmentList;
         }
         // This method returns the Bill Payments for Expense for mode Cheque
-        public List<ChequeAssignment> getExpenseBillPayments() throws ParseException, NumberFormatException, EGOVException
+        public List<ChequeAssignment> getExpenseBillPayments() throws ParseException, NumberFormatException, ApplicationException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting getExpenseBillPayments...");
                 getExpenseBillPaymentsHavingNoCheques();
@@ -230,7 +230,7 @@ public class ChequeAssignmentService {
         
         // Getting only those payments for which cheques have not been assigned.
         @SuppressWarnings("unchecked")
-        private void getExpenseBillPaymentsHavingNoCheques() throws NumberFormatException, EGOVException {
+        private void getExpenseBillPaymentsHavingNoCheques() throws NumberFormatException, ApplicationException {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting getExpenseBillPaymentsHavingNoCheques... NOT YET ASSIGNED");
                 List<ChequeAssignment> billChequeAssignmentList = null;
                 List<Long> billVHIds = new ArrayList<Long>();   
@@ -393,7 +393,7 @@ private BigDecimal getNonSubledgerDeductions(BigDecimal billVHId) {
         }
         // Getting only those payments for which  cheques have been assigned but no cheque is surrendered. 
         @SuppressWarnings("unchecked")
-        private void getExpenseBillPaymentsWithNoSurrenderedCheque() throws NumberFormatException, EGOVException {
+        private void getExpenseBillPaymentsWithNoSurrenderedCheque() throws NumberFormatException, ApplicationException {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting getExpenseBillPaymentsWithNoSurrenderedCheque...ALREADY ASSIGNED: ");
                 List<Long> billVHIds = new ArrayList<Long>();   
                 List<Long> billVHIdsForDebtitSideCC = new ArrayList<Long>();
@@ -578,7 +578,7 @@ private BigDecimal getNonSubledgerDeductions(BigDecimal billVHId) {
         
         // Getting only those payments associated with surrendered cheques
         @SuppressWarnings("unchecked")
-        private void getExpenseBillPaymentsWithSurrenderedCheques() throws NumberFormatException, EGOVException {
+        private void getExpenseBillPaymentsWithSurrenderedCheques() throws NumberFormatException, ApplicationException {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting getExpenseBillPaymentsWithSurrenderedCheques...ASSIGNED BUT SURRENDARD: ");
                 List<ChequeAssignment> billChequeAssignmentList = null;
                 List<Long> billVHIds = new ArrayList<Long>();   
@@ -979,7 +979,7 @@ private BigDecimal getNonSubledgerDeductions(BigDecimal billVHId) {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed getSubledgerAmtForDeduction.");
                 return map;
         }
-        public void getGlcodeIds() throws EGOVRuntimeException{
+        public void getGlcodeIds() throws ApplicationRuntimeException{
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting getGlcodeIds...");
                 try{
                         List<AppConfigValues> appList;
@@ -1008,11 +1008,11 @@ private BigDecimal getNonSubledgerDeductions(BigDecimal billVHId) {
                         }
                 }catch (Exception e){
                         LOGGER.error(e.getMessage());
-                        throw new EGOVRuntimeException(e.getMessage());
+                        throw new ApplicationRuntimeException(e.getMessage());
                 }
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed getGlcodeIds.");
         }
-        private List<CChartOfAccounts> populateGlCodeIds(String appConfigKey) throws  EGOVException {
+        private List<CChartOfAccounts> populateGlCodeIds(String appConfigKey) throws  ApplicationException {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting populateGlCodeIds...");
                 List<CChartOfAccounts> glCodeList = new ArrayList<CChartOfAccounts>();
                 
@@ -1029,7 +1029,7 @@ private BigDecimal getNonSubledgerDeductions(BigDecimal billVHId) {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed populateGlCodeIds.");
                 return glCodeList;
         }
-        public EntityType getEntity(Integer detailTypeId,Serializable detailKeyId)throws EGOVException
+        public EntityType getEntity(Integer detailTypeId,Serializable detailKeyId)throws ApplicationException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting getEntity...");
                 EntityType entity;
@@ -1046,12 +1046,12 @@ private BigDecimal getNonSubledgerDeductions(BigDecimal billVHId) {
                 }catch(Exception e)
                 {
                         LOGGER.error("Exception to get EntityType="+e.getMessage() + "for detailTypeId="+detailTypeId+"  for Detail key "+detailKeyId);
-                        throw new EGOVException("Exception to get EntityType="+e.getMessage());
+                        throw new ApplicationException("Exception to get EntityType="+e.getMessage());
                 }
                 if(entity==null)
                 {
                         LOGGER.error("Exception to get EntityType  for detailTypeId="+detailTypeId+"  for Detail key "+detailKeyId);
-                        throw new EGOVException("Exception to get EntityType");
+                        throw new ApplicationException("Exception to get EntityType");
                 }
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed getEntity.");
                 return entity;

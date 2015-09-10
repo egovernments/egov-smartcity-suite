@@ -72,7 +72,7 @@ import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgdmCollectedReceipt;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.MoneyUtils;
 import org.egov.infstr.utils.NumberToWord;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -245,7 +245,7 @@ public class PropertyBillInfo {
 		try {
 			billDate = dateFormat.parse(getBillDate());
 		} catch (ParseException e) {
-			throw new EGOVRuntimeException("Error in Bill due date", e);
+			throw new ApplicationRuntimeException("Error in Bill due date", e);
 		}
 		Calendar billDueDate = Calendar.getInstance();
 		billDueDate.setTime(billDate);

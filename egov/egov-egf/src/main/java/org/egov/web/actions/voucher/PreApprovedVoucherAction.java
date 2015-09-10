@@ -59,19 +59,19 @@ import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.SequenceGenerator;
@@ -231,7 +231,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
                 purposeValueVN = appConfigVal.getValue();
             }
         } catch (Exception e) {
-            throw new EGOVRuntimeException("Appconfig value for VOUCHERDATE_FROM_UI is not defined in the system");
+            throw new ApplicationRuntimeException("Appconfig value for VOUCHERDATE_FROM_UI is not defined in the system");
         }
         if (purposeValueVN.equals("Y")) {
             showVoucherDate = true;
@@ -357,7 +357,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
 
     @SkipValidation
     @Action(value = "/voucher/preApprovedVoucher-loadvoucherview")
-    public String loadvoucherview() throws EGOVException
+    public String loadvoucherview() throws ApplicationException
     {
 
         billDetails = new HashMap<String, Object>();
@@ -387,7 +387,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
     }
 
     @SkipValidation
-    public String approve() throws EGOVException
+    public String approve() throws ApplicationException
     {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {
                 "classpath:org/serviceconfig-Bean.xml", "classpath:org/egov/infstr/beanfactory/globalApplicationContext.xml",
@@ -432,7 +432,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
 
     @SkipValidation
     @Action(value = "/voucher/preApprovedVoucher-loadvoucherviewByCGN")
-    public String loadvoucherviewByCGN() throws EGOVException
+    public String loadvoucherviewByCGN() throws ApplicationException
     {
         billDetails = new HashMap<String, Object>();
         voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERYBYCGN, parameters.get(CGN)[0]);
@@ -712,7 +712,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
         return sourcePath;
     }
 
-    public Map<String, Object> getMasterName() throws EGOVException {
+    public Map<String, Object> getMasterName() throws ApplicationException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("getmastername===============");
         final Map<String, Object> names = new HashMap<String, Object>();
@@ -751,7 +751,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
         return names;
     }
 
-    public void getMasterDataForBill() throws EGOVException
+    public void getMasterDataForBill() throws ApplicationException
     {
         billDetails = new HashMap<String, Object>();
         CChartOfAccounts coa = null;
@@ -795,7 +795,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
         billDetails.put("payeeList", payeeList);
     }
 
-    public void getMasterDataForBillVoucher() throws EGOVException
+    public void getMasterDataForBillVoucher() throws ApplicationException
     {
         billDetails = new HashMap<String, Object>();
         CChartOfAccounts coa = null;
@@ -933,7 +933,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
     }
 
     public Map<String, Object> getAccountDetails(final Integer detailtypeid, final Integer detailkeyid,
-            Map<String, Object> tempMap) throws EGOVException
+            Map<String, Object> tempMap) throws ApplicationException
     {
         Accountdetailtype detailtype = (Accountdetailtype) getPersistenceService().find(ACCDETAILTYPEQUERY, detailtypeid);
         tempMap.put("detailtype", detailtype.getDescription());
@@ -1025,7 +1025,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
         return mandatoryFields.contains(field);
     }
 
-    public Position getPosition() throws EGOVRuntimeException
+    public Position getPosition() throws ApplicationRuntimeException
     {
         Position pos;
         if (LOGGER.isDebugEnabled())
@@ -1284,7 +1284,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
         } catch (Exception e)
         {
             LOGGER.error("Exception in PreApprovedVoucher", e);
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
 
     }

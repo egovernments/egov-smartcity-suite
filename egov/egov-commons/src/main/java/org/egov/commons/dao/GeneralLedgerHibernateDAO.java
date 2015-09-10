@@ -51,7 +51,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.commons.CGeneralLedger;
-import org.egov.exceptions.EGOVException;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -109,7 +109,7 @@ public class GeneralLedgerHibernateDAO extends GenericHibernateDAO implements Ge
 			list = (ArrayList) query.list();
 		} catch (final Exception e) {
 			LOG.error("Error occurred while getting Actuals Prev", e);
-			throw new EGOVException("Error occurred while getting Actuals Prev", e);
+			throw new ApplicationException("Error occurred while getting Actuals Prev", e);
 		}
 		if (list.size() > 0) {
 			if (list.get(0) == null) {
@@ -188,7 +188,7 @@ public class GeneralLedgerHibernateDAO extends GenericHibernateDAO implements Ge
 			list = (ArrayList) query.list();
 		} catch (final Exception e) {
 			LOG.error("Error occurred while getting Actuals upto december", e);
-			throw new EGOVException("Error occurred while getting Actuals upto december", e);
+			throw new ApplicationException("Error occurred while getting Actuals upto december", e);
 		}
 		if (list.size() > 0) {
 			if (list.get(0) == null) {
@@ -302,7 +302,7 @@ public class GeneralLedgerHibernateDAO extends GenericHibernateDAO implements Ge
 			}
 		} catch (final Exception e) {
 			LOG.error("Error occurred while getting Amount for Budgetting Type", e);
-			throw new EGOVException("Error occurred while getting Amount for Budgetting Type", e);
+			throw new ApplicationException("Error occurred while getting Amount for Budgetting Type", e);
 		}
 	}
 
@@ -336,7 +336,7 @@ public class GeneralLedgerHibernateDAO extends GenericHibernateDAO implements Ge
 
 		} catch (final Exception e) {
 			LOG.error("Error occurred while getting GL Amount By GLCode", e);
-			throw new EGOVException("Error occurred while getting GL Amount By GLCode", e);
+			throw new ApplicationException("Error occurred while getting GL Amount By GLCode", e);
 		}
 		return amount;
 	}

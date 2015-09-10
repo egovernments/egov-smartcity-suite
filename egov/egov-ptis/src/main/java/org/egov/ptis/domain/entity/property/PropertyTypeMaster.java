@@ -45,7 +45,7 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.BaseModel;
 
 /**
@@ -112,17 +112,17 @@ public class PropertyTypeMaster extends BaseModel {
 	 */
 	public boolean validatePropTypeMstr() {
 		if (getType() == null)
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					"In PropertyTypeMaster Validate :Attribute 'Type' is not set, Please Check !!");
 
 		if (getFactor() == null)
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					"In PropertyTypeMaster Validate :Attribute 'Factor' is not set, Please Check !!");
 
 		if (getFactor() == 0)
-			throw new EGOVRuntimeException("In PropertyTypeMaster Validate :Attribute 'Factor' = 0, Please Check !!");
+			throw new ApplicationRuntimeException("In PropertyTypeMaster Validate :Attribute 'Factor' = 0, Please Check !!");
 		if (getType() == null)
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					"In PropertyTypeMaster Validate :Attribute 'Type' is not set, Please Check !!");
 
 		return true;

@@ -51,7 +51,7 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentType;
@@ -130,13 +130,13 @@ public class FinancialsUtil {
     @Transactional
     public CVoucherHeader createPreApprovalVoucher(final Map<String, Object> headerdetails,
             final List<HashMap<String, Object>> accountcodedetails, final List<HashMap<String, Object>> subledgerdetails)
-                    throws EGOVRuntimeException {
+                    throws ApplicationRuntimeException {
         CVoucherHeader voucherHeaders = null;
         try {
             if (headerdetails instanceof HashMap)
                 voucherHeaders = voucherCreator.createPreApprovedVoucher((HashMap<String, Object>) headerdetails,
                         accountcodedetails, subledgerdetails);
-        } catch (final EGOVRuntimeException e) {
+        } catch (final ApplicationRuntimeException e) {
             LOGGER.error("Exception while creating voucher!", e);
             throw e;
         }
@@ -156,7 +156,7 @@ public class FinancialsUtil {
                 voucherHeaders = voucherCreator.createVoucher((HashMap<String, Object>) headerdetails,
                         accountcodedetails, subledgerdetails);
             }
-        } catch (final EGOVRuntimeException e) {
+        } catch (final ApplicationRuntimeException e) {
             LOGGER.error("Exception while creating voucher!", e);
             throw e;
         }
@@ -174,12 +174,12 @@ public class FinancialsUtil {
         CVoucherHeader voucherHeaders = null;
         try {
             voucherHeaders = voucherCreator.reverseVoucher(paramList);
-        } catch (final EGOVRuntimeException re) {
+        } catch (final ApplicationRuntimeException re) {
             LOGGER.error("Runtime Exception while creating reversal voucher!", re);
             throw re;
         } catch (final Exception e) {
             LOGGER.error("Exception while creating reversal voucher!", e);
-            throw new EGOVRuntimeException("Exception while creating reversal voucher!", e);
+            throw new ApplicationRuntimeException("Exception while creating reversal voucher!", e);
         }
         return voucherHeaders;
     }
@@ -305,7 +305,7 @@ public class FinancialsUtil {
                         return true;
                 }
             } catch (final Exception e) {
-                throw new EGOVRuntimeException("Exception in fetching purpose name for id [" + purposeId + "]", e);
+                throw new ApplicationRuntimeException("Exception in fetching purpose name for id [" + purposeId + "]", e);
             }
         return false;
     }

@@ -62,10 +62,10 @@ import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.Money;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetGroup;
@@ -857,7 +857,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
                 + functionId + "fundId:" + fundId + "budgetGroupId=" + budgetGroupId + "finYearId=" + finYearId);
         final List<Long> budgetheadid = new ArrayList<Long>();
         if (functionId == null || fundId == null || budgetGroupId == null || finYearId == null || departmentId == null)
-            throw new EGOVRuntimeException(
+            throw new ApplicationRuntimeException(
                     "Error:Invalid Argument passed to getBudgetAvailable(Integer departmentId,Long functionId,Integer fundId,Long budgetGroupId,Long finYearId)");
         budgetheadid.add(budgetGroupId);
 
@@ -1062,7 +1062,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         logger.debug("start of getEstimateAppropriationAmountByFinyear() || estimate number="
                 + estimate.getEstimateNumber());
         if (estimate == null || finYearId == null)
-            throw new EGOVRuntimeException("Invalid argument passed to getEstimateAppropriationAmountForFinyear()");
+            throw new ApplicationRuntimeException("Invalid argument passed to getEstimateAppropriationAmountForFinyear()");
         for (final MultiYearEstimate multiYearEstimate : estimate.getMultiYearEstimates())
             if (multiYearEstimate.getFinancialYear().getId().intValue() == finYearId) {
                 percentage = multiYearEstimate.getPercentage();

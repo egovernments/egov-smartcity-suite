@@ -76,8 +76,8 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgReasonCategory;
 import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.demand.utils.DemandConstants;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseDemand;
@@ -285,7 +285,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 reconcileCollForChequeBounce(demand, billReceipt);// needs to be done for multiple
         } catch (final Exception e) {
             LOGGER.error("Exception", e);
-            throw new EGOVRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
 
         return true;
@@ -531,7 +531,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     EgBill updateBillDetails(final BillReceiptInfo bri) throws InvalidAccountHeadException {
         EgBill egBill = null;
         if (bri == null)
-            throw new EGOVRuntimeException(" BillReceiptInfo Object is null ");
+            throw new ApplicationRuntimeException(" BillReceiptInfo Object is null ");
         egBill = egBillDao.findById(new Long(bri.getBillReferenceNum()), false);
         final List<EgBillDetails> billDetList = egBillDetailsDao.getBillDetailsByBill(egBill);
 
@@ -550,8 +550,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 for (final ReceiptInstrumentInfo rctInst : bri.getBouncedInstruments())
                     if (rctInst.getInstrumentAmount() != null)
                         totalCollAmt = totalCollAmt.add(rctInst.getInstrumentAmount());
-        } catch (final EGOVRuntimeException e) {
-            throw new EGOVRuntimeException("Exception in calculate Total Collected Amt" + e);
+        } catch (final ApplicationRuntimeException e) {
+            throw new ApplicationRuntimeException("Exception in calculate Total Collected Amt" + e);
         }
 
         return totalCollAmt;
@@ -572,8 +572,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                     if (!glCodeExist)
                         throw new InvalidAccountHeadException("GlCode does not exist for " + billDet.getGlcode());
                 }
-        } catch (final EGOVRuntimeException e) {
-            throw new EGOVRuntimeException("Exception in calculate Total Collected Amt" + e);
+        } catch (final ApplicationRuntimeException e) {
+            throw new ApplicationRuntimeException("Exception in calculate Total Collected Amt" + e);
         }
 
         return totalCollAmt;
@@ -601,14 +601,14 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     private BillReceipt linkBillToReceipt(final BillReceiptInfo bri) throws InvalidAccountHeadException, ObjectNotFoundException {
         BillReceipt billRecpt = null;
         if (bri == null)
-            throw new EGOVRuntimeException(" BillReceiptInfo Object is null ");
+            throw new ApplicationRuntimeException(" BillReceiptInfo Object is null ");
         final EgBill egBill = egBillDao.findById(new Long(bri.getBillReferenceNum()), false);
         if (egBill == null)
-            throw new EGOVRuntimeException(" EgBill Object is null for the Bill Number" + bri.getBillReferenceNum());
+            throw new ApplicationRuntimeException(" EgBill Object is null for the Bill Number" + bri.getBillReferenceNum());
         final List<EgBillDetails> billDetList = egBillDetailsDao.getBillDetailsByBill(egBill);
         final BigDecimal totalCollectedAmt = calculateTotalCollectedAmt(bri, billDetList);
         if (bri.getEvent() == null)
-            throw new EGOVRuntimeException(" Event in BillReceiptInfo Object is Null");
+            throw new ApplicationRuntimeException(" Event in BillReceiptInfo Object is Null");
         if (bri.getEvent().equals(BillingIntegrationService.EVENT_RECEIPT_CREATED)) {
             billRecpt = prepareBillReceiptBean(bri, egBill, totalCollectedAmt);
             egBillReceiptDao.create(billRecpt);
@@ -622,16 +622,16 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             final BigDecimal totalCollectedAmt) {
         BillReceipt billRecpt = null;
         if (bri == null)
-            throw new EGOVRuntimeException(" BillReceiptInfo Object is null ");
+            throw new ApplicationRuntimeException(" BillReceiptInfo Object is null ");
         if (egBill != null && totalCollectedAmt != null) {
             billRecpt = egBillReceiptDao.getBillReceiptByEgBill(egBill);
             if (billRecpt == null)
-                throw new EGOVRuntimeException(" Bill receipt Object is null for the EgBill " + egBill.getId());
+                throw new ApplicationRuntimeException(" Bill receipt Object is null for the EgBill " + egBill.getId());
             if (bri.getEvent().equals(BillingIntegrationService.EVENT_RECEIPT_CANCELLED))
                 billRecpt.setIsCancelled(Boolean.TRUE);
             billRecpt.setReceiptAmt(totalCollectedAmt.subtract(billRecpt.getReceiptAmt()));
         } else
-            throw new EGOVRuntimeException(" EgBill Object is null for the Bill Number" + bri.getBillReferenceNum()
+            throw new ApplicationRuntimeException(" EgBill Object is null for the Bill Number" + bri.getBillReferenceNum()
                     + "in updateBillReceiptForCancellation method");
         return billRecpt;
     }
@@ -671,11 +671,11 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             final EgDemandReasonMaster egDemandReasonMaster = demandGenericDao
                     .getDemandReasonMasterByCode(Constants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, module);
             if (egDemandReasonMaster == null)
-                throw new EGOVRuntimeException(" Penalty Demand reason Master is null in method  insertPenalty");
+                throw new ApplicationRuntimeException(" Penalty Demand reason Master is null in method  insertPenalty");
             final EgDemandReason egDemandReason = demandGenericDao
                     .getDmdReasonByDmdReasonMsterInstallAndMod(egDemandReasonMaster, currInstallment, module);
             if (egDemandReason == null)
-                throw new EGOVRuntimeException(" Penalty Demand reason is null in method  insertPenalty ");
+                throw new ApplicationRuntimeException(" Penalty Demand reason is null in method  insertPenalty ");
             demandDetail = EgDemandDetails.fromReasonAndAmounts(chqBouncePenalty, egDemandReason, BigDecimal.ZERO);
         }
         return demandDetail;

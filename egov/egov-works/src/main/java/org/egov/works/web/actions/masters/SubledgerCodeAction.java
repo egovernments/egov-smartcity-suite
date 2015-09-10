@@ -61,16 +61,16 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.HierarchyType;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.lib.admbndry.BoundaryDAO;
@@ -199,7 +199,7 @@ public class SubledgerCodeAction extends BaseFormAction {
             addDropdownData("fundList", commonsService.getAllActiveIsLeafFunds());
             try {
                 addDropdownData("fundSourceList", commonsService.getAllActiveIsLeafFundSources());
-            } catch (final EGOVException e) {
+            } catch (final ApplicationException e) {
                 logger.error("---Unable to load fund source information---" + e.getMessage());
                 addFieldError("fundsourceunavailable", "Unable to load fund source information");
             }
@@ -223,9 +223,9 @@ public class SubledgerCodeAction extends BaseFormAction {
         HierarchyType hType = null;
         try {
             hType = heirarchyTypeDAO.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
-        } catch (final EGOVException e) {
+        } catch (final ApplicationException e) {
             logger.error("Error while loading HeirarchyType - HeirarchyType." + e.getMessage());
-            throw new EGOVRuntimeException("Unable To Load Heirarchy Information", e);
+            throw new ApplicationRuntimeException("Unable To Load Heirarchy Information", e);
         }
         List<Boundary> zoneList = null;
         final BoundaryType bType = boundaryTypeDAO.getBoundaryType("zone", hType);

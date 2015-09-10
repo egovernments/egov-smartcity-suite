@@ -50,7 +50,7 @@ import javax.persistence.Query;
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.utils.EGovConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,7 +210,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             axisResponse.setTxnDate(transactionDate);
         } catch (final ParseException e) {
             LOGGER.error("Error occured in parsing the transaction date [" + fields.get("vpc_BatchNo") + "]", e);
-            throw new EGOVRuntimeException(".transactiondate.parse.error", e);
+            throw new ApplicationRuntimeException(".transactiondate.parse.error", e);
         }
 
         /*

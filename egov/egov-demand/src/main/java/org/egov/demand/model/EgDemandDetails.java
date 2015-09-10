@@ -45,8 +45,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.EgwStatus;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * EgDemandDetails entity.
@@ -256,7 +256,7 @@ public class EgDemandDetails implements Serializable, Cloneable {
     public void addCollectedWithTolerance(BigDecimal amount, BigDecimal tolerance) {
         BigDecimal collected = getAmtCollected() != null ? getAmtCollected() : BigDecimal.ZERO;
         if (amount.compareTo( getAmount().subtract(collected).add(tolerance) ) > 0) {
-			throw new EGOVRuntimeException("Amount being added " + amount + " is greater than " + getAmount() + " - "
+			throw new ApplicationRuntimeException("Amount being added " + amount + " is greater than " + getAmount() + " - "
 					+ collected + " + tolerance " + tolerance + ", for demand detail " + this.toString());
         } else {
             setAmtCollected(collected.add(amount));

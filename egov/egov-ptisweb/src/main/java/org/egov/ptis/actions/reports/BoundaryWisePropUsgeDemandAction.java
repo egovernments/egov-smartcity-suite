@@ -50,8 +50,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
@@ -85,7 +85,7 @@ public class BoundaryWisePropUsgeDemandAction extends BaseFormAction {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public String execute() throws EGOVException {
+	public String execute() throws ApplicationException {
 		LOGGER.debug("Entered into execute method");
 		String target = "failure";
 		try {
@@ -133,7 +133,7 @@ public class BoundaryWisePropUsgeDemandAction extends BaseFormAction {
 			target = "failure";
 			LOGGER.error("--error in BoundaryWisePropUsgeDemand-in execute() method--"
 					+ e.getMessage());
-			throw new EGOVRuntimeException("Error in ZoneWiseDemandAction---------------", e);
+			throw new ApplicationRuntimeException("Error in ZoneWiseDemandAction---------------", e);
 		}
 		LOGGER.debug("Exit from execute method");
 		return target;

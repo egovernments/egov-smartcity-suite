@@ -75,16 +75,16 @@ import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsServiceImpl;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.utils.NumberUtil;
 import org.egov.lib.admbndry.BoundaryDAO;
@@ -453,7 +453,7 @@ public class ChallanAction extends BaseFormAction {
 					receipts, getSession(), true);
 		} catch (Exception e) {
 			LOGGER.error(CollectionConstants.REPORT_GENERATION_ERROR, e);
-			throw new EGOVRuntimeException(CollectionConstants.REPORT_GENERATION_ERROR, e);
+			throw new ApplicationRuntimeException(CollectionConstants.REPORT_GENERATION_ERROR, e);
 		}
 		return CollectionConstants.REPORT;
 		}catch (StaleObjectStateException exp) {
@@ -478,7 +478,7 @@ public class ChallanAction extends BaseFormAction {
 					receiptHeader, getSession(), true);
 		} catch (Exception e) {
 			LOGGER.error(CollectionConstants.REPORT_GENERATION_ERROR, e);
-			throw new EGOVRuntimeException(CollectionConstants.REPORT_GENERATION_ERROR, e);
+			throw new ApplicationRuntimeException(CollectionConstants.REPORT_GENERATION_ERROR, e);
 		}
 		setSourcePage("viewChallan");
 		return CollectionConstants.REPORT;

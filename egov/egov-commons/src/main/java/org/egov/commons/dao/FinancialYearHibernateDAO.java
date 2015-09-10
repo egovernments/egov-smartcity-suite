@@ -51,7 +51,7 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
@@ -221,7 +221,7 @@ public CFinancialYear getFinancialYearById(Long id) {
 	    ArrayList list= (ArrayList)query.list();
 	    if(list.size()>0)
 	    	cFinancialYear=(CFinancialYear)list.get(0);
-	    if(null == cFinancialYear) throw new EGOVRuntimeException("Financial Year is not active For Posting.");
+	    if(null == cFinancialYear) throw new ApplicationRuntimeException("Financial Year is not active For Posting.");
 	    return cFinancialYear;
 	}
 	
@@ -235,7 +235,7 @@ public CFinancialYear getFinancialYearById(Long id) {
 	    ArrayList list= (ArrayList)query.list();
 	    if(list.size()>0)
 	    	cFinancialYear=(CFinancialYear)list.get(0);
-	    if(null == cFinancialYear) throw new EGOVRuntimeException("Financial Year Id does not exist.");
+	    if(null == cFinancialYear) throw new ApplicationRuntimeException("Financial Year Id does not exist.");
 	    return cFinancialYear;
 	}
 	public CFinancialYear getTwoPreviousYearByDate( Date date)

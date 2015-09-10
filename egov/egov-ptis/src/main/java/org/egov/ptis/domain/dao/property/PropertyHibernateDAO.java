@@ -49,8 +49,8 @@ import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -155,7 +155,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
 			return prop;
 		} catch (Exception e) {
 			LOGGER.error("Exception in  getPropertyForInstalment in DAO : " + e.getMessage());
-			throw new EGOVRuntimeException("Exception in  getPropertyForInstalment" + e);
+			throw new ApplicationRuntimeException("Exception in  getPropertyForInstalment" + e);
 		}
 	}
 
@@ -266,7 +266,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
 	 */
 	@Override
 	public Property getPropertyBySrcAndBp(BasicProperty basicProperty, PropertySource src)
-			throws EGOVRuntimeException {
+			throws ApplicationRuntimeException {
 		Property prop = null;
 		try {
 			if (basicProperty != null && src != null) {
@@ -281,7 +281,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
 			return prop;
 		} catch (Exception e) {
 			LOGGER.error("Exception in getPropertyBySrcAndBp : " + e.getMessage());
-			throw new EGOVRuntimeException("Exception in  getPropertyBySrcAndBp", e);
+			throw new ApplicationRuntimeException("Exception in  getPropertyBySrcAndBp", e);
 		}
 	}
 
@@ -292,7 +292,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
 	 * @return
 	 */
 	@Override
-	public boolean checkIfPropCountExceeds500(List bndryList) throws EGOVRuntimeException {
+	public boolean checkIfPropCountExceeds500(List bndryList) throws ApplicationRuntimeException {
 		boolean chkCntExcds500 = false;
 		int count = 0;
 		try {
@@ -310,19 +310,19 @@ public class PropertyHibernateDAO implements PropertyDAO {
 		} catch (HibernateException e) {
 			LOGGER.error("Error occured in PropertyHibernateDao.checkIfPropCountExceeds500"
 					+ e.getMessage());
-			throw new EGOVRuntimeException("Hibernate Exception in checkIfPropCountExceeds500: "
+			throw new ApplicationRuntimeException("Hibernate Exception in checkIfPropCountExceeds500: "
 					+ e.getMessage(), e);
 		} catch (Exception e1) {
 			LOGGER.error("Error occured in PropertyHibernateDao.checkIfPropCountExceeds500"
 					+ e1.getMessage());
-			throw new EGOVRuntimeException("Exception in checkIfPropCountExceeds500 : "
+			throw new ApplicationRuntimeException("Exception in checkIfPropCountExceeds500 : "
 					+ e1.getMessage(), e1);
 		}
 		return chkCntExcds500;
 	}
 
 	@Override
-	public List getBasicPropertyListByDcNo(String dcNo) throws EGOVRuntimeException {
+	public List getBasicPropertyListByDcNo(String dcNo) throws ApplicationRuntimeException {
 		List bpList = null;
 		try {
 			if (dcNo != null) {
@@ -334,7 +334,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
 		} catch (Exception e) {
 			LOGGER.error("Error occured in PropertyHibernateDao.getBasicPropertyListByDcNo"
 					+ e.getMessage());
-			throw new EGOVRuntimeException("Exception in checkIfPropCountExceeds500 : " + e);
+			throw new ApplicationRuntimeException("Exception in checkIfPropCountExceeds500 : " + e);
 		}
 		return bpList;
 	}
@@ -436,7 +436,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
 		} catch (Exception e) {
 			LOGGER.error("Error occured in PropertyHibernateDao.getPropsMrkdForDeactByWard"
 					+ e.getMessage());
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					"Exception in  getAllPropertiesMarkedForDeactivationByWard" + e);
 		}
 	}

@@ -63,18 +63,18 @@ import org.egov.commons.SubScheme;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
@@ -362,7 +362,7 @@ criteria.createCriteria(Constants.BUDGET).add(Restrictions.eq("materializedPath"
         return (User) ((PersistenceService)this).find(" from User where id=?",EgovThreadLocals.getUserId());
     }
 
-    public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException{
+    public Position getPositionForEmployee(Employee emp)throws ApplicationRuntimeException{
         return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
     }
 
@@ -383,15 +383,15 @@ criteria.createCriteria(Constants.BUDGET).add(Restrictions.eq("materializedPath"
      *
      * @param detail
      * @return department of the budgetdetail
-     * @throws EGOVRuntimeException
+     * @throws ApplicationRuntimeException
      */
-    public Department getDepartmentForBudget(BudgetDetail detail)throws EGOVRuntimeException
+    public Department getDepartmentForBudget(BudgetDetail detail)throws ApplicationRuntimeException
     {
         Department dept=null;
         if(detail.getExecutingDepartment()!=null){
             dept=detail.getExecutingDepartment();
         }else{
-            throw new EGOVRuntimeException("Department not found for the Budget"+detail.getId());
+            throw new ApplicationRuntimeException("Department not found for the Budget"+detail.getId());
         }
         return dept;
     }
@@ -411,10 +411,10 @@ criteria.createCriteria(Constants.BUDGET).add(Restrictions.eq("materializedPath"
             return (Department)dept;
         }catch(NullPointerException ne)
         {
-            throw new EGOVRuntimeException(ne.getMessage());
+            throw new ApplicationRuntimeException(ne.getMessage());
         }
         catch (Exception e) {
-            throw new EGOVRuntimeException("Error while getting Department fort the employee"+emp.getName());
+            throw new ApplicationRuntimeException("Error while getting Department fort the employee"+emp.getName());
         }
 
 

@@ -40,7 +40,7 @@
 package org.egov.commons.dao;
 
 import org.egov.commons.Bankbranch;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -60,7 +60,7 @@ public class BankbranchDAO {
 			getSession().save(bankbranch);
 
 		} catch (final Exception e) {
-			throw new EGOVRuntimeException((new StringBuilder("Hibernate Exception : ")).append(e.getMessage()).toString());
+			throw new ApplicationRuntimeException((new StringBuilder("Hibernate Exception : ")).append(e.getMessage()).toString());
 		}
 	}
 
@@ -68,7 +68,7 @@ public class BankbranchDAO {
 		try {
 			getSession().saveOrUpdate(bankbranch);
 		} catch (final Exception e) {
-			throw new EGOVRuntimeException((new StringBuilder("Hibernate Exception : ")).append(e.getMessage()).toString());
+			throw new ApplicationRuntimeException((new StringBuilder("Hibernate Exception : ")).append(e.getMessage()).toString());
 		}
 	}
 
@@ -76,7 +76,7 @@ public class BankbranchDAO {
 		try {
 			getSession().delete(bankbranch);
 		} catch (final Exception e) {
-			throw new EGOVRuntimeException((new StringBuilder("Hibernate Exception : ")).append(e.getMessage()).toString());
+			throw new ApplicationRuntimeException((new StringBuilder("Hibernate Exception : ")).append(e.getMessage()).toString());
 		}
 	}
 
@@ -85,7 +85,7 @@ public class BankbranchDAO {
 
 			return (Bankbranch) getSession().get(Bankbranch.class, bankbranch);
 		} catch (final Exception e) {
-			throw new EGOVRuntimeException((new StringBuilder("Hibernate Exception : ")).append(e.getMessage()).toString());
+			throw new ApplicationRuntimeException((new StringBuilder("Hibernate Exception : ")).append(e.getMessage()).toString());
 		}
 	}
 

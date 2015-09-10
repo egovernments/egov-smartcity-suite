@@ -70,14 +70,14 @@ import org.egov.commons.Vouchermis;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.contra.ContraBean;
@@ -367,7 +367,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 		if (instrumentVoucher == null) {
 			LOGGER
 					.error("System Error :Instrument is not linked with voucher ");
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					" System Error :Instrument is not linked with voucher  ");
 		}
 		final InstrumentHeader oldInstrumentHeader = instrumentVoucher
@@ -390,7 +390,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 										.getFromBankAccountId(), 1,
 										voucherHeader.getVouchermis()
 												.getDepartmentid().getId().intValue()));
-					} catch (EGOVRuntimeException e) {
+					} catch (ApplicationRuntimeException e) {
 						throw new ValidationException(
 								Arrays
 										.asList(new ValidationError(
@@ -678,7 +678,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 		reversalList.add(reversalVoucherMap);
 		try {
 			reversalVoucher = cv.reverseVoucher(reversalList);
-		} catch (final EGOVRuntimeException e) {
+		} catch (final ApplicationRuntimeException e) {
 			LOGGER.error("Error in reverse" + e.getMessage());
 			throw new ValidationException(Arrays.asList(new ValidationError(
 					"Failed while Reversing", "Failed while Reversing")));
@@ -968,7 +968,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 			LOGGER.error(e.getMessage());
 			throw new ValidationException(Arrays.asList(new ValidationError(
 					EXCEPTION_WHILE_SAVING_DATA, TRANSACTION_FAILED)));
-		} catch (final EGOVRuntimeException e) {
+		} catch (final ApplicationRuntimeException e) {
 			LOGGER.error(e.getMessage());
 			throw new ValidationException(Arrays.asList(new ValidationError(e
 					.getMessage(), e.getMessage())));
@@ -1091,7 +1091,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 			LOGGER.error(e.getMessage(), e);
 			throw new ValidationException(Arrays.asList(new ValidationError(
 					EXCEPTION_WHILE_SAVING_DATA, TRANSACTION_FAILED)));
-		} catch (final EGOVRuntimeException e) {
+		} catch (final ApplicationRuntimeException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ValidationException(Arrays.asList(new ValidationError(e
 					.getMessage(), e.getMessage())));
@@ -1171,7 +1171,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 															.getVouchermis()
 															.getDepartmentid()
 															.getId().intValue()));
-						} catch (EGOVRuntimeException e) {
+						} catch (ApplicationRuntimeException e) {
 							LOGGER.error(e.getMessage(), e);
 							throw new ValidationException(
 									Arrays
@@ -1235,7 +1235,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 
 		} catch (final ParseException e) {
 			LOGGER.error(e.getMessage());
-			throw new EGOVRuntimeException(e.getMessage());
+			throw new ApplicationRuntimeException(e.getMessage());
 		}
 
 		if (updateInstrument) {
@@ -1319,7 +1319,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 											.toString(), 1, voucherHeader
 											.getVouchermis().getDepartmentid()
 											.getId().intValue()));
-				} catch (EGOVRuntimeException e) {
+				} catch (ApplicationRuntimeException e) {
 					LOGGER.error(e.getMessage(), e);
 					throw new ValidationException(Arrays
 							.asList(new ValidationError(
@@ -1395,7 +1395,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 											.toString(), 1, voucherHeader
 											.getVouchermis().getDepartmentid()
 											.getId().intValue()));
-				} catch (EGOVRuntimeException e) {
+				} catch (ApplicationRuntimeException e) {
 					throw new ValidationException(Arrays
 							.asList(new ValidationError(
 									"Exception while getting Cheque Number  ",
@@ -1787,7 +1787,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 		if (instrumentVoucher == null) {
 			LOGGER
 					.error("System Error :Instrument is not linked with voucher ");
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					" System Error :Instrument is not linked with voucher  ");
 		}
 		final InstrumentHeader instrumentHeader = instrumentVoucher

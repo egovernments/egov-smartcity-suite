@@ -57,7 +57,7 @@ import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;

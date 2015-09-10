@@ -41,9 +41,8 @@
 <%@page import="org.hibernate.jdbc.ReturningWork"%>
 <%@ page language="java" contentType="text/plain; charset=UTF-8" pageEncoding="UTF-8"
 import="org.egov.infstr.security.utils.SecurityUtils,java.sql.*,java.util.HashMap,java.util.Date,java.text.*,
-org.egov.infstr.utils.*,org.egov.infstr.utils.HibernateUtil,org.egov.exceptions.EGOVRuntimeException" %>
-<%!
-org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger("Process.jsp");
+org.egov.infstr.utils.*,org.egov.infstr.utils.HibernateUtil,org.egov.infra.exception.ApplicationRuntimeException" %>
+<%!org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger("Process.jsp");
 
 public String processResultSet(ResultSet rs) {
 	int i = 0;
@@ -73,7 +72,7 @@ public String simpleExecute(final String query) {
 				return processResultSet(stmt.executeQuery());
 			} catch (Exception e) {
 				LOG.error(e);
-				throw new EGOVRuntimeException("Error occurred while executing SQL statement",e);
+				throw new ApplicationRuntimeException("Error occurred while executing SQL statement",e);
 			}	
 		}
 	});
@@ -90,7 +89,7 @@ public String dataExist(final String query, final String ... params) {
 				return String.valueOf(stmt.executeQuery().next());
 			} catch (Exception e) {
 				LOG.error(e);
-				throw new EGOVRuntimeException("Error occurred while executing SQL statement",e);
+				throw new ApplicationRuntimeException("Error occurred while executing SQL statement",e);
 			}	
 		}
 	});
@@ -107,15 +106,13 @@ public String executeWithParam(final String query, final String ... params) {
 				return processResultSet(stmt.executeQuery());
 			} catch (Exception e) {
 				LOG.error(e);
-				throw new EGOVRuntimeException("Error occurred while executing SQL statement",e);
+				throw new ApplicationRuntimeException("Error occurred while executing SQL statement",e);
 			}	
 		}
 	});
-}
-%>
+}%>
 <%
-
-String result="";
+    String result="";
 try {
 	String type = request.getParameter("type"); 
 	if(type.equalsIgnoreCase("coaSubMinorCode")) { //TESTED
@@ -219,7 +216,7 @@ try {
 					return processResultSet(stmt.executeQuery());
 				} catch (Exception e) {
 					LOG.error(e);
-					throw new EGOVRuntimeException("Error occurred while executing SQL statement",e);
+					throw new ApplicationRuntimeException("Error occurred while executing SQL statement",e);
 				}	
 			}
 		});
@@ -261,7 +258,7 @@ try {
 					return processResultSet(stmt.executeQuery());
 				} catch (Exception e) {
 					LOG.error(e);
-					throw new EGOVRuntimeException("Error occurred while executing SQL statement",e);
+					throw new ApplicationRuntimeException("Error occurred while executing SQL statement",e);
 				}	
 			}
 		});
@@ -296,7 +293,7 @@ try {
 					return id.append("^").append(names).append("^").toString();
 				} catch (Exception e) {
 					LOG.error(e);
-					throw new EGOVRuntimeException("Error occurred while executing SQL statement",e);
+					throw new ApplicationRuntimeException("Error occurred while executing SQL statement",e);
 				}	
 			}
 		});	
@@ -307,10 +304,10 @@ try {
 		result = executeWithParam(query,vouchHeaderId);
 	} else if(type.equalsIgnoreCase("getBillNo")){//TESTED NOT FUNCTIONAL FOR NEW SCHEMA		
 		final String query=" SELECT eb.billnumber||'`-`'||v.id AS code FROM VOUCHERHEADER v,OTHERBILLDETAIL ob,EG_BILLREGISTER eb"+
-                  " WHERE v.name='Contingency Journal' AND v.id NOT IN"+
-                  "(SELECT m.BILLVHID FROM MISCBILLDETAIL m, VOUCHERHEADER vh ,PAYMENTHEADER p WHERE m.billvhid IS NOT NULL "+
-                  " AND (m.isreversed=0 OR m.isreversed IS NULL) AND p.VOUCHERHEADERID=vh.id  AND p.MISCBILLDETAILID=m.id AND"+
-                  " vh.STATUS!=4 )   AND v.status=0 AND v.id = ob.voucherheaderid AND ob.billid =eb.id";
+          " WHERE v.name='Contingency Journal' AND v.id NOT IN"+
+          "(SELECT m.BILLVHID FROM MISCBILLDETAIL m, VOUCHERHEADER vh ,PAYMENTHEADER p WHERE m.billvhid IS NOT NULL "+
+          " AND (m.isreversed=0 OR m.isreversed IS NULL) AND p.VOUCHERHEADERID=vh.id  AND p.MISCBILLDETAILID=m.id AND"+
+          " vh.STATUS!=4 )   AND v.status=0 AND v.id = ob.voucherheaderid AND ob.billid =eb.id";
 		if((request.getParameter("mode").equalsIgnoreCase("paymentBank"))|| (request.getParameter("mode").equalsIgnoreCase("paymentCash"))) { 
 			result = simpleExecute(query);
 	    } else { 
@@ -318,7 +315,7 @@ try {
 	                  " WHERE v.name='Contingency Journal' AND v.id IN"+
 	                  "(SELECT m.BILLVHID FROM MISCBILLDETAIL m, VOUCHERHEADER vh ,PAYMENTHEADER p WHERE m.billvhid IS NOT NULL "+
 	                  " AND (m.isreversed=0 OR m.isreversed IS NULL) AND p.VOUCHERHEADERID=vh.id  AND p.MISCBILLDETAILID=m.id AND"+
-                  " vh.STATUS!=4 and vh.cgn = ?)   AND v.status=0 AND v.id = ob.voucherheaderid AND ob.billid =eb.id";
+          " vh.STATUS!=4 and vh.cgn = ?)   AND v.status=0 AND v.id = ob.voucherheaderid AND ob.billid =eb.id";
 	    	String cgn = SecurityUtils.checkSQLInjection(request.getParameter("cgn"));
 	    	result = executeWithParam(query+" union "+queryedit,cgn);
        	}
@@ -381,7 +378,7 @@ try {
 					}
 				} catch (Exception e) {
 					LOG.error(e);
-					throw new EGOVRuntimeException("Error occurred while executing SQL statement",e);
+					throw new ApplicationRuntimeException("Error occurred while executing SQL statement",e);
 				}	
 			}
 		});
@@ -445,6 +442,6 @@ try {
 	response.getWriter().write(result);
 } catch(Exception e) {
 	LOG.error(e);
-	throw new EGOVRuntimeException("Error occurred while processing");
+	throw new ApplicationRuntimeException("Error occurred while processing");
 }
 %>

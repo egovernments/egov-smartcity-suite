@@ -52,7 +52,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
@@ -95,7 +95,7 @@ public class ZoneWiseDemandAction extends ActionSupport {
 		} catch (Exception e) {
 			target = "failure";
 			LOGGER.error("Error in ZoneWiseDemandAction : " + e.getMessage());
-			throw new EGOVRuntimeException("error in ZoneWiseDemandAction---------------", e);
+			throw new ApplicationRuntimeException("error in ZoneWiseDemandAction---------------", e);
 		}
 		LOGGER.debug("Exit from execute method");
 		return target;

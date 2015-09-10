@@ -70,7 +70,7 @@ public class CodeValidator {
 		{
 			// TODO Auto-generated catch block
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Exp="+e.getMessage());
-			throw new EGOVRuntimeException(e.getMessage());
+			throw new ApplicationRuntimeException(e.getMessage());
 		}*/
 	}
 
@@ -124,13 +124,13 @@ public class CodeValidator {
 	{
 		// TODO Auto-generated catch block
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Exp="+e.getMessage());
-		throw new EGOVRuntimeException(e.getMessage());
+		throw new ApplicationRuntimeException(e.getMessage());
 	}
 	catch (Exception e)
 	{
 		// TODO Auto-generated catch block
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Exp="+e.getMessage());
-		throw new EGOVRuntimeException(e.getMessage());
+		throw new ApplicationRuntimeException(e.getMessage());
     }
 */
 }
@@ -146,7 +146,7 @@ public class CodeValidator {
 	{
 		// TODO Auto-generated catch block
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Exp="+e.getMessage());
-		throw new EGOVRuntimeException(e.getMessage());
+		throw new ApplicationRuntimeException(e.getMessage());
 	}
 	//if(LOGGER.isInfoEnabled())     LOGGER.info("glcode:"+pGlCode);
 	//if(LOGGER.isInfoEnabled())     LOGGER.info("looked up str:"+rootNode+"/"+FilterName.get()+gLFilterCode);

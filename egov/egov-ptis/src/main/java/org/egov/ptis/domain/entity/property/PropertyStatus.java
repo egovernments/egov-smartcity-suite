@@ -47,7 +47,7 @@ package org.egov.ptis.domain.entity.property;
 
 import java.util.Date;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * <p>
@@ -176,7 +176,7 @@ public class PropertyStatus implements java.io.Serializable {
 	 */
 	public boolean validate() {
 		if (getName() == null)
-			throw new EGOVRuntimeException(
+			throw new ApplicationRuntimeException(
 					"In PropertyStatus Validate : 'Status Name' Attribute is Not Set, Please Check !!");
 		return true;
 	}

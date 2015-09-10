@@ -46,7 +46,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.service.spi.Stoppable;
 
 public class TenantDatasourceProvider implements Stoppable {
@@ -64,7 +64,7 @@ public class TenantDatasourceProvider implements Stoppable {
 			try {
 				datasource = (DataSource) InitialContext.doLookup("java:/" + tenantID);
 			} catch (final NamingException e) {
-				new EGOVRuntimeException("Error occurred at JNDI lookup for tenant datatsource", e);
+				new ApplicationRuntimeException("Error occurred at JNDI lookup for tenant datatsource", e);
 			}
 			tenantDatasourceStore.put(tenantID, datasource);
 		}

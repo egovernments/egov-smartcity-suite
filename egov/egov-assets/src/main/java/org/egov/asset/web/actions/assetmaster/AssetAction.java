@@ -71,18 +71,18 @@ import org.egov.asset.util.AssetConstants;
 import org.egov.asset.util.AssetIdentifier;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
@@ -212,10 +212,10 @@ public class AssetAction extends SearchFormAction {
         HierarchyType hType = null;
         try {
             hType = heirarchyTypeDAO.getHierarchyTypeByName(LOCATION_HIERARCHY_TYPE);
-        } catch (final EGOVException e) {
+        } catch (final ApplicationException e) {
             LOGGER.error(Error_While_Loading_HeirarchyType + e.getMessage());
             addFieldError("Heirarchy", Unable_To_Load_Heirarchy_Information);
-            throw new EGOVRuntimeException(Unable_To_Load_Heirarchy_Information, e);
+            throw new ApplicationRuntimeException(Unable_To_Load_Heirarchy_Information, e);
         }
 
         /**
@@ -382,7 +382,7 @@ public class AssetAction extends SearchFormAction {
             } catch (final Exception e) {
                 LOGGER.error("Error while loading locations - locations." + e.getMessage());
                 addFieldError("location", "Unable to load location information");
-                throw new EGOVRuntimeException("Unable to load location information", e);
+                throw new ApplicationRuntimeException("Unable to load location information", e);
             }
             addDropdownData("locationList", locationList);
         }
@@ -398,7 +398,7 @@ public class AssetAction extends SearchFormAction {
             } catch (final Exception e) {
                 LOGGER.error("Error while loading Streets." + e.getMessage());
                 addFieldError("streets", "Unable to load Streets Information");
-                throw new EGOVRuntimeException("Unable to load Streets information", e);
+                throw new ApplicationRuntimeException("Unable to load Streets information", e);
             }
         }
         if (asset.getWard() != null) {
@@ -417,9 +417,9 @@ public class AssetAction extends SearchFormAction {
         HierarchyType hType = null;
         try {
             hType = heirarchyTypeDAO.getHierarchyTypeByName(LOCATION_HIERARCHY_TYPE);
-        } catch (final EGOVException e) {
+        } catch (final ApplicationException e) {
             LOGGER.error(Error_While_Loading_HeirarchyType + e.getMessage());
-            throw new EGOVRuntimeException(Unable_To_Load_Heirarchy_Information, e);
+            throw new ApplicationRuntimeException(Unable_To_Load_Heirarchy_Information, e);
         }
         List<Boundary> locationList = null;
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(LOACTION_BOUNDARY_TYPE,
@@ -432,9 +432,9 @@ public class AssetAction extends SearchFormAction {
         HierarchyType hType = null;
         try {
             hType = heirarchyTypeDAO.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
-        } catch (final EGOVException e) {
+        } catch (final ApplicationException e) {
             LOGGER.error(Error_While_Loading_HeirarchyType + e.getMessage());
-            throw new EGOVRuntimeException(Unable_To_Load_Heirarchy_Information, e);
+            throw new ApplicationRuntimeException(Unable_To_Load_Heirarchy_Information, e);
         }
         List<Boundary> wardList = null;
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(WARD_BOUNDARY_TYPE, hType);
@@ -446,9 +446,9 @@ public class AssetAction extends SearchFormAction {
         HierarchyType hType = null;
         try {
             hType = heirarchyTypeDAO.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
-        } catch (final EGOVException e) {
+        } catch (final ApplicationException e) {
             LOGGER.error(Error_While_Loading_HeirarchyType + e.getMessage());
-            throw new EGOVRuntimeException(Unable_To_Load_Heirarchy_Information, e);
+            throw new ApplicationRuntimeException(Unable_To_Load_Heirarchy_Information, e);
         }
         List<Boundary> zoneList = null;
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(Zone_BOUNDARY_TYPE, hType);

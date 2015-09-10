@@ -40,7 +40,7 @@
 package org.egov.commons.dao;
 
 import org.egov.commons.Bank;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -61,7 +61,7 @@ public class BankDAO {
 
 			getSession().save(bank);
 		} catch (final Exception e) {
-			throw new EGOVRuntimeException("Error occurred while creating Bank", e);
+			throw new ApplicationRuntimeException("Error occurred while creating Bank", e);
 		}
 	}
 
@@ -69,7 +69,7 @@ public class BankDAO {
 		try {
 			getSession().saveOrUpdate(bank);
 		} catch (final Exception e) {
-			throw new EGOVRuntimeException("Error occurred while updating Bank", e);
+			throw new ApplicationRuntimeException("Error occurred while updating Bank", e);
 		}
 	}
 
@@ -77,7 +77,7 @@ public class BankDAO {
 		try {
 			getSession().delete(bank);
 		} catch (final Exception e) {
-			throw new EGOVRuntimeException("Error occurred while deleting Bank", e);
+			throw new ApplicationRuntimeException("Error occurred while deleting Bank", e);
 		}
 	}
 
@@ -85,7 +85,7 @@ public class BankDAO {
 		try {
 			return (Bank) getSession().get(Bank.class, Integer.valueOf(bank));
 		} catch (final Exception e) {
-			throw new EGOVRuntimeException("Error occurred while getting Bank by id", e);
+			throw new ApplicationRuntimeException("Error occurred while getting Bank by id", e);
 		}
 	}
 

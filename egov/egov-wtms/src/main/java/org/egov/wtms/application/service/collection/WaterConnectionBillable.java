@@ -50,10 +50,10 @@ import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.BoundaryDetails;
 import org.egov.ptis.domain.model.OwnerName;
@@ -271,7 +271,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     public String buildOwnerFullName(final Set<OwnerName> ownerSet) {
         if (ownerSet == null)
-            throw new EGOVRuntimeException("Property Owner set is null...");
+            throw new ApplicationRuntimeException("Property Owner set is null...");
         String ownerFullName = "";
         final Set<String> ownerNameSet = new HashSet<String>();
         for (final OwnerName propOwnerInfo : ownerSet)

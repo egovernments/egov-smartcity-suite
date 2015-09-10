@@ -45,7 +45,7 @@ import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.utils.CollectionsUtil;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,10 +86,10 @@ public class ChallanService extends PersistenceService<Challan, Long> {
      * @param remarks
      *            a <code>String</code> representing the remarks for the current
      *            action
-     * @throws EGOVRuntimeException
+     * @throws ApplicationRuntimeException
      */
     public void workflowtransition(final Challan challan, final Position nextPosition, final String actionName,
-            final String remarks) throws EGOVRuntimeException {
+            final String remarks) throws ApplicationRuntimeException {
         // to initiate the workflow
         if (challan.getState() == null) {
             challan.transition().start().withSenderName(challan.getCreatedBy().getName())

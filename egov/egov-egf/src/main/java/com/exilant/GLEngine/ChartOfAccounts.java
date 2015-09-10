@@ -61,12 +61,12 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
@@ -137,7 +137,7 @@ public class ChartOfAccounts {
 		} catch (Exception e)
 		{
 			LOGGER.error(EXP+e.getMessage(),e);
-			throw new EGOVRuntimeException(e.getMessage());
+			throw new ApplicationRuntimeException(e.getMessage());
 		}
 	}
 
@@ -593,7 +593,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc) throws TaskFai
 		}
    		return true;
 	}
-	public boolean postTransaxtions(Transaxtion txnList[],DataCollection dc) throws Exception,TaskFailedException, ParseException,SQLException,EGOVException,ValidationException
+	public boolean postTransaxtions(Transaxtion txnList[],DataCollection dc) throws Exception,TaskFailedException, ParseException,SQLException,ApplicationException,ValidationException
 	{
 		if(!checkBudget(txnList))
 			throw new TaskFailedException("Budgetary check is failed");
@@ -1283,7 +1283,7 @@ public static HashMap getAccountDetailType()
 	} catch (Exception e)
 	{
 		LOGGER.debug(EXP+e.getMessage());
-		throw new EGOVRuntimeException(e.getMessage());
+		throw new ApplicationRuntimeException(e.getMessage());
 	}
 	return retMap;
 }
@@ -1309,7 +1309,7 @@ public static HashMap getAccountDetailType()
 	} catch (Exception e)
 	{
 		LOGGER.debug(EXP+e.getMessage());
-		throw new EGOVRuntimeException(e.getMessage());
+		throw new ApplicationRuntimeException(e.getMessage());
 	}
 	return retMap;
 	}
@@ -1332,7 +1332,7 @@ public static HashMap getAccountDetailType()
 		} catch (Exception e)
 		{
 			LOGGER.debug(EXP+e.getMessage());
-			throw new EGOVRuntimeException(e.getMessage());
+			throw new ApplicationRuntimeException(e.getMessage());
 		}
 		return retMap;
 	}

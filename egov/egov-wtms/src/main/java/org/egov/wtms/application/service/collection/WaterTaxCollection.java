@@ -59,9 +59,9 @@ import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
@@ -280,7 +280,7 @@ public class WaterTaxCollection extends TaxCollection {
                     if (reason.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster()
                             .getReasonMaster())) {
                         if (demandDetail.getAmtCollected().compareTo(rcptAccInfo.getCrAmount()) < 0)
-                            throw new EGOVRuntimeException(
+                            throw new ApplicationRuntimeException(
                                     "updateDmdDetForRcptCancel : Exception while updating cancel receipt, "
                                             + "to be deducted amount " + rcptAccInfo.getCrAmount()
                                             + " is greater than the collected amount " + demandDetail.getAmtCollected()

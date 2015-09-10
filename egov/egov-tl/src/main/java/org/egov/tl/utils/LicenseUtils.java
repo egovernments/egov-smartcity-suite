@@ -66,7 +66,6 @@ import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgdmCollectedReceipt;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
@@ -82,6 +81,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
@@ -163,7 +163,7 @@ public class LicenseUtils {
      * called while fetching the child boundaries for a given boundary
      *
      * @param String boundaryId
-     * @exception EGOVRuntimeException
+     * @exception ApplicationRuntimeException
      * @return List<Boundary> child boundaries
      */
     public List<Boundary> getChildBoundaries(final String boundaryId) {
@@ -172,7 +172,7 @@ public class LicenseUtils {
             cBoundaries = boundaryService.getChildBoundariesByBoundaryId(Long.valueOf(boundaryId));
         } catch (final Exception e) {
             LOGGER.error("getChildBoundaries()--Exception is thrown");
-            throw new EGOVRuntimeException("Unable to load boundary information", e);
+            throw new ApplicationRuntimeException("Unable to load boundary information", e);
         }
         return cBoundaries;
     }
@@ -195,7 +195,7 @@ public class LicenseUtils {
         /*
          * HierarchyType hType = null; try { hType = HierarchyTypeDAO.getHierarchyTypeByName(hierarchyType); } catch (final
          * Exception e) { LOGGER.error("getCrossHeirarchyChildren()--Exception"); throw new
-         * EGOVRuntimeException("Unable to load hierarchy information", e); } final BoundaryType childBoundaryType =
+         * ApplicationRuntimeException("Unable to load hierarchy information", e); } final BoundaryType childBoundaryType =
          * boundaryTypeDAO.getBoundaryType(boundaryType, hType); final Boundary parentBoundary =
          * boundaryService.getBoundaryById(Long.valueOf(boundaryId));
          */
@@ -210,7 +210,7 @@ public class LicenseUtils {
             hType = hierarchyTypeService.getHierarchyTypeByName(LicenseUtils.ADMIN_HIERARCHY_TYPE);
         } catch (final Exception e) {
             LOGGER.error("getAllZone()--Exception");
-            throw new EGOVRuntimeException("Unable to load Heirarchy information", e);
+            throw new ApplicationRuntimeException("Unable to load Heirarchy information", e);
         }
         List<Boundary> zoneList = null;
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(LicenseUtils.ZONE_BOUNDARY_TYPE,
@@ -227,7 +227,7 @@ public class LicenseUtils {
             hType = hierarchyTypeService.getHierarchyTypeByName(LicenseUtils.ADMIN_HIERARCHY_TYPE);
         } catch (final Exception e) {
             LOGGER.error("getAllCity()--Exception");
-            throw new EGOVRuntimeException("Unable to load Heirarchy information", e);
+            throw new ApplicationRuntimeException("Unable to load Heirarchy information", e);
         }
         List<Boundary> cityList = null;
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(LicenseUtils.CITY_BOUNDARY_TYPE,
@@ -244,7 +244,7 @@ public class LicenseUtils {
             hType = hierarchyTypeService.getHierarchyTypeByName(LicenseUtils.ADMIN_HIERARCHY_TYPE);
         } catch (final Exception e) {
             LOGGER.error("getAllWard()--Exception");
-            throw new EGOVRuntimeException("Unable to load Heirarchy information", e);
+            throw new ApplicationRuntimeException("Unable to load Heirarchy information", e);
         }
         List<Boundary> wardList = null;
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(LicenseUtils.WARD_BOUNDARY_TYPE,

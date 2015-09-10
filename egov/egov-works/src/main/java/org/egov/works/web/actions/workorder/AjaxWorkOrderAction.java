@@ -55,11 +55,11 @@ import javax.script.ScriptContext;
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CommonsService;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.model.PersonalInformation;
@@ -145,7 +145,7 @@ public class AjaxWorkOrderAction extends BaseFormAction {
             else
                 userList = personalInformationService.getListOfEmployeeViewBasedOnCriteria(criteriaParams, -1, -1);
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("user.find.error", e);
+            throw new ApplicationRuntimeException("user.find.error", e);
         }
         return WORKORDER_USER_LIST;
     }
@@ -160,7 +160,7 @@ public class AjaxWorkOrderAction extends BaseFormAction {
                                 "select distinct woe.workOrder.engineerIncharge from  WorkOrderEstimate woe where woe.estimate.executingDepartment.id=?",
                                 executingDepartment);
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("user.find.error", e);
+            throw new ApplicationRuntimeException("user.find.error", e);
         }
         return WORKORDER_ASSIGNED_LIST;
     }
@@ -175,7 +175,7 @@ public class AjaxWorkOrderAction extends BaseFormAction {
                                 "select distinct woe.workOrder.engineerIncharge2 from  WorkOrderEstimate woe where woe.estimate.executingDepartment.id=?",
                                 executingDepartment);
         } catch (final Exception e) {
-            throw new EGOVRuntimeException("user.find.error", e);
+            throw new ApplicationRuntimeException("user.find.error", e);
         }
         return WORKORDER_ASSIGNED_LIST;
     }

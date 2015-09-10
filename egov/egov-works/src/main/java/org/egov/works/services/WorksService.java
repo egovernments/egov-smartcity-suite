@@ -60,12 +60,12 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.EmployeeView;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
@@ -260,8 +260,8 @@ public class WorksService {
                 && !wfObj.getCurrentState().getValue().equals(WorksConstants.END)) {
             try {
                 positionList = employeeService.getPositionsForUser(user, new Date());
-            } catch (final EGOVException egovExp) {
-                throw new EGOVRuntimeException("Error: In getting position for user ", egovExp);
+            } catch (final ApplicationException egovExp) {
+                throw new ApplicationRuntimeException("Error: In getting position for user ", egovExp);
             }
             if (positionList.contains(wfObj.getCurrentState().getOwnerPosition()))
                 validateUser = false;
@@ -293,9 +293,9 @@ public class WorksService {
      * @return - List of Maps of department name, total amount of approved payments and count made for all the bills made against
      * project codes
      * @return - Null is returned in the case of no data
-     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
+     * @throws ApplicationException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
-    public List<Map<String, Object>> getWorkProgressTotalPayments(final String uuid) throws EGOVException {
+    public List<Map<String, Object>> getWorkProgressTotalPayments(final String uuid) throws ApplicationException {
         Map<String, Object> result = null;
         List<Object[]> objForExpense;
         final List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
@@ -333,9 +333,9 @@ public class WorksService {
      * @param uuid - Only project codes ids associated with this uuid are considered
      * @return - List of Maps of depart name, total approved voucher count
      * @return - Null is returned in the case of no data
-     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
+     * @throws ApplicationException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
-    public List<Map<String, Object>> getVoucherCounts(final String uuid) throws EGOVException {
+    public List<Map<String, Object>> getVoucherCounts(final String uuid) throws ApplicationException {
         List<Object[]> queryResult;
         final List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
         Map<String, Object> resultMap = null;
@@ -374,10 +374,10 @@ public class WorksService {
      * @return - List of Map of Maps. The outer map's key is the department name Inner map's keys "amount" and "count" represent
      * sum of CJVs amount and approved CJV count
      * @return - Null is returned in the case of no data
-     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
+     * @throws ApplicationException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
     public List<Map<String, Map<String, BigDecimal>>> getTotalCJVCountAndAmounts(final String uuid)
-            throws EGOVException {
+            throws ApplicationException {
 
         Map<String, Map<String, BigDecimal>> resultMap = null;
         Map<String, BigDecimal> simpleMap = null;
@@ -472,9 +472,9 @@ public class WorksService {
      * @return - List of Maps of department name, total amount of approved payments and count made for all the bills made against
      * project codes
      * @return - Null is returned in the case of no data
-     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
+     * @throws ApplicationException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
-    public List<Map<String, Object>> getWorkProgressTotal(final String uuid) throws EGOVException {
+    public List<Map<String, Object>> getWorkProgressTotal(final String uuid) throws ApplicationException {
         Map<String, Object> result = null;
         List<Object[]> objForExpense;
         final List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
@@ -514,10 +514,10 @@ public class WorksService {
      * @return - List of Maps of department name, total amount of approved payments and count made for all the bills made against
      * project codes
      * @return - Null is returned in the case of no data
-     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
+     * @throws ApplicationException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
     public List<Map<String, Object>> getWorkProgressAbstractReport2TotalPayments(final String uuid,
-            final Date fromDate, final Date toDate) throws EGOVException {
+            final Date fromDate, final Date toDate) throws ApplicationException {
         Map<String, Object> result = null;
         List<Object[]> objForExpense;
         final List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
@@ -586,9 +586,9 @@ public class WorksService {
      * @param Project code id for which the payment amount should be considered
      * @return - Total amount of approved payments
      * @return - Null is returned in the case of no data
-     * @throws EGOVException - If the parameter is null
+     * @throws ApplicationException - If the parameter is null
      */
-    public BigDecimal getTotalPaymentForProjectCode(final Long projcodeId) throws EGOVException {
+    public BigDecimal getTotalPaymentForProjectCode(final Long projcodeId) throws ApplicationException {
         List<Object> objForExpense;
         final String payQuery = " select nvl(sum(nvl(bp.debitamount,0)),0)  "
                 + " FROM eg_billregister br,eg_billdetails bd, eg_billpayeedetails bp,voucherheader vh,eg_billregistermis ms, "
@@ -622,10 +622,10 @@ public class WorksService {
      * @param uuid - Only project codes ids associated with this uuid are considered
      * @return - List of Maps of depart name, total approved voucher count
      * @return - Null is returned in the case of no data
-     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
+     * @throws ApplicationException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
     public List<Map<String, Object>> getWorkProgressAbstractReport2VoucherCounts(final String uuid,
-            final Date fromDate, final Date toDate) throws EGOVException {
+            final Date fromDate, final Date toDate) throws ApplicationException {
         List<Object[]> queryResult;
         final List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
         Map<String, Object> resultMap = null;
@@ -668,10 +668,10 @@ public class WorksService {
      * @return - List of Maps of department name, total amount of approved payments and count made for all the bills made against
      * project codes
      * @return - Null is returned in the case of no data
-     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
+     * @throws ApplicationException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
     public List<Map<String, Object>> getWorkProgSpillOverTotalPayments(final String uuid, final Date fromDate,
-            final Date toDate) throws EGOVException {
+            final Date toDate) throws ApplicationException {
         Map<String, Object> result = null;
         List<Object[]> objForExpense;
         final List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
@@ -754,10 +754,10 @@ public class WorksService {
      * @param uuid - Only project codes ids associated with this uuid are considered
      * @return - List of Maps of depart name, total approved voucher count
      * @return - Null is returned in the case of no data
-     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
+     * @throws ApplicationException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
     public List<Map<String, Object>> getVoucherCountsForSpillOver(final String uuid, final Date fromDate,
-            final Date toDate) throws EGOVException {
+            final Date toDate) throws ApplicationException {
         List<Object[]> queryResult;
         final List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
         Map<String, Object> resultMap = null;
@@ -923,14 +923,14 @@ public class WorksService {
      * @param entityList - Object list containing ProjectCode ids.
      * @param asOnDate - The payments are considered from the beginning to asOnDate (excluding asOnDate)
      * @return - Total amount as BigDecimal
-     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode ids list passed is empty.
+     * @throws ApplicationException - If anyone of the parameters is null or the ProjectCode ids list passed is empty.
      */
     public BigDecimal getPaymentInfoforProjectCode(final List<Object> projectCodeIdList, final Date asOnDate)
-            throws EGOVException {
+            throws ApplicationException {
         if (projectCodeIdList == null || projectCodeIdList.size() == 0)
-            throw new EGOVException("ProjectCode Id list is null or empty");
+            throw new ApplicationException("ProjectCode Id list is null or empty");
         if (asOnDate == null)
-            throw new EGOVException("asOnDate is null");
+            throw new ApplicationException("asOnDate is null");
         final String strAsOnDate = Constants.DDMMYYYYFORMAT1.format(asOnDate);
         final String strProjectCodeIds = getInSubQuery(projectCodeIdList, " bpd.ACCOUNTDETAILKEYID ", false);
         final String query = " SELECT NVL(SUM(bpd.DEBITAMOUNT),0) " + " FROM eg_billregister br, "
@@ -994,14 +994,14 @@ public class WorksService {
      * @param projectCodeIdStr
      * @param asOnDate
      * @return
-     * @throws EGOVException
+     * @throws ApplicationException
      */
     public BigDecimal getPaymentInfoforProjectCodeSubQuery(final String projectCodeIdStr, final Date asOnDate)
-            throws EGOVException {
+            throws ApplicationException {
         if (projectCodeIdStr == null)
-            throw new EGOVException("ProjectCode Id Str is null ");
+            throw new ApplicationException("ProjectCode Id Str is null ");
         if (asOnDate == null)
-            throw new EGOVException("asOnDate is null");
+            throw new ApplicationException("asOnDate is null");
         final String strAsOnDate = Constants.DDMMYYYYFORMAT1.format(asOnDate);
         final String query = " SELECT NVL(SUM(bpd.DEBITAMOUNT),0) " + " FROM eg_billregister br, "
                 + "   eg_billdetails bd, " + "   eg_billpayeedetails bpd, " + "   paymentheader ph1, "
@@ -1147,10 +1147,10 @@ public class WorksService {
      * @return - List of Map of Maps. The outer map's key is the department name Inner map's keys "amount" and "count" represent
      * sum of CJVs amount and approved Final CJV count
      * @return - Null is returned in the case of no data
-     * @throws EGOVException - If anyone of the parameters is null or the ProjectCode list passed is empty.
+     * @throws ApplicationException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
     public List<Map<String, Map<String, BigDecimal>>> getCJVCountAndAmountsForSpillOver(final String uuid,
-            final Date fromDate, final Date toDate) throws EGOVException {
+            final Date fromDate, final Date toDate) throws ApplicationException {
 
         Map<String, Map<String, BigDecimal>> resultMap = null;
         Map<String, BigDecimal> simpleMap = null;

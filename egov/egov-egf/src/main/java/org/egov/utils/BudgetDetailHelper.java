@@ -48,11 +48,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
-import org.egov.infstr.ValidationException;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.web.actions.budget.BudgetAmountView;
 
@@ -184,7 +184,7 @@ public class BudgetDetailHelper{
 	public CFinancialYear getPreviousYearFor(CFinancialYear financialYear) {
 		try {
 			return financialYearDAO.getFinancialYearByDate(subtractYear(financialYear.getStartingDate()));
-		} catch (EGOVRuntimeException e) {
+		} catch (ApplicationRuntimeException e) {
 			return null;
 		}
 	}

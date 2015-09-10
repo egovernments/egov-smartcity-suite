@@ -47,7 +47,7 @@ import java.util.Set;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
-import org.egov.exceptions.EGOVException;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
@@ -236,7 +236,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
      *
      * @return BigDecimal
      */
-    public BigDecimal getNetPayableAmountForGlCodeId(Long billId) throws NumberFormatException, EGOVException;
+    public BigDecimal getNetPayableAmountForGlCodeId(Long billId) throws NumberFormatException, ApplicationException;
 
     /**
      * API will returns the Total Amount for Statutory deduction for workorder upto billdate for that dedcution
@@ -274,31 +274,31 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
      *
      * @param billId ,workOrderEstimateId,statutoryList,standardDeductionList, retentionMoneyDeductionList
      * @return List
-     * @throws EGOVException
+     * @throws ApplicationException
      * @throws NumberFormatException
      */
     public List<EgBilldetails> getCustomDeductionList(Long billId, Long workOrderEstimateId,
             List<StatutoryDeductionsForBill> statutoryList, List<DeductionTypeForBill> standardDeductionList,
-            List<EgBilldetails> retentionMoneyDeductionList) throws NumberFormatException, EGOVException;
+            List<EgBilldetails> retentionMoneyDeductionList) throws NumberFormatException, ApplicationException;
 
     /**
      * Get the list of retention money dedcution based on glcodes of retention deduction
      *
      * @param ContractorBillRegister
      * @return List
-     * @throws EGOVException
+     * @throws ApplicationException
      * @throws NumberFormatException
      */
     public List<EgBilldetails> getRetentionMoneyDeductionList(Long billId,
             List<StatutoryDeductionsForBill> statutoryList, List<DeductionTypeForBill> standardDeductionList)
-                    throws NumberFormatException, EGOVException;
+                    throws NumberFormatException, ApplicationException;
 
     /**
      * Get the netpayblecode
      *
      * @param billId ,glcodeIdList
      * @return BigDecimal
-     * @throws EGOVException
+     * @throws ApplicationException
      * @throws NumberFormatException
      */
     public BigDecimal getNetPaybleCode(Long billId) throws Exception;
@@ -328,7 +328,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     public List<EgBilldetails> getAccountDetailsList(Long billId, Long workOrderEstimateId,
             List<StatutoryDeductionsForBill> statutoryList, List<DeductionTypeForBill> standardDeductionList,
             List<EgBilldetails> customDeductionList, List<EgBilldetails> retentionMoneyDeductionList)
-                    throws NumberFormatException, EGOVException;
+                    throws NumberFormatException, ApplicationException;
 
     /**
      * @param statutoryList ,standardDeductionList,customDeductionList,workOrderEstimateId ,workOrderId, id(billId)
@@ -337,7 +337,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     public void setAllViewLists(Long id, Long workOrderId, Long workOrderEstimateId,
             List<StatutoryDeductionsForBill> actionStatutorydetails, List<DeductionTypeForBill> standardDeductions,
             List<EgBilldetails> customDeductions, List<EgBilldetails> retentionMoneyDeductions,
-            List<AssetForBill> accountDetailsForBill) throws NumberFormatException, EGOVException;
+            List<AssetForBill> accountDetailsForBill) throws NumberFormatException, ApplicationException;
 
     /**
      * Get the EgChecklists
@@ -345,7 +345,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
      * @param billid
      * @return List
      */
-    public List<EgChecklists> getEgcheckList(Long billId) throws NumberFormatException, EGOVException;
+    public List<EgChecklists> getEgcheckList(Long billId) throws NumberFormatException, ApplicationException;
 
     /**
      * Get the WorkCompletionInfo for completion certificate
