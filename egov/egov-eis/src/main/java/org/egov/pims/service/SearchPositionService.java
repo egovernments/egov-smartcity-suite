@@ -56,7 +56,9 @@ import org.egov.pims.dao.PersonalInformationHibernateDAO;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Service;
 
+@Service
 public class SearchPositionService {
 
 	private static final Logger logger = Logger.getLogger(SearchPositionService.class);
