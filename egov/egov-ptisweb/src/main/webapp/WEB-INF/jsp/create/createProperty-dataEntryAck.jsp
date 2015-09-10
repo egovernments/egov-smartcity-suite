@@ -47,8 +47,14 @@
 <head>
 <title><s:text name='CreateAck.title' /></title>
 <script type="text/javascript">
-	function createAnother() {
-		window.location="/ptis/create/createProperty-dataEntry.action";
+	function createAnother(obj) {
+		alert(obj)
+		if(obj.id == 'createNew') {
+		    window.location="/ptis/create/createProperty-dataEntry.action";
+		} else if(obj.id == 'editDCB') {
+			var propertyId = document.getElementById("upicNo").value;
+			window.location="/ptis/edit/editDemand-newEditForm.action?propertyId="+propertyId;
+		}
 	}
 </script>
 </head>
@@ -57,6 +63,7 @@
 	<s:form name="CreatePropertyAckForm" theme="simple">
 		<s:push value="model">
 			<s:token />
+			<s:hidden name="upicNo" id="upicNo" value="%{upicNo}"></s:hidden>
 			<div class="formmainbox">
 				<div class="headingbg">
 					<s:text name="CreatePropertyAckHeader" />
@@ -70,9 +77,13 @@
 					<tr>
 						<td>
 							<div class="buttonbottom" align="center">
-										<input type="button" value="Create Another" name="Create Another" id="Create Another"
+										<input type="button" value="Create Another" name="Create Another" id="createNew"
 											 class="buttonsubmit" align="center"
-											onclick="createAnother()" />
+											onclick="createAnother(this)" />
+											
+											<input type="button" value="Add/Edit DCB" name="Add/Edit DCB" id="editDCB"
+											 class="buttonsubmit" align="center"
+											onclick="createAnother(this)" />
 								<input type="button" class="button" onclick="window.close();" value="Close">
 							</div>
 						</td>

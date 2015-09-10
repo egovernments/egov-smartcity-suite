@@ -74,9 +74,10 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.CommonsDAOFactory;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.dcb.bean.DCBReport;
@@ -128,12 +129,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Namespace("/edit")
+@ResultPath("/WEB-INF/jsp/")
+@Results({ @Result(name = EditDemandAction.RESULT_NEW, location = "edit/editDemand-editForm.jsp"),
+    @Result(name = EditDemandAction.RESULT_ERROR, location = "edit/editDemand-error.jsp"),
+    @Result(name = EditDemandAction.RESULT_ACK, location = "edit/editDemand-ack.jsp") })
 public class EditDemandAction extends BaseFormAction {
 
 	private static final Logger LOGGER = Logger.getLogger(EditDemandAction.class);
-	private static final String RESULT_NEW = "editForm";
-	private static final String RESULT_ERROR = "error";
-	private static final String RESULT_ACK = "ack";
+	protected static final String RESULT_NEW = "editForm";
+	protected static final String RESULT_ERROR = "error";
+	protected static final String RESULT_ACK = "ack";
 	private static final String MSG_ERROR_NOT_MIGRATED_PROPERTY = " This is not a migrated property ";
 	private static final String MSG_ERROR_ALL_FIELDS_BLANK = " You have not entered any value ";
 	private static final String MSG_ERROR_EDITDEMAND_NOTALLOWED = " You cannot edit the demands. ";
@@ -160,23 +165,23 @@ public class EditDemandAction extends BaseFormAction {
 	private String propertyAddress;
 	private String remarks;
 	private String errorMessage;
-
-	private List<EgDemandDetails> demandDetails = new ArrayList<EgDemandDetails>();
-	private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>();
+	
 	private BasicProperty basicProperty;
 	private PropertyService propService;
-
 	private DCBDisplayInfo dcbDispInfo;
 	private DCBService dcbService;
 	private DCBReport dcbReport;
-	private CommonsDAOFactory commonsDAOFactory;
-	private Map<Installment, Map<String, Boolean>> collectionDetails = new HashMap<Installment, Map<String, Boolean>>();
-	private InstallmentDao installmentDao = commonsDAOFactory.getInstallmentDao();
-	private List<Installment> allInstallments = new ArrayList<Installment>();
-	private Set<Installment> propertyInstallments = new TreeSet<Installment>();
-
+	
+	@Autowired
+	private InstallmentDao installmentDAO;
 	@Autowired
 	private PropertyTaxUtil propertyTaxUtil;
+	
+	private List<EgDemandDetails> demandDetails = new ArrayList<EgDemandDetails>();
+        private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>();
+        private Map<Installment, Map<String, Boolean>> collectionDetails = new HashMap<Installment, Map<String, Boolean>>();
+        private List<Installment> allInstallments = new ArrayList<Installment>();
+        private Set<Installment> propertyInstallments = new TreeSet<Installment>();
 
 	@Override
 	public Object getModel() {
@@ -195,7 +200,7 @@ public class EditDemandAction extends BaseFormAction {
 
 			if (dd.getInstallment() != null && dd.getInstallment().getId() != null
 					&& !dd.getInstallment().getId().equals(-1)) {
-				dd.setInstallment((Installment) installmentDao.findById(dd.getInstallment().getId(), false));
+				dd.setInstallment((Installment) installmentDAO.findById(dd.getInstallment().getId(), false));
 				if (!dd.getIsNew()) {
 					propertyInstallments.add(dd.getInstallment());
 				}
@@ -253,7 +258,7 @@ public class EditDemandAction extends BaseFormAction {
 
 					if (dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_CHQ_BOUNCE_PENALTY)
 							&& dd.getActualAmount().equals(BigDecimal.ZERO)) {
-						Installment inst = (Installment) installmentDao.findById(dd.getInstallment().getId(), false);
+						Installment inst = (Installment) installmentDAO.findById(dd.getInstallment().getId(), false);
 						installmentsChqPenalty.add(inst.getDescription());
 					}
 				}
@@ -304,27 +309,27 @@ public class EditDemandAction extends BaseFormAction {
 
 	@SuppressWarnings("unchecked")
 	@SkipValidation
-	@Action(value = "/editDemand-newEditForm", results = { @Result(name = RESULT_NEW, location = "/editDemand-editForm.jsp") })
+	@Action(value = "/editDemand-newEditForm")
 	public String newEditForm() {
 		LOGGER.debug("Entered into newEditForm");
 		String resultPage = "";
 
-		if (basicProperty != null && !basicProperty.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_APPLICATION)) {
+		/*if (basicProperty != null && !basicProperty.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_APPLICATION)) {
 			setErrorMessage(MSG_ERROR_NOT_MIGRATED_PROPERTY);
 			resultPage = RESULT_ERROR;
-		} else {
+		} else {*/
 			ownerName = basicProperty.getFullOwnerName();
 			propertyAddress = basicProperty.getAddress().toString();
 
 			demandDetails = getPersistenceService().findAllBy(queryInstallmentDemandDetails, basicProperty,
 					propertyTaxUtil.getCurrentInstallment());
 
-			if (demandDetails.isEmpty()) {
+			/*if (demandDetails.isEmpty()) {
 				setErrorMessage(MSG_ERROR_EDITDEMAND_NOTALLOWED);
 				return RESULT_ERROR;
-			}
+			}*/
 
-			Collections.sort(demandDetails, new Comparator<EgDemandDetails>() {
+			/*Collections.sort(demandDetails, new Comparator<EgDemandDetails>() {
 
 				@Override
 				public int compare(EgDemandDetails o1, EgDemandDetails o2) {
@@ -332,12 +337,12 @@ public class EditDemandAction extends BaseFormAction {
 							.compareTo(o2.getEgDemandReason().getEgInstallmentMaster());
 				}
 
-			});
+			});*/
 
 			PropertyTaxBillable billable = new PropertyTaxBillable();
 			billable.setBasicProperty(basicProperty);
 			dcbService = new DCBServiceImpl(billable);
-			prepareDisplayInfo();
+			/*prepareDisplayInfo();
 			dcbReport = dcbService.getCurrentDCBAndReceipts(dcbDispInfo);
 
 			Set<String> receiptNumbers = new HashSet<String>();
@@ -366,7 +371,7 @@ public class EditDemandAction extends BaseFormAction {
 				}
 			}
 
-			LOGGER.info("newEditForm - collectionDetails=" + collectionDetails);
+			LOGGER.info("newEditForm - collectionDetails=" + collectionDetails);*/
 			Boolean isInstallmentExists = false;
 			Map<Installment, List<String>> installmentDemandReason = new HashMap<Installment, List<String>>();
 
@@ -400,14 +405,14 @@ public class EditDemandAction extends BaseFormAction {
 			}
 
 			Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
-			if (!installmentDemandReason.get(currentInstallment).contains(DEMANDRSN_STR_CHQ_BOUNCE_PENALTY)) {
-				DemandDetail dmdDtl = createDemandDetailBean(currentInstallment, DEMANDRSN_STR_CHQ_BOUNCE_PENALTY,
+			/*if (!installmentDemandReason.get(currentInstallment).contains(DEMANDRSN_STR_CHQ_BOUNCE_PENALTY)) {*/
+				/*DemandDetail dmdDtl = createDemandDetailBean(currentInstallment, DEMANDRSN_STR_CHQ_BOUNCE_PENALTY,
 						null, null, true);
-				demandDetailBeanList.add(dmdDtl);
-			}
+				demandDetailBeanList.add(dmdDtl);*/
+			/*}*/
 
 			resultPage = RESULT_NEW;
-		}
+		//}
 
 		allInstallments.removeAll(propertyInstallments);
 
@@ -465,7 +470,7 @@ public class EditDemandAction extends BaseFormAction {
 
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage(value = RESULT_NEW)
-	@Action(value = "/editDemand.action", results = { @Result(name = RESULT_ACK, location = "/editDemand-ack.jsp") })
+	@Action(value = "/editDemand.action", results = {  })
 	public String update() {
 		LOGGER.info("Entered into update, basicProperty=" + basicProperty);
 
@@ -606,7 +611,7 @@ public class EditDemandAction extends BaseFormAction {
 									.equalsIgnoreCase(
 											PropertyTaxConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster()))) {
 
-						Installment inst = (Installment) installmentDao.findById(dmdDetail.getInstallment().getId(),
+						Installment inst = (Installment) installmentDAO.findById(dmdDetail.getInstallment().getId(),
 								false);
 
 						if (ddFromDB.getEgDemandReason().getEgInstallmentMaster().equals(inst)) {

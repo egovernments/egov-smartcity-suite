@@ -1,42 +1,42 @@
-#-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation 
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or 
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this 
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It 
-# 	   is required that all modified versions of this material be marked in 
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+<!--
+	eGov suite of products aim to improve the internal efficiency,transparency, 
+    accountability and the service delivery of the government  organizations.
+ 
+    Copyright (C) <2015>  eGovernments Foundation
+ 
+	The updated version of eGov suite of products as by eGovernments Foundation 
+    is available at http://www.egovernments.org
+ 
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+ 
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+ 
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    http://www.gnu.org/licenses/gpl.html .
+ 
+    In addition to the terms of the GPL license to be adhered to in using this
+    program, the following additional terms are to be complied with:
+ 
+ 	1) All versions of this program, verbatim or modified must carry this 
+ 	   Legal Notice.
+ 
+ 	2) Any misrepresentation of the origin of the material is prohibited. It 
+ 	   is required that all modified versions of this material be marked in 
+ 	   reasonable ways as different from the original version.
+ 
+ 	3) This license does not grant any rights to any user of the program 
+ 	   with regards to rights under trademark law for use of the trade names 
+ 	   or trademarks of eGovernments Foundation.
+ 
+   	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+-->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
@@ -243,22 +243,22 @@
 										<td colspan="8" align="right">
 										   Add/Remove Installment
 											<img id="addInstallment" name="addInstallment"
-												src="${pageContext.request.contextPath}/image/addrow.gif"
+												src="${pageContext.request.contextPath}/resources/image/addrow.gif"
 												alt="Add Installment" onclick="javascript: addNewInstallment(); rearrangeIndexes();" width="18"
 												height="18" border="0" />
 											<img id="delInstallment"
 												name="delInstallment"
-												src="${pageContext.request.contextPath}/image/removerow.gif"
+												src="${pageContext.request.contextPath}/resources/image/removerow.gif"
 												alt="Remove Installment" onclick="javascript: deleteRecentInstallment();"
 												width="18" height="18" border="0" />
 										</td>
 									</tr> 						
 									<s:if test="%{hasActionErrors() == false}">
-									<s:set
+									<%-- <s:set
 										value="{@org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_WARRANT_FEE, @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_NOTICE_FEE, @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_COURT_FEE, @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_PENALTY_FINES}"
-										var="demandRsnToExclude" />
+										var="demandRsnToExclude" /> --%>
 									<s:iterator value="@org.egov.ptis.constants.PropertyTaxConstants@DMDRSN_CODE_MAP" status="itrStatus" var="rsn">
-											<s:if test="%{#demandRsnToExclude.contains(key) == false}" >
+											<%-- <s:if test="%{#demandRsnToExclude.contains(key) == false}" > --%>
 											<tr id="newInstallmentRow">
 												<s:if test="%{#itrStatus.count == 1}" >												
 												<td class="blueborderfortd">												
@@ -318,17 +318,17 @@
 													</div>
 												</td>
 											</tr>
-											</s:if>
+											<%-- </s:if> --%>
 										</s:iterator>
 										<script type="text/javascript">
-											if (isFirstInstVisible == true) {
+											/* if (isFirstInstVisible == true) {
 												isFirstInstVisible = false;
 												var instDetailsTable = document.getElementById("instDetails");
 												for (var i = 0; i < noOfDemandRsns; i++) {
 													var row = instDetailsTable.rows[i+instDetailsRowIndex];
 													row.style.display = "none";
 												}
-											}
+											} */
 										</script>	
 									</s:if>								
 									<s:if test="%{hasActionErrors() == true}">
