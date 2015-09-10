@@ -68,7 +68,7 @@
 						</div>
 						<div class="panel-body custom-form">
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Module<span class="mandatory"></span></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.module"/><span class="mandatory"></span></label>
 								<div class="col-sm-6 add-margin">
 									<form:select path="module" id="appModuleName"
 										cssClass="form-control" cssErrorClass="form-control error"
@@ -84,8 +84,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="field-1" class="col-sm-3 control-label">Key
-									Name<span class="mandatory"></span>
+								<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.AppconfigKeyName"/><span class="mandatory"></span>
 								</label>
 
 								<div class="col-sm-6">
@@ -97,7 +96,7 @@
 
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Description<span class="mandatory"></span></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.description"/><span class="mandatory"></span></label>
 								<div class="col-sm-6">
 									<form:input path="description" id="description" type="text"
 										class="form-control low-width" placeholder=""
@@ -108,9 +107,9 @@
 							<div class="col-md-12">
 								<table class="table table-bordered" id="floorDetails">
 									<tr>
-										<th>Date<span class="mandatory"></span></th>
-										<th>Values<span class="mandatory"></span></th>
-										<th>Operation</th>
+										<th><spring:message code="lbl.date"/><span class="mandatory"></span></th>
+										<th><spring:message code="lbl.values"/><span class="mandatory"></span></th>
+										<th><spring:message code="lbl.operation"/></th>
 									</tr>
 									<c:choose>
 										<c:when test="${!appConfig.appDataValues.isEmpty()}">
@@ -146,7 +145,7 @@
 							</div>
 							<div class="col-md-12 text-center">
 								<div class="add-margin">
-									<button type="submit" class="btn btn-primary">Submit</button>
+									<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
 									<button type="reset" class="btn btn-default">
 										<spring:message code="lbl.reset" />
 									</button>

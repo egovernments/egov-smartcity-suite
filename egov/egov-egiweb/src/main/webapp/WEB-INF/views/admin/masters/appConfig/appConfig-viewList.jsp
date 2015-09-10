@@ -62,7 +62,7 @@
 				</div> 
 			<div class="panel-body custom-form11">
 					<div class="form-group">
-								<label for="field-1" class="col-sm-3 control-label">key Name<span class="mandatory"></span></label>
+								<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.AppconfigKeyName"/><span class="mandatory"></span></label>
 								
 								<div class="col-sm-6">
 							<form:input path="keyName" id="keyName" type="text" class="form-control low-width" placeholder="" autocomplete="off" readonly="true" />
@@ -73,14 +73,14 @@
 							
 							<div class="form-group">
 								
-								<label class="col-sm-3 control-label">Description<span class="mandatory"></span></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.description"/><span class="mandatory"></span></label>
 								<div class="col-sm-6">
 							<form:input path="description" id="description" type="text" class="form-control low-width" readonly="true" placeholder="" autocomplete="off" />
                             <form:errors path="description" cssClass="add-margin error-msg"/>
 						</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Module<span class="mandatory"></span></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.module"/><span class="mandatory"></span></label>
 							<div class="col-sm-6">
 							<form:input path="module.name" id="module" type="text" class="form-control low-width" placeholder="" autocomplete="off"  readonly="true"/>
 					        <form:errors path="module" cssClass="add-margin error-msg"/>
@@ -91,12 +91,10 @@
 					
 					<div class="col-md-12">
 					 <table  class="table table-bordered"   id="floorDetails" >
-      				  <tr>
-						<th>Date</th>
-							<th>Values</th>
-							
-							  </tr>
-						
+      				 	<tr>
+							<th><spring:message code="lbl.date"/></th>
+							<th><spring:message code="lbl.values"/></th>
+						</tr>
 										<c:choose>
 											<c:when test="${!appConfig.appDataValues.isEmpty()}">
 												<c:forEach items="${appConfig.appDataValues}" var="var1" varStatus="counter">
@@ -125,12 +123,8 @@
 											</c:when>
 
 										</c:choose>
-								
-								
-			
-					  </table>
-					
-					</div>
+					  			</table>
+							</div>
 					
 					<div class="col-md-12 text-center">
 						<div class="add-margin">
@@ -141,15 +135,11 @@
 					</div>
 					</form:form>
 				</div>
-		
-		
-		
 		</div>	
-	<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>	
-	
-	<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
+<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>	
+<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>

@@ -67,7 +67,7 @@
 			
 				<div class="panel-body custom-form">
 					<div class="form-group">
-								<label for="field-1" class="col-sm-3 control-label">key Name<span class="mandatory"></span></label></label>
+								<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.AppconfigKeyName"/><span class="mandatory"></span></label></label>
 								
 								<div class="col-sm-6">
 							<form:input path="keyName" id="keyName" type="text" class="form-control low-width" placeholder="" autocomplete="off" readonly="true" required="required"/>
@@ -78,14 +78,14 @@
 							
 							<div class="form-group">
 								
-								<label class="col-sm-3 control-label">Description<span class="mandatory"></span></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.description"/><span class="mandatory"></span></label>
 								<div class="col-sm-6">
 							<form:input path="description" id="description" type="text" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
                             <form:errors path="description" cssClass="add-margin error-msg"/>
 						</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Module<span class="mandatory"></span></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.module"/><span class="mandatory"></span></label>
 							<div class="col-sm-6">
 							<form:input path="module.name" id="module" type="text" class="form-control low-width" placeholder="" autocomplete="off" required="required" readonly="true"/>
 					        <form:errors path="module" cssClass="add-margin error-msg"/>
@@ -96,11 +96,11 @@
 					
 					<div class="col-md-12">
 					 <table  class="table table-bordered"   id="floorDetails" >
-      				  <tr>
-						<th>Date</th>
-							<th>Values</th>
-								<th>Operation</th>
-							  </tr>
+	      				 <tr>
+	      				 	<th><spring:message code="lbl.date"/></th>
+							<th><spring:message code="lbl.values"/></th>
+							<th><spring:message code="lbl.operation"/></th>
+						 </tr>
 						
 										<c:choose>
 											<c:when test="${!appConfig.appDataValues.isEmpty()}">
@@ -143,7 +143,7 @@
 					
 					<div class="col-md-12 text-center">
 						<div class="add-margin">
-							<button type="submit" class="btn btn-primary">Submit</button>
+							<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
 							 <button type="button" class="btn btn-default" onclick="history.back()"><spring:message code="lbl.back"/></button>
                           <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
                           </div>
@@ -152,15 +152,11 @@
 					</div>
 					</form:form>
 				</div>
-		
-		
-		
-		</div>	
-	<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>	
-	
-	<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
+			</div>	
+<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>	
+<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>

@@ -59,7 +59,7 @@
 						<div class="panel-body custom-form">
 					
 						<div class="form-group">
-								<label class="col-sm-3 control-label">Module<span class="mandatory"></span></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.module"/><span class="mandatory"></span></label>
 								<div class="col-sm-6 add-margin">
 	                            <form:select path="module.name"
 	                                         id="appModuleName" cssClass="form-control" cssErrorClass="form-control error" required="required" >
@@ -73,7 +73,7 @@
 	                    <div class="panel-body custom-form">
 					
 						<div class="form-group">
-						<label class="col-sm-3 control-label">Key Name<span class="mandatory"></span></label>
+						<label class="col-sm-3 control-label"><spring:message code="lbl.AppconfigKeyName"/><span class="mandatory"></span></label>
 						<div class="col-sm-6 add-margin">		
 					<form:select path="keyName" data-first-option="false"
 						id="appKeyName" cssClass="form-control"
@@ -87,7 +87,6 @@
 					  <form:errors path="keyName" cssClass="error-msg"/>
 					</div>
 					</div>
-					
 				</div>
 								<%-- <div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message code="lbl.AppconfigKeyName"></spring:message><small><i

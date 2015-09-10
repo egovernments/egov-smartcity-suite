@@ -118,7 +118,7 @@ public class ModifyAppConfigController {
         appConfig = buildAppConfigValueDeatils(appConfig, appConfig.getAppDataValues());
         appConfigValueService.updateAppConfigValues(appConfig);
         redirectAttrs.addFlashAttribute("appConfig", appConfig);
-        redirectAttrs.addFlashAttribute("message", "msg.appconfig.update.success");
+        model.addAttribute("message", "msg.appconfig.update.success");
 
         return "appConfig-success";
     }

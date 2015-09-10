@@ -47,7 +47,9 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title text-center no-float">
-					<strong><spring:message code="${message}"/></strong>
+							<c:if test="${not empty message}">
+                    			<strong><spring:message code="${message}"/></strong>
+                			</c:if>
 				</div>
 			</div>
 			<form:form id="appconfigForm" method="post"
@@ -55,14 +57,12 @@
 				<div class="panel-body">
 					<div class="row">
 						<div class="col-md-3 col-xs-6 add-margin">
-							KeyName
+							<spring:message code="lbl.AppconfigKeyName"/>
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-name">
 							<c:out value="${appConfig.keyName }"></c:out>
-							<input id="compTypeName" type="hidden"
-								value="<c:out value="${appConfig.keyName }" />" />
+							<input id="compTypeName" type="hidden" value="<c:out value="${appConfig.keyName}" />" />
 						</div>
-						
 					</div>
 					
 
