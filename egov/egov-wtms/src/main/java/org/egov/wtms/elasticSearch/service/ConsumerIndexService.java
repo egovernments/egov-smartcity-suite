@@ -30,6 +30,7 @@
  */
 package org.egov.wtms.elasticSearch.service;
 
+import java.math.BigDecimal;
 import java.util.Iterator;
 
 import org.egov.config.search.Index;
@@ -68,8 +69,8 @@ public class ConsumerIndexService {
         consumerSearch.setApplicationCode(waterConnectionDetails.getApplicationType().getCode());
         consumerSearch.setStatus(waterConnectionDetails.getConnectionStatus().name());
         consumerSearch.setConnectionType(waterConnectionDetails.getConnectionType().name());
-        consumerSearch.setWaterTaxDue(waterConnectionDetails.getDemand().getBaseDemand()
-                .subtract(waterConnectionDetails.getDemand().getAmtCollected()));
+        consumerSearch.setWaterTaxDue((null !=waterConnectionDetails.getDemand() && null !=waterConnectionDetails.getDemand().getBaseDemand() ? waterConnectionDetails.getDemand().getBaseDemand():BigDecimal.ZERO)
+                .subtract((null !=waterConnectionDetails.getDemand() && null !=waterConnectionDetails.getDemand().getAmtCollected() ?waterConnectionDetails.getDemand().getAmtCollected():BigDecimal.ZERO)));
         ownerNameItr = assessmentDetails.getOwnerNames().iterator();
         if (ownerNameItr.hasNext()) {
             consumerSearch.setConsumerName(ownerNameItr.next().getOwnerName());
