@@ -78,8 +78,7 @@
 								</c:forEach>
 							</c:when>
 							<c:otherwise>
-								<div class="col-md-3 col-xs-6 add-margin">No history
-									details for water connection</div>
+								<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.nohistorydetails.code"/></div>
 							</c:otherwise>
 						</c:choose>
 					

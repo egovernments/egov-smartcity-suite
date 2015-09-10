@@ -98,7 +98,7 @@
 							</div>
 							
 							<div class="col-md-12 spinner-text">
-								Processing your request. Please wait..
+								<spring:message code='lbl.process.wait'/>
 							</div>
 						</div>
 					</div>

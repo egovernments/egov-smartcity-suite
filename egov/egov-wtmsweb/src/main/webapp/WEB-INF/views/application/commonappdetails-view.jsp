@@ -50,7 +50,7 @@
 					<c:when test="${not empty waterConnectionDetails.applicationNumber}">
 						<c:out value="${waterConnectionDetails.applicationNumber}" />
 					</c:when>
-					<c:otherwise>N/A</c:otherwise>
+					<c:otherwise><spring:message code="lb.NA.code"/></c:otherwise>
 				</c:choose>
 			</div>
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.application.date"/></div>
@@ -99,7 +99,7 @@
 				<c:when test="${not empty waterConnectionDetails.connection.consumerCode}">
 					<c:out value="${waterConnectionDetails.connection.consumerCode}" />
 				</c:when>
-				<c:otherwise>N/A</c:otherwise>
+				<c:otherwise><spring:message code="lb.NA.code"/></c:otherwise>
 			</c:choose>
 		</div>
 		
@@ -123,7 +123,7 @@
 					<div class="col-xs-3 add-margin view-content error-msg"><c:out value="${waterConnectionDetails.demand.baseDemand-waterConnectionDetails.demand.amtCollected}" /></div>
 				</c:when>	
 				<c:otherwise>
-					<div class="col-xs-3 add-margin view-content">N/A</div>
+					<div class="col-xs-3 add-margin view-content"><spring:message code="lb.NA.code"/></div>
 				</c:otherwise>
 			</c:choose>
 			

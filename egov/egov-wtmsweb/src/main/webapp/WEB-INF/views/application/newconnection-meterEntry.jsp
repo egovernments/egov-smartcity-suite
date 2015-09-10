@@ -151,7 +151,7 @@
 
 							<c:if test="${currentInstallmentExist}">
 								<button type="submit" class="btn btn-primary"
-									onclick="return getUrlToPring()">Print Demand Notice</button>
+									onclick="return getUrlToPring()"><spring:message code="lbl.print.demand.button"/></button>
 							</c:if>
 							<a href="javascript:void(0);" class="btn btn-primary"
 								onclick="self.close()"> <spring:message code='lbl.close' />

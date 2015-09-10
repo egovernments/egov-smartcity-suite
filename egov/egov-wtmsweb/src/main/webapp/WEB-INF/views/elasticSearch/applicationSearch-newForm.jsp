@@ -67,7 +67,7 @@
 						<form:select name="moduleName" path="" data-first-option="false" id="moduleName"
 							cssClass="form-control" >
 							<form:option value="">
-								Select from below
+								<spring:message code="lbl.select"/>
 							</form:option>
 							<form:options items="${modulesList}"  />  
 						</form:select>
@@ -78,7 +78,7 @@
 						<form:select name="applicationType" path="" data-first-option="false" id="applicationType"
 							cssClass="form-control" >
 							<form:option value="">
-								Select from below
+								<spring:message code="lbl.select"/>
 							</form:option>
 							<form:options items="${applicationTypeList}"  />  
 						</form:select>
@@ -139,7 +139,7 @@
 							<a href="javascript:void(0);" class="btn btn-primary" id="searchapplication" 
 								><spring:message code='lbl.search' /></a>
 								
-							<button class="btn btn-danger" type="reset" >Reset</button>
+							<button class="btn btn-danger" type="reset" ><spring:message code="lbl.reset.button"/></button>
 							<a href="javascript:void(0);" id="closeComplaints"
 								class="btn btn-default" onclick="self.close()"><spring:message code='lbl.close' /></a>
 						</div>

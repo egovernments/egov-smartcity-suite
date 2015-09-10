@@ -62,32 +62,6 @@ $('#metercurrentReadingDate').on('change', function(){
 		
 	});
 
-	/*$("#metercurrentReadingDate").datepicker({
-	}).on("change", function(e) {
-		$.ajax({
-			url: "/wtms/ajax-meterReadingEntryExist",     
-				type: "GET",
-				cache: true,
-				data: {
-					givenDate : $('#metercurrentReadingDate').val() ,
-					requestConsumerCode : $('#consumerCode').val() 
-				},
-				dataType: "json",
-		}).done(function(value) {
-			 if(value == true) {
-				 alert('Entered Metered Reading Date Allready Exist');
-				 $('#metercurrentReadingDate').val('');
-				 return false;
-			 } else {
-				 document.forms[0].submit;
-				 return true; 
-			 }
-		});
-	  
-	  });*/
-	
-
-	
 	var currentInstallmentExist = $('#currentInstallmentExist').val();
 	if (currentInstallmentExist) {
 		$('#submitButtonId').hide();
@@ -129,27 +103,6 @@ $('#metercurrentReadingDate').on('change', function(){
 		return true;
 		
 		
-	}
-// this date range validation to check entred date is same as previous date means equal checking
-	function validateDateRange(fromDate, toDate) {
-		if (fromDate != "" && toDate != "") {
-			var stsplit = fromDate.split("/");
-			var ensplit = toDate.split("/");
-
-			startDate = Date.parse(stsplit[1] + "/" + stsplit[0] + "/"
-					+ stsplit[2]);
-			endDate = Date.parse(ensplit[1] + "/" + ensplit[0] + "/"
-					+ ensplit[2]);
-
-			// Check the date range, 86400000 is the number of milliseconds in one day
-			var difference = (endDate - startDate) / (86400000 * 7);
-			if (difference = 0) {
-				return false;
-			} else {
-				return true;
-			}
-		}
-		return true;
 	}
 // this date validation is to check less than 
 	function validateCurrentAndExecutionDateRange(fromDate, toDate) {

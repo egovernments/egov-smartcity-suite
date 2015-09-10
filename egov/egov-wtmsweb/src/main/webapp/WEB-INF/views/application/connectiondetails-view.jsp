@@ -102,7 +102,7 @@
                           <c:out value="${waterConnectionDetails.bplCardHolderName}" />
                         </c:when>
                         <c:otherwise>
-                          <c:out value="Not Applicable" />
+                          <spring:message code="lbl.notapplicable.code"/>
                         </c:otherwise>          
                     </c:choose>
                     </div>

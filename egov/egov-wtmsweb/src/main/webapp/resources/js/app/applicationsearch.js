@@ -54,7 +54,6 @@ jQuery(document).ready(function ($) {
 					destroy:true,
 					"sPaginationType": "bootstrap",
 					"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-					//"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
 					"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 					"autoWidth": false,
 					searchable:true,
@@ -126,9 +125,7 @@ jQuery(document).ready(function ($) {
 						return true;
 					}
 				}else{
-			    //alert("Select the date");
-			   // return false;
-				}
+			 }
 				event.preventDefault();
 			
 		});
@@ -141,11 +138,9 @@ jQuery(document).ready(function ($) {
 		tableContainer.$('tr.row_selected').removeClass('row_selected');
         $(this).addClass('row_selected');
         var url= tableContainer.fnGetData( this,1);
-        //var url = '/wtms/application/view/'+applicationNumber ;
-		$('#applicationSearchRequestForm').attr('method', 'get');
+        $('#applicationSearchRequestForm').attr('method', 'get');
 		$('#applicationSearchRequestForm').attr('action', url);
 		$('#applicationSearchRequestForm').attr('mode', 'search');
-		//window.location=url;
 		window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 		 
 	});

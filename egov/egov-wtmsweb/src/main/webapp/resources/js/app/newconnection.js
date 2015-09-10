@@ -44,8 +44,6 @@ $(document).ready(function(){
 	if(currentloggedInUser=='true' && mode=='')
 		{
 		$(".show-row").hide(); 
-		/*$('#approvalComent').hide();
-		$('#approvalComent').hide();*/
 		$('#approvalDepartment').removeAttr('required');
 		$('#approvalDesignation').removeAttr('required');
 		$('#approvalPosition').removeAttr('required');
@@ -62,8 +60,6 @@ $(document).ready(function(){
 	$('#connectionType').change(function(){
 		if($('#legacy'))
 		{
-			//alert($('#legacy').val())
-			//alert($('#connectionType').val())
 			if($('#connectionType').val()=='METERED')
 			{
 				$('#metereddetails').show();	
@@ -113,8 +109,6 @@ $(document).ready(function(){
 						
 						if($('#legacy'))
 						{
-							//alert($('#legacy').val());
-							
 							var radioValue = $("input[name='applicationType']:checked").val();
 							 $('#frm input[type="radio"]').each(function(){
 							      $(this).checked = false;  

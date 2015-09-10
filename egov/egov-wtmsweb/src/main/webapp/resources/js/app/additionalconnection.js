@@ -45,8 +45,6 @@ $(document).ready(function(){
 	if(currentloggedInUser=='true' && mode=='addconnection')
 		{
 		$(".show-row").hide(); 
-		/*$('#approvalComent').hide();
-		$('#approvalComent').hide();*/
 		$('#approvalDepartment').removeAttr('required');
 		$('#approvalDesignation').removeAttr('required');
 		$('#approvalPosition').removeAttr('required');

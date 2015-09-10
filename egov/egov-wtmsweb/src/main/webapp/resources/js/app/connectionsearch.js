@@ -174,7 +174,6 @@ jQuery(document).ready(function($) {
 											$('#waterSearchRequestForm').attr('method', 'get');
 											$('#waterSearchRequestForm').attr('action', url);
 											window.location = url;
-											// window.location.href="applyforadditionalconnection.html"
 										} else if (this.value == 2) {
 											if (consumerNumber != '') {
 												var url = '/wtms/application/changeOfUse/'+ consumerNumber;
@@ -182,21 +181,15 @@ jQuery(document).ready(function($) {
 												$('#waterSearchRequestForm').attr('action', url);
 												window.location = url;
 											}
-											// window.location.href="changeofuse.html"
-										} else if (this.value == 3) {
-
-											// window.location.href="reconnection.html"
-										} else if (this.value == 4) {
-											// window.location.href="disconnectionotice.html"
+											} else if (this.value == 3) {
+											} else if (this.value == 4) {
 										} else if (this.value == 5) {
-											// window.location.href="disconnectionotice.html"
 										} else if (this.value == 6) {
 											var url = '/wtms/application/generatebill/'+ consumerNumber;
 											$('#waterSearchRequestForm').attr('method', 'get');
 											$('#waterSearchRequestForm').attr('action', url);
 											window.location = url;
 										} else if (this.value == 7) {
-											// window.location.href="excecutiondate.html"
 										}
 										else if (this.value == 8) {
 											var url = '/wtms/application/meterentry/'+ consumerNumber;

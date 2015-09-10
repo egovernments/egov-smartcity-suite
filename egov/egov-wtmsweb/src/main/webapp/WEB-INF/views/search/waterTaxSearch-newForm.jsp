@@ -107,7 +107,7 @@
 							<a href="javascript:void(0);" id="searchapprvedapplication"
 								class="btn btn-primary"><spring:message code='lbl.search' /></a>
 								
-							<button class="btn btn-danger" type="reset">Reset</button>
+							<button class="btn btn-danger" type="reset"><spring:message code='lbl.reset.button'/></button>
 							<a href="javascript:void(0);" id="closeComplaints"
 								class="btn btn-default" onclick="self.close()"><spring:message code='lbl.close' /></a>
 						</div>
@@ -127,9 +127,9 @@
 
 
 <div class="row">
-					<div class="col-md-6 col-xs-6 table-header">The Search result is</div>
+					<div class="col-md-6 col-xs-6 table-header"><spring:message code='lbl.searchresult'/></div>
 					<div class="col-md-6 col-xs-6 add-margin text-right">
-						<span class="inline-elem">Search</span>
+						<span class="inline-elem"><spring:message code='lbl.search'/></span>
 						<span class="inline-elem"><input type="text" id="searchwatertax" class="form-control input-sm"></span>
 					</div>
 	<div class="col-md-12" id="searchResultDiv">	

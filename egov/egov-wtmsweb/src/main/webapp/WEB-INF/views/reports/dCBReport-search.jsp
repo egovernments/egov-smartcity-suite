@@ -202,7 +202,7 @@
 </div>
 
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">DCB Drill Down
+	<div class="col-md-12 table-header text-left"><spring:message code="lbl.drill.report" /> 
 		Report Details</div>
 	<div class="col-md-12 form-group report-table-container">
 		<table
@@ -210,29 +210,29 @@
 			id="tbldcbdrilldown">
 			<thead>
 				<tr>
-					<th rowspan="2">Number</th>
-					<th colspan="1">UserName</th>
-					<th colspan="3">Demand</th>
-					<th colspan="3">Collection</th>
-					<th colspan="3">Balance</th>
+					<th rowspan="2"><spring:message code="lbl.Number" /> </th>
+					<th colspan="1"><spring:message code="lbl.UserName" /> </th>
+					<th colspan="3"><spring:message code="lbl.Demand" /> </th>
+					<th colspan="3"><spring:message code="lbl.Collection" /></th>
+					<th colspan="3"><spring:message code="lbl.Balance" /> </th>
 				</tr>
 
 				<tr>
-					<th>UserName</th>
-					<th>Arrear</th>
-					<th>Current</th>
-					<th>Total</th>
-					<th>Arrear</th>
-					<th>Current</th>
-					<th>Total</th>
-					<th>Arrear</th>
-					<th>Current</th>
-					<th>Total</th>
+					<th><spring:message code="lbl.UserName" /> </th>
+					<th><spring:message code="lbl.Arrear" /> </th>
+					<th><spring:message code="lbl.Current" /> </th>
+					<th><spring:message code="lbl.Total" /> </th>
+					<th><spring:message code="lbl.Arrear" /> </th>
+					<th><spring:message code="lbl.Current" /> </th>
+					<th><spring:message code="lbl.Total" /> </th>
+					<th><spring:message code="lbl.Arrear" /> </th>
+					<th><spring:message code="lbl.Current" /> </th>
+					<th><spring:message code="lbl.Total" /> </th>
 				</tr>
 			</thead>
 			<tfoot id="report-footer">
 				<tr>
-					<td colspan="2" align="center">Total</td>
+					<td colspan="2" align="center"><spring:message code="lbl.Total" /></td>
 					<td></td>
 					<td></td>
 					<td></td>
@@ -249,7 +249,7 @@
 </div>
 <div id="report-backbutton" class="col-xs-12 text-center">
 	<div class="form-group">
-		<buttton class="btn btn-primary" id="backButton"> Back</buttton>
+		<buttton class="btn btn-primary" id="backButton"> <spring:message code="lbl.back.button" /></buttton>
 	</div>
 </div>
 <link rel="stylesheet"

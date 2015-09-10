@@ -49,7 +49,7 @@
 		<meta name="description" content="Neon Admin Panel" />
 		<meta name="author" content="" />
 		
-		<title>eGov Urban Portal</title>
+		<title><spring:message code='lbl.egov.header'/></title>
 		
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
