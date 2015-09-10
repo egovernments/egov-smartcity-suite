@@ -45,7 +45,8 @@
 <script type="text/javascript">
 	function submitForm() {
 		var id = '<s:property value="coaId"/>';
-		document.chartOfAccountsForm.action = '${pageContext.request.contextPath}/masters/chartOfAccounts-modify.action?model.id=' + id;
+		document.chartOfAccountsForm.action = '${pageContext.request.contextPath}/masters/chartOfAccounts-modify.action?model.id='
+				+ id;
 		document.chartOfAccountsForm.submit();
 
 		return true;
@@ -96,8 +97,15 @@
 					<td width="20%" class="bluebox">&nbsp;</td>
 					<td width="10%" class="bluebox"><strong><s:text
 								name="chartOfAccount.classification" />:</strong></td>
-					<td width="22%" class="bluebox"><s:property
-							value="model.classification" /></td>
+					<td width="22%" class="bluebox"><s:if
+							test="%{model.classification == 1}">
+							<s:text name="chartOfAccount.majorCode" />
+						</s:if> <s:elseif test="%{model.classification == 2}">
+							<s:text name="chartOfAccount.minorCode" />
+						</s:elseif> <s:elseif test="%{model.classification == 4}">
+							<s:text name="chartOfAccount.detailedCode" />
+						</s:elseif> <s:else>
+						</s:else></td>
 					<td width="10%" class="bluebox"><strong><s:text
 								name="chartOfAccount.purpose" />:</strong></td>
 					<td class="bluebox"><s:property

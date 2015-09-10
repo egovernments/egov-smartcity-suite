@@ -105,26 +105,26 @@
 				<tr>
 					<td width="20%" class="bluebox">&nbsp;</td>
 					<td width="10%" class="bluebox"><strong><s:text
-								name="chartOfAccount.classification" />:</strong></td>
-					<td width="22%" class="bluebox"><input type="text"
-						name="model.classification"
-						value='<s:property value="model.classification"/>'
-						style="border: 0px;" /></td>
-					<td width="10%" class="bluebox"><strong><s:text
 								name="chartOfAccount.purpose" />:</strong></td>
 					<td class="bluebox"><s:select list="dropdownData.purposeList"
 							listKey="id" listValue="name" name="accountcodePurpose.id"
 							headerKey="0" headerValue="--- Select ---"
 							value="accountcodePurpose.id"></s:select></td>
+					<td width="10%" class="bluebox"><strong><s:text
+								name="chartOfAccount.classification" />:</strong></td>
+					<td width="22%" class="bluebox"><s:if
+							test="%{model.classification == 1}">
+							<s:text name="chartOfAccount.majorCode" />
+						</s:if> <s:elseif test="%{model.classification == 2}">
+							<s:text name="chartOfAccount.minorCode" />
+						</s:elseif> <s:elseif test="%{model.classification == 4}">
+							<s:text name="chartOfAccount.detailedCode" />
+						</s:elseif> <s:else>
+						</s:else></td>
 				</tr>
 				<tr>
 					<td width="20%" class="greybox">&nbsp;</td>
-					<td width="10%" class="greybox"><strong><s:text
-								name="chartOfAccount.accountDetailType" />:</strong></td>
-					<td width="22%" class="greybox"><s:select
-							list="dropdownData.accountDetailTypeList" listKey="id"
-							listValue="name" name="accountDetailTypeList" multiple="true"
-							value="accountDetailTypeList"></s:select></td>
+
 					<td width="10%" class="greybox"><strong><s:text
 								name="chartOfAccount.activeForPosting" />:</strong></td>
 					<td class="greybox"><s:if
@@ -134,6 +134,12 @@
 						</s:if> <s:else>
 							<s:checkbox name="activeForPosting" value="isActiveForPosting"></s:checkbox>
 						</s:else></td>
+					<td width="10%" class="greybox"><strong><s:text
+								name="chartOfAccount.accountDetailType" />:</strong></td>
+					<td width="22%"><s:select
+							list="dropdownData.accountDetailTypeList" listKey="id"
+							listValue="name" name="accountDetailTypeList" multiple="true"
+							size="5" value="accountDetailTypeList"></s:select></td>
 				</tr>
 				<tr>
 					<td width="20%" class="bluebox">&nbsp;</td>
