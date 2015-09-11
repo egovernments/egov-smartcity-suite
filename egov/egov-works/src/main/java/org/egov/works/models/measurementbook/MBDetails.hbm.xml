@@ -159,7 +159,7 @@
             group by woa,woa.activity having (id = ? or activity.id = ?)
    		]]>  
 	</query>
-	<!-- <query name="totalEstimatedQuantityForRE"> 
+	<query name="totalEstimatedQuantityForRE"> 
 		<![CDATA[
 	     	select sum(woa.approvedQuantity*coalesce((CASE WHEN woa.activity.revisionType = 'REDUCED_QUANTITY' THEN -1 
 	     	WHEN woa.activity.revisionType = 'ADDITIONAL_QUANTITY' THEN 1 WHEN woa.activity.revisionType = 'NON_TENDERED_ITEM' THEN 1 
@@ -168,7 +168,7 @@
 	     	and ((woa.activity.parent is null and woa.workOrderEstimate.workOrder = ?) or (woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?)) 
 	     	group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id = ? ) 
     	]]>
-	</query> -->
+	</query>
 	<query name="totalEstimatedQuantityInRE">
 		<![CDATA[            
             select sum(woa.approvedQuantity) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code != 'CANCELLED' and 
