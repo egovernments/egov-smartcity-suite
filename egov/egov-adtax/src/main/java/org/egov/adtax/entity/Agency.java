@@ -90,9 +90,11 @@ public class Agency extends AbstractAuditable {
     @ManyToOne
     @JoinColumn(name = "status", nullable = false)
     private EgwStatus status;
-    /*@NotNull
-    @SafeHtml
-    private Double depositAmount;*/
+
+    /*
+     * @NotNull
+     * @SafeHtml private Double depositAmount;
+     */
 
     @Override
     protected void setId(final Long id) {
@@ -153,12 +155,10 @@ public class Agency extends AbstractAuditable {
         this.status = status;
     }
 
-    /*public Double getDepositAmount() {
-        return depositAmount;
-    }
-
-    public void setDepositAmount(final Double depositAmount) {
-        this.depositAmount = depositAmount;
-    }*/
+    /*
+     * public Double getDepositAmount() { return depositAmount; } public void
+     * setDepositAmount(final Double depositAmount) { this.depositAmount =
+     * depositAmount; }
+     */
 
 }

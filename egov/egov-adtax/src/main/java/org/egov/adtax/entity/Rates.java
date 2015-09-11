@@ -41,7 +41,6 @@ package org.egov.adtax.entity;
 
 import java.util.Date;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -53,57 +52,52 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
-import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.validation.regex.Constants;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGADTAX_RATES")
 @SequenceGenerator(name = Rates.SEQ_RATES, sequenceName = Rates.SEQ_RATES, allocationSize = 1)
 public class Rates extends AbstractAuditable {
-   
+
     private static final long serialVersionUID = -3661778599272146492L;
     public static final String SEQ_RATES = "SEQ_EGADTAX_RATES";
     @Id
     @GeneratedValue(generator = SEQ_RATES, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "category",nullable = false)
+    @JoinColumn(name = "category", nullable = false)
     private HoardingCategory category;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "subcategory",nullable = false)
+    @JoinColumn(name = "subcategory", nullable = false)
     private SubCategory subCategory;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "unitofmeasure",nullable = false)
+    @JoinColumn(name = "unitofmeasure", nullable = false)
     private UnitOfMeasure unitofmeasure;
-    
-    private boolean active;
 
+    private boolean active;
 
     @NotNull
     @Temporal(value = TemporalType.DATE)
     private Date readingDate;
-    
+
     @NotNull
     @Temporal(value = TemporalType.DATE)
     private Date validtodate;
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -111,7 +105,7 @@ public class Rates extends AbstractAuditable {
         return category;
     }
 
-    public void setCategory(HoardingCategory category) {
+    public void setCategory(final HoardingCategory category) {
         this.category = category;
     }
 
@@ -119,7 +113,7 @@ public class Rates extends AbstractAuditable {
         return subCategory;
     }
 
-    public void setSubCategory(SubCategory subCategory) {
+    public void setSubCategory(final SubCategory subCategory) {
         this.subCategory = subCategory;
     }
 
@@ -127,7 +121,7 @@ public class Rates extends AbstractAuditable {
         return unitofmeasure;
     }
 
-    public void setUnitofmeasure(UnitOfMeasure unitofmeasure) {
+    public void setUnitofmeasure(final UnitOfMeasure unitofmeasure) {
         this.unitofmeasure = unitofmeasure;
     }
 
@@ -135,7 +129,7 @@ public class Rates extends AbstractAuditable {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
 
@@ -143,7 +137,7 @@ public class Rates extends AbstractAuditable {
         return readingDate;
     }
 
-    public void setReadingDate(Date readingDate) {
+    public void setReadingDate(final Date readingDate) {
         this.readingDate = readingDate;
     }
 
@@ -151,10 +145,8 @@ public class Rates extends AbstractAuditable {
         return validtodate;
     }
 
-    public void setValidtodate(Date validtodate) {
+    public void setValidtodate(final Date validtodate) {
         this.validtodate = validtodate;
     }
-    
-    
-    
+
 }

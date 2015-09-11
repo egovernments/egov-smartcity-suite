@@ -39,9 +39,6 @@
  */
 package org.egov.adtax.entity;
 
-import java.util.Date;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -50,43 +47,37 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
-import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.validation.regex.Constants;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGADTAX_RATES_DETAILS")
 @SequenceGenerator(name = RatesDetails.SEQ_RATESDETAILS, sequenceName = RatesDetails.SEQ_RATESDETAILS, allocationSize = 1)
 public class RatesDetails extends AbstractAuditable {
- 
+
     private static final long serialVersionUID = 3330971216171501421L;
     public static final String SEQ_RATESDETAILS = "SEQ_EGADTAX_RATESDETAILS";
     @Id
     @GeneratedValue(generator = SEQ_RATESDETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "class",nullable = false)
+    @JoinColumn(name = "class", nullable = false)
     private RatesClass classtype;
 
     private Double unitFrom;
     private Double unitTo;
     private Double rate;
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -94,7 +85,7 @@ public class RatesDetails extends AbstractAuditable {
         return classtype;
     }
 
-    public void setClasstype(RatesClass classtype) {
+    public void setClasstype(final RatesClass classtype) {
         this.classtype = classtype;
     }
 
@@ -102,7 +93,7 @@ public class RatesDetails extends AbstractAuditable {
         return unitFrom;
     }
 
-    public void setUnitFrom(Double unitFrom) {
+    public void setUnitFrom(final Double unitFrom) {
         this.unitFrom = unitFrom;
     }
 
@@ -110,7 +101,7 @@ public class RatesDetails extends AbstractAuditable {
         return unitTo;
     }
 
-    public void setUnitTo(Double unitTo) {
+    public void setUnitTo(final Double unitTo) {
         this.unitTo = unitTo;
     }
 
@@ -118,8 +109,8 @@ public class RatesDetails extends AbstractAuditable {
         return rate;
     }
 
-    public void setRate(Double rate) {
+    public void setRate(final Double rate) {
         this.rate = rate;
     }
-    
+
 }

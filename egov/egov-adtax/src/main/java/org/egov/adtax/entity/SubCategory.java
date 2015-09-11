@@ -59,10 +59,9 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = SubCategory.SEQ_SUBCATEGORY, sequenceName = SubCategory.SEQ_SUBCATEGORY, allocationSize = 1)
 public class SubCategory extends AbstractAuditable {
 
+    private static final long serialVersionUID = -2340335623115410828L;
 
-private static final long serialVersionUID = -2340335623115410828L;
-
-public static final String SEQ_SUBCATEGORY = "SEQ_EGADTAX_SUBCATEGORY";       
+    public static final String SEQ_SUBCATEGORY = "SEQ_EGADTAX_SUBCATEGORY";
 
     @Id
     @GeneratedValue(generator = SEQ_SUBCATEGORY, strategy = GenerationType.SEQUENCE)
@@ -79,19 +78,21 @@ public static final String SEQ_SUBCATEGORY = "SEQ_EGADTAX_SUBCATEGORY";
     @Length(max = 250)
     @Column(name = "description", unique = true)
     private String description;
-    
+
     private boolean active;
-   
+
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "category",nullable = false)
+    @JoinColumn(name = "category", nullable = false)
     private HoardingCategory category;
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -99,7 +100,7 @@ public static final String SEQ_SUBCATEGORY = "SEQ_EGADTAX_SUBCATEGORY";
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(final String code) {
         this.code = code;
     }
 
@@ -107,7 +108,7 @@ public static final String SEQ_SUBCATEGORY = "SEQ_EGADTAX_SUBCATEGORY";
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -115,7 +116,7 @@ public static final String SEQ_SUBCATEGORY = "SEQ_EGADTAX_SUBCATEGORY";
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
 
@@ -123,8 +124,8 @@ public static final String SEQ_SUBCATEGORY = "SEQ_EGADTAX_SUBCATEGORY";
         return category;
     }
 
-    public void setCategory(HoardingCategory category) {
+    public void setCategory(final HoardingCategory category) {
         this.category = category;
     }
-    
+
 }

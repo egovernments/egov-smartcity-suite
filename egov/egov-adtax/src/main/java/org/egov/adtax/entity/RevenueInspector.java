@@ -57,9 +57,9 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = RevenueInspector.SEQ_REVENUE_INSPECTORS, sequenceName = RevenueInspector.SEQ_REVENUE_INSPECTORS, allocationSize = 1)
 public class RevenueInspector extends AbstractAuditable {
 
-private static final long serialVersionUID = -8688346654911767440L;
+    private static final long serialVersionUID = -8688346654911767440L;
 
-public static final String SEQ_REVENUE_INSPECTORS = "SEQ_EGADTAX_REVENUEINSPECTORS";       
+    public static final String SEQ_REVENUE_INSPECTORS = "SEQ_EGADTAX_REVENUEINSPECTORS";
 
     @Id
     @GeneratedValue(generator = SEQ_REVENUE_INSPECTORS, strategy = GenerationType.SEQUENCE)
@@ -73,11 +73,13 @@ public static final String SEQ_REVENUE_INSPECTORS = "SEQ_EGADTAX_REVENUEINSPECTO
 
     private boolean active;
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -85,7 +87,7 @@ public static final String SEQ_REVENUE_INSPECTORS = "SEQ_EGADTAX_REVENUEINSPECTO
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -93,9 +95,8 @@ public static final String SEQ_REVENUE_INSPECTORS = "SEQ_EGADTAX_REVENUEINSPECTO
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
-
 
 }

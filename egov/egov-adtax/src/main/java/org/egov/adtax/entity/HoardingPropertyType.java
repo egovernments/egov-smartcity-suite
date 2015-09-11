@@ -73,11 +73,13 @@ public class HoardingPropertyType extends AbstractAuditable {
 
     private boolean active;
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -85,7 +87,7 @@ public class HoardingPropertyType extends AbstractAuditable {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -93,9 +95,8 @@ public class HoardingPropertyType extends AbstractAuditable {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
-
 
 }

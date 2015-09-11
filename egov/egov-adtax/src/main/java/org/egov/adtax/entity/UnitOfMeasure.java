@@ -57,9 +57,9 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = UnitOfMeasure.SEQ_UNITOFMEASURE, sequenceName = UnitOfMeasure.SEQ_UNITOFMEASURE, allocationSize = 1)
 public class UnitOfMeasure extends AbstractAuditable {
 
-private static final long serialVersionUID = 8341855744507541704L;
+    private static final long serialVersionUID = 8341855744507541704L;
 
-public static final String SEQ_UNITOFMEASURE = "SEQ_EGADTAX_UNITOFMEASURE";       
+    public static final String SEQ_UNITOFMEASURE = "SEQ_EGADTAX_UNITOFMEASURE";
 
     @Id
     @GeneratedValue(generator = SEQ_UNITOFMEASURE, strategy = GenerationType.SEQUENCE)
@@ -76,14 +76,16 @@ public static final String SEQ_UNITOFMEASURE = "SEQ_EGADTAX_UNITOFMEASURE";
     @Length(max = 50)
     @Column(name = "description", unique = true)
     private String description;
-    
+
     private boolean active;
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -91,7 +93,7 @@ public static final String SEQ_UNITOFMEASURE = "SEQ_EGADTAX_UNITOFMEASURE";
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(final String code) {
         this.code = code;
     }
 
@@ -99,7 +101,7 @@ public static final String SEQ_UNITOFMEASURE = "SEQ_EGADTAX_UNITOFMEASURE";
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -107,7 +109,7 @@ public static final String SEQ_UNITOFMEASURE = "SEQ_EGADTAX_UNITOFMEASURE";
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
 

@@ -59,7 +59,7 @@ public class RatesClass extends AbstractAuditable {
 
     private static final long serialVersionUID = 3430864664081345984L;
 
-    public static final String SEQ_RATES_CLASS = "SEQ_EGADTAX_RATESCLASS";       
+    public static final String SEQ_RATES_CLASS = "SEQ_EGADTAX_RATESCLASS";
 
     @Id
     @GeneratedValue(generator = SEQ_RATES_CLASS, strategy = GenerationType.SEQUENCE)
@@ -73,11 +73,13 @@ public class RatesClass extends AbstractAuditable {
 
     private boolean active;
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -85,7 +87,7 @@ public class RatesClass extends AbstractAuditable {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -93,9 +95,8 @@ public class RatesClass extends AbstractAuditable {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
-
 
 }

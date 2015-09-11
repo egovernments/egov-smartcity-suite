@@ -57,10 +57,9 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = HoardingCategory.SEQ_CATEGORY, sequenceName = HoardingCategory.SEQ_CATEGORY, allocationSize = 1)
 public class HoardingCategory extends AbstractAuditable {
 
+    private static final long serialVersionUID = 3539719034190449335L;
 
-private static final long serialVersionUID = 3539719034190449335L;
-
-public static final String SEQ_CATEGORY = "SEQ_EGADTAX_CATEGORY";       
+    public static final String SEQ_CATEGORY = "SEQ_EGADTAX_CATEGORY";
 
     @Id
     @GeneratedValue(generator = SEQ_CATEGORY, strategy = GenerationType.SEQUENCE)
@@ -77,14 +76,16 @@ public static final String SEQ_CATEGORY = "SEQ_EGADTAX_CATEGORY";
     @Length(max = 250)
     @Column(name = "name", unique = true)
     private String name;
-    
+
     private boolean active;
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -92,7 +93,7 @@ public static final String SEQ_CATEGORY = "SEQ_EGADTAX_CATEGORY";
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(final String code) {
         this.code = code;
     }
 
@@ -100,7 +101,7 @@ public static final String SEQ_CATEGORY = "SEQ_EGADTAX_CATEGORY";
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -108,7 +109,7 @@ public static final String SEQ_CATEGORY = "SEQ_EGADTAX_CATEGORY";
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
 

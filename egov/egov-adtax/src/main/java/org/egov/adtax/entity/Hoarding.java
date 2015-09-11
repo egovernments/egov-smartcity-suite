@@ -71,65 +71,64 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Table(name = "EGADTAX_HOARDING")
 @SequenceGenerator(name = Hoarding.SEQ_HOARDING, sequenceName = Hoarding.SEQ_HOARDING, allocationSize = 1)
 public class Hoarding extends AbstractAuditable {
-   
+
     private static final long serialVersionUID = 5612476685142904195L;
     public static final String SEQ_HOARDING = "SEQ_EGADTAX_HOARDING";
     @Id
     @GeneratedValue(generator = SEQ_HOARDING, strategy = GenerationType.SEQUENCE)
     private Long id;
-   
+
     @NotNull
     @Column(name = "applicationNumber", unique = true)
     @SafeHtml
     @Length(max = 25)
     private String applicationNumber;
-    
+
     @NotNull
     @Column(name = "permissionNumber")
     @SafeHtml
     @Length(max = 25)
     private String permissionNumber;
-    
+
     @NotNull
     @Column(name = "hoardingnumber", unique = true)
     @SafeHtml
     @Length(max = 25)
     private String hoardingnumber;
-    
+
     @NotNull
     @Column(name = "hoardingName")
     @SafeHtml
     @Length(max = 125)
     private String hoardingName;
-    
+
     @NotNull
     @Column(name = "type")
     @SafeHtml
     @Length(max = 25)
     private String type;
-    
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "agency", nullable = false)
     private Agency agency;
-        
+
     @NotNull
     @Column(name = "advertiser")
     @SafeHtml
     @Length(max = 125)
     private String advertiser;
-    
+
     @NotNull
     @Column(name = "advertiserParticular")
     @SafeHtml
     @Length(max = 512)
     private String advertiserParticular;
-    
+
     @NotNull
     @Temporal(value = TemporalType.DATE)
     private Date applicationdate;
-    
-    
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "propertyType", nullable = false)
@@ -139,32 +138,32 @@ public class Hoarding extends AbstractAuditable {
     @SafeHtml
     @Length(max = 50)
     private String propertyNumber;
-    
+
     @Column(name = "ownerdetail")
     @SafeHtml
     @Length(max = 125)
     private String ownerDetail;
-    
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "status", nullable = false)
     private EgwStatus status;
-    
+
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "category",nullable = false)
+    @JoinColumn(name = "category", nullable = false)
     private HoardingCategory category;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "subcategory",nullable = false)
+    @JoinColumn(name = "subcategory", nullable = false)
     private SubCategory subCategory;
-    
+
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "unitofmeasure",nullable = false)
+    @JoinColumn(name = "unitofmeasure", nullable = false)
     private UnitOfMeasure unitofmeasure;
-    
+
     private Double measurement;
     private Double length;
     private Double width;
@@ -172,63 +171,60 @@ public class Hoarding extends AbstractAuditable {
     private Double totalHeight;
     private Double taxAmount;
     private Double encroachmentFee;
-    
 
     @ManyToOne
-    @JoinColumn(name = "class",nullable = false)
+    @JoinColumn(name = "class", nullable = false)
     private RatesClass rateClass;
-   
+
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "revenueinspector",nullable = false)
+    @JoinColumn(name = "revenueinspector", nullable = false)
     private RevenueInspector revenueInspector;
-    
 
     @ManyToOne
-    @JoinColumn(name = "revenueboundary",nullable = false)
+    @JoinColumn(name = "revenueboundary", nullable = false)
     private Boundary revenueBoundary;
-    
+
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "adminBoundry",nullable = false)
+    @JoinColumn(name = "adminBoundry", nullable = false)
     private Boundary adminBoundry;
-  
+
     @NotNull
     @Column(name = "address")
     @SafeHtml
     @Length(max = 512)
     private String address;
-    
+
     @NotNull
     @Column(name = "advertisementduration")
     @SafeHtml
     @Length(max = 25)
     private String advertisementDuration;
-    
+
     @ManyToOne
-    @JoinColumn(name = "demandid",nullable = false)
+    @JoinColumn(name = "demandid", nullable = false)
     private EgDemand demandid;
 
-    
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "egadtax_hoarding_docs", joinColumns = @JoinColumn(name = "hoarding") , inverseJoinColumns = @JoinColumn(name = "document") )
+    @JoinTable(name = "egadtax_hoarding_docs", joinColumns = @JoinColumn(name = "hoarding"), inverseJoinColumns = @JoinColumn(name = "document"))
     private Set<HoardingDocument> documents = new HashSet<>();
-    
-    
-    
+
     public Set<HoardingDocument> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(Set<HoardingDocument> documents) {
+    public void setDocuments(final Set<HoardingDocument> documents) {
         this.documents = documents;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -236,7 +232,7 @@ public class Hoarding extends AbstractAuditable {
         return applicationNumber;
     }
 
-    public void setApplicationNumber(String applicationNumber) {
+    public void setApplicationNumber(final String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
 
@@ -244,7 +240,7 @@ public class Hoarding extends AbstractAuditable {
         return permissionNumber;
     }
 
-    public void setPermissionNumber(String permissionNumber) {
+    public void setPermissionNumber(final String permissionNumber) {
         this.permissionNumber = permissionNumber;
     }
 
@@ -252,7 +248,7 @@ public class Hoarding extends AbstractAuditable {
         return hoardingnumber;
     }
 
-    public void setHoardingnumber(String hoardingnumber) {
+    public void setHoardingnumber(final String hoardingnumber) {
         this.hoardingnumber = hoardingnumber;
     }
 
@@ -260,7 +256,7 @@ public class Hoarding extends AbstractAuditable {
         return hoardingName;
     }
 
-    public void setHoardingName(String hoardingName) {
+    public void setHoardingName(final String hoardingName) {
         this.hoardingName = hoardingName;
     }
 
@@ -268,7 +264,7 @@ public class Hoarding extends AbstractAuditable {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
@@ -276,7 +272,7 @@ public class Hoarding extends AbstractAuditable {
         return agency;
     }
 
-    public void setAgency(Agency agency) {
+    public void setAgency(final Agency agency) {
         this.agency = agency;
     }
 
@@ -284,7 +280,7 @@ public class Hoarding extends AbstractAuditable {
         return advertiser;
     }
 
-    public void setAdvertiser(String advertiser) {
+    public void setAdvertiser(final String advertiser) {
         this.advertiser = advertiser;
     }
 
@@ -292,7 +288,7 @@ public class Hoarding extends AbstractAuditable {
         return advertiserParticular;
     }
 
-    public void setAdvertiserParticular(String advertiserParticular) {
+    public void setAdvertiserParticular(final String advertiserParticular) {
         this.advertiserParticular = advertiserParticular;
     }
 
@@ -300,7 +296,7 @@ public class Hoarding extends AbstractAuditable {
         return applicationdate;
     }
 
-    public void setApplicationdate(Date applicationdate) {
+    public void setApplicationdate(final Date applicationdate) {
         this.applicationdate = applicationdate;
     }
 
@@ -308,7 +304,7 @@ public class Hoarding extends AbstractAuditable {
         return propertyType;
     }
 
-    public void setPropertyType(HoardingPropertyType propertyType) {
+    public void setPropertyType(final HoardingPropertyType propertyType) {
         this.propertyType = propertyType;
     }
 
@@ -316,7 +312,7 @@ public class Hoarding extends AbstractAuditable {
         return propertyNumber;
     }
 
-    public void setPropertyNumber(String propertyNumber) {
+    public void setPropertyNumber(final String propertyNumber) {
         this.propertyNumber = propertyNumber;
     }
 
@@ -324,7 +320,7 @@ public class Hoarding extends AbstractAuditable {
         return ownerDetail;
     }
 
-    public void setOwnerDetail(String ownerDetail) {
+    public void setOwnerDetail(final String ownerDetail) {
         this.ownerDetail = ownerDetail;
     }
 
@@ -332,7 +328,7 @@ public class Hoarding extends AbstractAuditable {
         return status;
     }
 
-    public void setStatus(EgwStatus status) {
+    public void setStatus(final EgwStatus status) {
         this.status = status;
     }
 
@@ -340,7 +336,7 @@ public class Hoarding extends AbstractAuditable {
         return category;
     }
 
-    public void setCategory(HoardingCategory category) {
+    public void setCategory(final HoardingCategory category) {
         this.category = category;
     }
 
@@ -348,7 +344,7 @@ public class Hoarding extends AbstractAuditable {
         return subCategory;
     }
 
-    public void setSubCategory(SubCategory subCategory) {
+    public void setSubCategory(final SubCategory subCategory) {
         this.subCategory = subCategory;
     }
 
@@ -356,7 +352,7 @@ public class Hoarding extends AbstractAuditable {
         return unitofmeasure;
     }
 
-    public void setUnitofmeasure(UnitOfMeasure unitofmeasure) {
+    public void setUnitofmeasure(final UnitOfMeasure unitofmeasure) {
         this.unitofmeasure = unitofmeasure;
     }
 
@@ -364,7 +360,7 @@ public class Hoarding extends AbstractAuditable {
         return measurement;
     }
 
-    public void setMeasurement(Double measurement) {
+    public void setMeasurement(final Double measurement) {
         this.measurement = measurement;
     }
 
@@ -372,7 +368,7 @@ public class Hoarding extends AbstractAuditable {
         return length;
     }
 
-    public void setLength(Double length) {
+    public void setLength(final Double length) {
         this.length = length;
     }
 
@@ -380,7 +376,7 @@ public class Hoarding extends AbstractAuditable {
         return width;
     }
 
-    public void setWidth(Double width) {
+    public void setWidth(final Double width) {
         this.width = width;
     }
 
@@ -388,7 +384,7 @@ public class Hoarding extends AbstractAuditable {
         return breadth;
     }
 
-    public void setBreadth(Double breadth) {
+    public void setBreadth(final Double breadth) {
         this.breadth = breadth;
     }
 
@@ -396,7 +392,7 @@ public class Hoarding extends AbstractAuditable {
         return totalHeight;
     }
 
-    public void setTotalHeight(Double totalHeight) {
+    public void setTotalHeight(final Double totalHeight) {
         this.totalHeight = totalHeight;
     }
 
@@ -404,7 +400,7 @@ public class Hoarding extends AbstractAuditable {
         return taxAmount;
     }
 
-    public void setTaxAmount(Double taxAmount) {
+    public void setTaxAmount(final Double taxAmount) {
         this.taxAmount = taxAmount;
     }
 
@@ -412,7 +408,7 @@ public class Hoarding extends AbstractAuditable {
         return encroachmentFee;
     }
 
-    public void setEncroachmentFee(Double encroachmentFee) {
+    public void setEncroachmentFee(final Double encroachmentFee) {
         this.encroachmentFee = encroachmentFee;
     }
 
@@ -420,7 +416,7 @@ public class Hoarding extends AbstractAuditable {
         return rateClass;
     }
 
-    public void setRateClass(RatesClass rateClass) {
+    public void setRateClass(final RatesClass rateClass) {
         this.rateClass = rateClass;
     }
 
@@ -428,7 +424,7 @@ public class Hoarding extends AbstractAuditable {
         return revenueInspector;
     }
 
-    public void setRevenueInspector(RevenueInspector revenueInspector) {
+    public void setRevenueInspector(final RevenueInspector revenueInspector) {
         this.revenueInspector = revenueInspector;
     }
 
@@ -436,7 +432,7 @@ public class Hoarding extends AbstractAuditable {
         return revenueBoundary;
     }
 
-    public void setRevenueBoundary(Boundary revenueBoundary) {
+    public void setRevenueBoundary(final Boundary revenueBoundary) {
         this.revenueBoundary = revenueBoundary;
     }
 
@@ -444,7 +440,7 @@ public class Hoarding extends AbstractAuditable {
         return adminBoundry;
     }
 
-    public void setAdminBoundry(Boundary adminBoundry) {
+    public void setAdminBoundry(final Boundary adminBoundry) {
         this.adminBoundry = adminBoundry;
     }
 
@@ -452,7 +448,7 @@ public class Hoarding extends AbstractAuditable {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(final String address) {
         this.address = address;
     }
 
@@ -460,7 +456,7 @@ public class Hoarding extends AbstractAuditable {
         return advertisementDuration;
     }
 
-    public void setAdvertisementDuration(String advertisementDuration) {
+    public void setAdvertisementDuration(final String advertisementDuration) {
         this.advertisementDuration = advertisementDuration;
     }
 
@@ -468,8 +464,8 @@ public class Hoarding extends AbstractAuditable {
         return demandid;
     }
 
-    public void setDemandid(EgDemand demandid) {
+    public void setDemandid(final EgDemand demandid) {
         this.demandid = demandid;
     }
-    
+
 }

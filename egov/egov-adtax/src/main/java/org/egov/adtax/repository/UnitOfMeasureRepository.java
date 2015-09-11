@@ -1,4 +1,4 @@
-/*
+/**
  * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
@@ -37,58 +37,23 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.adtax.entity;
+package org.egov.adtax.repository;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import java.util.List;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.search.annotations.DocumentId;
+import org.egov.adtax.entity.UnitOfMeasure;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
-@Entity
-@Table(name = "EGADTAX_DOCUMENT_TYPE")
-@SequenceGenerator(name = HoardingDocumentType.SEQ_HOARDINGDOCUMENT_TYPE, sequenceName = HoardingDocumentType.SEQ_HOARDINGDOCUMENT_TYPE, allocationSize = 1)
-public class HoardingDocumentType extends AbstractPersistable<Long> {
+@Repository
+public interface UnitOfMeasureRepository extends JpaRepository<UnitOfMeasure, Long> {
 
-    private static final long serialVersionUID = -6885857888257785672L;
+    UnitOfMeasure findByDescription(String description);
 
-    public static final String SEQ_HOARDINGDOCUMENT_TYPE = "SEQ_EGADTAX_DOCUMENT_TYPE";
+    UnitOfMeasure findByCode(String code);
 
-    @Id
-    @GeneratedValue(generator = SEQ_HOARDINGDOCUMENT_TYPE, strategy = GenerationType.SEQUENCE)
-    @DocumentId
-    private Long id;
-    private String name;
-    private boolean mandatory;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public boolean isMandatory() {
-        return mandatory;
-    }
-
-    public void setMandatory(final boolean mandatory) {
-        this.mandatory = mandatory;
-    }
+    @Query("from UnitOfMeasure uom where uom.active=true order by uom.description ")
+    List<UnitOfMeasure> getAllActiveUnitOfMeasures();
 
 }

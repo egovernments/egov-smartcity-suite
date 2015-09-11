@@ -67,7 +67,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.search.annotations.DocumentId;
 
 @Entity
-@Table(name="EGADTAX_DOCUMENT")
+@Table(name = "EGADTAX_DOCUMENT")
 @SequenceGenerator(name = HoardingDocument.SEQ_HOARDING_DOCUMENT, sequenceName = HoardingDocument.SEQ_HOARDING_DOCUMENT, allocationSize = 1)
 public class HoardingDocument extends AbstractAuditable {
 
@@ -78,78 +78,98 @@ public class HoardingDocument extends AbstractAuditable {
     @DocumentId
     private Long id;
     @ManyToOne
-    @JoinColumn(name="doctype")
+    @JoinColumn(name = "doctype")
     private HoardingDocumentType doctype;
-    
+
     private String description;
-    
+
     @Temporal(TemporalType.DATE)
     private Date docDate;
     private boolean enclosed;
-    
+
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "EGADTAX_DOCUMENT_FILES", joinColumns = @JoinColumn(name = "document") , inverseJoinColumns = @JoinColumn(name = "filestore") )
+    @JoinTable(name = "EGADTAX_DOCUMENT_FILES", joinColumns = @JoinColumn(name = "document"), inverseJoinColumns = @JoinColumn(name = "filestore"))
     private Set<FileStoreMapper> files = new HashSet<>();
-    
+
     @Transient
     private List<File> uploads = new ArrayList<>();
     @Transient
     private List<String> uploadsFileName = new ArrayList<>();
     @Transient
     private List<String> uploadsContentType = new ArrayList<>();
+
+    @Override
     public Long getId() {
         return id;
     }
-    public void setId(Long id) {
+
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
+
     public HoardingDocumentType getDoctype() {
         return doctype;
     }
-    public void setDoctype(HoardingDocumentType doctype) {
+
+    public void setDoctype(final HoardingDocumentType doctype) {
         this.doctype = doctype;
     }
+
     public String getDescription() {
         return description;
     }
-    public void setDescription(String description) {
+
+    public void setDescription(final String description) {
         this.description = description;
     }
+
     public Date getDocDate() {
         return docDate;
     }
-    public void setDocDate(Date docDate) {
+
+    public void setDocDate(final Date docDate) {
         this.docDate = docDate;
     }
+
     public boolean isEnclosed() {
         return enclosed;
     }
-    public void setEnclosed(boolean enclosed) {
+
+    public void setEnclosed(final boolean enclosed) {
         this.enclosed = enclosed;
     }
+
     public Set<FileStoreMapper> getFiles() {
         return files;
     }
-    public void setFiles(Set<FileStoreMapper> files) {
+
+    public void setFiles(final Set<FileStoreMapper> files) {
         this.files = files;
     }
+
     public List<File> getUploads() {
         return uploads;
     }
-    public void setUploads(List<File> uploads) {
+
+    public void setUploads(final List<File> uploads) {
         this.uploads = uploads;
     }
+
     public List<String> getUploadsFileName() {
         return uploadsFileName;
     }
-    public void setUploadsFileName(List<String> uploadsFileName) {
+
+    public void setUploadsFileName(final List<String> uploadsFileName) {
         this.uploadsFileName = uploadsFileName;
     }
+
     public List<String> getUploadsContentType() {
         return uploadsContentType;
     }
-    public void setUploadsContentType(List<String> uploadsContentType) {
+
+    public void setUploadsContentType(final List<String> uploadsContentType) {
         this.uploadsContentType = uploadsContentType;
     }
-    
+
 }
