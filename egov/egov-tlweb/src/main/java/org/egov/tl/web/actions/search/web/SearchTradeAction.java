@@ -24,22 +24,26 @@
  *      In addition to the terms of the GPL license to be adhered to in using this
  *      program, the following additional terms are to be complied with:
  *
- *  	1) All versions of this program, verbatim or modified must carry this
- *  	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- *  	2) Any misrepresentation of the origin of the material is prohibited. It
- *  	   is required that all modified versions of this material be marked in
- *  	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *  	3) This license does not grant any rights to any user of the program
- *  	   with regards to rights under trademark law for use of the trade names
- *  	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.tl.web.actions.search.web;
 
+import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
+
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,10 +78,14 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
+import com.opensymphony.xwork2.validator.annotations.Validations;
+
 /**
  * The Class TradeSearchAction.
  */
 @ParentPackage("egov")
+@Validations
+@Results({ @Result(name = NEW, location = "searchTrade-new.jsp") })
 public class SearchTradeAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(SearchTradeAction.class);
     private static final long serialVersionUID = 1L;
@@ -89,7 +97,7 @@ public class SearchTradeAction extends BaseFormAction {
     private final List<String> noticelist = new ArrayList<String>();
     private String roleName;
 
-@Action(value="/search/web/searchTrade-newForm")
+    @Action(value="/search/web/searchTrade-newForm")
     public String newForm() {
         return BaseFormAction.NEW;
     }

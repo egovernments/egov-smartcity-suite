@@ -52,14 +52,7 @@
 
 	<bean class="org.egov.tl.utils.LicenseUtils" id="licenseUtils"
 		scope="prototype">
-		<constructor-arg ref="egovSessionFactory" />
 		<property name="persistenceService" ref="persistenceService" />
-		<property name="moduleDAO" ref="moduleDAO" />
-		<property name="boundaryDAO" ref="boundaryDAO" />
-		<property name="boundaryTypeDAO" ref="boundaryTypeDAO" />
-		<property name="heirarchyTypeDAO" ref="heirarchyTypeDAO" />
-		<property name="contractorService" ref="contractorService" />
-		<property name="collectionIntegrationService" ref="collectionIntegrationService" />
 	</bean>
 
 	<bean id="feeService" class="org.egov.tl.domain.service.FeeService"
