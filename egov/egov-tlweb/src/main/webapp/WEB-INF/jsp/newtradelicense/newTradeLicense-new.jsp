@@ -41,16 +41,16 @@
 <html>
 	<head>
 		<title><s:text name="page.title.newtrade" /></title>
-		<sx:head />
 		<script>
 	
 			function validateForm(obj) {
-			clearWaterMark();
+				/* clearWaterMark();
     			if(validateForm_newTradeLicense()==false) {
     				return false;
-    			} else {
-      				return true;
-    			}
+    			} else { */
+        			document.forms[0].action = 'newTradeLicense-create.action';
+        			document.forms[0].submit;
+    			/* } */
   			}
   
 			function clearWaterMark(){
@@ -219,7 +219,7 @@
 				  //3rd column
 				<s:if test="%{!sControlDisabled}">  
 					var oCell = row.insertCell(2);
-					oCell.innerHTML = "<img src='${pageContext.request.contextPath}/images/addrow.gif' alt='Add' width='18' height='18' border='0' id='addImg"+motorcnt+"' onclick='addMotorRowToTable(false);'/> <img src='${pageContext.request.contextPath}/images/removerow.gif' alt='Remove' id='delImg"+motorcnt+"' width='18' height='18' border='0' onclick='removeRow1(this);'/>";
+					oCell.innerHTML = "<img src='${pageContext.request.contextPath}/resources/image/addrow.gif' alt='Add' width='18' height='18' border='0' id='addImg"+motorcnt+"' onclick='addMotorRowToTable(false);'/> <img src='${pageContext.request.contextPath}/resources/image/removerow.gif' alt='Remove' id='delImg"+motorcnt+"' width='18' height='18' border='0' onclick='removeRow1(this);'/>";
 				</s:if>
 				 motorcnt++;  
 			}
@@ -279,7 +279,7 @@
 											</td>
 										</tr>
 									</table>
-									<s:form action="newTradeLicense" theme="css_xhtml" name="registrationForm" validate="true">
+									<s:form action="newTradeLicense" theme="simple" name="registrationForm" validate="true">
 									<s:token/>
 										<s:hidden name="actionName" value="create" />
 										<s:hidden id="detailChanged" name="detailChanged" />
@@ -290,7 +290,7 @@
 												<tr>
 													<td colspan="5" class="headingwk">
 														<div class="arrowiconwk">
-															<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20"/>
+															<img src="/egi/resources/erp2/images/arrow.gif" height="20"/>
 														</div>
 														<div class="headplacer">
 															<s:text name='license.title.applicantiondetails' />
@@ -302,7 +302,7 @@
 												<tr>
 													<td colspan="5" class="headingwk">
 														<div class="arrowiconwk">
-															<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20"/>
+															<img src="/egi/resources/erp2/images/arrow.gif" height="20"/>
 														</div>
 														<div class="headplacer">
 															<s:text name='license.title.applicantdetails' />
@@ -377,7 +377,7 @@
 												<tr>
 													<td colspan="5" class="headingwk">
 														<div class="arrowiconwk">
-															<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20"/>
+															<img src="/egi/resources/erp2/images/arrow.gif" height="20"/>
 														</div>
 														<div class="headplacer">
 															<s:text name='license.title.motordetail' />

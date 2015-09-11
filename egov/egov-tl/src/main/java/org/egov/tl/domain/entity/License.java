@@ -53,6 +53,7 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.persistence.entity.PermanentAddress;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
@@ -65,7 +66,7 @@ import org.egov.tl.utils.LicenseUtils;
 public abstract class License extends StateAware {
 
     private static final long serialVersionUID = 1L;
-    protected Address address;
+    protected PermanentAddress address;
     @Required(message = "license.applicationdate.err.required")
     // TODO -- Change the attributes according to the requirement
     @ValidateDate(message = "license.applicationdate.err.properdate", allowPast = false, dateFormat = "")
@@ -165,7 +166,7 @@ public abstract class License extends StateAware {
         return this;
     }
 
-    public Address getAddress() {
+    public PermanentAddress getAddress() {
         return address;
     }
 
@@ -352,7 +353,7 @@ public abstract class License extends StateAware {
         this.isActive = isActive;
     }
 
-    public void setAddress(final Address address) {
+    public void setAddress(final PermanentAddress address) {
         this.address = address;
     }
 
@@ -775,7 +776,8 @@ public abstract class License extends StateAware {
         getLicenseTransfer().setOldNameOfEstablishment(tempNameOfEstalishment);
 
         final Address tempAddress = licensee.getAddress();
-        getLicensee().setAddress(getLicenseTransfer().getOldAddress());
+        //TODO -- Commented for Phoenix migration
+        //getLicensee().setAddress(getLicenseTransfer().getOldAddress());*/
         getLicenseTransfer().setOldAddress(tempAddress);
 
         final Boundary tempBoundary = getLicensee().getBoundary();

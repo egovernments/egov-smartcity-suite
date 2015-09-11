@@ -136,12 +136,13 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     },
     intRangeFields = {
             @IntRangeFieldValidator(fieldName = "noOfRooms", min = "1", max = "999", message = "", key = "Number of rooms should be in the range 1 to 999"),
-            @IntRangeFieldValidator(fieldName = "address.pinCode", min = "100000", max = "999999", message = "", key = "Minimum and Maximum length for Pincode is 6 and all Digit Cannot be 0"),
-            @IntRangeFieldValidator(fieldName = "licensee.age", min = "1", max = "100", message = "", key = "Age should be in the range of 1 to 100"),
-            @IntRangeFieldValidator(fieldName = "licensee.address.pinCode", min = "100000", max = "999999", message = "", key = "Minimum and Maximum length for Pincode is 6 and all Digit Cannot be 0")
+            /*@IntRangeFieldValidator(fieldName = "address.pinCode", min = "100000", max = "999999", message = "", key = "Minimum and Maximum length for Pincode is 6 and all Digit Cannot be 0"),*/
+            @IntRangeFieldValidator(fieldName = "licensee.age", min = "1", max = "100", message = "", key = "Age should be in the range of 1 to 100")
+            /*,@IntRangeFieldValidator(fieldName = "licensee.address.pinCode", min = "100000", max = "999999", message = "", key = "Minimum and Maximum length for Pincode is 6 and all Digit Cannot be 0")*/
     }
             )
     @ValidationErrorPage(Constants.NEW)
+    @Action(value = "/newtradelicense/newTradeLicense-create")
     public String create() {
         LOGGER.debug("Trade license Creation Parameters:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
         if (tradeLicense.getLicenseZoneId() != null && tradeLicense.getBoundary() == null) {

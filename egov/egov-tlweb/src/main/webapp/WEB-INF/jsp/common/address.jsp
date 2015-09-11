@@ -82,13 +82,10 @@
 		<span class="mandatory">*</span>
 	</td>
 	<td class="<c:out value="${trclass}"/>">
-		<s:textfield name="address.houseNo" maxlength="10" />
+		<s:textfield name="address.houseNoBldgApt" maxlength="10" />
 	</td>
-	<td class="<c:out value="${trclass}"/>">
-		<s:text name='license.housenumber.old' />
-	</td>
-	<td class="<c:out value="${trclass}"/>">
-		<s:textfield name="address.streetAddress2" maxlength="10" />
+	<td class="<c:out value="${trclass}"/>" colspan="2">
+		&nbsp;
 	</td>
 </tr>
 <c:choose>
@@ -105,7 +102,7 @@
 		<s:text name='license.remainingaddress' />
 	</td>
 	<td class="<c:out value="${trclass}"/>" colspan="3">
-		<s:textarea name="address.streetAddress1" maxlength="500" rows="3" cols="40" />
+		<s:textarea name="address.streetRoadLine" maxlength="500" rows="3" cols="40" />
 	</td>
 </tr>
 

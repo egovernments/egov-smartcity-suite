@@ -86,7 +86,7 @@
 	</td>
 	<td class="<c:out value="${trclass}"/>">
 		<s:textfield name="applicationDate" id="applicationDate" onfocus="waterMarkTextIn('applicationDate','dd/mm/yyyy');" onblur="waterMarkTextOut('applicationDate','dd/mm/yyyy');lessThanOrEqualToCurrentDate(this);if(this.value != \"dd/mm/yyyy\"){validateDateFormat(this)};" maxlength="10" size="10" value="%{applicationDate}" onkeyup="DateFormat(this,this.value,event,false,'3')" />
-		<a href="javascript:show_calendar('forms[0].applicationDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"> <img src="${pageContext.request.contextPath}/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" id="calenderImgId" >
+		<a href="javascript:show_calendar('forms[0].applicationDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"> <img src="${pageContext.request.contextPath}/resources/image/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" id="calenderImgId" >
 		</a>
 	</td>
 	<td class="<c:out value="${trclass}"/>"></td>

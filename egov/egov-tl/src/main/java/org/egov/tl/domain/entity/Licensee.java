@@ -40,7 +40,7 @@
 package org.egov.tl.domain.entity;
 
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.persistence.entity.PermanentAddress;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
@@ -53,7 +53,7 @@ public class Licensee extends BaseModel {
     @Required(message = "licensee.name.err.required")
     @Length(min = 1, max = 256, message = "licensee.name.err.maxlength")
     private String applicantName;
-    private Address address;
+    private PermanentAddress address;
     private String nationality;
     private String fatherOrSpouseName;
     // private String spouseName;
@@ -125,11 +125,11 @@ public class Licensee extends BaseModel {
         this.applicantName = applicantName;
     }
 
-    public Address getAddress() {
+    public PermanentAddress getAddress() {
         return address;
     }
 
-    public void setAddress(final Address address) {
+    public void setAddress(final PermanentAddress address) {
         this.address = address;
     }
 
