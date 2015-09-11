@@ -40,27 +40,30 @@
 package org.egov.adtax.entity;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.validation.regex.Constants;
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -205,6 +208,21 @@ public class Hoarding extends AbstractAuditable {
     @ManyToOne
     @JoinColumn(name = "demandid",nullable = false)
     private EgDemand demandid;
+
+    
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinTable(name = "egadtax_hoarding_docs", joinColumns = @JoinColumn(name = "hoarding") , inverseJoinColumns = @JoinColumn(name = "document") )
+    private Set<HoardingDocument> documents = new HashSet<>();
+    
+    
+    
+    public Set<HoardingDocument> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(Set<HoardingDocument> documents) {
+        this.documents = documents;
+    }
 
     public Long getId() {
         return id;
