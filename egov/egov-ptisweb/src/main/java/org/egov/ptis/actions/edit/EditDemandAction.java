@@ -40,7 +40,6 @@
 package org.egov.ptis.actions.edit;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
 import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
 import static org.egov.ptis.client.util.PropertyTaxUtil.isZero;
 import static org.egov.ptis.constants.PropertyTaxConstants.AUDITDATA_STRING_SEP;
@@ -57,7 +56,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -81,8 +79,6 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.dcb.bean.DCBReport;
-import org.egov.dcb.bean.Receipt;
-import org.egov.dcb.bean.ReceiptDetail;
 import org.egov.dcb.service.DCBService;
 import org.egov.dcb.service.DCBServiceImpl;
 import org.egov.demand.model.EgDemand;
@@ -263,7 +259,7 @@ public class EditDemandAction extends BaseFormAction {
             } else {
                 newInstallments.add(dd.getInstallment());
 
-                if (isNotNull(dd.getRevisedAmount()) && isZero(dd.getRevisedAmount())) {
+                if (null != dd.getRevisedAmount() && isZero(dd.getRevisedAmount())) {
                     if (dd.getActualCollection().compareTo(BigDecimal.ZERO) > 0 && isNull(dd.getRevisedCollection())) {
                         errorParams = new ArrayList<String>();
                         errorParams.add(dd.getReasonMaster());
@@ -550,7 +546,6 @@ public class EditDemandAction extends BaseFormAction {
 
                 for (EgDemandDetails details : dmdDtlsWithZeroAmt) {
                     if (details.getEgDemandReason().equals(egDmdRsn)) {
-
                         zeroInstallments.add(details.getEgDemandReason().getEgInstallmentMaster());
                         details.setAmount(dmdDetail.getActualAmount());
                         details.setAmtCollected((dmdDetail.getActualCollection() == null) ? BigDecimal.ZERO : dmdDetail
@@ -558,10 +553,8 @@ public class EditDemandAction extends BaseFormAction {
                         egDemandDtls = details;
 
                     } else {
-
                         egDemandDtls = propService.createDemandDetails(dmdDetail.getActualAmount(),
                                 dmdDetail.getActualCollection(), egDmdRsn, dmdDetail.getInstallment());
-
                     }
                 }
 
@@ -595,12 +588,11 @@ public class EditDemandAction extends BaseFormAction {
 
                     if (dmdDetail.getRevisedAmount() != null
                             && dmdDetail.getInstallment().equals(ddFromDB.getEgDemandReason().getEgInstallmentMaster())
-                            && ddFromDB
-                                    .getEgDemandReason()
+                            && ddFromDB.getEgDemandReason()
                                     .getEgDemandReasonMaster()
                                     .getCode()
                                     .equalsIgnoreCase(
-                                            PropertyTaxConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster()))) {
+                                            PropertyTaxConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster().toUpperCase()))) {
 
                         isUpdateAmount = true;
                         buildAuditLog(installmentTaxEdits, ddFromDB.getEgDemandReason().getEgInstallmentMaster(),
@@ -615,7 +607,7 @@ public class EditDemandAction extends BaseFormAction {
                                     .getEgDemandReasonMaster()
                                     .getCode()
                                     .equalsIgnoreCase(
-                                            PropertyTaxConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster()))) {
+                                            PropertyTaxConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster().toUpperCase()))) {
 
                         Installment inst = (Installment) installmentDAO.findById(dmdDetail.getInstallment().getId(),
                                 false);

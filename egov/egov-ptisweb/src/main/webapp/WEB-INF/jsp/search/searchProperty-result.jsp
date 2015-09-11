@@ -54,10 +54,11 @@
 					window.location = "../revPetition/revPetition-newForm.action?propertyId=" + assessmentNum;
 				} else if (selectedValue == 'CollectTax') {
 					window.location = "/../ptis/collection/collectPropertyTax-generateBill.action?propertyId=" + assessmentNum;
-				}
-			    else if (selectedValue == 'EDIT_DATAENTRY') {
+				} else if (selectedValue == 'EDIT_DATAENTRY') {
 						window.location = "../modify/modifyProperty-modifyDataEntry.action?indexNumber=" + assessmentNum;
-					}
+				} else if (selectedValue == 'ADD_EDIT_DEMAND') {
+						window.location = "../edit/editDemand-newEditForm.action?propertyId=" + assessmentNum;
+				} 
 			}
 
 			function gotoSearchForm(){
@@ -135,6 +136,9 @@
 											<s:if test="%{#attr.currentRowObject.source!='A'}">
 												<option value="EDIT_DATAENTRY">
 													<s:text name="edit_dataentry"></s:text>
+												</option>
+												<option value="ADD_EDIT_DEMAND">
+													<s:text name="addeditDemand"></s:text>
 												</option>
 											</s:if>
 											<s:else>

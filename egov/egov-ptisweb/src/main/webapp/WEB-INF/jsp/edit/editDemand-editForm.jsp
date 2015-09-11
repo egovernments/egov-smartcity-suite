@@ -112,7 +112,7 @@
 			// New index for textfield name & value attribute	
 			var newInstallments = newInstallmentCount;
 			var z = 0;
-			var li = (parseInt(lastIndex) + 1);
+			var li = (parseInt(document.getElementById("lastIdx").value) + 1);
 			for (var i = 0; i < noOfDemandRsns; i++) {
 				var row = instDetailsTable.rows[i+instDetailsRowIndex];				
 				var attrValueInstallment = "demandDetailBeanList["+li+"].installment.id";
@@ -191,6 +191,7 @@
 						<td class="bluebox" colspan="2">
 							<span class="bold"> <s:property value="%{propertyId}" />
 							<s:hidden name="propertyId" value="%{propertyId}" /> </span>
+							<s:hidden name="lastIdx" id="lastIdx"/>
 						</td>
 					</tr>					
 					<tr>
@@ -337,19 +338,16 @@
 										<s:set value="%{demandDetailBeanList.size()}" var="listSize" />										
 										<s:set value="0" var="count" />						
 										<s:set value="#listSize" var="j" />
-										j is the each new installment start index
+										<%-- j is the each new installment start index --%>
 										<s:set value="%{#j - 6}" var="j" />
-										j <s:property value="%{#j}"/>
-										idx index value for the installmentss demand reason 
+										<%-- idx index value for the installmentss demand reason --%>
 										<s:set value="%{#j}" var="idx" />
 										
 										<s:iterator value="demandDetailBeanList" status="demandInfoStatus">
 										<!-- #idx > 0 && ((#idx % 10) == 0) && demandDetailBeanList[#idx].installment != demandDetailBeanList[#idx - 1].installment -->
 										<s:if test="%{demandDetailBeanList[#idx].isNew == true}">											
 											<tr id="newInstallmentRow">
-												Demand List 0<s:property value="demandDetailBeanList[%{#idx}]"/>
-												<s:if
-													test="%{demandDetailBeanList[#idx].reasonMaster == @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_GENERAL_TAX}">
+												<s:if	test="%{demandDetailBeanList[#idx].reasonMaster == @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_GENERAL_TAX}">
 													<td class="blueborderfortd">
 														<div align="center">
 															<s:select id="installments"

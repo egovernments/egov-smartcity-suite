@@ -37,6 +37,7 @@
  
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
+<%@ include file="/includes/taglibs.jsp"%>
 <tr id="demandinfos">
 		<td class="blueborderfortd">
 			<div align="center">
@@ -95,8 +96,7 @@
 					N/A
 				</s:if>
 				<s:else>
-					<s:textfield
-						name="demandDetailBeanList[%{#demandInfoStatus.index}].revisedAmount"
+					<s:textfield name="demandDetailBeanList[%{#demandInfoStatus.index}].revisedAmount"
 						id="revisedTax" size="10" maxlength="10"
 						onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Revised Tax');"
 						value="%{demandDetailBeanList[#demandInfoStatus.index].revisedAmount}"
@@ -145,5 +145,6 @@
 		</td>
 </tr>
 <script type="text/javascript">
-	lastIndex = '<s:property value="%{#demandInfoStatus.index}" />';										
+	lastIndex = '<s:property value="%{#demandInfoStatus.index}" />';
+	document.getElementById("lastIdx").value = lastIndex;
 </script>

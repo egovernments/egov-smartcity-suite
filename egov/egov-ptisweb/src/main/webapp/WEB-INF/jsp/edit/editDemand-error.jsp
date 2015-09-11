@@ -73,7 +73,7 @@
 	<div class="buttonbottom" align="center">
 		<td><input type="button" class="button" name="SearchProperty"
 			id="SearchProperty" value="Search Property"
-			onclick="window.location='../search/searchProperty!searchForm.action';" />
+			onclick="window.location='../search/searchProperty-searchForm.action';" />
 		</td>
 		<td><input type="button" name="button2" id="button2" value="Close"
 				class="button" onclick="window.close();" /></td>
