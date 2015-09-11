@@ -77,13 +77,7 @@ public class ContractorGrade extends BaseModel {
 
 	private String maxAmountString;
 	private String minAmountString;
-	private String code;
-	private BigDecimal minSolvency;
-	private BigDecimal avgAnnualTurnOver;
-	private BigDecimal costOfWorks;
-	private BigDecimal emd;
-	private String minTechQualification;
-
+	
 	public ContractorGrade() {
 		//For hibernate to work
 	}
@@ -143,54 +137,6 @@ public class ContractorGrade extends BaseModel {
 		this.minAmountString = minAmountString;
 	}
 
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public BigDecimal getMinSolvency() {
-		return minSolvency;
-	}
-
-	public void setMinSolvency(BigDecimal minSolvency) {
-		this.minSolvency = minSolvency;
-	}
-
-	public BigDecimal getAvgAnnualTurnOver() {
-		return avgAnnualTurnOver;
-	}
-
-	public void setAvgAnnualTurnOver(BigDecimal avgAnnualTurnOver) {
-		this.avgAnnualTurnOver = avgAnnualTurnOver;
-	}
-
-	public BigDecimal getCostOfWorks() {
-		return costOfWorks;
-	}
-
-	public void setCostOfWorks(BigDecimal costOfWorks) {
-		this.costOfWorks = costOfWorks;
-	}
-
-	public BigDecimal getEmd() {
-		return emd;
-	}
-
-	public void setEmd(BigDecimal emd) {
-		this.emd = emd;
-	}
-
-	public String getMinTechQualification() {
-		return minTechQualification;
-	}
-
-	public void setMinTechQualification(String minTechQualification) {
-		this.minTechQualification = minTechQualification;
-	}
-
 	public List<ValidationError> validate() {
 		List<ValidationError> errorList = null;
 		if (maxAmount.compareTo(minAmount) == -1) {
@@ -204,8 +150,7 @@ public class ContractorGrade extends BaseModel {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("ContractorGrade [grade=").append(grade).append(", description=").append(description).append(", minAmount=").append(minAmount).append(", maxAmount=").append(maxAmount).append(", maxAmountString=").append(maxAmountString)
-				.append(", minAmountString=").append(minAmountString).append(", code=").append(code).append(", minSolvency=").append(minSolvency).append(", avgAnnualTurnOver=").append(avgAnnualTurnOver).append(", costOfWorks=").append(costOfWorks)
-				.append(", emd=").append(emd).append("]");
+				.append(", minAmountString=").append(minAmountString).append("]");
 		return builder.toString();
 	}
 
