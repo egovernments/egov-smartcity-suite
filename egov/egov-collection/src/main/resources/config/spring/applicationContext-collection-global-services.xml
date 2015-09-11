@@ -47,7 +47,6 @@
 	<bean id="collectionsUtil" class="org.egov.collection.utils.CollectionsUtil" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="userService" ref="userService" />
-		<property name="beanProvider" ref="beanProvider" />
 	</bean>
 	
 	<bean class="org.egov.collection.utils.CollectionsNumberGenerator"
@@ -117,4 +116,6 @@
    </bean>
 
 	<bean id="TLCollectionsInterface" class="org.egov.tl.domain.service.integration.LicenseBillService" scope="prototype"/>
+	
+	<bean id="AXISPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.AxisAdaptor"/>
 </beans>

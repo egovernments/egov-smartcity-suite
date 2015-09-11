@@ -57,6 +57,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SearchPositionService {
@@ -104,7 +105,7 @@ public class SearchPositionService {
 			
 			"EV.position.id=P.id  and "+
 			"trim(upper(P.name))  like '"+myBeginsWith.trim().toUpperCase()+"%' and "+
-			" ((EV.toDate IS NULL AND EV.fromDate <= :userDate)OR(EV.fromDate <= :userDate AND EV.toDate >= :userDate))and EV.isActive ='1'";
+			" ((EV.toDate IS NULL AND EV.fromDate <= :userDate)OR(EV.fromDate <= :userDate AND EV.toDate >= :userDate))and EV.userActive ='1'";
 		
 			
 
@@ -120,13 +121,13 @@ public class SearchPositionService {
 				searchQuery+= "and EV.userMaster in (:bndryObjList)    "; 
 			}
 			if(desId!= null&& desId.intValue() != 0)
-				searchQuery += " and EV.desigId.designationId = :desId  ";
+				searchQuery += " and EV.designation.id = :desId  ";
 			if(deptId!= null&& deptId.intValue() != 0)
-				searchQuery +=" and EV.deptId.id= :deptId ";
+				searchQuery +=" and EV.department.id= :deptId ";
 			if(roleId!=null && roleId!=null)
 			{
 				//FIXME: add isHistory check
-				searchQuery+=" and EV.userMaster.id IN ( Select U.user.id from UserRole U where U.role.id=:roleId and U.isHistory='N'and "+
+				searchQuery+=" and EV.employee.id IN ( Select U.user.id from UserRole U where U.role.id=:roleId and U.isHistory='N'and "+
 				"((U.toDate IS NULL AND U.fromDate <= :userDate)OR(U.fromDate <= :userDate AND U.toDate > :userDate)))" ;
 
 

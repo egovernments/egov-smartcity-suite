@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-07-06T15:01:13 -->
+<!-- 2015-09-10T15:08:28 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bank_remittance" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="22d06118-8d4e-4e71-8645-fd13b3ff63bf">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Postgresql"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<style name="eGov Basic" isDefault="true" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hTextAlign="Left" hImageAlign="Left" vTextAlign="Middle" vImageAlign="Middle" rotation="None" fontName="Times New Roman" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman">
 		<box leftPadding="5" rightPadding="5"/>
@@ -37,11 +38,8 @@
 	<queryString language="hql">
 		<![CDATA[SELECT ih FROM 
     org.egov.model.instrument.InstrumentHeader ih,
-    org.egov.model.instrument.InstrumentVoucher iv,
-    org.egov.commons.CVoucherHeader vh
 WHERE
     iv.instrumentHeaderId.id = ih.id
-    AND iv.voucherHeaderId.id = vh.id
     AND ih.instrumentType.type in ('cheque', 'dd')
     AND ih.isPayCheque = '0'
     AND ih.statusId.description = 'New'
@@ -81,7 +79,7 @@ WHERE
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="14" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Department: " + (($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : (String)ReportUtil.fetchFromDBHql("SELECT dept.deptName FROM org.egov.infra.admin.master.entity.Department dept WHERE dept.id = " + $P{EGOV_DEPT_ID}))]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Department: " + (($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : (String)ReportUtil.fetchFromDBHql("SELECT dept.name FROM org.egov.infra.admin.master.entity.Department dept WHERE dept.id = " + $P{EGOV_DEPT_ID}))]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -278,7 +276,7 @@ Collected]]></text>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="14" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Department: " + (($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : (String)ReportUtil.fetchFromDBHql("SELECT dept.deptName FROM org.egov.infra.admin.master.entity.Department dept WHERE dept.id = " + $P{EGOV_DEPT_ID}))]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Department: " + (($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : (String)ReportUtil.fetchFromDBHql("SELECT dept.name FROM org.egov.infra.admin.master.entity.Department dept WHERE dept.id = " + $P{EGOV_DEPT_ID}))]]></textFieldExpression>
 			</textField>
 		</band>
 	</noData>

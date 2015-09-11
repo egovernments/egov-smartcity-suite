@@ -78,6 +78,4 @@
 	
 	<bean id="BDPGIPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.BillDeskAdaptor" />
 	
-	<bean id="AXISPaymentGatewayAdaptor" class="org.egov.erpcollection.integration.pgi.AxisAdaptor" scope="prototype">
-    
 </beans>

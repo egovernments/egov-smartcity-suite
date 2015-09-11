@@ -94,12 +94,13 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
   
   
@@ -148,7 +149,8 @@ public class FileUploadAction extends BaseFormAction{
 	
 	private BigDecimal chequeInstrumenttotal;
 	
-	private ApplicationContextBeanProvider beanProvider;
+	@Autowired
+	private ApplicationContext beanProvider;
 	
 	private Map<Integer, String> errorRowMap = new TreeMap<Integer, String>();
 	
@@ -163,12 +165,6 @@ public class FileUploadAction extends BaseFormAction{
 	public void setInputList(List<String[]> inputList){
 		this.inputList=inputList;
 	}
-
-	
-	public void setBeanProvider(ApplicationContextBeanProvider beanProvider) {
-		this.beanProvider = beanProvider;
-	}
-
 	
 	public String getSource() {
 		return source;

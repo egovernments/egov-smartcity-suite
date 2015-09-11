@@ -190,7 +190,7 @@ function validate()
 		}	
 
 		doLoadingMask('#loadingMask');
-		document.bankRemittanceForm.action="bankRemittance!create.action";
+		document.bankRemittanceForm.action="bankRemittance-create.action";
 		document.bankRemittanceForm.submit();
 	}
 
@@ -221,6 +221,7 @@ function onChangeDesignation(designationId)
 }
 </script>
 </head>
+<body>
 <span align="center" style="display:none" id="selectremittanceerror">
   <li>
      <font size="2" color="red"><b><s:text name="bankremittance.error.norecordselected"/>  </b></font>
@@ -246,9 +247,6 @@ function onChangeDesignation(designationId)
      <font size="2" color="red"><b><s:text name="bankremittance.error.noApproverselected"/>  </b></font>
   </li>
 </span>
-
-<body>
-
 <s:form theme="simple" name="bankRemittanceForm">
 <s:token/>
 	<div class="formmainbox"><div class="subheadnew"><s:text name="bankRemittance.title"/></div>
@@ -262,7 +260,7 @@ function onChangeDesignation(designationId)
 						value="${currentRow.id}"
 						onClick="handleReceiptSelectionEvent('${currentRow.SERVICENAME}','${currentRow.FUNDNAME}',this.checked)"/>
 						<egov:ajaxdropdown id="bankBranchMasterDropdown" fields="['Text','Value']" dropdownId='bankBranchMaster'
-		                 url='receipts/ajaxBankRemittance!bankBranchList.action' selectedValue="%{bankbranch.id}"/>
+		                 url='receipts/ajaxBankRemittance-bankBranchList.action' selectedValue="%{bankbranch.id}"/>
 						<input type="hidden" name="serviceNameTempArray" id="serviceNameTempArray" value="${currentRow.SERVICENAME}"/>
 						<input type="hidden" name="fundCodeTempArray" id="fundCodeTempArray" value="${currentRow.FUNDCODE}"/>
 						<input type="hidden" name="departmentCodeTempArray" id="departmentCodeTempArray" value="${currentRow.DEPARTMENTCODE}"/>		
@@ -270,7 +268,7 @@ function onChangeDesignation(designationId)
 						<input type="hidden" name="totalChequeAmountTempArray" id="totalChequeAmountTempArray" value="${currentRow.SERVICETOTALCHEQUEAMOUNT}"/>
 						<input type="hidden" name="totalCardAmountTempArray" id="totalCardAmountTempArray" value="${currentRow.SERVICETOTALCARDPAYMENTAMOUNT}"/>
 						<input type="hidden" name="totalOnlineAmountTempArray" id="totalOnlineAmountTempArray" value="${currentRow.SERVICETOTALONLINEPAYMENTAMOUNT}"/>
-						<input type="hidden" name="receiptDateTempArray" id="receiptDateTempArray" value="${currentRow.VOUCHERDATE}"/>
+						<input type="hidden" name="receiptDateTempArray" id="receiptDateTempArray" value="${currentRow.RECEIPTDATE}"/>
 						<input type="hidden" name="serviceNameArray" id="serviceNameArray" />
 						<input type="hidden" name="fundCodeArray" id="fundCodeArray" />
 						<input type="hidden" name="departmentCodeArray" id="departmentCodeArray" />
@@ -283,7 +281,7 @@ function onChangeDesignation(designationId)
 					</display:column>
 
 					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-						title="Date" style="width:10%;text-align: center" value="${currentRow.VOUCHERDATE}" format="{0,date,dd/MM/yyyy}"/>
+						title="Date" style="width:10%;text-align: center" value="${currentRow.RECEIPTDATE}" format="{0,date,dd/MM/yyyy}"/>
 					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 						title="Service Name" style="width:20%;text-align: center" value="${currentRow.SERVICENAME}"/>
 
@@ -315,7 +313,7 @@ function onChangeDesignation(designationId)
 					<s:select headerValue="--Select--"  headerKey="0" list="dropdownData.bankBranchList" listKey="id" id="bankBranchMaster" 
 					listValue="branchname" label="bankBranchMaster" name="bankBranchMaster" value="%{bankbranch.id}" onChange="onChangeBankAccount(this.value)"/>
 					<egov:ajaxdropdown id="accountNumberMasterDropdown" fields="['Text','Value']" dropdownId='accountNumberMaster' 
-					url='receipts/ajaxBankRemittance!accountList.action' selectedValue="%{bankaccount.id}"/>
+					url='receipts/ajaxBankRemittance-accountList.action' selectedValue="%{bankaccount.id}"/>
 				</td>
 				<td width="15%" class="bluebox2"><s:text name="bankremittance.accountnumber"/><span class="mandatory">*</span>:</td>
 				<td width="30%" class="bluebox2">
@@ -333,17 +331,17 @@ function onChangeDesignation(designationId)
 		<tr>
 			<td width="4%" class="bluebox2">&nbsp;</td>
 			<td width="15%" class="bluebox2"> Approver Department: <s:if test="%{model.id==null}"><span class="mandatory">*</span></s:if></td>
-			<td width="20%" class="bluebox2"><s:select headerKey="" headerValue="%{getText('challan.select')}" name="approverDeptId" id="approverDeptId" cssClass="selectwk" list="dropdownData.approverDepartmentList" listKey="id" listValue="deptName" 
+			<td width="20%" class="bluebox2"><s:select headerKey="" headerValue="%{getText('challan.select')}" name="approverDeptId" id="approverDeptId" cssClass="selectwk" list="dropdownData.approverDepartmentList" listKey="id" listValue="name" 
 onChange="onChangeDeparment(this.value)" /> 
 		<egov:ajaxdropdown id="designationIdDropdown" fields="['Text','Value']" dropdownId='designationId'
-			         url='receipts/ajaxBankRemittance!approverDesignationList.action' selectedValue="%{designationId}"/>
+			         url='receipts/ajaxBankRemittance-approverDesignationList.action' selectedValue="%{designationId}"/>
 			</td>
 
 			
 		      	<td width="15%" class="bluebox2"><s:text name="challan.approve.designation"/><s:if test="%{model.id==null}"><span class="mandatory">*</span></s:if></td>
-			  <td width="20%" class="bluebox2"><s:select headerKey="" headerValue="--Select--" name="designationId" id="designationId" cssClass="selectwk"  list="dropdownData.designationMasterList" listKey="designationId" listValue="designationName" onChange="onChangeDesignation(this.value)"/>
+			  <td width="20%" class="bluebox2"><s:select headerKey="" headerValue="--Select--" name="designationId" id="designationId" cssClass="selectwk"  list="dropdownData.designationMasterList" listKey="id" listValue="name" onChange="onChangeDesignation(this.value)"/>
 			  <egov:ajaxdropdown id="positionUserDropdown" fields="['Text','Value']" dropdownId='positionUser'
-			         url='receipts/ajaxBankRemittance!positionUserList.action' selectedValue="%{position.id}"/>	 
+			         url='receipts/ajaxBankRemittance-positionUserList.action' selectedValue="%{position.id}"/>	 
 			 </td>
 			 <td width="15%" class="bluebox2"><s:text name="challan.approve.userposition"/><s:if test="%{model.id==null}"><span class="mandatory">*</span></s:if></td>
 				<td width="20%" class="bluebox2">
@@ -353,7 +351,7 @@ onChange="onChangeDeparment(this.value)" />
 				</td>
 		</tr>		
 		</table>
-		<div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="${pageContext.request.contextPath}/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
+		<div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
 		
 			<div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
 			<div class="buttonbottom">

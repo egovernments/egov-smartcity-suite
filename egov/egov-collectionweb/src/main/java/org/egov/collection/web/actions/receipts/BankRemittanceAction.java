@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,27 +18,27 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.collection.web.actions.receipts;  
-  
+package org.egov.collection.web.actions.receipts;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,300 +47,314 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.CVoucherHeader;
+import org.egov.eis.entity.Employee;
+import org.egov.eis.entity.Jurisdiction;
+import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.springframework.transaction.annotation.Transactional;
-  
-@Result(name="success", type="redirect", location = "bankRemittance")  
-  
-@ParentPackage("egov")  
-@Transactional(readOnly=true)
-public class BankRemittanceAction extends BaseFormAction{  
-	
-	private static final long serialVersionUID = 1L;
-	private static final Logger LOGGER = Logger.getLogger(BankRemittanceAction.class);
-	private List<HashMap<String, Object>> paramList=null;
-	private ReceiptHeaderService receiptHeaderService;
-	private final ReceiptHeader receiptHeaderIntsance=new ReceiptHeader();
-	private List<CVoucherHeader> voucherHeaderValues = new ArrayList<CVoucherHeader>();
-	private String[] serviceNameArray;
-	private String[] totalCashAmountArray;
-	private String[] totalChequeAmountArray;
-	private String[] totalCardAmountArray;
-	private String[] receiptDateArray;
-	private String[] totalOnlineAmountArray;
-	private String[] fundCodeArray;
-	private String[] departmentCodeArray;
-	private Integer accountNumberMaster;
-	private CollectionsUtil collectionsUtil;
-	
-	//Added for Manual Work Flow
-	private Integer positionUser;
-	private Integer designationId;
-	
-	/**
-	 * @param collectionsUtil the collectionsUtil to set
-	 */
-	public void setCollectionsUtil(CollectionsUtil collectionsUtil) {
-		this.collectionsUtil = collectionsUtil;
-	}
+import org.springframework.beans.factory.annotation.Autowired;
 
-	public String execute() throws Exception {
-		return list();
-	}
+@Results({ @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
+        @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp") })
+@ParentPackage("egov")
+public class BankRemittanceAction extends BaseFormAction {
 
-	public String newform(){
-		return NEW;
-	}
+    private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger.getLogger(BankRemittanceAction.class);
+    private List<HashMap<String, Object>> paramList = null;
+    private ReceiptHeaderService receiptHeaderService;
+    private final ReceiptHeader receiptHeaderIntsance = new ReceiptHeader();
+    private List<CVoucherHeader> voucherHeaderValues = new ArrayList<CVoucherHeader>();
+    private String[] serviceNameArray;
+    private String[] totalCashAmountArray;
+    private String[] totalChequeAmountArray;
+    private String[] totalCardAmountArray;
+    private String[] receiptDateArray;
+    private String[] totalOnlineAmountArray;
+    private String[] fundCodeArray;
+    private String[] departmentCodeArray;
+    private Integer accountNumberMaster;
+    private CollectionsUtil collectionsUtil;
 
-	@Action(value="/receipts/bankRemittance-list", results = { @Result(name = NEW,type="redirect") })
-	public String list() {
-		long startTimeMillis = System.currentTimeMillis();
-		User user=collectionsUtil.getLoggedInUser();
-		
-		StringBuilder jurValuesId = new StringBuilder();
-		/* TODO: Uncomment after the getting all jurisdictions
-		for (Iterator iter = user.getAllJurisdictions().iterator(); iter.hasNext();) {
-			JurisdictionValues element = (JurisdictionValues) iter.next();
-			if (jurValuesId.length() > 0) {
-				jurValuesId.append(',');
-			}
-			jurValuesId.append(element.getBoundary().getId());
-		}*/
-			
-		paramList= receiptHeaderService.findAllRemitanceDetails(jurValuesId.toString());
-		addDropdownData("approverDepartmentList", collectionsUtil.getDepartmentsAllowedForBankRemittanceApproval(
-				collectionsUtil.getLoggedInUser()));
-		addDropdownData("designationMasterList", new ArrayList());
-		addDropdownData("postionUserList", new ArrayList());
-		
-		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-        
+    // Added for Manual Work Flow
+    private Integer positionUser;
+    private Integer designationId;
+
+    @Autowired
+    private EmployeeService employeeService;
+
+    /**
+     * @param collectionsUtil
+     *            the collectionsUtil to set
+     */
+    public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
+        this.collectionsUtil = collectionsUtil;
+    }
+
+    @Override
+    public String execute() throws Exception {
+        return list();
+    }
+
+    public String newform() {
+        return NEW;
+    }
+
+    @Action(value = "/receipts/bankRemittance-list")
+    public String list() {
+        final long startTimeMillis = System.currentTimeMillis();
+        final User user = collectionsUtil.getLoggedInUser();
+        final Employee employee = employeeService.getEmployeeById(user.getId());
+        final StringBuilder jurValuesId = new StringBuilder();
+        for (final Jurisdiction jur : employee.getJurisdictions())
+            jurValuesId.append(jur.getBoundary().getId());
+
+        paramList = receiptHeaderService.findAllRemitanceDetails(jurValuesId.toString());
+        addDropdownData("approverDepartmentList",
+                collectionsUtil.getDepartmentsAllowedForBankRemittanceApproval(collectionsUtil.getLoggedInUser()));
+        addDropdownData("designationMasterList", new ArrayList());
+        addDropdownData("postionUserList", new ArrayList());
+
+        final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+
         LOGGER.info("$$$$$$ Time taken to populate the remittance list (ms) = " + elapsedTimeMillis);
-		return NEW;
-	}
+        return NEW;
+    }
 
-	public String edit(){
-		return EDIT;
-	}
+    public String edit() {
+        return EDIT;
+    }
 
-	public String save(){
-		return SUCCESS;
-	}
-	
-	public void prepare() {
-		super.prepare();
-		addDropdownData("bankBranchList", new ArrayList());
-		addDropdownData("accountNumberList", new ArrayList());
-	}	
+    public String save() {
+        return SUCCESS;
+    }
 
-	@Transactional
-	public String create(){
-		long startTimeMillis = System.currentTimeMillis();
-		voucherHeaderValues=receiptHeaderService.createBankRemittance(getServiceNameArray(),getTotalCashAmountArray(),getTotalChequeAmountArray(),
-				getTotalCardAmountArray(),getTotalOnlineAmountArray(),getReceiptDateArray(),getFundCodeArray(),getDepartmentCodeArray(),accountNumberMaster,positionUser);
-		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-	    LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);
-		return INDEX;
-	}
-	
-	public Object getModel() {
-		return receiptHeaderIntsance;
-	}
+    @Override
+    public void prepare() {
+        super.prepare();
+        addDropdownData("bankBranchList", new ArrayList());
+        addDropdownData("accountNumberList", new ArrayList());
+    }
 
-	
-	public void setReceiptHeaderService(ReceiptHeaderService receiptHeaderService) {
-		this.receiptHeaderService = receiptHeaderService;
-	}
+    @Action(value = "/receipts/bankRemittance-create")
+    public String create() {
+        final long startTimeMillis = System.currentTimeMillis();
+        voucherHeaderValues = receiptHeaderService.createBankRemittance(getServiceNameArray(),
+                getTotalCashAmountArray(), getTotalChequeAmountArray(), getTotalCardAmountArray(),
+                getTotalOnlineAmountArray(), getReceiptDateArray(), getFundCodeArray(), getDepartmentCodeArray(),
+                accountNumberMaster, positionUser);
+        final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+        LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);
+        return INDEX;
+    }
 
-	/**
-	 * @return the paramList
-	 */
-	public List<HashMap<String, Object>> getParamList() {
-		return paramList;
-	}
+    @Override
+    public Object getModel() {
+        return receiptHeaderIntsance;
+    }
 
-	/**
-	 * @param paramList the paramList to set
-	 */
-	public void setParamList(List<HashMap<String, Object>> paramList) {
-		this.paramList = paramList;
-	}
+    public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
+        this.receiptHeaderService = receiptHeaderService;
+    }
 
-	/**
-	 * @return the serviceName
-	 */
-	public String[] getServiceNameArray() {
-		return serviceNameArray;
-	}
+    /**
+     * @return the paramList
+     */
+    public List<HashMap<String, Object>> getParamList() {
+        return paramList;
+    }
 
-	/**
-	 * @param serviceName the serviceName to set
-	 */
-	public void setServiceNameArray(String[] serviceNameArray) {
-		this.serviceNameArray = serviceNameArray;
-	}
+    /**
+     * @param paramList
+     *            the paramList to set
+     */
+    public void setParamList(final List<HashMap<String, Object>> paramList) {
+        this.paramList = paramList;
+    }
 
-	/**
-	 * @return the totalCashAmount
-	 */
-	public String[] getTotalCashAmountArray() {
-		return totalCashAmountArray;
-	}
+    /**
+     * @return the serviceName
+     */
+    public String[] getServiceNameArray() {
+        return serviceNameArray;
+    }
 
-	/**
-	 * @param totalCashAmount the totalCashAmount to set
-	 */
-	public void setTotalCashAmountArray(String[] totalCashAmountArray) {
-		this.totalCashAmountArray = totalCashAmountArray;
-	}
+    /**
+     * @param serviceName
+     *            the serviceName to set
+     */
+    public void setServiceNameArray(final String[] serviceNameArray) {
+        this.serviceNameArray = serviceNameArray;
+    }
 
-	/**
-	 * @return the totalChequeAmount
-	 */
-	public String[] getTotalChequeAmountArray() {
-		return totalChequeAmountArray;
-	}
+    /**
+     * @return the totalCashAmount
+     */
+    public String[] getTotalCashAmountArray() {
+        return totalCashAmountArray;
+    }
 
-	/**
-	 * @param totalChequeAmount the totalChequeAmount to set
-	 */
-	public void setTotalChequeAmountArray(String[] totalChequeAmountArray) {
-		this.totalChequeAmountArray = totalChequeAmountArray;
-	}
+    /**
+     * @param totalCashAmount
+     *            the totalCashAmount to set
+     */
+    public void setTotalCashAmountArray(final String[] totalCashAmountArray) {
+        this.totalCashAmountArray = totalCashAmountArray;
+    }
 
-	/**
-	 * @return the receiptDate
-	 */
-	public String[] getReceiptDateArray() {
-		return receiptDateArray;
-	}
+    /**
+     * @return the totalChequeAmount
+     */
+    public String[] getTotalChequeAmountArray() {
+        return totalChequeAmountArray;
+    }
 
-	/**
-	 * @param receiptDate the receiptDate to set
-	 */
-	public void setReceiptDateArray(String[] receiptDateArray) {
-		this.receiptDateArray = receiptDateArray;
-	}
+    /**
+     * @param totalChequeAmount
+     *            the totalChequeAmount to set
+     */
+    public void setTotalChequeAmountArray(final String[] totalChequeAmountArray) {
+        this.totalChequeAmountArray = totalChequeAmountArray;
+    }
 
-	/**
-	 * @return the voucherHeaderValues
-	 */
-	public List<CVoucherHeader> getVoucherHeaderValues() {
-		return voucherHeaderValues;
-	}
+    /**
+     * @return the receiptDate
+     */
+    public String[] getReceiptDateArray() {
+        return receiptDateArray;
+    }
 
-	/**
-	 * @param voucherHeaderValues the voucherHeaderValues to set
-	 */
-	public void setVoucherHeaderValues(List<CVoucherHeader> voucherHeaderValues) {
-		this.voucherHeaderValues = voucherHeaderValues;
-	}
+    /**
+     * @param receiptDate
+     *            the receiptDate to set
+     */
+    public void setReceiptDateArray(final String[] receiptDateArray) {
+        this.receiptDateArray = receiptDateArray;
+    }
 
-	/**
-	 * @return the accountNumberMaster
-	 */
-	public Integer getAccountNumberMaster() {
-		return accountNumberMaster;
-	}
+    /**
+     * @return the voucherHeaderValues
+     */
+    public List<CVoucherHeader> getVoucherHeaderValues() {
+        return voucherHeaderValues;
+    }
 
-	/**
-	 * @param accountNumberMaster the accountNumberMaster to set
-	 */
-	public void setAccountNumberMaster(Integer accountNumberMaster) {
-		this.accountNumberMaster = accountNumberMaster;
-	}
+    /**
+     * @param voucherHeaderValues
+     *            the voucherHeaderValues to set
+     */
+    public void setVoucherHeaderValues(final List<CVoucherHeader> voucherHeaderValues) {
+        this.voucherHeaderValues = voucherHeaderValues;
+    }
 
-	
-	/**
-	 * @return the totalOnlineAmountArray
-	 */
-	public String[] getTotalOnlineAmountArray() {
-		return totalOnlineAmountArray;
-	}
+    /**
+     * @return the accountNumberMaster
+     */
+    public Integer getAccountNumberMaster() {
+        return accountNumberMaster;
+    }
 
-	/**
-	 * @param totalOnlineAmountArray the totalOnlineAmountArray to set
-	 */
-	public void setTotalOnlineAmountArray(String[] totalOnlineAmountArray) {
-		this.totalOnlineAmountArray = totalOnlineAmountArray;
-	}
+    /**
+     * @param accountNumberMaster
+     *            the accountNumberMaster to set
+     */
+    public void setAccountNumberMaster(final Integer accountNumberMaster) {
+        this.accountNumberMaster = accountNumberMaster;
+    }
 
-	/**
-	 * @return the fundCodeArray
-	 */
-	public String[] getFundCodeArray() {
-		return fundCodeArray;
-	}
+    /**
+     * @return the totalOnlineAmountArray
+     */
+    public String[] getTotalOnlineAmountArray() {
+        return totalOnlineAmountArray;
+    }
 
-	/**
-	 * @param fundCodeArray the fundCodeArray to set
-	 */
-	public void setFundCodeArray(String[] fundCodeArray) {
-		this.fundCodeArray = fundCodeArray;
-	}
+    /**
+     * @param totalOnlineAmountArray
+     *            the totalOnlineAmountArray to set
+     */
+    public void setTotalOnlineAmountArray(final String[] totalOnlineAmountArray) {
+        this.totalOnlineAmountArray = totalOnlineAmountArray;
+    }
 
-	/**
-	 * @return the departmentCodeArray
-	 */
-	public String[] getDepartmentCodeArray() {
-		return departmentCodeArray;
-	}
+    /**
+     * @return the fundCodeArray
+     */
+    public String[] getFundCodeArray() {
+        return fundCodeArray;
+    }
 
-	/**
-	 * @param departmentCodeArray the departmentCodeArray to set
-	 */
-	public void setDepartmentCodeArray(String[] departmentCodeArray) {
-		this.departmentCodeArray = departmentCodeArray;
-	}
+    /**
+     * @param fundCodeArray
+     *            the fundCodeArray to set
+     */
+    public void setFundCodeArray(final String[] fundCodeArray) {
+        this.fundCodeArray = fundCodeArray;
+    }
 
-	/**
-	 * @return the totalCardAmountArray
-	 */
-	public String[] getTotalCardAmountArray() {
-		return totalCardAmountArray;
-	}
+    /**
+     * @return the departmentCodeArray
+     */
+    public String[] getDepartmentCodeArray() {
+        return departmentCodeArray;
+    }
 
-	/**
-	 * @param totalCardAmountArray the totalCardAmountArray to set
-	 */
-	public void setTotalCardAmountArray(String[] totalCardAmountArray) {
-		this.totalCardAmountArray = totalCardAmountArray;
-	}
+    /**
+     * @param departmentCodeArray
+     *            the departmentCodeArray to set
+     */
+    public void setDepartmentCodeArray(final String[] departmentCodeArray) {
+        this.departmentCodeArray = departmentCodeArray;
+    }
 
-	/**
-	 * @return the positionUser
-	 */
-	public Integer getPositionUser() {
-		return positionUser;
-	}
+    /**
+     * @return the totalCardAmountArray
+     */
+    public String[] getTotalCardAmountArray() {
+        return totalCardAmountArray;
+    }
 
-	/**
-	 * @param positionUser the positionUser to set
-	 */
-	public void setPositionUser(Integer positionUser) {
-		this.positionUser = positionUser;
-	}
+    /**
+     * @param totalCardAmountArray
+     *            the totalCardAmountArray to set
+     */
+    public void setTotalCardAmountArray(final String[] totalCardAmountArray) {
+        this.totalCardAmountArray = totalCardAmountArray;
+    }
 
-	/**
-	 * @return the designationId
-	 */
-	public Integer getDesignationId() {
-		return designationId;
-	}
+    /**
+     * @return the positionUser
+     */
+    public Integer getPositionUser() {
+        return positionUser;
+    }
 
-	/**
-	 * @param designationId the designationId to set
-	 */
-	public void setDesignationId(Integer designationId) {
-		this.designationId = designationId;
-	}
+    /**
+     * @param positionUser
+     *            the positionUser to set
+     */
+    public void setPositionUser(final Integer positionUser) {
+        this.positionUser = positionUser;
+    }
 
-	
+    /**
+     * @return the designationId
+     */
+    public Integer getDesignationId() {
+        return designationId;
+    }
 
-	
+    /**
+     * @param designationId
+     *            the designationId to set
+     */
+    public void setDesignationId(final Integer designationId) {
+        this.designationId = designationId;
+    }
+
 }

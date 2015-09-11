@@ -24,16 +24,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -77,11 +77,11 @@ import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.security.terminal.model.Location;
+import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
@@ -89,6 +89,7 @@ import org.egov.pims.service.SearchPositionService;
 import org.egov.pims.utils.EisManagersUtill;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 public class CollectionsUtil {
     private final Map<String, EgwStatus> statusMap = new HashMap<String, EgwStatus>();
@@ -104,8 +105,10 @@ public class CollectionsUtil {
     @Autowired
     private EisCommonService eisCommonService;
     private EISServeable eisService;
+    @Autowired
     private SearchPositionService searchPositionService;
-    private ApplicationContextBeanProvider beanProvider;
+    @Autowired
+    private ApplicationContext context;
     private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
     @Autowired
     private SecurityUtils securityUtils;
@@ -464,7 +467,7 @@ public class CollectionsUtil {
 
         Object bean = null;
         try {
-            bean = beanProvider.getBean(beanName);
+            bean = context.getBean(beanName);
             LOGGER.debug(" Got bean : " + beanName);
         } catch (final BeansException e) {
             final String errorMsg = "Could not locate bean [" + beanName + "]";
@@ -619,7 +622,7 @@ public class CollectionsUtil {
             final ReceiptHeader receiptHeaderObj) {
         scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_CHALLAN_WORKFLOWDESIGNATIONS);
         return null;/*
-         * (List<DesignationMaster>) scripts.get(0).eval(
+         * (List<Designation>) scripts.get(0).eval(
          * Script.createContext("departmentId", departmentId,
          * "collUtil", this, "receiptHeaderObj", receiptHeaderObj,
          * "persistanceService", persistenceService));
@@ -638,27 +641,73 @@ public class CollectionsUtil {
     }
 
     public List<Department> getDepartmentsAllowedForBankRemittanceApproval(final User loggedInUser) {
-        scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_BANKREMITTANCE_WORKFLOWDEPARTMENTS);
-        return null;/*
+        /*
+         * scriptService.findAllByNamedQuery("SCRIPT",
+         * CollectionConstants.QUERY_BANKREMITTANCE_WORKFLOWDEPARTMENTS); return
          * (List<Department>) scripts.get(0).eval(
-         * Script.createContext("loggedInUser", loggedInUser,
-         * "collUtil", this, "persistanceService",
-         * persistenceService, "contraJournalVoucherObj", new
-         * ContraJournalVoucher()));
+         * Script.createContext("loggedInUser", loggedInUser, "collUtil", this,
+         * "persistanceService", persistenceService, "contraJournalVoucherObj",
+         * new ContraJournalVoucher()));
          */
+        List<Department> departments;
+        Department department;
+        final ContraJournalVoucher contraJournalVoucherObj = new ContraJournalVoucher();
+        if (contraJournalVoucherObj.getVoucherHeaderId() == null)
+            department = getDepartmentOfUser(loggedInUser);
+        else
+            department = contraJournalVoucherObj.getVoucherHeaderId().getVouchermis().getDepartmentid();
+        if (department.getCode().equals('R')) {
+            if (contraJournalVoucherObj.getVoucherHeaderId() == null)
+                departments = persistenceService.findAllBy("select dept from Department dept where dept.code=?", 'R');
+            else
+                departments = persistenceService.findAllBy("select dept from Department dept where dept.code=?", "CAF");
+        } else
+            /*
+             * departments = persistenceService.findAllBy(
+             * "select dept from Department dept where dept.billingLocation= ? order by dept.name "
+             * , '0');
+             */
+            departments = persistenceService.findAllBy("select dept from Department dept order by dept.name ");
 
+        return departments;
     }
 
-    public List<Designation> getDesignationsAllowedForBankRemittanceApproval(final Integer departmentId) {
-        scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_BANKREMITTANCE_WORKFLOWDESIGNATIONS);
-        return null;/*
-         * (List<DesignationMaster>) scripts.get(0).eval(
-         * Script.createContext("departmentId", departmentId,
-         * "collUtil", this, "persistanceService",
-         * persistenceService, "contraJournalVoucherObj", new
-         * ContraJournalVoucher()));
+    public List<Designation> getDesignationsAllowedForBankRemittanceApproval(final Long departmentId) {
+        /*
+         * scriptService.findAllByNamedQuery("SCRIPT",
+         * CollectionConstants.QUERY_BANKREMITTANCE_WORKFLOWDESIGNATIONS);
+         * return (List<Designation>) scripts.get(0).eval(
+         * Script.createContext("departmentId", departmentId, "collUtil", this,
+         * "persistanceService", persistenceService, "contraJournalVoucherObj",
+         * new ContraJournalVoucher()));
          */
-
+        Department department;
+        List<Designation> designations;
+        final ContraJournalVoucher contraJournalVoucherObj = new ContraJournalVoucher();
+        department = (Department) persistenceService.find("select dept from Department dept where dept.id=?",
+                departmentId);
+        if (contraJournalVoucherObj.getVoucherHeaderId() == null) {
+            if (department.getCode().equals('R'))
+                designations = persistenceService
+                        .findAllBy(
+                                "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=? and upper(dm.name)=?",
+                                departmentId, "REVENUE INSPECTOR");
+            else
+                designations = persistenceService
+                        .findAllBy(
+                                "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
+                                departmentId);
+        } else if (department.getCode().equals("CAF"))
+            designations = persistenceService
+                    .findAllBy(
+                            "select distinct(dm) from Designation dm,Assignment a where a.designation,id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.code=? and upper(dm.name)=?",
+                            "CAF", "SENIOR GRADE CLERK");
+        else
+            designations = persistenceService
+                    .findAllBy(
+                            "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
+                            departmentId);
+        return designations;
     }
 
     /**
@@ -701,16 +750,12 @@ public class CollectionsUtil {
         return retValue;
     }
 
-    public void setSearchPositionService(final SearchPositionService searchPositionService) {
-        this.searchPositionService = searchPositionService;
-    }
-
     public List<EmployeeView> getPositionBySearchParameters(final String beginsWith, final Integer desId,
             final Integer deptId, final Integer jurdId, final Integer roleId, final Date userDate,
             final Integer maxResults) throws NoSuchObjectException {
 
-        return searchPositionService.getPositionBySearchParameters(beginsWith, desId, deptId, Long.valueOf(jurdId),
-                roleId, userDate, maxResults);
+        return searchPositionService.getPositionBySearchParameters(beginsWith, desId, deptId,
+                jurdId != null ? Long.valueOf(jurdId) : null, roleId, userDate, maxResults);
 
     }
 
@@ -730,10 +775,6 @@ public class CollectionsUtil {
 
     public void setCommonsService(final CommonsService commonsService) {
         this.commonsService = commonsService;
-    }
-
-    public void setBeanProvider(final ApplicationContextBeanProvider beanProvider) {
-        this.beanProvider = beanProvider;
     }
 
     public void setPersistenceService(final PersistenceService persistenceService) {

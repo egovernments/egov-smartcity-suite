@@ -42,7 +42,7 @@
 </head>
 <body>
 	<s:form theme="simple" name="bankRemittanceReportForm"
-		action="bankRemittanceReport!report.action">
+		action="bankRemittanceReport-report.action">
 		<div class="formmainbox">
 			<div class="subheadnew">
 				<s:text name="bankRemittanceReport.title" />
@@ -63,7 +63,7 @@
 					<td width="25%" class="bluebox">
 						<s:select name="deptId" id="dept" cssClass="selectwk"
 							list="dropdownData.departmentList" listKey="id"
-							listValue="deptName" value="%{deptId}" />
+							listValue="name" value="%{deptId}" />
 					</td>
 					<td width="30%" class="bluebox">
 						&nbsp;
