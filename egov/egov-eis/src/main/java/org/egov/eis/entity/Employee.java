@@ -61,24 +61,20 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.egov.commons.EgwStatus;
+import org.egov.commons.utils.EntityType;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "egeis_employee")
 @Unique(id = "id", tableName = "egeis_employee", columnName = { "code" }, fields = { "code" }, enableDfltMsg = true)
-public class Employee extends User {
+public class Employee extends User implements EntityType {
 
     private static final long serialVersionUID = -1105585841211211215L;
 
@@ -115,6 +111,7 @@ public class Employee extends User {
         setType(UserType.EMPLOYEE);
     }
 
+    @Override
     public String getCode() {
         return code;
     }
@@ -165,14 +162,59 @@ public class Employee extends User {
             this.assignments.addAll(assignments);
     }
 
-	public Set<Jurisdiction> getJurisdictions() {
-		return jurisdictions;
-	}
-	
-	public void setJurisdictions(final List<Jurisdiction> jurisdictions) {
+    public Set<Jurisdiction> getJurisdictions() {
+        return jurisdictions;
+    }
+
+    public void setJurisdictions(final List<Jurisdiction> jurisdictions) {
         this.jurisdictions.clear();
         if (jurisdictions != null)
             this.jurisdictions.addAll(jurisdictions);
+    }
+
+    @Override
+    public String getBankname() {
+        return null;
+    }
+
+    @Override
+    public String getBankaccount() {
+        return null;
+    }
+
+    @Override
+    public String getPanno() {
+        return null;
+    }
+
+    @Override
+    public String getTinno() {
+        return null;
+    }
+
+    @Override
+    public String getIfsccode() {
+        return null;
+    }
+
+    @Override
+    public String getModeofpay() {
+        return null;
+    }
+
+    @Override
+    public Integer getEntityId() {
+        return null;
+    }
+
+    @Override
+    public String getEntityDescription() {
+        return null;
+    }
+
+    @Override
+    public EgwStatus getEgwStatus() {
+        return null;
     }
 
 }

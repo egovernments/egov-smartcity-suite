@@ -52,6 +52,8 @@ import javax.persistence.PersistenceContext;
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
+import org.egov.commons.service.EntityTypeService;
+import org.egov.commons.utils.EntityType;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeSearchDTO;
@@ -64,25 +66,22 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infstr.ValidationException;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.query.dsl.BooleanJunction;
-import org.hibernate.search.query.dsl.QueryBuilder;
-import org.hibernate.search.query.dsl.TermMatchingContext;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@Service                                                                                                                                                                                                                                                                                                                
 @Transactional(readOnly = true)
-public class EmployeeService {
+public class EmployeeService  implements EntityTypeService {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -133,6 +132,16 @@ public class EmployeeService {
     @SuppressWarnings("unchecked")
     public List<Fund> getAllGrades() {
         return getCurrentSession().createQuery("from GradeMaster order by name").list();
+    }
+    /**
+     * since it is mapped to only one AccountDetailType -creditor it ignores the input parameter
+     */
+    @SuppressWarnings("unchecked")
+    public List<EntityType> getAllActiveEntities(Integer employeeId) {
+            List<EntityType> entities=new ArrayList<EntityType>();
+            List<Employee> employees  = getAllEmployees();
+            entities.addAll(employees);
+            return entities;
     }
 
     @Transactional
@@ -324,6 +333,26 @@ public class EmployeeService {
 
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
+    }
+
+    @Override
+    public List<? extends EntityType> filterActiveEntities(String filterKey, int maxRecords, Integer accountDetailTypeId) {
+        return null;
+    }
+
+    @Override
+    public List getAssetCodesForProjectCode(Integer accountdetailkey) throws ValidationException {
+        return null;
+    }
+
+    @Override
+    public List<? extends EntityType> validateEntityForRTGS(List<Long> idsList) throws ValidationException {
+        return null;
+    }
+
+    @Override
+    public List<? extends EntityType> getEntitiesById(List<Long> idsList) throws ValidationException {
+        return null;
     }
 
 }
