@@ -67,7 +67,7 @@ import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @Result(
-        name = Action.SUCCESS, type = "redirect", location = "CancelLicense.action")
+        name = Action.SUCCESS, type = "redirectAction", location = "CancelLicense.action")
 @ParentPackage("egov")
 public class CancelLicenseAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(CancelLicenseAction.class);

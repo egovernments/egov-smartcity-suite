@@ -66,7 +66,7 @@ import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
-@Result(name = "viewlicense", type = "redirect", location = "viewTradeLicense", params = { "namespace", "/viewtradelicense/web",
+@Result(name = "viewlicense", type = "redirectAction", location = "viewTradeLicense", params = { "namespace", "/viewtradelicense/web",
         "method", "view", "modelId", "${model.id}" })
 public class EnterTradeLicenseAction extends BaseLicenseAction {
     private static final long serialVersionUID = 1L;

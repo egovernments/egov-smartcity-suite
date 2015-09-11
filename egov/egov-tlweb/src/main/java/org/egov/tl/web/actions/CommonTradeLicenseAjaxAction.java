@@ -59,9 +59,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.opensymphony.xwork2.Action;
 
 @Result(
-        name = Action.SUCCESS, type = "redirect", location = "CommonTradeLicenseAjaxAction.action")
+        name = Action.SUCCESS, type = "redirectAction", location = "CommonTradeLicenseAjaxAction.action")
 @Results({ @Result(
-        name = "AJAX_RESULT", type = "redirect", location = "returnStream", params = { "contentType", "text/plain" }) })
+        name = "AJAX_RESULT", type = "redirectAction", location = "returnStream", params = { "contentType", "text/plain" }) })
 @ParentPackage("egov")
 public class CommonTradeLicenseAjaxAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;

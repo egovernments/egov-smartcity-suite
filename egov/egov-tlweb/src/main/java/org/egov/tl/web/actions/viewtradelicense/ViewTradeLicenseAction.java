@@ -64,7 +64,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.struts2.convention.annotation.Action;
 
 @ParentPackage("egov")
-@Result(name = "auditReport", type = "redirect", location = "auditReport", params = { "moduleName", "TL", "namespace",
+@Result(name = "auditReport", type = "redirectAction", location = "auditReport", params = { "moduleName", "TL", "namespace",
         "/egi/auditing", "method", "searchForm", "actionName", "auditReport", "prependServletContext", "false" })
 public class ViewTradeLicenseAction extends BaseLicenseAction implements ServletRequestAware {
     private static final Logger LOGGER = Logger.getLogger(ViewTradeLicenseAction.class);

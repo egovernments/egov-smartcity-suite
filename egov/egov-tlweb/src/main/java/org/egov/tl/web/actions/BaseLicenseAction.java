@@ -77,87 +77,87 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @ParentPackage("egov")
 @Results({
-        @Result(name = "collection", type = "redirect", location = "licenseBillCollect", params = {
+        @Result(name = "collection", type = "redirectAction", location = "licenseBillCollect", params = {
                 "namespace", "/integration", "method", "renew" }),
-        @Result(name = "tl_editlicense", type = "redirect", location = "editTradeLicense", params = {
+        @Result(name = "tl_editlicense", type = "redirectAction", location = "editTradeLicense", params = {
                 "namespace", "/newtradelicense/web", "method", "beforeEdit" }),
-        @Result(name = "tl_approve", type = "redirect", location = "viewTradeLicense", params = {
+        @Result(name = "tl_approve", type = "redirectAction", location = "viewTradeLicense", params = {
                 "namespace", "/viewtradelicense/web", "method", "showForApproval" }),
-        @Result(name = "tl_generateRejCertificate", type = "redirect", location = "viewTradeLicense", params = {
+        @Result(name = "tl_generateRejCertificate", type = "redirectAction", location = "viewTradeLicense", params = {
                 "namespace", "/viewtradelicense/web", "method", "generateRejCertificate" }),
-        @Result(name = "tl_generateCertificate", type = "redirect", location = "viewTradeLicense", params = {
+        @Result(name = "tl_generateCertificate", type = "redirectAction", location = "viewTradeLicense", params = {
                 "namespace", "/viewtradelicense/web", "method", "generateCertificate" }),
-        @Result(name = "tl_generateNoc", type = "redirect", location = "viewTradeLicense", params = {
+        @Result(name = "tl_generateNoc", type = "redirectAction", location = "viewTradeLicense", params = {
                 "namespace", "/viewtradelicense/web", "method", "generateNoc" }),
-        @Result(name = "transfertl_editlicense", type = "redirect", location = "transferTradeLicense", params = {
+        @Result(name = "transfertl_editlicense", type = "redirectAction", location = "transferTradeLicense", params = {
                 "namespace", "/transfer/web", "method", "beforeEdit" }),
-        @Result(name = "transfertl_approve", type = "redirect", location = "transferTradeLicense", params = {
+        @Result(name = "transfertl_approve", type = "redirectAction", location = "transferTradeLicense", params = {
                 "namespace", "/transfer/web", "method", "showForApproval" }),
-        @Result(name = "hl_editlicense", type = "redirect", location = "editHospitalLicense", params = {
+        @Result(name = "hl_editlicense", type = "redirectAction", location = "editHospitalLicense", params = {
                 "namespace", "/newhospitallicense/web", "method", "beforeEdit" }),
-        @Result(name = "hl_approve", type = "redirect", location = "viewHospitalLicense", params = {
+        @Result(name = "hl_approve", type = "redirectAction", location = "viewHospitalLicense", params = {
                 "namespace", "/viewhospitallicense/web", "method", "showForApproval" }),
-        @Result(name = "hl_generateCertificate", type = "redirect", location = "viewHospitalLicense", params = {
+        @Result(name = "hl_generateCertificate", type = "redirectAction", location = "viewHospitalLicense", params = {
                 "namespace", "/viewhospitallicense/web", "method", "generateCertificate" }),
-        @Result(name = "hl_generateRejCertificate", type = "redirect", location = "viewHospitalLicense", params = {
+        @Result(name = "hl_generateRejCertificate", type = "redirectAction", location = "viewHospitalLicense", params = {
                 "namespace", "/viewhospitallicense/web", "method", "generateRejCertificate" }),
-        @Result(name = "transferhl_editlicense", type = "redirect", location = "transferHospitalLicense", params = {
+        @Result(name = "transferhl_editlicense", type = "redirectAction", location = "transferHospitalLicense", params = {
                 "namespace", "/transfer/web", "method", "beforeEdit" }),
-        @Result(name = "transferhl_approve", type = "redirect", location = "transferHospitalLicense", params = {
+        @Result(name = "transferhl_approve", type = "redirectAction", location = "transferHospitalLicense", params = {
                 "namespace", "/transfer/web", "method", "showForApproval" }),
-        @Result(name = "hkr_editlicense", type = "redirect", location = "editHawkerLicense", params = {
+        @Result(name = "hkr_editlicense", type = "redirectAction", location = "editHawkerLicense", params = {
                 "namespace", "/newhawkerlicense/web", "method", "beforeEdit" }),
-        @Result(name = "hkr_approve", type = "redirect", location = "viewHawkerLicense", params = {
+        @Result(name = "hkr_approve", type = "redirectAction", location = "viewHawkerLicense", params = {
                 "namespace", "/viewhawkerlicense/web", "method", "showForApproval" }),
-        @Result(name = "hkr_generateCertificate", type = "redirect", location = "viewHawkerLicense", params = {
+        @Result(name = "hkr_generateCertificate", type = "redirectAction", location = "viewHawkerLicense", params = {
                 "namespace", "/viewhawkerlicense/web", "method", "generateCertificate" }),
-        @Result(name = "transferhkr_editlicense", type = "redirect", location = "transferHawkerlLicense", params = {
+        @Result(name = "transferhkr_editlicense", type = "redirectAction", location = "transferHawkerlLicense", params = {
                 "namespace", "/transfer/web", "method", "beforeEdit" }),
-        @Result(name = "transferhkr_approve", type = "redirect", location = "transferHawkerLicense", params = {
+        @Result(name = "transferhkr_approve", type = "redirectAction", location = "transferHawkerLicense", params = {
                 "namespace", "/transfer/web", "method", "showForApproval" }),
-        @Result(name = "hkr_generateRejCertificate", type = "redirect", location = "viewHawkerLicense", params = {
+        @Result(name = "hkr_generateRejCertificate", type = "redirectAction", location = "viewHawkerLicense", params = {
                 "namespace", "/viewhawkerlicense/web", "method", "generateRejCertificate" }),
-        @Result(name = "wwl_editlicense", type = "redirect", location = "editWaterworksLicense", params = {
+        @Result(name = "wwl_editlicense", type = "redirectAction", location = "editWaterworksLicense", params = {
                 "namespace", "/newwaterworkslicense/web", "method", "beforeEdit" }),
-        @Result(name = "wwl_approve", type = "redirect", location = "viewWaterworksLicense", params = {
+        @Result(name = "wwl_approve", type = "redirectAction", location = "viewWaterworksLicense", params = {
                 "namespace", "/viewwaterworkslicense/web", "method", "showForApproval" }),
-        @Result(name = "wwl_generateCertificate", type = "redirect", location = "viewWaterworksLicense", params = {
+        @Result(name = "wwl_generateCertificate", type = "redirectAction", location = "viewWaterworksLicense", params = {
                 "namespace", "/viewwaterworkslicense/web", "method", "generateCertificate" }),
-        @Result(name = "transferwwl_editlicense", type = "redirect", location = "transferWaterworkslLicense", params = {
+        @Result(name = "transferwwl_editlicense", type = "redirectAction", location = "transferWaterworkslLicense", params = {
                 "namespace", "/transfer/web", "method", "beforeEdit" }),
-        @Result(name = "transferwwl_approve", type = "redirect", location = "transferWaterworksLicense", params = {
+        @Result(name = "transferwwl_approve", type = "redirectAction", location = "transferWaterworksLicense", params = {
                 "namespace", "/transfer/web", "method", "showForApproval" }),
-        @Result(name = "wwl_generateRejCertificate", type = "redirect", location = "viewWaterworksLicense", params = {
+        @Result(name = "wwl_generateRejCertificate", type = "redirectAction", location = "viewWaterworksLicense", params = {
                 "namespace", "/viewwaterworkslicense/web", "method", "generateRejCertificate" }),
-        @Result(name = "vetl_editlicense", type = "redirect", location = "editVeterinaryLicense", params = {
+        @Result(name = "vetl_editlicense", type = "redirectAction", location = "editVeterinaryLicense", params = {
                 "namespace", "/newlicense/web", "method", "beforeEdit" }),
-        @Result(name = "vetl_approve", type = "redirect", location = "viewVeterinaryLicense", params = {
+        @Result(name = "vetl_approve", type = "redirectAction", location = "viewVeterinaryLicense", params = {
                 "namespace", "/viewveterinarylicense/web", "method", "showForApproval" }),
-        @Result(name = "vetl_generateCertificate", type = "redirect", location = "viewVeterinaryLicense", params = {
+        @Result(name = "vetl_generateCertificate", type = "redirectAction", location = "viewVeterinaryLicense", params = {
                 "namespace", "/viewveterinarylicense/web", "method", "generateCertificate" }),
-        @Result(name = "transfervet_editlicense", type = "redirect", location = "transferVeterinarylLicense", params = {
+        @Result(name = "transfervet_editlicense", type = "redirectAction", location = "transferVeterinarylLicense", params = {
                 "namespace", "/transfer/web", "method", "beforeEdit" }),
-        @Result(name = "transfervet_approve", type = "redirect", location = "transferVeterinaryLicense", params = {
+        @Result(name = "transfervet_approve", type = "redirectAction", location = "transferVeterinaryLicense", params = {
                 "namespace", "/transfer/web", "method", "showForApproval" }),
-        @Result(name = "vetl_generateRejCertificate", type = "redirect", location = "viewVeterinaryLicense", params = {
+        @Result(name = "vetl_generateRejCertificate", type = "redirectAction", location = "viewVeterinaryLicense", params = {
                 "namespace", "/viewveterinarylicense/web", "method", "generateRejCertificate" }),
-        @Result(name = "pwd_approve", type = "redirect", location = "viewPwdContractorLicense", params = {
+        @Result(name = "pwd_approve", type = "redirectAction", location = "viewPwdContractorLicense", params = {
                 "namespace", "/viewpwdcontractorlicense/web", "method", "showForApproval" }),
-        @Result(name = "pwd_generateCertificate", type = "redirect", location = "viewPwdContractorLicense", params = {
+        @Result(name = "pwd_generateCertificate", type = "redirectAction", location = "viewPwdContractorLicense", params = {
                 "namespace", "/viewpwdcontractorlicense/web", "method", "generateCertificate" }),
-        @Result(name = "pwd_editlicense", type = "redirect", location = "editPwdContractorLicense", params = {
+        @Result(name = "pwd_editlicense", type = "redirectAction", location = "editPwdContractorLicense", params = {
                 "namespace", "/newpwdcontractorlicense/web", "method", "beforeEdit" }),
-        @Result(name = "pwd_generateRejCertificate", type = "redirect", location = "viewPwdContractorLicense", params = {
+        @Result(name = "pwd_generateRejCertificate", type = "redirectAction", location = "viewPwdContractorLicense", params = {
                 "namespace", "/viewpwdcontractorlicense/web", "method", "generateRejCertificate" }),
-        @Result(name = "ele_approve", type = "redirect", location = "viewElectricalContractorLicense", params = {
+        @Result(name = "ele_approve", type = "redirectAction", location = "viewElectricalContractorLicense", params = {
                 "namespace", "/viewelectricalcontractorlicense/web", "method", "approveElectrical" }),
-        @Result(name = "ele_approveRenew", type = "redirect", location = "viewElectricalContractorLicense", params = {
+        @Result(name = "ele_approveRenew", type = "redirectAction", location = "viewElectricalContractorLicense", params = {
                 "namespace", "/viewelectricalcontractorlicense/web", "method", "approveRenewElectrical" }),
-        @Result(name = "ele_generateCertificate", type = "redirect", location = "viewElectricalContractorLicense", params = {
+        @Result(name = "ele_generateCertificate", type = "redirectAction", location = "viewElectricalContractorLicense", params = {
                 "namespace", "/viewelectricalcontractorlicense/web", "method", "generateCertificate" }),
-        @Result(name = "ele_editlicense", type = "redirect", location = "editElectricalContractorLicense", params = {
+        @Result(name = "ele_editlicense", type = "redirectAction", location = "editElectricalContractorLicense", params = {
                 "namespace", "/newelectricalcontractorlicense/web", "method", "beforeEdit" }),
-        @Result(name = "ele_generateRejCertificate", type = "redirect", location = "viewElectricalContractorLicense", params = {
+        @Result(name = "ele_generateRejCertificate", type = "redirectAction", location = "viewElectricalContractorLicense", params = {
                 "namespace", "/viewelectricalcontractorlicense/web", "method", "generateRejCertificate" })
 })
 public abstract class BaseLicenseAction extends BaseFormAction {

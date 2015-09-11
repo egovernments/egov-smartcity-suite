@@ -63,7 +63,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Result(
-        name = "SUCCESS", type = "redirect", location = "CommonAjaxAction.action")
+        name = "SUCCESS", type = "redirectAction", location = "CommonAjaxAction.action")
 @Results({ @Result(
         name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain" }) })
 @ParentPackage("egov")
