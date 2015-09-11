@@ -109,10 +109,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
-        @Result(name = WorkProgressRegisterAction.PRINT_PDF, type = "StreamResult.class", location = "workProgressRegisterStream", params = {
+        @Result(name = WorkProgressRegisterAction.PRINT_PDF, type = "stream", location = "workProgressRegisterStream", params = {
                 "inputName", "workProgressRegisterStream", "contentType", "application/pdf", "contentDisposition",
                 "no-cache;filename=WorkProgressRegisterReport.pdf" }),
-        @Result(name = WorkProgressRegisterAction.PRINT_EXCEL, type = "StreamResult.class", location = "workProgressRegisterStream", params = {
+        @Result(name = WorkProgressRegisterAction.PRINT_EXCEL, type = "stream", location = "workProgressRegisterStream", params = {
                 "inputName", "workProgressRegisterStream", "contentType", "application/xls", "contentDisposition",
                 "no-cache;filename=WorkProgressRegisterReport.xls" }) })
 public class WorkProgressRegisterAction extends SearchFormAction {

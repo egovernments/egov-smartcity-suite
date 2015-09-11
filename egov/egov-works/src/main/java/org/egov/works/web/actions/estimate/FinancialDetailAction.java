@@ -103,7 +103,7 @@ import org.springframework.transaction.annotation.Transactional;
 import net.sf.jasperreports.engine.JRException;
 
 @Transactional(readOnly = true)
-@Results({ @Result(name = FinancialDetailAction.PRINT, type = "StreamResult.class", location = "budgetFolioPDF", params = {
+@Results({ @Result(name = FinancialDetailAction.PRINT, type = "stream", location = "budgetFolioPDF", params = {
         "inputName", "budgetFolioPDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
         @Result(name = AbstractEstimateAction.NEW, location = "financialDetail-add.jsp")
 })

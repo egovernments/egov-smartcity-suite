@@ -111,7 +111,7 @@ import net.sf.jasperreports.engine.JRException;
 
 @Transactional(readOnly = true)
 @ParentPackage("egov")
-@Results({ @Result(name = AbstractEstimateAction.PRINT, type = "StreamResult.class", location = "XlsInputStream", params = {
+@Results({ @Result(name = AbstractEstimateAction.PRINT, type = "stream", location = "XlsInputStream", params = {
         "inputName", "XlsInputStream", "contentType", "application/xls", "contentDisposition",
         "no-cache;filename=AbstractEstimate-BillOfQuantites.xls" }),
         @Result(name = AbstractEstimateAction.NEW, location = "abstractEstimate-new.jsp") })

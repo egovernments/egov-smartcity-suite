@@ -82,16 +82,16 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
-        @Result(name = ContractorwiseAbstractReportAction.PDF, type = "StreamResult.class", location = "reportInputStream", params = {
+        @Result(name = ContractorwiseAbstractReportAction.PDF, type = "stream", location = "reportInputStream", params = {
                 "inputName", "contractorwiseAbstractReport", "contentType", "application/pdf", "contentDisposition",
                 "no-cache;filename=ContractorwiseAbstractReport.pdf" }),
-        @Result(name = ContractorwiseAbstractReportAction.XLS, type = "StreamResult.class", location = "reportInputStream", params = {
+        @Result(name = ContractorwiseAbstractReportAction.XLS, type = "stream", location = "reportInputStream", params = {
                 "inputName", "contractorwiseAbstractReport", "contentType", "application/xls", "contentDisposition",
                 "no-cache;filename=ContractorwiseAbstractReport.xls" }),
-        @Result(name = "estimateXLS", type = "StreamResult.class", location = "reportInputStream", params = {
+        @Result(name = "estimateXLS", type = "stream", location = "reportInputStream", params = {
                 "inputName", "contractorwiseReport_Estimates", "contentType", "application/xls", "contentDisposition",
                 "no-cache;filename=ContractorwiseReport_Estimates.xls" }),
-        @Result(name = "estimatePDF", type = "StreamResult.class", location = "reportInputStream", params = {
+        @Result(name = "estimatePDF", type = "stream", location = "reportInputStream", params = {
                 "inputName", "contractorwiseReport_Estimates", "contentType", "application/pdf", "contentDisposition",
                 "no-cache;filename=ContractorwiseReport_Estimates.pdf" }) })
 @ParentPackage("egov")

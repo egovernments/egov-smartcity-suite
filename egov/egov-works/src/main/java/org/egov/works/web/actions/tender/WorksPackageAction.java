@@ -86,7 +86,7 @@ import org.springframework.transaction.annotation.Transactional;
 import net.sf.jasperreports.engine.JRException;
 
 @Transactional(readOnly = true)
-@Results({ @Result(name = WorksPackageAction.PRINT, type = "StreamResult.class", location = "WorkspackagePDF", params = {
+@Results({ @Result(name = WorksPackageAction.PRINT, type = "stream", location = "WorkspackagePDF", params = {
         "inputName", "WorkspackagePDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
         @Result(name = WorksPackageAction.NEW, location = "worksPackage-new.jsp") })
 public class WorksPackageAction extends BaseFormAction {

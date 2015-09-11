@@ -90,7 +90,7 @@ public class WorksService {
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
-    private EmployeeServiceOld employeeService;
+    private EmployeeServiceOld employeeServiceOld;
     @Autowired
     private CommonsService commonsService;
     private PersistenceService persistenceService;
@@ -153,7 +153,7 @@ public class WorksService {
         designationName = designationMaster.getName();
         PersonalInformation personalInformation = null;
         try {
-            personalInformation = employeeService.getEmpForPositionAndDate(date,
+            personalInformation = employeeServiceOld.getEmpForPositionAndDate(date,
                     Integer.parseInt(position.getId().toString()));
         } catch (final Exception e) {
             logger.debug("exception " + e);
@@ -175,12 +175,6 @@ public class WorksService {
      * empName+"@"+designationName; }
      */
 
-    /**
-     * @param employeeService the employeeService to set
-     */
-    public void setEmployeeService(final EmployeeServiceOld employeeService) {
-        this.employeeService = employeeService;
-    }
 
     /**
      * if the bigdecimal obj1 is greater than or egual to obj2 then it returns false
@@ -259,7 +253,7 @@ public class WorksService {
         if (user != null && wfObj.getCurrentState() != null
                 && !wfObj.getCurrentState().getValue().equals(WorksConstants.END)) {
             try {
-                positionList = employeeService.getPositionsForUser(user, new Date());
+                positionList = employeeServiceOld.getPositionsForUser(user, new Date());
             } catch (final ApplicationException egovExp) {
                 throw new ApplicationRuntimeException("Error: In getting position for user ", egovExp);
             }
@@ -1086,7 +1080,7 @@ public class WorksService {
     public List<Department> getAllDeptmentsForLoggedInUser() {
         // load the primary and secondary assignment departments of the logged
         // in user
-        final PersonalInformation employee = employeeService.getEmpForUserId(getCurrentLoggedInUserId());
+        final PersonalInformation employee = employeeServiceOld.getEmpForUserId(getCurrentLoggedInUserId());
         final HashMap<String, String> paramMap = new HashMap<String, String>();
         paramMap.put("code", employee.getCode());
         final List<EmployeeView> listEmployeeView = eisService.getEmployeeInfoList(paramMap);

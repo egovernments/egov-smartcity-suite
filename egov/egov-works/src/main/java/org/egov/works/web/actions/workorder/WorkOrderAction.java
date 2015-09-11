@@ -125,9 +125,9 @@ import net.sf.jasperreports.engine.JRException;
 @Transactional(readOnly = true)
 @ParentPackage("egov")
 @Results(value = {
-        @Result(name = WorkOrderAction.PRINT, type = "StreamResult.class", location = "WorkOrderPDF", params = {
+        @Result(name = WorkOrderAction.PRINT, type = "stream", location = "WorkOrderPDF", params = {
                 "inputName", "WorkOrderPDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
-        @Result(name = WorkOrderAction.WORKORDERNOTICEPDF, type = "StreamResult.class", location = "WorkOrderPDF", params = {
+        @Result(name = WorkOrderAction.WORKORDERNOTICEPDF, type = "stream", location = "WorkOrderPDF", params = {
                 "inputName", "WorkOrderPDF", "contentType", "application/pdf", "contentDisposition",
                 "no-cache;filename=WorkOrderNotice.pdf" }),
         @Result(name = WorkOrderAction.NEW, location = "workOrder-new.jsp") })

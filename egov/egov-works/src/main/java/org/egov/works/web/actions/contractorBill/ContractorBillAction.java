@@ -129,7 +129,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 @ParentPackage("egov")
-@Results({@Result(name = ContractorBillAction.PRINT, type = "StreamResult.class", location = "CompletionCertificatePDF", params = {
+@Results({@Result(name = ContractorBillAction.PRINT, type = "stream", location = "CompletionCertificatePDF", params = {
         "inputName", "CompletionCertificatePDF", "contentType", "application/pdf", "contentDisposition",
         "no-cache;filename=ContractorBill_CompletionCertificate.pdf" }),
         @Result(name = ContractorBillAction.NEW, location = "contractorBill-new.jsp")})

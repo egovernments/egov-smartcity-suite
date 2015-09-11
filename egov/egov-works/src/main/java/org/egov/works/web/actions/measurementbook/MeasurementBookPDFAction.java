@@ -72,7 +72,7 @@ import org.egov.works.services.MeasurementBookService;
 import org.egov.works.services.WorkOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Result(name = BaseFormAction.SUCCESS, type = "StreamResult.class", location = "measurementBookPDF", params = {
+@Result(name = BaseFormAction.SUCCESS, type = "stream", location = "measurementBookPDF", params = {
         "inputName", "measurementBookPDF", "contentType", "application/pdf", "contentDisposition",
         "no-cache;filename=MeasurementBook.pdf" })
 @ParentPackage("egov")

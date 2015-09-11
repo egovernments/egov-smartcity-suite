@@ -58,7 +58,7 @@ import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Result(name = BaseFormAction.SUCCESS, type = "StreamResult.class", location = "estimatePDF", params = { "inputName",
+@Result(name = BaseFormAction.SUCCESS, type = "stream", location = "estimatePDF", params = { "inputName",
         "estimatePDF", "contentType", "application/pdf", "contentDisposition", "no-cache;filename=AbstractEstimatePDF.pdf" })
 @ParentPackage("egov")
 public class AbstractEstimatePDFAction extends BaseFormAction {

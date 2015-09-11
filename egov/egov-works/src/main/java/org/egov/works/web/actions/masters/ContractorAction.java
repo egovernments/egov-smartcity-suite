@@ -382,7 +382,7 @@ public class ContractorAction extends SearchFormAction {
             contractor = contractorService.findById(id, false);
         super.prepare();
         setupDropdownDataExcluding("bank");
-        addDropdownData("departmentList", getPersistenceService().findAllBy("from DepartmentImpl order by upper(deptName)"));
+        addDropdownData("departmentList", getPersistenceService().findAllBy("from Department order by upper(name)"));
         addDropdownData("gradeList", getPersistenceService().findAllBy("from ContractorGrade order by upper(grade)"));
         addDropdownData("bankList", getPersistenceService().findAllBy("from Bank where isactive=1 order by upper(name)"));
         addDropdownData("statusList", getPersistenceService().findAllBy("from EgwStatus where moduletype='Contractor'"));

@@ -74,10 +74,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
-        @Result(name = RetentionMoneyRecoveryRegisterAction.EXPORTPDF, type = "StreamResult.class", location = "pdfInputStream", params = {
+        @Result(name = RetentionMoneyRecoveryRegisterAction.EXPORTPDF, type = "stream", location = "pdfInputStream", params = {
                 "inputName", "pdfInputStream", "contentType", "application/pdf", "contentDisposition",
                 "no-cache;filename=RetentionMoneyRecoveryRegister.pdf" }),
-        @Result(name = RetentionMoneyRecoveryRegisterAction.EXPORTEXCEL, type = "StreamResult.class", location = "excelInputStream", params = {
+        @Result(name = RetentionMoneyRecoveryRegisterAction.EXPORTEXCEL, type = "stream", location = "excelInputStream", params = {
                 "inputName", "excelInputStream", "contentType", "application/xls", "contentDisposition",
                 "no-cache;filename=RetentionMoneyRecoveryRegister.xls" }) })
 public class RetentionMoneyRecoveryRegisterAction extends SearchFormAction {
