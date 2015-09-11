@@ -44,6 +44,7 @@ import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.CChartOfAccounts;
@@ -56,14 +57,10 @@ import org.egov.works.models.masters.Overhead;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.opensymphony.xwork2.Action;
-
 @ParentPackage("egov")
-@Result(name = Action.SUCCESS, type = "ServletRedirectResult.class", location = "overhead.action")
+@Result(name = OverheadAction.NEW, location = "overhead-new.jsp")
 public class OverheadAction extends BaseFormAction {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = 5694568397341403350L;
     /**
      * An instance of Logger
@@ -118,6 +115,7 @@ public class OverheadAction extends BaseFormAction {
      *
      * @return a <code>String</code> representing the value 'NEW'
      */
+    @Action(value = "/masters/overhead-newform")
     public String newform() {
         return NEW;
     }

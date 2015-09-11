@@ -41,21 +41,17 @@ package org.egov.works.web.actions.masters;
 
 import java.util.List;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.ScheduleCategory;
 
-import com.opensymphony.xwork2.Action;
-
-@Result(name = Action.SUCCESS, type = "ServletRedirectResult.class", location = "scheduleCategory.action")
 @ParentPackage("egov")
+@Result(name = ScheduleCategoryAction.NEW, location = "scheduleCategory-new.jsp")
 public class ScheduleCategoryAction extends BaseFormAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 8722637434208106061L;
     private PersistenceService<ScheduleCategory, Long> scheduleCategoryService;
     private ScheduleCategory scheduleCategoryInstance = new ScheduleCategory();
@@ -66,6 +62,7 @@ public class ScheduleCategoryAction extends BaseFormAction {
         return list();
     }
 
+    @Action(value = "/masters/scheduleCategory-newform")
     public String newform() {
         return NEW;
     }

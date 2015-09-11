@@ -81,7 +81,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ParentPackage("egov")
 @Result(name = ContractorAction.NEW, location = "contractor-new.jsp")
 public class ContractorAction extends SearchFormAction {
-    
+
     private static final long serialVersionUID = 3167651186547987956L;
 
     private static final Logger logger = Logger.getLogger(ContractorAction.class);
@@ -130,7 +130,7 @@ public class ContractorAction extends SearchFormAction {
         return list();
     }
 
-    @Action(value = "/masters/contractor-newform") 
+    @Action(value = "/masters/contractor-newform")
     public String newform() {
         return NEW;
     }

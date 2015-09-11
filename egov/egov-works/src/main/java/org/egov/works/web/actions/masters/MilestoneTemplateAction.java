@@ -46,7 +46,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.service.CommonsService;
@@ -66,14 +68,11 @@ import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * @author vikas
- *
- */
 @ParentPackage("egov")
+@Result(name = MilestoneTemplateAction.NEW, location = "milestoneTemplate-new.jsp")
 public class MilestoneTemplateAction extends SearchFormAction {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 5517312981738363805L;
     private MilestoneTemplate template = new MilestoneTemplate();
     private PersistenceService<MilestoneTemplate, Long> milestoneTemplateService;
     private Long id;
@@ -121,6 +120,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
         return template;
     }
 
+    @Action(value = "/masters/milestoneTemplate-newform")
     @SkipValidation
     public String newform() {
         return "new";

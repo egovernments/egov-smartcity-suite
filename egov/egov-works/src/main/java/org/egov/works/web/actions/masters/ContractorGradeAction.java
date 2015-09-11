@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.ContractorGrade;
@@ -54,9 +55,7 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.utils.WorksConstants;
 
-import com.opensymphony.xwork2.Action;
-
-@Result(name = Action.SUCCESS, type = "ServletRedirectResult.class", location = "contractor.action")
+@Result(name = ContractorGradeAction.NEW, location = "contractorGrade-new.jsp")
 @ParentPackage("egov")
 public class ContractorGradeAction extends SearchFormAction {
 
@@ -84,6 +83,7 @@ public class ContractorGradeAction extends SearchFormAction {
 
     }
 
+    @Action(value = "/masters/contractorGrade-newform")
     public String newform() {
         return NEW;
     }

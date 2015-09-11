@@ -42,6 +42,7 @@ package org.egov.works.web.actions.masters;
 import java.util.Collection;
 import java.util.Date;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -49,19 +50,14 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 
-import com.opensymphony.xwork2.Action;
-
-@Result(name = Action.SUCCESS, type = "ServletRedirectResult.class", location = "scheduleOfRateSearch-searchResults")
-
 @ParentPackage("egov")
+@Result(name = ScheduleOfRateSearchAction.SEARCH_RESULTS, location = "scheduleOfRateSearch-searchResults")
 public class ScheduleOfRateSearchAction extends BaseFormAction {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = -3299140283276738474L;
     private PersistenceService<ScheduleOfRate, Long> scheduleOfRateService;
     // private static final String PUNCTUATIONS_AND_SPECIALCHARS = "[^\\w\\d\\.]";
-    private static final String SEARCH_RESULTS = "searchResults";
+    public static final String SEARCH_RESULTS = "searchResults";
     private ScheduleOfRate sor = new ScheduleOfRate();
     private SORRate currentRate;
     private String sorID;
@@ -78,6 +74,7 @@ public class ScheduleOfRateSearchAction extends BaseFormAction {
         this.query = query;
     }
 
+    @Action(value = "/masters/scheduleOfRateSearch-search")
     public String searchAjax() {
         return SEARCH_RESULTS;
     }

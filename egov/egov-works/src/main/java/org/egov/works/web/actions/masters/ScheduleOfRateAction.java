@@ -50,6 +50,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.core.security.user.UserImpl;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.common.entity.UOM;
@@ -70,14 +71,10 @@ import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.utils.WorksConstants;
 
-import com.opensymphony.xwork2.Action;
-
-@Result(name = Action.SUCCESS, type = "ServletRedirectResult.class", location = "scheduleOfRate.action")
+@Result(name = ScheduleOfRateAction.NEW, location = "scheduleOfRate-new.jsp")
 @ParentPackage("egov")
 public class ScheduleOfRateAction extends SearchFormAction {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = -5496042432775969286L;
     private PersistenceService<ScheduleOfRate, Long> scheduleOfRateService;
     private ScheduleOfRate scheduleOfRate = new ScheduleOfRate();
@@ -120,6 +117,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
         return list();
     }
 
+    @Action(value = "/masters/scheduleOfRate-newform")
     public String newform() {
         return NEW;
     }
@@ -402,7 +400,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
                     }
                 }
             }
-        }   // end of for abstractestimate
+        }     // end of for abstractestimate
     }
 
     public void iterateWOList(final List woeList, final SORRate rate, final boolean validationMessageFlag) {
@@ -440,7 +438,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
                         deleteFlagMap2.put(rate.getId(), "no");
                 }
             }
-        }   // end of for wo
+        }     // end of for wo
     }
 
     public void validateWODate(final boolean flag, final List woList) {
