@@ -76,7 +76,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  */
 @ParentPackage("egov")
-@Result(name = SearchEstimateForContractorAdvanceAction.SEARCH, location = "searchEstimateForContractorAdvance-new.jsp")
+@Result(name = SearchEstimateForContractorAdvanceAction.SEARCH, location = "searchEstimateForContractorAdvance-search.jsp")
 public class SearchEstimateForContractorAdvanceAction extends SearchFormAction {
 
     private static final long serialVersionUID = 9140665581257254905L;

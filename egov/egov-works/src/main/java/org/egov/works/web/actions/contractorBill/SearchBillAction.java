@@ -75,7 +75,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
-@Result(name = SearchBillAction.SEARCH, location = "searchBill-new.jsp")
+@Result(name = SearchBillAction.SEARCH, location = "searchBill-search.jsp")
 public class SearchBillAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1691106236053172675L;

@@ -79,7 +79,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  */
 @ParentPackage("egov")
-@Result(name = SearchContractorAdvanceRequisitionAction.SEARCH, location = "searchContractorAdvanceRequisition-new.jsp")
+@Result(name = SearchContractorAdvanceRequisitionAction.SEARCH, location = "searchContractorAdvanceRequisition-search.jsp")
 public class SearchContractorAdvanceRequisitionAction extends SearchFormAction {
 
     private static final long serialVersionUID = -2101507785101129271L;
@@ -177,8 +177,6 @@ public class SearchContractorAdvanceRequisitionAction extends SearchFormAction {
         queryAndParams.put("params", paramList);
         return queryAndParams;
     }
-
-    @Action(value = "/contractoradvance/contractorAdvanceRequisition-newform")
 
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {

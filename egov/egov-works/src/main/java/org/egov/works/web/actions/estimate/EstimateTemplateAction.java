@@ -64,7 +64,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
-@Result(name = EstimateTemplateAction.SUCCESS, location = "estimateTemplate-new.jsp")
+@Result(name = EstimateTemplateAction.NEW, location = "estimateTemplate-new.jsp")
 public class EstimateTemplateAction extends SearchFormAction {
 
     private static final long serialVersionUID = 3610026596221473556L;
