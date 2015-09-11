@@ -297,8 +297,8 @@
 														</div>
 													</td>
 												</tr>
-												<%@ include file='../../common/license.jsp'%>
-												<%@ include file='../../common/address.jsp'%>
+												<%@ include file='../common/license.jsp'%>
+												<%@ include file='../common/address.jsp'%>
 												<tr>
 													<td colspan="5" class="headingwk">
 														<div class="arrowiconwk">
@@ -309,8 +309,8 @@
 														</div>
 													</td>
 												</tr>
-												<%@ include file='../../common/licensee.jsp'%>
-												<%@ include file='../../common/licenseeAddress.jsp'%>
+												<%@ include file='../common/licensee.jsp'%>
+												<%@ include file='../common/licenseeAddress.jsp'%>
 												
 												<c:choose>
 													<c:when test="${trclass=='greybox'}">

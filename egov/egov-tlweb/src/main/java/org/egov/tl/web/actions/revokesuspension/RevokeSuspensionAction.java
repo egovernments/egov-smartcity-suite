@@ -101,7 +101,7 @@ public class RevokeSuspensionAction extends BaseLicenseAction {
 
     @Override
     @SkipValidation
-@Action(value="/revokesuspension/web/revokeSuspension-newForm")
+@Action(value="/revokesuspension/revokeSuspension-newForm")
     public String newForm() {
         license = (License) persistenceService.find("from License where id=?", licenseId);
         return Constants.NEW;

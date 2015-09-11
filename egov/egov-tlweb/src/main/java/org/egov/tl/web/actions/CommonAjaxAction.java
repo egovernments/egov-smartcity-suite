@@ -142,7 +142,7 @@ public class CommonAjaxAction extends BaseFormAction {
      *
      * @return the string
      */
-@Action(value="/web/commonAjax-populateDivisions")
+@Action(value="/commonAjax-populateDivisions")
     public String populateDivisions() {
         try {
             final Boundary boundary = boundaryService.getBoundaryById(Long.valueOf(zoneId));
@@ -157,7 +157,7 @@ public class CommonAjaxAction extends BaseFormAction {
         return "ward";
     }
 
-@Action(value="/web/commonAjax-ajaxPopulateDesignationsByDept")
+@Action(value="/commonAjax-ajaxPopulateDesignationsByDept")
     public String ajaxPopulateDesignationsByDept() {
         try {
 
@@ -172,7 +172,7 @@ public class CommonAjaxAction extends BaseFormAction {
     }
 
     @SuppressWarnings("unchecked")
-@Action(value="/web/commonAjax-ajaxPopulateUsersByDesignation")
+@Action(value="/commonAjax-ajaxPopulateUsersByDesignation")
     public String ajaxPopulateUsersByDesignation() {
         try {
             //allActiveUsersByGivenDesg = designationService.getAllActiveUsersByGivenDesg(designationId);

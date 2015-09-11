@@ -78,7 +78,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ParentPackage("egov")
 @Results({
         @Result(name = "collection", type = "redirect", location = "licenseBillCollect", params = {
-                "namespace", "/web/integration", "method", "renew" }),
+                "namespace", "/integration", "method", "renew" }),
         @Result(name = "tl_editlicense", type = "redirect", location = "editTradeLicense", params = {
                 "namespace", "/newtradelicense/web", "method", "beforeEdit" }),
         @Result(name = "tl_approve", type = "redirect", location = "viewTradeLicense", params = {

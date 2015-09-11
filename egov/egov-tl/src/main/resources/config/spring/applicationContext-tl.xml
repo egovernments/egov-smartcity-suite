@@ -57,8 +57,7 @@
 
 	<bean id="feeService" class="org.egov.tl.domain.service.FeeService"
 		parent="persistenceService" scope="prototype">
-		<property name="type"
-			value="org.egov.tl.domain.entity.FeeMatrix" />
+		<property name="type" value="org.egov.tl.domain.entity.FeeMatrix" />
 	</bean>
 
 	<bean id="workflowBean" class="org.egov.tl.domain.entity.WorkflowBean"
@@ -82,25 +81,25 @@
 
 	<bean id="baseLicenseService" class="org.egov.tl.domain.BaseLicenseService"
 		scope="prototype" abstract="true">
-		<property name="sequenceGenerator" ref="sequenceGenerator" />
-		<property name="persistenceService" ref="persistenceService" />
-		<property name="eisCommonsManager" ref="eisCommonsManager" />
+		<!-- <property name="sequenceGenerator" ref="sequenceGenerator" /> -->
+		<!-- <property name="persistenceService" ref="persistenceService" /> -->
+		<!-- <property name="eisCommonsManager" ref="eisCommonsManager" /> -->
 		<property name="feeService" ref="feeService" />
-		<property name="installmentDao" ref="installmentDao" />
+		<!-- <property name="installmentDao" ref="installmentDao" /> -->
 	</bean>
 
 	<bean id="licenseBillService"
 		class="org.egov.tl.domain.service.integration.LicenseBillService"
 		scope="prototype">
-		<property name="billDao" ref="billDao" />
-		<property name="persistenceService" ref="persistenceService" />
+		<!-- <property name="billDao" ref="billDao" />
+		<property name="persistenceService" ref="persistenceService" /> -->
 	</bean>
 
 	<bean id="licenseReportService"
 		class="org.egov.tl.domain.service.LicenseReportService"
 		scope="prototype">
-		<property name="persistenceService" ref="persistenceService" />
-		<property name="installmentDao" ref="installmentDao" />
+		<!-- <property name="persistenceService" ref="persistenceService" />
+		<property name="installmentDao" ref="installmentDao" /> -->
 	</bean>
 
 	<bean id="contractorLicenseReportService"
@@ -108,12 +107,12 @@
 		parent="licenseReportService" scope="prototype">
 	</bean>
 
-	<bean id="tradeLicenseWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
+	<!-- <bean id="tradeLicenseWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="persistenceService" index="0" />
 		<constructor-arg value="org.egov.tl.domain.entity.TradeLicense"
 			index="1" />
-	</bean>
+	</bean> -->
 
 	<bean id="tps" parent="persistenceService" scope="prototype">
 		<property name="type"
@@ -123,11 +122,11 @@
 	<bean id="ts" class="org.egov.tl.domain.service.TradeService"
 		parent="baseLicenseService" scope="prototype">
 		<property name="tps" ref="tps" />
-		<property name="eisCommonsManager" ref="eisCommonsManager" />
-		<property name="tradeLicenseWorkflowService" ref="tradeLicenseWorkflowService" />
+		<!-- <property name="eisCommonsManager" ref="eisCommonsManager" /> -->
+		<!-- <property name="tradeLicenseWorkflowService" ref="tradeLicenseWorkflowService" /> -->
 	</bean>
 
-	<bean id="objectionService"
+	<!-- <bean id="objectionService"
 		class="org.egov.tl.domain.service.objection.ObjectionService"
 		parent="persistenceService" scope="prototype">
 		<property name="type"
@@ -136,7 +135,7 @@
 		<property name="licenseService" ref="ts" />
 		<property name="sequenceGenerator" ref="sequenceGenerator" />
 		<property name="objectionWorkflowService" ref="objectionWorkflowService" />
-	</bean>
+	</bean> -->
 
 	<bean id="licenseBill"
 		class="org.egov.tl.domain.service.integration.LicenseBill"
@@ -146,19 +145,5 @@
 		<property name="billDao" ref="billDao" />
 		<property name="licenseUtils" ref="licenseUtils" />
 	</bean>
-
-	<!-- <bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" /> -->
-
-	<!-- <bean id="persistenceService" class="org.egov.infstr.services.PersistenceService">
-		<property name="sessionFactory" ref="egovSessionFactory" />
-	</bean> -->
-
-	<!-- <bean id="auditEventPersistenceService" parent="persistenceService">
-		<property name="type" value="org.egov.infstr.auditing.model.AuditEvent" />
-	</bean> -->
-
-	<!-- <bean id="auditEventService" class="org.egov.infstr.auditing.service.AuditEventService">
-		<property name="auditEventPersistenceService" ref="auditEventPersistenceService" />
-	</bean> -->
 
 </beans>

@@ -163,7 +163,7 @@ public class ObjectionAction extends BaseFormAction {
     }
 
     @SkipValidation
-@Action(value="/web/objection/objection-newForm")
+@Action(value="/objection/objection-newForm")
     public String newForm() {
         license = (License) persistenceService.find("from License where id=?", licenseId);
         objection.setLicense(license);
@@ -201,7 +201,7 @@ public class ObjectionAction extends BaseFormAction {
     }
 
     @SkipValidation
-@Action(value="/web/objection/objection-showForApproval")
+@Action(value="/objection/objection-showForApproval")
     public String showForApproval() {
         objectionService.setContextName(ServletActionContext.getRequest().getContextPath());
         objection = objectionService.findByNamedQuery(LicenseObjection.BY_ID, objection.getId());
@@ -245,14 +245,14 @@ public class ObjectionAction extends BaseFormAction {
     }
 
     @SkipValidation
-@Action(value="/web/objection/objection-preNotice")
+@Action(value="/objection/objection-preNotice")
     public String preNotice() {
         objection = objectionService.findByNamedQuery(LicenseObjection.BY_ID, objection.getId());
         return "prenotice";
     }
 
     @SkipValidation
-@Action(value="/web/objection/objection-preliminaryNotice")
+@Action(value="/objection/objection-preliminaryNotice")
     public String preliminaryNotice() {
         objection = objectionService.findByNamedQuery(LicenseObjection.BY_ID, objection.getId());
         generateNotice("_PreNotice");
@@ -260,14 +260,14 @@ public class ObjectionAction extends BaseFormAction {
     }
 
     @SkipValidation
-@Action(value="/web/objection/objection-scNotice")
+@Action(value="/objection/objection-scNotice")
     public String scNotice() {
         objection = objectionService.findByNamedQuery(LicenseObjection.BY_ID, objection.getId());
         return "showcausenotice";
     }
 
     @SkipValidation
-@Action(value="/web/objection/objection-showCauseNotice")
+@Action(value="/objection/objection-showCauseNotice")
     public String showCauseNotice() {
         objection = objectionService.findByNamedQuery(LicenseObjection.BY_ID, objection.getId());
         generateNotice("_SCNotice");

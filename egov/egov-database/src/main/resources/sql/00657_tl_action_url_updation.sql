@@ -1,0 +1,1 @@
+update eg_action set url = replace(url, '/web/', '/') where contextroot = 'tl' and url like '%/web/%';

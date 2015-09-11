@@ -66,7 +66,7 @@ public class TradeLicenseReportsAction extends BaseLicenseAction {
     /* to log errors and debugging information */
     private final Logger LOGGER = Logger.getLogger(getClass());
 
-@Action(value="/reports/web/tradeLicenseReports-showZoneWiseReport")
+@Action(value="/reports/tradeLicenseReports-showZoneWiseReport")
     public String showZoneWiseReport() {
 
         LOGGER.debug("Trade License Report Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + toString());
@@ -80,7 +80,7 @@ public class TradeLicenseReportsAction extends BaseLicenseAction {
         return Constants.ZONE_WISE_REPORT;
     }
 
-@Action(value="/reports/web/tradeLicenseReports-showWardWiseReport")
+@Action(value="/reports/tradeLicenseReports-showWardWiseReport")
     public String showWardWiseReport() {
         LOGGER.debug("Trade License Report Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + toString());
         final String pno = licenseReportService.getParameterValue(Constants.PARAM_PAGE,
@@ -93,7 +93,7 @@ public class TradeLicenseReportsAction extends BaseLicenseAction {
         return Constants.WARD_WISE_REPORT;
     }
 
-@Action(value="/reports/web/tradeLicenseReports-showTradeWiseReport")
+@Action(value="/reports/tradeLicenseReports-showTradeWiseReport")
     public String showTradeWiseReport() {
         LOGGER.debug("Trade License Report Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + toString());
         final String pno = licenseReportService.getParameterValue(Constants.PARAM_PAGE,
@@ -106,7 +106,7 @@ public class TradeLicenseReportsAction extends BaseLicenseAction {
         return Constants.TRADE_WISE_REPORT;
     }
 
-@Action(value="/reports/web/tradeLicenseReports-showLateRenewalsReport")
+@Action(value="/reports/tradeLicenseReports-showLateRenewalsReport")
     public String showLateRenewalsReport() {
         LOGGER.debug("Trade License Report Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + toString());
         final String pno = licenseReportService.getParameterValue(Constants.PARAM_PAGE,

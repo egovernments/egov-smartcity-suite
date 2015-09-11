@@ -144,7 +144,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
 
     @Override
     @SkipValidation
-@Action(value="/transfer/web/transferTradeLicense-newForm")
+@Action(value="/transfer/transferTradeLicense-newForm")
     public String newForm() {
         tl = (TradeLicense) ts.getPersistenceService().find("from TradeLicense where id=?", tl.getId());
         tl.setLicenseeZoneId(Long.valueOf(tl.getLicensee().getBoundary().getParent().getId()));
@@ -249,7 +249,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
     }
 
     @SkipValidation
-@Action(value="/transfer/web/transferTradeLicense-beforeEdit")
+@Action(value="/transfer/transferTradeLicense-beforeEdit")
     public String beforeEdit() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tl);
         showForApproval();
@@ -276,7 +276,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
 
     @Override
     @SkipValidation
-@Action(value="/transfer/web/transferTradeLicense-showForApproval")
+@Action(value="/transfer/transferTradeLicense-showForApproval")
     public String showForApproval() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tl);
         Long id = null;

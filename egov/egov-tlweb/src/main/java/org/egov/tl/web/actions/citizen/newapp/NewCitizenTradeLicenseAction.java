@@ -85,8 +85,9 @@ implements ServletRequestAware {
         request = arg0;
     }
 
+    //TODO -- Fix me
     private void setUserDetails() {
-        session = request.getSession();
+        /*session = request.getSession();
         final String userName = (String) session
                 .getAttribute("com.egov.user.LoginUserName");
         final User user;
@@ -98,6 +99,6 @@ implements ServletRequestAware {
                     user.getName());
         }
         userId = user.getId();
-        EgovThreadLocals.setUserId(userId);
+        EgovThreadLocals.setUserId(userId);*/
     }
 }

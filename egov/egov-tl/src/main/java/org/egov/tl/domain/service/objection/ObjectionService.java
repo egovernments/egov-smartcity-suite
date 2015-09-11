@@ -65,6 +65,7 @@ public class ObjectionService extends PersistenceService<LicenseObjection, Long>
     @Autowired
     private EisCommonService eisCommonService;
     protected SequenceGenerator sequenceGenerator;
+    @Autowired
     protected BaseLicenseService licenseService;
     private SimpleWorkflowService<LicenseObjection> objectionWorkflowService;
 

@@ -133,7 +133,7 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
     }
 
     @SkipValidation
-@Action(value="/newtradelicense/web/editTradeLicense-beforeEdit")
+@Action(value="/newtradelicense/editTradeLicense-beforeEdit")
     public String beforeEdit() {
         return Constants.EDIT;
     }

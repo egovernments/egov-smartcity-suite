@@ -56,8 +56,10 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.tl.utils.Constants;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class LicenseReportService {
+    @Autowired
     protected PersistenceService persistenceService;
     protected List<Map<String, Object>> licenseList = new ArrayList<Map<String, Object>>();
     protected EgovPaginatedList paginateList;
@@ -65,6 +67,7 @@ public class LicenseReportService {
     protected Integer pageSize = Constants.PAGE_SIZE;
     protected List pageList = new ArrayList();
     protected Map<String, Object> hashMap = null;
+    @Autowired
     protected InstallmentHibDao installmentDao;
     protected String query;
 

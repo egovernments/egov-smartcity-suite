@@ -107,6 +107,7 @@ public class LicenseUtils {
     private static final String CITY_BOUNDARY_TYPE = "City";
     public static final String LOCATION_HIERARCHY_TYPE = "LOCATION";
     private static final String DEMAND_ID = "demandId";
+    @Autowired
     private PersistenceService persistenceService;
     @Autowired
     private ModuleService moduleService;
@@ -116,6 +117,7 @@ public class LicenseUtils {
     private BoundaryTypeService boundaryTypeService;
     @Autowired
     private HierarchyTypeService hierarchyTypeService;
+    @Autowired
     protected CollectionIntegrationService collectionIntegrationService;
     @Autowired
     private AppConfigValueService appConfigValueService;
@@ -140,7 +142,7 @@ public class LicenseUtils {
     }
 
     public LicenseUtils() {
-        session = HibernateUtil.getCurrentSession();
+        //session = persistenceService.getSession();
     }
 
     public LicenseUtils(final SessionFactory factory) {

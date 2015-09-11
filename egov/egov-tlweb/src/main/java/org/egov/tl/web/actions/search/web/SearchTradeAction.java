@@ -97,7 +97,7 @@ public class SearchTradeAction extends BaseFormAction {
     private final List<String> noticelist = new ArrayList<String>();
     private String roleName;
 
-    @Action(value="/search/web/searchTrade-newForm")
+    @Action(value="/search/searchTrade-newForm")
     public String newForm() {
         return BaseFormAction.NEW;
     }
@@ -316,7 +316,7 @@ public class SearchTradeAction extends BaseFormAction {
     }
 
     @SkipValidation
-@Action(value="/search/web/searchTrade-searchPortal")
+@Action(value="/search/searchTrade-searchPortal")
     public String searchPortal() {
         final HttpServletRequest request = ServletActionContext.getRequest();
         final Criteria criteria = createSearchQueryPortal();

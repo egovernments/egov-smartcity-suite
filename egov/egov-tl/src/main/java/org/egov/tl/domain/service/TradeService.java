@@ -59,7 +59,7 @@ import org.egov.tl.utils.LicenseUtils;
 
 public class TradeService extends BaseLicenseService {
     private PersistenceService<TradeLicense, Long> tps;
-    private WorkflowService<TradeLicense> tradeLicenseWorkflowService;
+    /*private WorkflowService<TradeLicense> tradeLicenseWorkflowService;*/
 
     public PersistenceService<TradeLicense, Long> getTps() {
         return tps;
@@ -98,13 +98,13 @@ public class TradeService extends BaseLicenseService {
         return tl;
     }
 
-    public void setTradeLicenseWorkflowService(final WorkflowService<TradeLicense> tradeLicenseWorkflowService) {
+    /*public void setTradeLicenseWorkflowService(final WorkflowService<TradeLicense> tradeLicenseWorkflowService) {
         this.tradeLicenseWorkflowService = tradeLicenseWorkflowService;
-    }
+    }*/
 
     @Override
     protected WorkflowService<TradeLicense> workflowService() {
-        return tradeLicenseWorkflowService;
+        return null/*tradeLicenseWorkflowService*/;
     }
 
     public void transferLicense(final TradeLicense tl, final LicenseTransfer licenseTransfer) {

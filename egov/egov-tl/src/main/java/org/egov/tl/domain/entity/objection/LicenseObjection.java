@@ -147,7 +147,7 @@ public class LicenseObjection extends StateAware {
 
     @Override
     public String myLinkId() {
-        return getCurrentState() + "/web/objection/objection!showForApproval.action?model.id=" + getId();
+        return getCurrentState() + "/objection/objection!showForApproval.action?model.id=" + getId();
     }
 
     @Override
