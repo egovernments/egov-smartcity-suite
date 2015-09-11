@@ -50,6 +50,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
@@ -67,6 +69,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
+
+@Result(name = SetStatusAction.EDIT, location = "setStatus-edit.jsp")
 public class SetStatusAction extends BaseFormAction {
 
     private static final long serialVersionUID = -6533573442117204510L;
@@ -173,6 +177,7 @@ public class SetStatusAction extends BaseFormAction {
     }
 
     @SkipValidation
+    @Action(value = "/tender/setStatus-edit")
     public String edit() {
         if (setStatusList != null && !setStatusList.isEmpty())
             populateStatusNameAndDateDetails(setStatusList);

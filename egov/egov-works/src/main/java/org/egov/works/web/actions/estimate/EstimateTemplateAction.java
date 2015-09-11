@@ -45,6 +45,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.common.entity.UOM;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.infra.web.struts.actions.SearchFormAction;
@@ -62,6 +64,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
+@Result(name = EstimateTemplateAction.SUCCESS, location = "estimateTemplate-new.jsp")
 public class EstimateTemplateAction extends SearchFormAction {
 
     private static final long serialVersionUID = 3610026596221473556L;
@@ -133,6 +136,7 @@ public class EstimateTemplateAction extends SearchFormAction {
 
     }
 
+    @Action(value = "/estimate/estimateTemplate-newform")
     public String newform() {
         return NEW;
     }

@@ -53,7 +53,9 @@ import javax.script.ScriptContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.common.entity.UOM;
 import org.egov.commons.service.CommonsService;
 import org.egov.infra.admin.master.entity.Department;
@@ -93,6 +95,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 @ParentPackage("egov")
+@Result(name = RevisionEstimateAction.NEW, location = "revisionEstimate-new.jsp")
 public class RevisionEstimateAction extends GenericWorkFlowAction {
 
     private static final long serialVersionUID = 7691992958619463320L;
@@ -209,6 +212,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
         return NEW;
     }
 
+    @Action(value = "/revisionEstimate/revisionEstimate-newform")
     public String newform() {
         LOGGER.debug("RevisionEstimateAction | newform | Start");
         return NEW;

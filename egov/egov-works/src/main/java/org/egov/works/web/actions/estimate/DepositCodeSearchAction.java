@@ -41,21 +41,20 @@ package org.egov.works.web.actions.estimate;
 
 import java.util.Collection;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.DepositCode;
 
-import com.opensymphony.xwork2.Action;
-
-@Result(name = Action.SUCCESS, type = "ServletRedirectResult.class", location = "depositCodeSearch-searchResults")
+@Result(name = DepositCodeSearchAction.SEARCH_RESULTS, location = "depositCodeSearch-searchResults")
 @ParentPackage("egov")
 public class DepositCodeSearchAction extends BaseFormAction {
 
     private static final long serialVersionUID = 7203092403134880647L;
     private PersistenceService<DepositCode, Long> depositCodeService;
-    private static final String SEARCH_RESULTS = "searchResults";
+    public static final String SEARCH_RESULTS = "searchResults";
     private static final String SEARCH_DC_RESULTS = "searchDepCodeResults";
     private String query;
     private Integer fundId;
@@ -64,6 +63,7 @@ public class DepositCodeSearchAction extends BaseFormAction {
         this.query = query;
     }
 
+    @Action(value = "/estimate/depositCodeSearch-searchAjax")
     public String searchAjax() {
         return SEARCH_RESULTS;
     }

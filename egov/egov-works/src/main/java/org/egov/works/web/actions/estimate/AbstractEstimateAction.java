@@ -58,6 +58,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -78,14 +79,13 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.workflow.Action;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
@@ -113,7 +113,8 @@ import net.sf.jasperreports.engine.JRException;
 @ParentPackage("egov")
 @Results({ @Result(name = AbstractEstimateAction.PRINT, type = "StreamResult.class", location = "XlsInputStream", params = {
         "inputName", "XlsInputStream", "contentType", "application/xls", "contentDisposition",
-        "no-cache;filename=AbstractEstimate-BillOfQuantites.xls" }) })
+        "no-cache;filename=AbstractEstimate-BillOfQuantites.xls" }),
+        @Result(name = AbstractEstimateAction.NEW, location = "abstractEstimate-new.jsp") })
 public class AbstractEstimateAction extends BaseFormAction {
 
     private static final long serialVersionUID = -4801105778751138267L;
@@ -605,6 +606,7 @@ public class AbstractEstimateAction extends BaseFormAction {
         return SUCCESS;
     }
 
+    @Action(value = "/estimate/abstractEstimate-newform")
     public String newform() {
         return NEW;
     }
@@ -1014,7 +1016,7 @@ public class AbstractEstimateAction extends BaseFormAction {
         this.actionMultiYearEstimateValues = actionMultiYearEstimateValues;
     }
 
-    public List<Action> getValidActions() {
+    public List<org.egov.infstr.workflow.Action> getValidActions() {
         return workflowService.getValidActions(abstractEstimate);
     }
 

@@ -61,8 +61,10 @@ import javax.script.ScriptContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.asset.model.Asset;
 import org.egov.asset.service.CommonAssetsService;
@@ -127,9 +129,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 @ParentPackage("egov")
-@Result(name = ContractorBillAction.PRINT, type = "StreamResult.class", location = "CompletionCertificatePDF", params = {
+@Results({@Result(name = ContractorBillAction.PRINT, type = "StreamResult.class", location = "CompletionCertificatePDF", params = {
         "inputName", "CompletionCertificatePDF", "contentType", "application/pdf", "contentDisposition",
-        "no-cache;filename=ContractorBill_CompletionCertificate.pdf" })
+        "no-cache;filename=ContractorBill_CompletionCertificate.pdf" }),
+        @Result(name = ContractorBillAction.NEW, location = "contractorBill-new.jsp")})
 public class ContractorBillAction extends BaseFormAction {
 
     private static final long serialVersionUID = -2842467886385709531L;
@@ -647,6 +650,7 @@ public class ContractorBillAction extends BaseFormAction {
     }
 
     @SkipValidation
+    @Action(value = "/contractorBill/contractorBill-newform")
     public String newform() {
         if (!contractorBillService.getBillType().isEmpty()) {
             final List<MBHeader> objList = measurementBookService.getPartBillList(workOrderId, contractorBillService

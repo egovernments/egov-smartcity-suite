@@ -46,7 +46,9 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
@@ -74,6 +76,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 @ParentPackage("egov")
+@Result(name = ContractorAdvanceRequisitionAction.NEW, location = "contractorAdvanceRequisition-new.jsp")
 public class ContractorAdvanceRequisitionAction extends BaseFormAction {
 
     private static final Logger LOGGER = Logger.getLogger(ContractorAdvanceRequisitionAction.class);
@@ -159,6 +162,7 @@ public class ContractorAdvanceRequisitionAction extends BaseFormAction {
     }
 
     @SkipValidation
+    @Action(value = "/contractoradvance/contractorAdvanceRequisition-newform")
     public String newform() {
         return NEW;
     }

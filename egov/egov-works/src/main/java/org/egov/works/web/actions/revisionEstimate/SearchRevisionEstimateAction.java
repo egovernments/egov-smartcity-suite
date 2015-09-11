@@ -53,7 +53,9 @@ import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.service.CommonsService;
@@ -91,6 +93,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 @ParentPackage("egov")
+@Result(name = SearchRevisionEstimateAction.SEARCH, location = "searchRevisionEstimate-search.jsp")
 public class SearchRevisionEstimateAction extends SearchFormAction {
 
     private static final long serialVersionUID = -4526273645489797831L;
@@ -102,6 +105,7 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
     @Autowired
     private EmployeeServiceOld employeeService;
     private PersonalInformationService personalInformationService;
+    public static final String SEARCH = "search";
     public static final Locale LOCALE = new Locale("en", "IN");
     public static final SimpleDateFormat DDMMYYYYFORMATS = new SimpleDateFormat("dd/MM/yyyy", LOCALE);
     private List<RevisionAbstractEstimate> revEstimateList;
@@ -166,12 +170,13 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
         }
     }
 
+    @Action(value = "/revisionEstimate/searchRevisionEstimate-beforeSearch")
     public String beforeSearch() {
-        return "search";
+        return SEARCH;
     }
 
     public String searchRE() {
-        return "search";
+        return SEARCH;
     }
 
     @Override
@@ -247,11 +252,11 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
         }
 
         if (isError)
-            return "search";
+            return SEARCH;
         setPageSize(WorksConstants.PAGE_SIZE);
         search();
         showOwnerName();
-        return "search";
+        return SEARCH;
     }
 
     public List<String> getActionsList() {

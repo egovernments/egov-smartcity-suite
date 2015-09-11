@@ -41,21 +41,20 @@ package org.egov.works.web.actions.estimate;
 
 import java.util.Collection;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 
-import com.opensymphony.xwork2.Action;
-
-@Result(name = Action.SUCCESS, type = "ServletRedirectResult.class", location = "wardSearch-searchResults")
+@Result(name = WardSearchAction.SEARCH_RESULTS, location = "wardSearch-searchResults")
 @ParentPackage("egov")
 public class WardSearchAction extends BaseFormAction {
 
     private static final long serialVersionUID = -1549853362997914848L;
     private PersistenceService<Boundary, Integer> boundaryService;
-    private static final String SEARCH_RESULTS = "searchResults";
+    public static final String SEARCH_RESULTS = "searchResults";
     private String query;
     private Boolean isBoundaryHistory;
 
@@ -63,6 +62,7 @@ public class WardSearchAction extends BaseFormAction {
         this.query = query;
     }
 
+    @Action(value = "/estimate/wardSearch-searchAjax")
     public String searchAjax() {
         return SEARCH_RESULTS;
     }

@@ -50,7 +50,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.web.struts.actions.SearchFormAction;
@@ -71,6 +73,7 @@ import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 
 @ParentPackage("egov")
+@Result(name = SearchEstimateForREAction.SEARCH_WO, location = "searchEstimateForRE-searchWO.jsp")
 public class SearchEstimateForREAction extends SearchFormAction {
 
     private static final long serialVersionUID = -8446251759865551258L;
@@ -81,6 +84,7 @@ public class SearchEstimateForREAction extends SearchFormAction {
     private Date toDate;
     private PersonalInformationService personalInformationService;
     public static final Locale LOCALE = new Locale("en", "IN");
+    public static final String SEARCH_WO = "searchWO";
     public static final SimpleDateFormat DDMMYYYYFORMATS = new SimpleDateFormat("dd/MM/yyyy", LOCALE);
     private WorkOrderService workOrderService;
     private Integer deptId;
@@ -125,10 +129,11 @@ public class SearchEstimateForREAction extends SearchFormAction {
             execDept = abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDepartment().getId();
     }
 
-    @ValidationErrorPage(value = "searchWO")
+    @ValidationErrorPage(value = SEARCH_WO)
+    @Action(value = "/revisionEstimate/searchEstimateForRE-searchWO")
     public String searchWorkOrder() {
 
-        return "searchWO";
+        return SEARCH_WO;
     }
 
     private Map getQuery() {

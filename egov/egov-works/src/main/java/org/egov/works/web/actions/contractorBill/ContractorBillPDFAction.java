@@ -61,14 +61,11 @@ import org.egov.works.services.ContractorBillService;
 import org.egov.works.services.WorksService;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.springframework.beans.factory.annotation.Autowired;
-
+@ParentPackage("egov")
 @Result(name = BaseFormAction.SUCCESS, type = "StreamResult.class", location = "egBillRegisterPDF", params = { "inputName",
         "egBillRegisterPDF", "contentType", "application/pdf", "contentDisposition", "no-cache" })
-@ParentPackage("egov")
 public class ContractorBillPDFAction extends BaseFormAction {
-    /**
-     *
-     */
+   
     private static final long serialVersionUID = -4416572537527288800L;
     private static final Logger logger = Logger.getLogger(ContractorBillAction.class);
     private Long egbillRegisterId;

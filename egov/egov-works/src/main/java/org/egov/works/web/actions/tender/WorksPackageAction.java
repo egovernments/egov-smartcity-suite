@@ -50,7 +50,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -84,8 +86,9 @@ import org.springframework.transaction.annotation.Transactional;
 import net.sf.jasperreports.engine.JRException;
 
 @Transactional(readOnly = true)
-@Result(name = WorksPackageAction.PRINT, type = "StreamResult.class", location = "WorkspackagePDF", params = {
-        "inputName", "WorkspackagePDF", "contentType", "application/pdf", "contentDisposition", "no-cache" })
+@Results({ @Result(name = WorksPackageAction.PRINT, type = "StreamResult.class", location = "WorkspackagePDF", params = {
+        "inputName", "WorkspackagePDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
+        @Result(name = WorksPackageAction.NEW, location = "worksPackage-new.jsp") })
 public class WorksPackageAction extends BaseFormAction {
 
     private static final long serialVersionUID = -6365331777546797839L;
@@ -185,6 +188,7 @@ public class WorksPackageAction extends BaseFormAction {
 
     }
 
+    @Action(value = "/tender/worksPackage-newform")
     public String newform() {
         /*
          * PersonalInformation pi = getEmployee(); Assignment assignment = getAssignment(pi); if(assignment!=null &&

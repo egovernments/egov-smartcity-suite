@@ -56,7 +56,9 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
@@ -101,8 +103,10 @@ import org.springframework.transaction.annotation.Transactional;
 import net.sf.jasperreports.engine.JRException;
 
 @Transactional(readOnly = true)
-@Result(name = FinancialDetailAction.PRINT, type = "StreamResult.class", location = "budgetFolioPDF", params = {
-        "inputName", "budgetFolioPDF", "contentType", "application/pdf", "contentDisposition", "no-cache" })
+@Results({ @Result(name = FinancialDetailAction.PRINT, type = "StreamResult.class", location = "budgetFolioPDF", params = {
+        "inputName", "budgetFolioPDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
+        @Result(name = AbstractEstimateAction.NEW, location = "financialDetail-add.jsp")
+})
 public class FinancialDetailAction extends BaseFormAction {
 
     private static final long serialVersionUID = -8120661601900686441L;
@@ -223,6 +227,7 @@ public class FinancialDetailAction extends BaseFormAction {
         return ADD;
     }
 
+    @Action(value = "/estimate/financialDetail-add")
     public String add() {
         if (SOURCE_INBOX.equalsIgnoreCase(sourcepage)) {
             final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());

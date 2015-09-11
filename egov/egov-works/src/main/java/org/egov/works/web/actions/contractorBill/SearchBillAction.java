@@ -47,6 +47,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -73,6 +75,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
+@Result(name = SearchBillAction.SEARCH, location = "searchBill-new.jsp")
 public class SearchBillAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1691106236053172675L;
@@ -91,6 +94,7 @@ public class SearchBillAction extends BaseFormAction {
     private WorksService worksService;
     @Autowired
     private CommonsService commonsService;
+    public static final String SEARCH = "search";
     private static final String BILL_MODULE_KEY = "CONTRACTORBILL";
     private static final String NEW_STATUS = "NEW";
     private static final String DATE_FORMAT_DD_MMM_YYYY = "dd-MMM-yyyy";
@@ -128,9 +132,10 @@ public class SearchBillAction extends BaseFormAction {
                     latestStatusList.add(egwStatus);
         return latestStatusList;
     }
-
+    
+    @Action(value = "/contractorBill/searchBill-search")
     public String search() {
-        return "search";
+        return SEARCH;
     }
 
     public String edit() {
@@ -205,7 +210,7 @@ public class SearchBillAction extends BaseFormAction {
             contractorBillList = getPositionAndUser(contractorBillList);
 
         pagedResults.setList(contractorBillList);
-        return "search";
+        return SEARCH;
     }
 
     @Override

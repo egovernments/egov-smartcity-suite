@@ -47,6 +47,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.EstimatePhotographs;
@@ -55,10 +57,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 @SuppressWarnings("serial")
+@Result(name = UploadEstimatePhotosAction.SEARCH, location = "uploadEstimatePhotos-search.jsp")
 public class UploadEstimatePhotosAction extends BaseFormAction {
 
     private static final long serialVersionUID = -8691126456751483363L;
-    private final String SEARCH = "search";
+    public static final String SEARCH = "search";
     private final String SEARCH_LIST = "searchList";
     private AbstractEstimate abstractEstimate = new AbstractEstimate();
     private String fromDate;
@@ -80,6 +83,7 @@ public class UploadEstimatePhotosAction extends BaseFormAction {
         addDropdownData("execDeptList", getPersistenceService().findAllBy("from Department "));
     }
 
+    @Action(value = "/mobile/uploadEstimatePhotos-newform")
     public String search() {
         return SEARCH;
     }

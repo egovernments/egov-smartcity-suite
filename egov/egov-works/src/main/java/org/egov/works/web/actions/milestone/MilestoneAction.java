@@ -45,7 +45,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.service.CommonsService;
@@ -66,6 +68,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 @ParentPackage("egov")
+@Result(name = MilestoneAction.NEW, location = "milestone-new.jsp")
 public class MilestoneAction extends BaseFormAction {
 
     private static final long serialVersionUID = -415095644985621213L;
@@ -124,6 +127,7 @@ public class MilestoneAction extends BaseFormAction {
     }
 
     @SkipValidation
+    @Action(value = "/milestone/milestone-newform")
     public String newform() {
 
         return "new";

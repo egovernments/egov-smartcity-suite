@@ -53,7 +53,9 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
@@ -95,6 +97,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 @ParentPackage("egov")
+@Result(name = MeasurementBookAction.NEW, location = "measurementBook-new.jsp")
 public class MeasurementBookAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1536135285051426488L;
@@ -497,6 +500,7 @@ public class MeasurementBookAction extends BaseFormAction {
         return workOrderService.getAllContractorForWorkOrder();
     }
 
+    @Action(value = "/measurementbook/measurementBook-newform")
     public String newform() {
         return NEW;
     }

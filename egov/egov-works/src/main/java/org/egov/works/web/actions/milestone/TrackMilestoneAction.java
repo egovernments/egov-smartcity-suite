@@ -45,7 +45,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.service.CommonsService;
 import org.egov.infra.admin.master.entity.User;
@@ -66,6 +68,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 @ParentPackage("egov")
+@Result(name = TrackMilestoneAction.NEW, location = "trackMilestone-new.jsp")
 public class TrackMilestoneAction extends BaseFormAction {
 
     private static final long serialVersionUID = -3165064901699566106L;
@@ -165,6 +168,7 @@ public class TrackMilestoneAction extends BaseFormAction {
     }
 
     @SkipValidation
+    @Action(value = "/milestone/trackMilestone-newform")
     public String newform() {
         if (trackMilestone.getEgwStatus() != null && trackMilestone.getEgwStatus().getCode().equals(WorksConstants.NEW)) {
             final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());

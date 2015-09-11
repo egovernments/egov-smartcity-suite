@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.service.CommonsService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
@@ -62,6 +63,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 @ParentPackage("egov")
+@Result(name = CopyEstimateAction.SUCCESS, location = "copyEstimate-success.jsp")
 public class CopyEstimateAction extends BaseFormAction {
 
     private static final long serialVersionUID = 4934369735700310753L;

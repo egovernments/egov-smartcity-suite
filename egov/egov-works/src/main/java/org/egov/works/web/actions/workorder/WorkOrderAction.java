@@ -60,6 +60,7 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -128,7 +129,8 @@ import net.sf.jasperreports.engine.JRException;
                 "inputName", "WorkOrderPDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
         @Result(name = WorkOrderAction.WORKORDERNOTICEPDF, type = "StreamResult.class", location = "WorkOrderPDF", params = {
                 "inputName", "WorkOrderPDF", "contentType", "application/pdf", "contentDisposition",
-                "no-cache;filename=WorkOrderNotice.pdf" }) })
+                "no-cache;filename=WorkOrderNotice.pdf" }),
+        @Result(name = WorkOrderAction.NEW, location = "workOrder-new.jsp") })
 public class WorkOrderAction extends BaseFormAction {
 
     private static final long serialVersionUID = -8902400945730474523L;
@@ -389,6 +391,7 @@ public class WorkOrderAction extends BaseFormAction {
         return ajaxEstimateAction.getUsersInExecutingDepartment();
     }
 
+    @Action(value = "/workorder/worksOrder-newform")
     public String newform() {
         final PersonalInformation pi = getEmployee();
         final Assignment assignment = getAssignment(pi);

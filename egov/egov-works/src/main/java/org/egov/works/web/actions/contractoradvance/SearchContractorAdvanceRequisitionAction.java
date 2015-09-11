@@ -54,7 +54,9 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.eis.entity.DrawingOfficer;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.web.struts.actions.SearchFormAction;
@@ -77,10 +79,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  */
 @ParentPackage("egov")
+@Result(name = SearchContractorAdvanceRequisitionAction.SEARCH, location = "searchContractorAdvanceRequisition-new.jsp")
 public class SearchContractorAdvanceRequisitionAction extends SearchFormAction {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2101507785101129271L;
     private static final Logger LOGGER = Logger.getLogger(SearchContractorAdvanceRequisitionAction.class);
+    public static final String SEARCH = "search";
     private Integer arfStatus;
     private String estimateNumber;
     private Date advanceRequisitionFromDate;
@@ -120,8 +124,9 @@ public class SearchContractorAdvanceRequisitionAction extends SearchFormAction {
             addDropdownData("drawingOfficerList", Collections.emptyList());
     }
 
+    @Action(value = "/contractoradvance/searchContractorAdvanceRequisition-beforeSearch")
     public String beforeSearch() {
-        return "search";
+        return SEARCH;
     }
 
     private Map getQuery() {
@@ -173,6 +178,8 @@ public class SearchContractorAdvanceRequisitionAction extends SearchFormAction {
         return queryAndParams;
     }
 
+    @Action(value = "/contractoradvance/contractorAdvanceRequisition-newform")
+
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
         String query = null;
@@ -189,7 +196,7 @@ public class SearchContractorAdvanceRequisitionAction extends SearchFormAction {
 
     @Override
     public String search() {
-        return "search";
+        return SEARCH;
     }
 
     public String searchList() {
@@ -211,14 +218,14 @@ public class SearchContractorAdvanceRequisitionAction extends SearchFormAction {
         }
 
         if (isError)
-            return "search";
+            return SEARCH;
 
         setPageSize(WorksConstants.PAGE_SIZE);
         super.search();
 
         if (searchResult != null && searchResult.getList() != null && !searchResult.getList().isEmpty())
             setOwnerName();
-        return "search";
+        return SEARCH;
     }
 
     private void setOwnerName() {

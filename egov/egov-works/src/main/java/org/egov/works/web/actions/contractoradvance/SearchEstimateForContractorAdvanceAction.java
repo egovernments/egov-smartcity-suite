@@ -50,7 +50,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
@@ -74,12 +76,14 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  */
 @ParentPackage("egov")
+@Result(name = SearchEstimateForContractorAdvanceAction.SEARCH, location = "searchEstimateForContractorAdvance-new.jsp")
 public class SearchEstimateForContractorAdvanceAction extends SearchFormAction {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 9140665581257254905L;
     @Autowired
     private DepartmentService departmentService;
     public static final Locale LOCALE = new Locale("en", "IN");
+    public static final String SEARCH = "search";
     public static final SimpleDateFormat DDMMYYYYFORMATS = new SimpleDateFormat("dd/MM/yyyy", LOCALE);
     private PersistenceService<Contractor, Long> contractorService;
     private TenderResponseService tenderResponseService;
@@ -109,8 +113,9 @@ public class SearchEstimateForContractorAdvanceAction extends SearchFormAction {
         estimateStatus = AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString();
     }
 
+    @Action(value = "/contractoradvance/searchEstimateForContractorAdvance-beforeSearch")
     public String beforeSearch() {
-        return "search";
+        return SEARCH;
     }
 
     private Map getQuery() {
@@ -188,7 +193,7 @@ public class SearchEstimateForContractorAdvanceAction extends SearchFormAction {
 
     @Override
     public String search() {
-        return "search";
+        return SEARCH;
     }
 
     public String searchList() {
@@ -210,14 +215,14 @@ public class SearchEstimateForContractorAdvanceAction extends SearchFormAction {
         }
 
         if (isError)
-            return "search";
+            return SEARCH;
 
         setPageSize(WorksConstants.PAGE_SIZE);
         super.search();
 
         if (searchResult != null && searchResult.getList() != null && !searchResult.getList().isEmpty())
             setTenderType();
-        return "search";
+        return SEARCH;
     }
 
     protected void setTenderType() {

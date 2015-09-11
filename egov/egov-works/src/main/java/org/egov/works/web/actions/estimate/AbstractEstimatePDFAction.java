@@ -62,9 +62,7 @@ import org.springframework.beans.factory.annotation.Autowired;
         "estimatePDF", "contentType", "application/pdf", "contentDisposition", "no-cache;filename=AbstractEstimatePDF.pdf" })
 @ParentPackage("egov")
 public class AbstractEstimatePDFAction extends BaseFormAction {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = 8202192351878784580L;
     private static final Logger logger = Logger.getLogger(AbstractEstimatePDFAction.class);
     private Long estimateID;

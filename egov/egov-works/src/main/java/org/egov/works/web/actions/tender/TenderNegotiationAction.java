@@ -55,7 +55,9 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
@@ -102,6 +104,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 @ParentPackage("egov")
+@Result(name = TenderNegotiationAction.NEW, location = "tenderNegotiation-new.jsp")
 public class TenderNegotiationAction extends SearchFormAction {
 
     private static final long serialVersionUID = 1705982410378688424L;
@@ -431,6 +434,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     @SkipValidation
+    @Action(value = "/tender/tenderNegotiation-newform")
     public String newform() {
         setDeptId(worksPackage.getDepartment().getId());
         return NEW;
