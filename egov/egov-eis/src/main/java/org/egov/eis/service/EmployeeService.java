@@ -66,7 +66,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.config.properties.ApplicationProperties;
-import org.egov.infstr.ValidationException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
