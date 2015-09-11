@@ -48,7 +48,6 @@
 <title><s:text name='CreateAck.title' /></title>
 <script type="text/javascript">
 	function createAnother(obj) {
-		alert(obj)
 		if(obj.id == 'createNew') {
 		    window.location="/ptis/create/createProperty-dataEntry.action";
 		} else if(obj.id == 'editDCB') {

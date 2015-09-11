@@ -52,14 +52,13 @@
 		jQuery("#loadingMask").remove();
 	    var newInstallmentCount = 0;
 	    var instDetailsRowIndex = 2;
-	    var newDemandRsnsCount = 10;	    
+	    var newDemandRsnsCount = 6;	    
 	    var lastIndex;
 	    var lastIndexOnError;
-	    var noOfDemandRsns = 10;
+	    var noOfDemandRsns = 6;
 	    var isFirstInstVisible = true;
 		
 	    function addNewInstallment() {
-			
 			var rowIndex = document.getElementById("newInstallmentRow").rowIndex;
 			var trClones = new Array();
 			var instDetailsTable = document.getElementById("instDetails");
@@ -167,7 +166,7 @@
 		function assignInstallmentId(obj, id) {
 			var instDetailsTable = document.getElementById("instDetails");
 			var selRowIndex = obj.parentNode.parentNode.parentNode.rowIndex;
-			for (var i = 1; i <= 9; i++) {
+			for (var i = 1; i <= 7; i++) {
 				var row = instDetailsTable.rows[i+selRowIndex];
 				row.cells[0].childNodes[1].childNodes[1].setAttribute("value", id);
 			}
@@ -182,7 +181,7 @@
 	<div class="formmainbox">
   	<div class="formheading"></div>
 		<div class="headingbg"><s:text name="editDemand"/></div>
-		<s:form name="editDemandForm" action="editDemand" theme="simple">
+		<s:form name="editDemandForm" action="editDemand-update" theme="simple">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td class="bluebox" ></td>
@@ -252,7 +251,7 @@
 												alt="Remove Installment" onclick="javascript: deleteRecentInstallment();"
 												width="18" height="18" border="0" />
 										</td>
-									</tr> 						
+									</tr> 		
 									<s:if test="%{hasActionErrors() == false}">
 									<%-- <s:set
 										value="{@org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_WARRANT_FEE, @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_NOTICE_FEE, @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_COURT_FEE, @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_PENALTY_FINES}"
@@ -321,32 +320,34 @@
 											<%-- </s:if> --%>
 										</s:iterator>
 										<script type="text/javascript">
-											/* if (isFirstInstVisible == true) {
+											 if (isFirstInstVisible == true) {
 												isFirstInstVisible = false;
 												var instDetailsTable = document.getElementById("instDetails");
 												for (var i = 0; i < noOfDemandRsns; i++) {
 													var row = instDetailsTable.rows[i+instDetailsRowIndex];
 													row.style.display = "none";
 												}
-											} */
+											} 
 										</script>	
-									</s:if>								
-									<s:if test="%{hasActionErrors() == true}">
+									</s:if>				
+									<s:if test="%{hasActionErrors() == false}">	
 										<script type="text/javascript">
 											var newInstCountOnError = 0;
-										</script>				
+										</script>		
 										<s:set value="%{demandDetailBeanList.size()}" var="listSize" />										
 										<s:set value="0" var="count" />						
 										<s:set value="#listSize" var="j" />
-										<%-- j is the each new installment start index --%>
-										<s:set value="%{#j - 10}" var="j" />
-										<%-- idx index value for the installmentss demand reason --%>
+										j is the each new installment start index
+										<s:set value="%{#j - 6}" var="j" />
+										j <s:property value="%{#j}"/>
+										idx index value for the installmentss demand reason 
 										<s:set value="%{#j}" var="idx" />
+										
 										<s:iterator value="demandDetailBeanList" status="demandInfoStatus">
 										<!-- #idx > 0 && ((#idx % 10) == 0) && demandDetailBeanList[#idx].installment != demandDetailBeanList[#idx - 1].installment -->
-										<s:if
-											test="%{demandDetailBeanList[#idx].isNew == true && demandDetailBeanList[#idx - 1].isNew == true}">											
+										<s:if test="%{demandDetailBeanList[#idx].isNew == true}">											
 											<tr id="newInstallmentRow">
+												Demand List 0<s:property value="demandDetailBeanList[%{#idx}]"/>
 												<s:if
 													test="%{demandDetailBeanList[#idx].reasonMaster == @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_GENERAL_TAX}">
 													<td class="blueborderfortd">
@@ -362,7 +363,7 @@
 															name="demandDetailBeanList[%{#idx}].isNew"
 															value="%{demandDetailBeanList[#idx].isNew}" />
 													</td>
-													<script type="text/javascript">
+												<script type="text/javascript">
 														newInstCountOnError++;
 														isFirstInstVisible = true;														
 													</script>
@@ -415,9 +416,9 @@
 													<div align="center">N/A</div>
 												</td>
 											</tr>
-											<s:if test="%{#count == 9}" >
+											<s:if test="%{#count == 6}" >
 												<s:set value="0" var="count" />
-												<s:set value="%{#j - 10}" var="j" />
+												<s:set value="%{#j - 7}" var="j" />
 												<s:set value="#j" var="idx" />
 											</s:if>
 											<s:else>
@@ -436,14 +437,14 @@
 										<script type="text/javascript">
 											lastIndex = lastIndexOnError;
 											newInstallmentCount = newInstCountOnError;
-										</script>
-									</s:if>
-									<s:else>										
+										</script> 
+									</s:if> 
+									<s:else>							
 										<s:iterator value="demandDetailBeanList" status="demandInfoStatus">											
 												<%@ include file="editDemandInstallmentDetail.jsp" %>																				
-										</s:iterator>
+										</s:iterator>	
 									</s:else>
-																														
+												 																	
 								</table>
 							</div>
 						</td>
@@ -460,14 +461,11 @@
 					</tr> 
 				</table>
 			</div>
-			<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
 		 	<div class="buttonbottom" align="center">
-				<s:submit name="Update" value="Update" cssClass="buttonsubmit" method="update" onclick="doLoadingMask();"/>				
-				<input class="button" type="button" name="close" value="Close"
-					onclick="window.close();" />
+				<s:submit name="Update" value="Update" cssClass="buttonsubmit" method="update"/>				
+				<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
 			</div> 
 		</s:form>
-	</div>	
 	<s:if test="%{hasActionErrors() == false || isFirstInstVisible == false}">
 		<script type="text/javascript">
 			//alert('isFirstInstVisible' + isFirstInstVisible);
