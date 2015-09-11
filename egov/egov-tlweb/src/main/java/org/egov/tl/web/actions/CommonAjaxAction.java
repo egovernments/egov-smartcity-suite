@@ -39,7 +39,6 @@
  ******************************************************************************/
 package org.egov.tl.web.actions;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Date;
@@ -47,10 +46,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.eis.service.DesignationService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -95,6 +96,8 @@ public class CommonAjaxAction extends BaseFormAction {
     private BoundaryService boundaryService;
     @Autowired
     private DesignationService designationService;
+    @Autowired
+    private EisCommonService eisCommonService;
 
     public InputStream getReturnStream() {
         final ByteArrayInputStream is = new ByteArrayInputStream(returnStream.getBytes());
@@ -175,7 +178,7 @@ public class CommonAjaxAction extends BaseFormAction {
 @Action(value="/commonAjax-ajaxPopulateUsersByDesignation")
     public String ajaxPopulateUsersByDesignation() {
         try {
-            //allActiveUsersByGivenDesg = designationService.getAllActiveUsersByGivenDesg(designationId);
+            allActiveUsersByGivenDesg = eisCommonService.getAllActiveUsersByGivenDesig(Long.valueOf(designationId));
         } catch (final Exception e) {
             LOGGER.error("populateUsersByDept() - Error while loading divisions ." + e.getMessage());
             addFieldError(CommonAjaxAction.LOCATION, "Unable to load User information");
