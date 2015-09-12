@@ -378,16 +378,6 @@ function validate(text){
 	return true;
 }
 
-function validateDigitalSignPwd() {
-	digitalSignPwd = document.getElementById("signaturePassword");
-	if(digitalSignPwd == null || digitalSignPwd.value == '') {
-		alert("Please enter Digital Signature Password for authentication!")
-		return false;
-	}
-	if(!validate('admin_sanction'))
-		return false;
-	return true
-}
 
 jq(document).on('click', '#wpView', function(){
 	var wpId = jq(this).attr("data-wpId");
@@ -603,9 +593,6 @@ jq(document).on('click', '#woView', function(){
 	  </s:else>
 	  </s:if>
 	</s:iterator>
-	<s:if test="%{sourcepage=='inbox' && model.egwStatus!=null && model.currentState!=null && model.currentState.nextAction=='Pending Admin Sanction'}" >
-  	 	<s:submit type="submit" cssClass="buttonfinal" value="Digitally Sign & Submit" id="digitalSignButton" name="digitalSignButton" method="moveEstimate" onclick="document.abstractEstimateForm.actionName.value='admin_sanction';return validateDigitalSignPwd();"/>
-  	</s:if>
 	<s:if test="%{(model.egwStatus.code=='TECH_SANCTIONED' || model.egwStatus.code=='REJECTED') && 
 	(model.currentState.nextAction=='Pending Budgetary Appropriation' || model.currentState.nextAction=='Pending Deposit Code Appropriation') }">
 		 	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/financialDetail!add.action?estimateId=<s:property value='%{model.id}'/>&sourcepage=<s:property value='%{sourcepage}'/>&source=UpdateFinancialDetail', '_self');" class="buttonadd" value="Update Financial Details " id="updateFinancialDetailButton" name="updateFinancialDetailButton"/>
@@ -1094,11 +1081,7 @@ jq(document).on('click', '#woView', function(){
 	if(document.getElementById("rcCheckbox"))
 		document.getElementById("rcCheckbox").disabled=true;
 	
-	//Enable Digital Sign Check Box if present
-	if(document.getElementById("digitalSignCheckbox"))
-		document.getElementById("digitalSignCheckbox").disabled=false; 
-	if(document.getElementById("digitalSignButton"))
-		document.getElementById("digitalSignButton").disabled=false; 
+	
 </script>
 </body>
 

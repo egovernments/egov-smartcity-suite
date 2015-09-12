@@ -358,7 +358,7 @@ function showChangeQtyDtlsTab(){
          			<c:set var="approverHeadCSS" value="headingwk" scope="request" />
          			<c:set var="approverCSS" value="bluebox" scope="request" />
          			<s:hidden name="departmentName" id="departmentName" value="%{departmentName}"/>
-					<%@ include file="/commons/commonWorkflow.jsp"%>
+					<%@ include file="../commons/commonWorkflow.jsp"%>
   				</div>
  		    </td>
             </tr>

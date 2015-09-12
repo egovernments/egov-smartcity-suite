@@ -73,9 +73,6 @@
 <script type="text/javascript" src="/egi/javascript/validations.js"></script>
 <script type="text/javascript" src="/egi/jsutils/prototype/prototype.js"></script>
 
-<script src="/egworks/freerte_v1/js/richtext.js" type="text/javascript" language="javascript"></script>
-<script src="/egworks/freerte_v1/js/config.js" type="text/javascript" language="javascript"></script>
-
 <script type="text/javascript" src="/egworks/js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="/egworks/js/jquery-ui-1.8.22.custom.min.js"></script>  
 <link rel="stylesheet" type="text/css" href="/egworks/css/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" />
