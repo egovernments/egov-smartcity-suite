@@ -38,9 +38,9 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 
-<script type="text/javascript" src="<egov:url path='js/jquery/jquery.fixheadertable.js'/>"></script>
-<link rel="stylesheet" type="text/css" href="../css/jquery/base.css" />
-<link rel="stylesheet" type="text/css" href="../css/jquery-ui/css/redmond/jquery-ui-1.8.4.custom.css" />
+<script type="text/javascript" src="<egov:url path='resources/js/jquery/jquery.fixheadertable.js'/>"></script>
+<link rel="stylesheet" type="text/css" href="../resources/css/jquery/base.css" />
+<link rel="stylesheet" type="text/css" href="../resources/css/jquery-ui/css/redmond/jquery-ui-1.8.4.custom.css" />
 
 <style type="text/css">
 

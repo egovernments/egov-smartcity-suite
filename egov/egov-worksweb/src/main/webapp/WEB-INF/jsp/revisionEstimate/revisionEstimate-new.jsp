@@ -42,8 +42,7 @@
 <html>
 <title><s:text name="revisionEstimate.label.title" /></title>
 <body class="yui-skin-sam" onload="defaultApproverDept();noBack();" onpageshow="if(event.persisted) noBack();" onunload=""> 
-<script src="<egov:url path='js/works.js'/>"></script> 
-<script src="<egov:url path='js/helper.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js'/>"></script> 
 
 <script>
 window.history.forward(1);

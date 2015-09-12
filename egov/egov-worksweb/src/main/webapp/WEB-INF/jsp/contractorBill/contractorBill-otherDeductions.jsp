@@ -40,7 +40,6 @@
 <style type="text/css">
 
 </style>
-<script src="<egov:url path='js/works.js'/>"></script>
 <script>
 function validateOtherDeductions(elem,recordId){
 	if(!validateForStdDeduction())

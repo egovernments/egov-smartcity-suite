@@ -40,10 +40,10 @@
  
 <%@ page import="java.util.*" %>
 <%@ include file="/includes/taglibs.jsp" %>
-<script type="text/javascript" src="<egov:url path='js/jquery/jquery.fixheadertable.js'/>"></script>
-<link rel="stylesheet" type="text/css" href="../css/jquery/base.css" />
-<link rel="stylesheet" type="text/css" href="../css/jquery-ui/css/redmond/jquery-ui-1.8.4.custom.css" />
-<script src="<egov:url path='js/workProgressAbstractReportHelper.js'/>"></script>
+<script type="text/javascript" src="<egov:url path='resources/js/jquery/jquery.fixheadertable.js'/>"></script>
+<link rel="stylesheet" type="text/css" href="../resources/css/jquery/base.css" />
+<link rel="stylesheet" type="text/css" href="../resources/css/jquery-ui/css/redmond/jquery-ui-1.8.4.custom.css" />
+<script src="<egov:url path='resources/js/workProgressAbstractReportHelper.js'/>"></script>
 <style type="text/css">
 
 th.pagetableth {

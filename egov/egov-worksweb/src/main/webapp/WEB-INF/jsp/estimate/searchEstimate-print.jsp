@@ -44,8 +44,10 @@
 		<title><s:text name='page.title.search.estimate' /></title> 
 
 </head>
-<link href="<egov:url path='/css/works.css'/>" rel="stylesheet" type="text/css" />
-<link href="<egov:url path='/css/commonegov.css'/>" rel="stylesheet" type="text/css" />
+
+<link href="<c:url value='/resources/css/works.css'/>" rel="stylesheet" type="text/css" />
+<link href="<c:url value='/css/commonegov.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+
 <script type="text/javascript">
 
 function  setValues(){

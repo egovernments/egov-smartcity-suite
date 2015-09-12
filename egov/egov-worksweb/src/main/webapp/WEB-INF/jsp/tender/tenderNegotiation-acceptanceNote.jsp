@@ -44,12 +44,10 @@
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE>Authority for Tender Acceptance</TITLE>
 	<meta http-equiv="Pragma" content="no-cache"/>
-	<link href="/egworks/css/works.css" rel="stylesheet" type="text/css" />
-	<link href="/egworks/css/commonegov.css" rel="stylesheet" type="text/css" />
-	<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/assets/skins/sam/skin.css" />
-	<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/assets/skins/sam/button.css" />
-	<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/assets/skins/sam/menu.css" />
 	
+<link href="<c:url value='/resources/css/works.css'/>" rel="stylesheet" type="text/css" />
+<link href="<c:url value='/css/commonegov.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+
 </HEAD>
 
 <BODY>

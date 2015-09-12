@@ -43,7 +43,7 @@
  <%@ include file="/includes/meta.jsp" %> 
 <title>eGov Works <decorator:title/></title>
 
-<link href="<c:url value='/css/works.css'/>" rel="stylesheet" type="text/css" />
+<link href="<c:url value='/resources/css/works.css'/>" rel="stylesheet" type="text/css" />
 <link href="<c:url value='/css/commonegov.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 
 <link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/fonts/fonts-min.css"/>
@@ -65,7 +65,7 @@
 <script type="text/javascript" src="/egi/commonyui/yui2.8/button/button-min.js"></script>
 <script type="text/javascript" src="/egi/commonyui/yui2.8/editor/editor-min.js"></script>
 
-<script type="text/javascript" src="<egov:url path='/js/helper.js'/>"></script>
+<script type="text/javascript" src="<egov:url path='/resources/js/helper.js'/>"></script>
 <script type="text/javascript" src="/egi/script/calendar.js"></script>
 <script type="text/javascript" src="/egi/javascript/calender.js"></script>
 <script type="text/javascript" src="/egi/script/jsCommonMethods.js"></script>
@@ -73,10 +73,10 @@
 <script type="text/javascript" src="/egi/javascript/validations.js"></script>
 <script type="text/javascript" src="/egi/jsutils/prototype/prototype.js"></script>
 
-<script type="text/javascript" src="/egworks/js/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="/egworks/js/jquery-ui-1.8.22.custom.min.js"></script>  
-<link rel="stylesheet" type="text/css" href="/egworks/css/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" />
-<script type="text/javascript" src="/egworks/js/ajax-script.js"></script>
+<script type="text/javascript" src="/egworks/resources/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/egworks/resources/js/jquery-ui-1.8.22.custom.min.js"></script>  
+<link rel="stylesheet" type="text/css" href="/egworks/resources/css/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" />
+<script type="text/javascript" src="/egworks/resources/js/ajax-script.js"></script>
 
 <script type="text/javascript" >
 window.document.onkeydown = function(event) { 

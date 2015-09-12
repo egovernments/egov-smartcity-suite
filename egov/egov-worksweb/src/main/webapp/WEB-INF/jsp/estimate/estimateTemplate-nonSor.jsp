@@ -76,8 +76,6 @@
 	text-align:left;
 }
 </style>
-<script src="<egov:url path='js/works.js'/>"></script>
-<script src="<egov:url path='js/helper.js'/>"></script>
 <script>
 
 var uomDropdownOptions=[{label:"--- Select ---", value:"0"},

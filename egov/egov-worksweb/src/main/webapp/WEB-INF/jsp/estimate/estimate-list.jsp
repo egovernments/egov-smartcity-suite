@@ -37,7 +37,6 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<script src="<egov:url path='js/works.js'/>"></script>
 
 <script type="text/javascript">
 

@@ -51,7 +51,7 @@
 }
 
 </style>
-<script src="<egov:url path='js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js'/>"></script>
 <script>
 
 function createContractorIDFormatter(el, oRecord, oColumn){

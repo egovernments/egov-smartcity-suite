@@ -39,7 +39,7 @@
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
 
-<script src="<egov:url path='js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js'/>"></script>
 <html>
 	<head>
 		<title><s:text name='page.title.search.workorder' /></title>

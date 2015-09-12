@@ -45,8 +45,6 @@
 	text-align:right;
 }
 </style>
-<script src="<egov:url path='js/works.js'/>"></script>
-
 <script>
 	var custDeductionDropdownOptions=[{label:"--- Select ---", value:"0"},
     <s:iterator var="s" value="customDeductionAccountList" status="status">    

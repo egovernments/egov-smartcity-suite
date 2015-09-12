@@ -41,8 +41,7 @@
 
 <html>
 <title><s:text name="estimate.budgetfolio.header" /></title>
-<script src="<egov:url path='js/works.js'/>"></script>
-<script src="<egov:url path='js/helper.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js'/>"></script>
 
 <script type="text/javascript">
 	function checkDate(obj){

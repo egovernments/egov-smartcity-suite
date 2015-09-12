@@ -45,8 +45,7 @@
 	</title>
 </head>
 <body onload="enableOrDisableRetendering();addElementsInLastColumn();" >
-<script src="<egov:url path='js/helper.js'/>"></script>
-<script src="<egov:url path='js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js'/>"></script>
 
 <script type="text/javascript">
 jQuery("#loadingMask").remove();

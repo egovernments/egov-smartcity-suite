@@ -38,7 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
-<script src="<egov:url path='js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js'/>"></script>
 <script>
 function validateAndSubmit() {
    if(dom.get('mbStatus').value==-1 && dom.get('contractor').value==-1 && dom.get('workorderNoSearch').value==""

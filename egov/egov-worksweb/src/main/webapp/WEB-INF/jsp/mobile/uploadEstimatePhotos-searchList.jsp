@@ -46,9 +46,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">  
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">   
-<link rel="stylesheet" href="../css/jquerymobile/jquery.mobile-1.3.1.min.css" />
-<script src="../js/jquery-1.7.2.min.js"></script>
-<script src="../js/jquerymobile/jquery.mobile-1.3.1.min.js"></script>
+<link rel="stylesheet" href="../resources/css/jquerymobile/jquery.mobile-1.3.1.min.css" />
+<script src="../resources/js/jquery-1.7.2.min.js"></script>
+<script src="../resources/js/jquerymobile/jquery.mobile-1.3.1.min.js"></script>
 <style>
 @media screen and (min-width: 20em) {
 	   .my-custom-class th.ui-table-priority-1,

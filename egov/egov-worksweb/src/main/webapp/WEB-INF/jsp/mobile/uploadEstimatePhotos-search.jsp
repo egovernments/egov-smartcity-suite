@@ -84,15 +84,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<link rel="stylesheet" href="../css/jquerymobile/jquery.mobile-1.3.1.min.css" />
-<link rel="stylesheet" href="../css/jquery/jquery.toastmessage.css" />
-<script src="../js/jquery-1.7.2.min.js"></script>
-<script src="../js/jquerymobile/jquery.mobile-1.3.1.min.js"></script>
-<script type="text/javascript" src="../js/jquery/jquery.toastmessage.js"></script>
+<link rel="stylesheet" href="../resources/css/jquerymobile/jquery.mobile-1.3.1.min.css" />
+<link rel="stylesheet" href="../resources/css/jquery/jquery.toastmessage.css" />
+<script src="../resources/js/jquery-1.7.2.min.js"></script>
+<script src="../resources/js/jquerymobile/jquery.mobile-1.3.1.min.js"></script>
+<script type="text/javascript" src="../resources/js/jquery/jquery.toastmessage.js"></script>
 
-<link rel="stylesheet" href="../css/jquerymobile/jqm-datebox.min.css" />
-<script src="../js/jquerymobile/jqm-datebox.core.min.js"></script>
-<script src="../js/jquerymobile/jqm-datebox.mode.datebox.min.js"></script>
+<link rel="stylesheet" href="../resources/css/jquerymobile/jqm-datebox.min.css" />
+<script src="../resources/js/jquerymobile/jqm-datebox.core.min.js"></script>
+<script src="../resources/js/jquerymobile/jqm-datebox.mode.datebox.min.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function() {

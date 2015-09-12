@@ -37,9 +37,6 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp" %>  
-
-<script src="<egov:url path='js/works.js'/>"></script>
 <style type="text/css">
 #yui-dt0-bodytable, #yui-dt1-bodytable, #yui-dt2-bodytable {
     Width:200%;

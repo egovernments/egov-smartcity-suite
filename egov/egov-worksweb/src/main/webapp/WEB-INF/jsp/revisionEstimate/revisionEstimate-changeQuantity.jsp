@@ -81,7 +81,6 @@
 
 
 </style>
-<script src="<egov:url path='js/works.js'/>"></script>
 <script>
  function checkChangeQuantityRate(elem,recordId){
  dom.get('error'+elem.id).style.display='none';

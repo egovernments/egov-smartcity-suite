@@ -45,7 +45,6 @@
 	text-align:right;
 }
 </style>
-<script src="<egov:url path='js/works.js'/>"></script>
 
 <script>
 	var stdDeductionTypeDropdownOptions=[{label:"--- Select ---", value:"0"},

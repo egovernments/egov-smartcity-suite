@@ -79,7 +79,7 @@ function bodyOnLoad(){
 <title><s:text name='page.title.estimate.template.search'/></title>
 <body onload="bodyOnLoad()" class="yui-skin-sam">
 
-<script src="<egov:url path='js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js'/>"></script>
    <s:if test="%{hasErrors()}">
         <div id="errorstyle" class="errorstyle" >
           <s:actionerror/>

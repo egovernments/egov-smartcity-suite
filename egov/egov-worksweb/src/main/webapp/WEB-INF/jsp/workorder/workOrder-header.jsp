@@ -37,7 +37,6 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<script src="<egov:url path='js/works.js'/>"></script> 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 		 <s:hidden name="tenderRespId" id="tenderRespId"  value="%{tenderRespId}"></s:hidden>
 		 <s:hidden name="tenderRespContrId" id="tenderRespContrId"  value="%{tenderRespContrId}"/>

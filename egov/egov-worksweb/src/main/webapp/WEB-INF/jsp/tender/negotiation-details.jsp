@@ -66,7 +66,6 @@
 	text-align:right;
 }
 </style>
-<script src="<egov:url path='js/works.js'/>"></script>
 <script type="text/javascript" src="<egov:url path='jsutils/prototype/prototype.js'/>"></script>
 
 <script>

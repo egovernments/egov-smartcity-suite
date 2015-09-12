@@ -98,7 +98,7 @@ function jurisdictionSearchParameters(){
 <title><s:text name='page.title.workprogress.register'/></title>
 <body  >
 
-<script src="<egov:url path='js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js'/>"></script>
    <s:if test="%{hasErrors()}">
         <div id="errorstyle" class="errorstyle" >
           <s:actionerror/>

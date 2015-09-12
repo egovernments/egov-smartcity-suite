@@ -50,8 +50,7 @@
 }
 
 </style>
-<script src="<egov:url path='js/works.js'/>"></script>
-<script src="../js/jquery-1.7.2.min.js"></script>
+<script src="../resources/js/jquery-1.7.2.min.js"></script>
 <script>
 var jq = jQuery.noConflict(true);
 

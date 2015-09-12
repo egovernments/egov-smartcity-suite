@@ -43,7 +43,7 @@
 	Width: 100%;
 }
 </style>
-<script src="<egov:url path='/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js'/>"></script>
 <script>
 function validateLoggedInUser(){
 	var userHasRole = dom.get("hasRoleMapped").value; 

@@ -44,7 +44,7 @@
 <title><s:text name='page.title.milestone.template'/></title>
 <body onload="populateDesignation();" class="yui-skin-sam">
 
-<script src="<egov:url path='js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js'/>"></script>
 <script>
 
 function enableFieldsForModify(){

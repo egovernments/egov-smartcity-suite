@@ -68,7 +68,6 @@
 }
 
 </style>
-<script src="<egov:url path='js/works.js'/>"></script>
 <script>
 var NON_TEDERED = 'nonTendered';
 var LUMP_SUM = 'lumpSum';

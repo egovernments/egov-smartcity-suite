@@ -54,8 +54,7 @@
 <title><s:text name='contractorBill.header.title' /></title>
 
 <body onload="getCurrentDate();loadBillAmount();loadWorkName();noBack();showAccountDetails();checkBudgetHeadForWorkflowBill();" onpageshow="if(event.persisted) noBack();" onunload="">
-<script src="<egov:url path='js/works.js'/>"></script>	
-<script src="<egov:url path='js/helper.js'/>"></script>	
+<script src="<egov:url path='resources/js/works.js'/>"></script>	
 
 <script>
 window.history.forward(1);

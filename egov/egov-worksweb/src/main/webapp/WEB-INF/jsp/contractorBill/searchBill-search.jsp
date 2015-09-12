@@ -38,8 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
-<script src="<egov:url path='js/works.js'/>"></script>
-<script src="<egov:url path='js/helper.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js'/>"></script> 
 <html>
 <head>
 	<title><s:text name='page.title.search.contractorbill' /></title>

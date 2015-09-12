@@ -43,7 +43,7 @@
 	<head>
 		<title><s:text name='page.title.search.workorder' /></title>
 	</head>
-<script src="<egov:url path='js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js'/>"></script>
 
 <script type="text/javascript">
 function validateAndSubmit(){

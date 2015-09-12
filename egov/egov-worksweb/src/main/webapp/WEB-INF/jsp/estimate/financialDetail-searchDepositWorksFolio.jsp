@@ -42,7 +42,7 @@
   <head>
       <title><s:text name='page.title.depositWorksFolioReport'/></title>
   </head>
-	<script src="<egov:url path='js/works.js'/>"></script>
+	<script src="<egov:url path='resources/js/works.js'/>"></script>
   	<script type="text/javascript">
   		var warnings=new Array();
 		warnings['improperDepositCodeSelection']='<s:text name="estimate.depositCode.warning.improperDepositCodeSelection"/>'

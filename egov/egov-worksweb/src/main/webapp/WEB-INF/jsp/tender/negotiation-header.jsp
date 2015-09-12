@@ -43,7 +43,6 @@
 	color: blue;
 }
 </style>
-<script src="<egov:url path='js/works.js'/>"></script> 
 <script>
 
 designationLoadHandler = function(req,res){

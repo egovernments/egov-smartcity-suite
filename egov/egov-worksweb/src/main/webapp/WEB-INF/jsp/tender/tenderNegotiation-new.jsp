@@ -43,8 +43,7 @@
 <body
 	onload="getDefaults();populateDetails();populateDesignation();noBack();"
 	onpageshow="if(event.persisted) noBack();" onunload="">
-	<script src="<egov:url path='js/works.js'/>"></script>
-	<%-- script src="<egov:url path='js/helper.js'/>"></script --%>
+	<script src="<egov:url path='resources/js/works.js'/>"></script>
 
 	<script>
 jQuery("#loadingMask").remove();

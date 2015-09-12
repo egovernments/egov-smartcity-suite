@@ -42,7 +42,7 @@
 <html>
 <title><s:text name="contractoradvance.advancerequisition.title" /></title>
 <body class="yui-skin-sam" onload="setDefaults();noBack();" onpageshow="if(event.persisted) noBack();" onunload=""> 
-<script src="<egov:url path='js/works.js'/>"></script> 
+<script src="<egov:url path='resources/js/works.js'/>"></script> 
 
 <script>
 window.history.forward(1);

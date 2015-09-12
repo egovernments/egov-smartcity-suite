@@ -43,7 +43,7 @@
   <head>
      <title><s:text name='page.title.subledgerCode'/></title>
   </head>
-<script src="<egov:url path='js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js'/>"></script>
   <script type="text/javascript">
   
   var currentDate='<%=new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())%>';

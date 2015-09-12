@@ -59,7 +59,6 @@
 }
 </style>
 
-<script src="<egov:url path='js/works.js'/>"></script>
 <script>
 
 function afterSORResults(sType,results){

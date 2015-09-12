@@ -42,7 +42,7 @@
 <head>
 	<title><s:text name="revisionEstimate.search.title" /></title>
 </head>
-<script src="<egov:url path='js/works.js'/>"></script> 
+<script src="<egov:url path='resources/js/works.js'/>"></script>
 <script>
 
 function validateSearch() {	
