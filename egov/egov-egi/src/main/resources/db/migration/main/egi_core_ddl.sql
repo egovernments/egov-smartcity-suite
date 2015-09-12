@@ -129,58 +129,6 @@ ALTER TABLE ONLY eg_script ADD CONSTRAINT eg_script_pkey PRIMARY KEY (id);
 -------------------END-------------------
 
 ------------------START------------------
-CREATE TABLE eg_rules (
-    id bigint NOT NULL,
-    name character varying(50),
-    defaultvalue character varying(50),
-    minrange bigint,
-    maxrange bigint,
-    updatedtime timestamp without time zone,
-    type character varying(30),
-    active bigint,
-    included smallint,
-    excluded smallint
-);
-CREATE SEQUENCE seq_eg_rules
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_rules ADD CONSTRAINT eg_rules_name_key UNIQUE (name);
-ALTER TABLE ONLY eg_rules ADD CONSTRAINT eg_rules_pkey PRIMARY KEY (id);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE eg_rulegroup (
-    id bigint NOT NULL,
-    name character varying(50) NOT NULL,
-    updatedtime timestamp without time zone,
-    roleid bigint NOT NULL
-);
-CREATE SEQUENCE seq_eg_rulegroup
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_rulegroup ADD CONSTRAINT eg_rulegroup_name_key UNIQUE (name);
-ALTER TABLE ONLY eg_rulegroup ADD CONSTRAINT eg_rulegroup_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY eg_rgrule_map ADD CONSTRAINT fkrule FOREIGN KEY (ruleid) REFERENCES eg_rules(id); 
-ALTER TABLE ONLY eg_rgrule_map ADD CONSTRAINT fkrulegroup FOREIGN KEY (rulegroupid) REFERENCES eg_rulegroup(id); 
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE eg_actionrg_map (
-    actionid bigint NOT NULL,
-    rulegroupid bigint NOT NULL
-);
-ALTER TABLE ONLY eg_actionrg_map ADD CONSTRAINT eg_actionrg_map_rulegroupid_key UNIQUE (rulegroupid);
-ALTER TABLE ONLY eg_actionrg_map ADD CONSTRAINT fkaction FOREIGN KEY (actionid) REFERENCES eg_action(id); 
-ALTER TABLE ONLY eg_actionrg_map ADD CONSTRAINT fkrg FOREIGN KEY (rulegroupid) REFERENCES eg_rulegroup(id);
--------------------END-------------------
-
-------------------START------------------
 CREATE TABLE eg_address (
     housenobldgapt character varying(32),
     subdistrict character varying(100),
@@ -280,18 +228,7 @@ CREATE SEQUENCE seq_eg_applicationindex
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE eg_authorization_rule (
-    id bigint NOT NULL,
-    actionid bigint,
-    object_type character varying(256),
-    scriptid bigint
-);
-ALTER TABLE ONLY eg_authorization_rule ADD CONSTRAINT eg_authorization_rule_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY eg_authorization_rule ADD CONSTRAINT fk_auth_actionid FOREIGN KEY (actionid) REFERENCES eg_action(id);
-ALTER TABLE ONLY eg_authorization_rule ADD CONSTRAINT fk_scriptid_auth FOREIGN KEY (scriptid) REFERENCES eg_script(id);
+ALTER TABLE ONLY eg_applicationindex ADD CONSTRAINT eg_applicationindex_pkey PRIMARY KEY (id);
 -------------------END-------------------
 
 ------------------START------------------
@@ -372,26 +309,8 @@ CREATE SEQUENCE seq_eg_boundary
     NO MAXVALUE
     CACHE 1;
 ALTER TABLE ONLY eg_boundary ADD CONSTRAINT eg_boundary_pkey PRIMARY KEY (id);
-CREATE INDEX indx_eb_bndrytypeid ON eg_boundary USING btree (boundarytype);
 ALTER TABLE ONLY eg_boundary ADD CONSTRAINT bndry_type_fk FOREIGN KEY (boundarytype) REFERENCES eg_boundary_type(id); 
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE eg_checklists (
-    id bigint NOT NULL,
-    appconfig_values_id bigint NOT NULL,
-    checklistvalue character varying(5) NOT NULL,
-    object_id bigint NOT NULL,
-    lastmodifieddate timestamp without time zone
-);
-CREATE SEQUENCE seq_eg_checklists
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_checklists ADD CONSTRAINT eg_checklists_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY eg_checklists ADD CONSTRAINT fk_eg_checklist_appconfig FOREIGN KEY (appconfig_values_id) REFERENCES eg_appconfig_values(id);
+CREATE INDEX indx_eb_bndrytypeid ON eg_boundary USING btree (boundarytype);
 -------------------END-------------------
 
 ------------------START------------------
@@ -422,7 +341,6 @@ CREATE SEQUENCE seq_eg_citypreferences
 ALTER TABLE ONLY eg_citypreferences ADD CONSTRAINT eg_citypreferences_pkey PRIMARY KEY (id);
 ALTER TABLE ONLY eg_citypreferences ADD CONSTRAINT eg_citypreferences_giskml_fkey FOREIGN KEY (giskml) REFERENCES eg_filestoremap(id); 
 ALTER TABLE ONLY eg_citypreferences ADD CONSTRAINT eg_citypreferences_logo_fkey FOREIGN KEY (municipalitylogo) REFERENCES eg_filestoremap(id);
-ALTER TABLE ONLY eg_city ADD CONSTRAINT fk_preference FOREIGN KEY (preferences) REFERENCES eg_citypreferences(id) MATCH FULL;
 -------------------END-------------------
 
 ------------------START------------------
@@ -432,7 +350,6 @@ CREATE TABLE eg_city (
     name character varying(256) NOT NULL,
     localname character varying(256),
     id bigint NOT NULL,
-    logo character varying(100),
     active boolean,
     version bigint,
     createdby numeric,
@@ -454,8 +371,9 @@ CREATE SEQUENCE seq_eg_city
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-ALTER TABLE ONLY eg_city ADD CONSTRAINT eg_city_website_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY eg_city ADD CONSTRAINT eg_city_pkey PRIMARY KEY (id);
 ALTER TABLE ONLY eg_city ADD CONSTRAINT fk_bdr_cw FOREIGN KEY (boundary) REFERENCES eg_boundary(id);
+ALTER TABLE ONLY eg_city ADD CONSTRAINT fk_preference FOREIGN KEY (preferences) REFERENCES eg_citypreferences(id) MATCH FULL;
 -------------------END-------------------
 
 ------------------START------------------
@@ -546,7 +464,7 @@ ALTER TABLE ONLY eg_device ADD CONSTRAINT eg_device_pkey PRIMARY KEY (id);
 
 ------------------START------------------
 CREATE TABLE eg_favourites (
-    id bigint,
+    id bigint NOT NULL,
     userid bigint,
     actionid bigint,
     name character varying(100),
@@ -559,6 +477,7 @@ CREATE SEQUENCE seq_eg_favourites
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
+ALTER TABLE ONLY eg_favourites ADD CONSTRAINT eg_favourites_pkey PRIMARY KEY (id);
 -------------------END-------------------
 
 ------------------START------------------
@@ -580,48 +499,10 @@ ALTER TABLE ONLY eg_identityrecovery ADD CONSTRAINT eg_identityrecovery_token_ke
 -------------------END-------------------
 
 ------------------START------------------
-CREATE TABLE eg_location (
-    id bigint NOT NULL,
-    name character varying(50) NOT NULL,
-    description character varying(100),
-    locationid bigint,
-    createddate timestamp without time zone,
-    lastmodifieddate timestamp without time zone,
-    isactive smallint,
-    islocation smallint
-);
-CREATE SEQUENCE seq_eg_location
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_location ADD CONSTRAINT eg_location_pkey PRIMARY KEY (id);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE eg_location_ipmap (
-    id bigint NOT NULL,
-    locationid bigint NOT NULL,
-    ipaddress character varying(150) NOT NULL
-);
-CREATE SEQUENCE seq_eg_location_ipmap
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER TABLE ONLY eg_location_ipmap ADD CONSTRAINT eg_location_ipmap_ipaddress_key UNIQUE (ipaddress);
-ALTER TABLE ONLY eg_location_ipmap ADD CONSTRAINT eg_location_ipmap_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY eg_location_ipmap ADD CONSTRAINT fk_location_id FOREIGN KEY (locationid) REFERENCES eg_location(id); 
--------------------END-------------------
-
-------------------START------------------
 CREATE TABLE eg_messagetemplate (
     id numeric NOT NULL,
-    templatename character varying(100),
-    template character varying,
+    templatename character varying(100) NOT NULL,
+    template character varying NOT NULL,
     locale character varying(10),
     version bigint
 );
@@ -643,7 +524,7 @@ CREATE TABLE eg_number_generic (
     value bigint NOT NULL,
     updatedtimestamp timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL
 );
---obsulete
+--obsolete
 CREATE SEQUENCE seq_eg_number_generic
     START WITH 1
     INCREMENT BY 1
@@ -660,7 +541,7 @@ CREATE TABLE eg_numbers (
     month bigint
 );
 
---obsulete
+--obsolete
 CREATE SEQUENCE seq_eg_numbers
     START WITH 1
     INCREMENT BY 1
@@ -700,28 +581,13 @@ ALTER TABLE ONLY eg_role ADD CONSTRAINT eg_roles_role_name_key UNIQUE (name);
 
 ------------------START------------------
 CREATE TABLE eg_roleaction (
-    roleid bigint,
-    actionid bigint
+    roleid bigint NOT NULL,
+    actionid bigint NOT NULL
 );
 CREATE INDEX indx_eram_actionid ON eg_roleaction USING btree (actionid);
 CREATE INDEX indx_eram_roleid ON eg_roleaction USING btree (roleid);
 ALTER TABLE ONLY eg_roleaction ADD CONSTRAINT fk_action_id FOREIGN KEY (actionid) REFERENCES eg_action(id); 
 ALTER TABLE ONLY eg_roleaction ADD CONSTRAINT fk_role_id FOREIGN KEY (roleid) REFERENCES eg_role(id);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE eg_ruletype (
-    id bigint NOT NULL,
-    name character varying(50),
-    updatedtime timestamp without time zone
-);
-CREATE SEQUENCE seq_eg_ruletype
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_ruletype ADD CONSTRAINT eg_ruletype_pkey PRIMARY KEY (id);
 -------------------END-------------------
 
 ------------------START------------------
@@ -741,18 +607,6 @@ CREATE SEQUENCE seq_eg_systemaudit
     NO MAXVALUE
     CACHE 1;
 ALTER TABLE ONLY eg_systemaudit ADD CONSTRAINT eg_systemaudit_pkey PRIMARY KEY (id);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE eg_terminal (
-    id bigint NOT NULL,
-    terminal_name character varying(16),
-    ip_address character varying(16),
-    terminal_desc character varying(64)
-);
-ALTER TABLE ONLY eg_terminal ADD CONSTRAINT eg_terminal_ip_address_key UNIQUE (ip_address);
-ALTER TABLE ONLY eg_terminal ADD CONSTRAINT eg_terminal_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY eg_terminal ADD CONSTRAINT eg_terminal_terminal_name_key UNIQUE (terminal_name);
 -------------------END-------------------
 
 ------------------START------------------
@@ -776,29 +630,6 @@ CREATE SEQUENCE seq_eg_token
     CACHE 1;
 ALTER TABLE ONLY eg_token ADD CONSTRAINT pk_token PRIMARY KEY (id);
 CREATE INDEX idx_token_number ON eg_token USING btree (tokennumber);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE eg_usercounter_map (
-    id bigint NOT NULL,
-    userid bigint NOT NULL,
-    counterid bigint NOT NULL,
-    fromdate timestamp without time zone NOT NULL,
-    todate timestamp without time zone,
-    modifiedby bigint NOT NULL,
-    modifieddate timestamp without time zone NOT NULL
-);
-CREATE SEQUENCE seq_eg_usercounter_map
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_usercounter_map ADD CONSTRAINT eg_usercounter_map_pkey PRIMARY KEY (id);
-CREATE INDEX indx_eucm_counterid ON eg_usercounter_map USING btree (counterid);
-CREATE INDEX indx_eucm_userid ON eg_usercounter_map USING btree (userid);
-ALTER TABLE ONLY eg_usercounter_map ADD CONSTRAINT fk_mapcounterid FOREIGN KEY (counterid) REFERENCES eg_location(id); 
-ALTER TABLE ONLY eg_usercounter_map ADD CONSTRAINT fk_mapuserid FOREIGN KEY (userid) REFERENCES eg_user(id);
 -------------------END-------------------
 
 ------------------START------------------

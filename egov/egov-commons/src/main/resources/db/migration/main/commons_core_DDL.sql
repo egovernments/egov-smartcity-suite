@@ -1,3 +1,94 @@
+
+------------------START------------------
+CREATE TABLE eg_authorization_rule (
+    id bigint NOT NULL,
+    actionid bigint,
+    object_type character varying(256),
+    scriptid bigint
+);
+ALTER TABLE ONLY eg_authorization_rule ADD CONSTRAINT eg_authorization_rule_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY eg_authorization_rule ADD CONSTRAINT fk_auth_actionid FOREIGN KEY (actionid) REFERENCES eg_action(id);
+ALTER TABLE ONLY eg_authorization_rule ADD CONSTRAINT fk_scriptid_auth FOREIGN KEY (scriptid) REFERENCES eg_script(id);
+-------------------END-------------------
+
+------------------START------------------
+CREATE TABLE eg_checklists (
+    id bigint NOT NULL,
+    appconfig_values_id bigint NOT NULL,
+    checklistvalue character varying(5) NOT NULL,
+    object_id bigint NOT NULL,
+    lastmodifieddate timestamp without time zone
+);
+CREATE SEQUENCE seq_eg_checklists
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER TABLE ONLY eg_checklists ADD CONSTRAINT eg_checklists_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY eg_checklists ADD CONSTRAINT fk_eg_checklist_appconfig FOREIGN KEY (appconfig_values_id) REFERENCES eg_appconfig_values(id);
+-------------------END-------------------
+
+------------------START------------------
+CREATE TABLE eg_location (
+    id bigint NOT NULL,
+    name character varying(50) NOT NULL,
+    description character varying(100),
+    locationid bigint,
+    createddate timestamp without time zone,
+    lastmodifieddate timestamp without time zone,
+    isactive smallint,
+    islocation smallint
+);
+CREATE SEQUENCE seq_eg_location
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER TABLE ONLY eg_location ADD CONSTRAINT eg_location_pkey PRIMARY KEY (id);
+-------------------END-------------------
+
+------------------START------------------
+CREATE TABLE eg_location_ipmap (
+    id bigint NOT NULL,
+    locationid bigint NOT NULL,
+    ipaddress character varying(150) NOT NULL
+);
+CREATE SEQUENCE seq_eg_location_ipmap
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER TABLE ONLY eg_location_ipmap ADD CONSTRAINT eg_location_ipmap_ipaddress_key UNIQUE (ipaddress);
+ALTER TABLE ONLY eg_location_ipmap ADD CONSTRAINT eg_location_ipmap_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY eg_location_ipmap ADD CONSTRAINT fk_location_id FOREIGN KEY (locationid) REFERENCES eg_location(id); 
+-------------------END-------------------
+
+------------------START------------------
+CREATE TABLE eg_usercounter_map (
+    id bigint NOT NULL,
+    userid bigint NOT NULL,
+    counterid bigint NOT NULL,
+    fromdate timestamp without time zone NOT NULL,
+    todate timestamp without time zone,
+    modifiedby bigint NOT NULL,
+    modifieddate timestamp without time zone NOT NULL
+);
+CREATE SEQUENCE seq_eg_usercounter_map
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER TABLE ONLY eg_usercounter_map ADD CONSTRAINT eg_usercounter_map_pkey PRIMARY KEY (id);
+CREATE INDEX indx_eucm_counterid ON eg_usercounter_map USING btree (counterid);
+CREATE INDEX indx_eucm_userid ON eg_usercounter_map USING btree (userid);
+ALTER TABLE ONLY eg_usercounter_map ADD CONSTRAINT fk_mapcounterid FOREIGN KEY (counterid) REFERENCES eg_location(id); 
+ALTER TABLE ONLY eg_usercounter_map ADD CONSTRAINT fk_mapuserid FOREIGN KEY (userid) REFERENCES eg_user(id);
+-------------------END-------------------
+
 ------------------START-------------------
 CREATE TABLE accountdetailkey (
     id bigint NOT NULL,
@@ -1701,16 +1792,6 @@ CREATE SEQUENCE seq_eg_entity
 ALTER TABLE ONLY eg_entity ADD CONSTRAINT eg_entity_name_key UNIQUE (name);
 ALTER TABLE ONLY eg_entity ADD CONSTRAINT eg_entity_pkey PRIMARY KEY (id);
 
-CREATE TABLE eg_ielist (
-    id bigint NOT NULL,
-    ruleid bigint NOT NULL,
-    value character varying(40) NOT NULL,
-    type character(1) NOT NULL,
-    updatedtime timestamp without time zone
-);
-ALTER TABLE ONLY eg_ielist ADD CONSTRAINT eg_ielist_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY eg_ielist ADD CONSTRAINT fkruleid FOREIGN KEY (ruleid) REFERENCES eg_rules(id); 
-
 CREATE TABLE eg_remittance (
     id bigint NOT NULL,
     tdsid bigint NOT NULL,
@@ -1765,12 +1846,6 @@ CREATE SEQUENCE seq_eg_remittance_gldtl
     NO MAXVALUE
     CACHE 1;
 ALTER TABLE ONLY eg_remittance_gldtl ADD CONSTRAINT eg_remittance_gldtl_pkey PRIMARY KEY (id);
-
-CREATE TABLE eg_rgrule_map (
-    rulegroupid bigint NOT NULL,
-    ruleid bigint NOT NULL
-);
-ALTER TABLE ONLY eg_rgrule_map ADD CONSTRAINT eg_rgrule_map_ruleid_key UNIQUE (ruleid);
 
 CREATE TABLE eg_surrendered_cheques (
     id bigint NOT NULL,
