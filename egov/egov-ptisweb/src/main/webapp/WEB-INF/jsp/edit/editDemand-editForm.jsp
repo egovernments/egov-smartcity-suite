@@ -52,17 +52,16 @@
 		jQuery("#loadingMask").remove();
 	    var newInstallmentCount = 0;
 	    var instDetailsRowIndex = 2;
-	    var newDemandRsnsCount = 6;	    
+	    var newDemandRsnsCount = 4;	    
 	    var lastIndex;
 	    var lastIndexOnError;
-	    var noOfDemandRsns = 6;
+	    var noOfDemandRsns = 4;
 	    var isFirstInstVisible = true;
 		
 	    function addNewInstallment() {
 			var rowIndex = document.getElementById("newInstallmentRow").rowIndex;
 			var trClones = new Array();
 			var instDetailsTable = document.getElementById("instDetails");
-			
 			if (newInstallmentCount == 0) {
 				for (var i = 0; i < noOfDemandRsns; i++) {
 					var row = instDetailsTable.rows[i+instDetailsRowIndex];
@@ -166,7 +165,7 @@
 		function assignInstallmentId(obj, id) {
 			var instDetailsTable = document.getElementById("instDetails");
 			var selRowIndex = obj.parentNode.parentNode.parentNode.rowIndex;
-			for (var i = 1; i <= 7; i++) {
+			for (var i = 1; i <= 5; i++) {
 				var row = instDetailsTable.rows[i+selRowIndex];
 				row.cells[0].childNodes[1].childNodes[1].setAttribute("value", id);
 			}
@@ -339,7 +338,7 @@
 										<s:set value="0" var="count" />						
 										<s:set value="#listSize" var="j" />
 										<%-- j is the each new installment start index --%>
-										<s:set value="%{#j - 6}" var="j" />
+										<s:set value="%{#j - 4}" var="j" />
 										<%-- idx index value for the installmentss demand reason --%>
 										<s:set value="%{#j}" var="idx" />
 										
@@ -414,9 +413,9 @@
 													<div align="center">N/A</div>
 												</td>
 											</tr>
-											<s:if test="%{#count == 6}" >
+											<s:if test="%{#count == 4}" >
 												<s:set value="0" var="count" />
-												<s:set value="%{#j - 7}" var="j" />
+												<s:set value="%{#j - 5}" var="j" />
 												<s:set value="#j" var="idx" />
 											</s:if>
 											<s:else>

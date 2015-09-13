@@ -56,6 +56,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -163,8 +164,6 @@ public class EditDemandAction extends BaseFormAction {
     private BasicProperty basicProperty;
     private PropertyService propService;
     private DCBDisplayInfo dcbDispInfo;
-    private DCBService dcbService;
-    private DCBReport dcbReport;
 
     @Autowired
     private InstallmentDao installmentDAO;
@@ -186,7 +185,8 @@ public class EditDemandAction extends BaseFormAction {
     @SuppressWarnings("unchecked")
     @SkipValidation
     public void prepare() {
-        LOGGER.debug("Entered into prepare");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into prepare");
 
         basicProperty = (BasicProperty) getPersistenceService().findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO,
                 propertyId);
@@ -212,13 +212,15 @@ public class EditDemandAction extends BaseFormAction {
 
         addDropdownData("allInstallments", allInstallments);
 
-        LOGGER.debug("Exiting from prepare");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exiting from prepare");
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void validate() {
-        LOGGER.debug("Entered into validate");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into validate");
 
         // Set<String> instDemandRsn = new LinkedHashSet<String>();
         Set<Installment> newInstallments = new TreeSet<Installment>();
@@ -301,151 +303,98 @@ public class EditDemandAction extends BaseFormAction {
         if (StringUtils.isBlank(remarks)) {
             addActionError(getText("mandatory.editDmdCollRemarks"));
         }
-        LOGGER.debug("Exiting from validate");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exiting from validate");
     }
 
     @SuppressWarnings("unchecked")
     @SkipValidation
     @Action(value = "/editDemand-newEditForm")
     public String newEditForm() {
-        LOGGER.debug("Entered into newEditForm");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into newEditForm");
         String resultPage = "";
 
-        /*
-         * if (basicProperty != null &&
-         * !basicProperty.getSource().equals(PropertyTaxConstants
-         * .SOURCEOFDATA_APPLICATION)) {
-         * setErrorMessage(MSG_ERROR_NOT_MIGRATED_PROPERTY); resultPage =
-         * RESULT_ERROR; } else {
-         */
-        ownerName = basicProperty.getFullOwnerName();
-        propertyAddress = basicProperty.getAddress().toString();
-
-        demandDetails = getPersistenceService().findAllBy(queryInstallmentDemandDetails, basicProperty,
-                propertyTaxUtil.getCurrentInstallment());
-
-        /*
-         * if (demandDetails.isEmpty()) {
-         * setErrorMessage(MSG_ERROR_EDITDEMAND_NOTALLOWED); return
-         * RESULT_ERROR; }
-         */
-
-        /*
-         * Collections.sort(demandDetails, new Comparator<EgDemandDetails>() {
-         * @Override public int compare(EgDemandDetails o1, EgDemandDetails o2)
-         * { return o1.getEgDemandReason().getEgInstallmentMaster()
-         * .compareTo(o2.getEgDemandReason().getEgInstallmentMaster()); } });
-         */
-
-        PropertyTaxBillable billable = new PropertyTaxBillable();
-        billable.setBasicProperty(basicProperty);
-        dcbService = new DCBServiceImpl(billable);
-        /*
-         * prepareDisplayInfo(); dcbReport =
-         * dcbService.getCurrentDCBAndReceipts(dcbDispInfo); Set<String>
-         * receiptNumbers = new HashSet<String>(); for (Map.Entry<Installment,
-         * List<Receipt>> entry : dcbReport.getReceipts().entrySet()) { for
-         * (Receipt receipt : entry.getValue()) { if (receiptNumbers.isEmpty()
-         * || !receiptNumbers.contains(receipt.getReceiptNumber())) {
-         * receiptNumbers.add(receipt.getReceiptNumber()); for (ReceiptDetail
-         * receiptDetail : receipt.getReceiptDetails()) { if
-         * (collectionDetails.get(receiptDetail.getInstallment()) == null &&
-         * receiptDetail.getAmount() != null &&
-         * receiptDetail.getAmount().compareTo(BigDecimal.ZERO) > 0) {
-         * Map<String, Boolean> reasonCodeAndViewStatus = new HashMap<String,
-         * Boolean>();
-         * reasonCodeAndViewStatus.put(receiptDetail.getReasonCode(), true);
-         * collectionDetails.put(receiptDetail.getInstallment(),
-         * reasonCodeAndViewStatus); } else {
-         * collectionDetails.get(receiptDetail.getInstallment()).put(
-         * receiptDetail.getReasonCode(), true); } } } } }
-         * LOGGER.info("newEditForm - collectionDetails=" + collectionDetails);
-         */
-        Boolean isInstallmentExists = false;
-        Map<Installment, List<String>> installmentDemandReason = new HashMap<Installment, List<String>>();
-
-        if (!demandDetails.isEmpty()) {
-            for (EgDemandDetails demandDetail : demandDetails) {
-                Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
-                String reasonMaster = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
-
-                if (installmentDemandReason.get(installment) == null) {
-                    List<String> rsns = new ArrayList<String>();
-                    rsns.add(reasonMaster);
-                    installmentDemandReason.put(installment, rsns);
-                } else {
-                    installmentDemandReason.get(installment).add(reasonMaster);
-                }
-
-                isInstallmentExists = propertyInstallments.add(installment);
-
-                if (isInstallmentExists && !demandDetailBeanList.isEmpty()) {
-                    Installment prevInstallment = demandDetailBeanList.get(demandDetailBeanList.size() - 1)
-                            .getInstallment();
-                    if (!installmentDemandReason.get(prevInstallment).contains(DEMANDRSN_STR_CHQ_BOUNCE_PENALTY)) {
-                        DemandDetail dmdDtl = createDemandDetailBean(prevInstallment, DEMANDRSN_STR_CHQ_BOUNCE_PENALTY,
-                                null, null, true);
-                        demandDetailBeanList.add(dmdDtl);
-                    }
-                }
-
-                DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster, demandDetail.getAmount(),
-                        demandDetail.getAmtCollected(), false);
-                demandDetailBeanList.add(dmdDtl);
-            }
+        if (basicProperty != null && !basicProperty.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_DATAENTRY)) {
+            setErrorMessage(MSG_ERROR_NOT_MIGRATED_PROPERTY);
+            resultPage = RESULT_ERROR;
         } else {
-            for (Map.Entry<String, String> entry : DMDRSN_CODE_MAP.entrySet()) {
-                DemandDetail dmdDtl = createDemandDetailBean(null, entry.getKey(), null, null, true);
-                demandDetailBeanList.add(dmdDtl);
+            ownerName = basicProperty.getFullOwnerName();
+            propertyAddress = basicProperty.getAddress().toString();
+            demandDetails = getPersistenceService().findAllBy(queryInstallmentDemandDetails, basicProperty,
+                    propertyTaxUtil.getCurrentInstallment());
+
+            if (demandDetails.isEmpty()) {
+                Collections.sort(demandDetails, new Comparator<EgDemandDetails>() {
+                    @Override
+                    public int compare(EgDemandDetails o1, EgDemandDetails o2) {
+                        return o1.getEgDemandReason().getEgInstallmentMaster()
+                                .compareTo(o2.getEgDemandReason().getEgInstallmentMaster());
+                    }
+                });
             }
+
+            PropertyTaxBillable billable = new PropertyTaxBillable();
+            billable.setBasicProperty(basicProperty);
+            Boolean isInstallmentExists = false;
+            Map<Installment, List<String>> installmentDemandReason = new HashMap<Installment, List<String>>();
+
+            if (!demandDetails.isEmpty()) {
+                for (EgDemandDetails demandDetail : demandDetails) {
+                    Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
+                    String reasonMaster = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
+
+                    if (installmentDemandReason.get(installment) == null) {
+                        List<String> rsns = new ArrayList<String>();
+                        rsns.add(reasonMaster);
+                        installmentDemandReason.put(installment, rsns);
+                    } else {
+                        installmentDemandReason.get(installment).add(reasonMaster);
+                    }
+
+                    DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster, demandDetail.getAmount(),
+                            demandDetail.getAmtCollected(), false);
+                    demandDetailBeanList.add(dmdDtl);
+                }
+            } else {
+                for (Map.Entry<String, String> entry : DMDRSN_CODE_MAP.entrySet()) {
+                    DemandDetail dmdDtl = createDemandDetailBean(null, entry.getKey(), null, null, true);
+                    demandDetailBeanList.add(dmdDtl);
+                }
+            }
+
+            Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
+            resultPage = RESULT_NEW;
         }
 
-        Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
-        /*
-         * if (!installmentDemandReason.get(currentInstallment).contains(
-         * DEMANDRSN_STR_CHQ_BOUNCE_PENALTY)) {
-         */
-        /*
-         * DemandDetail dmdDtl = createDemandDetailBean(currentInstallment,
-         * DEMANDRSN_STR_CHQ_BOUNCE_PENALTY, null, null, true);
-         * demandDetailBeanList.add(dmdDtl);
-         */
-        /* } */
-
-        resultPage = RESULT_NEW;
-        // }
-
         allInstallments.removeAll(propertyInstallments);
-
         addDropdownData("allInstallments", allInstallments);
 
-        LOGGER.debug("Exiting from newEditForm");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exiting from newEditForm");
 
         return resultPage;
     }
 
     private DemandDetail createDemandDetailBean(Installment installment, String reasonMaster, BigDecimal amount,
             BigDecimal amountCollected, Boolean isNew) {
-        LOGGER.debug("Entered into createDemandDetailBean");
-        LOGGER.debug("createDemandDetailBean - installment=" + installment + ", reasonMaster=" + reasonMaster
-                + ", amount=" + amount + ", amountCollected=" + amountCollected);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into createDemandDetailBean");
+            LOGGER.debug("createDemandDetailBean - installment=" + installment + ", reasonMaster=" + reasonMaster
+                    + ", amount=" + amount + ", amountCollected=" + amountCollected);
+        }
 
         DemandDetail demandDetail = new DemandDetail();
         demandDetail.setInstallment(installment);
         demandDetail.setReasonMaster(reasonMaster);
         demandDetail.setActualAmount(amount);
         demandDetail.setActualCollection(amountCollected);
-        // If there is collection detail for the reasonMaster (means
-        // collected via eGov Collection System)
-        // then disabling the edit collection
-        if (!collectionDetails.isEmpty())
-            demandDetail.setIsCollectionEditable(collectionDetails.get(installment) == null ? true : collectionDetails
-                    .get(installment).get(DMDRSN_CODE_MAP.get(reasonMaster)) == null ? true : collectionDetails.get(
-                    installment).get(DMDRSN_CODE_MAP.get(reasonMaster)) ? false : true);
-
+        demandDetail.setIsCollectionEditable(true);
         demandDetail.setIsNew(isNew);
 
-        LOGGER.debug("createDemandDetailBean - demandDetail= " + demandDetail + "\nExiting from createDemandDetailBean");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("createDemandDetailBean - demandDetail= " + demandDetail
+                    + "\nExiting from createDemandDetailBean");
         return demandDetail;
     }
 
@@ -459,22 +408,26 @@ public class EditDemandAction extends BaseFormAction {
     @SkipValidation
     private void prepareDisplayInfo() {
 
-        LOGGER.debug("Entered into method prepareDisplayInfo");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into method prepareDisplayInfo");
         dcbDispInfo = new DCBDisplayInfo();
         dcbDispInfo.setReasonCategoryCodes(Collections.<String> emptyList());
         List<String> reasonList = new ArrayList<String>();
         reasonList.addAll(DEMAND_REASON_ORDER_MAP.keySet());
         dcbDispInfo.setReasonMasterCodes(reasonList);
-        LOGGER.debug("DCB Display Info : " + dcbDispInfo);
-        LOGGER.debug("Number of Demand Reasons : " + (reasonList != null ? reasonList.size() : ZERO));
-        LOGGER.debug("Exit from method prepareDisplayInfo");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("DCB Display Info : " + dcbDispInfo);
+            LOGGER.debug("Number of Demand Reasons : " + (reasonList != null ? reasonList.size() : ZERO));
+            LOGGER.debug("Exit from method prepareDisplayInfo");
+        }
     }
 
     @SuppressWarnings("unchecked")
     @ValidationErrorPage(value = RESULT_NEW)
     @Action(value = "/editDemand-update")
     public String update() {
-        LOGGER.info("Entered into update, basicProperty=" + basicProperty);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.info("Entered into update, basicProperty=" + basicProperty);
 
         boolean isAllRevisedTaxesBlank = true;
         boolean isAllRevisedCollectionsBlank = true;
@@ -588,11 +541,12 @@ public class EditDemandAction extends BaseFormAction {
 
                     if (dmdDetail.getRevisedAmount() != null
                             && dmdDetail.getInstallment().equals(ddFromDB.getEgDemandReason().getEgInstallmentMaster())
-                            && ddFromDB.getEgDemandReason()
+                            && ddFromDB
+                                    .getEgDemandReason()
                                     .getEgDemandReasonMaster()
                                     .getCode()
                                     .equalsIgnoreCase(
-                                            PropertyTaxConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster().toUpperCase()))) {
+                                            PropertyTaxConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster()))) {
 
                         isUpdateAmount = true;
                         buildAuditLog(installmentTaxEdits, ddFromDB.getEgDemandReason().getEgInstallmentMaster(),
@@ -607,7 +561,7 @@ public class EditDemandAction extends BaseFormAction {
                                     .getEgDemandReasonMaster()
                                     .getCode()
                                     .equalsIgnoreCase(
-                                            PropertyTaxConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster().toUpperCase()))) {
+                                            PropertyTaxConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster()))) {
 
                         Installment inst = (Installment) installmentDAO.findById(dmdDetail.getInstallment().getId(),
                                 false);
@@ -801,7 +755,8 @@ public class EditDemandAction extends BaseFormAction {
 
     public void buildAuditLog(Map<Installment, String> installmentEdits, Installment installment, String reasonCode,
             BigDecimal actualAmount, BigDecimal revisedAmount) {
-        LOGGER.debug("Entered into buildAuditLog");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into buildAuditLog");
 
         // amountEdits = TAX_NAME | OLD_TAX | NEW_TAX |
         String amountEdits = reasonCode.concat(STRING_VALUE_SEP).concat(actualAmount.toString())
@@ -821,7 +776,8 @@ public class EditDemandAction extends BaseFormAction {
             }
         }
 
-        LOGGER.debug("Exiting from buildAuditLog");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exiting from buildAuditLog");
     }
 
     public Map<Installment, Set<EgDemandDetails>> getEgDemandDetailsSetByInstallment(List<EgDemandDetails> demandDtls) {

@@ -52,8 +52,7 @@
 					value="%{demandDetailBeanList[#demandInfoStatus.index].installment.id}"
 					name="demandDetailBeanList[%{#demandInfoStatus.index}].installment.id" />
 			<s:hidden name="demandDetailBeanList[%{#demandInfoStatus.index}].isNew" value="%{demandDetailBeanList[#demandInfoStatus.index].isNew}"/>
-			<s:if
-				test="#demandInfoStatus.index > 0 && demandDetailBeanList[#demandInfoStatus.index].installment == demandDetailBeanList[#demandInfoStatus.index - 1].installment">
+			<s:if test="{#demandInfoStatus.index > 0 && demandDetailBeanList[#demandInfoStatus.index].installment == demandDetailBeanList[#demandInfoStatus.index - 1].installment}">
 					&nbsp;
 				</s:if>
 			<s:else>

@@ -414,11 +414,11 @@ public interface PropertyTaxConstants {
     public static final String DEMANDRSN_CODE_RECOVERY_FEE = "RECOVERY_FEE";
 
     // Demand Reason master Strings
-    public static final String DEMANDRSN_STR_GENERAL_TAX = "GENERAL TAX";
+    public static final String DEMANDRSN_STR_GENERAL_TAX = "General Tax";
     public static final String DEMANDRSN_STR_VACANT_TAX = "VACANT LAND TAX";
-    public static final String DEMANDRSN_STR_LIBRARY_CESS = "LIBRARY CESS";
-    public static final String DEMANDRSN_STR_EDUCATIONAL_CESS = "EDUCATION CESS";
-    public static final String DEMANDRSN_STR_UNAUTHORIZED_PENALTY = "UNAUTHORIZED PENALTY";
+    public static final String DEMANDRSN_STR_LIBRARY_CESS = "Library Cess";
+    public static final String DEMANDRSN_STR_EDUCATIONAL_CESS = "Education Cess";
+    public static final String DEMANDRSN_STR_UNAUTHORIZED_PENALTY = "Unauthorized Penalty";
     public static final String DEMANDRSN_STR_CHQ_BOUNCE_PENALTY = "CHEQUE BOUNCE PENALTY";
     public static final String DEMANDRSN_STR_PENALTY_FINES = "PENALTY_FINES";
     public static final String DEMANDRSN_STR_ADVANCE = "ADVANCE";
@@ -716,8 +716,6 @@ public interface PropertyTaxConstants {
             put(DEMANDRSN_STR_LIBRARY_CESS, DEMANDRSN_CODE_LIBRARY_CESS);
             put(DEMANDRSN_STR_EDUCATIONAL_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS);
             put(DEMANDRSN_STR_UNAUTHORIZED_PENALTY, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
-            put(DEMANDRSN_STR_CHQ_BOUNCE_PENALTY, DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY);
-            put(DEMANDRSN_STR_PENALTY_FINES, DEMANDRSN_CODE_PENALTY_FINES);
         }
     };
 
