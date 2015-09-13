@@ -116,10 +116,6 @@
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 
-	<bean id="boundaryTypeDAO" class="org.egov.lib.admbndry.BoundaryTypeDAO" scope="prototype" >
-		<constructor-arg ref="sessionFactory" />
-	</bean>
-
 	<bean id="bankAccountDao" class="org.egov.commons.dao.BankaccountDAO">
 		<constructor-arg ref="sessionFactory" />
 	</bean>

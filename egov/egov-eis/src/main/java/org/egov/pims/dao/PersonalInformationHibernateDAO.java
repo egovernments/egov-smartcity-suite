@@ -54,16 +54,16 @@ import org.apache.log4j.Logger;
 import org.egov.eis.entity.Jurisdiction;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.exception.TooManyValuesException;
 import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.lib.admbndry.BoundaryDAO;
-import org.egov.lib.admbndry.BoundaryTypeDAO;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -80,8 +80,9 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 	private static final Logger LOGGER = Logger.getLogger(PersonalInformationHibernateDAO.class); 
 	
 	private final static String STR_CURRDATE= "currDate";
-	private BoundaryDAO boundaryDAO;
-	private BoundaryTypeDAO boundaryTypeDAO;
+	
+	@Autowired
+	private BoundaryService boundaryService;
 	
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -184,7 +185,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 	public List getListOfUsersByBoundaryId(Long boundaryId) throws NoSuchObjectException
 	{
 		List userObjList = new ArrayList();
-		List bndryObjList = boundaryTypeDAO.getParentBoundaryList(boundaryId);
+		List bndryObjList = boundaryService.getParentBoundariesByBoundaryId(boundaryId);
 		Date currDate =new Date();
 		if(!bndryObjList.isEmpty())
 		{
@@ -219,9 +220,9 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 		List bndryObjList = new ArrayList();	
 			
 		//get All Children of given boundary
-		bndryObjList = boundaryDAO.getAllchildBoundaries(boundaryId);
+		bndryObjList = boundaryService.getChildBoundariesByBoundaryId(boundaryId);
 		//Add parent boundary
-		Boundary bnd = boundaryDAO.getBoundary(boundaryId);
+		Boundary bnd = boundaryService.getBoundaryById(boundaryId);
 		if(bnd != null)
 			bndryObjList.add(bnd);
 		Date currDate =new Date();

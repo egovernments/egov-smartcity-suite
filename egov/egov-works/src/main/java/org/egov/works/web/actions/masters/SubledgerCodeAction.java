@@ -67,6 +67,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.HierarchyType;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.script.service.ScriptService;
@@ -76,7 +77,6 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.lib.admbndry.BoundaryDAO;
-import org.egov.lib.admbndry.BoundaryTypeDAO;
 import org.egov.model.bills.EgBillregister;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.estimate.AbstractEstimate;
@@ -133,7 +133,7 @@ public class SubledgerCodeAction extends BaseFormAction {
     @Autowired
     private HierarchyTypeService hierarchyTypeService;
     @Autowired
-    private BoundaryTypeDAO boundaryTypeDAO;
+    private BoundaryTypeService boundaryTypeService;
     @Autowired
     private BoundaryDAO boundaryDAO;
 
@@ -222,7 +222,7 @@ public class SubledgerCodeAction extends BaseFormAction {
     public List<Boundary> getAllZone() {
         HierarchyType hType =  hierarchyTypeService.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
         List<Boundary> zoneList = null;
-        final BoundaryType bType = boundaryTypeDAO.getBoundaryType("zone", hType);
+        final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType("zone", hType);
         zoneList = boundaryDAO.getAllBoundariesByBndryTypeId(bType.getId());
         return zoneList;
     }
