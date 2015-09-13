@@ -54,8 +54,8 @@ import org.hibernate.search.annotations.DocumentId;
 
 @Entity
 @Table(name = "EG_CROSSHIERARCHY")
-@SequenceGenerator(name = CrossHeirarchy.SEQ_CROSSHIERARCHY, sequenceName = CrossHeirarchy.SEQ_CROSSHIERARCHY, allocationSize = 1)
-public class CrossHeirarchy extends AbstractPersistable<Long> {
+@SequenceGenerator(name = CrossHierarchy.SEQ_CROSSHIERARCHY, sequenceName = CrossHierarchy.SEQ_CROSSHIERARCHY, allocationSize = 1)
+public class CrossHierarchy extends AbstractPersistable<Long> {
     private static final long serialVersionUID = 5586809829548733921L;
     public static final String SEQ_CROSSHIERARCHY = "seq_eg_crosshierarchy";
 

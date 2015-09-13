@@ -178,7 +178,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 		if (wardExists ) {
 			List<Boundary> streetList = new ArrayList<Boundary>();
 			streetList = getPersistenceService()
-					.findAllBy("select CH.child from CrossHeirarchy CH where CH.parent.id = ? ",getWardId().longValue());
+					.findAllBy("select CH.child from CrossHierarchy CH where CH.parent.id = ? ",getWardId().longValue());
 			
 			LOGGER.debug("prepareStreetDropDownData : No of areas in ward: " + getWardId() + " are: "
 					+ ((streetList != null) ? streetList.size() : ZERO));
