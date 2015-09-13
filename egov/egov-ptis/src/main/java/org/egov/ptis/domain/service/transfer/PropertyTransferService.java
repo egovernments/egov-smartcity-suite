@@ -69,7 +69,6 @@ import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.portal.entity.Citizen;
@@ -150,9 +149,6 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
 
     @Autowired
     private PTBillServiceImpl ptBillServiceImpl;
-
-    @Autowired
-    private ApplicationContextBeanProvider beanProvider;
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;

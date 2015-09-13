@@ -45,22 +45,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.apache.log4j.Logger;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.web.utils.ERPWebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.web.servlet.tags.RequestContextAwareTag;
 
 /**
  * @author Manas TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
  */
-public class DepartmentUserTag extends BodyTagSupport {
+public class DepartmentUserTag extends RequestContextAwareTag {
 
 	/**
 	 * 
@@ -105,9 +101,8 @@ public class DepartmentUserTag extends BodyTagSupport {
 	}
 
 	@Override
-	public int doStartTag() throws javax.servlet.jsp.JspTagException
+	public int doStartTagInternal() throws javax.servlet.jsp.JspTagException
 	{
-		System.out.println("In doStartTag() " + this.getDeptCollection());
 		return SKIP_BODY;
 	}
 
@@ -199,10 +194,7 @@ public class DepartmentUserTag extends BodyTagSupport {
 
 		List userList = new ArrayList();
 		final Map userMap = new TreeMap();
-		final ApplicationContextBeanProvider provider = new ApplicationContextBeanProvider();
-		provider.setApplicationContext(WebApplicationContextUtils.getWebApplicationContext(ERPWebApplicationContext.getServletContext()));
-		//TODO -- Remove this comment once the below method is added in departmentService
-		//userList = ((DepartmentService) provider.getBean("departmentService")).getAllUsersByDept(department, new Integer(cityid).intValue());
+		//userList = ((DepartmentService) getRequestContext().getWebApplicationContext().getBean("departmentService")).getAllUsersByDept(department, new Integer(cityid).intValue());
 		s2 += "document.forms[0]." + this.labelsList.get(3) + ".options[0] = new Option(\"Choose\",\"\");";
 
 		for (final Iterator userItr = userList.iterator(); userItr.hasNext();)

@@ -44,26 +44,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.servlet.jsp.JspTagException;
-import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.Tag;
 
 import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.ActionService;
-import org.egov.infra.web.utils.ERPWebApplicationContext;
-import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.security.AuthorizeRule;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.web.servlet.tags.RequestContextAwareTag;
 
 /**
  * A tag that shows/hides html within it depending on user's access
  * 
  * @author sahinab
  */
-public class EgovAuthorizeTag extends BodyTagSupport {
+public class EgovAuthorizeTag extends  RequestContextAwareTag {
 
 	/**
 	 * 
@@ -120,7 +117,7 @@ public class EgovAuthorizeTag extends BodyTagSupport {
 	 * evaluates if body content within <authorize> tag is to be included.
 	 */
 	@Override
-	public int doStartTag() throws JspTagException {
+	public int doStartTagInternal() throws JspTagException {
 		Action action = null;
 		final Set userRoles = this.getPrincipalRoles();
 
@@ -134,10 +131,8 @@ public class EgovAuthorizeTag extends BodyTagSupport {
 			 * Authentication currentUser = SecurityContextHolder.getContext() .getAuthentication(); if (ruleObject.isAuthorized(currentUser)) return EVAL_BODY_INCLUDE; else return SKIP_BODY;
 			 */
 		}
-		final ApplicationContextBeanProvider provider = new ApplicationContextBeanProvider();
-		provider.setApplicationContext(WebApplicationContextUtils.getWebApplicationContext(ERPWebApplicationContext.getServletContext()));
 		//
-		final ActionService rbacService = (ActionService) provider.getBean("actionService");
+		final ActionService rbacService = (ActionService) getRequestContext().getWebApplicationContext().getBean("actionService");
 
 		if (this.actionName != null) {
 			action = rbacService.getActionByName(this.actionName);
