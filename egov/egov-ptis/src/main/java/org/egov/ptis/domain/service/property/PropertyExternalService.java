@@ -74,6 +74,7 @@ import org.egov.dcb.bean.Payment;
 import org.egov.demand.model.EgBill;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.CrossHeirarchy;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -86,7 +87,6 @@ import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
-import org.egov.lib.admbndry.CrossHeirarchyImpl;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.model.PenaltyAndRebate;
@@ -714,11 +714,11 @@ public class PropertyExternalService {
 		if (null != list && !list.isEmpty()) {
 			localityDetails = new LocalityDetails();
 			Boundary boundary = (Boundary) list.get(0);
-			qry = entityManager.createQuery("from CrossHeirarchyImpl cr where cr.child = :child");
+			qry = entityManager.createQuery("from CrossHeirarchy cr where cr.child = :child");
 			qry.setParameter("child", boundary);
 			list = qry.getResultList();
 			if (null != list && !list.isEmpty()) {
-				CrossHeirarchyImpl crossHeirarchyImpl = (CrossHeirarchyImpl) list.get(0);
+				CrossHeirarchy crossHeirarchyImpl = (CrossHeirarchy) list.get(0);
 				qry = entityManager.createQuery("from Boundary b where b.id = :id");
 				qry.setParameter("id", crossHeirarchyImpl.getParent().getId());
 				list = qry.getResultList();
@@ -1149,9 +1149,9 @@ public class PropertyExternalService {
 		qry.setParameter("boundaryNo", boundaryNo);
 		qry.setParameter("name", boundaryName);
 		Boundary boundary = (Boundary) qry.getSingleResult();
-		qry = entityManager.createQuery("from CrossHeirarchyImpl cr where cr.child = :child");
+		qry = entityManager.createQuery("from CrossHeirarchy cr where cr.child = :child");
 		qry.setParameter("child", boundary);
-		CrossHeirarchyImpl crossHeirarchyImpl = (CrossHeirarchyImpl) qry.getSingleResult();
+		CrossHeirarchy crossHeirarchyImpl = (CrossHeirarchy) qry.getSingleResult();
 		qry = entityManager.createQuery("from Boundary b where b.id = :id");
 		qry.setParameter("id", crossHeirarchyImpl.getParent().getId());
 		Boundary block = (Boundary) qry.getSingleResult();

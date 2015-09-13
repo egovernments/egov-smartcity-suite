@@ -43,7 +43,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -57,9 +56,10 @@ import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.admin.master.service.CrossHierarchyService;
+import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
@@ -107,9 +107,14 @@ public class AjaxAssetAction extends BaseFormAction {
     private AssetCategoryService assetCategoryService;
 
     @Autowired
-    private HeirarchyTypeDAO heirarchyTypeDAO;
+    private HierarchyTypeService heirarchyTypeService;
+    
+    @Autowired
+    private CrossHierarchyService crossHeirarchyService;
+    
     @Autowired
     private BoundaryService boundaryService;
+    
     @Autowired
     private BoundaryTypeService boundaryTypeService;
 
@@ -146,7 +151,7 @@ public class AjaxAssetAction extends BaseFormAction {
     public String populateAreaByLocation() {
         HierarchyType hType = null;
         try {
-            hType = heirarchyTypeDAO.getHierarchyTypeByName(hierarchyTypeName);
+            hType = heirarchyTypeService.getHierarchyTypeByName(hierarchyTypeName);
         } catch (final Exception e) {
             LOGGER.error("Error while loading areas - areas." + e.getMessage());
             addFieldError("areas", "Unable to load areas information");
@@ -204,7 +209,7 @@ public class AjaxAssetAction extends BaseFormAction {
     public String populateStreets() throws Exception {
         HierarchyType hType = null;
         try {
-            hType = heirarchyTypeDAO.getHierarchyTypeByName(hierarchyTypeName);
+            hType = heirarchyTypeService.getHierarchyTypeByName(hierarchyTypeName);
         } catch (final Exception e) {
             LOGGER.error("Error while loading Streets." + e.getMessage());
             addFieldError("streets", "Unable to load Streets Information");
@@ -214,9 +219,7 @@ public class AjaxAssetAction extends BaseFormAction {
                 hType);
         if (wardId != null && wardId != -1) {
             final Boundary parentBoundary = boundaryService.getBoundaryById(wardId);
-            final Set<Boundary> boundarySet = heirarchyTypeDAO.getCrossHeirarchyChildren(parentBoundary,
-                    childBoundaryType);
-            streetList = new LinkedList<Boundary>(boundarySet);
+            streetList = crossHeirarchyService.getCrossHierarchyChildrens(parentBoundary, childBoundaryType);
         } else
             streetList = Collections.EMPTY_LIST;
         return STREETS;
@@ -377,10 +380,6 @@ public class AjaxAssetAction extends BaseFormAction {
         this.parentCatId = parentCatId;
     }
 
-    public void setHeirarchyTypeDAO(final HeirarchyTypeDAO heirarchyTypeDAO) {
-        this.heirarchyTypeDAO = heirarchyTypeDAO;
-    }
-
     public void setBoundaryService(final BoundaryService boundaryService) {
         this.boundaryService = boundaryService;
     }
@@ -391,6 +390,14 @@ public class AjaxAssetAction extends BaseFormAction {
 
     public void setAssetCategoryService(final AssetCategoryService assetCategoryService) {
         this.assetCategoryService = assetCategoryService;
+    }
+
+    public void setHeirarchyTypeService(HierarchyTypeService heirarchyTypeService) {
+        this.heirarchyTypeService = heirarchyTypeService;
+    }
+
+    public void setCrossHeirarchyService(CrossHierarchyService crossHeirarchyService) {
+        this.crossHeirarchyService = crossHeirarchyService;
     }
 
 }

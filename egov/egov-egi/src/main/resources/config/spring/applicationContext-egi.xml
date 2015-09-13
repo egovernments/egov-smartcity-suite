@@ -120,9 +120,6 @@
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 
-	<bean id="heirarchyTypeDAO" class="org.egov.lib.admbndry.HeirarchyTypeDAO" scope="prototype">
-	</bean>
-
 	<bean id="bankAccountDao" class="org.egov.commons.dao.BankaccountDAO">
 		<constructor-arg ref="sessionFactory" />
 	</bean>

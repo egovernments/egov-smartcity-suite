@@ -80,7 +80,6 @@ import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.dao.SchemeHibernateDAO;
 import org.egov.commons.dao.SubSchemeHibernateDAO;
 import org.egov.commons.dao.VoucherHeaderDAO;
-import org.egov.dao.bills.BillsDaoFactory;
 import org.egov.dao.bills.EgBillRegisterHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
@@ -93,6 +92,7 @@ import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
@@ -105,7 +105,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.admbndry.BoundaryDAO;
-import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.egov.masters.services.MastersService;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
@@ -245,6 +244,9 @@ public class CreateVoucher {
     @Autowired
     private EisCommonService eisCommonService;
 
+    @Autowired
+    private HierarchyTypeService hierarchyTypeService;
+    
     private MastersService masters;
     CommonMethodsI cmImpl = new CommonMethodsImpl();
     PersistenceService<Bankreconciliation, Integer> bankReconSer;
@@ -897,22 +899,11 @@ public class CreateVoucher {
         Boundary boundaryForUser = null;
         if (department.getCode().equalsIgnoreCase("A"))
         {
-            try {
-                HierarchyType hierarchyTypeByName = new HeirarchyTypeDAO().getHierarchyTypeByName("ADMINISTRATION");
+                HierarchyType hierarchyTypeByName = hierarchyTypeService.getHierarchyTypeByName("ADMINISTRATION");
                 List topBoundaries = new BoundaryDAO(null).getTopBoundaries(hierarchyTypeByName);
                 if (topBoundaries != null && topBoundaries.size() > 0)
                     boundaryForUser = (Boundary) topBoundaries.get(0);
-            } catch (NoSuchObjectException e) {
-                List<ValidationError> errors = new ArrayList<ValidationError>();
-                errors.add(new ValidationError("Coundnot fetch Boundary", "Coundnot fetch Boundary"));
-                throw new ValidationException(errors);
-            } catch (TooManyValuesException e) {
-                List<ValidationError> errors = new ArrayList<ValidationError>();
-                errors.add(new ValidationError("Coundnot fetch Boundary", "Coundnot fetch Boundary"));
-                throw new ValidationException(errors);
-            }
-
-            functionaryName = "Compilation";
+                functionaryName = "Compilation";
         } else
         {
             boundaryForUser = vs.getBoundaryForUser(voucherheader);

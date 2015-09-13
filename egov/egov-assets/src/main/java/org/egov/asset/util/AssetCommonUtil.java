@@ -52,11 +52,11 @@ import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
-import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.admin.master.service.CrossHierarchyService;
+import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AssetCommonUtil {
@@ -66,7 +66,11 @@ public class AssetCommonUtil {
     private static final String Zone_BOUNDARY_TYPE = "Zone";
     private static String hierarchyTypeName = "LOCATION";
     @Autowired
-    private HeirarchyTypeDAO heirarchyTypeDAO;
+    private HierarchyTypeService heirarchyTypeService;
+    
+    @Autowired
+    private CrossHierarchyService crossHeirarchyService;
+    
     @Autowired
     private BoundaryService boundaryService;
     @Autowired
@@ -74,14 +78,8 @@ public class AssetCommonUtil {
 
     @SuppressWarnings("unchecked")
     public List<Boundary> getAllZoneOfHTypeAdmin() {
-        HierarchyType hType = null;
-        try {
-            hType = heirarchyTypeDAO.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
-        } catch (final ApplicationException e) {
-            LOGGER.error("Error_While_Loading_HeirarchyType" + e.getMessage());
-            throw new ApplicationRuntimeException("Unable_To_Load_Heirarchy_Information", e);
-        }
-        List<Boundary> zoneList = null;
+        HierarchyType hType = heirarchyTypeService.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
+       List<Boundary> zoneList = null;
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(Zone_BOUNDARY_TYPE, hType);
         zoneList = boundaryService.getChildBoundariesByBoundaryId(bType.getId());
         return zoneList;
@@ -106,17 +104,11 @@ public class AssetCommonUtil {
      */
     @SuppressWarnings("unchecked")
     public List<Boundary> populateArea(final Long wardId) {
-        HierarchyType hType = null;
+        HierarchyType hType = heirarchyTypeService.getHierarchyTypeByName(hierarchyTypeName);;
         List<Boundary> areaList = new LinkedList<Boundary>();
-        try {
-            hType = heirarchyTypeDAO.getHierarchyTypeByName(hierarchyTypeName);
-        } catch (final Exception e) {
-            LOGGER.error("Error while loading areas - areas." + e.getMessage());
-            throw new ApplicationRuntimeException("Unable to load areas information", e);
-        }
         final BoundaryType childBoundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType("Area", hType);
         final Boundary parentBoundary = boundaryService.getBoundaryById(wardId);
-        areaList = new LinkedList(heirarchyTypeDAO.getCrossHeirarchyChildren(parentBoundary, childBoundaryType));
+        areaList = new LinkedList(crossHeirarchyService.getCrossHierarchyChildrens(parentBoundary, childBoundaryType));
 
         LOGGER.info("***********Ajax AreaList: " + areaList.toString());
         return areaList;
@@ -130,18 +122,12 @@ public class AssetCommonUtil {
      */
     @SuppressWarnings("unchecked")
     public List<Boundary> populateStreets(final Long wardId) {
-        HierarchyType hType = null;
+        HierarchyType hType = heirarchyTypeService.getHierarchyTypeByName(hierarchyTypeName);
         List<Boundary> streetList = new LinkedList<Boundary>();
-        try {
-            hType = heirarchyTypeDAO.getHierarchyTypeByName(hierarchyTypeName);
-        } catch (final Exception e) {
-            LOGGER.error("Error while loading Streets." + e.getMessage());
-            throw new ApplicationRuntimeException("Unable to load Streets information", e);
-        }
         final BoundaryType childBoundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType("Street",
                 hType);
         final Boundary parentBoundary = boundaryService.getBoundaryById(wardId);
-        streetList = new LinkedList(heirarchyTypeDAO.getCrossHeirarchyChildren(parentBoundary, childBoundaryType));
+        streetList = new LinkedList(crossHeirarchyService.getCrossHierarchyChildrens(parentBoundary, childBoundaryType));
         return streetList;
     }
 
@@ -171,11 +157,7 @@ public class AssetCommonUtil {
         }
     }
 
-    public void setHeirarchyTypeDAO(final HeirarchyTypeDAO heirarchyTypeDAO) {
-        this.heirarchyTypeDAO = heirarchyTypeDAO;
-    }
-
-    public void setBoundaryService(final BoundaryService boundaryService) {
+     public void setBoundaryService(final BoundaryService boundaryService) {
         this.boundaryService = boundaryService;
     }
 

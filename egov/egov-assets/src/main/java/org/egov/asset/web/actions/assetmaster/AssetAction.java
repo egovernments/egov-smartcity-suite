@@ -77,7 +77,8 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
-import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.admin.master.service.CrossHierarchyService;
+import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -85,7 +86,6 @@ import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
-import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -169,7 +169,10 @@ public class AssetAction extends SearchFormAction {
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
     @Autowired
-    private HeirarchyTypeDAO heirarchyTypeDAO;
+    private HierarchyTypeService hierarchyTypeService;
+    
+    @Autowired
+    private CrossHierarchyService crossHeirarchyService;
     @Autowired
     private BoundaryService boundaryService;
     @Autowired
@@ -209,14 +212,7 @@ public class AssetAction extends SearchFormAction {
         addDropdownData("acquisitionModeList", Arrays.asList(ModeOfAcquisition.values()));
 
         // Fetch HeirarchyType
-        HierarchyType hType = null;
-        try {
-            hType = heirarchyTypeDAO.getHierarchyTypeByName(LOCATION_HIERARCHY_TYPE);
-        } catch (final ApplicationException e) {
-            LOGGER.error(Error_While_Loading_HeirarchyType + e.getMessage());
-            addFieldError("Heirarchy", Unable_To_Load_Heirarchy_Information);
-            throw new ApplicationRuntimeException(Unable_To_Load_Heirarchy_Information, e);
-        }
+        HierarchyType hType = hierarchyTypeService.getHierarchyTypeByName(LOCATION_HIERARCHY_TYPE);
 
         /**
          * Fetch Area Dropdown List
@@ -277,13 +273,13 @@ public class AssetAction extends SearchFormAction {
             final BoundaryType childBoundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType("Street",
                     hType);
             final Boundary parentBoundary = boundaryService.getBoundaryById(wardId);
-            streetList = new LinkedList(heirarchyTypeDAO.getCrossHeirarchyChildren(parentBoundary, childBoundaryType));
+            streetList = crossHeirarchyService.getCrossHierarchyChildrens(parentBoundary, childBoundaryType);
         }
         if (asset.getWard() != null) {
             final BoundaryType childBoundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType("Street",
                     hType);
             final Boundary parentBoundary = boundaryService.getBoundaryById(asset.getWard().getId());
-            streetList = new LinkedList(heirarchyTypeDAO.getCrossHeirarchyChildren(parentBoundary, childBoundaryType));
+            streetList = crossHeirarchyService.getCrossHierarchyChildrens(parentBoundary, childBoundaryType);
         }
         addDropdownData("streetList", streetList);
 
@@ -388,7 +384,8 @@ public class AssetAction extends SearchFormAction {
         }
         if (asset.getWard() != null) {
             final AjaxAssetAction ajaxAssetAction = new AjaxAssetAction();
-            ajaxAssetAction.setHeirarchyTypeDAO(heirarchyTypeDAO);
+            ajaxAssetAction.setHeirarchyTypeService(hierarchyTypeService);
+            ajaxAssetAction.setCrossHeirarchyService(crossHeirarchyService);
             ajaxAssetAction.setBoundaryService(boundaryService);
             ajaxAssetAction.setBoundaryTypeService(boundaryTypeService);
             ajaxAssetAction.setWardId(asset.getWard().getId());
@@ -415,12 +412,7 @@ public class AssetAction extends SearchFormAction {
 
     public List<Boundary> getAllLocation() {
         HierarchyType hType = null;
-        try {
-            hType = heirarchyTypeDAO.getHierarchyTypeByName(LOCATION_HIERARCHY_TYPE);
-        } catch (final ApplicationException e) {
-            LOGGER.error(Error_While_Loading_HeirarchyType + e.getMessage());
-            throw new ApplicationRuntimeException(Unable_To_Load_Heirarchy_Information, e);
-        }
+            hType = hierarchyTypeService.getHierarchyTypeByName(LOCATION_HIERARCHY_TYPE);
         List<Boundary> locationList = null;
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(LOACTION_BOUNDARY_TYPE,
                 hType);
@@ -430,12 +422,7 @@ public class AssetAction extends SearchFormAction {
 
     public List<Boundary> getAllWard() {
         HierarchyType hType = null;
-        try {
-            hType = heirarchyTypeDAO.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
-        } catch (final ApplicationException e) {
-            LOGGER.error(Error_While_Loading_HeirarchyType + e.getMessage());
-            throw new ApplicationRuntimeException(Unable_To_Load_Heirarchy_Information, e);
-        }
+            hType = hierarchyTypeService.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
         List<Boundary> wardList = null;
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(WARD_BOUNDARY_TYPE, hType);
         wardList = boundaryService.getAllBoundariesByBoundaryTypeId(bType.getId());
@@ -443,13 +430,7 @@ public class AssetAction extends SearchFormAction {
     }
 
     public List<Boundary> getAllZone() {
-        HierarchyType hType = null;
-        try {
-            hType = heirarchyTypeDAO.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
-        } catch (final ApplicationException e) {
-            LOGGER.error(Error_While_Loading_HeirarchyType + e.getMessage());
-            throw new ApplicationRuntimeException(Unable_To_Load_Heirarchy_Information, e);
-        }
+        HierarchyType hType = hierarchyTypeService.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
         List<Boundary> zoneList = null;
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(Zone_BOUNDARY_TYPE, hType);
         if (actionType == null)

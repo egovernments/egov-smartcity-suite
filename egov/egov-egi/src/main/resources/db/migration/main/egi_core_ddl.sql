@@ -404,18 +404,18 @@ CREATE TABLE eg_correspondence_address (
 -------------------END-------------------
 
 ------------------START------------------
-CREATE TABLE eg_crossheirarchy_linkage (
+CREATE TABLE eg_crosshierarchy (
     id bigint NOT NULL,
     parent bigint NOT NULL,
     child bigint NOT NULL
 );
-CREATE SEQUENCE seq_eg_crossheirarchy_linkage
+CREATE SEQUENCE seq_eg_crosshierarchy
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-ALTER TABLE ONLY eg_crossheirarchy_linkage ADD CONSTRAINT eg_crossheirarchy_linkage_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY eg_crosshierarchy ADD CONSTRAINT eg_crosshierarchy_pkey PRIMARY KEY (id);
 -------------------END-------------------
 
 ------------------START------------------

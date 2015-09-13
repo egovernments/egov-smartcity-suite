@@ -153,7 +153,7 @@ public class BoundaryDAO {
             throw new ApplicationRuntimeException("Childbndry.object.null");
         else {
             final Query qry = getSession().createQuery(
-                    "select CI.parent from CrossHeirarchyImpl CI where CI.child = :childBoundary");
+                    "select CI.parent from CrossHeirarchy CI where CI.child = :childBoundary");
             qry.setEntity("childBoundary", childBoundary);
 
             for (final Iterator iter = qry.iterate(); iter.hasNext();) {
@@ -180,7 +180,7 @@ public class BoundaryDAO {
         else {
             final Query qry = getSession()
                     .createQuery(
-                            "select CI.child from CrossHeirarchyImpl CI, Boundary BI where CI.parent = :parentBoundary and CI.child=BI and BI.boundaryType = :childBoundaryType order by BI.name ");
+                            "select CI.child from CrossHeirarchy CI, Boundary BI where CI.parent = :parentBoundary and CI.child=BI and BI.boundaryType = :childBoundaryType order by BI.name ");
             qry.setEntity("parentBoundary", parentBoundary);
             qry.setEntity("childBoundaryType", childBoundaryType);
 

@@ -67,8 +67,8 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.HierarchyType;
+import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -77,7 +77,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryTypeDAO;
-import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.egov.model.bills.EgBillregister;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.estimate.AbstractEstimate;
@@ -132,7 +131,7 @@ public class SubledgerCodeAction extends BaseFormAction {
     @Autowired
     private ScriptService scriptService;
     @Autowired
-    private HeirarchyTypeDAO heirarchyTypeDAO;
+    private HierarchyTypeService hierarchyTypeService;
     @Autowired
     private BoundaryTypeDAO boundaryTypeDAO;
     @Autowired
@@ -221,13 +220,7 @@ public class SubledgerCodeAction extends BaseFormAction {
 
     /* To Populate Zone DropDown */
     public List<Boundary> getAllZone() {
-        HierarchyType hType = null;
-        try {
-            hType = heirarchyTypeDAO.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
-        } catch (final ApplicationException e) {
-            logger.error("Error while loading HeirarchyType - HeirarchyType." + e.getMessage());
-            throw new ApplicationRuntimeException("Unable To Load Heirarchy Information", e);
-        }
+        HierarchyType hType =  hierarchyTypeService.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
         List<Boundary> zoneList = null;
         final BoundaryType bType = boundaryTypeDAO.getBoundaryType("zone", hType);
         zoneList = boundaryDAO.getAllBoundariesByBndryTypeId(bType.getId());

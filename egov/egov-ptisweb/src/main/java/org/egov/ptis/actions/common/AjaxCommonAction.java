@@ -197,7 +197,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 		LOGGER.debug("Entered into streetByWard, wardId: " + wardId);
 		streetList = new ArrayList<Boundary>();
 		streetList = getPersistenceService().findAllBy(
-				"select CH.child from CrossHeirarchyImpl CH where CH.parent.id = ? ", getWardId());
+				"select CH.child from CrossHeirarchy CH where CH.parent.id = ? ", getWardId());
 		LOGGER.debug("Exiting from streetByWard, No of streets in ward: " + wardId + " are "
 				+ ((streetList != null) ? streetList : ZERO));
 		return "street";
@@ -208,7 +208,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 		LOGGER.debug("Entered into blockByLocality, locality: " + locality);
 
 		Boundary blockBoundary = (Boundary) getPersistenceService().find(
-				"select CH.parent from CrossHeirarchyImpl CH where CH.child.id = ? ", getLocality());
+				"select CH.parent from CrossHeirarchy CH where CH.child.id = ? ", getLocality());
 		Boundary wardBoundary = blockBoundary.getParent();
 		Boundary zoneBoundary = wardBoundary.getParent();
 
