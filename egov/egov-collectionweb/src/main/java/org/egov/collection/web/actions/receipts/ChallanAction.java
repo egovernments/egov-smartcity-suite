@@ -79,6 +79,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -87,7 +88,6 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.utils.NumberUtil;
-import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
 import org.hibernate.StaleObjectStateException;
@@ -115,7 +115,10 @@ public class ChallanAction extends BaseFormAction {
 	private CollectionsUtil collectionsUtil;
 	private FinancialsUtil financialsUtil;
 	private CommonsServiceImpl commonsServiceImpl;
-	private BoundaryDAO boundaryDAO;
+	
+	@Autowired
+	private BoundaryService boundaryService;
+	
 	private String deptId;
 	private Long boundaryId;
 	
@@ -724,7 +727,7 @@ public class ChallanAction extends BaseFormAction {
 				Integer.valueOf(this.deptId));
 		receiptHeader.getReceiptMisc().setDepartment(dept);
 		if(boundaryId!=null){
-			receiptHeader.getReceiptMisc().setBoundary(boundaryDAO.getBoundary(boundaryId));
+			receiptHeader.getReceiptMisc().setBoundary(boundaryService.getBoundaryById(boundaryId));
 		}
 		receiptHeader.getReceiptMisc().setReceiptHeader(receiptHeader);
 		
@@ -1193,11 +1196,7 @@ public class ChallanAction extends BaseFormAction {
 	public void setSubLedgerlist(List<ReceiptDetailInfo> subLedgerlist) {
 		this.subLedgerlist = subLedgerlist;
 	}
-	
-	public void setBoundaryDAO(BoundaryDAO boundaryDAO) {
-		this.boundaryDAO = boundaryDAO;
-	}
-	
+		
 	public CFunction getFunction() {
 		return function;
 	}

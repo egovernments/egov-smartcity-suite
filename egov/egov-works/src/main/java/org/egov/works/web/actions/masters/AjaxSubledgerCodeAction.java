@@ -45,9 +45,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.works.models.estimate.ProjectCode;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -63,14 +63,14 @@ public class AjaxSubledgerCodeAction extends BaseFormAction {
     private String query = "wards";
     private List<ProjectCode> projectCodeList = new LinkedList<ProjectCode>();
     @Autowired
-    private BoundaryDAO boundaryDAO;
+    private BoundaryService boundaryService;
 
     /**
      * Populate the ward list by zone
      */
     public String populateWard() {
         try {
-            wardList = boundaryDAO.getChildBoundaries(String.valueOf(zoneId));
+            wardList = boundaryService.getChildBoundariesByBoundaryId(zoneId);
         } catch (final Exception e) {
             LOGGER.error("Error while loading warda - wards." + e.getMessage());
             addFieldError("location", getText("slCode.wardLoad.failure"));

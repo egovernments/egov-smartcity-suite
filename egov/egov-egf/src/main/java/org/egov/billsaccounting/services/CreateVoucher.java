@@ -104,7 +104,6 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.masters.services.MastersService;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
@@ -221,6 +220,9 @@ public class CreateVoucher {
     private VoucherService voucherService;
     @Autowired
     private EgfRecordStatusService egfRecordStatusService;
+    
+    @Autowired
+    private BoundaryService boundaryService;
 
     private static final String ERR = "Exception in CreateVoucher";
     private static final String DEPTMISSINGMSG = "Department is missing in the Bill cannot proceed creating vouvher";
@@ -900,7 +902,7 @@ public class CreateVoucher {
         if (department.getCode().equalsIgnoreCase("A"))
         {
                 HierarchyType hierarchyTypeByName = hierarchyTypeService.getHierarchyTypeByName("ADMINISTRATION");
-                List topBoundaries = new BoundaryDAO(null).getTopBoundaries(hierarchyTypeByName);
+                List topBoundaries = boundaryService.getTopLevelBoundaryByHierarchyType(hierarchyTypeByName);
                 if (topBoundaries != null && topBoundaries.size() > 0)
                     boundaryForUser = (Boundary) topBoundaries.get(0);
                 functionaryName = "Compilation";

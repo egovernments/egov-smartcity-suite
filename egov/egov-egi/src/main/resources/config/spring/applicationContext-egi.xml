@@ -112,10 +112,6 @@
 	
 	<bean id="applicationTenantResolverFilter" class="org.egov.infra.web.filter.ApplicationTenantResolverFilter"/>
 	
-	<bean id="boundaryDAO" class="org.egov.lib.admbndry.BoundaryDAO" scope="prototype">
-		<constructor-arg ref="sessionFactory" />
-	</bean>
-
 	<bean id="bankAccountDao" class="org.egov.commons.dao.BankaccountDAO">
 		<constructor-arg ref="sessionFactory" />
 	</bean>

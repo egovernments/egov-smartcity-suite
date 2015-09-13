@@ -54,12 +54,12 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.dao.PersonalInformationDAO;
@@ -82,7 +82,7 @@ public class EisUtilService implements EISServeable {
     @Autowired
     private PersistenceService persistenceService;
     @Autowired
-    private BoundaryDAO boundaryDAO;
+    private BoundaryService boundaryService;
     @Autowired
     private PersonalInformationDAO personalInformationDAO;
     	
@@ -195,7 +195,7 @@ public class EisUtilService implements EISServeable {
         if (boundaryId != null && boundaryId != 0) {
             Boundary boundary = null;
 
-            boundary = boundaryDAO.getBoundary(boundaryId);
+            boundary = boundaryService.getBoundaryById(boundaryId);
             // Exclude get users list if boundary is city level
             if (boundary.getParent() != null)
                 try {
