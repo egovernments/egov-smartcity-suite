@@ -480,105 +480,6 @@ ALTER TABLE ONLY contrajournalvoucher ADD CONSTRAINT contrajournalvoucher_pkey P
 -------------------END-------------------
 
 ------------------START------------------
-CREATE TABLE eg_bill (
-    id bigint NOT NULL,
-    id_demand bigint,
-    citizen_name character varying(1024) NOT NULL,
-    citizen_address character varying(1024) NOT NULL,
-    bill_no character varying(20) NOT NULL,
-    id_bill_type bigint NOT NULL,
-    issue_date timestamp without time zone NOT NULL,
-    last_date timestamp without time zone,
-    module_id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    create_date timestamp without time zone NOT NULL,
-    modified_date timestamp without time zone NOT NULL,
-    is_history character(1) DEFAULT 'N'::bpchar NOT NULL,
-    is_cancelled character(1) DEFAULT 'N'::bpchar NOT NULL,
-    fundcode character varying(32),
-    functionary_code double precision,
-    fundsource_code character varying(32),
-    department_code character varying(32),
-    coll_modes_not_allowed character varying(512),
-    boundary_num bigint,
-    boundary_type character varying(512),
-    total_amount double precision,
-    total_collected_amount double precision,
-    service_code character varying(50),
-    part_payment_allowed character(1),
-    override_accountheads_allowed character(1),
-    description character varying(250),
-    min_amt_payable double precision,
-    consumer_id character varying(64),
-    dspl_message character varying(256),
-    callback_for_apportion character(1) DEFAULT 0 NOT NULL
-);
-CREATE SEQUENCE seq_eg_bill
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_bill ADD CONSTRAINT pk_eg_bill PRIMARY KEY (id);
-
-COMMENT ON TABLE eg_bill IS 'Bills for the demand framework';
-COMMENT ON COLUMN eg_bill.id IS 'Primary Key';
-COMMENT ON COLUMN eg_bill.citizen_name IS 'citizen name';
-COMMENT ON COLUMN eg_bill.citizen_address IS 'Citizen address';
-COMMENT ON COLUMN eg_bill.bill_no IS 'Bill no';
-COMMENT ON COLUMN eg_bill.id_bill_type IS 'FK to eg_bill_type';
-COMMENT ON COLUMN eg_bill.issue_date IS 'Bill issue date';
-COMMENT ON COLUMN eg_bill.last_date IS 'Last date of payment using this bill';
-COMMENT ON COLUMN eg_bill.module_id IS 'FK to eg_module';
-COMMENT ON COLUMN eg_bill.user_id IS 'FK to eg_user';
-COMMENT ON COLUMN eg_bill.is_history IS 'Bill history status';
-COMMENT ON COLUMN eg_bill.is_cancelled IS 'Bill cancel status';
-COMMENT ON COLUMN eg_bill.fundcode IS 'fund code';
-COMMENT ON COLUMN eg_bill.functionary_code IS 'functionary code';
-COMMENT ON COLUMN eg_bill.fundsource_code IS 'fund source code';
-COMMENT ON COLUMN eg_bill.department_code IS 'Department that bill entity belongs to';
-COMMENT ON COLUMN eg_bill.coll_modes_not_allowed IS 'allowd collection modes for this bill';
-COMMENT ON COLUMN eg_bill.boundary_num IS 'boundary of entity, for which bill is generated';
-COMMENT ON COLUMN eg_bill.boundary_type IS 'boundary type of entity, for which bill is generated';
-COMMENT ON COLUMN eg_bill.total_amount IS 'total bill amount';
-COMMENT ON COLUMN eg_bill.total_collected_amount IS 'total amount collected for this bill';
-COMMENT ON COLUMN eg_bill.service_code IS 'service code from collection system for each billing system';
-COMMENT ON COLUMN eg_bill.part_payment_allowed IS 'information to collection system, do system need to allow partial payment';
-COMMENT ON COLUMN eg_bill.override_accountheads_allowed IS 'information to collection system, do collection system allow for override  of account head wise collection';
-COMMENT ON COLUMN eg_bill.description IS 'Description of entity for which bill is created';
-COMMENT ON COLUMN eg_bill.min_amt_payable IS 'minimu amount payable for this bill';
-COMMENT ON COLUMN eg_bill.consumer_id IS 'consumer id, for different billing system diff unique ref no will be thr';
-COMMENT ON COLUMN eg_bill.dspl_message IS 'message need to be shown on collection screen';
-COMMENT ON COLUMN eg_bill.callback_for_apportion IS 'call back required or not while doing collection';
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE eg_bill_details (
-    id bigint NOT NULL,
-    id_demand_reason bigint,
-    create_date timestamp without time zone,
-    modified_date timestamp without time zone NOT NULL,
-    id_bill bigint NOT NULL,
-    collected_amount double precision,
-    order_no bigint,
-    glcode character varying(64),
-    function_code character varying(32),
-    cr_amount double precision,
-    dr_amount double precision,
-    description character varying(128),
-    id_installment bigint,
-    additional_flag bigint
-);
-CREATE SEQUENCE seq_eg_bill_details
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_bill_details ADD CONSTRAINT pk_eg_bill_details PRIMARY KEY (id);
--------------------END-------------------
-
-------------------START------------------
 CREATE TABLE eg_bill_subtype (
     id bigint NOT NULL,
     name character varying(120) NOT NULL,
@@ -657,38 +558,6 @@ ALTER TABLE ONLY eg_billpayeedetails ADD CONSTRAINT eg_billpayeedetails_pkey PRI
 CREATE INDEX index_egbill_payd_accdetkey ON eg_billpayeedetails USING btree (accountdetailkeyid);
 CREATE INDEX indx_ebpd_adtid ON eg_billpayeedetails USING btree (accountdetailtypeid);
 CREATE INDEX indx_ebpd_bdid ON eg_billpayeedetails USING btree (billdetailid);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE eg_billreceipt (
-    id bigint NOT NULL,
-    billid bigint NOT NULL,
-    receipt_number character varying(50),
-    receipt_date timestamp without time zone,
-    receipt_amount double precision NOT NULL,
-    collection_status character varying(20),
-    created_date timestamp without time zone NOT NULL,
-    modified_date timestamp without time zone NOT NULL,
-    createdby bigint,
-    lastmodifiedby bigint,
-    is_cancelled character(1) DEFAULT 'N'::bpchar NOT NULL
-);
-CREATE SEQUENCE seq_eg_billreceipt
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_billreceipt ADD CONSTRAINT pk_eg_billreceipt PRIMARY KEY (id);
-
-COMMENT ON TABLE eg_billreceipt IS 'Maps receipt information to a bill';
-COMMENT ON COLUMN eg_billreceipt.id IS 'Primary Key';
-COMMENT ON COLUMN eg_billreceipt.billid IS 'FK to eg_bill';
-COMMENT ON COLUMN eg_billreceipt.receipt_number IS 'receipt NUMBER';
-COMMENT ON COLUMN eg_billreceipt.receipt_date IS 'receipt date';
-COMMENT ON COLUMN eg_billreceipt.receipt_amount IS 'receipt amount';
-COMMENT ON COLUMN eg_billreceipt.collection_status IS 'status of collection (approved, pending, etc)';
-COMMENT ON COLUMN eg_billreceipt.is_cancelled IS 'receipt status';
 -------------------END-------------------
 
 ------------------START------------------
@@ -924,38 +793,6 @@ CREATE INDEX index_emp_qulified_id ON eg_employee USING btree (qulified_id);
 CREATE INDEX index_emp_recruitment_type_id ON eg_employee USING btree (recruitment_type_id);
 CREATE INDEX index_emp_religion_id ON eg_employee USING btree (religion_id);
 CREATE INDEX index_emp_status_id ON eg_employee USING btree (employment_status);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE eg_installment_master (
-    id bigint NOT NULL,
-    installment_num bigint NOT NULL,
-    installment_year timestamp without time zone NOT NULL,
-    start_date timestamp without time zone NOT NULL,
-    end_date timestamp without time zone NOT NULL,
-    id_module bigint,
-    lastupdatedtimestamp timestamp without time zone,
-    description character varying(25),
-    installment_type character varying(50)
-);
-CREATE SEQUENCE seq_eg_installment_master
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_installment_master ADD CONSTRAINT unq_year_number_mod UNIQUE (id_module, installment_num, installment_year);
-
-COMMENT ON TABLE eg_installment_master IS 'This table contains the period for which the bills are being generated';
-COMMENT ON COLUMN eg_installment_master.id IS 'primary key';
-COMMENT ON COLUMN eg_installment_master.installment_num IS 'Installment number';
-COMMENT ON COLUMN eg_installment_master.installment_year IS 'Installment year';
-COMMENT ON COLUMN eg_installment_master.start_date IS 'installment start date';
-COMMENT ON COLUMN eg_installment_master.end_date IS 'installment end date';
-COMMENT ON COLUMN eg_installment_master.id_module IS 'fk to eg_module';
-COMMENT ON COLUMN eg_installment_master.lastupdatedtimestamp IS 'last updated time when row got updated';
-COMMENT ON COLUMN eg_installment_master.description IS 'Descriptiion of installment';
-COMMENT ON COLUMN eg_installment_master.installment_type IS 'type of installment';
 -------------------END-------------------
 
 ------------------START------------------
@@ -2124,9 +1961,6 @@ CREATE SEQUENCE sq_receiptheader_2025_26
 
 ALTER TABLE ONLY cheque_dept_mapping ADD CONSTRAINT chequedept_dept_fk FOREIGN KEY (allotedto) REFERENCES eg_department(id);
  
-ALTER TABLE ONLY eg_installment_master ADD CONSTRAINT pk_egpt_installment_master PRIMARY KEY (id);
-ALTER TABLE ONLY eg_installment_master ADD CONSTRAINT fk_instmstr_module FOREIGN KEY (id_module) REFERENCES eg_module(id); 
-
 ALTER TABLE ONLY function ADD CONSTRAINT fk_function FOREIGN KEY (parentid) REFERENCES function(id);
  
 ALTER TABLE ONLY fund ADD CONSTRAINT fk_fund1 FOREIGN KEY (parentid) REFERENCES fund(id);
@@ -2168,8 +2002,6 @@ ALTER TABLE ONLY bankaccount ADD CONSTRAINT fk_bb_ba FOREIGN KEY (branchid) REFE
 ALTER TABLE ONLY eg_billdetails ADD CONSTRAINT fk_bd_brg FOREIGN KEY (billid) REFERENCES eg_billregister(id); 
 ALTER TABLE ONLY eg_billdetails ADD CONSTRAINT fk_bd_fun FOREIGN KEY (functionid) REFERENCES function(id); 
 ALTER TABLE ONLY eg_billdetails ADD CONSTRAINT fk_bd_gl FOREIGN KEY (glcodeid) REFERENCES chartofaccounts(id); 
-ALTER TABLE ONLY eg_bill_details ADD CONSTRAINT fk_eg_bill_det_idbill FOREIGN KEY (id_bill) REFERENCES eg_bill(id);
-ALTER TABLE ONLY eg_bill_details ADD CONSTRAINT eg_installment_id FOREIGN KEY (id_installment) REFERENCES eg_installment_master(id);
 
 ALTER TABLE ONLY eg_billpayeedetails ADD CONSTRAINT fk_bdp_adt FOREIGN KEY (accountdetailtypeid) REFERENCES accountdetailtype(id); 
 ALTER TABLE ONLY eg_billpayeedetails ADD CONSTRAINT sys_c009660 FOREIGN KEY (tdsid) REFERENCES tds(id);
@@ -2239,9 +2071,6 @@ ALTER TABLE ONLY accountentitymaster ADD CONSTRAINT fk_dt_aem FOREIGN KEY (detai
 
 ALTER TABLE ONLY eg_drawingofficer ADD CONSTRAINT fk_eg_drawingofficer_position FOREIGN KEY ("position") REFERENCES eg_position(id);
  
-ALTER TABLE ONLY eg_bill ADD CONSTRAINT fk_eg_module FOREIGN KEY (module_id) REFERENCES eg_module(id); 
-ALTER TABLE ONLY eg_bill ADD CONSTRAINT fk_eg_user FOREIGN KEY (user_id) REFERENCES eg_user(id);
-
 ALTER TABLE ONLY fiscalperiod ADD CONSTRAINT fk_fp_md FOREIGN KEY (moduleid) REFERENCES eg_module(id);
 ALTER TABLE ONLY fiscalperiod ADD CONSTRAINT fk_fy_fp FOREIGN KEY (financialyearid) REFERENCES financialyear(id);
  
