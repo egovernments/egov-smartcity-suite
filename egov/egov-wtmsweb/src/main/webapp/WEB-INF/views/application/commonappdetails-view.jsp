@@ -115,7 +115,7 @@
 		
 		
 		<div class="row">
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.pt.due"/></div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.pt.tax"/></div>
 			<div class="col-xs-3 add-margin view-content" id="propertytaxdue"></div>
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.current.due"/></div>
 			<c:choose>
