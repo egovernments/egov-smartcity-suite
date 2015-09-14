@@ -67,7 +67,6 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.FieldInspectionDetails;
@@ -89,6 +88,7 @@ import org.egov.wtms.masters.service.WaterRatesHeaderService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.springframework.context.ApplicationContext;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,7 +124,7 @@ public class ConnectionDemandService {
     WaterConnectionDetailsService waterConnectionDetailsService;
 
     @Autowired
-    private ApplicationContextBeanProvider beanProvider;
+    private ApplicationContext context;
 
     @Autowired
     private EgBillDao egBillDAO;
@@ -371,7 +371,7 @@ public class ConnectionDemandService {
         String collectXML = "";
         final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
         String currentInstallmentYear = null;
-        final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) beanProvider
+        final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context
                 .getBean("waterConnectionBillable");
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumberOrConsumerCode(consumerCode);
@@ -454,7 +454,7 @@ public class ConnectionDemandService {
     @Transactional
     public String generateBillForMeterAndMonthly(final String consumerCode) {
 
-        final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) beanProvider
+        final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context
                 .getBean("waterConnectionBillable");
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);

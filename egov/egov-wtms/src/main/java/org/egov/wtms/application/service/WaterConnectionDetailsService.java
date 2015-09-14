@@ -61,7 +61,6 @@ import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -88,6 +87,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -120,7 +120,7 @@ public class WaterConnectionDetailsService {
     private DocumentNamesService documentNamesService;
 
     @Autowired
-    private ApplicationContextBeanProvider beanProvider;
+    private ApplicationContext context;
 
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
@@ -346,8 +346,8 @@ public class WaterConnectionDetailsService {
      */
     public ApplicationWorkflowCustomDefaultImpl getInitialisedWorkFlowBean() {
          ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl=null;
-        if(null != beanProvider){
-         applicationWorkflowCustomDefaultImpl = (ApplicationWorkflowCustomDefaultImpl) beanProvider
+        if(null != context){
+         applicationWorkflowCustomDefaultImpl = (ApplicationWorkflowCustomDefaultImpl) context
                 .getBean("applicationWorkflowCustomDefaultImpl");
         }
         return applicationWorkflowCustomDefaultImpl;
