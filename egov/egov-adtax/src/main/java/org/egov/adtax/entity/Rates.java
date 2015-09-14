@@ -85,11 +85,11 @@ public class Rates extends AbstractAuditable {
 
     @NotNull
     @Temporal(value = TemporalType.DATE)
-    private Date readingDate;
+    private Date validFromoDate;
 
     @NotNull
     @Temporal(value = TemporalType.DATE)
-    private Date validtodate;
+    private Date validToDate;
 
     @Override
     public Long getId() {
@@ -133,20 +133,22 @@ public class Rates extends AbstractAuditable {
         this.active = active;
     }
 
-    public Date getReadingDate() {
-        return readingDate;
+    public Date getValidFromoDate() {
+        return validFromoDate;
     }
 
-    public void setReadingDate(final Date readingDate) {
-        this.readingDate = readingDate;
+    public void setValidFromoDate(Date validFromoDate) {
+        this.validFromoDate = validFromoDate;
     }
 
-    public Date getValidtodate() {
-        return validtodate;
+    public Date getValidToDate() {
+        return validToDate;
     }
 
-    public void setValidtodate(final Date validtodate) {
-        this.validtodate = validtodate;
+    public void setValidToDate(Date validToDate) {
+        this.validToDate = validToDate;
     }
+
+  
 
 }

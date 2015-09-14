@@ -50,7 +50,7 @@ import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.search.annotations.DocumentId;
 
 @Entity
-@Table(name = "EGADTAX_DOCUMENT_TYPE")
+@Table(name = "egadtax_HOARDINGdocument_type")
 @SequenceGenerator(name = HoardingDocumentType.SEQ_HOARDINGDOCUMENT_TYPE, sequenceName = HoardingDocumentType.SEQ_HOARDINGDOCUMENT_TYPE, allocationSize = 1)
 public class HoardingDocumentType extends AbstractPersistable<Long> {
 

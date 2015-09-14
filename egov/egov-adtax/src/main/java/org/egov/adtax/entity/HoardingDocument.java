@@ -67,7 +67,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.search.annotations.DocumentId;
 
 @Entity
-@Table(name = "EGADTAX_DOCUMENT")
+@Table(name = "egadtax_HOARDINGdocument")
 @SequenceGenerator(name = HoardingDocument.SEQ_HOARDING_DOCUMENT, sequenceName = HoardingDocument.SEQ_HOARDING_DOCUMENT, allocationSize = 1)
 public class HoardingDocument extends AbstractAuditable {
 
