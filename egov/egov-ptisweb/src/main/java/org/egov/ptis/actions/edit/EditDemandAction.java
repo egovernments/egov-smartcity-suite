@@ -324,7 +324,7 @@ public class EditDemandAction extends BaseFormAction {
             demandDetails = getPersistenceService().findAllBy(queryInstallmentDemandDetails, basicProperty,
                     propertyTaxUtil.getCurrentInstallment());
 
-            if (demandDetails.isEmpty()) {
+            if (!demandDetails.isEmpty()) {
                 Collections.sort(demandDetails, new Comparator<EgDemandDetails>() {
                     @Override
                     public int compare(EgDemandDetails o1, EgDemandDetails o2) {
