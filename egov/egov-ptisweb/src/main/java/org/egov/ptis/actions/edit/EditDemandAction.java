@@ -43,12 +43,15 @@ import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
 import static org.egov.ptis.client.util.PropertyTaxUtil.isZero;
 import static org.egov.ptis.constants.PropertyTaxConstants.AUDITDATA_STRING_SEP;
+import static org.egov.ptis.constants.PropertyTaxConstants.BUILTUP_PROPERTY_DMDRSN_CODE_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
-import static org.egov.ptis.constants.PropertyTaxConstants.DMDRSN_CODE_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY_DMDRSN_CODE_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -79,9 +82,6 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.dcb.bean.DCBDisplayInfo;
-import org.egov.dcb.bean.DCBReport;
-import org.egov.dcb.service.DCBService;
-import org.egov.dcb.service.DCBServiceImpl;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
@@ -172,9 +172,10 @@ public class EditDemandAction extends BaseFormAction {
 
     private List<EgDemandDetails> demandDetails = new ArrayList<EgDemandDetails>();
     private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>();
-    private Map<Installment, Map<String, Boolean>> collectionDetails = new HashMap<Installment, Map<String, Boolean>>();
     private List<Installment> allInstallments = new ArrayList<Installment>();
     private Set<Installment> propertyInstallments = new TreeSet<Installment>();
+    private Map<Installment, Map<String, Boolean>> collectionDetails = new HashMap<Installment, Map<String, Boolean>>();
+    private Map<String, String> demandReasonMap = new HashMap<String, String>();
 
     @Override
     public Object getModel() {
@@ -190,6 +191,13 @@ public class EditDemandAction extends BaseFormAction {
 
         basicProperty = (BasicProperty) getPersistenceService().findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO,
                 propertyId);
+        if (null != basicProperty.getActiveProperty())
+            if (basicProperty.getActiveProperty().getPropertyDetail().getPropertyTypeMaster().getCode()
+                    .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+                demandReasonMap = VACANT_PROPERTY_DMDRSN_CODE_MAP;
+            } else
+                demandReasonMap = BUILTUP_PROPERTY_DMDRSN_CODE_MAP;
+
         for (DemandDetail dd : demandDetailBeanList) {
 
             if (dd.getInstallment() != null && dd.getInstallment().getId() != null
@@ -233,12 +241,14 @@ public class EditDemandAction extends BaseFormAction {
         for (DemandDetail dd : demandDetailBeanList) {
 
             if (dd.getIsNew() != null && dd.getIsNew()) {
+           
                 if (dd.getActualAmount() == null) {
                     if (dd.getActualCollection() != null) {
                         actAmtInstallments.add(dd.getInstallment().getDescription());
                     }
                 } else {
-                    if (dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_GENERAL_TAX)) {
+                    if (dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_GENERAL_TAX)
+                            || dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_VACANT_TAX)) {
                         if (dd.getInstallment().getId() == null || dd.getInstallment().getId().equals(-1)) {
                             addActionError(getText("error.editDemand.selectInstallment"));
                         } else {
@@ -250,12 +260,6 @@ public class EditDemandAction extends BaseFormAction {
                                 addActionError(getText("error.editDemand.duplicateInstallment", instString));
                             }
                         }
-                    }
-
-                    if (dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_CHQ_BOUNCE_PENALTY)
-                            && dd.getActualAmount().equals(BigDecimal.ZERO)) {
-                        Installment inst = (Installment) installmentDAO.findById(dd.getInstallment().getId(), false);
-                        installmentsChqPenalty.add(inst.getDescription());
                     }
                 }
             } else {
@@ -357,7 +361,7 @@ public class EditDemandAction extends BaseFormAction {
                     demandDetailBeanList.add(dmdDtl);
                 }
             } else {
-                for (Map.Entry<String, String> entry : DMDRSN_CODE_MAP.entrySet()) {
+                for (Map.Entry<String, String> entry : demandReasonMap.entrySet()) {
                     DemandDetail dmdDtl = createDemandDetailBean(null, entry.getKey(), null, null, true);
                     demandDetailBeanList.add(dmdDtl);
                 }
@@ -485,8 +489,7 @@ public class EditDemandAction extends BaseFormAction {
         for (DemandDetail dmdDetail : demandDetailBeanList) {
             if ((dmdDetail.getIsNew() != null && dmdDetail.getIsNew()) && dmdDetail.getActualAmount() != null) {
                 EgDemandReason egDmdRsn = propertyTaxUtil.getDemandReasonByCodeAndInstallment(
-                        PropertyTaxConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster()),
-                        dmdDetail.getInstallment());
+                        demandReasonMap.get(dmdDetail.getReasonMaster()), dmdDetail.getInstallment());
                 // PropertyService.createDemandDetails()
 
                 /**
@@ -541,12 +544,8 @@ public class EditDemandAction extends BaseFormAction {
 
                     if (dmdDetail.getRevisedAmount() != null
                             && dmdDetail.getInstallment().equals(ddFromDB.getEgDemandReason().getEgInstallmentMaster())
-                            && ddFromDB
-                                    .getEgDemandReason()
-                                    .getEgDemandReasonMaster()
-                                    .getCode()
-                                    .equalsIgnoreCase(
-                                            PropertyTaxConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster()))) {
+                            && ddFromDB.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                    .equalsIgnoreCase(demandReasonMap.get(dmdDetail.getReasonMaster()))) {
 
                         isUpdateAmount = true;
                         buildAuditLog(installmentTaxEdits, ddFromDB.getEgDemandReason().getEgInstallmentMaster(),
@@ -556,12 +555,8 @@ public class EditDemandAction extends BaseFormAction {
 
                     if (dmdDetail.getRevisedCollection() != null
                             && ddFromDB.getEgDemand().getEgInstallmentMaster().equals(currentInstallment)
-                            && ddFromDB
-                                    .getEgDemandReason()
-                                    .getEgDemandReasonMaster()
-                                    .getCode()
-                                    .equalsIgnoreCase(
-                                            PropertyTaxConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster()))) {
+                            && ddFromDB.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                    .equalsIgnoreCase(demandReasonMap.get(dmdDetail.getReasonMaster()))) {
 
                         Installment inst = (Installment) installmentDAO.findById(dmdDetail.getInstallment().getId(),
                                 false);
@@ -887,4 +882,13 @@ public class EditDemandAction extends BaseFormAction {
     public void setAllInstallments(List<Installment> allInstallments) {
         this.allInstallments = allInstallments;
     }
+
+    public Map<String, String> getDemandReasonMap() {
+        return demandReasonMap;
+    }
+
+    public void setDemandReasonMap(Map<String, String> demandReasonMap) {
+        this.demandReasonMap = demandReasonMap;
+    }
+
 }

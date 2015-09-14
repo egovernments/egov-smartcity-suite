@@ -51,6 +51,7 @@
 		jQuery.noConflict();
 		jQuery("#loadingMask").remove();
 	    var newInstallmentCount = 0;
+	    var mapSize = document.getElementById("mapSize");
 	    var instDetailsRowIndex = 2;
 	    var newDemandRsnsCount = 4;	    
 	    var lastIndex;
@@ -165,7 +166,8 @@
 		function assignInstallmentId(obj, id) {
 			var instDetailsTable = document.getElementById("instDetails");
 			var selRowIndex = obj.parentNode.parentNode.parentNode.rowIndex;
-			for (var i = 1; i <= 5; i++) {
+			var mapSize = document.getElementById("mapSize").value;
+			for (var i = 1; i <= mapSize+1; i++) {
 				var row = instDetailsTable.rows[i+selRowIndex];
 				row.cells[0].childNodes[1].childNodes[1].setAttribute("value", id);
 			}
@@ -191,6 +193,7 @@
 							<span class="bold"> <s:property value="%{propertyId}" />
 							<s:hidden name="propertyId" value="%{propertyId}" /> </span>
 							<s:hidden name="lastIdx" id="lastIdx"/>
+							<s:hidden name="mapSize" value="%{demandReasonMap.size()}" id="mapSize"/>
 						</td>
 					</tr>					
 					<tr>
@@ -256,7 +259,7 @@
 									<%-- <s:set
 										value="{@org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_WARRANT_FEE, @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_NOTICE_FEE, @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_COURT_FEE, @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_PENALTY_FINES}"
 										var="demandRsnToExclude" /> --%>
-									<s:iterator value="@org.egov.ptis.constants.PropertyTaxConstants@DMDRSN_CODE_MAP" status="itrStatus" var="rsn">
+									<s:iterator value="demandReasonMap" status="itrStatus" var="rsn">
 											<%-- <s:if test="%{#demandRsnToExclude.contains(key) == false}" > --%>
 											<tr id="newInstallmentRow">
 												<s:if test="%{#itrStatus.count == 1}" >												
@@ -278,15 +281,13 @@
 														</div>
 													</td>
 												</s:else>
-												<td class="blueborderfortd">												
-													<%-- <s:iterator value="@org.egov.ptis.constants.PropertyTaxConstants@DMDRSN_CODE_MAP" status="itrCodeMapStatus">
-														<s:if test="%{value == #rsn}"> --%>
+												<td class="blueborderfortd" align="left">			
+														<s:hidden value="%{key}" />
+														<div align="left">
 															<s:property value="key" />
-															<s:hidden value="%{key}" />
-														<%-- </s:if>
-													</s:iterator> --%>
-												</td>											
-												<td class="blueborderfortd">
+														</div>
+												</td>		
+												<td class="blueborderfortd" align="center">
 													<div align="right">
 														<s:textfield
 															name="demandDetailBeanList[%{#idx}].actualAmount"
@@ -338,15 +339,18 @@
 										<s:set value="0" var="count" />						
 										<s:set value="#listSize" var="j" />
 										<%-- j is the each new installment start index --%>
-										<s:set value="%{#j - 4}" var="j" />
+										<s:set value="%{#j - demandDetailBeanList.size}" var="j" />
 										<%-- idx index value for the installmentss demand reason --%>
 										<s:set value="%{#j}" var="idx" />
 										
 										<s:iterator value="demandDetailBeanList" status="demandInfoStatus">
+										
 										<!-- #idx > 0 && ((#idx % 10) == 0) && demandDetailBeanList[#idx].installment != demandDetailBeanList[#idx - 1].installment -->
-										<s:if test="%{demandDetailBeanList[#idx].isNew == true}">											
+										<s:if test="%{demandDetailBeanList[#idx].isNew == true}">		
+										demandDetailBeanList <s:property value="%{demandDetailBeanList}"/>
 											<tr id="newInstallmentRow">
-												<s:if	test="%{demandDetailBeanList[#idx].reasonMaster == @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_GENERAL_TAX}">
+												<s:if test="%{demandDetailBeanList[#idx].reasonMaster == @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_GENERAL_TAX ||
+												demandDetailBeanList[#idx].reasonMaster == @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_VACANT_TAX}">
 													<td class="blueborderfortd">
 														<div align="center">
 															<s:select id="installments"
@@ -413,9 +417,9 @@
 													<div align="center">N/A</div>
 												</td>
 											</tr>
-											<s:if test="%{#count == 4}" >
+											<s:if test="%{#count == demandDetailBeanList.size}" >
 												<s:set value="0" var="count" />
-												<s:set value="%{#j - 5}" var="j" />
+												<s:set value="%{#j - demandDetailBeanList.size +1}" var="j" />
 												<s:set value="#j" var="idx" />
 											</s:if>
 											<s:else>
@@ -426,8 +430,7 @@
 										</s:if>
 										</s:iterator>	
 										<s:iterator value="demandDetailBeanList" status="demandInfoStatus">
-											<s:if
-												test="%{demandDetailBeanList[#demandInfoStatus.index].isNew == false || (demandDetailBeanList[#demandInfoStatus.index - 1].isNew == false && demandDetailBeanList[#demandInfoStatus.index].reasonMaster == @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_CHQ_BOUNCE_PENALTY)}">
+											<s:if test="%{demandDetailBeanList[#demandInfoStatus.index].isNew == false || (demandDetailBeanList[#demandInfoStatus.index - 1].isNew == false && demandDetailBeanList[#demandInfoStatus.index].reasonMaster == @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_CHQ_BOUNCE_PENALTY)}">
 												<%@ include file="editDemandInstallmentDetail.jsp"%>
 											</s:if>
 										</s:iterator>

@@ -415,7 +415,7 @@ public interface PropertyTaxConstants {
 
     // Demand Reason master Strings
     public static final String DEMANDRSN_STR_GENERAL_TAX = "General Tax";
-    public static final String DEMANDRSN_STR_VACANT_TAX = "VACANT LAND TAX";
+    public static final String DEMANDRSN_STR_VACANT_TAX = "Vacant Land Tax";
     public static final String DEMANDRSN_STR_LIBRARY_CESS = "Library Cess";
     public static final String DEMANDRSN_STR_EDUCATIONAL_CESS = "Education Cess";
     public static final String DEMANDRSN_STR_UNAUTHORIZED_PENALTY = "Unauthorized Penalty";
@@ -710,12 +710,19 @@ public interface PropertyTaxConstants {
     };
 
     // HashMap map b/n Demand reason string and code
-    public static final LinkedHashMap<String, String> DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
+    public static final LinkedHashMap<String, String> BUILTUP_PROPERTY_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
         {
             put(DEMANDRSN_STR_GENERAL_TAX, DEMANDRSN_CODE_GENERAL_TAX);
             put(DEMANDRSN_STR_LIBRARY_CESS, DEMANDRSN_CODE_LIBRARY_CESS);
             put(DEMANDRSN_STR_EDUCATIONAL_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS);
             put(DEMANDRSN_STR_UNAUTHORIZED_PENALTY, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
+        }
+    };
+    
+    public static final LinkedHashMap<String, String> VACANT_PROPERTY_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
+        {
+            put(DEMANDRSN_STR_VACANT_TAX, DEMANDRSN_CODE_VACANT_TAX);
+            put(DEMANDRSN_STR_EDUCATIONAL_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS);
         }
     };
 

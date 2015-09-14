@@ -56,7 +56,7 @@
 				</s:if>
 			<s:else>
 				<s:property
-					value="%{demandDetailBeanList[#demandInfoStatus.index].installment}" />
+					value="%{demandDetailBeanList[#demandInfoStatus.index].installment}" /> 
 			</s:else>												
 
 		</div>
