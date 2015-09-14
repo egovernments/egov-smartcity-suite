@@ -30,6 +30,8 @@
  */
 package org.egov.wtms.application.service;
 
+import java.util.List;
+
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -103,6 +105,11 @@ public class ChangeOfUseService {
             if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE))
                 validationMessage = messageSource.getMessage("err.validate.primary.connection.wtdue.forchangeofuse",
                         null, null);
+        } else if (waterConnectionDue(parentWaterConnectionDetail.getId()) > 0) {
+
+            if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE))
+                validationMessage = messageSource.getMessage("err.validate.additional.connection.wtdue.forchangeofuse",
+                        null, null);
         } else if (null != inWorkflow)
             validationMessage = messageSource.getMessage(
                     "err.validate.changeofUse.application.inprocess",
@@ -110,14 +117,26 @@ public class ChangeOfUseService {
                             inWorkflow.getApplicationNumber() }, null);
         return validationMessage;
     }
+
+    public double waterConnectionDue(final long parentId) {
+        double finalDueAmount = 0;
+        final List<WaterConnectionDetails> waterConnectionDetails = waterConnectionDetailsRepository
+                .getAllConnectionDetailsByParentConnection(parentId);
+        for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails)
+            finalDueAmount = finalDueAmount + waterconnectiondetails.getDemand().getBaseDemand().doubleValue()
+                    - waterconnectiondetails.getDemand().getAmtCollected().doubleValue();
+        return finalDueAmount;
+    }
+
     /**
-     * 
      * @param changeOfUse
      * @param approvalPosition
      * @param approvalComent
      * @param additionalRule
      * @param workFlowAction
-     * @return Update Old Connection Object And Creates New WaterConnectionDetails with INPROGRESS of ApplicationType as "CHNAGEOFUSE"
+     * @return Update Old Connection Object And Creates New
+     *         WaterConnectionDetails with INPROGRESS of ApplicationType as
+     *         "CHNAGEOFUSE"
      */
     @Transactional
     public WaterConnectionDetails createChangeOfUseApplication(final WaterConnectionDetails changeOfUse,
