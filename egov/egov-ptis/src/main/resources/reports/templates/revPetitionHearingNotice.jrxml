@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="revPetitionHearingNotice" language="groovy" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bfa584a8-aba2-402c-aa8b-d9cf2f66bfb3">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="92"/>
 	<parameter name="logoPath" class="java.lang.String"/>
 	<parameter name="docNumberObjection" class="java.lang.String"/>
 	<parameter name="receivedOn" class="java.lang.String"/>
@@ -17,7 +17,10 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="65" splitType="Stretch">
+		<band height="64" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="0" width="570" height="64" uuid="452cce49-6a14-4535-938f-87f5d55734a1"/>
+			</rectangle>
 			<staticText>
 				<reportElement x="103" y="32" width="367" height="32" uuid="bccf3998-ed33-41bf-aa2a-9e192a0cb77d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -40,68 +43,81 @@
 		</band>
 	</title>
 	<pageHeader>
-		<band height="41" splitType="Stretch">
+		<band height="45" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="0" width="570" height="45" uuid="d9d502da-9560-47d9-9848-3e098eaf8bd8"/>
+			</rectangle>
 			<staticText>
 				<reportElement x="14" y="5" width="57" height="36" uuid="671442c6-680b-4755-a65a-b797dc290f7f"/>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[R.P.NO.:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="424" y="5" width="148" height="36" uuid="56608ea1-3a46-44c3-a2ef-83648f8de1cc"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" markup="styled"/>
+				<reportElement x="395" y="5" width="173" height="36" uuid="56608ea1-3a46-44c3-a2ef-83648f8de1cc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA["Date : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{currentDate}+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="71" y="5" width="181" height="35" isPrintWhenDetailOverflows="true" uuid="1b5cdb8f-cd61-48cf-860b-2c98dc373709"/>
-				<textElement verticalAlignment="Middle"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{docNumberObjection}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="199" splitType="Stretch">
-			<textField>
-				<reportElement x="5" y="12" width="566" height="51" uuid="e6dec114-7213-468e-93b3-4396a6134008"/>
-				<textElement verticalAlignment="Middle">
+		<band height="257" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="0" width="570" height="247" uuid="d06d0ece-151f-46e0-959d-a4f24633f33e"/>
+			</rectangle>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="3" y="11" width="566" height="103" uuid="e6dec114-7213-468e-93b3-4396a6134008"/>
+				<textElement verticalAlignment="Top">
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["It is here by noted that revision petition submitted by you dated on "+ $P{receivedOn}+" is considered, and the hearing date is fixed on date: " +$P{hearingNoticeDate}+ " at Time: "+$P{hearingTime}+ " Hrs and Venue: "+$P{hearingVenue}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["It is here by noted that revision petition submitted by you dated on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+ $P{receivedOn}+"</style> is considered, and the hearing date is fixed on date: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> " +$P{hearingNoticeDate}+ "</style> at Time: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{hearingTime}+ " </style> Hrs and Venue: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{hearingVenue}+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="5" y="73" width="566" height="39" uuid="bfdc75b0-7b9c-4295-88e7-329807b4b01f"/>
-				<textElement verticalAlignment="Middle">
+				<reportElement x="4" y="118" width="566" height="39" uuid="bfdc75b0-7b9c-4295-88e7-329807b4b01f"/>
+				<textElement verticalAlignment="Top">
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
 				<textFieldExpression><![CDATA["You are requested to attend the hearing as above or you can send the authorized person nominateed by you. Otherwise youre petition hearing will be solved without your presence."]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="371" y="166" width="200" height="32" uuid="05d607a4-8727-447c-8c52-578a667914f2"/>
+				<reportElement x="371" y="210" width="200" height="32" uuid="05d607a4-8727-447c-8c52-578a667914f2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Signature of Commissioner]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="5" y="142" width="78" height="32" uuid="ace941f2-07be-4c23-914f-40dbe32ca2a4"/>
+				<reportElement x="5" y="186" width="88" height="32" uuid="ace941f2-07be-4c23-914f-40dbe32ca2a4"/>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[To, Sri/Smt./Kum.]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="78" y="144" width="196" height="32" uuid="0d73bbd8-554f-4713-9f4a-8feeca04e673"/>
-				<textElement verticalAlignment="Middle"/>
+				<reportElement x="96" y="186" width="185" height="32" uuid="0d73bbd8-554f-4713-9f4a-8feeca04e673"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{recievedBy}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="7" y="176" width="76" height="20" uuid="83fd3821-2aff-4aa6-9b36-64b68ac982f9"/>
+				<reportElement x="7" y="220" width="86" height="20" uuid="83fd3821-2aff-4aa6-9b36-64b68ac982f9"/>
+				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[House No:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="79" y="176" width="195" height="23" uuid="5f1dc1e9-8e54-4854-a3e7-728e659ca699"/>
+				<reportElement x="96" y="219" width="195" height="23" uuid="5f1dc1e9-8e54-4854-a3e7-728e659ca699"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{HouseNo}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
-	<summary>
-		<band height="42" splitType="Stretch"/>
-	</summary>
 </jasperReport>

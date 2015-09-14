@@ -445,7 +445,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             reportParams.put("currentDate", dateformat.format(new Date()));
             reportParams.put("receivedOn", dateformat.format(objection.getRecievedOn()));
             reportParams.put("docNumberObjection", objection.getObjectionNumber());
-            reportParams.put("HouseNo", objection.getBasicProperty().getProperty().getApplicationNo());
+            reportParams.put("HouseNo", objection.getBasicProperty().getUpicNo());
             reportParams.put("hearingTime", objection.getHearings().get(objection.getHearings().size() - 1)
                     .getHearingTime());
             reportParams.put("hearingVenue", objection.getHearings().get(objection.getHearings().size() - 1)
@@ -646,15 +646,15 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
             reportParams.put("currentDate", dateformat.format(new Date()));
             reportParams.put("receivedOn", dateformat.format(objection.getRecievedOn()));
-            reportParams.put("HouseNo", objection.getBasicProperty().getProperty().getApplicationNo());
+            reportParams.put("HouseNo", objection.getBasicProperty().getUpicNo());
             reportParams.put("wardNumber", objection.getBasicProperty().getBoundary() != null ? objection
                     .getBasicProperty().getBoundary().getName() : "");
-            reportParams.put("AnnualPropertyTaxTo", currentDemand.get(CURR_DMD_STR).divide(BigDecimal.valueOf(2))
+            reportParams.put("HalfYearPropertyTaxTo", currentDemand.get(CURR_DMD_STR).divide(BigDecimal.valueOf(2))
+                    .setScale(2)); 
+            reportParams.put("HalfYearPropertyTaxFrom", earlierDemand.get(CURR_DMD_STR).divide(BigDecimal.valueOf(2))
                     .setScale(2));
-            reportParams.put("AnnualPropertyTaxFrom", earlierDemand.get(CURR_DMD_STR).divide(BigDecimal.valueOf(2))
-                    .setScale(2));
-            reportParams.put("HalfYearPropertyTaxTo", currentDemand.get(CURR_DMD_STR).setScale(2).toString());
-            reportParams.put("HalfYearPropertyTaxFrom", earlierDemand.get(CURR_DMD_STR).setScale(2).toString());
+            reportParams.put("AnnualPropertyTaxTo", currentDemand.get(CURR_DMD_STR).setScale(2).toString());
+            reportParams.put("AnnualPropertyTaxFrom", earlierDemand.get(CURR_DMD_STR).setScale(2).toString());
 
             reportRequest = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_REVISIONPETITION_ENDORSEMENT,
                     objection, reportParams);
