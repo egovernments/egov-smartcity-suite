@@ -40,16 +40,15 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" oncontextmenu="return false">
 <head>
- <%@ include file="/includes/meta.jsp" %> 
+ <%@ include file="/includes/meta.jsp" %>  
 <title>eGov Works <decorator:title/></title>
 
 <link href="<c:url value='/resources/css/works.css'/>" rel="stylesheet" type="text/css" />
 <link href="<c:url value='/css/commonegov.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 
-<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/fonts/fonts-min.css"/>
+<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/fonts/fonts-min.css"/> 
 <link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>
 <link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/skin.css"/>
-<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/button.css"/>
 <link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/button.css"/>
 
 <script type="text/javascript" src="/egi/commonyui/yui2.8/autocomplete/autocomplete-min.js" ></script>
@@ -66,12 +65,12 @@
 <script type="text/javascript" src="/egi/commonyui/yui2.8/editor/editor-min.js"></script>
 
 <script type="text/javascript" src="<egov:url path='/resources/js/helper.js'/>"></script>
-<script type="text/javascript" src="/egi/script/calendar.js"></script>
-<script type="text/javascript" src="/egi/javascript/calender.js"></script>
-<script type="text/javascript" src="/egi/script/jsCommonMethods.js"></script>
-<script type="text/javascript" src="/egi/commonjs/ajaxCommonFunctions.js"></script>
-<script type="text/javascript" src="/egi/javascript/validations.js"></script>
-<script type="text/javascript" src="/egi/jsutils/prototype/prototype.js"></script>
+<script type="text/javascript" src="<c:url value='/commonjs/calendar.js' context='/egi'/>" ></script>
+<script type="text/javascript" src="<c:url value='/javascript/calender.js' context='/egi'/>"></script>
+<script type="text/javascript" src="/egf/resources/javascript/jsCommonMethods.js"></script>
+<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/javascript/validations.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/prototype.js'/>"></script>
 
 <script type="text/javascript" src="/egworks/resources/js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="/egworks/resources/js/jquery-ui-1.8.22.custom.min.js"></script>  

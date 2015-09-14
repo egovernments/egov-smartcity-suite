@@ -48,8 +48,7 @@
         <pattern>/*Ajax.do</pattern>
         <pattern>/*decorate=false*</pattern>
     </excludes>
-    <decorator name="default" page="default.jsp">
-      <pattern>/*.action</pattern>
-      <pattern>/*.do</pattern>
+    <decorator name="default" page="default.jsp"> 
+      <pattern>/*</pattern>
     </decorator>
 </decorators>
