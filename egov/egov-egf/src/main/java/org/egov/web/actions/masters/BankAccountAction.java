@@ -116,9 +116,10 @@ public class BankAccountAction extends JQueryGridActionSupport {
 		bankAccount.setBankbranch(bankBranch);
 		bankAccount.setCurrentbalance(BigDecimal.ZERO);
 		try {
+		    if(!request.getParameter("accounttype").equalsIgnoreCase("")){
 			newGLCode = prepareBankAccCode(request.getParameter("accounttype").split("#")[0],code);
-		
-		coaID = postInChartOfAccounts(newGLCode,request.getParameter("accounttype").split("#")[0],request.getParameter("accountnumber"));
+			coaID = postInChartOfAccounts(newGLCode,request.getParameter("accounttype").split("#")[0],request.getParameter("accountnumber"));
+		    }
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -145,7 +146,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
 	private void populateBankAccountDetail(final Bankaccount bankAccount) {
 		final HttpServletRequest request = ServletActionContext.getRequest();
 		bankAccount.setAccountnumber(request.getParameter("accountnumber"));
-		bankAccount.setAccounttype(request.getParameter("accounttype").split("#")[1]);
+		bankAccount.setAccounttype(request.getParameter("accounttype").equalsIgnoreCase("")?null:request.getParameter("accounttype").split("#")[1]);
 		if (StringUtils.isNotBlank(request.getParameter("fundname"))) {
 			final Fund fund = (Fund) persistenceService.getSession().load(Fund.class, Integer.valueOf(request.getParameter("fundname")));
 			bankAccount.setFund(fund);

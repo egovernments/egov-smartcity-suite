@@ -85,7 +85,6 @@ public class Bankaccount extends AbstractAuditable implements java.io.Serializab
         private Fund fund;
         @NotNull
         private String accountnumber;
-        @NotNull
         private String accounttype;
         private String narration;
         @NotNull

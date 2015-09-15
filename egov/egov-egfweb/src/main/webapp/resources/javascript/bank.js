@@ -148,7 +148,7 @@ function initializeGrid() {
 												colModel : [{name : 'id', index : 'id', key : true, hidden : true, width : 55, editable : true, editoptions : {readonly : true, size : 10}},
 												            {name : "accountnumber", index : "accountnumber", width : 80, key : true, editable : true,searchoptions: { sopt: ['eq','ne','lt','le','gt','ge', 'in', 'ni'] }, editoptions : {size : 25}, editrules : { required : true}},
 												            {name : "fundname", index : "fundname", width : 130, editable : true, edittype : "select", editoptions : {value : fundJson}, editrules : { required : true}},
-												            {name : "accounttype", index : "accounttype", width : 70, editable :true, edittype : "select", editoptions : {value : accTypeJson}, editrules : {required : true}},
+												            {name : "accounttype", index : "accounttype", width : 70, editable :true, edittype : "select", editoptions : {value : accTypeJson}},
 												            {name : "narration", index : "narration", width : 70, editable : true, edittype : "textarea", editoptions : { rows : "2", cols : "20" } },
 												            {name : "payto", index : "payto", width : 70, editable : true, editoptions : {size : 25}},
 												            {name : "typename", index : "typename", width : 70, editable : true, edittype : "select", editoptions : {value : bankAccTypeJson}, editrules : { required : true}},
