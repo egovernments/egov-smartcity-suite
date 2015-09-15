@@ -1320,31 +1320,6 @@ INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, di
 INSERT INTO eg_address (housenobldgapt, subdistrict, postoffice, landmark, country, userid, type, streetroadline, citytownvillage, arealocalitysector, district, state, pincode, id, version) VALUES ('001', NULL, NULL, 'Bank Road', NULL, 1, 'PROPERTYADDRESS', NULL, NULL, NULL, NULL, NULL, '532001', 1, 0);
 ------------------END---------------------
 
------------------START--------------------
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (26, 'Rent, Rates And Taxes', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (27, 'Electricity Charges', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (28, 'Water Charges', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (29, 'Security Expenses', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (30, 'Communication Expenses', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (31, 'Books And Periodicals', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (32, 'Printing And Stationery', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (33, 'Postage And Telegrams', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (34, 'Traveling And Conveyance', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (35, 'Insurance', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (36, 'Audit Fees', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (37, 'Legal Expenses', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (38, 'Professional And Other Fees', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (39, 'E-Governance', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (40, 'Advertisement And publicity', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (41, 'Hospitality Expenses', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (42, 'Membership And Subscription', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (43, 'Others', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (44, 'Power And Fuel', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (45, 'Education Expenses', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (46, 'Garden Expenses', 'Expense');
-INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (47, 'Privatization', 'Expense');
-------------------END---------------------
-
 ------------------------START---------------------------
 INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (59, 1, '2004-04-01 00:00:00', '2004-04-01 00:00:00', '2004-09-30 00:00:00', 359, '2015-08-28 10:45:13.280134', 'I/04-05', NULL);
 INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (60, 1, '2004-10-01 00:00:00', '2004-10-01 00:00:00', '2005-03-31 00:00:00', 359, '2015-08-28 10:45:13.280134', 'II/04-05', NULL);

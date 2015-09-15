@@ -368,21 +368,6 @@ ALTER TABLE ONLY chartofaccountdetail ADD CONSTRAINT fk_dt_coa FOREIGN KEY (deta
 
 --Removed compantdetail as it is not been used anywhere
 ------------------START------------------
-CREATE TABLE eg_bill_subtype (
-    id bigint NOT NULL,
-    name character varying(120) NOT NULL,
-    expenditure_type character varying(50) NOT NULL
-);
-CREATE SEQUENCE seq_eg_bill_subtype
-    START WITH 26
-    INCREMENT BY 1
-    MINVALUE 0
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_bill_subtype ADD CONSTRAINT eg_bill_subtype_pkey PRIMARY KEY (id);
--------------------END-------------------
-
-------------------START------------------
 CREATE TABLE eg_bill_type (
     id bigint NOT NULL,
     name character varying(32) NOT NULL,

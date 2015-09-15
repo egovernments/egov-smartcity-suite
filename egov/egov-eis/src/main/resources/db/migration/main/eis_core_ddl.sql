@@ -60,6 +60,8 @@ ALTER TABLE ONLY egeis_employee_hod
     ADD CONSTRAINT ass_id FOREIGN KEY (assignment) REFERENCES egeis_assignment(id);
 ALTER TABLE ONLY egeis_employee_hod
     ADD CONSTRAINT hod_id FOREIGN KEY (hod) REFERENCES eg_department(id);    
+ALTER TABLE ONLY egeis_employee_hod
+    ADD CONSTRAINT ass_id FOREIGN KEY (assignment) REFERENCES egeis_assignment(id);
 --------------END-----------------------
 -----------------START--------------
 CREATE TABLE egeis_grade_mstr (
@@ -245,8 +247,7 @@ CREATE INDEX index_emp_assgn_id_function ON egeis_assignment USING btree (functi
 CREATE INDEX index_emp_assgn_id_fund ON egeis_assignment USING btree (fund);
 CREATE INDEX index_emp_assgn_main_dept ON egeis_assignment USING btree (department);
 CREATE INDEX index_emp_assgn_position_id ON egeis_assignment USING btree ("position");
-ALTER TABLE ONLY egeis_employee_hod
-    ADD CONSTRAINT ass_id FOREIGN KEY (assignment) REFERENCES egeis_assignment(id);
+
 ALTER TABLE ONLY egeis_assignment
     ADD CONSTRAINT function_fk FOREIGN KEY (function) REFERENCES function(id);
 ALTER TABLE ONLY egeis_assignment
