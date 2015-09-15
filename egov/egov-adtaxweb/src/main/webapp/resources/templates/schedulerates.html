@@ -49,6 +49,7 @@
 		<title>eGov Urban Portal</title>
 		
 		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap.css">
+        <link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/font-icons/entypo/css/entypo.css">
 		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/custom.css">
 		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/header-custom.css">
 		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
@@ -128,36 +129,46 @@
                                                 <label class="radio-inline"><input type="radio" name="optradio">Per Unit Basis</label>
                                             </div>
                                         </div>
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <th>S.no</th>
-                                                <th>class</th>
-                                                <th>Unit From</th>
-                                                <th>Unit Too</th>
-                                                <th>Rate</th>
-                                                <th>Actions</th>
-                                            </thead>
-                                            <tbody>
-                                                <td>1</td>
-                                                <td><select class="form-control table-input"><option>select from below</option></select></td>
-                                                <td><input type="text" class="form-control table-input"></td>
-                                                <td><input type="text" class="form-control table-input"></td>
-                                                <td><input type="text" class="form-control table-input"></td>
-                                                <td><span class="add-padding"><i class="fa fa-plus"></i></span><span class="add-padding"><i class="fa fa-trash"></i></span></td>
-                                            </tbody>
-                                        </table>
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"> Close</button>
+                                        </div>
 									</form>
 								</div>
 							</div>	
-                            <div class="text-center">
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"> Close</button>
-                        </div>
+                            
 						</div>
 				</div>
-
-				
-
+                
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-header">The Search result is</div>
+                        <table class="table table-bordered" id="">
+                         <thead>
+                            <th>S.no</th>
+                            <th>class</th>
+                            <th>Unit From</th>
+                            <th>Unit Too</th>
+                            <th>Rate</th>
+                            <th>Actions</th>
+                        </thead>
+                        <tbody>
+                            <td>1</td>
+                            <td><select class="form-control table-input"><option>select from below</option></select></td>
+                            <td><input type="text" class="form-control table-input"></td>
+                            <td><input type="text" class="form-control table-input"></td>
+                            <td><input type="text" class="form-control table-input"></td>
+                            <td><span class="add-padding"><i class="fa fa-trash"></i></span></td>
+                        </tbody>
+                    </table>
+                    </div>
+                    <div class="col-sm-12 text-center">
+                        <button type="button" class="btn btn-primary">Add Row</button>
+                        <button type="button" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+                
+                
 			</div>
 			<footer class="main">
 					
@@ -165,11 +176,15 @@
 					
 			</footer> 
 		</div>
-	<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap-datepicker.css">
-	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global//js/bootstrap/bootstrap.js"></script>
-		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap-datepicker.js"></script>
-	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
-	<script src="../js/app/newconnection.js"></script>
+	<link rel="stylesheet"
+		href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap-datepicker.css">
+	<script
+		src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap.js"></script>
+	<script
+		src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap-datepicker.js"></script>
+       
+	<script
+		src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
 	</body>
 </html>
 
