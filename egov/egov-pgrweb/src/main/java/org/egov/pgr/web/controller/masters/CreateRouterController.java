@@ -100,6 +100,7 @@ class CreateRouterController {
         } else {
             complaintRouterService.createComplaintRouter(complaintRouter);
             redirectAttrs.addFlashAttribute("complaintRouter", complaintRouter);
+            model.addAttribute("message","msg.router.success");
             return "router-success";
         }
     }

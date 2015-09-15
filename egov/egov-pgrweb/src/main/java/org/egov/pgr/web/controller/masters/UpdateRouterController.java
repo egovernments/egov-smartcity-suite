@@ -107,8 +107,8 @@ class UpdateRouterController {
 
         complaintRouterService.updateComplaintRouter(complaintRouter);
         redirectAttrs.addFlashAttribute("complaintRouter", complaintRouter);
-        redirectAttrs.addFlashAttribute("routerHeading","msg.router.update.heading");
-        redirectAttrs.addFlashAttribute("message", "msg.router.update.success");
+        model.addAttribute("routerHeading","msg.router.update.heading");
+        model.addAttribute("message", "msg.router.update.success");
         return "router-success";
     }
 
@@ -120,8 +120,8 @@ class UpdateRouterController {
 
         complaintRouterService.updateComplaintRouter(complaintRouter);
         redirectAttrs.addFlashAttribute("complaintRouter", complaintRouter);
-        redirectAttrs.addFlashAttribute("routerHeading", "msg.router.update.heading");
-        redirectAttrs.addFlashAttribute("message", "msg.router.update.success");
+        model.addAttribute("routerHeading", "msg.router.update.heading");
+        model.addAttribute("message", "msg.router.update.success");
         return "router-updateSuccess";
     }
 
@@ -133,8 +133,8 @@ class UpdateRouterController {
 
         complaintRouterService.deleteComplaintRouter(complaintRouter);
         redirectAttrs.addFlashAttribute("complaintRouter", complaintRouter);
-        redirectAttrs.addFlashAttribute("routerHeading", "msg.router.del.heading");
-        redirectAttrs.addFlashAttribute("message", "msg.router.del.success");
+        model.addAttribute("routerHeading", "msg.router.del.heading");
+        model.addAttribute("message", "msg.router.del.success");
         return "router-deleteMsg";
 
     }
