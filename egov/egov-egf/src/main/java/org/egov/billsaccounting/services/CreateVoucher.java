@@ -248,8 +248,8 @@ public class CreateVoucher {
 
     @Autowired
     private HierarchyTypeService hierarchyTypeService;
-    
-    private MastersService masters;
+    @Autowired
+    private MastersService mastersService;
     CommonMethodsI cmImpl = new CommonMethodsImpl();
     PersistenceService<Bankreconciliation, Integer> bankReconSer;
     PersistenceService<EgBillregistermis, Integer> billMisSer;
@@ -1947,9 +1947,9 @@ public class CreateVoucher {
                 detailtypeid = subdetailDetailMap.get(VoucherConstant.DETAILTYPEID).toString();
                 Session session = HibernateUtil.getCurrentSession();
                 Query qry = session.createQuery("from CChartOfAccountDetail cd,CChartOfAccounts c where " +
-                        "cd.glCodeId = c.id and c.glcode=:glcode and cd.detailTypeId=:detailTypeId");
+                        "cd.glCodeId = c.id and c.glcode=:glcode and cd.detailTypeId.id=:detailTypeId");
                 qry.setString(VoucherConstant.GLCODE, glcode);
-                qry.setString("detailTypeId", detailtypeid);
+                qry.setInteger("detailTypeId", Integer.valueOf(detailtypeid));
                 qry.setCacheable(true);
                 if (null == qry.list() || qry.list().size() == 0) {
                     throw new ApplicationRuntimeException("The subledger type mapped to this account code is not correct " + glcode);
@@ -1963,9 +1963,9 @@ public class CreateVoucher {
                 detailKeyId = subdetailDetailMap.get(VoucherConstant.DETAILKEYID).toString();
                 Session session = HibernateUtil.getCurrentSession();
                 Query qry = session
-                        .createQuery("from Accountdetailkey adk where adk.accountdetailtype=:detailtypeid and adk.detailkey=:detailkey");
-                qry.setString(VoucherConstant.DETAILTYPEID, detailtypeid);
-                qry.setString("detailkey", detailKeyId);
+                        .createQuery("from Accountdetailkey adk where adk.accountdetailtype.id=:detailtypeid and adk.detailkey=:detailkey");
+                qry.setInteger(VoucherConstant.DETAILTYPEID, Integer.valueOf(detailtypeid));
+                qry.setInteger("detailkey", Integer.valueOf(detailKeyId));
                 qry.setCacheable(true);
                 if (null == qry.list() || qry.list().size() == 0) {
                     throw new ApplicationRuntimeException("Subledger data is not valid for account code " + glcode);
@@ -2087,7 +2087,7 @@ public class CreateVoucher {
                         String detailFunctionCode = sublegDetailMap.get(VoucherConstant.FUNCTIONCODE).toString();
                         if (glcode.equals(detailGlCode) && functioncode != null && functioncode.equals(detailFunctionCode)) {
                             TransaxtionParameter reqData = new TransaxtionParameter();
-                            Accountdetailtype adt = masters.getAccountdetailtypeById(Integer.valueOf(detailtypeid));
+                            Accountdetailtype adt = mastersService.getAccountdetailtypeById(Integer.valueOf(detailtypeid));
                             reqData.setDetailName(adt.getAttributename());
                             reqData.setGlcodeId(chartOfAcc.getId().toString());
                             if (null != sublegDetailMap.get(VoucherConstant.DEBITAMOUNT)
@@ -2107,7 +2107,7 @@ public class CreateVoucher {
                     } else {
                         if (glcode.equals(detailGlCode)) {
                             TransaxtionParameter reqData = new TransaxtionParameter();
-                            Accountdetailtype adt = masters.getAccountdetailtypeById(Integer.valueOf(detailtypeid));
+                            Accountdetailtype adt = mastersService.getAccountdetailtypeById(Integer.valueOf(detailtypeid));
                             reqData.setDetailName(adt.getAttributename());
                             reqData.setGlcodeId(chartOfAcc.getId().toString());
                             if (null != sublegDetailMap.get(VoucherConstant.DEBITAMOUNT)
@@ -2864,6 +2864,14 @@ public class CreateVoucher {
     public void setAppConfigValuesService(
             AppConfigValueService appConfigValuesService) {
         this.appConfigValuesService = appConfigValuesService;
+    }
+
+    public MastersService getMastersService() {
+        return mastersService;
+    }
+
+    public void setMastersService(MastersService mastersService) {
+        this.mastersService = mastersService;
     }
 
 }

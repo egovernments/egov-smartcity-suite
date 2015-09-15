@@ -44,6 +44,7 @@
 
 package com.exilant.eGov.src.domain;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
@@ -81,11 +82,11 @@ public class GeneralLedgerDetail {
 								"VALUES ( ?, ?, ?, ?, ?)";		
 		
 	      Query pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-	      pst.setString(1, id);
-	      pst.setString(2, glId);
-	      pst.setString(3, detailKeyId);
-	      pst.setString(4, detailTypeId);
-	      pst.setString(5, detailAmt);
+	      pst.setLong(0, Long.valueOf(id));
+	      pst.setLong(1, Long.valueOf(glId));
+	      pst.setLong(2, Long.valueOf(detailKeyId));
+	      pst.setLong(3, Long.valueOf(detailTypeId));
+	      pst.setBigDecimal(4, BigDecimal.valueOf(Long.valueOf(detailAmt.split(".00")[0])));
 	      pst.executeUpdate();
 	      if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
 	}

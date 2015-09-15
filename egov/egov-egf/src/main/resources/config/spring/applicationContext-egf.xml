@@ -227,6 +227,9 @@
     <bean id="voucherHibDAO" class="org.egov.dao.voucher.VoucherHibernateDAO" scope="prototype">
 		
 	</bean> 
+	 <bean id="mastersService" class="org.egov.masters.services.MastersService" scope="prototype">
+		
+	</bean> 
 	<bean id="billRegisterService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="type" value="org.egov.model.bills.EgBillregister" />
 	</bean>

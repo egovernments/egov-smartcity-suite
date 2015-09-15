@@ -51,6 +51,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.SQLQuery;
 
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.dataservice.DataExtractor;
@@ -130,13 +131,15 @@ public class RequiredValidator {
 		}
 	}
 	public boolean validateKey(int detailId,String keyToValidate) throws TaskFailedException{
-		HashMap accKeyMap=loadAccDetKey(detailId);
-		Iterator it=accKeyMap.keySet().iterator();
-		while(it.hasNext()){
-			AccountDetailKey accKey=(AccountDetailKey)accKeyMap.get(it.next());
-			if(accKey.getDetailKey().equalsIgnoreCase(keyToValidate))
-				return true;
-		}
-		return false;
+	    
+	    String sql="select detailKey as \"detailKey\" ,detailName as \"detailName\","+
+	                "glCodeID as \"glCodeID\",groupID as \"groupID\",ID as \"ID\" from accountdetailkey where detailTypeId="+String.valueOf(detailId)+" and detailKey = "+String.valueOf(keyToValidate);
+	     List list = HibernateUtil.getCurrentSession().createSQLQuery(sql).list();
+	     if(list!=null && list.size()>0){
+	         return true;
+	     }else
+	     {
+	         return false;
+	     }
 	}
 }

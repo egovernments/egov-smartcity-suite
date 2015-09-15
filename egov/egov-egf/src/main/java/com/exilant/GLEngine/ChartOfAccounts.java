@@ -50,9 +50,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccountDetail;
@@ -61,7 +63,6 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -952,6 +953,10 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc) throws TaskFai
 				//if that code doesnot require any details no nedd to insert in GL details
 			if(glAcc.getGLParameters().size()<=0)continue;
 			ArrayList glParamList=glAcc.getGLParameters();
+			Set temp = new HashSet<>();
+			temp.addAll(glParamList);
+			glParamList.clear();
+			glParamList.addAll(temp);
 			ArrayList txnPrm=txn.getTransaxtionParam();
 			String detKeyId="";
 			if(LOGGER.isInfoEnabled())     LOGGER.info("glParamList size :"+glParamList.size());
@@ -1341,7 +1346,7 @@ public static HashMap getAccountDetailType()
 	   	try{
 	   		String query="select id from tds where glcodeid= ? and isactive=1";
 	   		Query pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-	   		pst.setString(1, glcodeId);
+	   		pst.setLong(0, Long.valueOf(glcodeId));
 	   		if(LOGGER.isInfoEnabled())     LOGGER.info("query-->"+query);
 	   		List<Object[]> rset=pst.list();
 	   		if(rset!=null && rset.size()>0)
