@@ -164,22 +164,6 @@ ALTER TABLE ONLY accountentitymaster ADD CONSTRAINT fk_dt_aem FOREIGN KEY (detai
 -------------------END-------------------
 
 ------------------START------------------
---TODO check if this table is been used anywhere
-CREATE TABLE accountgroup (
-    id bigint NOT NULL,
-    name character varying(50) NOT NULL,
-    nbroflevels bigint NOT NULL
-);
-CREATE SEQUENCE seq_accountgroup
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY accountgroup ADD CONSTRAINT accountgroup_pkey PRIMARY KEY (id);
--------------------END-------------------
-
-------------------START------------------
 CREATE TABLE bank (
     id bigint NOT NULL,
     code character varying(50) NOT NULL,
@@ -850,6 +834,10 @@ ALTER TABLE ONLY voucherheader ADD CONSTRAINT voucherheader_pkey PRIMARY KEY (id
 ALTER TABLE ONLY voucherheader ADD CONSTRAINT voucherheader_cgvn_fiscalperiodid_key UNIQUE (cgvn, fiscalperiodid);
 CREATE UNIQUE INDEX cgn_c ON voucherheader USING btree (cgn);
 CREATE INDEX indx_vh_fundid ON voucherheader USING btree (fundid);
+ALTER TABLE ONLY voucherheader ADD CONSTRAINT fk_fp_vh FOREIGN KEY (fiscalperiodid) REFERENCES fiscalperiod(id); 
+ALTER TABLE ONLY voucherheader ADD CONSTRAINT fk_fund_vh FOREIGN KEY (fundid) REFERENCES fund(id); 
+ALTER TABLE ONLY voucherheader ADD CONSTRAINT fk_voucher_state FOREIGN KEY (state_id) REFERENCES eg_wf_states(id); 
+ALTER TABLE ONLY voucherheader ADD CONSTRAINT fk_voucherheader_vh FOREIGN KEY (originalvcid) REFERENCES voucherheader(id);
 -------------------END-------------------
 
 ------------------START------------------
@@ -878,6 +866,11 @@ CREATE SEQUENCE seq_vouchermis
 CREATE INDEX indx_vmis_schemeid ON vouchermis USING btree (schemeid);
 CREATE INDEX indx_vmis_subschemeid ON vouchermis USING btree (subschemeid);
 CREATE INDEX indx_vmis_vhid ON vouchermis USING btree (voucherheaderid);
+ALTER TABLE ONLY vouchermis ADD CONSTRAINT fk_vmis_functionary FOREIGN KEY (functionaryid) REFERENCES functionary(id); 
+ALTER TABLE ONLY vouchermis ADD CONSTRAINT fk_vmis_schemeid FOREIGN KEY (schemeid) REFERENCES scheme(id); 
+ALTER TABLE ONLY vouchermis ADD CONSTRAINT fk_vmis_subschemeidpk FOREIGN KEY (subschemeid) REFERENCES sub_scheme(id);
+ALTER TABLE ONLY vouchermis ADD CONSTRAINT fk_vmis_vhidpk FOREIGN KEY (voucherheaderid) REFERENCES voucherheader(id); 
+
 --------------------END ---------------------------------
 
 ------------------START------------------
@@ -997,6 +990,8 @@ CREATE SEQUENCE seq_sub_scheme
 ALTER TABLE ONLY sub_scheme ADD CONSTRAINT sub_scheme_code_schemeid_key UNIQUE (code, schemeid);
 ALTER TABLE ONLY sub_scheme ADD CONSTRAINT sub_scheme_pkey PRIMARY KEY (id);
 CREATE INDEX indx_schemeid ON sub_scheme USING btree (schemeid);
+ALTER TABLE ONLY sub_scheme ADD CONSTRAINT fk_sub_scheme_department FOREIGN KEY (department) REFERENCES eg_department(id); 
+ALTER TABLE ONLY sub_scheme ADD CONSTRAINT sub_scheme_r01 FOREIGN KEY (schemeid) REFERENCES scheme(id);
 -------------------END-------------------
 ------------------START-----------------
 CREATE TABLE eg_surrendered_cheques (
@@ -1016,6 +1011,9 @@ CREATE SEQUENCE seq_eg_surrendered_cheques
 ALTER TABLE ONLY eg_surrendered_cheques ADD CONSTRAINT eg_surrendered_cheques_pkey PRIMARY KEY (id);
 CREATE INDEX indx_esc_accountid ON eg_surrendered_cheques USING btree (bankaccountid);
 CREATE INDEX indx_esc_vhid ON eg_surrendered_cheques USING btree (vhid);
+ALTER TABLE ONLY eg_surrendered_cheques ADD CONSTRAINT fk_surc_ba FOREIGN KEY (bankaccountid) REFERENCES bankaccount(id); 
+ALTER TABLE ONLY eg_surrendered_cheques ADD CONSTRAINT fk_surc_vh FOREIGN KEY (vhid) REFERENCES voucherheader(id);
+
 -----------------------END-----------------------------
 
 ---------------------------------NOT STRUCTURED---------------------------------
@@ -1071,8 +1069,6 @@ CREATE INDEX digitalsign_objectid_idx ON eg_digital_signed_docs USING btree (obj
 ---removed eg_entity----
 ----removed eg_tasks----------
 
-
-
 CREATE TABLE eg_userdetails (
     id_userdet bigint NOT NULL,
     id_user bigint NOT NULL,
@@ -1094,7 +1090,6 @@ CREATE TABLE eg_view (
     dateofview timestamp without time zone
 );
 ALTER TABLE ONLY eg_view ADD CONSTRAINT eg_view_complaintnumber_key UNIQUE (complaintnumber);
-
 
 
 CREATE SEQUENCE seq_service_history
@@ -1218,9 +1213,6 @@ CREATE SEQUENCE sq_receiptheader_2025_26
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
----------------------------
-
-
 
 
 ALTER TABLE ONLY egp_citizeninbox ADD CONSTRAINT fk_c_inbox_createdby FOREIGN KEY (createdby) REFERENCES eg_user(id); 
@@ -1232,59 +1224,10 @@ ALTER TABLE ONLY eg_citizen ADD CONSTRAINT fk_citizen_user FOREIGN KEY (id) REFE
  
 ALTER TABLE ONLY eg_digital_signed_docs ADD CONSTRAINT fk_digitalsign FOREIGN KEY (createdby) REFERENCES eg_user(id); 
 
-
-
-
- 
- 
-ALTER TABLE ONLY voucherheader ADD CONSTRAINT fk_fp_vh FOREIGN KEY (fiscalperiodid) REFERENCES fiscalperiod(id); 
-ALTER TABLE ONLY voucherheader ADD CONSTRAINT fk_fund_vh FOREIGN KEY (fundid) REFERENCES fund(id); 
-ALTER TABLE ONLY voucherheader ADD CONSTRAINT fk_voucher_state FOREIGN KEY (state_id) REFERENCES eg_wf_states(id); 
-ALTER TABLE ONLY voucherheader ADD CONSTRAINT fk_voucherheader_vh FOREIGN KEY (originalvcid) REFERENCES voucherheader(id);
-
-ALTER TABLE ONLY miscbilldetail ADD CONSTRAINT fk_mbd_pbi FOREIGN KEY (paidbyid) REFERENCES eg_user(id); 
-ALTER TABLE ONLY miscbilldetail ADD CONSTRAINT fk_mbd_pvh FOREIGN KEY (payvhid) REFERENCES voucherheader(id); 
-ALTER TABLE ONLY miscbilldetail ADD CONSTRAINT fk_mbd_vh FOREIGN KEY (billvhid) REFERENCES voucherheader(id);
-
 ALTER TABLE ONLY eg_object_history ADD CONSTRAINT fk_modified_by FOREIGN KEY (modifed_by) REFERENCES eg_user(id); 
 ALTER TABLE ONLY eg_object_history ADD CONSTRAINT fk_object_type_id FOREIGN KEY (object_type_id) REFERENCES eg_object_type(id); 
 
-ALTER TABLE ONLY paymentheader ADD CONSTRAINT fk_ph_doid FOREIGN KEY (drawingofficer_id) REFERENCES eg_drawingofficer(id);
-ALTER TABLE ONLY paymentheader ADD CONSTRAINT fk_ba_ph FOREIGN KEY (bankaccountnumberid) REFERENCES bankaccount(id);
-ALTER TABLE ONLY paymentheader ADD CONSTRAINT fk_vh_ph FOREIGN KEY (voucherheaderid) REFERENCES voucherheader(id);  
-
-  
-ALTER TABLE ONLY eg_remittance ADD CONSTRAINT fk_rmt_fd FOREIGN KEY (fundid) REFERENCES fund(id); 
-ALTER TABLE ONLY eg_remittance ADD CONSTRAINT fk_rmt_fy FOREIGN KEY (fyid) REFERENCES financialyear(id); 
-ALTER TABLE ONLY eg_remittance ADD CONSTRAINT fk_rmt_tds FOREIGN KEY (tdsid) REFERENCES tds(id); 
-ALTER TABLE ONLY eg_remittance ADD CONSTRAINT fk_rmt_vh FOREIGN KEY (paymentvhid) REFERENCES voucherheader(id); 
-
-ALTER TABLE ONLY eg_remittance_gldtl ADD CONSTRAINT fk_rmtgl_gld FOREIGN KEY (gldtlid) REFERENCES generalledgerdetail(id);
-ALTER TABLE ONLY eg_remittance_gldtl ADD CONSTRAINT sys_c009869 FOREIGN KEY (tdsid) REFERENCES tds(id);
-
-ALTER TABLE ONLY schedulemapping ADD CONSTRAINT fk_scd_luser FOREIGN KEY (lastmodifiedby) REFERENCES eg_user(id); 
-ALTER TABLE ONLY schedulemapping ADD CONSTRAINT fk_sch_cuser FOREIGN KEY (createdby) REFERENCES eg_user(id);
- 
-ALTER TABLE ONLY sub_scheme ADD CONSTRAINT fk_sub_scheme_department FOREIGN KEY (department) REFERENCES eg_department(id); 
-ALTER TABLE ONLY sub_scheme ADD CONSTRAINT sub_scheme_r01 FOREIGN KEY (schemeid) REFERENCES scheme(id);
-
-ALTER TABLE ONLY eg_surrendered_cheques ADD CONSTRAINT fk_surc_ba FOREIGN KEY (bankaccountid) REFERENCES bankaccount(id); 
-ALTER TABLE ONLY eg_surrendered_cheques ADD CONSTRAINT fk_surc_vh FOREIGN KEY (vhid) REFERENCES voucherheader(id);
- 
 ALTER TABLE ONLY eg_view ADD CONSTRAINT fk_user_view FOREIGN KEY (userid) REFERENCES eg_user(id); 
 
-
-
-ALTER TABLE ONLY vouchermis ADD CONSTRAINT fk_vmis_functionary FOREIGN KEY (functionaryid) REFERENCES functionary(id); 
-ALTER TABLE ONLY vouchermis ADD CONSTRAINT fk_vmis_schemeid FOREIGN KEY (schemeid) REFERENCES scheme(id); 
-ALTER TABLE ONLY vouchermis ADD CONSTRAINT fk_vmis_subschemeidpk FOREIGN KEY (subschemeid) REFERENCES sub_scheme(id);
-ALTER TABLE ONLY vouchermis ADD CONSTRAINT fk_vmis_vhidpk FOREIGN KEY (voucherheaderid) REFERENCES voucherheader(id); 
-
-ALTER TABLE ONLY bankentries ADD CONSTRAINT fkbaid FOREIGN KEY (bankaccountid) REFERENCES bankaccount(id); 
-ALTER TABLE ONLY bankentries ADD CONSTRAINT fkcoaid FOREIGN KEY (glcodeid) REFERENCES chartofaccounts(id); 
-ALTER TABLE ONLY bankentries ADD CONSTRAINT fkvhid FOREIGN KEY (voucherheaderid) REFERENCES voucherheader(id);
- 
-ALTER TABLE ONLY bankentries_mis ADD CONSTRAINT sys_c0011773 FOREIGN KEY (bankentries_id) REFERENCES bankentries(id); 
-ALTER TABLE ONLY bankentries_mis ADD CONSTRAINT sys_c0011774 FOREIGN KEY (function_id) REFERENCES function(id);
 
 ---------------------------------NOT STRUCTURED ENDS---------------------------------
