@@ -60,6 +60,7 @@
 	    var isFirstInstVisible = true;
 		
 	    function addNewInstallment() {
+	    	newDemandRsnsCount = document.getElementById("mapSize").size;
 			var rowIndex = document.getElementById("newInstallmentRow").rowIndex;
 			var trClones = new Array();
 			var instDetailsTable = document.getElementById("instDetails");
@@ -176,9 +177,13 @@
 	</script>
 </head>
 <body>	
-	<div align="left">
-  		<s:actionerror/>
-  	</div>
+	<s:if test="%{hasErrors()}">
+		<div class="errorstyle" id="property_error_area">
+			<div class="errortext">
+				<s:actionerror />
+			</div>
+		</div>
+	</s:if>
 	<div class="formmainbox">
   	<div class="formheading"></div>
 		<div class="headingbg"><s:text name="editDemand"/></div>
@@ -255,7 +260,7 @@
 												width="18" height="18" border="0" />
 										</td>
 									</tr> 		
-									<s:if test="%{hasActionErrors() == false}">
+									<%-- <s:if test="%{hasActionErrors() == false}"> --%>
 									<%-- <s:set
 										value="{@org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_WARRANT_FEE, @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_NOTICE_FEE, @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_COURT_FEE, @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_PENALTY_FINES}"
 										var="demandRsnToExclude" /> --%>
@@ -330,8 +335,7 @@
 												}
 											} 
 										</script>	
-									</s:if>				
-									<s:if test="%{hasActionErrors() == false}">	
+									<%-- </s:if>	 --%>			
 										<script type="text/javascript">
 											var newInstCountOnError = 0;
 										</script>		
@@ -342,12 +346,10 @@
 										<s:set value="%{#j - demandDetailBeanList.size}" var="j" />
 										<%-- idx index value for the installmentss demand reason --%>
 										<s:set value="%{#j}" var="idx" />
-										
 										<s:iterator value="demandDetailBeanList" status="demandInfoStatus">
 										
 										<!-- #idx > 0 && ((#idx % 10) == 0) && demandDetailBeanList[#idx].installment != demandDetailBeanList[#idx - 1].installment -->
 										<s:if test="%{demandDetailBeanList[#idx].isNew == true}">		
-										demandDetailBeanList <s:property value="%{demandDetailBeanList}"/>
 											<tr id="newInstallmentRow">
 												<s:if test="%{demandDetailBeanList[#idx].reasonMaster == @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_GENERAL_TAX ||
 												demandDetailBeanList[#idx].reasonMaster == @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_VACANT_TAX}">
@@ -394,7 +396,7 @@
 													<div align="right">
 														<s:textfield
 															name="demandDetailBeanList[%{#idx}].actualAmount"
-															id="revisedTax" size="10" maxlength="10"
+															id="revisedTax" size="10" maxlength="7"
 															onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Actual Tax');"
 															value="%{demandDetailBeanList[#idx].actualAmount}"
 															style="text-align: right" />
@@ -407,7 +409,7 @@
 													<div align="right">
 														<s:textfield
 															name="demandDetailBeanList[%{#idx}].actualCollection"
-															id="revisedCollection" size="10" maxlength="10"
+															id="revisedCollection" size="10" maxlength="7"
 															onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Actual Collection');"
 															style="text-align: right"
 															value="%{demandDetailBeanList[#idx].actualCollection}" />
@@ -417,7 +419,11 @@
 													<div align="center">N/A</div>
 												</td>
 											</tr>
-											<s:if test="%{#count == demandDetailBeanList.size}" >
+										</s:if>
+										<s:else>
+										<%@ include file="editDemandInstallmentDetail.jsp"%>
+										</s:else>
+										<s:if test="%{#count == demandDetailBeanList.size}" >
 												<s:set value="0" var="count" />
 												<s:set value="%{#j - demandDetailBeanList.size +1}" var="j" />
 												<s:set value="#j" var="idx" />
@@ -426,25 +432,11 @@
 												<s:set value="%{#count + 1}" var="count" />
 												<s:set value="%{#idx + 1}" var="idx" />
 											</s:else>
-											
-										</s:if>
 										</s:iterator>	
-										<s:iterator value="demandDetailBeanList" status="demandInfoStatus">
-											<s:if test="%{demandDetailBeanList[#demandInfoStatus.index].isNew == false || (demandDetailBeanList[#demandInfoStatus.index - 1].isNew == false && demandDetailBeanList[#demandInfoStatus.index].reasonMaster == @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_CHQ_BOUNCE_PENALTY)}">
-												<%@ include file="editDemandInstallmentDetail.jsp"%>
-											</s:if>
-										</s:iterator>
 										<script type="text/javascript">
 											lastIndex = lastIndexOnError;
 											newInstallmentCount = newInstCountOnError;
 										</script> 
-									</s:if> 
-									<s:else>							
-										<s:iterator value="demandDetailBeanList" status="demandInfoStatus">											
-												<%@ include file="editDemandInstallmentDetail.jsp" %>																				
-										</s:iterator>	
-									</s:else>
-												 																	
 								</table>
 							</div>
 						</td>
@@ -453,7 +445,7 @@
 						<td class="bluebox"></td>
 						<td class="bluebox"  colspan="2">
 							&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <s:text name="remarks.head"></s:text><span
-			class="mandatory1">*</span> :
+			              class="mandatory1">*</span> :
 						</td>
 						<td class="bluebox" colspan="2">
 							<s:textarea name="remarks" id="remarks" cols="60" onkeypress="checkTextAreaLength(this, 256)"></s:textarea>

@@ -132,9 +132,7 @@
 					id="revisedCollection" size="10" maxlength="10"
 					onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Revised Collection');"
 					style="text-align: right" 
-					value="%{demandDetailBeanList[#demandInfoStatus.index].revisedCollection}"
-					cssClass="%{demandDetailBeanList[#demandInfoStatus.index].isCollectionEditable == true ? '' : 'hiddentext'}" 
-					disabled="!demandDetailBeanList[#demandInfoStatus.index].isCollectionEditable"/>
+					value="%{demandDetailBeanList[#demandInfoStatus.index].revisedCollection}"/>
 				<s:hidden
 						value="%{demandDetailBeanList[#demandInfoStatus.index].isCollectionEditable}"
 						name="demandDetailBeanList[%{#demandInfoStatus.index}].isCollectionEditable" />

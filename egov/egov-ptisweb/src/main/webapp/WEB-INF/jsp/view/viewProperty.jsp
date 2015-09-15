@@ -75,16 +75,16 @@
 		</div>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin">
-				Property Type
+				<s:text name="ownership.type"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				N/A
+				<s:property value="%{propertyDetail.propertyTypeMaster.type}" default="N/A" /></span>
 			</div>
 			<div class="col-xs-3 add-margin">
-				Exemption
+				<s:text name="exemptioncategory"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				N/A
+				 <s:property value="%{taxExemptedReason.name}" default="N/A" /></span>
 			</div>
 		</div>
 		<div class="row add-border">
@@ -108,12 +108,12 @@
 		</div>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin">
-				<s:text name="ownership.type"></s:text>
+				<s:text name="property.type"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
 				<s:property
 					default="N/A"
-					value="%{basicProperty.property.propertyDetail.propertyTypeMaster.type}" />
+					value="%{basicProperty.property.propertyDetail.categoryType}" />
 			</div>
 			<div class="col-xs-3 add-margin">
 				<s:text name="apartcomplex.name"></s:text>
@@ -174,8 +174,6 @@
 				</s:else>
 			</div>
 		</div>
-		
-		
 		
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin">
@@ -359,15 +357,13 @@
 						<s:else>No</s:else></td>
 				</tr>
 			</table>
-
 		</td>
-
 	</tr>
-	
 </table>
 
 <br><br>
-<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+
+<div class="panel panel-primary construction" data-collapsed="0" style="text-align:left">
 	<div class="panel-heading">
 		<div class="panel-title">
 			<s:text name="title.constructiontypes" />
@@ -417,7 +413,6 @@
 </div>
 
 <table style="width: 100%;">
-	
 	<tr class="floordetails">
 		<td colspan="5" width="5%">
 			<div class="headingsmallbg" style="font-size:19px;font-family: regular;">
@@ -433,7 +428,7 @@
 			</div>
 		</td>
 	</tr>
-	<tr class="vacantlanddetaills-view">
+	<tr class="vacantlanddetaills">
 		<td colspan="5">
 			<div class="headingsmallbg" style="font-size:19px;font-family: regular;">
 				<span><s:text name="VacantLandDetailsHeader" />
@@ -442,7 +437,7 @@
 		</td>
 	</tr>
 
-	<tr class="vacantlanddetaills-view">
+	<tr class="vacantlanddetaills">
 		<td colspan="5">
 			<div align="center">
 				<%@ include file="../common/vacantLandView.jsp"%>

@@ -86,9 +86,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ParentPackage("egov")
 @Results({ @Result(name = "view", location = "viewProperty-view.jsp") })
 public class ViewPropertyAction extends BaseFormAction {
-	/**
-     *
-     */
+	
 	private static final long serialVersionUID = 4609817011534083012L;
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	private String propertyId;

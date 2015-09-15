@@ -234,14 +234,36 @@ public class EditDemandAction extends BaseFormAction {
         Set<Installment> newInstallments = new TreeSet<Installment>();
         Set<String> installmentsChqPenalty = new TreeSet<String>();
         Set<String> instDmdRsnMaster = new HashSet<String>();
-        List<String> instString = new ArrayList<String>();
+        List<String> instString;
         Set<String> actAmtInstallments = new TreeSet<String>();
         List<String> errorParams = null;
 
         for (DemandDetail dd : demandDetailBeanList) {
 
             if (dd.getIsNew() != null && dd.getIsNew()) {
-           
+                instString = new ArrayList<String>();
+                instString.add(dd.getReasonMaster());
+                if (dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_GENERAL_TAX)
+                        || dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_VACANT_TAX)) {
+                    if (dd.getInstallment().getId() == null || dd.getInstallment().getId().equals(-1)) {
+                        addActionError(getText("error.editDemand.selectInstallment"));
+                    }
+                }
+
+                if (null != dd.getInstallment().getId() && !dd.getInstallment().getId().equals(-1)) {
+                    if (null == dd.getActualAmount()) {
+                        addActionError(getText("error.editDemand.actualAmount", instString));
+                    }
+                    if (null == dd.getActualCollection()) {
+                        addActionError(getText("error.editDemand.collectionAmount", instString));
+                    }
+                    if (null != dd.getActualAmount() && null != dd.getActualCollection()) {
+                        if (dd.getActualAmount().intValue() < dd.getActualCollection().intValue()) {
+                            addActionError(getText("error.collection.greaterThan.actualAmount"));
+                        }
+                    }
+                }
+
                 if (dd.getActualAmount() == null) {
                     if (dd.getActualCollection() != null) {
                         actAmtInstallments.add(dd.getInstallment().getDescription());
