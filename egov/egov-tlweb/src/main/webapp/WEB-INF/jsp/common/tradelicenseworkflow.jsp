@@ -64,7 +64,7 @@
 		<tr>
 			<td class="<c:out value="${trclass}"/>">
 				<s:text name="license.workflow.approver.department" />
-				<span class="mandatory">*</span>
+				<span class="mandatory1">*</span>
 			</td>
 			<td class="<c:out value="${trclass}"/>">
 				<s:select name="workflowBean.departmentId" id="departmentId" list="workflowBean.departmentList" listKey="id" listValue="deptName" headerKey="-1" headerValue="----Choose----" value="%{workflowBean.departmentId}" onchange="populateDesignations()" />
@@ -72,7 +72,7 @@
 			<egov:ajaxdropdown id="designationId" fields="['Text','Value']" dropdownId="designationId" url="web/commonAjax!ajaxPopulateDesignationsByDept.action" />
 			<td class="<c:out value="${trclass}"/>">
 				Approver Designation
-				<span class="mandatory">*</span>
+				<span class="mandatory1">*</span>
 			</td>
 			<td class="<c:out value="${trclass}"/>">
 				<s:select name="workflowBean.designationId" id="designationId" list="workflowBean.designationList" listKey="designationId" listValue="designationName" headerKey="-1" headerValue="----Choose----" onchange="populateUser()" />
@@ -90,7 +90,7 @@
 			<egov:ajaxdropdown id="approverUserId" fields="['Text','Value']" dropdownId="approverUserId" url="web/commonAjax!ajaxPopulateUsersByDesignation.action" />
 			<td class="<c:out value="${trclass}"/>" width="13%">
 				<s:text name="license.workflow.approver" />
-				<span class="mandatory">*</span>
+				<span class="mandatory1">*</span>
 			</td>
 			<td class="<c:out value="${trclass}"/>" width="33%">
 				<s:select id="approverUserId" name="workflowBean.approverUserId" list="workflowBean.appoverUserList" headerKey="-1" headerValue="----Choose----" listKey="id" listValue="userName" />

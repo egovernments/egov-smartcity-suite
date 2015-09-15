@@ -38,19 +38,20 @@
 #    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------->
 <%@ include file="/includes/taglibs.jsp"%>
+<sx:head/>
 <html>
 	<head>
 		<title><s:text name="page.title.newtrade" /></title>
 		<script>
 	
 			function validateForm(obj) {
-				/* clearWaterMark();
+				clearWaterMark();
     			if(validateForm_newTradeLicense()==false) {
     				return false;
-    			} else { */
+    			} else { 
         			document.forms[0].action = 'newTradeLicense-create.action';
         			document.forms[0].submit;
-    			/* } */
+    			 } 
   			}
   
 			function clearWaterMark(){
@@ -279,7 +280,7 @@
 											</td>
 										</tr>
 									</table>
-									<s:form action="newTradeLicense" theme="simple" name="registrationForm" validate="true">
+									<s:form action="newTradeLicense" theme="css_xhtml" name="newTradeLicense" validate="true">
 									<s:token/>
 										<s:hidden name="actionName" value="create" />
 										<s:hidden id="detailChanged" name="detailChanged" />
@@ -409,7 +410,7 @@
 													<td colspan="3" class="<c:out value="${trclass}"/>">
 														<table width="47%" border="0" cellspacing="1" cellpadding="0" id="tb2Create" align="left">
 															<th id="hpheader" style="display: none;" colspan="3" class="bluebgheadtd" align="center">
-																<b><s:text name="license.horsepower" /><span class="mandatory">*</span> </b>
+																<b><s:text name="license.horsepower" /><span class="mandatory1">*</span> </b>
 															</th>
 														</table>
 													</td>
@@ -432,7 +433,7 @@
 													<td colspan="2" class="<c:out value="${trclass}"/>" align="center" class="bluebox1">
 														<s:text name="license.total.horsepower" />
 														:
-														<span class="mandatory">*</span>
+														<span class="mandatory1">*</span>
 														<span class="greybox"> 
 															<s:textfield readonly="true" disabled="%{sDisabled}" name="totalHP" size="12" onBlur="trimAll(this.value);" id="totalHP" /> 
 														</span>
@@ -462,7 +463,7 @@
 												</tr>
 											</table>
 										</div>
-										<div class="mandatory" style="font-size: 11px;" align="left">
+										<div class="mandatory1" style="font-size: 11px;" align="left">
 											* Mandatory Fields
 										</div>
 									</s:form>

@@ -42,7 +42,7 @@
 <%@ page language="java"%>
 <html>
 	<head>
-		<title>Trade License Objection Success</title>
+		<title>Trade License Update Success</title>
 	</head>
 	<body onload="refreshInbox()">
 		<s:form action="editTradeLicense" theme="simple">

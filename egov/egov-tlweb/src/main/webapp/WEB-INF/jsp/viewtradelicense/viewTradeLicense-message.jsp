@@ -42,10 +42,10 @@
 <%@ page language="java"%>
 <html>
 	<head>
-		<title>Trade License Objection Success</title>
+		<title>Trade License</title>
 	</head>
 	<body onload="refreshInbox()">
-		<s:form action="editTradeLicense" theme="simple">
+		<s:form action="viewTradeLicense" theme="simple">
 			<span class="mandatory1"> <s:actionmessage /> </span>
 			<br />
 			<input type="button" value="Close" onclick="javascript:window.close()" class="button" />

@@ -36,7 +36,7 @@
 #  	   or trademarks of eGovernments Foundation.
 #  
 #    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------->>
+#------------------------------------------------------------------------------->
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
@@ -53,7 +53,7 @@
 	</td>
 	<td class="<c:out value="${trclass}"/>" align="right">
 		<s:text name="license.zone" />
-		<span class="mandatory">*</span>
+		<span class="mandatory1">*</span>
 	</td>
 	<td class="<c:out value="${trclass}"/>" align="left">
 		<s:select headerKey="" headerValue="%{getText('license.default.select')}" name="licenseZoneId" id="licenseZoneId" list="dropdownData.zoneList" listKey="id" listValue='name' onChange="setupAjaxDivision(this);" />
@@ -79,7 +79,7 @@
 	<td class="<c:out value="${trclass}"/> width="5%">
 	<td class="<c:out value="${trclass}"/>">
 		<s:text name='license.housenumber' />
-		<span class="mandatory">*</span>
+		<span class="mandatory1">*</span>
 	</td>
 	<td class="<c:out value="${trclass}"/>">
 		<s:textfield name="address.houseNoBldgApt" maxlength="10" />

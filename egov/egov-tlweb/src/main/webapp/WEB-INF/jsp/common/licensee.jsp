@@ -53,7 +53,7 @@
 	</td>
 	<td class="<c:out value="${trclass}"/>">
 		<s:text name="licensee.applicantname" />
-		<span class="mandatory">*</span>
+		<span class="mandatory1">*</span>
 	</td>
 	<td class="<c:out value="${trclass}"/>">
 		<s:textfield name="licensee.applicantName" id="applicantName" maxlength="100"/>
@@ -109,7 +109,7 @@
 	</td>
 	<td class="<c:out value="${trclass}" />">
 		<s:text name="licensee.gender" />
-		<span class="mandatory">*</span>
+		<span class="mandatory1">*</span>
 	</td>
 	<td class="<c:out value="${trclass}" />">
 		<s:radio name="licensee.gender" list="genderList" id="gender" />

@@ -36,17 +36,17 @@
 #  	   or trademarks of eGovernments Foundation.
 #  
 #    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------->>
+#------------------------------------------------------------------------------->
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 	<head>
-		<title><s:text name="page.title.newtrade" /></title>
+		<title><s:text name="page.title.entertrade" />
+		</title>
 		<sx:head />
 		<script>
-	
-			function validateForm(obj) {
-			clearWaterMark();
-    			if(validateForm_newTradeLicense()==false) {
+	   		function validateForm(obj) {
+	   		clearWaterMark();
+    			if(validateForm_enterTradeLicense()==false) {
     				return false;
     			} else {
       				return true;
@@ -56,6 +56,9 @@
 			function clearWaterMark(){
 				if(document.getElementById('applicationDate') && document.getElementById('applicationDate').value=='dd/mm/yyyy') {
 					document.getElementById('applicationDate').value = '';
+				}	
+				if(document.getElementById('dateOfCreation') && document.getElementById('dateOfCreation').value=='dd/mm/yyyy') {
+					document.getElementById('dateOfCreation').value = '';
 				}				
 			}
 			
@@ -257,8 +260,7 @@
             		obj.value=(parseFloat(obj.value)).toFixed(2);
        			}
     		}
- 		</script>
-
+		</script>
 	</head>
 	<body onload="onBodyLoad()">
 		<table align="center" width="100%">
@@ -269,202 +271,214 @@
 							<center>
 								<div class="formmainbox">
 									<div class="headingbg">
-										<s:text name="page.title.newtrade" />
+										<s:text name="page.title.entertrade" />
 									</div>
 									<table>
 										<tr>
 											<td align="left" style="color: #FF0000">
-												<s:actionerror cssStyle="color: #FF0000" />
+												<div id="Errors">
+													<s:actionerror />
+													<s:fielderror />
+												</div>
 												<s:actionmessage />
 											</td>
 										</tr>
 									</table>
-									<s:form action="newCitizenTradeLicense" theme="css_xhtml" name="registrationForm" validate="true">
+									<s:form action="enterTradeLicense" theme="css_xhtml" name="registrationForm" validate="true">
 									<s:token/>
-										<s:hidden name="actionName" value="create" />
-										<s:hidden id="detailChanged" name="detailChanged" />
-										<s:hidden name="docNumber" id="docNumber" />
-										<c:set var="trclass" value="greybox" />
-										<table border="0" cellpadding="0" cellspacing="0" width="100%">
-											<tbody>
-												<tr>
-													<td colspan="5" class="headingwk">
-														<div class="arrowiconwk">
-															<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20"/>
-														</div>
-														<div class="headplacer">
-															<s:text name='license.title.applicantiondetails' />
-														</div>
-													</td>
-												</tr>
-												<%@ include file='../../common/license.jsp'%>
-												<%@ include file='../../common/address.jsp'%>
-												<tr>
-													<td colspan="5" class="headingwk">
-														<div class="arrowiconwk">
-															<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20"/>
-														</div>
-														<div class="headplacer">
-															<s:text name='license.title.applicantdetails' />
-														</div>
-													</td>
-												</tr>
-												<%@ include file='../../common/licensee.jsp'%>
-												<%@ include file='../../common/licenseeAddress.jsp'%>
-												
-												<c:choose>
-													<c:when test="${trclass=='greybox'}">
-														<c:set var="trclass" value="bluebox" />
-													</c:when>
-													<c:when test="${trclass=='bluebox'}">
-														<c:set var="trclass" value="greybox" />
-													</c:when>
-												</c:choose>
-												<tr>
+										<s:push value="model">
+											<s:hidden name="actionName" value="create" />
+											<s:hidden id="detailChanged" name="detailChanged" />
+											<s:hidden name="docNumber" id="docNumber" />
+											<c:set var="trclass" value="greybox" />
+											<table border="0" cellpadding="0" cellspacing="0" width="100%">
+												<tbody>
+													<tr>
+														<td colspan="5" class="headingwk">
+															<div class="arrowiconwk">
+																<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20" />
+															</div>
+															<div class="headplacer">
+																<s:text name='license.title.applicantiondetails' />
+															</div>
+														</td>
+													</tr>
+													<tr>
+														<td class="<c:out value="${trclass}"/> width="5%"></td>
+														<td class="<c:out value="${trclass}"/>">
+															<s:text name='license.old.license.number' /><span class="mandatory1">*</span>
+														</td>
+														<td class="<c:out value="${trclass}"/>">
+															<s:textfield name="oldLicenseNumber" maxlength="30"/>
+														</td>
+														<td class="<c:out value="${trclass}"/>">
+															<s:text name='license.enter.issuedate' /><span class="mandatory1">*</span>
+														</td>
+														<td class="<c:out value="${trclass}"/>">
+															<s:date name="dateOfCreation" id="dateOfCreation"  format="dd/MM/yyyy"/>
+														 	<s:textfield name="dateOfCreation" id="dateOfCreation" onfocus="waterMarkTextIn('dateOfCreation','dd/mm/yyyy');" onblur="waterMarkTextOut('dateOfCreation','dd/mm/yyyy');lessThanOrEqualToCurrentDate(this)" maxlength="10" size="10" value="%{dateofcreation}" onkeyup="DateFormat(this,this.value,event,false,'3')" />
+															<a href="javascript:show_calendar('forms[0].dateOfCreation',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"> <img src="${pageContext.request.contextPath}/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" id="calenderImgId" />
+													 	</td>
+													</tr>
+													<%@ include file='../common/license.jsp'%>
+													<%@ include file='../common/address.jsp'%>
+													<tr>
+														<td colspan="5" class="headingwk">
+															<div class="arrowiconwk">
+																<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20" />
+															</div>
+															<div class="headplacer">
+																<s:text name='license.title.applicantdetails' />
+															</div>
+														</td>
+													</tr>
+													<%@ include file='../common/licensee.jsp'%>
+													<%@ include file='../common/licenseeAddress.jsp'%>
+
+													<c:choose>
+														<c:when test="${trclass=='greybox'}">
+															<c:set var="trclass" value="bluebox" />
+														</c:when>
+														<c:when test="${trclass=='bluebox'}">
+															<c:set var="trclass" value="greybox" />
+														</c:when>
+													</c:choose>
+													<tr>
+														<td class="<c:out value="${trclass}"/> width="5%"></td>
+														<td class="<c:out value="${trclass}"/>">
+															<s:text name='license.othercharges' />
+														</td>
+														<td class="<c:out value="${trclass}"/>">
+															<s:textfield name="otherCharges" onKeyPress="return numbersforamount(this, event)" onBlur="checkLength(this,8),formatCurrency(otherCharges)" />
+														</td>
+														<td class="<c:out value="${trclass}"/>">
+															<s:text name='license.deduction' />
+														</td>
+														<td class="<c:out value="${trclass}"/>"> <s:textfield name="deduction"  onKeyPress="return numbersforamount(this, event)" onBlur="checkLength(this,8),formatCurrency(deduction)" /></td>
+													</tr>
+													<c:choose>
+														<c:when test="${trclass=='greybox'}">
+															<c:set var="trclass" value="bluebox" />
+														</c:when>
+														<c:when test="${trclass=='bluebox'}">
+															<c:set var="trclass" value="greybox" />
+														</c:when>
+													</c:choose>
+													<tr>
 													<td class="<c:out value="${trclass}"/> width="5%"></td>
-													<td class="<c:out value="${trclass}"/>">
-														<s:text name='license.othercharges' />
-													</td>
-													<td class="<c:out value="${trclass}"/>">
-														<s:textfield name="otherCharges" maxlength="8" onKeyPress="return numbersforamount(this, event)" onBlur="checkLength(this,8),formatCurrency(otherCharges)" />
-													</td>
-													<td class="<c:out value="${trclass}"/>">
-														<s:text name='license.deduction' />
-													</td>
-													<td class="<c:out value="${trclass}"/>" <s:textfield name="deduction"  maxlength="8" onKeyPress="return numbersforamount(this, event)" onBlur="checkLength(this,8),formatCurrency(deduction)" /></td>
-												</tr>
-												<c:choose>
-													<c:when test="${trclass=='greybox'}">
-														<c:set var="trclass" value="bluebox" />
-													</c:when>
-													<c:when test="${trclass=='bluebox'}">
-														<c:set var="trclass" value="greybox" />
-													</c:when>
-												</c:choose>
-												<tr>
-												<td class="<c:out value="${trclass}"/> width="5%"></td>
-													<td class="<c:out value="${trclass}"/>">
-														<s:text name='license.swmfee' />
-													</td>
-													<td class="<c:out value="${trclass}"/>">
-														<s:textfield name="swmFee" maxlength="8" onKeyPress="return numbersforamount(this, event)" onBlur="checkLength(this,8),formatCurrency(swmFee)" />
-													</td>
-													<td colspan="4" class="<c:out value="${trclass}"/> width="5%"></td>
-												</tr>
-												<c:choose>
-													<c:when test="${trclass=='greybox'}">
-														<c:set var="trclass" value="bluebox" />
-													</c:when>
-													<c:when test="${trclass=='bluebox'}">
-														<c:set var="trclass" value="greybox" />
-													</c:when>
-												</c:choose>
-												<tr align="center">
-													<td class="<c:out value="${trclass}"/> width="5%"></td>
-													<td class="<c:out value="${trclass}"/> width="5%"></td>
-													<td class="<c:out value="${trclass}"/>" colspan="3">
-														<input type="button" class="button" value="Upload Document" id="docUploadButton" onclick="showDocumentManagerForDoc('docNumber');updateCurrentDocId('docNumber')" tabindex="1" />
-													</td>
-												</tr>
-												<c:choose>
-													<c:when test="${trclass=='greybox'}">
-														<c:set var="trclass" value="bluebox" />
-													</c:when>
-													<c:when test="${trclass=='bluebox'}">
-														<c:set var="trclass" value="greybox" />
-													</c:when>
-												</c:choose>
-												<tr>
-													<td colspan="5" class="headingwk">
-														<div class="arrowiconwk">
-															<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20"/>
-														</div>
-														<div class="headplacer">
-															<s:text name='license.title.motordetail' />
-														</div>
-													</td>
-												</tr>
-												<tr>
-													<td class="<c:out value="${trclass}"/>" width="5%">
-													</td>
-													<td class="<c:out value="${trclass}"/>">
-														<s:text name="license.motor.installed" />
-													</td>
-													<td class="<c:out value="${trclass}"/>">
-														<s:checkbox theme="simple" key="motorInstalled" tabindex="17" onclick="showhide('addmoremotor')" label="motorInstalled" id="motorInstalled" disabled="%{sDisabled}" />
-													</td>
-													<td class="<c:out value="${trclass}"/>" colspan="2"></td>
-												</tr>
-												<c:choose>
-													<c:when test="${trclass=='greybox'}">
-														<c:set var="trclass" value="bluebox" />
-													</c:when>
-													<c:when test="${trclass=='bluebox'}">
-														<c:set var="trclass" value="greybox" />
-													</c:when>
-												</c:choose>
-												<tr>
-													<td colspan="2" class="<c:out value="${trclass}"/>">
-													</td>
-													<td colspan="3" class="<c:out value="${trclass}"/>">
-														<table width="47%" border="0" cellspacing="1" cellpadding="0" id="tb2Create" align="left">
-															<th id="hpheader" style="display: none;" colspan="3" class="bluebgheadtd" align="center">
-																<b><s:text name="license.horsepower" /><span class="mandatory1">*</span> </b>
-															</th>
-														</table>
-													</td>
-												</tr>
-												<script>
+														<td class="<c:out value="${trclass}"/>">
+															<s:text name='license.swmfee' />
+														</td>
+														<td class="<c:out value="${trclass}"/>">
+															<s:textfield name="swmFee" maxlength="8" onKeyPress="return numbersforamount(this, event)" onBlur="checkLength(this,8),formatCurrency(swmFee)" />
+														</td>
+														<td colspan="4" class="<c:out value="${trclass}"/> width="5%"></td>
+													</tr>
+													<c:choose>
+														<c:when test="${trclass=='greybox'}">
+															<c:set var="trclass" value="bluebox" />
+														</c:when>
+														<c:when test="${trclass=='bluebox'}">
+															<c:set var="trclass" value="greybox" />
+														</c:when>
+													</c:choose>
+													<tr>
+														<td colspan="5" class="headingwk">
+															<div class="arrowiconwk">
+																<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20" />
+															</div>
+															<div class="headplacer">
+																<s:text name='license.title.motordetail' />
+															</div>
+														</td>
+													</tr>
+													<tr>
+														<td class="<c:out value="${trclass}"/>" width="5%">
+														</td>
+														<td class="<c:out value="${trclass}"/>">
+															<s:text name="license.motor.installed" />
+														</td>
+														<td class="<c:out value="${trclass}"/>">
+															<s:checkbox theme="simple" key="motorInstalled" tabindex="17" onclick="showhide('addmoremotor')" label="motorInstalled" id="motorInstalled" disabled="%{sDisabled}" />
+														</td>
+														<td class="<c:out value="${trclass}"/>" colspan="2"></td>
+													</tr>
+													<c:choose>
+														<c:when test="${trclass=='greybox'}">
+															<c:set var="trclass" value="bluebox" />
+														</c:when>
+														<c:when test="${trclass=='bluebox'}">
+															<c:set var="trclass" value="greybox" />
+														</c:when>
+													</c:choose>
+													<tr>
+														<td colspan="2" class="<c:out value="${trclass}"/>">
+														</td>
+														<td colspan="3" class="<c:out value="${trclass}"/>">
+															<table width="47%" border="0" cellspacing="1" cellpadding="0" id="tb2Create" align="left">
+																<th id="hpheader" style="display: none;" colspan="3" class="bluebgheadtd" align="center">
+																	<b><s:text name="license.horsepower" /><span class="mandatory1">*</span> </b>
+																</th>
+															</table>
+														</td>
+													</tr>
+													<script>
 												<s:iterator var="p" value="installedMotorList">
 													addMotorRowToTable(true,'<s:property value="key"/>',  '<s:property value="#p.hp"/>', '<s:property value="#p.noOfMachines"/>');
 												</s:iterator>
 												</script>
-												<c:choose>
-													<c:when test="${trclass=='greybox'}">
-														<c:set var="trclass" value="bluebox" />
-													</c:when>
-													<c:when test="${trclass=='bluebox'}">
-														<c:set var="trclass" value="greybox" />
-													</c:when>
-												</c:choose>
-												<tr id="addmoremotor">
-													<td colspan="2" class="<c:out value="${trclass}"/>" />
-													<td colspan="2" class="<c:out value="${trclass}"/>" align="center" class="bluebox1">
-														<s:text name="license.total.horsepower" />
-														:
-														<span class="mandatory1">*</span>
-														<span class="greybox"> 
-															<s:textfield readonly="true" disabled="%{sDisabled}" name="totalHP" size="12" onBlur="trimAll(this.value);" id="totalHP" /> 
-														</span>
-													</td>
-													<td colspan="1" class="<c:out value="${trclass}"/>"></td>
-												</tr>
-												<script>
+													<c:choose>
+														<c:when test="${trclass=='greybox'}">
+															<c:set var="trclass" value="bluebox" />
+														</c:when>
+														<c:when test="${trclass=='bluebox'}">
+															<c:set var="trclass" value="greybox" />
+														</c:when>
+													</c:choose>
+													<tr id="addmoremotor">
+														<td colspan="2" class="<c:out value="${trclass}"/>" />
+														<td colspan="2" class="<c:out value="${trclass}"/>" align="center" class="bluebox1">
+															<s:text name="license.total.horsepower" />
+															:
+															<span class="mandatory1">*</span>
+															<span class="greybox"> <s:textfield readonly="true" disabled="%{sDisabled}" name="totalHP" size="12" onBlur="trimAll(this.value);" id="totalHP" /> </span>
+														</td>
+														<td colspan="1" class="<c:out value="${trclass}"/>"></td>
+													</tr>
+													<script>
 														if(document.getElementById("motorInstalled").checked){															
 															document.getElementById("addmoremotor").style.display='';
 														}else{
 															document.getElementById("addmoremotor").style.display='none';
 														}														
 														totalHP();
-												</script>
-											</tbody>
-										</table>
-
-										<div>
-											<table>
-												<tr class="buttonbottom" id="buttondiv" style="align: middle">
-													<td>
-														<s:submit type="submit" cssClass="buttonsubmit" value="Save" id="Save" method="create" onclick="return validateForm(this);" />
-													</td>
-													<td>
-														<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
-													</td>
-												</tr>
+													</script>
+													<tr>
+														<td colspan="5" align="center">
+														    <br/>
+															<input type="button" class="button" value="Upload Document" id="docUploadButton" onclick="showDocumentManagerForDoc('docNumber');updateCurrentDocId('docNumber')" tabindex="1" />
+															<br/>
+															<br/>
+														</td>
+													</tr>
+												</tbody>
 											</table>
-										</div>
-										<div class="mandatory1" style="font-size: 11px;" align="left">
-											* Mandatory Fields
-										</div>
+											<div align="center" class="buttonbottom">
+												<table align="center">													
+													<tr  id="buttondiv" style="align: middle">
+														<td>
+															<s:submit type="submit" cssClass="buttonsubmit" name="SaveNew" value="Save" id="Save_New" method="enterExisting" onclick="validateForm(this)" />
+														</td>
+														<td>
+															<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
+														</td>
+													</tr>
+												</table>
+											</div>
+											<div class="mandatory1" style="font-size: 11px;" align="left">
+												* Mandatory Fields
+											</div>
+										</s:push>
 									</s:form>
 								</div>
 							</center>

@@ -120,7 +120,7 @@
 													<td class="<c:out value="${trclass}"/>"></td>
 													<td class="<c:out value="${trclass}" />">
 														<s:text name="objection.recordtype" />
-														<span class="mandatory">*</span>
+														<span class="mandatory1">*</span>
 													</td>
 													<td class="<c:out value="${trclass}" />">
 														<s:radio name="activities[%{size}].type" list="activityTypeList" id="type" />
@@ -142,7 +142,7 @@
 													</td>
 													<td class="<c:out value="${trclass}"/>">
 														<s:text name="objection.activity.date" />
-														<span class="mandatory">*</span>:
+														<span class="mandatory1">*</span>:
 													</td>
 													<td class="<c:out value="${trclass}"/>">
 														<s:textfield name="activities[%{size}].activityDate" id="activityDate" onfocus="waterMarkTextIn('activityDate','dd/mm/yyyy');" onblur="validateDateFormat(this);lessThanOrEqualToCurrentDate(this);" maxlength="10" size="10" value="" tabindex="1" onkeyup="DateFormat(this,this.value,event,false,'3')" />
@@ -213,7 +213,7 @@
 													</td>
 												</tr>
 											</table>
-											<div class="mandatory" style="font-size: 11px;" align="left">
+											<div class="mandatory1" style="font-size: 11px;" align="left">
 												* Mandatory Fields
 											</div>
 

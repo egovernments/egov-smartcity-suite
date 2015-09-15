@@ -46,7 +46,7 @@
 	</head>
 	<body onload="refreshInbox()">
 		<s:form action="newTradeLicense" theme="simple">
-			<span class="mandatory"> <s:actionmessage /> </span>
+			<span class="mandatory1"> <s:actionmessage /> </span>
 			<br />
 			<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
 		</s:form>

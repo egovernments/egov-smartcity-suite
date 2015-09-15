@@ -81,9 +81,9 @@
 
 	<bean id="baseLicenseService" class="org.egov.tl.domain.BaseLicenseService"
 		scope="prototype" abstract="true">
-		<!-- <property name="sequenceGenerator" ref="sequenceGenerator" /> -->
-		<!-- <property name="persistenceService" ref="persistenceService" /> -->
-		<!-- <property name="eisCommonsManager" ref="eisCommonsManager" /> -->
+		<!-- <property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="eisCommonsManager" ref="eisCommonsManager" /> -->
 		<property name="feeService" ref="feeService" />
 		<!-- <property name="installmentDao" ref="installmentDao" /> -->
 	</bean>

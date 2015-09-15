@@ -62,6 +62,7 @@
 				<security:filter-chain pattern="/index.jsp" filters="none" />
 				<security:filter-chain pattern="/image/**" filters="none" />
 				<security:filter-chain pattern="/rest/**" filters="none" />
+				<security:filter-chain pattern="/struts/**" filters="none" />
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
 		</constructor-arg>

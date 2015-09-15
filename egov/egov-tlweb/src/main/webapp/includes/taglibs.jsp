@@ -46,3 +46,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
 <%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %>  
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="sx" uri="/WEB-INF/taglib/struts-dojo-tags.tld" %>

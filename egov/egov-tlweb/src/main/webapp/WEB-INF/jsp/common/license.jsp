@@ -82,7 +82,7 @@
 	</td>
 	<td class="<c:out value="${trclass}"/>">
 		<s:text name="license.applicationdate" />
-		<span class="mandatory">*</span>
+		<span class="mandatory1">*</span>
 	</td>
 	<td class="<c:out value="${trclass}"/>">
 		<s:textfield name="applicationDate" id="applicationDate" onfocus="waterMarkTextIn('applicationDate','dd/mm/yyyy');" onblur="waterMarkTextOut('applicationDate','dd/mm/yyyy');lessThanOrEqualToCurrentDate(this);if(this.value != \"dd/mm/yyyy\"){validateDateFormat(this)};" maxlength="10" size="10" value="%{applicationDate}" onkeyup="DateFormat(this,this.value,event,false,'3')" />
@@ -106,14 +106,14 @@
 	</td>
 	<td class="<c:out value="${trclass}"/>">
 		<s:text name="license.establishmentname" />
-		<span class="mandatory">*</span>
+		<span class="mandatory1">*</span>
 	</td>
 	<td class="<c:out value="${trclass}"/>">
 		<s:textfield name="nameOfEstablishment" id="nameOfEstablishment" maxlength="100"/>
 	</td>
 	<td class="greybox">
 		<s:text name="license.tradename" />
-		<span class="mandatory">*</span>
+		<span class="mandatory1">*</span>
 	</td>
 	<td class="greybox" >
 		<s:select headerValue="%{getText('license.default.select')}" headerKey="" list="dropdownData.tradeNameList" listKey="id" listValue="name" name="tradeName" disabled="%{sDisabled}" id="tradeName" value="%{tradeName.id}" width="230" style="width: 230px" size="0" onchange="showHotelGrade(this);"/>
@@ -149,7 +149,7 @@
 	</td>
 	<td class="<c:out value="${trclass}"/>">
 		<s:text name='license.ownbuilding' />
-		<span class="mandatory">*</span>
+		<span class="mandatory1">*</span>
 	</td>
 	<td class="<c:out value="${trclass}"/>">
 		<s:radio name="buildingType" list="buildingTypeList" id="buildingtype" onchange="enableRentPaid(this)" />

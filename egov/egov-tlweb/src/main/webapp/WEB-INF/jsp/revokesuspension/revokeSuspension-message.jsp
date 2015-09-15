@@ -43,6 +43,7 @@
 <html>
 	<head>
 		<title>Trade License Objection Success</title>
+
 	</head>
 	<body onload="refreshInbox()">
 		<s:form action="editTradeLicense" theme="simple">

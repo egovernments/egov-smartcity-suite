@@ -54,7 +54,7 @@
 	</td>
 	<td class="<c:out value="${trclass}"/>" align="right">
 		<s:text name="license.zone" />
-		<span class="mandatory">*</span>
+		<span class="mandatory1">*</span>
 	</td>
 	<td class="<c:out value="${trclass}"/>" align="left">
 		<s:select headerKey="" headerValue="%{getText('license.default.select')}" name="licenseeZoneId" id="licenseeZoneId" list="dropdownData.zoneList" listKey="id" listValue='name' onChange="setupLicenseeAjaxDivision(this);" />
@@ -82,7 +82,7 @@
 	</td>
 	<td class="<c:out value="${trclass}"/>">
 		<s:text name='license.housenumber' />
-		<span class="mandatory">*</span>
+		<span class="mandatory1">*</span>
 	</td>
 	<td class="<c:out value="${trclass}"/>">
 		<s:textfield name="licensee.address.houseNo" maxlength="10"/>

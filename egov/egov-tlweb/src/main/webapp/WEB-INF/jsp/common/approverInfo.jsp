@@ -94,7 +94,7 @@
 		</td>
 		<td class="bluebox" width="10%">
 			Approver:
-			<span class="mandatory">*</span>
+			<span class="mandatory1">*</span>
 		</td>
 		<td class="bluebox" width="16%">
 			<s:select id="approverName" name="approverName" list="dropdownData.approverList" headerKey="-1" headerValue="----Choose----" listKey="id" listValue="userName" value="%{approverName}" />

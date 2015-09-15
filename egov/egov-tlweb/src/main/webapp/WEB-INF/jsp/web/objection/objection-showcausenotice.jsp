@@ -120,7 +120,7 @@
 													</td>
 													<td class="<c:out value="${trclass}"/>" width="15%">
 														<s:text name="license.showcausenotice.date" />
-														<span class="mandatory">*</span>:
+														<span class="mandatory1">*</span>:
 													</td>
 													<td class="<c:out value="${trclass}"/>">
 														<s:textfield name="activities[0].activityDate" id="activityDate" onfocus="waterMarkTextIn('activityDate','dd/mm/yyyy');" onblur="waterMarkTextOut('activityDate','dd/mm/yyyy');lessThanOrEqualToCurrentDate(this);" maxlength="10" size="10" value="%{activityDate}" onkeyup="DateFormat(this,this.value,event,false,'3')" />
@@ -128,7 +128,7 @@
 													</td>
 													<td class="<c:out value="${trclass}"/>" width="20%">
 														<s:text name="license.showcausenotice.response.expecteddate" />
-														<span class="mandatory">*</span>:
+														<span class="mandatory1">*</span>:
 													</td>
 													<td class="<c:out value="${trclass}"/>">
 														<s:textfield name="activities[0].expectedDateOfResponse" id="expectedDateOfResponse" onfocus="waterMarkTextIn('expectedDateOfResponse','dd/mm/yyyy');" onblur="waterMarkTextOut('expectedDateOfResponse','dd/mm/yyyy');" maxlength="10" size="10" value="%{expectedDateOfResponse}" onkeyup="DateFormat(this,this.value,event,false,'3')" />
