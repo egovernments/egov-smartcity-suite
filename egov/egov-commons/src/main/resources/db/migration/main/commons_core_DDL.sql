@@ -398,156 +398,7 @@ CREATE SEQUENCE seq_eg_bill_type
 ALTER TABLE ONLY eg_bill_type ADD CONSTRAINT pk_eg_bill_type PRIMARY KEY (id);
 -------------------END-------------------
 
-------------------START------------------
----TODO BILL DEATILS 2times ?
-CREATE TABLE eg_billdetails (
-    id bigint NOT NULL,
-    billid bigint NOT NULL,
-    functionid bigint,
-    glcodeid bigint NOT NULL,
-    debitamount double precision,
-    creditamount double precision,
-    lastupdatedtime timestamp without time zone NOT NULL,
-    narration character varying(250)
-);
-CREATE SEQUENCE seq_eg_billdetails
-    START WITH 1
-    INCREMENT BY 1
-    MINVALUE 0
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_billdetails ADD CONSTRAINT eg_billdetails_pkey PRIMARY KEY (id);
-CREATE INDEX indx_ebd_billid ON eg_billdetails USING btree (billid);
-CREATE INDEX indx_ebd_functionid ON eg_billdetails USING btree (functionid);
-CREATE INDEX indx_ebd_glcodeid ON eg_billdetails USING btree (glcodeid);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE eg_billpayeedetails (
-    id bigint NOT NULL,
-    billdetailid bigint NOT NULL,
-    accountdetailtypeid bigint NOT NULL,
-    accountdetailkeyid bigint NOT NULL,
-    debitamount double precision,
-    creditamount double precision,
-    lastupdatedtime timestamp without time zone NOT NULL,
-    tdsid bigint,
-    narration character varying(250),
-    pc_department bigint
-);
-CREATE SEQUENCE seq_eg_billpayeedetails
-    START WITH 1
-    INCREMENT BY 1
-    MINVALUE 0
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_billpayeedetails ADD CONSTRAINT eg_billpayeedetails_pkey PRIMARY KEY (id);
-CREATE INDEX index_egbill_payd_accdetkey ON eg_billpayeedetails USING btree (accountdetailkeyid);
-CREATE INDEX indx_ebpd_adtid ON eg_billpayeedetails USING btree (accountdetailtypeid);
-CREATE INDEX indx_ebpd_bdid ON eg_billpayeedetails USING btree (billdetailid);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE eg_billregister (
-    id bigint NOT NULL,
-    billnumber character varying(50) NOT NULL,
-    billdate timestamp without time zone NOT NULL,
-    billamount double precision NOT NULL,
-    fieldid bigint,
-    worksdetailid character varying(50),
-    billstatus character varying(50) NOT NULL,
-    narration character varying(1024),
-    passedamount double precision,
-    billtype character varying(50),
-    expendituretype character varying(20) NOT NULL,
-    advanceadjusted double precision,
-    createdby bigint NOT NULL,
-    createddate timestamp without time zone NOT NULL,
-    lastmodifiedby bigint,
-    lastmodifieddate timestamp without time zone,
-    statusid bigint,
-    workorderdate timestamp without time zone,
-    zone character varying(20),
-    division character varying(50),
-    workordernumber character varying(50),
-    billpasseddate timestamp without time zone,
-    isactive boolean,
-    billapprovalstatus character varying(50),
-    po character varying(50),
-    state_id bigint,
-    version bigint
-);
-CREATE SEQUENCE seq_eg_billregister
-    START WITH 1
-    INCREMENT BY 1
-    MINVALUE 0
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_billregister ADD CONSTRAINT eg_billregister_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY eg_billregister ADD CONSTRAINT eg_billregister_billnumber_key UNIQUE (billnumber);
-CREATE INDEX indx_billreg_expendituretype ON eg_billregister USING btree (expendituretype);
-CREATE INDEX indx_billreg_statusid ON eg_billregister USING btree (statusid);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE eg_billregistermis (
-    id bigint,
-    billid bigint NOT NULL,
-    fundid bigint,
-    segmentid bigint,
-    subsegmentid bigint,
-    fieldid bigint,
-    subfieldid bigint,
-    functionaryid bigint,
-    sanctionedby character varying(30),
-    sanctiondate timestamp without time zone,
-    sanctiondetail character varying(200),
-    narration character varying(300),
-    lastupdatedtime timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
-    disbursementtype character varying(30),
-    escalation bigint,
-    advancepayments bigint,
-    securedadvances bigint,
-    deductamountwitheld bigint,
-    departmentid bigint,
-    month bigint,
-    financialyearid bigint,
-    fundsourceid bigint,
-    rebate real,
-    billtype character varying(50),
-    payto character varying(250),
-    paybydate timestamp without time zone,
-    mbrefno character varying(200),
-    schemeid bigint,
-    subschemeid bigint,
-    voucherheaderid bigint,
-    sourcepath character varying(150),
-    partybillnumber character varying(50),
-    partybilldate timestamp without time zone,
-    inwardserialnumber character varying(50),
-    billsubtype bigint,
-    budgetary_appnumber character varying(30),
-    budgetcheckreq boolean,
-    functionid bigint
-);
-CREATE SEQUENCE seq_eg_billregistermis
-    START WITH 1
-    INCREMENT BY 1
-    MINVALUE 0
-    NO MAXVALUE
-    CACHE 1;
-
-CREATE INDEX indx_ebrm_billid ON eg_billregistermis USING btree (billid);
-CREATE INDEX indx_ebrm_fieldid ON eg_billregistermis USING btree (fieldid);
-CREATE INDEX indx_ebrm_funationaryid ON eg_billregistermis USING btree (functionaryid);
-CREATE INDEX indx_ebrm_fundid ON eg_billregistermis USING btree (fundid);
-CREATE INDEX indx_ebrm_segmentid ON eg_billregistermis USING btree (segmentid);
-CREATE INDEX indx_ebrm_subfieldid ON eg_billregistermis USING btree (subfieldid);
-CREATE INDEX indx_ebrm_subsegid ON eg_billregistermis USING btree (subsegmentid);
-CREATE INDEX indx_billmis_departmentid ON eg_billregistermis USING btree (departmentid);
-CREATE INDEX indx_billmis_voucherheaderid ON eg_billregistermis USING btree (voucherheaderid);
--------------------END-------------------
-
+----TODO designation object is there in egi as of now
 ------------------START------------------
 CREATE TABLE eg_designation (
     id bigint NOT NULL,
@@ -596,92 +447,7 @@ ALTER TABLE ONLY eg_drawingofficer ADD CONSTRAINT eg_drawingofficer_code_key UNI
 ALTER TABLE ONLY eg_drawingofficer ADD CONSTRAINT eg_drawingofficer_pkey PRIMARY KEY (id);
 -------------------END-------------------
 
-------------------START------------------
-CREATE TABLE eg_employee (
-    id bigint NOT NULL,
-    date_of_birth timestamp without time zone,
-    blood_group bigint,
-    mother_tonuge character varying(256),
-    religion_id bigint,
-    community_id bigint,
-    gender character(1),
-    is_handicapped character(1),
-    is_med_report_available character(1),
-    date_of_first_appointment timestamp without time zone,
-    identification_marks1 character varying(1024),
-    languages_known_id bigint,
-    mode_of_recruiment_id bigint,
-    recruitment_type_id bigint,
-    employment_status bigint DEFAULT 1,
-    category_id bigint,
-    qulified_id bigint,
-    salary_bank bigint,
-    pay_fixed_in_id bigint,
-    grade_id bigint,
-    present_designation integer,
-    scale_of_pay character varying(1024),
-    basic_pay bigint,
-    spl_pay bigint,
-    pp_sgpp_pay bigint,
-    annual_increment_id bigint,
-    gpf_ac_number character varying(1024),
-    retirement_age smallint,
-    present_department integer,
-    if_on_duty_arrangment_duty_dep character varying(256),
-    location character varying(256),
-    cost_center character varying(256),
-    id_dept bigint,
-    id_user bigint,
-    isactive smallint,
-    empfather_firstname character varying(256),
-    empfather_lastname character varying(256),
-    empfather_middlename character varying(256),
-    emp_firstname character varying(256) NOT NULL,
-    emp_lastname character varying(256),
-    emp_middlename character varying(256),
-    identification_marks2 character varying(1024),
-    pan_number character varying(256),
-    name character varying(256),
-    maturity_date timestamp without time zone,
-    bank character varying(256),
-    createdtime timestamp without time zone,
-    created_by bigint,
-    status bigint,
-    death_date timestamp without time zone,
-    lastmodified_date timestamp without time zone,
-    deputation_date timestamp without time zone,
-    govt_order_no character varying(256),
-    retirement_date timestamp without time zone,
-    payment_type character varying(32),
-    posting_type_id bigint,
-    code character varying(32) NOT NULL,
-    modified_by bigint,
-    is_avail_quarters smallint DEFAULT 2,
-    permanent_address character varying(1024),
-    correspondence_address character varying(1024),
-    version numeric DEFAULT 0
-);
-ALTER TABLE ONLY eg_employee ADD CONSTRAINT eg_employee_code_key UNIQUE (code);
-ALTER TABLE ONLY eg_employee ADD CONSTRAINT eg_employee_pkey PRIMARY KEY (id);
-CREATE INDEX index_emp_blood_group ON eg_employee USING btree (blood_group);
-CREATE INDEX index_emp_category_id ON eg_employee USING btree (category_id);
-CREATE INDEX index_emp_community_id ON eg_employee USING btree (community_id);
-CREATE INDEX index_emp_date_of_birth ON eg_employee USING btree (date_of_birth);
-CREATE INDEX index_emp_emp_firstname ON eg_employee USING btree (emp_firstname);
-CREATE INDEX index_emp_gender ON eg_employee USING btree (gender);
-CREATE INDEX index_emp_grade_id ON eg_employee USING btree (grade_id);
-CREATE INDEX index_emp_id_dept ON eg_employee USING btree (id_dept);
-CREATE INDEX index_emp_id_user ON eg_employee USING btree (id_user);
-CREATE INDEX index_emp_isactive ON eg_employee USING btree (isactive);
-CREATE INDEX index_emp_languages_known_id ON eg_employee USING btree (languages_known_id);
-CREATE INDEX index_emp_mode_of_rect_id ON eg_employee USING btree (mode_of_recruiment_id);
-CREATE INDEX index_emp_mother_tonuge ON eg_employee USING btree (mother_tonuge);
-CREATE INDEX index_emp_qulified_id ON eg_employee USING btree (qulified_id);
-CREATE INDEX index_emp_recruitment_type_id ON eg_employee USING btree (recruitment_type_id);
-CREATE INDEX index_emp_religion_id ON eg_employee USING btree (religion_id);
-CREATE INDEX index_emp_status_id ON eg_employee USING btree (employment_status);
--------------------END-------------------
-
+---Removed eg_employee as this is not been used anymore
 ------------------START------------------
 CREATE TABLE eg_modules (
     id bigint NOT NULL,
@@ -860,20 +626,6 @@ ALTER TABLE ONLY financialyear ADD CONSTRAINT financialyear_pkey PRIMARY KEY (id
 -------------------END-------------------
 
 ------------------START------------------
-CREATE TABLE financial_institution (
-    id bigint NOT NULL,
-    name character varying(250) NOT NULL
-);
-CREATE SEQUENCE seq_financial_institution
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY financial_institution ADD CONSTRAINT financial_institution_pkey PRIMARY KEY (id);
--------------------END-------------------
-
-------------------START------------------
 CREATE TABLE fiscalperiod (
     id bigint NOT NULL,
     type bigint,
@@ -1020,6 +772,72 @@ ALTER TABLE ONLY fundsource ADD CONSTRAINT fundsource_name_key UNIQUE (name);
 ALTER TABLE ONLY fundsource ADD CONSTRAINT fundsource_pkey PRIMARY KEY (id);
 -------------------END-------------------
 
+
+------------------START------------------
+CREATE TABLE voucherheader (
+    id bigint NOT NULL,
+    cgn character varying(50) NOT NULL,
+    name character varying(50) NOT NULL,
+    type character varying(100) NOT NULL,
+    description character varying(1024),
+    effectivedate timestamp without time zone NOT NULL,
+    vouchernumber character varying(30),
+    voucherdate timestamp without time zone NOT NULL,
+    fundid bigint,
+    fiscalperiodid bigint NOT NULL,
+    status smallint,
+    originalvcid bigint,
+    isconfirmed smallint DEFAULT 0,
+    createdby bigint,
+    refcgno character varying(10),
+    cgvn character varying(50) NOT NULL,
+    lastmodifiedby bigint,
+    lastmodifieddate timestamp without time zone,
+    moduleid bigint,
+    state_id bigint,
+    createddate timestamp without time zone,
+    version bigint
+);
+CREATE SEQUENCE seq_voucherheader
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER TABLE ONLY voucherheader ADD CONSTRAINT voucherheader_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY voucherheader ADD CONSTRAINT voucherheader_cgvn_fiscalperiodid_key UNIQUE (cgvn, fiscalperiodid);
+CREATE UNIQUE INDEX cgn_c ON voucherheader USING btree (cgn);
+CREATE INDEX indx_vh_fundid ON voucherheader USING btree (fundid);
+-------------------END-------------------
+
+------------------START------------------
+CREATE TABLE vouchermis (
+    id bigint NOT NULL,
+    billnumber bigint,
+    divisionid bigint,
+    departmentid bigint,
+    voucherheaderid bigint,
+    fundsourceid bigint,
+    schemeid bigint,
+    subschemeid bigint,
+    functionaryid bigint,
+    sourcepath character varying(250),
+    budgetary_appnumber character varying(30),
+    budgetcheckreq boolean,
+    functionid bigint
+);
+CREATE SEQUENCE seq_vouchermis
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE INDEX indx_vmis_schemeid ON vouchermis USING btree (schemeid);
+CREATE INDEX indx_vmis_subschemeid ON vouchermis USING btree (subschemeid);
+CREATE INDEX indx_vmis_vhid ON vouchermis USING btree (voucherheaderid);
+--------------------END ---------------------------------
+
 ------------------START------------------
 CREATE TABLE generalledger (
     id bigint NOT NULL,
@@ -1066,56 +884,6 @@ CREATE SEQUENCE seq_generalledgerdetail
 ALTER TABLE ONLY generalledgerdetail ADD CONSTRAINT generalledgerdetail_pkey PRIMARY KEY (id);
 CREATE INDEX indx_gld_acdtypeid ON generalledgerdetail USING btree (detailtypeid);
 CREATE INDEX indx_gld_glid ON generalledgerdetail USING btree (generalledgerid);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE miscbilldetail (
-    id bigint NOT NULL,
-    billnumber character varying(50),
-    billdate timestamp without time zone,
-    amount double precision NOT NULL,
-    passedamount double precision NOT NULL,
-    paidto character varying(250) NOT NULL,
-    paidbyid bigint,
-    billvhid bigint,
-    payvhid bigint,
-    paidamount double precision
-);
-CREATE SEQUENCE seq_miscbilldetail
-    START WITH 1
-    INCREMENT BY 1
-    MINVALUE 0
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY miscbilldetail ADD CONSTRAINT miscbilldetail_pkey PRIMARY KEY (id);
-CREATE INDEX indx_mb_paidamount ON miscbilldetail USING btree (paidamount);
-CREATE INDEX indx_mb_paidto ON miscbilldetail USING btree (paidto);
-CREATE INDEX indx_mbd_pvhid ON miscbilldetail USING btree (payvhid);
-CREATE INDEX indx_mbd_vhid ON miscbilldetail USING btree (billvhid);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE paymentheader (
-    id bigint NOT NULL,
-    voucherheaderid bigint NOT NULL,
-    type character varying(50) NOT NULL,
-    bankaccountnumberid bigint,
-    state_id bigint,
-    createdby bigint,
-    lastmodifiedby bigint,
-    paymentamount double precision,
-    concurrencedate timestamp without time zone,
-    drawingofficer_id bigint
-);
-CREATE SEQUENCE seq_paymentheader
-    START WITH 1
-    INCREMENT BY 1
-    MINVALUE 0
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY paymentheader ADD CONSTRAINT paymentheader_pkey PRIMARY KEY (id);
-CREATE INDEX indx_ph_accountid ON paymentheader USING btree (bankaccountnumberid);
-CREATE INDEX indx_ph_vhid ON paymentheader USING btree (voucherheaderid);
 -------------------END-------------------
 
 ------------------START------------------
@@ -1181,143 +949,6 @@ ALTER TABLE ONLY sub_scheme ADD CONSTRAINT sub_scheme_pkey PRIMARY KEY (id);
 CREATE INDEX indx_schemeid ON sub_scheme USING btree (schemeid);
 -------------------END-------------------
 
-------------------START------------------
-CREATE TABLE tds (
-    id bigint NOT NULL,
-    type character varying(20),
-    ispaid smallint,
-    glcodeid bigint,
-    isactive smallint,
-    lastmodified timestamp without time zone,
-    created timestamp without time zone,
-    modifiedby bigint,
-    rate double precision,
-    effectivefrom timestamp without time zone,
-    createdby bigint NOT NULL,
-    remitted character varying(100),
-    bsrcode character varying(20),
-    description character varying(200),
-    partytypeid bigint,
-    bankid bigint,
-    caplimit double precision,
-    isearning character varying(1),
-    recoveryname character varying(50),
-    calculationtype character varying(50),
-    section character varying(50),
-    recovery_mode character(1) DEFAULT 'M'::bpchar NOT NULL,
-    remittance_mode character(1) DEFAULT 'M'::bpchar,
-    ifsccode character varying(16),
-    accountnumber character varying(32),
-    CONSTRAINT tds_ma CHECK ((recovery_mode = ANY (ARRAY['M'::bpchar, 'A'::bpchar])))
-);
-CREATE SEQUENCE seq_tds
-    START WITH 7
-    INCREMENT BY 1
-    MINVALUE 0
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY tds ADD CONSTRAINT tds_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY tds ADD CONSTRAINT tds_type_key UNIQUE (type);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE transactionsummary (
-    id bigint NOT NULL,
-    glcodeid bigint NOT NULL,
-    openingdebitbalance double precision NOT NULL,
-    openingcreditbalance double precision NOT NULL,
-    debitamount double precision NOT NULL,
-    creditamount double precision NOT NULL,
-    accountdetailtypeid bigint,
-    accountdetailkey bigint,
-    financialyearid bigint NOT NULL,
-    fundid bigint,
-    fundsourceid bigint,
-    narration character varying(300),
-    lastmodifiedby bigint,
-    lastmodifieddate timestamp without time zone,
-    departmentid bigint,
-    functionaryid bigint,
-    functionid smallint,
-    divisionid bigint
-);
-CREATE SEQUENCE seq_transactionsummary
-    START WITH 3
-    INCREMENT BY 1
-    MINVALUE 0
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY transactionsummary ADD CONSTRAINT transactionsummary_pkey PRIMARY KEY (id);
-CREATE INDEX indx_ts_acdtypeid ON transactionsummary USING btree (accountdetailtypeid);
-CREATE INDEX indx_ts_coaid ON transactionsummary USING btree (glcodeid);
-CREATE INDEX indx_ts_finyear ON transactionsummary USING btree (financialyearid);
-CREATE INDEX indx_ts_fsourseid ON transactionsummary USING btree (fundsourceid);
-CREATE INDEX indx_ts_fundid ON transactionsummary USING btree (fundid);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE voucherheader (
-    id bigint NOT NULL,
-    cgn character varying(50) NOT NULL,
-    name character varying(50) NOT NULL,
-    type character varying(100) NOT NULL,
-    description character varying(1024),
-    effectivedate timestamp without time zone NOT NULL,
-    vouchernumber character varying(30),
-    voucherdate timestamp without time zone NOT NULL,
-    fundid bigint,
-    fiscalperiodid bigint NOT NULL,
-    status smallint,
-    originalvcid bigint,
-    isconfirmed smallint DEFAULT 0,
-    createdby bigint,
-    refcgno character varying(10),
-    cgvn character varying(50) NOT NULL,
-    lastmodifiedby bigint,
-    lastmodifieddate timestamp without time zone,
-    moduleid bigint,
-    state_id bigint,
-    createddate timestamp without time zone,
-    version bigint
-);
-CREATE SEQUENCE seq_voucherheader
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY voucherheader ADD CONSTRAINT voucherheader_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY voucherheader ADD CONSTRAINT voucherheader_cgvn_fiscalperiodid_key UNIQUE (cgvn, fiscalperiodid);
-CREATE UNIQUE INDEX cgn_c ON voucherheader USING btree (cgn);
-CREATE INDEX indx_vh_fundid ON voucherheader USING btree (fundid);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE vouchermis (
-    id bigint NOT NULL,
-    billnumber bigint,
-    divisionid bigint,
-    departmentid bigint,
-    voucherheaderid bigint,
-    fundsourceid bigint,
-    schemeid bigint,
-    subschemeid bigint,
-    functionaryid bigint,
-    sourcepath character varying(250),
-    budgetary_appnumber character varying(30),
-    budgetcheckreq boolean,
-    functionid bigint
-);
-CREATE SEQUENCE seq_vouchermis
-    START WITH 1
-    INCREMENT BY 1
-    MINVALUE 0
-    NO MAXVALUE
-    CACHE 1;
-
-CREATE INDEX indx_vmis_schemeid ON vouchermis USING btree (schemeid);
-CREATE INDEX indx_vmis_subschemeid ON vouchermis USING btree (subschemeid);
-CREATE INDEX indx_vmis_vhid ON vouchermis USING btree (voucherheaderid);
 
 ---------------------------------NOT STRUCTURED---------------------------------
 
@@ -1885,26 +1516,6 @@ ALTER TABLE ONLY contrajournalvoucher ADD CONSTRAINT fk_ba_cjv1 FOREIGN KEY (tob
 ALTER TABLE ONLY bankreconciliation ADD CONSTRAINT fk_bacc_brs FOREIGN KEY (bankaccountid) REFERENCES bankaccount(id);
 
 ALTER TABLE ONLY bankaccount ADD CONSTRAINT fk_bb_ba FOREIGN KEY (branchid) REFERENCES bankbranch(id); 
-
-ALTER TABLE ONLY eg_billdetails ADD CONSTRAINT fk_bd_brg FOREIGN KEY (billid) REFERENCES eg_billregister(id); 
-ALTER TABLE ONLY eg_billdetails ADD CONSTRAINT fk_bd_fun FOREIGN KEY (functionid) REFERENCES function(id); 
-ALTER TABLE ONLY eg_billdetails ADD CONSTRAINT fk_bd_gl FOREIGN KEY (glcodeid) REFERENCES chartofaccounts(id); 
-
-ALTER TABLE ONLY eg_billpayeedetails ADD CONSTRAINT fk_bdp_adt FOREIGN KEY (accountdetailtypeid) REFERENCES accountdetailtype(id); 
-ALTER TABLE ONLY eg_billpayeedetails ADD CONSTRAINT sys_c009660 FOREIGN KEY (tdsid) REFERENCES tds(id);
-
-ALTER TABLE ONLY bankbranch ADD CONSTRAINT fk_bk_bb FOREIGN KEY (bankid) REFERENCES bank(id); 
-
-ALTER TABLE ONLY eg_billregister ADD CONSTRAINT fk_br_fd FOREIGN KEY (fieldid) REFERENCES eg_boundary(id); 
-ALTER TABLE ONLY eg_billregister ADD CONSTRAINT sys_c0010469 FOREIGN KEY (state_id) REFERENCES eg_wf_states(id);
-
-ALTER TABLE ONLY eg_billregistermis ADD CONSTRAINT fk_brm_br FOREIGN KEY (billid) REFERENCES eg_billregister(id); 
-ALTER TABLE ONLY eg_billregistermis ADD CONSTRAINT fk_brm_bst FOREIGN KEY (billsubtype) REFERENCES eg_bill_subtype(id); 
-ALTER TABLE ONLY eg_billregistermis ADD CONSTRAINT fk_brm_dpt FOREIGN KEY (departmentid) REFERENCES eg_department(id); 
-ALTER TABLE ONLY eg_billregistermis ADD CONSTRAINT fk_brm_fd FOREIGN KEY (fundid) REFERENCES fund(id); 
-ALTER TABLE ONLY eg_billregistermis ADD CONSTRAINT fk_brm_fs FOREIGN KEY (fundsourceid) REFERENCES fundsource(id); 
-ALTER TABLE ONLY eg_billregistermis ADD CONSTRAINT fk_brm_fy FOREIGN KEY (financialyearid) REFERENCES financialyear(id); 
-ALTER TABLE ONLY eg_billregistermis ADD CONSTRAINT fk_brm_vh FOREIGN KEY (voucherheaderid) REFERENCES voucherheader(id); 
 
 ALTER TABLE ONLY egp_citizeninbox ADD CONSTRAINT fk_c_inbox_createdby FOREIGN KEY (createdby) REFERENCES eg_user(id); 
 ALTER TABLE ONLY egp_citizeninbox ADD CONSTRAINT fk_c_inbox_lastmodifiedby FOREIGN KEY (lastmodifiedby) REFERENCES eg_user(id); 
