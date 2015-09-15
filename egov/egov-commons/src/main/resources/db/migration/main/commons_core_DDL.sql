@@ -1214,14 +1214,6 @@ CREATE SEQUENCE sq_receiptheader_2025_26
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE ONLY egp_citizeninbox ADD CONSTRAINT fk_c_inbox_createdby FOREIGN KEY (createdby) REFERENCES eg_user(id); 
-ALTER TABLE ONLY egp_citizeninbox ADD CONSTRAINT fk_c_inbox_lastmodifiedby FOREIGN KEY (lastmodifiedby) REFERENCES eg_user(id); 
-ALTER TABLE ONLY egp_citizeninbox ADD CONSTRAINT fk_c_inbox_mod_id FOREIGN KEY (module_id) REFERENCES eg_module(id); 
-ALTER TABLE ONLY egp_citizeninbox ADD CONSTRAINT fk_c_inbox_state_id FOREIGN KEY (state_id) REFERENCES eg_wf_states(id);
- 
-ALTER TABLE ONLY eg_citizen ADD CONSTRAINT fk_citizen_user FOREIGN KEY (id) REFERENCES eg_user(id) MATCH FULL; 
- 
 ALTER TABLE ONLY eg_digital_signed_docs ADD CONSTRAINT fk_digitalsign FOREIGN KEY (createdby) REFERENCES eg_user(id); 
 
 ALTER TABLE ONLY eg_object_history ADD CONSTRAINT fk_modified_by FOREIGN KEY (modifed_by) REFERENCES eg_user(id); 
