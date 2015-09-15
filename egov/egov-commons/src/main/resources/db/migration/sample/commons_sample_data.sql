@@ -1,72 +1,3 @@
------------------START--------------------
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (1, 1, NULL, 1, 'employee_id', 2);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (2, 1, NULL, 1, 'employee_id', 3);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (3, 1, NULL, 1, 'employee_id', 4);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (4, 1, NULL, 1, 'employee_id', 5);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (5, 1, NULL, 1, 'employee_id', 6);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (6, 1, NULL, 1, 'employee_id', 7);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (7, 1, NULL, 1, 'employee_id', 8);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (8, 1, NULL, 1, 'employee_id', 9);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (9, 1, NULL, 1, 'employee_id', 10);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (10, 1, NULL, 1, 'employee_id', 11);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (11, 1, NULL, 1, 'employee_id', 12);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (12, 1, NULL, 1, 'employee_id', 13);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (13, 1, NULL, 1, 'employee_id', 14);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (14, 1, NULL, 1, 'employee_id', 15);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (15, 1, NULL, 1, 'employee_id', 16);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (16, 1, NULL, 1, 'employee_id', 17);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (17, 1, NULL, 1, 'employee_id', 18);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (18, 1, NULL, 1, 'employee_id', 19);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (19, 1, NULL, 1, 'employee_id', 20);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (20, 1, NULL, 1, 'employee_id', 21);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (21, 1, NULL, 1, 'employee_id', 22);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (22, 1, NULL, 1, 'employee_id', 23);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (23, 1, NULL, 1, 'employee_id', 24);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (24, 1, NULL, 1, 'employee_id', 25);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (25, 1, NULL, 1, 'employee_id', 26);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (26, 1, NULL, 1, 'employee_id', 27);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (27, 1, NULL, 1, 'employee_id', 28);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (28, 1, NULL, 1, 'employee_id', 29);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (29, 1, NULL, 1, 'employee_id', 30);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (30, 1, NULL, 1, 'employee_id', 31);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (31, 1, NULL, 1, 'employee_id', 32);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (32, 1, NULL, 1, 'employee_id', 33);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (33, 1, NULL, 1, 'employee_id', 34);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (34, 1, NULL, 1, 'employee_id', 35);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (35, 1, NULL, 1, 'employee_id', 36);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (36, 1, NULL, 1, 'employee_id', 37);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (37, 1, NULL, 1, 'employee_id', 38);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (38, 1, NULL, 1, 'employee_id', 39);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (39, 1, NULL, 1, 'employee_id', 40);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (40, 1, NULL, 1, 'employee_id', 41);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (41, 1, NULL, 1, 'employee_id', 42);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (42, 1, NULL, 1, 'employee_id', 43);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (43, 1, NULL, 1, 'employee_id', 44);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (44, 1, NULL, 1, 'employee_id', 45);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (45, 1, NULL, 1, 'employee_id', 46);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (46, 1, NULL, 1, 'employee_id', 47);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (47, 1, NULL, 1, 'employee_id', 48);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (48, 1, NULL, 1, 'employee_id', 49);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (49, 1, NULL, 1, 'employee_id', 50);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (50, 1, NULL, 1, 'employee_id', 51);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (51, 1, NULL, 1, 'employee_id', 52);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (52, 1, NULL, 1, 'employee_id', 53);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (53, 1, NULL, 1, 'employee_id', 55);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (54, 1, NULL, 1, 'employee_id', 56);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (55, 1, NULL, 1, 'employee_id', 57);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (56, 1, NULL, 1, 'employee_id', 58);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (57, 1, NULL, 1, 'employee_id', 59);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (58, 1, NULL, 1, 'employee_id', 60);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (59, 1, NULL, 1, 'employee_id', 61);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (60, 1, NULL, 1, 'employee_id', 62);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (61, 1, NULL, 1, 'employee_id', 63);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (62, 1, NULL, 1, 'employee_id', 64);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (63, 1, NULL, 1, 'employee_id', 65);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (64, 1, NULL, 1, 'employee_id', 54);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (65, 1, NULL, 1, 'employee_id', 68);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (66, 1, NULL, 1, 'employee_id', 1);
-INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (67, 1, NULL, 3, 'drawingofficer_id', 1);
-------------------END---------------------
 
 -----------------START--------------------
 INSERT INTO bank (id, code, name, narration, isactive, lastmodified, created, modifiedby, type) VALUES (1, '1', 'Allahabad UP Gramin Bank', NULL, 1, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, NULL);
@@ -149,6 +80,15 @@ INSERT INTO bank (id, code, name, narration, isactive, lastmodified, created, mo
 INSERT INTO bank (id, code, name, narration, isactive, lastmodified, created, modifiedby, type) VALUES (78, '78', 'Vidharbha Kshetriya Gramin Bank', NULL, 1, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, NULL);
 INSERT INTO bank (id, code, name, narration, isactive, lastmodified, created, modifiedby, type) VALUES (79, '79', 'Visveshvaraya Grameena Bank', NULL, 1, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, NULL);
 INSERT INTO bank (id, code, name, narration, isactive, lastmodified, created, modifiedby, type) VALUES (80, '80', 'Wainganga Krishna Gramin Bank', NULL, 1, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, NULL);
+
+DROP SEQUENCE SEQ_BANK;
+
+CREATE SEQUENCE seq_bank
+    START WITH 81
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 ------------------END---------------------
 
 -----------------START--------------------
@@ -1368,17 +1308,31 @@ INSERT INTO chartofaccounts (id, glcode, name, description, isactiveforposting, 
 INSERT INTO chartofaccounts (id, glcode, name, description, isactiveforposting, parentid, lastmodified, modifiedby, created, purposeid, operation, type, class, classification, functionreqd, budgetcheckreq, scheduleid, receiptscheduleid, receiptoperation, paymentscheduleid, paymentoperation, majorcode, createdby, fiescheduleid, fieoperation) VALUES (884, '3501003', 'Creditors-Expenses', NULL, true, 148, NULL, 1, '2015-08-28 00:00:00', 28, NULL, 'L', NULL, 4, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '350', 1, NULL, NULL);
 INSERT INTO chartofaccounts (id, glcode, name, description, isactiveforposting, parentid, lastmodified, modifiedby, created, purposeid, operation, type, class, classification, functionreqd, budgetcheckreq, scheduleid, receiptscheduleid, receiptoperation, paymentscheduleid, paymentoperation, majorcode, createdby, fiescheduleid, fieoperation) VALUES (883, '3501002', 'Creditors-Contractors', NULL, true, 148, NULL, 1, '2015-08-28 00:00:00', 26, NULL, 'L', NULL, 4, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '350', 1, NULL, NULL);
 INSERT INTO chartofaccounts (id, glcode, name, description, isactiveforposting, parentid, lastmodified, modifiedby, created, purposeid, operation, type, class, classification, functionreqd, budgetcheckreq, scheduleid, receiptscheduleid, receiptoperation, paymentscheduleid, paymentoperation, majorcode, createdby, fiescheduleid, fieoperation) VALUES (882, '3501001', 'Creditors-Suppliers', NULL, true, 148, NULL, 1, '2015-08-28 00:00:00', 27, NULL, 'L', NULL, 4, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '350', 1, NULL, NULL);
+
+DROP SEQUENCE seq_chartofaccounts;
+
+CREATE SEQUENCE seq_chartofaccounts
+    START WITH 1223
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+    
 ------------------END---------------------
 
 -----------------START--------------------
-INSERT INTO chartofaccountdetail (id, glcodeid, detailtypeid, modifiedby, modifieddate, createdby, createddate) VALUES (1, 1190, 1, 1, '2015-08-28 00:00:00', 1, '2015-08-28 00:00:00');
-INSERT INTO chartofaccountdetail (id, glcodeid, detailtypeid, modifiedby, modifieddate, createdby, createddate) VALUES (2, 1202, 1, 1, '2015-08-28 00:00:00', 1, '2015-08-28 00:00:00');
-INSERT INTO chartofaccountdetail (id, glcodeid, detailtypeid, modifiedby, modifieddate, createdby, createddate) VALUES (3, 1193, 3, 1, '2015-08-28 00:00:00', 1, '2015-08-28 00:00:00');
+INSERT INTO chartofaccountdetail (id, glcodeid, detailtypeid, modifiedby, modifieddate, createdby, createddate) VALUES (nextval('seq_chartofaccountdetail'), 1190, 1, 1, '2015-08-28 00:00:00', 1, '2015-08-28 00:00:00');
+INSERT INTO chartofaccountdetail (id, glcodeid, detailtypeid, modifiedby, modifieddate, createdby, createddate) VALUES (nextval('seq_chartofaccountdetail'), 1202, 1, 1, '2015-08-28 00:00:00', 1, '2015-08-28 00:00:00');
+INSERT INTO chartofaccountdetail (id, glcodeid, detailtypeid, modifiedby, modifieddate, createdby, createddate) VALUES (nextval('seq_chartofaccountdetail'), 1193, 3, 1, '2015-08-28 00:00:00', 1, '2015-08-28 00:00:00');
+
 ------------------END---------------------
 
 -----------------START--------------------
-INSERT INTO eg_drawingofficer (id, code, name, bank, bankbranch, accountnumber, tan, "position", version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (1, 'DO01', 'ASST EXT HEALTH', NULL, NULL, NULL, NULL, NULL, NULL, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1);
+INSERT INTO eg_drawingofficer (id, code, name, bank, bankbranch, accountnumber, tan, "position", version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (nextval('seq_eg_drawingofficer'), 'DO01', 'ASST EXT HEALTH', NULL, NULL, NULL, NULL, NULL, NULL, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1);
+
+INSERT INTO accountdetailkey (id, groupid, glcodeid, detailtypeid, detailname, detailkey) VALUES (nextval('seq_accountdetailkey'), 1, NULL, 3, 'drawingofficer_id', 1);
 ------------------END---------------------
+
 
 -----------------START--------------------
 INSERT INTO eg_designation (id, name, description, chartofaccounts, version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (2, 'Section managar', 'Section managar', NULL, 0, '2015-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1);
@@ -1451,6 +1405,15 @@ INSERT INTO eg_designation (id, name, description, chartofaccounts, version, cre
 INSERT INTO eg_designation (id, name, description, chartofaccounts, version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (70, 'Bill Collector', 'Bill Collector', NULL, 0, '2015-08-28 10:45:27.720835', '2015-08-28 10:45:27.720835', 1, 1);
 INSERT INTO eg_designation (id, name, description, chartofaccounts, version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (71, 'Revenue Inspector', 'Revenue Inspector', NULL, 0, '2015-08-28 10:45:30.245116', '2015-08-28 10:45:30.245116', 1, 1);
 INSERT INTO eg_designation (id, name, description, chartofaccounts, version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (72, 'Revenue Clerk', 'Revenue Clerk', NULL, 0, '2015-08-28 10:45:30.245116', '2015-08-28 10:45:30.245116', 1, 1);
+
+DROP SEQUENCE seq_eg_designation;
+
+CREATE SEQUENCE seq_eg_designation
+    START WITH 73
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 ------------------END---------------------
 
 -----------------START-------------------
@@ -1477,6 +1440,15 @@ INSERT INTO eg_position (name, id, deptdesig, createddate, lastmodifieddate, cre
 INSERT INTO eg_position (name, id, deptdesig, createddate, lastmodifieddate, createdby, lastmodifiedby, ispostoutsourced, version) VALUES ('R-Revenue Clerk-1', 21, 13, '2015-08-28 10:45:30.245116', '2015-08-28 10:45:30.245116', 1, 1, false, 0);
 INSERT INTO eg_position (name, id, deptdesig, createddate, lastmodifieddate, createdby, lastmodifiedby, ispostoutsourced, version) VALUES ('R-Revenue Clerk-2', 22, 13, '2015-08-28 10:45:30.245116', '2015-08-28 10:45:30.245116', 1, 1, false, 0);
 INSERT INTO eg_position (name, id, deptdesig, createddate, lastmodifieddate, createdby, lastmodifiedby, ispostoutsourced, version) VALUES ('R-SECTION MANAGER-1', 23, NULL, '2015-09-07 09:25:58.725906', '2015-09-07 09:25:58.725906', 1, 1, false, 0);
+
+DROP SEQUENCE seq_eg_position;
+
+CREATE SEQUENCE seq_eg_position
+    START WITH 24
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 ------------------END---------------------
 
 -----------------START-------------------
@@ -1496,13 +1468,22 @@ INSERT INTO financialyear (id, financialyear, startingdate, endingdate, isactive
 INSERT INTO financialyear (id, financialyear, startingdate, endingdate, isactive, created, lastmodified, modifiedby, isactiveforposting, isclosed, transferclosingbalance) VALUES (14, '2003-04', '2003-04-01 00:00:00', '2004-03-31 00:00:00', 1, '2007-02-14 00:00:00', '2007-02-14 00:00:00', 1, 1, 0, 0);
 INSERT INTO financialyear (id, financialyear, startingdate, endingdate, isactive, created, lastmodified, modifiedby, isactiveforposting, isclosed, transferclosingbalance) VALUES (15, '2011-12', '2011-04-01 00:00:00', '2012-03-31 00:00:00', 1, '2010-05-26 00:00:00', '2010-05-26 00:00:00', 1, 0, 0, 1);
 INSERT INTO financialyear (id, financialyear, startingdate, endingdate, isactive, created, lastmodified, modifiedby, isactiveforposting, isclosed, transferclosingbalance) VALUES (16, '2015-16', '2015-04-01 00:00:00', '2016-03-31 00:00:00', 1, '2015-03-29 00:00:00', '2015-03-29 00:00:00', 1, 1, 0, 0);
+
+DROP sequence seq_financialyear;
+
+CREATE SEQUENCE seq_financialyear
+    START WITH 17
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 ------------------END---------------------
 
 
 -----------------START-------------------
-INSERT INTO fiscalperiod (id, type, name, startingdate, endingdate, parentid, isactiveforposting, isactive, modifiedby, lastmodified, created, financialyearid, isclosed, moduleid) VALUES (1, NULL, '201213', '2012-04-01 00:00:00', '2013-03-31 00:00:00', NULL, 0, 0, 308, '2012-03-30 00:00:00', '2012-03-30 00:00:00', 1, NULL, NULL);
-INSERT INTO fiscalperiod (id, type, name, startingdate, endingdate, parentid, isactiveforposting, isactive, modifiedby, lastmodified, created, financialyearid, isclosed, moduleid) VALUES (2, NULL, '201314', '2013-04-01 00:00:00', '2014-03-31 00:00:00', NULL, 0, 0, 308, '2012-11-11 00:00:00', '2012-11-11 00:00:00', 2, NULL, NULL);
-INSERT INTO fiscalperiod (id, type, name, startingdate, endingdate, parentid, isactiveforposting, isactive, modifiedby, lastmodified, created, financialyearid, isclosed, moduleid) VALUES (3, NULL, 'FP1415', '2014-04-01 00:00:00', '2015-03-31 00:00:00', NULL, 0, 0, 308, '2013-03-15 00:00:00', '2013-03-15 00:00:00', 3, NULL, NULL);
+INSERT INTO fiscalperiod (id, type, name, startingdate, endingdate, parentid, isactiveforposting, isactive, modifiedby, lastmodified, created, financialyearid, isclosed, moduleid) VALUES (1, NULL, '201213', '2012-04-01 00:00:00', '2013-03-31 00:00:00', NULL, 0, 0, 1, '2012-03-30 00:00:00', '2012-03-30 00:00:00', 1, NULL, NULL);
+INSERT INTO fiscalperiod (id, type, name, startingdate, endingdate, parentid, isactiveforposting, isactive, modifiedby, lastmodified, created, financialyearid, isclosed, moduleid) VALUES (2, NULL, '201314', '2013-04-01 00:00:00', '2014-03-31 00:00:00', NULL, 0, 0, 1, '2012-11-11 00:00:00', '2012-11-11 00:00:00', 2, NULL, NULL);
+INSERT INTO fiscalperiod (id, type, name, startingdate, endingdate, parentid, isactiveforposting, isactive, modifiedby, lastmodified, created, financialyearid, isclosed, moduleid) VALUES (3, NULL, 'FP1415', '2014-04-01 00:00:00', '2015-03-31 00:00:00', NULL, 0, 0, 1, '2013-03-15 00:00:00', '2013-03-15 00:00:00', 3, NULL, NULL);
 INSERT INTO fiscalperiod (id, type, name, startingdate, endingdate, parentid, isactiveforposting, isactive, modifiedby, lastmodified, created, financialyearid, isclosed, moduleid) VALUES (4, NULL, 'FP8', '2011-04-01 00:00:00', '2012-03-31 00:00:00', NULL, 0, 0, 1, '2009-03-26 00:00:00', '2009-03-26 00:00:00', 15, NULL, NULL);
 INSERT INTO fiscalperiod (id, type, name, startingdate, endingdate, parentid, isactiveforposting, isactive, modifiedby, lastmodified, created, financialyearid, isclosed, moduleid) VALUES (5, NULL, 'FP1', '2004-04-01 00:00:00', '2005-03-31 00:00:00', NULL, 0, 0, 1, '2009-03-26 00:00:00', '2009-03-26 00:00:00', 4, NULL, NULL);
 INSERT INTO fiscalperiod (id, type, name, startingdate, endingdate, parentid, isactiveforposting, isactive, modifiedby, lastmodified, created, financialyearid, isclosed, moduleid) VALUES (6, NULL, 'FP2', '2005-04-01 00:00:00', '2006-03-31 00:00:00', NULL, 0, 0, 1, '2009-03-26 00:00:00', '2009-03-26 00:00:00', 5, NULL, NULL);
@@ -1511,7 +1492,16 @@ INSERT INTO fiscalperiod (id, type, name, startingdate, endingdate, parentid, is
 INSERT INTO fiscalperiod (id, type, name, startingdate, endingdate, parentid, isactiveforposting, isactive, modifiedby, lastmodified, created, financialyearid, isclosed, moduleid) VALUES (9, NULL, 'FP5', '2008-04-01 00:00:00', '2009-03-31 00:00:00', NULL, 0, 0, 1, '2009-03-26 00:00:00', '2009-03-26 00:00:00', 8, NULL, NULL);
 INSERT INTO fiscalperiod (id, type, name, startingdate, endingdate, parentid, isactiveforposting, isactive, modifiedby, lastmodified, created, financialyearid, isclosed, moduleid) VALUES (10, NULL, 'FP6', '2009-04-01 00:00:00', '2010-03-31 00:00:00', NULL, 0, 0, 1, '2009-03-26 00:00:00', '2009-03-26 00:00:00', 9, NULL, NULL);
 INSERT INTO fiscalperiod (id, type, name, startingdate, endingdate, parentid, isactiveforposting, isactive, modifiedby, lastmodified, created, financialyearid, isclosed, moduleid) VALUES (11, NULL, 'FP7', '2010-04-01 00:00:00', '2011-03-31 00:00:00', NULL, 0, 0, 1, '2009-03-26 00:00:00', '2009-03-26 00:00:00', 10, NULL, NULL);
-INSERT INTO fiscalperiod (id, type, name, startingdate, endingdate, parentid, isactiveforposting, isactive, modifiedby, lastmodified, created, financialyearid, isclosed, moduleid) VALUES (12, NULL, '201516', '2015-04-01 00:00:00', '2016-03-31 00:00:00', NULL, 1, 1, 308, '2015-03-30 00:00:00', '2015-03-30 00:00:00', 16, NULL, NULL);
+INSERT INTO fiscalperiod (id, type, name, startingdate, endingdate, parentid, isactiveforposting, isactive, modifiedby, lastmodified, created, financialyearid, isclosed, moduleid) VALUES (12, NULL, '201516', '2015-04-01 00:00:00', '2016-03-31 00:00:00', NULL, 1, 1, 1, '2015-03-30 00:00:00', '2015-03-30 00:00:00', 16, NULL, NULL);
+
+DROP sequence seq_fiscalperiod;
+
+CREATE SEQUENCE seq_fiscalperiod
+    START WITH 13
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 ------------------END---------------------
 
 -----------------START-------------------
@@ -1632,7 +1622,7 @@ INSERT INTO function (id, code, name, type, llevel, parentid, isactive, created,
 INSERT INTO function (id, code, name, type, llevel, parentid, isactive, created, lastmodified, modifiedby, isnotleaf, parentcode, createdby) VALUES (206, '606200', 'Play Grounds', NULL, 1, 161, 1, NULL, '2015-08-28 10:39:06.917873', NULL, 0, NULL, NULL);
 INSERT INTO function (id, code, name, type, llevel, parentid, isactive, created, lastmodified, modifiedby, isnotleaf, parentcode, createdby) VALUES (178, '606700', 'Stadium', NULL, 1, 162, 1, NULL, '2015-08-28 10:39:06.917873', NULL, 0, NULL, NULL);
 INSERT INTO function (id, code, name, type, llevel, parentid, isactive, created, lastmodified, modifiedby, isnotleaf, parentcode, createdby) VALUES (187, '606800', 'Swimming Pool', NULL, 1, 163, 1, NULL, '2015-08-28 10:39:06.917873', NULL, 0, NULL, NULL);
-INSERT INTO function (id, code, name, type, llevel, parentid, isactive, created, lastmodified, modifiedby, isnotleaf, parentcode, createdby) VALUES (194, '808201', 'Non-Plan Secondary School', NULL, 1, 164, 1, NULL, '2015-08-28 10:39:06.917873', NULL, 0, NULL, NULL);
+INSERT INTO function (id, code, name, type, lle308vel, parentid, isactive, created, lastmodified, modifiedby, isnotleaf, parentcode, createdby) VALUES (194, '808201', 'Non-Plan Secondary School', NULL, 1, 164, 1, NULL, '2015-08-28 10:39:06.917873', NULL, 0, NULL, NULL);
 INSERT INTO function (id, code, name, type, llevel, parentid, isactive, created, lastmodified, modifiedby, isnotleaf, parentcode, createdby) VALUES (195, '808202', 'Industrial Training Institute', NULL, 1, 164, 1, NULL, '2015-08-28 10:39:06.917873', NULL, 0, NULL, NULL);
 INSERT INTO function (id, code, name, type, llevel, parentid, isactive, created, lastmodified, modifiedby, isnotleaf, parentcode, createdby) VALUES (234, '808203', 'Community College', NULL, 1, 164, 1, NULL, '2015-08-28 10:39:06.917873', NULL, 0, NULL, NULL);
 INSERT INTO function (id, code, name, type, llevel, parentid, isactive, created, lastmodified, modifiedby, isnotleaf, parentcode, createdby) VALUES (220, '808204', 'Health Programme (School)', NULL, 1, 164, 1, NULL, '2015-08-28 10:39:06.917873', NULL, 0, NULL, NULL);
@@ -1643,16 +1633,25 @@ INSERT INTO function (id, code, name, type, llevel, parentid, isactive, created,
 INSERT INTO function (id, code, name, type, llevel, parentid, isactive, created, lastmodified, modifiedby, isnotleaf, parentcode, createdby) VALUES (188, '909100', 'Revenue (Property Taxes)', NULL, 1, 166, 0, NULL, '2015-08-28 10:39:06.917873', NULL, 0, NULL, NULL);
 INSERT INTO function (id, code, name, type, llevel, parentid, isactive, created, lastmodified, modifiedby, isnotleaf, parentcode, createdby) VALUES (245, '909101', 'Revenue(H.Q)', NULL, 1, 166, 1, NULL, '2015-08-28 10:39:06.917873', NULL, 0, NULL, NULL);
 INSERT INTO function (id, code, name, type, llevel, parentid, isactive, created, lastmodified, modifiedby, isnotleaf, parentcode, createdby) VALUES (246, '909102', 'Revenue(ZONES)', NULL, 1, 166, 1, NULL, '2015-08-28 10:39:06.917873', NULL, 0, NULL, NULL);
+
+drop sequence seq_function;
+
+CREATE SEQUENCE seq_function
+    START WITH 252
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 ------------------END---------------------
 
 -----------------START-------------------
-INSERT INTO functionary (id, code, name, createtimestamp, updatetimestamp, isactive, module_name) VALUES (1, 1, 'Sample', '2015-08-27 00:00:00', '2015-08-27 00:00:00', 1, NULL);
+INSERT INTO functionary (id, code, name, createtimestamp, updatetimestamp, isactive, module_name) VALUES (nextval('seq_functionary'), 1, 'Sample', '2015-08-27 00:00:00', '2015-08-27 00:00:00', 1, NULL);
 ------------------END---------------------
 
 -----------------START-------------------
-INSERT INTO fund (id, code, name, llevel, parentid, isactive, lastmodified, created, modifiedby, isnotleaf, identifier, purpose_id, payglcodeid, recvglcodeid, createdby, openingdebitbalance, openingcreditbalance, transactiondebitamount, transactioncreditamount) VALUES (1, '01', 'Municipal Fund', 0, NULL, 1, '0001-04-13 00:00:00 BC', '0001-04-13 00:00:00 BC', 1, 0, '1', 12, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO fund (id, code, name, llevel, parentid, isactive, lastmodified, created, modifiedby, isnotleaf, identifier, purpose_id, payglcodeid, recvglcodeid, createdby, openingdebitbalance, openingcreditbalance, transactiondebitamount, transactioncreditamount) VALUES (2, '02', 'Capital Fund', 0, NULL, 1, '0001-04-13 00:00:00 BC', '0001-04-13 00:00:00 BC', 1, 0, '2', 12, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO fund (id, code, name, llevel, parentid, isactive, lastmodified, created, modifiedby, isnotleaf, identifier, purpose_id, payglcodeid, recvglcodeid, createdby, openingdebitbalance, openingcreditbalance, transactiondebitamount, transactioncreditamount) VALUES (3, '03', 'Elementary Education Fund', 0, NULL, 1, '0001-04-13 00:00:00 BC', '0001-04-13 00:00:00 BC', 1, 0, '3', 12, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO fund (id, code, name, llevel, parentid, isactive, lastmodified, created, modifiedby, isnotleaf, identifier, purpose_id, payglcodeid, recvglcodeid, createdby, openingdebitbalance, openingcreditbalance, transactiondebitamount, transactioncreditamount) VALUES (4, '04', 'Earmarked Funds', 0, NULL, 1, '0001-04-13 00:00:00 BC', '0001-04-13 00:00:00 BC', 1, 0, '4', 12, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO fund (id, code, name, llevel, parentid, isactive, lastmodified, created, modifiedby, isnotleaf, identifier, purpose_id, payglcodeid, recvglcodeid, createdby, openingdebitbalance, openingcreditbalance, transactiondebitamount, transactioncreditamount) VALUES (nextval('seq_fund'), '01', 'Municipal Fund', 0, NULL, 1, '0001-04-13 00:00:00 BC', '0001-04-13 00:00:00 BC', 1, 0, '1', 12, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO fund (id, code, name, llevel, parentid, isactive, lastmodified, created, modifiedby, isnotleaf, identifier, purpose_id, payglcodeid, recvglcodeid, createdby, openingdebitbalance, openingcreditbalance, transactiondebitamount, transactioncreditamount) VALUES (nextval('seq_fund'), '02', 'Capital Fund', 0, NULL, 1, '0001-04-13 00:00:00 BC', '0001-04-13 00:00:00 BC', 1, 0, '2', 12, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO fund (id, code, name, llevel, parentid, isactive, lastmodified, created, modifiedby, isnotleaf, identifier, purpose_id, payglcodeid, recvglcodeid, createdby, openingdebitbalance, openingcreditbalance, transactiondebitamount, transactioncreditamount) VALUES (nextval('seq_fund'), '03', 'Elementary Education Fund', 0, NULL, 1, '0001-04-13 00:00:00 BC', '0001-04-13 00:00:00 BC', 1, 0, '3', 12, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO fund (id, code, name, llevel, parentid, isactive, lastmodified, created, modifiedby, isnotleaf, identifier, purpose_id, payglcodeid, recvglcodeid, createdby, openingdebitbalance, openingcreditbalance, transactiondebitamount, transactioncreditamount) VALUES (nextval('seq_fund'), '04', 'Earmarked Funds', 0, NULL, 1, '0001-04-13 00:00:00 BC', '0001-04-13 00:00:00 BC', 1, 0, '4', 12, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 ---------------END-------------------------
 

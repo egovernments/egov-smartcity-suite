@@ -321,7 +321,7 @@ CREATE TABLE chartofaccounts (
     fieoperation character varying(1)
 );
 CREATE SEQUENCE seq_chartofaccounts
-    START WITH 1222
+    START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
@@ -413,7 +413,7 @@ CREATE TABLE eg_designation (
     lastmodifiedby bigint
 );
 CREATE SEQUENCE seq_eg_designation
-    START WITH 69
+    START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
@@ -534,7 +534,7 @@ CREATE TABLE eg_position (
     version bigint
 );
 CREATE SEQUENCE seq_eg_position
-    START WITH 7
+    START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
@@ -675,7 +675,7 @@ CREATE TABLE function (
     createdby bigint
 );
 CREATE SEQUENCE seq_function
-    START WITH 252
+    START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
@@ -729,6 +729,14 @@ CREATE TABLE fund (
     transactiondebitamount double precision,
     transactioncreditamount double precision
 );
+
+CREATE SEQUENCE seq_fund
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+    
 ALTER TABLE ONLY fund ADD CONSTRAINT fund_code_key UNIQUE (code);
 ALTER TABLE ONLY fund ADD CONSTRAINT fund_pkey PRIMARY KEY (id);
 CREATE INDEX indx_fund_purposeid ON fund USING btree (purpose_id);
