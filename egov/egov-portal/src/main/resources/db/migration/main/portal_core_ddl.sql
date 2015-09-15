@@ -4,7 +4,7 @@ CREATE TABLE egp_citizen (
     activationcode character varying(5),
     version numeric DEFAULT 0
 );
-ALTER TABLE ONLY egp_citizen ADD CONSTRAINT eg_citizen_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY egp_citizen ADD CONSTRAINT eg_citizen PRIMARY KEY (id);
 ALTER TABLE ONLY egp_citizen ADD CONSTRAINT fk_citizen_user FOREIGN KEY (id) REFERENCES eg_user(id) MATCH FULL; 
 -------------------END-------------------
 
