@@ -520,6 +520,36 @@ CREATE SEQUENCE seq_eg_partytype
     CACHE 1;
 ALTER TABLE ONLY eg_partytype ADD CONSTRAINT eg_partytype_pkey PRIMARY KEY (id);
 -------------------END-------------------
+----------------START--------------
+CREATE TABLE egeis_deptdesig (
+    id bigint NOT NULL,
+    designation integer NOT NULL,
+    department integer NOT NULL,
+    outsourcedposts integer,
+    sanctionedposts integer,
+    version bigint,
+    createddate timestamp without time zone,
+    lastmodifieddate timestamp without time zone,
+    createdby bigint,
+    lastmodifiedby bigint
+);
+CREATE SEQUENCE seq_egeis_deptdesig
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+    
+ALTER TABLE ONLY egeis_deptdesig
+    ADD CONSTRAINT egeis_deptdesig_desig_id_dept_id_key UNIQUE (designation, department);
+ALTER TABLE ONLY egeis_deptdesig
+    ADD CONSTRAINT egeis_deptdesig_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY egeis_deptdesig
+    ADD CONSTRAINT fk_egeis_deptdesig_departmnt FOREIGN KEY (department) REFERENCES eg_department(id);
+ALTER TABLE ONLY egeis_deptdesig
+    ADD CONSTRAINT fk_egeis_deptdesig_design FOREIGN KEY (designation) REFERENCES eg_designation(id);
+ 
+-----------------END---------------  
 
 ------------------START------------------
 CREATE TABLE eg_position (
@@ -1023,7 +1053,16 @@ ALTER TABLE ONLY eg_surrendered_cheques ADD CONSTRAINT fk_surc_ba FOREIGN KEY (b
 ALTER TABLE ONLY eg_surrendered_cheques ADD CONSTRAINT fk_surc_vh FOREIGN KEY (vhid) REFERENCES voucherheader(id);
 
 -----------------------END-----------------------------
-
+-------------------START--------------------
+CREATE SEQUENCE seq_egw_status
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+ALTER TABLE ONLY egw_status
+    ADD CONSTRAINT egw_status_pkey PRIMARY KEY (id);    
+----------------END-------------
 ---------------------------------NOT STRUCTURED---------------------------------
 
 

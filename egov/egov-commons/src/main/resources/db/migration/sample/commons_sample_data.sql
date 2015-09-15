@@ -1415,7 +1415,28 @@ CREATE SEQUENCE seq_eg_designation
     NO MAXVALUE
     CACHE 1;
 ------------------END---------------------
+--------------------------------START--------------------
+INSERT INTO egeis_deptdesig (id, designation, department, outsourcedposts, sanctionedposts, version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (1, 46, 20, 0, 1, 0, '2015-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1);
+INSERT INTO egeis_deptdesig (id, designation, department, outsourcedposts, sanctionedposts, version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (2, 29, 20, 0, 1, 0, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1);
+INSERT INTO egeis_deptdesig (id, designation, department, outsourcedposts, sanctionedposts, version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (3, 13, 18, 0, 1, 0, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1);
+INSERT INTO egeis_deptdesig (id, designation, department, outsourcedposts, sanctionedposts, version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (4, 45, 18, 0, 1, 0, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1);
+INSERT INTO egeis_deptdesig (id, designation, department, outsourcedposts, sanctionedposts, version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (5, 58, 16, 0, 1, 0, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1);
+INSERT INTO egeis_deptdesig (id, designation, department, outsourcedposts, sanctionedposts, version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (7, 25, 24, 0, 2, 0, '2015-08-28 10:43:54.366149', '2015-08-28 10:43:54.366149', 1, 1);
+INSERT INTO egeis_deptdesig (id, designation, department, outsourcedposts, sanctionedposts, version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (8, 69, 24, 0, 2, 0, '2015-08-28 10:43:54.366149', '2015-08-28 10:43:54.366149', 1, 1);
+INSERT INTO egeis_deptdesig (id, designation, department, outsourcedposts, sanctionedposts, version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (9, 58, 24, 0, 2, 0, '2015-08-28 10:43:54.366149', '2015-08-28 10:43:54.366149', 1, 1);
+INSERT INTO egeis_deptdesig (id, designation, department, outsourcedposts, sanctionedposts, version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (10, 49, 24, 0, 2, 0, '2015-08-28 10:45:27.820844', '2015-08-28 10:45:27.820844', 1, 1);
+INSERT INTO egeis_deptdesig (id, designation, department, outsourcedposts, sanctionedposts, version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (11, 70, 24, 0, 2, 0, '2015-08-28 10:45:27.820844', '2015-08-28 10:45:27.820844', 1, 1);
+INSERT INTO egeis_deptdesig (id, designation, department, outsourcedposts, sanctionedposts, version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (12, 71, 24, 0, 2, 0, '2015-08-28 10:45:30.245116', '2015-08-28 10:45:30.245116', 1, 1);
+INSERT INTO egeis_deptdesig (id, designation, department, outsourcedposts, sanctionedposts, version, createddate, lastmodifieddate, createdby, lastmodifiedby) VALUES (13, 72, 24, 0, 2, 0, '2015-08-28 10:45:30.245116', '2015-08-28 10:45:30.245116', 1, 1);
 
+drop SEQUENCE seq_egeis_deptdesig;
+CREATE SEQUENCE seq_egeis_deptdesig
+    START WITH 14
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+-----------------END-------------------
 -----------------START-------------------
 INSERT INTO eg_position (name, id, deptdesig, createddate, lastmodifieddate, createdby, lastmodifiedby, ispostoutsourced, version) VALUES ('L-JUNIOR ENGINEER-1', 1, 1, '2015-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, false, 0);
 INSERT INTO eg_position (name, id, deptdesig, createddate, lastmodifieddate, createdby, lastmodifiedby, ispostoutsourced, version) VALUES ('L-ASSISTANT ENGINEER-1', 2, 2, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, false, 0);
