@@ -123,6 +123,7 @@
 									title="Arrear Tax Due"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:center" />
+									
 								<display:column title="Action" headerClass="bluebgheadtd"
 									media="html" class="blueborderfortd" style="text-align:center">
 									<select id="actionValue" name="actionValue"
@@ -133,15 +134,14 @@
 										</option>
 										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) ||
 										roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
-											<s:if test="%{#attr.currentRowObject.source!='A'}">
+											<c:if test="${currentRowObject.source == 'D'}">
 												<option value="EDIT_DATAENTRY">
 													<s:text name="edit_dataentry"></s:text>
 												</option>
 												<option value="ADD_EDIT_DEMAND">
-													<s:text name="addeditDemand"></s:text>
+													<s:text name="addeditDemand"></s:text> 
 												</option>
-											</s:if>
-											<s:else>
+											</c:if>
 											<s:if test="%{isDemandActive}">
 												<option value="ADD_OR_ALTER">
 													<s:text name="viewprop.option.alter"></s:text>
@@ -157,7 +157,6 @@
 												<option value="RevisionPetition">
 													<s:text name="revisionPetition"></s:text>
 												</option>
-											</s:else>
 											</s:else>
 										</s:if>
 										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
