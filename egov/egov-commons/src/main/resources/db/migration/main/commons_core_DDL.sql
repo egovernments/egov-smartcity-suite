@@ -89,25 +89,6 @@ ALTER TABLE ONLY eg_usercounter_map ADD CONSTRAINT fk_mapcounterid FOREIGN KEY (
 ALTER TABLE ONLY eg_usercounter_map ADD CONSTRAINT fk_mapuserid FOREIGN KEY (userid) REFERENCES eg_user(id);
 -------------------END-------------------
 
-------------------START-------------------
-CREATE TABLE accountdetailkey (
-    id bigint NOT NULL,
-    groupid bigint NOT NULL,
-    glcodeid bigint,
-    detailtypeid bigint NOT NULL,
-    detailname character varying(50) NOT NULL,
-    detailkey bigint NOT NULL
-);
-CREATE SEQUENCE seq_accountdetailkey
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY accountdetailkey ADD CONSTRAINT accountdetailkey_pkey PRIMARY KEY (id);
-CREATE INDEX indx_acdk_acdtid ON accountdetailkey USING btree (detailtypeid);
--------------------END-------------------
-
 ------------------START------------------
 CREATE TABLE accountdetailtype (
     id bigint NOT NULL,
@@ -132,6 +113,25 @@ CREATE SEQUENCE seq_accountdetailtype
 ALTER TABLE ONLY accountdetailtype ADD CONSTRAINT accountdetailtype_attributename_key UNIQUE (attributename);
 ALTER TABLE ONLY accountdetailtype ADD CONSTRAINT accountdetailtype_name_key UNIQUE (name);
 ALTER TABLE ONLY accountdetailtype ADD CONSTRAINT accountdetailtype_pkey PRIMARY KEY (id);
+-------------------END-------------------
+
+------------------START-------------------
+CREATE TABLE accountdetailkey (
+    id bigint NOT NULL,
+    groupid bigint NOT NULL,
+    glcodeid bigint,
+    detailtypeid bigint NOT NULL,
+    detailname character varying(50) NOT NULL,
+    detailkey bigint NOT NULL
+);
+CREATE SEQUENCE seq_accountdetailkey
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER TABLE ONLY accountdetailkey ADD CONSTRAINT accountdetailkey_pkey PRIMARY KEY (id);
+CREATE INDEX indx_acdk_acdtid ON accountdetailkey USING btree (detailtypeid);
 -------------------END-------------------
 
 ------------------START------------------
@@ -159,6 +159,7 @@ CREATE INDEX indx_aem_acdtid ON accountentitymaster USING btree (detailtypeid);
 -------------------END-------------------
 
 ------------------START------------------
+--TODO check if this table is been used anywhere
 CREATE TABLE accountgroup (
     id bigint NOT NULL,
     name character varying(50) NOT NULL,
@@ -197,36 +198,6 @@ ALTER TABLE ONLY bank ADD CONSTRAINT bank_name_key UNIQUE (name);
 ALTER TABLE ONLY bank ADD CONSTRAINT bank_pkey PRIMARY KEY (id);
 -------------------END-------------------
 
-------------------START------------------
-CREATE TABLE bankaccount (
-    id bigint NOT NULL,
-    branchid bigint NOT NULL,
-    accountnumber character varying(20) NOT NULL,
-    accounttype character varying(150) NOT NULL,
-    narration character varying(250),
-    isactive smallint NOT NULL,
-    glcodeid bigint,
-    currentbalance double precision NOT NULL,
-    fundid bigint,
-    payto character varying(100),
-    type character varying(50),
-    createdby bigint,
-    lastmodifiedby bigint,
-    createddate timestamp without time zone,
-    lastmodifieddate timestamp without time zone,
-    version bigint
-);
-CREATE SEQUENCE seq_bankaccount
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY bankaccount ADD CONSTRAINT bankaccount_branchid_accountnumber_key UNIQUE (branchid, accountnumber);
-ALTER TABLE ONLY bankaccount ADD CONSTRAINT bankaccount_pkey PRIMARY KEY (id);
-CREATE INDEX indx_bankaccount_coaid ON bankaccount USING btree (glcodeid);
-CREATE INDEX indx_bankaccount_fundid ON bankaccount USING btree (fundid);
--------------------END-------------------
 
 ------------------START------------------
 CREATE TABLE bankbranch (
@@ -261,44 +232,34 @@ CREATE UNIQUE INDEX bank_branch_code ON bankbranch USING btree (bankid, branchco
 -------------------END-------------------
 
 ------------------START------------------
-CREATE TABLE bankentries (
+CREATE TABLE bankaccount (
     id bigint NOT NULL,
-    bankaccountid bigint NOT NULL,
-    refno character varying(20) NOT NULL,
-    type character(1) NOT NULL,
-    txndate timestamp without time zone NOT NULL,
-    txnamount bigint NOT NULL,
+    branchid bigint NOT NULL,
+    accountnumber character varying(20) NOT NULL,
+    accounttype character varying(150) NOT NULL,
+    narration character varying(250),
+    isactive smallint NOT NULL,
     glcodeid bigint,
-    voucherheaderid bigint,
-    remarks character varying(100),
-    isreversed smallint,
-    instrumentheaderid bigint
+    currentbalance double precision NOT NULL,
+    fundid bigint,
+    payto character varying(100),
+    type character varying(50),
+    createdby bigint,
+    lastmodifiedby bigint,
+    createddate timestamp without time zone,
+    lastmodifieddate timestamp without time zone,
+    version bigint
 );
-CREATE SEQUENCE seq_bankentries
+CREATE SEQUENCE seq_bankaccount
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-ALTER TABLE ONLY bankentries ADD CONSTRAINT bankentries_pkey PRIMARY KEY (id);
-CREATE INDEX indx_be_bankaccountid ON bankentries USING btree (bankaccountid);
-CREATE INDEX indx_be_coaid ON bankentries USING btree (glcodeid);
-CREATE INDEX indx_be_vhid ON bankentries USING btree (voucherheaderid);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE bankentries_mis (
-    id bigint NOT NULL,
-    bankentries_id bigint,
-    function_id bigint
-);
-CREATE SEQUENCE seq_bankentries_mis
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY bankentries_mis ADD CONSTRAINT bankentries_mis_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY bankaccount ADD CONSTRAINT bankaccount_branchid_accountnumber_key UNIQUE (branchid, accountnumber);
+ALTER TABLE ONLY bankaccount ADD CONSTRAINT bankaccount_pkey PRIMARY KEY (id);
+CREATE INDEX indx_bankaccount_coaid ON bankaccount USING btree (glcodeid);
+CREATE INDEX indx_bankaccount_fundid ON bankaccount USING btree (fundid);
 -------------------END-------------------
 
 ------------------START------------------
@@ -337,28 +298,6 @@ CREATE SEQUENCE seq_calendaryear
     CACHE 1;
 ALTER TABLE ONLY calendaryear ADD CONSTRAINT calendaryear_calendaryear_key UNIQUE (calendaryear);
 ALTER TABLE ONLY calendaryear ADD CONSTRAINT calendaryear_pkey PRIMARY KEY (id);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE chartofaccountdetail (
-    id bigint NOT NULL,
-    glcodeid bigint NOT NULL,
-    detailtypeid bigint NOT NULL,
-    modifiedby bigint,
-    modifieddate timestamp without time zone,
-    createdby bigint,
-    createddate timestamp without time zone
-);
-CREATE SEQUENCE seq_chartofaccountdetail
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY chartofaccountdetail ADD CONSTRAINT chartofaccountdetail_glcodeid_detailtypeid_key UNIQUE (glcodeid, detailtypeid);
-ALTER TABLE ONLY chartofaccountdetail ADD CONSTRAINT chartofaccountdetail_pkey PRIMARY KEY (id);
-CREATE INDEX indx_coad_acdtid ON chartofaccountdetail USING btree (detailtypeid);
-CREATE INDEX indx_coad_coaid ON chartofaccountdetail USING btree (glcodeid);
 -------------------END-------------------
 
 ------------------START------------------
@@ -405,80 +344,28 @@ CREATE INDEX indx_coa_scheduleid ON chartofaccounts USING btree (scheduleid);
 -------------------END-------------------
 
 ------------------START------------------
-CREATE TABLE cheque_dept_mapping (
+CREATE TABLE chartofaccountdetail (
     id bigint NOT NULL,
-    allotedto bigint NOT NULL,
-    accountchequeid bigint NOT NULL
-);
-CREATE SEQUENCE seq_cheque_dept_mapping
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY cheque_dept_mapping ADD CONSTRAINT cheque_dept_mapping_pkey PRIMARY KEY (id);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE closedperiods (
-    id bigint NOT NULL,
-    startingdate timestamp without time zone NOT NULL,
-    endingdate timestamp without time zone NOT NULL,
-    isclosed bigint NOT NULL
-);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE companydetail (
-    id bigint NOT NULL,
-    name character varying(50) NOT NULL,
-    address1 character varying(50) NOT NULL,
-    address2 character varying(50),
-    city character varying(50) NOT NULL,
-    pin character varying(10) NOT NULL,
-    state character varying(25),
-    phone character varying(25) NOT NULL,
-    contactperson character varying(50),
-    mobile character varying(25),
-    fax character varying(25),
-    email character varying(25),
-    isactive smallint NOT NULL,
+    glcodeid bigint NOT NULL,
+    detailtypeid bigint NOT NULL,
     modifiedby bigint,
-    created timestamp without time zone NOT NULL,
-    lastmodified timestamp without time zone,
-    narration character varying(250),
-    dbname character varying(50)
+    modifieddate timestamp without time zone,
+    createdby bigint,
+    createddate timestamp without time zone
 );
-CREATE SEQUENCE seq_companydetail
+CREATE SEQUENCE seq_chartofaccountdetail
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-ALTER TABLE ONLY companydetail ADD CONSTRAINT companydetail_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY companydetail ADD CONSTRAINT companydetail_name_key UNIQUE (name);
+ALTER TABLE ONLY chartofaccountdetail ADD CONSTRAINT chartofaccountdetail_glcodeid_detailtypeid_key UNIQUE (glcodeid, detailtypeid);
+ALTER TABLE ONLY chartofaccountdetail ADD CONSTRAINT chartofaccountdetail_pkey PRIMARY KEY (id);
+CREATE INDEX indx_coad_acdtid ON chartofaccountdetail USING btree (detailtypeid);
+CREATE INDEX indx_coad_coaid ON chartofaccountdetail USING btree (glcodeid);
 -------------------END-------------------
 
-------------------START------------------
-CREATE TABLE contrajournalvoucher (
-    id bigint NOT NULL,
-    voucherheaderid bigint NOT NULL,
-    frombankaccountid bigint,
-    tobankaccountid bigint,
-    instrumentheaderid bigint,
-    state_id bigint,
-    createdby bigint,
-    lastmodifiedby bigint
-);
-CREATE SEQUENCE seq_contrajournalvoucher
-    START WITH 1
-    INCREMENT BY 1
-    MINVALUE 0
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY contrajournalvoucher ADD CONSTRAINT contrajournalvoucher_pkey PRIMARY KEY (id);
--------------------END-------------------
-
+--Removed compantdetail as it is not been used anywhere
 ------------------START------------------
 CREATE TABLE eg_bill_subtype (
     id bigint NOT NULL,
