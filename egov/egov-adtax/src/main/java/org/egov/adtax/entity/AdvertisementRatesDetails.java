@@ -39,8 +39,6 @@
  */
 package org.egov.adtax.entity;
 
-import java.util.Date;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -49,48 +47,37 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
-@Table(name = "EGADTAX_RATES")
-@SequenceGenerator(name = Rates.SEQ_RATES, sequenceName = Rates.SEQ_RATES, allocationSize = 1)
-public class Rates extends AbstractAuditable {
+@Table(name = "EGADTAX_RATES_DETAILS")
+@SequenceGenerator(name = AdvertisementRatesDetails.SEQ_RATESDETAILS, sequenceName = AdvertisementRatesDetails.SEQ_RATESDETAILS, allocationSize = 1)
+public class AdvertisementRatesDetails extends AbstractAuditable {
 
-    private static final long serialVersionUID = -3661778599272146492L;
-    public static final String SEQ_RATES = "SEQ_EGADTAX_RATES";
+    private static final long serialVersionUID = 3330971216171501421L;
+    public static final String SEQ_RATESDETAILS = "SEQ_EGADTAX_RATESDETAILS";
     @Id
-    @GeneratedValue(generator = SEQ_RATES, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_RATESDETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "category", nullable = false)
-    private HoardingCategory category;
+    @JoinColumn(name = "class", nullable = false)
+    private RatesClass classtype;
 
+    private Double unitFrom;
+    private Double unitTo;
+   
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "subcategory", nullable = false)
-    private SubCategory subCategory;
-
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "unitofmeasure", nullable = false)
-    private UnitOfMeasure unitofmeasure;
-
-    private boolean active;
-
-    @NotNull
-    @Temporal(value = TemporalType.DATE)
-    private Date validFromoDate;
-
-    @NotNull
-    @Temporal(value = TemporalType.DATE)
-    private Date validToDate;
-
+    @JoinColumn(name = "rate", nullable = false)
+    private AdvertisementRate advertisementRate;
+    
+    private Double amount;
+    
+    
     @Override
     public Long getId() {
         return id;
@@ -101,54 +88,46 @@ public class Rates extends AbstractAuditable {
         this.id = id;
     }
 
-    public HoardingCategory getCategory() {
-        return category;
+    public RatesClass getClasstype() {
+        return classtype;
     }
 
-    public void setCategory(final HoardingCategory category) {
-        this.category = category;
+    public void setClasstype(final RatesClass classtype) {
+        this.classtype = classtype;
     }
 
-    public SubCategory getSubCategory() {
-        return subCategory;
+    public Double getUnitFrom() {
+        return unitFrom;
     }
 
-    public void setSubCategory(final SubCategory subCategory) {
-        this.subCategory = subCategory;
+    public void setUnitFrom(final Double unitFrom) {
+        this.unitFrom = unitFrom;
     }
 
-    public UnitOfMeasure getUnitofmeasure() {
-        return unitofmeasure;
+    public Double getUnitTo() {
+        return unitTo;
     }
 
-    public void setUnitofmeasure(final UnitOfMeasure unitofmeasure) {
-        this.unitofmeasure = unitofmeasure;
+    public void setUnitTo(final Double unitTo) {
+        this.unitTo = unitTo;
     }
 
-    public boolean isActive() {
-        return active;
+ 
+    public AdvertisementRate getAdvertisementRate() {
+        return advertisementRate;
     }
 
-    public void setActive(final boolean active) {
-        this.active = active;
+    public void setAdvertisementRate(AdvertisementRate advertisementRate) {
+        this.advertisementRate = advertisementRate;
     }
 
-    public Date getValidFromoDate() {
-        return validFromoDate;
+    public Double getAmount() {
+        return amount;
     }
 
-    public void setValidFromoDate(Date validFromoDate) {
-        this.validFromoDate = validFromoDate;
+    public void setAmount(Double amount) {
+        this.amount = amount;
     }
 
-    public Date getValidToDate() {
-        return validToDate;
-    }
-
-    public void setValidToDate(Date validToDate) {
-        this.validToDate = validToDate;
-    }
-
-  
 
 }

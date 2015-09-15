@@ -55,5 +55,11 @@
     <definition name="index" extends="base_layout">
         <put-attribute name="body" value="/WEB-INF/views/index.jsp"/>
     </definition>
+    
+     <definition name="scheduleOfRate-form" extends="base_layout">
+	    <put-attribute name="page-title" value="title.scheduleofrates" cascade="true"/>
+	    <put-attribute name="body" value="/WEB-INF/views/rates/scheduleOfRate-form.jsp"/>
+    </definition>
+    
 
 </tiles-definitions>

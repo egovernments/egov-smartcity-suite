@@ -41,13 +41,13 @@ package org.egov.adtax.repository;
 
 import java.util.List;
 
-import org.egov.adtax.entity.Rates;
+import org.egov.adtax.entity.AdvertisementRate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RatesRepository extends JpaRepository<Rates, Long> {
+public interface RatesRepository extends JpaRepository<AdvertisementRate, Long> {
 
    
 

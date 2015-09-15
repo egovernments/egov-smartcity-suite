@@ -1,0 +1,1 @@
+alter table EGADTAX_RATES_DETAILS add column Amount bigint not null default 0;

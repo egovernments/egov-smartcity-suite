@@ -39,7 +39,7 @@
  */
 package org.egov.adtax.service;
 
-import org.egov.adtax.entity.Rates;
+import org.egov.adtax.entity.AdvertisementRate;
 import org.egov.adtax.repository.RatesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,7 +55,7 @@ public class RatesService {
         this.ratesRepository = ratesRepository;
     }
 
-    public Rates getRateClassById(final Long id) {
+    public AdvertisementRate getRateClassById(final Long id) {
         return ratesRepository.findOne(id);
     }
 
