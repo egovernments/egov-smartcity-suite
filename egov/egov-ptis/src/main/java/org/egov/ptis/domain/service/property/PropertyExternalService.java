@@ -72,6 +72,8 @@ import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.dcb.bean.Payment;
 import org.egov.demand.model.EgBill;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
@@ -79,6 +81,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -86,7 +89,10 @@ import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
+import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.pims.commons.Position;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.model.PenaltyAndRebate;
@@ -137,6 +143,7 @@ import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.PropertyDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -185,7 +192,13 @@ public class PropertyExternalService {
 
 	@Autowired
 	private BoundaryTypeService boundaryTypeService;
-	
+	@Autowired
+    protected AssignmentService assignmentService;
+	@Autowired
+    private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
+	@Autowired
+	private UserService userService;
+
 	public AssessmentDetails loadAssessmentDetails(String propertyId, Integer flag) {
 		assessmentDetail = new AssessmentDetails();
 		assessmentDetail.setPropertyID(propertyId);
@@ -354,10 +367,10 @@ public class PropertyExternalService {
 	}
 
 	public List<PropertyTaxDetails> getPropertyTaxDetails(String circleName, String zoneName, String wardName,
-			String blockName, String ownerName, String doorNo) {
+			String blockName, String ownerName, String doorNo, String aadhaarNumber, String mobileNumber) {
 		List<PropertyTaxDetails> propTxDetailsList = null;
 		List<BasicProperty> basicPropertyList = basicPropertyDAO.getBasicPropertiesForTaxDetails(circleName, zoneName,
-				wardName, blockName, ownerName, doorNo);
+				wardName, blockName, ownerName, doorNo, aadhaarNumber, mobileNumber);
 		if (null != basicPropertyList) {
 			propTxDetailsList = new ArrayList<PropertyTaxDetails>();
 			for (BasicProperty basicProperty : basicPropertyList) {
@@ -635,6 +648,50 @@ public class PropertyExternalService {
 	}
 	
 	public List<MasterCodeNamePairDetails> getPropertyTypeCategoryDetails(String categoryCode) {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		Map<String, String> codeNameMap = null;
+		PropertyTypeMaster propertyTypeMasters = propertyTypeMasterDAO.getPropertyTypeMasterByCode(categoryCode);
+		if (null != propertyTypeMasters) {
+			if (propertyTypeMasters.getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)) {
+				codeNameMap = PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+			} else {
+				codeNameMap = PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
+			}
+			if (null != codeNameMap && !codeNameMap.isEmpty()) {
+				for (String code : codeNameMap.keySet()) {
+					MasterCodeNamePairDetails mstrCodeNamepairDetails = new MasterCodeNamePairDetails();
+					mstrCodeNamepairDetails.setCode(code);
+					mstrCodeNamepairDetails.setName(codeNameMap.get(code));
+					mstrCodeNamePairDetailsList.add(mstrCodeNamepairDetails);
+				}
+			}
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+	
+	public List<MasterCodeNamePairDetails> getPropertyTypes() {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		MasterCodeNamePairDetails mstrCodeNamepairDetails = null;
+		Map<String, String> vacLandMap = PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+		Map<String, String> nonVacLandMap = PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
+		
+		for(String key : vacLandMap.keySet()) {
+			 mstrCodeNamepairDetails = new MasterCodeNamePairDetails();
+			mstrCodeNamepairDetails.setCode(key);
+			mstrCodeNamepairDetails.setName(vacLandMap.get(key));
+			mstrCodeNamePairDetailsList.add(mstrCodeNamepairDetails);
+		}
+
+		for (String code : nonVacLandMap.keySet()) {
+			 mstrCodeNamepairDetails = new MasterCodeNamePairDetails();
+			mstrCodeNamepairDetails.setCode(code);
+			mstrCodeNamepairDetails.setName(nonVacLandMap.get(code));
+			mstrCodeNamePairDetailsList.add(mstrCodeNamepairDetails);
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+	
+	public List<MasterCodeNamePairDetails> getPropertyTypes(String categoryCode) {
 		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
 		Map<String, String> codeNameMap = null;
 		PropertyTypeMaster propertyTypeMasters = propertyTypeMasterDAO.getPropertyTypeMasterByCode(categoryCode);
@@ -1040,6 +1097,7 @@ public class PropertyExternalService {
 		propertyImpl.setDocuments(documents);
 		TaxExeptionReason taxExemptedReason = getTaxExemptionReasonByCode(floorDetailsList.get(0).getExemptionCategoryCode());
 		propertyImpl.setTaxExemptedReason(taxExemptedReason);
+		propertyImpl = transitionWorkFlow(propertyImpl); //Setting approver
 		property = propService.createProperty(propertyImpl, extentOfSite, mutationReasonCode,
 				propertyTypeMaster.getId().toString(), propertyUsage.getId().toString(),
 				propertyOccupation.getId().toString(), PropertyTaxConstants.STATUS_ISACTIVE, regdDocNo, nonResPlotArea,
@@ -1499,5 +1557,23 @@ public class PropertyExternalService {
 			e.printStackTrace();
 		}
 		return file;
+	}
+	
+	private PropertyImpl transitionWorkFlow(final PropertyImpl property) {
+        DateTime currentDate = new DateTime();
+        Date createdDate = new Date();
+        User user = userService.getUserById(EgovThreadLocals.getUserId());
+        String approverComments = "Property has been successfully forwarded.";
+        String currentState = "Created";
+        Assignment assignment = propService.getUserPositionByZone(property.getBasicProperty());
+        Position pos = assignment.getPosition();
+
+        WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
+                null, PropertyTaxConstants.NEW_ASSESSMENT, currentState, null);
+        property.transition().start().withSenderName(user.getName()).withComments(approverComments)
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                .withNextAction(wfmatrix.getNextAction()).setCreatedDate(createdDate);
+    
+        return property;
 	}
 }

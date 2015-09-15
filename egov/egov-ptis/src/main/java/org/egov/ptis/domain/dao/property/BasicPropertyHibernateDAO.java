@@ -49,12 +49,11 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.repository.BoundaryRepository;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyID;
-import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
@@ -190,7 +189,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 			if (resultSet.next()) {
 				regNum = resultSet.getInt(1);
 			} else {
-				throw new ApplicationRuntimeException("Could not generate Reg Num. Result is empty.");
+				throw new ApplicationException("Could not generate Reg Num. Result is empty.");
 			}
 
 		} catch (SQLException e) {
@@ -220,7 +219,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 			if (resultSet.next()) {
 				voucherNum = resultSet.getInt(1);
 			} else {
-				throw new ApplicationRuntimeException("Could not generate Voucher Num. Result is empty.");
+				throw new ApplicationException("Could not generate Voucher Num. Result is empty.");
 			}
 
 		} catch (SQLException e) {
@@ -295,8 +294,8 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 	}
 	
 	@Override
-	public List<BasicProperty> getBasicPropertiesForTaxDetails(String circleName, String zoneName, String wardName,
-			String blockName, String ownerName, String doorNo) {
+	public List<BasicProperty> getBasicPropertiesForTaxDetails(String circleName, String zoneName, 
+			String wardName, String blockName, String ownerName, String doorNo, String aadhaarNumber, String mobileNumber) {
 		
 		List<BasicProperty> basicProeprtyList = new ArrayList<BasicProperty>();
 		

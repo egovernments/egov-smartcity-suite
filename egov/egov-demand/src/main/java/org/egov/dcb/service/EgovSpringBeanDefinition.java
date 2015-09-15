@@ -50,7 +50,6 @@ public class EgovSpringBeanDefinition {
 
 	private static ApplicationContextBeanProvider beanProvider = (ApplicationContextBeanProvider) new ClassPathXmlApplicationContext(
 			new String[] {  "config/spring/applicationContext-egi.xml",
-			                "config/spring/applicationContext-events.xml",
 			                "config/spring/applicationContext-jms.xml",
 			                "config/spring/applicationContext-messages.xml",
 			                "config/spring/applicationContext-eis.xml",

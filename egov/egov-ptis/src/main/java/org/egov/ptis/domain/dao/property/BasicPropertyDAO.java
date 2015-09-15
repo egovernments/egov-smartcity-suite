@@ -82,7 +82,7 @@ public interface BasicPropertyDAO {
 	public BasicProperty update(BasicProperty basicProperty);
 
 	public List<BasicProperty> getBasicPropertiesForTaxDetails(String circleName, String zoneName, 
-			String wardName, String blockName, String ownerName, String doorNo);
+			String wardName, String blockName, String ownerName, String doorNo, String aadhaarNumber, String mobileNumber);
 	
 	public List<Long> getBoundaryIds(String boundaryName);
 	
