@@ -52,14 +52,14 @@
 				<br>
 				<tr>
 					<td align="left"><a
-						href='${pageContext.request.contextPath}/citizen/search/searchCitizenLicense!newForm.action'
+						href='${pageContext.request.contextPath}/citizen/search/searchCitizenLicense-newForm.action'
 						target="_blank"><img src="../images/searchicon.gif" />  Search Trade License</a></td>
 				</tr>
 				<tr>
 				</tr>
 				<tr>
 					<td align="left"><a
-						href='${pageContext.request.contextPath}/citizen/newapp/newCitizenTradeLicense!newForm.action'
+						href='${pageContext.request.contextPath}/citizen/newapp/newCitizenTradeLicense-newForm.action'
 						target="_blank"> <img src="../images/application_edit.png" /> Apply for Trade License</a></td>
 				</tr>
 			</tbody>

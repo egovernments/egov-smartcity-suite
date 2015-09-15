@@ -55,13 +55,15 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Action;
 
-import com.opensymphony.xwork2.Action;
-
-@Result(
-        name = Action.SUCCESS, type = "redirectAction", location = "CommonTradeLicenseAjaxAction.action")
-@Results({ @Result(
-        name = "AJAX_RESULT", type = "redirectAction", location = "returnStream", params = { "contentType", "text/plain" }) })
+        
+@Results({ @Result(name = "AJAX_RESULT", type = "redirectAction", location = "returnStream", params = { "contentType", "text/plain" }),
+	@Result(name = "ward", location = "commonAjax-ward.jsp"),
+	@Result(name = "success", type = "redirectAction", location = "CommonTradeLicenseAjaxAction.action")
+	})
 @ParentPackage("egov")
 public class CommonTradeLicenseAjaxAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
@@ -77,6 +79,7 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction {
      *
      * @return the string
      */
+    @Action(value="/domain/CommonTradeLicenseAjaxAction-populateDivisions") 
     public String populateDivisions() {
         try {
             final Boundary boundary = boundaryService.getBoundaryById(Long.valueOf(zoneId));

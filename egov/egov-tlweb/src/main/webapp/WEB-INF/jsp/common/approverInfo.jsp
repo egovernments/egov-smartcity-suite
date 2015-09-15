@@ -80,7 +80,7 @@
 		</td>
 		<td class="bluebox">
 			<s:select name="departmentid" id="departmentid" list="dropdownData.departmentIdList" listKey="id" listValue="deptName" value="%{departmentId}" onchange="loadDesignationByDeptId();" />
-			<egov:ajaxdropdown fields="['Text','Value']" url="transactions/ajaxTradeLicense!getDesignationByDeptId.action" id="approverDesg" dropdownId="approverDesg" />
+			<egov:ajaxdropdown fields="['Text','Value']" url="transactions/ajaxTradeLicense-getDesignationByDeptId.action" id="approverDesg" dropdownId="approverDesg" />
 		</td>
 		<td class="bluebox" width="10%">
 			&nbsp;
@@ -90,7 +90,7 @@
 		</td>
 		<td class="bluebox" width="33%">
 			<s:select id="approverDesg" name="approverDesg" list="dropdownData.desgnationList" listKey="designationId" listValue="designationName" onchange="getUsersByDeisgnation(this.value)" onfocus="callAlertForDepartment();" />
-			<egov:ajaxdropdown id="approverName" fields="['Text','Value']" dropdownId="approverName" url="transactions/ajaxTradeLicense!getUsersByPassingDesigId.action" />
+			<egov:ajaxdropdown id="approverName" fields="['Text','Value']" dropdownId="approverName" url="transactions/ajaxTradeLicense-getUsersByPassingDesigId.action" />
 		</td>
 		<td class="bluebox" width="10%">
 			Approver:

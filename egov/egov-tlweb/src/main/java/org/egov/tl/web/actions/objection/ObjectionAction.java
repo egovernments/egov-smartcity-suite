@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.objection;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Action;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,6 +62,15 @@ import org.egov.tl.utils.LicenseUtils;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
+@Results({
+@Result(name = Constants.NEW, location = "objection-"+Constants.NEW+".jsp"),
+@Result(name = "message", location = "objection-message.jsp"),
+@Result(name = "approve", location = "objection-approve.jsp"),
+@Result(name = "prenotice", location = "objection-prenotice.jsp"),
+@Result(name = "prenoticeletter", location = "objection-prenoticeletter.jsp"),
+@Result(name = "showcausenotice", location = "objection-showcausenotice.jsp"),
+@Result(name = "scnoticeletter", location = "objection-scnoticeletter.jsp")
+})
 public class ObjectionAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -178,6 +189,7 @@ public class ObjectionAction extends BaseFormAction {
                     fieldName = "objectionDate", message = "", key = Constants.REQUIRED), @RequiredFieldValidator(
                     fieldName = "details", message = "", key = Constants.REQUIRED), @RequiredFieldValidator(
                     fieldName = "reason", message = "", key = Constants.REQUIRED) })
+@Action(value="/objection/objection-create")
     public String create() {
         objectionService.setContextName(ServletActionContext.getRequest().getContextPath());
         objection = objectionService.recordObjection(objection, licenseId, workflowBean);

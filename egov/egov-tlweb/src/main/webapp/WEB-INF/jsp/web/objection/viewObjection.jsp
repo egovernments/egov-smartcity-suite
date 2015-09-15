@@ -131,7 +131,7 @@
 	</td>
 	<td colspan="4" height="22" align="right" class="<c:out value="${trclass}"/>">
 		<s:if test="%{docNumber != null && docNumber != ''}">
-			<a href="/egi/docmgmt/basicDocumentManager!viewDocument.action?docNumber=${docNumber}&moduleName=egtradelicense" target="_blank">View Objection Attachment </a>
+			<a href="/egi/docmgmt/basicDocumentManager-viewDocument.action?docNumber=${docNumber}&moduleName=egtradelicense" target="_blank">View Objection Attachment </a>
 		</s:if>
 	</td>
 </tr>

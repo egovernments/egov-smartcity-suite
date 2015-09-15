@@ -52,7 +52,7 @@
 				if( document.getElementById("rejectreason").value=='') {
 					alert("Please enter reason for rejection");return false;
 				} else {
-					var url= "viewTradeLicense!certificateForRej.action?model.id="+<s:property value="model.id"/>;
+					var url= "viewTradeLicense-certificateForRej.action?model.id="+<s:property value="model.id"/>;
 					var form = document.createElement("form");
 					form.setAttribute("method", "post");
 					form.setAttribute("action", url);

@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.reports;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Action;
 
 import java.util.List;
@@ -52,6 +54,12 @@ import org.egov.tl.domain.service.LicenseReportService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
 
+@Results({
+@Result(name = Constants.ZONE_WISE_REPORT, location = "tradeLicenseReports-"+Constants.ZONE_WISE_REPORT+".jsp"),
+@Result(name = Constants.WARD_WISE_REPORT, location = "tradeLicenseReports-"+Constants.WARD_WISE_REPORT+".jsp"),
+@Result(name = Constants.TRADE_WISE_REPORT, location = "tradeLicenseReports-"+Constants.TRADE_WISE_REPORT+".jsp"),
+@Result(name = Constants.LATE_RENEWALS_REPORT, location = "tradeLicenseReports-"+Constants.LATE_RENEWALS_REPORT+".jsp")
+})
 public class TradeLicenseReportsAction extends BaseLicenseAction {
 
     /**

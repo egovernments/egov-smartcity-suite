@@ -44,7 +44,7 @@
 function onlinePaymentMode(appNumber)
 {
 	if(appNumber!=null && appNumber!='' ) {
-	       window.location="../collection/collectionLicense!onLinePaymentMode.action?appNumber="+appNumber;
+	       window.location="../collection/collectionLicense-onLinePaymentMode.action?appNumber="+appNumber;
 	} 
 }
 </script>
@@ -68,7 +68,7 @@ function onlinePaymentMode(appNumber)
 	<br/>
 	<fieldset>
 		<legend align="center"><b>Search Result</b></legend>
-		<display:table name="pagedResults" uid="license" style="background-color:#e8edf1;width:98%;padding:0px;margin:10 0 0 5px;" pagesize="20" export="false" requestURI="searchCitizenLicense!search.action?reportSize=${reportSize}"  excludedParams="reportSize" cellpadding="0" cellspacing="0"  >
+		<display:table name="pagedResults" uid="license" style="background-color:#e8edf1;width:98%;padding:0px;margin:10 0 0 5px;" pagesize="20" export="false" requestURI="searchCitizenLicense-search.action?reportSize=${reportSize}"  excludedParams="reportSize" cellpadding="0" cellspacing="0"  >
 			
 			<display:column class="blueborderfortd" title="License Number" media="html">
 				<c:if test="${license.licenseNumber == null || license.licenseNumber == ''}">
@@ -76,10 +76,10 @@ function onlinePaymentMode(appNumber)
 				</c:if>
 				<c:choose>				
 					<c:when test='${license.licenseNumber != null && license.licenseNumber != ""}'>
-						<a href="../../viewtradelicense/web/viewTradeLicense!viewCitizen.action?id=${license.id}" target="_blank"> <center>${license.licenseNumber}</center> </a>
+						<a href="../../viewtradelicense/web/viewTradeLicense-viewCitizen.action?id=${license.id}" target="_blank"> <center>${license.licenseNumber}</center> </a>
 					</c:when>
 					<c:when test='${license.tempLicenseNumber != null && license.tempLicenseNumber != ""}'>
-						<a href="../../viewtradelicense/web/viewTradeLicense!viewCitizen.action?id=${license.id}" target="_blank"> <center>${license.tempLicenseNumber}</center> </a>
+						<a href="../../viewtradelicense/web/viewTradeLicense-viewCitizen.action?id=${license.id}" target="_blank"> <center>${license.tempLicenseNumber}</center> </a>
 					</c:when>
 				</c:choose>
 				</display:column>
@@ -89,7 +89,7 @@ function onlinePaymentMode(appNumber)
 				</c:if>
 				<c:choose>
 					<c:when test='${license.applicationNumber != null && license.applicationNumber != ""}'>
-						<a href="../../viewtradelicense/web/viewTradeLicense!viewCitizen.action?id=${license.id}" target="_blank"> ${license.applicationNumber} </a>
+						<a href="../../viewtradelicense/web/viewTradeLicense-viewCitizen.action?id=${license.id}" target="_blank"> ${license.applicationNumber} </a>
 					</c:when>
 				</c:choose>
 			</display:column>

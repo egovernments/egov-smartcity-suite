@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.viewtradelicense;
 
+import org.apache.struts2.convention.annotation.Action;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -226,6 +227,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
     }
 
     @SkipValidation
+@Action(value="/viewtradelicense/viewTradeLicense-certificateForRej")
     public String certificateForRej() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
         getSession().get("model.id");

@@ -60,7 +60,7 @@
 				} else if(document.getElementById("expectedDateOfResponse").value=='') {
 					alert("Please enter Expected Date of Response");return false;
 				} else {
-					var url = 'objection!showCauseNotice.action?model.id=<s:property value="model.id"/>';
+					var url = 'objection-showCauseNotice.action?model.id=<s:property value="model.id"/>';
 					var form = document.createElement("form");
 					form.setAttribute("method", "post");
 					form.setAttribute("action", url);

@@ -51,7 +51,7 @@
 		<center style="color: #444; font: bold 13px tohoma, arial, helvetica; position: relative; top: 250px">
 			Please wait...
 		</center>
-		<form action="/collection/receipts/receipt!newform.action" method="POST">
+		<form action="/collection/receipts/receipt-newform.action" method="POST">
 			<input type="hidden" id="collectXML" name="collectXML" value="${collectXML}" />
 		</form>
 	</body>

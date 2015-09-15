@@ -147,7 +147,7 @@ function showDocumentManagerView(docNumber) {
 	if (docNumber == null || docNumber == '' || docNumber == 'To be assigned' || docNumber == 'null') {
 		url = "/egtradelicense/citizen/uploaddocument/uploadDocumentLicense.action?moduleName=egtradelicense";
 	} else {
-		url = "/egtradelicense/citizen/uploaddocument/uploadDocumentLicense!editDocument.action?docNumber="+ docNumber + "&moduleName=egtradelicense";
+		url = "/egtradelicense/citizen/uploaddocument/uploadDocumentLicense-editDocument.action?docNumber="+ docNumber + "&moduleName=egtradelicense";
 	}
 	window.open(url, 'docupload', 'width=1000,height=400');
 }

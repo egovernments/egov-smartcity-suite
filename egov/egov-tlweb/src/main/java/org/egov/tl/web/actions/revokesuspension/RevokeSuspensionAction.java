@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.revokesuspension;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Action;
 
 import java.util.Date;
@@ -62,6 +64,9 @@ import org.egov.tl.web.actions.BaseLicenseAction;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
+@Results({
+@Result(name = Constants.NEW, location = "revokeSuspension-"+Constants.NEW+".jsp")
+})
 public class RevokeSuspensionAction extends BaseLicenseAction {
 
     private static final Logger LOGGER = Logger.getLogger(RevokeSuspensionAction.class);

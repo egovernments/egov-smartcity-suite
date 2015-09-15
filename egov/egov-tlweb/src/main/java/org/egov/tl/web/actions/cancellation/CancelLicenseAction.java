@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.cancellation;
 
+import org.apache.struts2.convention.annotation.Action;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,12 +63,12 @@ import org.egov.tl.domain.service.TradeService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 
-import com.opensymphony.xwork2.Action;
+
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @Result(
-        name = Action.SUCCESS, type = "redirectAction", location = "CancelLicense.action")
+        name = "success", type = "redirectAction", location = "CancelLicense.action")
 @ParentPackage("egov")
 public class CancelLicenseAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(CancelLicenseAction.class);
@@ -135,6 +136,7 @@ public class CancelLicenseAction extends BaseFormAction {
     }
 
     @SkipValidation
+@Action(value="/cancellation/cancelLicense-newForm")
     public String newForm() {
         license = ts.getTps().findById(licenseId.longValue(), false);
         return Constants.NEW;

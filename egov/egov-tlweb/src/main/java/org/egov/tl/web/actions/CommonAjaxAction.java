@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.tl.web.actions;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Action;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Date;
@@ -62,11 +65,14 @@ import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-@Result(
-        name = "SUCCESS", type = "redirectAction", location = "CommonAjaxAction.action")
-@Results({ @Result(
-        name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain" }) })
-@ParentPackage("egov")
+
+@Results({
+@Result(name = "ward", location = "commonAjax-ward.jsp"),
+@Result(name = "designation", location = "commonAjax-designation.jsp"),
+@Result(name = "users", location = "commonAjax-users.jsp"),
+@Result(name = "SUCCESS", type = "redirectAction", location = "CommonAjaxAction.action"),
+@Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain" })
+})
 public class CommonAjaxAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(CommonAjaxAction.class);

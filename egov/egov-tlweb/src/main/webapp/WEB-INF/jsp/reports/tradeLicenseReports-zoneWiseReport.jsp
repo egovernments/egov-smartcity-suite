@@ -73,7 +73,7 @@
                 requestURI="">
 <display:caption> &nbsp;</display:caption>
                 <display:column  class="blueborderfortd" title="Zone Name"  style="text-align:center;width:10%" property="Zone"
-                    href="tradeLicenseReports!showWardWiseReport.action" paramId="zoneId" paramProperty="ZONE_ID">
+                    href="tradeLicenseReports-showWardWiseReport.action" paramId="zoneId" paramProperty="ZONE_ID">
                 <s:text name ="ZONE_ID"/> </display:column>
 
                 <display:column class="blueborderfortd" title="New"

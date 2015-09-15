@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.entertradelicense;
 
+import org.apache.struts2.convention.annotation.Action;
 import java.math.BigDecimal;
 import java.util.Iterator;
 

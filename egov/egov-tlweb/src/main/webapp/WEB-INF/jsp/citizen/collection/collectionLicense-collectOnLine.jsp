@@ -49,7 +49,7 @@
   	var form = document.createElement("form");
 		form.setAttribute("method", "post");
 		var collStr="";
-        collStr="/collection/citizen/onlineReceipt!newform.action";
+        collStr="/collection/citizen/onlineReceipt-newform.action";
 		form.setAttribute("action", collStr);
 		var hiddenField = document.createElement("input");
 		hiddenField.setAttribute("type","hidden");              

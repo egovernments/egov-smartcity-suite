@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.transfer;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Action;
 
 import java.util.ArrayList;
@@ -93,6 +95,12 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @StringLengthFieldValidator(fieldName = "licenseTransfer.oldMobileNumber", maxLength = "15", message = "", key = "Maximum length for Phone Number is 15"),
         @StringLengthFieldValidator(fieldName = "licenseTransfer.oldHomePhoneNumber", maxLength = "15", message = "", key = "Phone number should be upto 15 numbers"),
         @StringLengthFieldValidator(fieldName = "licenseTransfer.oldUid", maxLength = "12", message = "", key = "Maximum length for UID is 12") }, intRangeFields = { @IntRangeFieldValidator(fieldName = "licenseTransfer.oldAddress.pinCode", min = "100000", max = "999999", message = "", key = "Minimum and Maximum length for Pincode is 6 and all Digit Cannot be 0") })
+@Results({
+@Result(name = "transfer", location = "transferTradeLicense-transfer.jsp"),
+@Result(name = "message", location = "transferTradeLicense-message.jsp"),
+@Result(name = Constants.EDIT, location = "transferTradeLicense-"+Constants.EDIT+".jsp"),
+@Result(name = "approve", location = "transferTradeLicense-approve.jsp")
+})
 public class TransferTradeLicenseAction extends BaseLicenseAction {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(TransferTradeLicenseAction.class);
@@ -160,6 +168,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
 
     @Override
     @ValidationErrorPage("transfer")
+@Action(value="/transfer/transferTradeLicense-create")
     public String create() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tl);
         if (tl.getLicenseeZoneId() != null && tl.getLicenseTransfer().getBoundary() == null) {
@@ -185,6 +194,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
     }
 
     @ValidationErrorPage("edit")
+@Action(value="/transfer/transferTradeLicense-edit")
     public String edit() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tl);
         if (tl.getLicenseeZoneId() != null && tl.getLicenseTransfer().getBoundary() == null) {

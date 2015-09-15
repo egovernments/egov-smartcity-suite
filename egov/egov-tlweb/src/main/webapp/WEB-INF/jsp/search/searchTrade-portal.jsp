@@ -56,7 +56,7 @@
 				</c:if>
 				<c:choose>
 					<c:when test='${license.applicationNumber != null && license.applicationNumber != ""}'>
-						<a href="../newtradelicense/web/editTradeLicense!beforeEdit.action?model.id=${license.id}" target="_blank"> ${license.applicationNumber} </a>
+						<a href="../newtradelicense/web/editTradeLicense-beforeEdit.action?model.id=${license.id}" target="_blank"> ${license.applicationNumber} </a>
 					</c:when>
 				</c:choose>
 			</display:column>

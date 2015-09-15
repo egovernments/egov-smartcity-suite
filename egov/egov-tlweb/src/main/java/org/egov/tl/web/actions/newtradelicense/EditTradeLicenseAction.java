@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.newtradelicense;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Action;
 
 import java.util.ArrayList;
@@ -70,6 +72,10 @@ import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
+@Results({
+@Result(name = Constants.EDIT, location = "editTradeLicense-"+Constants.EDIT+".jsp"),
+@Result(name = Constants.MESSAGE, location = "editTradeLicense-"+Constants.MESSAGE+".jsp")
+})
 public class EditTradeLicenseAction extends BaseLicenseAction {
     private static final long serialVersionUID = 1L;
     private TradeLicense tradeLicense = new TradeLicense();
@@ -177,6 +183,7 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
             )
             @ValidationErrorPageExt(
                     action = "edit", makeCall = true, toMethod = "setupBeforeEdit")
+@Action(value="/newtradelicense/editTradeLicense-edit")
             public String edit() {
         LOGGER.debug("Edit Trade License Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense.toString());
         persistenceService.setType(TradeLicense.class);

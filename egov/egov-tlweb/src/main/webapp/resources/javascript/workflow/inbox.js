@@ -133,7 +133,7 @@ var wincntr = 0;
 								 elRow = p_myDataTable.getTrEl(elRow);   
 								 var stateId = elRow.firstChild.firstChild.innerHTML.split("#")[0];
 								 if (stateId !== '') {
-									 var sUrl = "../workflow/inbox!populateHistory.action?stateId="+stateId;
+									 var sUrl = "../workflow/inbox-populateHistory.action?stateId="+stateId;
 									 var callback = {
 									 success:function (oResponse) {
 										 var historyData = oResponse.responseText;
@@ -194,9 +194,9 @@ var wincntr = 0;
 			var sUrl = null;
 			var comingfrom = this.from;
 			if (comingfrom  === 'Drafts') {
-				sUrl = "../workflow/inbox!pollDraft.action";
+				sUrl = "../workflow/inbox-pollDraft.action";
 			} else {
-				sUrl = "../workflow/inbox!pollInbox.action";
+				sUrl = "../workflow/inbox-pollInbox.action";
 			}
 
 			var callback = {
@@ -247,7 +247,7 @@ var wincntr = 0;
 			document.getElementById('filterContainer').style.display = 'none';
 			var param = "fromDate="+document.getElementById('fromDate').value+"&toDate="+document.getElementById('toDate').value+
 						"&sender="+document.getElementsByTagName('select')[0].value+"&task="+document.getElementsByTagName('select')[1].value;
-			var sUrl  = "../workflow/inbox!filterInboxData.action?"+param;
+			var sUrl  = "../workflow/inbox-filterInboxData.action?"+param;
 			var callback = {
 					 success:function (oResponse) {
 						 var responseData = oResponse.responseText;

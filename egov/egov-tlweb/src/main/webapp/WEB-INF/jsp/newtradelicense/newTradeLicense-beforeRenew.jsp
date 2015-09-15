@@ -122,7 +122,7 @@
 														<c:choose>
 		<c:when test="${docNumber!=null && docNumber!='' }">
 		<td class="<c:out value="${trclass}"/>" colspan="5">
-		<a href="/egi/docmgmt/basicDocumentManager!viewDocument.action?moduleName=egtradelicense&docNumber=${docNumber}" target="_blank">View Attachments</a>
+		<a href="/egi/docmgmt/basicDocumentManager-viewDocument.action?moduleName=egtradelicense&docNumber=${docNumber}" target="_blank">View Attachments</a>
 		</td>
 		</c:when>
 		<c:otherwise>

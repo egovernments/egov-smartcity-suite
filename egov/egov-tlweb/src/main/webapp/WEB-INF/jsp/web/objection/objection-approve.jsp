@@ -68,11 +68,11 @@
 		}
 		
 		function openPreliminaryNotice(){
-			window.open('${pageContext.request.contextPath}/web/objection/objection!preNotice.action?model.id=<s:property value="model.id"/>','_self','resizable=yes,scrollbars=yes,height=700,width=900,status=yes');
+			window.open('${pageContext.request.contextPath}/web/objection/objection-preNotice.action?model.id=<s:property value="model.id"/>','_self','resizable=yes,scrollbars=yes,height=700,width=900,status=yes');
 		}
 		
 		function openShowCauseNotice(){
-			window.open('${pageContext.request.contextPath}/web/objection/objection!scNotice.action?model.id=<s:property value="model.id"/>','_self','resizable=yes,scrollbars=yes,height=700,width=900,status=yes');
+			window.open('${pageContext.request.contextPath}/web/objection/objection-scNotice.action?model.id=<s:property value="model.id"/>','_self','resizable=yes,scrollbars=yes,height=700,width=900,status=yes');
 		}
 		</script>
 	</head>

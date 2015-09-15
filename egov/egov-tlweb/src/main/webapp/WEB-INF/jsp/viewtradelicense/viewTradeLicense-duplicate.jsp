@@ -74,7 +74,7 @@
 				retType=validate();
 				if(retType==true)
 				{
-					document.forms[0].action = "${pageContext.request.contextPath}/viewtradelicense/web/viewTradeLicense!generateCertificate.action";
+					document.forms[0].action = "${pageContext.request.contextPath}/viewtradelicense/web/viewTradeLicense-generateCertificate.action";
 					document.forms[0].submit();
 				}
 			}

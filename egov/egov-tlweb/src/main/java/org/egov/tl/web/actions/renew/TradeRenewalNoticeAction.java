@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.renew;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.log4j.Logger;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.TradeLicense;
@@ -47,6 +50,9 @@ import org.egov.tl.domain.service.TradeService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
 
+@Results({
+@Result(name = Constants.RENEWALNOTICE, location = "tradeRenewalNotice-"+Constants.RENEWALNOTICE+".jsp")
+})
 public class TradeRenewalNoticeAction extends BaseLicenseAction {
 
     private static final long serialVersionUID = 1L;
@@ -72,6 +78,7 @@ public class TradeRenewalNoticeAction extends BaseLicenseAction {
         return ts;
     }
 
+@Action(value="/renew/tradeRenewalNotice-renewalNotice")
     public String renewalNotice() {
         LOGGER.debug("Trade License Renewal Notice Elements are:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
         tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", tradeLicense.getId());

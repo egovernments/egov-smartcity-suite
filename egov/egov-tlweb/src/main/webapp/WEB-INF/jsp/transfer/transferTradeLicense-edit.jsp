@@ -190,7 +190,7 @@
 																value="licenseTransfer.boundary.id" /> <egov:ajaxdropdown
 																id="populateLicenseeDivision" fields="['Text','Value']"
 																dropdownId='licenseedivision'
-																url='web/commonAjax!populateDivisions.action' />
+																url='web/commonAjax-populateDivisions.action' />
 														</td>
 														<td class="<c:out value="${trclass}"/>"><s:text
 																name="license.division" /> <span class="mandatory1">*</span>
@@ -222,7 +222,7 @@
 																value="licenseTransfer.boundary.parent.id" /> <egov:ajaxdropdown
 																id="populateLicenseeDivision" fields="['Text','Value']"
 																dropdownId='licenseedivision'
-																url='web/commonAjax!populateDivisions.action' />
+																url='web/commonAjax-populateDivisions.action' />
 														</td>
 														<td class="<c:out value="${trclass}"/>"><s:text
 																name="license.division" /> <span class="mandatory1">*</span>

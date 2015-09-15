@@ -47,7 +47,7 @@ function searchDocument() {
 			args = args + inputs[i].name + "=" + inputs[i].value + "&";
 		}
 	}
-	var sUrl = "/egi/docmgmt/documentManager!searchDocument.action?" + args+"rnd="+Math.random();
+	var sUrl = "/egi/docmgmt/documentManager-searchDocument.action?" + args+"rnd="+Math.random();
 	var callback = {success:function (oResponse) {
 		var responseData = oResponse.responseText;
 		if (responseData == "") {
