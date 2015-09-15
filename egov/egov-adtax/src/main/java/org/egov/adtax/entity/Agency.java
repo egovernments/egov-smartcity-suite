@@ -41,6 +41,7 @@ package org.egov.adtax.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -68,7 +69,7 @@ public class Agency extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_AGENCY, strategy = GenerationType.SEQUENCE)
     private Long id;
     @NotNull
-    @Column(name = "code", unique = true)
+    @Column(name = "code", unique = true, updatable = false)
     @SafeHtml
     private String code;
     @NotNull
@@ -86,15 +87,15 @@ public class Agency extends AbstractAuditable {
     @Length(max = 15)
     @SafeHtml
     private String mobileNumber;
+    @SafeHtml
+    private String address;
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "status", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status")
     private EgwStatus status;
 
-    /*
-     * @NotNull
-     * @SafeHtml private Double depositAmount;
-     */
+    @NotNull
+    private Double depositAmount;
 
     @Override
     protected void setId(final Long id) {
@@ -155,10 +156,20 @@ public class Agency extends AbstractAuditable {
         this.status = status;
     }
 
-    /*
-     * public Double getDepositAmount() { return depositAmount; } public void
-     * setDepositAmount(final Double depositAmount) { this.depositAmount =
-     * depositAmount; }
-     */
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(final String address) {
+        this.address = address;
+    }
+
+    public Double getDepositAmount() {
+        return depositAmount;
+    }
+
+    public void setDepositAmount(final Double depositAmount) {
+        this.depositAmount = depositAmount;
+    }
 
 }
