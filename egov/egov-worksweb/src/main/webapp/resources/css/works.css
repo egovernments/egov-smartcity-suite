@@ -78,7 +78,7 @@ input.buttonfinal {
 	padding-right: 5px;
 	padding-bottom: -2px;
 	padding-left: 5px;
-	background-image: url(../image/buttonbgyellow.gif);
+	background-image: url(/egi/resources/erp2/images/buttonbgyellow.gif);
 	background-repeat: repeat-x;
 	background-position: bottom;
 	background-color: #FAD584;
@@ -110,7 +110,7 @@ input.buttonfinal1 {
 	padding-right: 5px;
 	padding-bottom: -2px;
 	padding-left: 5px;
-	background-image: url(../image/buttonbgyellow.gif);
+	background-image: url(/egi/resources/erp2/images/buttonbgyellow.gif);
 	background-repeat: repeat-x;
 	background-position: bottom;
 	background-color: #FAD584;
@@ -235,11 +235,11 @@ div.insidecontent {
 }
 
 .rbbot2 div {
-	background: url(../image/bl.gif) no-repeat bottom left;
+	background: url(/egi/resources/erp2/images/bl.gif) no-repeat bottom left;
 }
 
 .rbbot2 {
-	background: url(../image/br.gif) no-repeat bottom right;
+	background: url(/egi/resources/erp2/images/br.gif) no-repeat bottom right;
 }
 
 .rbtop2 div,.rbtop2,.rbbot2 div,.rbbot2 {
@@ -376,7 +376,7 @@ UNKNOWN {
 	WIDTH: 100%;
 	LINE-HEIGHT: normal;
 	background-color: #dae0d2;
-	background-image: url(../image/bg.gif);
+	background-image: url(/egi/resources/erp2/images/bg.gif);
 	background-repeat: repeat-x;
 	background-position: 50% bottom;
 	font-family: Arial, Helvetica, sans-serif;
@@ -952,7 +952,7 @@ div.errorstyle {
 	font-weight: normal;
 	margin-right: 25px;
 	margin-left: 25px;
-	background-image: url(../image/arrow.gif);
+	background-image: url(../egi/resources/erp2/images/arrow.gif);
 	background-repeat: no-repeat;
 	background-position: left top;
 	margin-top: 25px;

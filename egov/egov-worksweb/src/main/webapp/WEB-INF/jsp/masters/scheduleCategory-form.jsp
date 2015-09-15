@@ -84,7 +84,7 @@ if(document.getElementById("description").value=="Category Name"){
 				<tr>
 					<td colspan="4" class="headingwk">
 					<div class="arrowiconwk"><img
-						src="${pageContext.request.contextPath}/image/arrow.gif" /></div>
+						src="/egi/resources/erp2/images/arrow.gif" /></div>
 					<div class="headplacer">SOR Category</div>
 					</td>
 				</tr>

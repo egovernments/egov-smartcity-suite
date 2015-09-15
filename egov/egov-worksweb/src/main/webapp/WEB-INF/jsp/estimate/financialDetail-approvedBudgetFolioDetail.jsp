@@ -44,7 +44,7 @@
 					<tr>
 						<td class="headingwk">
 				  			<div class="arrowiconwk">
-								<img src="${pageContext.request.contextPath}/image/arrow.gif" />
+								<img src="/egi/resources/erp2/images/arrow.gif" />
 				  			</div>
 				  			<div class="headplacer">
 								Actual Balance

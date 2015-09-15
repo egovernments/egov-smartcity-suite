@@ -88,7 +88,7 @@
 							<tr>
 								<td colspan="4" class="headingwk">
 									<div class="arrowiconwk">
-										<img src="${pageContext.request.contextPath}/image/arrow.gif" />
+										<img src="/egi/resources/erp2/images/arrow.gif" />
 									</div>
 									<div class="headplacer">
 										<s:text name='title.search.criteria' />
@@ -160,7 +160,7 @@
 										<tr>
 											<td colspan="7" class="headingwk">
 												<div class="arrowiconwk">
-													<img src="${pageContext.request.contextPath}/image/arrow.gif" />
+													<img src="/egi/resources/erp2/images/arrow.gif" />
 												</div>
 												<div class="headplacer">
 													<s:text name="title.search.result" />
@@ -224,7 +224,7 @@
 																</td>
 																<td width="20">
 																	<a href="${pageContext.request.contextPath}/masters/contractorGrade!edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
-																		<img src='${pageContext.request.contextPath}/image/book_open.png' alt="View Data" width="16" height="16" border="0" align="absmiddle" />
+																		<img src='/egi/resources/erp2/images/book_open.png' alt="View Data" width="16" height="16" border="0" align="absmiddle" />
 																	</a>
 																</td>
 															</tr>

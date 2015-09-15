@@ -216,7 +216,7 @@ function deleteContractorDetails(contractorId){
 <div class="errorstyle" id="contractor_error" style="display:none;"></div>
 <table id="contractorsHeaderTable" width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td colspan="7" class="headingwk"><div class="arrowiconwk"><image src="<egov:url path='/image/arrow.gif'/>" /></div>
+		<td colspan="7" class="headingwk"><div class="arrowiconwk"><image src="<egov:url path='/egi/resources/erp2/images/arrow.gif'/>" /></div>
 			<div class="headplacer"><s:text name="negotiation.contractor.details"/></div>
 		</td>
 	</tr>

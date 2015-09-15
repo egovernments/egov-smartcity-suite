@@ -853,13 +853,13 @@ function hideOther(recordId,mode){
 				<tr>
 					<td colspan="6" class="headingwk">
 						<div class="arrowiconwk">
-							<img src="${pageContext.request.contextPath}/image/arrow.gif" />
+							<img src="/egi/resources/erp2/images/arrow.gif" />
 						</div>
 						<div class="headplacer"><s:text name="measurementbook.nontendered.details"/></div>
 					</td>
 					<td align="right" class="headingwk" style="border-left-width: 0px">
                 		<a href="#" onclick="addOtherActivity('nonTendered');">
-                		<img height="16" border="0" width="16" alt="Add Non-SOR" src="${pageContext.request.contextPath}/image/add.png" />
+                		<img height="16" border="0" width="16" alt="Add Non-SOR" src="/egi/resources/erp2/images/add.png" />
                 		</a>
                 	</td>
 				</tr>
@@ -938,13 +938,13 @@ function hideOther(recordId,mode){
 				<tr>
 					<td colspan="6" class="headingwk">
 						<div class="arrowiconwk">
-							<img src="${pageContext.request.contextPath}/image/arrow.gif" />
+							<img src="/egi/resources/erp2/images/arrow.gif" />
 						</div>
 						<div class="headplacer"><s:text name="measurementbook.lumpsum.details"/></div>
 					</td>
 					<td align="right" class="headingwk" style="border-left-width: 0px">
                 		<a href="#" onclick="addOtherActivity('lumpSum');">
-                		<img height="16" border="0" width="16" alt="Add Non-SOR" src="${pageContext.request.contextPath}/image/add.png" />
+                		<img height="16" border="0" width="16" alt="Add Non-SOR" src="/egi/resources/erp2/images/add.png" />
                 		</a>
                 	</td>
 				</tr>

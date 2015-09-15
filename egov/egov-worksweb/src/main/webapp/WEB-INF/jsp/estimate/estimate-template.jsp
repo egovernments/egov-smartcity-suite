@@ -193,7 +193,7 @@ function searchTemplate(){
 
 <table  width="100%" border="0" cellspacing="0" cellpadding="0">
  		<tr>
-                <td colspan="4" class="headingwk"><div class="arrowiconwk"><image src="<egov:url path='/image/arrow.gif'/>" /></div><div class="headplacer">Estimate Template</div></td>
+                <td colspan="4" class="headingwk"><div class="arrowiconwk"><image src="<egov:url path='/egi/resources/erp2/images/arrow.gif'/>" /></div><div class="headplacer">Estimate Template</div></td>
               </tr>
  		<tr>
                 <td class="whiteboxwk"><span class="mandatory">*</span><s:text name="estimate.work.type" />:</td>

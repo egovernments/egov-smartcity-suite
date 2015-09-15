@@ -323,7 +323,7 @@ function resetPreviousDate() {
             <td>
  				<table width="100%"  border="0" cellspacing="0" cellpadding="0">
 	 				<tr>
-	                	<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="${pageContext.request.contextPath}/image/arrow.gif" /></div>
+	                	<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
 	                	<div class="headplacer"><s:text name="estimate.header" />:</div></td>
 	                </tr>
 					<tr>
@@ -332,7 +332,7 @@ function resetPreviousDate() {
 							<s:date name="advanceRequisitionDate" var="advanceRequisitionDateFormat" format="dd/MM/yyyy"/>
 							<s:textfield name="advanceRequisitionDate" value="%{advanceRequisitionDateFormat}" id="advanceRequisitionDate" cssClass="selectwk" onBlur="dateChangeValidation(this)" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
 	                    	<a href="javascript:show_calendar('forms[0].advanceRequisitionDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;">
-	                    		<img id="arfDateImage" src="${pageContext.request.contextPath}/image/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" />
+	                    		<img id="arfDateImage" src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" />
 	                    	</a>
 	                    	<input type='hidden' id='hiddenAdvanceRequisitionDate' name='hiddenAdvanceRequisitionDate'/>
 						</td>

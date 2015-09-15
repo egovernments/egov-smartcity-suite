@@ -285,7 +285,7 @@ var makeScheduleOfRateDataTable = function() {
          	<table width="100%" border="0" cellspacing="0" cellpadding="0">
         	<tr>
           		<td colspan="4" class="headingwk">
-          			<div class="arrowiconwk"><img src="${pageContext.request.contextPath}/image/arrow.gif" /></div>
+          			<div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
             		<div class="headplacer"><s:text name="sor.header" /></div>
             	</td>
         	</tr>
@@ -318,10 +318,10 @@ var makeScheduleOfRateDataTable = function() {
             <td>
             <table id="ratesTable" width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
-				<td colspan="3" class="headingwk" style="border-right-width: 0px"><div class="arrowiconwk"><img src="${pageContext.request.contextPath}/image/arrow.gif" /></div>
+				<td colspan="3" class="headingwk" style="border-right-width: 0px"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
 				<div class="headplacer"><s:text name="sor.rateDetails" /></div>
 				</td>
-				<td align="right" class="headingwk" style="border-left-width: 0px"><a href="#" onclick="scheduleOfRateDataTable.addRow({SlNo:scheduleOfRateDataTable.getRecordSet().getLength()+1});return false;"><img border="0" alt="Add SOR Rate" src="${pageContext.request.contextPath}/image/add.png" /></a>
+				<td align="right" class="headingwk" style="border-left-width: 0px"><a href="#" onclick="scheduleOfRateDataTable.addRow({SlNo:scheduleOfRateDataTable.getRecordSet().getLength()+1});return false;"><img border="0" alt="Add SOR Rate" src="/egi/resources/erp2/images/add.png" /></a>
 				</td>
 			</tr>
 		<tr>

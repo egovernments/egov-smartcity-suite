@@ -111,7 +111,7 @@ function bodyOnLoad(){
 			 <tr>
 			 <td colspan="4" class="headingwk" align="left">
 				<div class="arrowiconwk">
-				  <img src="${pageContext.request.contextPath}/image/arrow.gif" />
+				  <img src="/egi/resources/erp2/images/arrow.gif" />
 				</div>
 				<div class="headplacer">
 				  <s:text name='title.search.criteria' />
@@ -159,7 +159,7 @@ function bodyOnLoad(){
 						 <tr>
 							<td class="headingwk">
 								<div class="arrowiconwk">
-									<img src="${pageContext.request.contextPath}/image/arrow.gif" />
+									<img src="/egi/resources/erp2/images/arrow.gif" />
 								</div>
 								<div class="headplacer">
 									<s:text name="estimate.template.searh.result.title" />

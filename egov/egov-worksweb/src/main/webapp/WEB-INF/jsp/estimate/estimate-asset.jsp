@@ -211,7 +211,7 @@ function createNewImageFormatter(baseURL){
 
 function createDeleteImageFormatter(baseURL){
 	var deleteImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL=baseURL+"/image/cancel.png";
+	    var imageURL="/egi/resources/erp2/images/cancel.png";
 	    markup='<a href="#"><img src="'+imageURL+'" height=16  width=16 border="0" alt="Delete" align="absmiddle"></a>';
 	    el.innerHTML = markup;
 	}
@@ -220,7 +220,7 @@ function createDeleteImageFormatter(baseURL){
 
 function createAddImageFormatter(baseURL){
 	var addImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL=baseURL+"/image/add.png";
+	    var imageURL="/egi/resources/erp2/images/add.png";
 	    markup='<a href="#"><img src="'+imageURL+'" height=16  width=16 border="0" alt="Add" align="absmiddle"></a>';
 	    el.innerHTML = markup;
 	}
@@ -264,7 +264,7 @@ jq(document).on('click', '.assetCode', function(){
 <table id="assetsHeaderTable" width="100%" border="0" cellspacing="0"
 	cellpadding="0">
 	<tr>
-		<td colspan="7" class="headingwk"><div class="arrowiconwk"><img src="${pageContext.request.contextPath}/image/arrow.gif" /></div>
+		<td colspan="7" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
 		<div class="headplacer"><s:text name="estimate.title.assets"/></div></td>
 	</tr>
 	<s:hidden name="assetStatus" id="assetstatus"/>

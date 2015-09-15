@@ -62,7 +62,7 @@
           <tr>
             <td>&nbsp;</td>
           </tr>
-          <tr><td colspan="5" class="headingwk"><div class="arrowiconwk"><img src="${pageContext.request.contextPath}/image/arrow.gif" /></div><div class="headplacer"><s:text name="contractor.grade.master" /></div></td></tr>
+          <tr><td colspan="5" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div><div class="headplacer"><s:text name="contractor.grade.master" /></div></td></tr>
           <tr>
             <display:table name="contractorGradeList"  uid="currentRow"
 													cellpadding="0" cellspacing="0" requestURI=""
@@ -118,7 +118,7 @@
 																</td>
 																<td width="20">
 																	<a href="${pageContext.request.contextPath}/masters/contractorGrade!edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
-																		<img src='${pageContext.request.contextPath}/image/book_open.png' alt="View Data" width="16" height="16" border="0" align="absmiddle" />
+																		<img src='/egi/resources/erp2/images/book_open.png' alt="View Data" width="16" height="16" border="0" align="absmiddle" />
 																	</a>
 																</td>
 															</tr>

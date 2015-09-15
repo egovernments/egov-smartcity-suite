@@ -42,7 +42,7 @@
 function createDeleteImageFormatterMR(baseURL){
 	var deleteImageFormatter = function(el, oRecord, oColumn, oData) {
 	
-	    var imageURL=baseURL+"/image/cancel.png";
+	    var imageURL="/egi/resources/erp2/images/cancel.png";
 	    markup='<img height="16" border="0" width="16" alt="Delete" src="'+imageURL+'"/>';
 	    el.innerHTML = markup;
 	}
@@ -136,12 +136,12 @@ var makeScheduleOfRateDataTableForMR = function() {
             <table id="marketRatesTable" width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
 				<td colspan="3" class="headingwk" style="border-right-width: 0px">
-				<div class="arrowiconwk"><img src="${pageContext.request.contextPath}/image/arrow.gif" /></div>
+				<div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
 				<div class="headplacer"><s:text name="sor.marketrateDetails" /></div>
 				</td>
 				<td align="right" class="headingwk" style="border-left-width: 0px">
 				<a href="#" onclick="scheduleOfRateDataTableMR.addRow({SlNo:scheduleOfRateDataTableMR.getRecordSet().getLength()+1});return false;">
-				<img border="0" alt="Add SOR Market Rate" src="${pageContext.request.contextPath}/image/add.png" />
+				<img border="0" alt="Add SOR Market Rate" src="/egi/resources/erp2/images/add.png" />
 				</a>
 				</td>
 			</tr>
@@ -150,7 +150,7 @@ var makeScheduleOfRateDataTableForMR = function() {
 			<div class="yui-skin-sam">
 			<div id="scheduleOfRateTableMR"></div>
 	<script>
-	var imgURL="${pageContext.request.contextPath}/image/cancel.png";	
+	var imgURL="/egi/resources/erp2/images/cancel.png";	
             makeScheduleOfRateDataTableForMR();
 			
             <s:iterator id="marketRateIterator" value="model.marketRates" status="marketrate_row_status">

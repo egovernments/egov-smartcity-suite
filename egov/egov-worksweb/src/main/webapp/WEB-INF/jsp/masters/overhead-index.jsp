@@ -67,7 +67,7 @@
           <tr>
             <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
-                <td colspan="6" class="headingwk"><div class="arrowiconwk"><img src="${pageContext.request.contextPath}/image/arrow.gif" /></div><div class="headplacer">Overhead Rate</div></td>
+                <td colspan="6" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div><div class="headplacer">Overhead Rate</div></td>
               </tr>
               <tr>
                 <!--  <td width="10%" class="tablesubheadwk">ID</td>  -->
@@ -89,7 +89,7 @@
 					<td width="12%"><s:property value="%{expenditureType.value}" /></td>
 					<td width="14%"><table width="60" border="0" cellpadding="0" cellspacing="2">
                   		<tr>
-                    		<td width="18"><a href="#"><img src='${pageContext.request.contextPath}/image/book_edit.png' alt="Edit Data" width="16" height="16" border="0" align="absmiddle" /></a></td>
+                    		<td width="18"><a href="#"><img src='/egi/resources/erp2/images/book_edit.png' alt="Edit Data" width="16" height="16" border="0" align="absmiddle" /></a></td>
                     		<td width="36"><a href='${pageContext.request.contextPath}/masters/overhead!edit.action?id=<s:property value='%{id}'/>'>Edit</a></td>
                     	</tr>
                 </table></td>

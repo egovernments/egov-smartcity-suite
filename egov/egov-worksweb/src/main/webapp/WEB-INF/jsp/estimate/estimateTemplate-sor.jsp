@@ -336,7 +336,7 @@ function showProcessImage(event) {
             <td>
 <table id="sorHeaderTable" width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
-                <td colspan="11" class="headingwk" align="left"><div class="arrowiconwk"><image src="<egov:url path='/image/arrow.gif'/>" /></div><div class="headplacer">SOR</div></td>
+                <td colspan="11" class="headingwk" align="left"><div class="arrowiconwk"><image src="<egov:url path='/egi/resources/erp2/images/arrow.gif'/>" /></div><div class="headplacer">SOR</div></td>
               </tr>
               <tr>
                 <td >

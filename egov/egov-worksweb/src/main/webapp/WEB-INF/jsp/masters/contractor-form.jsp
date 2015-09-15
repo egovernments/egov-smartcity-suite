@@ -266,7 +266,7 @@ var makeContractorDataTable = function() {
          	<table width="100%" border="0" cellspacing="0" cellpadding="0">
         	<tr>
           		<td colspan="4" class="headingwk">
-          			<div class="arrowiconwk"><img src="${pageContext.request.contextPath}/image/arrow.gif" /></div>
+          			<div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
             		<div class="headplacer"><s:text name="contractor.header" /></div>
             	</td>
         	</tr>
@@ -333,10 +333,10 @@ var makeContractorDataTable = function() {
             <td>
             <table id="detailsTable" width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
-				<td colspan="3" class="headingwk" style="border-right-width: 0px"><div class="arrowiconwk"><img src="${pageContext.request.contextPath}/image/arrow.gif" /></div>
+				<td colspan="3" class="headingwk" style="border-right-width: 0px"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
 				<div class="headplacer"><s:text name="contractor.contDetails" /></div>
 				</td>
-				<td align="right" class="headingwk" style="border-left-width: 0px"><a href="#" onclick="contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value});return false;"><img border="0" alt="Add Row" src="${pageContext.request.contextPath}/image/add.png" /></a>
+				<td align="right" class="headingwk" style="border-left-width: 0px"><a href="#" onclick="contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value});return false;"><img border="0" alt="Add Row" src="/egi/resources/erp2/images/add.png" /></a>
 				</td>
 			</tr>
 		<tr>

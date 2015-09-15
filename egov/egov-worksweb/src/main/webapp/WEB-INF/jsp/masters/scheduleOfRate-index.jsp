@@ -65,7 +65,7 @@
           <tr>
             <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
-            <td colspan="6" class="headingwk"><div class="arrowiconwk"><img src="${pageContext.request.contextPath}/image/arrow.gif" /></div><div class="headplacer"><s:text name="sor.scheduleOfRate" /></div></td>
+            <td colspan="6" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div><div class="headplacer"><s:text name="sor.scheduleOfRate" /></div></td>
               </tr>
               <tr>
                 <!--  <td width="10%" class="tablesubheadwk">ID</td>  -->
@@ -103,7 +103,7 @@
                     		<td width="20"><a href="${pageContext.request.contextPath}/masters/scheduleOfRate!edit.action?id=<s:property value='%{id}'/>&mode=edit"><s:text name="sor.edit" /></a></td>
                     		<td width="20"><a href="${pageContext.request.contextPath}/masters/scheduleOfRate!edit.action?id=<s:property value='%{id}'/>&mode=edit"><img src='${pageContext.request.contextPath}/image/page_edit.png' alt="Edit Data" width="16" height="16" border="0" align="absmiddle" />&nbsp;/</a></td>
                     		<td width="20"><a href="${pageContext.request.contextPath}/masters/scheduleOfRate!edit.action?id=<s:property value='%{id}'/>&mode=view"><s:text name="sor.view" /></a></td>
-                    		<td width="20"><a href="${pageContext.request.contextPath}/masters/scheduleOfRate!edit.action?id=<s:property value='%{id}'/>&mode=view"><img src='${pageContext.request.contextPath}/image/book_open.png' alt="View Data" width="16" height="16" border="0" align="absmiddle" /></a></td>
+                    		<td width="20"><a href="${pageContext.request.contextPath}/masters/scheduleOfRate!edit.action?id=<s:property value='%{id}'/>&mode=view"><img src='/egi/resources/erp2/images/book_open.png' alt="View Data" width="16" height="16" border="0" align="absmiddle" /></a></td>
                     	</tr>
                 		</table>
                 	</td>

@@ -129,7 +129,7 @@ var makeOverheadRateDataTable = function()
 	<table id="overheadTable" width="100%" border="0" cellspacing="0" cellpadding="0">
 				 <tr>
 				      	<td colspan="4" class="headingwk">
-				      		<div class="arrowiconwk"><img src="${pageContext.request.contextPath}/image/arrow.gif" /></div>
+				      		<div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
 				      		<div class="headplacer"><s:text name='page.title.overheads' /></div>
 				     	 </td>
 				 </tr>
@@ -156,13 +156,13 @@ var makeOverheadRateDataTable = function()
 <tr><td>
      <table id="overheadRatesTable" width="100%" border="0" cellspacing="0" cellpadding="0">
 			 <tr><td colspan="5" class="headingwk">
-			 	<div class="arrowiconwk"><img src="${pageContext.request.contextPath}/image/arrow.gif" /></div>
+			 	<div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
 			 	<div class="headplacer"><s:text name='page.title.overheadrate' /></div>
 			 </td>
 			 <td align="right" class="headingwk"><a href="#"
 					onclick="overheadRateDataTable.addRow({SlNo:overheadRateDataTable.getRecordSet().getLength()+1});return false;"><img
 					border="0" alt="Add Overhead Rate"
-					src="${pageContext.request.contextPath}/image/add.png" /></a>
+					src="/egi/resources/erp2/images/add.png" /></a>
 			</td></tr>
    		    
    		    <tr>

@@ -164,7 +164,7 @@ function retenderonclick(obj)
 											<td colspan="4" class="headingwk">
 												<div class="arrowiconwk">
 													<img
-														src="${pageContext.request.contextPath}/image/arrow.gif" />
+														src="/egi/resources/erp2/images/arrow.gif" />
 												</div>
 												<div class="headplacer">
 													<s:text name="search.wp" />
@@ -257,7 +257,7 @@ function retenderonclick(obj)
 													href="javascript:show_calendar('forms[0].fromDate',null,null,'DD/MM/YYYY');"
 													onmouseover="window.status='Date Picker';return true;"
 													onmouseout="window.status='';return true;"> <img
-														src="${pageContext.request.contextPath}/image/calendar.png"
+														src="/egi/resources/erp2/images/calendar.png"
 														alt="Calendar" width="16" height="16" border="0"
 														align="absmiddle" />
 												</a>
@@ -281,7 +281,7 @@ function retenderonclick(obj)
 													href="javascript:show_calendar('forms[0].toDate',null,null,'DD/MM/YYYY');"
 													onmouseover="window.status='Date Picker';return true;"
 													onmouseout="window.status='';return true;"> <img
-														src="${pageContext.request.contextPath}/image/calendar.png"
+														src="/egi/resources/erp2/images/calendar.png"
 														alt="Calendar" width="16" height="16" border="0"
 														align="absmiddle" />
 												</a>

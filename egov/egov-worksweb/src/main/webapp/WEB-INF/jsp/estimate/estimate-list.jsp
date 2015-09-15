@@ -292,7 +292,7 @@ function toggleCancelRemarks(obj) {
 				<tr>
 					<td colspan="9" class="headingwk" align="left">
 						<div class="arrowiconwk">
-							<img src="${pageContext.request.contextPath}/image/arrow.gif" />
+							<img src="/egi/resources/erp2/images/arrow.gif" />
 						</div>
 						<s:if test="%{source=='financialdetail'}">
 							<div class="headerplacer">

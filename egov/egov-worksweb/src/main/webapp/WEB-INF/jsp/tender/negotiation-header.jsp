@@ -688,7 +688,7 @@ function checkTenderDate(){
 		<s:hidden name="worksPackageId" value="%{worksPackage.id}" />
 		<td colspan="4" class="headingwk">
 			<div class="arrowiconwk">
-				<img src="${pageContext.request.contextPath}/image/arrow.gif" />
+				<img src="/egi/resources/erp2/images/arrow.gif" />
 			</div>
 			<div class="headplacer">
 				<s:text name="page.header.negotiation" />
@@ -769,7 +769,7 @@ function checkTenderDate(){
 	         </s:if>  
 	          <s:else>
 	          	<s:textfield name="tenderHeader.tenderDate" value="%{tenderDateFormat}" id="tenderDate" cssClass="selectboldwk" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-	          	<a href="javascript:show_calendar('forms[0].tenderDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="${pageContext.request.contextPath}/image/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
+	          	<a href="javascript:show_calendar('forms[0].tenderDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
 	          </s:else>	         
 	        </td>    
 	</tr>
@@ -839,7 +839,7 @@ function checkTenderDate(){
 				href="javascript:show_calendar('forms[0].negotiationDate',null,null,'DD/MM/YYYY');"
 				onmouseover="window.status='Date Picker';return true;"
 				onmouseout="window.status='';return true;"> <img
-					src="${pageContext.request.contextPath}/image/calendar.png"
+					src="/egi/resources/erp2/images/calendar.png"
 					id="wpDateImg" alt="Calendar" width="16" height="16" border="0"
 					align="absmiddle" /> </a>
 			<input type='hidden' id='hiddenNegotiationDate' name='hiddenNegotiationDate' />

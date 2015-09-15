@@ -193,7 +193,7 @@ function showChangeQtyDtlsTab(){
             <div id="revEst_header">
  				<table width="100%"  border="0" cellspacing="0" cellpadding="0">
 	 				<tr>
-	                	<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="${pageContext.request.contextPath}/image/arrow.gif" /></div>
+	                	<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
 	                	<div class="headplacer"><s:text name="estimate.header" />:</div></td>
 	                </tr>
 	                
