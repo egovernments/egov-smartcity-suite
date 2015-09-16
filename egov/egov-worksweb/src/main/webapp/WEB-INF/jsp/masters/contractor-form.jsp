@@ -128,7 +128,7 @@ function validateContractorFormAndSubmit() {
 
 var departmentDropdownOptions=[{label:"--- Select ---", value:"0"},
     <s:iterator var="s" value="dropdownData.departmentList" status="status">  
-    {"label":"<s:property value="%{deptName}"/>" ,
+    {"label":"<s:property value="%{name}"/>" ,
     	"value":"<s:property value="%{id}" />"
     }<s:if test="!#status.last">,</s:if>
     </s:iterator>       
@@ -365,7 +365,7 @@ var makeContractorDataTable = function() {
 	        						grade:'<s:property value="grade.id"/>',
 	        						status:'<s:property value="status.id"/>',
 	                                SlNo:'<s:property value="#row_status.count"/>',
-	                                departmentName:'<s:property value="department.deptName"/>',
+	                                departmentName:'<s:property value="department.name"/>',
 	                                registrationNumber:'<s:property value="registrationNumber"/>',
 	                                gradeName:'<s:property value="grade.grade"/>',
 	                                statusDesc:'<s:property value="status.description"/>',
