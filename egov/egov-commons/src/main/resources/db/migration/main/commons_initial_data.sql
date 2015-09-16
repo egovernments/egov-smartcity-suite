@@ -99,10 +99,6 @@ INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (388, 'Position', true, 'eis', 385, 'Position', 3);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (389, 'Escalation Time', true, NULL, 300, 'Escalation Time', 4);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (390, 'Escalation', true, NULL, 300, 'Escalation', 5);
-INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (391, 'Water Tax Management', true, 'wtms', NULL, 'Water Tax Management', 7);
-INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (392, 'WaterTaxMasters', true, NULL, 391, 'Masters', 1);
-INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (393, 'WaterTaxTransactions', true, NULL, 391, 'Transactions', 2);
-INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (394, 'WaterTaxReports', true, NULL, 391, 'Reports', 3);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (397, 'Portal', false, 'portal', NULL, 'Portal', 10);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (398, 'EIS-COMMON', false, 'eis', 384, 'EIS-COMMON', NULL);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (399, 'EGF-COMMON', false, 'egf', 302, 'EGF-COMMON', NULL);
@@ -1218,43 +1214,6 @@ Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, di
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1338,'TLAuditTrailReport','/viewtradelicense/viewTradeLicense-auditReport.action','moduleName=TL',413,1,'Audit Trail Report','true','tl',0,1,'2015-09-08 17:47:23.464804',1,'2015-09-08 17:47:23.464804',412);
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1339,'Search Trade Portal Licenses','/search/searchTrade-searchPortal.action',null,415,2,'Search Portal Licenses','true','tl',0,1,'2015-09-08 17:47:23.464804',1,'2015-09-08 17:47:23.464804',412);
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1355,'Create New License Create Action','/newtradelicense/newTradeLicense-create.action',null,412,null,null,'false','tl',0,1,'2015-09-14 11:53:25.315498',1,'2015-09-14 11:53:25.315498',412);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1061,'WaterTaxCreateNewConnectionNewForm','/application/newConnection-newform',null,393,1,'New Water Tap Connection','true','wtms',0,1,'2015-07-15 19:15:09.885895',1,'2015-07-15 19:15:09.885895',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1063,'WaterTaxCreateNewConnection','/application/newConnection-create',null,393,1,'WaterTaxCreateNewConnection','false','wtms',0,1,'2015-07-15 19:15:12.306001',1,'2015-07-15 19:15:12.306001',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1092,'View Water Connection','/application/view/',null,393,null,'View Water Connection','false','wtms',0,1,'2015-07-15 19:15:14.135897',1,'2015-07-15 19:15:14.135897',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1109,'ElasiticapplicationSearch','/elastic/appSearch/',null,393,null,'Search Application','true','wtms',0,1,'2015-07-15 19:15:14.932428',1,'2015-07-15 19:15:14.932428',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1110,'AjaxDesignationsByDepartment','/ajaxWorkFlow-getDesignationsByObjectType',null,393,1,'Approver Designations by Department','false','wtms',0,1,'2015-07-15 19:17:52.052893',1,'2015-07-15 19:17:52.052893',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1111,'AjaxApproverByDesignationAndDepartment','/ajaxWorkFlow-positionsByDepartmentAndDesignation',null,393,1,'Approver By Designation and Department','false','wtms',0,1,'2015-07-15 19:17:52.052893',1,'2015-07-15 19:17:52.052893',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1112,'UpdateWaterConnectionApplication','/application/update/',null,393,null,'Update Water Connection Application','false','wtms',0,1,'2015-07-15 19:17:52.343804',1,'2015-07-15 19:17:52.343804',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1134,'watertaxappsearch','/search/waterSearch/',null,393,null,'Search Connection','true','wtms',0,1,'2015-07-15 19:17:56.401142',1,'2015-07-15 19:17:56.401142',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1142,'Addtional Water Connection','/application/addconnection/',null,393,null,'Addtional Water Connection','false','wtms',0,1,'2015-07-15 19:17:57.839354',1,'2015-07-15 19:17:57.839354',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1143,'WaterTaxAddConnection','/application/addConnection-create',null,393,null,'WaterTaxAddConnection','false','wtms',0,1,'2015-07-15 19:17:57.839354',1,'2015-07-15 19:17:57.839354',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1152,'WaterTaxChangeOfUseApplication','/application/changeOfUse/',null,393,1,'Change Of Use','false','wtms',0,1,'2015-07-15 19:18:00.799756',1,'2015-07-15 19:18:00.799756',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1153,'WaterTaxCreateChangeOfUseApplication','/application/changeOfUse-create',null,393,1,'Create Change Of Use','false','wtms',0,1,'2015-07-15 19:18:00.799756',1,'2015-07-15 19:18:00.799756',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1155,'WaterTaxCollectionView','/application/generatebill',null,393,null,'WaterTaxCollectionView','false','wtms',0,1,'2015-07-15 19:18:00.850557',1,'2015-07-15 19:18:00.850557',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1175,'WaterTaxAjaxCheckPrimaryConnection','/ajaxconnection/check-primaryconnection-exists',null,393,1,'WaterTaxAjaxCheckPrimaryConnection','false','wtms',0,1,'2015-07-25 12:53:16.625729',1,'2015-07-25 12:53:16.625729',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1219,'connectiontypesajax','/ajax-connectionTypes',null,391,null,'connectiontypesajax','false','wtms',0,1,'2015-08-03 11:20:15.804937',1,'2015-08-03 11:20:15.804937',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1249,'workorderreportview','/application/workorder/view',null,393,null,'workorderreportview','false','wtms',0,1,'2015-08-13 10:43:01.742684',1,'2015-08-13 10:43:01.742684',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1250,'workorderreport','/application/workorder',null,393,null,'workorderreport','false','wtms',0,1,'2015-08-13 10:43:01.742684',1,'2015-08-13 10:43:01.742684',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1251,'WaterTaxConnectionDataEntry','/application/newConnection-dataEntryForm.action',null,393,2,'Data Entry Screen','true','wtms',0,1,'2015-08-14 11:48:03.41046',1,'2015-08-14 11:48:03.41046',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1252,'categorytypebypropertytypeajax','/ajax-CategoryTypeByPropertyType',null,391,null,'populatingcategorytypebasingonpropertytype','false','wtms',0,1,'2015-08-15 09:59:19.999748',1,'2015-08-15 09:59:19.999748',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1253,'usagetypebypropertytypeajax','/ajax-UsageTypeByPropertyType',null,391,null,'populatingusagetypebasingonpropertytype','false','wtms',0,1,'2015-08-15 09:59:19.999748',1,'2015-08-15 09:59:19.999748',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1254,'pipesizesbypropertytypeajax','/ajax-PipeSizesByPropertyType',null,391,null,'populatingpipesizesbasingonpropertytype','false','wtms',0,1,'2015-08-15 09:59:19.999748',1,'2015-08-15 09:59:19.999748',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1256,'meter Entry screen','/application/meterentry/',null,391,null,'meter Entry screen','false','wtms',0,1,'2015-08-18 11:50:20.820519',1,'2015-08-18 11:50:20.820519',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1257,'WaterTaxConnectionDataEntry-message','/application/newConnection-existingMessage',null,393,2,'WaterTaxConnectionDataEntry-message','false','wtms',0,1,'2015-08-18 11:50:21.037413',1,'2015-08-18 11:50:21.037413',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1262,'watertaxestimationnotice','/application/estimationNotice',null,393,null,'watertaxestimationnotice','false','wtms',0,1,'2015-08-19 02:14:08.045878',1,'2015-08-19 02:14:08.045878',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1263,'watertaxestimationnoticeview','/application/estimationNotice/view/',null,393,null,'watertaxestimationnoticeview','false','wtms',0,1,'2015-08-19 02:14:08.045878',1,'2015-08-19 02:14:08.045878',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1265,'WaterTaxConnectionDataEntry-edit','/application/newConnection-editExisting',null,393,2,'WaterTaxConnectionDataEntry-edit','false','wtms',0,1,'2015-08-19 02:14:08.211437',1,'2015-08-19 02:14:08.211437',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1267,'WaterTaxDCBReportZoneWise','/reports/dCBReport/zoneWise',null,394,1,'DCB Report Zone Wise','true','wtms',0,1,'2015-08-19 17:10:11.807185',1,'2015-08-19 17:10:11.807185',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1268,'DCBReportList','/reports/dCBReportList',null,394,null,'DCB Report List','false','wtms',0,1,'2015-08-19 17:10:11.807185',1,'2015-08-19 17:10:11.807185',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1271,'meter Demand Notice generate screen','/application/meterdemandnotice',null,391,null,'meter Demand Notice generate screen','false','wtms',0,1,'2015-08-20 19:07:11.507568',1,'2015-08-20 19:07:11.507568',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1272,'autopopulateApplicationType','/elastic/appSearch/ajax-moduleTypepopulate',null,391,null,'autopopulateApplicationType','false','wtms',0,1,'2015-08-21 09:34:03.049142',1,'2015-08-21 09:34:03.049142',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1273,'WaterTaxDCBReportWardWise','/reports/dCBReport/wardWise',null,394,2,'DCB Report Ward Wise','true','wtms',0,1,'2015-08-21 20:20:46.778951',1,'2015-08-21 20:20:46.778951',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1274,'WaterTaxDCBReportBlockWise','/reports/dCBReport/blockWise',null,394,3,'DCB Report Block Wise','true','wtms',0,1,'2015-08-21 20:20:46.778951',1,'2015-08-21 20:20:46.778951',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1277,'WaterTaxDCBReportLocalityWise','/reports/dCBReport/localityWise',null,394,4,'DCB Report Locality Wise','true','wtms',0,1,'2015-08-22 16:56:26.040712',1,'2015-08-22 16:56:26.040712',391);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1280,'ChairPersonDetailsScreen','/application/chairPersonDetails.action',null,392,1,'Create Chair Person','true','wtms',0,1,'2015-08-31 10:45:43.183386',1,'2015-08-31 10:45:43.183386',392);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1281,'getchairpersonname-ajax','/application/ajax-chairPersonName',null,392,null,'getchairpersonname','false','wtms',0,1,'2015-08-31 10:45:43.183386',1,'2015-08-31 10:45:43.183386',392);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1282,'getchairpersontableajax','/application/ajax-chairpersontable',null,392,null,'getchairpersontable','false','wtms',0,1,'2015-08-31 10:45:43.183386',1,'2015-08-31 10:45:43.183386',392);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1292,'ajaxForExistredMeterReading','/ajax-meterReadingEntryExist',null,393,4,'ajaxForExistredMeterReading','false','wtms',0,1,'2015-09-02 15:28:31.837355',1,'2015-09-02 15:28:31.837355',391);
 ------------------END---------------------
 
 -----------------START--------------------
@@ -1281,14 +1240,12 @@ INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodified
 INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (5, 'CSC Operator', 'Collection Operator mans the Citizen Service Centers.', '2010-01-01 00:00:00', 1, 1, '2015-01-01 00:00:00', 0);
 INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (7, 'Citizen', 'Citizen who can raise complaint', '2010-01-01 00:00:00', 1, 1, '2015-01-01 00:00:00', 0);
 INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (8, 'Asset Administrator', 'Asset Administrator', '2010-01-01 00:00:00', 1, 1, '2015-01-01 00:00:00', 0);
-INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (13, 'Water Tax Approver', 'Approver for Water tap connections', '2015-08-28 10:43:56.323259', 1, 1, '2015-08-28 10:43:56.323259', 0);
 INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (14, 'Property Administrator', 'Administrator for Property Tax', '2015-08-28 10:43:58.851212', 1, 1, '2015-08-28 10:43:58.851212', 0);
 INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (11, 'Property Verifier', 'Muncipal Commissioner, final approval authority', '2015-08-28 10:43:45.850138', 1, 1, '2015-08-28 10:43:45.850138', NULL);
 INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (12, 'Property Approver', 'Muncipal Commissioner, final approval authority', '2015-08-28 10:43:45.850138', 1, 1, '2015-08-28 10:43:45.850138', NULL);
 INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (15, 'Employee', 'Default role for all employees', '2015-08-28 00:00:00', 1, 1, '2015-08-28 00:00:00', 0);
 INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (16, 'ULB Operator', 'ULB Operator', '2015-08-28 10:45:17.567676', 1, 1, '2015-08-28 10:45:17.567676', 0);
 INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (17, 'Remitter', 'Remitter', '2015-08-28 10:45:29.321197', 1, 1, '2015-08-28 10:45:29.321197', NULL);
-INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (18, 'Water Tax Report Viewer', 'Report Viewer for Water Tax', '2015-08-28 10:45:36.363551', 1, 1, '2015-08-28 10:45:36.363551', 0);
 ------------------END---------------------
 
 -----------------START-------------------
@@ -1861,10 +1818,6 @@ Insert into EG_ROLEACTION (roleid, actionid) values (4,387);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,388);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,389);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,390);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,391);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,392);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,393);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,394);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,395);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,396);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,397);
@@ -2706,105 +2659,6 @@ Insert into EG_ROLEACTION (roleid, actionid) values (4,1337);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,1338);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,1339);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,1355);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1061);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1061);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1061);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1063);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1063);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1063);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1092);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1092);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1092);
-Insert into EG_ROLEACTION (roleid, actionid) values (13,1092);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1109);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1109);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1109);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1110);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1110);
-Insert into EG_ROLEACTION (roleid, actionid) values (13,1110);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1111);
-Insert into EG_ROLEACTION (roleid, actionid) values (13,1111);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1111);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1112);
-Insert into EG_ROLEACTION (roleid, actionid) values (13,1112);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1112);
-Insert into EG_ROLEACTION (roleid, actionid) values (14,1112);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1134);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1134);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1134);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1134);
-Insert into EG_ROLEACTION (roleid, actionid) values (13,1134);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1142);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1142);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1142);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1143);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1143);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1152);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1152);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1152);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1153);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1153);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1153);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1155);
-Insert into EG_ROLEACTION (roleid, actionid) values (13,1155);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1155);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1155);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1175);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1175);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1175);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1219);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1219);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1219);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1219);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1249);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1249);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1249);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1250);
-Insert into EG_ROLEACTION (roleid, actionid) values (13,1250);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1250);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1251);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1251);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1252);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1252);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1252);
-Insert into EG_ROLEACTION (roleid, actionid) values (13,1252);
-Insert into EG_ROLEACTION (roleid, actionid) values (13,1253);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1253);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1253);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1253);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1254);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1254);
-Insert into EG_ROLEACTION (roleid, actionid) values (13,1254);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1254);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1256);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1256);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1256);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1257);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1257);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1262);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1262);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1263);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1263);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1263);
-Insert into EG_ROLEACTION (roleid, actionid) values (13,1263);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1265);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1265);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1267);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1268);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1271);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1271);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1271);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1272);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1272);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1272);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1273);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1274);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1277);
-Insert into EG_ROLEACTION (roleid, actionid) values (14,1280);
-Insert into EG_ROLEACTION (roleid, actionid) values (14,1281);
-Insert into EG_ROLEACTION (roleid, actionid) values (14,1282);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1292);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1292);
 ------------------END---------------------
 
 --------------START--------------------
@@ -2837,6 +2691,7 @@ INSERT INTO eg_uom (id, uomcategoryid, uom, narration, conv_factor, baseuom, las
 INSERT INTO eg_uom (id, uomcategoryid, uom, narration, conv_factor, baseuom, lastmodified, createddate, createdby, lastmodifiedby) VALUES (13, 4, 'Each', 'each', 1, 0, '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
 INSERT INTO eg_uom (id, uomcategoryid, uom, narration, conv_factor, baseuom, lastmodified, createddate, createdby, lastmodifiedby) VALUES (14, 4, 'No', 'number', 1, 1, '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
 ------------------END---------------------
+
 -----------------START-------------------
 INSERT INTO eg_chairperson (id, name, fromdate, todate, active, createdby, createddate, lastmodifieddate, lastmodifiedby, version) VALUES (1, 'Mr. XXX Chiar Person', '2015-08-28', '2016-08-27', true, 1, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 0);
 ------------------END---------------------
@@ -2846,36 +2701,6 @@ INSERT INTO eg_wf_actions (id, type, name, description, created_by, created_date
 INSERT INTO eg_wf_actions (id, type, name, description, created_by, created_date, modified_by, modified_date) VALUES (2, 'ReceiptHeader', 'Submit for Approval', 'Submit for Approval', 1, '2015-08-28 10:45:37.926703', 1, '2015-08-28 10:45:37.926703');
 INSERT INTO eg_wf_actions (id, type, name, description, created_by, created_date, modified_by, modified_date) VALUES (3, 'ReceiptHeader', 'Approve', 'Approve', 1, '2015-08-28 10:45:37.926703', 1, '2015-08-28 10:45:37.926703');
 INSERT INTO eg_wf_actions (id, type, name, description, created_by, created_date, modified_by, modified_date) VALUES (4, 'ReceiptHeader', 'Reject', 'Reject', 1, '2015-08-28 10:45:37.926703', 1, '2015-08-28 10:45:37.926703');
-------------------END---------------------
-
------------------START-------------------
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (37, 'ANY', 'WaterConnectionDetails', 'Rejected', NULL, NULL, 'Revenue Clerk', 'NEWCONNECTION', 'Clerk approved', 'Asst.engineer approval pending', 'Assistant engineer', NULL, 'Forward,Reject', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (31, 'ANY', 'WaterConnectionDetails', 'NEW', NULL, NULL, 'Revenue Clerk', 'NEWCONNECTION', 'Clerk approved', 'Asst.engineer approval pending', 'Assistant engineer', 'Clerk Approved', 'Forward', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (32, 'ANY', 'WaterConnectionDetails', 'Clerk approved', NULL, NULL, 'Assistant engineer', 'NEWCONNECTION', 'Asst engg approved', 'Estimation Notice print pending', 'Revenue Clerk', 'Assistant Engineer approved', 'Submit,Reject', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (34, 'ANY', 'WaterConnectionDetails', 'Payment done against Estimation', NULL, NULL, 'Commissioner', 'NEWCONNECTION', 'Commissioner Approved', 'Work order print pending', 'Revenue Clerk', 'workorder pending', 'Approve', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (36, 'ANY', 'WaterConnectionDetails', 'Work order generated', NULL, NULL, 'Assistant engineer', 'NEWCONNECTION', 'END', 'END', NULL, NULL, 'Tap Execution Date', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (35, 'ANY', 'WaterConnectionDetails', 'Commissioner Approved', NULL, NULL, 'Revenue Clerk', 'NEWCONNECTION', 'Work order generated', 'Tap execution pending', 'Assistant engineer', 'Metered connection entry', 'Generate WorkOrder', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (33, 'ANY', 'WaterConnectionDetails', 'Asst engg approved', NULL, NULL, 'Revenue Clerk', 'NEWCONNECTION', 'Estmate Notice Generated', 'Ready For Payment', 'Revenue Clerk', 'Ready for Payment', 'Generate Estimation Notice', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (38, 'ANY', 'WaterConnectionDetails', 'Created', NULL, NULL, NULL, 'NEWCONNECTION', 'NEW', 'Revenue Clerk approval pending', 'Revenue Clerk', 'Clerk Approved Pending', 'Forward', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (59, 'ANY', 'WaterConnectionDetails', 'NEW', NULL, NULL, 'Revenue Clerk', 'ADDNLCONNECTION', 'Clerk approved', 'Asst.engineer approval pending', 'Assistant engineer', 'Clerk Approved', 'Forward', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (60, 'ANY', 'WaterConnectionDetails', 'Clerk approved', NULL, NULL, 'Assistant engineer', 'ADDNLCONNECTION', 'Asst engg approved', 'Estimation Notice print pending', 'Revenue Clerk', 'Assistant Engineer approved', 'Submit,Reject', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (62, 'ANY', 'WaterConnectionDetails', 'Payment done against Estimation', NULL, NULL, 'Commissioner', 'ADDNLCONNECTION', 'Commissioner Approved', 'Work order print pending', 'Revenue Clerk', 'workorder pending', 'Approve', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (63, 'ANY', 'WaterConnectionDetails', 'Commissioner Approved', NULL, NULL, 'Revenue Clerk', 'ADDNLCONNECTION', 'Work order generated', 'Tap execution pending', 'Assistant engineer', 'Metered connection entry', 'WorkOrder Generate', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (64, 'ANY', 'WaterConnectionDetails', 'Work order generated', NULL, NULL, 'Assistant engineer', 'ADDNLCONNECTION', 'END', 'END', NULL, NULL, 'Tap Execution Date', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (66, 'ANY', 'WaterConnectionDetails', 'NEW', NULL, NULL, 'Revenue Clerk', 'CHANGEOFUSE', 'Clerk approved', 'Asst.engineer approval pending', 'Assistant engineer', 'Clerk Approved', 'Forward', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (67, 'ANY', 'WaterConnectionDetails', 'Clerk approved', NULL, NULL, 'Assistant engineer', 'CHANGEOFUSE', 'Asst engg approved', 'Estimation Notice print pending', 'Revenue Clerk', 'Assistant Engineer approved', 'Submit,Reject', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (69, 'ANY', 'WaterConnectionDetails', 'Payment done against Estimation', NULL, NULL, 'Commissioner', 'CHANGEOFUSE', 'Commissioner Approved', 'Work order print pending', 'Revenue Clerk', 'workorder pending', 'Approve', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (70, 'ANY', 'WaterConnectionDetails', 'Commissioner Approved', NULL, NULL, 'Revenue Clerk', 'CHANGEOFUSE', 'Work order generated', 'Tap execution pending', 'Assistant engineer', 'Metered connection entry', 'WorkOrder Generate', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (71, 'ANY', 'WaterConnectionDetails', 'Work order generated', NULL, NULL, 'Assistant engineer', 'CHANGEOFUSE', 'END', 'END', NULL, NULL, 'Tap Execution Date', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (61, 'ANY', 'WaterConnectionDetails', 'Asst engg approved', NULL, NULL, 'Revenue Clerk', 'ADDNLCONNECTION', 'Estmate Notice Generated', 'Ready For Payment', 'Revenue Clerk', 'Ready for Payment', 'Generate Estimation Notice', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (68, 'ANY', 'WaterConnectionDetails', 'Asst engg approved', NULL, NULL, 'Revenue Clerk', 'CHANGEOFUSE', 'Estmate Notice Generated', 'Ready For Payment', 'Revenue Clerk', 'Ready for Payment', 'Generate Estimation Notice', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (73, 'ANY', 'WaterConnectionDetails', 'Estmate Notice Generated', NULL, NULL, 'Revenue Clerk', 'NEWCONNECTION', 'Payment done against Estimation', 'Commissioner Approval pending', 'Commissioner', 'Payment against Estimation', 'Submit,Reject', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (74, 'ANY', 'WaterConnectionDetails', 'Estmate Notice Generated', NULL, NULL, 'Revenue Clerk', 'ADDNLCONNECTION', 'Payment done against Estimation', 'Commissioner Approval pending', 'Commissioner', 'Payment against Estimation', 'Submit,Reject', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (75, 'ANY', 'WaterConnectionDetails', 'Estmate Notice Generated', NULL, NULL, 'Revenue Clerk', 'CHANGEOFUSE', 'Payment done against Estimation', 'Commissioner Approval pending', 'Commissioner', 'Payment against Estimation', 'Submit,Reject', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (65, 'ANY', 'WaterConnectionDetails', 'Rejected', NULL, NULL, 'Revenue Clerk', 'ADDNLCONNECTION', 'Clerk approved', 'Asst.engineer approval pending', 'Assistant engineer', NULL, 'Forward,Reject', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (76, 'ANY', 'WaterConnectionDetails', 'Created', NULL, NULL, NULL, 'ADDNLCONNECTION', 'NEW', 'Revenue Clerk approval pending', 'Revenue Clerk', 'Clerk Approved Pending', 'Forward', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (72, 'ANY', 'WaterConnectionDetails', 'Rejected', NULL, NULL, 'Revenue Clerk', 'CHANGEOFUSE', 'Clerk approved', 'Asst.engineer approval pending', 'Assistant engineer', NULL, 'Forward,Reject', NULL, NULL, '2015-08-01', '2099-04-01');
-INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (77, 'ANY', 'WaterConnectionDetails', 'Created', NULL, NULL, NULL, 'CHANGEOFUSE', 'NEW', 'Revenue Clerk approval pending', 'Revenue Clerk', 'Clerk Approved Pending', 'Forward', NULL, NULL, '2015-08-01', '2099-04-01');
 ------------------END---------------------
 
 -----------------START-------------------
@@ -2890,6 +2715,5 @@ INSERT INTO eg_wf_types (id, module, type, link, createdby, createddate, lastmod
 INSERT INTO eg_wf_types (id, module, type, link, createdby, createddate, lastmodifiedby, lastmodifieddate, renderyn, groupyn, typefqn, displayname, version) VALUES (9, 302, 'ReceiptVoucher', '/EGF/voucher/preApprovedVoucher!loadvoucherview.action?vhid=:ID\&from=Receipt', NULL, NULL, NULL, NULL, 'Y', 'N', 'org.egov.model.receipt.ReceiptVoucher', 'Receipt Voucher', NULL);
 INSERT INTO eg_wf_types (id, module, type, link, createdby, createddate, lastmodifiedby, lastmodifieddate, renderyn, groupyn, typefqn, displayname, version) VALUES (10, 328, 'DishonorCheque', '/EGF/payment/dishonorChequeWorkflow!view.action?dishonourChqId=:ID', 1, '0001-01-20 00:00:00 BC', NULL, NULL, 'Y', 'N', 'org.egov.model.instrument.DishonorCheque', 'Dishonor Cheque', NULL);
 INSERT INTO eg_wf_types (id, module, type, link, createdby, createddate, lastmodifiedby, lastmodifieddate, renderyn, groupyn, typefqn, displayname, version) VALUES (11, 312, 'EBDetails', '/EGF/bill/eBBillInfoFetch!viewInboxItem.action?model.id=:ID', 1, NULL, NULL, NULL, 'Y', 'Y', 'org.egov.eb.domain.master.entity.EBDetails', 'TNEB Bill', NULL);
-INSERT INTO eg_wf_types (id, module, type, link, createdby, createddate, lastmodifiedby, lastmodifieddate, renderyn, groupyn, typefqn, displayname, version) VALUES (14, 2, 'WaterConnectionDetails', '/wtms/application/update/:ID', 1, '2015-08-28 10:45:18.201078', 1, '2015-08-28 10:45:18.201078', 'Y', 'N', 'org.egov.wtms.application.entity.WaterConnectionDetails', 'Water Tap Connection', 0);
 INSERT INTO eg_wf_types (id, module, type, link, createdby, createddate, lastmodifiedby, lastmodifieddate, renderyn, groupyn, typefqn, displayname, version) VALUES (16, 365, 'ReceiptHeader', '/collection/receipts/collectionsWorkflow-listWorkflow.action?inboxItemDetails=:ID', 1, '2015-08-28 10:45:35.929319', 1, '2015-08-28 10:45:35.929319', 'Y', 'N', 'org.egov.collection.entity.ReceiptHeader', 'Collections Receipt Header', 0);
 ------------------END---------------------
