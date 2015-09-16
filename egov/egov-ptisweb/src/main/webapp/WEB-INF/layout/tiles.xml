@@ -63,9 +63,15 @@
         <put-attribute name="page-title" value="lbl.hdr.rebate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/rebatePeriod/rebatePeriod-form.jsp"/>
     </definition>
+    
     <definition name="rebatePeriod-success" extends="base_layout">
         <put-attribute name="page-title" value="lbl.hdr.rebate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/rebatePeriod/rebatePeriod-success.jsp"/>
+    </definition>
+    
+    <definition name="demolition-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.property.demolition" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/demolition/demolition-form.jsp"/>
     </definition>
     
 </tiles-definitions>
