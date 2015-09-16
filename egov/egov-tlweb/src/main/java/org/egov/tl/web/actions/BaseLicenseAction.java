@@ -52,13 +52,14 @@ import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.utils.NumberToWord;
 import org.egov.pims.commons.Position;
@@ -161,7 +162,7 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = "ele_generateRejCertificate", type = "redirectAction", location = "viewElectricalContractorLicense", params = {
                 "namespace", "/viewelectricalcontractorlicense/web", "method", "generateRejCertificate" })
 })
-public abstract class BaseLicenseAction extends BaseFormAction {
+public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     private static final long serialVersionUID = 1L;
     // sub classes should add setters for the following beans
     @Autowired
@@ -201,7 +202,6 @@ public abstract class BaseLicenseAction extends BaseFormAction {
         return "message";
     }
 
-    @SuppressWarnings("unchecked")
     @ValidationErrorPage(Constants.NEW)
     public String create() {
         try {
@@ -333,7 +333,7 @@ public abstract class BaseLicenseAction extends BaseFormAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         return license();
     }
 

@@ -39,11 +39,11 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.viewtradelicense;
 
-import org.apache.struts2.convention.annotation.Action;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.ServletRequestAware;
@@ -52,6 +52,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseStatus;
@@ -62,7 +63,6 @@ import org.egov.tl.domain.service.TradeService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.apache.struts2.convention.annotation.Action;
 
 @ParentPackage("egov")
 @Result(name = "auditReport", type = "redirectAction", location = "auditReport", params = { "moduleName", "TL", "namespace",
@@ -96,7 +96,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         return tradeLicense;
 
     }

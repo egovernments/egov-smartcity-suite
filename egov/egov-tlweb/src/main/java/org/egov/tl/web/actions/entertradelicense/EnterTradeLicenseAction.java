@@ -39,7 +39,6 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.entertradelicense;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.math.BigDecimal;
 import java.util.Iterator;
 
@@ -50,6 +49,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.Licensee;
 import org.egov.tl.domain.entity.MotorDetails;
@@ -170,7 +170,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         return tradeLicense;
     }
 

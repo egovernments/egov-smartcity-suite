@@ -142,7 +142,8 @@
 												<tr style="display: none">
 													<td colspan="5">
 														<c:set value="bluebox" var="trclass" />
-														<%@ include file='../../common/tradelicenseworkflow.jsp'%>
+														<%@ include file='../../common/commonWorkflowMatrix.jsp'%>
+														<%@ include file='../../common/commonWorkflowMatrix-button.jsp'%>
 													</td>
 												</tr>
 											</table>

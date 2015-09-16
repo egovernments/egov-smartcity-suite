@@ -358,8 +358,9 @@
 															onBlur="checkLength(this,12)" /></td>
 												</tr>
 												<tr>
-													<td colspan="5"><%@ include
-															file='../common/tradelicenseworkflow.jsp'%>
+													<td colspan="5">
+														<%@ include file='../common/commonWorkflowMatrix.jsp'%>
+														<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
 													</td>
 												</tr>
 											</tbody>

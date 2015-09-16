@@ -39,10 +39,11 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.renew;
 
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Action;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.TradeLicense;
 import org.egov.tl.domain.service.BaseLicenseService;
@@ -63,7 +64,7 @@ public class TradeRenewalNoticeAction extends BaseLicenseAction {
     private final Logger LOGGER = Logger.getLogger(getClass());
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         return tradeLicense;
     }
 

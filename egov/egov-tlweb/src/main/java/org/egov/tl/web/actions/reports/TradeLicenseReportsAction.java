@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.service.BaseLicenseService;
@@ -60,7 +61,7 @@ import org.egov.tl.web.actions.BaseLicenseAction;
 @Result(name = Constants.TRADE_WISE_REPORT, location = "tradeLicenseReports-"+Constants.TRADE_WISE_REPORT+".jsp"),
 @Result(name = Constants.LATE_RENEWALS_REPORT, location = "tradeLicenseReports-"+Constants.LATE_RENEWALS_REPORT+".jsp")
 })
-public class TradeLicenseReportsAction extends BaseLicenseAction {
+public class TradeLicenseReportsAction extends BaseFormAction {
 
     /**
      *
@@ -127,16 +128,6 @@ public class TradeLicenseReportsAction extends BaseLicenseAction {
         return Constants.LATE_RENEWALS_REPORT;
     }
 
-    @Override
-    protected License license() {
-        return null;
-    }
-
-    @Override
-    protected BaseLicenseService service() {
-        return null;
-    }
-
     public void setLicenseReportService(final LicenseReportService licenseReportService) {
         this.licenseReportService = licenseReportService;
     }
@@ -175,6 +166,11 @@ public class TradeLicenseReportsAction extends BaseLicenseAction {
         str.append(" zoneId=").append(zoneId == null ? "null" : zoneId.toString());
         str.append(" totalList=").append(totalList == null ? "null" : totalList.toString());
         return str.toString();
+    }
+
+    @Override
+    public Object getModel() {
+        return null;
     }
 
 }

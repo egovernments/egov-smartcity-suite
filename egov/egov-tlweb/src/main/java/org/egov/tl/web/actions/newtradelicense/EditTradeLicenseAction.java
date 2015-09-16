@@ -39,22 +39,22 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.newtradelicense;
 
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Action;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.persistence.entity.PermanentAddress;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.Licensee;
 import org.egov.tl.domain.entity.TradeLicense;
@@ -95,7 +95,7 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
     private final Logger LOGGER = Logger.getLogger(getClass());
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         return tradeLicense;
     }
 

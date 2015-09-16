@@ -39,17 +39,17 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.revokesuspension;
 
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Action;
-
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseStatusValues;
 import org.egov.tl.domain.entity.Licensee;
@@ -128,7 +128,7 @@ public class RevokeSuspensionAction extends BaseLicenseAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         return license;
     }
 

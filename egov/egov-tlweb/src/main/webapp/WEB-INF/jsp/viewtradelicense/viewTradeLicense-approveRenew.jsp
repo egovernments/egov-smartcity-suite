@@ -95,7 +95,8 @@
 												</tr>												
 												<tr>
 													<td colspan="5">
-														<%@ include file='../common/tradelicenseworkflow.jsp'%>
+														<%@ include file='../common/commonWorkflowMatrix.jsp'%>
+														<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
 													</td>
 												</tr>
 												<tr>
