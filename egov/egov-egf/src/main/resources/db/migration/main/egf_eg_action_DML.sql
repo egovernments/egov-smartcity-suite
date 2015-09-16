@@ -619,3 +619,8 @@ Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, di
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1289,'ChartOfAccountsUpdate','/masters/chartOfAccounts-update.action',null,332,1,'BillVouchersList','false','EGF',0,1,'2015-09-02 15:28:31.665409',1,'2015-09-02 15:28:31.665409',302);
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1290,'ChartOfAccountsModify','/masters/chartOfAccounts-modify.action',null,332,1,'BillVouchersList','false','EGF',0,1,'2015-09-02 15:28:31.665409',1,'2015-09-02 15:28:31.665409',302);
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1291,'ChartOfAccountsCreate','/masters/chartOfAccounts-create.action',null,332,1,'BillVouchersList','false','EGF',0,1,'2015-09-02 15:28:31.665409',1,'2015-09-02 15:28:31.665409',302);
+
+---------------------------------------------------
+
+
+Insert into EG_ROLEACTION (roleid, actionid) select (select id from eg_role where name ='Super User'),id  from eg_action  where contextroot = 'EGF';
