@@ -441,7 +441,6 @@ CREATE TABLE eg_advancerequisition (
 );
 
 ALTER TABLE ONLY eg_advancerequisition ADD CONSTRAINT eg_advancerequisition_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY eg_advancerequisition ADD CONSTRAINT eg_advancerequisition_advancerequisitionnumber_key UNIQUE (advancerequisitionnumber);
 
 ---------------------------------END-------------------------------
 ---------------------------------START---------------------------------------
