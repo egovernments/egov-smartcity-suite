@@ -149,6 +149,8 @@ CREATE TABLE accountentitymaster (
     modifiedby bigint,
     created timestamp without time zone
 );
+ALTER TABLE accountentitymaster ALTER COLUMN isactive TYPE boolean USING CASE WHEN isactive = 0 THEN FALSE WHEN isactive = 1 THEN TRUE ELSE NULL END;
+
 CREATE SEQUENCE seq_accountentitymaster
     START WITH 1
     INCREMENT BY 1
@@ -239,6 +241,8 @@ CREATE TABLE bankaccount (
     lastmodifieddate timestamp without time zone,
     version bigint
 );
+ALTER TABLE bankaccount ALTER COLUMN accounttype DROP NOT NULL;
+
 CREATE SEQUENCE seq_bankaccount
     START WITH 1
     INCREMENT BY 1
