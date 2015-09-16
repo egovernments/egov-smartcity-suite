@@ -40,20 +40,21 @@
 package org.egov.tl.domain.entity;
 
 import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
 /**
  * The Class TradeCategory.
  */
-@Unique(fields = { "tradeCategory" }, id = "id", tableName = "EGTL_MSTR_LICENSE_CATEGORY", columnName = { "name" }, message = "masters.tradecategory.isunique")
 public class LicenseCategory extends BaseModel {
     private static final long serialVersionUID = 1L;
-    @Required(message = "tradelic.master.tradecategory.null")
-    @Length(max = 256, message = "masters.tradecategory.length")
-    // @OptionalPattern(regex = ValidatorConstants.alphaNumericwithSpace, message = "tradelicense.error.tradecategory.text")
+    @Required(message = "tradelic.master.tradecategoryname.null")
+    @Length(max = 256, message = "tradelic.masters.tradecategoryname.length")
     private String name;
+
+    @Required(message = "tradelic.master.tradecategorycode.null")
+    @Length(max = 256, message = "tradelic.masters.tradecategorycode.length")
+    private String code;
 
     public String getName() {
         return name;
@@ -63,12 +64,21 @@ public class LicenseCategory extends BaseModel {
         this.name = name;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(final String code) {
+        this.code = code;
+    }
+
     @Override
     public String toString() {
         final StringBuilder str = new StringBuilder();
         str.append("LicenseCategory={");
         str.append("serialVersionUID=").append(serialVersionUID);
         str.append("name=").append(name == null ? "null" : name.toString());
+        str.append("code=").append(code == null ? "null" : code.toString());
         str.append("}");
         return str.toString();
     }

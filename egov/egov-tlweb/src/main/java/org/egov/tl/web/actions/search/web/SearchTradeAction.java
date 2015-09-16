@@ -91,13 +91,13 @@ public class SearchTradeAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     private PaginatedList pagedResults;
     private int page;
-    private int reportSize;
+    private int reportSize;  
     private final SearchForm searchForm = new SearchForm();
     private LicenseUtils licenseUtils;
     private final List<String> noticelist = new ArrayList<String>();
     private String roleName;
 
-    @Action(value="/search/searchTrade-newForm")
+    @Action(value="/search/web/searchTrade-newForm")
     public String newForm() {
         return BaseFormAction.NEW;
     }

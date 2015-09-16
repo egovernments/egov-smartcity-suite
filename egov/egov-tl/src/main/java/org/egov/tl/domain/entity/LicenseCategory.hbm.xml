@@ -39,7 +39,7 @@
      In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+ "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 	<class name="org.egov.tl.domain.entity.LicenseCategory" table="EGTL_MSTR_CATEGORY">
 		<id column="ID" name="id" type="long">
@@ -47,18 +47,21 @@
 				<param name="sequence">SEQ_EGTL_MSTR_CATEGORY</param>
 			</generator>
 		</id>
-		<property generated="never" lazy="false" name="createdDate" type="java.util.Date">
+		<property  name="createdDate" type="java.util.Date">
 			<column length="7" name="CREATEDDATE" not-null="true" />
 		</property>
-		<property generated="never" lazy="false" name="modifiedDate" type="java.util.Date">
+		<property  name="modifiedDate" type="java.util.Date">
 			<column name="LASTMODIFIEDDATE" not-null="true" />
 		</property>
 		<many-to-one class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" fetch="select" name="createdBy"
 			not-null="true" />
 		<many-to-one class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY" fetch="select" name="modifiedBy"
 			not-null="true" />
-		<property generated="never" lazy="false" name="name" type="java.lang.String">
-			<column length="256" name="NAME" not-null="true" />
+		<property  name="name" type="java.lang.String">
+			<column length="256" name="NAME" not-null="true" unique="true" />
+		</property>
+		<property  name="code" type="java.lang.String">
+			<column length="256" name="CODE" not-null="true" unique="true" />
 		</property>
 	</class>
 </hibernate-mapping>
