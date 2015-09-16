@@ -37,7 +37,7 @@
  *
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
-package org.egov.tl.web.actions;
+package org.egov.tl.web.actions.domain;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -79,7 +79,7 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction {
      *
      * @return the string
      */
-    @Action(value="/domain/CommonTradeLicenseAjaxAction-populateDivisions") 
+    @Action(value="/domain/commonTradeLicenseAjaxAction-populateDivisions") 
     public String populateDivisions() {
         try {
             final Boundary boundary = boundaryService.getBoundaryById(Long.valueOf(zoneId));

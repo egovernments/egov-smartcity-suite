@@ -70,6 +70,7 @@ import org.egov.tl.domain.service.BaseLicenseService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseChecklistHelper;
 import org.egov.tl.utils.LicenseUtils;
+import org.egov.tl.web.actions.domain.CommonAjaxAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

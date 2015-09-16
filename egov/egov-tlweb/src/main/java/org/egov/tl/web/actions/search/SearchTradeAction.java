@@ -40,8 +40,8 @@
 package org.egov.tl.web.actions.search;
 
 import org.apache.struts2.convention.annotation.Action;
-import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
 
+import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -145,8 +145,16 @@ public class SearchTradeAction extends BaseFormAction {
         final Criteria criteria = createSearchQuery();
         if (page == 0) {
             criteria.setProjection(Projections.rowCount());
-            reportSize = (Integer) criteria.uniqueResult();
+            Object uniqueResult = criteria.uniqueResult();
+            if(uniqueResult!=null)
+            {
+            reportSize = ((Long)uniqueResult).intValue();
+            }else
+            {
+            	reportSize=0;
+            }
         }
+        criteria.addOrder(Order.desc("createdDate"));
         final ParamEncoder paramEncoder = new ParamEncoder("license");
         final boolean isReport = parameters.get(paramEncoder.encodeParameterName(TableTagParameters.PARAMETER_EXPORTTYPE)) != null;
         final Page page = new Page(createSearchQuery(), isReport ? 1 : this.page, isReport ? null : 20);
@@ -223,7 +231,7 @@ public class SearchTradeAction extends BaseFormAction {
                 }
 
             }
-            criteria.addOrder(Order.desc("createdDate"));
+            
             return criteria;
         }
         // Search for notices of license
@@ -312,7 +320,6 @@ public class SearchTradeAction extends BaseFormAction {
                 // criteria.add(orExp);
                 criteria.add(orExp6);
             }
-            criteria.addOrder(Order.desc("createdDate"));
             return criteria;
         }
 

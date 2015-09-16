@@ -76,10 +76,10 @@ function onlinePaymentMode(appNumber)
 				</c:if>
 				<c:choose>				
 					<c:when test='${license.licenseNumber != null && license.licenseNumber != ""}'>
-						<a href="../../viewtradelicense/web/viewTradeLicense-viewCitizen.action?id=${license.id}" target="_blank"> <center>${license.licenseNumber}</center> </a>
+						<a href="../../viewtradelicense/viewTradeLicense-viewCitizen.action?id=${license.id}" target="_blank"> <center>${license.licenseNumber}</center> </a>
 					</c:when>
 					<c:when test='${license.tempLicenseNumber != null && license.tempLicenseNumber != ""}'>
-						<a href="../../viewtradelicense/web/viewTradeLicense-viewCitizen.action?id=${license.id}" target="_blank"> <center>${license.tempLicenseNumber}</center> </a>
+						<a href="../../viewtradelicense/viewTradeLicense-viewCitizen.action?id=${license.id}" target="_blank"> <center>${license.tempLicenseNumber}</center> </a>
 					</c:when>
 				</c:choose>
 				</display:column>
@@ -89,7 +89,7 @@ function onlinePaymentMode(appNumber)
 				</c:if>
 				<c:choose>
 					<c:when test='${license.applicationNumber != null && license.applicationNumber != ""}'>
-						<a href="../../viewtradelicense/web/viewTradeLicense-viewCitizen.action?id=${license.id}" target="_blank"> ${license.applicationNumber} </a>
+						<a href="../../viewtradelicense/viewTradeLicense-viewCitizen.action?id=${license.id}" target="_blank"> ${license.applicationNumber} </a>
 					</c:when>
 				</c:choose>
 			</display:column>

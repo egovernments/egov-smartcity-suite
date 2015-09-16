@@ -189,7 +189,7 @@ public class ObjectionAction extends BaseFormAction {
                     fieldName = "objectionDate", message = "", key = Constants.REQUIRED), @RequiredFieldValidator(
                     fieldName = "details", message = "", key = Constants.REQUIRED), @RequiredFieldValidator(
                     fieldName = "reason", message = "", key = Constants.REQUIRED) })
-@Action(value="/objection/objection-create")
+    @Action(value="/objection/objection-create")
     public String create() {
         objectionService.setContextName(ServletActionContext.getRequest().getContextPath());
         objection = objectionService.recordObjection(objection, licenseId, workflowBean);

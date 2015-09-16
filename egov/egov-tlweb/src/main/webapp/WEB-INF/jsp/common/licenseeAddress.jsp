@@ -58,14 +58,14 @@
 	</td>
 	<td class="<c:out value="${trclass}"/>" align="left">
 		<s:select headerKey="" headerValue="%{getText('license.default.select')}" name="licenseeZoneId" id="licenseeZoneId" list="dropdownData.zoneList" listKey="id" listValue='name' onChange="setupLicenseeAjaxDivision(this);" />
-		<egov:ajaxdropdown id="populateLicenseeDivision" fields="['Text','Value']" dropdownId='licenseedivision' url='domain/web/commonTradeLicenseAjax-populateDivisions.action' />
+		<egov:ajaxdropdown id="populateLicenseeDivision" fields="['Text','Value']" dropdownId='licenseedivision' url='domain/commonTradeLicenseAjax-populateDivisions.action' />
 	</td>
 	<td class="<c:out value="${trclass}"/>">
 		<s:text name="license.division" />
 	</td>
 	<td class="<c:out value="${trclass}"/>">
 		<s:select headerKey="" headerValue="%{getText('license.default.select')}" disabled="%{sDisabled}" name="licensee.boundary" id="licenseedivision" list="dropdownData.divisionListLicensee" listKey="id" listValue='name' onChange="setupAjaxArea(this);" />
-		<egov:ajaxdropdown id="populateLicenseeArea" fields="['Text','Value']" dropdownId='licenseeArea' url='web/commonAjax-populateAreas.action' />
+		<egov:ajaxdropdown id="populateLicenseeArea" fields="['Text','Value']" dropdownId='licenseeArea' url='domain/commonAjax-populateAreas.action' />
 	</td>
 </tr>
 <c:choose>

@@ -220,7 +220,7 @@
 																onChange="setupLicenseeAjaxDivision(this);" /> <egov:ajaxdropdown
 																id="populateLicenseeDivision" fields="['Text','Value']"
 																dropdownId='licenseedivision'
-																url='web/commonAjax-populateDivisions.action' /></td>
+																url='domain/commonAjax-populateDivisions.action' /></td>
 														<td class="<c:out value="${trclass}"/>"><s:text
 																name="license.division" /></td>
 														<td class="<c:out value="${trclass}"/>"><s:select
@@ -233,7 +233,7 @@
 																onChange="setupAjaxArea(this);" /> <egov:ajaxdropdown
 																id="populateLicenseeArea" fields="['Text','Value']"
 																dropdownId='licenseeArea'
-																url='web/commonAjax-populateAreas.action' /></td>
+																url='domain/commonAjax-populateAreas.action' /></td>
 													</tr>
 												</s:if>
 												<s:else>
@@ -251,7 +251,7 @@
 																onChange="setupLicenseeAjaxDivision(this);" /> <egov:ajaxdropdown
 																id="populateLicenseeDivision" fields="['Text','Value']"
 																dropdownId='licenseedivision'
-																url='web/commonAjax-populateDivisions.action' /></td>
+																url='domain/commonAjax-populateDivisions.action' /></td>
 														<td class="<c:out value="${trclass}"/>"><s:text
 																name="license.division" /></td>
 														<td class="<c:out value="${trclass}"/>"><s:select
@@ -264,7 +264,7 @@
 																onChange="setupAjaxArea(this);" /> <egov:ajaxdropdown
 																id="populateLicenseeArea" fields="['Text','Value']"
 																dropdownId='licenseeArea'
-																url='web/commonAjax-populateAreas.action' /></td>
+																url='domain/commonAjax-populateAreas.action' /></td>
 													</tr>
 												</s:else>
 												<c:choose>

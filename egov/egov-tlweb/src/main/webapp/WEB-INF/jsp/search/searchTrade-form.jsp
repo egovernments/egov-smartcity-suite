@@ -143,7 +143,7 @@
 	</td>
 	<td class="<c:out value="${trclass}"/>" align="left">
 		<s:select headerKey="-1" headerValue="%{getText('license.default.select')}" name="zone" id="zone" list="dropdownData.zoneList" listKey="id" listValue='name' onChange="setupAjaxDivision(this);" />
-		<egov:ajaxdropdown id="populateDivision" fields="['Text','Value']" dropdownId='division' url='web/commonAjax-populateDivisions.action' />
+		<egov:ajaxdropdown id="populateDivision" fields="['Text','Value']" dropdownId='division' url='domain/commonAjax-populateDivisions.action' />
 	</td>
 	<td class="<c:out value="${trclass}"/>">
 		<s:text name="license.division" />

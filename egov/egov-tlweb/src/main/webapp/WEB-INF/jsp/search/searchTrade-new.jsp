@@ -41,8 +41,8 @@
 <html>
 	<head>
 		<title><s:text name="license.search" /></title>
-		<link href="../css/license/searchTrade.css" rel="stylesheet" type="text/css"></link>
-		<script type="text/javascript" src="../javascript/license/searchTrade.js"></script>
+		<link href="/resources/css/license/searchTrade.css" rel="stylesheet" type="text/css"></link>
+		<script type="text/javascript" src="/resources/javascript/license/searchTrade.js"></script>
 	</head>
 	<body onload="init()">
 		<table align="center" width="100%">
@@ -56,7 +56,7 @@
 										<s:text name="license.search" />
 									</div>
 									<s:push value="model">
-										<s:form action="searchTrade" theme="simple" name="searchForm">
+										<s:form action="searchTrade-search" theme="simple" name="searchForm">
 											<s:hidden name="actionName" value="search" />
 											<div id="error" style="color: #FF0000">
 											</div>

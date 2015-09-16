@@ -73,10 +73,10 @@ String path = request.getContextPath();
 				</c:if>
 				<c:choose>
 					<c:when test='${license.licenseNumber != null && license.licenseNumber != ""}'>
-						<a href="../viewtradelicense/web/viewTradeLicense-view.action?id=${license.id}" target="_blank"> ${license.licenseNumber} </a>
+						<a href="../viewtradelicense/viewTradeLicense-view.action?id=${license.id}" target="_blank"> ${license.licenseNumber} </a>
 					</c:when>
 					<c:when test='${license.tempLicenseNumber != null && license.tempLicenseNumber != ""}'>
-						<a href="../viewtradelicense/web/viewTradeLicense-view.action?id=${license.id}" target="_blank"> ${license.tempLicenseNumber} </a>
+						<a href="../viewtradelicense/viewTradeLicense-view.action?id=${license.id}" target="_blank"> ${license.tempLicenseNumber} </a>
 					</c:when>
 				</c:choose>
 			</display:column>
@@ -96,7 +96,7 @@ String path = request.getContextPath();
 				</c:if>
 				<c:choose>
 					<c:when test='${license.applicationNumber != null && license.applicationNumber != ""}'>
-						<a href="../viewtradelicense/web/viewTradeLicense-view.action?id=${license.id}" target="_blank"> ${license.applicationNumber} </a>
+						<a href="../viewtradelicense/viewTradeLicense-view.action?id=${license.id}" target="_blank"> ${license.applicationNumber} </a>
 					</c:when>
 				</c:choose>
 			</display:column>
@@ -165,24 +165,24 @@ String path = request.getContextPath();
 					<s:if test="%{#attr.license.status.statusCode!='CAN'}">
 						<s:if test="%{#attr.license.status.statusCode!='UWF'}">
 						<s:if test="%{roleName.contains('TLAPPROVER')}">
-							<option value="/cancellation/web/cancelLicense-newForm.action?licenseId=">
+							<option value="/cancellation/cancelLicense-newForm.action?licenseId=">
 								<s:text name="Cancel Trade" />
 							</option>
 							</s:if>
 							<s:if test="%{roleName.contains('TLCREATOR')}">
 							<s:if test="%{#attr.license.disablePrintCertificate() != true}">
-							<option value="/viewtradelicense/web/viewTradeLicense-duplicateCertificate.action?model.id=">
+							<option value="/viewtradelicense/viewTradeLicense-duplicateCertificate.action?model.id=">
 								<s:text name="Print License" />
 							</option>
 							</s:if>
 							</s:if>
 							<s:if test="%{#attr.license.status.statusCode=='ACT'}">
 							<s:if test="%{roleName.contains('TLCREATOR')}">
-								<option value="/transfer/web/transferTradeLicense-newForm.action?model.id=">
+								<option value="/transfer/transferTradeLicense-newForm.action?model.id=">
 									<s:text name="license.action.transfer" />
 								</option>
 								<s:if test="%{#attr.license.oldLicenseNumber != null && #attr.license.oldLicenseNumber != ''}">
-									<option value="/newtradelicense/web/editTradeLicense-beforeEdit.action?model.id=">
+									<option value="/newtradelicense/editTradeLicense-beforeEdit.action?model.id=">
 										<s:text name="license.action.modify" />
 									</option>
 								</s:if>
@@ -190,7 +190,7 @@ String path = request.getContextPath();
 							</s:if>
 							<s:if test="%{roleName.contains('OPERATOR')}">
 							<s:if test="%{#attr.license.isPaid() != true && #attr.license.status.statusCode=='ACK' && #attr.license.isWorkFlowStateRejected() != true}">
-								<option value="/web/integration/licenseBillCollect.action?licenseId=">
+								<option value="/integration/licenseBillCollect.action?licenseId=">
 									<s:text name="Collect Fee" />
 								</option>
 							</s:if>
@@ -198,21 +198,21 @@ String path = request.getContextPath();
 						</s:if>
 						<s:if test="%{roleName.contains('OPERATOR')}">
 						<s:if test="%{#attr.license.isPaid() != true && #attr.license.status.statusCode=='UWF' && #attr.license.isWorkFlowStateRejected() != true}">
-							<option value="/web/integration/licenseBillCollect.action?licenseId=">
+							<option value="/integration/licenseBillCollect.action?licenseId=">
 								<s:text name="Collect Fee" />
 							</option>
 						</s:if>
 						</s:if>
 						<s:if test="%{roleName.contains('TLCREATOR')}">
 						<s:if test="%{#attr.license.licenseNumber != null && #attr.license.licenseNumber != ''}">
-						<option value="/web/objection/objection!newForm.action?licenseId=">
+						<option value="/objection/objection!newForm.action?licenseId=">
 							<s:text name="Record Objection" />
 						</option>
 						</s:if>
 						</s:if>
 						<s:if test="%{roleName.contains('TLCREATOR')}">
 						<s:if test="%{#attr.license.status.statusCode=='SUS'}">
-							<option value="/revokesuspension/web/revokeSuspension-newForm.action?licenseId=">
+							<option value="/revokesuspension/revokeSuspension-newForm.action?licenseId=">
 								<s:text name="Revoke Suspension" />
 							</option>
 						</s:if>
@@ -222,7 +222,7 @@ String path = request.getContextPath();
 					<s:set name="dateOfExpiry" value="%{#attr.license.dateOfExpiry}" />
 					<s:if test="%{roleName.contains('TLAPPROVER') || roleName.contains('TLVALIDATOR')}">
 					<s:if test="%{checkForRenewalNotice(#dateOfExpiry)}">
-						<option value="/renew/web/tradeRenewalNotice-renewalNotice.action?model.id=">
+						<option value="/renew/tradeRenewalNotice-renewalNotice.action?model.id=">
 							<s:text name="Renewal Notice" />
 						</option>
 					</s:if>
@@ -231,7 +231,7 @@ String path = request.getContextPath();
 					<s:if test="%{isRenewable(#attr.license.id)}">
 				    <s:if test="%{#attr.license.status.statusCode=='ACT'}">
                     <s:set name="licenseId" value="%{#attr.license.dateOfExpiry}" />
-						<option value="/newtradelicense/web/newTradeLicense-beforeRenew.action?model.id=">
+						<option value="/newtradelicense/newTradeLicense-beforeRenew.action?model.id=">
 							<s:text name="license.action.renew" />
 						</option>
 					</s:if>
@@ -239,7 +239,7 @@ String path = request.getContextPath();
                     </s:if>
                     <s:if test="%{roleName.contains('TLCREATOR')}">
                     <s:if test="%{isNocApplicable(#attr.license.id)}">
-	                    <option value="/viewtradelicense/web/viewTradeLicense-duplicateNoc.action?model.id=">
+	                    <option value="/viewtradelicense/viewTradeLicense-duplicateNoc.action?model.id=">
 							<s:text name="Reprint NOC" />
 						</option>
                     </s:if>
