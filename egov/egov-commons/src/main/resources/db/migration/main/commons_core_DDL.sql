@@ -1043,6 +1043,16 @@ ALTER TABLE ONLY eg_surrendered_cheques ADD CONSTRAINT fk_surc_vh FOREIGN KEY (v
 
 -----------------------END-----------------------------
 -------------------START--------------------
+
+CREATE TABLE egw_status (
+    id bigint NOT NULL,
+    moduletype character varying(50) NOT NULL,
+    description character varying(50),
+    lastmodifieddate timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+    code character varying(30),
+    order_id bigint
+);
+
 CREATE SEQUENCE seq_egw_status
     START WITH 1
     INCREMENT BY 1

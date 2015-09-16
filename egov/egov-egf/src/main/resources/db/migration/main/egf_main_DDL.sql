@@ -1467,6 +1467,13 @@ CREATE TABLE egf_dishonorcheque (
     bankreason character varying(50),
     instrumentdishonorreason character varying(50)
 );
+CREATE SEQUENCE seq_egf_dishonorchq
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
 
 ALTER TABLE ONLY egf_dishonorcheque
     ADD CONSTRAINT egf_dishonorcheque_pkey PRIMARY KEY (id);
@@ -1486,6 +1493,38 @@ ALTER TABLE ONLY egf_dishonorcheque
     ADD CONSTRAINT egf_dishchq_st_fk FOREIGN KEY (statusid) REFERENCES egw_status(id);
 ALTER TABLE ONLY egf_dishonorcheque
     ADD CONSTRAINT egf_dishchq_state_fk FOREIGN KEY (stateid) REFERENCES eg_wf_states(id);
+
+    
+CREATE TABLE egf_dishonorcheque_detail (
+    id bigint NOT NULL,
+    headerid bigint NOT NULL,
+    glcodeid bigint NOT NULL,
+    debitamt bigint,
+    creditamt bigint,
+    detailkey bigint,
+    detailtype bigint,
+    functionid bigint
+);
+    
+CREATE SEQUENCE seq_egf_dishonorchqdet
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+    
+ALTER TABLE ONLY egf_dishonorcheque_detail
+    ADD CONSTRAINT egf_dishonorcheque_detail_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY egf_dishonorcheque_detail
+    ADD CONSTRAINT egf_dishchqde_head_fk FOREIGN KEY (headerid) REFERENCES egf_dishonorcheque(id);
+ALTER TABLE ONLY egf_dishonorcheque_detail
+    ADD CONSTRAINT egf_dishchqdet_acdet_fk FOREIGN KEY (detailtype) REFERENCES accountdetailtype(id);
+ALTER TABLE ONLY egf_dishonorcheque_detail
+    ADD CONSTRAINT egf_dishchqdet_acdetky_fk FOREIGN KEY (detailkey) REFERENCES accountdetailkey(id);
+ALTER TABLE ONLY egf_dishonorcheque_detail
+    ADD CONSTRAINT egf_dishchqdet_glcode_fk FOREIGN KEY (glcodeid) REFERENCES chartofaccounts(id);
+    
+    
     
 CREATE TABLE ecstype (
     id bigint NOT NULL,
@@ -1498,19 +1537,7 @@ CREATE TABLE ecstype (
     functionid bigint
 );
 
-CREATE SEQUENCE seq_egf_dishonorchq
-    START WITH 1
-    INCREMENT BY 1
-    MINVALUE 0
-    NO MAXVALUE
-    CACHE 1;
 
-CREATE SEQUENCE seq_egf_dishonorchqdet
-    START WITH 1
-    INCREMENT BY 1
-    MINVALUE 0
-    NO MAXVALUE
-    CACHE 1;
 CREATE TABLE egf_recovery_bankdetails (
     id bigint NOT NULL,
     tds_id bigint NOT NULL,
