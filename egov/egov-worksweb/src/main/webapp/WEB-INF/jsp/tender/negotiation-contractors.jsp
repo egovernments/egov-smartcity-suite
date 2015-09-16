@@ -169,7 +169,7 @@ var makeContractorsDataTable = function() {
 
 function createSearchImageFormatter(baseURL){
 	var searchImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL=baseURL+"/image/magnifier.png";
+	    var imageURL="/egi/resources/erp2/images/magnifier.png";
 	    markup='<a href="#"><img src="'+imageURL+'" height=16  width=16 border="0" alt="Search" align="absmiddle"></a>';
 	    el.innerHTML = markup;
 	}

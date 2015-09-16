@@ -423,7 +423,7 @@ function jurisdictionSearchParameters(){
               </tr>
               <tr>
                 <td class="whiteboxwk"><s:text name="estimate.location" />:</td>
-                <td class="whitebox2wk"><s:textfield name="location" value="%{location}" id="location" size="35" cssClass="selectwk" /><a href="javascript:openMap();" id="mapAnchor" title="Click here to add/view gis marker on map"><img height="18" width="18" align="absmiddle" src="${pageContext.request.contextPath}/image/map_icon_small.jpg" /></a></td>
+                <td class="whitebox2wk"><s:textfield name="location" value="%{location}" id="location" size="35" cssClass="selectwk" /><a href="javascript:openMap();" id="mapAnchor" title="Click here to add/view gis marker on map"><img height="18" width="18" align="absmiddle" src="/egi/resources/erp2/images/map_icon_small.jpg" /></a></td>
                 <td width="15%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="estimate.work.nature" /></td>
                 <td width="53%" class="whitebox2wk">
                 <s:if test="%{(dropdownData.typeList.size==1)}" >

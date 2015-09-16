@@ -154,7 +154,7 @@ var descriptionFormatter = function(el, oRecord, oColumn, oData) {
     markup="<span class='yui-dt-liner'>"+value+"</span>"+hint.replace(/@fulldescription@/g,escapeSpecialChars(oRecord.getData('FullDescription')))
     el.innerHTML = markup;
 }
-var hint='<a href="#" class="hintanchor" onMouseover="showhint(\'@fulldescription@\', this, event, \'300px\')"><img src="${pageContext.request.contextPath}/image/help.png" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>'
+var hint='<a href="#" class="hintanchor" onMouseover="showhint(\'@fulldescription@\', this, event, \'300px\')"><img src="/egi/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>'
 
 function createHiddenFormatter(el, oRecord, oColumn, oData){
 var hiddenFormatter = function(el, oRecord, oColumn, oData) {

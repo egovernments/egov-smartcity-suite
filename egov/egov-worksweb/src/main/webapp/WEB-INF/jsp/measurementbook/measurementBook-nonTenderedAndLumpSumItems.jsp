@@ -160,7 +160,7 @@ var activityDescFormatterNT = function(el, oRecord, oColumn, oData) {
     el.innerHTML = markup;
 }
 
-var hint='<a href="#" class="hintanchor" onMouseover="showhint(\'@fulldescription@\', this, event, \'300px\')"><img src="${pageContext.request.contextPath}/image/help.png"	alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>';
+var hint='<a href="#" class="hintanchor" onMouseover="showhint(\'@fulldescription@\', this, event, \'300px\')"><img src="/egi/resources/erp2/images/help.gif"	alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>';
 
 
 function createQuantityTextboxFormatter(prefix){

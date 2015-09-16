@@ -51,7 +51,7 @@
 					<input type="button" value="Load Template" onclick="getTemplateByDepName()" />
 					<input type="button" value="Print" onclick="printSpecial()" />
 						<a id="printButton" href="javascript:printSpecial()" >
-							<img src="<egov:url path='/images/print.gif'/>" alt="Print" border="0" /> 
+							<img src="<egov:url path='/egi/resources/erp2/images/print.gif'/>" alt="Print" border="0" /> 
 						</a>
 					-->
 					<s:hidden id="documentId" name="model.document"  />					

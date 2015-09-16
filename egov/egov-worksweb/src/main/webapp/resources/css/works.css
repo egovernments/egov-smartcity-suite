@@ -46,29 +46,11 @@ div.topbar {
 	font-size: 17px;
 	font-weight: bold;
 	color: #666666;
-	background-image: url(../image/topbannerbg.gif);
+	background-image: url(/egi/resources/erp2/images/topbannerbg.gif);
 	background-repeat: repeat-x;
 	background-color: #FFFFFF;
 }
 
-div.topbar2 {
-	background-color: #666;
-	height: 65px;
-	width: 100%;
-	border-bottom-width: 1px;
-	border-bottom-style: solid;
-	border-bottom-color: #CCCCCC;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 24px;
-	font-weight: normal;
-	color: #CCC;
-	padding-top: 5px;
-	padding-bottom: 5px;
-	vertical-align: middle;
-	text-align: center;
-	background-image: url(../image/homebgtop.gif);
-	background-repeat: repeat-x;
-}
 
 input.buttonfinal {
 	font-family: Arial, Helvetica, sans-serif;
@@ -202,7 +184,7 @@ input.buttonadd {
 div.formheading {
 	width: 100%;
 	height: 23px;
-	background-image: url(../image/gbluebg.gif);
+	background-image: url(/egi/resources/erp2/images/gbluebg.gif);
 	background-repeat: repeat-x;
 }
 
@@ -222,16 +204,16 @@ div.insidecontent {
 }
 
 .rbroundbox2 {
-	background-image: url(../image/nt.gif);
+	background-image: url(/egi/resources/erp2/images/nt.gif);
 	background-repeat: repeat;
 }
 
 .rbtop2 div {
-	background: url(../image/tl.gif) no-repeat top left;
+	background: url(/egi/resources/erp2/images/tl.gif) no-repeat top left;
 }
 
 .rbtop2 {
-	background: url(../image/tr.gif) no-repeat top right;
+	background: url(/egi/resources/erp2/images/tr.gif) no-repeat top right;
 }
 
 .rbbot2 div {
@@ -278,7 +260,7 @@ div.navibarwk {
 	padding-bottom: 0px;
 	padding-left: 15px;
 	text-align: left;
-	background-image: url(../image/yellowbg.gif);
+	background-image: url(/egi/resources/erp2/images/yellowbg.gif);
 	background-repeat: repeat-x;
 	vertical-align: middle;
 	height: 30px;
@@ -291,7 +273,7 @@ div.navibarwk2 {
 	padding-bottom: 0px;
 	padding-left: 15px;
 	text-align: left;
-	background-image: url(../image/yellowbg.gif);
+	background-image: url(/egi/resources/erp2/images/yellowbg.gif);
 	background-repeat: repeat-x;
 	vertical-align: middle;
 	height: 26px;
@@ -313,14 +295,14 @@ div.navibarloginwk {
 
 div.navibarshadowwk {
 	background-color: #FFFFFF;
-	background-image: url(../image/topshadow.gif);
+	background-image: url(/egi/resources/erp2/images/topshadow.gif);
 	background-repeat: repeat-x;
 	height: 19px;
 }
 
 div.navibarshadow2wk {
 	background-color: #FFFFFF;
-	background-image: url(../image/topshadow.gif);
+	background-image: url(/egi/resources/erp2/images/topshadow.gif);
 	background-repeat: repeat-x;
 	height: 19px;
 	margin-right: 8px;
@@ -335,7 +317,7 @@ div.formmainheadwk {
 	font-weight: bold;
 	color: #000000;
 	background-color: #FFFFFF;
-	background-image: url(../image/subheadingbg.gif);
+	background-image: url(/egi/resources/erp2/images/subheadingbg.gif);
 	background-repeat: repeat-x;
 	height: 29px;
 	text-align: center;
@@ -345,7 +327,7 @@ div.urlwk {
 	margin-top: 10px;
 	padding: 15px;
 	background-color: #FFFFFF;
-	background-image: url(../image/urlBg.gif);
+	background-image: url(/egi/resources/erp2/images/urlBg.gif);
 	background-repeat: repeat-x;
 	height: 58px;
 	border-top-width: 1px;
@@ -637,7 +619,7 @@ div.buttonholdersearch {
 }
 
 td.headingwk {
-	background-image: url(../image/tableheadbg.gif);
+	background-image: url(/egi/resources/erp2/images/tableheadbg.gif);
 	border-top-width: 1px;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
@@ -723,7 +705,7 @@ div.arrowiconwk {
 }
 
 td.shadowwk {
-	background-image: url(../image/tablebottom.gif);
+	background-image: url(/egi/resources/erp2/images/tablebottom.gif);
 	background-repeat: repeat-x;
 	height: 5px;
 	background-position: bottom;
@@ -731,7 +713,7 @@ td.shadowwk {
 }
 
 div.shadowwk3 {
-	background-image: url(../image/tablebottom.gif);
+	background-image: url(/egi/resources/erp2/images/tablebottom.gif);
 	background-repeat: repeat-x;
 	height: 5px;
 	background-position: bottom;
@@ -772,11 +754,11 @@ div.headplacer {
 	padding: 0;
 	margin: 0;
 	float: left;
-	background: url(../image/TabTL.png) top left repeat-x;
+	background: url(/egi/resources/erp2/images/TabTL.png) top left repeat-x;
 }
 
 #Tabs a {
-	background: url(../image/TabTR.png) top right no-repeat;
+	background: url(/egi/resources/erp2/images/TabTR.png) top right no-repeat;
 	padding: 5px 30px 6px 8px;
 	float: left;
 	color: #fff;
@@ -785,12 +767,12 @@ div.headplacer {
 }
 
 #Tabs li.Active {
-	background: url(../image/TabATL.png) top left repeat-x;
+	background: url(/egi/resources/erp2/images/TabATL.png) top left repeat-x;
 }
 
 #Tabs li.Active a {
 	color: #005C7D;
-	background: url(../image/TabATR.png) top right no-repeat;
+	background: url(/egi/resources/erp2/images/TabATR.png) top right no-repeat;
 	text-decoration: none;
 }
 
@@ -800,15 +782,15 @@ div.headplacer {
 }
 
 #Tabs li.Last a {
-	background: url(../image/TabTRLast.png) top right no-repeat;
+	background: url(/egi/resources/erp2/images/TabTRLast.png) top right no-repeat;
 }
 
 #Tabs li.BeforeActive a {
-	background: url(../image/TabBeforeATR.png) top right no-repeat;
+	background: url(/egi/resources/erp2/images/TabBeforeATR.png) top right no-repeat;
 }
 
 #Tabs li.ActiveLast a {
-	background: url(../image/TabATRLast.png) top right no-repeat;
+	background: url(/egi/resources/erp2/images/TabATRLast.png) top right no-repeat;
 }
 
 div.estimateno {
@@ -940,7 +922,7 @@ div.errorstyle {
 	padding-right: 8px;
 	padding-left: 8px;
 	background-color: #cfd6de;
-	background-image: url(../image/urlBg.gif);
+	background-image: url(/egi/resources/erp2/images/urlBg.gif);
 	background-repeat: repeat-x;
 	border: 1px dotted #e7efef;
 }
@@ -1195,7 +1177,7 @@ div.navibarwk2 {
 	padding-bottom: 0px;
 	padding-left: 15px;
 	text-align: left;
-	background-image: url(../image/yellowbg.gif);
+	background-image: url(/egi/resources/erp2/images/yellowbg.gif);
 	background-repeat: repeat-x;
 	vertical-align: middle;
 	height: 26px;

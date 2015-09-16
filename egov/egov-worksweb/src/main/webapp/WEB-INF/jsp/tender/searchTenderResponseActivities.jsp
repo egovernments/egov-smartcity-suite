@@ -245,7 +245,7 @@ function returnBackToParent() {
 														title="Description" titleKey="workOrder.activitySearch.description" style="width:40%;text-align:left">
 													<s:if test="%{#attr.currentRow.activity.schedule}">
 														<s:property value="#attr.currentRow.activity.schedule.summary" />
-														<a href="#" class="hintanchor" onMouseover='showhint("<s:property value='%{#attr.currentRow.activity.schedule.description}' />", this, event, "300px")'><img src="${pageContext.request.contextPath}/image/help.png" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>
+														<a href="#" class="hintanchor" onMouseover='showhint("<s:property value='%{#attr.currentRow.activity.schedule.description}' />", this, event, "300px")'><img src="/egi/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>
 													</s:if>	
 													<s:else>
 														<s:property value="#attr.currentRow.activity.nonSor.description" />

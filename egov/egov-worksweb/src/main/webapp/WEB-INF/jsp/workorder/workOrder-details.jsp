@@ -398,7 +398,7 @@ var makeWODataTable = function() {
 													<td width="8%"><s:property value='%{code}' /></td>
 													<td width="8%"><div align="right"><s:property value='%{quantity}' /></div></td>
 													<s:if test="%{code!=null && code!=''}">
-													<td width="25%"><s:property value='%{summary}' /><a href="#" class="hintanchor" onMouseover='showhint("<s:property value='%{description}' />", this, event, "300px")'><img src="${pageContext.request.contextPath}/image/help.png" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a></td>
+													<td width="25%"><s:property value='%{summary}' /><a href="#" class="hintanchor" onMouseover='showhint("<s:property value='%{description}' />", this, event, "300px")'><img src="/egi/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a></td>
 													</s:if>
 													<s:else>
 													<td width="25%"><s:property value='%{description}' /></td>

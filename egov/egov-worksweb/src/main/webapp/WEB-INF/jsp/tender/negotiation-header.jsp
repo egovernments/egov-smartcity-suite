@@ -858,7 +858,7 @@ function checkTenderDate(){
 			<td><input type="text" name="contractorName" id="contractorName" value='<s:property value="%{contractor.name}" />'  class="selectboldwk" /></td>
 			<td><input type="text" name="contractorCode" id="contractorCode"  disabled="true" value='<s:property value="%{contractor.code}" />' class="selectboldwk" />
 			<s:hidden id="contractor" name="contractor" value="%{contractor.id}"/></td>
-			<td><a onclick="searchContractor(this)" href="#"><IMG id="img" height=16 src="${pageContext.request.contextPath}/image/magnifier.png" width=16 alt="Search" border="0" align="absmiddle"></a></td>
+			<td><a onclick="searchContractor(this)" href="#"><IMG id="img" height=16 src="/egi/resources/erp2/images/magnifier.png" width=16 alt="Search" border="0" align="absmiddle"></a></td>
 			</tr>
 			</table>
        </td>

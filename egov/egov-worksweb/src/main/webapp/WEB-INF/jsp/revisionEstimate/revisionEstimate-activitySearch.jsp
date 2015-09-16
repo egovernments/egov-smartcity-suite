@@ -187,11 +187,11 @@ function validateAndSubmit() {
 																	title="Description" titleKey="activity.search.column.desc" style="width:40%;text-align:left">
 																	<s:if test="%{#attr.currentRow.activity.schedule}">																
 																		<s:property value="%{#attr.currentRow.activity.schedule.summary}" />
-																		<a href="#" class="hintanchor" onMouseover="showhint('<s:property value="%{#attr.currentRow.activity.schedule.descriptionJS}" />', this, event, '300px')"><img src="${pageContext.request.contextPath}/image/help.png"	alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>
+																		<a href="#" class="hintanchor" onMouseover="showhint('<s:property value="%{#attr.currentRow.activity.schedule.descriptionJS}" />', this, event, '300px')"><img src="/egi/resources/erp2/images/help.gif"	alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>
 																	</s:if>
 																	<s:elseif test="%{#attr.currentRow.activity.nonSor}">
 																		<s:property value="%{#attr.currentRow.activity.nonSor.description}" />
-																		<a href="#" class="hintanchor" onMouseover="showhint('<s:property value="%{#attr.currentRow.activity.nonSor.descriptionJS}" />', this, event, '300px')"><img src="${pageContext.request.contextPath}/image/help.png"	alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>
+																		<a href="#" class="hintanchor" onMouseover="showhint('<s:property value="%{#attr.currentRow.activity.nonSor.descriptionJS}" />', this, event, '300px')"><img src="/egi/resources/erp2/images/help.gif"	alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>
 																	</s:elseif>
 																</display:column>
 																<display:column headerClass="pagetableth" class="pagetabletd"
