@@ -85,7 +85,7 @@
 		<td class="greybox"><s:text name="extent.site"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:textfield name="areaOfPlot" id="areaOfPlot" size="12"
-				maxlength="15" value="%{areaOfPlot}"></s:textfield></td>
+				maxlength="8" value="%{areaOfPlot}"></s:textfield></td>
 		
 	</tr>
  
@@ -104,7 +104,7 @@
 		<td class="greybox"><s:text name="extent.appurtntland"></s:text>
 			<span class="mandatory1">*</span> :</td>
 		<td class="greybox"><s:textfield name="propertyDetail.extentAppartenauntLand" id="extentAppartenauntLand"
-				value="%{propertyDetail.extentAppartenauntLand}" size="12"	maxlength="12" onchange="trim(this,this.value);"
+				value="%{propertyDetail.extentAppartenauntLand}" size="12"	maxlength="8" onchange="trim(this,this.value);"
 				onblur="validNumber(this);checkZero(this);"></s:textfield></td>
 	</tr>
 	
@@ -116,7 +116,7 @@
 			value="%{propertyDetail.structure}" onclick="enableOrDisableSiteOwnerDetails(this);" />
 		</td>
 		<td class="greybox siteowner"><s:text name="siteowner"></s:text>:</td>
-		<td class="greybox siteowner"><s:textfield maxlength="64" value="%{propertyDetail.siteOwner}"
+		<td class="greybox siteowner"><s:textfield maxlength="32" value="%{propertyDetail.siteOwner}"
 				name="propertyDetail.siteOwner" id="siteOwner"></s:textfield></td>
 	</tr>
 	

@@ -66,14 +66,14 @@
 				cssClass="selectwk"></s:select>
         </td>
 		<td class="blueborderfortd" align="center">
-        	<s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.name" maxlength="64" size="20" id="ownerName"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.name}" 
+        	<s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.name" maxlength="32" size="20" id="ownerName"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.name}" 
         		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Owner name is mandatory!"/>
         </td>
         <td class="blueborderfortd" align="center"><s:select id="gender" name="basicProperty.propertyOwnerInfoProxy[0].owner.gender" value="%{basicProperty.propertyOwnerInfoProxy[0].owner.gender}"
 				headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()" cssClass="selectwk">
 		</s:select></td>
         <td class="blueborderfortd" align="center">
-        	<s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.emailId" maxlength="64" size="20" id="emailId"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.emailId}" 
+        	<s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.emailId" maxlength="32" size="20" id="emailId"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.emailId}" 
         		onblur="trim(this,this.value);validateEmail(this);"/>
         </td>
         <td class="blueborderfortd" align="center">
@@ -81,7 +81,7 @@
 				 headerValue="Choose" headerKey="" list="guardianRelationMap"/>
 		</td>
          <td class="blueborderfortd" align="center">
-        	<s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.guardian" maxlength="64" size="20" id="guardian"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.guardian}" 
+        	<s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.guardian" maxlength="32" size="20" id="guardian"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.guardian}" 
         		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1"/>
         </td>
         
@@ -109,14 +109,14 @@
 				cssClass="selectwk"></s:select>
             </td>
         		<td class="blueborderfortd" align="center">
-        			<s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.name" maxlength="64" size="20" id="ownerName" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.name}" 
+        			<s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.name" maxlength="32" size="20" id="ownerName" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.name}" 
         				onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Owner name is mandatory!"/>
         		</td>
         		<td class="blueborderfortd" align="center"><s:select id="gender" name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.gender" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.gender}"
 				headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()">
 		       </s:select></td>
         		<td class="blueborderfortd" align="center">
-        			<s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.emailId" maxlength="64" size="20" id="emailId" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.emailId}" 
+        			<s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.emailId" maxlength="32" size="20" id="emailId" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.emailId}" 
         				onblur="trim(this,this.value);validateEmail(this);"/>
         		</td>
         		<td class="blueborderfortd" align="center">
@@ -124,7 +124,7 @@
 				headerValue="Choose" headerKey="" list="guardianRelationMap"/>
         	    </td>
         		<td class="blueborderfortd" align="center">
-        	        <s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.guardian" maxlength="64" size="20" id="guardian"  value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.guardian}" 
+        	        <s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.guardian" maxlength="32" size="20" id="guardian"  value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.guardian}" 
         		   onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1"/>
                 </td>
         		<td class="blueborderfortd">

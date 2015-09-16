@@ -61,12 +61,12 @@
         </td>
         <td class="blueborderfortd" align="center">
         	<s:textfield name="propertyDetail.sitalArea.area" id="vacantLandArea"
-				maxlength="15" value="%{propertyDetail.sitalArea.area}"
+				maxlength="10" value="%{propertyDetail.sitalArea.area}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.sitalArea.area');checkZero(this,'propertyDetail.sitalArea.area');" />
         </td>
         <td class="blueborderfortd" align="center">
         	<s:textfield name="propertyDetail.marketValue" id="marketValue"
-				maxlength="15" value="%{propertyDetail.marketValue}"
+				maxlength="10" value="%{propertyDetail.marketValue}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.marketValue');checkZero(this,'propertyDetail.marketValue');" />
 		</td>
         
@@ -94,13 +94,13 @@
 						<th class="bluebgheadtd"><s:text name="South" /><span class="mandatory1">*</span></th>
 					</tr>
 					<tr>
-						<td class="blueborderfortd" align="center"><s:textfield name="northBoundary" id="northBoundary" maxlength="64"
+						<td class="blueborderfortd" align="center"><s:textfield name="northBoundary" id="northBoundary" maxlength="32"
 								value="%{northBoundary}" /></td>
-						<td class="blueborderfortd" align="center"><s:textfield name="eastBoundary" id="eastBoundary" maxlength="64"
+						<td class="blueborderfortd" align="center"><s:textfield name="eastBoundary" id="eastBoundary" maxlength="32"
 								value="%{eastBoundary}" /></td>
-						<td class="blueborderfortd" align="center"><s:textfield name="westBoundary" id="westBoundary" maxlength="64"
+						<td class="blueborderfortd" align="center"><s:textfield name="westBoundary" id="westBoundary" maxlength="32"
 								value="%{westBoundary}" /></td>
-						<td class="blueborderfortd" align="center"><s:textfield	name="southBoundary" id="southBoundary" maxlength="64"
+						<td class="blueborderfortd" align="center"><s:textfield	name="southBoundary" id="southBoundary" maxlength="32"
 								value="%{southBoundary}" /></td>
 					</tr>
 				</tbody>

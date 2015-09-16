@@ -54,7 +54,7 @@
 	      <td class="bluebox2" width="5%">&nbsp;</td>
 	      <td class="bluebox" width="25%"><s:text name="Address1"/>:</td>
 	      <td class="bluebox" style="width:26%;">
-	        <s:textfield name="corrAddress1" id="corrAddress1" value="%{corrAddress1}" maxlength="512" onblur="trim(this,this.value);checkZero(this,'Corr Address1');validateAddress(this);"/>
+	        <s:textfield name="corrAddress1" id="corrAddress1" value="%{corrAddress1}" maxlength="256" onblur="trim(this,this.value);checkZero(this,'Corr Address1');validateAddress(this);"/>
 	      </td>
 	      
 	    </tr>
@@ -62,7 +62,7 @@
 	    <tr id="add2Row">
 	      <td class="greybox2" width="5%">&nbsp;</td>
 	      <td class="greybox" width="25%"><s:text name="Address2"/>:</td>
-	      <td class="greybox" ><s:textfield name="corrAddress2" id="corrAddress2" value="%{corrAddress2}" maxlength="512" onblur="trim(this,this.value);checkZero(this,'Corr Address2');validateAddress(this);"/></td>
+	      <td class="greybox" ><s:textfield name="corrAddress2" id="corrAddress2" value="%{corrAddress2}" maxlength="256" onblur="trim(this,this.value);checkZero(this,'Corr Address2');validateAddress(this);"/></td>
 	      <td class="greybox" width="25%"><s:text name="PinCode"/>:</td>
 	      <td class="greybox" ><s:textfield name="corrPinCode" id="corrPinCode" maxlength="6" styleId = "CorrPinCode" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"  value="%{corrPinCode}"/></td>
 	    </tr>

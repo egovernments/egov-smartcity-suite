@@ -105,7 +105,7 @@
 					<s:textfield name="propertyDetail.floorDetailsProxy[0].occupantName"
 						id="occupantName" size="20"
 						value="%{propertyDetail.floorDetailsProxy[0].occupantName}"
-						maxlength="64" cssStyle="width:100%"/>
+						maxlength="32" cssStyle="width:100%"/>
 				</div>
 			</td>
 
@@ -122,7 +122,7 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:textfield name="propertyDetail.floorDetailsProxy[0].builtUpArea.area" 
-						maxlength="15" size="10" id="propertyDetail.floorDetailsProxy[0].builtUpArea.area" value="%{propertyDetail.floorDetailsProxy[0].builtUpArea.area}"
+						maxlength="10" size="10" id="propertyDetail.floorDetailsProxy[0].builtUpArea.area" value="%{propertyDetail.floorDetailsProxy[0].builtUpArea.area}"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
 						cssStyle="width:100%" data-optional="0" data-errormsg="Plinth area is mandatory!"/>
 				</div>
@@ -141,7 +141,7 @@
 				<div align="center">
 					<s:textfield autocomplete="off" name="propertyDetail.floorDetailsProxy[0].noOfSeats" 
 						id="propertyDetail.floorDetailsProxy[0].noOfSeats" value="%{propertyDetail.floorDetailsProxy[0].noOfSeats}" size="10"
-						maxlength="10" cssStyle="width:100%"></s:textfield>
+						maxlength="3" cssStyle="width:100%"></s:textfield>
 				</div>
 			</td>
 
@@ -229,7 +229,7 @@
                <td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].occupantName"
-							id="occupantname" size="25" maxlength="64" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].occupantName}"
+							id="occupantname" size="25" maxlength="32" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].occupantName}"
 							cssStyle="width:100%" />
 					</div>
 				</td>
@@ -248,7 +248,7 @@
 					<div align="center">
 						<s:textfield
 							name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].builtUpArea.area"
-							maxlength="15" size="10" id="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].builtUpArea.area"
+							maxlength="10" size="10" id="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].builtUpArea.area"
 							value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].builtUpArea.area}"
 							onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
 							cssStyle="width:100%" />
@@ -268,7 +268,7 @@
 					<div align="center">
 						<s:textfield autocomplete="off" name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].noOfSeats" 
 							id="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].noOfSeats" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].noOfSeats}" size="10"
-							maxlength="10" cssStyle="width:100%"></s:textfield>
+							maxlength="3" cssStyle="width:100%"></s:textfield>
 					</div>
 				</td>
 				
