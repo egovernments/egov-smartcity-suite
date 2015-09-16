@@ -48,14 +48,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egadtax_revenueinspectors")
 @SequenceGenerator(name = RevenueInspector.SEQ_REVENUE_INSPECTORS, sequenceName = RevenueInspector.SEQ_REVENUE_INSPECTORS, allocationSize = 1)
-public class RevenueInspector extends AbstractAuditable {
+public class RevenueInspector  extends AbstractPersistable<Long> { 
 
     private static final long serialVersionUID = -8688346654911767440L;
 

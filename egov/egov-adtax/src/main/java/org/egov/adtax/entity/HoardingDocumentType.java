@@ -52,7 +52,7 @@ import org.hibernate.search.annotations.DocumentId;
 @Entity
 @Table(name = "egadtax_HOARDINGdocument_type")
 @SequenceGenerator(name = HoardingDocumentType.SEQ_HOARDINGDOCUMENT_TYPE, sequenceName = HoardingDocumentType.SEQ_HOARDINGDOCUMENT_TYPE, allocationSize = 1)
-public class HoardingDocumentType extends AbstractPersistable<Long> {
+public class HoardingDocumentType extends AbstractPersistable<Long> { 
 
     private static final long serialVersionUID = -6885857888257785672L;
 

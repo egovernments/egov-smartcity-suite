@@ -54,7 +54,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @Entity
 @Table(name = "EGADTAX_RATES_DETAILS")
 @SequenceGenerator(name = AdvertisementRatesDetails.SEQ_RATESDETAILS, sequenceName = AdvertisementRatesDetails.SEQ_RATESDETAILS, allocationSize = 1)
-public class AdvertisementRatesDetails extends AbstractAuditable {
+public class AdvertisementRatesDetails  {
 
     private static final long serialVersionUID = 3330971216171501421L;
     public static final String SEQ_RATESDETAILS = "SEQ_EGADTAX_RATESDETAILS";
@@ -77,13 +77,10 @@ public class AdvertisementRatesDetails extends AbstractAuditable {
     
     private Double amount;
     
-    
-    @Override
     public Long getId() {
         return id;
     }
-
-    @Override
+  
     public void setId(final Long id) {
         this.id = id;
     }

@@ -48,14 +48,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egadtax_propertytype")
 @SequenceGenerator(name = HoardingPropertyType.SEQ_PROPERTYTYPE, sequenceName = HoardingPropertyType.SEQ_PROPERTYTYPE, allocationSize = 1)
-public class HoardingPropertyType extends AbstractAuditable {
+public class HoardingPropertyType  extends AbstractPersistable<Long> { 
 
     private static final long serialVersionUID = 6041012994763053319L;
 
