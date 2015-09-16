@@ -441,6 +441,7 @@ CREATE TABLE eg_advancerequisition (
 );
 
 ALTER TABLE ONLY eg_advancerequisition ADD CONSTRAINT eg_advancerequisition_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY eg_advancerequisition ADD CONSTRAINT eg_advancerequisition_advancerequisitionnumber_key UNIQUE (advancerequisitionnumber);
 
 ---------------------------------END-------------------------------
 ---------------------------------START---------------------------------------
@@ -1200,6 +1201,8 @@ CREATE TABLE egf_budgetgroup (
     isactive smallint,
     updatedtimestamp timestamp without time zone NOT NULL
 );
+ALTER TABLE egf_budgetgroup ALTER COLUMN isactive TYPE boolean USING CASE WHEN isactive = 0 THEN FALSE WHEN isactive = 1 THEN TRUE ELSE NULL END;
+
 ALTER TABLE ONLY egf_budgetgroup
     ADD CONSTRAINT egf_budgetgroup_pkey PRIMARY KEY (id);
 ALTER TABLE ONLY egf_budgetgroup
@@ -1526,5 +1529,15 @@ ALTER TABLE ONLY egf_recovery_bankdetails
     ADD CONSTRAINT fk_recbank_fund FOREIGN KEY (fund_id) REFERENCES fund(id);
 ALTER TABLE ONLY egf_recovery_bankdetails
     ADD CONSTRAINT fk_recbank_tds FOREIGN KEY (tds_id) REFERENCES tds(id);
-
+-----------------------------------------------END-------------------------
+----------------START-------------------
     
+    CREATE TABLE egf_accountcode_purpose (
+    id bigint NOT NULL,
+    name character varying(250),
+    modifieddate timestamp without time zone,
+    modifiedby bigint,
+    createddate timestamp without time zone,
+    createdby bigint
+);
+----------------------END-------------------    
