@@ -41,18 +41,16 @@ package org.egov.adtax.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.regex.Constants;
 import org.hibernate.validator.constraints.Email;
@@ -90,9 +88,8 @@ public class Agency extends AbstractAuditable {
     @SafeHtml
     private String address;
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "status")
-    private EgwStatus status;
+    @Enumerated(EnumType.STRING)
+    private AgencyStatus status;
 
     @NotNull
     private Double depositAmount;
@@ -148,11 +145,11 @@ public class Agency extends AbstractAuditable {
         this.mobileNumber = mobileNumber;
     }
 
-    public EgwStatus getStatus() {
+    public AgencyStatus getStatus() {
         return status;
     }
 
-    public void setStatus(final EgwStatus status) {
+    public void setStatus(final AgencyStatus status) {
         this.status = status;
     }
 
