@@ -96,6 +96,40 @@ def getVoucherNum():
 		result=egnum_voucherType+voucherNumber
 		return (result,None)
 result,validationErrors=getVoucherNum()', '1900-01-01 00:00:00', '2100-01-01 00:00:00', 0);
+
+UPDATE eg_script SET script ='from org.egov.infra.validation.exception import ValidationError
+from java.lang import Long
+from java.lang import Integer
+from java.lang import String
+from java.lang import Exception
+from org.hibernate.exception import SQLGrammarException
+transNumber=''''
+egnum_voucherType=fundIdentity+''/''+voucherType
+def getVoucherNum():  
+	if (vNumGenMode == ''Auto''):
+		try:
+			financialYear = commonsService.getFinancialYearByDate(date)
+		except Exception,e:
+			return (None,[ValidationError(''Financial Year is not active for posting.'',''Financial Year is not active for posting.'')])
+		year=financialYear.getFinYearRange()
+		try:
+			transNumber = sequenceNumberGenerator.getNextSequence(sequenceName)
+        	except SQLGrammarException,e:
+			transNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName)
+		print transNumber
+		print len(str(transNumber))
+		for num in range(len(str(transNumber)), 8):
+			transNumber="0"+str(transNumber)
+		print ''after loop''
+		print transNumber
+		result=egnum_voucherType+''/''+str(transNumber)+''/''+month+''/''+year
+		return (result,None)
+	else:
+		result=egnum_voucherType+voucherNumber
+		return (result,None)
+result,validationErrors=getVoucherNum()' where name = 'voucherheader.vouchernumber';
+
+
 INSERT INTO eg_script (id, name, type, createdby, createddate, lastmodifiedby, lastmodifieddate, script, startdate, enddate, version) VALUES (5, 'autobillnumber', 'python', NULL, NULL, NULL, NULL, 'financialYear = commonsService.getFinancialYearByDate(bill.getBilldate())
 year=financialYear.getFinYearRange()
 result=bill.getEgBillregistermis().getEgDepartment().getCode()+"/"+"MN"+"/"+sequenceGenerator.getNextNumber("MN",1).getFormattedNumber().zfill(4)+"/"+year', '1900-01-01 00:00:00', '2100-01-01 00:00:00', 0);
@@ -107,6 +141,14 @@ try:
 except ValidationException,e:
     validationErrors=e.getErrors()
     result=None', '1900-01-01 00:00:00', '2100-01-01 00:00:00', 0);
+    
+UPDATE eg_script SET script ='from  org.egov.infra.validation.exception import ValidationException
+from org.egov.infra.validation.exception import ValidationError
+try:
+	result=voucherService.budgetaryCheck(bill)
+except ValidationException,e:
+    validationErrors=e.getErrors()
+    result=None' where name = 'egf.bill.budgetcheck';    
     
 -------------------------------END---------------------------    
     
@@ -215,7 +257,11 @@ Insert into eg_appconfig_values (ID,KEY_ID,EFFECTIVE_FROM,VALUE) values (nextval
 Insert into eg_appconfig_values (ID,KEY_ID,EFFECTIVE_FROM,VALUE) values (nextval('seq_eg_appconfig_values'),(select id from eg_appconfig where KEY_NAME ='VOUCHERDATE_FROM_UI'),to_date('29-05-14','DD-MM-RR'),'Y');
 Insert into eg_appconfig_values (ID,KEY_ID,EFFECTIVE_FROM,VALUE) values (nextval('seq_eg_appconfig_values'),(select id from eg_appconfig where KEY_NAME ='Remove Entrys With Zero Amount'),to_date('20-08-14','DD-MM-RR'),'true');
 Insert into eg_appconfig_values (ID,KEY_ID,EFFECTIVE_FROM,VALUE) values (nextval('seq_eg_appconfig_values'),(select id from eg_appconfig where KEY_NAME ='Remove Entries With Zero Amount in Report'),to_date('17-10-14','DD-MM-RR'),'Yes');
+update eg_appconfig_values set value = 7 where KEY_ID in (select id from eg_appconfig where key_name = 'coa_detailcode_length');
+update eg_appconfig_values set value = 5 where KEY_ID in (select id from eg_appconfig where key_name = 'coa_subminorcode_length');
+update eg_appconfig_values set value = 2 where KEY_ID in (select id from eg_appconfig where key_name = 'parent_for_detailcode');
 
 ----------------------------------END-------------------------------------------------    
 Insert into eg_roleaction_map  values((select id from eg_role where name='Super User'),(select id from eg_action where name='createScheme'));
+Insert into eg_roleaction   values((select id from eg_role where name='Super User'),(select id from eg_action where name='ExpenseBillCreate'));
 

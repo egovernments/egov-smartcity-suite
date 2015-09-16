@@ -131,4 +131,63 @@ Insert into eg_appconfig (ID,KEY_NAME,DESCRIPTION,MODULE) values (nextval('seq_e
 Insert into eg_appconfig (ID,KEY_NAME,DESCRIPTION,MODULE) values (nextval('seq_eg_appconfig'),'CJV_PAYMENT_MODE_AS_RTGS','Whether RTGS should be the only mode of payment for CJVs','EGF');
 Insert into eg_appconfig (ID,KEY_NAME,DESCRIPTION,MODULE) values (nextval('seq_eg_appconfig'),'Remove Entries With Zero Amount in Report','Value to deside Remove Entries With Zero Amount in Reports','EGF');
 --------------------------------END---------------------------------------------------------
+------------------------START-------------------------
+update eg_module set enabled=false where name='Assigned Revenue Reports';
+update eg_module set enabled=false where name='TNEB';
 
+update eg_action set enabled=false where name='Reverse Bills-Search';
+update eg_action set enabled=false where name='Modify Payments-Search';
+update eg_action set enabled=false where name='Modify Fund Flow Analysis Report';
+update eg_action set enabled=false where name='Fund Flow Analysis Report';
+update eg_action set enabled=false where name='Outstanding Payment';
+update eg_action set enabled=false where name='Concurrence Report';
+update eg_action set enabled=false where name='ManualEntryReport';
+update eg_action set enabled=false where name='Reverse Journal Vouchers-Search';
+update eg_action set enabled=false where name='Cash Withdrawal';
+update eg_action set enabled=false where name='Reverse Contra Entries-Search';
+
+update eg_action set enabled=false where name='AutoReconcile';
+update eg_action set enabled=false where name='AutoReconcile-Upload';
+update eg_action set enabled=false where name='Confirm Vouchers';
+update eg_action set enabled=false where name='ScheduleRemittanceManual';
+update eg_action set enabled=false where name='RTGSAssignmentforPayment';
+update eg_action set enabled=false where name='Creditors Recoveries';
+update eg_action set enabled=false where name='Setup Cheque in Hand/Cash in Hand';
+update eg_action set enabled=false where name='Add Bank';
+update eg_action set enabled=false where name='AutoRemittanceReport';
+update eg_action set enabled=false where name='AutoRemittanceSchedulerReport';
+update eg_action set enabled = false where displayname ='Add/Modify Branch-Modify Bank';
+------------------------END-------------------
+------------------------START-------------------------
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (4,'Cash In Hand',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (5,'Cheque In Hand',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (7,'ExcessIE',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (8,' Payable to Other Funds',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (10,'Contractor Deductions',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (16,'CWIP Account code',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (21,'Fixed Assets Written off',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (22,'Inter-Unit Transfer Account',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (26,'Creditors-Contractor Payable',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (27,'Creditors-Supplier Payable',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (28,'Contigency Bill Code',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (29,'Security Deposit',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (30,'Bank Charges',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (31,'Salary Payable',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (35,'Supplier Advance Account',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (37,'Material Clearing Account',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (38,'Scrap Suspense Account',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (60,'Overhead_account codes',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (61,'DEPOSIT:OTHER WORKS',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (62,'REPAIRS AND MAINTENANCE',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (95,'RETENTION_MONEY',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (96,'LandEstate_Rent_purpose',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (103,'Pension Payable Code',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (105,'CONTRACTOR_ADVANCE_ACCOUNTCODE',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (120,'BPA Deposit CWIP Account Code',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (34,'Pension Payable',current_date,1,current_date,1);
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values (36,'Wages Payable',current_date,1,current_date,1);
+update egf_accountcode_purpose set id = 11 where name = 'Fixed Assets';
+update egf_accountcode_purpose set id = 15 where name = 'Accumulated Depreciation';
+update egf_accountcode_purpose set id = 17 where name = 'Depreciation Expense Account';
+update egf_accountcode_purpose set id = 18 where name = 'Revaluation Reserve Account';
+------------------------END-------------------
