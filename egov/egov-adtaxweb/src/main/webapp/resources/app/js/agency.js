@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+/*#-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,14 +36,13 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-lbl.select=Select from below
-title.scheduleofrates=Schedule of Rates
+#-------------------------------------------------------------------------------*/
+jQuery(document).ready(function($) {
+	
+	$("#buttonEdit").click(function() {
+		var action = '/adtax/agency/update/' + $('#agencyCode').val();
+		$('#agencysuccess').attr('method', 'get');
+		$('#agencysuccess').attr('action', action);
+	});
+});
 
-##Agency
-title.agency.details=Agency details
-lbl.agency.code=Agency Code
-lbl.agency.name=Agency Name
-lbl.agency.ssid=Agency SSID
-lbl.agency.deposit=Deposit Amount
-title.agency.search=Search Agency

@@ -61,5 +61,22 @@
 	    <put-attribute name="body" value="/WEB-INF/views/rates/scheduleOfRate-form.jsp"/>
     </definition>
     
-
+    <definition name="error/*" extends="error">
+		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
+	</definition>
+	
+	<definition name="agency-form" extends="base_layout">
+    	<put-attribute name="page-title" value="title.agency.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/agency/agency-form.jsp"/>
+    </definition>
+    
+    <definition name="agency/agency-success" extends="base_layout">
+    	<put-attribute name="page-title" value="title.agency.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/agency/agency-success.jsp"/>
+    </definition>
+    
+    <definition name="agency-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.agency.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/agency/agency-search.jsp"/>
+    </definition>
 </tiles-definitions>
