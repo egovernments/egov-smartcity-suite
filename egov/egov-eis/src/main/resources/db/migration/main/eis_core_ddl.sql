@@ -34,35 +34,7 @@ CREATE TABLE egeis_employee (
 ALTER TABLE ONLY egeis_employee
     ADD CONSTRAINT pk_egeis_employee_id PRIMARY KEY (id);
 --------------------------------_END--------------------
-----------------_START-----------------
-CREATE TABLE egeis_employee_hod (
-    id bigint NOT NULL,
-    assignment bigint,
-    hod bigint,
-    version bigint,
-    createddate timestamp without time zone,
-    lastmodifieddate timestamp without time zone,
-    createdby bigint,
-    lastmodifiedby bigint
-);
-CREATE SEQUENCE seq_egeis_employee_hod
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-    
-ALTER TABLE ONLY egeis_employee_hod
-    ADD CONSTRAINT eg_employee_dept_pkey PRIMARY KEY (id);  
-CREATE INDEX index_emp_dept_assignment_id ON egeis_employee_hod USING btree (assignment);
-CREATE INDEX index_emp_dept_hod ON egeis_employee_hod USING btree (hod);
-ALTER TABLE ONLY egeis_employee_hod
-    ADD CONSTRAINT ass_id FOREIGN KEY (assignment) REFERENCES egeis_assignment(id);
-ALTER TABLE ONLY egeis_employee_hod
-    ADD CONSTRAINT hod_id FOREIGN KEY (hod) REFERENCES eg_department(id);    
-ALTER TABLE ONLY egeis_employee_hod
-    ADD CONSTRAINT ass_id FOREIGN KEY (assignment) REFERENCES egeis_assignment(id);
---------------END-----------------------
+
 -----------------START--------------
 CREATE TABLE egeis_grade_mstr (
     grade_id bigint NOT NULL,
@@ -243,7 +215,6 @@ ALTER TABLE ONLY egeis_assignment
 CREATE INDEX index_emp_assgn_designationid ON egeis_assignment USING btree (designation);
 CREATE INDEX index_emp_assgn_id_function ON egeis_assignment USING btree (function);
 CREATE INDEX index_emp_assgn_id_functionary ON egeis_assignment USING btree (functionary);
-CREATE INDEX index_emp_assgn_id_function ON egeis_assignment USING btree (function);
 CREATE INDEX index_emp_assgn_id_fund ON egeis_assignment USING btree (fund);
 CREATE INDEX index_emp_assgn_main_dept ON egeis_assignment USING btree (department);
 CREATE INDEX index_emp_assgn_position_id ON egeis_assignment USING btree ("position");
@@ -258,7 +229,33 @@ ALTER TABLE ONLY egeis_assignment
     ADD CONSTRAINT pos_id FOREIGN KEY ("position") REFERENCES eg_position(id);
 
 --------------END-----------------
-
+----------------_START-----------------
+CREATE TABLE egeis_employee_hod (
+    id bigint NOT NULL,
+    assignment bigint,
+    hod bigint,
+    version bigint,
+    createddate timestamp without time zone,
+    lastmodifieddate timestamp without time zone,
+    createdby bigint,
+    lastmodifiedby bigint
+);
+CREATE SEQUENCE seq_egeis_employee_hod
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+    
+ALTER TABLE ONLY egeis_employee_hod
+    ADD CONSTRAINT eg_employee_dept_pkey PRIMARY KEY (id);  
+CREATE INDEX index_emp_dept_assignment_id ON egeis_employee_hod USING btree (assignment);
+CREATE INDEX index_emp_dept_hod ON egeis_employee_hod USING btree (hod);
+ALTER TABLE ONLY egeis_employee_hod
+    ADD CONSTRAINT ass_id FOREIGN KEY (assignment) REFERENCES egeis_assignment(id);
+ALTER TABLE ONLY egeis_employee_hod
+    ADD CONSTRAINT hod_id FOREIGN KEY (hod) REFERENCES eg_department(id);    
+--------------END-----------------------
 --------------------------START------------------------------
 CREATE TABLE egeis_bloodgroup (
     id bigint NOT NULL,

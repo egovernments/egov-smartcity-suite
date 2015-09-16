@@ -115,27 +115,7 @@ ALTER TABLE ONLY accountdetailtype ADD CONSTRAINT accountdetailtype_name_key UNI
 ALTER TABLE ONLY accountdetailtype ADD CONSTRAINT accountdetailtype_pkey PRIMARY KEY (id);
 -------------------END-------------------
 
-------------------START-------------------
-CREATE TABLE accountdetailkey (
-    id bigint NOT NULL,
-    groupid bigint NOT NULL,
-    glcodeid bigint,
-    detailtypeid bigint NOT NULL,
-    detailname character varying(50) NOT NULL,
-    detailkey bigint NOT NULL
-);
-CREATE SEQUENCE seq_accountdetailkey
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY accountdetailkey ADD CONSTRAINT accountdetailkey_pkey PRIMARY KEY (id);
-CREATE INDEX indx_acdk_acdtid ON accountdetailkey USING btree (detailtypeid);
-ALTER TABLE ONLY accountdetailkey ADD CONSTRAINT fk_coa_dk FOREIGN KEY (glcodeid) REFERENCES chartofaccounts(id); 
-ALTER TABLE ONLY accountdetailkey ADD CONSTRAINT fk_dt_dk FOREIGN KEY (detailtypeid) REFERENCES accountdetailtype(id);
 
--------------------END-------------------
 
 ------------------START------------------
 CREATE TABLE accountentitymaster (
@@ -295,7 +275,29 @@ CREATE SEQUENCE seq_calendaryear
 ALTER TABLE ONLY calendaryear ADD CONSTRAINT calendaryear_calendaryear_key UNIQUE (calendaryear);
 ALTER TABLE ONLY calendaryear ADD CONSTRAINT calendaryear_pkey PRIMARY KEY (id);
 -------------------END-------------------
+----------------START---------
+CREATE TABLE schedulemapping (
+    id bigint NOT NULL,
+    reporttype character varying(10) NOT NULL,
+    schedule character varying(10) NOT NULL,
+    schedulename character varying(250) NOT NULL,
+    repsubtype character varying(10),
+    createdby bigint NOT NULL,
+    createddate timestamp without time zone NOT NULL,
+    lastmodifiedby bigint,
+    lastmodifieddate timestamp without time zone,
+    isremission smallint
+);
+CREATE SEQUENCE seq_schedulemapping
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER TABLE ONLY schedulemapping ADD CONSTRAINT schedulemapping_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY schedulemapping ADD CONSTRAINT schedulemapping_schedule_reporttype_key UNIQUE (schedule, reporttype);
 
+--------------------END------------------
 ------------------START------------------
 CREATE TABLE chartofaccounts (
     id bigint NOT NULL,
@@ -344,7 +346,27 @@ ALTER TABLE ONLY chartofaccounts ADD CONSTRAINT fk_cos_sch2 FOREIGN KEY (payment
 ALTER TABLE ONLY chartofaccounts ADD CONSTRAINT fiescheduleid_shedule_map_fk FOREIGN KEY (fiescheduleid) REFERENCES schedulemapping(id);
 
 -------------------END-------------------
+------------------START-------------------
+CREATE TABLE accountdetailkey (
+    id bigint NOT NULL,
+    groupid bigint NOT NULL,
+    glcodeid bigint,
+    detailtypeid bigint NOT NULL,
+    detailname character varying(50) NOT NULL,
+    detailkey bigint NOT NULL
+);
+CREATE SEQUENCE seq_accountdetailkey
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER TABLE ONLY accountdetailkey ADD CONSTRAINT accountdetailkey_pkey PRIMARY KEY (id);
+CREATE INDEX indx_acdk_acdtid ON accountdetailkey USING btree (detailtypeid);
+ALTER TABLE ONLY accountdetailkey ADD CONSTRAINT fk_coa_dk FOREIGN KEY (glcodeid) REFERENCES chartofaccounts(id); 
+ALTER TABLE ONLY accountdetailkey ADD CONSTRAINT fk_dt_dk FOREIGN KEY (detailtypeid) REFERENCES accountdetailtype(id);
 
+-------------------END-------------------
 ------------------START------------------
 CREATE TABLE chartofaccountdetail (
     id bigint NOT NULL,
@@ -412,32 +434,7 @@ ALTER TABLE ONLY eg_designation ADD CONSTRAINT eg_designation_pkey PRIMARY KEY (
 
 -------------------END-------------------
 
-------------------START------------------
-CREATE TABLE eg_drawingofficer (
-    id bigint NOT NULL,
-    code character varying(100) NOT NULL,
-    name character varying(150),
-    bank bigint,
-    bankbranch bigint,
-    accountnumber character varying(20),
-    tan character varying(10),
-    "position" bigint,
-    version bigint,
-    createddate timestamp without time zone,
-    lastmodifieddate timestamp without time zone,
-    createdby bigint,
-    lastmodifiedby bigint
-);
-CREATE SEQUENCE seq_eg_drawingofficer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_drawingofficer ADD CONSTRAINT eg_drawingofficer_code_key UNIQUE (code);
-ALTER TABLE ONLY eg_drawingofficer ADD CONSTRAINT eg_drawingofficer_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY eg_drawingofficer ADD CONSTRAINT fk_eg_drawingofficer_position FOREIGN KEY ("position") REFERENCES eg_position(id);
--------------------END-------------------
+
 
 ---Removed eg_employee as this is not been used anymore
 ------------------START------------------
@@ -560,7 +557,32 @@ CREATE SEQUENCE seq_eg_position
     CACHE 1;
 ALTER TABLE ONLY eg_position ADD CONSTRAINT eg_position_pkey PRIMARY KEY (id);
 -------------------END-------------------
-
+------------------START------------------
+CREATE TABLE eg_drawingofficer (
+    id bigint NOT NULL,
+    code character varying(100) NOT NULL,
+    name character varying(150),
+    bank bigint,
+    bankbranch bigint,
+    accountnumber character varying(20),
+    tan character varying(10),
+    "position" bigint,
+    version bigint,
+    createddate timestamp without time zone,
+    lastmodifieddate timestamp without time zone,
+    createdby bigint,
+    lastmodifiedby bigint
+);
+CREATE SEQUENCE seq_eg_drawingofficer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER TABLE ONLY eg_drawingofficer ADD CONSTRAINT eg_drawingofficer_code_key UNIQUE (code);
+ALTER TABLE ONLY eg_drawingofficer ADD CONSTRAINT eg_drawingofficer_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY eg_drawingofficer ADD CONSTRAINT fk_eg_drawingofficer_position FOREIGN KEY ("position") REFERENCES eg_position(id);
+-------------------END-------------------
 ------------------START------------------
 CREATE TABLE eg_reason_category (
     id bigint NOT NULL,
@@ -776,6 +798,70 @@ CREATE SEQUENCE seq_financial_institution
 ALTER TABLE ONLY financial_institution ADD CONSTRAINT financial_institution_pkey PRIMARY KEY (id);
 -------------------END-------------------
 ------------------START------------------
+CREATE TABLE scheme (
+    id bigint NOT NULL,
+    code character varying(20),
+    name character varying(50),
+    validfrom timestamp without time zone,
+    validto timestamp without time zone,
+    isactive boolean DEFAULT false,
+    description character varying(255),
+    fundid bigint,
+    sectorid bigint,
+    aaes bigint,
+    fieldid bigint,
+    createddate timestamp without time zone,
+    lastmodifieddate timestamp without time zone,
+    createdby bigint,
+    lastmodifiedby bigint
+);
+CREATE SEQUENCE seq_scheme
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER TABLE ONLY scheme ADD CONSTRAINT scheme_code_fundid_key UNIQUE (code, fundid);
+ALTER TABLE ONLY scheme ADD CONSTRAINT scheme_pkey PRIMARY KEY (id);
+-------------------END-------------------
+
+------------------START------------------
+CREATE TABLE sub_scheme (
+    id bigint NOT NULL,
+    code character varying(50) NOT NULL,
+    name character varying(50) NOT NULL,
+    validfrom timestamp without time zone NOT NULL,
+    validto timestamp without time zone,
+    isactive character varying(1) NOT NULL,
+    schemeid bigint NOT NULL,
+    lastmodifieddate timestamp without time zone NOT NULL,
+    department bigint,
+    initial_estimate_amount bigint,
+    council_loan_proposal_number character varying(256),
+    council_loan_proposal_date timestamp without time zone,
+    council_admin_sanction_number character varying(256),
+    council_admin_sanction_date timestamp without time zone,
+    govt_loan_proposal_number character varying(256),
+    govt_loan_proposal_date timestamp without time zone,
+    govt_admin_sanction_number character varying(256),
+    govt_admin_sanction_date timestamp without time zone,
+    createddate timestamp without time zone,
+    createdby bigint,
+    lastmodifiedby bigint
+);
+CREATE SEQUENCE seq_sub_scheme
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER TABLE ONLY sub_scheme ADD CONSTRAINT sub_scheme_code_schemeid_key UNIQUE (code, schemeid);
+ALTER TABLE ONLY sub_scheme ADD CONSTRAINT sub_scheme_pkey PRIMARY KEY (id);
+CREATE INDEX indx_schemeid ON sub_scheme USING btree (schemeid);
+ALTER TABLE ONLY sub_scheme ADD CONSTRAINT fk_sub_scheme_department FOREIGN KEY (department) REFERENCES eg_department(id); 
+ALTER TABLE ONLY sub_scheme ADD CONSTRAINT sub_scheme_r01 FOREIGN KEY (schemeid) REFERENCES scheme(id);
+-------------------END-------------------
+------------------START------------------
 CREATE TABLE fundsource (
     id bigint NOT NULL,
     code character varying(50) NOT NULL,
@@ -956,70 +1042,6 @@ ALTER TABLE ONLY generalledgerdetail ADD CONSTRAINT fk_gl_gld FOREIGN KEY (gener
 
 -------------------END-------------------
 
-------------------START------------------
-CREATE TABLE scheme (
-    id bigint NOT NULL,
-    code character varying(20),
-    name character varying(50),
-    validfrom timestamp without time zone,
-    validto timestamp without time zone,
-    isactive boolean DEFAULT false,
-    description character varying(255),
-    fundid bigint,
-    sectorid bigint,
-    aaes bigint,
-    fieldid bigint,
-    createddate timestamp without time zone,
-    lastmodifieddate timestamp without time zone,
-    createdby bigint,
-    lastmodifiedby bigint
-);
-CREATE SEQUENCE seq_scheme
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY scheme ADD CONSTRAINT scheme_code_fundid_key UNIQUE (code, fundid);
-ALTER TABLE ONLY scheme ADD CONSTRAINT scheme_pkey PRIMARY KEY (id);
--------------------END-------------------
-
-------------------START------------------
-CREATE TABLE sub_scheme (
-    id bigint NOT NULL,
-    code character varying(50) NOT NULL,
-    name character varying(50) NOT NULL,
-    validfrom timestamp without time zone NOT NULL,
-    validto timestamp without time zone,
-    isactive character varying(1) NOT NULL,
-    schemeid bigint NOT NULL,
-    lastmodifieddate timestamp without time zone NOT NULL,
-    department bigint,
-    initial_estimate_amount bigint,
-    council_loan_proposal_number character varying(256),
-    council_loan_proposal_date timestamp without time zone,
-    council_admin_sanction_number character varying(256),
-    council_admin_sanction_date timestamp without time zone,
-    govt_loan_proposal_number character varying(256),
-    govt_loan_proposal_date timestamp without time zone,
-    govt_admin_sanction_number character varying(256),
-    govt_admin_sanction_date timestamp without time zone,
-    createddate timestamp without time zone,
-    createdby bigint,
-    lastmodifiedby bigint
-);
-CREATE SEQUENCE seq_sub_scheme
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY sub_scheme ADD CONSTRAINT sub_scheme_code_schemeid_key UNIQUE (code, schemeid);
-ALTER TABLE ONLY sub_scheme ADD CONSTRAINT sub_scheme_pkey PRIMARY KEY (id);
-CREATE INDEX indx_schemeid ON sub_scheme USING btree (schemeid);
-ALTER TABLE ONLY sub_scheme ADD CONSTRAINT fk_sub_scheme_department FOREIGN KEY (department) REFERENCES eg_department(id); 
-ALTER TABLE ONLY sub_scheme ADD CONSTRAINT sub_scheme_r01 FOREIGN KEY (schemeid) REFERENCES scheme(id);
--------------------END-------------------
 ------------------START-----------------
 CREATE TABLE eg_surrendered_cheques (
     id bigint NOT NULL,

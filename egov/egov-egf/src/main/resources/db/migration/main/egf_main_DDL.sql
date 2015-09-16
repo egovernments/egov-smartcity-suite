@@ -46,24 +46,7 @@ ALTER TABLE ONLY bankentries_mis ADD CONSTRAINT sys_c0011774 FOREIGN KEY (functi
 -------------------END-------------------
 
 
-------------------START------------------
-CREATE TABLE cheque_dept_mapping (
-    id bigint NOT NULL,
-    allotedto bigint NOT NULL,
-    accountchequeid bigint NOT NULL
-);
-CREATE SEQUENCE seq_cheque_dept_mapping
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY cheque_dept_mapping ADD CONSTRAINT cheque_dept_mapping_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY cheque_dept_mapping ADD CONSTRAINT chequedept_dept_fk FOREIGN KEY (allotedto) REFERENCES eg_department(id);
-ALTER TABLE ONLY cheque_dept_mapping
-    ADD CONSTRAINT chequedept_cheque_fk FOREIGN KEY (accountchequeid) REFERENCES egf_account_cheques(id);
 
--------------------END-------------------
 
 ------------------START------------------
 CREATE TABLE closedperiods (
@@ -152,8 +135,6 @@ ALTER TABLE ONLY eg_billregister ADD CONSTRAINT eg_billregister_pkey PRIMARY KEY
 ALTER TABLE ONLY eg_billregister ADD CONSTRAINT eg_billregister_billnumber_key UNIQUE (billnumber);
 CREATE INDEX indx_billreg_expendituretype ON eg_billregister USING btree (expendituretype);
 CREATE INDEX indx_billreg_statusid ON eg_billregister USING btree (statusid);
-ALTER TABLE ONLY eg_billregister
-    ADD CONSTRAINT eg_billregister_billnumber_key UNIQUE (billnumber);
 ALTER TABLE ONLY eg_billregister
     ADD CONSTRAINT fk_br_fd FOREIGN KEY (fieldid) REFERENCES eg_boundary(id);
 ALTER TABLE ONLY eg_billregister
@@ -261,7 +242,49 @@ ALTER TABLE ONLY eg_billdetails
 ALTER TABLE ONLY eg_billdetails
     ADD CONSTRAINT fk_bd_gl FOREIGN KEY (glcodeid) REFERENCES chartofaccounts(id);
 -------------------END-------------------
+------------------START------------------
+CREATE TABLE tds (
+    id bigint NOT NULL,
+    type character varying(20),
+    ispaid smallint,
+    glcodeid bigint,
+    isactive smallint,
+    lastmodified timestamp without time zone,
+    created timestamp without time zone,
+    modifiedby bigint,
+    rate double precision,
+    effectivefrom timestamp without time zone,
+    createdby bigint NOT NULL,
+    remitted character varying(100),
+    bsrcode character varying(20),
+    description character varying(200),
+    partytypeid bigint,
+    bankid bigint,
+    caplimit double precision,
+    isearning character varying(1),
+    recoveryname character varying(50),
+    calculationtype character varying(50),
+    section character varying(50),
+    recovery_mode character(1) DEFAULT 'M'::bpchar NOT NULL,
+    remittance_mode character(1) DEFAULT 'M'::bpchar,
+    ifsccode character varying(16),
+    accountnumber character varying(32),
+    CONSTRAINT tds_ma CHECK ((recovery_mode = ANY (ARRAY['M'::bpchar, 'A'::bpchar])))
+);
+CREATE SEQUENCE seq_tds
+    START WITH 7
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+ALTER TABLE ONLY tds ADD CONSTRAINT tds_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY tds ADD CONSTRAINT tds_type_key UNIQUE (type);
+ALTER TABLE ONLY tds ADD CONSTRAINT fk_coa_tds FOREIGN KEY (glcodeid) REFERENCES chartofaccounts(id); 
+ALTER TABLE ONLY tds ADD CONSTRAINT fk_tds_bk FOREIGN KEY (bankid) REFERENCES bank(id); 
+ALTER TABLE ONLY tds ADD CONSTRAINT fk_tds_fy FOREIGN KEY (partytypeid) REFERENCES eg_partytype(id);
 
+
+-------------------END-------------------
 ------------------START------------------
 CREATE TABLE eg_billpayeedetails (
     id bigint NOT NULL,
@@ -293,25 +316,12 @@ ALTER TABLE ONLY eg_billpayeedetails
 
 
 ---------------------START----------------------
-ALTER TABLE ONLY eg_billdetails ADD CONSTRAINT fk_bd_brg FOREIGN KEY (billid) REFERENCES eg_billregister(id); 
-ALTER TABLE ONLY eg_billdetails ADD CONSTRAINT fk_bd_fun FOREIGN KEY (functionid) REFERENCES function(id); 
-ALTER TABLE ONLY eg_billdetails ADD CONSTRAINT fk_bd_gl FOREIGN KEY (glcodeid) REFERENCES chartofaccounts(id); 
 
-ALTER TABLE ONLY eg_billpayeedetails ADD CONSTRAINT fk_bdp_adt FOREIGN KEY (accountdetailtypeid) REFERENCES accountdetailtype(id); 
-ALTER TABLE ONLY eg_billpayeedetails ADD CONSTRAINT sys_c009660 FOREIGN KEY (tdsid) REFERENCES tds(id);
 
 ALTER TABLE ONLY bankbranch ADD CONSTRAINT fk_bk_bb FOREIGN KEY (bankid) REFERENCES bank(id); 
 
-ALTER TABLE ONLY eg_billregister ADD CONSTRAINT fk_br_fd FOREIGN KEY (fieldid) REFERENCES eg_boundary(id); 
 ALTER TABLE ONLY eg_billregister ADD CONSTRAINT sys_c0010469 FOREIGN KEY (state_id) REFERENCES eg_wf_states(id);
 
-ALTER TABLE ONLY eg_billregistermis ADD CONSTRAINT fk_brm_br FOREIGN KEY (billid) REFERENCES eg_billregister(id); 
-ALTER TABLE ONLY eg_billregistermis ADD CONSTRAINT fk_brm_bst FOREIGN KEY (billsubtype) REFERENCES eg_bill_subtype(id); 
-ALTER TABLE ONLY eg_billregistermis ADD CONSTRAINT fk_brm_dpt FOREIGN KEY (departmentid) REFERENCES eg_department(id); 
-ALTER TABLE ONLY eg_billregistermis ADD CONSTRAINT fk_brm_fd FOREIGN KEY (fundid) REFERENCES fund(id); 
-ALTER TABLE ONLY eg_billregistermis ADD CONSTRAINT fk_brm_fs FOREIGN KEY (fundsourceid) REFERENCES fundsource(id); 
-ALTER TABLE ONLY eg_billregistermis ADD CONSTRAINT fk_brm_fy FOREIGN KEY (financialyearid) REFERENCES financialyear(id); 
-ALTER TABLE ONLY eg_billregistermis ADD CONSTRAINT fk_brm_vh FOREIGN KEY (voucherheaderid) REFERENCES voucherheader(id); 
 ---------------------------------------END-----------------------------------------------------
 
 
@@ -373,50 +383,6 @@ ALTER TABLE ONLY miscbilldetail ADD CONSTRAINT fk_mbd_pvh FOREIGN KEY (payvhid) 
 ALTER TABLE ONLY miscbilldetail ADD CONSTRAINT fk_mbd_vh FOREIGN KEY (billvhid) REFERENCES voucherheader(id);
 -------------------END-------------------
 
-------------------START------------------
-CREATE TABLE tds (
-    id bigint NOT NULL,
-    type character varying(20),
-    ispaid smallint,
-    glcodeid bigint,
-    isactive smallint,
-    lastmodified timestamp without time zone,
-    created timestamp without time zone,
-    modifiedby bigint,
-    rate double precision,
-    effectivefrom timestamp without time zone,
-    createdby bigint NOT NULL,
-    remitted character varying(100),
-    bsrcode character varying(20),
-    description character varying(200),
-    partytypeid bigint,
-    bankid bigint,
-    caplimit double precision,
-    isearning character varying(1),
-    recoveryname character varying(50),
-    calculationtype character varying(50),
-    section character varying(50),
-    recovery_mode character(1) DEFAULT 'M'::bpchar NOT NULL,
-    remittance_mode character(1) DEFAULT 'M'::bpchar,
-    ifsccode character varying(16),
-    accountnumber character varying(32),
-    CONSTRAINT tds_ma CHECK ((recovery_mode = ANY (ARRAY['M'::bpchar, 'A'::bpchar])))
-);
-CREATE SEQUENCE seq_tds
-    START WITH 7
-    INCREMENT BY 1
-    MINVALUE 0
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY tds ADD CONSTRAINT tds_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY tds ADD CONSTRAINT tds_type_key UNIQUE (type);
-ALTER TABLE ONLY tds ADD CONSTRAINT fk_coa_tds FOREIGN KEY (glcodeid) REFERENCES chartofaccounts(id); 
-ALTER TABLE ONLY tds ADD CONSTRAINT fk_tds_bk FOREIGN KEY (bankid) REFERENCES bank(id); 
-ALTER TABLE ONLY tds ADD CONSTRAINT fk_tds_fy FOREIGN KEY (partytypeid) REFERENCES eg_partytype(id);
-
-
--------------------END-------------------
-
 
 ------------------START------------------
 CREATE TABLE transactionsummary (
@@ -475,9 +441,26 @@ CREATE TABLE eg_advancerequisition (
 );
 
 ALTER TABLE ONLY eg_advancerequisition ADD CONSTRAINT eg_advancerequisition_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY eg_advancerequisition ADD CONSTRAINT eg_advancerequisition_advancerequisitionnumber_key UNIQUE (advancerequisitionnumber);
 
 ---------------------------------END-------------------------------
+---------------------------------START---------------------------------------
+CREATE TABLE eg_advancerequisitiondetails (
+    id bigint NOT NULL,
+    advancerequisitionid bigint NOT NULL,
+    glcodeid bigint NOT NULL,
+    creditamount double precision,
+    debitamount double precision,
+    lastupdatedtime timestamp without time zone NOT NULL,
+    narration character varying(256),
+    functionid bigint
+);
+ALTER TABLE ONLY eg_advancerequisitiondetails ADD CONSTRAINT eg_advancerequisitiondetails_pkey PRIMARY KEY (id);
+CREATE INDEX indx_advreqdetail_advreqid ON eg_advancerequisitiondetails USING btree (advancerequisitionid);
+CREATE INDEX indx_advreqdetail_functionid ON eg_advancerequisitiondetails USING btree (functionid);
+CREATE INDEX indx_advreqdetail_glcodeid ON eg_advancerequisitiondetails USING btree (glcodeid);
+
+-----------------------------------END--------------------------------------
+
 ------------------------START------------------------------------------------
 CREATE TABLE eg_advancerequisitionmis (
     id bigint NOT NULL,
@@ -530,30 +513,10 @@ ALTER TABLE ONLY eg_advancerequisitionmis ADD CONSTRAINT fk_armissubfield_bdry F
 ALTER TABLE ONLY eg_advancerequisitionmis ADD CONSTRAINT fk_armisubsm_subscheme FOREIGN KEY (subschemeid) REFERENCES sub_scheme(id); 
 ALTER TABLE ONLY eg_advancerequisitionmis ADD CONSTRAINT fk_armisvh_vh FOREIGN KEY (voucherheaderid) REFERENCES voucherheader(id); 
 
-ALTER TABLE ONLY eg_advancereqpayeedetails ADD CONSTRAINT fk_arpd_adt FOREIGN KEY (accountdetailtypeid) REFERENCES accountdetailtype(id); 
-ALTER TABLE ONLY eg_advancereqpayeedetails ADD CONSTRAINT fk_arpd_ard FOREIGN KEY (advancerequisitiondetailid) REFERENCES eg_advancerequisitiondetails(id); 
-ALTER TABLE ONLY eg_advancereqpayeedetails ADD CONSTRAINT fk_arpd_tds FOREIGN KEY (tdsid) REFERENCES tds(id); 
+
  
 -----------------------------------END------------------------------------
 
-
----------------------------------START---------------------------------------
-CREATE TABLE eg_advancerequisitiondetails (
-    id bigint NOT NULL,
-    advancerequisitionid bigint NOT NULL,
-    glcodeid bigint NOT NULL,
-    creditamount double precision,
-    debitamount double precision,
-    lastupdatedtime timestamp without time zone NOT NULL,
-    narration character varying(256),
-    functionid bigint
-);
-ALTER TABLE ONLY eg_advancerequisitiondetails ADD CONSTRAINT eg_advancerequisitiondetails_pkey PRIMARY KEY (id);
-CREATE INDEX indx_advreqdetail_advreqid ON eg_advancerequisitiondetails USING btree (advancerequisitionid);
-CREATE INDEX indx_advreqdetail_functionid ON eg_advancerequisitiondetails USING btree (functionid);
-CREATE INDEX indx_advreqdetail_glcodeid ON eg_advancerequisitiondetails USING btree (glcodeid);
-
------------------------------------END--------------------------------------
 
 --------------------START----------------------------------------------------------
 CREATE TABLE eg_advancereqpayeedetails (
@@ -567,6 +530,9 @@ CREATE TABLE eg_advancereqpayeedetails (
     tdsid bigint,
     narration character varying(250)
 );
+ALTER TABLE ONLY eg_advancereqpayeedetails ADD CONSTRAINT fk_arpd_adt FOREIGN KEY (accountdetailtypeid) REFERENCES accountdetailtype(id); 
+ALTER TABLE ONLY eg_advancereqpayeedetails ADD CONSTRAINT fk_arpd_ard FOREIGN KEY (advancerequisitiondetailid) REFERENCES eg_advancerequisitiondetails(id); 
+ALTER TABLE ONLY eg_advancereqpayeedetails ADD CONSTRAINT fk_arpd_tds FOREIGN KEY (tdsid) REFERENCES tds(id); 
 ALTER TABLE ONLY eg_advancereqpayeedetails ADD CONSTRAINT eg_advancereqpayeedetails_pkey PRIMARY KEY (id);
 ALTER TABLE ONLY eg_advancerequisition ADD CONSTRAINT eg_advancerequisition_advancerequisitionnumber_key UNIQUE (advancerequisitionnumber);
 CREATE INDEX indx_arpd_adtid ON eg_advancereqpayeedetails USING btree (accountdetailtypeid);
@@ -625,10 +591,6 @@ CREATE TABLE eg_deduction_details (
 );
 ALTER TABLE ONLY eg_deduction_details ADD CONSTRAINT eg_deduction_details_pkey PRIMARY KEY (id);
 ALTER TABLE ONLY eg_deduction_details ADD CONSTRAINT fk_dedd_fy FOREIGN KEY (partytypeid) REFERENCES eg_partytype(id);
-ALTER TABLE ONLY eg_deduction_details
-    ADD CONSTRAINT fk_dedd_typw FOREIGN KEY (doctypeid) REFERENCES egw_typeofwork(id);
-ALTER TABLE ONLY eg_deduction_details
-    ADD CONSTRAINT fk_dedd_typw1 FOREIGN KEY (docsubtypeid) REFERENCES egw_typeofwork(id);
 
 CREATE SEQUENCE seq_eg_deduction_details
     START WITH 6
@@ -747,35 +709,25 @@ ALTER TABLE ONLY eg_remittance_gldtl ADD CONSTRAINT fk_rmtgl_gld FOREIGN KEY (gl
 ALTER TABLE ONLY eg_remittance_gldtl ADD CONSTRAINT FK_RGLDTL_TDS FOREIGN KEY (tdsid) REFERENCES tds(id);
 ---------------------END --------------------------------
 
-----------------START---------
-CREATE TABLE schedulemapping (
-    id bigint NOT NULL,
-    reporttype character varying(10) NOT NULL,
-    schedule character varying(10) NOT NULL,
-    schedulename character varying(250) NOT NULL,
-    repsubtype character varying(10),
-    createdby bigint NOT NULL,
-    createddate timestamp without time zone NOT NULL,
-    lastmodifiedby bigint,
-    lastmodifieddate timestamp without time zone,
-    isremission smallint
-);
-CREATE SEQUENCE seq_schedulemapping
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY schedulemapping ADD CONSTRAINT schedulemapping_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY schedulemapping ADD CONSTRAINT schedulemapping_schedule_reporttype_key UNIQUE (schedule, reporttype);
-
---------------------END------------------
 
 CREATE TABLE egf_cbill (
     id bigint
 );
 ---------------------END --------------------------------
-
+CREATE TABLE egf_instrumenttype (
+    id bigint NOT NULL,
+    type character varying(50),
+    isactive character varying(1),
+    createdby bigint NOT NULL,
+    lastmodifiedby bigint NOT NULL,
+    createddate timestamp without time zone NOT NULL,
+    lastmodifieddate timestamp without time zone NOT NULL
+);
+ALTER TABLE ONLY egf_instrumenttype
+    ADD CONSTRAINT egf_instrumenttype_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY egf_instrumenttype
+    ADD CONSTRAINT egf_instrumenttype_type_key UNIQUE (type);
+    
 CREATE TABLE egf_instrumentaccountcodes (
     id bigint NOT NULL,
     typeid bigint,
@@ -799,26 +751,16 @@ ALTER TABLE ONLY egf_instrumentaccountcodes
     ADD CONSTRAINT fk_egf_instracccodes_instrtype FOREIGN KEY (typeid) REFERENCES egf_instrumenttype(id);
 
     
-CREATE TABLE egf_instrumenttype (
-    id bigint NOT NULL,
-    type character varying(50),
-    isactive character varying(1),
-    createdby bigint NOT NULL,
-    lastmodifiedby bigint NOT NULL,
-    createddate timestamp without time zone NOT NULL,
-    lastmodifieddate timestamp without time zone NOT NULL
-);
-ALTER TABLE ONLY egf_instrumenttype
-    ADD CONSTRAINT egf_instrumenttype_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY egf_instrumenttype
-    ADD CONSTRAINT egf_instrumenttype_type_key UNIQUE (type);
-    
+
+
     
 CREATE TABLE egf_ecstype (
     id bigint NOT NULL,
     type character varying(30) NOT NULL,
     isactive bigint NOT NULL
 );
+ALTER TABLE ONLY egf_ecstype
+    ADD CONSTRAINT egf_ecstype_pkey PRIMARY KEY (id);
 ALTER TABLE ONLY egf_ecstype
     ADD CONSTRAINT egf_ecstype_type_key UNIQUE (type);
     
@@ -828,7 +770,24 @@ CREATE SEQUENCE seq_egf_ecstype
     NO MINVALUE
     NO MAXVALUE
     CACHE 20;
-    
+    CREATE TABLE egf_instrumentvoucher (
+    id bigint,
+    instrumentheaderid bigint,
+    voucherheaderid bigint,
+    createdby bigint NOT NULL,
+    lastmodifiedby bigint NOT NULL,
+    createddate timestamp without time zone NOT NULL,
+    lastmodifieddate timestamp without time zone NOT NULL
+);
+
+CREATE INDEX indx_iv_vh ON egf_instrumentvoucher USING btree (voucherheaderid);
+
+CREATE SEQUENCE seq_egf_instrumentvoucher
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
 CREATE TABLE egf_instrumentheader (
     id bigint NOT NULL,
     instrumentnumber character varying(20),
@@ -889,17 +848,6 @@ CREATE TABLE egf_instrumentotherdetails (
 
 
 
-CREATE TABLE egf_instrumentvoucher (
-    id bigint,
-    instrumentheaderid bigint,
-    voucherheaderid bigint,
-    createdby bigint NOT NULL,
-    lastmodifiedby bigint NOT NULL,
-    createddate timestamp without time zone NOT NULL,
-    lastmodifieddate timestamp without time zone NOT NULL
-);
-CREATE INDEX indx_iv_vh ON egf_instrumentvoucher USING btree (voucherheaderid);
-
 CREATE SEQUENCE seq_egf_instrumentheader
     START WITH 1
     INCREMENT BY 1
@@ -919,12 +867,6 @@ CREATE SEQUENCE seq_egf_instrumenttype
     NO MAXVALUE
     CACHE 1;
 
-CREATE SEQUENCE seq_egf_instrumentvoucher
-    START WITH 1
-    INCREMENT BY 1
-    MINVALUE 0
-    NO MAXVALUE
-    CACHE 1;
 ----------------START-------------------------------
 CREATE TABLE egf_fundingagency (
     id bigint NOT NULL,
@@ -1226,6 +1168,8 @@ CREATE TABLE egf_budget (
     document_number bigint
 );
 ALTER TABLE ONLY egf_budget
+    ADD CONSTRAINT egf_budget_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY egf_budget
     ADD CONSTRAINT egf_budget_name_key UNIQUE (name);
 ALTER TABLE ONLY egf_budget
     ADD CONSTRAINT fk_egf_budget_budget FOREIGN KEY (parent) REFERENCES egf_budget(id);
@@ -1256,6 +1200,8 @@ CREATE TABLE egf_budgetgroup (
     isactive smallint,
     updatedtimestamp timestamp without time zone NOT NULL
 );
+ALTER TABLE ONLY egf_budgetgroup
+    ADD CONSTRAINT egf_budgetgroup_pkey PRIMARY KEY (id);
 ALTER TABLE ONLY egf_budgetgroup
     ADD CONSTRAINT fk_egf_budgetgroup_majorcode FOREIGN KEY (majorcode) REFERENCES chartofaccounts(id);
 ALTER TABLE ONLY egf_budgetgroup
@@ -1292,6 +1238,9 @@ CREATE TABLE egf_budgetdetail (
     uniqueno character varying(32),
     planningpercent real
 );
+
+ALTER TABLE ONLY egf_budgetdetail
+    ADD CONSTRAINT egf_budgetdetail_pkey PRIMARY KEY (id);
 ALTER TABLE ONLY egf_budgetdetail
     ADD CONSTRAINT egf_budgetdetail_budget_budgetgroup_scheme_subscheme_functi_key UNIQUE (budget, budgetgroup, scheme, subscheme, functionary, function, executing_department, fund);
 ALTER TABLE ONLY egf_budgetdetail
@@ -1319,6 +1268,22 @@ CREATE INDEX budgetdetail_budgetgroup ON egf_budgetdetail USING btree (budgetgro
 CREATE INDEX budgetdetail_dept ON egf_budgetdetail USING btree (executing_department);
 CREATE INDEX budgetdetail_function ON egf_budgetdetail USING btree (function);
 
+CREATE TABLE egf_reappropriation_misc (
+    id bigint NOT NULL,
+    sequence_number character varying(1024),
+    reappropriation_date timestamp without time zone,
+    remarks character varying(1024),
+    state_id bigint,
+    modifiedby bigint,
+    modifieddate timestamp without time zone,
+    createdby bigint,
+    createddate timestamp without time zone
+);
+
+ALTER TABLE ONLY egf_reappropriation_misc
+    ADD CONSTRAINT egf_reappropriation_misc_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY egf_reappropriation_misc
+    ADD CONSTRAINT egf_reappropriation_misc_sequence_number_key UNIQUE (sequence_number);
 CREATE TABLE egf_budget_reappropriation (
     id bigint NOT NULL,
     budgetdetail bigint NOT NULL,
@@ -1336,6 +1301,8 @@ CREATE TABLE egf_budget_reappropriation (
     status bigint
 );
 ALTER TABLE ONLY egf_budget_reappropriation
+    ADD CONSTRAINT egf_budget_reappropriation_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY egf_budget_reappropriation
     ADD CONSTRAINT fk_egf_budgetdetail FOREIGN KEY (budgetdetail) REFERENCES egf_budgetdetail(id);
 ALTER TABLE ONLY egf_budget_reappropriation
     ADD CONSTRAINT fk_egf_reappropriation_state FOREIGN KEY (state_id) REFERENCES eg_wf_states(id);
@@ -1344,19 +1311,7 @@ ALTER TABLE ONLY egf_budget_reappropriation
 ALTER TABLE ONLY egf_budget_reappropriation
     ADD CONSTRAINT fk_reappropriation_misc FOREIGN KEY (reappropriation_misc) REFERENCES egf_reappropriation_misc(id);
     
-CREATE TABLE egf_reappropriation_misc (
-    id bigint NOT NULL,
-    sequence_number character varying(1024),
-    reappropriation_date timestamp without time zone,
-    remarks character varying(1024),
-    state_id bigint,
-    modifiedby bigint,
-    modifieddate timestamp without time zone,
-    createdby bigint,
-    createddate timestamp without time zone
-);
-ALTER TABLE ONLY egf_reappropriation_misc
-    ADD CONSTRAINT egf_reappropriation_misc_sequence_number_key UNIQUE (sequence_number);
+
 
 CREATE TABLE egf_budget_usage (
     id bigint NOT NULL,
@@ -1370,6 +1325,9 @@ CREATE TABLE egf_budget_usage (
     budgetdetailid bigint NOT NULL,
     appropriationnumber character varying(32)
 );
+
+ALTER TABLE ONLY egf_budget_usage
+    ADD CONSTRAINT egf_budget_usage_pkey PRIMARY KEY (id);  
 ALTER TABLE ONLY egf_budget_usage
     ADD CONSTRAINT fk_fp_bu FOREIGN KEY (financialyearid) REFERENCES financialyear(id);
     
@@ -1404,23 +1362,10 @@ CREATE SEQUENCE seq_egf_budget_usage
     MINVALUE 0
     NO MAXVALUE
     CACHE 1;
-ALTER TABLE ONLY egf_budget
-    ADD CONSTRAINT egf_budget_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY egf_budgetdetail
-    ADD CONSTRAINT egf_budgetdetail_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY egf_budgetgroup
-    ADD CONSTRAINT egf_budgetgroup_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY egf_budget_reappropriation
-    ADD CONSTRAINT egf_budget_reappropriation_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY egf_reappropriation_misc
-    ADD CONSTRAINT egf_reappropriation_misc_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY egf_budget_usage
-    ADD CONSTRAINT egf_budget_usage_pkey PRIMARY KEY (id);    
+  
     --------------------------
 
 CREATE TABLE egf_account_cheques (
@@ -1447,7 +1392,24 @@ ALTER TABLE ONLY egf_account_cheques
     ADD CONSTRAINT egf_account_cheques_pkey PRIMARY KEY (id);
 ALTER TABLE ONLY egf_account_cheques
     ADD CONSTRAINT fk_ba_chq FOREIGN KEY (bankaccountid) REFERENCES bankaccount(id);    
-    
+    ------------------START------------------
+CREATE TABLE cheque_dept_mapping (
+    id bigint NOT NULL,
+    allotedto bigint NOT NULL,
+    accountchequeid bigint NOT NULL
+);
+CREATE SEQUENCE seq_cheque_dept_mapping
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER TABLE ONLY cheque_dept_mapping ADD CONSTRAINT cheque_dept_mapping_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY cheque_dept_mapping ADD CONSTRAINT chequedept_dept_fk FOREIGN KEY (allotedto) REFERENCES eg_department(id);
+ALTER TABLE ONLY cheque_dept_mapping
+    ADD CONSTRAINT chequedept_cheque_fk FOREIGN KEY (accountchequeid) REFERENCES egf_account_cheques(id);
+
+-------------------END-------------------
 CREATE TABLE egf_dishonorcheque (
     id bigint NOT NULL,
     instrumentheaderid bigint NOT NULL,

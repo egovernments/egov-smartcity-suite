@@ -16,6 +16,7 @@ INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (136, 'Find Aggregated Status Reports', true, NULL, 36, 'Aggregated Status Reports', 5);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (137, 'View PieCharts', true, NULL, 36, 'View PieCharts', 6);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (138, 'Register Complaint', true, NULL, 36, 'Register Complaint', 1);
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (157, 'Workflow', true, null, 1, 'Workflow', 1);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (300, 'Pgr Masters', true, NULL, 36, 'Masters', 2);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (301, 'PGRComplaints', true, NULL, 36, 'Complaint', 2);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (302, 'EGF', true, 'egf', NULL, 'Financials', 4);
@@ -115,9 +116,15 @@ INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (409, 'Drill Down Report', true, NULL, 407, 'Drill Down Report', 2);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (410, 'Complaint Type Wise Report', true, NULL, 407, 'Complaint Type Wise Report', 3);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (405, 'Billbased Services', true, NULL, 369, 'Bill Based Service', 1);
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (412,'Trade License',true,'tl',null,'Trade License', null);
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (413,'Trade License Reports',true,'tl',412,'Trade License Reports', null);
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (414,'Trade License Transactions',true,'tl',412,'Trade License Transactions', null);
+insert into EG_MODULE (ID,NAME,ENABLED,CONTEXTROOT,PARENTMODULE,DISPLAYNAME,ORDERNUMBER) VALUES (415,'Search Trade',true,'tl',412,'Search Trade', null);
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (418,'Works Management',true,'egworks',null,'Works Management',11);
 ------------------END---------------------
 
 -----------------START--------------------
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (56, 'File Download', '/downloadfile', NULL, 300, 0, 'File Download', false, 'egi', 0, 1, '2015-08-28 10:43:35.552035', 1, '2015-08-28 10:43:35.552035', 1);
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (895,'BpaFeeDetailsInRegExtn','/extd/fee/feeDetailsExtn-showFeeDetailsinRegistration.action',null,371,1,'Submit BPAfee Extn','false','bpa',0,1,'2015-07-15 19:14:54.980736',1,'2015-07-15 19:14:54.980736',370);
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (896,'BuildingMeasurementDetailsExtn','/extd/buildingdetails/buildingDetailsExtn.action',null,371,2,'BuildingMeasurementDetailsExtn','false','bpa',0,1,'2015-07-15 19:14:54.980736',1,'2015-07-15 19:14:54.980736',370);
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (897,'BuildingMeasurementFormExtn','/extd/buildingdetails/buildingDetailsExtn-newForm.action',null,371,3,'BuildingMeasurementFormExtn','false','bpa',0,1,'2015-07-15 19:14:54.980736',1,'2015-07-15 19:14:54.980736',370);
@@ -1254,23 +1261,6 @@ Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, di
 INSERT INTO eg_address (housenobldgapt, subdistrict, postoffice, landmark, country, userid, type, streetroadline, citytownvillage, arealocalitysector, district, state, pincode, id, version) VALUES ('001', NULL, NULL, 'Bank Road', NULL, 1, 'PROPERTYADDRESS', NULL, NULL, NULL, NULL, NULL, '532001', 1, 0);
 ------------------END---------------------
 
-------------------------START---------------------------
-INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (58, 2015, '2015-04-01 00:00:00', '2015-04-01 00:00:00', '2016-03-31 00:00:00', 391, '2015-08-28 10:44:03.289636', '2015-16', 'Yearly');
-INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (81, 1, '2015-04-01 00:00:00', '2015-04-01 00:00:00', '2015-09-30 00:00:00', 359, '2015-08-28 10:45:13.280134', 'I/15-16', NULL);
-INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (82, 42015, '2015-04-01 00:00:00', '2015-04-01 00:00:00', '2015-04-30 00:00:00', 391, '2015-08-28 10:45:34.63278', 'WT_MC-I/15-16', 'Monthly');
-INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (83, 52015, '2015-05-01 00:00:00', '2015-05-01 00:00:00', '2015-05-31 00:00:00', 391, '2015-08-28 10:45:34.63278', 'WT_MC-II/15-16', 'Monthly');
-INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (84, 62015, '2015-06-01 00:00:00', '2015-06-01 00:00:00', '2015-06-30 00:00:00', 391, '2015-08-28 10:45:34.63278', 'WT_MC-III/15-16', 'Monthly');
-INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (85, 72015, '2015-07-01 00:00:00', '2015-07-01 00:00:00', '2015-07-31 00:00:00', 391, '2015-08-28 10:45:34.63278', 'WT_MC-IV/15-16', 'Monthly');
-INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (86, 82015, '2015-08-01 00:00:00', '2015-08-01 00:00:00', '2015-08-31 00:00:00', 391, '2015-08-28 10:45:34.63278', 'WT_MC-V/15-16', 'Monthly');
-INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (87, 92015, '2015-09-01 00:00:00', '2015-09-01 00:00:00', '2015-09-30 00:00:00', 391, '2015-08-28 10:45:34.63278', 'WT_MC-VI/15-16', 'Monthly');
-INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (88, 102015, '2015-10-01 00:00:00', '2015-10-01 00:00:00', '2015-10-31 00:00:00', 391, '2015-08-28 10:45:34.63278', 'WT_MC-VII/15-16', 'Monthly');
-INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (89, 112015, '2015-11-01 00:00:00', '2015-11-01 00:00:00', '2015-11-30 00:00:00', 391, '2015-08-28 10:45:34.63278', 'WT_MC-VIII/15-16', 'Monthly');
-INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (90, 122015, '2015-12-01 00:00:00', '2015-12-01 00:00:00', '2015-12-31 00:00:00', 391, '2015-08-28 10:45:34.63278', 'WT_MC-IX/15-16', 'Monthly');
-INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (91, 12015, '2016-01-01 00:00:00', '2016-01-01 00:00:00', '2016-01-31 00:00:00', 391, '2015-08-28 10:45:34.63278', 'WT_MC-X/15-16', 'Monthly');
-INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (92, 22015, '2016-02-01 00:00:00', '2016-02-01 00:00:00', '2016-02-28 00:00:00', 391, '2015-08-28 10:45:34.63278', 'WT_MC-XI/15-16', 'Monthly');
-INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (93, 32015, '2016-03-01 00:00:00', '2016-03-01 00:00:00', '2016-03-31 00:00:00', 391, '2015-08-28 10:45:34.63278', 'WT_MC-XII/15-16', 'Monthly');
-------------------END---------------------
-
 -----------------START-------------------
 INSERT INTO eg_location (id, name, description, locationid, createddate, lastmodifieddate, isactive, islocation) VALUES (2, 'Z01C1', 'Zone 1 Counter 1', 86, '2015-08-28 10:45:26.83161', '2015-08-28 10:45:26.83161', 1, 0);
 ------------------END---------------------
@@ -2398,16 +2388,12 @@ Insert into EG_ROLEACTION (roleid, actionid) values (4,43);
 Insert into EG_ROLEACTION (roleid, actionid) values (15,43);
 Insert into EG_ROLEACTION (roleid, actionid) values (3,44);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,44);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,45);
-Insert into EG_ROLEACTION (roleid, actionid) values (3,45);
 Insert into EG_ROLEACTION (roleid, actionid) values (3,46);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,46);
 Insert into EG_ROLEACTION (roleid, actionid) values (3,47);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,47);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,50);
 Insert into EG_ROLEACTION (roleid, actionid) values (3,50);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,53);
-Insert into EG_ROLEACTION (roleid, actionid) values (3,53);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,54);
 Insert into EG_ROLEACTION (roleid, actionid) values (3,54);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,55);
@@ -2426,7 +2412,6 @@ Insert into EG_ROLEACTION (roleid, actionid) values (16,58);
 Insert into EG_ROLEACTION (roleid, actionid) values (1,58);
 Insert into EG_ROLEACTION (roleid, actionid) values (2,58);
 Insert into EG_ROLEACTION (roleid, actionid) values (12,58);
-Insert into EG_ROLEACTION (roleid, actionid) values (19,58);
 Insert into EG_ROLEACTION (roleid, actionid) values (15,58);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,58);
 Insert into EG_ROLEACTION (roleid, actionid) values (3,58);
@@ -2450,7 +2435,6 @@ Insert into EG_ROLEACTION (roleid, actionid) values (14,59);
 Insert into EG_ROLEACTION (roleid, actionid) values (11,59);
 Insert into EG_ROLEACTION (roleid, actionid) values (12,59);
 Insert into EG_ROLEACTION (roleid, actionid) values (17,59);
-Insert into EG_ROLEACTION (roleid, actionid) values (19,59);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,62);
 Insert into EG_ROLEACTION (roleid, actionid) values (1,62);
 Insert into EG_ROLEACTION (roleid, actionid) values (2,62);
@@ -2500,13 +2484,6 @@ Insert into EG_ROLEACTION (roleid, actionid) values (4,1041);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,1044);
 Insert into EG_ROLEACTION (roleid, actionid) values (3,1049);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,1049);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1212);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1213);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,1223);
-Insert into EG_ROLEACTION (roleid, actionid) values (5,1255);
-Insert into EG_ROLEACTION (roleid, actionid) values (11,1255);
-Insert into EG_ROLEACTION (roleid, actionid) values (16,1255);
-Insert into EG_ROLEACTION (roleid, actionid) values (12,1255);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,1340);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,4);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,4);
@@ -2813,8 +2790,6 @@ Insert into EG_ROLEACTION (roleid, actionid) values (13,1263);
 Insert into EG_ROLEACTION (roleid, actionid) values (5,1265);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,1265);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,1267);
-Insert into EG_ROLEACTION (roleid, actionid) values (19,1267);
-Insert into EG_ROLEACTION (roleid, actionid) values (19,1268);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,1268);
 Insert into EG_ROLEACTION (roleid, actionid) values (5,1271);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,1271);
@@ -2822,12 +2797,9 @@ Insert into EG_ROLEACTION (roleid, actionid) values (16,1271);
 Insert into EG_ROLEACTION (roleid, actionid) values (16,1272);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,1272);
 Insert into EG_ROLEACTION (roleid, actionid) values (5,1272);
-Insert into EG_ROLEACTION (roleid, actionid) values (19,1273);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,1273);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,1274);
-Insert into EG_ROLEACTION (roleid, actionid) values (19,1274);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,1277);
-Insert into EG_ROLEACTION (roleid, actionid) values (19,1277);
 Insert into EG_ROLEACTION (roleid, actionid) values (14,1280);
 Insert into EG_ROLEACTION (roleid, actionid) values (14,1281);
 Insert into EG_ROLEACTION (roleid, actionid) values (14,1282);
@@ -2921,4 +2893,3 @@ INSERT INTO eg_wf_types (id, module, type, link, createdby, createddate, lastmod
 INSERT INTO eg_wf_types (id, module, type, link, createdby, createddate, lastmodifiedby, lastmodifieddate, renderyn, groupyn, typefqn, displayname, version) VALUES (14, 2, 'WaterConnectionDetails', '/wtms/application/update/:ID', 1, '2015-08-28 10:45:18.201078', 1, '2015-08-28 10:45:18.201078', 'Y', 'N', 'org.egov.wtms.application.entity.WaterConnectionDetails', 'Water Tap Connection', 0);
 INSERT INTO eg_wf_types (id, module, type, link, createdby, createddate, lastmodifiedby, lastmodifieddate, renderyn, groupyn, typefqn, displayname, version) VALUES (16, 365, 'ReceiptHeader', '/collection/receipts/collectionsWorkflow-listWorkflow.action?inboxItemDetails=:ID', 1, '2015-08-28 10:45:35.929319', 1, '2015-08-28 10:45:35.929319', 'Y', 'N', 'org.egov.collection.entity.ReceiptHeader', 'Collections Receipt Header', 0);
 ------------------END---------------------
-

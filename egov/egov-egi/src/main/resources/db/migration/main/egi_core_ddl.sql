@@ -346,7 +346,7 @@ ALTER TABLE ONLY eg_citypreferences ADD CONSTRAINT eg_citypreferences_logo_fkey 
 ------------------START------------------
 CREATE TABLE eg_city (
     domainurl character varying(128) NOT NULL,
-    boundary integer NOT NULL,
+    boundary integer ,
     name character varying(256) NOT NULL,
     localname character varying(256),
     id bigint NOT NULL,
