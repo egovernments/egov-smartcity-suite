@@ -44,24 +44,53 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-	<title><s:text name='licenseCategory.Search' /></title>
+	<title>
+	<s:if test="%{userMode=='new'}">
+		<s:text name='licenseSubCategory.create' />
+	</s:if>
+	<s:elseif test="%{userMode=='edit'}">
+		<s:text name='licenseSubCategory.modify' />
+	</s:elseif>	
+	<s:elseif test="%{userMode=='view'}">
+		<s:text name='licenseSubCategory.view' />
+	</s:elseif>	
+	</title>
 	<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 	<script>
-	function validateFormAndSubmit(){
-			var categoryId= dom.get("categoryId").value;
-			 if (categoryId == "-1"){
-				showMessage('category_error', '<s:text name="licenseCategory.category.null" />');
-				return false;
-			} else {
-			    	clearMessage('category_error')
-			    	document.licenseCategoryForm.action='${pageContext.request.contextPath}/masters/licenseCategory-newform.action?id=' + categoryId;
-			    	document.licenseCategoryForm.submit();
-			 	}
+
+	function bodyOnLoad(){
+		if(dom.get("userMode").value=='view'){
+			 dom.get("code").disabled=true;
+			 dom.get("name").disabled=true;
+			 dom.get("categoryId").disabled=true;
 		}
+	}
+
+	function validateFormAndSubmit(){
+		var code= dom.get("code").value;
+		var name= dom.get("name").value;
+		var categoryId= dom.get("categoryId").value;
+		if (name == '' || name == null){
+			showMessage('subcategory_error', '<s:text name="tradelic.master.tradesubcategoryname.null" />');
+			return false;
+		} else if (code == '' || code == null){
+			showMessage('subcategory_error', '<s:text name="tradelic.master.tradesubcategorycode.null" />');
+			return false;
+		}  else if (categoryId == '-1'){
+			showMessage('subcategory_error', '<s:text name="tradelic.master.tradesubcategoryid.null" />');
+			return false;
+		} 
+		else {
+		    	clearMessage('subcategory_error')
+		    	document.licenseSubCategoryForm.action='${pageContext.request.contextPath}/masters/licenseSubCategory-save.action';
+		    	document.licenseSubCategoryForm.submit();
+		 	}
+	}
+
 	</script>
 </head>
-<body>
-	<div id="category_error" class="errorstyle" style="display:none;"></div> 
+<body onload="bodyOnLoad();">
+	<div id="subcategory_error" class="errorstyle" style="display:none;"></div> 
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel-body">
@@ -71,18 +100,51 @@
 					<s:fielderror/>
 				</div>			
 			</s:if>
-			<s:form name="licenseCategoryForm" action="licenseCategory" theme="simple"
+			<s:if test="%{hasActionMessages()}">
+			<div class="messagestyle">
+				<s:actionmessage theme="simple" />
+			</div>
+			</s:if>
+			<s:form name="licenseSubCategoryForm" action="licenseSubCategory" theme="simple"
 				cssClass="form-horizontal form-groups-bordered"> 
 				<s:token name="%{tokenName()}"/> 
+				<s:push value="model">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
-						<div class="panel-title text-left"><s:text name='licenseCategory.Search' /></div>
+						<div class="panel-title text-left">
+							<s:if test="%{userMode=='new'}">
+								<s:text name='licenseSubCategory.create' />
+							</s:if>
+							<s:elseif test="%{userMode=='edit'}">
+								<s:text name='licenseSubCategory.modify' />
+							</s:elseif>	
+							<s:elseif test="%{userMode=='view'}">
+								<s:text name='licenseSubCategory.view' />
+							</s:elseif>	
+						</div>
 					</div>
 					<div class="panel-body custom-form">
+					
+						<s:hidden name="id" /> 
 						<s:hidden name="userMode" id="userMode"/>
+					
 						<div class="form-group">
 							<label for="field-1" class="col-sm-2 control-label text-right"><span class="mandatory"></span><s:text
-									name="licenseCategory.category.lbl" /> :</label>
+									name="licenseSubCategory.name.lbl" /> :</label>
+							<div class="col-sm-3 add-margin">
+								<s:textfield id="name"	name="name" value="%{name}" />
+							</div>
+							
+							<label for="field-1" class="col-sm-2 control-label text-right"><span class="mandatory"></span><s:text
+									name="licenseSubCategory.code.lbl" /> :</label>
+							<div class="col-sm-3 add-margin">
+								<s:textfield id="code"	name="code" value="%{code}" />
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label for="field-1" class="col-sm-2 control-label text-right"><span class="mandatory"></span><s:text
+									name="licenseSubCategory.category.lbl" /> :</label>
 							<div class="col-sm-3 add-margin">
 								<s:select headerKey="-1"
 										headerValue="%{getText('default.select')}" name="categoryId"
@@ -91,23 +153,24 @@
 										/>
 							</div>
 						</div>
+						
 					</div>
 				</div>
+				</s:push>
 			</s:form>
 
 			<div class="row">
 				<div class="text-center">
-				<s:if test="%{userMode=='edit'}">
-					<button type="button" id="btnedit" class="btn btn-success" onclick="return validateFormAndSubmit();">
-						Modify</button>
-				</s:if>
-				<s:elseif test="%{userMode=='view'}">
-					<button type="button" id="btnview" class="btn btn-success" onclick="return validateFormAndSubmit();">
-						View</button>
-				</s:elseif>
+					<s:if test="%{userMode!='view'}">
+						<button type="button" id="btnsave" class="btn btn-success" onclick="return validateFormAndSubmit();">
+							Save</button>
+					</s:if>
 					<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
 						Close</button>
 				</div>
+			</div>
+			<div align="left" class="mandatory1" style="font-size: 11px">
+			  &nbsp;&nbsp;Mandatory Fields *
 			</div>
 		</div>
 		</div>

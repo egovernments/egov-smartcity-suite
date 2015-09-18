@@ -39,7 +39,6 @@
  ******************************************************************************/
 package org.egov.tl.domain.entity;
 
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.models.BaseModel;
@@ -51,19 +50,19 @@ import org.hibernate.validator.constraints.Length;
 @Unique(fields = { "code" }, id = "id", tableName = "EGTL_MSTR_SUB_CATEGORY", columnName = { "code" }, message = "masters.code.isunique")
 public class SubCategory extends BaseModel {
     private static final long serialVersionUID = 1L;
-    private boolean approvalrequired;
     private LicenseCategory category;
-    @Required(message = "masters.master.trade.code")
-    @Length(max = 32, message = "masters.master.code.length")
+    @Required(message = "tradelic.master.tradesubcategorycode.null")
+    @Length(max = 32, message = "tradelic.master.tradesubcategorycode.length")
     private String code;
-    @Required(message = "masters.master.trade.feebasedon")
-    @Length(max = 40, message = "masters.master.feebasedon.length")
+    
+    @Required(message = "tradelic.master.tradesubcategoryname.null")
+    @Length(max = 256, message = "tradelic.master.tradesubcategoryname.length")
+    private String name;
+    
+    private boolean approvalrequired;
+    
     private String feeBasedOn;
     private LicenseType licenseType;
-    @Required(message = "masters.master.trade.tradename")
-    @Length(max = 256, message = "masters.master.tradename.length")
-    //@OptionalPattern(regex = ValidatorConstants.alphaNumericwithSpace, message = "tradelicense.error.tradename.text")
-    private String name;
     private NatureOfBusiness natureOfBusiness;
     private boolean pfaApplicable;
     private Schedule scheduleMaster;
@@ -71,8 +70,6 @@ public class SubCategory extends BaseModel {
     private LicenseSubType licenseSubType;
     private Boolean nocApplicable;
 
-    public SubCategory() {
-    }
 
     public LicenseCategory getCategory() {
         return category;
@@ -82,41 +79,11 @@ public class SubCategory extends BaseModel {
         return code;
     }
 
-    public String getFeeBasedOn() {
-        return feeBasedOn;
-    }
-
-    public LicenseType getLicenseType() {
-        return licenseType;
-    }
-
+ 
     public String getName() {
         return name;
     }
 
-    public NatureOfBusiness getNatureOfBusiness() {
-        return natureOfBusiness;
-    }
-
-    public Schedule getScheduleMaster() {
-        return scheduleMaster;
-    }
-
-    public String getSectionApplicable() {
-        return sectionApplicable;
-    }
-
-    public boolean isApprovalrequired() {
-        return approvalrequired;
-    }
-
-    public boolean isPfaApplicable() {
-        return pfaApplicable;
-    }
-
-    public void setApprovalrequired(final boolean approvalrequired) {
-        this.approvalrequired = approvalrequired;
-    }
 
     public void setCategory(final LicenseCategory category) {
         this.category = category;
@@ -126,49 +93,11 @@ public class SubCategory extends BaseModel {
         this.code = code;
     }
 
-    public void setFeeBasedOn(final String feeBasedOn) {
-        this.feeBasedOn = feeBasedOn;
-    }
-
-    public void setLicenseType(final LicenseType licenseType) {
-        this.licenseType = licenseType;
-    }
 
     public void setName(final String name) {
         this.name = name;
     }
 
-    public void setNatureOfBusiness(final NatureOfBusiness natureOfBusiness) {
-        this.natureOfBusiness = natureOfBusiness;
-    }
-
-    public void setPfaApplicable(final boolean pfaApplicable) {
-        this.pfaApplicable = pfaApplicable;
-    }
-
-    public void setScheduleMaster(final Schedule scheduleMaster) {
-        this.scheduleMaster = scheduleMaster;
-    }
-
-    public void setSectionApplicable(final String sectionApplicable) {
-        this.sectionApplicable = sectionApplicable;
-    }
-
-    public LicenseSubType getLicenseSubType() {
-        return licenseSubType;
-    }
-
-    public void setLicenseSubType(final LicenseSubType licenseSubType) {
-        this.licenseSubType = licenseSubType;
-    }
-
-    public Boolean isNocApplicable() {
-        return nocApplicable;
-    }
-
-    public void setNocApplicable(final Boolean nocApplicable) {
-        this.nocApplicable = nocApplicable;
-    }
 
     @Override
     public String toString() {
@@ -176,18 +105,81 @@ public class SubCategory extends BaseModel {
         str.append("SubCategory={");
         str.append("  name=").append(name == null ? "null" : name.toString());
         str.append("  code=").append(code == null ? "null" : code.toString());
-        str.append("  scheduleMaster=").append(scheduleMaster == null ? "null" : scheduleMaster.toString());
-        str.append("  natureOfBusiness=").append(natureOfBusiness == null ? "null" : natureOfBusiness.toString());
         str.append("  category=").append(category == null ? "null" : category.toString());
-        str.append("  pfaApplicable=").append(pfaApplicable);
-        str.append("  approvalrequired=").append(approvalrequired);
-        str.append("  licenseType=").append(licenseType == null ? "null" : licenseType.toString());
-        str.append("  feeBasedOn=").append(feeBasedOn == null ? "null" : feeBasedOn.toString());
-        str.append("  sectionApplicable=").append(sectionApplicable == null ? "null" : sectionApplicable.toString());
-        str.append("  licenseSubType=").append(licenseSubType == null ? "null" : licenseSubType.toString());
-        str.append("  nocApplicable=").append(nocApplicable);
         str.append("}");
         return str.toString();
+    }
+
+    public boolean isApprovalrequired() {
+        return approvalrequired;
+    }
+
+    public void setApprovalrequired(boolean approvalrequired) {
+        this.approvalrequired = approvalrequired;
+    }
+
+    public String getFeeBasedOn() {
+        return feeBasedOn;
+    }
+
+    public void setFeeBasedOn(String feeBasedOn) {
+        this.feeBasedOn = feeBasedOn;
+    }
+
+    public LicenseType getLicenseType() {
+        return licenseType;
+    }
+
+    public void setLicenseType(LicenseType licenseType) {
+        this.licenseType = licenseType;
+    }
+
+    public NatureOfBusiness getNatureOfBusiness() {
+        return natureOfBusiness;
+    }
+
+    public void setNatureOfBusiness(NatureOfBusiness natureOfBusiness) {
+        this.natureOfBusiness = natureOfBusiness;
+    }
+
+    public boolean isPfaApplicable() {
+        return pfaApplicable;
+    }
+
+    public void setPfaApplicable(boolean pfaApplicable) {
+        this.pfaApplicable = pfaApplicable;
+    }
+
+    public Schedule getScheduleMaster() {
+        return scheduleMaster;
+    }
+
+    public void setScheduleMaster(Schedule scheduleMaster) {
+        this.scheduleMaster = scheduleMaster;
+    }
+
+    public String getSectionApplicable() {
+        return sectionApplicable;
+    }
+
+    public void setSectionApplicable(String sectionApplicable) {
+        this.sectionApplicable = sectionApplicable;
+    }
+
+    public LicenseSubType getLicenseSubType() {
+        return licenseSubType;
+    }
+
+    public void setLicenseSubType(LicenseSubType licenseSubType) {
+        this.licenseSubType = licenseSubType;
+    }
+
+    public Boolean isNocApplicable() {
+        return nocApplicable;
+    }
+
+    public void setNocApplicable(Boolean nocApplicable) {
+        this.nocApplicable = nocApplicable;
     }
 
 }

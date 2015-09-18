@@ -44,24 +44,24 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-	<title><s:text name='licenseCategory.Search' /></title>
+	<title><s:text name='licenseSubCategory.Search' /></title>
 	<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 	<script>
 	function validateFormAndSubmit(){
-			var categoryId= dom.get("categoryId").value;
-			 if (categoryId == "-1"){
-				showMessage('category_error', '<s:text name="licenseCategory.category.null" />');
+			var subCategoryId= dom.get("subCategoryId").value;
+			 if (subCategoryId == "-1"){
+				showMessage('subCategory_error', '<s:text name="licenseSubCategory.category.null" />');
 				return false;
 			} else {
-			    	clearMessage('category_error')
-			    	document.licenseCategoryForm.action='${pageContext.request.contextPath}/masters/licenseCategory-newform.action?id=' + categoryId;
-			    	document.licenseCategoryForm.submit();
+			    	clearMessage('subCategory_error')
+			    	document.licenseSubCategoryForm.action='${pageContext.request.contextPath}/masters/licenseSubCategory-newform.action?id=' + subCategoryId;
+			    	document.licenseSubCategoryForm.submit();
 			 	}
 		}
 	</script>
 </head>
 <body>
-	<div id="category_error" class="errorstyle" style="display:none;"></div> 
+	<div id="subCategory_error" class="errorstyle" style="display:none;"></div> 
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel-body">
@@ -71,23 +71,23 @@
 					<s:fielderror/>
 				</div>			
 			</s:if>
-			<s:form name="licenseCategoryForm" action="licenseCategory" theme="simple"
+			<s:form name="licenseSubCategoryForm" action="licenseSubCategory" theme="simple"
 				cssClass="form-horizontal form-groups-bordered"> 
 				<s:token name="%{tokenName()}"/> 
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
-						<div class="panel-title text-left"><s:text name='licenseCategory.Search' /></div>
+						<div class="panel-title text-left"><s:text name='licenseSubCategory.Search' /></div>
 					</div>
 					<div class="panel-body custom-form">
 						<s:hidden name="userMode" id="userMode"/>
 						<div class="form-group">
 							<label for="field-1" class="col-sm-2 control-label text-right"><span class="mandatory"></span><s:text
-									name="licenseCategory.category.lbl" /> :</label>
+									name="licenseSubCategory.subCategory.lbl" /> :</label>
 							<div class="col-sm-3 add-margin">
 								<s:select headerKey="-1"
-										headerValue="%{getText('default.select')}" name="categoryId"
-										id="categoryId" listKey="key" listValue="value"
-										list="licenseCategoryMap" cssClass="form-control" value="%{categoryId}" 
+										headerValue="%{getText('default.select')}" name="subCategoryId"
+										id="subCategoryId" listKey="key" listValue="value"
+										list="licenseSubCategoryMap" cssClass="form-control" value="%{subCategoryId}" 
 										/>
 							</div>
 						</div>
