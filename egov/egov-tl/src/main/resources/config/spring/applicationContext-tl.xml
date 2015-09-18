@@ -64,21 +64,21 @@
 	<bean id="workflowBean" class="org.egov.tl.domain.entity.WorkflowBean"
 		scope="prototype" />
 
-	<bean id="transferLicenseWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
+	<!-- <bean id="transferLicenseWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="persistenceService" index="0" />
 		<constructor-arg
 			value="org.egov.tl.domain.entity.transfer.LicenseTransfer"
 			index="1" />
-	</bean>
+	</bean> -->
 
-	<bean id="objectionWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
+	<!-- <bean id="objectionWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="persistenceService" index="0" />
 		<constructor-arg
 			value="org.egov.tl.domain.entity.objection.LicenseObjection"
 			index="1" />
-	</bean>
+	</bean> -->
 
 	<bean id="baseLicenseService" class="org.egov.tl.domain.BaseLicenseService"
 		scope="prototype" abstract="true">

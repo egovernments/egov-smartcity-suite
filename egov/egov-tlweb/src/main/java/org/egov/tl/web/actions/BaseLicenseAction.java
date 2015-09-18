@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.tl.web.actions;
 
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,17 +54,22 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.NumberToWord;
+import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseDemand;
@@ -72,6 +80,7 @@ import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseChecklistHelper;
 import org.egov.tl.utils.LicenseUtils;
 import org.egov.tl.web.actions.domain.CommonAjaxAction;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -178,10 +187,15 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     protected String roleName;
     @Autowired
     private PositionMasterService positionMasterService;
-
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private AssignmentService assignmentService;
+    @Autowired
+    private SimpleWorkflowService<License> licenseWorkflowService;
     protected abstract License license();
-
     protected abstract BaseLicenseService service();
+    protected String ackMessage;
 
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
@@ -208,7 +222,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             this.setCheckList();
             service().create(license());
             addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
-            initiateWorkFlowForLicense();
+            transitionWorkFlow(license());
             persistenceService.getSession().flush();
         } catch (final RuntimeException e) {
             loadAjaxedDropDowns();
@@ -788,5 +802,68 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     @SkipValidation
     public String auditReport() {
         return "auditReport";
+    }
+    
+    public void transitionWorkFlow(final License license) {
+        final DateTime currentDate = new DateTime();
+        final User user = securityUtils.getCurrentUser();
+        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        Position pos = null;
+        Assignment wfInitiator = null;
+
+        if (null != license.getId())
+            wfInitiator = getWorkflowInitiator(license);
+
+        if (BUTTONREJECT.equalsIgnoreCase(workFlowAction)) {
+            if (wfInitiator.equals(userAssignment)) {
+                license.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                        .withDateInfo(currentDate.toDate());
+            } else {
+                final String stateValue = license.getCurrentState().getValue();
+                license.transition(true).withSenderName(user.getName()).withComments(approverComments)
+                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withOwner(wfInitiator.getPosition()).withNextAction("Assistant Health Officer approval pending");
+            }
+
+        } else {
+            if (null != approverPositionId && approverPositionId != -1)
+                pos = (Position) persistenceService.find("from Position where id=?", approverPositionId);
+            else if (BUTTONAPPROVE.equalsIgnoreCase(workFlowAction))
+                pos = wfInitiator.getPosition();
+            if (null == license.getState()) {
+                final WorkFlowMatrix wfmatrix = licenseWorkflowService.getWfMatrix(license.getStateType(), null,
+                        null, null, currentState, null);
+                license.transition().start().withSenderName(user.getName()).withComments(approverComments)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction());
+            } else if (license.getCurrentState().getNextAction().equalsIgnoreCase("END"))
+                license.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                        .withDateInfo(currentDate.toDate());
+            else {
+                final WorkFlowMatrix wfmatrix = licenseWorkflowService.getWfMatrix(license.getStateType(), null,
+                        null, null, license.getCurrentState().getValue(), null);
+                license.transition(true).withSenderName(user.getName()).withComments(approverComments)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction());
+            }
+        }
+        if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase("----Choose----")) {
+            final String approvalmesg = " Succesfully Forwarded to : ";
+            ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
+        } else if (workFlowAction != null && workFlowAction.equalsIgnoreCase("cancel")) {
+            final String approvalmesg = " Succesfully Cancelled.";
+            ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
+        }
+    }
+    
+    protected Assignment getWorkflowInitiator(final License license) {
+        Assignment wfInitiator;
+        if (!license.getStateHistory().isEmpty())
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(license.getStateHistory().get(0)
+                    .getOwnerPosition().getId());
+        else
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(license.getState().getOwnerPosition()
+                    .getId());
+        return wfInitiator;
     }
 }

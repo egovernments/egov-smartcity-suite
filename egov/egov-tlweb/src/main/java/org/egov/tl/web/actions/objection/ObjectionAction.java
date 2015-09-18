@@ -39,18 +39,19 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.objection;
 
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Action;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseStatusValues;
 import org.egov.tl.domain.entity.WorkflowBean;
@@ -71,7 +72,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Result(name = "showcausenotice", location = "objection-showcausenotice.jsp"),
 @Result(name = "scnoticeletter", location = "objection-scnoticeletter.jsp")
 })
-public class ObjectionAction extends BaseFormAction {
+public class ObjectionAction extends GenericWorkFlowAction {
 
     private static final long serialVersionUID = 1L;
     private Long licenseId;
@@ -151,7 +152,7 @@ public class ObjectionAction extends BaseFormAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         return objection;
     }
 

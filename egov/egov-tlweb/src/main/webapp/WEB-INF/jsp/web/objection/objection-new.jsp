@@ -47,6 +47,12 @@
 		   function validateForm(obj) {
 		    	return validateApprover(obj);
 	  	   }
+
+		   function onSubmit() {
+       			document.forms[0].action = 'objection-create.action';
+       			document.forms[0].submit;
+       		}
+       	
     	</script>
 	</head>
 	<body onload="resetForm()">
@@ -152,7 +158,7 @@
 											</div>
 
 											<div class="buttonbottom">
-												<table>
+												<%-- <table>
 													<tr class="buttonbottom" id="buttondiv" style="align: middle">
 														<td>
 															<s:submit name="submit" type="submit" cssClass="buttonsubmit" id="button2" method="create" value="Save" onclick="return validateForm(this);" tabindex="1" />
@@ -161,7 +167,9 @@
 															<input name="close" type="button" class="button" id="button" onclick="window.close()" value="Close" tabindex="1" />
 														</td>
 													</tr>
-												</table>
+												</table> --%>
+												<%@ include file='../../common/commonWorkflowMatrix.jsp'%>
+												<%@ include file='../../common/commonWorkflowMatrix-button.jsp'%>
 											</div>
 										</s:push>
 									</s:form>

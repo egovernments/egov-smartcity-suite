@@ -58,6 +58,12 @@
 					obj.value = obj.value.substring(0,val);
 				}
 			}	
+
+			function onSubmit() {
+        		document.forms[0].action = 'transferTradeLicense-create';
+        		document.forms[0].submit;
+        	}
+			
 		</script>
 </head>
 <body>
@@ -393,7 +399,7 @@
 
 										<div class="mandatory1" style="font-size: 11px;" align="left">
 											* Mandatory Fields</div>
-										<div>
+										<%-- <div>
 											<table>
 												<tr class="buttonbottom" id="buttondiv"
 													style="align: middle">
@@ -413,7 +419,7 @@
 														class="button" /></td>
 												</tr>
 											</table>
-										</div>
+										</div> --%>
 									</s:push>
 								</s:form>
 							</div>
