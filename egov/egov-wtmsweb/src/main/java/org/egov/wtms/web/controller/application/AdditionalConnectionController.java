@@ -164,6 +164,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
             prepareWorkflow(model,addConnection,new WorkflowContainer());
             model.addAttribute("additionalRule", addConnection.getApplicationType().getCode());
             model.addAttribute("stateType", addConnection.getClass().getSimpleName());
+            model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
             return "addconnection-form";
         }
         addConnection.setApplicationDate(new Date());

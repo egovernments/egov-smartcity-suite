@@ -55,9 +55,10 @@
 						<spring:message  code="lbl.basicdetails"/>
 					</div>
 				</div>
+				<input type="hidden" name="validateIfPTDueExists" id="validateIfPTDueExists" value="${validateIfPTDueExists}"> 
 				<form:hidden path="connection" id="connection" value="${changeOfUse.connection.id}"/>
 				<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}">
-				<input type="hidden" id="currentUser" value="${currentUser}"/>  
+				<input type="hidden" id="currentUser" value="${currentUser}" name="currentUser"/>  
 				<form:hidden id="mode" path=""  value="${mode}"/>
 				<form:hidden id="documentName" path="" value="${documentName}"/>
 				<form:hidden path="applicationType" id="applicationType.id" value="${changeOfUse.applicationType.id}"/>

@@ -41,8 +41,9 @@ $(document).ready(function(){
 	loadPropertyDetails();
 	
 	var mode =$('#mode').val();
+	var validateIfPTDueExists=$('#validateIfPTDueExists').val();
 	var currentloggedInUser=$('#currentUser').val();
-	if(currentloggedInUser=='true' && mode=='addconnection')
+	if((currentloggedInUser=='true' && mode=='addconnection' && validateIfPTDueExists=='') ||(currentloggedInUser=='true' && validateIfPTDueExists=='false'))
 		{
 		$(".show-row").hide(); 
 		$('#approvalDepartment').removeAttr('required');

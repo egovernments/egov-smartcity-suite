@@ -159,6 +159,7 @@ public class ChangeOfUseController extends GenericConnectionController {
             prepareWorkflow(model,changeOfUse,new WorkflowContainer());
             model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
             model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
+            model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
             return "changeOfUse-form";
         }
         if (changeOfUse.getState() == null)

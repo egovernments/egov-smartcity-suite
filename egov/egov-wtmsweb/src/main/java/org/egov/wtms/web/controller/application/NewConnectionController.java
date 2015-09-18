@@ -152,7 +152,7 @@ public class NewConnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction) {
 
-       validatePropertyID(waterConnectionDetails, resultBinder);
+        validatePropertyID(waterConnectionDetails, resultBinder);
 
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         int i = 0;
@@ -172,6 +172,8 @@ public class NewConnectionController extends GenericConnectionController {
             model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
             prepareWorkflow(model,waterConnectionDetails,new WorkflowContainer());
             model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
+            model.addAttribute("currentUser", 
+                    waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
             model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
             return "newconnection-form";
         }
