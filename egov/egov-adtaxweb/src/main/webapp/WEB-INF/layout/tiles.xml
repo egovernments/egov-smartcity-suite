@@ -79,4 +79,10 @@
         <put-attribute name="page-title" value="title.agency.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/agency/agency-search.jsp"/>
     </definition>
+    
+    <definition name="agency/agency-form" extends="base_layout">
+    	<put-attribute name="page-title" value="title.agency.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/agency/agency-form.jsp"/>
+    </definition>
+    
 </tiles-definitions>

@@ -53,11 +53,11 @@
 						<label class="col-sm-3 control-label"><spring:message code="lbl.agency.name">
 						</spring:message><span class="mandatory"></span></label>
 						<div class="col-sm-6 add-margin">
-                            <form:select path="code"
-                                         id="agencies" cssClass="form-control" cssErrorClass="form-control error" >
+                            <form:select path="code" id="agencies" cssClass="form-control" cssErrorClass="form-control error" required="required">
                                 <form:option value=""> <spring:message code="lbl.select"/> </form:option>
                                 <form:options items="${agencies}" itemValue="code" itemLabel="name"/>
                             </form:select>
+                            <input type="hidden" id="agencyCode">
                            	<form:errors path="name" cssClass="error-msg"/>
                        	</div>
 					</div>
@@ -65,7 +65,7 @@
 	        </div>
             <div class="form-group">
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>                           
+                    <button type="submit" class="btn btn-success" id="searcheditbutton"><spring:message code="lbl.edit"/></button>
                     <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
                     <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
                 </div>
@@ -73,3 +73,12 @@
         </form:form>
     </div>
 </div>
+<script src="<c:url value='/resources/app/js/agency.js'/>"></script>
+<script>
+$(function() {
+    $('#agencies').change(function() {
+        var agencycode = $(this).val();
+        $('#agencyCode').val(agencycode);
+    });
+});
+</script>

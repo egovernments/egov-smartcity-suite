@@ -44,5 +44,12 @@ jQuery(document).ready(function($) {
 		$('#agencysuccess').attr('method', 'get');
 		$('#agencysuccess').attr('action', action);
 	});
+	
+	$("#searcheditbutton").click(function() {
+		var action = '/adtax/agency/updateAgency/' + $('#agencyCode').val();
+		$('#agencysearch').attr('method', 'get');
+		$('#agencysearch').attr('action', action);
+	});
+	
 });
 

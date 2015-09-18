@@ -39,15 +39,12 @@
  */
 package org.egov.adtax.web.controller.agency;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.validation.Valid;
 
 import org.egov.adtax.entity.Agency;
-import org.egov.adtax.entity.AgencyStatus;
 import org.egov.adtax.service.AgencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -56,7 +53,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -72,13 +69,12 @@ public class UpdateAgencyController {
 
     @ModelAttribute
     public Agency agencyModel(@PathVariable final String code, final Model model) {
-        model.addAttribute("agencystatus", new ArrayList<AgencyStatus>(Arrays.asList(AgencyStatus.values())));
         return agencyService.findByCode(code);
     }
 
-    @RequestMapping(value = "/update/{code}", method = RequestMethod.GET)
-    public String update() {
-        return "agency-form";
+    @RequestMapping(value = "/updateAgency/{code}", method = GET)
+    public String update(@PathVariable final String code) {
+        return "redirect:/agency/update/" + code;
     }
 
     @RequestMapping(value = "/update/{code}", method = POST)
@@ -92,4 +88,9 @@ public class UpdateAgencyController {
         return "redirect:/agency/success/" + agency.getCode();
     }
 
+    @RequestMapping(value = "/update/{code}", method = GET)
+    public ModelAndView updateView(@PathVariable("code") final String code, @ModelAttribute final Agency agency) {
+        return new ModelAndView("agency/agency-form", "agency", agencyService.findByCode(code));
+
+    }
 }
