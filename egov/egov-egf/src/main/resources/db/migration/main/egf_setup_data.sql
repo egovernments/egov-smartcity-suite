@@ -130,6 +130,9 @@ Insert into eg_appconfig (ID,KEY_NAME,DESCRIPTION,MODULE) values (nextval('seq_e
 Insert into eg_appconfig (ID,KEY_NAME,DESCRIPTION,MODULE) values (nextval('seq_eg_appconfig'),'VOUCHERDATE_FROM_UI','GET VOUCHERDATE FROM UI',(select id from eg_module where name='EGF'));
 Insert into eg_appconfig (ID,KEY_NAME,DESCRIPTION,MODULE) values (nextval('seq_eg_appconfig'),'CJV_PAYMENT_MODE_AS_RTGS','Whether RTGS should be the only mode of payment for CJVs',(select id from eg_module where name='EGF'));
 Insert into eg_appconfig (ID,KEY_NAME,DESCRIPTION,MODULE) values (nextval('seq_eg_appconfig'),'Remove Entries With Zero Amount in Report','Value to deside Remove Entries With Zero Amount in Reports',(select id from eg_module where name='EGF'));
+Insert into eg_appconfig (ID,KEY_NAME,DESCRIPTION,MODULE) values (nextval('seq_eg_appconfig'),'coa_major_capital_exp_fie_report','coa_major_capital_exp_fie_report',(select id from eg_module where name='EGF'));
+Insert into eg_appconfig (ID,KEY_NAME,DESCRIPTION,MODULE) values (nextval('seq_eg_appconfig'),'AuoRemittance_Account_Number_For_GJV','Bank Account number GJV remittance Payment',(select id from eg_module where name='EGF'));
+
 --------------------------------END---------------------------------------------------------
 ------------------------START-------------------------
 update eg_module set enabled=false where name='Assigned Revenue Reports';
