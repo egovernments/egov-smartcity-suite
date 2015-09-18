@@ -110,7 +110,8 @@ import org.springframework.transaction.annotation.Transactional;
 		@Result(name = "structural", location = "ajaxCommon-structural.jsp"),
 		@Result(name = "designationList", location = "ajaxCommon-designationList.jsp"),
 		@Result(name = "userList", location = "ajaxCommon-userList.jsp"),
-		@Result(name = "propCategory", location = "ajaxCommon-propCategory.jsp") })
+		@Result(name = "propCategory", location = "ajaxCommon-propCategory.jsp"),
+		@Result(name = "checkExistingCategory", location = "ajaxCommon-checkExistingCategory.jsp") })
 public class AjaxCommonAction extends BaseFormAction implements ServletResponseAware {
 
 	private static final String AJAX_RESULT = "AJAX_RESULT";
@@ -150,6 +151,13 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	private List<Assignment> assignmentList;
 	private String currentStatusCode;
 	private String mobileNumber;
+	private String categoryExists = "no";
+	private Long usageId;
+	private Long structureClassId;
+	private Date categoryFromDate;
+	private String validationMessage="";
+	private static final String RESULT_CHECK_EXISTING_CATEGORY = "checkExistingCategory";
+
 
 	@Autowired
 	private CategoryDao categoryDAO;
@@ -422,6 +430,18 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	        IOUtils.write(jsonObject.toString(), response.getWriter());
 	    }
 
+	@Action(value = "/ajaxCommon-checkIfCategoryExists")
+	public String checkIfCategoryExists() {
+		LOGGER.debug("Entered into checkIfCategoryExists ");
+		Category existingCategory = (Category) getPersistenceService().find("select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
+				+ "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? ", zoneId,usageId,structureClassId,categoryFromDate);
+		if(existingCategory!=null){
+			categoryExists = "yes";
+			validationMessage = getText("unit.rate.exists.for.combination", new String[] { existingCategory.getCategoryAmount().toString() });
+		}
+		return RESULT_CHECK_EXISTING_CATEGORY;
+	}
+	 
 	public Long getZoneId() {
 		return zoneId;
 	}
@@ -643,4 +663,43 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         this.mobileNumber = mobileNumber;
     }
 
+    public String getCategoryExists() {
+		return categoryExists;
+	}
+
+	public void setCategoryExists(String categoryExists) {
+		this.categoryExists = categoryExists;
+	}
+	
+	public Long getUsageId() {
+		return usageId;
+	}
+
+	public void setUsageId(Long usageId) {
+		this.usageId = usageId;
+	}
+
+	public Long getStructureClassId() {
+		return structureClassId;
+	}
+
+	public void setStructureClassId(Long structureClassId) {
+		this.structureClassId = structureClassId;
+	}
+
+	public Date getCategoryFromDate() {
+		return categoryFromDate;
+	}
+
+	public void setCategoryFromDate(Date categoryFromDate) {
+		this.categoryFromDate = categoryFromDate;
+	}
+	
+	public String getValidationMessage() {
+		return validationMessage;
+	}
+
+	public void setValidationMessage(String validationMessage) {
+		this.validationMessage = validationMessage;
+	}
 }

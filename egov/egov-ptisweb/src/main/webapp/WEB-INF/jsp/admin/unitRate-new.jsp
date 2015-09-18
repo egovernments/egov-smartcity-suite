@@ -65,6 +65,8 @@ jQuery(function ($) {
 		});
 });
 
+var validationMessage = '';
+var showMessage = false;
 function validateData(){
 	var zoneId = document.getElementById("zoneId").value;
 	var usageId = document.getElementById("usageId").value;
@@ -93,10 +95,44 @@ function validateData(){
 		return false;
 	}
 
-	document.forms[0].action = 'unitRate-create.action';
+	if(validationMessage != ''){
+	 	if(!confirmSubmit(validationMessage)) {
+			return false;
+		}
+	}
+	
+ 	document.forms[0].action = 'unitRate-create.action';
 	document.forms[0].submit;
 	return true;
 }
+
+function checkIfCategoryExists(){
+	var zoneId = document.getElementById("zoneId").value;
+	var usageId = document.getElementById("usageId").value;
+	var structureClassId = document.getElementById("structureClassId").value;
+	var taxAmount = document.getElementById("categoryAmount").value;
+	var fromDate = document.getElementById("fromDate").value;
+
+	makeJSONCall(["Value","validationMessage"],'/ptis/common/ajaxCommon-checkIfCategoryExists.action',{zoneId:zoneId,usageId:usageId,structureClassId:structureClassId,categoryFromDate:fromDate},
+			categoryCheckSuccess,categoryCheckFailure) ;
+}
+
+categoryCheckSuccess = function(req,res){
+results=res.results;
+var checkResult='';
+
+	if(results != '') {
+		checkResult =   results[0].Value;
+		validationMessage =   results[0].validationMessage;
+	}
+	if(checkResult != '' && checkResult=='yes'){
+		showMessage = true;
+	}	
+}
+categoryCheckFailure= function(){
+	alert('Unable to check for existing category');
+}
+
 </script>
 </head> 
 
@@ -157,7 +193,7 @@ function validateData(){
 				<td class="greybox" width="20%">&nbsp;</td>
 				<td class="greybox" width="30%"><s:text name="unit.rate.fromDate"/> <span class="mandatory1">*</span> :</td>
 				<td class="greybox" width="30%">
-					<s:textfield name="fromDate"  cssClass="form-control datepicker" id="fromDate" size="12" maxlength="12"></s:textfield>
+					<s:textfield name="fromDate"  cssClass="form-control datepicker" id="fromDate" size="12" maxlength="12" onchange="checkIfCategoryExists();"></s:textfield>
 				<td class="greybox" width="20%">&nbsp;</td>
 			</tr>
 			
@@ -167,10 +203,8 @@ function validateData(){
         	<font size="2"><div align="right" class="mandatory1">&nbsp;&nbsp;<s:text name="mandtryFlds"/></div></font>
         
 		    <div class="buttonbottom" align="center">	
-		    	<s:submit value="Add" name="Add"
-						id='Create:Save' cssClass="buttonsubmit" method="create" onclick="return validateData();" />  
-				<input type="reset" value="Clear" class="btn btn-default" />
-				<input type="reset" value="Close" class="btn btn-default" onclick="window.close();" />
+		    	<s:submit value="Add" name="add"
+						id='add' cssClass="buttonsubmit" method="create" onclick="return validateData();" />  
 			</div>
 	</div>
 	</s:push>

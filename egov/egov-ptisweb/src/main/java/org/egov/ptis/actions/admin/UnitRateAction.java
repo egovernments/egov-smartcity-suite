@@ -108,36 +108,47 @@ public class UnitRateAction extends BaseFormAction{
 	
 	@Action(value = "/unitRate-create")
 	public String create() {
-		PropertyUsage usage = (PropertyUsage) getPersistenceService().find("from PropertyUsage where id = ? ", usageId);
-		StructureClassification structureClass = (StructureClassification) getPersistenceService().find("from StructureClassification where id = ? ", structureClassId);
-		Boundary zone = boundaryService.getBoundaryById(zoneId);
-		category.setPropUsage(usage);
-		category.setStructureClass(structureClass);
-		category.setIsHistory('N');
-		category.setCategoryName(usage.getUsageCode().concat("-").concat(structureClass.getConstrTypeCode()).concat("-").concat(category.getCategoryAmount().toString()));
+		Category existingCategory = (Category) getPersistenceService().find("select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
+				+ "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? ", zoneId,usageId,structureClassId,category.getFromDate());
 		
-		if(zoneId!=-1 && usageId!=-1 && structureClassId!=-1){
-			Category existingCategory = (Category) getPersistenceService().find("select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
-					+ "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? ", zoneId,usageId,structureClassId);
-			if(existingCategory!=null){
-				Date toDate = existingCategory.getToDate();
-				if(toDate==null || (toDate!=null && toDate.after(category.getFromDate()))){
-					Date newToDate = DateUtils.addDays(category.getFromDate(),-1);
-					existingCategory.setToDate(newToDate);
+		//If category exists for the combination of zone, usage,structure and from date, update the existing category's rate
+		if(existingCategory!=null){
+			existingCategory.setCategoryName(existingCategory.getPropUsage().getUsageCode().concat("-").concat(existingCategory.getStructureClass().getConstrTypeCode()).concat("-").concat(category.getCategoryAmount().toString()));
+			existingCategory.setCategoryAmount(category.getCategoryAmount());
+			getPersistenceService().update(existingCategory);
+		}else{
+			PropertyUsage usage = (PropertyUsage) getPersistenceService().find("from PropertyUsage where id = ? ", usageId);
+			StructureClassification structureClass = (StructureClassification) getPersistenceService().find("from StructureClassification where id = ? ", structureClassId);
+			Boundary zone = boundaryService.getBoundaryById(zoneId);
+			category.setPropUsage(usage);
+			category.setStructureClass(structureClass);
+			category.setIsHistory('N');
+			category.setCategoryName(usage.getUsageCode().concat("-").concat(structureClass.getConstrTypeCode()).concat("-").concat(category.getCategoryAmount().toString()));
+			
+			if(zoneId!=-1 && usageId!=-1 && structureClassId!=-1){
+				existingCategory = (Category) getPersistenceService().find("select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
+						+ "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? ", zoneId,usageId,structureClassId);
+				if(existingCategory!=null){
+					Date toDate = existingCategory.getToDate();
+					if(toDate==null || (toDate!=null && toDate.after(category.getFromDate()))){
+						Date newToDate = DateUtils.addDays(category.getFromDate(),-1);
+						existingCategory.setToDate(newToDate);
+					}
 				}
 			}
+			
+			BoundaryCategory boundaryCategory = new BoundaryCategory();
+			boundaryCategory.setCategory(category);
+			boundaryCategory.setBndry(zone);
+			boundaryCategory.setFromDate(category.getFromDate());
+			Set<BoundaryCategory> boundaryCategorySet = new HashSet<BoundaryCategory>();
+			boundaryCategorySet.add(boundaryCategory);
+			
+			category.setCatBoundaries(boundaryCategorySet);
+			getPersistenceService().persist(category);
 		}
 		
-		BoundaryCategory boundaryCategory = new BoundaryCategory();
-		boundaryCategory.setCategory(category);
-		boundaryCategory.setBndry(zone);
-		boundaryCategory.setFromDate(category.getFromDate());
-		Set<BoundaryCategory> boundaryCategorySet = new HashSet<BoundaryCategory>();
-		boundaryCategorySet.add(boundaryCategory);
-		
-		category.setCatBoundaries(boundaryCategorySet);
-		getPersistenceService().persist(category);
-		setAckMessage("Unit Rate is added successfully!");
+		setAckMessage("Unit Rate is saved successfully!");
 		return RESULT_ACK;
 	}
 	
@@ -157,13 +168,6 @@ public class UnitRateAction extends BaseFormAction{
 		}
 		if(category.getFromDate()==null){
 			addActionError(getText("unit.rate.fromDate.required"));
-		}
-		if(zoneId!=-1 && usageId!=-1 && structureClassId!=-1){
-			Category existingCategory = (Category) getPersistenceService().find("select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
-					+ "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? ", zoneId,usageId,structureClassId,category.getFromDate());
-			if(existingCategory!=null){
-				addActionError(getText("unit.rate.exists.for.combination"));
-			}
 		}
 	}
 	

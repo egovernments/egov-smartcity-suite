@@ -1143,3 +1143,13 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 		}
 	}
 }
+
+function confirmSubmit(msg) {  
+	var ans=confirm(msg + " ?");	
+	if(ans) {
+		return true;
+	}
+	else {
+		return false;		
+	}
+}
