@@ -92,6 +92,15 @@
         <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newconnection-success.jsp"/> 
     </definition>
+    
+	<definition name="editDemandDateEntry-newForm" extends="base_layout">
+        <put-attribute name="page-title" value="title.editDemndNonMetered" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/editDemandDateEntry-newForm.jsp"/> 
+    </definition>
+    <definition name="editDemand-dataEntryAck" extends="base_layout">
+        <put-attribute name="page-title" value="title.editDemndNonMetered" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/editDemand-dataEntryAck.jsp"/> 
+    </definition>
    
 	 <definition name="addconnection-form" extends="base_layout">	 
         <put-attribute name="page-title" value="title.addconnection" cascade="true"/>

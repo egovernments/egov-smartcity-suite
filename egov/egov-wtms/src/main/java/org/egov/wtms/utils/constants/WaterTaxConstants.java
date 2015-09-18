@@ -39,9 +39,12 @@
  */
 package org.egov.wtms.utils.constants;
 
+import java.util.LinkedHashMap;
+
 public class WaterTaxConstants {
 
     public static final String MODULE_NAME = "Water Tax Management";
+    public static final String PROPERTY_MODULE_NAME = "Property Tax";
     public static final String MODULETYPE = "WATERTAXAPPLICATION";
     public static final String DASH_DELIM = "-";
     public static final String APPROVED = "APPROVED";
@@ -166,5 +169,12 @@ public class WaterTaxConstants {
 
     public static final String RESIDENTIAL = "RESIDENTIAL";
     public static final String WFLOW_ACTION_STEP_THIRDPARTY_CREATED="Created";
-
+    public static final String NONMETEREDDEMANDREASON = "Water tax charges";
+    // HashMap map b/n Demand reason string and code
+    public static final LinkedHashMap<String, String> NON_METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
+        {
+            put(WATERTAXREASONCODE, NONMETEREDDEMANDREASON);
+           
+        }
+    };
 }

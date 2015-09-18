@@ -139,6 +139,11 @@ public class NewConnectionController extends GenericConnectionController {
     @RequestMapping(value = "/newConnection-existingMessage/{consumerCode}", method = GET)
     public String dataEntryMessage(final Model model, @PathVariable final String consumerCode) {
         model.addAttribute("consumerCode", consumerCode);
+        final WaterConnectionDetails waterConnectionDetails=waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode);
+        model.addAttribute(
+                "connectionType",
+                waterConnectionDetailsService.getConnectionTypesMap().get(
+                        waterConnectionDetails.getConnectionType().name()));
         return "newconnection-dataEntryMessage";
     }
 
@@ -147,7 +152,7 @@ public class NewConnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction) {
 
-        validatePropertyID(waterConnectionDetails, resultBinder);
+       validatePropertyID(waterConnectionDetails, resultBinder);
 
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         int i = 0;

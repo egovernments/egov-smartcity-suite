@@ -35,6 +35,7 @@ import java.util.List;
 
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemandReason;
 import org.egov.wtms.application.entity.MeterReadingConnectionDetails;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -89,8 +90,8 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
 
     @Query(" from WaterConnectionDetails WCD where WCD.connectionStatus in(:status)"
             + " and WCD.connection.propertyIdentifier =:propertyIdentifier")
-    WaterConnectionDetails getConnectionDetailsInWorkflow(
-            @Param("propertyIdentifier") String propertyIdentifier, @Param("status") ConnectionStatus Status);
+    WaterConnectionDetails getConnectionDetailsInWorkflow(@Param("propertyIdentifier") String propertyIdentifier,
+            @Param("status") ConnectionStatus Status);
 
     WaterConnectionDetails findByConnection_PropertyIdentifierAndConnectionStatusAndConnection_ParentConnectionIsNull(
             String propertyIdentifier, ConnectionStatus connectionStatus);
@@ -102,7 +103,13 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
 
     @Query("select wcd from WaterConnectionDetails wcd  where wcd.connection.id  in (select wc.id from WaterConnection wc where wc.parentConnection.id = :parentId) ")
     List<WaterConnectionDetails> getAllConnectionDetailsByParentConnection(@Param("parentId") Long parentId);
-    
+
     WaterConnectionDetails findByConnectionAndConnectionStatusAndIsHistory(WaterConnection waterConnection,
             ConnectionStatus connectionStatus, Boolean isHistory);
+
+    @Query("select dr from org.egov.demand.model.EgDemandReason dr where dr.egDemandReasonMaster.code =:code")
+    List<EgDemandReason> getDemandReasonByCode(@Param("code") String code);
+
+    @Query("select I from Installment I where I.module.name=:module and I.description =:description")
+    Installment getInstallmentByDescription(@Param("module") String code, @Param("description") String description);
 }

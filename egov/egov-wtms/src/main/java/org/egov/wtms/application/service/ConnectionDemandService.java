@@ -87,11 +87,12 @@ import org.egov.wtms.masters.service.WaterRatesDetailsService;
 import org.egov.wtms.masters.service.WaterRatesHeaderService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.springframework.context.ApplicationContext;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -145,6 +146,9 @@ public class ConnectionDemandService {
     private WaterRatesHeaderService waterRatesHeaderService;
 
     @Autowired
+    private WaterTaxUtils waterTaxUtils;
+
+    @Autowired
     private WaterTaxNumberGenerator waterTaxNumberGenerator;
 
     public Session getCurrentSession() {
@@ -168,7 +172,7 @@ public class ConnectionDemandService {
                 donationDetails = donationDetailsService.findByDonationHeader(donationHeaderService
                         .findByCategoryandUsageandMinPipeSize(waterConnectionDetails.getCategory(),
                                 waterConnectionDetails.getUsageType(), waterConnectionDetails.getPipeSize()
-                                .getSizeInInch()));
+                                        .getSizeInInch()));
 
         if (donationDetails != null) {
             feeDetails.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, donationDetails.getAmount());
@@ -215,6 +219,14 @@ public class ConnectionDemandService {
         return demandReasonObj;
     }
 
+    public EgDemandReason getDemandReasonByCode(final String demandReason) {
+        final Query demandQuery = getCurrentSession().getNamedQuery("DEMANDREASONBY_CODE_AND_INSTALLMENTID");
+        demandQuery.setParameter(0, demandReason);
+        // demandQuery.setParameter(1, installment.getId());
+        final EgDemandReason demandReasonObj = (EgDemandReason) demandQuery.uniqueResult();
+        return demandReasonObj;
+    }
+
     public HashMap<String, Double> getSplitFee(final WaterConnectionDetails waterConnectionDetails) {
         final EgDemand demand = waterConnectionDetails.getDemand();
         final HashMap<String, Double> splitAmount = new HashMap<>();
@@ -223,7 +235,7 @@ public class ConnectionDemandService {
                 if (WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE.equals(detail.getEgDemandReason()
                         .getEgDemandReasonMaster().getCode()))
                     splitAmount
-                    .put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE, detail.getAmount().doubleValue());
+                            .put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE, detail.getAmount().doubleValue());
                 else if (WaterTaxConstants.WATERTAX_DONATION_CHARGE.equals(detail.getEgDemandReason()
                         .getEgDemandReasonMaster().getCode()))
                     splitAmount.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, detail.getAmount().doubleValue());
@@ -443,6 +455,46 @@ public class ConnectionDemandService {
         generateBillForMeterAndMonthly(waterConnectionDetails.getConnection().getConsumerCode());
         return waterConnectionDetails;
     }
+/**
+ * 
+ * @param waterConnectionDetails
+ * @param demandDeatilslist
+ * @return creation or updating demand and demanddetails for data Entry Screen 
+ */
+    public WaterConnectionDetails updateDemandForNonMeteredConnectionDataEntry(
+            final WaterConnectionDetails waterConnectionDetails, final List<EgDemandDetails> demandDeatilslist) {
+        final Set<EgDemandDetails> ddset = new HashSet<EgDemandDetails>(demandDeatilslist);
+        EgDemand demandObj = waterConnectionDetails.getDemand();
+        final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
+        dmdDetailSet.addAll(ddset);
+        demandObj.setBaseDemand(demandObj.getBaseDemand().add(getToTalAmount(dmdDetailSet)));
+        final Integer ddLength = demandObj.getEgDemandDetails().size() - 1;
+        demandObj.setEgInstallmentMaster(demandDeatilslist.get(ddLength).getEgDemandReason().getEgInstallmentMaster());
+        demandObj.getEgDemandDetails().addAll(dmdDetailSet);
+        demandObj.setAmtCollected(demandObj.getAmtCollected().add(
+                getToTalCollectedAmount(demandObj.getEgDemandDetails())));
+        demandObj.setModifiedDate(new Date());
+        if (demandObj.getIsHistory() == null)
+            demandObj.setIsHistory("N");
+        if (demandObj.getCreateDate() == null)
+            demandObj.setCreateDate(new Date());
+        waterConnectionDetails.setDemand(demandObj);
+        return waterConnectionDetails;
+    }
+
+    public BigDecimal getToTalAmount(final Set<EgDemandDetails> demandDeatilslist) {
+        BigDecimal currentTotalAmount = BigDecimal.ZERO;
+        for (final EgDemandDetails de : demandDeatilslist)
+            currentTotalAmount = currentTotalAmount.add(de.getAmount());
+        return currentTotalAmount;
+    }
+
+    public BigDecimal getToTalCollectedAmount(final Set<EgDemandDetails> demandDeatilslist) {
+        BigDecimal currentTotalAmount = BigDecimal.ZERO;
+        for (final EgDemandDetails de : demandDeatilslist)
+            currentTotalAmount = currentTotalAmount.add(de.getAmtCollected());
+        return currentTotalAmount;
+    }
 
     /**
      * @param consumerCode
@@ -598,8 +650,8 @@ public class ConnectionDemandService {
         if (waterConnectionDetails.getDemand() != null
                 && waterConnectionDetails.getDemand().getEgInstallmentMaster() != null)
             if (installment != null
-            && installment.getInstallmentNumber().equals(
-                    waterConnectionDetails.getDemand().getEgInstallmentMaster().getInstallmentNumber()))
+                    && installment.getInstallmentNumber().equals(
+                            waterConnectionDetails.getDemand().getEgInstallmentMaster().getInstallmentNumber()))
                 currrentInstallMentExist = true;
         return currrentInstallMentExist;
     }

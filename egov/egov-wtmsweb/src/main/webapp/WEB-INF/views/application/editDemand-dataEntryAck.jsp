@@ -45,40 +45,20 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="text-align:center">
 	<tr>
 		<td width="100%" style="text-align:center"><strong><spring:message
-					code="msg.dataentry.save.success" /></strong></td>
+					code="msg.dataentry.editDemand.success" /></strong></td>
 	</tr>
 <tr>
 <td>&nbsp;</td>
 </tr>
 	<tr>
-		<td width="100%" style="text-align:center"><input type="button" id="view"
-			class="btn btn-primary" value="view"
-			onclick="showView('${consumerCode}');"> <input type="button"
-			name="create-new" id="btn btn-primary" value="Create Another"
-			class="btn btn-primary" onclick="showNewform()" />
-			<c:if test="${connectionType == 'Non-metered'}">
-			<input type="button" value="Add/Edit DCB" name="Add/Edit DCB" id="editDCB"
-											id="btn btn-primary" class="btn btn-primary" 
-											onclick="showeditDcb('${consumerCode}')" />
-											</c:if>
-											</td>
+		<td width="100%" style="text-align:center"><input type="button" name="button2" id="button2" value="Close"
+				class="btn btn-default" onclick="window.close();" /></td>
 	</tr>
 </table>
 <script>   
-function showView(obj)
-{
-window.location="/wtms/application/view/"+obj;
-}
 
-function showNewform()
-{
-window.location="/wtms/application/newConnection-dataEntryForm.action";
-}
-function showeditDcb(obj)
-{
-window.location="/wtms/application/editDemand/"+obj;
-}
+
 
 </script>
-</div>
+
 

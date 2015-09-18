@@ -30,10 +30,14 @@
  */
 package org.egov.wtms.utils;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
+
 import java.util.Date;
 import java.util.List;
 
 import org.egov.commons.EgwStatus;
+import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.AssignmentService;
@@ -64,12 +68,16 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Service
 public class WaterTaxUtils {
+
+    @Qualifier("entityQueryService")
+    private @Autowired PersistenceService entityQueryService;
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
@@ -143,17 +151,19 @@ public class WaterTaxUtils {
         return !appConfigValueList.isEmpty() ? appConfigValueList : null;
 
     }
+
     /**
-     * 
      * @return appconfigValues List for Keyname='ROLESFORLOGGEDINUSER'
      */
     public List<AppConfigValues> getUserRolesForLoggedInUser() {
-        final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKeyByValueAsc(
-                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ROLESFORLOGGEDINUSER);
-        //TODO: this method getting Values by Order By value Asc and based on that returning LoggedInRoles
+        final List<AppConfigValues> appConfigValueList = appConfigValuesService
+                .getConfigValuesByModuleAndKeyByValueAsc(WaterTaxConstants.MODULE_NAME,
+                        WaterTaxConstants.ROLESFORLOGGEDINUSER);
+        // TODO: this method getting Values by Order By value Asc and based on
+        // that returning LoggedInRoles
         return !appConfigValueList.isEmpty() ? appConfigValueList : null;
-    } 
-    
+    }
+
     public Boolean getCurrentUserRole(final User currentUser) {
         Boolean applicationByOthers = false;
         for (final Role userrole : currentUser.getRoles())
@@ -225,7 +235,7 @@ public class WaterTaxUtils {
             final WaterConnectionDetails waterConnectionDetails, final String applicantName) {
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, null);
+                        waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, null);
         return smsMsg;
     }
 
@@ -320,4 +330,10 @@ public class WaterTaxUtils {
                 }
         return isCSCOperator;
     }
+
+    public List<Installment> getInstallmentListByStartDate(final Date startDate) {
+        return entityQueryService.findAllByNamedQuery(QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR, startDate,
+                startDate, PTMODULENAME);
+    }
+
 }
