@@ -42,6 +42,8 @@
  */
 package org.egov.web.actions.voucher;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -63,8 +65,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
@@ -126,17 +126,42 @@ import com.exilant.eGov.src.domain.Bank;
  *
  */
 
-@Results({ 
-	@Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain"}),
-	@Result(name = "schemes", location = "common-schemes.jsp"),
-	@Result(name = Constants.SUBSCHEMES, location = "common-subSchemes.jsp"),
-	@Result(name = Constants.FUNDSOURCE, location = "common-fundsource.jsp"),
-	@Result(name = "accountcodes", location = "common-accountcodes.jsp"),
-	@Result(name = "searchResult", location = "common-searchResult.jsp"),
-	@Result(name = "entities", location = "common-entities.jsp"),
-	@Result(name = "result", location = "common-result.jsp")
-})
+
 @Transactional(readOnly=true)
+@Results({
+@Result(name = "bankAccountByBranch", location = "common-bankAccountByBranch.jsp"),
+@Result(name = "branch", location = "common-branch.jsp"),
+@Result(name = "users", location = "common-users.jsp"),
+@Result(name = "arfNoSearchResults", location = "common-arfNoSearchResults.jsp"),
+@Result(name = "bankAccNum", location = "common-bankAccNum.jsp"),
+@Result(name = Constants.FUNDSOURCE, location = "common-"+Constants.FUNDSOURCE+".jsp"),
+@Result(name = "workflowHistory", location = "common-workflowHistory.jsp"),
+@Result(name = "searchAccountCodes", location = "common-searchAccountCodes.jsp"),
+@Result(name = "entities", location = "common-entities.jsp"),
+@Result(name = "bankByFund", location = "common-bankByFund.jsp"),
+@Result(name = "result", location = "common-result.jsp"),
+@Result(name = "branchesByBank", location = "common-branchesByBank.jsp"),
+@Result(name = "bank", location = "common-bank.jsp"),
+@Result(name = "glCodes", location = "common-glCodes.jsp"),
+@Result(name = "subLedgerType", location = "common-subLedgerType.jsp"),
+@Result(name = "checkList", location = "common-checkList.jsp"),
+@Result(name = "projectCodesBy20", location = "common-projectCodesBy20.jsp"),
+@Result(name = "bankAccNumAndType", location = "common-bankAccNumAndType.jsp"),
+@Result(name = "schemes", location = "common-schemes.jsp"),
+@Result(name = "subSchemeBy20", location = "common-subSchemeBy20.jsp"),
+@Result(name = "voucherNames", location = "common-voucherNames.jsp"),
+@Result(name = "rtgsNumbers", location = "common-rtgsNumbers.jsp"),
+@Result(name = Constants.SUBSCHEMES, location = "common-"+Constants.SUBSCHEMES+".jsp"),
+@Result(name = "drawingOffcer", location = "common-drawingOffcer.jsp"),
+@Result(name = "searchResult", location = "common-searchResult.jsp"),
+@Result(name = "projectcodes", location = "common-projectcodes.jsp"),
+@Result(name = "functionCodes", location = "common-functionCodes.jsp"),
+@Result(name = "AJAX_RESULT", location = "common-AJAX_RESULT.jsp"),
+@Result(name = "accountcodes", location = "common-accountcodes.jsp"),
+@Result(name = "instrument", location = "common-instrument.jsp"),
+@Result(name = "desg", location = "common-desg.jsp"),
+@Result(name = "schemeBy20", location = "common-schemeBy20.jsp")
+})
 public class CommonAction extends BaseFormAction{
 
 

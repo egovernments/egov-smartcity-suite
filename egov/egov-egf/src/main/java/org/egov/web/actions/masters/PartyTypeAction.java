@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Action;
 
 import java.util.Arrays;
@@ -64,6 +66,11 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @ParentPackage("egov")
 @Validation()
 @Transactional(readOnly=true)
+@Results({
+@Result(name = PartyTypeAction.NEW, location = "partyType-"+PartyTypeAction.NEW+".jsp"),
+@Result(name = "search", location = "partyType-search.jsp"),
+@Result(name = PartyTypeAction.EDIT, location = "partyType-"+PartyTypeAction.EDIT+".jsp")
+})
 public class PartyTypeAction extends BaseFormAction{
 	
 	private static final long serialVersionUID = -1076021355881784888L;

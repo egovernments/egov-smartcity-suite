@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -70,6 +72,12 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @ParentPackage("egov")
 @Transactional(readOnly=true)
+@Results({
+@Result(name = "result", location = "financingSource-result.jsp"),
+@Result(name = "new", location = "financingSource-new.jsp"),
+@Result(name = "nameUniqueCheck", location = "financingSource-nameUniqueCheck.jsp"),
+@Result(name = "codeUniqueCheck", location = "financingSource-codeUniqueCheck.jsp")
+})
 public class FinancingSourceAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 1L;

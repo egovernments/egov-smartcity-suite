@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.contra;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Action;
 
 import java.math.BigDecimal;
@@ -83,6 +85,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
 @Transactional(readOnly=true)
+@Results({
+@Result(name = Constants.VIEW, location = "contraBTC-"+Constants.VIEW+".jsp"),
+@Result(name = ContraBTCAction.NEW, location = "contraBTC-"+ContraBTCAction.NEW+".jsp"),
+@Result(name = "availableBalance", location = "contraBTC-availableBalance.jsp")
+})
 public class ContraBTCAction extends BaseVoucherAction {
 	private static final String SOURCEPATH = "/EGF/contra/contraBTC!view.action?voucherHeader.id=";
 	private ContraBean contraBean = new ContraBean();

@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,6 +69,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly=true)
 @ParentPackage("egov")
+@Results({
+@Result(name = AutoRemittanceSchedulerReportAction.NEW, location = "autoRemittanceSchedulerReport-"+AutoRemittanceSchedulerReportAction.NEW+".jsp")
+})
 public class AutoRemittanceSchedulerReportAction extends SearchFormAction{
 
 	private static final long serialVersionUID = 1L;

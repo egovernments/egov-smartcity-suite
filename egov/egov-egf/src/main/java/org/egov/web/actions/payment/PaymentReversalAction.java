@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,6 +71,9 @@ import org.egov.web.actions.voucher.BaseVoucherAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
+@Results({
+@Result(name = "reversalVouchers", location = "paymentReversal-reversalVouchers.jsp")
+})
 public class PaymentReversalAction extends BaseVoucherAction{
 	private VoucherSearchUtil voucherSearchUtil;
 	private Date fromDate;

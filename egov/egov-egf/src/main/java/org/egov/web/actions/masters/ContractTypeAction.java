@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Action;
 
 import java.math.BigDecimal;
@@ -64,6 +66,11 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @ParentPackage("egov")
 @Validation()
 @Transactional(readOnly=true)
+@Results({
+@Result(name = ContractTypeAction.NEW, location = "contractType-"+ContractTypeAction.NEW+".jsp"),
+@Result(name = "search", location = "contractType-search.jsp"),
+@Result(name = ContractTypeAction.EDIT, location = "contractType-"+ContractTypeAction.EDIT+".jsp")
+})
 public class ContractTypeAction extends BaseFormAction{
 
 	private static final long serialVersionUID = -8067645108656316667L;

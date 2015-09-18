@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.bill;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -66,6 +68,9 @@ import org.egov.web.actions.voucher.VoucherSearchAction;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 @ParentPackage("egov")
+@Results({
+@Result(name = Constants.VIEW, location = "billView-"+Constants.VIEW+".jsp")
+})
 public class BillViewAction extends BaseFormAction
  {
 	private static final Logger	LOGGER	= Logger.getLogger(VoucherSearchAction.class);

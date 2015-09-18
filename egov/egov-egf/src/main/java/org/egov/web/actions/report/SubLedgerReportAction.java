@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Action;
 
 import java.text.DateFormat;
@@ -69,6 +71,9 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @Transactional(readOnly=true)
 @ParentPackage("egov")   
+@Results({
+@Result(name = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH, location = "subLedgerReport-"+FinancialConstants.STRUTS_RESULT_PAGE_SEARCH+".jsp")
+})
 public class SubLedgerReportAction extends BaseFormAction{
 
 	private static final Logger	LOGGER = Logger.getLogger(SubLedgerReportAction.class);

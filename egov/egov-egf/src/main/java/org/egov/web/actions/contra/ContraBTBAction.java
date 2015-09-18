@@ -42,6 +42,8 @@
  */
 package org.egov.web.actions.contra;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -111,6 +113,12 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @Transactional(readOnly=true)
 @ParentPackage("egov")
 @Validation
+@Results({
+@Result(name = ContraBTBAction.NEW, location = "contraBTB-"+ContraBTBAction.NEW+".jsp"),
+@Result(name = ContraBTBAction.EDIT, location = "contraBTB-"+ContraBTBAction.EDIT+".jsp"),
+@Result(name = "reverse", location = "contraBTB-reverse.jsp"),
+@Result(name = "view", location = "contraBTB-view.jsp")
+})
 public class ContraBTBAction extends BaseVoucherAction {
 	private static final String DD_MMM_YYYY = "dd-MMM-yyyy";
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);

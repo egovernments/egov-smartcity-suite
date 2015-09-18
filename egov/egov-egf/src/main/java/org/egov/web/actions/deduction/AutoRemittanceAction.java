@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.deduction;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -67,6 +69,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Transactional(readOnly=true)
+@Results({
+@Result(name = "manual", location = "autoRemittance-manual.jsp")
+})
 public class AutoRemittanceAction extends BaseFormAction {
 
 	private final static Logger LOGGER=Logger.getLogger(AutoRemittanceAction.class);

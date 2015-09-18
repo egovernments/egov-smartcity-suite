@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.budget;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -88,6 +90,10 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
 @Transactional(readOnly=true)
 @ParentPackage("egov")
+@Results({
+@Result(name = "approvalList", location = "budgetReAppropriationModify-approvalList.jsp"),
+@Result(name = "modify", location = "budgetReAppropriationModify-modify.jsp")
+})
 public class BudgetReAppropriationModifyAction extends BaseFormAction{
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER=Logger.getLogger(BudgetReAppropriationModifyAction.class);

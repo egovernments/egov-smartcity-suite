@@ -42,6 +42,8 @@
  */
 package org.egov.web.actions.deduction;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -117,6 +119,11 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @Transactional(readOnly=true)
 @ParentPackage("egov")
 @Validation
+@Results({
+@Result(name = RemitRecoveryAction.NEW, location = "remitRecovery-"+RemitRecoveryAction.NEW+".jsp"),
+@Result(name = "messages", location = "remitRecovery-messages.jsp"),
+@Result(name = "view", location = "remitRecovery-view.jsp")
+})
 public class RemitRecoveryAction extends BasePaymentAction{
 	
 	private static final String	DESIGNATION_ID	= "designationId";

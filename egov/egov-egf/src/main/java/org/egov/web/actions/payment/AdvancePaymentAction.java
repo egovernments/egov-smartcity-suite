@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -90,6 +92,10 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
+@Results({
+@Result(name = AdvancePaymentAction.NEW, location = "advancePayment-"+AdvancePaymentAction.NEW+".jsp"),
+@Result(name = "view", location = "advancePayment-view.jsp")
+})
 public class AdvancePaymentAction extends BasePaymentAction{
 	private static final Logger	LOGGER	= Logger.getLogger(AdvancePaymentAction.class);
 	private EgAdvanceRequisition advanceRequisition = new EgAdvanceRequisition();

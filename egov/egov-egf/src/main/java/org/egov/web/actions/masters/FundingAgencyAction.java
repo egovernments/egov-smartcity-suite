@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Action;
 
 import java.util.Arrays;
@@ -56,6 +58,12 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly=true)
+@Results({
+@Result(name = FundingAgencyAction.NEW, location = "fundingAgency-"+FundingAgencyAction.NEW+".jsp"),
+@Result(name = "search", location = "fundingAgency-search.jsp"),
+@Result(name = FundingAgencyAction.EDIT, location = "fundingAgency-"+FundingAgencyAction.EDIT+".jsp"),
+@Result(name = "codeUniqueCheckCode", location = "fundingAgency-codeUniqueCheckCode.jsp")
+})
 public class FundingAgencyAction extends BaseFormAction {
 	/**
 	 * 

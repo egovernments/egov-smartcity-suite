@@ -30,6 +30,8 @@
  ******************************************************************************/
 package org.egov.web.actions.contra;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Action;
 
 import java.math.BigDecimal;
@@ -70,6 +72,9 @@ import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
 
 @Transactional(readOnly = true)
+@Results({
+@Result(name = ContraCTBAction.NEW, location = "contraCTB-"+ContraCTBAction.NEW+".jsp")
+})
 public class ContraCTBAction extends BaseVoucherAction
 {
     private static final Logger LOGGER = Logger.getLogger(ContraCTBAction.class);

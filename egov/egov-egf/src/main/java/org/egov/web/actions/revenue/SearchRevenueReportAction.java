@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.revenue;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +55,9 @@ import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
+@Results({
+@Result(name = "view", location = "searchRevenueReport-view.jsp")
+})
 public class SearchRevenueReportAction extends BaseRevenueAction {
 /**
 	 * 

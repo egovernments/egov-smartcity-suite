@@ -42,6 +42,8 @@
  */
 package org.egov.web.actions.contra;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -90,6 +92,11 @@ import com.exilant.GLEngine.Transaxtion;
  * This class is used for the Payin Slip(Cheque Deposit).
  */
 @Transactional(readOnly=true)
+@Results({
+@Result(name = PayInSlipAction.NEW, location = "payInSlip-"+PayInSlipAction.NEW+".jsp"),
+@Result(name = PayInSlipAction.EDIT, location = "payInSlip-"+PayInSlipAction.EDIT+".jsp"),
+@Result(name = "view", location = "payInSlip-view.jsp")
+})
 public class PayInSlipAction extends BaseVoucherAction {
         private static final Logger     LOGGER  = Logger.getLogger(PayInSlipAction.class);
         private static final long serialVersionUID = 1L;
@@ -152,9 +159,9 @@ public class PayInSlipAction extends BaseVoucherAction {
                 return EDIT;
         }
         /**
-         *  @description - All the instruments that are of type “Cheque” and are of type collections and that are not yet DEPOSITED
+         *  @description - All the instruments that are of type Ã¢ÂÂChequeÃ¢ÂÂ and are of type collections and that are not yet DEPOSITED
          *                 should come for cheque deposit.User should be able to select one or more cheques using a check box and SAVE. On SAVE,
-         *                 a payinslip contra voucher gets generated and the instrument status gets changed to “DEPOSITED”.
+         *                 a payinslip contra voucher gets generated and the instrument status gets changed to Ã¢ÂÂDEPOSITEDÃ¢ÂÂ.
          * @return - return to  the payinslip new page after the payinslip voucher is created.
          */
 @Action(value="/contra/payInSlip-create")

@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Action;
 
 import java.util.ArrayList;
@@ -59,6 +61,9 @@ import org.egov.utils.VoucherHelper;
 import org.hibernate.FlushMode;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
+@Results({
+@Result(name = "search", location = "searchAdvanceRequisitionForPayment-search.jsp")
+})
 public class SearchAdvanceRequisitionForPaymentAction extends SearchFormAction{
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = Logger.getLogger(SearchAdvanceRequisitionForPaymentAction.class);

@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.voucher;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Action;
 
 import java.text.ParseException;
@@ -66,6 +68,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.exilant.eGov.src.domain.BillRegisterBean;
 
 @Transactional(readOnly=true)
+@Results({
+@Result(name = "search", location = "cancelBill-search.jsp")
+})
 public class CancelBillAction extends BaseFormAction  {
 	private static final long serialVersionUID = 1L;
 	private static final Logger	LOGGER	= Logger.getLogger(CancelBillAction.class);

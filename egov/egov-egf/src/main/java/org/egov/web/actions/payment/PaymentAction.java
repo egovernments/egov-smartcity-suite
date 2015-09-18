@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -102,6 +104,15 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @ParentPackage("egov")  
 @Validation
 @Transactional(readOnly=true)
+@Results({
+@Result(name = "search", location = "payment-search.jsp"),
+@Result(name = "tnebSearch", location = "payment-tnebSearch.jsp"),
+@Result(name = "balance", location = "payment-balance.jsp"),
+@Result(name = "modify", location = "payment-modify.jsp"),
+@Result(name = "form", location = "payment-form.jsp"),
+@Result(name = "view", location = "payment-view.jsp"),
+@Result(name = "list", location = "payment-list.jsp")
+})
 public class PaymentAction extends BasePaymentAction{
         /**
          * 

@@ -42,6 +42,8 @@
  */
 package org.egov.web.actions.payment;  
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -115,6 +117,12 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  * @author mani
  */
 @Transactional(readOnly=true)
+@Results({
+@Result(name = DirectBankPaymentAction.NEW, location = "directBankPayment-"+DirectBankPaymentAction.NEW+".jsp"),
+@Result(name = DirectBankPaymentAction.EDIT, location = "directBankPayment-"+DirectBankPaymentAction.EDIT+".jsp"),
+@Result(name = "reverse", location = "directBankPayment-reverse.jsp"),
+@Result(name = "view", location = "directBankPayment-view.jsp")
+})
 public class DirectBankPaymentAction extends BasePaymentAction {
 	private static final String						FAILED_WHILE_REVERSING		= "Failed while Reversing";
 	private static final String						FAILED						= "Transaction failed";

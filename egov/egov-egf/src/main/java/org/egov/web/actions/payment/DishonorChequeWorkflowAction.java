@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -105,6 +107,10 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import com.exilant.eGov.src.domain.BankEntries;
 import com.exilant.exility.common.TaskFailedException;
 @Transactional(readOnly=true)
+@Results({
+@Result(name = "Value= view", location = "dishonorChequeWorkflow-Value= view.jsp"),
+@Result(name = "view", location = "dishonorChequeWorkflow-view.jsp")
+})
 public class DishonorChequeWorkflowAction  extends BaseFormAction {
         
         private static final long serialVersionUID = 1L;

@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Action;
 
 import java.math.BigDecimal;
@@ -75,6 +77,14 @@ import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
+@Results({
+@Result(name = LoanGrantAction.NEW, location = "loanGrant-"+LoanGrantAction.NEW+".jsp"),
+@Result(name = "search", location = "loanGrant-search.jsp"),
+@Result(name = "new", location = "loanGrant-new.jsp"),
+@Result(name = LoanGrantAction.EDIT, location = "loanGrant-"+LoanGrantAction.EDIT+".jsp"),
+@Result(name = "codeUniqueCheckCode", location = "loanGrant-codeUniqueCheckCode.jsp"),
+@Result(name = "view", location = "loanGrant-view.jsp")
+})
 public class LoanGrantAction extends LoanGrantBaseAction {
 	private static final String	VIEW	= "view";
 	private LoanGrantHeader loanGrantHeader;

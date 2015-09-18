@@ -42,6 +42,8 @@
  */
 package org.egov.web.actions.masters;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Action;
 
 import java.math.BigDecimal;
@@ -76,6 +78,10 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 @Transactional(readOnly=true)
+@Results({
+@Result(name = "new", location = "accountCheque-new.jsp"),
+@Result(name = "manipulateCheques", location = "accountCheque-manipulateCheques.jsp")
+})
 public class AccountChequeAction extends BaseFormAction{
 	
 	private static final long serialVersionUID = 1L;

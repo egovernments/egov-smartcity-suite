@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -64,6 +66,11 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @ParentPackage("egov")
 @Validation()
 @Transactional(readOnly=true)
+@Results({
+@Result(name = UserDefinedCodesAction.NEW, location = "userDefinedCodes-"+UserDefinedCodesAction.NEW+".jsp"),
+@Result(name = "search", location = "userDefinedCodes-search.jsp"),
+@Result(name = UserDefinedCodesAction.EDIT, location = "userDefinedCodes-"+UserDefinedCodesAction.EDIT+".jsp")
+})
 public class UserDefinedCodesAction extends BaseFormAction{
 
 	private static final long serialVersionUID = 1706040004784954089L;

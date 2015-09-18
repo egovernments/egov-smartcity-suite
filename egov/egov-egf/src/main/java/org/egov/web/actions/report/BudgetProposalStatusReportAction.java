@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,6 +61,9 @@ import org.hibernate.FlushMode;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 @ParentPackage("egov")
+@Results({
+@Result(name = "reportSearch", location = "budgetProposalStatusReport-reportSearch.jsp")
+})
 public class BudgetProposalStatusReportAction extends BaseFormAction {
 	
 	private List<BudgetProposalStatus> budgetProposalStatusDeptList = new ArrayList<BudgetProposalStatus>();
