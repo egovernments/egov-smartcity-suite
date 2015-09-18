@@ -134,6 +134,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 
 		if (currDue.compareTo(BigDecimal.ZERO) <= 0 && arrDue.compareTo(BigDecimal.ZERO) <= 0) {
 			args.add(propertyId);
+			isAssessmentNoValid = Boolean.TRUE;
 			setErrorMsg(getText("msg.collection.fully.paid", args));
 			return RESULT_ERROR;
 		}

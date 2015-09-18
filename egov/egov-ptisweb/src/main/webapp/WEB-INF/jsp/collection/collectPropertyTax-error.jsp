@@ -64,7 +64,7 @@
 					<tr>
 						<td>
 							<div class="buttonbottom" align="center">
-								<s:if test="%{!isAssessmentNoValid}">
+								<s:if test="%{isAssessmentNoValid}">
 								<input type="button" class="buttonsubmit" name="btnViewDCB" id="btnViewDCB" value="View DCB"
 			onclick="window.location='${pageContext.request.contextPath}/view/viewDCBProperty-displayPropInfo.action?propertyId=<s:property value="%{propertyId}" />';" />
 								</s:if>
