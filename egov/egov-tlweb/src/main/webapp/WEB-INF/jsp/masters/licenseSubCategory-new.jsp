@@ -132,13 +132,13 @@
 							<label for="field-1" class="col-sm-2 control-label text-right"><span class="mandatory"></span><s:text
 									name="licenseSubCategory.name.lbl" /> :</label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="name"	name="name" value="%{name}" />
+								<s:textfield id="name"	name="name" value="%{name}" cssClass="form-control"/>
 							</div>
 							
 							<label for="field-1" class="col-sm-2 control-label text-right"><span class="mandatory"></span><s:text
 									name="licenseSubCategory.code.lbl" /> :</label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="code"	name="code" value="%{code}" />
+								<s:textfield id="code"	name="code" value="%{code}" cssClass="form-control"/>
 							</div>
 						</div>
 						
@@ -168,9 +168,6 @@
 					<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
 						Close</button>
 				</div>
-			</div>
-			<div align="left" class="mandatory1" style="font-size: 11px">
-			  &nbsp;&nbsp;Mandatory Fields *
 			</div>
 		</div>
 		</div>
