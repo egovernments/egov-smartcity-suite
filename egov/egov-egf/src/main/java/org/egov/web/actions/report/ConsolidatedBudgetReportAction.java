@@ -125,6 +125,7 @@ public class ConsolidatedBudgetReportAction extends BaseFormAction {
     	return "reportSearch";
     }
     
+@Action(value="/report/consolidatedBudgetReport-search")
     public String search(){
     	addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=1 order by finYearRange desc "));
     	

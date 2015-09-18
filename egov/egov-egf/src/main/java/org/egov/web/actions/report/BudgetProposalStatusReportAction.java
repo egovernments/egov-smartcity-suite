@@ -110,6 +110,7 @@ public class BudgetProposalStatusReportAction extends BaseFormAction {
 		return "reportSearch";
 	}
 	
+@Action(value="/report/budgetProposalStatusReport-search")
 	public String search(){
 		addDropdownData("departmentList", getPersistenceService().findAllBy("from Department order by deptName"));
 		

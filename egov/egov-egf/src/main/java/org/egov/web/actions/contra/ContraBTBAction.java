@@ -233,6 +233,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 	 *             </ol>
 	 */
 	@Transactional
+@Action(value="/contra/contraBTB-create")
 	public String create() throws ValidationException {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting Bank to Bank Transfer ...");
 		try {

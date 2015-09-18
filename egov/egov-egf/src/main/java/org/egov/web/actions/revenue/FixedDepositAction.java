@@ -140,6 +140,7 @@ public class FixedDepositAction extends BaseFormAction {
 
 	@SuppressWarnings("unchecked")
 	@SkipValidation
+@Action(value="/revenue/fixedDeposit-search")
 	public String search() {
 		StringBuffer query = new StringBuffer();
 		query.append("From FixedDeposit ");
@@ -191,6 +192,7 @@ public class FixedDepositAction extends BaseFormAction {
 
 	//@ValidationErrorPage(value="edit")
 	@SuppressWarnings("unchecked")
+@Action(value="/revenue/fixedDeposit-update")
 	public String saveOrupdate(){
 		for (FixedDeposit fd : fixedDepositList) {
 			fd.setBankBranch((Bankbranch) persistenceService.find("from Bankbranch where id=?", fd.getBankBranch().getId()));

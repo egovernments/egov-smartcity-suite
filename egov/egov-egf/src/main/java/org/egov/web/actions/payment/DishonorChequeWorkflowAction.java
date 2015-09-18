@@ -301,6 +301,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
                 
                         instOtherDetailUpdateQuery.executeUpdate();  
         }
+@Action(value="/payment/dishonorChequeWorkflow-save")
         public String save() throws ParseException{
                 LOGGER.info(">>>>>>>>>>"+getActionName());
                 String returnValue="view";

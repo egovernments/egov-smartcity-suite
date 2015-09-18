@@ -284,6 +284,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 		return budgetDetail;
 	}
 	@Transactional
+@Action(value="/budget/budgetReAppropriationModify-update")
 	public String update(){
 		for (BudgetReAppropriationView entry : savedBudgetReAppropriationList) {
 			BudgetReAppropriation reApp = budgetReAppropriationService.findBySequenceNumberAndBudgetDetail(entry.getSequenceNumber(), entry.getBudgetDetail().getId());

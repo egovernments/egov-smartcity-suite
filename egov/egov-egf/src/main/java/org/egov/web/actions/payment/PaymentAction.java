@@ -351,6 +351,7 @@ public class PaymentAction extends BasePaymentAction{
         }
 }
         @ValidationErrorPage(value="search")
+@Action(value="/payment/payment-search")
         public String search() throws Exception{
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting search...");
                 //Get App config value
@@ -617,6 +618,7 @@ public class PaymentAction extends BasePaymentAction{
  * this api is called from searchbills method is changed to save to enable csrf fix
  * actaul method name was generate payment. I doesnot save  data but forwards to screen where for selected bill we can make payment
  */
+@Action(value="/payment/payment-save")
         public String save() throws ValidationException{
                 List<PaymentBean> paymentList=new ArrayList<PaymentBean>();
                 try{
@@ -738,6 +740,7 @@ public class PaymentAction extends BasePaymentAction{
         
         @ValidationErrorPage(value="form")
         @SkipValidation
+@Action(value="/payment/payment-create")
         public String create(){
                 try{               
                         //billregister.getEgBillregistermis().setFunction(functionSel);
@@ -1100,6 +1103,7 @@ public class PaymentAction extends BasePaymentAction{
         }          
         @ValidationErrorPage(value=MODIFY)
         @SkipValidation
+@Action(value="/payment/payment-edit")
         public String edit()throws Exception
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting update...");

@@ -135,6 +135,7 @@ public class PayInSlipAction extends BaseVoucherAction {
          * @description - This method displays the payin slip voucher when the user go through the source path.
          * @return - returns the payinslip-view jsp file 
          */
+@Action(value="/contra/payInSlip-view")
         public String view(){
                 
                 preparePayinVoucher();
@@ -156,6 +157,7 @@ public class PayInSlipAction extends BaseVoucherAction {
          *                 a payinslip contra voucher gets generated and the instrument status gets changed to “DEPOSITED”.
          * @return - return to  the payinslip new page after the payinslip voucher is created.
          */
+@Action(value="/contra/payInSlip-create")
         public String create() {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("PayinSlipAction | Create | start");
                 createOrEdit("create");
@@ -167,6 +169,7 @@ public class PayInSlipAction extends BaseVoucherAction {
          * @return- return to  the payinslip edit  page after the payinslip voucher is modified.
          */
         
+@Action(value="/contra/payInSlip-edit")
         public String edit(){
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("PayinSlipAction | Edit | start");
                 voucherHeader.setType("Contra");
@@ -225,6 +228,7 @@ public class PayInSlipAction extends BaseVoucherAction {
                 addActionMessage("Contra Payinslip Reversal Successful : " + reversalVoucher.getVoucherNumber());
                 return "reverse";
         }
+@Action(value="/contra/payInSlip-search")
         public String search() {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("PayInSlipAction | search | Start");
                 loadSchemeSubscheme();

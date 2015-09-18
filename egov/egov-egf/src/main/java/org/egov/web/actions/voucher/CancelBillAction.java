@@ -260,6 +260,7 @@ public class CancelBillAction extends BaseFormAction  {
 	}
 	
 	@ValidationErrorPage(value="search") 
+@Action(value="/voucher/cancelBill-search")
 	public String search()
 	{
 		validateFund();

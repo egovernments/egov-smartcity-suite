@@ -160,6 +160,7 @@ public class AccountChequeAction extends BaseFormAction{
 	}
 	@ValidationErrorPage(value="manipulateCheques")	
 	@SuppressWarnings("unchecked")
+@Action(value="/masters/accountCheque-save")
 	public String save(){
 		
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("AccountChequeAction | save | Start");

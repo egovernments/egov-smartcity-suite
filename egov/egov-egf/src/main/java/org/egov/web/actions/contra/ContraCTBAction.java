@@ -122,6 +122,7 @@ public class ContraCTBAction extends BaseVoucherAction
         mandatoryFields.add("boundarylevel");
     }
 
+@Action(value="/contra/contraCTB-create")
     public String create() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("ContraCTBAction | depositCTB | Start ");

@@ -410,6 +410,7 @@ public class FunctionwiseIEAction extends ReportAction
 		this.heading = heading;
 	}
 
+@Action(value="/report/functionwiseIE-search")
 	public String search() throws Exception
 	{
 		Integer majorCodeLen = Integer.valueOf(appConfigValuesService.getConfigValuesByModuleAndKey

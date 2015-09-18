@@ -163,6 +163,7 @@ public class AdvancePaymentAction extends BasePaymentAction{
 	}
 	
 	@ValidationErrorPage(value=NEW)
+@Action(value="/payment/advancePayment-save")
 	public String save() {
 		
 		voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);

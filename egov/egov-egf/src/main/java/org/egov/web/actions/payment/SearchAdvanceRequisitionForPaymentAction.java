@@ -136,6 +136,7 @@ public class SearchAdvanceRequisitionForPaymentAction extends SearchFormAction{
 			return new SearchQueryHQL(query, countQuery, paramList);
 	}
 	
+@Action(value="/payment/searchAdvanceRequisitionForPayment-search")
 	public String search() 	{
 		return "search";
 	}

@@ -98,6 +98,7 @@ public class PartyTypeAction extends BaseFormAction{
 
 	@SkipValidation
 	@ValidationErrorPage(NEW)
+@Action(value="/masters/partyType-create")
 	public String create() {
 		validatemandatoryFields();
 		try {
@@ -136,6 +137,7 @@ public class PartyTypeAction extends BaseFormAction{
 	
 	@SkipValidation
 	@ValidationErrorPage(EDIT)
+@Action(value="/masters/partyType-edit")
 	public String edit() {
 		validatemandatoryFields();
 		try {
@@ -184,6 +186,7 @@ public class PartyTypeAction extends BaseFormAction{
 	}
 	
 	@SkipValidation
+@Action(value="/masters/partyType-search")
 	public String search() {
 		StringBuffer query = new StringBuffer();
 

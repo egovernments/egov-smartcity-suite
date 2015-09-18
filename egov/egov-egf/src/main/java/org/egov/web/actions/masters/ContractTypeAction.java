@@ -105,6 +105,7 @@ public class ContractTypeAction extends BaseFormAction{
 	})
 	@SkipValidation
 	@ValidationErrorPage(NEW)
+@Action(value="/masters/contractType-create")
 	public String create() {
 		try {
 			if (typeOfWork.getCode() != null) {
@@ -154,6 +155,7 @@ public class ContractTypeAction extends BaseFormAction{
 	
 	@SkipValidation
 	@ValidationErrorPage(EDIT)
+@Action(value="/masters/contractType-edit")
 	public String edit() {
 		try {
 			EgwTypeOfWork typeOfWkOld = (EgwTypeOfWork) persistenceService.find("from EgwTypeOfWork where id=?",
@@ -213,6 +215,7 @@ public class ContractTypeAction extends BaseFormAction{
 	}
 	
 	@SkipValidation
+@Action(value="/masters/contractType-search")
 	public String search() {
 		StringBuffer query = new StringBuffer();
 		query.append("From EgwTypeOfWork where createdBy is not null ");

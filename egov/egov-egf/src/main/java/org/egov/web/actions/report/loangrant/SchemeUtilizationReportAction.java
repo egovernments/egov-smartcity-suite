@@ -106,6 +106,7 @@ public class SchemeUtilizationReportAction extends LoanGrantBaseAction {
 	{
 		return NEW;
 	}
+@Action(value="/report/loangrant/schemeUtilizationReport-search")
 	public String search()  
 	{
 		if(projectCodeIdList!=null){

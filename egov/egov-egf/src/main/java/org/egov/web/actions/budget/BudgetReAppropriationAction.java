@@ -275,6 +275,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 		return budgetDetail;
 	}
 	@Transactional
+@Action(value="/budget/budgetReAppropriation-create")
 	public String create() {
 		save(EgovThreadLocals.getUserId().intValue());
 		return NEW;
@@ -470,6 +471,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 	}
 	
 	@SkipValidation
+@Action(value="/budget/budgetReAppropriation-search")
 	public String search()
 	{
 		String sql= " ba.budgetDetail.budget.financialYear="+financialYear.getId()+" and ba.budgetDetail.budget.isbere='"+budgetDetail.getBudget().getIsbere()+"' ";

@@ -107,6 +107,7 @@ public class FunctionAction extends BaseFormAction {
 	
 	@ValidationErrorPage(NEW)
 	@SuppressWarnings("unchecked")
+@Action(value="/masters/function-create")
 	public String create() {
 		StringBuffer funcNameStr = new StringBuffer();
 		CFunction parentFunc = null;
@@ -147,6 +148,7 @@ public class FunctionAction extends BaseFormAction {
 	
 	@ValidationErrorPage(value = "edit")
 	@SuppressWarnings("unchecked")
+@Action(value="/masters/function-edit")
 	public String edit() {
 		StringBuffer funcNameStr = new StringBuffer();
 		int parentLevel = 0;
@@ -212,6 +214,7 @@ public class FunctionAction extends BaseFormAction {
 	
 	@SuppressWarnings("unchecked")
 	@SkipValidation
+@Action(value="/masters/function-search")
 	public String search() {
 		StringBuffer query = new StringBuffer();
 		query.append("From CFunction");

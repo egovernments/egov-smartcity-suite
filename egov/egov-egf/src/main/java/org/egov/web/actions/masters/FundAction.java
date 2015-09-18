@@ -115,6 +115,7 @@ public class FundAction extends BaseFormAction{
 	
 	@ValidationErrorPage(NEW)
 	@SuppressWarnings("unchecked")
+@Action(value="/masters/fund-create")
 	public String create() {
 		StringBuffer fundNameStr = new StringBuffer();
 		BigDecimal parentLevel = BigDecimal.ZERO;
@@ -157,6 +158,7 @@ public class FundAction extends BaseFormAction{
 	
 	@ValidationErrorPage(value = "edit")
 	@SuppressWarnings("unchecked")
+@Action(value="/masters/fund-edit")
 	public String edit() {
 		StringBuffer fundNameStr = new StringBuffer();
 		BigDecimal parentLevel = BigDecimal.ZERO;
@@ -230,6 +232,7 @@ public class FundAction extends BaseFormAction{
 	
 	@SuppressWarnings("unchecked")
 	@SkipValidation
+@Action(value="/masters/fund-search")
 	public String search() {
 		StringBuffer query = new StringBuffer();
 

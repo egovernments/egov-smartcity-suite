@@ -123,6 +123,7 @@ public class BudgetAction extends BaseFormAction{
 		return NEW;
 	}
 	@Transactional
+@Action(value="/budget/budget-create")
 	public String create(){
 		addMaterializedPath(budget);
 		budgetService.create(budget);
@@ -205,6 +206,7 @@ public class BudgetAction extends BaseFormAction{
 		return String.valueOf(val);
 	}
 	@Transactional
+@Action(value="/budget/budget-save")
 	public String save()
 	{
 		if(getParentId()!=null &&getParentId()>0)

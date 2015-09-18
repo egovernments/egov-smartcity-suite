@@ -98,6 +98,7 @@ public class UserDefinedCodesAction extends BaseFormAction{
 	
 	@ValidationErrorPage(NEW)
 	@SuppressWarnings("unchecked")
+@Action(value="/masters/userDefinedCodes-create")
 	public String create() {
 		validatemandatoryFields();
 		
@@ -125,6 +126,7 @@ public class UserDefinedCodesAction extends BaseFormAction{
 	
 	@ValidationErrorPage(EDIT)
 	@SuppressWarnings("unchecked")
+@Action(value="/masters/userDefinedCodes-edit")
 	public String edit() {
 		validatemandatoryFields();
 		
@@ -177,6 +179,7 @@ public class UserDefinedCodesAction extends BaseFormAction{
 	
 	@SuppressWarnings("unchecked")
 	@SkipValidation
+@Action(value="/masters/userDefinedCodes-search")
 	public String search() {
 		StringBuffer query = new StringBuffer();
 		query.append("From AccountEntity where ");

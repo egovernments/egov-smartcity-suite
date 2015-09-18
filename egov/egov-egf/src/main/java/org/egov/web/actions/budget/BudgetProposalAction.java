@@ -988,6 +988,7 @@ int i=0;
 	}
 	@Transactional
 	   @SkipValidation
+@Action(value="/budget/budgetProposal-update")
 	    public String update()
 	    {   	
 	    //Only save the items

@@ -404,6 +404,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         model.setGlcode(StringUtils.leftPad("", glCodeLengths.get(classification), '0'));
     }
 
+@Action(value="/masters/chartOfAccounts-save")
     public String save() throws Exception {
         if (generatedGlcode == null || newGlcode == null) {
             addActionMessage(getText("chartOfAccount.invalid.glcode"));

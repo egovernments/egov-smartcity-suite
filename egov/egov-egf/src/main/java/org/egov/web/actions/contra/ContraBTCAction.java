@@ -129,6 +129,7 @@ public class ContraBTCAction extends BaseVoucherAction {
 						: null);
 	}
 	@Transactional
+@Action(value="/contra/contraBTC-create")
 	public String create() {
 		if (validateInputData()) {
 			List<InstrumentHeader> instrumentList = new ArrayList<InstrumentHeader>();
@@ -594,6 +595,7 @@ public class ContraBTCAction extends BaseVoucherAction {
 		this.voucherService = voucherService;
 	}
 
+@Action(value="/contra/contraBTC-edit")
 	public String edit() {
 		ContraJournalVoucher contraVoucher = (ContraJournalVoucher) persistenceService
 				.find("from ContraJournalVoucher where voucherHeaderId.id=?",

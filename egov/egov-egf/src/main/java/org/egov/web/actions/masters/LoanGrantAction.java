@@ -293,6 +293,7 @@ public class LoanGrantAction extends LoanGrantBaseAction {
 	}
 	@ValidationErrorPage(NEW)
 	@SuppressWarnings("unchecked")
+@Action(value="/masters/loanGrant-save")
 	public String save()
 	{
 		if(!getFieldErrors().isEmpty())
@@ -334,6 +335,7 @@ public class LoanGrantAction extends LoanGrantBaseAction {
 	}
 	@ValidationErrorPage(EDIT)
 	@SuppressWarnings("unchecked")
+@Action(value="/masters/loanGrant-update")
 	public String update()
 	{
 		if(!getFieldErrors().isEmpty())

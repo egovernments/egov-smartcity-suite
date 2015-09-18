@@ -139,6 +139,7 @@ public class FundFlowAction extends BaseFormAction {
 	 * Receipt for Payment Bank Accounts --previousDaybtbReceiptList 13. Add the
 	 * Contra Receipt to opening balance --PaymentList
 	 */
+@Action(value="/report/fundFlow-search")
 	public String search() {
 		StringBuffer alreadyExistsQryStr = new StringBuffer(100);
 		alreadyExistsQryStr
@@ -508,6 +509,7 @@ public class FundFlowAction extends BaseFormAction {
 	}
 
 	@SuppressWarnings("unchecked")
+@Action(value="/report/fundFlow-create")
 	public String create() {
 		// merge two list to get sigle without duplicates
 		StringBuffer alreadyExistsQryStr = new StringBuffer(100);
@@ -676,6 +678,7 @@ public class FundFlowAction extends BaseFormAction {
 	}
 
 	@SuppressWarnings("unchecked")
+@Action(value="/report/fundFlow-edit")
 	public String edit() {
 		// Connection conn = null;
 		List<FundFlowBean> finalList = merge(receiptList, paymentList);

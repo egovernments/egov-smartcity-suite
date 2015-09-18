@@ -259,6 +259,7 @@ public class BankAdviceReportAction extends BaseFormAction {
 	   
 	
 	@ValidationErrorPage(NEW)
+@Action(value="/report/bankAdviceReport-search")
 	public String search() {
 		
 		if(instrumentnumber.getId() == -1) {
@@ -269,6 +270,7 @@ public class BankAdviceReportAction extends BaseFormAction {
         return NEW;
 	}
 	@SkipValidation
+@Action(value="/report/bankAdviceReport-search")
 	public String TNEBsearch() {
 		
 		String query = "select distinct ih " +

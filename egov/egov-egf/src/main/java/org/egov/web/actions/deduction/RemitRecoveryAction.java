@@ -215,6 +215,7 @@ public class RemitRecoveryAction extends BasePaymentAction{
     }
 	
 	@ValidationErrorPage (value=NEW)
+@Action(value="/deduction/remitRecovery-search")
 	public String search(){
 		listRemitBean=new ArrayList<RemittanceBean>();
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("RemitRecoveryAction | Search | Start");
@@ -253,6 +254,7 @@ public class RemitRecoveryAction extends BasePaymentAction{
 		return "remitDetail";
 	}         
 	@ValidationErrorPage(value="remitDetail")  
+@Action(value="/deduction/remitRecovery-create")
 	public String create()
 	{
 		try {
@@ -597,6 +599,7 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 	}
 	
 	@ValidationErrorPage(value=EDIT)  
+@Action(value="/deduction/remitRecovery-edit")
 	public String edit()
 	{
 		try {

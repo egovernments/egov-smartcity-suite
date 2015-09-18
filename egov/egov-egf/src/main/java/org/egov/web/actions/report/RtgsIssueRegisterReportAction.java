@@ -219,6 +219,7 @@ protected Map<String, Object> getParamMap() {
 
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage(NEW)
+@Action(value="/report/rtgsIssueRegisterReport-search")
 	public String search() {
 		searchResult = Boolean.TRUE;
 		if(LOGGER.isDebugEnabled())   LOGGER.debug(" Seraching RTGS result for given criteria ");

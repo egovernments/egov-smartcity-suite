@@ -254,6 +254,7 @@ public class VoucherStatusReportAction extends BaseFormAction
     }
 
     @ValidationErrorPage(value = "search")
+@Action(value="/report/voucherStatusReport-search")
     public String search() throws ApplicationException, ParseException
     {
         voucherList = new ArrayList<Map<String, Object>>();

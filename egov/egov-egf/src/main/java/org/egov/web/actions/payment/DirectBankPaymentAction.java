@@ -218,6 +218,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 			@RequiredFieldValidator(fieldName = "commonBean.paidTo", message = "", key = REQUIRED) })
 	@SkipValidation
 	@ValidationErrorPage(value=NEW)
+@Action(value="/payment/directBankPayment-create")
 	public String create() {
 		CVoucherHeader billVhId=null;
 		voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
@@ -579,6 +580,7 @@ public String nonBillPayment()
 	}
 	
 	@SuppressWarnings("deprecation")
+@Action(value="/payment/directBankPayment-edit")
 	public String edit() throws SQLException {
 		CVoucherHeader billVhId=null;
 		voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);

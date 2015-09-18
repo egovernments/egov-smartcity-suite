@@ -110,6 +110,7 @@ public class ReceiptPaymentReportAction extends BaseFormAction {
 	}
 
 	      
+@Action(value="/report/receiptPaymentReport-search")
 	public String search()
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside Search|Ready to fetch data");

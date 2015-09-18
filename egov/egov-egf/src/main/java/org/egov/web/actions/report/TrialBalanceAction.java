@@ -191,6 +191,7 @@ public class TrialBalanceAction extends BaseFormAction {
 		return NEW; 
 	}
 	@SkipValidation	
+@Action(value="/report/trialBalance-search")
 	public String search()
 	{
 		try{

@@ -387,6 +387,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
     }
 
     @SkipValidation
+@Action(value="/voucher/preApprovedVoucher-approve")
     public String approve() throws ApplicationException
     {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {
@@ -508,6 +509,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
         return "billview";
     }
 
+@Action(value="/voucher/preApprovedVoucher-update")
     public String update() throws ValidationException
     {
         if (LOGGER.isDebugEnabled())

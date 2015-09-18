@@ -122,6 +122,7 @@ public class DepartmentwiseExpenditureReportAction  extends BaseFormAction{
 	
 	@SkipValidation	
 	@ValidationErrorPage(value=NEW)
+@Action(value="/report/departmentwiseExpenditureReport-search")
 	public String search() throws Exception
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("@-- Inside search method --@");

@@ -83,6 +83,7 @@ public class FundingAgencyAction extends BaseFormAction {
 	}
 	@ValidationErrorPage(NEW)
 	@SuppressWarnings("unchecked")
+@Action(value="/masters/fundingAgency-create")
 	public String create() {
 		try {
 			//validateMandatory();
@@ -112,6 +113,7 @@ public class FundingAgencyAction extends BaseFormAction {
 	
 	@SuppressWarnings("unchecked")
 	@SkipValidation
+@Action(value="/masters/fundingAgency-search")
 	public String search() {
 		StringBuffer query = new StringBuffer();
 		query.append("From FundingAgency");
@@ -137,6 +139,7 @@ public class FundingAgencyAction extends BaseFormAction {
 	//edit
 	
 	@SuppressWarnings("unchecked")
+@Action(value="/masters/fundingAgency-edit")
 	public String edit(){
 		persistenceService.setType(FundingAgency.class);
 		persistenceService.persist(fundingAgency);

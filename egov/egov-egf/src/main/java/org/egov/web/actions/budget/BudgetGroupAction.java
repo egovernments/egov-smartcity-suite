@@ -124,6 +124,7 @@ public class BudgetGroupAction extends BaseFormAction{
 		return NEW;
 	}
 	@Transactional
+@Action(value="/budget/budgetGroup-create")
 	public String create()
 	{
 		if(budgetGroup.getMinCode()!=null && budgetGroup.getMaxCode()==null)
@@ -153,6 +154,7 @@ public class BudgetGroupAction extends BaseFormAction{
 		return SEARCH;
 	}
 	@Transactional
+@Action(value="/budget/budgetGroup-save")
 	public String save()
 	{
 		if(budgetGroup.getMinCode()!=null && budgetGroup.getMaxCode()==null)

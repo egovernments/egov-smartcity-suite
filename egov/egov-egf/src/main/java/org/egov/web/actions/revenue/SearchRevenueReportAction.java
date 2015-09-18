@@ -88,6 +88,7 @@ public String beforeSearch() {
 
 @SuppressWarnings("unchecked")
 @SkipValidation
+@Action(value="/revenue/searchRevenueReport-search")
 public String search() {
 	StringBuffer query = new StringBuffer();
 	if(LOGGER.isInfoEnabled())     LOGGER.info("Search Query:-"+"Financials Year id"+ finYearId);

@@ -678,6 +678,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 		return "searchRtgsResult";      
 	}
 	@ValidationErrorPage(value="search")         
+@Action(value="/payment/chequeAssignment-search")
 	public String search() throws ApplicationException,ParseException
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting search...");
@@ -852,6 +853,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 	}
 	@ValidationErrorPage(value="searchRtgsResult")
 	@SkipValidation
+@Action(value="/payment/chequeAssignment-update")
 	public String update()throws  ApplicationException,ParseException
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Start createInstrumentForRTGS");   
@@ -890,6 +892,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 	}
 	@ValidationErrorPage(value="searchpayment")
 	@SkipValidation
+@Action(value="/payment/chequeAssignment-create")
 	public String create()throws ApplicationException
 	
 	{
@@ -1528,6 +1531,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 	}
 @ValidationErrorPage(value="surrendercheques")
 	@SkipValidation
+@Action(value="/payment/chequeAssignment-save")
 	public String save()
 	{
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting surrenderCheques...");

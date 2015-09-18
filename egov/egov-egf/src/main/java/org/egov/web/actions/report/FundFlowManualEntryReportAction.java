@@ -127,6 +127,7 @@ public class FundFlowManualEntryReportAction extends BaseFormAction{
 	
 	
 	@ValidationErrorPage(value=NEW)
+@Action(value="/report/fundFlowManualEntryReport-search")
 	public String search(){
 		 
 		 populateReAppropriationData() ;

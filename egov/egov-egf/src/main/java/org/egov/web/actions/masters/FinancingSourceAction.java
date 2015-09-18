@@ -172,6 +172,7 @@ public boolean getNameCheck(){
 	return nameExistsOrNot;
 }
 @ValidationErrorPage(value="new")
+@Action(value="/masters/financingSource-save")
     public String save(){
     	if(LOGGER.isDebugEnabled())     LOGGER.debug("FinancingSourceAction | save | start");
     	if(LOGGER.isDebugEnabled())     LOGGER.debug("financial source list size "+ fundSourceList.size());
