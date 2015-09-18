@@ -63,11 +63,6 @@ INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, di
 ------------------END---------------------
 
 -----------------START--------------------
-INSERT INTO eg_hierarchy_type (id, name, code, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (1, 'ADMINISTRATION', 'ADMIN', '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, 0, NULL);
-INSERT INTO eg_hierarchy_type (id, name, code, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (2, 'LOCATION', 'LOCATION', '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, 0, NULL);
-------------------END---------------------
-
------------------START--------------------
 INSERT INTO eg_city (domainurl, boundary, name, localname, id, active, version, createdby, lastmodifiedby, createddate, lastmodifieddate, code, recaptchapk, districtcode, districtname, longitude, latitude, preferences, recaptchapub) VALUES ('localhost', null, 'Ranchi Municipal Corporation', 'Ranchi', 2, true, 0, 1, 1, '2010-01-01 00:00:00', '2015-01-01 00:00:00', '0001', '6LfidggTAAAAANDSoCgfkNdvYm3Ugnl9HC8_68o0', NULL, NULL, NULL, NULL, NULL, '6LfidggTAAAAADwfl4uOq1CSLhCkH8OE7QFinbVs');
 ------------------END---------------------
 

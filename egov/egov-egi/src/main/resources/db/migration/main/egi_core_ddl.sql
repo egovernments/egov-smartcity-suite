@@ -54,6 +54,22 @@ ALTER TABLE ONLY eg_user ADD CONSTRAINT eg_user_user_name_key UNIQUE (username);
 -------------------END-------------------
 
 ------------------START------------------
+CREATE TABLE eg_citizen
+(
+  id numeric NOT NULL,
+  activationCode character varying(5),
+  version bigint
+);
+CREATE SEQUENCE seq_eg_citizen
+    START WITH 300
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+    ALTER TABLE ONLY eg_citizen
+    ADD CONSTRAINT eg_citizen_pkey PRIMARY KEY (id);
+-------------------END-------------------
+------------------START------------------
 CREATE TABLE eg_module (
     id bigint NOT NULL,
     name character varying(100) NOT NULL,
@@ -312,7 +328,22 @@ ALTER TABLE ONLY eg_boundary ADD CONSTRAINT eg_boundary_pkey PRIMARY KEY (id);
 ALTER TABLE ONLY eg_boundary ADD CONSTRAINT bndry_type_fk FOREIGN KEY (boundarytype) REFERENCES eg_boundary_type(id); 
 CREATE INDEX indx_eb_bndrytypeid ON eg_boundary USING btree (boundarytype);
 -------------------END-------------------
-
+------------------START------------------
+CREATE TABLE eg_crossheirarchy (
+    id bigint NOT NULL,
+    parent bigint NOT NULL,
+    child bigint NOT NULL,
+    version bigint
+);
+CREATE SEQUENCE seq_eg_crossheirarchy
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER TABLE ONLY eg_crossheirarchy
+    ADD CONSTRAINT eg_crossheirarchy_pkey PRIMARY KEY (id);
+-------------------END-------------------
 ------------------START------------------
 CREATE TABLE eg_citypreferences (
     id numeric NOT NULL,
