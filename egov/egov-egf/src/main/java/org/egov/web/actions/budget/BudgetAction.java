@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.budget;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -50,7 +52,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
@@ -68,10 +69,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
-@Result(name="success", type="redirect", location = "budget.action")
+
 @ParentPackage("egov")
 @Validation
 @Transactional(readOnly=true)
+@Results({
+@Result(name = BudgetAction.NEW, location = "budget-"+BudgetAction.NEW+".jsp"),
+@Result(name = "referenceBudgets", location = "budget-referenceBudgets.jsp"),
+@Result(name = "search", location = "budget-search.jsp"),
+@Result(name = "parentbudgets", location = "budget-parentbudgets.jsp"),
+@Result(name="success", type="redirect", location = "budget.action"),
+@Result(name = BudgetAction.EDIT, location = "budget-"+BudgetAction.EDIT+".jsp")
+})
 public class BudgetAction extends BaseFormAction{
 	private static final long serialVersionUID = 1L;
 	private Budget budget=new Budget();

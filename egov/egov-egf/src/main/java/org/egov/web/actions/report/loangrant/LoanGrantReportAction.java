@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.report.loangrant;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -52,9 +54,6 @@ import net.sf.jasperreports.engine.JRException;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.StreamResult;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.egf.masters.model.FundingAgency;
@@ -71,13 +70,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-@Results(value={
-		@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=LoanGrant.pdf"}),
-		@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=LoanGrant.xls"}),
-		@Result(name="HTML",type="stream",location="inputStream",  params={"inputName","inputStream","contentType","text/html","contentDisposition","no-cache;filename=LoanGrant.html"})
-		
-})
+
 @Transactional(readOnly=true)
+@Results({
+@Result(name = "searchGC", location = "loanGrantReport-searchGC.jsp"),
+@Result(name = "searchLoan", location = "loanGrantReport-searchLoan.jsp"),
+@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=LoanGrant.pdf"}),
+@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=LoanGrant.xls"}),
+@Result(name="HTML",type="stream",location="inputStream",  params={"inputName","inputStream","contentType","text/html","contentDisposition","no-cache;filename=LoanGrant.html"})
+})
 public class LoanGrantReportAction extends LoanGrantBaseAction {
 	private static final String	GRANT_CONTRIBUTION	= "GrantContribution";
 	private static final String	LOAN_OUT_STANDINNG	= "LoanOutStandinng";

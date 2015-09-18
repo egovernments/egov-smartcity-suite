@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -57,8 +59,6 @@ import net.sf.jasperreports.engine.JRException;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
@@ -86,13 +86,15 @@ import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-@Results(value={
-		@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=BankBookReport.pdf"}),
-		@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=BankBookReport.xls"})
-	})
-	
+
 @Transactional(readOnly=true)
 @ParentPackage("egov")
+@Results({
+@Result(name = "results", location = "bankBookReport-results.jsp"),
+@Result(name = "chequeDetails", location = "bankBookReport-chequeDetails.jsp"),
+@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=BankBookReport.pdf"}),
+@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=BankBookReport.xls"})
+})
 public class BankBookReportAction extends BaseFormAction{
 	private static final String EMPTY_STRING = "";
 	private static final String PAYMENT = "Payment";

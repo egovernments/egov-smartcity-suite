@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.brs;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -64,8 +66,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
@@ -94,10 +94,15 @@ import org.springframework.transaction.annotation.Transactional;
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 @ParentPackage("egov")
-@Results(value = {
-		@Result(name = "PDF", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType", "application/pdf",	"contentDisposition","no-cache;filename=AutoReconcileReport.pdf" }),
-		@Result(name = "XLS", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType", "application/xls",	"contentDisposition","no-cache;filename=AutoReconcileReport.xls" }) })
+
 @Transactional(readOnly=true)
+        
+@Results({
+@Result(name = AutoReconciliationAction.NEW, location = "autoReconciliation-"+AutoReconciliationAction.NEW+".jsp"),
+@Result(name = "upload", location = "autoReconciliation-upload.jsp"),
+@Result(name = "PDF", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType", "application/pdf",        "contentDisposition","no-cache;filename=AutoReconcileReport.pdf" }),
+@Result(name = "XLS", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType", "application/xls",        "contentDisposition","no-cache;filename=AutoReconcileReport.xls" })
+})
 public class AutoReconciliationAction extends BaseFormAction {
 
 

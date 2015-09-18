@@ -77,6 +77,7 @@ import com.exilant.exility.common.TaskFailedException;
         @Result(name = "detailed", location = "chartOfAccounts-detailed.jsp"),
         @Result(name = Constants.EDIT, location = "chartOfAccounts-edit.jsp"),
         @Result(name = Constants.VIEW, location = "chartOfAccounts-view.jsp"),
+        @Result(name = "new", location = "chartOfAccounts-new.jsp"),
         @Result(name = "generated-glcode", location = "chartOfAccounts-generated-glcode.jsp") })
 public class ChartOfAccountsAction extends BaseFormAction {
     private static final long serialVersionUID = 3393565721493478018L;

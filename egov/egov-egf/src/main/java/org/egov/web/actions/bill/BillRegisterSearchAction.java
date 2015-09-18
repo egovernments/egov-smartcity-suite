@@ -42,6 +42,8 @@
  */
 package org.egov.web.actions.bill;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,8 +53,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
@@ -77,8 +77,9 @@ import org.hibernate.Query;
  * 
  */
 @ParentPackage("egov")
-@Results({ 
-		@Result(name = BillRegisterSearchAction.NEW, location = "billRegisterSearch-new.jsp")})
+@Results({
+@Result(name = BillRegisterSearchAction.NEW, location = "billRegisterSearch-"+BillRegisterSearchAction.NEW+".jsp")
+})
 public class BillRegisterSearchAction extends BaseFormAction {
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = Logger

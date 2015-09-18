@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -64,8 +66,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Bankaccount;
@@ -110,15 +110,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
-@Results(value={
-		@Result(name="bankAdvice-PDF",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf",Constants.CONTENT_DISPOSITION,"no-cache;filename=BandAdvice.pdf"}),
-		@Result(name="bankAdvice-XLS",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/xls",Constants.CONTENT_DISPOSITION,"no-cache;filename=BandAdvice.xls"}),
-		@Result(name="bankAdvice-HTML",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"text/html"})
-	})
+
 
 @ParentPackage("egov")
 @Validation
 @Transactional(readOnly=true)
+@Results({
+@Result(name = "search", location = "chequeAssignment-search.jsp"),
+@Result(name = "surrenderRTGSsearch", location = "chequeAssignment-surrenderRTGSsearch.jsp"),
+@Result(name = "viewReceiptDetailsResult", location = "chequeAssignment-viewReceiptDetailsResult.jsp"),
+@Result(name = "before_pension_search", location = "chequeAssignment-before_pension_search.jsp"),
+@Result(name = "surrenderRTGS", location = "chequeAssignment-surrenderRTGS.jsp"),
+@Result(name = "viewsurrender", location = "chequeAssignment-viewsurrender.jsp"),
+@Result(name = "remittanceRtgsSearch", location = "chequeAssignment-remittanceRtgsSearch.jsp"),
+@Result(name = "before_remittance_search", location = "chequeAssignment-before_remittance_search.jsp"),
+@Result(name = "before_salary_search", location = "chequeAssignment-before_salary_search.jsp"),
+@Result(name = "searchRtgsResult", location = "chequeAssignment-searchRtgsResult.jsp"),
+@Result(name = "surrendersearch", location = "chequeAssignment-surrendersearch.jsp"),
+@Result(name = "searchpayment", location = "chequeAssignment-searchpayment.jsp"),
+@Result(name = "rtgsSearch", location = "chequeAssignment-rtgsSearch.jsp"),
+@Result(name = "tnebRtgsSearch", location = "chequeAssignment-tnebRtgsSearch.jsp"),
+@Result(name="bankAdvice-PDF",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf",Constants.CONTENT_DISPOSITION,"no-cache;filename=BandAdvice.pdf"}),
+@Result(name="bankAdvice-XLS",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/xls",Constants.CONTENT_DISPOSITION,"no-cache;filename=BandAdvice.xls"}),
+@Result(name="bankAdvice-HTML",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"text/html"})
+})
 public class ChequeAssignmentAction extends BaseVoucherAction 
 {
 	private static final String	SURRENDERSEARCH	= "surrendersearch";

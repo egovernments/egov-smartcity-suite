@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.budget;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -51,9 +53,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
@@ -72,10 +71,15 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
 import org.springframework.transaction.annotation.Transactional;
 @ParentPackage("egov")
-@Results({ 
-	@Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain"})
-})
+
 @Transactional(readOnly=true)
+@Results({
+@Result(name = "new-re", location = "budgetDetail-new-re.jsp"),
+@Result(name = "budgets", location = "budgetDetail-budgets.jsp"),
+@Result(name = "functions", location = "budgetDetail-functions.jsp"),
+@Result(name = "budgetGroup", location = "budgetDetail-budgetGroup.jsp"),
+@Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain"})
+})
 public class BudgetDetailAction extends BaseBudgetDetailAction{
 	private static final long serialVersionUID = 1L;
 

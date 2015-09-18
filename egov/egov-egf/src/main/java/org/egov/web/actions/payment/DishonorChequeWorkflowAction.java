@@ -108,7 +108,7 @@ import com.exilant.eGov.src.domain.BankEntries;
 import com.exilant.exility.common.TaskFailedException;
 @Transactional(readOnly=true)
 @Results({
-@Result(name = "Value= view", location = "dishonorChequeWorkflow-Value= view.jsp"),
+@Result(name = "viewMessage", location = "dishonorChequeWorkflow-viewMessage.jsp"),
 @Result(name = "view", location = "dishonorChequeWorkflow-view.jsp")
 })
 public class DishonorChequeWorkflowAction  extends BaseFormAction {

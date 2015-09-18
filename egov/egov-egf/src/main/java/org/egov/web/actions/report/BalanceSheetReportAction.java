@@ -69,13 +69,18 @@ import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-@Results(value={
-		@Result(name="balanceSheet-PDF",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf",Constants.CONTENT_DISPOSITION,"no-cache;filename=BalanceSheet.pdf"}),
-		@Result(name="balanceSheet-XLS",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/xls",Constants.CONTENT_DISPOSITION,"no-cache;filename=BalanceSheet.xls"}),
-		@Result(name="balanceSheet-HTML",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"text/html"})
-	})
+
 @Transactional(readOnly=true)
 @ParentPackage("egov")
+@Results({
+@Result(name = "allScheduleDetailedResults", location = "balanceSheetReport-allScheduleDetailedResults.jsp"),
+@Result(name = "report", location = "balanceSheetReport-report.jsp"),
+@Result(name = "scheduleResults", location = "balanceSheetReport-scheduleResults.jsp"),
+@Result(name = "allScheduleResults", location = "balanceSheetReport-allScheduleResults.jsp"),
+@Result(name="balanceSheet-PDF",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf",Constants.CONTENT_DISPOSITION,"no-cache;filename=BalanceSheet.pdf"}),
+@Result(name="balanceSheet-XLS",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/xls",Constants.CONTENT_DISPOSITION,"no-cache;filename=BalanceSheet.xls"}),
+@Result(name="balanceSheet-HTML",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"text/html"})
+})
 public class BalanceSheetReportAction extends BaseFormAction{
 	private static final String BALANCE_SHEET_PDF = "balanceSheet-PDF";
 	private static final String BALANCE_SHEET_XLS = "balanceSheet-XLS";

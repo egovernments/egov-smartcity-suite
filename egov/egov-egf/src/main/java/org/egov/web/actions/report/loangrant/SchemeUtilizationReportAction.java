@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.report.loangrant;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -53,8 +55,6 @@ import net.sf.jasperreports.engine.JRException;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.masters.model.LoanGrantBean;
@@ -69,14 +69,15 @@ import org.egov.web.actions.masters.loangrant.LoanGrantBaseAction;
 import org.hibernate.SQLQuery;
 import org.springframework.transaction.annotation.Transactional;
 
-@Results(value={
-		@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=SchemeUtilization.pdf"}),
-		@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=SchemeUtilization.xls"}),
-		@Result(name="HTML",type="stream",location="inputStream",  params={"inputName","inputStream","contentType","text/html","contentDisposition","no-cache;filename=SchemeUtilization.html"})
-		
-})
 
 @Transactional(readOnly=true)
+@Results({
+@Result(name = "result", location = "schemeUtilizationReport-result.jsp"),
+@Result(name = SchemeUtilizationReportAction.NEW, location = "schemeUtilizationReport-"+SchemeUtilizationReportAction.NEW+".jsp"),
+@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=SchemeUtilization.pdf"}),
+@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=SchemeUtilization.xls"}),
+@Result(name="HTML",type="stream",location="inputStream",  params={"inputName","inputStream","contentType","text/html","contentDisposition","no-cache;filename=SchemeUtilization.html"})
+})
 public class SchemeUtilizationReportAction extends LoanGrantBaseAction {
 	private static final long	serialVersionUID	= 5416901822456802437L;
 	final static Logger LOGGER=Logger.getLogger(SchemeUtilizationReportAction.class);

@@ -39,11 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -58,8 +56,6 @@ import java.util.TreeMap;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
@@ -69,8 +65,8 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -87,13 +83,15 @@ import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-@Results({ 
-	@Result(name = "reportview", type = "stream", location = "inputStream", params = { "contentType", "${contentType}", "contentDisposition", "attachment; filename=${fileName}" }),
-	@Result(name = "txtresult", type = "stream", location = "inStream", params = { "contentType", "${contentType}", "contentDisposition", "attachment; filename=${textFileName}" })
-	
-	})
+
 @ParentPackage("egov")
 @Transactional(readOnly=true)
+@Results({
+@Result(name = BankAdviceReportAction.NEW, location = "bankAdviceReport-"+BankAdviceReportAction.NEW+".jsp"),
+@Result(name = "downloadText", location = "bankAdviceReport-downloadText.jsp"),
+@Result(name = "reportview", type = "stream", location = "inputStream", params = { "contentType", "${contentType}", "contentDisposition", "attachment; filename=${fileName}" }),
+@Result(name = "txtresult", type = "stream", location = "inStream", params = { "contentType", "${contentType}", "contentDisposition", "attachment; filename=${textFileName}" })
+})
 public class BankAdviceReportAction extends BaseFormAction {
 	
 	private static final String seperatorForIOB = " | ";
@@ -270,7 +268,6 @@ public class BankAdviceReportAction extends BaseFormAction {
         return NEW;
 	}
 	@SkipValidation
-@Action(value="/report/bankAdviceReport-search")
 	public String TNEBsearch() {
 		
 		String query = "select distinct ih " +

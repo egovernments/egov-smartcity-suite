@@ -39,13 +39,14 @@
  ******************************************************************************/
 package org.egov.web.actions.budget;
 
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.Result;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -62,10 +63,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
-@Result(name="success", type="redirect", location = "budgetGroup.action")
+
 @ParentPackage("egov")
 @Validation
 @Transactional(readOnly=true)
+@Results({
+@Result(name = BudgetGroupAction.NEW, location = "budgetGroup-"+BudgetGroupAction.NEW+".jsp"),
+@Result(name = "search", location = "budgetGroup-search.jsp"),
+@Result(name = BudgetGroupAction.EDIT, location = "budgetGroup-"+BudgetGroupAction.EDIT+".jsp"),
+@Result(name="success", type="redirect", location = "budgetGroup.action")
+})
 public class BudgetGroupAction extends BaseFormAction{
 	private static final long serialVersionUID = 1L;
 	private BudgetGroup budgetGroup = new BudgetGroup();
