@@ -66,6 +66,7 @@
             <div class="form-group">
                 <div class="text-center">
                     <button type="submit" class="btn btn-success" id="searcheditbutton"><spring:message code="lbl.edit"/></button>
+                    <button type="submit" class="btn btn-success" id="buttonView"><spring:message code="lbl.view"/></button>
                     <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
                     <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
                 </div>

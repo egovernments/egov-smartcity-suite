@@ -51,5 +51,11 @@ jQuery(document).ready(function($) {
 		$('#agencysearch').attr('action', action);
 	});
 	
+	$("#buttonView").click(function() {
+		var action = '/adtax/agency/view/' + $('#agencyCode').val();
+		$('#agencysearch').attr('method', 'get');
+		$('#agencysearch').attr('action', action);
+	});
+	
 });
 

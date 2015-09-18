@@ -93,4 +93,11 @@ public class UpdateAgencyController {
         return new ModelAndView("agency/agency-form", "agency", agencyService.findByCode(code));
 
     }
+
+    @RequestMapping(value = "/view/{code}", method = GET)
+    public String view(@ModelAttribute final Agency agency, final BindingResult errors) {
+        if (errors.hasErrors())
+            return "agency-search";
+        return "redirect:/agency/success/" + agency.getCode();
+    }
 }

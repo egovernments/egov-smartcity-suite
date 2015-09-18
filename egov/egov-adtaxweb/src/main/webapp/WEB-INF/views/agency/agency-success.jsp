@@ -113,9 +113,11 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
+				<c:if test="${not empty message}">
 					<button type="submit" id="buttonEdit" class="btn btn-success">
 						<spring:message code="lbl.edit" />
 					</button>
+				</c:if>
 	       			<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
 	       				<spring:message code="lbl.close"/>
 	       			</button>
@@ -125,4 +127,3 @@
 	</div>
 </div>
 <script src="<c:url value='/resources/app/js/agency.js'/>"></script>
-
