@@ -51,6 +51,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.egov.adtax.entity.enums.AgencyStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.regex.Constants;
 import org.hibernate.validator.constraints.Email;

@@ -49,7 +49,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.egov.adtax.entity.Agency;
-import org.egov.adtax.entity.AgencyStatus;
+import org.egov.adtax.entity.enums.AgencyStatus;
 import org.egov.adtax.service.AgencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

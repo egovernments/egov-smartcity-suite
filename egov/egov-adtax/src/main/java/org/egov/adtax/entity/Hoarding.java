@@ -61,6 +61,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.egov.adtax.entity.enums.HoardingStatus;
 import org.egov.adtax.entity.enums.HoardingType;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -72,8 +73,9 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "EGADTAX_HOARDING")
 @SequenceGenerator(name = Hoarding.SEQ_HOARDING, sequenceName = Hoarding.SEQ_HOARDING, allocationSize = 1)
-@Unique(id = "id", tableName = "EGADTAX_HOARDING", columnName = { "applicationNumber", "permissionNumber", "hoardingNumber" }, fields = {
-        "applicationNumber", "permissionNumber", "hoardingNumber" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "EGADTAX_HOARDING", columnName = { "applicationNumber", "permissionNumber",
+        "hoardingNumber" }, fields = {
+                "applicationNumber", "permissionNumber", "hoardingNumber" }, enableDfltMsg = true)
 public class Hoarding extends AbstractAuditable {
 
     private static final long serialVersionUID = 5612476685142904195L;
@@ -148,7 +150,7 @@ public class Hoarding extends AbstractAuditable {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private AgencyStatus status;
+    private HoardingStatus status;
 
     @NotNull
     @ManyToOne
@@ -325,11 +327,11 @@ public class Hoarding extends AbstractAuditable {
         this.ownerDetail = ownerDetail;
     }
 
-    public AgencyStatus getStatus() {
+    public HoardingStatus getStatus() {
         return status;
     }
 
-    public void setStatus(final AgencyStatus status) {
+    public void setStatus(final HoardingStatus status) {
         this.status = status;
     }
 
