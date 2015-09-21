@@ -279,20 +279,6 @@ div.navibarwk2 {
 	height: 26px;
 }
 
-div.navibarloginwk {
-	background-color: #FFBB3D;
-	padding-top: 0px;
-	padding-right: 15px;
-	padding-bottom: 0px;
-	padding-left: 15px;
-	text-align: left;
-	background-image: url(../image/yellowbgl.gif);
-	background-repeat: repeat-x;
-	vertical-align: middle;
-	height: 100px;
-	background-position: bottom;
-}
-
 div.navibarshadowwk {
 	background-color: #FFFFFF;
 	background-image: url(/egi/resources/erp2/images/topshadow.gif);
@@ -942,27 +928,6 @@ div.errorstyle {
 	height: 72px;
 	vertical-align: bottom;
 	padding-top: 18px;
-}
-
-.loginboxnew {
-	background-color: #FFF;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 11px;
-	color: #000;
-	border-right-width: 1px;
-	border-left-width: 1px;
-	border-right-style: solid;
-	border-left-style: solid;
-	border-right-color: #ced6de;
-	border-left-color: #ced6de;
-	font-weight: bold;
-	padding-top: 15px;
-	padding-right: 15px;
-	padding-bottom: 15px;
-	padding-left: 31px;
-	background-image: url(../image/login.gif);
-	background-repeat: no-repeat;
-	background-position: right;
 }
 
 .loginboxbuttonarea {
