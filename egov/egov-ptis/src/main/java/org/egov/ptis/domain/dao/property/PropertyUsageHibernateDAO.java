@@ -145,8 +145,8 @@ public class PropertyUsageHibernateDAO implements PropertyUsageDAO {
 
 	@Override
 	public PropertyUsage create(PropertyUsage propertyUsage) {
-		// TODO Auto-generated method stub
-		return null;
+		getCurrentSession().save(propertyUsage);
+		return propertyUsage;
 	}
 
 	@Override

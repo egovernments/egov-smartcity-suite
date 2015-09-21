@@ -48,6 +48,7 @@ package org.egov.ptis.domain.entity.property;
 import java.util.Date;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.models.BaseModel;
 
 /**
@@ -61,6 +62,7 @@ import org.egov.infstr.models.BaseModel;
  * @version 2.00
  * @since 2.00
  */
+@Unique(id = "id", tableName = "egpt_property_usage_master", fields = { "usageName" }, columnName = { "usg_name" }, enableDfltMsg = true)
 public class PropertyUsage extends BaseModel {
 
 	private String usageName;
@@ -74,6 +76,8 @@ public class PropertyUsage extends BaseModel {
 	private Date fromDate;
 	private Date toDate;
 	private Integer isEnabled;
+	
+	private String resdOrNonResd;
 
 	/**
 	 * @return Returns if the given Object is equal to PropertyUsage
@@ -202,5 +206,13 @@ public class PropertyUsage extends BaseModel {
 
 	public void setIsEnabled(Integer isEnabled) {
 		this.isEnabled = isEnabled;
+	}
+
+	public String getResdOrNonResd() {
+		return resdOrNonResd;
+	}
+
+	public void setResdOrNonResd(String resdOrNonResd) {
+		this.resdOrNonResd = resdOrNonResd;
 	}
 }

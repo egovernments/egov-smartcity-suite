@@ -64,6 +64,11 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/rebatePeriod/rebatePeriod-form.jsp"/>
     </definition>
     
+    <definition name="usage-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.property.usageMaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage/usage-form.jsp"/>
+    </definition>
+    
     <definition name="rebatePeriod-success" extends="base_layout">
         <put-attribute name="page-title" value="lbl.hdr.rebate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/rebatePeriod/rebatePeriod-success.jsp"/>
