@@ -80,7 +80,7 @@
 			index="1" />
 	</bean> -->
 
-	<bean id="baseLicenseService" class="org.egov.tl.domain.BaseLicenseService"
+	<bean id="baseLicenseService" class="org.egov.tl.domain.service.BaseLicenseService"
 		scope="prototype" abstract="true">
 		<!-- <property name="sequenceGenerator" ref="sequenceGenerator" />
 		<property name="persistenceService" ref="persistenceService" />
