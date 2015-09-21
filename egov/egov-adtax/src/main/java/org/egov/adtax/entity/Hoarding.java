@@ -46,6 +46,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -60,7 +62,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -94,7 +95,7 @@ public class Hoarding extends AbstractAuditable {
     @Column(name = "hoardingnumber", unique = true)
     @SafeHtml
     @Length(max = 25)
-    private String hoardingnumber;
+    private String hoardingNumber;
 
     @NotNull
     @Column(name = "hoardingName")
@@ -127,7 +128,7 @@ public class Hoarding extends AbstractAuditable {
 
     @NotNull
     @Temporal(value = TemporalType.DATE)
-    private Date applicationdate;
+    private Date applicationDate;
 
     @NotNull
     @ManyToOne
@@ -145,9 +146,8 @@ public class Hoarding extends AbstractAuditable {
     private String ownerDetail;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "status", nullable = false)
-    private EgwStatus status;
+    @Enumerated(EnumType.STRING)
+    private AgencyStatus status;
 
     @NotNull
     @ManyToOne
@@ -162,7 +162,7 @@ public class Hoarding extends AbstractAuditable {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "unitofmeasure", nullable = false)
-    private UnitOfMeasure unitofmeasure;
+    private UnitOfMeasure unitOfMeasure;
 
     private Double measurement;
     private Double length;
@@ -204,7 +204,7 @@ public class Hoarding extends AbstractAuditable {
 
     @ManyToOne
     @JoinColumn(name = "demandid", nullable = false)
-    private EgDemand demandid;
+    private EgDemand demandId;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinTable(name = "egadtax_hoarding_docs", joinColumns = @JoinColumn(name = "hoarding"), inverseJoinColumns = @JoinColumn(name = "document"))
@@ -244,12 +244,13 @@ public class Hoarding extends AbstractAuditable {
         this.permissionNumber = permissionNumber;
     }
 
-    public String getHoardingnumber() {
-        return hoardingnumber;
+    
+    public String getHoardingNumber() {
+        return hoardingNumber;
     }
 
-    public void setHoardingnumber(final String hoardingnumber) {
-        this.hoardingnumber = hoardingnumber;
+    public void setHoardingNumber(String hoardingNumber) {
+        this.hoardingNumber = hoardingNumber;
     }
 
     public String getHoardingName() {
@@ -292,12 +293,12 @@ public class Hoarding extends AbstractAuditable {
         this.advertiserParticular = advertiserParticular;
     }
 
-    public Date getApplicationdate() {
-        return applicationdate;
+    public Date getApplicationDate() {
+        return applicationDate;
     }
 
-    public void setApplicationdate(final Date applicationdate) {
-        this.applicationdate = applicationdate;
+    public void setApplicationDate(Date applicationDate) {
+        this.applicationDate = applicationDate;
     }
 
     public HoardingPropertyType getPropertyType() {
@@ -324,11 +325,11 @@ public class Hoarding extends AbstractAuditable {
         this.ownerDetail = ownerDetail;
     }
 
-    public EgwStatus getStatus() {
+    public AgencyStatus getStatus() {
         return status;
     }
 
-    public void setStatus(final EgwStatus status) {
+    public void setStatus(AgencyStatus status) {
         this.status = status;
     }
 
@@ -348,12 +349,12 @@ public class Hoarding extends AbstractAuditable {
         this.subCategory = subCategory;
     }
 
-    public UnitOfMeasure getUnitofmeasure() {
-        return unitofmeasure;
+    public UnitOfMeasure getUnitOfMeasure() {
+        return unitOfMeasure;
     }
 
-    public void setUnitofmeasure(final UnitOfMeasure unitofmeasure) {
-        this.unitofmeasure = unitofmeasure;
+    public void setUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
+        this.unitOfMeasure = unitOfMeasure;
     }
 
     public Double getMeasurement() {
@@ -460,12 +461,12 @@ public class Hoarding extends AbstractAuditable {
         this.advertisementDuration = advertisementDuration;
     }
 
-    public EgDemand getDemandid() {
-        return demandid;
+    public EgDemand getDemandId() {
+        return demandId;
     }
 
-    public void setDemandid(final EgDemand demandid) {
-        this.demandid = demandid;
+    public void setDemandId(EgDemand demandId) {
+        this.demandId = demandId;
     }
 
 }
