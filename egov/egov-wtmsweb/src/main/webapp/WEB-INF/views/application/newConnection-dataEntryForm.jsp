@@ -64,7 +64,7 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.appType" /></label>
 						<div class="col-sm-6 add-margin dynamic-span capitalize">
-							<form:radiobuttons path="applicationType" items="${radioButtonMap}"  element="span" /> 
+							<form:radiobuttons path="applicationType" items="${radioButtonMap}"  element="span"  onchange="resetPropertyDetailsafterCheckBox();"/> 
 						</div>
 					</div>
 					<jsp:include page="applicantdetails.jsp"></jsp:include>
@@ -94,7 +94,7 @@
 				<table>
 					<tr>
 						<td><form:button type="submit" id="Create"
-								class="btn btn-primary" value="Create" onclick="validate();"><spring:message code="lbl.create.button"/></form:button>
+								class="btn btn-primary" value="Create" onclick="validate();"><spring:message code="lbl.Submit.button"/></form:button>
 							<input type="button" name="button2" id="button2" value="Close"
 							class="btn btn-primary" onclick="window.close();" /></td>
 					</tr>
@@ -110,6 +110,20 @@
 		
 		function validate(){
 			//alert(document.forms[0].action);
+			if($('#connectionType').val() !='METERED')
+				{
+					$('#monthlyFee').attr('required', 'required');
+					
+				}
+			else {
+				$('#existmeterCost').attr('required', 'required');
+				$('#existmeterName').attr('required', 'required');
+
+				$('#existmeterNo').attr('required', 'required');
+				$('#previousReading').attr('required', 'required');
+				$('#currentcurrentReading').attr('required', 'required');
+				$('#existreadingDate').attr('required', 'required');
+				}
 			var radioValue = $("input[name='applicationType']:checked").val();
 		    var ar=document.getElementsByName('applicationType');
             ar[0].value=radioValue;
@@ -121,6 +135,18 @@
 		{
 			//alert('callback function called!');
 			
+		}
+		function resetPropertyDetailsafterCheckBox() {
+			$('#propertyIdentifier').val('');
+			$('#applicantname').val('');
+			$('#mobileNumber').val('');
+			$('#email').val('');
+			$('#aadhaar').val('');
+			$('#nooffloors').val('');
+			$('#propertyaddress').val('');
+			$('#locality').val('');
+			$('#zonewardblock').val('');
+			$('#propertytax').val('0.00');
 		}
 		</script>
 		</form:form>
