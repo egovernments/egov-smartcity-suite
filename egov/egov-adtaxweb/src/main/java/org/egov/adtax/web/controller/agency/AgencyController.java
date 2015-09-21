@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -39,6 +38,7 @@
  */
 package org.egov.adtax.web.controller.agency;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -58,6 +58,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -121,4 +123,8 @@ public class AgencyController {
         return "redirect:/agency/update/" + agency.getCode();
     }
 
+    @RequestMapping(value = "agencies", method = GET, produces = APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Agency> findAgencies(@RequestParam final String name) {
+        return agencyService.findAllByNameLike(name);
+    }
 }

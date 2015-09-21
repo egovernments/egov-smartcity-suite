@@ -36,19 +36,34 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.adtax.repository;
+package org.egov.adtax.web.controller.hoarding;
 
-import java.util.List;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import org.egov.adtax.entity.Agency;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import javax.validation.Valid;
 
-@Repository
-public interface AgencyRepository extends JpaRepository<Agency, Long> {
-    Agency findByName(String name);
+import org.egov.adtax.entity.Hoarding;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-    Agency findByCode(String code);
+@Controller
+@RequestMapping("/hoarding")
+public class CreateHoardingController {
 
-    List<Agency> findByNameContainingIgnoreCase(String name);
+    @ModelAttribute
+    public Hoarding hoarding() {
+        return new Hoarding();
+    }
+
+    @RequestMapping(value = "create", method = GET)
+    public String createHoardingForm() {
+        return "hoarding-create";
+    }
+
+    @RequestMapping(value = "create", method = POST)
+    public String createHoarding(@Valid @ModelAttribute final Hoarding hoarding) {
+        return "create-hoarding";
+    }
 }

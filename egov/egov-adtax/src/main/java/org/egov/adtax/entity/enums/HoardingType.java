@@ -36,19 +36,15 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.adtax.repository;
+package org.egov.adtax.entity.enums;
 
-import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
-import org.egov.adtax.entity.Agency;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+public enum HoardingType {
+    PERMANENT, TEMPORARY;
 
-@Repository
-public interface AgencyRepository extends JpaRepository<Agency, Long> {
-    Agency findByName(String name);
-
-    Agency findByCode(String code);
-
-    List<Agency> findByNameContainingIgnoreCase(String name);
+    @Override
+    public String toString() {
+        return StringUtils.capitalize(name());
+    }
 }

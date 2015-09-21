@@ -85,4 +85,9 @@
         <put-attribute name="body" value="/WEB-INF/views/agency/agency-form.jsp"/>
     </definition>
     
+    <definition name="hoarding-create" extends="base_layout">
+    	<put-attribute name="page-title" value="title.agency.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-create.jsp"/>
+    </definition>
+    
 </tiles-definitions>

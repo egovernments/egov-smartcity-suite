@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -62,15 +61,19 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.egov.adtax.entity.enums.HoardingType;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGADTAX_HOARDING")
 @SequenceGenerator(name = Hoarding.SEQ_HOARDING, sequenceName = Hoarding.SEQ_HOARDING, allocationSize = 1)
+@Unique(id = "id", tableName = "EGADTAX_HOARDING", columnName = { "applicationNumber", "permissionNumber", "hoardingNumber" }, fields = {
+        "applicationNumber", "permissionNumber", "hoardingNumber" }, enableDfltMsg = true)
 public class Hoarding extends AbstractAuditable {
 
     private static final long serialVersionUID = 5612476685142904195L;
@@ -86,28 +89,26 @@ public class Hoarding extends AbstractAuditable {
     private String applicationNumber;
 
     @NotNull
-    @Column(name = "permissionNumber")
+    @Column(name = "permissionNumber", unique = true)
     @SafeHtml
     @Length(max = 25)
     private String permissionNumber;
 
     @NotNull
-    @Column(name = "hoardingnumber", unique = true)
+    @Column(name = "hoardingNumber", unique = true)
     @SafeHtml
     @Length(max = 25)
     private String hoardingNumber;
 
     @NotNull
-    @Column(name = "hoardingName")
     @SafeHtml
     @Length(max = 125)
     private String hoardingName;
 
     @NotNull
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "type")
-    @SafeHtml
-    @Length(max = 25)
-    private String type;
+    private HoardingType type;
 
     @NotNull
     @ManyToOne
@@ -207,7 +208,7 @@ public class Hoarding extends AbstractAuditable {
     private EgDemand demandId;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "egadtax_hoarding_docs", joinColumns = @JoinColumn(name = "hoarding"), inverseJoinColumns = @JoinColumn(name = "document"))
+    @JoinTable(name = "egadtax_hoarding_docs", joinColumns = @JoinColumn(name = "hoarding") , inverseJoinColumns = @JoinColumn(name = "document") )
     private Set<HoardingDocument> documents = new HashSet<>();
 
     public Set<HoardingDocument> getDocuments() {
@@ -244,12 +245,11 @@ public class Hoarding extends AbstractAuditable {
         this.permissionNumber = permissionNumber;
     }
 
-    
     public String getHoardingNumber() {
         return hoardingNumber;
     }
 
-    public void setHoardingNumber(String hoardingNumber) {
+    public void setHoardingNumber(final String hoardingNumber) {
         this.hoardingNumber = hoardingNumber;
     }
 
@@ -261,11 +261,11 @@ public class Hoarding extends AbstractAuditable {
         this.hoardingName = hoardingName;
     }
 
-    public String getType() {
+    public HoardingType getType() {
         return type;
     }
 
-    public void setType(final String type) {
+    public void setType(final HoardingType type) {
         this.type = type;
     }
 
@@ -297,7 +297,7 @@ public class Hoarding extends AbstractAuditable {
         return applicationDate;
     }
 
-    public void setApplicationDate(Date applicationDate) {
+    public void setApplicationDate(final Date applicationDate) {
         this.applicationDate = applicationDate;
     }
 
@@ -329,7 +329,7 @@ public class Hoarding extends AbstractAuditable {
         return status;
     }
 
-    public void setStatus(AgencyStatus status) {
+    public void setStatus(final AgencyStatus status) {
         this.status = status;
     }
 
@@ -353,7 +353,7 @@ public class Hoarding extends AbstractAuditable {
         return unitOfMeasure;
     }
 
-    public void setUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
+    public void setUnitOfMeasure(final UnitOfMeasure unitOfMeasure) {
         this.unitOfMeasure = unitOfMeasure;
     }
 
@@ -465,7 +465,7 @@ public class Hoarding extends AbstractAuditable {
         return demandId;
     }
 
-    public void setDemandId(EgDemand demandId) {
+    public void setDemandId(final EgDemand demandId) {
         this.demandId = demandId;
     }
 
