@@ -41,7 +41,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-
 <div class="row">
 	<div class="col-md-12">
 		<form:form id="hoardingform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="hoarding" commandName="hoarding">
@@ -115,54 +114,63 @@
 									<form:hidden path="agency" id="agencyId" value="0" />
 									<form:errors path="agency" cssClass="error-msg" />
 								</div>
-								<label class="col-sm-3 control-label text-right">Advertiser<span
+								<label class="col-sm-2 control-label text-right">Advertiser<span
 									class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="advertiser" id="advertiser" required="required"/>
+									<form:textarea path="advertiser" cols="5" rows="2" class="form-control"  required="required" minlength="5" maxlength="125"/>
                                		<form:errors path="advertiser" cssClass="error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
-								
-								<label class="col-sm-2 control-label text-right">Advertisement
+								<label class="col-sm-3 control-label text-right">Advertisement
 									Particulars<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<input type="text" class="form-control" required>
+									<form:textarea path="advertisementParticular" cols="5" rows="2" class="form-control"  required="required" minlength="5" maxlength="512"/>
+									<form:errors path="advertisementParticular" cssClass="error-msg" />
+								</div>
+									<label class="col-sm-2 control-label text-right">Property
+										Type<span class="mandatory"></span>
+									</label>
+									<div class="col-sm-3 add-margin">
+										<form:select path="propertyType" id="propertyType" cssClass="form-control" cssErrorClass="form-control error" required="required">
+											<form:option value=""><spring:message code="lbl.select" /></form:option>
+											<form:options items="${hoardingPropertyType}"/>
+										</form:select>
+									<form:errors path="propertyType" cssClass="error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">Property
-									Type<span class="mandatory"></span>
-								</label>
-								<div class="col-sm-3 add-margin">
-									<select class="form-control"><option>select
-											from below</option></select>
-								</div>
-								<label class="col-sm-2 control-label text-right">Property
 									Assessment No</label>
 								<div class="col-sm-3 add-margin">
 									<div class="input-group">
-										<input type="text" class="form-control" /> <span
+										<form:input type="text" cssClass="form-control" path="propertyNumber" id="propertyNumber" /><span
 											class="input-group-addon"> <i
-											class="fa fa-search specific"></i>
-										</span>
+											class="fa fa-search specific"></i></span>
+                               			<form:errors path="propertyNumber" cssClass="error-msg" />
 									</div>
 								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">Owner
+								<label class="col-sm-2 control-label text-right">Owner
 									Details<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<input type="text" class="form-control" required>
+									<form:textarea path="ownerDetail" cols="5" rows="2" class="form-control"  required="required" minlength="5" maxlength="125"/>
+                               		<form:errors path="ownerDetail" cssClass="error-msg" />
 								</div>
-								<label class="col-sm-2 control-label text-right">Hoarding
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right">Hoarding
 									Status<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<input type="text" class="form-control" required>
+									<form:select path="status" id="status" cssClass="form-control" cssErrorClass="form-control error" required="required">
+										<form:option value=""><spring:message code="lbl.select" /></form:option>
+										<form:options items="${hoardingStatus}"/>
+									</form:select>
+									<form:errors path="status" cssClass="error-msg" />
 								</div>
+								<div class="col-sm-5 add-margin">&nbsp;</div>
 							</div>
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">Structure</div>
@@ -171,15 +179,19 @@
 								<label class="col-sm-3 control-label text-right">Category<span
 									class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
-									<select class="form-control"><option>select
-											from below</option></select>
+									<form:select path="category" id="category" cssClass="form-control" cssErrorClass="form-control error" required="required">
+										<form:option value=""><spring:message code="lbl.select" /></form:option>
+										<form:options items="${hoardingCategories}" itemLabel="name" itemValue="id"/>
+									</form:select>
+									<form:errors path="category" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">Sub
 									Category<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<select class="form-control"><option>select
-											from below</option></select>
+									<select class="form-control" name=subCategory id="subCategory">
+										<option>select from below</option>
+									</select>
 								</div>
 							</div>
 							<div class="form-group">
@@ -187,13 +199,17 @@
 									(No/SqMt/Sqft/Vol)<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<input type="text" class="form-control" required>
+									<form:input type="text" cssClass="form-control" path="measurement" id="measurement" required="required"/>
+                               		<form:errors path="measurement" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">UOM<span
 									class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
-									<select class="form-control"><option>select
-											from below</option></select>
+									<form:select path="unitOfMeasure" id="unitOfMeasure" cssClass="form-control" cssErrorClass="form-control error" required="required">
+										<form:option value=""><spring:message code="lbl.select" /></form:option>
+										<form:options items="${uom}" itemLabel="description" itemValue="id"/>
+									</form:select>
+									<form:errors path="unitOfMeasure" cssClass="error-msg" />
 								</div>
 							</div>
 							<div class="form-group">

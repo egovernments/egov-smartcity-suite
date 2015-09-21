@@ -38,23 +38,59 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.List;
 
 import javax.validation.Valid;
 
 import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.entity.HoardingCategory;
+import org.egov.adtax.entity.SubCategory;
+import org.egov.adtax.entity.UnitOfMeasure;
+import org.egov.adtax.service.HoardingCategoryService;
+import org.egov.adtax.service.SubCategoryService;
+import org.egov.adtax.service.UnitOfMeasureService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/hoarding")
 public class CreateHoardingController {
 
+    @Autowired
+    private HoardingCategoryService hoardingCategoryService;
+
+    @Autowired
+    private UnitOfMeasureService unitOfMeasureService;
+
+    @Autowired
+    private SubCategoryService subCategoryService;
+
     @ModelAttribute
     public Hoarding hoarding() {
         return new Hoarding();
+    }
+
+    @ModelAttribute("hoardingCategories")
+    public List<HoardingCategory> hoardingCategories() {
+        return hoardingCategoryService.getAllActiveHoardingCategory();
+    }
+
+    @ModelAttribute("uom")
+    public List<UnitOfMeasure> uom() {
+        return unitOfMeasureService.getAllActiveUnitOfMeasure();
+    }
+    
+    @RequestMapping(value="subcategories", method = GET, produces = APPLICATION_JSON_VALUE)
+    public @ResponseBody List<SubCategory> hoardingSubcategories(@RequestParam final Long categoryId) {
+        return subCategoryService.getAllActiveSubCategoryByCategoryId(categoryId);
     }
 
     @RequestMapping(value = "create", method = GET)

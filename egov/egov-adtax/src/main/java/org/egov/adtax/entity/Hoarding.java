@@ -61,6 +61,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.egov.adtax.entity.enums.HoardingPropertyType;
 import org.egov.adtax.entity.enums.HoardingStatus;
 import org.egov.adtax.entity.enums.HoardingType;
 import org.egov.demand.model.EgDemand;
@@ -73,9 +74,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "EGADTAX_HOARDING")
 @SequenceGenerator(name = Hoarding.SEQ_HOARDING, sequenceName = Hoarding.SEQ_HOARDING, allocationSize = 1)
-@Unique(id = "id", tableName = "EGADTAX_HOARDING", columnName = { "applicationNumber", "permissionNumber",
-        "hoardingNumber" }, fields = {
-                "applicationNumber", "permissionNumber", "hoardingNumber" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "EGADTAX_HOARDING", columnName = { "applicationNumber", "permissionNumber", "hoardingNumber" }, fields = {
+        "applicationNumber", "permissionNumber", "hoardingNumber" }, enableDfltMsg = true)
 public class Hoarding extends AbstractAuditable {
 
     private static final long serialVersionUID = 5612476685142904195L;
@@ -109,7 +109,6 @@ public class Hoarding extends AbstractAuditable {
 
     @NotNull
     @Enumerated(EnumType.ORDINAL)
-    @Column(name = "type")
     private HoardingType type;
 
     @NotNull
@@ -118,38 +117,33 @@ public class Hoarding extends AbstractAuditable {
     private Agency agency;
 
     @NotNull
-    @Column(name = "advertiser")
     @SafeHtml
     @Length(max = 125)
     private String advertiser;
 
     @NotNull
-    @Column(name = "advertiserParticular")
     @SafeHtml
     @Length(max = 512)
-    private String advertiserParticular;
+    private String advertisementParticular;
 
     @NotNull
     @Temporal(value = TemporalType.DATE)
     private Date applicationDate;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "propertyType", nullable = false)
+    @Enumerated(EnumType.ORDINAL)
     private HoardingPropertyType propertyType;
 
-    @Column(name = "propertyNumber")
     @SafeHtml
     @Length(max = 50)
     private String propertyNumber;
 
-    @Column(name = "ownerdetail")
     @SafeHtml
     @Length(max = 125)
     private String ownerDetail;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private HoardingStatus status;
 
     @NotNull
@@ -194,13 +188,11 @@ public class Hoarding extends AbstractAuditable {
     private Boundary adminBoundry;
 
     @NotNull
-    @Column(name = "address")
     @SafeHtml
     @Length(max = 512)
     private String address;
 
     @NotNull
-    @Column(name = "advertisementduration")
     @SafeHtml
     @Length(max = 25)
     private String advertisementDuration;
@@ -287,12 +279,12 @@ public class Hoarding extends AbstractAuditable {
         this.advertiser = advertiser;
     }
 
-    public String getAdvertiserParticular() {
-        return advertiserParticular;
+    public String getAdvertisementParticular() {
+        return advertisementParticular;
     }
 
-    public void setAdvertiserParticular(final String advertiserParticular) {
-        this.advertiserParticular = advertiserParticular;
+    public void setAdvertisementParticular(final String advertisementParticular) {
+        this.advertisementParticular = advertisementParticular;
     }
 
     public Date getApplicationDate() {

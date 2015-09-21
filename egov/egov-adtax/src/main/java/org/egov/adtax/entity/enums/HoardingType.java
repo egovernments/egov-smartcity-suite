@@ -38,13 +38,6 @@
  */
 package org.egov.adtax.entity.enums;
 
-import org.apache.commons.lang3.StringUtils;
-
 public enum HoardingType {
     PERMANENT, TEMPORARY;
-
-    @Override
-    public String toString() {
-        return StringUtils.capitalize(name());
-    }
 }

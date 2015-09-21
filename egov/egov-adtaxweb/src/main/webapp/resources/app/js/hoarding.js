@@ -37,4 +37,21 @@ $(document).ready(function(){
        $(this).parent().before('<div class="col-sm-3 add-margin"> <input type="file" class="form-control" required> </div>');
    });
 
+   $('#category').change(function(){
+		if (this.value === '') {
+			return;
+		} else {
+			$.ajax({
+				type: "GET",
+				url: "subcategories",
+				cache: true,
+				dataType: "json",
+				data:{'categoryId' : this.value}
+			}).done(function(value) {
+				$.each(value, function(index, val) {
+				     $('#subCategory').append($('<option>').text(val.description).attr('value', val.id));
+				});
+			});
+		}
+	});	
 });
