@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.newtradelicense;
 
+
 import java.math.BigDecimal;
 import java.util.Iterator;
 
@@ -50,6 +51,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.persistence.entity.PermanentAddress;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
@@ -84,6 +86,9 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     public NewTradeLicenseAction() {
         super();
         tradeLicense.setLicensee(new Licensee());
+        tradeLicense.setAddress(new PermanentAddress());
+        tradeLicense.getLicensee().setAddress(new PermanentAddress());
+        
     }
 
     /* to log errors and debugging information */
@@ -110,9 +115,10 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
             @RequiredFieldValidator(fieldName = "tradeName", message = "", key = Constants.REQUIRED),
             @RequiredFieldValidator(fieldName = "applicationDate", message = "", key = Constants.REQUIRED),
             @RequiredFieldValidator(fieldName = "licensee.gender", message = "", key = Constants.REQUIRED),
-            @RequiredFieldValidator(fieldName = "nameOfEstablishment", message = "", key = Constants.REQUIRED),
-            @RequiredFieldValidator(fieldName = "address.houseNo", message = "", key = Constants.REQUIRED),
-            @RequiredFieldValidator(fieldName = "licensee.address.houseNo", message = "", key = Constants.REQUIRED) },
+            @RequiredFieldValidator(fieldName = "nameOfEstablishment", message = "", key = Constants.REQUIRED)
+           // @RequiredFieldValidator(fieldName = "address.houseNo", message = "", key = Constants.REQUIRED),
+            //@RequiredFieldValidator(fieldName = "licensee.address.houseNo", message = "", key = Constants.REQUIRED) 
+            },
             emails = {
             @EmailValidator(message = "Please enter the valid Email Id", fieldName = "licensee.emailId", key = "Please enter the valid Email Id")
     },
@@ -128,7 +134,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
             @StringLengthFieldValidator(fieldName = "licensee.fatherOrSpouseName", maxLength = "100", message = "", key = "Maximum length for Father Or SpouseName is 100"),
             @StringLengthFieldValidator(fieldName = "licensee.qualification", maxLength = "50", message = "", key = "Maximum length for Qualification is 50"),
             @StringLengthFieldValidator(fieldName = "licensee.panNumber", maxLength = "10", message = "", key = "Maximum length for PAN Number is 10"),
-            @StringLengthFieldValidator(fieldName = "licensee.address.houseNo", maxLength = "10", message = "", key = "Maximum length for house number is 10"),
+          //  @StringLengthFieldValidator(fieldName = "licensee.address.houseNo", maxLength = "10", message = "", key = "Maximum length for house number is 10"),
             @StringLengthFieldValidator(fieldName = "licensee.address.streetAddress2", maxLength = "10", message = "", key = "Maximum length for house number is 10"),
             @StringLengthFieldValidator(fieldName = "licensee.address.streetAddress1", maxLength = "500", message = "", key = "Maximum length for remaining address is 500"),
             @StringLengthFieldValidator(fieldName = "licensee.phoneNumber", maxLength = "15", message = "", key = "Maximum length for Phone Number is 15"),

@@ -83,7 +83,7 @@ public class TradeService extends BaseLicenseService {
     @Override
     protected Module getModuleName() {
         final Module module = (Module) persistenceService.find(
-                "from org.egov.infra.admin.master.entity.Module where parent is null and moduleName=?", "Trade License");
+                "from org.egov.infra.admin.master.entity.Module where parentModule is null and name=?", "Trade License");
         return module;
     }
 

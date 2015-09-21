@@ -57,7 +57,7 @@
 		<property name="gender" column="GENDER" />
 		<property name="panNumber" column="PAN_NUM" />
 		<many-to-one name="boundary" class="org.egov.infra.admin.master.entity.Boundary" column="ID_ADM_BNDRY" unique="true" />
-		<many-to-one name="address" column="ID_ADDRESS" class="org.egov.infra.persistence.entity.Address" cascade="all"
+		<many-to-one name="address" column="ID_ADDRESS" class="org.egov.infra.persistence.entity.PermanentAddress" cascade="all"
 			unique="true" />
 		<property name="mobilePhoneNumber" column="MOBILE_PHONENUMBER"  />
 		<property name="uid" column="UNIQUEID"  />

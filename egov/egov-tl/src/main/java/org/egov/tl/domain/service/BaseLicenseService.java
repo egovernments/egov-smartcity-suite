@@ -53,6 +53,9 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgReasonCategory;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -80,6 +83,9 @@ public abstract class BaseLicenseService {
     protected SequenceGenerator sequenceGenerator;
     @Autowired
     protected InstallmentHibDao installmentDao;
+    @Autowired
+    private ApplicationNumberGenerator applicationNumberGenerator;
+    
 
     protected abstract WorkflowService workflowService();
 
@@ -93,6 +99,9 @@ public abstract class BaseLicenseService {
     protected abstract Module getModuleName();
 
     protected abstract NatureOfBusiness getNatureOfBusiness();
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     public PersistenceService getPersistenceService() {
         return persistenceService;
@@ -114,7 +123,8 @@ public abstract class BaseLicenseService {
     public void create(License license) {
         final LicenseAppType appType = getLicenseApplicationType();
         final NatureOfBusiness nature = getNatureOfBusiness();
-        final List<FeeMatrix> feeList = feeService.getFeeList(license.getTradeName(), appType, nature);
+        //commented need to be completed after fee matrix
+        final List<FeeMatrix> feeList = new ArrayList<FeeMatrix>();//feeService.getFeeList(license.getTradeName(), appType, nature); 
         final BigDecimal totalAmount = BigDecimal.ZERO;
         // calculateFee code sets the fee type like cnc or pfa etc etc only required on create
         // this.feeService.calculateFee(license, license.getTradeName(), this.getLicenseApplicationType(),
@@ -127,11 +137,8 @@ public abstract class BaseLicenseService {
                 .find("from org.egov.demand.model.EgReasonCategory where name='Fee'");
         final Set<EgDemandReasonMaster> egDemandReasonMasters = reasonCategory.getEgDemandReasonMasters();
         String feeType = "";
-        if (getModuleName().getName().equals(Constants.ELECTRICALLICENSE_MODULENAME))
-            feeType = getFeeTypeForElectricalLicense(license);
-        else
-            feeType = license.getClass().getSimpleName().toUpperCase();
-        final String runningApplicationNumber = getNextRunningNumber(feeType + "_APPLICATION_NUMBER");
+        feeType = license.getClass().getSimpleName().toUpperCase();
+        final String runningApplicationNumber = applicationNumberGenerator.generate();
         license = license.create(feeList, appType, nature, installment, egDemandReasonMasters, totalAmount,
                 runningApplicationNumber, license.getFeeTypeStr(), getModuleName());
         license.getLicensee().setLicense(license);
@@ -139,10 +146,23 @@ public abstract class BaseLicenseService {
                 "from org.egov.tl.domain.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
         license.updateStatus(status);
         license = additionalOperations(license, egDemandReasonMasters, installment);
+        setAuditEntries(license);
         persistenceService.create(license);
     }
 
-    public String getFeeTypeForElectricalLicense(final License license) {
+    private void setAuditEntries(License license) {
+    	if(license.getId()==null)
+    	{
+    	license.setCreatedBy(securityUtils.getCurrentUser());
+    	license.setCreatedDate(new Date());
+    	}
+    	license.setLastModifiedBy(securityUtils.getCurrentUser());
+    	license.setLastModifiedDate(new Date());
+    
+		
+	}
+
+	public String getFeeTypeForElectricalLicense(final License license) {
         String feeType = null;
         if (license != null && license.getLicenseSubType() != null)
             if (license.getLicenseSubType().getCode().equals(Constants.MAINTENANCE_CONTRACTORS))

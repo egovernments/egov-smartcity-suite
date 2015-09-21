@@ -40,7 +40,7 @@
 jQuery.noConflict();
 
 function doLoadingMask() {
-    jQuery("#loadingMask").dialog({ 
+    /*jQuery("#loadingMask").dialog({ 
         modal: true,
         width: 250,  
         height: 90,
@@ -51,7 +51,7 @@ function doLoadingMask() {
             jQuery(".ui-dialog-titlebar-close").hide();
             jQuery(".ui-dialog-titlebar").hide();   
         }
-    });
+    });*/
 }
 
 function undoLoadingMask() {

@@ -41,19 +41,6 @@
 <%
 String path = request.getContextPath();
 %>
-<script type="text/javascript">
-	function callEdit(obj, id){
-		path='<%=path%>';	
-		licenseId = id;
-		var actionValue = obj.options[obj.selectedIndex].value;
-		if(actionValue!=-1&& actionValue!=-2&& actionValue!=-3){
-			window.open(path+actionValue+Number(id),"winPop","scrollbars=yes,menubar=no,resizable=yes,toolbar=no,location=no,status=no,alwaysLowered=yes");
-		} else if(actionValue==-2){
-			var appType = 'RENEWAL';
-			makeJSONCall(["licenseAppType"],'ajaxTradeLicense-checkLicenseAppType.action',{licenseAppType:appType},licenseSuccessHandler,licenseFailureHandler) ;
-		}	
-	}
-</script>
 
 <s:if test="pagedResults != null && pagedResults.getList() != null && !pagedResults.getList().isEmpty()">
 	<br />
@@ -341,3 +328,20 @@ String path = request.getContextPath();
 	</div>
 </fieldset>
 <%} %>
+
+
+<script type="text/javascript">
+	function callEdit(obj, id){
+		path='<%=path%>';	
+		licenseId = id;
+		alert(obj+"-------------"+"---------------"+id);   
+		var actionValue = obj.options[obj.selectedIndex].value;
+		if(actionValue!=-1&& actionValue!=-2&& actionValue!=-3){
+			window.open(path+actionValue+Number(id),"winPop","scrollbars=yes,menubar=no,resizable=yes,toolbar=no,location=no,status=no,alwaysLowered=yes");
+		} else if(actionValue==-2){
+			var appType = 'RENEWAL';
+			makeJSONCall(["licenseAppType"],'ajaxTradeLicense-checkLicenseAppType.action',{licenseAppType:appType},licenseSuccessHandler,licenseFailureHandler) ;
+		}	
+	}
+</script>
+

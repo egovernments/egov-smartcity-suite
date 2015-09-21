@@ -42,7 +42,7 @@
 	<head>
 		<title><s:text name="license.search" /></title>
 		<link href="/resources/css/license/searchTrade.css" rel="stylesheet" type="text/css"></link>
-		<script type="text/javascript" src="/resources/javascript/license/searchTrade.js"></script>
+		<script type="text/javascript" src="/tl/resources/javascript/license/searchTrade.js"></script>
 	</head>
 	<body onload="init()">
 		<table align="center" width="100%">

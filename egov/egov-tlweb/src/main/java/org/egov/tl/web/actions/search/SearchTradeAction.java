@@ -61,6 +61,7 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.displaytag.pagination.PaginatedList;
+import org.displaytag.properties.SortOrderEnum;
 import org.displaytag.tags.TableTagParameters;
 import org.displaytag.util.ParamEncoder;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -154,11 +155,11 @@ public class SearchTradeAction extends BaseFormAction {
             	reportSize=0;
             }
         }
-        criteria.addOrder(Order.desc("createdDate"));
+        //criteria.addOrder(Order.desc("createdDate"));
         final ParamEncoder paramEncoder = new ParamEncoder("license");
         final boolean isReport = parameters.get(paramEncoder.encodeParameterName(TableTagParameters.PARAMETER_EXPORTTYPE)) != null;
-        final Page page = new Page(createSearchQuery(), isReport ? 1 : this.page, isReport ? null : 20);
-        pagedResults = new EgovPaginatedList(page, reportSize, null, null);
+        final Page page = new Page(criteria, isReport ? 1 : this.page, isReport ? null : 20);
+        pagedResults = new EgovPaginatedList(page, reportSize, "createdDate", SortOrderEnum.DESCENDING);
         request.setAttribute("hasResult", !page.getList().isEmpty());
         return BaseFormAction.NEW;
     }

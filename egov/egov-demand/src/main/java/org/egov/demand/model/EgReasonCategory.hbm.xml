@@ -31,7 +31,7 @@
         </property>
         <set name="egDemandReasonMasters" table="EG_DEMAND_REASON_MASTER">
             <key>
-                <column name="ID_CATEGORY" not-null="true" />
+                <column name="CATEGORY" not-null="true" />
             </key>
             <one-to-many class="org.egov.demand.model.EgDemandReasonMaster" />
         </set>

@@ -62,6 +62,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.persistence.entity.PermanentAddress;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -201,6 +202,8 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         this.addRelatedEntity("boundary", Boundary.class);
         this.addRelatedEntity("licensee.boundary", Boundary.class);
         this.addRelatedEntity("tradeName", SubCategory.class);
+        this.addRelatedEntity("address", PermanentAddress.class);
+        this.addRelatedEntity("licensee.address", PermanentAddress.class);
     }
 
     // sub class should get the object of the model and set to license()
@@ -236,10 +239,10 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             this.setCheckList();
             service().create(license());
             addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
-            // initiateWorkFlowForLicenseDraft();
+           // initiateWorkFlowForLicense();
             persistenceService.getSession().flush();
         } catch (final RuntimeException e) {
-            loadAjaxedDropDowns();
+            //loadAjaxedDropDowns();
             throw e;
         }
         return Constants.ACKNOWLEDGEMENT;
@@ -688,30 +691,30 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     }
 
     public void loadAjaxedDropDowns() {
-        final CommonAjaxAction comm = new CommonAjaxAction();
-        comm.setLicenseUtils(licenseUtils);
+        final CommonAjaxAction commonAjaxAction = new CommonAjaxAction();
+        commonAjaxAction.setLicenseUtils(licenseUtils);
         // if the zone is loaded from ui which have trigger load division
         // set those list
         // else is not required since empty lists are set in prepare itself
         if (license().getLicenseZoneId() != null) {
-            comm.setZoneId(license().getLicenseZoneId().intValue());
-            comm.populateDivisions();
-            addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSE, comm.getDivisionList());
+            commonAjaxAction.setZoneId(license().getLicenseZoneId().intValue());
+            commonAjaxAction.populateDivisions();
+            addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSE, commonAjaxAction.getDivisionList());
         }
         if (license().getLicenseeZoneId() != null) {
-            comm.setZoneId(license().getLicenseeZoneId().intValue());
-            comm.populateDivisions();
-            addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSEE, comm.getDivisionList());
+            commonAjaxAction.setZoneId(license().getLicenseeZoneId().intValue());
+            commonAjaxAction.populateDivisions();
+            addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSEE, commonAjaxAction.getDivisionList());
         }
         if (workflowBean.getDepartmentId() != null) {
-            comm.setDepartmentId(workflowBean.getDepartmentId());
-            comm.ajaxPopulateDesignationsByDept();
-            workflowBean.setDesignationList(comm.getDesignationList());
+            commonAjaxAction.setDepartmentId(workflowBean.getDepartmentId());
+            commonAjaxAction.ajaxPopulateDesignationsByDept();
+            workflowBean.setDesignationList(commonAjaxAction.getDesignationList());
         }
         if (workflowBean.getDesignationId() != null) {
-            comm.setDesignationId(workflowBean.getDesignationId());
-            comm.ajaxPopulateUsersByDesignation();
-            workflowBean.setAppoverUserList(comm.getAllActiveUsersByGivenDesg());
+            commonAjaxAction.setDesignationId(workflowBean.getDesignationId());
+            commonAjaxAction.ajaxPopulateUsersByDesignation();
+            workflowBean.setAppoverUserList(commonAjaxAction.getAllActiveUsersByGivenDesg());
         }
     }
 

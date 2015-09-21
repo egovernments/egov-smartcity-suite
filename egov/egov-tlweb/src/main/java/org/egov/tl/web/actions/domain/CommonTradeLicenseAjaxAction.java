@@ -79,7 +79,7 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction {
      *
      * @return the string
      */
-    @Action(value="/domain/commonTradeLicenseAjaxAction-populateDivisions") 
+    @Action(value="/domain/commonTradeLicenseAjax-populateDivisions") 
     public String populateDivisions() {
         try {
             final Boundary boundary = boundaryService.getBoundaryById(Long.valueOf(zoneId));
