@@ -40,12 +40,12 @@
 <%@ include file="/includes/taglibs.jsp" %> 
 
 <html>
-<title><s:text name="contractor.list" /></title>
+<title><s:text name="contractor.search" /></title>
 
 <script type="text/javascript">
      
 	function validate(){
-		document.searchContractorForm.action='${pageContext.request.contextPath}/masters/contractor!viewResult.action';
+		document.searchContractorForm.action='${pageContext.request.contextPath}/masters/contractor-viewResult.action'; 
     	document.searchContractorForm.submit();
 		
 	}
@@ -62,7 +62,7 @@
         		<s:actionmessage theme="simple"/>
         	</div>
     	</s:if>
-		<s:form action="/masters/contractor!viewResult.action" theme="simple" name="contractor" >
+		<s:form action="/masters/contractor-viewResult.action" theme="simple" name="contractor" >
 			<div class="navibarshadowwk">
 			</div>
 			<div class="formmainbox">
@@ -114,7 +114,7 @@
 								</td>
 								<td width="21%" class="greybox2wk">
 									<s:select id="status" name="departmentId" cssClass="selectwk"
-										list="%{dropdownData.departmentList}" listKey="id" listValue="deptName" 
+										list="%{dropdownData.departmentList}" listKey="id" listValue="name" 
 										headerKey="" headerValue="--- Select ---" />	
 								</td>
 								<td width="15%" class="greyboxwk">

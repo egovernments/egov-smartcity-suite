@@ -52,15 +52,6 @@
 							<div></div>
 						</div>
 						<div class="rbcontent2">
-						
-						<!--  div class="datewk">
-								<div class="estimateno">
-									Estimate No: &lt;Not Assigned&gt;
-								</div>
-								<span class="bold">Today</span> 12/12/2009
-							</div>
-							
-						-->
 							<table width="100%" border="0" cellspacing="0" cellpadding="0">
 									<s:hidden name="rowId" id="rowid"/>
 								<tr>
@@ -227,7 +218,6 @@
 			}
 			
 			function returnBackToParent(contractorId,contractorCode,contractorname) {
-				//document.all.ret.value =  contractorId+ '`~`' + contractorCode+ '`~`' + contractorname;
 				var wind;
 				var data = new Array();
 				wind=window.dialogArguments;

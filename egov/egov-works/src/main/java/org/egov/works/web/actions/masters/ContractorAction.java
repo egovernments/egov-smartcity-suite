@@ -51,6 +51,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
@@ -79,12 +80,16 @@ import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
-@Result(name = ContractorAction.NEW, location = "contractor-new.jsp")
+@Results({ @Result(name = ContractorAction.NEW, location = "contractor-new.jsp"),
+        @Result(name = ContractorAction.VIEW_CONTRACTOR, location = "contractor-viewContractor.jsp")
+})
 public class ContractorAction extends SearchFormAction {
 
     private static final long serialVersionUID = 3167651186547987956L;
 
     private static final Logger logger = Logger.getLogger(ContractorAction.class);
+
+    public static final String VIEW_CONTRACTOR = "viewContractor";
 
     private PersistenceService<Contractor, Long> contractorService;
 
@@ -145,19 +150,17 @@ public class ContractorAction extends SearchFormAction {
         return EDIT;
     }
 
-    /*
-     * on 28th 2009 for listing contractor based on criteria
-     */
-    public String viewContractor() {
-        return "viewContractor";
+    @Override
+    @Action(value = "/masters/contractor-search")
+    public String search() {
+        return VIEW_CONTRACTOR;
     }
 
+    @Action(value = "/masters/contractor-viewResult")
     public String viewResult() {
-        logger.debug("Inside viewResult");
-        // getContractorListForCriterias();
         setPageSize(WorksConstants.PAGE_SIZE);
         search();
-        return "viewContractor";
+        return VIEW_CONTRACTOR;
     }
 
     public void getContractorListForCriterias() {
