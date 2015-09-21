@@ -38,55 +38,70 @@
 	#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 
-/*
- * Note : Property "selectedModeBndry" used to traverse forward and backward. 
- * 1.ondrilldown at each level(ie zone/ward/block/property) this property value gets updated with the concatenated values of mode and boundary.
- * 2. Value format : mode~boundaryId. 
- * 3. Ex: zone~1 (At 1st level), zone~1-ward~6-block~8-property~10 (At last level). 
- * 4. property~10 means show all properties under block with id 10 / block~8 means show all blocks under ward id 8 and so on.  		
- */
 
-function calculateAmount(obj){
+
+		function calculateAmount(obj){
 	
-	/* var table= document.getElementById("dcbOnlinePaymentTable");
-	 var rowobj= getRow(obj).rowIndex;
-	 var nodes = jQuery('#dcbOnlinePaymentTable').find('input[type=checkbox]');
-
-	  if(document.forms[0].payInstallment[rowobj-2]!=undefined && document.forms[0].payInstallment[rowobj-2].checked==true){	 
-			for(var j=0;j<=rowobj-2;j++)
-			{
-				if(document.forms[0].payInstallment[j].checked==false){
-					dom.get("shop_error").style.display = '';
-					document.getElementById("shop_error").innerHTML ="Please choose its previos Installments. Random selection not allowed.";
-					document.forms[0].payInstallment[rowobj-2].checked=false;
-					document.getElementById("shop_error").focus();
-					return false;
-				}
-			}*/
-		
 	 var table= document.getElementById("dcbOnlinePaymentTable");
 	 var rowobj= getRow(obj).rowIndex;
-	var val=$('#demand.egDemandDetails'+[rowobj-2]+'amount').val();
-	  if(jQuery('#amount[rowobj-2]')!=undefined && jQuery('#amount[rowobj-2]').val() >0){	 
+		if(obj.value !=undefined)
+		{
+			if( obj.value -(document.forms[0].actualCollection[rowobj].value) < 0 )
+				{
+				alert(" Collection Amount should not be greater than Demand amount111");
+				document.forms[0].actualCollection[rowobj].value="";
+				return false;
+				}
+		}
+	if(document.forms[0].actualAmount[rowobj-2]!=undefined && document.forms[0].actualAmount[rowobj-2].value !=undefined){	 
 			for(var j=0;j<=rowobj-2;j++)
 			{
-				if(jQuery('#amount[j]').val() >0){
+				if(document.forms[0].actualAmount[j].value ==""){
 					
 					alert("Please choose its previos Installments. Random selection not allowed.");
-					//document.forms[0].amount[rowobj-2].checked=false;
-					
+					obj.value="";
 					return false;
 				}
 			}
-	  }/*else if(document.forms[0].amount[rowobj-2]!=undefined && document.forms[0].amount[rowobj-2].value !=""){
-			for(var j=rowobj-2;j<nodes.length;j++){
-				document.forms[0].amount[j].value=false;
-				if(document.forms[0].isArrersServiceTax[j].value=="true"){
-					document.forms[0].arrersServiceTaxAmount[j].value="";
+ 		}
+	 	
+		}
+		
+
+		function calculateCollectionAmount(obj){
+	
+	 var table= document.getElementById("dcbOnlinePaymentTable");
+	 var rowobj= getRow(obj).rowIndex;
+	if(obj.value !=undefined)
+	{
+		/*var rate = $(obj).parent('td').prev('td').text();
+		var values=$(obj).parent('td').prev('td').attr("value");
+		if(document.forms[0].actualAmount[rowobj].value=="")
+		{
+			alert("Please Enter Demand Amount for This row");
+			obj.value="";
+			return false;
+			//need to fix .. get previous td value n do validation
+		}*/
+		
+		/*if((document.forms[0].actualAmount[rowobj].value) -(obj.value) <0 )
+			{
+			alert(" Collection Amount should not be greater than Demand amount");
+			obj.value="";
+			return false;
+			}*/
+	}
+	if(document.forms[0].actualCollection[rowobj-2]!=undefined && document.forms[0].actualCollection[rowobj-2].value !=undefined){	 
+			for(var j=0;j<=rowobj-2;j++)
+			{
+				if(document.forms[0].actualCollection[j].value == ""){
+					alert("Please choose its previos Installments. Random selection not allowed.");
+					obj.value="";
+					return false;
 				}
 			}
-	  } */
+ 		}
+		}
 
 	 
 	 
-}

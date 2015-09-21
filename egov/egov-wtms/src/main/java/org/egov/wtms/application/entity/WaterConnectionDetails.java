@@ -63,6 +63,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -221,12 +222,25 @@ public class WaterConnectionDetails extends StateAware {
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<NonMeteredConnBillDetails> nonmeteredBillDetails = new HashSet<NonMeteredConnBillDetails>(0);
 
+    
+    @Transient
+    private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>(0);
+    
     public List<MeterReadingConnectionDetails> getMeterConnection() {
         return meterConnection;
     }
 
     public void setMeterConnection(final List<MeterReadingConnectionDetails> meterConnection) {
         this.meterConnection = meterConnection;
+    }
+    
+
+    public List<DemandDetail> getDemandDetailBeanList() {
+        return demandDetailBeanList;
+    }
+
+    public void setDemandDetailBeanList(List<DemandDetail> demandDetailBeanList) {
+        this.demandDetailBeanList = demandDetailBeanList;
     }
 
     @Override

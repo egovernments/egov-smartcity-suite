@@ -49,7 +49,7 @@
 
 			<form:form method="post"
 				modelAttribute="waterConnectionDetails"
-				id="editmeterWaterConnectionform"
+				id="editmeter11WaterConnectionform"
 				cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 				<div class="page-container" id="page-container">
 				<div class="panel-heading">
@@ -85,82 +85,48 @@
 										</th>
 										</tr>
 										<c:choose>
-										<c:when test="${!waterConnectionDetails.demand.egDemandDetails.isEmpty()}">
-											<c:forEach items="${waterConnectionDetails.demand.egDemandDetails}" var="var1"
+										<c:when test="${!demandDetailBeanList.isEmpty()}">
+											<c:forEach items="${demandDetailBeanList}" var="var1"
 												varStatus="counter">
 												<tr id="Floorinfo">
 												
-												<td class="blueborderfortd"><form:input type="text" path="demand.egDemandDetails[${counter.index}].egDemandReason.egInstallmentMaster.description"
-														class="form-control low-width" value="${var1.egDemandReason.egInstallmentMaster.description}"
-														name="demand.egDemandDetails[${counter.index}].egDemandReason.egInstallmentMaster.description"
-														id="demand.egDemandDetails[${counter.index}].egDemandReason.egInstallmentMaster.description"
+												<td class="blueborderfortd"><form:input type="text" path=""
+														class="form-control low-width" value="${var1.installment}"
+														name="demandDetailBeanList[${counter.index}].installment"
+														id="demandDetailBeanList[${counter.index}].installment"
 														required="required"readonly="readonly"
 														/>
-														<form:input type="hidden"
-														class="form-control low-width" path="demand.egDemandDetails[${counter.index}].egDemandReason.egInstallmentMaster.id" value="${var1.egDemandReason.egInstallmentMaster.id}"
-														name="demand.egDemandDetails[${counter.index}].egDemandReason.egInstallmentMaster.id"
-														id="demand.egDemandDetails[${counter.index}].egDemandReason.egInstallmentMaster.id"
+													</td>
+											<td class="blueborderfortd">
+												<form:input type="hidden" path="" 
+														class="form-control low-width" value="${var1.reasonMaster}"
+														name="demandDetailBeanList[${counter.index}].reasonMaster"
+														id="demandDetailBeanList[${counter.index}].reasonMaster"
 														
-														/></td>
-														
-														
-												
-												<td class="blueborderfortd">
-												<form:input type="hidden" path="demand.egDemandDetails[${counter.index}].egDemandReason.id" 
-														class="form-control low-width" value="${var1.egDemandReason.id}"
-														name="demand.egDemandDetails[${counter.index}].egDemandReason.id"
-														id="demand.egDemandDetails[${counter.index}].egDemandReason.id"
-														
-														/> 
-														<form:input type="hidden" path="demand.egDemandDetails[${counter.index}].egDemandReason.egDemandReasonMaster.id" 
-														class="form-control low-width" value="${var1.egDemandReason.egDemandReasonMaster.id}"
-														name="demand.egDemandDetails[${counter.index}].egDemandReason.egDemandReasonMaster.id"
-														id="demand.egDemandDetails[${counter.index}].egDemandReason.egDemandReasonMaster.id"
-														
-														/> 
-													<%-- 		<form:input type="hidden" path="demand.egDemandDetails[${counter.index}].egDemandReason.modifiedDate" 
-														class="form-control low-width" value="${var1.egDemandReason.modifiedDate}"
-														name="demand.egDemandDetails[${counter.index}].egDemandReason.modifiedDate"
-														id="demand.egDemandDetails[${counter.index}].egDemandReason.modifiedDate"
-														
-														/> 
-														<form:input type="hidden" path="demand.egDemandDetails[${counter.index}].egDemandReason.egDemandReasonMaster.modifiedDate" 
-														class="form-control low-width" value="${var1.egDemandReason.egDemandReasonMaster.modifiedDate}"
-														name="demand.egDemandDetails[${counter.index}].egDemandReason.egDemandReasonMaster.modifiedDate"
-														id="demand.egDemandDetails[${counter.index}].egDemandReason.egDemandReasonMaster.modifiedDate"
-														
-														/>  --%>
-														<form:input type="text" path="demand.egDemandDetails[${counter.index}].egDemandReason.egDemandReasonMaster.code" 
-														class="form-control low-width" value="${var1.egDemandReason.egDemandReasonMaster.reasonMaster}"
-														name="demand.egDemandDetails[${counter.index}].egDemandReason.egDemandReasonMaster.code"
-														id="demand.egDemandDetails[${counter.index}].egDemandReason.egDemandReasonMaster.code"
-														required="required" readonly="readonly"
-														/><%-- <c:out value="${var1.egDemandReason.egDemandReasonMaster.code}"/> --%>
-												</td>
-													<td class="blueborderfortd"><form:input type="text" path="demand.egDemandDetails[${counter.index}].amount"
-														class="form-control is_valid_number" value="${var1.amount}"
-														name="demand.egDemandDetails[${counter.index}].amount"
-														id="demand.egDemandDetails[${counter.index}].amount"
-														
-														maxlength="7"
-														required="required"
-														/></td>
-														<td class="blueborderfortd"><form:input type="text" path="demand.egDemandDetails[${counter.index}].amtCollected"
-														class="form-control is_valid_number" value="${var1.amtCollected}"
-														name="demand.egDemandDetails[${counter.index}].amtCollected"
-														id="demand.egDemandDetails[${counter.index}].amtCollected"  maxlength="7"
-														required="required"
 														/>
-														<form:input path="demand.egDemandDetails[${counter.index}].id"
-														type="hidden" id="cmdaddListId"
-														value="demand.egDemandDetails[${counter.index}].id" />
-													<%-- 	
-														<form:input path=""
-														type="hidden" id="cmdadd33L3istId" name="demand.egDemandDetails[${counter.index}].egDemandReason.id"
-														value="demand.egDemandDetails[${counter.index}].egDemandReason.id" />
-														<form:input path=""
-														type="hidden" id="cmdadd33ListId" name="demand.egDemandDetails[${counter.index}].egDemandReason.egDemandReasonMaster.id"
-														value="demand.egDemandDetails[${counter.index}].egDemandReason.egDemandReasonMaster.id" /> --%>
+														
+												<form:input type="text" path="" 
+														class="form-control low-width" value="${var1.reasonMasterDesc}"
+														name="demandDetailBeanList[${counter.index}].reasonMasterDesc"
+														id="demandDetailBeanList[${counter.index}].reasonMasterDesc"
+														required="required" readonly="readonly"
+														/>
+														
+												</td>
+													<td class="blueborderfortd"><form:input type="text" path=""
+														class="form-control is_valid_number" value="${var1.actualAmount}"
+														name="demandDetailBeanList[${counter.index}].actualAmount"
+														id="actualAmount"
+														maxlength="7"
+														required="required"  onblur="return calculateAmount(this);"
+														/></td>
+														<td class="blueborderfortd"><form:input type="text" path=""
+														class="form-control is_valid_number" value="${var1.actualCollection}"
+														name="demandDetailBeanList[${counter.index}].actualCollection"
+														id="actualCollection"  maxlength="7"  onblur=" return calculateCollectionAmount(this)"
+														required="required" 
+														/>
+														
 													
 														</td>
 												</tr>
@@ -169,18 +135,7 @@
 									</c:choose>
 									
 									</table>
-									<table>
-								<%-- 	<tr>
-										<td class="bluebox">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </td>
-										<td class="bluebox">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </td>
-										<td class="bluebox">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </td>
-						<td class="bluebox"  colspan="2"> Remarks<span class="mandatory">*</span> :
-						</td>
-						<td class="bluebox" colspan="2">
-						<form:textarea class="form-control" path=""  id="remarks" name="remarks" />
-						
-						</td>		</tr> --%>	
-									</table>
+									
 									</div>
 					</div>
 						<div class="row">
