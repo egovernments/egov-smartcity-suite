@@ -297,4 +297,28 @@ public class CommonAjaxAction extends BaseFormAction {
         this.licenseUtils = licenseUtils;
     }
 
+	public BoundaryService getBoundaryService() {
+		return boundaryService;
+	}
+
+	public void setBoundaryService(BoundaryService boundaryService) {
+		this.boundaryService = boundaryService;
+	}
+
+	public DesignationService getDesignationService() {
+		return designationService;
+	}
+
+	public void setDesignationService(DesignationService designationService) {
+		this.designationService = designationService;
+	}
+
+	public EisCommonService getEisCommonService() {
+		return eisCommonService;
+	}
+
+	public void setEisCommonService(EisCommonService eisCommonService) {
+		this.eisCommonService = eisCommonService;
+	}
+
 }

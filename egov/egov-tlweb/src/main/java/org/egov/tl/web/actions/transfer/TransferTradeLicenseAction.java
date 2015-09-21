@@ -309,7 +309,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
     }
 
     @Override
-    public StateAware getModel() {
+    public License getModel() {
         return tl;
     }
 

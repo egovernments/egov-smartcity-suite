@@ -128,7 +128,7 @@ public class RevokeSuspensionAction extends BaseLicenseAction {
     }
 
     @Override
-    public StateAware getModel() {
+    public License getModel() {
         return license;
     }
 

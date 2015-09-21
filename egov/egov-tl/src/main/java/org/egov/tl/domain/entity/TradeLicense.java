@@ -349,7 +349,7 @@ public class TradeLicense extends License {
     }
 
     @Override
-    protected void setId(final Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 

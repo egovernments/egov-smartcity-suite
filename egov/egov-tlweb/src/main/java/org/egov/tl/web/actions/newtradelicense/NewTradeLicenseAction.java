@@ -73,7 +73,8 @@ import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
-@Results({ @Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp") })
+@Results({ @Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
+	       @Result(name = Constants.ACKNOWLEDGEMENT, location = "newTradeLicense-"+Constants.ACKNOWLEDGEMENT+".jsp")})
 public class NewTradeLicenseAction extends BaseLicenseAction {
 
     private static final long serialVersionUID = 1L;
@@ -113,7 +114,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
             @RequiredFieldValidator(fieldName = "licenseeZoneId", message = "", key = Constants.REQUIRED),
             @RequiredFieldValidator(fieldName = "licenseZoneId", message = "", key = Constants.REQUIRED),
             @RequiredFieldValidator(fieldName = "tradeName", message = "", key = Constants.REQUIRED),
-            @RequiredFieldValidator(fieldName = "applicationDate", message = "", key = Constants.REQUIRED),
+           // @RequiredFieldValidator(fieldName = "applicationDate", message = "", key = Constants.REQUIRED),
             @RequiredFieldValidator(fieldName = "licensee.gender", message = "", key = Constants.REQUIRED),
             @RequiredFieldValidator(fieldName = "nameOfEstablishment", message = "", key = Constants.REQUIRED)
            // @RequiredFieldValidator(fieldName = "address.houseNo", message = "", key = Constants.REQUIRED),
@@ -219,7 +220,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     }
 
     @Override
-    public StateAware getModel() {
+    public License getModel() {
         return tradeLicense;
     }
 

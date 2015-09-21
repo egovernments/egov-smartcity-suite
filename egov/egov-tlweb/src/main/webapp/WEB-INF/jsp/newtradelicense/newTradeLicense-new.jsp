@@ -458,7 +458,7 @@
 										</table>
 
 										<div>
-											<%-- <table>
+											 <table>
 												<tr class="buttonbottom" id="buttondiv" style="align: middle">
 													<td>
 														<s:submit type="submit" cssClass="buttonsubmit" value="Save" id="Save" method="create" onclick="return validateForm(this);" />
@@ -467,9 +467,8 @@
 														<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
 													</td>
 												</tr>
-											</table> --%>
-											<%@ include file='../common/commonWorkflowMatrix.jsp'%>
-											<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
+											</table> 
+											 
 										</div>
 										<div class="mandatory1" style="font-size: 11px;" align="left">
 											* Mandatory Fields

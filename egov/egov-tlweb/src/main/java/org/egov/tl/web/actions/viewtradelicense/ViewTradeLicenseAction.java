@@ -96,7 +96,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
     }
 
     @Override
-    public StateAware getModel() {
+    public TradeLicense getModel() {
         return tradeLicense;
 
     }
@@ -204,14 +204,12 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
     private void setLicenseIdIfServletRedirect() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
         if (tradeLicense.getId() == null)
-            /**
-             * TODO -- Fix this
-             */
+           
             if (getSession().get("model.id") != null) {
-                /*
-                 * this.tradeLicense.setId(Long.valueOf((Long) this.getSession().get("model.id")));
-                 * this.getSession().remove("model.id");
-                 */
+            
+                  this.tradeLicense.setId(Long.valueOf((Long) this.getSession().get("model.id")));
+                  this.getSession().remove("model.id");
+                 
             }
         LOGGER.debug("Exiting from the setLicenseIdIfServletRedirect method:<<<<<<<<<<>>>>>>>>>>>>>:");
     }
@@ -241,7 +239,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
     }
 
     @Override
-    protected License license() {
+    protected TradeLicense license() {
         return tradeLicense;
     }
 

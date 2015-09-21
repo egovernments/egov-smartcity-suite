@@ -158,7 +158,7 @@ public class SearchTradeAction extends BaseFormAction {
         //criteria.addOrder(Order.desc("createdDate"));
         final ParamEncoder paramEncoder = new ParamEncoder("license");
         final boolean isReport = parameters.get(paramEncoder.encodeParameterName(TableTagParameters.PARAMETER_EXPORTTYPE)) != null;
-        final Page page = new Page(criteria, isReport ? 1 : this.page, isReport ? null : 20);
+        final Page page = new Page(createSearchQuery(), isReport ? 1 : this.page, isReport ? null : 20);
         pagedResults = new EgovPaginatedList(page, reportSize, "createdDate", SortOrderEnum.DESCENDING);
         request.setAttribute("hasResult", !page.getList().isEmpty());
         return BaseFormAction.NEW;

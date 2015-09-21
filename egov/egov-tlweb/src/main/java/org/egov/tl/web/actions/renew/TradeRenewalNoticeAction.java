@@ -64,7 +64,7 @@ public class TradeRenewalNoticeAction extends BaseLicenseAction {
     private final Logger LOGGER = Logger.getLogger(getClass());
 
     @Override
-    public StateAware getModel() {
+    public License getModel() {
         return tradeLicense;
     }
 

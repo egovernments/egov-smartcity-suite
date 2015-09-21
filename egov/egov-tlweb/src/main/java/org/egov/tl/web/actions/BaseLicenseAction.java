@@ -39,9 +39,6 @@
  ******************************************************************************/
 package org.egov.tl.web.actions;
 
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.BUTTONREJECT;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,11 +53,14 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.PermanentAddress;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -70,7 +70,6 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.NumberToWord;
-import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseDemand;
@@ -81,7 +80,6 @@ import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseChecklistHelper;
 import org.egov.tl.utils.LicenseUtils;
 import org.egov.tl.web.actions.domain.CommonAjaxAction;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -194,6 +192,12 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     private AssignmentService assignmentService;
     @Autowired
     private SimpleWorkflowService<License> licenseWorkflowService;
+    @Autowired
+    private BoundaryService boundaryService;
+    @Autowired
+    private DesignationService designationService;
+    @Autowired
+    private EisCommonService eisCommonService;
     protected abstract License license();
     protected abstract BaseLicenseService service();
     protected String ackMessage;
@@ -225,7 +229,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             this.setCheckList();
             service().create(license());
             addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
-            transitionWorkFlow(license());
+           // transitionWorkFlow(license());
             persistenceService.getSession().flush();
         } catch (final RuntimeException e) {
             loadAjaxedDropDowns();
@@ -242,7 +246,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
            // initiateWorkFlowForLicense();
             persistenceService.getSession().flush();
         } catch (final RuntimeException e) {
-            //loadAjaxedDropDowns();
+            loadAjaxedDropDowns();
             throw e;
         }
         return Constants.ACKNOWLEDGEMENT;
@@ -693,6 +697,10 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     public void loadAjaxedDropDowns() {
         final CommonAjaxAction commonAjaxAction = new CommonAjaxAction();
         commonAjaxAction.setLicenseUtils(licenseUtils);
+        commonAjaxAction.setBoundaryService(boundaryService);
+        commonAjaxAction.setEisCommonService(eisCommonService);
+        commonAjaxAction.setDesignationService(designationService);
+        
         // if the zone is loaded from ui which have trigger load division
         // set those list
         // else is not required since empty lists are set in prepare itself
@@ -807,7 +815,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         return "auditReport";
     }
     
-    public void transitionWorkFlow(final License license) {
+    /*public void transitionWorkFlow(final License license) {
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
@@ -857,7 +865,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             final String approvalmesg = " Succesfully Cancelled.";
             ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
         }
-    }
+    }*/
     
     protected Assignment getWorkflowInitiator(final License license) {
         Assignment wfInitiator;

@@ -170,7 +170,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction {
     }
 
     @Override
-    public StateAware getModel() {
+    public License getModel() {
         return tradeLicense;
     }
 
