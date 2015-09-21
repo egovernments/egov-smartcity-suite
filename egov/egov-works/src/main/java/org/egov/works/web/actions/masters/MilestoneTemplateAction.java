@@ -111,7 +111,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
         addDropdownData("parentCategoryList",
                 getPersistenceService().findAllBy("from EgwTypeOfWork etw where etw.parentid is null"));
         populateCategoryList(ajaxEstimateAction, template.getWorkType() != null);
-        addDropdownData("executingDepartmentList", getPersistenceService().findAllBy("from Department order by upper(dept)"));
+        addDropdownData("executingDepartmentList", getPersistenceService().findAllBy("from Department order by upper(name)"));
     }
 
     @Override
@@ -123,7 +123,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
     @Action(value = "/masters/milestoneTemplate-newform")
     @SkipValidation
     public String newform() {
-        return "new";
+        return NEW;
     }
 
     public String save() {

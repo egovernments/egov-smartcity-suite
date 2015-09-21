@@ -104,7 +104,7 @@
 		<property name="tenderResponseService" ref="tenderResponseService" />
 		<property name="estimateAppropriationService" ref="estimateAppropriationService" />
 		<property name="worksService" ref="worksService" />
-		<property name="commonsService" ref="commonsService" />
+		<!-- <property name="commonsService" ref="commonsService" /> -->
 		<property name="depositWorksUsageService" ref="depositWorksUsageService" />
 		<property name="budgetUsageService" ref="budgetUsageService" />
 		<property name="workOrderService" ref="workOrderService" />
@@ -272,11 +272,10 @@
 	<bean id="egwStatusService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.commons.EgwStatus" />
 	</bean>
-	<bean id="personalInformationService" parent="persistenceService"
+	<!-- <bean id="personalInformationService" parent="persistenceService"
 		scope="prototype">
 		<property name="type" value="org.egov.pims.model.PersonalInformation" />
-	</bean>
-
+	</bean> -->
 	<bean class="org.egov.works.services.impl.WorkOrderServiceImpl"
 		id="workOrderService" scope="prototype">
 		<constructor-arg>
@@ -313,7 +312,7 @@
 	<bean id="egovCommon" class="org.egov.egf.commons.EgovCommon"
 		scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
-		<property name="genericDao" ref="genericDao" />
+		<!-- <property name="genericDao" ref="genericDao" /> -->
 	</bean>
 	<bean class="org.egov.works.services.impl.ContractorBillServiceImpl"
 		id="contractorBillService" scope="prototype">
@@ -351,9 +350,9 @@
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
 	</bean>
 
-	<!--  <bean class="org.egov.asset.service.AppService" id="appService"
+	 <bean class="org.egov.asset.service.AppService" id="appService"
 		scope="prototype">
-	</bean>-->
+	</bean>
 	<bean class="org.egov.asset.service.CommonAssetsService" id="commonAssetsService"
 		scope="prototype">
 		<property name="genericService" ref="persistenceService" />
@@ -371,8 +370,8 @@
 				<property name="type" value="org.egov.asset.model.AssetCategory" />
 			</bean>
 		</constructor-arg>
-		<property name="genericService" ref="persistenceService" />
-		<!-- <property name="appService" ref="appService" /> -->
+		<!-- <property name="genericService" ref="persistenceService" /> -->
+		<property name="appService" ref="appService" />
 		<property name="assetCategoryNumberGenrator" ref="assetCategoryNumberGenrator" />
 	</bean>
 	<bean class="org.egov.asset.model.AssetNumberGenrator" id="assetNumberGenrator">
@@ -386,8 +385,8 @@
 				<property name="type" value="org.egov.asset.model.Asset" />
 			</bean>
 		</constructor-arg>
-		<property name="genericService" ref="persistenceService" />
-		<!-- <property name="appService" ref="appService" /> -->
+		<!-- <property name="genericService" ref="persistenceService" /> -->
+		<property name="appService" ref="appService" />
 		<property name="assetNumberGenrator" ref="assetNumberGenrator" />
 	</bean>
 	<bean class="org.egov.works.services.WorkOrderWFService" id="workOrderWFService"
@@ -481,7 +480,7 @@
 	<bean id="milestoneTemplateWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="milestoneTemplateWFService" />
-		<constructor-arg value="org.egov.works.models.masters.MilestoneTemplate" />
+		<!-- <constructor-arg value="org.egov.works.models.masters.MilestoneTemplate" /> -->
 	</bean>
 	<bean id="milestoneService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.works.models.milestone.Milestone" />
@@ -572,7 +571,7 @@
 			ref="contractorAdvanceRequisitionNumberGenerator" />
 		<property name="commonsService" ref="commonsService" />
 		<property name="revisionAbstractEstimateService" ref="revisionAbstractEstimateService" />
-		<property name="contractorAdvanceWorkflowService" ref="contractorAdvanceWorkflowService" />
+		<!-- <property name="contractorAdvanceWorkflowService" ref="contractorAdvanceWorkflowService" /> -->
 	</bean>
 
 	<bean
@@ -586,5 +585,8 @@
 		<constructor-arg
 			value="org.egov.works.models.contractoradvance.ContractorAdvanceRequisition" />
 	</bean>
-
+	<bean id="billsDaoFactory" class="org.egov.dao.bills.BillsHibernateDaoFactory"/>
+	<bean id="genericDao" class="org.egov.infstr.dao.GenericHibernateDAO"/>
+	<bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl"/>
+	<bean id="budgetDetailsDAO" class="org.egov.dao.budget.BudgetDetailsHibernateDAO"/>
 </beans>

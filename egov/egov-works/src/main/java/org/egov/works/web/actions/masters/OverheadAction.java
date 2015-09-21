@@ -154,16 +154,17 @@ public class OverheadAction extends BaseFormAction {
         if (id != null)
             overhead = overheadService.findById(id, false);
 
-        expenditureTypeList = (List) overheadService.findAllBy("select distinct expenditureType from WorkType");
-
+        //expenditureTypeList = (List) overheadService.findAllBy("select distinct expenditureType from WorkType");
+        expenditureTypeList = (List) overheadService.findAllBy("select distinct expenditureType from Overhead");
         super.prepare();
         setupDropdownDataExcluding("account");
         try {
-
-            final List<CChartOfAccounts> accounts = commonsService
-                    .getAccountCodeByPurpose(Integer.valueOf(worksService.getWorksConfigValue("OVERHEAD_PURPOSE")));
-            addDropdownData("accountList", accounts);
-
+        	List<CChartOfAccounts> accounts = new ArrayList<CChartOfAccounts>();
+        	//TODO: 
+        	if(worksService.getWorksConfigValue("OVERHEAD_PURPOSE") != null) {
+        		accounts = commonsService.getAccountCodeByPurpose(Integer.valueOf(worksService.getWorksConfigValue("OVERHEAD_PURPOSE")));
+        	}
+        	addDropdownData("accountList", accounts);
         } catch (final ApplicationException e) {
             logger.error("Unable to load accountcode :" + e.getMessage());
             addFieldError("accountcode", "Unable to load accountcode");

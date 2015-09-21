@@ -131,7 +131,7 @@ if(document.getElementById("description").value=="Category Name"){
 							<td width="70%" class="greybox2wk"><s:textfield
 								cssClass="selectwk grey" name="code" maxlength="15" id="code" value ="Category code" size="40" onfocus="setFocus(this,'Category code')" onblur="setBlur(this,'Category code')"/> <span
 								cssClass="buttonholderwk"> <s:textfield
-								cssClass="selectwk grey" name="description" maxlength="150" id="description" value = "Category Name"  size="40" onfocus="setFocus(this,'Category Name')" onblur="setBlur(this,'Category Name')"/> <s:submit value="Save" cssClass="buttonfinal" value="SAVE" id="saveButton" name="button" method="create" onclick="methodTest();"/> </span></td>
+								cssClass="selectwk grey" name="description" maxlength="150" id="description" value = "Category Name"  size="40" onfocus="setFocus(this,'Category Name')" onblur="setBlur(this,'Category Name')"/> <s:submit cssClass="buttonfinal" value="SAVE" id="saveButton" name="button" method="create" onclick="methodTest();"/> </span></td>
 						</tr>
 					</table>
 					</td>

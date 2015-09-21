@@ -141,10 +141,15 @@ var makeOverheadRateDataTable = function()
 				 </tr>
 				 <tr>
 				 		<td width="11%" class="greyboxwk"><span class="whiteboxwk"><span class="mandatory">*</span><s:text name="master.overhead.account" />:</span></td>
-						<td width="21%" class="greybox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="account" id="account" cssClass="selectwk" list="dropdownData.accountList"
-										listKey="id" listValue='glcode  + " : " + name' value="%{account.id}" /></td>
+						<td width="21%" class="greybox2wk">
+							<!-- <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="account" id="account" cssClass="selectwk" list="dropdownData.accountList" listKey="id" listValue='glcode  + " : " + name' value="%{account.id}" /> -->
+							<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="account" id="account" cssClass="selectwk" list="dropdownData.accountList" listKey="id" listValue='glcode  + " : " + name' value="" />
+						</td>
 						<td width="15%" class="greyboxwk"><span class="mandatory">*</span><s:text name="master.overhead.expenditure" />:</td>
-						<td width="53%" class="greybox2wk"><s:select headerKey="-1"  headerValue="%{getText('estimate.default.select')}" name="expenditure" id="expenditure" cssClass="selectwk" list="expenditureTypeList" listKey="value" listValue="value" value="%{expenditureType.value}" /></td>
+						<td width="53%" class="greybox2wk">
+							<!-- <s:select headerKey="-1"  headerValue="%{getText('estimate.default.select')}" name="expenditure" id="expenditure" cssClass="selectwk" list="expenditureTypeList" listKey="value" listValue="value" value="%{expenditureType.value}" /> -->
+							<s:select headerKey="-1"  headerValue="%{getText('estimate.default.select')}" name="expenditure" id="expenditure" cssClass="selectwk" list="expenditureTypeList" listKey="value" listValue="value" value="" />
+						</td>
 				 </tr>
 				 <tr>
 			            <td colspan="4" class="shadowwk"></td>

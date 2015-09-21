@@ -74,7 +74,8 @@ public class EstimateTemplateAction extends SearchFormAction {
     private List<EstimateTemplateActivity> nonSorActivities = new LinkedList<EstimateTemplateActivity>();
     @Autowired
     private EmployeeServiceOld employeeService;
-    private PersonalInformationService personalInformationService;
+    //@Autowired
+    /*private PersonalInformationService personalInformationService;*/
     private PersistenceService<EstimateTemplate, Long> estimateTemplateService;
     private String mode = null;
     private Long id;
@@ -121,7 +122,8 @@ public class EstimateTemplateAction extends SearchFormAction {
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         ajaxEstimateAction.setEmployeeService(employeeService);
-        ajaxEstimateAction.setPersonalInformationService(personalInformationService);
+        //TODO: Need to uncomment
+        //ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         super.prepare();
         setupDropdownDataExcluding("workType", "subType");
         addDropdownData("parentCategoryList",
@@ -231,9 +233,9 @@ public class EstimateTemplateAction extends SearchFormAction {
         this.employeeService = employeeService;
     }
 
-    public void setPersonalInformationService(final PersonalInformationService personalInformationService) {
+    /*public void setPersonalInformationService(final PersonalInformationService personalInformationService) {
         this.personalInformationService = personalInformationService;
-    }
+    }*/
 
     public List<EstimateTemplateActivity> getSorActivities() {
         return sorActivities;

@@ -56,7 +56,7 @@ public class FunctionHibernateDAO extends GenericHibernateDAO implements Functio
         @PersistenceContext
         private EntityManager entityManager;
         
-        @Override
+        //@Override
         public Session  getCurrentSession() {
                 return entityManager.unwrap(Session.class);
         }

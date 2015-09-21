@@ -294,8 +294,14 @@ var makeScheduleOfRateDataTable = function() {
           		<td width="21%" class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="selectwk" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code" value="%{scheduleCategory.id}" onchange="UniqueCheckOnCodenumber();"/> </td>
                 <td width="15%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="master.sor.code" />:</td>
           		<td width="53%" class="whitebox2wk"><s:textfield name="code" cssClass="selectwk" id="code" value = "%{code}" maxlength = "50" autocomplete="off" 	onkeyup="UniqueCheckOnCodenumber();" onblur="checkForCode();validateLineBreaks();" />
-					<egov:uniquecheck id="numberunique" fields="['Value']" url='/masters/ajaxScheduleOfRate!codeNumberUniqueCheck.action' key='codenumber.already.exists' />
+					<%-- <egov:uniquecheck id="numberunique" fields="['Value']" url='/masters/ajaxScheduleOfRate!codeNumberUniqueCheck.action' key='codenumber.already.exists' /> --%>
 				</td>
+			</tr>
+			<tr>
+				<td width="11%" class="whiteboxwk"><s:text name="sor.depositWorks.checkbox" />:</td>
+            	<td width="21%" class="whiteboxwk" style="text-align:left;"><s:checkbox name="isDepositWorksSOR" id="isDepositWorksSOR" value="%{isDepositWorksSOR}"/></td>
+            	<td width="15%" class="whiteboxwk"></td>
+            	<td width="53%" class="whitebox2wk"></td>
 			</tr>
 			<tr>
 				<td width="11%" class="greyboxwk"><span class="mandatory">*</span><s:text name="master.sor.description" />:</td>

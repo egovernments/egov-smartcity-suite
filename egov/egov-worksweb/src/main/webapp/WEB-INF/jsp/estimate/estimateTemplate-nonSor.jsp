@@ -236,7 +236,7 @@ function resetNonSorTable(){
 		<table id="nonSorHeaderTable" width="100%" border="0" cellspacing="0" cellpadding="0">              	
               	<tr>
                 	<td colspan="9" class="headingwk" style="border-right-width: 0px" align="left">
-                		<div class="arrowiconwk"><image src="<egov:url path='/egi/resources/erp2/images/arrow.gif'/>" /></div>
+                		<div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
                 		<div class="headplacer" >Non-SOR</div>
                 	</td>
                 	<td  align="right" class="headingwk" style="border-left-width: 0px">

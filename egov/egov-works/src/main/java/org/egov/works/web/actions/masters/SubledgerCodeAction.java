@@ -156,7 +156,7 @@ public class SubledgerCodeAction extends BaseFormAction {
         } else {
             depCode = true;  // Onload to set DepositCode Radio Button
             final ScriptContext scriptContext = ScriptService.createContext("depCode", depositCode, "projCode", null);
-            list = (List<String>) scriptService.executeScript(SCRIPT_NAME, scriptContext);
+            //list = (List<String>) scriptService.executeScript(SCRIPT_NAME, scriptContext);
             // list = (List<String>) validScript.eval(Script.createContext("depCode",depositCode,"projCode",null));
         }
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
@@ -170,10 +170,12 @@ public class SubledgerCodeAction extends BaseFormAction {
         addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=1"));
         addDropdownData("typeOfWorkList",
                 getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
-        addDropdownData("functionList", commonsService.getAllFunction());
-
+        //TODO: Need to uncomment
+        //addDropdownData("functionList", commonsService.getAllFunction());
+        //TODO: Need to remove
+        addDropdownData("functionList", new ArrayList<CFunction>());
         // TO load Fund and FundSource dropdown with appconfig defined values in case of SubLedgerDepositCode
-        if ((list.isEmpty() || !list.isEmpty()) && depCode) {
+        if (null != null && (list.isEmpty() || !list.isEmpty()) && depCode) {
             String config = worksService.getWorksConfigValue("SLDEPOSITCODE_SHOW_FUNDS");
             List<String> code = new ArrayList<String>();
             if (config == null)
@@ -196,10 +198,16 @@ public class SubledgerCodeAction extends BaseFormAction {
             }
 
         } else {
-            addDropdownData("fundList", commonsService.getAllActiveIsLeafFunds());
+        	//TODO: Uncomment 
+            //addDropdownData("fundList", commonsService.getAllActiveIsLeafFunds());
+        	//TODO: Remove
+        	addDropdownData("fundList", new ArrayList<Fund>());
             try {
-                addDropdownData("fundSourceList", commonsService.getAllActiveIsLeafFundSources());
-            } catch (final ApplicationException e) {
+            	//TODO : Uncomment
+                //addDropdownData("fundSourceList", commonsService.getAllActiveIsLeafFundSources());
+            	//TODO : Remove
+            	addDropdownData("fundSourceList", new ArrayList<Fundsource>());
+            } catch (final Exception e) {
                 logger.error("---Unable to load fund source information---" + e.getMessage());
                 addFieldError("fundsourceunavailable", "Unable to load fund source information");
             }
@@ -208,8 +216,9 @@ public class SubledgerCodeAction extends BaseFormAction {
         /**
          * Fetch Zone Dropdown List
          */
-        addDropdownData("zoneList", getAllZone());
-        addDropdownData("wardList", Collections.emptyList());
+        //TODO: Uncomment
+        //addDropdownData("zoneList", getAllZone());
+        //addDropdownData("wardList", Collections.emptyList());
         addDropdownData("subTypeOfWorkList", Collections.emptyList());
         addDropdownData("schemeList", Collections.emptyList());
         addDropdownData("subSchemeList", Collections.emptyList());

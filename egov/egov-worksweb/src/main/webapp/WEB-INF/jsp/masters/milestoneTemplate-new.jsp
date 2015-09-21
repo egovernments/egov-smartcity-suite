@@ -38,7 +38,6 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
-<%@ taglib uri="/WEB-INF/egov-authz.tld" prefix="egov-authz" %>
 
 <html>
 <title><s:text name='page.title.milestone.template'/></title>

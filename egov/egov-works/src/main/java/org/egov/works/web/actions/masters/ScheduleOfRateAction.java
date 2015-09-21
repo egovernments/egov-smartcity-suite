@@ -213,10 +213,10 @@ public class ScheduleOfRateAction extends SearchFormAction {
         if (id != null)
             scheduleOfRate = scheduleOfRateService.findById(id, false);
         super.prepare();
-        setupDropdownDataExcluding();
+        //setupDropdownDataExcluding();
         final List<ScheduleOfRate> categories = scheduleOfRateService.findAllBy("from ScheduleCategory sc");
         addDropdownData("scheduleCategoryList", categories);
-        addDropdownData("uomlist", scheduleOfRateService.findAllBy("from Uom  order by upper(uom)"));
+        addDropdownData("uomlist", scheduleOfRateService.findAllBy("from UOM  order by upper(uom)"));
     }
 
     private void getPersistedRateDetails(final ScheduleOfRate sor) {

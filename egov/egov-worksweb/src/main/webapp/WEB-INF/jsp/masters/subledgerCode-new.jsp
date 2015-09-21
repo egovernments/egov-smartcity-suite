@@ -75,7 +75,7 @@
   	  	if(document.subledgerCode.ward!=undefined)
   	  	    	   document.subledgerCode.zone.setAttribute("onChange","setupAjaxWards(this);"); 
   	  	if(document.subledgerCode.subTypeOfWork!=undefined)
-  	  	    	   document.subledgerCode.typeOfWork.setAttribute("onChange","setupSubTypes(this);"); 
+  	  	    	   document.subledgerCode.typeOfWork.setAttribute("onChange","setupSubTypes(this);");
   }
   
   // To show fields based on Account Entity Types - Deposit / Project Code 
@@ -229,19 +229,20 @@
          		<td class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="financialYear" id="financialYear" cssClass="selectwk" list="dropdownData.financialYearList" listKey="id" listValue="finYearRange" value="%{currentFinancialYearId}" /></td>
       	</tr> 
      
-      <s:if test="%{list.isEmpty()!=true}"> 
+      <%-- <s:if test="%{list.isEmpty()!=true}">  --%> <!-- Need to uncomment -->
       	<tr>
        		<s:if test="%{list.contains('department')}" >
           		 <td width="15%" class="greyboxwk" id="department1" ><span class="mandatory">*</span><s:text name="subledgerCode.executing.department" />:</td>
            		<td width="53%" class="greybox2wk" ><s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="department" id="department" cssClass="selectwk" list="dropdownData.departmentList" listKey="id" listValue="deptName" value="%{department.id}" /></td>
           	</s:if> 
-          	<s:if test="%{list.contains('fundSource')}" >  
+          	<!-- Need to uncomment -->
+          	<%-- <s:if test="%{list.contains('fundSource')}" >  --%> 
            		 <td width="11%" class="greyboxwk"  id="fundSource1"><span class="mandatory">*</span><s:text name="subledgerCode.fundSource.name" />:</td>
             	<td width="21%" class="greybox2wk">
                 	<s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="fundSource" id="fundSource" 
                			 cssClass="selectwk" list="dropdownData.fundSourceList" listKey="id" listValue="name" value="%{fundSource.id}"/>
 				</td>
-			</s:if>          
+			<%-- </s:if>    --%>       
        </tr>
        
        	<tr>
@@ -302,7 +303,7 @@
                 <td class="greybox2wk"><s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="subScheme" id="subScheme" cssClass="selectwk" list="dropdownData.subSchemeList" listKey="id" listValue="name" value="%{subScheme.id}" onClick="checkScheme(this);"/></td>
  			</s:if>      
 	 	</tr>  
-	 	</s:if>
+	 	<%-- </s:if> --%> <!-- Need to uncomment -->
 	 </table>
 	
 	<br>
@@ -318,7 +319,7 @@
 	
 	<!-- To Show Save and Close Buttons -->
 	<div class="buttonholderwk" id="slCodeButtons">
-		<s:submit value="Save " cssClass="buttonfinal" value="SAVE" id="saveButton" name="saveButton" method="save" onclick="return validateBeforeSubmit();"/>
+		<s:submit cssClass="buttonfinal" value="SAVE" id="saveButton" name="saveButton" method="save" onclick="return validateBeforeSubmit();"/>
 	  			&nbsp;
 	 <input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="confirmClose('<s:text name='subledger.close.confirm'/>');"/>
     </div>
