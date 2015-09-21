@@ -142,16 +142,11 @@ INSERT INTO egeis_employee (id, code, dateofappointment, dateofretirement, emplo
 
 -----------------START--------------------
 INSERT INTO eg_userrole (roleid, userid) VALUES (4, 2);
-INSERT INTO eg_userrole (roleid, userid) VALUES (1, 3);
-INSERT INTO eg_userrole (roleid, userid) VALUES (2, 47);
-INSERT INTO eg_userrole (roleid, userid) VALUES (2, 57);
+
 INSERT INTO eg_userrole (roleid, userid) VALUES (7, 1);
 INSERT INTO eg_userrole (roleid, userid) VALUES (7, 67);
 INSERT INTO eg_userrole (roleid, userid) VALUES (4, 68);
-INSERT INTO eg_userrole (roleid, userid) VALUES (11, 12);
-INSERT INTO eg_userrole (roleid, userid) VALUES (11, 11);
-INSERT INTO eg_userrole (roleid, userid) VALUES (11, 16);
-INSERT INTO eg_userrole (roleid, userid) VALUES (14, 16);
+
 INSERT INTO eg_userrole (roleid, userid) VALUES (5, 40);
 INSERT INTO eg_userrole (roleid, userid) VALUES (5, 47);
 INSERT INTO eg_userrole (roleid, userid) VALUES (16, 35);
@@ -159,12 +154,10 @@ INSERT INTO eg_userrole (roleid, userid) VALUES (16, 26);
 INSERT INTO eg_userrole (roleid, userid) VALUES (16, 27);
 INSERT INTO eg_userrole (roleid, userid) VALUES (16, 30);
 INSERT INTO eg_userrole (roleid, userid) VALUES (16, 34);
-INSERT INTO eg_userrole (roleid, userid) VALUES (12, 39);
 INSERT INTO eg_userrole (roleid, userid) VALUES (16, 38);
-INSERT INTO eg_userrole (roleid, userid) VALUES (17, 2);
-INSERT INTO eg_userrole (roleid, userid) VALUES (11, 41);
+
 INSERT INTO eg_userrole (roleid, userid) VALUES (5, 16);
-INSERT INTO eg_userrole (roleid, userid) VALUES (17, 61);
+
 ------------------END---------------------
 
 -----------------START--------------------
@@ -533,3 +526,14 @@ INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmod
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (265, 1, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 5);
 
 ---------------------END-----------------------------
+
+
+
+
+
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (384, 'EIS', true, 'eis', NULL, 'EIS', 2);
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (385, 'EIS Masters', true, 'eis', 384, 'Masters', 1);
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (386, 'Employee', true, 'eis', 385, 'Employee', 1);
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (387, 'Designation', true, 'eis', 385, 'Designation', 2);
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (388, 'Position', true, 'eis', 385, 'Position', 3);
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (398, 'EIS-COMMON', false, 'eis', 384, 'EIS-COMMON', NULL);

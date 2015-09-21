@@ -392,23 +392,7 @@ ALTER TABLE ONLY chartofaccountdetail ADD CONSTRAINT fk_dt_coa FOREIGN KEY (deta
 
 -------------------END-------------------
 
---Removed compantdetail as it is not been used anywhere
-------------------START------------------
-CREATE TABLE eg_bill_type (
-    id bigint NOT NULL,
-    name character varying(32) NOT NULL,
-    code character varying(10) NOT NULL,
-    create_date date NOT NULL,
-    modified_date date NOT NULL
-);
-CREATE SEQUENCE seq_eg_bill_type
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_bill_type ADD CONSTRAINT pk_eg_bill_type PRIMARY KEY (id);
--------------------END-------------------
+
 
 ----TODO designation object is there in egi as of now
 ------------------START------------------
@@ -582,23 +566,6 @@ CREATE SEQUENCE seq_eg_drawingofficer
 ALTER TABLE ONLY eg_drawingofficer ADD CONSTRAINT eg_drawingofficer_code_key UNIQUE (code);
 ALTER TABLE ONLY eg_drawingofficer ADD CONSTRAINT eg_drawingofficer_pkey PRIMARY KEY (id);
 ALTER TABLE ONLY eg_drawingofficer ADD CONSTRAINT fk_eg_drawingofficer_position FOREIGN KEY ("position") REFERENCES eg_position(id);
--------------------END-------------------
-------------------START------------------
-CREATE TABLE eg_reason_category (
-    id bigint NOT NULL,
-    name character varying(64) NOT NULL,
-    code character varying(64) NOT NULL,
-    "order" bigint NOT NULL,
-    modified_date timestamp without time zone NOT NULL
-);
-CREATE SEQUENCE seq_eg_reason_category
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_reason_category ADD CONSTRAINT pk_eg_reason_category PRIMARY KEY (id);
-COMMENT ON TABLE eg_reason_category IS 'Master table for Demand Reason Categories';
 -------------------END-------------------
 
 ------------------START------------------

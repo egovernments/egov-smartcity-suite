@@ -408,3 +408,8 @@ CREATE SEQUENCE seq_eg_crossheirarchy
     NO MAXVALUE
     CACHE 1;
 ------------------END---------------------
+
+-----------------START--------------------
+UPDATE EG_CITY SET boundary=1 WHERE ID=2;
+    
+------------------END---------------------

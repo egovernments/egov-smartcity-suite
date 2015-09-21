@@ -72,7 +72,6 @@ ALTER TABLE eg_demand_reason_master ADD CONSTRAINT pk_eg_demand_reason_master PR
 ALTER TABLE eg_demand_reason_master ADD CONSTRAINT fk_reason_category FOREIGN KEY (category) REFERENCES eg_reason_category(id);
 ALTER TABLE eg_demand_reason_master ADD CONSTRAINT fk_demand_reason_module FOREIGN KEY (module) REFERENCES eg_module(id);
 
-CREATE INDEX idx_dem_reason_det ON eg_demand_reason_details USING btree (id_demand_reason);
 
 COMMENT ON TABLE eg_demand_reason_master IS 'Master table for Demand head';
 COMMENT ON COLUMN eg_demand_reason_master.id IS 'Primary Key';
@@ -85,7 +84,7 @@ COMMENT ON COLUMN eg_demand_reason_master."order" IS 'Order no to display list';
 -------------------END-------------------
 
 ------------------START------------------
-CREATE SEQUENCE SEQ_EG_REASON_CATEGORY;
+CREATE SEQUENCE SEQ_EG_DEMAND_REASON;
 CREATE TABLE eg_demand_reason
 (
   id bigint NOT NULL, -- Primary Key
@@ -107,7 +106,7 @@ ALTER TABLE eg_demand_reason ADD CONSTRAINT fk_egdemandreasonmaster_id FOREIGN K
 CREATE INDEX indx_dem_reason_inst ON eg_demand_reason USING btree (id_demand_reason_master, id_installment);
 CREATE UNIQUE INDEX indx_eg_demand_reason ON eg_demand_reason USING btree (id);
 
-COMMENT ON TABLE eg_demand_reasonIS 'Master table for Demand heads per installment';
+COMMENT ON TABLE eg_demand_reason IS 'Master table for Demand heads per installment';
 COMMENT ON COLUMN eg_demand_reason.id IS 'Primary Key';
 COMMENT ON COLUMN eg_demand_reason.id_demand_reason_master IS 'FK to eg_demand_reason_master';
 COMMENT ON COLUMN eg_demand_reason.id_installment IS 'FK to eg_installment_master';
@@ -145,6 +144,8 @@ COMMENT ON COLUMN eg_demand_reason_details.low_limit IS 'low limit amount for ta
 COMMENT ON COLUMN eg_demand_reason_details.high_limit IS 'High limit amount for tax head';
 COMMENT ON COLUMN eg_demand_reason_details.flat_amount IS 'Flat tax amount to be applicable';
 COMMENT ON COLUMN eg_demand_reason_details.is_flatamnt_max IS 'if the tax for head is flat amount then amount comes here';
+CREATE INDEX idx_dem_reason_det ON eg_demand_reason_details USING btree (id_demand_reason);
+
 -------------------END-------------------
 
 ------------------START------------------
@@ -195,7 +196,7 @@ CREATE TABLE eg_demand_details
   amt_rebate double precision DEFAULT 0 -- tax rebate given
 );
 
-ALTER TABLE eg_demand ADD CONSTRAINT pk_eg_demand_details KEY (id);
+ALTER TABLE eg_demand_details ADD CONSTRAINT pk_eg_demand_details PRIMARY KEY (id);
 ALTER TABLE eg_demand_details ADD CONSTRAINT fk_demdndetail_status FOREIGN KEY (id_status) REFERENCES egw_status (id);
 ALTER TABLE eg_demand_details ADD CONSTRAINT fk_egdm_dem_reason_id FOREIGN KEY (id_demand_reason) REFERENCES eg_demand_reason;
 ALTER TABLE eg_demand_details ADD CONSTRAINT fk_egdm_demand_id FOREIGN KEY (id_demand) REFERENCES eg_demand (id);
@@ -407,7 +408,7 @@ COMMENT ON COLUMN eg_billreceipt.is_cancelled IS 'receipt status';
 -------------------END-------------------
 
 ------------------START------------------
-create sesquence SEQ_EGDM_DEPRECIATIONMASTER;
+create sequence SEQ_EGDM_DEPRECIATIONMASTER;
 CREATE TABLE egdm_depreciationmaster
 (
   id bigint NOT NULL, -- Primary Key

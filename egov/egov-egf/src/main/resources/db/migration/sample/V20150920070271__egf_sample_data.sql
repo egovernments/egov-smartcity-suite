@@ -262,6 +262,6 @@ update eg_appconfig_values set value = 5 where KEY_ID in (select id from eg_appc
 update eg_appconfig_values set value = 2 where KEY_ID in (select id from eg_appconfig where key_name = 'parent_for_detailcode');
 
 ----------------------------------END-------------------------------------------------    
-Insert into eg_roleaction_map  values((select id from eg_role where name='Super User'),(select id from eg_action where name='createScheme'));
+Insert into eg_roleaction  values((select id from eg_role where name='Super User'),(select id from eg_action where name='createScheme'));
 Insert into eg_roleaction   values((select id from eg_role where name='Super User'),(select id from eg_action where name='ExpenseBillCreate'));
 

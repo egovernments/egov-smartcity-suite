@@ -46,3 +46,11 @@ INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (355, 'Salary Bills', false, NULL, 347, 'Salary Bills', 6);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (399, 'EGF-COMMON', false, 'egf', 302, 'EGF-COMMON', NULL);
 
+DROP SEQUENCE SEQ_EG_MODULE;
+
+CREATE SEQUENCE SEQ_EG_MODULE
+    START WITH 412
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;

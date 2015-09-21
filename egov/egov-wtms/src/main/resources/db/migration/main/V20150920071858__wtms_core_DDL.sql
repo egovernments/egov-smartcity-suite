@@ -477,7 +477,7 @@ CREATE INDEX idx_conndtl_proptype ON egwtr_connectiondetails USING btree (proper
 CREATE INDEX idx_conndtl_usagetype ON egwtr_connectiondetails USING btree (usagetype);
 CREATE INDEX idx_conndtl_watersource ON egwtr_connectiondetails USING btree (watersource);
 CREATE INDEX idx_connectiondetails_chairperson ON egwtr_connectiondetails USING btree (chairperson);
-CREATE SEQUENCE seq_egwtr_connectiondetails
+CREATE SEQUENCE seq_egwtr_connectiondetails;
 -------------------END-------------------
 ------------------START------------------
 CREATE TABLE egwtr_documents
@@ -569,7 +569,7 @@ CREATE TABLE egwtr_meter_connection_details
   CONSTRAINT fk_meter_connection_details FOREIGN KEY (connectiondetailsid) REFERENCES egwtr_connectiondetails (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 CREATE INDEX idx_meterentrydetails_connectiondetailsid ON egwtr_meter_connection_details USING btree (connectiondetailsid);
-CREATE INDEX idx_fieldinspectiondetails_roadcategory ON egwtr_fieldinspection_details USING btree (roadcategory);
+--CREATE INDEX idx_fieldinspectiondetails_roadcategory ON egwtr_fieldinspection_details USING btree (roadcategory);
 CREATE SEQUENCE seq_egwtr_meter_connection_details;
 -------------------END-------------------
 ------------------START------------------

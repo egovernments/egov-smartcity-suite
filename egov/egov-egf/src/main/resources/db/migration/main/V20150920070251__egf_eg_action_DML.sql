@@ -624,3 +624,13 @@ Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, di
 
 
 Insert into EG_ROLEACTION (roleid, actionid) select (select id from eg_role where name ='Super User'),id  from eg_action  where contextroot = 'EGF';
+
+
+DROP SEQUENCE SEQ_EG_ACTION;
+
+CREATE SEQUENCE SEQ_EG_ACTION
+    START WITH 1343
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
