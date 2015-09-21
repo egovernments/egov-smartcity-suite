@@ -81,7 +81,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ContractorAction.NEW, location = "contractor-new.jsp"),
-        @Result(name = ContractorAction.VIEW_CONTRACTOR, location = "contractor-viewContractor.jsp")
+        @Result(name = ContractorAction.VIEW_CONTRACTOR, location = "contractor-viewContractor.jsp"),
+        @Result(name = ContractorAction.SEARCH, location = "contractor-search.jsp")
 })
 public class ContractorAction extends SearchFormAction {
 
@@ -90,6 +91,7 @@ public class ContractorAction extends SearchFormAction {
     private static final Logger logger = Logger.getLogger(ContractorAction.class);
 
     public static final String VIEW_CONTRACTOR = "viewContractor";
+    public static final String SEARCH = "search";
 
     private PersistenceService<Contractor, Long> contractorService;
 
@@ -164,12 +166,9 @@ public class ContractorAction extends SearchFormAction {
     }
 
     public void getContractorListForCriterias() {
-        logger.debug("Inside getContractorListForCriterias");
         String contractorStr = null;
         final List<Object> paramList = new ArrayList<Object>();
         Object[] params;
-        // if(statusId !=null || departmentId != null || gradeId != null || (contractorcode != null && !contractorcode.equals(""))
-        // || (contractorName != null && !contractorName.equals("")))
         contractorStr = " select distinct contractor from Contractor contractor ";
 
         if (statusId != null || departmentId != null || gradeId != null)
@@ -245,15 +244,15 @@ public class ContractorAction extends SearchFormAction {
      * This method will take user to the search contractor screen.
      * @author prashant.gaurav
      */
+    @Action(value = "/masters/contractor-searchPage")
     public String searchPage() {
         final String negDate = (String) request.get("negDate");
-        logger.debug("Negotiation date found :----------" + negDate);
         if (negDate != null) {
             final SimpleDateFormat dftDateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             try {
                 searchDate = dftDateFormatter.parse(negDate);
             } catch (final ParseException e) {
-                logger.debug("Negotiation date is not valid, should be in dd/MM/yyyy format");
+                logger.error("Negotiation date is not valid, should be in dd/MM/yyyy format");
             }
         }
 
@@ -264,6 +263,7 @@ public class ContractorAction extends SearchFormAction {
      * This method witll return the list of contrator based on search criteria entered.
      * @author prashant.gaurav
      */
+    @Action(value = "/masters/contractor-searchResult")
     public String searchResult() {
         searchContractor();
         return "search";
@@ -281,8 +281,6 @@ public class ContractorAction extends SearchFormAction {
         final List<AppConfigValues> configList = worksService.getAppConfigValue("Works", "CONTRACTOR_STATUS");
         // Assuming that status is inserted using db script
         final String status = configList.get(0).getValue();
-        logger.debug("CONTRACTOR_STATUS for the module Works in appconfig table, Found ------" + status
-                + " || Expected ------- 'Active'");
 
         final Criteria criteria = contractorService.getSession().createCriteria(Contractor.class);
         if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorcode))
@@ -432,15 +430,6 @@ public class ContractorAction extends SearchFormAction {
         this.commonsService = commonsService;
     }
 
-    // public MastersManager getMastersMgr() {
-    // return mastersMgr;
-    // }
-    //
-    //
-    // public void setMastersMgr(MastersManager mastersMgr) {
-    // this.mastersMgr = mastersMgr;
-    // }
-
     public String getContractorName() {
         return contractorName;
     }
@@ -537,8 +526,6 @@ public class ContractorAction extends SearchFormAction {
 
         String contractorStr = null;
         final List<Object> paramList = new ArrayList<Object>();
-        // if(statusId !=null || departmentId != null || gradeId != null || (contractorcode != null && !contractorcode.equals(""))
-        // || (contractorName != null && !contractorName.equals("")))
         contractorStr = " from ContractorDetail detail ";
 
         if (statusId != null || departmentId != null || gradeId != null || contractorcode != null && !contractorcode.equals("")

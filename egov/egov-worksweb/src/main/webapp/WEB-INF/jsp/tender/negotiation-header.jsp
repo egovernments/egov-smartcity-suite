@@ -340,8 +340,7 @@ function searchContractor(rowId){
 	if(!checkDate(document.tenderNegotiationForm.negotiationDate)) 
 		return;
 	
-//	var sRtn = showModalDialog("../masters/contractor!searchPage.action?searchDate="+date,"","dialogLeft=300px;dialogTop=210px;dialogWidth=750px;dialogHeight=500px;status=no;");	
-	window.open("../masters/contractor!searchPage.action?searchDate="+date+"&rowId="+rowId,"", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");	
+	window.open("../masters/contractor-searchPage.action?searchDate="+date+"&rowId="+rowId,"", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");	
 }
 
 function update(elemValue) {	

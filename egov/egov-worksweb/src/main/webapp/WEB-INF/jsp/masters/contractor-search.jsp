@@ -82,7 +82,7 @@
 												</td>
 												<td width="30%" class="greybox2wk">
 													<s:select id="status" name="departmentId" cssClass="selectwk"
-														list="%{dropdownData.departmentList}" listKey="id" listValue="deptName" 
+														list="%{dropdownData.departmentList}" listKey="id" listValue="name" 
 														headerKey="" headerValue="--- Select ---" />
 												</td>
 												<td width="14%" class="greyboxwk">
@@ -213,7 +213,7 @@
 		
 		<script type="text/javascript">
 			function validateAndSubmit() {
-				document.searchContractorForm.action='${pageContext.request.contextPath}/masters/contractor!searchResult.action';
+				document.searchContractorForm.action='${pageContext.request.contextPath}/masters/contractor-searchResult.action';
     			document.searchContractorForm.submit();
 			}
 			

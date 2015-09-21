@@ -40,7 +40,7 @@
 <%@ include file="/includes/taglibs.jsp" %> 
 
 <html>
-<title><s:text name="contractor.search" /></title>
+<title><s:text name="contractor.search.title" /></title>
 
 <script type="text/javascript">
      
