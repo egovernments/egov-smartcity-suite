@@ -66,9 +66,6 @@ import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.services.WorksService;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
-@Transactional(readOnly = true)
 
 @Result(name = SetStatusAction.EDIT, location = "setStatus-edit.jsp")
 public class SetStatusAction extends BaseFormAction {
@@ -317,7 +314,6 @@ public class SetStatusAction extends BaseFormAction {
         return returnVal;
     }
 
-    @Transactional
     @ValidationErrorPage(value = RETENDER)
     @SkipValidation
     public String retenderSave() {
@@ -345,7 +341,6 @@ public class SetStatusAction extends BaseFormAction {
         return SUCCESS;
     }
 
-    @Transactional
     private void saveWhenRetenderingWasNotPreviouslyDone() {
         final List<RetenderHistory> retHistList = new LinkedList<RetenderHistory>();
         for (final RetenderHistory rh : retenderHistoryList) {
@@ -368,7 +363,6 @@ public class SetStatusAction extends BaseFormAction {
         worksPackage.setLatestOfflineStatus(ss);
     }
 
-    @Transactional
     private void saveWhenRetenderingPreviouslyDoneAndRetenderingIsNotSelected() {
         final List<RetenderHistory> retHistList = new LinkedList<RetenderHistory>();
 
@@ -400,7 +394,6 @@ public class SetStatusAction extends BaseFormAction {
         worksPackage.setLatestOfflineStatus(ss);
     }
 
-    @Transactional
     private void saveWhenRetenderingIsSelected() {
         final List<RetenderHistory> retHistList = new LinkedList<RetenderHistory>();
         final List<Retender> retList = new LinkedList<Retender>();
@@ -443,7 +436,6 @@ public class SetStatusAction extends BaseFormAction {
         worksPackage.setLatestOfflineStatus(ss);
     }
 
-    @Transactional
     public String save() {
         int i = 0;
         for (final String statName : getStatusNameDetails()) {

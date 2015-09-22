@@ -82,9 +82,7 @@ import org.egov.utils.FinancialConstants;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 public class WorksService {
     private static final Logger logger = Logger.getLogger(WorksService.class);
     @Autowired
@@ -175,7 +173,6 @@ public class WorksService {
      * empName+"@"+designationName; }
      */
 
-
     /**
      * if the bigdecimal obj1 is greater than or egual to obj2 then it returns false
      *
@@ -215,7 +212,6 @@ public class WorksService {
         return commonsService.getStatusListByModuleAndCodeList(objType, statList);
     }
 
-    @Transactional
     public void createAccountDetailKey(final Long id, final String type) {
         final Accountdetailtype accountdetailtype = getAccountdetailtypeByName(type);
         final Accountdetailkey adk = new Accountdetailkey();

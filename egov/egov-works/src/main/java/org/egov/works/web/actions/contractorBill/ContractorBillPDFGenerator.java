@@ -279,7 +279,8 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
         contractorBillMainTable.addCell(contractorBillRightHeaderCell);
     }
 
-    protected PdfPTable createContractorBillHeader(final String title, final int i) throws DocumentException, ApplicationException {
+    protected PdfPTable createContractorBillHeader(final String title, final int i)
+            throws DocumentException, ApplicationException {
         final PdfPTable contractorBillHeaderTable = new PdfPTable(3);
         contractorBillHeaderTable.getDefaultCell().setBorderWidth(0);
         if (i == 0) {
@@ -314,7 +315,8 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     }
 
     // row7 createDeductionTypeLabel
-    protected void createDeductionTypeLabel(final PdfPTable contractorBillMainTable) throws DocumentException, ApplicationException {
+    protected void createDeductionTypeLabel(final PdfPTable contractorBillMainTable)
+            throws DocumentException, ApplicationException {
         contractorBillMainTable.getDefaultCell().setBorderWidth(1);
         final PdfPTable deductionTypeTable = createDeductionTypeLabelTable(contractorBillMainTable);
         deductionTypeTable.getDefaultCell().setBorderWidth(1);
@@ -339,7 +341,8 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     }
 
     // row8 createDeductionTypeData
-    protected void createDeductionTypeData(final PdfPTable contractorBillMainTable) throws DocumentException, ApplicationException {
+    protected void createDeductionTypeData(final PdfPTable contractorBillMainTable)
+            throws DocumentException, ApplicationException {
         contractorBillMainTable.getDefaultCell().setBorderWidth(1);
         final PdfPTable createDeductionTypeDataTable = createDeductionTypeDataTable(contractorBillMainTable);
         createDeductionTypeDataTable.getDefaultCell().setBorderWidth(1);
@@ -448,7 +451,8 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
         contractorBillMainTable.addCell(createNetPayableCell);
     }
 
-    protected PdfPTable createNetPayableTable(final PdfPTable contractorBillMainTable) throws DocumentException, ApplicationException {
+    protected PdfPTable createNetPayableTable(final PdfPTable contractorBillMainTable)
+            throws DocumentException, ApplicationException {
         final String resultAmt = getIntDecimalParts(netPayableAmount);
         final String[] resultAry = resultAmt.split(":");
         final PdfPTable createNetPayableData = new PdfPTable(11);
@@ -551,7 +555,8 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     }
 
     // row3 and row4 ---createDetailForWorkOrder
-    protected void createDetailsForWorkOrder(final PdfPTable contractorBillMainTable) throws DocumentException, ApplicationException {
+    protected void createDetailsForWorkOrder(final PdfPTable contractorBillMainTable)
+            throws DocumentException, ApplicationException {
         createDetailsForWorkOrderLabel(contractorBillMainTable);
         createDetailsForWorkOrderData(contractorBillMainTable);
     }
@@ -670,7 +675,8 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
         contractorBillMainTable.addCell(workDescCell);
     }
 
-    protected PdfPTable createWorkDescTable(final PdfPTable contractorBillMainTable) throws DocumentException, ApplicationException {
+    protected PdfPTable createWorkDescTable(final PdfPTable contractorBillMainTable)
+            throws DocumentException, ApplicationException {
         final PdfPTable workDescTable = new PdfPTable(11);
         workDescTable.getDefaultCell().setBorderWidth(1);
         workDescTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -694,7 +700,8 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
         contractorBillMainTable.addCell(contractorCell);
     }
 
-    protected PdfPTable createContractorTable(final PdfPTable contractorBillMainTable) throws DocumentException, ApplicationException {
+    protected PdfPTable createContractorTable(final PdfPTable contractorBillMainTable)
+            throws DocumentException, ApplicationException {
         final PdfPTable contractorTable = new PdfPTable(11);
         contractorTable.getDefaultCell().setBorderWidth(1);
         contractorTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_LEFT);

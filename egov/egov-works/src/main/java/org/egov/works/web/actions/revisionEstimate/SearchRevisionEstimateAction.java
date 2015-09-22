@@ -89,9 +89,7 @@ import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 @Result(name = SearchRevisionEstimateAction.SEARCH, location = "searchRevisionEstimate-search.jsp")
 public class SearchRevisionEstimateAction extends SearchFormAction {
@@ -275,7 +273,6 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
             addDropdownData("categoryList", Collections.emptyList());
     }
 
-    @Transactional
     @ValidationErrorPage(value = "search")
     public String cancelApprovedRE() {
         final RevisionWorkOrder revWorkOrder = revisionWorkOrderService.findById(revWOId, false);

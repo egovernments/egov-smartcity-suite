@@ -64,9 +64,7 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 @Result(name = MilestoneAction.NEW, location = "milestone-new.jsp")
 public class MilestoneAction extends BaseFormAction {
@@ -133,7 +131,6 @@ public class MilestoneAction extends BaseFormAction {
         return "new";
     }
 
-    @Transactional
     public String save() {
         final String actionName = parameters.get("actionName")[0];
 
@@ -154,7 +151,6 @@ public class MilestoneAction extends BaseFormAction {
 
     }
 
-    @Transactional
     public String cancel() {
         if (milestone.getId() != null) {
             milestoneWorkflowService.transition(Milestone.Actions.CANCEL.toString(), milestone,
@@ -166,7 +162,6 @@ public class MilestoneAction extends BaseFormAction {
         return SUCCESS;
     }
 
-    @Transactional
     public String reject() {
         milestoneWorkflowService.transition(Milestone.Actions.REJECT.toString(), milestone,
                 milestone.getWorkflowapproverComments());

@@ -72,9 +72,7 @@ import org.egov.works.services.impl.MeasurementBookServiceImpl;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @Result(name = SearchBillAction.SEARCH, location = "searchBill-search.jsp")
 public class SearchBillAction extends BaseFormAction {
 
@@ -132,7 +130,7 @@ public class SearchBillAction extends BaseFormAction {
                     latestStatusList.add(egwStatus);
         return latestStatusList;
     }
-    
+
     @Action(value = "/contractorBill/searchBill-search")
     public String search() {
         return SEARCH;
@@ -224,7 +222,6 @@ public class SearchBillAction extends BaseFormAction {
             setStatus(ContractorBillRegister.BillStatus.APPROVED.toString());
     }
 
-    @Transactional
     @ValidationErrorPageExt(action = "search", makeCall = true, toMethod = "searchBill")
     public String cancelApprovedBill() throws Exception {
         contractorBillRegister = contractorBillService.findById(contractorBillId, false);

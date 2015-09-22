@@ -125,14 +125,12 @@ import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.egov.works.services.impl.MeasurementBookServiceImpl;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
-@Results({@Result(name = ContractorBillAction.PRINT, type = "stream", location = "CompletionCertificatePDF", params = {
+@Results({ @Result(name = ContractorBillAction.PRINT, type = "stream", location = "CompletionCertificatePDF", params = {
         "inputName", "CompletionCertificatePDF", "contentType", "application/pdf", "contentDisposition",
         "no-cache;filename=ContractorBill_CompletionCertificate.pdf" }),
-        @Result(name = ContractorBillAction.NEW, location = "contractorBill-new.jsp")})
+        @Result(name = ContractorBillAction.NEW, location = "contractorBill-new.jsp") })
 public class ContractorBillAction extends BaseFormAction {
 
     private static final long serialVersionUID = -2842467886385709531L;
@@ -684,7 +682,6 @@ public class ContractorBillAction extends BaseFormAction {
 
     }
 
-    @Transactional
     public String save() throws Exception {
         String actionName = "";
         if (parameters.get(ACTION_NAME) != null && parameters.get(ACTION_NAME)[0] != null)
@@ -858,7 +855,6 @@ public class ContractorBillAction extends BaseFormAction {
         }
     }
 
-    @Transactional
     public String cancel() {
         final String actionName = parameters.get("actionName")[0];
         if (contractorBillRegister.getId() != null) {
@@ -1281,7 +1277,7 @@ public class ContractorBillAction extends BaseFormAction {
                 Accountdetailtype adt1 = null;
                 final Accountdetailtype adt2 = null;
                 Accountdetailtype adt3 = null;
-                if (isDebit)   // Story# 806 - Enable code to create an contractor
+                if (isDebit)     // Story# 806 - Enable code to create an contractor
                 // bill
                 // with project code as sub-ledger for the debit COA for
                 // Deposit Works

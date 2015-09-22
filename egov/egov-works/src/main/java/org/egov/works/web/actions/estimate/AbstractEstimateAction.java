@@ -105,11 +105,9 @@ import org.egov.works.services.ContractorBillService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import net.sf.jasperreports.engine.JRException;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 @Results({ @Result(name = AbstractEstimateAction.PRINT, type = "stream", location = "XlsInputStream", params = {
         "inputName", "XlsInputStream", "contentType", "application/xls", "contentDisposition",
@@ -380,7 +378,6 @@ public class AbstractEstimateAction extends BaseFormAction {
         return null;
     }
 
-    @Transactional
     public String moveEstimate() {
         final String actionName = parameters.get("actionName")[0];
         if (actionName != null
@@ -531,7 +528,6 @@ public class AbstractEstimateAction extends BaseFormAction {
         /* end */
     }
 
-    @Transactional
     public String cancel() {
         if (abstractEstimate.getId() != null) {
             workflowService.transition(AbstractEstimate.Actions.CANCEL.toString(), abstractEstimate, approverComments);
@@ -545,7 +541,6 @@ public class AbstractEstimateAction extends BaseFormAction {
         return SUCCESS;
     }
 
-    @Transactional
     public String reject() {
         workflowService.transition(AbstractEstimate.Actions.REJECT.toString(), abstractEstimate, approverComments);
         abstractEstimate = abstractEstimateService.persist(abstractEstimate);
@@ -611,7 +606,6 @@ public class AbstractEstimateAction extends BaseFormAction {
         return NEW;
     }
 
-    @Transactional
     private void saveEstimate(final String actionName) {
         abstractEstimate.getActivities().clear();
         abstractEstimate.getOverheadValues().clear();
@@ -815,7 +809,6 @@ public class AbstractEstimateAction extends BaseFormAction {
         return false;
     }
 
-    @Transactional
     public String cancelApprovedEstimate() {
         abstractEstimate = abstractEstimateService.findById(estimateId, false);
 

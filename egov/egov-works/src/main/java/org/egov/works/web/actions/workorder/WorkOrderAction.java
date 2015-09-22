@@ -118,11 +118,9 @@ import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import net.sf.jasperreports.engine.JRException;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 @Results(value = {
         @Result(name = WorkOrderAction.PRINT, type = "stream", location = "WorkOrderPDF", params = {
@@ -402,7 +400,6 @@ public class WorkOrderAction extends BaseFormAction {
         return NEW;
     }
 
-    @Transactional
     public String save() {
         final String actionName = parameters.get("actionName")[0];
         if (workOrder.getEgwStatus() == null
@@ -455,7 +452,6 @@ public class WorkOrderAction extends BaseFormAction {
         return SAVE_ACTION.equals(actionName) ? EDIT : SUCCESS;
     }
 
-    @Transactional
     public String cancel() {
         final String actionName = parameters.get("actionName")[0];
         if (workOrder.getId() != null) {
@@ -1544,7 +1540,6 @@ public class WorkOrderAction extends BaseFormAction {
             return assignedQty.doubleValue();
     }
 
-    @Transactional
     @ValidationErrorPage(value = SEARCH_WO)
     public String cancelApprovedWO() {
         final WorkOrder workOrder = workOrderService.findById(workOrderId, false);

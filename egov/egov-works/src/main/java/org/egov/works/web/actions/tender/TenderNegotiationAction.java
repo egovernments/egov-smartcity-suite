@@ -100,9 +100,7 @@ import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 @Result(name = TenderNegotiationAction.NEW, location = "tenderNegotiation-new.jsp")
 public class TenderNegotiationAction extends SearchFormAction {
@@ -485,7 +483,6 @@ public class TenderNegotiationAction extends SearchFormAction {
         return Boolean.TRUE;
     }
 
-    @Transactional
     public String save() {
         if (tenderResponse != null
                 && (tenderResponse.getEgwStatus() == null
@@ -608,7 +605,6 @@ public class TenderNegotiationAction extends SearchFormAction {
         return SAVE_ACTION.equals(actionName) ? EDIT : SUCCESS;
     }
 
-    @Transactional
     public String cancel() {
         actionTenderResponseContractors = (List) getActionTenderResponseContractorsList();
         if (tenderResponse != null
@@ -664,7 +660,6 @@ public class TenderNegotiationAction extends SearchFormAction {
 
     // end
 
-    @Transactional
     private void saveTender() {
         populateTenderEstimate();
 
@@ -796,7 +791,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     /** reject */
-    @Transactional
+
     public String reject() {
         saveTender();
         tenderResponse.setTenderEstimate(tenderHeader.getTenderEstimates().get(0));
@@ -1631,7 +1626,6 @@ public class TenderNegotiationAction extends SearchFormAction {
         return "searchNegotiationPage";
     }
 
-    @Transactional
     public String cancelApprovedTN() {
         final TenderResponse tenderResponse = tenderResponseService.findById(tenderRespId, false);
         tenderResponse.setEgwStatus(commonsService.getStatusByModuleAndCode("TenderResponse",

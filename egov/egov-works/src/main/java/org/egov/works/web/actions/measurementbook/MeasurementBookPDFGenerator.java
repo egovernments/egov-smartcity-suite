@@ -388,7 +388,7 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
                     per = activity.getNonSor().getUom().getUom();
                 mbTable.addCell(centerPara(8, per));
                 // end start unit
-            }     // end of if activity
+            }       // end of if activity
 
             /*
              * measurementBookService.prevCumulativeAmount(workOrderActivity.getId ()); total work completed------->(completed
@@ -435,7 +435,7 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
             currentCost = currentMeasurement * approveRateWo * uomFactor;
             mbTable.addCell(rightPara(8, formatter.format(currentCost)));
             // } //end of if mbDetails
-        }    // end of for loop
+        }      // end of for loop
         return mbTable;
     }
 

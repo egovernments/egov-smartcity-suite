@@ -59,9 +59,7 @@ import org.egov.works.models.estimate.OverheadValue;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 @Result(name = CopyEstimateAction.SUCCESS, location = "copyEstimate-success.jsp")
 public class CopyEstimateAction extends BaseFormAction {
@@ -84,7 +82,6 @@ public class CopyEstimateAction extends BaseFormAction {
         super.prepare();
     }
 
-    @Transactional
     public String copyEstimate() {
         final AbstractEstimate abstractEstimate = abstractEstimateService.findById(estimateId, false);
         final PersonalInformation loggedInEmp = employeeService

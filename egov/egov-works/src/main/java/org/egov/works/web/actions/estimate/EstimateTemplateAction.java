@@ -54,16 +54,13 @@ import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.service.EmployeeServiceOld;
-import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.EstimateTemplate;
 import org.egov.works.models.estimate.EstimateTemplateActivity;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @Result(name = EstimateTemplateAction.NEW, location = "estimateTemplate-new.jsp")
 public class EstimateTemplateAction extends SearchFormAction {
 
@@ -74,8 +71,8 @@ public class EstimateTemplateAction extends SearchFormAction {
     private List<EstimateTemplateActivity> nonSorActivities = new LinkedList<EstimateTemplateActivity>();
     @Autowired
     private EmployeeServiceOld employeeService;
-    //@Autowired
-    /*private PersonalInformationService personalInformationService;*/
+    // @Autowired
+    /* private PersonalInformationService personalInformationService; */
     private PersistenceService<EstimateTemplate, Long> estimateTemplateService;
     private String mode = null;
     private Long id;
@@ -122,8 +119,8 @@ public class EstimateTemplateAction extends SearchFormAction {
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         ajaxEstimateAction.setEmployeeService(employeeService);
-        //TODO: Need to uncomment
-        //ajaxEstimateAction.setPersonalInformationService(personalInformationService);
+        // TODO: Need to uncomment
+        // ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         super.prepare();
         setupDropdownDataExcluding("workType", "subType");
         addDropdownData("parentCategoryList",
@@ -143,7 +140,6 @@ public class EstimateTemplateAction extends SearchFormAction {
         return NEW;
     }
 
-    @Transactional
     public String save() {
         estimateTemplate.getEstimateTemplateActivities().clear();
         populateSorActivities();
@@ -233,9 +229,10 @@ public class EstimateTemplateAction extends SearchFormAction {
         this.employeeService = employeeService;
     }
 
-    /*public void setPersonalInformationService(final PersonalInformationService personalInformationService) {
-        this.personalInformationService = personalInformationService;
-    }*/
+    /*
+     * public void setPersonalInformationService(final PersonalInformationService personalInformationService) {
+     * this.personalInformationService = personalInformationService; }
+     */
 
     public List<EstimateTemplateActivity> getSorActivities() {
         return sorActivities;

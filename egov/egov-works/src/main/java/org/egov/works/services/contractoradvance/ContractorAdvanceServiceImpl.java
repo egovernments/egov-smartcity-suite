@@ -74,9 +74,7 @@ import org.egov.works.models.revisionEstimate.RevisionAbstractEstimate;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorAdvanceRequisition, Long>implements
         ContractorAdvanceService {
 
@@ -127,7 +125,6 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
         return advanceAlreadyPaid;
     }
 
-    @Transactional
     @Override
     public ContractorAdvanceRequisition save(ContractorAdvanceRequisition contractorAdvanceRequisition,
             final String actionName, final Long advanceAccountCode) throws ValidationException {
@@ -432,7 +429,6 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
         return workflowFunctionaryId;
     }
 
-    @Transactional
     @Override
     public void cancelContractorAdvanceRequisition(ContractorAdvanceRequisition contractorAdvanceRequisition,
             final String actionName) throws ValidationException {

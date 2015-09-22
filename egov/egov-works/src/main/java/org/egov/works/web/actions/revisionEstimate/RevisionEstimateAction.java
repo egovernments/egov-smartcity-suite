@@ -91,9 +91,7 @@ import org.egov.works.services.impl.WorkOrderServiceImpl;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 @Result(name = RevisionEstimateAction.NEW, location = "revisionEstimate-new.jsp")
 public class RevisionEstimateAction extends GenericWorkFlowAction {
@@ -316,7 +314,6 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
         return new BigDecimal(revisionEstimate.getWorkValue().getValue());
     }
 
-    @Transactional
     public String save() {
         final String actionName = parameters.get("actionName")[0];
         if (actionName != null
@@ -397,7 +394,6 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
         createRevisionEstimate();
     }
 
-    @Transactional
     protected void createRevisionEstimate() {
         final List<AbstractEstimate> revisionEstimates = abstractEstimateService.findAllBy(
                 "from AbstractEstimate where parent.id=?", originalEstimateId);
@@ -509,7 +505,6 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
         return ACTIVITY_SEARCH;
     }
 
-    @Transactional
     protected RevisionWorkOrder createRevisionWO(final String curStatus) {
 
         RevisionWorkOrder revisionWO = new RevisionWorkOrder();
@@ -627,7 +622,6 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
         return false;
     }
 
-    @Transactional
     protected void populateNonSorActivities(final AbstractEstimate abstractEstimate) {
         for (final Activity activity : nonSorActivities)
             if (activity != null) {

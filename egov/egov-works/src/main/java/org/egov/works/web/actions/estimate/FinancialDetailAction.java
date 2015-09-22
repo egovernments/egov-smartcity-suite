@@ -98,11 +98,9 @@ import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.DepositWorksUsageService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import net.sf.jasperreports.engine.JRException;
 
-@Transactional(readOnly = true)
 @Results({ @Result(name = FinancialDetailAction.PRINT, type = "stream", location = "budgetFolioPDF", params = {
         "inputName", "budgetFolioPDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
         @Result(name = AbstractEstimateAction.NEW, location = "financialDetail-add.jsp")
@@ -253,7 +251,6 @@ public class FinancialDetailAction extends BaseFormAction {
         return ADD;
     }
 
-    @Transactional
     public String save() {
         setBudgetHeadGlcode(worksService.getWorksConfigValue(SCHEME_MANDATORYCHECK_BUDGETHEAD));
         populateFinancialDetail();
@@ -267,7 +264,6 @@ public class FinancialDetailAction extends BaseFormAction {
         return EDIT;
     }
 
-    @Transactional
     public String saveAndSubmit() {
         setBudgetHeadGlcode(worksService.getWorksConfigValue(SCHEME_MANDATORYCHECK_BUDGETHEAD));
         populateFinancialDetail();
@@ -341,7 +337,6 @@ public class FinancialDetailAction extends BaseFormAction {
             financialDetail.setCoa(null);
     }
 
-    @Transactional
     private void persistFinancialDetail() {
 
         if (depositCodeId != null && depositCodeId != -1)

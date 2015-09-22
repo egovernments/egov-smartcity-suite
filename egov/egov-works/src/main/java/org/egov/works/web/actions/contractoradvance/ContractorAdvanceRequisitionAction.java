@@ -72,9 +72,7 @@ import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksService;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 @Result(name = ContractorAdvanceRequisitionAction.NEW, location = "contractorAdvanceRequisition-new.jsp")
 public class ContractorAdvanceRequisitionAction extends BaseFormAction {
@@ -179,7 +177,6 @@ public class ContractorAdvanceRequisitionAction extends BaseFormAction {
         return EDIT;
     }
 
-    @Transactional
     public String save() {
         String actionName = "";
         try {
@@ -223,7 +220,6 @@ public class ContractorAdvanceRequisitionAction extends BaseFormAction {
         return SAVE_ACTION.equals(actionName) ? EDIT : SUCCESS;
     }
 
-    @Transactional
     public String cancel() {
         final String actionName = parameters.get("actionName")[0];
         contractorAdvanceService.cancelContractorAdvanceRequisition(contractorAdvanceRequisition, actionName);

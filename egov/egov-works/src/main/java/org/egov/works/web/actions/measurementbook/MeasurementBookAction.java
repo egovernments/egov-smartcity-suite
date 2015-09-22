@@ -93,9 +93,7 @@ import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 @Result(name = MeasurementBookAction.NEW, location = "measurementBook-new.jsp")
 public class MeasurementBookAction extends BaseFormAction {
@@ -561,7 +559,6 @@ public class MeasurementBookAction extends BaseFormAction {
             }
     }
 
-    @Transactional
     public String save() {
         if (mbHeader.getEgwStatus() == null
                 || WorksConstants.REJECTED.equalsIgnoreCase(mbHeader.getEgwStatus().getCode())
@@ -776,7 +773,7 @@ public class MeasurementBookAction extends BaseFormAction {
 
     // workflow for reject mb
     /** reject */
-    @Transactional
+
     public String reject() {
         String actionName = "";
         if (parameters.get(ACTION_NAME) != null && parameters.get(ACTION_NAME)[0] != null)
@@ -793,7 +790,7 @@ public class MeasurementBookAction extends BaseFormAction {
     }
 
     // workflow for cancel mb
-    @Transactional
+
     public String cancel() {
         if (mbHeader != null && mbHeader.getEgBillregister() != null
                 && mbHeader.getEgBillregister().getStatus() != null
@@ -846,7 +843,6 @@ public class MeasurementBookAction extends BaseFormAction {
         return mbHeader;
     }
 
-    @Transactional
     public String cancelApprovedMB() {
         final MBHeader mbHeader = measurementBookService.findById(mbId, false);
         mbHeader.setEgwStatus(commonsService.getStatusByModuleAndCode("MBHeader",

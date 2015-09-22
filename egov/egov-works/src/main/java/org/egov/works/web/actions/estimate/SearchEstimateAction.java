@@ -91,9 +91,7 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.workorder.AjaxWorkOrderAction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 public class SearchEstimateAction extends SearchFormAction {
 
@@ -977,7 +975,6 @@ public class SearchEstimateAction extends SearchFormAction {
         return retVal;
     }
 
-    @Transactional
     @ValidationErrorPage(value = INDEX)
     public String cancelApprdMilestones() {
         final StringBuilder estimateNum = new StringBuilder(200);

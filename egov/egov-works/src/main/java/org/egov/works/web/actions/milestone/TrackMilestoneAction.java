@@ -64,9 +64,7 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @ParentPackage("egov")
 @Result(name = TrackMilestoneAction.NEW, location = "trackMilestone-new.jsp")
 public class TrackMilestoneAction extends BaseFormAction {
@@ -185,7 +183,6 @@ public class TrackMilestoneAction extends BaseFormAction {
         return NEW;
     }
 
-    @Transactional
     public String save() {
         final String actionName = parameters.get("actionName")[0];
 
@@ -218,7 +215,6 @@ public class TrackMilestoneAction extends BaseFormAction {
 
     }
 
-    @Transactional
     public String cancel() {
         if (trackMilestone.getId() != null) {
             trackMilestoneWorkflowService.transition(TrackMilestone.Actions.CANCEL.toString(), trackMilestone,
@@ -230,7 +226,6 @@ public class TrackMilestoneAction extends BaseFormAction {
         return SUCCESS;
     }
 
-    @Transactional
     public String reject() {
         trackMilestoneWorkflowService.transition(TrackMilestone.Actions.REJECT.toString(), trackMilestone,
                 trackMilestone.getWorkflowapproverComments());

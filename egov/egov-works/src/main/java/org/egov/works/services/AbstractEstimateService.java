@@ -85,9 +85,7 @@ import org.egov.works.models.estimate.ProjectCodeGenerator;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 public class AbstractEstimateService extends PersistenceService<AbstractEstimate, Long> {
     private static final Logger logger = Logger.getLogger(AbstractEstimateService.class);
     private EstimateNumberGenerator estimateNumberGenerator;
@@ -138,7 +136,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         return saved;
     }
 
-    @Transactional
     @Override
     public AbstractEstimate persist(final AbstractEstimate entity) {
         final AbstractEstimate saved = super.persist(entity);
@@ -184,7 +181,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         return true;
     }
 
-    @Transactional
     public void setEstimateNumber(final AbstractEstimate entity) {
         final CFinancialYear financialYear = getCurrentFinancialYear(entity.getEstimateDate());
         if (entity.getEstimateNumber() == null || entity.getEstimateNumber() != null
@@ -197,7 +193,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
      *
      * @param entity an instance of <code>AbstractEstimate</code> for the project code is to be generated.
      */
-    @Transactional
     public void setProjectCode(final AbstractEstimate entity) {
         final CFinancialYear finYear = getCurrentFinancialYear(entity.getEstimateDate());
         final ProjectCode projectCode = new ProjectCode(entity, null);
@@ -217,7 +212,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         createAccountDetailKey(projectCode);
     }
 
-    @Transactional
     protected void createAccountDetailKey(final ProjectCode proj) {
         final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName("PROJECTCODE");
         final Accountdetailkey adk = new Accountdetailkey();
@@ -236,7 +230,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
      * @param estimate the parent <code>AbstractEstimate</code> object
      * @return the persisted <code>AbstractEstimate</code> object
      */
-    @Transactional
     public AbstractEstimate persistFinancialDetail(final FinancialDetail financialDetail,
             final AbstractEstimate estimate) {
         super.validate(estimate);
@@ -895,7 +888,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         return egovCommon;
     }
 
-    @Transactional
     public boolean checkForBudgetaryAppropriationForDepositWorks(final FinancialDetail financialDetail)
             throws ValidationException {
         boolean flag = false;
@@ -938,7 +930,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         return flag;
     }
 
-    @Transactional
     public boolean releaseDepositWorksAmountOnReject(final FinancialDetail financialDetail) throws ValidationException {
         boolean flag = false;
         final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName("DEPOSITCODE");
@@ -974,7 +965,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         return depositWorksUsageService;
     }
 
-    @Transactional
     private void persistBudgetAppropriationDetails(final AbstractEstimate abstractEstimate,
             final BudgetUsage budgetUsage) {
         AbstractEstimateAppropriation estimateAppropriation = null;
@@ -995,7 +985,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         estimateAppropriationService.persist(estimateAppropriation);
     }
 
-    @Transactional
     private void persistDepositCodeAppDetails(final DepositWorksUsage depositWorksUsage) {
         AbstractEstimateAppropriation estimateAppropriation = null;
         final int finYearId = commonsService.getFinYearByDate(new Date()).getId().intValue();
@@ -1024,7 +1013,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         estimateAppropriationService.persist(estimateAppropriation);
     }
 
-    @Transactional
     private void persistBudgetReleaseDetails(final AbstractEstimate abstractEstimate, final BudgetUsage budgetUsage) {
         AbstractEstimateAppropriation estimateAppropriation = null;
         estimateAppropriation = estimateAppropriationService.findByNamedQuery("getLatestBudgetUsageForEstimate",
@@ -1036,7 +1024,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         estimateAppropriationService.persist(estimateAppropriation);
     }
 
-    @Transactional
     private void persistReleaseDepositWorksAmountDetails(final DepositWorksUsage depositWorksUsage) {
         AbstractEstimateAppropriation estimateAppropriation = null;
         final BigDecimal creditBalance = depositWorksUsage.getTotalDepositAmount();

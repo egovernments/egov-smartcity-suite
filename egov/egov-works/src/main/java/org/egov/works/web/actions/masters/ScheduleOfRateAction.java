@@ -213,7 +213,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
         if (id != null)
             scheduleOfRate = scheduleOfRateService.findById(id, false);
         super.prepare();
-        //setupDropdownDataExcluding();
+        // setupDropdownDataExcluding();
         final List<ScheduleOfRate> categories = scheduleOfRateService.findAllBy("from ScheduleCategory sc");
         addDropdownData("scheduleCategoryList", categories);
         addDropdownData("uomlist", scheduleOfRateService.findAllBy("from UOM  order by upper(uom)"));
@@ -400,7 +400,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
                     }
                 }
             }
-        }     // end of for abstractestimate
+        }       // end of for abstractestimate
     }
 
     public void iterateWOList(final List woeList, final SORRate rate, final boolean validationMessageFlag) {
@@ -438,7 +438,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
                         deleteFlagMap2.put(rate.getId(), "no");
                 }
             }
-        }     // end of for wo
+        }       // end of for wo
     }
 
     public void validateWODate(final boolean flag, final List woList) {

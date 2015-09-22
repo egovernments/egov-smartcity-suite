@@ -193,7 +193,7 @@ public class MeasurementBookPDFAction extends BaseFormAction {
                     per = activity.getNonSor().getUom().getUom();
                 mbPDF.setUom(per);
                 // end start unit
-            }     // end of if activity
+            }       // end of if activity
 
             final double workCompleted = completedMeasurement * approveRateWo * uomFactor;
             mbPDF.setCompletedCost(workCompleted);

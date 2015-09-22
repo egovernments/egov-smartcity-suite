@@ -53,9 +53,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.EstimatePhotographs;
 import org.egov.works.services.AbstractEstimateService;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @SuppressWarnings("serial")
 @Result(name = UploadEstimatePhotosAction.SEARCH, location = "uploadEstimatePhotos-search.jsp")
 public class UploadEstimatePhotosAction extends BaseFormAction {
@@ -117,7 +115,6 @@ public class UploadEstimatePhotosAction extends BaseFormAction {
         return UPLOAD;
     }
 
-    @Transactional
     public String savePhotos() {
         final AbstractEstimate ae = abstractEstimateService.find(" from AbstractEstimate where id = ?", estId);
         if (abstractEstimate != null && abstractEstimate.getEstimatePhotographsList() != null

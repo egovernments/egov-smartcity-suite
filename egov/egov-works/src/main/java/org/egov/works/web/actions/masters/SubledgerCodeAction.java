@@ -70,7 +70,6 @@ import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.HierarchyTypeService;
-import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -155,9 +154,7 @@ public class SubledgerCodeAction extends BaseFormAction {
             // list = (List<String>) validScript.eval(Script.createContext("depCode",null,"projCode",projectCode));
         } else {
             depCode = true;  // Onload to set DepositCode Radio Button
-            final ScriptContext scriptContext = ScriptService.createContext("depCode", depositCode, "projCode", null);
-            //list = (List<String>) scriptService.executeScript(SCRIPT_NAME, scriptContext);
-            // list = (List<String>) validScript.eval(Script.createContext("depCode",depositCode,"projCode",null));
+            ScriptService.createContext("depCode", depositCode, "projCode", null);
         }
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
@@ -170,9 +167,9 @@ public class SubledgerCodeAction extends BaseFormAction {
         addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=1"));
         addDropdownData("typeOfWorkList",
                 getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
-        //TODO: Need to uncomment
-        //addDropdownData("functionList", commonsService.getAllFunction());
-        //TODO: Need to remove
+        // TODO: Need to uncomment
+        // addDropdownData("functionList", commonsService.getAllFunction());
+        // TODO: Need to remove
         addDropdownData("functionList", new ArrayList<CFunction>());
         // TO load Fund and FundSource dropdown with appconfig defined values in case of SubLedgerDepositCode
         if (null != null && (list.isEmpty() || !list.isEmpty()) && depCode) {
@@ -198,15 +195,15 @@ public class SubledgerCodeAction extends BaseFormAction {
             }
 
         } else {
-        	//TODO: Uncomment 
-            //addDropdownData("fundList", commonsService.getAllActiveIsLeafFunds());
-        	//TODO: Remove
-        	addDropdownData("fundList", new ArrayList<Fund>());
+            // TODO: Uncomment
+            // addDropdownData("fundList", commonsService.getAllActiveIsLeafFunds());
+            // TODO: Remove
+            addDropdownData("fundList", new ArrayList<Fund>());
             try {
-            	//TODO : Uncomment
-                //addDropdownData("fundSourceList", commonsService.getAllActiveIsLeafFundSources());
-            	//TODO : Remove
-            	addDropdownData("fundSourceList", new ArrayList<Fundsource>());
+                // TODO : Uncomment
+                // addDropdownData("fundSourceList", commonsService.getAllActiveIsLeafFundSources());
+                // TODO : Remove
+                addDropdownData("fundSourceList", new ArrayList<Fundsource>());
             } catch (final Exception e) {
                 logger.error("---Unable to load fund source information---" + e.getMessage());
                 addFieldError("fundsourceunavailable", "Unable to load fund source information");
@@ -216,9 +213,9 @@ public class SubledgerCodeAction extends BaseFormAction {
         /**
          * Fetch Zone Dropdown List
          */
-        //TODO: Uncomment
-        //addDropdownData("zoneList", getAllZone());
-        //addDropdownData("wardList", Collections.emptyList());
+        // TODO: Uncomment
+        // addDropdownData("zoneList", getAllZone());
+        // addDropdownData("wardList", Collections.emptyList());
         addDropdownData("subTypeOfWorkList", Collections.emptyList());
         addDropdownData("schemeList", Collections.emptyList());
         addDropdownData("subSchemeList", Collections.emptyList());
@@ -229,7 +226,7 @@ public class SubledgerCodeAction extends BaseFormAction {
 
     /* To Populate Zone DropDown */
     public List<Boundary> getAllZone() {
-        HierarchyType hType =  hierarchyTypeService.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
+        final HierarchyType hType = hierarchyTypeService.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
         List<Boundary> zoneList = null;
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType("zone", hType);
         zoneList = boundaryService.getAllBoundariesByBoundaryTypeId(bType.getId());

@@ -65,12 +65,10 @@ import org.egov.works.services.DepositWorksUsageService;
 import org.egov.works.services.RevisionEstimateService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This class will expose all Revision Estimate related operations.
  */
-@Transactional(readOnly = true)
 public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstractEstimate, Long>implements
         RevisionEstimateService {
 
@@ -119,7 +117,6 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
             revisionEstimate.setBudgetRejectionNo(null);
     }
 
-    @Transactional
     private boolean releaseDepositWorksAmountOnReject(final RevisionAbstractEstimate revisionEstimate,
             final FinancialDetail financialDetail) throws ValidationException {
         boolean flag = false;
@@ -149,7 +146,6 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
         return flag;
     }
 
-    @Transactional
     private void persistReleaseDepositWorksAmountDetails(final RevisionAbstractEstimate revisionEstimate,
             final FinancialDetail financialDetail, final DepositWorksUsage depositWorksUsage) {
         AbstractEstimateAppropriation estimateAppropriation = null;
@@ -164,7 +160,6 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
         estimateAppropriationService.persist(estimateAppropriation);
     }
 
-    @Transactional
     private boolean consumeBudgetForNormalWorks(final RevisionAbstractEstimate revisionEstimate) {
         boolean flag = false;
         final Long finYearId = commonsService.getFinancialYearByDate(new Date()).getId();
@@ -194,7 +189,6 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
         return flag;
     }
 
-    @Transactional
     private void persistBudgetAppropriationDetails(final RevisionAbstractEstimate revisionEstimate,
             final AbstractEstimate parentEstimate, final BudgetUsage budgetUsage) {
         AbstractEstimateAppropriation estimateAppropriation = null;
@@ -217,7 +211,6 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
         estimateAppropriationService.persist(estimateAppropriation);
     }
 
-    @Transactional
     private boolean checkForBudgetaryAppropriationForDepositWorks(final RevisionAbstractEstimate revisionEstimate)
             throws ValidationException {
         boolean flag = false;
@@ -262,7 +255,6 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
         return flag;
     }
 
-    @Transactional
     private void persistDepositCodeAppDetails(final DepositWorksUsage depositWorksUsage,
             final FinancialDetail financialDetail) {
         AbstractEstimateAppropriation estimateAppropriation = null;
@@ -292,7 +284,6 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
         estimateAppropriationService.persist(estimateAppropriation);
     }
 
-    @Transactional
     private boolean releaseBudgetOnReject(final RevisionAbstractEstimate revisionEstimate,
             final FinancialDetail financialDetail) throws ValidationException {
         boolean flag = false;
@@ -327,7 +318,6 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
         return flag;
     }
 
-    @Transactional
     private void persistBudgetReleaseDetails(final RevisionAbstractEstimate revisionEstimate,
             final AbstractEstimate parentEstimate, final BudgetUsage budgetUsage) {
         AbstractEstimateAppropriation estimateAppropriation = null;

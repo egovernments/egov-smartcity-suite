@@ -65,9 +65,7 @@ import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 public class SearchWorksPackageAction extends SearchFormAction {
 
     private static final long serialVersionUID = -6268869129605734393L;
@@ -486,7 +484,6 @@ public class SearchWorksPackageAction extends SearchFormAction {
         return new SearchQueryHQL(query, countQuery, paramList);
     }
 
-    @Transactional
     public String cancelWP() {
         final WorksPackage worksPackage = workspackageService.findById(wpCancelId, false);
         final PersonalInformation prsnlInfo = employeeService.getEmpForUserId(worksService.getCurrentLoggedInUserId());
