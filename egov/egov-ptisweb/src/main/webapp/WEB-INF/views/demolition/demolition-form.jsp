@@ -37,44 +37,15 @@
  
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="description" content="Neon Admin Panel" />
-<meta name="author" content="" />
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
 
-<title>eGov Urban Portal</title>
-
-<!-- <link rel="stylesheet" href="../css/propertytax.css">
-<link rel="stylesheet"
-	href="../../../../../../egov-egiweb/src/main/webapp/css/commonegovNew.css">
-
-<link rel="stylesheet"
-	href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap.css">
-<link rel="stylesheet"
-	href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/custom.css">
-<link rel="stylesheet"
-	href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/header-custom.css">
-<link rel="stylesheet"
-	href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
-<script
-	src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/jquery.js"></script> -->
-
-<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
-<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-		<![endif]-->
-
-
-</head>
-<body class="page-body">
+<form:form id="demolition" method="post"
+	class="form-horizontal form-groups-bordered" modelAttribute="property">
 	<div class="page-container" id="page-container">
 		<div class="main-content">
 			<div class="row">
@@ -83,70 +54,139 @@
 						style="text-align: left">
 						<div class="panel-heading">
 							<div class="panel-title">Property Details</div>
-
 						</div>
 						<div class="panel-body">
 							<div class="row add-border">
-								<div class="col-xs-3 add-margin">Assessment Number</div>
-								<div class="col-xs-3 add-margin view-content">1085000001</div>
-
-								<div class="col-xs-3 add-margin">Assessment number of
-									parent property</div>
-								<div class="col-xs-3 add-margin view-content">N/A</div>
-							</div>
-							<div class="row add-border">
-								<div class="col-xs-3 add-margin">Property Type</div>
-								<div class="col-xs-3 add-margin view-content">N/A</div>
-								<div class="col-xs-3 add-margin">Exemption</div>
-								<div class="col-xs-3 add-margin view-content">N/A</div>
-							</div>
-							<div class="row add-border">
-								<div class="col-xs-3 add-margin">Annual Value</div>
-								<div class="col-xs-3 add-margin view-content">Rs.
-									format.money</div>
-								<div class="col-xs-3 add-margin">Effective Date</div>
-								<div class="col-xs-3 add-margin view-content">N/A</div>
-							</div>
-							<div class="row add-border">
-								<div class="col-xs-3 add-margin">Category of Ownership</div>
-								<div class="col-xs-3 add-margin view-content">Private</div>
-								<div class="col-xs-3 add-margin">Apartment/Complex Name</div>
-								<div class="col-xs-3 add-margin view-content">N/A</div>
-							</div>
-							<div class="row add-border">
-								<div class="col-xs-3 add-margin">Extent of Site (Sq.Mtrs)
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.assmtno" />
 								</div>
-								<div class="col-xs-3 add-margin view-content">1600.0</div>
-								<div class="col-xs-3 add-margin">Extend of Appurtenant
-									Land (Sq.Mtrs)</div>
-								<div class="col-xs-3 add-margin view-content">500.0</div>
-							</div>
-							<div class="row add-border">
-								<div class="col-xs-3 add-margin">Super Structure</div>
-								<div class="col-xs-3 add-margin view-content">N/A</div>
-								<div class="col-xs-3 add-margin">Site Owner</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${property.basicProperty.upicNo}"></c:out>
+								</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.assmtno.parentproperty" />
+								</div>
 								<div class="col-xs-3 add-margin view-content">N/A</div>
 							</div>
 							<div class="row add-border">
-								<div class="col-xs-3 add-margin">Registration Doc No</div>
-								<div class="col-xs-3 add-margin view-content">100</div>
-								<div class="col-xs-3 add-margin">Registration Doc Date</div>
-								<div class="col-xs-3 add-margin view-content">02/01/2015</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.propertytype" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${property.propertyDetail.propertyType}"></c:out>
+								</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.excemption" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${property.taxExemptedReason.name}"></c:out>
+								</div>
 							</div>
-
-
-
 							<div class="row add-border">
-								<div class="col-xs-3 add-margin">BP Number</div>
-								<div class="col-xs-3 add-margin view-content">N/A</div>
-								<div class="col-xs-3 add-margin">BP Date</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.annualvalue" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">Rs.format.money</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.effectivedate" />
+								</div>
 								<div class="col-xs-3 add-margin view-content">N/A</div>
 							</div>
 							<div class="row add-border">
-								<div class="col-xs-3 add-margin">% of Deviation</div>
-								<div class="col-xs-3 add-margin view-content">N/A</div>
-								<div class="col-xs-3 add-margin">Reason for Creation</div>
-								<div class="col-xs-3 add-margin view-content">N/A</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.category.ownership" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${property.propertyDetail.categoryType}"></c:out>
+								</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.appartmentorcomplex" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${property.propertyDetail.apartment.name}"
+										default="N/A"></c:out>
+								</div>
+							</div>
+							<div class="row add-border">
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.extentofsite" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${property.propertyDetail.sitalArea.area}"></c:out>
+								</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.extent.appurtenant" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out
+										value="${property.propertyDetail.extentAppartenauntLand}"></c:out>
+								</div>
+							</div>
+							<div class="row add-border">
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.superstructure" />
+								</div>
+								<c:choose>
+									<c:when test="${property.propertyDetail.structure == 'true'}">
+										<div class="col-xs-3 add-margin view-content">Yes</div>
+									</c:when>
+									<c:otherwise>
+										<div class="col-xs-3 add-margin view-content">No</div>
+									</c:otherwise>
+								</c:choose>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.siteowner" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${property.propertyDetail.siteOwner}"></c:out>
+								</div>
+							</div>
+							<div class="row add-border">
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.registrationDoc.no" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${property.basicProperty.regdDocNo}"></c:out>
+								</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.registrationDoc.date" />
+								</div>
+								<fmt:formatDate value="${property.basicProperty.regdDocDate}"
+									var="registrationDate" pattern="dd-MM-yyyy" />
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${registrationDate}"></c:out>
+								</div>
+							</div>
+							<div class="row add-border">
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.bpno" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${property.propertyDetail.buildingPermissionNo}"></c:out>
+								</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.bpdate" />
+								</div>
+								<fmt:formatDate
+									value="${property.propertyDetail.buildingPermissionDate}"
+									var="bpregistrationDate" pattern="dd-MM-yyyy" />
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${bpregistrationDate}"></c:out>
+								</div>
+							</div>
+							<div class="row add-border">
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.percentagedeviation" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${property.propertyDetail.deviationPercentage}"></c:out>
+								</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.reason.creation" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${property.propertyModifyReason}"></c:out>
+								</div>
 							</div>
 
 						</div>
@@ -159,31 +199,52 @@
 					<div class="panel panel-primary" data-collapsed="0"
 						style="text-align: left">
 						<div class="panel-heading">
-							<div class="panel-title">Tax Details</div>
-
+							<div class="panel-title">
+								<spring:message code="lbl.hdr.taxdetails" />
+							</div>
 						</div>
 						<div class="panel-body">
 							<div class="row add-border">
-								<div class="col-xs-3 add-margin">Current Tax</div>
-								<div class="col-xs-3 add-margin view-content">Rs. 505.00</div>
-								<div class="col-xs-3 add-margin">Education Tax</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.currenttax" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${currTax}"></c:out>
+								</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.edutax" />
+								</div>
 								<div class="col-xs-3 add-margin view-content">N/A</div>
 							</div>
 							<div class="row add-border">
-								<div class="col-xs-3 add-margin">Current Tax Due</div>
-								<div class="col-xs-3 add-margin view-content">Rs. 505.00</div>
-								<div class="col-xs-3 add-margin">Library Cess</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.currenttax.due" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${currTaxDue}"></c:out>
+								</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.librarycess" />
+								</div>
 								<div class="col-xs-3 add-margin view-content">N/A</div>
 							</div>
 							<div class="row add-border">
-								<div class="col-xs-3 add-margin">Total Arrears Due</div>
-								<div class="col-xs-3 add-margin view-content">Rs. 0.00</div>
-								<div class="col-xs-3 add-margin">Property Tax</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.totalarrears.due" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${totalArrDue}"></c:out>
+								</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.propertytax" />
+								</div>
 								<div class="col-xs-3 add-margin view-content">N/A</div>
 							</div>
 							<div class="row add-border">
 								<div class="col-xs-6 add-margin"></div>
-								<div class="col-xs-3 add-margin">Total Property Tax</div>
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.total.propertytax" />
+								</div>
 								<div class="col-xs-3 add-margin view-content">N/A</div>
 							</div>
 						</div>
@@ -196,13 +257,15 @@
 					<div class="panel panel-primary" data-collapsed="0">
 
 						<div class="panel-heading" style="text-align: left">
-							<div class="panel-title">Demolition Details</div>
+							<div class="panel-title">
+								<spring:message code="lbl.hdr.demolition.details" />
+							</div>
 						</div>
 						<div class="panel-body custom-form">
 							<form role="form" class="form-horizontal form-groups-bordered">
 								<div class="form-group">
-									<label class="col-sm-3 control-label text-right">Reason
-										for demolition<span class="mandatory"></span>
+									<label class="col-sm-3 control-label text-right"><spring:message
+											code="lbl.demolition.reason" /><span class="mandatory"></span>
 									</label>
 									<div class="col-sm-8 add-margin">
 										<textarea class="form-control"></textarea>
@@ -214,65 +277,85 @@
 				</div>
 			</div>
 
- 
+
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel panel-primary" data-collapsed="0">
 
 						<div class="panel-heading" style="text-align: left">
-							<div class="panel-title">Vacant Land Details</div>
+							<div class="panel-title">
+								<spring:message code="lbl.hdr.vacantland.details" />
+							</div>
 						</div>
-						<div class="panel-body custom-form">
-							<table width="100%" border="0" cellspacing="0" cellpadding="0"
+
+						<%-- <div class="form-group">
+							<label class="col-sm-2 control-label" style="text-align: center"> <spring:message	code="lbl.surveyNumber" /><span class="mandatory"></span></label>
+							<label class="col-sm-2 control-label" style="text-align: center"> <spring:message	code="lbl.pattaNumber" /><span class="mandatory"></span></label> 
+							<label class="col-sm-2 control-label" style="text-align: center"> <spring:message	code="lbl.vacantland.area" /><span class="mandatory"></span></label> 
+							<label class="col-sm-3 control-label" style="text-align: center"> <spring:message	code="lbl.MarketValue" /><span class="mandatory"></span></label> 
+							<label class="col-sm-2 control-label" style="text-align: center"> <spring:message	code="lbl.pattaNumber" /><span class="mandatory"></span></label>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-2 add-margin">
+								<form:input path="propertyDetail.surveyNumber" id="surveyNumber" cssClass="form-control" cssErrorClass="form-control error" />
+							</div>
+							<div class="col-sm-2 add-margin">
+								<form:input path="propertyDetail.pattaNumber" id="pattaNumber" cssClass="form-control" cssErrorClass="form-control error" />
+							</div>
+							<div class="col-sm-2 add-margin">
+								<form:input path="propertyDetail.sitalArea.area" id="sitalArea"	cssClass="form-control"
+									cssErrorClass="form-control error" />
+							</div>
+							<div class="col-sm-3 add-margin">
+								<form:input path="propertyDetail.marketValue" id="marketValue"	cssClass="form-control"
+									cssErrorClass="form-control error" />
+							</div>
+							<div class="col-sm-3 add-margin">
+								<form:input path="propertyDetail.currentCapitalValue" id="currentCapitalValue"	cssClass="form-control"
+									cssErrorClass="form-control error" />
+							</div>
+						</div> --%>
+						 <table width="100%" border="0" cellspacing="0" cellpadding="0"
 								class="tablebottom" id="vacantLandTable">
 
 								<tbody>
 									<tr>
-										<th class="bluebgheadtd">Survey Number<span
+										<th class="bluebgheadtd"><spring:message code="lbl.surveyNumber" /><span
+											class="mandatory">*</span>
+										</th>
+										<th class="bluebgheadtd"><spring:message code="lbl.pattaNumber" /><span
+											class="mandatory1">*</span></th>
+										<th class="bluebgheadtd"><spring:message code="lbl.vacantland.area" /><span
+											class="mandatory1">*</span></th>
+										<th class="bluebgheadtd"><spring:message code="lbl.MarketValue" /><span
 											class="mandatory1">*</span>
 										</th>
-										<th class="bluebgheadtd">Patta Number<span
-											class="mandatory1">*</span></th>
-										<th class="bluebgheadtd">Vacant Land Area(in Sq.Yards)<span
-											class="mandatory1">*</span></th>
-										<th class="bluebgheadtd">Market area Value per Sq.Mtrs
-											(As Per Current Registration department)<span
-											class="mandatory1">*</span>
-										</th>
-										<th class="bluebgheadtd">Current Capital Value<span
-											class="mandatory1">*</span></th>
-										<th class="bluebgheadtd">Effective Date<span
+										<th class="bluebgheadtd"><spring:message code="lbl.currentCapitalValue" /><span
 											class="mandatory1">*</span></th>
 									</tr>
 
 									<tr id="vacantLandRow">
-										<td class="blueborderfortd" align="center"><input
-											type="text" name="propertyDetail.surveyNumber" maxlength="15"
-											value="" id="propertyDetail.surveyNumber"></td>
-										<td class="blueborderfortd" align="center"><input
-											type="text" name="propertyDetail.pattaNumber" maxlength="15"
-											value="" id="propertyDetail.pattaNumber"></td>
-										<td class="blueborderfortd" align="center"><input
-											type="text" name="propertyDetail.sitalArea.area"
+										<td class="blueborderfortd" align="center"><form:input path="propertyDetail.surveyNumber" id="surveyNumber" maxlength="15"
+											/></td>
+										<td class="blueborderfortd" align="center"><form:input path="propertyDetail.pattaNumber" id="pattaNumber" maxlength="15"
+											/></td>
+										<td class="blueborderfortd" align="center"><form:input
+											type="text" path="propertyDetail.sitalArea.area"
 											maxlength="15" value="" id="vacantLandArea"
-											onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.sitalArea.area');checkZero(this,'propertyDetail.sitalArea.area');">
+											onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.sitalArea.area');checkZero(this,'propertyDetail.sitalArea.area');"/>
 										</td>
-										<td class="blueborderfortd" align="center"><input
-											type="text" name="propertyDetail.marketValue" maxlength="15"
+										<td class="blueborderfortd" align="center"><form:input
+											type="text" path="propertyDetail.marketValue" maxlength="15"
 											value="" id="marketValue"
-											onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.marketValue');checkZero(this,'propertyDetail.marketValue');">
+											onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.marketValue');checkZero(this,'propertyDetail.marketValue');"/>
 										</td>
 
-										<td class="blueborderfortd"><input type="text"
-											name="propertyDetail.currentCapitalValue" maxlength="15"
+										<td class="blueborderfortd"><form:input type="text"
+											path="propertyDetail.currentCapitalValue" maxlength="15"
 											value="" id="currentCapitalValue"
 											onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.currentCapitalValue');checkZero(this,'propertyDetail.currentCapitalValue');"
-											readonly="true"></td>
+											readonly="true"/></td>
 
-										<td class="blueborderfortd"><input type="text"
-											name="propertyDetail.dateOfCompletion" size="10"
-											maxlength="10" value="" id="propertyDetail.dateOfCompletion"
-											class="datepicker" autocomplete="off"></td>
 									</tr>
 
 									<tr>
@@ -306,65 +389,69 @@
 											</table></td>
 									</tr>
 								</tbody>
-							</table>
-							<br />
-						</div>
-					</div> 
-
-					<div class="row">
-						<div class="col-md-12">
-							<div class="panel panel-primary" data-collapsed="0">
-
-								<div class="panel-heading" style="text-align: left">
-									<div class="panel-title">Approval Details</div>
-								</div>
-								<div class="panel-body custom-form">
-									<form role="form" class="form-horizontal form-groups-bordered">
-										<div class="form-group">
-											<label class="col-md-2 col-xs-12 text-left">Approver Department <span class="mandatory"></span>
-											</label>
-											<div class="col-md-2 col-xs-12 add-margin">
-												<select class="form-control"><option>select</option></select>
-											</div>
-											<label class="col-md-2 col-xs-12 text-left">Approver Designation <span class="mandatory"></span>
-											</label>
-											<div class="col-md-2 col-xs-12 add-margin">
-												<select class="form-control"><option>select</option></select>
-											</div>
-											<label class="col-md-2 col-xs-12 text-left">Approver <span class="mandatory"></span>
-											</label>
-											<div class="col-md-2 col-xs-12 add-margin">
-												<select class="form-control"><option>select</option></select>
-											</div>
-										</div>
-										<div class="form-group">
-											<label class="col-sm-2 col-xs-12 text-left">
-											  Approver Remarks
-											</label>
-											<div class="col-sm-4 add-margin">
-												<textarea class="form-control"></textarea>
-											</div>
-										</div>
-										<br/>
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="form-group text-center">
-						<input type="button" class="buttonsubmit" value="Submit">
-						&nbsp; <input type="button" class="button" value="Close">
+							</table> 
 					</div>
 				</div>
 			</div>
 
+			<div class="row">
+				<div class="col-md-12">
+					<div class="panel panel-primary" data-collapsed="0">
+
+						<div class="panel-heading" style="text-align: left">
+							<div class="panel-title">Approval Details</div>
+						</div>
+						<div class="panel-body custom-form">
+							<form role="form" class="form-horizontal form-groups-bordered">
+								<div class="form-group">
+									<label class="col-md-2 col-xs-12 text-left">Approver
+										Department <span class="mandatory"></span>
+									</label>
+									<div class="col-md-2 col-xs-12 add-margin">
+										<select class="form-control"><option>select</option></select>
+									</div>
+									<label class="col-md-2 col-xs-12 text-left">Approver
+										Designation <span class="mandatory"></span>
+									</label>
+									<div class="col-md-2 col-xs-12 add-margin">
+										<select class="form-control"><option>select</option></select>
+									</div>
+									<label class="col-md-2 col-xs-12 text-left">Approver <span
+										class="mandatory"></span>
+									</label>
+									<div class="col-md-2 col-xs-12 add-margin">
+										<select class="form-control"><option>select</option></select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 col-xs-12 text-left"> Approver
+										Remarks </label>
+									<div class="col-sm-4 add-margin">
+										<textarea class="form-control"></textarea>
+									</div>
+								</div>
+								<br />
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group text-center">
+				<input type="button" class="buttonsubmit" value="Submit">
+				&nbsp; <input type="button" class="button" value="Close">
+			</div>
 		</div>
-		
 	</div>
-<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
-<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-	<script	src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
-</body>
-</html>
+</form:form>
+<script type="text/javascript">
+	 jQuery("#marketValue").blur(function() {
+		 var vacantLandArea = jQuery("#vacantLandArea").val();
+		 var marketValue =  jQuery("#marketValue").val();
+		 //1 square yard = 0.836127 sqr mtrs
+		 var capitalValue = vacantLandArea * marketValue * 0.836127;
+		 jQuery("#currentCapitalValue").val(roundoff(capitalValue));
+	 });
+</script>
+
+

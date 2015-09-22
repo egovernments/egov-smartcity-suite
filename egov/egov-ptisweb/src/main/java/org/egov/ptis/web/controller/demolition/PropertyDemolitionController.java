@@ -39,10 +39,22 @@
  ******************************************************************************/
 package org.egov.ptis.web.controller.demolition;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+
+import java.math.BigDecimal;
+import java.util.Map;
+
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,13 +67,34 @@ public class PropertyDemolitionController {
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
 
+    @Autowired
+    private PtDemandDao ptDemandDAO;
+
     @ModelAttribute
-    public BasicProperty complaintTypeModel(@PathVariable String assessmentNo) {
-        return basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+    public Property complaintTypeModel(@PathVariable String assessmentNo) {
+        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        return basicProperty.getActiveProperty();
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String newForm() {
+    public String newForm(final Model model, @PathVariable String assessmentNo) {
+        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        if (null != basicProperty) {
+            Property property = basicProperty.getActiveProperty();
+            model.addAttribute("property", basicProperty.getActiveProperty());
+            if (!property.getIsExemptedFromTax()) {
+                final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
+                model.addAttribute("currTax", demandCollMap.get(CURR_DMD_STR));
+                model.addAttribute("currTaxDue",
+                        demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
+                model.addAttribute("totalArrDue",
+                        demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
+            } else {
+                model.addAttribute("currTax", BigDecimal.ZERO);
+                model.addAttribute("currTaxDue", BigDecimal.ZERO);
+                model.addAttribute("totalArrDue", BigDecimal.ZERO);
+            }
+        }
         return "demolition-form";
     }
 
