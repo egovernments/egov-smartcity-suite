@@ -39,14 +39,20 @@
  */
 package org.egov.adtax.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -68,26 +74,35 @@ public class AdvertisementRate extends AbstractAuditable {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "category", nullable = false)
+    @JoinColumn(name = "category")
     private HoardingCategory category;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "subcategory", nullable = false)
+    @JoinColumn(name = "subcategory")
     private SubCategory subCategory;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "unitofmeasure", nullable = false)
+    @JoinColumn(name = "unitofmeasure")
     private UnitOfMeasure unitofmeasure;
 
-    private boolean active;
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "class")
+    private RatesClass classtype;
+
+    private boolean active = Boolean.TRUE;
 
     @Temporal(value = TemporalType.DATE)
-    private Date validFromoDate;
+    private Date validFromDate;
 
     @Temporal(value = TemporalType.DATE)
     private Date validToDate;
+
+    @OrderBy("id")
+    @OneToMany(mappedBy = "advertisementRate", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AdvertisementRatesDetails> advertisementRatesDetails = new ArrayList<AdvertisementRatesDetails>(0);
 
     @Override
     public Long getId() {
@@ -131,22 +146,36 @@ public class AdvertisementRate extends AbstractAuditable {
         this.active = active;
     }
 
-    public Date getValidFromoDate() {
-        return validFromoDate;
+    public Date getValidFromDate() {
+        return validFromDate;
     }
 
-    public void setValidFromoDate(Date validFromoDate) {
-        this.validFromoDate = validFromoDate;
+    public void setValidFromDate(final Date validFromDate) {
+        this.validFromDate = validFromDate;
     }
 
     public Date getValidToDate() {
         return validToDate;
     }
 
-    public void setValidToDate(Date validToDate) {
+    public void setValidToDate(final Date validToDate) {
         this.validToDate = validToDate;
     }
 
-  
+    public List<AdvertisementRatesDetails> getAdvertisementRatesDetails() {
+        return advertisementRatesDetails;
+    }
+
+    public void setAdvertisementRatesDetails(final List<AdvertisementRatesDetails> advertisementRatesDetails) {
+        this.advertisementRatesDetails = advertisementRatesDetails;
+    }
+
+    public RatesClass getClasstype() {
+        return classtype;
+    }
+
+    public void setClasstype(final RatesClass classtype) {
+        this.classtype = classtype;
+    }
 
 }

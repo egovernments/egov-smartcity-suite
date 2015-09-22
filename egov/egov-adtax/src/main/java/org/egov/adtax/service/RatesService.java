@@ -55,8 +55,12 @@ public class RatesService {
         this.ratesRepository = ratesRepository;
     }
 
-    public AdvertisementRate getRateClassById(final Long id) {
+    public AdvertisementRate getScheduleOfRateById(final Long id) {
         return ratesRepository.findOne(id);
     }
 
+    @Transactional
+    public AdvertisementRate createScheduleOfRate(final AdvertisementRate rate) {
+        return ratesRepository.save(rate);
+    }
 }

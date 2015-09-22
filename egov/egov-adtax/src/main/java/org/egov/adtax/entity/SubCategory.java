@@ -39,8 +39,10 @@
  */
 package org.egov.adtax.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -83,7 +85,7 @@ public class SubCategory extends AbstractAuditable {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "category", nullable = false)
+    @JoinColumn(name = "category")
     private HoardingCategory category;
 
     @Override

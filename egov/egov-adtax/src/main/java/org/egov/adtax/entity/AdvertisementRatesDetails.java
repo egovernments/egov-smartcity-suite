@@ -49,48 +49,38 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 
 @Entity
 @Table(name = "EGADTAX_RATES_DETAILS")
 @SequenceGenerator(name = AdvertisementRatesDetails.SEQ_RATESDETAILS, sequenceName = AdvertisementRatesDetails.SEQ_RATESDETAILS, allocationSize = 1)
-public class AdvertisementRatesDetails  {
+public class AdvertisementRatesDetails extends AbstractPersistable<Long> {
 
-    private static final long serialVersionUID = 3330971216171501421L;
+    private static final long serialVersionUID = 8947498263482063238L;
     public static final String SEQ_RATESDETAILS = "SEQ_EGADTAX_RATESDETAILS";
     @Id
     @GeneratedValue(generator = SEQ_RATESDETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "class", nullable = false)
-    private RatesClass classtype;
-
     private Double unitFrom;
     private Double unitTo;
-   
+
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "rate", nullable = false)
+    // (fetch=FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinColumn(name = "rate")
     private AdvertisementRate advertisementRate;
-    
+
     private Double amount;
-    
+
+    @Override
     public Long getId() {
         return id;
     }
-  
+
+    @Override
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public RatesClass getClasstype() {
-        return classtype;
-    }
-
-    public void setClasstype(final RatesClass classtype) {
-        this.classtype = classtype;
     }
 
     public Double getUnitFrom() {
@@ -109,12 +99,11 @@ public class AdvertisementRatesDetails  {
         this.unitTo = unitTo;
     }
 
- 
     public AdvertisementRate getAdvertisementRate() {
         return advertisementRate;
     }
 
-    public void setAdvertisementRate(AdvertisementRate advertisementRate) {
+    public void setAdvertisementRate(final AdvertisementRate advertisementRate) {
         this.advertisementRate = advertisementRate;
     }
 
@@ -122,9 +111,8 @@ public class AdvertisementRatesDetails  {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(final Double amount) {
         this.amount = amount;
     }
-
 
 }

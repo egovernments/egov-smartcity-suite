@@ -39,10 +39,18 @@
 #-------------------------------------------------------------------------------*/
 var tableContainer;
 jQuery(document).ready(function ($) {
+	if ($('#mode').val() == 'dataFound') {
+		jQuery('#schedleOfrateDiv').removeClass('hidden');
+	}
+	$("#addnewscheduleofrate").click(function() {
+		$("#noscheduleofrateDataFoundDiv").hide();
+		$("#schedleOfrateDiv").show();
+		jQuery('#schedleOfrateDiv').removeClass('hidden');
+	});
 	
 	$('#category').change(function(){
 		$.ajax({
-			url: "/adtax/ajax/ajax-subCategorypopulate",     
+			url: "/adtax/ajax-subCategories",    
 			type: "GET",
 			data: {
 				category : $('#category').val()   
@@ -53,7 +61,7 @@ jQuery(document).ready(function ($) {
 				$('#subCategory').empty();
 				$('#subCategory').append($("<option value=''>Select from below</option>"));
 				$.each(response, function(index, value) {
-					$('#subCategory').append($('<option>').text(value));
+					$('#subCategory').append($('<option>').text(value.description).attr('value', value.id));
 				});
 				
 			}, 
@@ -62,5 +70,39 @@ jQuery(document).ready(function ($) {
 			}
 		});
 	});
+	
+	$(".btn-add")
+	.click(
+			function() {
+				var currentIndex = $("#schedleOfrateTable tr").length;
+				    	addNewRowToTable(currentIndex);
+			});
+
+	
+	$('#schedleOfrateBtn').click(function() {
+			$('#scheduleOfRateformResult').attr('method', 'post');
+	 	$('#scheduleOfRateformResult').attr('action', '/adtax/rates/create');
+	 //	$('#viewEscalation').submit(); 
+	});
+	$('#scheduleOfRateSearch').click(function() {
+		$('#scheduleOfRateform').attr('method', 'post');
+ 	$('#scheduleOfRateform').attr('action', '/adtax/rates/search');
+
+	});
+	
+	$('#scheduleOfRateSearchAgain').click(function() {
+		$('#scheduleOfRateform').attr('method', 'GET');
+ 	$('#scheduleOfRateform').attr('action', '/adtax/rates/search');
+
+	});
 
 });
+
+function addNewRowToTable(currentIndex)
+{
+	$("#schedleOfrateTable tbody")
+	.append(
+			'<tr> <td> <input id="positionHierarchyFromPositionId'+(currentIndex - 1)+'" name="advertisementRatesDetails['+(currentIndex - 1)+'].id"  type="hidden"> <input class="form-control is_valid_number" id="advertisementRatesDetailsUnitFrom'+(currentIndex - 1)+'"  autocomplete="off"  name="advertisementRatesDetails['+(currentIndex - 1)+'].unitFrom"  required="required" type="text"></td><td><input class="form-control is_valid_number" id="advertisementRatesDetailsUnitTo'+(currentIndex - 1)+'"  autocomplete="off"  name="advertisementRatesDetails['+(currentIndex - 1)+'].unitTo"  required="required" type="text"></td> <td> <input class="form-control is_valid_number" id="advertisementRatesDetailsAmount'+(currentIndex - 1)+'"  autocomplete="off"  name="advertisementRatesDetails['+(currentIndex - 1)+'].amount"  required="required" type="text"></td>  <td> <button type="button" onclick="deleteRow(this)" id="Add" class="btn btn-success">Delete </button> </td></tr>');
+					
+		
+}

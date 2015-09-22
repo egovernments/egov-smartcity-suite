@@ -60,6 +60,14 @@
 	    <put-attribute name="page-title" value="title.scheduleofrates" cascade="true"/>
 	    <put-attribute name="body" value="/WEB-INF/views/rates/scheduleOfRate-form.jsp"/>
     </definition>
+      <definition name="scheduleOfRate-result" extends="base_layout">
+	    <put-attribute name="page-title" value="title.scheduleofrates" cascade="true"/>
+	    <put-attribute name="body" value="/WEB-INF/views/rates/scheduleOfRate-result.jsp"/>
+    </definition>
+     <definition name="scheduleOfRate-success" extends="base_layout">
+	    <put-attribute name="page-title" value="title.scheduleofrates" cascade="true"/>
+	    <put-attribute name="body" value="/WEB-INF/views/rates/scheduleOfRate-success.jsp"/>
+    </definition>
     
     <definition name="error/*" extends="error">
 		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
