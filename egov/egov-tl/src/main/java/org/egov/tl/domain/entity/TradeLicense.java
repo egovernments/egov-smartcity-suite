@@ -73,6 +73,7 @@ public class TradeLicense extends License {
     private String nocNumber;
     private Boolean isCertificateGenerated;
     private Long id;
+    private List<LicenseDocument> documents = new ArrayList<>();
 
     public Set<EgDemandDetails> additionalDemandDetails(final Set<EgDemandReasonMaster> egDemandReasonMasters,
             final Installment installment) {
@@ -128,7 +129,7 @@ public class TradeLicense extends License {
         final Calendar cal = Calendar.getInstance();
         cal.setTime(super.getApplicationDate());
         licenseNumber.append(getFeeTypeStr()).append(Constants.BACKSLASH).append(runningNumber).append(Constants.BACKSLASH)
-        .append(Constants.monthName[cal.get(Calendar.MONTH)]).append("-").append(cal.get(Calendar.YEAR));
+                .append(Constants.monthName[cal.get(Calendar.MONTH)]).append("-").append(cal.get(Calendar.YEAR));
         setLicenseNumber(licenseNumber.toString());
         LOGGER.debug("Generated License Number =" + licenseNumber.toString());
         LOGGER.debug("Generating License Number completed.");
@@ -139,7 +140,7 @@ public class TradeLicense extends License {
         LOGGER.debug("Generating NOC Number...");
         final StringBuilder nocNumber = new StringBuilder(32);
         nocNumber.append("W.O.").append(Constants.BACKSLASH).append("PRO-NOC").append(Constants.BACKSLASH).append(runningNumber)
-        .append(Constants.BACKSLASH).append("LC.");
+                .append(Constants.BACKSLASH).append("LC.");
         setNocNumber(nocNumber.toString());
         LOGGER.debug("Generated NOC Number =" + nocNumber.toString());
         LOGGER.debug("Generating NOC Number completed.");
@@ -356,6 +357,16 @@ public class TradeLicense extends License {
     @Override
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public List<LicenseDocument> getDocuments() {
+        return documents;
+    }
+
+    @Override
+    public void setDocuments(final List<LicenseDocument> documents) {
+        this.documents = documents;
     }
 
 }

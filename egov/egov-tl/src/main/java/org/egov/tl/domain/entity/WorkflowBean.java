@@ -50,11 +50,14 @@ public class WorkflowBean {
     private String actionState;
     private List<User> appoverUserList;
     private Long approverUserId;
-    private String comments;
+    private String approverComments;
     private Integer departmentId;
     private List<Department> departmentList;
     private Integer designationId;
     private List<Designation> designationList;
+    private String workFlowAction;
+    private Long approverPositionId;
+    private String currentState;
 
     public String getActionName() {
         return actionName;
@@ -66,10 +69,6 @@ public class WorkflowBean {
 
     public Long getApproverUserId() {
         return approverUserId;
-    }
-
-    public String getComments() {
-        return comments;
     }
 
     public List<Department> getDepartmentList() {
@@ -100,10 +99,6 @@ public class WorkflowBean {
         this.approverUserId = approverUserId;
     }
 
-    public void setComments(final String comments) {
-        this.comments = comments;
-    }
-
     public void setDepartmentList(final List<Department> departmentList) {
         this.departmentList = departmentList;
     }
@@ -127,7 +122,39 @@ public class WorkflowBean {
     public void setDesignationList(final List<Designation> designationList) {
         this.designationList = designationList;
     }
+    
+    public String getApproverComments() {
+        return approverComments;
+    }
 
+    public void setApproverComments(String approverComments) {
+        this.approverComments = approverComments;
+    }
+
+    public String getWorkFlowAction() {
+        return workFlowAction;
+    }
+
+    public void setWorkFlowAction(String workFlowAction) {
+        this.workFlowAction = workFlowAction;
+    }
+    
+    public Long getApproverPositionId() {
+        return approverPositionId;
+    }
+
+    public void setApproverPositionId(Long approverPositionId) {
+        this.approverPositionId = approverPositionId;
+    }
+    
+    public String getCurrentState() {
+        return currentState;
+    }
+
+    public void setCurrentState(String currentState) {
+        this.currentState = currentState;
+    }
+    
     @Override
     public String toString() {
         final StringBuilder str = new StringBuilder();
@@ -136,7 +163,7 @@ public class WorkflowBean {
         str.append("actionState=").append(actionState == null ? "null" : actionState.toString());
         str.append("appoverUserList=").append(appoverUserList == null ? "null" : appoverUserList.toString());
         str.append("approverUserId=").append(approverUserId == null ? "null" : approverUserId.toString());
-        str.append("comments=").append(comments == null ? "null" : comments.toString());
+        str.append("comments=").append(approverComments == null ? "null" : approverComments.toString());
         str.append("departmentId=").append(departmentId == null ? "null" : departmentId.toString());
         str.append("departmentList=").append(departmentList == null ? "null" : departmentList.toString());
         str.append("designationId=").append(designationId == null ? "null" : designationId.toString());
@@ -144,4 +171,5 @@ public class WorkflowBean {
         str.append("}");
         return str.toString();
     }
+
 }

@@ -44,6 +44,7 @@ import java.util.List;
 
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.domain.entity.License;
+import org.egov.tl.domain.entity.LicenseDocument;
 
 public class LicenseObjection extends StateAware {
     private static final long serialVersionUID = 1L;
@@ -59,6 +60,7 @@ public class LicenseObjection extends StateAware {
     private List<Activity> activities;
     private List<Notice> notices;
     private Long id;
+    private List<LicenseDocument> documents;
 
     public List<Notice> getNotices() {
         return notices;
@@ -178,4 +180,13 @@ public class LicenseObjection extends StateAware {
     public String getStateDetails() {
         return "License Objection" + " - " + getLicense().getApplicationNumber();
     }
+
+    public List<LicenseDocument> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<LicenseDocument> documents) {
+        this.documents = documents;
+    }
+    
 }

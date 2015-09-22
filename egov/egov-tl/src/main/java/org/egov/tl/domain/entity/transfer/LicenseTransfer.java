@@ -40,11 +40,13 @@
 package org.egov.tl.domain.entity.transfer;
 
 import java.util.Date;
+import java.util.List;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.domain.entity.License;
+import org.egov.tl.domain.entity.LicenseDocument;
 
 public class LicenseTransfer extends StateAware {
     private Long id;
@@ -60,6 +62,7 @@ public class LicenseTransfer extends StateAware {
     private String oldEmailId;
     private String oldUid;
     protected Boundary boundary;
+    private List<LicenseDocument> documents;
 
     public Boundary getBoundary() {
         return boundary;
@@ -210,4 +213,13 @@ public class LicenseTransfer extends StateAware {
     public Long getId() {
         return id;
     }
+
+    public List<LicenseDocument> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<LicenseDocument> documents) {
+        this.documents = documents;
+    }
+    
 }

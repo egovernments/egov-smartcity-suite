@@ -227,9 +227,10 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     public String create() {
         try {
             this.setCheckList();
+            service().processAndStoreDocument(license().getDocuments());
             service().create(license());
             addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
-           // transitionWorkFlow(license());
+            //service().transitionWorkFlow(license(), workflowBean);
             persistenceService.getSession().flush();
         } catch (final RuntimeException e) {
             loadAjaxedDropDowns();

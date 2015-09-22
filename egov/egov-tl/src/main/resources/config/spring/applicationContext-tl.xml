@@ -147,4 +147,7 @@
 		<property name="licenseUtils" ref="licenseUtils" />
 	</bean>
 
+	<bean id="licenseDocumentTypeService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.tl.domain.entity.LicenseDocumentType" />
+	</bean>
 </beans>

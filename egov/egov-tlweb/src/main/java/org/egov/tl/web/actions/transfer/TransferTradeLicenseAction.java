@@ -58,8 +58,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.Licensee;
 import org.egov.tl.domain.entity.TradeLicense;
@@ -179,7 +177,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
         tl = (TradeLicense) persistenceService.find("from TradeLicense where id=?", tl.getId());
         ts.transferLicense(tl, licenseTransfer);
         try {
-            // ts.initiateWorkFlowForTransfer(license(), workflowBean);
+            ts.initiateWorkFlowForTransfer(license(), workflowBean);
             /*
              * if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONAPPROVE)) doAuditing(AuditModule.TL,
              * AuditEntity.TL_LIC, "TRANSFER LICENSE", tl.getAuditDetails());
@@ -206,7 +204,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
         licenseTransfer.setLicense(tl);
         tl.setLicenseTransfer(licenseTransfer);
         persistenceService.persist(tl);
-        // ts.processWorkFlowForTransfer(license(), workflowBean);
+        ts.processWorkFlowForTransfer(license(), workflowBean);
         setMessages();
         LOGGER.debug("Exiting from the edit method:<<<<<<<<<<>>>>>>>>>>>>>:");
         return "message";
@@ -217,7 +215,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
     public String approve() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tl);
         tl = (TradeLicense) persistenceService.find("from TradeLicense where id=?", tl.getId());
-        // ts.processWorkFlowForTransfer(license(), workflowBean);
+        ts.processWorkFlowForTransfer(license(), workflowBean);
         /*
          * if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONAPPROVE)) doAuditing(AuditModule.TL,
          * AuditEntity.TL_LIC, "TRANSFER LICENSE", tl.getAuditDetails());
@@ -315,10 +313,6 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
 
     public void setTs(final TradeService ts) {
         this.ts = ts;
-    }
-
-    protected WorkflowService workflowService() {
-        return null;
     }
 
     public WorkflowBean getWorkflowBean() {

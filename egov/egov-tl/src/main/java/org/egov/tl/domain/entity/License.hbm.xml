@@ -161,7 +161,11 @@
 				</key>
 				<one-to-many class="org.egov.tl.domain.entity.MotorDetails" />
 			</bag>
-
+			
+			<bag name="documents" table="egtl_tradelicense_docs" cascade="all" order-by="document">
+				<key column="license" not-null="true"/>			
+				<many-to-many class="org.egov.tl.domain.entity.LicenseDocument" column="document"/>
+			</bag>
 
 			<join table="EGTL_TRADE_LICENSE">
 				<key column="ID" />

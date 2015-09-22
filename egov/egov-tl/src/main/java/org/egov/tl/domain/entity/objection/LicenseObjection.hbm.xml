@@ -85,6 +85,12 @@
 			</key>
 			<one-to-many class="org.egov.tl.domain.entity.objection.Notice" />
 		</bag>
+		<bag name="documents" table="egtl_licenseobjection_docs" cascade="all" order-by="document">
+			<key>
+				<column name="objection" not-null="true"/>
+			</key>
+			<many-to-many class="org.egov.tl.domain.entity.LicenseDocument" column="document"/>		
+		</bag>
 	</class>
 	<query name="LISENSEOBJECTION_BY_ID">
 		from

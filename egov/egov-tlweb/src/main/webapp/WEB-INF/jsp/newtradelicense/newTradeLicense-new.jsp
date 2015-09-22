@@ -282,15 +282,15 @@
 										<tr>
 											<td align="left" style="color: #FF0000">
 												<s:actionerror cssStyle="color: #FF0000" />
+												<s:fielderror/>
 												<s:actionmessage />
 											</td>
 										</tr>
 									</table>
-									<s:form action="newTradeLicense" theme="css_xhtml" name="newTradeLicense" validate="true">
+									<s:form action="newTradeLicense" theme="css_xhtml"  enctype="multipart/form-data" name="newTradeLicense" validate="true">
 									<s:token/>
 										<s:hidden name="actionName" value="create" />
 										<s:hidden id="detailChanged" name="detailChanged" />
-										<s:hidden name="docNumber" id="docNumber" />
 										<c:set var="trclass" value="greybox" />
 										<table border="0" cellpadding="0" cellspacing="0" width="100%">
 											<tbody>
@@ -366,13 +366,6 @@
 														<c:set var="trclass" value="greybox" />
 													</c:when>
 												</c:choose>
-												<tr align="center">
-													<td class="<c:out value="${trclass}"/> width="5%"></td>
-													<td class="<c:out value="${trclass}"/> width="5%"></td>
-													<td class="<c:out value="${trclass}"/>" colspan="3">
-														<input type="button" class="button" value="Upload Document" id="docUploadButton" onclick="showDocumentManagerForDoc('docNumber');updateCurrentDocId('docNumber')" tabindex="1" />
-													</td>
-												</tr>
 												<c:choose>
 													<c:when test="${trclass=='greybox'}">
 														<c:set var="trclass" value="bluebox" />
@@ -456,7 +449,9 @@
 												</script>
 											</tbody>
 										</table>
-
+										<div>
+												<%@include file="../common/documentUpload.jsp" %>
+										</div>
 										<div>
 											 <table>
 												<tr class="buttonbottom" id="buttondiv" style="align: middle">

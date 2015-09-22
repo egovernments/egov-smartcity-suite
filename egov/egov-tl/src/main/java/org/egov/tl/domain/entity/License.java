@@ -68,8 +68,7 @@ public abstract class License extends StateAware {
     private static final long serialVersionUID = 1L;
     protected PermanentAddress address;
     @Required(message = "license.applicationdate.err.required")
-    // TODO -- Change the attributes according to the requirement
-    @ValidateDate(message = "license.applicationdate.err.properdate", allowPast = false, dateFormat = "")
+    @ValidateDate(message = "license.applicationdate.err.properdate", allowPast = true, dateFormat = "dd/MM/yyyy")
     protected Date applicationDate;
     protected String applicationNumber;
     protected Boundary boundary;
@@ -142,6 +141,10 @@ public abstract class License extends StateAware {
     public abstract void setCreationAndExpiryDateForEnterLicense();
 
     public abstract void updateExpiryDate(Date renewalDate);
+    
+    public abstract List<LicenseDocument> getDocuments();
+
+    public abstract void setDocuments(final List<LicenseDocument> documents);
 
     public LicenseDemand getLicenseDemand() {
         return licenseDemand;

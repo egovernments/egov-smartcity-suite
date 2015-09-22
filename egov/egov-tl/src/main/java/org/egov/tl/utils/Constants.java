@@ -683,4 +683,6 @@ public class Constants {
     public static final String VIOLATION_FEE_DEMAND_REASON = "Violation Fee";
 
     public static final String GLCODE_VIOLATIONFEE = "1402001";
+    
+    public static final String TRANSACTIONTYPE_CREATE_LICENSE = "Create License";
 }

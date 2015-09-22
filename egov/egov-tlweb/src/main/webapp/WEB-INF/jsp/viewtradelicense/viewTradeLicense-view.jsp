@@ -89,7 +89,6 @@
 										<s:form action="viewTradeLicense" theme="css_xhtml" name="viewForm">
 											<s:push value="model">
 												<s:hidden name="actionName" value="create" />
-												<s:hidden name="docNumber" />
 												<s:hidden id="detailChanged" name="detailChanged"></s:hidden>
 												<c:set var="trclass" value="greybox" />
 												<table width="100%">
@@ -118,17 +117,7 @@
 																<s:text name="No" />
 															</s:else>
 														</td>
-														<c:choose>
-		<c:when test="${docNumber!=null && docNumber!='' }">
-		<td class="<c:out value="${trclass}"/>" colspan="5">
-		<a href="/egi/docmgmt/basicDocumentManager-viewDocument.action?moduleName=egtradelicense&docNumber=${docNumber}" target="_blank">View Attachments</a>
-		</td>
-		</c:when>
-		<c:otherwise>
-		<td class="<c:out value="${trclass}"/>" colspan="2">
-		</c:otherwise>
-		</c:choose>
-														
+														<td class="<c:out value="${trclass}"/>" colspan="2">														
 													</tr>
 													<s:if test="%{motorInstalled}">
 														<tr>
@@ -147,6 +136,9 @@
 					</tr>
 				</tbody>
 			</table>
+			<div>
+				<%@ include file="../common/documentView.jsp" %>
+			</div>
 		</div>
 		<div align="center" class="buttonbottom" id="buttondiv">
 			<table>

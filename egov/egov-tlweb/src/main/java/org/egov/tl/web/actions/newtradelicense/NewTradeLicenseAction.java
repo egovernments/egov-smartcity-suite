@@ -40,8 +40,12 @@
 package org.egov.tl.web.actions.newtradelicense;
 
 
+import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -53,9 +57,9 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.persistence.entity.PermanentAddress;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.tl.domain.entity.License;
+import org.egov.tl.domain.entity.LicenseDocumentType;
 import org.egov.tl.domain.entity.Licensee;
 import org.egov.tl.domain.entity.MotorDetails;
 import org.egov.tl.domain.entity.TradeLicense;
@@ -83,6 +87,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     private TradeService ts;
     @Autowired
     private BoundaryService boundaryService;
+    private List<LicenseDocumentType> documentTypes = new ArrayList<>();
 
     public NewTradeLicenseAction() {
         super();
@@ -183,6 +188,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @Override
     public void prepareNewForm() {
         super.prepareNewForm();
+        setDocumentTypes(service().getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
         tradeLicense.setHotelGradeList(tradeLicense.populateHotelGradeList());
         tradeLicense.setHotelSubCatList(ts.getHotelCategoriesForTrade());
     }
@@ -252,6 +258,14 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
 
     public void setWorkflowBean(final WorkflowBean workflowBean) {
         this.workflowBean = workflowBean;
+    }
+
+    public List<LicenseDocumentType> getDocumentTypes() {
+        return documentTypes;
+    }
+
+    public void setDocumentTypes(List<LicenseDocumentType> documentTypes) {
+        this.documentTypes = documentTypes;
     }
 
 }

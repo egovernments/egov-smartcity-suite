@@ -39,15 +39,24 @@
  ******************************************************************************/
 package org.egov.tl.domain.service.objection;
 
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
+
 import java.util.Date;
 
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.Sequence;
 import org.egov.infstr.utils.SequenceGenerator;
+import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.pims.commons.Position;
+import org.egov.pims.commons.service.PositionService;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseStatus;
 import org.egov.tl.domain.entity.WorkflowBean;
@@ -56,6 +65,7 @@ import org.egov.tl.domain.entity.objection.LicenseObjection;
 import org.egov.tl.domain.entity.objection.Notice;
 import org.egov.tl.domain.service.BaseLicenseService;
 import org.egov.tl.utils.Constants;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ObjectionService extends PersistenceService<LicenseObjection, Long> {
@@ -67,7 +77,14 @@ public class ObjectionService extends PersistenceService<LicenseObjection, Long>
     protected SequenceGenerator sequenceGenerator;
     @Autowired
     protected BaseLicenseService licenseService;
+    @Autowired
     private SimpleWorkflowService<LicenseObjection> objectionWorkflowService;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private AssignmentService assignmentService;
+    @Autowired
+    private PositionService positionService;
 
     public void setContextName(final String contextName) {
     }
@@ -77,7 +94,6 @@ public class ObjectionService extends PersistenceService<LicenseObjection, Long>
     @SuppressWarnings("unchecked")
     public LicenseObjection recordObjection(final LicenseObjection objection, final Long licenseId,
             final WorkflowBean workflowBean) {
-        // Objection objection=license.getObjections().get(0);
         final String runningNumber = getNextRunningNumber(Constants.OBJECTIONNUMBERPREFIX);
         objection.generateNumber(runningNumber);
         final License license = (License) licenseService.getPersistenceService().find("from License where id=?", licenseId);
@@ -88,28 +104,12 @@ public class ObjectionService extends PersistenceService<LicenseObjection, Long>
     }
 
     private void initiateWorkflow(final LicenseObjection objection, final WorkflowBean workflowBean) {
-        positionMasterService.getCurrentPositionForUser(EgovThreadLocals.getUserId());
-        /**
-         * TODO -- Fix me
-         */
-        // this.objectionWorkflowService.start(objection, position, workflowBean.getComments());
         final LicenseStatus objectedStatus = (LicenseStatus) licenseService.getPersistenceService().find(
                 "from LicenseStatus where code='OBJ'");
         objection.getLicense().setStatus(objectedStatus);
         processWorkflow(objection, workflowBean);
     }
 
-    public SimpleWorkflowService<LicenseObjection> getObjectionWorkflowService() {
-        return objectionWorkflowService;
-    }
-
-    public void setObjectionWorkflowService(final SimpleWorkflowService<LicenseObjection> objectionWorkflowService) {
-        this.objectionWorkflowService = objectionWorkflowService;
-    }
-
-    /**
-     * TODO -- Fix me
-     */
     private void processWorkflow(final LicenseObjection objection, final WorkflowBean workflowBean) {
         /*
          * if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONAPPROVE)) { Position position =
@@ -162,6 +162,59 @@ public class ObjectionService extends PersistenceService<LicenseObjection, Long>
          * (LicenseStatus) this.licenseService.getPersistenceService().find("from LicenseStatus where code='ACT'");
          * objection.getLicense().setStatus(activeStatus); } objection.getCurrentState().setText2(contextName);
          */
+        final DateTime currentDate = new DateTime();
+        final User user = securityUtils.getCurrentUser();
+        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        Position pos = null;
+        Assignment wfInitiator = null;
+
+        if (null != objection.getId())
+            wfInitiator = getWorkflowInitiator(objection);
+
+        if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            if (wfInitiator.equals(userAssignment)) {
+                objection.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withDateInfo(currentDate.toDate());
+            } else {
+                final String stateValue = objection.getCurrentState().getValue();
+                objection.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withOwner(wfInitiator.getPosition()).withNextAction("Assistant Health Officer approval pending");
+            }
+
+        } else {
+            if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
+                pos = positionService.find("from Position where id=?", workflowBean.getApproverPositionId());
+            else if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+                pos = wfInitiator.getPosition();
+            if (null == objection.getState()) {
+                final WorkFlowMatrix wfmatrix = objectionWorkflowService.getWfMatrix(objection.getStateType(), null,
+                        null, null, workflowBean.getCurrentState(), null);
+                objection.transition().start().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction());
+            } else if (objection.getCurrentState().getNextAction().equalsIgnoreCase("END"))
+                objection.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withDateInfo(currentDate.toDate());
+            else {
+                final WorkFlowMatrix wfmatrix = objectionWorkflowService.getWfMatrix(objection.getStateType(), null,
+                        null, null, objection.getCurrentState().getValue(), null);
+                objection.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction());
+            }
+        }
+    }
+    
+    protected Assignment getWorkflowInitiator(final LicenseObjection objection) {
+        Assignment wfInitiator;
+        if (!objection.getStateHistory().isEmpty())
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(objection.getStateHistory().get(0)
+                    .getOwnerPosition().getId());
+        else
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(objection.getState().getOwnerPosition()
+                    .getId());
+        return wfInitiator;
     }
 
     public BaseLicenseService getLicenseService() {

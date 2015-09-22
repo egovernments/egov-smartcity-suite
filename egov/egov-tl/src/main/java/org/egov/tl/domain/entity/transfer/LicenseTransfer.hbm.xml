@@ -77,5 +77,11 @@
 			fetch="select" />
 		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY" not-null="true"
 			fetch="select" />
+		<bag name="documents" table="egtl_licensetransfer_docs" cascade="all" order-by="document">
+			<key>
+				<column name="transfer" not-null="true"/>
+			</key>
+			<many-to-many class="org.egov.tl.domain.entity.LicenseDocument" column="document"/>
+		</bag>
 	</class>
 </hibernate-mapping>

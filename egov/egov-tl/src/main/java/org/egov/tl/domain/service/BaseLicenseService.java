@@ -39,6 +39,10 @@
  ******************************************************************************/
 package org.egov.tl.domain.service;
 
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
+
+import java.io.File;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,26 +55,35 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgReasonCategory;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.workflow.service.WorkflowService;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.Sequence;
 import org.egov.infstr.utils.SequenceGenerator;
+import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.pims.commons.Position;
 import org.egov.tl.domain.entity.FeeMatrix;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseAppType;
 import org.egov.tl.domain.entity.LicenseDemand;
+import org.egov.tl.domain.entity.LicenseDocument;
+import org.egov.tl.domain.entity.LicenseDocumentType;
 import org.egov.tl.domain.entity.LicenseStatus;
 import org.egov.tl.domain.entity.NatureOfBusiness;
 import org.egov.tl.domain.entity.WorkflowBean;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseChecklistHelper;
+import org.elasticsearch.common.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -85,9 +98,14 @@ public abstract class BaseLicenseService {
     protected InstallmentHibDao installmentDao;
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
-    
-
-    protected abstract WorkflowService workflowService();
+    @Autowired
+    private AssignmentService assignmentService;
+    @Autowired
+    private SimpleWorkflowService<License> licenseWorkflowService;
+    @Autowired
+    private FileStoreService fileStoreService;
+    @Autowired
+    private PersistenceService<LicenseDocumentType, Long> licenseDocumentTypeService;
 
     protected abstract LicenseAppType getLicenseApplicationTypeForRenew();
 
@@ -581,5 +599,87 @@ public abstract class BaseLicenseService {
         persistenceService.update(license);
         return license;
     }
+    
+    public void transitionWorkFlow(final License license, WorkflowBean workflowBean) {
+        final DateTime currentDate = new DateTime();
+        final User user = securityUtils.getCurrentUser();
+        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        Position pos = null;
+        Assignment wfInitiator = null;
 
+        if (null != license.getId())
+            wfInitiator = getWorkflowInitiator(license);
+
+        if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            if (wfInitiator.equals(userAssignment)) {
+                license.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withDateInfo(currentDate.toDate());
+            } else {
+                final String stateValue = license.getCurrentState().getValue();
+                license.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withOwner(wfInitiator.getPosition()).withNextAction("Assistant Health Officer approval pending");
+            }
+
+        } else {
+            if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
+                pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
+            else if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+                pos = wfInitiator.getPosition();
+            if (null == license.getState()) {
+                final WorkFlowMatrix wfmatrix = licenseWorkflowService.getWfMatrix(license.getStateType(), null,
+                        null, null, workflowBean.getCurrentState(), null);
+                license.transition().start().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction());
+            } else if (license.getCurrentState().getNextAction().equalsIgnoreCase("END"))
+                license.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withDateInfo(currentDate.toDate());
+            else {
+                final WorkFlowMatrix wfmatrix = licenseWorkflowService.getWfMatrix(license.getStateType(), null,
+                        null, null, license.getCurrentState().getValue(), null);
+                license.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction());
+            }
+        }
+    }
+
+    protected Assignment getWorkflowInitiator(final License license) {
+        Assignment wfInitiator;
+        if (!license.getStateHistory().isEmpty())
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(license.getStateHistory().get(0)
+                    .getOwnerPosition().getId());
+        else
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(license.getState().getOwnerPosition()
+                    .getId());
+        return wfInitiator;
+    }
+    
+    /**
+     * Stores Documents
+     *
+     * @param documents
+     */
+    public void processAndStoreDocument(final List<LicenseDocument> documents) {
+        documents.forEach(document -> {
+            if (!(document.getUploads().isEmpty() || document.getUploadsContentType().isEmpty())) {
+                int fileCount = 0;
+                for (final File file : document.getUploads()) {
+                    final FileStoreMapper fileStore = fileStoreService.store(file,
+                            document.getUploadsFileName().get(fileCount),
+                            document.getUploadsContentType().get(fileCount++), "EGTL");
+                    document.getFiles().add(fileStore);
+                }
+            }
+            document.setType(licenseDocumentTypeService.load(document.getType().getId(), LicenseDocumentType.class));
+            persistenceService.applyAuditing(document);
+        });
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<LicenseDocumentType> getDocumentTypesByTransaction(String transaction) {
+        return (List<LicenseDocumentType>) persistenceService.findAllBy("from LicenseDocumentType where applicationType = ?",
+                transaction);
+    }
 }
