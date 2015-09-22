@@ -39,16 +39,22 @@
  */
 package org.egov.adtax.repository;
 
-import java.util.List;
-
 import org.egov.adtax.entity.AdvertisementRate;
+import org.egov.adtax.entity.HoardingCategory;
+import org.egov.adtax.entity.RatesClass;
+import org.egov.adtax.entity.SubCategory;
+import org.egov.adtax.entity.UnitOfMeasure;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RatesRepository extends JpaRepository<AdvertisementRate, Long> {
+public interface AdvertisementRateRepository extends JpaRepository<AdvertisementRate, Long> {
 
-   
+    @Query("select A from AdvertisementRate A where A.category=:category and A.classtype=:ratesClass and A.unitofmeasure=:uom and A.subCategory=:subCategory and A.active=true")
+    AdvertisementRate findScheduleOfRateByCategorySubcategoryUomAndClass(@Param("category") HoardingCategory category,
+            @Param("subCategory") SubCategory subCategory, @Param("uom") UnitOfMeasure unitOfMeasure,
+            @Param("ratesClass") RatesClass ratesClass);
 
 }

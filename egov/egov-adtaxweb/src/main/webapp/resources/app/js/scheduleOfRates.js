@@ -97,12 +97,53 @@ jQuery(document).ready(function ($) {
 	});
 
 });
-
+function validateUnitToValue(obj)
+{
+	var unitto=parseFloat(obj.value);
+	var unitfrom=parseFloat($(obj).closest('td').prev('td').find('input.unit-from').val());
+	
+	if(unitto && unitfrom >= unitto)
+	{
+		alert('Unit To value should be greater than unit from value ->'+ unitfrom );
+		$(obj).val("");
+		return false;
+	}
+	return true;
+}
 function addNewRowToTable(currentIndex)
 {
-	$("#schedleOfrateTable tbody")
-	.append(
-			'<tr> <td> <input id="positionHierarchyFromPositionId'+(currentIndex - 1)+'" name="advertisementRatesDetails['+(currentIndex - 1)+'].id"  type="hidden"> <input class="form-control is_valid_number" id="advertisementRatesDetailsUnitFrom'+(currentIndex - 1)+'"  autocomplete="off"  name="advertisementRatesDetails['+(currentIndex - 1)+'].unitFrom"  required="required" type="text"></td><td><input class="form-control is_valid_number" id="advertisementRatesDetailsUnitTo'+(currentIndex - 1)+'"  autocomplete="off"  name="advertisementRatesDetails['+(currentIndex - 1)+'].unitTo"  required="required" type="text"></td> <td> <input class="form-control is_valid_number" id="advertisementRatesDetailsAmount'+(currentIndex - 1)+'"  autocomplete="off"  name="advertisementRatesDetails['+(currentIndex - 1)+'].amount"  required="required" type="text"></td>  <td> <button type="button" onclick="deleteRow(this)" id="Add" class="btn btn-success">Delete </button> </td></tr>');
-					
-		
+	var tr = $('#schedleOfrateTable tr:last'); 
+		  var firstcolumnval =    $(tr).find("td").find('input.unit-from').val();
+		   var secondcolumnval = $(tr).find("td").find('input.unit-to').val();
+		  var Thirdcolumnval = $(tr).find("td").find('input.unit-amount').val();
+	 
+	  if (firstcolumnval=="" || firstcolumnval==null || firstcolumnval=="undefined")
+	    {
+	    	alert('Unit From is mandatory in the last row');
+	    }else  if (secondcolumnval=="" || secondcolumnval==null || secondcolumnval=="undefined")
+	    {
+	    	alert('Unit To is mandatory in the last row');
+	    }else  if (Thirdcolumnval=="" || Thirdcolumnval==null || Thirdcolumnval=="undefined")
+	    {
+	    	alert('Unit Rate is mandatory in the last row');
+	    }else  if (parseFloat(firstcolumnval)>=parseFloat(secondcolumnval))
+	    {
+	    	alert('Unit To value should be greater than unit from value in the last row');
+	    	$(tr).find("td").find('input.unit-to').val("");
+	    }else
+	    	{
+	    	    $('#advertisementRatesDetailsUnitTo'+(currentIndex - 2)).prop("readonly", true);
+	    	    
+				$( "#schedleOfrateTable tr:last .delete-button").hide();
+				$("#schedleOfrateTable tbody")
+				.append(
+						'<tr> <td> <input id="advertisementRatesDetailsId'+(currentIndex - 1)+'" name="advertisementRatesDetails['+(currentIndex - 1)+'].id"  type="hidden"> <input class="form-control form-control patternvalidation unit-from" data-pattern="decimalvalue" id="advertisementRatesDetailsUnitFrom'+(currentIndex - 1)+'"  autocomplete="off"  name="advertisementRatesDetails['+(currentIndex - 1)+'].unitFrom"  readonly="readonly" required="required" type="text"></td><td><input class="form-control form-control patternvalidation unit-to"  onblur="return validateUnitToValue(this);" data-pattern="decimalvalue" id="advertisementRatesDetailsUnitTo'+(currentIndex - 1)+'"  autocomplete="off"  name="advertisementRatesDetails['+(currentIndex - 1)+'].unitTo"  required="required" type="text"></td> <td> <input class="form-control form-control patternvalidation unit-amount" data-pattern="decimalvalue" id="advertisementRatesDetailsAmount'+(currentIndex - 1)+'"  autocomplete="off"  name="advertisementRatesDetails['+(currentIndex - 1)+'].amount"  required="required" type="text"></td>  <td> <button type="button" onclick="deleteRow(this)" id="Add" class="btn btn-primary display-hide delete-button">Delete </button> </td></tr>');
+								
+				$( "#schedleOfrateTable tr:last .delete-button").show();
+				patternvalidation();
+				
+				$('#advertisementRatesDetailsUnitFrom'+(currentIndex - 1)).val($('#advertisementRatesDetailsUnitTo'+(currentIndex - 2)).val());
+				
+				
+	    	}
 }

@@ -48,7 +48,8 @@
 
 <script type="text/javascript"
 	src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
-
+<script type="text/javascript"
+	src="<c:url value='/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
 <script>
 	function deleteRow(obj) {
 		var tb1 = document.getElementById("schedleOfrateTable");
@@ -75,6 +76,9 @@
 				$("#advertisementRatesDetailsAmount"+j).attr('id',"advertisementRatesDetailsAmount"+(j-1));
 			}
 			tb1.deleteRow(curRow);
+			$( "#schedleOfrateTable tr:last .delete-button").show(); 
+			$( "#schedleOfrateTable tr:last .unit-to").prop("readonly", false);
+    	    
 			return true;
 		}
 	}
@@ -111,7 +115,7 @@
 						<label for="field-1" class="col-sm-3 control-label"> <spring:message
 								code="lbl.unitofmeasure.name" /></label>
 						<div class="col-sm-3 add-margin">
-							
+							  <form:hidden path="id" id="id" value="${rate.id}"/>
 							<c:out value="${rate.unitofmeasure.description}"></c:out>
 						</div>
 						
@@ -161,35 +165,43 @@
 										</tr>
 					</thead>
 				<tbody>
-					<form:hidden path="id" id="id" value="${rate.id}"/>
-							<form:hidden path="category" id="category" value="${rate.category.id}"/>
+					    
+					    <form:hidden path="id" id="id" value="${rate.id}"/>
+						<form:hidden path="category" id="category" value="${rate.category.id}"/>
 						<form:hidden path="subCategory" id="subCategory" value="${rate.subCategory.id}"/> 
-						
-							<form:hidden path="unitofmeasure" id="unitofmeasure" value="${rate.unitofmeasure.id}"/>
-					
-							<form:hidden path="classtype" id="classtype" value="${rate.classtype.id}"/>
+						<form:hidden path="unitofmeasure" id="unitofmeasure" value="${rate.unitofmeasure.id}"/>
+						<form:hidden path="classtype" id="classtype" value="${rate.classtype.id}"/>
 				
 						<c:forEach var="contact" items="${rate.advertisementRatesDetails}" varStatus="status">
-							<tr>
-								
+						<tr>
 							<td>
-							<input type=hidden
+							<%-- <input type=hidden
 									id="advertisementRatesDetailsId${status.index}"
 									name="advertisementRatesDetails[${status.index}].id"
-									value="${contact.id}"> 
-							<input type="text" class="form-control is_valid_number"
+									value="${contact.id}">  --%>
+						<c:if test="${mode == 'noDataFound'}">
+							<input type="text" class="form-control patternvalidation unit-from" data-pattern="decimalvalue"
 									id="advertisementRatesDetailsUnitFrom${status.index}"
 									value="0"  maxlength="10"
 									name="advertisementRatesDetails[${status.index}].unitFrom"
 									 autocomplete="off" required="required"  readonly="readonly">
+							</c:if>	
+							<c:if test="${mode == 'dataFound'}">		 
+							<input type="text" class="form-control patternvalidation unit-from" data-pattern="decimalvalue"
+									id="advertisementRatesDetailsUnitFrom${status.index}"
+									value="${contact.unitFrom}"  maxlength="10"
+									name="advertisementRatesDetails[${status.index}].unitFrom"
+									 autocomplete="off" required="required"  readonly="readonly">
+									 
+									</c:if>	 		 
 								</td>	
-				<td>	 <input type="text" class="form-control is_valid_number"
+							<td>	 <input type="text" class="form-control patternvalidation unit-to" data-pattern="decimalvalue"
 									id="advertisementRatesDetailsUnitTo${status.index}"
 									value="${contact.unitTo}"  maxlength="10"
-									name="advertisementRatesDetails[${status.index}].unitTo"
-									 autocomplete="off" required="required"  >
+									name="advertisementRatesDetails[${status.index}].unitTo" onblur="return validateUnitToValue(this);"
+									 autocomplete="off" required="required"  readonly="readonly" >
 									</td>	
-								<td>	 <input type="text" class="form-control is_valid_number"
+								<td>	 <input type="text" class="form-control patternvalidation unit-amount" data-pattern="decimalvalue"
 									id="advertisementRatesDetailsAmount${status.index}"
 									value="${contact.amount}"  maxlength="19"
 									name="advertisementRatesDetails[${status.index}].amount"
@@ -197,10 +209,15 @@
 									</td>	 	 
 									<td>
 										<button type="button" onclick="deleteRow(this)" id="Add"
-										class="btn btn-primary"><spring:message code="lbl.delete" /></button>
+										class="btn btn-primary display-hide delete-button"><spring:message code="lbl.delete" /></button>
 									</td>
 								</tr>
 						</c:forEach>
+						<script>
+						$( "#schedleOfrateTable tr:last .delete-button").show();
+						$( "#schedleOfrateTable tr:last .unit-to").prop("readonly", false);
+					    
+						</script>
 					</tbody>
 				</table>
 				<div class="form-group">

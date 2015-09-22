@@ -13,6 +13,7 @@ import org.egov.adtax.entity.AdvertisementRatesDetails;
 import org.egov.adtax.entity.HoardingCategory;
 import org.egov.adtax.entity.RatesClass;
 import org.egov.adtax.entity.UnitOfMeasure;
+import org.egov.adtax.repository.AdvertisementRateDetailRepository;
 import org.egov.adtax.service.HoardingCategoryService;
 import org.egov.adtax.service.RatesClassService;
 import org.egov.adtax.service.RatesService;
@@ -35,89 +36,138 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/rates")
 public class ScheduleOfRateController {
     private static final Logger LOG = LoggerFactory.getLogger(ScheduleOfRateController.class);
-    
-    @Autowired
-    private  RatesService ratesService;
-   
-    @Autowired
-    private  HoardingCategoryService hoardingCategoryService;
 
     @Autowired
-    private  SubCategoryService subCategoryService;
-    
+    private RatesService ratesService;
+
+    @Autowired
+    private AdvertisementRateDetailRepository advertisementRateDetailRepository;
+
+    @Autowired
+    private HoardingCategoryService hoardingCategoryService;
+
+    @Autowired
+    private SubCategoryService subCategoryService;
+
     @Autowired
     private RatesClassService ratesClassService;
-    
+
     @ModelAttribute("rate")
     public AdvertisementRate rate() {
         return new AdvertisementRate();
     }
 
     @Autowired
-    private  UnitOfMeasureService unitOfMeasureService;
-    
+    private UnitOfMeasureService unitOfMeasureService;
+
     public @ModelAttribute("hoardingCategories") List<HoardingCategory> hoardingCategories() {
         return hoardingCategoryService.getAllActiveHoardingCategory();
-    }   
-    
+    }
+
     public @ModelAttribute("unitOfMeasures") List<UnitOfMeasure> unitOfMeasures() {
         return unitOfMeasureService.getAllActiveUnitOfMeasure();
-    } 
+    }
+
     public @ModelAttribute("ratesClasses") List<RatesClass> ratesClasses() {
         return ratesClassService.getAllActiveRatesClass();
-    } 
-    
+    }
+
     @RequestMapping(value = "/search", method = GET)
     public String newScheduleOfRate() {
         LOG.info("Inside Schedule of rate ");
-          return "scheduleOfRate-form";
-    
+        return "scheduleOfRate-form";
+
     }
 
+    /**
+     * @param rate
+     * @param errors
+     * @param redirectAttrs
+     * @param model
+     * @return
+     */
     @RequestMapping(value = "/search", method = POST)
-    public String create(@Valid @ModelAttribute final AdvertisementRate rate, final BindingResult errors,
+    public String create(@Valid @ModelAttribute AdvertisementRate rate, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model) {
-
+        List<AdvertisementRatesDetails> advertisementRatesDetails = new ArrayList<AdvertisementRatesDetails>();
+       
         if (validateScheduleOfRateSearch(rate, model))
             return "scheduleOfRate-form";
-          //TODO: CHECK IF ALREADY EXIST THEN SHOW.  
-            List advertisementRatesDetails = new ArrayList<AdvertisementRatesDetails>();
+
+        advertisementRatesDetails = advertisementRateDetailRepository
+                .findScheduleOfRateDetailsByCategorySubcategoryUomAndClass(rate.getCategory(), rate.getSubCategory(),
+                        rate.getUnitofmeasure(), rate.getClasstype());
+
+        if (advertisementRatesDetails.size() == 0) {
             advertisementRatesDetails.add(new AdvertisementRatesDetails());
             rate.setAdvertisementRatesDetails(advertisementRatesDetails);
-            
-         model.addAttribute("mode", "noDataFound");
-         model.addAttribute("rate", rate);
-     
-         redirectAttrs.addFlashAttribute("rate", rate);
+            model.addAttribute("mode", "noDataFound");
+        } else {
+            rate = advertisementRatesDetails.get(0).getAdvertisementRate();
+            model.addAttribute("mode", "dataFound");
+        }
+        model.addAttribute("rate", rate);
+        redirectAttrs.addFlashAttribute("rate", rate);
         return "scheduleOfRate-result";
     }
+
+    /**
+     * @param rate
+     * @param redirectAttrs
+     * @param model
+     * @return
+     */
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String searchForm(@ModelAttribute final AdvertisementRate rate,
-            final RedirectAttributes redirectAttrs, final Model model) {
-        
+    public String searchForm(@ModelAttribute AdvertisementRate rate, final RedirectAttributes redirectAttrs,
+            final Model model) {
+
+        AdvertisementRate existingRateobject = null;
         final List<AdvertisementRatesDetails> rateDetails = new ArrayList<AdvertisementRatesDetails>();
-        
-      //TODO: validate, whether details are correct
-        for(AdvertisementRatesDetails advDtl:rate.getAdvertisementRatesDetails()){
-            advDtl.setAdvertisementRate(rate);
+
+        // TODO: validate, whether details are correct
+
+        existingRateobject = ratesService.findScheduleOfRateByCategorySubcategoryUomAndClass(rate.getCategory(),
+                rate.getSubCategory(), rate.getUnitofmeasure(), rate.getClasstype());
+
+        for (final AdvertisementRatesDetails advDtl : rate.getAdvertisementRatesDetails()) {
+            if (existingRateobject != null)
+                advDtl.setAdvertisementRate(existingRateobject);
+            else
+                advDtl.setAdvertisementRate(rate);
             rateDetails.add(advDtl);
         }
-        
-        rate.getAdvertisementRatesDetails().clear();
-        rate.setAdvertisementRatesDetails(rateDetails);
-        ratesService.createScheduleOfRate(rate);
+
+        if (existingRateobject != null) {
+            ratesService.deleteAllInBatch(existingRateobject.getAdvertisementRatesDetails());
+            existingRateobject.setAdvertisementRatesDetails(rateDetails);
+            rate = ratesService.createScheduleOfRate(existingRateobject);
+        } else {
+            rate.getAdvertisementRatesDetails().clear();
+            rate.setAdvertisementRatesDetails(rateDetails);
+            rate = ratesService.createScheduleOfRate(rate);
+        }
         redirectAttrs.addFlashAttribute("agency", rate);
         redirectAttrs.addFlashAttribute("message", "message.scheduleofrate.create");
         return "redirect:/rates/success/" + rate.getId();
-       // return "scheduleOfRate-form"; 
+      
     }
-    
+
+    /**
+     * @param id
+     * @param rate
+     * @return
+     */
     @RequestMapping(value = "/success/{id}", method = GET)
     public ModelAndView successView(@PathVariable("id") final Long id, @ModelAttribute final AdvertisementRate rate) {
         return new ModelAndView("scheduleOfRate-success", "rate", ratesService.getScheduleOfRateById(id));
 
     }
-    
+
+    /**
+     * @param rate
+     * @param model
+     * @return
+     */
     private Boolean validateScheduleOfRateSearch(final AdvertisementRate rate, final Model model) {
         Boolean validate = false;
         if (rate != null) {
@@ -136,5 +186,5 @@ public class ScheduleOfRateController {
         }
         return validate;
     }
-    
+
 }

@@ -39,8 +39,16 @@
  */
 package org.egov.adtax.service;
 
+import java.util.List;
+
 import org.egov.adtax.entity.AdvertisementRate;
-import org.egov.adtax.repository.RatesRepository;
+import org.egov.adtax.entity.AdvertisementRatesDetails;
+import org.egov.adtax.entity.HoardingCategory;
+import org.egov.adtax.entity.RatesClass;
+import org.egov.adtax.entity.SubCategory;
+import org.egov.adtax.entity.UnitOfMeasure;
+import org.egov.adtax.repository.AdvertisementRateDetailRepository;
+import org.egov.adtax.repository.AdvertisementRateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,19 +56,43 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class RatesService {
-    private final RatesRepository ratesRepository;
+    private final AdvertisementRateRepository ratesRepository;
+    private final AdvertisementRateDetailRepository rateDetailRepository;
 
     @Autowired
-    public RatesService(final RatesRepository ratesRepository) {
+    public RatesService(final AdvertisementRateRepository ratesRepository,
+            final AdvertisementRateDetailRepository rateDetailRepository) {
         this.ratesRepository = ratesRepository;
+        this.rateDetailRepository = rateDetailRepository;
     }
 
     public AdvertisementRate getScheduleOfRateById(final Long id) {
         return ratesRepository.findOne(id);
     }
 
+    public List<AdvertisementRatesDetails> findScheduleOfRateDetailsByCategorySubcategoryUomAndClass(
+            final HoardingCategory category, final SubCategory subCategory, final UnitOfMeasure unitOfMeasure,
+            final RatesClass ratesClass) {
+        return rateDetailRepository.findScheduleOfRateDetailsByCategorySubcategoryUomAndClass(category, subCategory,
+                unitOfMeasure, ratesClass);
+    }
+
     @Transactional
     public AdvertisementRate createScheduleOfRate(final AdvertisementRate rate) {
+
+        // if(rate!=null && rate.getId()!=null)
         return ratesRepository.save(rate);
     }
+
+    public AdvertisementRate findScheduleOfRateByCategorySubcategoryUomAndClass(final HoardingCategory category,
+            final SubCategory subCategory, final UnitOfMeasure unitofmeasure, final RatesClass classtype) {
+        return ratesRepository.findScheduleOfRateByCategorySubcategoryUomAndClass(category, subCategory, unitofmeasure,
+                classtype);
+    }
+
+    public void deleteAllInBatch(final List<AdvertisementRatesDetails> existingRateDetails) {
+        rateDetailRepository.deleteInBatch(existingRateDetails);
+
+    }
+
 }
