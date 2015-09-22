@@ -179,12 +179,10 @@ jQuery(document).ready(function($)
 			  },
 			  onNext: function (tour) {
 				  $('#complaintTypeName').typeahead('val','');
-				  $('#complaintTypeName').blur();
 			  },
 			  onEnd: function (tour) {
 				  $('#complaintTypeName').typeahead('val','');
-				  $('#complaintTypeName').blur();
-				  $('#complaintform').clearForm();
+				  $('#complaintTypeId').val('');
 			  },
 			  template : "<div class='popover tour'> <div class='arrow'></div> <h3 class='popover-title'></h3> <div class='popover-content'></div> </nav> </div>"
 		});

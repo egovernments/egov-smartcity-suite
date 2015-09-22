@@ -147,27 +147,6 @@ $(document).ready(function()
     	$('html, body').animate({scrollTop: off }, 0);
 	    });
 	}
-
-	/*$('.upload-file').change(function(e){
-		var fileInput = $(this);
-   		var maxSize = 20971520; //file size  in bytes(20MB)
-		var inMB = maxSize/1024/1024;
-		if(fileInput.get(0).files.length){
-			var fileSize = this.files[0].size; // in bytes
-			var charlen = (this.value.split('/').pop().split('\\').pop()).length;
-			if(charlen > 50){
-				alert('File length should not exceed 50 characters!');
-				fileInput.replaceWith(fileInput.val('').clone(true));
-				return false;			
-			}else if(fileSize > maxSize){
-				alert('File size should not exceed '+inMB+' MB!');
-				fileInput.replaceWith(fileInput.val('').clone(true));
-				return false;
-			    }
-		
-			
-		}
-	});*/
 	
 	$("select").each(function() { 
 		if($(this).children('option').length == 2)
@@ -339,21 +318,6 @@ function typeaheadWithEventsHandling(typeaheadobj, hiddeneleid)
     	    }
        });
 }
-
-$.fn.clearForm = function() {
-  return this.each(function() {
-    var type = this.type, tag = this.tagName.toLowerCase();
-    if (tag == 'form')
-      return $(':input',this).clearForm();
-    if (type == 'text' || type == 'password' || type == 'hidden' || tag == 'textarea')
-      this.value = '';
-    else if (type == 'checkbox' || type == 'radio')
-      this.checked = false;
-    else if (tag == 'select')
-      this.selectedIndex = -1;
-  });
-};
-
 
 /*$(".refreshInBox refeshDraft").on('click', function() {
 	if(window.opener)
