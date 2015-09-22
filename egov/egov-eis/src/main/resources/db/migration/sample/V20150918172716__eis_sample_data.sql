@@ -158,6 +158,20 @@ INSERT INTO eg_userrole (roleid, userid) VALUES (16, 38);
 
 INSERT INTO eg_userrole (roleid, userid) VALUES (5, 16);
 
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 2);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 16);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 26);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 27);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 30);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 34);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 35);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 38);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 40);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 47);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 68);
+ 
+ 
+
 ------------------END---------------------
 
 -----------------START--------------------

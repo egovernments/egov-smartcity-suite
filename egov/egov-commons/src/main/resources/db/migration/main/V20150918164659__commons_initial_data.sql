@@ -32,8 +32,11 @@ INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodified
 INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (15, 'Employee', 'Default role for all employees', '2015-08-28 00:00:00', 1, 1, '2015-08-28 00:00:00', 0);
 INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (16, 'ULB Operator', 'ULB Operator', '2015-08-28 10:45:17.567676', 1, 1, '2015-08-28 10:45:17.567676', 0);
 ------------------END---------------------
+-----------------START-------------------
 
+Insert into EG_ROLEACTION (roleid, actionid) values (15,37);
 
+------------------END---------------------
 -----------------START-------------------
 INSERT INTO eg_uomcategory (id, category, narration, lastmodified, createddate, createdby, lastmodifiedby) VALUES (1, 'AREA', 'area', '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
 INSERT INTO eg_uomcategory (id, category, narration, lastmodified, createddate, createdby, lastmodifiedby) VALUES (2, 'Length', 'Length', '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
