@@ -42,7 +42,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <div class="row">
-	<div class="col-md-12">
+	<div class="col-md-12" style="position:relative;">
+	<div class="tour-section" data-toggle="tooltip" title="Click for demo!"><i class="entypo-help"></i></div>
 		<form:form role="form" action="register" modelAttribute="complaint" commandName="complaint" id="complaintform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -54,7 +55,7 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintType"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
-							<input id="complaintTypeName" class="form-control typeahead is_valid_alphabet" placeholder=""
+							<input id="complaintTypeName" class="form-control typeahead is_valid_alphabet" placeholder="Enter your complaint"
 								autocomplete="off" required="required" value="${complaint.complaintType.name}"/>
 							<form:hidden path="complaintType" id="complaintTypeId" value="" />
 							<form:errors path="complaintType" cssClass="add-margin error-msg" />
@@ -103,9 +104,9 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintLoc"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
-							<div class="input-group">
-								<input id="location" type="text" value="${complaint.location.name}" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
-								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe specific"></i></span>
+							<div class="input-group" id="location-tour">
+								<input id="location" type="text" value="${complaint.location.name}" class="form-control low-width" placeholder="Enter your complaint location or select it from map icon" autocomplete="off" required="required"/>
+								<span class="input-group-addon map-class btn-secondary" data-toggle="tooltip" title="Locate on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe specific"></i></span>
 								<form:hidden path="location" id="locationid"/>
 								<form:hidden path="lat" id="lat"/>
                    				<form:hidden path="lng" id="lng"/>

@@ -120,7 +120,6 @@ $(document).ready(function()
 	
 	try { 
 		$('[data-toggle="tooltip"]').tooltip({
-			'placement': 'bottom'
 		});
 		}catch(e){
 		console.warn("No tooltip");
@@ -340,6 +339,20 @@ function typeaheadWithEventsHandling(typeaheadobj, hiddeneleid)
     	    }
        });
 }
+
+$.fn.clearForm = function() {
+  return this.each(function() {
+    var type = this.type, tag = this.tagName.toLowerCase();
+    if (tag == 'form')
+      return $(':input',this).clearForm();
+    if (type == 'text' || type == 'password' || type == 'hidden' || tag == 'textarea')
+      this.value = '';
+    else if (type == 'checkbox' || type == 'radio')
+      this.checked = false;
+    else if (tag == 'select')
+      this.selectedIndex = -1;
+  });
+};
 
 
 /*$(".refreshInBox refeshDraft").on('click', function() {

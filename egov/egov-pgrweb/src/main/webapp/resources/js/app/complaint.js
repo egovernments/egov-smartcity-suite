@@ -138,6 +138,65 @@ jQuery(document).ready(function($)
 			disableRC();
 		}
 	});
+	
+	$('.tour-section').click(function(){
+
+    	//define text
+	    var text = 'Dog';
+	    
+	    //text is split up to letters
+	    $.each(text.split(''), function(i, letter){
+	        setTimeout(function(){
+	            //we add the letter to the container
+	            $('#complaintTypeName').val($('#complaintTypeName').val() + letter);
+	            $("#complaintTypeName").trigger("input");
+	            $("span.twitter-typeahead .tt-suggestion > p").mouseenter();
+	            if(i == 2)
+	            { 
+	            	$('#complaintTypeName').typeahead('val','Dog menace'); 
+	            	$('#complaintTypeName').blur(); 
+            	}
+	        }, 1000*(i+1));
+	    });
+	    
+		var tour = new Tour({
+			  steps: [
+			  {
+			    element: "#complaintTypeName",
+			    title: "Complaint Type",
+			    content: "Enter your complaint type and select it from the below suggestion"
+			  },
+			  {
+			    element: "#location-tour",
+			    title: "Complaint Location",
+			    content: "Enter your complaint location or select it from the map icon"
+			  }
+			],
+			  storage: false,
+			  duration: 6000,
+			  onStart: function (tour) {
+				  
+			  },
+			  onNext: function (tour) {
+				  $('#complaintTypeName').typeahead('val','');
+				  $('#complaintTypeName').blur();
+			  },
+			  onEnd: function (tour) {
+				  $('#complaintTypeName').typeahead('val','');
+				  $('#complaintTypeName').blur();
+				  $('#complaintform').clearForm();
+			  },
+			  template : "<div class='popover tour'> <div class='arrow'></div> <h3 class='popover-title'></h3> <div class='popover-content'></div> </nav> </div>"
+		});
+		// Initialize the tour
+		tour.init();
+		// Start the tour
+		tour.start();
+
+	    text = '';
+	    $('#complaintTypeName').typeahead('val','');
+	    
+	});
 
 });
 
