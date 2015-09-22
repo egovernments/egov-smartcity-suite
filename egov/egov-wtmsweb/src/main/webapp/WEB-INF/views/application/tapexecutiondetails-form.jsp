@@ -82,7 +82,7 @@
 							<spring:message code="lbl.meter.serial.no"/><span class="mandatory"></span>
 						</div>
 						<div class="col-sm-3 add-margin">
-							<form:input class="form-control patternvalidation" id="meterSerialNumber" path="connection.meterSerialNumber" data-pattern="alphanumericwithspace-hyphen-underscore" required="required" />
+							<form:input class="form-control patternvalidation" id="meterSerialNumber" path="connection.meterSerialNumber" data-pattern="alphanumericwithspacehyphenunderscore" required="required" />
 							<form:errors path="connection.meterSerialNumber" cssClass="add-margin error-msg" />
 						</div>
 					</c:if>

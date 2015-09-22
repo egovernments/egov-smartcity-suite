@@ -889,7 +889,7 @@ footer.main a:hover, footer.main a:focus{
 
 .add-padding
 {
-	padding:0 5px;
+	padding:0 5px;cursor:pointer;
 }
 
 .table > thead:first-child > tr:first-child > th

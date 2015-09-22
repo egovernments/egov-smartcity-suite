@@ -22,7 +22,7 @@ var regexp_alphanumeric = /[^a-zA-Z0-9 ]/g ;
 //This will allow you to enter alphabets and numbers with specified special characters like dot(.), slash(/), hash(#), ampersand(&), plus(+), minus(-). If you need some additional special characters, add those characters to the corresponding regular expression. (eg: data-pattern="alphanumericwithspecialcharacters")
 var regexp_alphanumericspecialcharacters = /[^a-zA-Z0-9_@./#&+-]/g ;
 
-//This will allow you to enter alphabets and numbers with space, hyphen(-) and underscore(_). (eg: data-pattern="alphanumericwithspace-hyphen-underscore")
+//This will allow you to enter alphabets and numbers with space, hyphen(-) and underscore(_). (eg: data-pattern="alphanumericwithspacehyphenunderscore")
 var regexp_alphanumerichyphenunderscore = /[^a-zA-Z0-9 _-]/g ;
 
 //This will allow you to enter numbers and dot. (eg: data-pattern="decimalvalue")
@@ -31,51 +31,73 @@ var regexp_decimalvalue = /[^0-9.]/g ;
 //This will allow you to enter alphabets and numbers with specified special characters like  slash(/), hyphen(-). (eg: data-pattern="alphanumerichyphenbackslash")
 var regexp_alphanumerichyphenbackslash = /[^a-zA-Z0-9/-]/g ;
 
-//username pattern
+//username pattern (eg: data-pattern="username")
 var regexp_username = /[^a-zA-Z0-9_.]/g ;
 
 function patternvalidation(){
 	
 	$('.patternvalidation').on("input", function(){
-
-		if($(this).data('pattern') === "alphabetwithspace"){ //alphabetwithspaces
-			if($(this).val().match(regexp_alphabet)){
-				$(this).val( $(this).val().replace(regexp_alphabet,'') );
-			}
-		}else if($(this).data('pattern') === "alphabetwithspecialcharacters"){ //alphabetwithspecialcharacters
-			if($(this).val().match(regexp_alphabetspecialcharacters)){
-				$(this).val( $(this).val().replace(regexp_alphabetspecialcharacters,'') );
-			}
-		}else if($(this).data('pattern') === "number"){ //number
-			if($(this).val().match(regexp_number)){
-				$(this).val( $(this).val().replace(regexp_number,'') );
-			}
-		}else if($(this).data('pattern') === "alphanumericwithspace"){ //alphanumericwithspaces
-			if($(this).val().match(regexp_alphanumeric)){
-				$(this).val( $(this).val().replace(regexp_alphanumeric,'') );
-			}
-		}else if($(this).data('pattern') === "alphanumericwithspecialcharacters"){ //alphanumericwithspecialcharacters
-			if($(this).val().match(regexp_alphanumericspecialcharacters)){
-				$(this).val( $(this).val().replace(regexp_alphanumericspecialcharacters,'') );
-			}
-		}else if($(this).data('pattern') === "alphanumericwithspace-hyphen-underscore"){ //alphanumericwith-hyphen-underscore
-			if($(this).val().match(regexp_alphanumerichyphenunderscore)){
-				$(this).val( $(this).val().replace(regexp_alphanumerichyphenunderscore,'') );
-			}
-		}else if($(this).data('pattern') === "decimalvalue"){ //decimalvalue
-			if($(this).val().match(regexp_decimalvalue)){
-				$(this).val( $(this).val().replace(regexp_decimalvalue,'') );
-			}
-		}else if($(this).data('pattern') === "alphanumerichyphenbackslash"){ //alphanumerichyphenbackslash
-			if($(this).val().match(regexp_alphanumerichyphenbackslash)){
-				$(this).val( $(this).val().replace(regexp_alphanumerichyphenbackslash,'') );
-			}
-		}else if($(this).data('pattern') === "username"){ //username
-			if($(this).val().match(regexp_username)){
-				$(this).val( $(this).val().replace(regexp_username,'') );
-			}
+		
+		var fn = window[$(this).data('pattern')];
+		if(typeof fn === "function") {	
+			fn(this);
 		}
 
 	});
 	
 }
+
+function alphabetwithspace(obj){
+	if($(obj).val().match(regexp_alphabet)){
+		$(obj).val( $(obj).val().replace(regexp_alphabet,'') );
+	}
+}
+
+function alphabetwithspecialcharacters(obj){
+	if($(obj).val().match(regexp_alphabetspecialcharacters)){
+		$(obj).val( $(obj).val().replace(regexp_alphabetspecialcharacters,'') );
+	}
+}
+
+function number(obj){
+	if($(obj).val().match(regexp_number)){
+		$(obj).val( $(obj).val().replace(regexp_number,'') );
+	}
+}
+
+function alphanumericwithspace(obj){
+	if($(obj).val().match(regexp_alphanumeric)){
+		$(obj).val( $(obj).val().replace(regexp_alphanumeric,'') );
+	}
+}
+
+function alphanumericwithspecialcharacters(obj){
+	if($(obj).val().match(regexp_alphanumericspecialcharacters)){
+		$(obj).val( $(obj).val().replace(regexp_alphanumericspecialcharacters,'') );
+	}
+}
+
+function alphanumericwithspacehyphenunderscore(obj){
+	if($(obj).val().match(regexp_alphanumerichyphenunderscore)){
+		$(obj).val( $(obj).val().replace(regexp_alphanumerichyphenunderscore,'') );
+	}
+}
+
+function decimalvalue(obj){
+	if($(obj).val().match(regexp_decimalvalue)){
+		$(obj).val( $(obj).val().replace(regexp_decimalvalue,'') );
+	}
+}
+
+function alphanumerichyphenbackslash(obj){
+	if($(obj).val().match(regexp_alphanumerichyphenbackslash)){
+		$(obj).val( $(obj).val().replace(regexp_alphanumerichyphenbackslash,'') );
+	}
+}
+
+function username(obj){
+	if($(obj).val().match(regexp_username)){
+		$(obj).val( $(obj).val().replace(regexp_username,'') );
+	}
+}
+
