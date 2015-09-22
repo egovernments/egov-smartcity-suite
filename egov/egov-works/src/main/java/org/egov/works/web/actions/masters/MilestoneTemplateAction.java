@@ -49,6 +49,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.service.CommonsService;
@@ -69,7 +70,10 @@ import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
-@Result(name = MilestoneTemplateAction.NEW, location = "milestoneTemplate-new.jsp")
+@Results({
+	@Result(name = MilestoneTemplateAction.NEW, location = "milestoneTemplate-new.jsp"),
+	@Result(name = MilestoneTemplateAction.SEARCH, location = "milestoneTemplate-search.jsp")
+})
 public class MilestoneTemplateAction extends SearchFormAction {
 
     private static final long serialVersionUID = 5517312981738363805L;
@@ -94,7 +98,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
     private List<MilestoneTemplateActivity> templateActivities = new LinkedList<MilestoneTemplateActivity>();
     private static final String SOURCE_INBOX = "inbox";
     private static final String MODE_MODIFY = "modify";
-
+    public static final String SEARCH = "search";
     public MilestoneTemplateAction() {
         addRelatedEntity("workType", EgwTypeOfWork.class);
         addRelatedEntity("subType", EgwTypeOfWork.class);
@@ -124,6 +128,13 @@ public class MilestoneTemplateAction extends SearchFormAction {
     @SkipValidation
     public String newform() {
         return NEW;
+    }
+    
+    @Override
+    @SkipValidation
+    @Action(value = "/masters/milestoneTemplate-search")
+    public String search() {
+        return SEARCH;
     }
 
     public String save() {
@@ -251,13 +262,6 @@ public class MilestoneTemplateAction extends SearchFormAction {
             sourcepage = "search";
 
         return "edit";
-    }
-
-    @Override
-    @SkipValidation
-    public String search() {
-
-        return "search";
     }
 
     @SkipValidation

@@ -38,7 +38,6 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
-<%@ taglib uri="/egov-authz.tld" prefix="egov-authz" %>
 
 <html>
 <title><s:text name="sor.list" /></title>
@@ -53,7 +52,7 @@
 		//return false;
 	}
 	</script>
-<body >
+	<body>
 		<s:if test="%{hasErrors()}">
        		 <div class="errorstyle">
           		<s:actionerror/>
@@ -65,7 +64,7 @@
         		<s:actionmessage theme="simple"/>
         	</div>
     	</s:if>
-		 <s:form name="searchSORForm" id="searchSORForm" action="/masters/scheduleOfRate!searchSorDetails.action" theme="simple">			
+		<s:form name="searchSORForm" id="searchSORForm" action="/masters/scheduleOfRate!searchSorDetails.action" theme="simple">			
 			<div class="navibarshadowwk">
 			</div>
 			<div class="formmainbox">
@@ -102,10 +101,15 @@
 									<s:text name="master.sor.category" />:
 								</td>
 								<td width="21%" class="whitebox2wk">
-									<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}"
+									<!-- Need to uncomment when listValue is available-->
+									<%-- <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}"
 										name="scheduleCategoryId" id="scheduleCategory" cssClass="selectwk"
 										list="dropdownData.scheduleCategorylist" listKey="id"
-										listValue="code"/>		
+										listValue="code"/> --%>
+									<!-- Need to remove when scheduleCategorylist is not null-->
+									<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" 
+										name="categoryType" id="categoryTypeId" cssClass="selectwk"
+										list="#{'1':'BRIDGES-NORTH'}"></s:select>
 								</td>
 								<td width="11%" class="whiteboxwk">
 									&nbsp;
@@ -136,7 +140,7 @@
 							<tr>
 								<td colspan="4">
 									<div class="buttonholdersearch">
-										<input type="submit" class="buttonadd" value="Search" id="searchButton" 
+										<input type="submit" class="buttonadd" value="Search" id="searchButton" name="button" 
 											 onClick="validate()" />
 										<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="button"
 											onclick="window.close();" />
@@ -261,9 +265,5 @@
 			</div>
 			</div>
 		</s:form>
-		<script type="text/javascript">
-			
-						
-		</script>
 	</body>
 </html>

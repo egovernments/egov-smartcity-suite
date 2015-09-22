@@ -37,7 +37,7 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ taglib uri="/egov-authz.tld" prefix="egov-authz" %>
+<%-- <%@ taglib uri="/egov-authz.tld" prefix="egov-authz" %> --%>
 <script type="text/javascript">
 function setTemplateCode(obj){
 document.getElementById('selectedCode').value=obj.value;

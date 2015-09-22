@@ -53,6 +53,8 @@ import org.apache.jackrabbit.core.security.user.UserImpl;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.common.entity.UOM;
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.Required;
@@ -71,7 +73,10 @@ import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.utils.WorksConstants;
 
-@Result(name = ScheduleOfRateAction.NEW, location = "scheduleOfRate-new.jsp")
+@Results({
+	@Result(name = ScheduleOfRateAction.NEW, location = "scheduleOfRate-new.jsp"),
+	@Result(name = ScheduleOfRateAction.SEARCH, location = "scheduleOfRate-search.jsp")
+})
 @ParentPackage("egov")
 public class ScheduleOfRateAction extends SearchFormAction {
 
@@ -105,7 +110,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
     private Date woDate;
     private String woDateFlag = "no";
     private List<SORRate> editableRateList = new ArrayList<SORRate>();
-
+    public static final String SEARCH = "search";
     public ScheduleOfRateAction() {
         addRelatedEntity("scheduleCategory", ScheduleCategory.class);
         addRelatedEntity("uom", UOM.class);
@@ -120,6 +125,13 @@ public class ScheduleOfRateAction extends SearchFormAction {
     @Action(value = "/masters/scheduleOfRate-newform")
     public String newform() {
         return NEW;
+    }
+
+    @Override
+    @SkipValidation
+    @Action(value = "/masters/scheduleOfRate-search")
+    public String search() {
+        return SEARCH;
     }
 
     /*
@@ -438,7 +450,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
                         deleteFlagMap2.put(rate.getId(), "no");
                 }
             }
-        }       // end of for wo
+        }     // end of for wo
     }
 
     public void validateWODate(final boolean flag, final List woList) {
