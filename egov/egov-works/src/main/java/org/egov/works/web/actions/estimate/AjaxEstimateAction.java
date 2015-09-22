@@ -75,7 +75,6 @@ import org.egov.works.models.masters.Overhead;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksService;
-import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AjaxEstimateAction extends BaseFormAction {
@@ -218,7 +217,7 @@ public class AjaxEstimateAction extends BaseFormAction {
     public String isSkipDepartmentChange() {
         Department department = null;
         if (departmentId != null && departmentId != -1)
-            department = (Department) getPersistenceService().find("from DepartmentImpl where id=?", departmentId);
+            department = (Department) getPersistenceService().find("from Department where id=?", departmentId);
         final String departmentCodes = worksService.getWorksConfigValue("REAPPROPRIATION_DEPARTMENTS");
         isSkipDeptChange = true;
         if (department != null && departmentCodes != null)
@@ -295,7 +294,7 @@ public class AjaxEstimateAction extends BaseFormAction {
         String departmentName = "";
         Department department = null;
         if (departmentId != -1) {
-            department = (Department) getPersistenceService().find("from DepartmentImpl where id=?", departmentId);
+            department = (Department) getPersistenceService().find("from Department where id=?", departmentId);
             departmentName = department.getName();
         }
         Designation designation = null;
@@ -319,13 +318,7 @@ public class AjaxEstimateAction extends BaseFormAction {
     }
 
     public String validateEstimateForCancel() {
-        woNumber = (String) getPersistenceService()
-                .find("select woe.workOrder.workOrderNumber from WorkOrderEstimate woe where woe.workOrder.rateContract is not null "
-                        + "and woe.estimate.rateContract is not null and  woe.estimate.id=? and woe.estimate.egwStatus.code=? and woe.workOrder.egwStatus.code<>?",
-                        estimateId, AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString(),
-                        WorksConstants.CANCELLED_STATUS.toString());
-        if (woNumber == null)
-            woNumber = "";
+        woNumber = "";
         if (woNumber.equals("")) {
             wpNumber = (String) getPersistenceService().find(
                     "select wpd.worksPackage.wpNumber from WorksPackageDetails wpd where wpd.estimate.id=? "

@@ -60,31 +60,11 @@ function warn(type){
 function setupPreparedByList(elem){
     deptId=elem.options[elem.selectedIndex].value;    
     populatepreparedBy({executingDepartment:deptId,employeeCode:dom.get("loggedInUserEmployeeCode").value});
-    //getTemplateByDepName();
 }
 function clearDesignation(elem) {
     dom.get("designation").value='';
 }
-function validateForRCDept(elem)
-{
-	<s:if test="%{fromRateContract==true}" >
-		var rcDept = '<s:property value="%{rateContract.indent.department.id}" />';
-		if(eval(elem.value)!=eval(rcDept))
-		{
-			dom.get("worktypeerror").style.display='';
-			dom.get("worktypeerror").innerHTML='<s:text name="ratecontract.estimate.department.mismatch" />';
-			window.scroll(0,0);
-		}
-		else
-		{
-			if(dom.get("worktypeerror").innerHTML=='<s:text name="ratecontract.estimate.department.mismatch" />')
-			{
-				dom.get("worktypeerror").style.display='none';
-				dom.get("worktypeerror").innerHTML='';
-			}	
-		}		
-	</s:if>
-}
+
 function setupSubTypes(elem){
     categoryId=elem.options[elem.selectedIndex].value;
     populatecategory({category:categoryId});
@@ -395,10 +375,10 @@ function jurisdictionSearchParameters(){
                 </tr>
               <tr>
                 <td width="11%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="estimate.user.department" />:</td>
-                <td width="21%" class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="userDepartment" id="userDepartment" cssClass="selectwk" list="dropdownData.userDepartmentList" onchange="clearMsg(this);" listKey="id" listValue="deptName" value="%{userDepartment.id}"/>
+                <td width="21%" class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="userDepartment" id="userDepartment" cssClass="selectwk" list="dropdownData.userDepartmentList" onchange="clearMsg(this);" listKey="id" listValue="name" value="%{userDepartment.id}"/>
 
                 <td width="15%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="estimate.executing.department" />:</td>
-                <td width="53%" class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="executingDepartment" id="executingDepartment" cssClass="selectwk" list="dropdownData.executingDepartmentList" listKey="id" listValue="deptName" value="%{executingDepartment.id}" onChange="setupPreparedByList(this);clearDesignation(this);validateForRCDept(this);"/>
+                <td width="53%" class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="executingDepartment" id="executingDepartment" cssClass="selectwk" list="dropdownData.executingDepartmentList" listKey="id" listValue="name" value="%{executingDepartment.id}" onChange="setupPreparedByList(this);clearDesignation(this);"/>
                 </td>
               </tr>
               <tr>
@@ -458,34 +438,11 @@ function jurisdictionSearchParameters(){
 	                <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="fundSource" id="fundSource" 
 	                cssClass="selectwk" list="dropdownData.fundSourceList" listKey="id" listValue="name" value="%{fundSource.id}"/>
 				</td>
-				<s:if test="applicationRequest.depositWorksCategory==@org.egov.works.models.depositWorks.DepositWorksCategory@OTHERS || applicationRequest.depositWorksCategory==@org.egov.works.models.depositWorks.DepositWorksCategory@REPAIRSANDMAINTENANCE || applicationRequest.depositWorksCategory==@org.egov.works.models.depositWorks.DepositWorksCategory@EMERGENCYCUT">
-					<s:if test="%{(sourcepage=='roadCutDepositWorks' || mode=='roadCutDepositWorks' || (depositCode!=null && roadCutDepCodeFlag=='true'))}">
-					 	<td width="15%" class="greyboxwk"><s:text name="estimate.depositworks.depositcode" />:</td>
-		                <td width="53%" class="greybox2wk">
-		                	<s:textfield name="depCode" value="%{depositCode.code}" id="depCode" cssClass="selectwk" />
-		                </td>
-				 	</s:if>
-					 <s:else>
-		                <td width="15%" class="greyboxwk">&nbsp;</td>
-		                <td width="53%" class="greybox2wk">&nbsp;</td>
-	                 </s:else>
-                 </s:if>
+				
+                <td width="15%" class="greyboxwk">&nbsp;</td>
+                <td width="53%" class="greybox2wk">&nbsp;</td>
               </tr>
-				<s:if test="applicationRequest.depositWorksCategory==@org.egov.works.models.depositWorks.DepositWorksCategory@OTHERS  || applicationRequest.depositWorksCategory==@org.egov.works.models.depositWorks.DepositWorksCategory@REPAIRSANDMAINTENANCE || applicationRequest.depositWorksCategory==@org.egov.works.models.depositWorks.DepositWorksCategory@EMERGENCYCUT">
-					<s:if test="%{(sourcepage=='roadCutDepositWorks' || mode=='roadCutDepositWorks' || (depositCode!=null && roadCutDepCodeFlag=='true'))}">
-		               <tr>
-						 	<td width="15%" class="whiteboxwk"><s:text name="dw.feasibilityRep.depositCode.work.name" /></td>
-			                <td width="53%" class="whitebox2wk">
-			                <s:textfield name="depWrksName" value="%{depositCode.codeName}" id="depWrksName" cssClass="selectwk" />
-			                </td>
-			              
-			                <td width="15%" class="whiteboxwk"><s:text name="dw.feasibilityRep.subledgerCode.fund" />:</td>
-			                <td width="53%" class="whitebox2wk">
-			                <s:textfield name="depFundName" value="%{depositCode.fund.name}" id="depFundName" cssClass="selectwk" />
-			                </td>
-		              </tr>
-					</s:if>
-               </s:if>
+				
               <tr>
                 <td  colspan="4" class="shadowwk"> </td>                 
                 </tr>

@@ -46,7 +46,7 @@
                 </tr>
 	  	 <tr>
 			<td class="greyboxwk" id="deptLabel"><s:text name="workflow.approver.department"/></td>
-			<td class="greybox2wk"><s:select name="departmentid" id="departmentid" list="dropdownData.executingDepartmentList" listKey="id" listValue="deptName" headerKey="-1" 
+			<td class="greybox2wk"><s:select name="departmentid" id="departmentid" list="dropdownData.executingDepartmentList" listKey="id" listValue="name" headerKey="-1" 
 			headerValue="%{getText('estimate.default.select')}"  value="%{departmentId}"  onchange= "populateDesignation()"/>
 			<egov:ajaxdropdown id="designationId"fields="['Text','Value']" dropdownId="designationId" url="estimate/ajaxEstimate!getDesgByDeptAndType.action" />
 			</td>

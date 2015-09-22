@@ -144,7 +144,6 @@ public class AbstractEstimateAction extends BaseFormAction {
     private Integer approverUserId;
     @Autowired
     private CommonsService commonsService;
-    private Date financialYearStartDate;
     private Long departmentId;
     private Integer designationId;
     private String approverComments;
@@ -160,11 +159,8 @@ public class AbstractEstimateAction extends BaseFormAction {
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", new Locale("en", "IN"));
     private String loggedInUserEmployeeCode;
 
-    /*
-     * added by prashanth on 2nd nov 09 for disp user and desgination in success page
-     */
-    String employeeName;
-    String designation;
+    private String employeeName;
+    private String designation;
     private WorksService worksService;
     private PersonalInformationService personalInformationService;
 
@@ -812,72 +808,61 @@ public class AbstractEstimateAction extends BaseFormAction {
     public String cancelApprovedEstimate() {
         abstractEstimate = abstractEstimateService.findById(estimateId, false);
 
-        // Check whether any Rate contract WO exists for the give estimate
-        final String woNumber = (String) getPersistenceService()
-                .find("select woe.workOrder.workOrderNumber from WorkOrderEstimate woe where woe.workOrder.rateContract is not null "
-                        + "and woe.estimate.rateContract is not null and  woe.estimate.id=? and woe.estimate.egwStatus.code=? and woe.workOrder.egwStatus.code<>?",
-                        estimateId, AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString(),
-                        WorksConstants.CANCELLED_STATUS.toString());
-        if (woNumber != null && !woNumber.equals(""))
-            messageKey = getText("cancelEstimate.rc.wo.created.message.part1").concat(woNumber).concat(" ")
-                    .concat(getText("cancelEstimate.rc.wo.created.message.part2"));
+        final String oldEstimateNo = abstractEstimate.getEstimateNumber();
+
+        final PersonalInformation prsnlInfo = employeeService.getEmpForUserId(worksService
+                .getCurrentLoggedInUserId());
+        String empName = "";
+        if (prsnlInfo.getEmployeeFirstName() != null)
+            empName = prsnlInfo.getEmployeeFirstName();
+        if (prsnlInfo.getEmployeeLastName() != null)
+            empName = empName.concat(" ").concat(prsnlInfo.getEmployeeLastName());
+
+        if (cancelRemarks != null && StringUtils.isNotBlank(cancelRemarks))
+            cancellationReason.concat(" : ").concat(cancelRemarks).concat(". ")
+                    .concat(getText("estimate.cancel.cancelledby")).concat(": ").concat(empName);
+        else
+            cancellationReason.concat(". ").concat(getText("estimate.cancel.cancelledby")).concat(": ")
+                    .concat(empName);
+
+        // Generate Budget Rejection no here
+        abstractEstimate.setBudgetRejectionNo("BC/" + abstractEstimate.getBudgetApprNo());
+
+        // suffix /C for estimate number
+        final String newEstNo = abstractEstimate.getEstimateNumber() + "/C";
+        abstractEstimate.setEstimateNumber(newEstNo);
+
+        // If type is deposit works then release Deposit works amount
+        if (isSkipBudgetCheck())
+            abstractEstimateService
+                    .releaseDepositWorksAmountOnReject(abstractEstimate.getFinancialDetails().get(0));
         else {
-            final String oldEstimateNo = abstractEstimate.getEstimateNumber();
-
-            final PersonalInformation prsnlInfo = employeeService.getEmpForUserId(worksService
-                    .getCurrentLoggedInUserId());
-            String empName = "";
-            if (prsnlInfo.getEmployeeFirstName() != null)
-                empName = prsnlInfo.getEmployeeFirstName();
-            if (prsnlInfo.getEmployeeLastName() != null)
-                empName = empName.concat(" ").concat(prsnlInfo.getEmployeeLastName());
-
-            if (cancelRemarks != null && StringUtils.isNotBlank(cancelRemarks))
-                cancellationReason.concat(" : ").concat(cancelRemarks).concat(". ")
-                        .concat(getText("estimate.cancel.cancelledby")).concat(": ").concat(empName);
-            else
-                cancellationReason.concat(". ").concat(getText("estimate.cancel.cancelledby")).concat(": ")
-                        .concat(empName);
-
-            // Generate Budget Rejection no here
-            abstractEstimate.setBudgetRejectionNo("BC/" + abstractEstimate.getBudgetApprNo());
-
-            // suffix /C for estimate number
-            final String newEstNo = abstractEstimate.getEstimateNumber() + "/C";
-            abstractEstimate.setEstimateNumber(newEstNo);
-
-            // If type is deposit works then release Deposit works amount
-            if (isSkipBudgetCheck())
-                abstractEstimateService
-                        .releaseDepositWorksAmountOnReject(abstractEstimate.getFinancialDetails().get(0));
-            else {
-                // If it is Budget work then release latest budget consumed
-                abstractEstimateService.releaseBudgetOnReject(abstractEstimate.getFinancialDetails().get(0));
-                abstractEstimate.setBudgetAvailable(abstractEstimateService
-                        .getBudgetAvailable(abstractEstimate, abstractEstimateService
-                                .getLatestApprYearEndDate(abstractEstimate.getFinancialDetails().get(0))));
-            }
-            // Make corresponding project code as inactive
-            abstractEstimate.getProjectCode().setIsActive(false);
-
-            // TODO - The setter methods of variables in State.java are
-            // protected. Need to alternative way to solve this issue.
-            // Set the status and workflow state to cancelled
-            /*****
-             * State oldEndState = abstractEstimate.getCurrentState(); Position owner = prsnlInfo.getAssignment(new
-             * Date()).getPosition(); oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
-             * oldEndState.setModifiedBy(prsnlInfo.getUserMaster()); oldEndState.setCreatedDate(new Date());
-             * oldEndState.setModifiedDate(new Date()); oldEndState.setOwner(owner); oldEndState.setValue(AbstractEstimate
-             * .EstimateStatus.CANCELLED.toString()); oldEndState.setText1(cancellationText); abstractEstimate.changeState("END",
-             * owner, null);
-             *******/
-
-            abstractEstimate.setEgwStatus(commonsService.getStatusByModuleAndCode("AbstractEstimate",
-                    AbstractEstimate.EstimateStatus.CANCELLED.toString()));
-            getBudgetUsageListForEstimateNumber(oldEstimateNo);
-
-            messageKey = "estimate.cancel";
+            // If it is Budget work then release latest budget consumed
+            abstractEstimateService.releaseBudgetOnReject(abstractEstimate.getFinancialDetails().get(0));
+            abstractEstimate.setBudgetAvailable(abstractEstimateService
+                    .getBudgetAvailable(abstractEstimate, abstractEstimateService
+                            .getLatestApprYearEndDate(abstractEstimate.getFinancialDetails().get(0))));
         }
+        // Make corresponding project code as inactive
+        abstractEstimate.getProjectCode().setIsActive(false);
+
+        // TODO - The setter methods of variables in State.java are
+        // protected. Need to alternative way to solve this issue.
+        // Set the status and workflow state to cancelled
+        /*****
+         * State oldEndState = abstractEstimate.getCurrentState(); Position owner = prsnlInfo.getAssignment(new
+         * Date()).getPosition(); oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
+         * oldEndState.setModifiedBy(prsnlInfo.getUserMaster()); oldEndState.setCreatedDate(new Date());
+         * oldEndState.setModifiedDate(new Date()); oldEndState.setOwner(owner); oldEndState.setValue(AbstractEstimate
+         * .EstimateStatus.CANCELLED.toString()); oldEndState.setText1(cancellationText); abstractEstimate.changeState("END",
+         * owner, null);
+         *******/
+
+        abstractEstimate.setEgwStatus(commonsService.getStatusByModuleAndCode("AbstractEstimate",
+                AbstractEstimate.EstimateStatus.CANCELLED.toString()));
+        getBudgetUsageListForEstimateNumber(oldEstimateNo);
+
+        messageKey = "estimate.cancel";
 
         return SUCCESS;
     }
@@ -985,7 +970,7 @@ public class AbstractEstimateAction extends BaseFormAction {
             return commonsService.getFinYearByDate(new Date());
     }
 
-    public EmployeeServiceOld getemployeeService() {
+    public EmployeeServiceOld getEmployeeService() {
         return employeeService;
     }
 
@@ -1025,44 +1010,26 @@ public class AbstractEstimateAction extends BaseFormAction {
         this.sourcepage = sourcepage;
     }
 
-    /**
-     * @return the employeeName
-     */
     public String getEmployeeName() {
         return employeeName;
     }
 
-    /**
-     * @param employeeName the employeeName to set
-     */
     public void setEmployeeName(final String employeeName) {
         this.employeeName = employeeName;
     }
 
-    /**
-     * @return the designation
-     */
     public String getDesignation() {
         return designation;
     }
 
-    /**
-     * @param designation the designation to set
-     */
     public void setDesignation(final String designation) {
         this.designation = designation;
     }
 
-    /**
-     * @return the worksService
-     */
     public WorksService getWorksService() {
         return worksService;
     }
 
-    /**
-     * @param worksService the worksService to set
-     */
     public void setWorksService(final WorksService worksService) {
         this.worksService = worksService;
     }
@@ -1081,16 +1048,6 @@ public class AbstractEstimateAction extends BaseFormAction {
 
     public void setCommonsService(final CommonsService commonsService) {
         this.commonsService = commonsService;
-    }
-
-    public Date getFinancialYearStartDate() {
-        financialYearStartDate = commonsService.getFinancialYearByFinYearRange(
-                worksService.getWorksConfigValue("FINANCIAL_YEAR_RANGE")).getStartingDate();
-        return financialYearStartDate;
-    }
-
-    public void setFinancialYearStartDate(final Date financialYearStartDate) {
-        this.financialYearStartDate = financialYearStartDate;
     }
 
     public Integer getApproverUserId() {

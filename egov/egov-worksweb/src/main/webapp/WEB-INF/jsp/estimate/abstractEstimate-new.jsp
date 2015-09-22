@@ -40,7 +40,7 @@
 <%@ include file="/includes/taglibs.jsp" %> 
 <html>
 <title><s:text name='page.title.estimate'/></title>
-<body onload="showHideMap();loadWorkType();loadDepositDetails();setCurrentdate();refreshInbox();noBack();" onpageshow="if(event.persisted) noBack();" onunload="" class="yui-skin-sam">
+<body onload="showHideMap();setCurrentdate();refreshInbox();noBack();" onpageshow="if(event.persisted) noBack();" onunload="" class="yui-skin-sam">
 <script src="<egov:url path='resources/js/works.js'/>"></script>
 <script src="../resources/js/jquery-1.7.2.min.js"></script>
 <script>
@@ -59,46 +59,7 @@ designationLoadFailureHandler= function(){
     dom.get("errorstyle").style.display='';
 	document.getElementById("errorstyle").innerHTML='Unable to load designation';
 }
-function loadWorkType(){
-	<s:if test="applicationRequest.rateContract!=null && applicationRequest.rateContract.indent!=null && applicationRequest.rateContract.indent.typeOfWork!=null">
-		<s:if test="%{(sourcepage=='inbox' || sourcepage=='roadCutDepositWorks')}">
-			dom.get("parentCategory").value="<s:property value='applicationRequest.rateContract.indent.typeOfWork.id' />";
-			dom.get("parentCategory").disabled=true;
 
-			<s:if test="applicationRequest.rateContract.indent.subTypeOfWork!=null">
-				dom.get("category").value="<s:property value='applicationRequest.rateContract.indent.subTypeOfWork.id' />";
-				dom.get("category").disabled=true;
-			</s:if>	
-		</s:if>
-	</s:if>
-}
-
-function loadDepositDetails(){
-	<s:if test="applicationRequest.depositWorksCategory==@org.egov.works.models.depositWorks.DepositWorksCategory@OTHERS || applicationRequest.depositWorksCategory==@org.egov.works.models.depositWorks.DepositWorksCategory@REPAIRSANDMAINTENANCE || applicationRequest.depositWorksCategory==@org.egov.works.models.depositWorks.DepositWorksCategory@EMERGENCYCUT" >
-		<s:if test="%{(sourcepage=='roadCutDepositWorks' || mode=='roadCutDepositWorks')}">
-			dom.get("fundSource").value="<s:property value='appDetail.depositCode.fundSource.id' />";
-			dom.get("depCode").value="<s:property value='appDetail.depositCode.code' />";
-			dom.get("depWrksName").value="<s:property value='appDetail.depositCode.codeName' />";
-			dom.get("depFundName").value="<s:property value='appDetail.depositCode.fund.name' />";
-			dom.get("depId").value="<s:property value='appDetail.depositCode.id' />";
-			dom.get("fundSource").disabled=true;
-			dom.get("depCode").disabled=true;
-			dom.get("depWrksName").disabled=true;
-			dom.get("depFundName").disabled=true;
-		</s:if>
-		<s:elseif test="%{(depositCode!=null && roadCutDepCodeFlag=='true')}">
-			dom.get("fundSource").value="<s:property value='depositCode.fundSource.id' />";
-			dom.get("depCode").value="<s:property value='depositCode.code' />";
-			dom.get("depWrksName").value="<s:property value='depositCode.codeName' />";
-			dom.get("depFundName").value="<s:property value='depositCode.fund.name' />";
-			dom.get("depId").value="<s:property value='depositCode.id' />";
-			dom.get("fundSource").disabled=true;
-			dom.get("depCode").disabled=true;
-			dom.get("depWrksName").disabled=true;
-			dom.get("depFundName").disabled=true;
-		</s:elseif>
-	</s:if>	
-}
 function showHideMap()
 {
 	var lat = document.getElementById("latitude").value ;
@@ -161,27 +122,23 @@ function showSORTab(){
   hideHeaderTab();
   hideOverheadsTab();
   hideAssetTab();
-  $('doc_div').hide();
-  setCSSClasses('assetTab','');
+  setCSSClasses('assetTab','Last');
   setCSSClasses('sorTab','Active');
   setCSSClasses('headerTab','First BeforeActive');
   setCSSClasses('overheadsTab','');
-  setCSSClasses('docTab','Last');   
   disableTables();
 }
 
 function showHeaderTab(){
   var hiddenid = document.forms[0].id.value;
   document.getElementById('estimate_header').style.display='';
-  setCSSClasses('assetTab','');
-  setCSSClasses('docTab','Last');  
+  setCSSClasses('assetTab','Last');
   setCSSClasses('sorTab','');
   setCSSClasses('headerTab','First Active');
   setCSSClasses('overheadsTab','');
   hideSORTab();
   hideOverheadsTab();
   hideAssetTab();
-  $('doc_div').hide();
   disableTables();
 }
 
@@ -201,11 +158,9 @@ function showOverheadsTab(){
     setCSSClasses('headerTab','First');
     setCSSClasses('sorTab','BeforeActive');
     setCSSClasses('overheadsTab','Active');
-	setCSSClasses('assetTab','');
-	setCSSClasses('docTab','Last');
+	setCSSClasses('assetTab','Last');
 	document.getElementById('overheadsHeaderTable').style.display='';
     document.getElementById('overheadTable').style.display='';
-    $('doc_div').hide();
     disableTables();    
 }
 
@@ -223,13 +178,11 @@ function showAssetTab(){
     setCSSClasses('sorTab','');
     
     setCSSClasses('overheadsTab','BeforeActive');
-    setCSSClasses('assetTab','Active');
-	setCSSClasses('docTab','Last');
+    setCSSClasses('assetTab','Last Active ActiveLast');
     
    
 	document.getElementById('assetsHeaderTable').style.display='';
     document.getElementById('assetTable').style.display='';
-    $('doc_div').hide();
 	setAssetTableMessage();
 	disableTables();    
 	makeAssetClickable();
@@ -252,31 +205,6 @@ function hideAssetTab(){
   document.getElementById('assetTable').style.display='none';
   document.getElementById('estimate_asset').style.display='none';
 }
-
-var htmldefault ='';
-function showDocTab() {
-	document.getElementById('estimate_asset').style.display='';
-    setCSSClasses('headerTab','First');
-    setCSSClasses('sorTab','');    
-    setCSSClasses('overheadsTab','');
-    setCSSClasses('assetTab','BeforeActive');    
-    setCSSClasses('docTab','Last Active ActiveLast');    
-   
-   	hideHeaderTab();
-  	hideOverheadsTab();
-  	hideAssetTab();
-  	hideSORTab();
-  	
-	disableTables();
-	if(htmldefault =='' && $F('documentId')!='') {
-		myEditor.setEditorHTML(unescape($F('documentId')));
-		//$('msgpost_toolbar').insert({bottom:$('printButton')});
-		htmldefault = 'initialized';
-	}
-	
-	$('doc_div').show();
-}
-
 
 function setCSSClasses(id,classes){
     document.getElementById(id).setAttribute('class',classes);
@@ -320,15 +248,9 @@ function setCurrentdate(){
 		document.getElementById('estimateDate').value='<%=new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())%>';
 	}else{	
 		document.getElementById('estimateDate').value=estdate;
-	}
-	
-	if(htmldefault =='' && $F('documentId')!='') {
-		myEditor.setEditorHTML(unescape($F('documentId')));
-		//$('msgpost_toolbar').insert({bottom:$('printButton')});
-		htmldefault = 'initialized';
-	}
-		
+	}		
 }
+
 function validateCancel() {
 	var msg='<s:text name="estimate.cancel.confirm"/>';
 	var estNo='<s:property value="model.estimateNumber"/>';
@@ -414,14 +336,7 @@ jq(document).on('click', '#woView', function(){
 <s:if test="%{model.estimateNumber!=null}">
 	<s:hidden name="id"/>
 	</s:if>
-<s:if test="applicationRequest.depositWorksCategory==@org.egov.works.models.depositWorks.DepositWorksCategory@OTHERS || applicationRequest.depositWorksCategory==@org.egov.works.models.depositWorks.DepositWorksCategory@REPAIRSANDMAINTENANCE || applicationRequest.depositWorksCategory==@org.egov.works.models.depositWorks.DepositWorksCategory@EMERGENCYCUT">	
-	<s:if test="%{(sourcepage=='roadCutDepositWorks' || model.depositCode!=null)}">	
-		<s:hidden name="depositCode.id" id="depId"/>
-	</s:if>
-</s:if>	
-
 <s:hidden name="mode" id="mode"/>
-<s:hidden name="appDetailsId" id="appDetailsId"/> 
 <s:hidden name="isAllowEstDateModify" id="isAllowEstDateModify"/> 
 <div class="formmainbox"><div class="insidecontent">
   <div class="rbroundbox2">
@@ -477,9 +392,8 @@ jq(document).on('click', '#woView', function(){
 				<ul id="Tabs">
 					<li id="headerTab" class="First Active"><a id="header_1" href="#" onclick="showHeaderTab();">Header</a></li>
 		 			<li id="sorTab" class=""><a id="header_2" href="#" onclick="showSORTab();">Work Details</a></li>					
-					<li id="overheadsTab" class="Befor"><a id="header_4" href="#" onclick="showOverheadsTab();">Overheads</a></li>
-					<li id="assetTab" class="Befor"><a id="header_4" href="#" onclick="showAssetTab();">Asset Info</a></li>
-					<li id="docTab" class="Last"><a id="header_5" href="#" onclick="showDocTab();">Enclosures</a></li>
+					<li id="overheadsTab" class="Befor"><a id="header_3" href="#" onclick="showOverheadsTab();">Overheads</a></li>
+					<li id="assetTab" class="Last"><a id="header_4" href="#" onclick="showAssetTab();">Asset Info</a></li>
 				</ul>
             </div></td>
           </tr>
@@ -501,10 +415,7 @@ jq(document).on('click', '#woView', function(){
           <tr>
             <td>
             <div id="estimate_header">
-            <%@ include file="estimate-header.jsp"%>
-            <s:if test="%{model.rateContract!=null && model.rateContract.id!=null}">
-				<%@ include file="estimate-rcDetails.jsp"%>
-			</s:if>
+            <%@ include file="estimate-header.jsp"%>            
 			<br />	
             <%@ include file="estimate-multiYearEstimate.jsp"%>  
             </div>            
@@ -517,13 +428,6 @@ jq(document).on('click', '#woView', function(){
                 <%@ include file="estimate-sor.jsp"%>            
             	<%@ include file="estimate-nonSor.jsp"%>
             </div>
-            </td>
-          </tr>
-          <tr>
-            <td>
-	            <div id="doc_div" style="display:none;">
-	            	<%@ include file="abstractEstimate-doctemplate.jsp"%>
-	            </div>
             </td>
           </tr>
         <tr>
@@ -811,17 +715,7 @@ jq(document).on('click', '#woView', function(){
 					document.abstractEstimateForm.depositfolioreportButton.disabled=false;
 				 }	
 			</s:if>
-				
-			/*  <s:if test="%{model.currentState.value=='TECH_SANCTIONED'}"> 
-		         disableTables();
-		 		 document.abstractEstimateForm.budget_appropriation.readonly=false;
-				 document.abstractEstimateForm.budget_appropriation.disabled=false;
-				 document.abstractEstimateForm.reject.readonly=false;
-				 document.abstractEstimateForm.reject.disabled=false;
-				 document.abstractEstimateForm.financialDetailButton.readonly=false;
-				 document.abstractEstimateForm.financialDetailButton.disabled=false;	
-
-			 </s:if>*/
+		
 			 <s:if test="%{model.egwStatus.code=='BUDGETARY_APPROPRIATION_DONE' || model.egwStatus.code=='DEPOSIT_CODE_APPR_DONE' || model.egwStatus.code=='ADMIN_CHECKED'}">
 		          		disableTables();
 		        if(document.abstractEstimateForm.admin_sanction){  		
@@ -862,11 +756,6 @@ jq(document).on('click', '#woView', function(){
 					}
 			  </s:if>
 	 </s:if>
-	/* <s:if test="%{sourcepage=='search' && (model.currentState.value=='FIN_DETAIL_SAVED' || model.currentState.value=='FIN_SANCTIONED' || model.currentState.value=='ADMIN_SANCTIONED')}">
-	    		disableTables();
-				document.abstractEstimateForm.financialDetailButton.readonly=false;
-				document.abstractEstimateForm.financialDetailButton.disabled=false;
-     </s:if>	*/
 		
 	<s:if test="%{model.id==null && model.egwStatus.code=='CREATED'}"> 
 		document.abstractEstimateForm.cancel.visible=false;
@@ -874,9 +763,6 @@ jq(document).on('click', '#woView', function(){
 		document.abstractEstimateForm.BOQxlsButton.visible=false;
 		if(document.getElementById('approverCommentsRow')!=null)
 			document.getElementById('approverCommentsRow').style.display="none";
-	</s:if>
-	<s:if test="%{model.currentState.nextAction=='Pending Admin Sanction'}"> 
-		//enableResolutionFields();
 	</s:if>
 	<s:if test="%{model.id!=null && (model.egwStatus.code=='CREATED' || model.egwStatus.code=='RESUBMITTED')}">
 		if(document.getElementById('approverCommentsRow')!=null)
@@ -911,15 +797,12 @@ jq(document).on('click', '#woView', function(){
 		document.abstractEstimateForm.approverUserId.disabled=false;
 		
   	</s:if>
-<s:if test="%{sourcepage=='search'}">
-		//document.getElementById('save').style.visibility='hidden';
-               // document.getElementById('submit_for_approval').style.visibility='hidden';            
+<s:if test="%{sourcepage=='search'}">          
                var tempEstimateValue=Math.round(eval(document.getElementById("grandTotal").innerHTML)+eval(document.getElementById("nonSorGrandTotal").innerHTML)+eval(document.getElementById("overHeadTotalAmnt").innerHTML));
                document.getElementById("estimateValue").value=roundTo(tempEstimateValue);
                
                 document.getElementById('docViewButton').style.visibility='';
                  document.getElementById('history').style.visibility='';
-               // document.getElementById('cancel').style.visibility='hidden';
                 document.abstractEstimateForm.closeButton.readonly=false;
 		document.abstractEstimateForm.closeButton.disabled=false;
 		 document.abstractEstimateForm.history.readonly=false;
@@ -1077,9 +960,6 @@ jq(document).on('click', '#woView', function(){
 		document.abstractEstimateForm.estimateDate.disabled=true;
 		document.getElementById('estDatePicker').onclick = function(){return false};
 	</s:if>
-	//Disable rcCheckbox if present
-	if(document.getElementById("rcCheckbox"))
-		document.getElementById("rcCheckbox").disabled=true;
 	
 	
 </script>

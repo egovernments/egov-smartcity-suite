@@ -97,7 +97,6 @@ var makeAssetsTable = function() {
 		{key:"SlNo", label:'<s:text name="column.title.SLNo"/>', sortable:false, resizeable:false},
 		{key:"name",label:'<s:text name="column.title.Name"/>', formatter:assetDescTextboxFormatter,sortable:false, resizeable:false},
 		{key:"code",label:'<s:text name="column.title.code"/>', formatter:assetCodeTextboxFormatter,sortable:false, resizeable:false},
-		//{key:'New',label:'<s:text name="column.title.asset.create"/>',formatter:createNewImageFormatter("${pageContext.request.contextPath}")},
 		{key:'Search',label:'<s:text name="column.title.asset.search"/>',formatter:createSearchImageFormatter("${pageContext.request.contextPath}")},
 		{key:'Add',label:'<s:text name="column.title.add"/>',formatter:createAddImageFormatter("${pageContext.request.contextPath}")},
 		{key:'Delete',label:'<s:text name="column.title.delete"/>',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
@@ -141,11 +140,7 @@ var makeAssetsTable = function() {
 		if (column.key == 'Search' && status!='') {
 			window.open("${pageContext.request.contextPath}/../egassets/assetmaster/asset!showSearchPage.action?rowId="+records.getRecordIndex(record)+"&assetStatus="+status,"",
 	 			"height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
-		}
-		/*if (column.key == 'New' && status!='') {
-			window.open("${pageContext.request.contextPath}/../egassets/assetmaster/asset!showCreatePage.action?rowId="+records.getRecordIndex(record)+"&assetStatus="+status,"",
-	 				"height=600,width=600,scrollbars=yes,left=200,top=75,status=yes");	
-		}*/        
+		}    
 	});
 	assetsTable.addRow({SlNo:assetsTable.getRecordSet().getLength()+1});
 }
@@ -285,7 +280,6 @@ jq(document).on('click', '.assetCode', function(){
 		                                    SlNo:'<s:property value="#row_status.count"/>',
 		                                    name:'<s:property value="asset.name"/>',
 		                                    code:'<s:property value="asset.code"/>',
-		                                    //New:createNewImageFormatter("${pageContext.request.contextPath}"),
 		                                    Search:createSearchImageFormatter("${pageContext.request.contextPath}"),
 		                                    Add:createAddImageFormatter("${pageContext.request.contextPath}"),
 		                                    Delete:'X'});
@@ -295,7 +289,6 @@ jq(document).on('click', '.assetCode', function(){
 		                                    SlNo:'<s:property value="#row_status.count"/>',
 		                                    name:'<s:property value="asset.name"/>',
 		                                    code:'<s:property value="asset.code"/>',
-		                                    //New:createNewImageFormatter("${pageContext.request.contextPath}"),
 		                                    Search:createSearchImageFormatter("${pageContext.request.contextPath}"),
 		                                    Add:createAddImageFormatter("${pageContext.request.contextPath}"),
 		                                    Delete:'X'});
