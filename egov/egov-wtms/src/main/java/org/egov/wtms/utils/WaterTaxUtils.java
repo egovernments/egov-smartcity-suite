@@ -66,6 +66,7 @@ import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -118,6 +119,9 @@ public class WaterTaxUtils {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private WaterConnectionDetailsService waterConnectionDetailsService;
 
     public Boolean isSmsEnabled() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -235,7 +239,7 @@ public class WaterTaxUtils {
             final WaterConnectionDetails waterConnectionDetails, final String applicantName) {
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                        waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, null);
+                waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, null);
         return smsMsg;
     }
 
@@ -336,4 +340,16 @@ public class WaterTaxUtils {
                 startDate, PTMODULENAME);
     }
 
+    public Double waterConnectionDue(final long parentId) {
+        Double finalDueAmount = (double) 0;
+        final List<WaterConnectionDetails> waterConnectionDetails = waterConnectionDetailsService
+                .getAllConnectionDetailsByParentConnection(parentId);
+        for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails)
+
+            finalDueAmount = finalDueAmount
+                    + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
+                            .getDemand().getAmtCollected().doubleValue());
+
+        return finalDueAmount;
+    }
 }

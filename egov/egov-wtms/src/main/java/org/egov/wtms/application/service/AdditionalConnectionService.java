@@ -30,8 +30,6 @@
  */
 package org.egov.wtms.application.service;
 
-import java.util.List;
-
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -85,34 +83,21 @@ public class AdditionalConnectionService {
                 validationMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
                         assessmentDetails.getPropertyDetails().getTaxDue().toString(),
                         parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "additional" }, null);
-        } else if (parentWaterConnectionDetail.getDemand().getBaseDemand().doubleValue()
-                - parentWaterConnectionDetail.getDemand().getAmtCollected().doubleValue() > 0) {
-
-            if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(ADDCONNALLOWEDIFWTDUE))
+        } else if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(ADDCONNALLOWEDIFWTDUE)) {
+            if (parentWaterConnectionDetail.getDemand().getBaseDemand().doubleValue()
+                    - parentWaterConnectionDetail.getDemand().getAmtCollected().doubleValue() > 0)
                 validationMessage = messageSource
-                .getMessage("err.validate.primary.connection.watertax.due", null, null);
-        } else if (waterConnectionDue(parentWaterConnectionDetail.getId()) > 0) {
-
-            if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(ADDCONNALLOWEDIFWTDUE))
-                validationMessage = messageSource.getMessage("err.validate.additional.connection.watertax.due", null,
-                        null);
+                        .getMessage("err.validate.primary.connection.watertax.due", null, null);
+            if (parentWaterConnectionDetail.getConnection().getId() != null)
+                if (waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0)
+                    validationMessage = messageSource.getMessage("err.validate.additional.connection.watertax.due",
+                            null, null);
         } else if (null != inWorkflow)
             validationMessage = messageSource.getMessage(
                     "err.validate.addconnection.application.inprocess",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
                             inWorkflow.getApplicationNumber() }, null);
         return validationMessage;
-    }
-
-    public double waterConnectionDue(final long parentId) {
-        double finalDueAmount = 0;
-        final List<WaterConnectionDetails> waterConnectionDetails = waterConnectionDetailsRepository
-                .getAllConnectionDetailsByParentConnection(parentId);
-        for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails)
-            finalDueAmount = finalDueAmount + waterconnectiondetails.getDemand().getBaseDemand().doubleValue()
-                    - waterconnectiondetails.getDemand().getAmtCollected().doubleValue();
-
-        return finalDueAmount;
     }
 
 }

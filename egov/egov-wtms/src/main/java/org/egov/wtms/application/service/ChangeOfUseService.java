@@ -30,8 +30,6 @@
  */
 package org.egov.wtms.application.service;
 
-import java.util.List;
-
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -100,32 +98,21 @@ public class ChangeOfUseService {
                 validationMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
                         assessmentDetails.getPropertyDetails().getTaxDue().toString(),
                         parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "changeOfUsage" }, null);
-        } else if (parentWaterConnectionDetail.getDemand().getBaseDemand().doubleValue()
-                - parentWaterConnectionDetail.getDemand().getAmtCollected().doubleValue() > 0) {
-            if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE))
-                validationMessage = messageSource.getMessage("err.validate.primary.connection.wtdue.forchangeofuse",
-                        null, null);
-        } else if (waterConnectionDue(parentWaterConnectionDetail.getId()) > 0) {
-
-            if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE))
-                validationMessage = messageSource.getMessage("err.validate.additional.connection.wtdue.forchangeofuse",
-                        null, null);
+        } else if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE)) {
+            if (parentWaterConnectionDetail.getDemand().getBaseDemand().doubleValue()
+                    - parentWaterConnectionDetail.getDemand().getAmtCollected().doubleValue() > 0)
+                validationMessage = messageSource
+                        .getMessage("err.validate.primary.connection.wtdue.forchangeofuse", null, null);
+            if (parentWaterConnectionDetail.getConnection().getId() != null)
+                if (waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0)
+                    validationMessage = messageSource.getMessage("err.validate.additional.connection.wtdue.forchangeofuse",
+                            null, null);
         } else if (null != inWorkflow)
             validationMessage = messageSource.getMessage(
                     "err.validate.changeofUse.application.inprocess",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
                             inWorkflow.getApplicationNumber() }, null);
         return validationMessage;
-    }
-
-    public double waterConnectionDue(final long parentId) {
-        double finalDueAmount = 0;
-        final List<WaterConnectionDetails> waterConnectionDetails = waterConnectionDetailsRepository
-                .getAllConnectionDetailsByParentConnection(parentId);
-        for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails)
-            finalDueAmount = finalDueAmount + waterconnectiondetails.getDemand().getBaseDemand().doubleValue()
-                    - waterconnectiondetails.getDemand().getAmtCollected().doubleValue();
-        return finalDueAmount;
     }
 
     /**
