@@ -43,7 +43,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <div class="row">
 	<div class="col-md-12">
-		<form:form id="hoardingform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="hoarding" commandName="hoarding">
+		<form:form id="hoardingform" method="post" class="form-horizontal form-groups-bordered" 
+		modelAttribute="hoarding" commandName="hoarding" enctype="multipart/form-data">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<ul class="nav nav-tabs" id="settingstab">
@@ -57,8 +58,6 @@
 			<div class="panel-body custom-form">
 				<div class="tab-content">
 					<div class="tab-pane fade active in" id="hoardingdetails">
-						<form role="form" class="form-horizontal form-groups-bordered"
-							action="">
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">Application
 									No<span class="mandatory"></span>
@@ -122,7 +121,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">Advertisement
+								<label class="col-sm-3 control-label text-right">Ad
 									Particulars<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
@@ -215,23 +214,27 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">Length</label>
 								<div class="col-sm-3 add-margin">
-									<input type="text" class="form-control">
+									<form:input type="text" cssClass="form-control" path="length" id="length"/>
+                               		<form:errors path="length" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">Width</label>
 								<div class="col-sm-3 add-margin">
-									<input type="text" class="form-control">
+									<form:input type="text" cssClass="form-control" path="width" id="width"/>
+                               		<form:errors path="width" cssClass="error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">Breadth</label>
 								<div class="col-sm-3 add-margin">
-									<input type="text" class="form-control">
+									<form:input type="text" cssClass="form-control" path="breadth" id="breadth"/>
+                               		<form:errors path="breadth" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">Total
 									Height of Structure<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<input type="text" class="form-control">
+									<form:input type="text" cssClass="form-control" path="totalHeight" id="totalHeight" required="required"/>
+                               		<form:errors path="totalHeight" cssClass="error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -260,7 +263,8 @@
 								<label class="col-sm-2 control-label text-right">Address<span
 									class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
-									<textarea class="form-control" cols="" rows=""></textarea>
+									<form:textarea path="address" cols="5" rows="2" class="form-control"  required="required" minlength="5" maxlength="512"/>
+                               		<form:errors path="address" cssClass="error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -273,29 +277,43 @@
 								<label class="col-sm-2 control-label text-right">Ward<span
 									class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
-									<select class="form-control"><option>select
-											from below</option></select>
+									<form:select path="adminBoundry" id="adminBoundry" cssClass="form-control" cssErrorClass="form-control error" required="required">
+										<form:option value=""><spring:message code="lbl.select" /></form:option>
+										<form:options items="${zones}" itemLabel="name" itemValue="id"/>
+									</form:select>
+									<form:errors path="rateClass" cssClass="error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">Class<span
 									class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
-									<input type="text" class="form-control" required>
+									<form:select path="rateClass" id="rateClass" cssClass="form-control" cssErrorClass="form-control error" required="required">
+										<form:option value=""><spring:message code="lbl.select" /></form:option>
+										<form:options items="${rateClasses}" itemLabel="description" itemValue="id"/>
+									</form:select>
+									<form:errors path="rateClass" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">TPBO/RI
 									No</label>
 								<div class="col-sm-3 add-margin">
-									<input type="text" class="form-control">
+									<form:select path="revenueInspector" id="revenueInspector" cssClass="form-control" cssErrorClass="form-control error">
+										<form:option value=""><spring:message code="lbl.select" /></form:option>
+										<form:options items="${revenueInspectors}" itemLabel="name" itemValue="id"/>
+									</form:select>
+									<form:errors path="revenueInspector" cssClass="error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">Duration
-									of Advertisement<span class="mandatory"></span>
+									of Ad<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<select class="form-control"><option>select
-											from below</option></select>
+									<form:select path="advertisementDuration" id="advertisementDuration" cssClass="form-control" cssErrorClass="form-control error" required="required">
+										<form:option value=""><spring:message code="lbl.select" /></form:option>
+										<form:options items="${advertisementDuration}"/>
+									</form:select>
+									<form:errors path="advertisementDuration" cssClass="error-msg" />
 								</div>
 							</div>
 							<div class="panel-heading custom_form_panel_heading">
@@ -305,104 +323,60 @@
 								<label class="col-sm-3 control-label text-right">Tax<span
 									class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
-									<input type="text" class="form-control" required>
+									<form:input type="text" cssClass="form-control" path="taxAmount" id="taxAmount" required="required"/>
+                               		<form:errors path="taxAmount" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">Encroachment
 									Fees<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<input type="text" class="form-control" required>
+									<form:input type="text" cssClass="form-control" path="encroachmentFee" id="encroachmentFee" required="required"/>
+                               		<form:errors path="encroachmentFee" cssClass="error-msg" />
 								</div>
 							</div>
-							<div class="panel-heading custom_form_panel_heading">
-								<div class="panel-title">Attach Documents</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-3 add-margin">
-									<input type="file" class="form-control" required>
-								</div>
-								<div class="col-sm-3 add-margin" style="cursor: pointer;">
-									<div class="rounded-circle add-icon-attachment add-attachment">
-										<i class="fa fa-plus"></i>
-									</div>
-								</div>
-							</div>
-						</form>
 					</div>
 					<div class="tab-pane fade" id="hoardingattachments">
-						<form role="form" class="form-horizontal form-groups-bordered"
-							action="">
+						<c:choose>
+							<c:when test="${not empty hoardingDocumentTypes}">
+							<form:hidden path="latitude" id="latitude"/> 
+							<form:hidden path="longitude" id="longitude" /> 
 							<div class="col-sm-12 view-content header-color hidden-xs">
 								<div class="col-sm-1 table-div-column">S.no</div>
 								<div class="col-sm-5 table-div-column">Document Name</div>
-								<div class="col-sm-3 table-div-column">Check List</div>
+								<div class="col-sm-3 table-div-column">Enclosed</div>
 								<div class="col-sm-3 table-div-column">Attach Document</div>
 							</div>
-							<div class="form-group">
-								<div class="col-sm-1 text-center">1</div>
-								<div class="col-sm-5 text-center">Document 1</div>
-								<div class="col-sm-3 text-center">
-									<input type="checkbox" required>
+							
+							<c:forEach var="docs" items="${hoardingDocumentTypes}" varStatus="status">	
+								<div class="form-group">
+									<div class="col-sm-1 text-center">${status.index+1}</div>
+									<div class="col-sm-5 text-center">${docs.mandatory ? "<span
+									class='mandatory'></span>" : ""}${docs.name}
+									</div>
+									<div class="col-sm-3 text-center">
+										<input type="checkbox" name="documents[${status.index}].enclosed" ${docs.mandatory ? "required='required'" : ""}>
+									</div>
+									<div class="col-sm-3 text-center">
+										<input type="file" name="documents[${status.index}].attachments" class="form-control" ${docs.mandatory ? "required='required'" : ""}>
+										<form:errors path="documents[${status.index}].attachments" cssClass="add-margin error-msg" />
+										<form:hidden path="documents[${status.index}].doctype" value="${docs.id}" /> 
+									</div>
 								</div>
-								<div class="col-sm-3 text-center">
-									<input type="file" class="form-control" required>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-1 text-center">2</div>
-								<div class="col-sm-5 text-center">Document 2</div>
-								<div class="col-sm-3 text-center">
-									<input type="checkbox" required>
-								</div>
-								<div class="col-sm-3 text-center">
-									<input type="file" class="form-control" required>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-1 text-center">3</div>
-								<div class="col-sm-5 text-center">Document 3</div>
-								<div class="col-sm-3 text-center">
-									<input type="checkbox" required>
-								</div>
-								<div class="col-sm-3 text-center">
-									<input type="file" class="form-control" required>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-1 text-center">4</div>
-								<div class="col-sm-5 text-center">Document 4</div>
-								<div class="col-sm-3 text-center">
-									<input type="checkbox" required>
-								</div>
-								<div class="col-sm-3 text-center">
-									<input type="file" class="form-control" required>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-1 text-center">5</div>
-								<div class="col-sm-5 text-center">Document 5</div>
-								<div class="col-sm-3 text-center">
-									<input type="checkbox" required>
-								</div>
-								<div class="col-sm-3 text-center">
-									<input type="file" class="form-control" required>
-								</div>
-							</div>
-						</form>
+							</c:forEach> 
+							</c:when>
+						</c:choose>
 					</div>
 				</div>
 			</div>
 
 		</div>
-
 		<div class="text-center">
-			<button type="submit" class="btn btn-primary">Submit</button>
-			<button type="button" class="btn btn-default"
-				onclick="window.location.reload()">Reset</button>
-			<button type="button" class="btn btn-default" data-dismiss="modal"
-				onclick="window.close();">Close</button>
+			<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
+			<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+		    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 		</div>
 	</form:form>
 	</div>
 </div>
+<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/app/js/hoarding.js'/>"></script>

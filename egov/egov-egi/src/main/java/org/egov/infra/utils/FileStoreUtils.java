@@ -32,16 +32,22 @@ package org.egov.infra.utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class FileStoreUtils {
@@ -67,4 +73,21 @@ public class FileStoreUtils {
         }
     }
 
+    public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files, final String moduleName) {
+        if (ArrayUtils.isNotEmpty(files))
+            return Arrays
+                    .asList(files)
+                    .stream()
+                    .filter(file -> !file.isEmpty())
+                    .map(file -> {
+                        try {
+                            return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                                    file.getContentType(), moduleName);
+                        } catch (final Exception e) {
+                            throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
+                        }
+                    }).collect(Collectors.toSet());
+        else
+            return null;
+    }
 }

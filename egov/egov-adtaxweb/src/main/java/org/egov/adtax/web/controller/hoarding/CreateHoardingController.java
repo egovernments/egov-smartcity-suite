@@ -48,31 +48,52 @@ import javax.validation.Valid;
 
 import org.egov.adtax.entity.Hoarding;
 import org.egov.adtax.entity.HoardingCategory;
+import org.egov.adtax.entity.HoardingDocumentType;
+import org.egov.adtax.entity.RatesClass;
+import org.egov.adtax.entity.RevenueInspector;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.UnitOfMeasure;
 import org.egov.adtax.service.HoardingCategoryService;
+import org.egov.adtax.service.HoardingDocumentTypeService;
+import org.egov.adtax.service.HoardingService;
+import org.egov.adtax.service.RatesClassService;
+import org.egov.adtax.service.RevenueInspectorService;
 import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.service.UnitOfMeasureService;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.utils.FileStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/hoarding")
 public class CreateHoardingController {
 
-    @Autowired
-    private HoardingCategoryService hoardingCategoryService;
+    private @Autowired HoardingService hoardingService;
+    
+    private @Autowired HoardingCategoryService hoardingCategoryService;
 
-    @Autowired
-    private UnitOfMeasureService unitOfMeasureService;
+    private @Autowired UnitOfMeasureService unitOfMeasureService;
 
-    @Autowired
-    private SubCategoryService subCategoryService;
+    private @Autowired SubCategoryService subCategoryService;
+    
+    private @Autowired RevenueInspectorService revenueInspectorService;
 
+    private @Autowired RatesClassService ratesClassService;
+    
+    private @Autowired HoardingDocumentTypeService hoardingDocumentTypeService;
+    
+    private @Autowired FileStoreUtils fileStoreUtils;
+    
+    private @Autowired BoundaryService boundaryService;
+    
     @ModelAttribute
     public Hoarding hoarding() {
         return new Hoarding();
@@ -88,6 +109,26 @@ public class CreateHoardingController {
         return unitOfMeasureService.getAllActiveUnitOfMeasure();
     }
     
+    @ModelAttribute("revenueInspectors")
+    public List<RevenueInspector> revenueInspectors() {
+        return revenueInspectorService.findAllActiveRevenueInspectors();
+    }
+    
+    @ModelAttribute("rateClasses")
+    public List<RatesClass> rateClasses() {
+        return ratesClassService.getAllActiveRatesClass();
+    }
+    
+    @ModelAttribute("hoardingDocumentTypes")
+    public List<HoardingDocumentType> hoardingDocumentTypes() {
+        return hoardingDocumentTypeService.getAllDocumentTypes();
+    }
+    
+    @ModelAttribute("zones")
+    public List<Boundary> getZones() {
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", "ADMINISTRATION");
+    }
+    
     @RequestMapping(value="subcategories", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<SubCategory> hoardingSubcategories(@RequestParam final Long categoryId) {
         return subCategoryService.getAllActiveSubCategoryByCategoryId(categoryId);
@@ -99,7 +140,18 @@ public class CreateHoardingController {
     }
 
     @RequestMapping(value = "create", method = POST)
-    public String createHoarding(@Valid @ModelAttribute final Hoarding hoarding) {
-        return "create-hoarding";
+    public String createHoarding(@Valid @ModelAttribute final Hoarding hoarding, final BindingResult resultBinder, final RedirectAttributes redirectAttributes) {
+        if (resultBinder.hasErrors()) {
+            return "hoarding-create";
+        }
+        storeHoardingDocuments(hoarding);
+        hoardingService.createHoarding(hoarding);
+        return "redirect:/hoarding/create";
+    }
+    
+    private void storeHoardingDocuments(Hoarding hoarding) {
+        hoarding.getDocuments().forEach(document -> {
+            document.setFiles(fileStoreUtils.addToFileStore(document.getAttachments(), "ADTAX"));
+        });
     }
 }

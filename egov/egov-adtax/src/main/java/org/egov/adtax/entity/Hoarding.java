@@ -38,9 +38,9 @@
  */
 package org.egov.adtax.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -61,6 +61,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.egov.adtax.entity.enums.HoardingDuration;
 import org.egov.adtax.entity.enums.HoardingPropertyType;
 import org.egov.adtax.entity.enums.HoardingStatus;
 import org.egov.adtax.entity.enums.HoardingType;
@@ -80,6 +81,7 @@ public class Hoarding extends AbstractAuditable {
 
     private static final long serialVersionUID = 5612476685142904195L;
     public static final String SEQ_HOARDING = "SEQ_EGADTAX_HOARDING";
+    
     @Id
     @GeneratedValue(generator = SEQ_HOARDING, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -179,12 +181,12 @@ public class Hoarding extends AbstractAuditable {
     private RevenueInspector revenueInspector;
 
     @ManyToOne
-    @JoinColumn(name = "revenueboundary", nullable = false)
+    @JoinColumn(name = "revenueboundary", nullable = true)
     private Boundary revenueBoundary;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "adminBoundry", nullable = false)
+    @JoinColumn(name = "adminBoundry", nullable = true)
     private Boundary adminBoundry;
 
     @NotNull
@@ -193,25 +195,20 @@ public class Hoarding extends AbstractAuditable {
     private String address;
 
     @NotNull
-    @SafeHtml
-    @Length(max = 25)
-    private String advertisementDuration;
+    @Enumerated(EnumType.ORDINAL)
+    private HoardingDuration advertisementDuration;
 
     @ManyToOne
-    @JoinColumn(name = "demandid", nullable = false)
+    @JoinColumn(name = "demandid", nullable = true)
     private EgDemand demandId;
 
+    private double longitude;
+    
+    private double latitude;
+    
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinTable(name = "egadtax_hoarding_docs", joinColumns = @JoinColumn(name = "hoarding") , inverseJoinColumns = @JoinColumn(name = "document") )
-    private Set<HoardingDocument> documents = new HashSet<>();
-
-    public Set<HoardingDocument> getDocuments() {
-        return documents;
-    }
-
-    public void setDocuments(final Set<HoardingDocument> documents) {
-        this.documents = documents;
-    }
+    private List<HoardingDocument> documents = new ArrayList<>();
 
     @Override
     public Long getId() {
@@ -447,11 +444,11 @@ public class Hoarding extends AbstractAuditable {
         this.address = address;
     }
 
-    public String getAdvertisementDuration() {
+    public HoardingDuration getAdvertisementDuration() {
         return advertisementDuration;
     }
 
-    public void setAdvertisementDuration(final String advertisementDuration) {
+    public void setAdvertisementDuration(final HoardingDuration advertisementDuration) {
         this.advertisementDuration = advertisementDuration;
     }
 
@@ -461,6 +458,30 @@ public class Hoarding extends AbstractAuditable {
 
     public void setDemandId(final EgDemand demandId) {
         this.demandId = demandId;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public List<HoardingDocument> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(final List<HoardingDocument> documents) {
+        this.documents = documents;
     }
 
 }

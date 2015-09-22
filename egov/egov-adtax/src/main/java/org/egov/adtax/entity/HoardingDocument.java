@@ -1,5 +1,4 @@
-/*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -39,11 +38,8 @@
  */
 package org.egov.adtax.entity;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -65,18 +61,21 @@ import javax.persistence.Transient;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.search.annotations.DocumentId;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
-@Table(name = "egadtax_HOARDINGdocument")
+@Table(name = "egadtax_hoardingdocument")
 @SequenceGenerator(name = HoardingDocument.SEQ_HOARDING_DOCUMENT, sequenceName = HoardingDocument.SEQ_HOARDING_DOCUMENT, allocationSize = 1)
 public class HoardingDocument extends AbstractAuditable {
 
     private static final long serialVersionUID = 1938612090916339332L;
     public static final String SEQ_HOARDING_DOCUMENT = "SEQ_EGADTAX_DOCUMENT";
+   
     @Id
     @GeneratedValue(generator = SEQ_HOARDING_DOCUMENT, strategy = GenerationType.SEQUENCE)
     @DocumentId
     private Long id;
+    
     @ManyToOne
     @JoinColumn(name = "doctype")
     private HoardingDocumentType doctype;
@@ -85,18 +84,15 @@ public class HoardingDocument extends AbstractAuditable {
 
     @Temporal(TemporalType.DATE)
     private Date docDate;
+    
     private boolean enclosed;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "EGADTAX_DOCUMENT_FILES", joinColumns = @JoinColumn(name = "document"), inverseJoinColumns = @JoinColumn(name = "filestore"))
+    @JoinTable(name = "EGADTAX_DOCUMENT_FILES", joinColumns = @JoinColumn(name = "document") , inverseJoinColumns = @JoinColumn(name = "filestore") )
     private Set<FileStoreMapper> files = new HashSet<>();
 
     @Transient
-    private List<File> uploads = new ArrayList<>();
-    @Transient
-    private List<String> uploadsFileName = new ArrayList<>();
-    @Transient
-    private List<String> uploadsContentType = new ArrayList<>();
+    private MultipartFile[] attachments;
 
     @Override
     public Long getId() {
@@ -148,28 +144,11 @@ public class HoardingDocument extends AbstractAuditable {
         this.files = files;
     }
 
-    public List<File> getUploads() {
-        return uploads;
+    public MultipartFile[] getAttachments() {
+        return attachments;
     }
 
-    public void setUploads(final List<File> uploads) {
-        this.uploads = uploads;
+    public void setAttachments(final MultipartFile[] attachments) {
+        this.attachments = attachments;
     }
-
-    public List<String> getUploadsFileName() {
-        return uploadsFileName;
-    }
-
-    public void setUploadsFileName(final List<String> uploadsFileName) {
-        this.uploadsFileName = uploadsFileName;
-    }
-
-    public List<String> getUploadsContentType() {
-        return uploadsContentType;
-    }
-
-    public void setUploadsContentType(final List<String> uploadsContentType) {
-        this.uploadsContentType = uploadsContentType;
-    }
-
 }
