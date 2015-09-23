@@ -51,10 +51,8 @@ import java.util.TreeMap;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -109,12 +107,12 @@ public class AssessmentService {
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
-	@Path("/property/{assessmentNumber}")
+	@POST
+	@Path("/property/assessmentDetails")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getAssessmentDetails(@PathParam("assessmentNumber") String assessmentNumber)
+	public String getAssessmentDetails(@FormParam("assessmentNo") String assessmentNo)
 			throws JsonGenerationException, JsonMappingException, IOException {
-		AssessmentDetails assessmentDetail = propertyExternalService.loadAssessmentDetails(assessmentNumber,
+		AssessmentDetails assessmentDetail = propertyExternalService.loadAssessmentDetails(assessmentNo,
 				PropertyExternalService.FLAG_FULL_DETAILS);
 
 		return getJSONResponse(assessmentDetail);
@@ -125,10 +123,6 @@ public class AssessmentService {
 	 * 
 	 * @param assessmentNo
 	 *            - assessment no
-	 * @param username
-	 *            - username credential
-	 * @param password
-	 *            - password credential
 	 * @return
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
@@ -137,12 +131,10 @@ public class AssessmentService {
 	@POST
 	@Path("/property/propertyTaxDetails")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getPropertyTaxDetails(@FormParam("assessmentNo") String assessmentNo,
-			@FormParam("username") String username, @FormParam("password") String password)
-					throws JsonGenerationException, JsonMappingException, IOException {
+	public String getPropertyTaxDetails(@FormParam("assessmentNo") String assessmentNo)
+			throws JsonGenerationException, JsonMappingException, IOException {
 		PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
-		Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		if (isAuthenticatedUser) {
+		if (null != assessmentNo) {
 			propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo);
 		} else {
 			ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
@@ -166,10 +158,6 @@ public class AssessmentService {
 	 *            - owner name
 	 * @param doorNo
 	 *            - door number
-	 * @param username
-	 *            - username credential
-	 * @param password
-	 *            - password credential
 	 * @return
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
@@ -182,21 +170,11 @@ public class AssessmentService {
 			@FormParam("zoneName") String zoneName, @FormParam("wardName") String wardName,
 			@FormParam("blockName") String blockName, @FormParam("ownerName") String ownerName,
 			@FormParam("doorNo") String doorNo, @FormParam("aadhaarNumber") String aadhaarNumber,
-			@FormParam("mobileNumber") String mobileNumber, @FormParam("username") String username,
-			@FormParam("password") String password) throws JsonGenerationException, JsonMappingException, IOException {
-
-		PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
-		List<PropertyTaxDetails> propertyTaxDetailsList = new ArrayList<PropertyTaxDetails>();
-		Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		if (isAuthenticatedUser) {
-			propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(circleName, zoneName, wardName,
-					blockName, ownerName, doorNo, aadhaarNumber, mobileNumber);
-			return getJSONResponse(propertyTaxDetailsList);
-		} else {
-			ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
-			propertyTaxDetails.setErrorDetails(errorDetails);
-			return getJSONResponse(propertyTaxDetails);
-		}
+			@FormParam("mobileNumber") String mobileNumber)
+					throws JsonGenerationException, JsonMappingException, IOException {
+		List<PropertyTaxDetails> propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(circleName,
+				zoneName, wardName, blockName, ownerName, doorNo, aadhaarNumber, mobileNumber);
+		return getJSONResponse(propertyTaxDetailsList);
 	}
 
 	/**
@@ -210,10 +188,6 @@ public class AssessmentService {
 	 *            - total amount paid
 	 * @param paidBy
 	 *            - payer name
-	 * @param username
-	 *            - username credential
-	 * @param password
-	 *            - password credential
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
@@ -225,21 +199,19 @@ public class AssessmentService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String payPropertyTax(@FormParam("assessmentNo") String assessmentNo,
 			@FormParam("paymentMode") String paymentMode, @FormParam("totalAmount") BigDecimal totalAmount,
-			@FormParam("paidBy") String paidBy, @FormParam("username") String username,
-			@FormParam("password") String password) throws JsonGenerationException, JsonMappingException, IOException {
+			@FormParam("paidBy") String paidBy) throws JsonGenerationException, JsonMappingException, IOException {
 		String responseJson = new String();
-		Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		if (isAuthenticatedUser) {
-			ErrorDetails errorDetails = propertyExternalService.validatePaymentDetails(assessmentNo, paymentMode,
+
+		ErrorDetails errorDetails = propertyExternalService.validatePaymentDetails(assessmentNo, paymentMode,
+				totalAmount, paidBy);
+		if (null != errorDetails) {
+			responseJson = getJSONResponse(errorDetails);
+		} else {
+			ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(assessmentNo, paymentMode,
 					totalAmount, paidBy);
-			if (null != errorDetails) {
-				responseJson = getJSONResponse(errorDetails);
-			} else {
-				ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(assessmentNo, paymentMode,
-						totalAmount, paidBy, username, password);
-				responseJson = getJSONResponse(receiptDetails);
-			}
+			responseJson = getJSONResponse(receiptDetails);
 		}
+
 		return responseJson;
 	}
 
@@ -254,10 +226,6 @@ public class AssessmentService {
 	 *            - total amount paid
 	 * @param paidBy
 	 *            - payer's name
-	 * @param username
-	 *            - username credential
-	 * @param password
-	 *            - password credential
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
@@ -268,227 +236,134 @@ public class AssessmentService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public String payWateTax(@FormParam("consumerNo") String consumerNo, @FormParam("paymentMode") String paymentMode,
-			@FormParam("totalAmount") BigDecimal totalAmount, @FormParam("paidBy") String paidBy,
-			@FormParam("username") String username, @FormParam("password") String password)
+			@FormParam("totalAmount") BigDecimal totalAmount, @FormParam("paidBy") String paidBy)
 					throws JsonGenerationException, JsonMappingException, IOException {
 		ErrorDetails errorDetails = propertyExternalService.validatePaymentDetails(consumerNo, paymentMode, totalAmount,
 				paidBy);
 		if (null != errorDetails) {
 			return getJSONResponse(errorDetails);
 		} else {
-			errorDetails = propertyExternalService.payWaterTax(consumerNo, paymentMode, totalAmount, paidBy, username,
-					password);
+			errorDetails = propertyExternalService.payWaterTax(consumerNo, paymentMode, totalAmount, paidBy);
 			return getJSONResponse(errorDetails);
 		}
 	}
 
 	/**
 	 * This method is used to get the property type master details
-	 * 
-	 * @param username
-	 *            - username credential
-	 * @param password
-	 *            - password credential
+	 *
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/property/ownershipCategories")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getOwnershipCategories() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> propTypeMasterDetailsList = null;
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			propTypeMasterDetailsList = propertyExternalService.getPropertyTypeMasterDetails();
-			responseJson = getJSONResponse(propTypeMasterDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+		List<MasterCodeNamePairDetails> propTypeMasterDetailsList = propertyExternalService
+				.getPropertyTypeMasterDetails();
+		return getJSONResponse(propTypeMasterDetailsList);
 	}
-	
-	//TODO : Need to check again
-	@GET
-	@Path("/property/ownershipCategoryByCode/{ownershipCategoryCode}")
+
+	@POST
+	@Path("/property/ownershipCategoryByCode")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getOwnershipCategoryByCode(@PathParam("ownershipCategoryCode") String ownershipCategoryCode)
-					throws JsonGenerationException, JsonMappingException, IOException {
-		PropertyTypeMaster propertyTypeMaster = null;
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			propertyTypeMaster = propertyExternalService.getPropertyTypeMasterByCode(ownershipCategoryCode);
-			responseJson = getJSONResponse(propertyTypeMaster);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+	public String getOwnershipCategoryByCode(@FormParam("ownershipCategoryCode") String ownershipCategoryCode)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		PropertyTypeMaster propertyTypeMaster = propertyExternalService
+				.getPropertyTypeMasterByCode(ownershipCategoryCode);
+		return getJSONResponse(propertyTypeMaster);
 	}
 
 	/**
-	 * This method is used to get the property type based one category
+	 * This method is used to get the property type based on ownership category
 	 * 
 	 * @param categoryCode
 	 *            - property category code
-	 * @param username
-	 *            - username credential
-	 * @param password
-	 *            - password credential
 	 * @return
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
-	@Path("/property/propertyTypes/{ownershipCategoryCode}")
+	@POST
+	@Path("/property/propertyTypesByOwnership")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getPropertyTypeCategoryDetails(@PathParam("ownershipCategoryCode") String ownershipCategoryCode)
-					throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = null;
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getPropertyTypeCategoryDetails(ownershipCategoryCode);
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+	public String getPropertyTypeCategoryDetails(@FormParam("ownershipCategoryCode") String ownershipCategoryCode)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
+				.getPropertyTypeCategoryDetails(ownershipCategoryCode);
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
-	
-	@GET
+
+	/**
+	 * This method is used to get the property type based one category
+	 * 
+	 * @return
+	 * @throws JsonGenerationException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	@POST
 	@Path("/property/propertyTypes")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getPropertyTypes()
-					throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = null;
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getPropertyTypes();
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+	public String getPropertyTypes() throws JsonGenerationException, JsonMappingException, IOException {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getPropertyTypes();
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
 
 	/**
 	 * This method is used to get all the apartments and complexes.
 	 * 
-	 * @param username
-	 *            - username credential
-	 * @param password
-	 *            - password credential
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/property/apartments")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getApartmentsAndComplexes() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = null;
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getApartmentsAndComplexes();
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
+				.getApartmentsAndComplexes();
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
 
 	/**
 	 * This method is used to get reasons for create the property.
-	 * 
-	 * @param username
-	 *            - username credential
-	 * @param password
-	 *            - password credential
+	 *
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/property/createPropertyReasons")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getCreatePropertyReasons() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = null;
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getReasonsForCreateProperty();
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
+				.getReasonsForCreateProperty();
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
 
 	/**
 	 * This method is used to get all localities.
-	 * 
-	 * @param username
-	 *            - username credential
-	 * @param password
-	 *            - password credential
+	 *
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/property/localities")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getLocalities()
-			throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = null;
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getLocalities();
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+	public String getLocalities() throws JsonGenerationException, JsonMappingException, IOException {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getLocalities();
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
 
 	/**
 	 * This method is used to get all localities.
-	 * 
-	 * @param username
-	 *            - username credential
-	 * @param password
-	 *            - password credential
+	 *
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
@@ -497,349 +372,180 @@ public class AssessmentService {
 	@POST
 	@Path("/property/boundaryByLocalityCode")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getBoundaryByLocalityCode(@FormParam("localityCode") String localityCode,
-			@FormParam("username") String username, @FormParam("password") String password)
-					throws JsonGenerationException, JsonMappingException, IOException {
-		LocalityDetails localityDetails = null;
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		if (isAuthenticatedUser) {
-			localityDetails = propertyExternalService.getLocalityDetailsByLocalityCode(localityCode);
-			responseJson = getJSONResponse(localityDetails);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+	public String getBoundaryByLocalityCode(@FormParam("localityCode") String localityCode)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		LocalityDetails localityDetails = propertyExternalService.getLocalityDetailsByLocalityCode(localityCode);
+		return getJSONResponse(localityDetails);
 	}
 
 	/**
 	 * This method is used to get all list of all the election wards.
-	 * 
-	 * @param username
-	 *            - usernam credential
-	 * @param password
-	 *            - password credential
+	 *
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/property/electionWards")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getElectionWards()
-			throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getElectionBoundaries();
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+	public String getElectionWards() throws JsonGenerationException, JsonMappingException, IOException {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getElectionBoundaries();
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
 
 	/**
 	 * This method is used to get all list of all the enumeration blocks.
-	 * 
-	 * @param username
-	 *            - usernam credential
-	 * @param password
-	 *            - password credential
+	 *
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/property/enumerationBlocks")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getEnumerationBlocks()
-			throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getEnumerationBlocks();
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+	public String getEnumerationBlocks() throws JsonGenerationException, JsonMappingException, IOException {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getEnumerationBlocks();
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
 
 	/**
 	 * This method is used to get all types of floors.
-	 * 
-	 * @param username
-	 *            - usernam credential
-	 * @param password
-	 *            - password credential
+	 *
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/property/floorTypes")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getFloorTypes()
-			throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getFloorTypes();
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+	public String getFloorTypes() throws JsonGenerationException, JsonMappingException, IOException {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getFloorTypes();
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
 
 	/**
 	 * This method is used to get all type of roofs.
-	 * 
-	 * @param username
-	 *            - usernam credential
-	 * @param password
-	 *            - password credential
+	 *
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/property/roofTypes")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getRoofTypes()
-			throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getRoofTypes();
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+	public String getRoofTypes() throws JsonGenerationException, JsonMappingException, IOException {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getRoofTypes();
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
 
 	/**
 	 * This method is used to get all list of all type of walls.
-	 * 
-	 * @param username
-	 *            - usernam credential
-	 * @param password
-	 *            - password credential
+	 *
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/property/wallTypes")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getWallTypes()
-			throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getWallTypes();
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+	public String getWallTypes() throws JsonGenerationException, JsonMappingException, IOException {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getWallTypes();
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
 
 	/**
 	 * This method is used to get all list of all type of woods
-	 * 
-	 * @param username
-	 *            - usernam credential
-	 * @param password
-	 *            - password credential
+	 *
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/property/woodTypes")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getWoodTypes()
-			throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getWoodTypes();
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+	public String getWoodTypes() throws JsonGenerationException, JsonMappingException, IOException {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getWoodTypes();
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
 
 	/**
 	 * This method is used to get all list of floor numbers.
-	 * 
-	 * @param username
-	 *            - usernam credential
-	 * @param password
-	 *            - password credential
+	 *
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/property/floors")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getFloors()
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String getFloors() throws JsonGenerationException, JsonMappingException, IOException {
 		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			TreeMap<Integer, String> floorMap = PropertyTaxConstants.FLOOR_MAP;
-			
-			Set<Integer> keys = floorMap.keySet();
-			for (Integer key : keys) {
-				MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
-				mstrCodeNamePairDetails.setCode(key.toString());
-				mstrCodeNamePairDetails.setName(floorMap.get(key));
-				mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
-			}
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
+		TreeMap<Integer, String> floorMap = PropertyTaxConstants.FLOOR_MAP;
+		Set<Integer> keys = floorMap.keySet();
+		for (Integer key : keys) {
+			MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+			mstrCodeNamePairDetails.setCode(key.toString());
+			mstrCodeNamePairDetails.setName(floorMap.get(key));
+			mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
 		}
-		return responseJson;
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
 
 	/**
 	 * This method is used to get all classifications of the property
-	 * structutres.
+	 * structures.
 	 * 
-	 * @param username
-	 *            - usernam credential
-	 * @param password
-	 *            - password credential
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/property/propertyClassifications")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getPropertyClassifications() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getBuildingClassifications();
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
+				.getBuildingClassifications();
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
 
 	/**
 	 * This method is used to get nature of usages of the property.
 	 * 
-	 * @param username
-	 *            - usernam credential
-	 * @param password
-	 *            - password credential
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/property/propertyUsages")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getPropertUsages()
-			throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getNatureOfUsages();
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+	public String getPropertUsages() throws JsonGenerationException, JsonMappingException, IOException {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getNatureOfUsages();
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
 
 	/**
 	 * This method is used to get all list of occupancies.
 	 * 
-	 * @param username
-	 *            - usernam credential
-	 * @param password
-	 *            - password credential
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/property/occupancyTypes")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getOccupancyTypes()
-			throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getOccupancies();
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+	public String getOccupancyTypes() throws JsonGenerationException, JsonMappingException, IOException {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getOccupancies();
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
 
 	/**
@@ -854,93 +560,50 @@ public class AssessmentService {
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/property/exemptionCategories")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getTaxExemptionCategories() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getExemptionCategories();
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getExemptionCategories();
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
 
 	/**
 	 * This method is used to get drainages.
 	 * 
-	 * @param username
-	 *            - usernam credential
-	 * @param password
-	 *            - password credential
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/property/drainages")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getDrainages()
-			throws JsonGenerationException, JsonMappingException, IOException {
-
+	public String getDrainages() throws JsonGenerationException, JsonMappingException, IOException {
 		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			for (DrainageEnum drngEnum : DrainageEnum.values()) {
-				MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
-				mstrCodeNamePairDetails.setCode(drngEnum.getCode());
-				mstrCodeNamePairDetails.setName(drngEnum.name());
-				mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
-			}
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
+		for (DrainageEnum drngEnum : DrainageEnum.values()) {
+			MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+			mstrCodeNamePairDetails.setCode(drngEnum.getCode());
+			mstrCodeNamePairDetails.setName(drngEnum.name());
+			mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
 		}
-		return responseJson;
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
 
 	/**
 	 * This method is used to get all approver departments.
 	 * 
-	 * @param username
-	 *            - usernam credential
-	 * @param password
-	 *            - password credential
 	 * @return responseJson - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/property/approverDepartments")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getApproverDepartments()
-			throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		Boolean isAuthenticatedUser = true;
-		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getApproverDepartments();
-			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+	public String getApproverDepartments() throws JsonGenerationException, JsonMappingException, IOException {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getApproverDepartments();
+		return getJSONResponse(mstrCodeNamePairDetailsList);
 	}
 
 	/**
@@ -1056,10 +719,7 @@ public class AssessmentService {
 	 *            - death certificate copy input stream object
 	 * @param deathCertCopyDisp
 	 *            - death certificate copy content disposition object
-	 * @param username
-	 *            - username credential
-	 * @param password-
-	 *            password credential
+	 * 
 	 * @return - server response in JSON format
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
@@ -1111,42 +771,27 @@ public class AssessmentService {
 			@FormDataParam("afdvtBond") InputStream afdvtBondStream,
 			@FormDataParam("afdvtBond") FormDataContentDisposition afdvtBondDisp,
 			@FormDataParam("deathCertCopy") InputStream deathCertCopyStream,
-			@FormDataParam("deathCertCopy") FormDataContentDisposition deathCertCopyDisp,
-			@FormDataParam("username") String username, @FormDataParam("password") String password)
+			@FormDataParam("deathCertCopy") FormDataContentDisposition deathCertCopyDisp)
 					throws JsonGenerationException, JsonMappingException, IOException, ParseException {
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		if (isAuthenticatedUser) {
-			EgovThreadLocals.setUserId(Long.valueOf("38"));
-			List<FloorDetails> floorDetailsList = new ObjectMapper().readValue(floorDetails.toString(),
-					new TypeReference<Collection<FloorDetails>>() {
-					});
-			List<OwnerDetails> ownerDetailsList = new ObjectMapper().readValue(ownerDetails.toString(),
-					new TypeReference<Collection<OwnerDetails>>() {
-					});
-			List<Document> documents = propertyExternalService.getDocuments(photoAsmntStream, photoAsmntDisp, bldgPermCopyStream,
-					bldgPermCopyDisp, atstdCopyPropDocStream, atstdCopyPropDocDisp, nonJudcStampStream,
-					nonJudcStampDisp, afdvtBondStream, afdvtBondDisp, deathCertCopyStream, deathCertCopyDisp);
-			NewPropertyDetails newPropertyDetails = propertyExternalService.createNewProperty(propertyTypeMasterCode,
-					propertyCategoryCode, apartmentCmplxCode, ownerDetailsList, mutationReasonCode, extentOfSite,
-					isExtentAppurtenantLand, occupancyCertificationNo, isSuperStructure, isBuildingPlanDetails,
-					regdDocNo, regdDocDate, localityCode, street, electionWardCode, doorNo, enumerationBlockCode,
-					pinCode, isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, hasLift, hasToilet, hasWaterTap,
-					hasElectricity, hasAttachedBathroom, hasWaterHarvesting, floorTypeCode, roofTypeCode, wallTypeCode,
-					woodTypeCode, floorDetailsList, surveyNumber, pattaNumber, vacantLandArea, marketValue,
-					currentCapitalValue, completionDate, northBoundary, southBoundary, eastBoundary, westBoundary, documents);
-			if (null != newPropertyDetails) {
-				responseJson = getJSONResponse(newPropertyDetails);
-			} else {
-				errorDetails = getRequestFailedErrorDetails();
-				responseJson = getJSONResponse(errorDetails);
-			}
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;
+		EgovThreadLocals.setUserId(Long.valueOf("38"));
+		List<FloorDetails> floorDetailsList = new ObjectMapper().readValue(floorDetails.toString(),
+				new TypeReference<Collection<FloorDetails>>() {
+				});
+		List<OwnerDetails> ownerDetailsList = new ObjectMapper().readValue(ownerDetails.toString(),
+				new TypeReference<Collection<OwnerDetails>>() {
+				});
+		List<Document> documents = propertyExternalService.getDocuments(photoAsmntStream, photoAsmntDisp,
+				bldgPermCopyStream, bldgPermCopyDisp, atstdCopyPropDocStream, atstdCopyPropDocDisp, nonJudcStampStream,
+				nonJudcStampDisp, afdvtBondStream, afdvtBondDisp, deathCertCopyStream, deathCertCopyDisp);
+		NewPropertyDetails newPropertyDetails = propertyExternalService.createNewProperty(propertyTypeMasterCode,
+				propertyCategoryCode, apartmentCmplxCode, ownerDetailsList, mutationReasonCode, extentOfSite,
+				isExtentAppurtenantLand, occupancyCertificationNo, isSuperStructure, isBuildingPlanDetails, regdDocNo,
+				regdDocDate, localityCode, street, electionWardCode, doorNo, enumerationBlockCode, pinCode,
+				isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, hasLift, hasToilet, hasWaterTap, hasElectricity,
+				hasAttachedBathroom, hasWaterHarvesting, floorTypeCode, roofTypeCode, wallTypeCode, woodTypeCode,
+				floorDetailsList, surveyNumber, pattaNumber, vacantLandArea, marketValue, currentCapitalValue,
+				completionDate, northBoundary, southBoundary, eastBoundary, westBoundary, documents);
+		return getJSONResponse(newPropertyDetails);
 	}
 
 	/**
@@ -1177,8 +822,10 @@ public class AssessmentService {
 		errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_INVALIDCREDENTIALS);
 		return errorDetails;
 	}
+
 	/**
 	 * This method is used to get the error details for communication failure.
+	 * 
 	 * @return
 	 */
 	private ErrorDetails getRequestFailedErrorDetails() {
