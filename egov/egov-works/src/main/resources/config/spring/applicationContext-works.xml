@@ -111,11 +111,11 @@
 		<property name="workspackageService" ref="workspackageService" />
 	</bean>
 
-	<bean id="estimateWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
+	<!--  <bean id="estimateWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="abstractEstimateService" />
 		<constructor-arg value="org.egov.works.models.estimate.AbstractEstimate" />
-	</bean>
+	</bean>  -->
 
 	<bean id="packageWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">

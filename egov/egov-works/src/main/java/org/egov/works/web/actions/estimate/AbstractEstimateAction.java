@@ -72,11 +72,12 @@ import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -85,11 +86,9 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.Activity;
@@ -132,12 +131,17 @@ public class AbstractEstimateAction extends BaseFormAction {
     private List<AssetsForEstimate> actionAssetValues = new LinkedList<AssetsForEstimate>();
     private List<MultiYearEstimate> actionMultiYearEstimateValues = new LinkedList<MultiYearEstimate>();
     private AbstractEstimateService abstractEstimateService;
+
     @Autowired
-    private EmployeeServiceOld employeeService;
+    private EisCommonService eisCommonService;
+    @Autowired
+    private AssignmentService assignmentService;
     @Autowired
     private UserService userService;
     private EmployeeView estimatePreparedByView;
-    private WorkflowService<AbstractEstimate> workflowService;
+
+    // TODO:Fixme - Commented out for time being.. workflow needs to be implemented based on matrix
+    // private WorkflowService<AbstractEstimate> workflowService;
     private String messageKey;
     private String sourcepage = "";
     private String assetStatus;
@@ -162,8 +166,8 @@ public class AbstractEstimateAction extends BaseFormAction {
     private String employeeName;
     private String designation;
     private WorksService worksService;
+    @Autowired
     private PersonalInformationService personalInformationService;
-
     private Long estimateId;
     private String cancellationReason;
     private String cancelRemarks;
@@ -283,7 +287,6 @@ public class AbstractEstimateAction extends BaseFormAction {
     public void prepare() {
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
-        ajaxEstimateAction.setEmployeeService(employeeService);
         ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         ajaxEstimateAction.setEisService(eisService);
 
@@ -313,7 +316,7 @@ public class AbstractEstimateAction extends BaseFormAction {
         addDropdownData("parentCategoryList",
                 getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
         List<UOM> uomList = getPersistenceService().findAllBy("from UOM  order by upper(uom)");
-        if (id == null && abstractEstimate.getEgwStatus() == null || "roadCutDepositWorks".equals(sourcepage)
+        if (id == null && abstractEstimate.getEgwStatus() == null
                 || !SOURCE_SEARCH.equals(sourcepage) && abstractEstimate.getEgwStatus() != null
                         && abstractEstimate.getEgwStatus().getCode().equals("REJECTED")
                 || id != null
@@ -333,12 +336,9 @@ public class AbstractEstimateAction extends BaseFormAction {
         populatePreparedByList(ajaxEstimateAction, abstractEstimate.getExecutingDepartment() != null);
         populateOverheadsList(ajaxEstimateAction, abstractEstimate.getEstimateDate() != null);
 
-        try {
-            addDropdownData("fundSourceList", commonsService.getAllActiveIsLeafFundSources());
-        } catch (final ApplicationException e) {
-            logger.error("Unable to load fund source information >>>" + e.getMessage());
-            addFieldError("fundsourceunavailable", "Unable to load fund source information");
-        }
+        // TODO:Fixme - some issue with this API in EGF. So commented out for time being and loading empty list
+        // addDropdownData("fundSourceList", fundSourceHibernateDAO.findAllActiveIsLeafFundSources());
+        addDropdownData("fundSourceList", Collections.emptyList());
 
         if (abstractEstimate != null
                 && abstractEstimate.getEgwStatus() != null
@@ -349,16 +349,18 @@ public class AbstractEstimateAction extends BaseFormAction {
         if (abstractEstimate != null && abstractEstimate.getId() == null
                 && abstractEstimate.getExecutingDepartment() == null
                 && abstractEstimate.getEstimatePreparedBy() == null) {
-            final PersonalInformation LoggedInEmp = employeeService.getEmpForUserId(worksService
+            final PersonalInformation loggedInEmp = eisCommonService.getEmployeeByUserId(worksService
                     .getCurrentLoggedInUserId());
-            final Assignment assignment = employeeService.getAssignmentByEmpAndDate(new Date(),
-                    LoggedInEmp.getIdPersonalInformation());
-            abstractEstimate.setExecutingDepartment(assignment.getDepartment());
-            abstractEstimate.setEstimatePreparedBy(LoggedInEmp);
-            estimatePreparedByView = (EmployeeView) getPersistenceService().find("from EmployeeView where id = ?",
-                    abstractEstimate.getEstimatePreparedBy().getIdPersonalInformation());
-            if (assignment != null && assignment.getEmployee() != null)
-                loggedInUserEmployeeCode = assignment.getEmployee().getCode();
+            if (loggedInEmp != null) {
+                final Assignment assignment = assignmentService
+                        .getPrimaryAssignmentForEmployeeByToDate(loggedInEmp.getIdPersonalInformation().longValue(), new Date());
+                abstractEstimate.setExecutingDepartment(assignment.getDepartment());
+                abstractEstimate.setEstimatePreparedBy(loggedInEmp);
+                estimatePreparedByView = (EmployeeView) getPersistenceService().find("from EmployeeView where id = ?",
+                        abstractEstimate.getEstimatePreparedBy().getIdPersonalInformation());
+                if (assignment != null && assignment.getEmployee() != null)
+                    loggedInUserEmployeeCode = assignment.getEmployee().getCode();
+            }
             populatePreparedByList(ajaxEstimateAction, abstractEstimate.getExecutingDepartment() != null);
         }
     }
@@ -423,7 +425,8 @@ public class AbstractEstimateAction extends BaseFormAction {
                 }
         }
 
-        abstractEstimate = workflowService.transition(actionName, abstractEstimate, approverComments);
+        // TODO:Fixme - Commented out for time being.. workflow needs to be implemented based on matrix
+        // abstractEstimate = workflowService.transition(actionName, abstractEstimate, approverComments);
         if (abstractEstimate.getType() != null
                 && abstractEstimate.getType().getExpenditureType() != null
                 && abstractEstimate.getEgwStatus() != null
@@ -526,7 +529,8 @@ public class AbstractEstimateAction extends BaseFormAction {
 
     public String cancel() {
         if (abstractEstimate.getId() != null) {
-            workflowService.transition(AbstractEstimate.Actions.CANCEL.toString(), abstractEstimate, approverComments);
+            // TODO:Fixme - Commented out for time being.. workflow needs to be implemented based on matrix
+            // workflowService.transition(AbstractEstimate.Actions.CANCEL.toString(), abstractEstimate, approverComments);
             final String oldEstimateNo = abstractEstimate.getEstimateNumber();
             abstractEstimate.setEstimateNumber(oldEstimateNo.concat("/C"));
             getBudgetUsageListForEstimateNumber(oldEstimateNo);
@@ -538,7 +542,8 @@ public class AbstractEstimateAction extends BaseFormAction {
     }
 
     public String reject() {
-        workflowService.transition(AbstractEstimate.Actions.REJECT.toString(), abstractEstimate, approverComments);
+        // TODO:Fixme - Commented out for time being.. workflow needs to be implemented based on matrix
+        // workflowService.transition(AbstractEstimate.Actions.REJECT.toString(), abstractEstimate, approverComments);
         abstractEstimate = abstractEstimateService.persist(abstractEstimate);
         messageKey = "estimate.reject";
         getDesignation(abstractEstimate);
@@ -634,7 +639,7 @@ public class AbstractEstimateAction extends BaseFormAction {
     protected void setEstimatePreparedBy(final Integer idPersonalInformation) {
 
         if (validEstimatePreparedBy(idPersonalInformation)) {
-            abstractEstimate.setEstimatePreparedBy(employeeService.getEmloyeeById(idPersonalInformation));
+            abstractEstimate.setEstimatePreparedBy(personalInformationService.findById(idPersonalInformation, false));
             estimatePreparedByView = (EmployeeView) getPersistenceService().find("from EmployeeView where id = ?",
                     idPersonalInformation);
         } else {
@@ -810,7 +815,7 @@ public class AbstractEstimateAction extends BaseFormAction {
 
         final String oldEstimateNo = abstractEstimate.getEstimateNumber();
 
-        final PersonalInformation prsnlInfo = employeeService.getEmpForUserId(worksService
+        final PersonalInformation prsnlInfo = eisCommonService.getEmployeeByUserId(worksService
                 .getCurrentLoggedInUserId());
         String empName = "";
         if (prsnlInfo.getEmployeeFirstName() != null)
@@ -970,14 +975,6 @@ public class AbstractEstimateAction extends BaseFormAction {
             return commonsService.getFinYearByDate(new Date());
     }
 
-    public EmployeeServiceOld getEmployeeService() {
-        return employeeService;
-    }
-
-    public void setEmployeeService(final EmployeeServiceOld employeeService) {
-        this.employeeService = employeeService;
-    }
-
     public EmployeeView getEstimatePreparedByView() {
         return estimatePreparedByView;
     }
@@ -994,13 +991,16 @@ public class AbstractEstimateAction extends BaseFormAction {
         this.actionMultiYearEstimateValues = actionMultiYearEstimateValues;
     }
 
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
-        return workflowService.getValidActions(abstractEstimate);
-    }
+    // TODO:Fixme - Commented out for time being.. workflow needs to be implemented based on matrix
+    /*
+     * public List<org.egov.infstr.workflow.Action> getValidActions() { return workflowService.getValidActions(abstractEstimate);
+     * }
+     */
 
-    public void setEstimateWorkflowService(final WorkflowService<AbstractEstimate> workflow) {
-        workflowService = workflow;
-    }
+    // TODO:Fixme - Commented out for time being.. workflow needs to be implemented based on matrix
+    /*
+     * public void setEstimateWorkflowService(final WorkflowService<AbstractEstimate> workflow) { workflowService = workflow; }
+     */
 
     public String getSourcepage() {
         return sourcepage;
@@ -1100,10 +1100,6 @@ public class AbstractEstimateAction extends BaseFormAction {
 
     public void setEstimateValue(final String estimateValue) {
         this.estimateValue = estimateValue;
-    }
-
-    public void setPersonalInformationService(final PersonalInformationService personalInformationService) {
-        this.personalInformationService = personalInformationService;
     }
 
     public void setUserService(final UserService userService) {

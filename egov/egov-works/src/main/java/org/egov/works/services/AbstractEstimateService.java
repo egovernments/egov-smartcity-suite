@@ -62,6 +62,8 @@ import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -71,7 +73,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.AbstractEstimateAppropriation;
 import org.egov.works.models.estimate.BudgetFolioDetail;
@@ -98,13 +99,15 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     private BudgetDetailsDAO budgetDetailsDAO;
     @Autowired
     private AppConfigValueService appConfigValuesService;
+
     @Autowired
-    private EmployeeServiceOld employeeService;
+    private EisCommonService eisCommonService;
+    @Autowired
+    private AssignmentService assignmentService;
     private PersistenceService<TenderResponse, Long> tenderResponseService;
     private BudgetGroupDAO budgetGroupDAO;
     @Autowired
     private CommonsService commonsService;
-    // private MastersManager mastersMgr;
     private WorksService worksService;
 
     public static final String APPROVED = "APPROVED";
@@ -139,8 +142,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     @Override
     public AbstractEstimate persist(final AbstractEstimate entity) {
         final AbstractEstimate saved = super.persist(entity);
-        // setEstimateNumber(saved);
-
         return saved;
     }
 
@@ -786,10 +787,10 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         PersonalInformation personalInformation = null;
         final Long currentLoginUserId = worksService.getCurrentLoggedInUserId();
         if (currentLoginUserId != null && currentLoginUserId != 0)
-            personalInformation = employeeService.getEmpForUserId(currentLoginUserId);
+            personalInformation = eisCommonService.getEmployeeByUserId(currentLoginUserId);
         Assignment assignment = null;
         if (personalInformation != null)
-            assignment = employeeService.getLatestAssignmentForEmployee(personalInformation.getIdPersonalInformation());
+            assignment = assignmentService.getPrimaryAssignmentForEmployee(personalInformation.getId().longValue());
         return assignment;
     }
 
