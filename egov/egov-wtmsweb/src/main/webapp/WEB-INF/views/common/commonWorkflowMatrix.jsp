@@ -93,7 +93,7 @@
 				</div>
 				<div class="show-row form-group">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approver"/><span class="mandatory"></span></label>
-					<div class="col-md-3 add-margin">
+					<div class="col-sm-3 add-margin">
 					<form:select path="" data-first-option="false" 
 						id="approvalPosition" name="approvalPosition" cssClass="form-control" onfocus="callAlertForDesignation();" 
 						cssErrorClass="form-control error" required="required">  
