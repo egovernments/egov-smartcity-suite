@@ -31,7 +31,7 @@ INSERT INTO eg_department (id, name, createddate, code, createdby, lastmodifiedb
 DROP sequence seq_eg_department;
 
 CREATE SEQUENCE seq_eg_department
-    START WITH 29
+    START WITH 70
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
