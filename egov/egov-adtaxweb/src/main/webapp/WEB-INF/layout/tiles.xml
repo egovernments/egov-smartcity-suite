@@ -94,7 +94,7 @@
     </definition>
     
     <definition name="hoarding-create" extends="base_layout">
-    	<put-attribute name="page-title" value="title.agency.details" cascade="true"/>
+    	<put-attribute name="page-title" value="title.hoarding" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-create.jsp"/>
     </definition>
     
