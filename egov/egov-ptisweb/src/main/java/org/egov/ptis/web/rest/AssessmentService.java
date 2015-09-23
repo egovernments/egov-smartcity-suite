@@ -236,7 +236,7 @@ public class AssessmentService {
 				responseJson = getJSONResponse(errorDetails);
 			} else {
 				ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(assessmentNo, paymentMode,
-						totalAmount, paidBy, username, password);
+						totalAmount, paidBy);
 				responseJson = getJSONResponse(receiptDetails);
 			}
 		}
@@ -276,8 +276,7 @@ public class AssessmentService {
 		if (null != errorDetails) {
 			return getJSONResponse(errorDetails);
 		} else {
-			errorDetails = propertyExternalService.payWaterTax(consumerNo, paymentMode, totalAmount, paidBy, username,
-					password);
+			errorDetails = propertyExternalService.payWaterTax(consumerNo, paymentMode, totalAmount, paidBy);
 			return getJSONResponse(errorDetails);
 		}
 	}
