@@ -74,7 +74,7 @@
 							<div align="center">
 								<center>
 									<div class="formmainbox">
-										<div class="headingbg" id="headingdiv">
+										<div class="subheadnew" id="headingdiv">
 											<s:text name="page.title.viewtrade" />
 										</div>
 										<table>
@@ -93,23 +93,15 @@
 												<c:set var="trclass" value="greybox" />
 												<table width="100%">
 													<%@ include file='../common/view.jsp'%>
-													<c:choose>
-														<c:when test="${trclass=='greybox'}">
-															<c:set var="trclass" value="bluebox" />
-														</c:when>
-														<c:when test="${trclass=='bluebox'}">
-															<c:set var="trclass" value="greybox" />
-														</c:when>
-													</c:choose>
 													<tr>
-														<td class="<c:out value="${trclass}"/>" width="5%">
+														<td class="greybox" width="5%">
 															&nbsp;
 														</td>
-														<td class="<c:out value="${trclass}"/>">
+														<td class="greybox">
 															<b><s:text name="license.motor.installed" />
 															</b>
 														</td>
-														<td class="<c:out value="${trclass}"/>">
+														<td class="greybox">
 															<s:if test="%{motorInstalled}">
 																<s:text name="Yes" />
 															</s:if>
@@ -117,7 +109,7 @@
 																<s:text name="No" />
 															</s:else>
 														</td>
-														<td class="<c:out value="${trclass}"/>" colspan="2">														
+														<td class="greybox" colspan="2">														
 													</tr>
 													<s:if test="%{motorInstalled}">
 														<tr>
@@ -129,6 +121,9 @@
 												</table>
 											</s:push>
 										</s:form>
+										<div>
+											<%@ include file="../common/documentView.jsp" %>
+										</div>
 									</div>
 								</center>
 							</div>
@@ -136,9 +131,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<div>
-				<%@ include file="../common/documentView.jsp" %>
-			</div>
+			
 		</div>
 		<div align="center" class="buttonbottom" id="buttondiv">
 			<table>

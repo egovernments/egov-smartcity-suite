@@ -59,20 +59,20 @@
 			<table class="tablebottom" id="nameTable" width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tbody>
 					<tr>
-						<th class="bluebgheadtd"><s:text name="doctable.sno" /></th>
-						<th class="bluebgheadtd"><s:text name="doctable.doctype" /></th>
-						<th class="bluebgheadtd"><s:text name="upload.file" /></th>
+						<th class="bluebgheadtd" style="text-align: center"><s:text name="doctable.sno" /></th>
+						<th class="bluebgheadtd" style="text-align: center"><s:text name="doctable.doctype" /></th>
+						<th class="bluebgheadtd" style="text-align: center"><s:text name="upload.file" /></th>
 					</tr>
 					<s:iterator value="documentTypes" status="status" var="documentType">
 						<tr>
-							<td class="blueborderfortd" style="text-align: left">
+							<td class="blueborderfortd" style="text-align: center;width:10%">
 								<span><s:property value="#status.index + 1"/></span>
 							</td>
-							<td class="blueborderfortd" style="text-align: left">
+							<td class="blueborderfortd" style="text-align: center;width:70%">
 								<s:property value="name" /><s:if test="mandatory"><span class="mandatory1">*</span></s:if>
 								<s:hidden name="documents[%{#status.index}].type.id" value="%{id}"></s:hidden>
 							</td>
-							<td class="blueborderfortd" style="text-align: left">
+							<td class="blueborderfortd" style="text-align: center;width:30%">
 								<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" />
 							</td>
 						</tr>

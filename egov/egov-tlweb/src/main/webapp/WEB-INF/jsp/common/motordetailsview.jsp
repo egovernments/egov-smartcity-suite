@@ -43,10 +43,7 @@
 <table width="100%">
 	<tr>
 		<td colspan="5" class="headingwk">
-			<div class="arrowiconwk">
-				<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20"/>
-			</div>
-			<div class="headplacer">
+			<div class="subheadnew text-left">
 				<s:text name='license.title.motordetail' />
 			</div>
 		</td>
@@ -55,45 +52,29 @@
 <table width="50%" border="1" cellspacing="0" cellpadding="0" align="center">
 <br/>
 	<tr>
-		<th class="<c:out value="${trclass}"/>">
+		<th class="greybox">
 			<s:text name='license.horsepower' />
 		</th>
-		<th class="<c:out value="${trclass}"/>">
+		<th class="greybox">
 			<s:text name="license.noofmachines" />
 		</th>
 	</tr>
 	<s:iterator var="p" value="installedMotorList">
-		<c:choose>
-			<c:when test="${trclass=='greybox'}">
-				<c:set var="trclass" value="bluebox" />
-			</c:when>
-			<c:when test="${trclass=='bluebox'}">
-				<c:set var="trclass" value="greybox" />
-			</c:when>
-		</c:choose>
 		<tr>
-			<td text-align="center" class="<c:out value="${trclass}"/>">
+			<td text-align="center" class="greybox">
 				<s:property value="#p.hp" />
 			</td>
-			<td text-align="center" class="<c:out value="${trclass}"/>">
+			<td text-align="center" class="greybox">
 				<s:property value="#p.noOfMachines" />
 			</td>
 
 		</tr>
 	</s:iterator>
-	<c:choose>
-		<c:when test="${trclass=='greybox'}">
-			<c:set var="trclass" value="bluebox" />
-		</c:when>
-		<c:when test="${trclass=='bluebox'}">
-			<c:set var="trclass" value="greybox" />
-		</c:when>
-	</c:choose>
 	<tr>
-		<td align="center" class="<c:out value="${trclass}"/>">
+		<td align="center" class="greybox">
 			<b><s:text name="license.total.horsepower" /> </b>
 		</td>
-		<td align="center" class="<c:out value="${trclass}"/>">
+		<td align="center" class="greybox">
 			<b><s:property value="totalHP" /> </b>
 		</td>
 	</tr>

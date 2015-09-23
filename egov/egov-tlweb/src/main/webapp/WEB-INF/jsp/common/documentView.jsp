@@ -48,7 +48,7 @@
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td colspan="5">
-			<div class="headingsmallbg">
+			<div class="subheadnew text-left">
 				<s:text name="docsectiontitle" />
 			</div>
 		</td>
@@ -66,14 +66,14 @@
 					<s:iterator value="model.documents" status="status" var="document">
 						<tr>
 							<td class="blueborderfortd" style="text-align: center">
-								<span class="bold"><s:property value="#status.index + 1"/></span>
+								<s:property value="#status.index + 1"/>
 							</td>
-							<td class="blueborderfortd" style="text-align: left">
-								<span class="bold"><s:property value="%{type.name}" /></span>
+							<td class="blueborderfortd" style="text-align: center">
+								<s:property value="%{type.name}" />
 							</td>
 							<td class="blueborderfortd" style="text-align: center">
 								<s:if test="#document.files.isEmpty()">
-									<span class="bold">N/A</span>
+									N/A
 								</s:if>
 								<s:else>
 									<s:iterator value="#document.files">
