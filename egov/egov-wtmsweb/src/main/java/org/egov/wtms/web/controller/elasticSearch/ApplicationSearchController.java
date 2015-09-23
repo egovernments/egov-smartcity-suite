@@ -54,6 +54,7 @@ import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
 import org.egov.wtms.elasticSearch.service.ApplicationSearchService;
 import org.egov.wtms.web.contract.ApplicationSearchRequest;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -100,17 +101,12 @@ public class ApplicationSearchController {
         return applicationSearchService.findApplicationIndexModules();
     }
 
-    /*
-     * @ModelAttribute(value = "applicationTypeList") public List<ApplicationIndex> findApplicationIndexApplicationTypes() {
-     * return applicationSearchService .findApplicationIndexApplicationTypes(moduleName); }
-     */
-
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<Document> searchComplaints(@ModelAttribute final ApplicationSearchRequest searchRequest) {
         final SearchResult searchResult = searchService.search(asList(Index.APPLICATION.toString()),
                 asList(IndexType.APPLICATIONSEARCH.toString()), searchRequest.searchQuery(),
-                searchRequest.searchFilters(), Sort.NULL, Page.NULL);
+                searchRequest.searchFilters(), Sort.by().field("searchable.applicationdate", SortOrder.DESC), Page.NULL);
 
         return searchResult.getDocuments();
 

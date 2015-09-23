@@ -57,6 +57,7 @@ import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.web.contract.ConnectionSearchRequest;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -201,7 +202,7 @@ public class WaterTaxSearchController {
     public List<Document> searchConnection(@ModelAttribute final ConnectionSearchRequest searchRequest) {
         final SearchResult searchResult = searchService.search(asList(Index.WATERTAX.toString()),
                 asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(),
-                searchRequest.searchFilters(), Sort.NULL, Page.NULL);
+                searchRequest.searchFilters(), Sort.by().field("common.createdDate", SortOrder.DESC), Page.NULL);
         return searchResult.getDocuments();
 
     }
