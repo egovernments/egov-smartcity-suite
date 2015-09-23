@@ -78,13 +78,6 @@
           			</div>
           		</td>
           	</tr>
-		<tr> 
-		    <td>
-		    <div id="resolution_details" style="display:none;">
-		         <%@ include file="estimate-resolutionData.jsp"%>   
-		    </div>
-		    </td>
-            </tr>
 			
 	</div>
 <script>

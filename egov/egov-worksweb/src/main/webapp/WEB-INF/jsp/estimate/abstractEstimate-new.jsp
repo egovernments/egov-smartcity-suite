@@ -230,18 +230,20 @@ function enableFields(){
 }
 
 function refreshInbox() {
-        var x=opener.top.opener;
+		//TODO:Fixme - commented out for time being
+       /* var x=opener.top.opener;
         if(x==null){
             x=opener.top;
         }
         x.document.getElementById('inboxframe').contentWindow.egovInbox.from = 'Inbox';
-	    x.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
+	    x.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();*/
 }
 
 function setCurrentdate(){
 	
     <s:if test="%{sourcepage!='search'}">
-		populateDesignation();
+    	//TODO:Fixme - commented out for time being
+		//populateDesignation();
 	</s:if>	
 	var estdate=document.getElementById('estimateDate').value;
 	if(estdate=='') {

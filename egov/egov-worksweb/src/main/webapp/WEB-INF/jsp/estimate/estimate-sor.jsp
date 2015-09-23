@@ -352,7 +352,7 @@ function showProcessImage(event) {
 <div class="errorstyle" id="sor_error" style="display:none;"></div>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-                <td colspan="3" class="headingwk"><div class="arrowiconwk"><image src="<egov:url path='/egi/resources/erp2/images/arrow.gif'/>" /></div><div class="headplacer">SOR</div></td>
+                <td colspan="3" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div><div class="headplacer">SOR</div></td>
     </tr>
 </table>
 <table id="baseSORTable" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -375,7 +375,7 @@ function showProcessImage(event) {
 
                   <label>
 
-                  </label><td width="20%" class="whitebox2wk"><div id="loadImage" style="display:none"><image src="<egov:url path='/images/loading.gif'/>" />Loading SOR's. Please wait..</div></td>
+                  </label><td width="20%" class="whitebox2wk"><div id="loadImage" style="display:none"><img src="/egi/resources/erp2/images/loading.gif" />Loading SOR's. Please wait..</div></td>
             </table></td>
           </tr>
           <!--<tr>

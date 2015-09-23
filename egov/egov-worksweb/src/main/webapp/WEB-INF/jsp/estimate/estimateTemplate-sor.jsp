@@ -326,7 +326,7 @@ function showProcessImage(event) {
 
                   <label>
 
-                  </label><td width="20%" class="whitebox2wk"><div id="loadImage" style="display:none"><image src="<egov:url path='/images/loading.gif'/>" />Loading SOR's. Please wait..</div></td>
+                  </label><td width="20%" class="whitebox2wk"><div id="loadImage" style="display:none"><img src="/egi/resources/erp2/images/loading.gif" />Loading SOR's. Please wait..</div></td>
             </table></td>
           </tr>
           <!--<tr>

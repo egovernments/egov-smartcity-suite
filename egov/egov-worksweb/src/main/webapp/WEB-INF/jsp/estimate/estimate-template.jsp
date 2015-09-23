@@ -193,7 +193,7 @@ function searchTemplate(){
 
 <table  width="100%" border="0" cellspacing="0" cellpadding="0">
  		<tr>
-                <td colspan="4" class="headingwk"><div class="arrowiconwk"><image src="<egov:url path='/egi/resources/erp2/images/arrow.gif'/>" /></div><div class="headplacer">Estimate Template</div></td>
+                <td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div><div class="headplacer">Estimate Template</div></td>
               </tr>
  		<tr>
                 <td class="whiteboxwk"><span class="mandatory">*</span><s:text name="estimate.work.type" />:</td>
@@ -215,7 +215,7 @@ function searchTemplate(){
                 </div>
                 <egov:autocomplete name="codeSearch" width="20" field="codeSearch" url="ajaxEstimateTemplate!searchAjax.action?status=1&" queryQuestionMark="false" results="codeSearchResults" paramsFunction="codeSearchParameters" handler="codeSearchSelectionHandler" forceSelectionHandler="codeSelectionEnforceHandler" afterHandler="afterCodeResults"/>
                 <span class='warning' id="improperCodeSelectionWarning"></span>
-                <div id="loadImageForCode" style="display:none"><image src="<egov:url path='/images/loading.gif'/>" />Loading Templatecodes. Please wait..</div>
+                <div id="loadImageForCode" style="display:none"><img src="/egi/resources/erp2/images/loading.gif" />Loading Template codes. Please wait..</div>
             </td>
             <td colspan="2" class="greybox2wk"><input type="button"  class="buttonadd" onclick="getTemplateForCode()" value="Submit" id="codeSubmitButton" name="codeSubmitButton"/>    			
   </td>
