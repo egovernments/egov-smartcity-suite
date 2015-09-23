@@ -68,7 +68,7 @@
 								code="lbl.appType" /></label>
 						<div class="col-sm-6 add-margin dynamic-span capitalize">
 							<form:radiobuttons path="applicationType"
-								items="${radioButtonMap}" element="span" disabled="true" />
+								items="${radioButtonMap}" element="span" disabled="true" onchange="resetPropertyDetailsafterCheckBox();"/>
 						</div>
 					</div>
 					<jsp:include page="applicantdetails.jsp"></jsp:include>
@@ -114,13 +114,52 @@
 		 $('#propertyIdentifier').attr("disabled", "disabled");
 		 loadPropertyDetails();
 		
-		function validate()		{
-			//alert(document.forms[0].action);
-			var radioValue = $("input[name='applicationType']:checked").val();
-		    var ar=document.getElementsByName('applicationType');
-            ar[0].value=radioValue;
-         
-			return ture;}
+			function validate(){
+				//alert(document.forms[0].action);
+				if($('#connectionType').val() !='METERED')
+					{
+						$('#monthlyFee').attr('required', 'required');
+						
+						
+					}
+				else {
+					$('#existmeterCost').attr('required', 'required');
+					$('#existmeterName').attr('required', 'required');
+					$('#existmeterNo').attr('required', 'required');
+					$('#previousReading').attr('required', 'required');
+					$('#currentcurrentReading').attr('required', 'required');
+					$('#existreadingDate').attr('required', 'required');
+					}
+				var radioValue = $("input[name='applicationType']:checked").val();
+			    var ar=document.getElementsByName('applicationType');
+	            ar[0].value=radioValue;
+				return true;
+		    }
+			function resetPropertyDetailsafterCheckBox() {
+				$('#propertyIdentifier').val('');
+				$('#applicantname').val('');
+				$('#mobileNumber').val('');
+				$('#email').val('');
+				$('#aadhaar').val('');
+				$('#nooffloors').val('');
+				$('#propertyaddress').val('');
+				$('#locality').val('');
+				$('#zonewardblock').val('');
+				$('#propertytax').val('0.00');
+			}
+			function getEmptyValues()
+			{
+				if($('#connectionType').val() !='METERED')
+				 {
+				   $('#existmeterCost').val('');
+					$('#existmeterName').val('');
+					$('#existmeterNo').val('');
+					$('#previousReading').val('');
+					$('#currentcurrentReading').val('');
+					$('#existreadingDate').val('');
+				 }
+				}
+		
 		</script>
 		</form:form>
 	</div>

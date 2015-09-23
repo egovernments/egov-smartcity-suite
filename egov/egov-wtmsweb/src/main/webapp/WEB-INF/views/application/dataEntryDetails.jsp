@@ -48,7 +48,7 @@
 
 <div class="form-group">	
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.monthlyfees" /></label>
+			code="lbl.monthlyfees" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:input id="monthlyFee" path="existingConnection.monthlyFee" class="form-control text-right patternvalidation" maxlength="6" data-pattern="number"  />  
 		<form:errors path="existingConnection.monthlyFee" cssClass="add-margin error-msg" />	
@@ -77,13 +77,13 @@
 
 <div class="form-group">	
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.metercost" /></label>
+			code="lbl.metercost" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:input id="existmeterCost" path="existingConnection.meterCost" class="form-control text-right patternvalidation" maxlength="6" data-pattern="number"  />
 			<form:errors path="existingConnection.meterCost" cssClass="add-margin error-msg" />	  
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.metername" /></label>
+			code="lbl.metername" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:input id="existmeterName" path="existingConnection.meterName" class="form-control text-left" maxlength="20"/> 
 			<form:errors path="existingConnection.meterName" cssClass="add-margin error-msg" />	
@@ -92,13 +92,13 @@
 
 <div class="form-group">	
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.meterslno" /></label>
+			code="lbl.meterslno" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:input id="existmeterNo" path="existingConnection.meterNo"  class="form-control text-left patternvalidation" maxlength="12" data-pattern="number"/>   
 			<form:errors path="existingConnection.meterNo" cssClass="add-margin error-msg" />	
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.previousreading" /></label>
+			code="lbl.previousreading" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 	<form:input id="previousReading" path="existingConnection.previousReading"  class="form-control text-right patternvalidation" maxlength="12" data-pattern="number"/>   
 		<form:errors path="existingConnection.previousReading" cssClass="add-margin error-msg" />	 
@@ -108,14 +108,14 @@
 
 <div class="form-group">	
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.readingdate" /></label>
+			code="lbl.readingdate" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 	<form:input id="existreadingDate" path="existingConnection.readingDate"  class="form-control datepicker" data-date-end-date="0d"
 								 data-inputmask="'mask': 'd/m/y'" />  
 	<form:errors path="existingConnection.readingDate" cssClass="add-margin error-msg" />	     
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.currentreading" /></label>
+			code="lbl.currentreading" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:input id="currentcurrentReading" path="existingConnection.currentReading" class="form-control text-right patternvalidation" maxlength="12" data-pattern="number" />
 			<form:errors path="existingConnection.currentReading" cssClass="add-margin error-msg" />	

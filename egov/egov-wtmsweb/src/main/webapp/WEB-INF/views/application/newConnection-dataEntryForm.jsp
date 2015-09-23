@@ -106,29 +106,36 @@
 		 if($('#connectionType').val()=='METERED')
 		 {
 		   $('#metereddetails').show();
+		  
 		 }
 		
-		function validate(){
-			//alert(document.forms[0].action);
-			if($('#connectionType').val() !='METERED')
-				{
-					$('#monthlyFee').attr('required', 'required');
+			function validate(){
+				//alert(document.forms[0].action);
+				if($('#connectionType').val() !='METERED')
+					{
+						$('#monthlyFee').attr('required', 'required');
+						$('#existmeterCost').val('');
+						$('#existmeterName').val('');
+						$('#existmeterNo').val('');
+						$('#previousReading').val('');
+						$('#currentcurrentReading').val('');
+						$('#existreadingDate').val('');
+						
+					}
+				else {
 					
-				}
-			else {
-				$('#existmeterCost').attr('required', 'required');
-				$('#existmeterName').attr('required', 'required');
-
-				$('#existmeterNo').attr('required', 'required');
-				$('#previousReading').attr('required', 'required');
-				$('#currentcurrentReading').attr('required', 'required');
-				$('#existreadingDate').attr('required', 'required');
-				}
-			var radioValue = $("input[name='applicationType']:checked").val();
-		    var ar=document.getElementsByName('applicationType');
-            ar[0].value=radioValue;
-			return true;
-	    }
+					$('#existmeterCost').attr('required', 'required');
+					$('#existmeterName').attr('required', 'required');
+					$('#existmeterNo').attr('required', 'required');
+					$('#previousReading').attr('required', 'required');
+					$('#currentcurrentReading').attr('required', 'required');
+					$('#existreadingDate').attr('required', 'required');
+					}
+				var radioValue = $("input[name='applicationType']:checked").val();
+			    var ar=document.getElementsByName('applicationType');
+	            ar[0].value=radioValue;
+				return true;
+		    }
 
 		//default ajax callback function
 		function callBackAjax()
@@ -148,6 +155,19 @@
 			$('#zonewardblock').val('');
 			$('#propertytax').val('0.00');
 		}
+		function getEmptyValues()
+		{
+			if($('#connectionType').val() !='METERED')
+			 {
+			   $('#existmeterCost').val('');
+				$('#existmeterName').val('');
+				$('#existmeterNo').val('');
+				$('#previousReading').val('');
+				$('#currentcurrentReading').val('');
+				$('#existreadingDate').val('');
+			 }
+			}
+	
 		</script>
 		</form:form>
 	</div>

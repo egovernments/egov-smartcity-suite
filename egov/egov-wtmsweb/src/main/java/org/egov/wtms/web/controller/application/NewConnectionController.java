@@ -133,6 +133,7 @@ public class NewConnectionController extends GenericConnectionController {
         connectionTypeMap.put(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION).getId(),
                 WaterTaxConstants.CONN_NAME_ADDNLCONNECTION);
         model.addAttribute("radioButtonMap", connectionTypeMap);
+        model.addAttribute("mode", "dataEntry");
         return "newconnection-dataEntryForm";
     }
 

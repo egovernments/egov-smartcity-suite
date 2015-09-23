@@ -64,6 +64,7 @@
 	
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.connectiontype" /><span class="mandatory"></span></label>
+	<c:if test="${mode !='dataEntry' }">
 	<div class="col-sm-3 add-margin">
 		<form:select path="connectionType" data-first-option="false" cssClass="form-control" required="required"> 
 			<form:option value="">
@@ -73,6 +74,18 @@
 		</form:select>
 		<form:errors path="connectionType" cssClass="add-margin error-msg" />
 	</div>
+	</c:if>
+	<c:if test="${mode =='dataEntry' }">
+	<div class="col-sm-3 add-margin">
+		<form:select path="connectionType" data-first-option="false" cssClass="form-control" required="required"  onchange="getEmptyValues();"> 
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			<form:options items="${connectionTypes}" />
+		</form:select>
+		<form:errors path="connectionType" cssClass="add-margin error-msg" />
+	</div>
+	</c:if>
 	
 </div>
 <div class="form-group">
