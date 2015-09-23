@@ -186,7 +186,7 @@ public class Hoarding extends AbstractAuditable {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "adminBoundry", nullable = true)
+    @JoinColumn(name = "adminBoundry", nullable = false)
     private Boundary adminBoundry;
 
     @NotNull

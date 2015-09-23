@@ -48,9 +48,37 @@ $(document).ready(function(){
 				dataType: "json",
 				data:{'categoryId' : this.value}
 			}).done(function(value) {
+				$('#subCategory option:gt(0)').remove();
 				$.each(value, function(index, val) {
 				     $('#subCategory').append($('<option>').text(val.description).attr('value', val.id));
 				});
+				if(subcategory !== '') {
+					$("select#subCategory").val(subcategory); 
+					subcategory = '';
+				}
+			});
+		}
+	});
+   
+   $('#adminBoundryParent').change(function(){
+		if (this.value === '') {
+			return;
+		} else {
+			$.ajax({
+				type: "GET",
+				url: "wards",
+				cache: true,
+				dataType: "json",
+				data:{'zoneId' : this.value}
+			}).done(function(value) {
+				$('#adminBoundry option:gt(0)').remove();
+				$.each(value, function(index, val) {
+				     $('#adminBoundry').append($('<option>').text(val.name).attr('value', val.id));
+				});
+				if(adminBoundry !== '') {
+					$("select#adminBoundry").val(adminBoundry); 
+					adminBoundry = '';
+				}
 			});
 		}
 	});
@@ -84,4 +112,6 @@ $(document).ready(function(){
 		
 		return formatted;
 	}
+   $('#category').trigger('change');
+   $('#adminBoundryParent').trigger('change');
 });

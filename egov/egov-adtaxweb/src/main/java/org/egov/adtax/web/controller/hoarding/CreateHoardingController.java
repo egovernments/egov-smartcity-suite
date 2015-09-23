@@ -125,8 +125,13 @@ public class CreateHoardingController {
     }
     
     @ModelAttribute("zones")
-    public List<Boundary> getZones() {
+    public List<Boundary> zones() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", "ADMINISTRATION");
+    }
+    
+    @RequestMapping(value="wards", method = GET, produces = APPLICATION_JSON_VALUE)
+    public  @ResponseBody  List<Boundary> wards(@RequestParam final Long zoneId) {
+        return boundaryService.getActiveChildBoundariesByBoundaryId(zoneId);
     }
     
     @RequestMapping(value="subcategories", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -140,12 +145,13 @@ public class CreateHoardingController {
     }
 
     @RequestMapping(value = "create", method = POST)
-    public String createHoarding(@Valid @ModelAttribute final Hoarding hoarding, final BindingResult resultBinder, final RedirectAttributes redirectAttributes) {
+    public String createHoarding(@Valid @ModelAttribute final Hoarding hoarding, final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
         if (resultBinder.hasErrors()) {
             return "hoarding-create";
         }
         storeHoardingDocuments(hoarding);
         hoardingService.createHoarding(hoarding);
+        redirAttrib.addFlashAttribute("message", "hoarding.create.success");
         return "redirect:/hoarding/create";
     }
     
