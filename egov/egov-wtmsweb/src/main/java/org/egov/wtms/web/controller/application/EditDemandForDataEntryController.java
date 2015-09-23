@@ -52,6 +52,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.commons.Installment;
+import org.egov.demand.dao.EgDemandDetailsDao;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -82,6 +84,8 @@ public class EditDemandForDataEntryController {
     private final WaterConnectionDetailsRepository waterConnectionDetailsRepository;
     private final ConnectionDemandService connectionDemandService;
     @Autowired
+    private EgDemandDetailsDao egDemandDetailsDao;
+    @Autowired
     private WaterTaxUtils waterTaxUtils;
 
     @Autowired
@@ -107,56 +111,98 @@ public class EditDemandForDataEntryController {
 
     }
 
-    private String loadViewData(final Model model, final HttpServletRequest request,
-            final WaterConnectionDetails waterConnectionDetails) {
-        final List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>();
-        List<Installment> allInstallments = new ArrayList<Installment>();
-        final DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
-        try {
-            allInstallments = waterTaxUtils.getInstallmentListByStartDate(dateFormat.parse("01/04/1963"));
-        } catch (final ParseException e) {
-            throw new ApplicationRuntimeException("Error while getting all installments from start date", e);
-        }
-        for (final Map.Entry<String, String> entry : WaterTaxConstants.NON_METERED_DMDRSN_CODE_MAP.entrySet())
-            for (final Installment installObj : allInstallments) {
-                final EgDemandReason demandReasonObj = connectionDemandService.getDemandReasonByCodeAndInstallment(
-                        entry.getKey(), installObj);
-                if (demandReasonObj != null) {
-                    DemandDetail dmdDtl = null;
-                    /*
-                     * if(waterConnectionDetails.getDemand() !=null &&
-                     * !waterConnectionDetails
-                     * .getDemand().getEgDemandDetails().isEmpty()){
-                     * for(EgDemandDetails
-                     * detdd:waterConnectionDetails.getDemand
-                     * ().getEgDemandDetails()){ dmdDtl =
-                     * createDemandDetailBean(
-                     * detdd.getEgDemandReason().getEgInstallmentMaster(),
-                     * detdd.
-                     * getEgDemandReason().getEgDemandReasonMaster().getCode(),
-                     * detdd.getEgDemandReason().getEgDemandReasonMaster().
-                     * getReasonMaster(),
-                     * detdd.getAmount(),detdd.getAmtCollected()); } } else {
-                     */
-                    // TODO: need to check Modify Demand
-                    dmdDtl = createDemandDetailBean(installObj, entry.getKey(), entry.getValue(), null, null);
-                    // }
-                    demandDetailBeanList.add(dmdDtl);
-                }
-            }
-        model.addAttribute("demandDetailBeanList", demandDetailBeanList);
-        model.addAttribute("waterConnectionDetails", waterConnectionDetails);
-        return "editDemandDateEntry-newForm";
+	private String loadViewData(final Model model,
+			final HttpServletRequest request,
+			final WaterConnectionDetails waterConnectionDetails) {
+		final List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>();
+		final List<DemandDetail> demandDetailBeanTempList = new ArrayList<DemandDetail>();
+		List<Installment> allInstallments = new ArrayList<Installment>();
+		final DateFormat dateFormat = new SimpleDateFormat(
+				PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
+		try {
+			allInstallments = waterTaxUtils
+					.getInstallmentListByStartDate(dateFormat
+							.parse("01/04/1963"));
+		} catch (final ParseException e) {
+			throw new ApplicationRuntimeException(
+					"Error while getting all installments from start date", e);
+		}
+		DemandDetail dmdDtl = null;
+		for (final Map.Entry<String, String> entry : WaterTaxConstants.NON_METERED_DMDRSN_CODE_MAP
+				.entrySet())
+			for (final Installment installObj : allInstallments) {
+				final EgDemandReason demandReasonObj = connectionDemandService
+						.getDemandReasonByCodeAndInstallment(entry.getKey(),
+								installObj);
+				if (demandReasonObj != null) {
+					EgDemandDetails demanddet = getDemandDetailsExist(
+							waterConnectionDetails, demandReasonObj);
+					if (demanddet != null) {
+						dmdDtl = createDemandDetailBean(installObj,
+								demandReasonObj.getEgDemandReasonMaster()
+										.getCode(), entry.getValue(),
+								demanddet.getAmount(),
+								demanddet.getAmtCollected(), demanddet.getId(),
+								waterConnectionDetails);
+
+					} else {
+						dmdDtl = createDemandDetailBean(installObj,
+								entry.getKey(), entry.getValue(),
+								BigDecimal.ZERO, BigDecimal.ZERO, null,
+								waterConnectionDetails);
+
+					}
+
+				}
+				demandDetailBeanTempList.add(dmdDtl);
+			}
+		for (DemandDetail demandDetList : demandDetailBeanTempList) {
+			if (demandDetList != null) {
+				demandDetailBeanList.add(demandDetList);
+			}
+		}
+		model.addAttribute("demandDetailBeanList", demandDetailBeanList);
+		model.addAttribute("waterConnectionDetails", waterConnectionDetails);
+		model.addAttribute(
+				"connectionType",
+				waterConnectionDetailsService.getConnectionTypesMap().get(
+						waterConnectionDetails.getConnectionType().name()));
+		return "editDemandDateEntry-newForm";
+	}
+
+    private EgDemandDetails getDemandDetailsExist(WaterConnectionDetails waterConnectionDetails,EgDemandReason demandReasonObj)
+    {
+    	EgDemandDetails demandDet=null;
+    	for(EgDemandDetails dd:waterConnectionDetails.getDemand().getEgDemandDetails())
+    	{
+    		 if(dd.getEgDemandReason().equals(demandReasonObj))
+    	   	   {
+    			 demandDet=dd;
+    			 break;
+    	   	   }
+    	}
+    	return demandDet;
+    	
     }
-
     private DemandDetail createDemandDetailBean(final Installment installment, final String reasonMaster,
-            final String reasonMasterDesc, final BigDecimal amount, final BigDecimal amountCollected) {
-
-        final DemandDetail demandDetail = new DemandDetail();
+            final String reasonMasterDesc, final BigDecimal amount, final BigDecimal amountCollected,final Long demanddetailId,final WaterConnectionDetails waterConnectionDetails) {
+    	EgDemandDetails demandDetailsObj=null;
+       if(demanddetailId!=null && waterConnectionDetails.getDemand() !=null){
+        	 demandDetailsObj =waterConnectionDetailsRepository.getEgDemandDetailById(demanddetailId, waterConnectionDetails.getDemand().getId());
+        }
+        
+        final DemandDetail demandDetail=new DemandDetail();
         demandDetail.setInstallment(installment.getDescription());
         demandDetail.setReasonMaster(reasonMaster);
-        demandDetail.setActualAmount(amount);
+        demandDetail.setId(demanddetailId);
+        if(demandDetailsObj!=null){
+        demandDetail.setActualAmount((amount));
         demandDetail.setActualCollection(amountCollected);
+         }
+        else{
+        	  demandDetail.setActualAmount(amount);
+              demandDetail.setActualCollection(amountCollected);
+        }
         demandDetail.setReasonMasterDesc(reasonMasterDesc);
         return demandDetail;
     }

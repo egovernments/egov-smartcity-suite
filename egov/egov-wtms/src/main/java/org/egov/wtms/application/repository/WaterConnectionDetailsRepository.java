@@ -35,6 +35,7 @@ import java.util.List;
 
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.wtms.application.entity.MeterReadingConnectionDetails;
 import org.egov.wtms.application.entity.WaterConnection;
@@ -112,4 +113,7 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
 
     @Query("select I from Installment I where I.module.name=:module and I.description =:description")
     Installment getInstallmentByDescription(@Param("module") String code, @Param("description") String description);
+    
+    @Query("select D from EgDemandDetails D where D.id =:detId and D.egDemand.id =:demandId")
+    EgDemandDetails getEgDemandDetailById(@Param("detId") Long detId,@Param("demandId") Long demandId);
 }

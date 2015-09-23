@@ -199,32 +199,50 @@ public class ConnectionDemandService {
         return egDemand;
     }
 
-    private EgDemandDetails createDemandDetails(final Double amount, final String demandReason,
-            final Installment installment) {
-        final EgDemandReason demandReasonObj = getDemandReasonByCodeAndInstallment(demandReason, installment);
-        final EgDemandDetails demandDetail = new EgDemandDetails();
-        demandDetail.setAmount(BigDecimal.valueOf(amount));
-        demandDetail.setAmtCollected(BigDecimal.ZERO);
-        demandDetail.setAmtRebate(BigDecimal.ZERO);
-        demandDetail.setEgDemandReason(demandReasonObj);
-        demandDetail.setCreateDate(new Date());
-        demandDetail.setModifiedDate(new Date());
-        return demandDetail;
-    }
+	private EgDemandDetails createDemandDetails(final Double amount,
+			final String demandReason, final Installment installment) {
+		final EgDemandReason demandReasonObj = getDemandReasonByCodeAndInstallment(
+				demandReason, installment);
+		final EgDemandDetails demandDetail = new EgDemandDetails();
+		demandDetail.setAmount(BigDecimal.valueOf(amount));
+		demandDetail.setAmtCollected(BigDecimal.ZERO);
+		demandDetail.setAmtRebate(BigDecimal.ZERO);
+		demandDetail.setEgDemandReason(demandReasonObj);
+		demandDetail.setCreateDate(new Date());
+		demandDetail.setModifiedDate(new Date());
+		return demandDetail;
+	}
 
     private EgDemandDetails createDemandDetailsrForDataEntry(final BigDecimal amount, final BigDecimal collectAmount,
-            final String demandReason, final String installment) {
+            final String demandReason, final String installment,DemandDetail demandObj,WaterConnectionDetails waterConnectionDetails) {
         final Installment installObj = waterConnectionDetailsRepository.getInstallmentByDescription(
                 WaterTaxConstants.PROPERTY_MODULE_NAME, installment);
+         EgDemandDetails demandDetail=null;
+         EgDemandDetails  demandDetailsObj =waterConnectionDetailsRepository.getEgDemandDetailById(demandObj.getId(), waterConnectionDetails.getDemand().getId());
         final EgDemandReason demandReasonObj = getDemandReasonByCodeAndInstallment(demandReason, installObj);
-        final EgDemandDetails demandDetail = new EgDemandDetails();
-        demandDetail.setAmount(amount);
-        demandDetail.setAmtCollected(collectAmount);
-        demandDetail.setAmtRebate(BigDecimal.ZERO);
-        demandDetail.setEgDemandReason(demandReasonObj);
-        System.out.println(demandDetail.getEgDemandReason());
-        demandDetail.setCreateDate(new Date());
-        demandDetail.setModifiedDate(new Date());
+        if(demandDetailsObj!=null && demandObj.getId() !=null )
+    	   {
+    		   	demandDetail=demandDetailsObj;
+    		   	if(demandDetailsObj.getAmount().compareTo(amount) !=0){
+    		   	demandDetail.setAmount(amount);
+    		   	}
+    			if(demandDetailsObj.getAmtCollected().compareTo(collectAmount) !=0){
+   	        	demandDetail.setAmtCollected(collectAmount);
+    			}
+   	        	demandDetail.setEgDemandReason(demandReasonObj);
+   	        	demandDetail.setModifiedDate(new Date());
+    	   }
+    	   else
+    	   {
+    		   	demandDetail = new EgDemandDetails();
+    	        demandDetail.setAmount(amount);
+    	        demandDetail.setAmtCollected(collectAmount);
+    	        demandDetail.setAmtRebate(BigDecimal.ZERO);
+    	        demandDetail.setEgDemandReason(demandReasonObj);
+    	        demandDetail.setCreateDate(new Date());
+    	        demandDetail.setModifiedDate(new Date());
+    	       
+    	   }
         return demandDetail;
     }
 
@@ -487,18 +505,23 @@ public class ConnectionDemandService {
             demandObj = new EgDemand();
         else
             demandObj = waterConnectionDetails.getDemand();
-        final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
-        for (final DemandDetail ddtempObj : waterConnectionDetails.getDemandDetailBeanList())
-            dmdDetailSet.add(createDemandDetailsrForDataEntry(ddtempObj.getActualAmount(),
-                    ddtempObj.getActualCollection(), ddtempObj.getReasonMaster(), ddtempObj.getInstallment()));
+      
+         Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
+        for (final DemandDetail ddtempObj : waterConnectionDetails.getDemandDetailBeanList()){
+        	dmdDetailSet.add(createDemandDetailsrForDataEntry(ddtempObj.getActualAmount(),
+                    ddtempObj.getActualCollection(), ddtempObj.getReasonMaster(), ddtempObj.getInstallment(), ddtempObj,waterConnectionDetails));
+        }
+        
         demandObj.setBaseDemand(demandObj.getBaseDemand().add(getToTalAmount(dmdDetailSet)));
+        demandObj.setAmtCollected(demandObj.getAmtCollected().add(getToTalCollectedAmount(dmdDetailSet)));
+      
         final int listlength = waterConnectionDetails.getDemandDetailBeanList().size() - 1;
         final Installment installObj = waterConnectionDetailsRepository.getInstallmentByDescription(
                 WaterTaxConstants.PROPERTY_MODULE_NAME, waterConnectionDetails.getDemandDetailBeanList()
                         .get(listlength).getInstallment());
         demandObj.setEgInstallmentMaster(installObj);
         demandObj.getEgDemandDetails().addAll(dmdDetailSet);
-        demandObj.setAmtCollected(demandObj.getAmtCollected().add(getToTalCollectedAmount(dmdDetailSet)));
+       
         demandObj.setModifiedDate(new Date());
         if (demandObj.getIsHistory() == null)
             demandObj.setIsHistory("N");
@@ -510,15 +533,19 @@ public class ConnectionDemandService {
 
     public BigDecimal getToTalAmount(final Set<EgDemandDetails> demandDeatilslist) {
         BigDecimal currentTotalAmount = BigDecimal.ZERO;
-        for (final EgDemandDetails de : demandDeatilslist)
-            currentTotalAmount = currentTotalAmount.add(de.getAmount());
+        for (final EgDemandDetails de : demandDeatilslist){
+           currentTotalAmount = currentTotalAmount.add(de.getAmount());
+            
+        }
         return currentTotalAmount;
     }
 
     public BigDecimal getToTalCollectedAmount(final Set<EgDemandDetails> demandDeatilslist) {
         BigDecimal currentTotalAmount = BigDecimal.ZERO;
-        for (final EgDemandDetails de : demandDeatilslist)
+        for (final EgDemandDetails de : demandDeatilslist){
+        
             currentTotalAmount = currentTotalAmount.add(de.getAmtCollected());
+        }
         return currentTotalAmount;
     }
 

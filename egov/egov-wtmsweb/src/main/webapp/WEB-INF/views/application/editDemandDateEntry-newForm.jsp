@@ -126,7 +126,12 @@
 														id="actualCollection"  maxlength="7"  onblur=" return calculateCollectionAmount(this)"
 														required="required" 
 														/>
+														<form:input type="hidden" path="" 
+														class="form-control low-width" value="${var1.id}"
+														name="demandDetailBeanList[${counter.index}].id"
+														id="demandDetailBeanList[${counter.index}].id"
 														
+														/>
 													
 														</td>
 												</tr>

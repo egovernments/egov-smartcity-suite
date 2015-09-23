@@ -46,6 +46,7 @@ import java.math.BigDecimal;
  */
 public class DemandDetail {
 
+	private Long id;
     private String installment;
     private String reasonMaster;
     private String reasonMasterDesc;
@@ -113,4 +114,14 @@ public class DemandDetail {
         this.revisedCollection = revisedCollection;
     }
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	
+    
 }

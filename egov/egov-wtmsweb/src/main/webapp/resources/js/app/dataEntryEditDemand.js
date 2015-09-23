@@ -44,7 +44,7 @@
 	
 	 var table= document.getElementById("dcbOnlinePaymentTable");
 	 var rowobj= getRow(obj).rowIndex;
-		if(obj.value !=undefined)
+		/*if(obj.value !=undefined)
 		{
 			if( obj.value -(document.forms[0].actualCollection[rowobj].value) < 0 )
 				{
@@ -52,7 +52,7 @@
 				document.forms[0].actualCollection[rowobj].value="";
 				return false;
 				}
-		}
+		}*/
 	if(document.forms[0].actualAmount[rowobj-2]!=undefined && document.forms[0].actualAmount[rowobj-2].value !=undefined){	 
 			for(var j=0;j<=rowobj-2;j++)
 			{
