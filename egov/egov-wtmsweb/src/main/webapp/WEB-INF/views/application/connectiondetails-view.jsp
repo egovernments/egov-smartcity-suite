@@ -107,6 +107,22 @@
                     </c:choose>
                     </div>
 					</div>
+					<c:if test="${mode =='search' && waterConnectionDetails.legacy=='true' }">
+					<div class="row">
+					<div class="col-xs-3 add-margin"><spring:message code="lbl.donationcharge"/></div>  
+					<div class="col-xs-3 add-margin view-content">
+						<c:choose>
+						<c:when test="${not empty waterConnectionDetails.existingConnection.donationCharges}">
+							<c:out value="${waterConnectionDetails.existingConnection.donationCharges}" />
+						</c:when>
+						<c:otherwise>-</c:otherwise>
+					</c:choose></div>
+					<div class="col-xs-3 add-margin"></div>
+					<div class="col-xs-3 add-margin view-content">
+					</div>
+				</div>
+					</c:if>
+					<c:if test="${waterConnectionDetails.legacy=='false' }">
 				<div class="row">
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.donationcharge"/></div>  
 					<div class="col-xs-3 add-margin view-content">
@@ -124,7 +140,7 @@
 						</c:when>
 						<c:otherwise>-</c:otherwise>
 					</c:choose></div>
-				</div>
+				</div></c:if>
 				<c:if test="${waterConnectionDetails.connection.parentConnection.id!=null}">
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.addconnection.reason" /></div>

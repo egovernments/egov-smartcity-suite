@@ -42,7 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 	<div class="panel-body">
-	<c:if test="${mode!='addconnection' && mode!='changeOfUse'}">
+	<c:if test="${waterConnectionDetails.legacy=='false' && mode!='addconnection' && mode!='changeOfUse'}">
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.ack.number"/></div>
 			<div class="col-xs-3 add-margin view-content" id="applicationNumber">
@@ -57,6 +57,12 @@
 			<div class="col-xs-3 add-margin view-content" id="applicationDate">
 				<fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" />
 			</div>
+		</div>
+	</c:if>	
+	
+	<c:if test="${mode =='search' && waterConnectionDetails.legacy=='true' }">
+	<div class="row add-border">
+		
 		</div>
 	</c:if>	
 	<div class="row add-border">
