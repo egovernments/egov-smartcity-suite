@@ -44,24 +44,30 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-	<title><s:text name='licenseSubCategory.Search' /></title>
+	<title><s:text name='uommaster.Search' /></title>
 	<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 	<script>
-	function validateFormAndSubmit(){
-			var subCategoryId= dom.get("subCategoryId").value;
-			 if (subCategoryId == "-1"){
-				showMessage('subCategory_error', '<s:text name="licenseSubCategory.subCategory.null" />');
+	function validateFormAndSubmit(mode){
+			var uomId= dom.get("uomId").value;
+			dom.get("userMode").value=mode;
+			 if (uomId == "-1"){
+				showMessage('uom_error', '<s:text name="tradelic.uommaster.uom.null" />');
 				return false;
 			} else {
-			    	clearMessage('subCategory_error')
-			    	document.licenseSubCategoryForm.action='${pageContext.request.contextPath}/masters/licenseSubCategory-newform.action?id=' + subCategoryId;
-			    	document.licenseSubCategoryForm.submit();
+			    	clearMessage('uom_error')
+			    	document.uomForm.action='${pageContext.request.contextPath}/masters/unitOfMeasurement-newform.action?id=' + uomId;
+			    	document.uomForm.submit();
 			 	}
 		}
+
+	function reload(){
+		dom.get("uomId").value="-1";
+		clearMessage('uom_error');
+	}
 	</script>
 </head>
 <body>
-	<div id="subCategory_error" class="errorstyle" style="display:none;"></div> 
+	<div id="uom_error" class="errorstyle" style="display:none;"></div> 
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel-body">
@@ -71,23 +77,23 @@
 					<s:fielderror/>
 				</div>			
 			</s:if>
-			<s:form name="licenseSubCategoryForm" action="licenseSubCategory" theme="simple"
+			<s:form name="uomForm" action="unitOfMeasurement" theme="simple"
 				cssClass="form-horizontal form-groups-bordered"> 
 				<s:token name="%{tokenName()}"/> 
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
-						<div class="panel-title text-left"><s:text name='licenseSubCategory.Search' /></div>
+						<div class="panel-title text-left"><s:text name='uommaster.Search' /></div>
 					</div>
 					<div class="panel-body custom-form">
 						<s:hidden name="userMode" id="userMode"/>
 						<div class="form-group">
 							<label for="field-1" class="col-sm-2 control-label text-right"><span class="mandatory"></span><s:text
-									name="licenseSubCategory.subCategory.lbl" /> :</label>
+									name="uommaster.lbl" /> :</label>
 							<div class="col-sm-3 add-margin">
 								<s:select headerKey="-1"
-										headerValue="%{getText('default.select')}" name="subCategoryId"
-										id="subCategoryId" listKey="key" listValue="value"
-										list="licenseSubCategoryMap" cssClass="form-control" value="%{subCategoryId}" 
+										headerValue="%{getText('default.select')}" name="uomId"
+										id="uomId" listKey="key" listValue="value"
+										list="licenseUomMap" cssClass="form-control" value="%{uomId}" 
 										/>
 							</div>
 						</div>
@@ -97,14 +103,12 @@
 
 			<div class="row">
 				<div class="text-center">
-				<s:if test="%{userMode=='edit'}">
-					<button type="button" id="btnedit" class="btn btn-success" onclick="return validateFormAndSubmit();">
+					<button type="button" id="btnedit" class="btn btn-success" onclick="return validateFormAndSubmit('edit');">
 						Modify</button>
-				</s:if>
-				<s:elseif test="%{userMode=='view'}">
-					<button type="button" id="btnview" class="btn btn-success" onclick="return validateFormAndSubmit();">
+					<button type="button" id="btnview" class="btn btn-success" onclick="return validateFormAndSubmit('view');">
 						View</button>
-				</s:elseif>
+					<button type="button" id="btnreset" class="btn btn-success" onclick="return reload();">
+						Reset</button>
 					<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
 						Close</button>
 				</div>

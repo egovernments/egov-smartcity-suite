@@ -24,16 +24,16 @@
  *      In addition to the terms of the GPL license to be adhered to in using this
  *      program, the following additional terms are to be complied with:
  *
- *  	1) All versions of this program, verbatim or modified must carry this
- *  	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- *  	2) Any misrepresentation of the origin of the material is prohibited. It
- *  	   is required that all modified versions of this material be marked in
- *  	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *  	3) This license does not grant any rights to any user of the program
- *  	   with regards to rights under trademark law for use of the trade names
- *  	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
@@ -44,17 +44,19 @@ import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
 /**
- * The Class TradeCategory.
+ * The Class UnitOfMeasurement.
  */
-public class LicenseCategory extends BaseModel {
+public class UnitOfMeasurement extends BaseModel {
     private static final long serialVersionUID = 1L;
-    @Required(message = "tradelic.master.tradecategoryname.null")
-    @Length(max = 256, message = "tradelic.masters.tradecategoryname.length")
+    @Required(message = "tradelic.uommaster.name.null")
+    @Length(max = 50, message = "tradelic.uommaster.name.length")
     private String name;
 
-    @Required(message = "tradelic.master.tradecategorycode.null")
-    @Length(max = 32, message = "tradelic.masters.tradecategorycode.length")
+    @Required(message = "tradelic.uommaster.code.null")
+    @Length(max = 50, message = "tradelic.uommaster.code.length")
     private String code;
+    
+    private boolean active;
 
     public String getName() {
         return name;
@@ -72,15 +74,12 @@ public class LicenseCategory extends BaseModel {
         this.code = code;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("LicenseCategory={");
-        str.append("serialVersionUID=").append(serialVersionUID);
-        str.append("name=").append(name == null ? "null" : name.toString());
-        str.append("code=").append(code == null ? "null" : code.toString());
-        str.append("}");
-        return str.toString();
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
 }
