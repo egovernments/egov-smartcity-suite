@@ -268,25 +268,27 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.rev.zone"/>
-								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<select class="form-control"><option>select
-											from below</option></select>
+									<form:select path="revenueBoundary.parent" id="revenueBoundaryParent" cssClass="form-control" cssErrorClass="form-control error">
+										<form:option value=""><spring:message code="lbl.select" /></form:option>
+										<form:options items="${revenueZones}" itemLabel="name" itemValue="id"/>
+									</form:select>
+									<form:errors path="revenueBoundary.parent" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.rev.ward"/>
-								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<select class="form-control"><option>select
-											from below</option></select>
+									<form:select path="revenueBoundary" id="revenueBoundary" cssClass="form-control" cssErrorClass="form-control error">
+										<form:option value=""><spring:message code="lbl.select"/></form:option>
+									</form:select>
+									<form:errors path="revenueBoundary" cssClass="error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.locality"/>
-								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
 									<select class="form-control"><option>select
@@ -346,10 +348,9 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.duration"/>
-								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:select path="advertisementDuration" id="advertisementDuration" cssClass="form-control" cssErrorClass="form-control error" required="required">
+									<form:select path="advertisementDuration" id="advertisementDuration" cssClass="form-control" cssErrorClass="form-control error">
 										<form:option value=""><spring:message code="lbl.select" /></form:option>
 										<form:options items="${advertisementDuration}"/>
 									</form:select>
@@ -371,10 +372,9 @@
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.hoarding.enc.fee"/>
-								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="encroachmentFee" id="encroachmentFee" required="required"/>
+									<form:input type="text" cssClass="form-control" path="encroachmentFee" id="encroachmentFee"/>
                                		<form:errors path="encroachmentFee" cssClass="error-msg" />
 								</div>
 							</div>
@@ -398,10 +398,11 @@
 									class='mandatory'></span>" : ""}${docs.name}
 									</div>
 									<div class="col-sm-3 text-center">
-										<input type="checkbox" name="documents[${status.index}].enclosed" ${docs.mandatory ? "required='required'" : ""}>
+										<input type="checkbox" ${hoarding.documents[status.index].enclosed ? "checked='checked'" : ""} 
+										name="documents[${status.index}].enclosed" ${docs.mandatory ? "required='required'" : ""}>
 									</div>
 									<div class="col-sm-3 text-center">
-										<input type="file" name="documents[${status.index}].attachments" class="form-control" ${docs.mandatory ? "required='required'" : ""}>
+										<input type="file" name="documents[${status.index}].attachments" class="form-control" >
 										<form:errors path="documents[${status.index}].attachments" cssClass="add-margin error-msg" />
 										<form:hidden path="documents[${status.index}].doctype" value="${docs.id}" /> 
 									</div>
@@ -426,6 +427,7 @@
 //this is to reset the sub combobox upon field error
 var subcategory = '${hoarding.subCategory.id}';
 var adminBoundry = '${hoarding.adminBoundry.id}';
+var revenueBoundary = '${hoarding.revenueBoundary.id}';
 </script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/app/js/hoarding.js'/>"></script>

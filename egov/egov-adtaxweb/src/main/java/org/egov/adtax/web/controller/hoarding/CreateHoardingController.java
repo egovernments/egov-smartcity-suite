@@ -48,6 +48,7 @@ import javax.validation.Valid;
 
 import org.egov.adtax.entity.Hoarding;
 import org.egov.adtax.entity.HoardingCategory;
+import org.egov.adtax.entity.HoardingDocument;
 import org.egov.adtax.entity.HoardingDocumentType;
 import org.egov.adtax.entity.RatesClass;
 import org.egov.adtax.entity.RevenueInspector;
@@ -77,23 +78,23 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CreateHoardingController {
 
     private @Autowired HoardingService hoardingService;
-    
+
     private @Autowired HoardingCategoryService hoardingCategoryService;
 
     private @Autowired UnitOfMeasureService unitOfMeasureService;
 
     private @Autowired SubCategoryService subCategoryService;
-    
+
     private @Autowired RevenueInspectorService revenueInspectorService;
 
     private @Autowired RatesClassService ratesClassService;
-    
+
     private @Autowired HoardingDocumentTypeService hoardingDocumentTypeService;
-    
+
     private @Autowired FileStoreUtils fileStoreUtils;
-    
+
     private @Autowired BoundaryService boundaryService;
-    
+
     @ModelAttribute
     public Hoarding hoarding() {
         return new Hoarding();
@@ -108,33 +109,38 @@ public class CreateHoardingController {
     public List<UnitOfMeasure> uom() {
         return unitOfMeasureService.getAllActiveUnitOfMeasure();
     }
-    
+
     @ModelAttribute("revenueInspectors")
     public List<RevenueInspector> revenueInspectors() {
         return revenueInspectorService.findAllActiveRevenueInspectors();
     }
-    
+
     @ModelAttribute("rateClasses")
     public List<RatesClass> rateClasses() {
         return ratesClassService.getAllActiveRatesClass();
     }
-    
+
     @ModelAttribute("hoardingDocumentTypes")
     public List<HoardingDocumentType> hoardingDocumentTypes() {
         return hoardingDocumentTypeService.getAllDocumentTypes();
+    }
+
+    @ModelAttribute("revenueZones")
+    public List<Boundary> revenueZones() {
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", "ELECTION");
     }
     
     @ModelAttribute("zones")
     public List<Boundary> zones() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", "ADMINISTRATION");
     }
-    
-    @RequestMapping(value="wards", method = GET, produces = APPLICATION_JSON_VALUE)
-    public  @ResponseBody  List<Boundary> wards(@RequestParam final Long zoneId) {
-        return boundaryService.getActiveChildBoundariesByBoundaryId(zoneId);
+
+    @RequestMapping(value = "child-boundaries", method = GET, produces = APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Boundary> childBoundaries(@RequestParam final Long parentBoundaryId) {
+        return boundaryService.getActiveChildBoundariesByBoundaryId(parentBoundaryId);
     }
-    
-    @RequestMapping(value="subcategories", method = GET, produces = APPLICATION_JSON_VALUE)
+
+    @RequestMapping(value = "subcategories", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<SubCategory> hoardingSubcategories(@RequestParam final Long categoryId) {
         return subCategoryService.getAllActiveSubCategoryByCategoryId(categoryId);
     }
@@ -145,19 +151,31 @@ public class CreateHoardingController {
     }
 
     @RequestMapping(value = "create", method = POST)
-    public String createHoarding(@Valid @ModelAttribute final Hoarding hoarding, final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
-        if (resultBinder.hasErrors()) {
+    public String createHoarding(@Valid @ModelAttribute final Hoarding hoarding, final BindingResult resultBinder,
+            final RedirectAttributes redirAttrib) {
+        validateHoardingDocs(hoarding, resultBinder);
+        if (resultBinder.hasErrors())
             return "hoarding-create";
-        }
         storeHoardingDocuments(hoarding);
         hoardingService.createHoarding(hoarding);
         redirAttrib.addFlashAttribute("message", "hoarding.create.success");
         return "redirect:/hoarding/create";
     }
-    
-    private void storeHoardingDocuments(Hoarding hoarding) {
+
+    private void storeHoardingDocuments(final Hoarding hoarding) {
         hoarding.getDocuments().forEach(document -> {
             document.setFiles(fileStoreUtils.addToFileStore(document.getAttachments(), "ADTAX"));
         });
+    }
+
+    private void validateHoardingDocs(final Hoarding hoarding, final BindingResult resultBinder) {
+        int index = 0;
+        for (final HoardingDocument document : hoarding.getDocuments()) {
+            if (document.getDoctype().isMandatory() && document.getAttachments()[0].getSize() == 0)
+                resultBinder.rejectValue("documents[" + index+ "].attachments", "hoarding.doc.mandatory");
+            else if (document.isEnclosed() && document.getAttachments()[0].getSize() == 0)
+                resultBinder.rejectValue("documents[" + index+ "].attachments", "hoarding.doc.not.enclosed");
+            index++;
+        }
     }
 }

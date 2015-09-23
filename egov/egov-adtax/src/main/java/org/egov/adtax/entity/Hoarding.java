@@ -171,13 +171,13 @@ public class Hoarding extends AbstractAuditable {
     private Double taxAmount;
     private Double encroachmentFee;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "class", nullable = false)
     private RatesClass rateClass;
 
-    @NotNull
     @ManyToOne
-    @JoinColumn(name = "revenueinspector", nullable = false)
+    @JoinColumn(name = "revenueinspector")
     private RevenueInspector revenueInspector;
 
     @ManyToOne
@@ -194,7 +194,6 @@ public class Hoarding extends AbstractAuditable {
     @Length(max = 512)
     private String address;
 
-    @NotNull
     @Enumerated(EnumType.ORDINAL)
     private HoardingDuration advertisementDuration;
 

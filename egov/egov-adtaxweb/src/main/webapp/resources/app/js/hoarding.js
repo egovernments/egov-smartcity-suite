@@ -66,10 +66,10 @@ $(document).ready(function(){
 		} else {
 			$.ajax({
 				type: "GET",
-				url: "wards",
+				url: "child-boundaries",
 				cache: true,
 				dataType: "json",
-				data:{'zoneId' : this.value}
+				data:{'parentBoundaryId' : this.value}
 			}).done(function(value) {
 				$('#adminBoundry option:gt(0)').remove();
 				$.each(value, function(index, val) {
@@ -78,6 +78,29 @@ $(document).ready(function(){
 				if(adminBoundry !== '') {
 					$("select#adminBoundry").val(adminBoundry); 
 					adminBoundry = '';
+				}
+			});
+		}
+	});
+   
+   $('#revenueBoundaryParent').change(function(){
+		if (this.value === '') {
+			return;
+		} else {
+			$.ajax({
+				type: "GET",
+				url: "child-boundaries",
+				cache: true,
+				dataType: "json",
+				data:{'parentBoundaryId' : this.value}
+			}).done(function(value) {
+				$('#revenueBoundary option:gt(0)').remove();
+				$.each(value, function(index, val) {
+				     $('#revenueBoundary').append($('<option>').text(val.name).attr('value', val.id));
+				});
+				if(revenueBoundary !== '') {
+					$("select#revenueBoundary").val(revenueBoundary); 
+					revenueBoundary = '';
 				}
 			});
 		}
@@ -114,4 +137,5 @@ $(document).ready(function(){
 	}
    $('#category').trigger('change');
    $('#adminBoundryParent').trigger('change');
+   $('#revenueBoundryParent').trigger('change');
 });
