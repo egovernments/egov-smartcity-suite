@@ -572,8 +572,7 @@ public class PropertyExternalService {
 		return propertyTaxDetails;
 	}
 
-	public ReceiptDetails payPropertyTax(String assessmentNo, String paymentMode, BigDecimal totalAmount, String paidBy,
-			String username, String password) {
+	public ReceiptDetails payPropertyTax(String assessmentNo, String paymentMode, BigDecimal totalAmount, String paidBy) {
 		ReceiptDetails receiptDetails = null;
 		ErrorDetails errorDetails = null;
 		BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
@@ -615,8 +614,7 @@ public class PropertyExternalService {
 		return receiptDetails;
 	}
 	
-	public ErrorDetails payWaterTax(String consumerNo, String paymentMode, BigDecimal totalAmount, String paidBy,
-			String username, String password) {
+	public ErrorDetails payWaterTax(String consumerNo, String paymentMode, BigDecimal totalAmount, String paidBy) {
 		ErrorDetails errorDetails = validatePaymentDetails(consumerNo, paymentMode, totalAmount, paidBy);
 		if(null != errorDetails) {
 			return errorDetails;
