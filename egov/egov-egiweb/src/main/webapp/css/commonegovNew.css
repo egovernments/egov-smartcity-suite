@@ -557,7 +557,7 @@ div.subheadnew {
   font-size: 16px;
   font-weight: bold;
   color: #F5861F;
-  text-align: center;
+  /* text-align: center; */
   padding: 15px 15px;
   background:#fff;
 }

@@ -48,7 +48,7 @@
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td colspan="5">
-			<div class="headingsmallbg">
+			<div class="subheadnew text-left">
 				<s:text name="docsectiontitle" />
 			</div>
 		</td>
@@ -66,7 +66,7 @@
 					<s:iterator value="documentTypes" status="status" var="documentType">
 						<tr>
 							<td class="blueborderfortd" style="text-align: left">
-								<span class="bold"><s:property value="#status.index + 1"/></span>
+								<span><s:property value="#status.index + 1"/></span>
 							</td>
 							<td class="blueborderfortd" style="text-align: left">
 								<s:property value="name" /><s:if test="mandatory"><span class="mandatory1">*</span></s:if>
