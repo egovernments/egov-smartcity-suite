@@ -1,42 +1,61 @@
 $(document).ready(function(){
-    
-    
-    $('input[type=radio][name=optradio]').change(function() {
-        if (this.value == 'agency') {
-            $('.hoarding_section').hide();
-            $('.agency_section').show();
-        }
-        else if (this.value == 'hoarding') {
-            $('.agency_section').hide();
-            $('.hoarding_section').show();
-        }
-    });
-    
-    
-    tableContainer1 = $("#search_adtax_agency"); 
-	tableContainer1.dataTable({
-		"sPaginationType": "bootstrap",
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
-		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-		"bDestroy": true,
-		"autoWidth": false
+	
+	$('#subcategories').change(function(){
+		$("#subCategoryId").val($('#subcategories').val());    
 	});
-    
-    $('#adtaxsearch_agency').keyup(function(){
-		tableContainer1.fnFilter(this.value);
+	
+	$('#zoneList').change(function(){
+		$.ajax({
+			url: "/egi/wards-by-zone",     
+			type: "GET",
+			data: {
+				zoneId: $('#zoneList').val()  
+			},
+			dataType: "json",
+			success: function (response) {
+				console.log("success"+response);
+				$("#zoneId").val($('#zoneList').val());    
+				$('#wardlist').empty();
+				$('#wardlist').append($("<option value=''>Select from below</option>"));
+				$.each(response, function(index, value) {
+					$('#wardlist').append($('<option>').text(value.name).attr('value', value.id))
+				});
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
 	});
-    
-    tableContainer2 = $("#search_adtax_hoarding"); 
-	tableContainer2.dataTable({
-		"sPaginationType": "bootstrap",
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
-		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-		"bDestroy": true,
-		"autoWidth": false
+	
+	$('#wardlist').change(function(){
+		$("#wardId").val($('#wardlist').val());    
 	});
-    
-    $('#adtaxsearch_hoarding').keyup(function(){
-		tableContainer2.fnFilter(this.value);
+	
+	/*$('#revenueinspector').change(function(){
+		$("#revenueInspectorId").val($('#revenueinspector').val());    
+	});*/
+	
+	$('#categories').change(function(){
+		$.ajax({
+			url: "/adtax/hoarding/subcategory-by-category",    
+			type: "GET",
+			data: {
+				categoryId : $('#categories').val()   
+			},
+			dataType: "json",
+			success: function (response) {
+				console.log("success"+response);
+				$("#category").val($('#categories').val());    
+				$('#subcategories').empty();
+				$('#subcategories').append($("<option value=''>Select from below</option>"));
+				$.each(response, function(index, value) {
+					$('#subcategories').append($('<option>').text(value.description).attr('value', value.id));
+				});
+				
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
 	});
-    
 });
