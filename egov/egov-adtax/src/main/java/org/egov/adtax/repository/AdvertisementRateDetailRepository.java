@@ -57,4 +57,9 @@ public interface AdvertisementRateDetailRepository extends JpaRepository<Adverti
     List<AdvertisementRatesDetails> findScheduleOfRateDetailsByCategorySubcategoryUomAndClass(@Param("category") HoardingCategory category,
             @Param("subCategory") SubCategory subCategory, @Param("uom") UnitOfMeasure unitOfMeasure, @Param("ratesClass") RatesClass ratesClass);
 
+    @Query("select A.amount from AdvertisementRatesDetails A where A.advertisementRate.category=:category and A.unitFrom < :units and A.unitTo >= :units  and A.advertisementRate.classtype=:ratesClass and A.advertisementRate.unitofmeasure=:uom and A.advertisementRate.subCategory=:subCategory and A.advertisementRate.active=true")
+   Double getAmountByCategorySubcategoryUomAndClass(@Param("category") HoardingCategory category,
+            @Param("subCategory") SubCategory subCategory, @Param("uom") UnitOfMeasure unitOfMeasure, @Param("ratesClass") RatesClass ratesClass
+            , @Param("units") Double units);
+
 }

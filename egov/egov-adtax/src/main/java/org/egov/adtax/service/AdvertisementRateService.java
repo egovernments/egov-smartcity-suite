@@ -55,12 +55,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class RatesService {
+public class AdvertisementRateService {
     private final AdvertisementRateRepository ratesRepository;
     private final AdvertisementRateDetailRepository rateDetailRepository;
 
     @Autowired
-    public RatesService(final AdvertisementRateRepository ratesRepository,
+    public AdvertisementRateService(final AdvertisementRateRepository ratesRepository,
             final AdvertisementRateDetailRepository rateDetailRepository) {
         this.ratesRepository = ratesRepository;
         this.rateDetailRepository = rateDetailRepository;
@@ -94,5 +94,17 @@ public class RatesService {
         rateDetailRepository.deleteInBatch(existingRateDetails);
 
     }
+    
+    public Double getAmountByCategorySubcategoryUomAndClass(final HoardingCategory category,
+            final SubCategory subCategory, final UnitOfMeasure unitofmeasure, final RatesClass classtype, Double units) {
+        Double rate = Double.valueOf(0);
+
+        if (units != null && category != null && subCategory != null && unitofmeasure != null && classtype != null)
+            rate = rateDetailRepository.getAmountByCategorySubcategoryUomAndClass(category, subCategory, unitofmeasure,
+                    classtype, units);
+
+        return rate;
+    }
+    
 
 }

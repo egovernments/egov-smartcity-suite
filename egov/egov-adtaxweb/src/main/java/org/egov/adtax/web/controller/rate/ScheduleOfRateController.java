@@ -16,7 +16,7 @@ import org.egov.adtax.entity.UnitOfMeasure;
 import org.egov.adtax.repository.AdvertisementRateDetailRepository;
 import org.egov.adtax.service.HoardingCategoryService;
 import org.egov.adtax.service.RatesClassService;
-import org.egov.adtax.service.RatesService;
+import org.egov.adtax.service.AdvertisementRateService;
 import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.service.UnitOfMeasureService;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class ScheduleOfRateController {
     private static final Logger LOG = LoggerFactory.getLogger(ScheduleOfRateController.class);
 
     @Autowired
-    private RatesService ratesService;
+    private AdvertisementRateService advertisementRateService;
 
     @Autowired
     private AdvertisementRateDetailRepository advertisementRateDetailRepository;
@@ -126,9 +126,9 @@ public class ScheduleOfRateController {
 
         // TODO: validate, whether details are correct
 
-        existingRateobject = ratesService.findScheduleOfRateByCategorySubcategoryUomAndClass(rate.getCategory(),
+        existingRateobject = advertisementRateService.findScheduleOfRateByCategorySubcategoryUomAndClass(rate.getCategory(),
                 rate.getSubCategory(), rate.getUnitofmeasure(), rate.getClasstype());
-
+       
         for (final AdvertisementRatesDetails advDtl : rate.getAdvertisementRatesDetails()) {
             if (existingRateobject != null)
                 advDtl.setAdvertisementRate(existingRateobject);
@@ -138,13 +138,13 @@ public class ScheduleOfRateController {
         }
 
         if (existingRateobject != null) {
-            ratesService.deleteAllInBatch(existingRateobject.getAdvertisementRatesDetails());
+            advertisementRateService.deleteAllInBatch(existingRateobject.getAdvertisementRatesDetails());
             existingRateobject.setAdvertisementRatesDetails(rateDetails);
-            rate = ratesService.createScheduleOfRate(existingRateobject);
+            rate = advertisementRateService.createScheduleOfRate(existingRateobject);
         } else {
             rate.getAdvertisementRatesDetails().clear();
             rate.setAdvertisementRatesDetails(rateDetails);
-            rate = ratesService.createScheduleOfRate(rate);
+            rate = advertisementRateService.createScheduleOfRate(rate);
         }
         redirectAttrs.addFlashAttribute("agency", rate);
         redirectAttrs.addFlashAttribute("message", "message.scheduleofrate.create");
@@ -159,7 +159,7 @@ public class ScheduleOfRateController {
      */
     @RequestMapping(value = "/success/{id}", method = GET)
     public ModelAndView successView(@PathVariable("id") final Long id, @ModelAttribute final AdvertisementRate rate) {
-        return new ModelAndView("scheduleOfRate-success", "rate", ratesService.getScheduleOfRateById(id));
+        return new ModelAndView("scheduleOfRate-success", "rate", advertisementRateService.getScheduleOfRateById(id));
 
     }
 
