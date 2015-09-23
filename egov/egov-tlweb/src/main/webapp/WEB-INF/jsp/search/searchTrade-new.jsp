@@ -52,7 +52,7 @@
 						<div align="center">
 							<center>
 								<div class="formmainbox">
-									<div class="headingbg">
+									<div class="subheadnew">
 										<s:text name="license.search" />
 									</div>
 									<s:push value="model">
