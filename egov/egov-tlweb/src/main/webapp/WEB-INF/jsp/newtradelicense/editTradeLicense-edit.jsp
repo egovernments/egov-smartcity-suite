@@ -39,43 +39,50 @@
 #------------------------------------------------------------------------------->
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
-	<head>
-		<title><s:text name="page.title.edittrade" /></title>
-		<sx:head />
-		<script type="text/javascript" src="../javascript/license/tradeLicense.js"></script>
-		<script>
-		    function validateForm(obj) {
-		    	if (validateApprover(obj) == false) {
-		      		return false;
-		    	} else {
-		        	return true;
-		    	}
-		  	}
-		  	function  enableRentPaid(obj) {
-		if(obj.value=="Rental") {
-			document.getElementById("rentpaid").disabled=false;
-		} else {
-			document.getElementById("rentpaid").value="";
-			document.getElementById("rentpaid").disabled=true;
+<head>
+<title><s:text name="page.title.edittrade" /></title>
+<sx:head />
+<script type="text/javascript"
+	src="../javascript/license/tradeLicense.js"></script>
+<script>
+	function validateForm(obj) {
+		if(validateForm_editTradeLicense()==false) {
+			return false;
+		} else { 
+			document.forms[0].action = '/tl/newtradelicense/editTradeLicense-edit.action';
+			document.forms[0].submit;
 		}
 	}
-	function checkLength(obj,val){
-				if(obj.value.length>val) {
-					alert('Max '+val+' digits allowed')
-					obj.value = obj.value.substring(0,val);
-				}
-			}	
+	function enableRentPaid(obj) {
+		if (obj.value == "Rental") {
+			document.getElementById("rentpaid").disabled = false;
+		} else {
+			document.getElementById("rentpaid").value = "";
+			document.getElementById("rentpaid").disabled = true;
+		}
+	}
+	function checkLength(obj, val) {
+		if (obj.value.length > val) {
+			alert('Max ' + val + ' digits allowed')
+			obj.value = obj.value.substring(0, val);
+		}
+	}
+
+	function formatCurrency(obj) {
+		if (obj.value == "") {
+			return;
+		} else {
+			obj.value = (parseFloat(obj.value)).toFixed(2);
+		}
+	}
+
+	function onSubmit() {
+		return validateForm(this);
+	}
 	
-			function formatCurrency(obj) {
-       			if(obj.value=="") {
-        			return;
-        		} else {
-            		obj.value=(parseFloat(obj.value)).toFixed(2);
-       			}
-    		}
-    	</script>
-	</head>
-	<body onload="loadTableTdClass()">
+</script>
+</head>
+<body onload="loadTableTdClass()">
 		<table align="center" width="100%">
 			<tbody>
 				<tr>
@@ -90,24 +97,20 @@
 										<tr>
 											<td align="left" style="color: #FF0000">
 												<s:actionerror cssStyle="color: #FF0000" />
-												<s:fielderror />
+												<s:fielderror></s:fielderror>
 												<s:actionmessage />
 											</td>
 										</tr>
 									</table>
 									<s:push value="model">
-										<s:form action="editTradeLicense" theme="css_xhtml" name="registrationForm" validate="true">
+										<s:form action="editTradeLicense" theme="css_xhtml" name="editTradeLicense" validate="true">
 										<s:token/>
 											<s:hidden name="id" id="id" />
-											<s:hidden name="docNumber" id="docNumber" />
 											<table border="0" cellpadding="0" cellspacing="0" width="100%" id="maintbl">
 												<tbody>
 													<tr>
 														<td colspan="5" class="headingwk">
-															<div class="arrowiconwk">
-																<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20" />
-															</div>
-															<div class="headplacer">
+															<div class="subheadnew text-left">
 																<s:text name='license.title.applicantiondetails' />
 															</div>
 														</td>
@@ -199,24 +202,21 @@
 															<span class="mandatory1">*</span>
 														</td>
 														<td>
-															<s:textfield name="address.houseNo" maxlength="10"/>
+															<s:textfield name="address.houseNoBldgApt" maxlength="10"/>
 														</td>
-														<td>
-															<s:text name='license.housenumber.old' />
-														</td>
-														<td>
-															<s:textfield name="address.streetAddress2" maxlength="10"/>
+														<td colspan="2">
+															&nbsp;
 														</td>
 													</tr>
 													<tr>
 														<td>
 															&nbsp;
 														</td>
-		<td><s:text name="license.remainingaddress" />
-		</td>
-	<td>
-		<s:property value="address.streetAddress1" />
-	</td>
+														<td><s:text name="license.remainingaddress" />
+														</td>
+														<td>
+															<s:property value="address.streetRoadLine" default="N/A"/>
+														</td>
 														<td>
 															<s:text name='license.pincode' />
 														</td>
@@ -277,10 +277,7 @@
 														</tr>
 													<tr>
 														<td colspan="5" class="headingwk">
-															<div class="arrowiconwk">
-																<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20" />
-															</div>
-															<div class="headplacer">
+															<div class="subheadnew text-left">
 																<s:text name='license.title.applicantdetails' />
 															</div>
 														</td>
@@ -335,24 +332,20 @@
 															<span class="mandatory1">*</span>
 														</td>
 														<td>
-															<s:textfield name="licensee.address.houseNo" maxlength="10"/>
-														</td>
+															<s:textfield name="licensee.address.houseNoBldgApt" maxlength="10"/>
+														</td colspan="2">
+															&nbsp;														
 														<td>
-															<s:text name='license.housenumber.old' />
-														</td>
-														<td>
-															<s:textfield name="licensee.address.streetAddress2"  maxlength="10"/>
-														</td>
 													</tr>
 													<tr>
 														<td>
 															&nbsp;
 														</td>
-		<td><s:text name="licensee.remainingaddress" />
-	</td>
-	<td>
-		<s:property value="licensee.address.streetAddress1" />
-	</td>
+															<td><s:text name="licensee.remainingaddress" />
+														</td>
+														<td>
+															<s:property value="licensee.address.streetRoadLine" default="N/A"/>
+														</td>
 														<td>
 															<s:text name='license.pincode' />
 														</td>
@@ -393,10 +386,7 @@
 													</tr>
 													<tr>
 														<td colspan="5" class="headingwk">
-															<div class="arrowiconwk">
-																<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20" />
-															</div>
-															<div class="headplacer">
+															<div class="subheadnew text-left">
 																<s:text name='license.title.tradedetail' />
 															</div>
 														</td>
@@ -453,10 +443,7 @@
 													<s:if test="%{#attr.isOldLicense == false && motorInstalled}">
 														<tr>
 															<td colspan="5" class="headingwk">
-																<div class="arrowiconwk">
-																	<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20" />
-																</div>
-																<div class="headplacer">
+																<div class="subheadnew text-left">
 																	<s:text name='license.title.motordetail' />
 																</div>
 															</td>
@@ -505,16 +492,8 @@
 											<div class="mandatory1" style="font-size: 11px;" align="left">
 												* Mandatory Fields
 											</div>
-											<div>
+											<%-- <div>
 												<table>
-													<tr>
-														<td align="center" colspan="4">
-														<br/>
-														<input type="button" class="button" value="Upload Document" id="docUploadButton" onclick="showDocumentManagerForDoc('docNumber');updateCurrentDocId('docNumber')" tabindex="1" />
-														<br/>
-														<br/>
-														</td>
-													</tr>
 													<tr class="buttonbottom" id="buttondiv" style="align: middle">
 														<s:if test="%{#attr.isOldLicense == false}">
 														 <s:if test="%{roleName.contains('TLAPPROVER')}">
@@ -540,7 +519,7 @@
 														</td>
 													</tr>
 												</table>
-											</div>
+											</div> --%>
 										</s:form>
 									</s:push>
 								</div>

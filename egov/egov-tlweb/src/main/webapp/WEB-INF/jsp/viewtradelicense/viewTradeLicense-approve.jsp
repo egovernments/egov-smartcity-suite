@@ -45,12 +45,13 @@
 		<sx:head />
 		<script>
 	  		function validateForm(obj) {
-	    		if (validateApprover(obj) == false) {
-	      			return false;
-	    		} else {
-	      			return true;
-	    		}
+	    		document.forms[0].action = '/tl/newtradelicense/newTradeLicense-approve.action';
+        		document.forms[0].submit;
 	  		}
+
+	  		function onSubmit() {
+    			return validateForm(this);
+        	}
 		</script>
 	</head>
 	<body>
@@ -73,7 +74,7 @@
 											</td>
 										</tr>
 									</table>
-									<s:form action="viewTradeLicense" theme="css_xhtml" name="viewForm" validate="true">
+									<s:form action="viewTradeLicense" theme="css_xhtml" enctype="multipart/form-data" name="viewForm" validate="true">
 									<s:token/>
 										<s:push value="model">
 											<s:hidden name="docNumber" id="docNumber" />
@@ -91,24 +92,15 @@
 													<td colspan="5">
 														<%@ include file='../common/feedetailsview.jsp'%>
 													</td>
-												</tr>												
-												<tr>
-													<td colspan="5">
-														<%@ include file='../common/commonWorkflowMatrix.jsp'%>
-														<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
-													</td>
 												</tr>
 												<tr>
-													<td colspan="5" align="center">
-														<br/>
-														<input type="button" class="button" value="Upload Document" id="docUploadButton" onclick="showDocumentManagerForDoc('docNumber');updateCurrentDocId('docNumber')" tabindex="1" />
-														<br/>
-														<br/>
+													<td colspan="5">
+														<%@ include file='../common/documentView.jsp'%>
 													</td>
-												</tr>												
+												</tr>											
 											</table>
 											<div>
-												<table>
+												<%-- <table>
 													<tr class="buttonbottom" id="buttondiv" style="align: middle">
 													<s:if test="%{roleName.contains('TLAPPROVER')}">
 														<td>
@@ -125,7 +117,10 @@
 															<input type="button" value="Close" id="closeButton" onclick="javascript:window.close();" class="button" />
 														</td>
 													</tr>
-												</table>
+												</table> --%>
+												
+												<%@ include file="../common/commonWorkflowMatrix.jsp" %>
+												<%@ include file="../common/commonWorkflowMatrix-button.jsp" %>
 											</div>
 										</s:push>
 									</s:form>

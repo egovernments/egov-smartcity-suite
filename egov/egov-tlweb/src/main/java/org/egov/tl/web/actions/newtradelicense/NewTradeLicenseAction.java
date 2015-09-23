@@ -78,7 +78,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Results({ @Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
-	       @Result(name = Constants.ACKNOWLEDGEMENT, location = "newTradeLicense-"+Constants.ACKNOWLEDGEMENT+".jsp")})
+        @Result(name = Constants.ACKNOWLEDGEMENT, location = "newTradeLicense-" + Constants.ACKNOWLEDGEMENT + ".jsp"),
+        @Result(name = Constants.MESSAGE, location = "newTradeLicense-" + Constants.MESSAGE + ".jsp") })
 public class NewTradeLicenseAction extends BaseLicenseAction {
 
     private static final long serialVersionUID = 1L;
@@ -109,7 +110,9 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
 
     @Override
     @SkipValidation
+    @Action(value = "/newtradelicense/newTradeLicense-approve")
     public String approve() {
+        tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", getSession().get("model.id"));
         return super.approve();
     }
 

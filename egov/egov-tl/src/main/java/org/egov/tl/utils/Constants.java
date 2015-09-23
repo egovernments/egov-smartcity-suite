@@ -88,6 +88,7 @@ public class Constants {
     public static final String WF_STATE_ZO_Approval_Pending = "ZO Approval Pending";
     public static final String WF_STATE_LICENSE_NOT_APPROVED = "License Not Approved";
     public static final String WF_STATE_RENEWAL_PRINT_PENDING = "Renewal Print Pending";
+    public static final String WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING = "Sanitory inspector Approval Pending";
 
     // JSP Pages
     public static final String VIEW_RESULT_PAGE = "result";
@@ -321,7 +322,7 @@ public class Constants {
     public static final String WORKFLOW_STATE_GENERATEREJECTIONLETTER = "Generate Rejection Letter";
     public static final String WORKFLOW_STATE_GENERATESUSPENSIONLETTER = "Generate Suspension Letter";
     public static final String WORKFLOW_STATE_GENERATECANCELLATIONLETTER = "Generate Cancellation Letter";
-    public static final String WORKFLOW_STATE_TYPE_CREATENEWLICENSE = "New License:";
+    public static final String WORKFLOW_STATE_TYPE_CREATENEWLICENSE = "Create License:";
     public static final String WORKFLOW_STATE_TYPE_RENEWLICENSE = "Renew License:";
     public static final String WORKFLOW_STATE_TYPE_MODIFYLICENSE = "Modify License:";
     public static final String WORKFLOW_STATE_TYPE_TRANSFERLICENSE = "Transfer License:";

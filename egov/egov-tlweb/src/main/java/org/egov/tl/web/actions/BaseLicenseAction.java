@@ -89,86 +89,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Results({
         @Result(name = "collection", type = "redirectAction", location = "licenseBillCollect", params = {
                 "namespace", "/integration", "method", "renew" }),
-        @Result(name = "tl_editlicense", type = "redirectAction", location = "editTradeLicense", params = {
-                "namespace", "/newtradelicense/web", "method", "beforeEdit" }),
+        @Result(name = "tl_editlicense", type = "redirectAction", location = "editTradeLicense-beforeEdit", params = {
+                "namespace", "/newtradelicense"}),
         @Result(name = "tl_approve", type = "redirectAction", location = "viewTradeLicense", params = {
-                "namespace", "/viewtradelicense/web", "method", "showForApproval" }),
+                "namespace", "/viewtradelicense", "method", "showForApproval" }),
         @Result(name = "tl_generateRejCertificate", type = "redirectAction", location = "viewTradeLicense", params = {
-                "namespace", "/viewtradelicense/web", "method", "generateRejCertificate" }),
+                "namespace", "/viewtradelicense", "method", "generateRejCertificate" }),
         @Result(name = "tl_generateCertificate", type = "redirectAction", location = "viewTradeLicense", params = {
-                "namespace", "/viewtradelicense/web", "method", "generateCertificate" }),
+                "namespace", "/viewtradelicense", "method", "generateCertificate" }),
         @Result(name = "tl_generateNoc", type = "redirectAction", location = "viewTradeLicense", params = {
-                "namespace", "/viewtradelicense/web", "method", "generateNoc" }),
+                "namespace", "/viewtradelicense", "method", "generateNoc" }),
         @Result(name = "transfertl_editlicense", type = "redirectAction", location = "transferTradeLicense", params = {
-                "namespace", "/transfer/web", "method", "beforeEdit" }),
+                "namespace", "/transfer", "method", "beforeEdit" }),
         @Result(name = "transfertl_approve", type = "redirectAction", location = "transferTradeLicense", params = {
-                "namespace", "/transfer/web", "method", "showForApproval" }),
-        @Result(name = "hl_editlicense", type = "redirectAction", location = "editHospitalLicense", params = {
-                "namespace", "/newhospitallicense/web", "method", "beforeEdit" }),
-        @Result(name = "hl_approve", type = "redirectAction", location = "viewHospitalLicense", params = {
-                "namespace", "/viewhospitallicense/web", "method", "showForApproval" }),
-        @Result(name = "hl_generateCertificate", type = "redirectAction", location = "viewHospitalLicense", params = {
-                "namespace", "/viewhospitallicense/web", "method", "generateCertificate" }),
-        @Result(name = "hl_generateRejCertificate", type = "redirectAction", location = "viewHospitalLicense", params = {
-                "namespace", "/viewhospitallicense/web", "method", "generateRejCertificate" }),
-        @Result(name = "transferhl_editlicense", type = "redirectAction", location = "transferHospitalLicense", params = {
-                "namespace", "/transfer/web", "method", "beforeEdit" }),
-        @Result(name = "transferhl_approve", type = "redirectAction", location = "transferHospitalLicense", params = {
-                "namespace", "/transfer/web", "method", "showForApproval" }),
-        @Result(name = "hkr_editlicense", type = "redirectAction", location = "editHawkerLicense", params = {
-                "namespace", "/newhawkerlicense/web", "method", "beforeEdit" }),
-        @Result(name = "hkr_approve", type = "redirectAction", location = "viewHawkerLicense", params = {
-                "namespace", "/viewhawkerlicense/web", "method", "showForApproval" }),
-        @Result(name = "hkr_generateCertificate", type = "redirectAction", location = "viewHawkerLicense", params = {
-                "namespace", "/viewhawkerlicense/web", "method", "generateCertificate" }),
-        @Result(name = "transferhkr_editlicense", type = "redirectAction", location = "transferHawkerlLicense", params = {
-                "namespace", "/transfer/web", "method", "beforeEdit" }),
-        @Result(name = "transferhkr_approve", type = "redirectAction", location = "transferHawkerLicense", params = {
-                "namespace", "/transfer/web", "method", "showForApproval" }),
-        @Result(name = "hkr_generateRejCertificate", type = "redirectAction", location = "viewHawkerLicense", params = {
-                "namespace", "/viewhawkerlicense/web", "method", "generateRejCertificate" }),
-        @Result(name = "wwl_editlicense", type = "redirectAction", location = "editWaterworksLicense", params = {
-                "namespace", "/newwaterworkslicense/web", "method", "beforeEdit" }),
-        @Result(name = "wwl_approve", type = "redirectAction", location = "viewWaterworksLicense", params = {
-                "namespace", "/viewwaterworkslicense/web", "method", "showForApproval" }),
-        @Result(name = "wwl_generateCertificate", type = "redirectAction", location = "viewWaterworksLicense", params = {
-                "namespace", "/viewwaterworkslicense/web", "method", "generateCertificate" }),
-        @Result(name = "transferwwl_editlicense", type = "redirectAction", location = "transferWaterworkslLicense", params = {
-                "namespace", "/transfer/web", "method", "beforeEdit" }),
-        @Result(name = "transferwwl_approve", type = "redirectAction", location = "transferWaterworksLicense", params = {
-                "namespace", "/transfer/web", "method", "showForApproval" }),
-        @Result(name = "wwl_generateRejCertificate", type = "redirectAction", location = "viewWaterworksLicense", params = {
-                "namespace", "/viewwaterworkslicense/web", "method", "generateRejCertificate" }),
-        @Result(name = "vetl_editlicense", type = "redirectAction", location = "editVeterinaryLicense", params = {
-                "namespace", "/newlicense/web", "method", "beforeEdit" }),
-        @Result(name = "vetl_approve", type = "redirectAction", location = "viewVeterinaryLicense", params = {
-                "namespace", "/viewveterinarylicense/web", "method", "showForApproval" }),
-        @Result(name = "vetl_generateCertificate", type = "redirectAction", location = "viewVeterinaryLicense", params = {
-                "namespace", "/viewveterinarylicense/web", "method", "generateCertificate" }),
-        @Result(name = "transfervet_editlicense", type = "redirectAction", location = "transferVeterinarylLicense", params = {
-                "namespace", "/transfer/web", "method", "beforeEdit" }),
-        @Result(name = "transfervet_approve", type = "redirectAction", location = "transferVeterinaryLicense", params = {
-                "namespace", "/transfer/web", "method", "showForApproval" }),
-        @Result(name = "vetl_generateRejCertificate", type = "redirectAction", location = "viewVeterinaryLicense", params = {
-                "namespace", "/viewveterinarylicense/web", "method", "generateRejCertificate" }),
-        @Result(name = "pwd_approve", type = "redirectAction", location = "viewPwdContractorLicense", params = {
-                "namespace", "/viewpwdcontractorlicense/web", "method", "showForApproval" }),
-        @Result(name = "pwd_generateCertificate", type = "redirectAction", location = "viewPwdContractorLicense", params = {
-                "namespace", "/viewpwdcontractorlicense/web", "method", "generateCertificate" }),
-        @Result(name = "pwd_editlicense", type = "redirectAction", location = "editPwdContractorLicense", params = {
-                "namespace", "/newpwdcontractorlicense/web", "method", "beforeEdit" }),
-        @Result(name = "pwd_generateRejCertificate", type = "redirectAction", location = "viewPwdContractorLicense", params = {
-                "namespace", "/viewpwdcontractorlicense/web", "method", "generateRejCertificate" }),
-        @Result(name = "ele_approve", type = "redirectAction", location = "viewElectricalContractorLicense", params = {
-                "namespace", "/viewelectricalcontractorlicense/web", "method", "approveElectrical" }),
-        @Result(name = "ele_approveRenew", type = "redirectAction", location = "viewElectricalContractorLicense", params = {
-                "namespace", "/viewelectricalcontractorlicense/web", "method", "approveRenewElectrical" }),
-        @Result(name = "ele_generateCertificate", type = "redirectAction", location = "viewElectricalContractorLicense", params = {
-                "namespace", "/viewelectricalcontractorlicense/web", "method", "generateCertificate" }),
-        @Result(name = "ele_editlicense", type = "redirectAction", location = "editElectricalContractorLicense", params = {
-                "namespace", "/newelectricalcontractorlicense/web", "method", "beforeEdit" }),
-        @Result(name = "ele_generateRejCertificate", type = "redirectAction", location = "viewElectricalContractorLicense", params = {
-                "namespace", "/viewelectricalcontractorlicense/web", "method", "generateRejCertificate" })
+                "namespace", "/transfer", "method", "showForApproval" }),
+        @Result(name = "approve", location="viewTradeLicense-approve.jsp")
 })
 public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     private static final long serialVersionUID = 1L;
@@ -211,9 +146,11 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     }
 
     // sub class should get the object of the model and set to license()
+    @SuppressWarnings("unchecked")
     @SkipValidation
     public String approve() {
         processWorkflow(NEW);
+        persistenceService.persist(license());
         return "message";
     }
 
@@ -223,6 +160,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         return "message";
     }
 
+    @SuppressWarnings("unchecked")
     @ValidationErrorPage(Constants.NEW)
     public String create() {
         try {
@@ -230,8 +168,10 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             service().processAndStoreDocument(license().getDocuments());
             service().create(license());
             addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
-            //service().transitionWorkFlow(license(), workflowBean);
-            persistenceService.getSession().flush();
+            populateWorkflowBean();
+            service().transitionWorkFlow(license(), workflowBean);
+            persistenceService.applyAuditing(license().getState());
+            persistenceService.create(license());
         } catch (final RuntimeException e) {
             loadAjaxedDropDowns();
             throw e;
@@ -239,6 +179,13 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         return Constants.ACKNOWLEDGEMENT;
     }
 
+    protected void populateWorkflowBean() {
+        workflowBean.setApproverPositionId(approverPositionId);
+        workflowBean.setApproverComments(approverComments);
+        workflowBean.setWorkFlowAction(workFlowAction);
+        workflowBean.setCurrentState(currentState);
+    }
+    
     public String createDraftItems() {
         try {
             this.setCheckList();
@@ -400,62 +347,44 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
      * should be called from the second level only Approve will not end workflow instead it sends to the creator in approved state
      */
     public void processWorkflow(final String processType) {
-        final Module module = license().getTradeName().getLicenseType().getModule();
-        if (processType.equalsIgnoreCase(NEW))
-        {
-            service().processWorkflowForLicense(license(), workflowBean);
-            /*if (module.getName().equals(Constants.PWDLICENSE_MODULENAME))
-                if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONAPPROVE))
-                    if (module.getName().equals(Constants.PWDLICENSE_MODULENAME) && license().getIsUpgrade() != null
-                            && license().getIsUpgrade().equals('Y') && license().getTempLicenseNumber() != null)
-                        licenseUtils.updateContractorForDepartment(license(), Constants.LICENSE_UPGRADE,
-                                Constants.LICENSE_STATUS_ACTIVE);
-                    else
-                        licenseUtils.createContractorForDepartment(license(), Constants.LICENSE_STATUS_ACTIVE);*/
-        } else if (processType.equalsIgnoreCase("Renew"))
-        {
+        populateWorkflowBean();
+        if (processType.equalsIgnoreCase(NEW)) {
+            service().transitionWorkFlow(license(), workflowBean);
+        } else if (processType.equalsIgnoreCase("Renew")) {
             service().processWorkflowForRenewLicense(license(), workflowBean);
-            /*if (module.getName().equals(Constants.PWDLICENSE_MODULENAME))
-                licenseUtils.updateContractorForDepartment(license(), Constants.WORKS_UPDATE_TYPE_RENEW,
-                        Constants.LICENSE_STATUS_ACTIVE);*/
+             
         }
-        User userByID = null;
+        User user = null;
         for (final StateHistory state : license().getState().getHistory())
             if (state != null && state.getCreatedBy() != null)
                 if (state.getValue().equals(Constants.WORKFLOW_STATE_NEW)) {
-                    userByID = userService.getUserById(state.getCreatedBy().getId());
+                    user = state.getCreatedBy();
                     break;
                 }
-        if (userByID == null)
-            userByID = userService.getUserById(license()
-                    .getCreatedBy().getId());
-        if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONAPPROVE)) {
+        if (user == null)
+            user = license().getCreatedBy();
+        if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONAPPROVE)) {
             if (license().getTradeName().isNocApplicable() != null && license().getTradeName().isNocApplicable())
-                addActionMessage(this.getText("license.approved.and.sent.to") + userByID.getName() + " "
+                addActionMessage(this.getText("license.approved.and.sent.to") + user.getName() + " "
                         + this.getText("license.for.noc.generation"));
             else
-                addActionMessage(this.getText("license.approved.and.sent.to") + userByID.getName() + " "
-                        + this.getText("license.for.certificate.generation"));
-            /*
-             * doAuditing(getAuditModuleFromLicModule(module.getName()), getAuditEntityFromModule(module.getName()),
-             * AuditEvent.CREATED, license().getAuditDetails());
-             */
+                addActionMessage(this.getText("license.approved.success"));
 
-        } else if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONFORWARD)) {
-            final User userBy = userService.getUserById(workflowBean.getApproverUserId());
-            addActionMessage(this.getText("license.sent") + " " + userBy.getName());
-        } else if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONREJECT)) {
-            /*
-             * if (license().getState().getPrevious().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-             * addActionMessage(this.getText("license.rejectedfirst") + userByID.getName() + " " +
-             * this.getText("license.rejectedlast")); else addActionMessage(this.getText("license.rejected") +
-             * userByID.getName());
-             */
+        } else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONFORWARD)) {
+            final String userName = assignmentService.getPrimaryAssignmentForPositon(workflowBean.getApproverPositionId())
+                    .getEmployee().getUsername();
+            addActionMessage(this.getText("license.sent") + " " + userName);
+        } else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONREJECT)) {
+            if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
+                addActionMessage(this.getText("license.rejectedfirst") + user.getName() + " " +
+                        this.getText("license.rejectedlast"));
+            else
+                addActionMessage(this.getText("license.rejected") +
+                        user.getName());
         }
-
-        else if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONGENERATEDCERTIFICATE))
+        else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONGENERATEDCERTIFICATE))
             addActionMessage(this.getText("license.certifiacte.print.complete.recorded"));
-        else if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONPRINTCOMPLETED))
+        else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONPRINTCOMPLETED))
             addActionMessage(this.getText("license.rejection.certifiacte.print.complete.recorded"));
     }
 
@@ -502,196 +431,38 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     public String showForApproval() {
         getSession().put("model.id", license().getId());
         String result = "approve";
-        final Integer userId = (Integer) session().get(Constants.SESSIONLOGINID);
+        final Integer userId = Integer.valueOf(securityUtils.getCurrentUser().getId().intValue());
         if (userId != null)
             setRoleName(licenseUtils.getRolesForUserId(userId));
-        if (license().getState().getType().equalsIgnoreCase("TradeLicense"))
-            if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_CREATENEWLICENSE)) {
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "tl_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "tl_editlicense";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
-                    result = "tl_generateRejCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATENOC))
-                    result = "tl_generateNoc";
-                else
-                    result = "approve";
+        if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_CREATENEWLICENSE)) {
+            if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
+                result = "tl_generateCertificate";
+            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
+                result = "tl_editlicense";
+            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
+                result = "tl_generateRejCertificate";
+            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATENOC))
+                result = "tl_generateNoc";
+            else
+                result = "approve";
 
-            }
+        } else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE)) {
+            if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
+                result = "tl_generateCertificate";
+            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
+                result = "approveRenew";
+            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
+                result = "tl_generateRejCertificate";
+            else
+                result = "approveRenew";
 
-            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE)) {
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "tl_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "approveRenew";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
-                    result = "tl_generateRejCertificate";
-                else
-                    result = "approveRenew";
-
-            } else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE))
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "tl_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "transfertl_editlicense";
-                else
-                    result = "transfertl_approve";
-        if (license().getState().getType().equalsIgnoreCase("HospitalLicense"))
-            if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_CREATENEWLICENSE)) {
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "hl_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "hl_editlicense";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
-                    result = "hl_generateRejCertificate";
-                else
-                    result = "approve";
-            }
-
-            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE)) {
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "hl_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "approveRenew";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
-                    result = "hl_generateRejCertificate";
-                else
-                    result = "approveRenew";
-
-            } else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE))
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "hl_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "transferhl_editlicense";
-                else
-                    result = "transferhl_approve";
-        if (license().getState().getType().equalsIgnoreCase(Constants.HAWKERLICENSE))
-            if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_CREATENEWLICENSE)) {
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "hkr_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "hkr_editlicense";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
-                    result = "hkr_generateRejCertificate";
-                else
-                    result = "approve";
-            }
-            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE)) {
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "hkr_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "approveRenew";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
-                    result = "hkr_generateRejCertificate";
-                else
-                    result = "approveRenew";
-
-            } else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE))
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "hkr_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "transferhkr_editlicense";
-                else
-                    result = "transferhkr_approve";
-        if (license().getState().getType().equalsIgnoreCase(Constants.WATERWORKSLICENSE))
-            if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_CREATENEWLICENSE)) {
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "wwl_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "wwl_editlicense";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
-                    result = "wwl_generateRejCertificate";
-                else
-                    result = "approve";
-            } else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE)) {
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "wwl_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "approveRenew";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
-                    result = "wwl_generateRejCertificate";
-                else
-                    result = "approveRenew";
-
-            } else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE))
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "wwl_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "transferww_editlicense";
-                else
-                    result = "transferww_approve";
-
-        if (license().getState().getType().equalsIgnoreCase(Constants.VETERINARYLICENSE))
-            if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_CREATENEWLICENSE)) {
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "vetl_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "vetl_editlicense";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
-                    result = "vetl_generateRejCertificate";
-                else
-                    result = "approve";
-            } else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE)) {
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "vetl_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "approveRenew";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
-                    result = "vetl_generateRejCertificate";
-                else
-                    result = "approveRenew";
-
-            } else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE))
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "vetl_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "transfervet_editlicense";
-                else
-                    result = "transfervet_approve";
-        if (license().getState().getType().equalsIgnoreCase(Constants.PWDCONTRACTORLICENSE))
-            if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_CREATENEWLICENSE)) {
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "pwd_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "pwd_editlicense";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
-                    result = "pwd_generateRejCertificate";
-                else
-                    result = "approve";
-            }
-            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE))
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "pwd_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "approveRenew";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
-                    result = "pwd_generateRejCertificate";
-                else
-                    result = "approveRenew";
-        if (license().getState().getType().equalsIgnoreCase(Constants.ELECTRICALCONTRACTORLICENSE))
-            if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_CREATENEWLICENSE)) {
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "ele_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "ele_editlicense";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
-                    result = "ele_generateRejCertificate";
-                else
-                    result = "ele_approve";
-            }
-            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE)) {
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                    result = "ele_generateCertificate";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                    result = "ele_approveRenew";
-                else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
-                    result = "ele_generateRejCertificate";
-                else
-                    result = "ele_approveRenew";
-            }
-            else if (license().getState().getValue().equals(Constants.WORKFLOW_STATE_NEW))
-                result = "ele_editlicense";
+        } else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE))
+            if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
+                result = "tl_generateCertificate";
+            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
+                result = "transfertl_editlicense";
+            else
+                result = "transfertl_approve";
         return result;
     }
 

@@ -233,13 +233,7 @@ public class TradeService extends BaseLicenseService {
     }
     
     protected Assignment getWorkflowInitiator(final License license) {
-        Assignment wfInitiator;
-        if (!license.getStateHistory().isEmpty())
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(license.getStateHistory().get(0)
-                    .getOwnerPosition().getId());
-        else
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(license.getState().getOwnerPosition()
-                    .getId());
+        Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(license.getCreatedBy().getId());
         return wfInitiator;
     }
 

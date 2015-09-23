@@ -260,8 +260,7 @@
     		}
 
     		function onSubmit() {
-        		document.forms[0].action = 'newTradeLicense-create.action';
-        		document.forms[0].submit;
+    			return validateForm(this);
         	}
         	
  		</script>
@@ -396,7 +395,7 @@
 												<%@include file="../common/documentUpload.jsp" %>
 										</div>
 										<div class="buttonbottom">
-											 <table>
+											<%-- <table>
 												<tr class="buttonbottom" id="buttondiv" style="align: middle">
 													<td>
 														<s:submit type="submit" cssClass="buttonsubmit" value="Save" id="Save" method="create" onclick="return validateForm(this);" style="margin:0 10px"/>
@@ -405,8 +404,9 @@
 														<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
 													</td>
 												</tr>
-											</table> 
-											 
+											</table> --%> 
+											<%@ include file='../common/commonWorkflowMatrix.jsp'%>
+											<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
 										</div>
 									</s:form>
 								</div>

@@ -54,7 +54,6 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.persistence.entity.PermanentAddress;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
-import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.Licensee;
 import org.egov.tl.domain.entity.TradeLicense;
@@ -73,8 +72,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Results({
-@Result(name = Constants.EDIT, location = "editTradeLicense-"+Constants.EDIT+".jsp"),
-@Result(name = Constants.MESSAGE, location = "editTradeLicense-"+Constants.MESSAGE+".jsp")
+    @Result(name = Constants.EDIT, location = "editTradeLicense-" + Constants.EDIT + ".jsp"),
+    @Result(name = Constants.MESSAGE, location = "editTradeLicense-" + Constants.MESSAGE + ".jsp")
 })
 public class EditTradeLicenseAction extends BaseLicenseAction {
     private static final long serialVersionUID = 1L;
@@ -110,6 +109,8 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
             }
             else
                 id = tradeLicense.getId();
+        else
+            id = tradeLicense.getId();
         // this.persistenceService.setType(TradeLicense.class);
         tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id = ?", id);
         if (tradeLicense.getOldLicenseNumber() != null)
@@ -139,7 +140,7 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
     }
 
     @SkipValidation
-@Action(value="/newtradelicense/editTradeLicense-beforeEdit")
+    @Action(value = "/newtradelicense/editTradeLicense-beforeEdit")
     public String beforeEdit() {
         return Constants.EDIT;
     }
@@ -155,9 +156,9 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
             requiredFields = {
                     @RequiredFieldValidator(fieldName = "licenseeZoneId", message = "", key = Constants.REQUIRED),
                     @RequiredFieldValidator(fieldName = "licenseZoneId", message = "", key = Constants.REQUIRED),
-                    @RequiredFieldValidator(fieldName = "licensee.address.houseNo", message = "", key = Constants.REQUIRED),
+                    //@RequiredFieldValidator(fieldName = "licensee.address.houseNoBldgApt", message = "", key = Constants.REQUIRED),
                     @RequiredFieldValidator(fieldName = "nameOfEstablishment", message = "", key = Constants.REQUIRED),
-                    @RequiredFieldValidator(fieldName = "address.houseNo", message = "", key = Constants.REQUIRED),
+                    //@RequiredFieldValidator(fieldName = "address.houseNoBldgApt", message = "", key = Constants.REQUIRED),
                     @RequiredFieldValidator(fieldName = "buildingType", message = "", key = Constants.REQUIRED)
             },
             emails = {
@@ -166,25 +167,25 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
             stringLengthFields
             = {
                     @StringLengthFieldValidator(fieldName = "nameOfEstablishment", maxLength = "100", message = "", key = "Name of Establishment can be upto 100 characters long"),
-                    @StringLengthFieldValidator(fieldName = "address.houseNo", maxLength = "10", message = "", key = "Maximum  length for house number is 10"),
+                    @StringLengthFieldValidator(fieldName = "address.houseNoBldgApt", maxLength = "10", message = "", key = "Maximum  length for house number is 10"),
                     @StringLengthFieldValidator(fieldName = "address.streetAddress2", maxLength = "10", message = "", key = "Maximum  length for house number is 10"),
                     @StringLengthFieldValidator(fieldName = "phoneNumber", maxLength = "15", message = "", key = "Maximum  length for Phone number is 15"),
                     @StringLengthFieldValidator(fieldName = "remarks", maxLength = "500", message = "", key = "Remarks can be upto 500 characters long"),
-                    @StringLengthFieldValidator(fieldName = "licensee.address.houseNo", maxLength = "10", message = "", key = "Maximum  length for house number is 10"),
+                    //@StringLengthFieldValidator(fieldName = "licensee.address.houseNoBldgApt", maxLength = "10", message = "", key = "Maximum  length for house number is 10"),
                     @StringLengthFieldValidator(fieldName = "licensee.address.streetAddress2", maxLength = "10", message = "", key = "Maximum  length for house number is 10"),
                     @StringLengthFieldValidator(fieldName = "licensee.phoneNumber", maxLength = "15", message = "", key = "Phone number should be upto 15 numbers"),
                     @StringLengthFieldValidator(fieldName = "licensee.mobilePhoneNumber", maxLength = "15", message = "", key = "Maximum length for Phone Number is 15"),
                     @StringLengthFieldValidator(fieldName = "licensee.uid", maxLength = "12", message = "", key = "Maximum length for UID is 12") },
-            intRangeFields = {
+                    intRangeFields = {
                     @IntRangeFieldValidator(fieldName = "noOfRooms", min = "1", max = "999", message = "", key = "Number of rooms should be in the range 1 to 999"),
-                    @IntRangeFieldValidator(fieldName = "address.pinCode", min = "100000", max = "999999", message = "", key = "Minimum and Maximum length for Pincode is 6 and all Digit Cannot be 0"),
-                    @IntRangeFieldValidator(fieldName = "licensee.address.pinCode", min = "100000", max = "999999", message = "", key = "Minimum and Maximum length for Pincode is 6 and all Digit Cannot be 0")
+                    /*@IntRangeFieldValidator(fieldName = "address.pinCode", min = "100000", max = "999999", message = "", key = "Minimum and Maximum length for Pincode is 6 and all Digit Cannot be 0"),
+                    @IntRangeFieldValidator(fieldName = "licensee.address.pinCode", min = "100000", max = "999999", message = "", key = "Minimum and Maximum length for Pincode is 6 and all Digit Cannot be 0")*/
             }
             )
-            @ValidationErrorPageExt(
-                    action = "edit", makeCall = true, toMethod = "setupBeforeEdit")
-@Action(value="/newtradelicense/editTradeLicense-edit")
-            public String edit() {
+    @ValidationErrorPageExt(
+            action = "edit", makeCall = true, toMethod = "setupBeforeEdit")
+    @Action(value = "/newtradelicense/editTradeLicense-edit")
+    public String edit() {
         LOGGER.debug("Edit Trade License Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense.toString());
         persistenceService.setType(TradeLicense.class);
         final TradeLicense modifiedTL = tradeLicense;
@@ -221,12 +222,12 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
             tradeLicense.getLicensee().setBoundary(licenseeboundary);
         } else
             tradeLicense.getLicensee().setBoundary(modifiedTL.getLicensee().getBoundary());
-        persistenceService.update(tradeLicense);
         if (tradeLicense.getState() == null && !isOldLicense)
-            initiateWorkFlowForLicense();
+            service().transitionWorkFlow(tradeLicense, workflowBean);
         if (!isOldLicense)
             processWorkflow(NEW);
         addActionMessage(this.getText("license.update.succesful"));
+        persistenceService.update(tradeLicense);
         /*
          * if (tradeLicense.getOldLicenseNumber() != null) doAuditing(AuditModule.TL, AuditEntity.TL_LIC, AuditEvent.MODIFIED,
          * tradeLicense.getAuditDetails());
@@ -239,7 +240,7 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
     @Override
     public boolean acceptableParameterName(final String paramName) {
         final List<String> nonAcceptable = Arrays.asList(new String[] { "licensee.boundary.parent", "boundary.parent",
-                "tradeName.name" });
+        "tradeName.name" });
         final boolean retValue = super.acceptableParameterName(paramName);
         return retValue ? !nonAcceptable.contains(paramName) : retValue;
     }

@@ -41,6 +41,8 @@ package org.egov.tl.domain.service;
 
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
+import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -165,7 +167,6 @@ public abstract class BaseLicenseService {
         license.updateStatus(status);
         license = additionalOperations(license, egDemandReasonMasters, installment);
         setAuditEntries(license);
-        persistenceService.create(license);
     }
 
     private void setAuditEntries(License license) {
@@ -615,17 +616,18 @@ public abstract class BaseLicenseService {
                 license.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
             } else {
-                final String stateValue = license.getCurrentState().getValue();
+                final String stateValue = license.getCurrentState().getValue().split(":")[0] + ":" + WORKFLOW_STATE_REJECTED;
                 license.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction("Assistant Health Officer approval pending");
+                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING);
             }
 
+        } else if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            license.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+            .withDateInfo(currentDate.toDate());
         } else {
             if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
                 pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
-            else if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-                pos = wfInitiator.getPosition();
             if (null == license.getState()) {
                 final WorkFlowMatrix wfmatrix = licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                         null, null, workflowBean.getCurrentState(), null);
@@ -646,13 +648,7 @@ public abstract class BaseLicenseService {
     }
 
     protected Assignment getWorkflowInitiator(final License license) {
-        Assignment wfInitiator;
-        if (!license.getStateHistory().isEmpty())
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(license.getStateHistory().get(0)
-                    .getOwnerPosition().getId());
-        else
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(license.getState().getOwnerPosition()
-                    .getId());
+        Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(license.getCreatedBy().getId());
         return wfInitiator;
     }
     
