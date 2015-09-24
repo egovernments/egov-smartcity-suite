@@ -370,7 +370,7 @@ function sortBy() {
 	else
 		$('selectedorder').value =false;
 	
-	this.document.techSanctionEstimatesForm.action = '${pageContext.request.contextPath}/estimate/searchEstimate!search.action';
+	this.document.techSanctionEstimatesForm.action = '${pageContext.request.contextPath}/estimate/searchEstimate-search.action';
 	this.document.techSanctionEstimatesForm.submit();
 }
 
@@ -584,7 +584,7 @@ function jurisdictionSearchParameters(){
 				<s:fielderror />
 			</div>
 		</s:if>
-		<s:form name="techSanctionEstimatesForm" action="searchEstimate!search.action"
+		<s:form name="techSanctionEstimatesForm" action="searchEstimate-search.action"
 			id="techSanctionEstimatesForm" theme="simple"
 			onsubmit="enableSelect()">
 			<s:hidden name="selectedorder" id="selectedorder" />
@@ -611,8 +611,8 @@ function jurisdictionSearchParameters(){
 											<%@ include file="../tender/estimateOrWpSearch.jsp"%>
 										</td>
 										<script>
- 				document.forms[0].tenderForEst.checked=true;
-			</script>
+							 				document.forms[0].tenderForEst.checked=true;
+										</script>
 									</tr>
 								</s:if>
 								<tr>
@@ -653,7 +653,7 @@ function jurisdictionSearchParameters(){
 															name="execDept" id="executingDepartment"
 															cssClass="selectwk"
 															list="dropdownData.executingDepartmentList" listKey="id"
-															listValue="deptName" value="%{execDept}" />
+															listValue="name" value="%{execDept}" />
 													</td>
 													<s:if test="%{negoCreatedBy=='no'}">
 														<script>disableDept();</script>
@@ -685,7 +685,7 @@ function jurisdictionSearchParameters(){
 															name="execDept" id="executingDepartment"
 															cssClass="selectwk"
 															list="dropdownData.executingDepartmentList" listKey="id"
-															listValue="deptName" value="%{execDept}" />
+															listValue="name" value="%{execDept}" />
 													</td>
 													<s:if test="%{negoCreatedBy=='no'}">
 														<script>disableDept();</script>
@@ -763,7 +763,7 @@ function jurisdictionSearchParameters(){
 																name="execDept" id="executingDepartment"
 																cssClass="selectwk"
 																list="dropdownData.executingDepartmentList" listKey="id"
-																listValue="deptName" value="%{execDept}"
+																listValue="name" value="%{execDept}"
 																onChange="populateDesignation1();" />
 															<egov:ajaxdropdown id="assignedTo1"fields="['Text','Value']" 
 																dropdownId="assignedTo1" url="workorder/ajaxWorkOrder!getDesignationByDeptId.action" />
@@ -776,7 +776,7 @@ function jurisdictionSearchParameters(){
 																name="execDept" id="executingDepartment"
 																cssClass="selectwk"
 																list="dropdownData.executingDepartmentList" listKey="id"
-																listValue="deptName" value="%{execDept}"
+																listValue="name" value="%{execDept}"
 																onChange="setupPreparedByList(this);" />
 															<egov:ajaxdropdown id="preparedBy"
 																fields="['Text','Value','Designation']"

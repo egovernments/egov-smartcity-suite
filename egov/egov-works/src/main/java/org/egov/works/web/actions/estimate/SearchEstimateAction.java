@@ -55,11 +55,14 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
-import org.egov.infra.admin.master.entity.Action;
+import org.egov.eis.entity.Employee;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
@@ -74,10 +77,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.EmployeeServiceOld;
-import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.contractorBill.ContractorBillRegister;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.masters.NatureOfWork;
@@ -111,8 +111,6 @@ public class SearchEstimateAction extends SearchFormAction {
     private AbstractEstimateService abstractEstimateService;
     private final List<AbstractEstimate> results = new LinkedList<AbstractEstimate>();
     private AbstractEstimate estimates = new AbstractEstimate();
-    @Autowired
-    private EmployeeServiceOld employeeService;
     private Integer empId;
     private String wpdate;
 
@@ -129,7 +127,6 @@ public class SearchEstimateAction extends SearchFormAction {
     public static final String RESULTS = "results";
     public static final String SEARCH_ESTIMATE_FOR_WO = "SearchEstimateforWO";
     public static final String UNCHECKED = "unchecked";
-    private PersonalInformationService personalInformationService;
     private EisUtilService eisService;
     @Autowired
     private DepartmentService departmentService;
@@ -150,11 +147,16 @@ public class SearchEstimateAction extends SearchFormAction {
     private CommonsService commonsService;
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmployeeService employeeService;
+    @Autowired
+    private AssignmentService assignmentService;
     private String messageKey;
     private String ward = "";
     private String loginUserDeptName = "";
     @Autowired
-    private ActionService actionservice;
+    private ActionService actionService;
     private List<Role> roles = new ArrayList<Role>();
     private String milestoneStatus;
     private String status2;
@@ -205,10 +207,10 @@ public class SearchEstimateAction extends SearchFormAction {
             if (!estimate.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.ADMIN_SANCTIONED_STATUS)
                     && !estimate.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
                 final String posName = estimate.getState().getOwnerPosition().getName();
-                final PersonalInformation emp = employeeService.getEmployeeforPosition(estimate.getState()
-                        .getOwnerPosition());
-                if (emp != null)
-                    estimate.setPositionAndUserName(posName + " / " + emp.getEmployeeName());
+                final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(estimate.getState()
+                        .getOwnerPosition().getId());
+                if (assignment != null)
+                    estimate.setPositionAndUserName(posName + " / " + assignment.getEmployee().getName());
                 else
                     estimate.setPositionAndUserName(posName);
             }
@@ -232,10 +234,10 @@ public class SearchEstimateAction extends SearchFormAction {
                 if (!lastestMilestoneObj.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                         && !lastestMilestoneObj.getEgwStatus().getCode()
                                 .equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
-                    final PersonalInformation emp = employeeService.getEmployeeforPosition(lastestMilestoneObj
-                            .getState().getOwnerPosition());
-                    if (emp.getUserMaster() != null)
-                        lastestMilestoneObj.setOwnerName(emp.getUserMaster().getName());
+                    final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(lastestMilestoneObj
+                            .getState().getOwnerPosition().getId());
+                    if (assignment != null && assignment.getEmployee() != null)
+                        lastestMilestoneObj.setOwnerName(assignment.getEmployee().getName());
                 }
             woeList.add(woe);
         }
@@ -256,18 +258,18 @@ public class SearchEstimateAction extends SearchFormAction {
             if (msObj != null)
                 if (!msObj.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                         && !msObj.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
-                    final PersonalInformation emp = employeeService.getEmployeeforPosition(msObj.getState()
-                            .getOwnerPosition());
-                    if (emp.getUserMaster() != null)
-                        msObj.setOwnerName(emp.getUserMaster().getName());
+                    final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(msObj
+                            .getState().getOwnerPosition().getId());
+                    if (assignment != null && assignment.getEmployee() != null)
+                        msObj.setOwnerName(assignment.getEmployee().getName());
                 }
             if (tmObj != null)
                 if (!tmObj.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                         && !tmObj.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
-                    final PersonalInformation emp = employeeService.getEmployeeforPosition(tmObj.getState()
-                            .getOwnerPosition());
-                    if (emp.getUserMaster() != null)
-                        tmObj.setOwnerName(emp.getUserMaster().getName());
+                    final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(tmObj
+                            .getState().getOwnerPosition().getId());
+                    if (assignment != null && assignment.getEmployee() != null)
+                        tmObj.setOwnerName(assignment.getEmployee().getName());
                 }
             tempList.add(obj);
         }
@@ -326,10 +328,7 @@ public class SearchEstimateAction extends SearchFormAction {
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         final AjaxWorkOrderAction ajaxWorkOrderAction = new AjaxWorkOrderAction();
         ajaxWorkOrderAction.setPersistenceService(getPersistenceService());
-        ajaxWorkOrderAction.setPersonalInformationService(personalInformationService);
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
-        ajaxEstimateAction.setEmployeeService(employeeService);
-        ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         ajaxEstimateAction.setEisService(eisService);
         super.prepare();
         setupDropdownDataExcluding("ward");
@@ -596,10 +595,6 @@ public class SearchEstimateAction extends SearchFormAction {
         this.execDept = execDept;
     }
 
-    public void setEmployeeService(final EmployeeServiceOld employeeService) {
-        this.employeeService = employeeService;
-    }
-
     public List<String> getEstimateActions() {
         String actions = "";
         final List<Role> copyEstActionRoles = new ArrayList<Role>();
@@ -613,7 +608,7 @@ public class SearchEstimateAction extends SearchFormAction {
             copyEstActionName = actionList.get(actionList.size() - 1);
 
             // get the roles for the Copy Estimate action
-            final Action copyEstaction = actionservice.getActionByName(copyEstActionName);
+            final org.egov.infra.admin.master.entity.Action copyEstaction = actionService.getActionByName(copyEstActionName);
             copyEstActionRoles.addAll(copyEstaction.getRoles());
 
             // check if the userroles contains the copy estimate action roles
@@ -902,11 +897,8 @@ public class SearchEstimateAction extends SearchFormAction {
         return INDEX;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.egov.infra.web.struts.actions.SearchFormAction#search()
-     */
     @Override
+    @Action(value = "/estimate/searchEstimate-search")
     public String search() {
         boolean isError = false;
 
@@ -956,12 +948,12 @@ public class SearchEstimateAction extends SearchFormAction {
                                 getEstimatenumber());
             if (wp != null) {
                 if ("NEW".equalsIgnoreCase(wp.getEgwStatus().getCode())) {
-                    final PersonalInformation emp = employeeService.getEmployeeforPosition(wp.getCurrentState()
-                            .getOwnerPosition());
+                    final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(wp
+                            .getState().getOwnerPosition().getId());
                     addFieldError("result not found",
                             "Work package is already created for the Estimate with Work Package No " + wp.getWpNumber()
                                     + " dated on " + DateUtils.getFormattedDate(wp.getPackageDate(), "dd/MM/yyyy")
-                                    + " and " + "it is drafts of " + emp.getEmployeeName());
+                                    + " and " + "it is drafts of " + assignment.getEmployee().getName());
                 } else
                     addFieldError(
                             "result not found",
@@ -979,20 +971,14 @@ public class SearchEstimateAction extends SearchFormAction {
     public String cancelApprdMilestones() {
         final StringBuilder estimateNum = new StringBuilder(200);
         final String workOrderEstIdsStr[] = workOrdEstIds.split(",");
-        final PersonalInformation prsnlInfo = employeeService.getEmpForUserId(worksService.getCurrentLoggedInUserId());
-        String empName = "";
-        if (prsnlInfo.getEmployeeFirstName() != null)
-            empName = prsnlInfo.getEmployeeFirstName();
-        if (prsnlInfo.getEmployeeLastName() != null)
-            empName = empName.concat(" ").concat(prsnlInfo.getEmployeeLastName());
-
+        final Employee employee = employeeService.getEmployeeById(worksService.getCurrentLoggedInUserId());
         final StringBuilder cancelComments = new StringBuilder(200);
         if (cancelRemarks != null && StringUtils.isNotBlank(cancelRemarks))
             cancelComments.append(cancellationReason).append(" : ").append(cancelRemarks).append(". ")
-                    .append(getText("milestone.cancel.cancelledby")).append(": ").append(empName);
+                    .append(getText("milestone.cancel.cancelledby")).append(": ").append(employee.getName());
         else
             cancelComments.append(cancellationReason).append(". ").append(getText("milestone.cancel.cancelledby"))
-                    .append(": ").append(empName);
+                    .append(": ").append(employee.getName());
 
         for (final String workOrderIdStr : workOrderEstIdsStr) {
             final WorkOrderEstimate woe = (WorkOrderEstimate) getPersistenceService().find(
@@ -1015,7 +1001,7 @@ public class SearchEstimateAction extends SearchFormAction {
                                 billList }))));
             }
         }
-        prsnlInfo.getAssignment(new Date()).getPosition();
+
         for (final String workOrderIdStr : workOrderEstIdsStr) {
             final WorkOrderEstimate woe = (WorkOrderEstimate) getPersistenceService().find(
                     "from WorkOrderEstimate woe where woe.id=?", Long.valueOf(workOrderIdStr));
@@ -1059,10 +1045,9 @@ public class SearchEstimateAction extends SearchFormAction {
 
     // Get the login user department
     private void getLoginUserDept() {
-        final PersonalInformation LoggedInEmp = employeeService
-                .getEmpForUserId(worksService.getCurrentLoggedInUserId());
-        final Assignment assignment = employeeService.getAssignmentByEmpAndDate(new Date(),
-                LoggedInEmp.getIdPersonalInformation());
+        final Assignment assignment = assignmentService.getPrimaryAssignmentForEmployeeByToDate(
+                worksService.getCurrentLoggedInUserId(),
+                new Date());
         setLoginUserDeptName(assignment.getDepartment().getName());
     }
 
@@ -1071,10 +1056,6 @@ public class SearchEstimateAction extends SearchFormAction {
         final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
         if (user != null && !user.getRoles().isEmpty())
             roles.addAll(user.getRoles());
-    }
-
-    public void setPersonalInformationService(final PersonalInformationService personalInformationService) {
-        this.personalInformationService = personalInformationService;
     }
 
     public String getProjCode() {

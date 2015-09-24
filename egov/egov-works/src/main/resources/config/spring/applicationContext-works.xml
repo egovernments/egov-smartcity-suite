@@ -587,6 +587,6 @@
 	</bean>
 	<bean id="billsDaoFactory" class="org.egov.dao.bills.BillsHibernateDaoFactory"/>
 	<bean id="genericDao" class="org.egov.infstr.dao.GenericHibernateDAO"/>
-	<bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl"/>
+	<!-- <bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl"/> -->
 	<bean id="budgetDetailsDAO" class="org.egov.dao.budget.BudgetDetailsHibernateDAO"/>
 </beans>
