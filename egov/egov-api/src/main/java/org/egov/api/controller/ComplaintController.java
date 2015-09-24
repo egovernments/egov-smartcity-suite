@@ -32,6 +32,8 @@ package org.egov.api.controller;
 import static java.util.Arrays.asList;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -41,7 +43,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
+
+import net.coobird.thumbnailator.Thumbnails;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -372,12 +377,13 @@ public class ComplaintController extends ApiController {
      * 
      * @param complaintNo
      * @param fileNo
+     * @param isThumbnail
      * @return file
      */
 
     @RequestMapping(value = ApiUrl.COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT, method = RequestMethod.GET)
-    public void getComplaintDoc(@PathVariable String complaintNo, @RequestParam(value = "fileNo", required = false) Long fileNo,
-            HttpServletResponse response) throws IOException {
+    public void getComplaintDoc(@PathVariable String complaintNo, @RequestParam(value = "fileNo", required = false) Long fileNo, @RequestParam(value="isThumbnail", required = false, defaultValue = "false") boolean isThumbnail, 
+    		HttpServletResponse response) throws IOException {
         try {
             Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
             Set<FileStoreMapper> files = complaint.getSupportDocs();
@@ -389,18 +395,28 @@ public class ComplaintController extends ApiController {
             while (it.hasNext()) {
                 FileStoreMapper fm = it.next();
                 if (i == fileNo) {
-                    downloadFile = fileStoreService.fetch(fm.getFileStoreId(), PGRConstants.MODULE_NAME);
-                    response.setHeader("Content-Length", String.valueOf(downloadFile.length()));
+                	downloadFile = fileStoreService.fetch(fm.getFileStoreId(), PGRConstants.MODULE_NAME);
+                	ByteArrayOutputStream thumbImg = new ByteArrayOutputStream();
+                	long contentLength= downloadFile.length();
+                	
+                	if(isThumbnail)
+                	{
+                		BufferedImage img = Thumbnails.of(downloadFile).size(200, 200).asBufferedImage();
+                		ImageIO.write(img,"jpg", thumbImg);
+                		thumbImg.close();
+                		contentLength = thumbImg.size();
+                	}
+                    
+                    response.setHeader("Content-Length", String.valueOf(contentLength));
                     response.setHeader("Content-Disposition", "attachment;filename=" + fm.getFileName());
                     response.setContentType(Files.probeContentType(downloadFile.toPath()));
                     OutputStream out = response.getOutputStream();
-                    IOUtils.write(FileUtils.readFileToByteArray(downloadFile), out);
+                    IOUtils.write((isThumbnail == true? thumbImg.toByteArray() : FileUtils.readFileToByteArray(downloadFile)), out);
                     IOUtils.closeQuietly(out);
                     break;
                 }
                 i++;
             }
-
         } catch (Exception e) {
             throw new IOException();
         }

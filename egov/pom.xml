@@ -689,6 +689,15 @@
                 <version>1.7.3</version>
             </dependency>
             <!-- MISC END -->
+            
+            
+		    <!-- IMAGE PROCESSING API START -->
+			<dependency>
+				<groupId>net.coobird</groupId>
+				<artifactId>thumbnailator</artifactId>
+				<version>0.4.8</version>
+			</dependency>
+			<!-- IMAGE PROCESSING API END -->
 
             <!-- TESTING START -->
             <dependency>
@@ -980,6 +989,10 @@
 		<dependency>
 	      	<groupId>org.jasypt</groupId>
 	      	<artifactId>jasypt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.coobird</groupId>
+			<artifactId>thumbnailator</artifactId>
 		</dependency>
 		<!-- MISC ENDS -->
 		
