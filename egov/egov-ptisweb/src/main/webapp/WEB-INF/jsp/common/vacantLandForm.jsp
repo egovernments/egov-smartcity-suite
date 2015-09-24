@@ -82,11 +82,18 @@
 				size="10" maxlength="10"></s:textfield>
 		</td>
     </tr>
-    
-   <tr>
-		<td colspan="6"><br />
+    <tr>
+     <tr>
+		<td colspan="6">
 			<table class="tablebottom" style="width: 100%;" id="boundaryData">
 				<tbody>
+				  <tr>
+				     <td>
+				       <div class="headingsmallbg">
+				         <span class="bold"><s:text name="boundaries"/></span> 
+			          </div>
+			         </td>
+			        </tr>
 					<tr>
 						<th class="bluebgheadtd"><s:text name="North" /><span class="mandatory1">*</span></th>
 						<th class="bluebgheadtd"><s:text name="East" /><span class="mandatory1">*</span></th>

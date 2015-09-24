@@ -77,6 +77,13 @@
      <br/>
       <table class="tablebottom" style="width: 100%;">
          <tbody>
+           <tr>
+				  <td>
+				      <div class="headingsmallbg">
+				         <span class="bold"><s:text name="boundaries" /></span> 
+			          </div>
+			         </td>
+			  </tr>
             <tr>
                <th class="bluebgheadtd"><s:text name="North" /></th>
                <th class="bluebgheadtd"><s:text name="East" /></th>
