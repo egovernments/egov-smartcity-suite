@@ -101,7 +101,7 @@ public class LicenseDocument extends AbstractAuditable {
     private List<String> uploadsContentType = new ArrayList<>();
 
     @Override
-    protected void setId(final Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 

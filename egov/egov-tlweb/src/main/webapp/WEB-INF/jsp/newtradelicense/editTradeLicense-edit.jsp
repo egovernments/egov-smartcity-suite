@@ -103,7 +103,7 @@
 										</tr>
 									</table>
 									<s:push value="model">
-										<s:form action="editTradeLicense" theme="css_xhtml" name="editTradeLicense" validate="true">
+										<s:form action="editTradeLicense" theme="css_xhtml" enctype="multipart/form-data" name="editTradeLicense" validate="true">
 										<s:token/>
 											<s:hidden name="id" id="id" />
 											<table border="0" cellpadding="0" cellspacing="0" width="100%" id="maintbl">
@@ -478,6 +478,7 @@
 															</td>
 														</tr>
 													</s:if>
+													<%@ include file="../common/documentUpload.jsp" %>
 													<s:if test="%{#attr.isOldLicense == false}">
 													    <tr>
 													    	<td colspan="5">

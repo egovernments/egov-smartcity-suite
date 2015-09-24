@@ -73,7 +73,21 @@
 								<s:hidden name="documents[%{#status.index}].type.id" value="%{id}"></s:hidden>
 							</td>
 							<td class="blueborderfortd" style="text-align: center;width:30%">
-								<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" />
+								<s:if test="%{documents.isEmpty()}">
+									<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" />
+								</s:if>
+								<s:elseif test="%{documents[#status.index].files.isEmpty()}">
+									<s:hidden name="documents[%{#status.index}].id"/>
+									<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" />
+								</s:elseif>
+								<s:else>
+									<s:iterator value="%{documents[#status.index].files}">
+										<s:hidden name="documents[%{#status.index}].id"/>
+										<a href="javascript:viewDocument('<s:property value="fileStoreId"/>')"> 
+					 						<s:property value="%{fileName}"/>
+										</a> 
+									</s:iterator>	
+								</s:else>
 							</td>
 						</tr>
 					</s:iterator>

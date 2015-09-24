@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.newtradelicense;
 
+import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,6 +57,8 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.persistence.entity.PermanentAddress;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.tl.domain.entity.License;
+import org.egov.tl.domain.entity.LicenseDocument;
+import org.egov.tl.domain.entity.LicenseDocumentType;
 import org.egov.tl.domain.entity.Licensee;
 import org.egov.tl.domain.entity.TradeLicense;
 import org.egov.tl.domain.entity.WorkflowBean;
@@ -82,6 +86,7 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
     private boolean isOldLicense = false;
     @Autowired
     private BoundaryService boundaryService;
+    private List<LicenseDocumentType> documentTypes = new ArrayList<>();
 
     public EditTradeLicenseAction() {
         super();
@@ -101,6 +106,7 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
     public void prepareBeforeEdit() {
         LOGGER.debug("Entering in the prepareBeforeEdit method:<<<<<<<<<<>>>>>>>>>>>>>:");
         prepareNewForm();
+        setDocumentTypes(service().getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
         Long id = null;
         if (tradeLicense.getId() == null)
             if (getSession().get("model.id") != null) {
@@ -227,6 +233,17 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
         if (!isOldLicense)
             processWorkflow(NEW);
         addActionMessage(this.getText("license.update.succesful"));
+        for (LicenseDocument modifiedDocument : modifiedTL.getDocuments()) {
+            for (LicenseDocument document : tradeLicense.getDocuments()) {
+                if (modifiedDocument.getId().equals(document.getId())) {
+                    document.setUploads(modifiedDocument.getUploads());
+                    document.setUploadsContentType(modifiedDocument.getUploadsContentType());
+                    document.setUploadsFileName(modifiedDocument.getUploadsFileName());
+                }
+            }
+        }
+        
+        service().processAndStoreDocument(tradeLicense.getDocuments());
         persistenceService.update(tradeLicense);
         /*
          * if (tradeLicense.getOldLicenseNumber() != null) doAuditing(AuditModule.TL, AuditEntity.TL_LIC, AuditEvent.MODIFIED,
@@ -274,6 +291,14 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
 
     public void setIsOldLicense(final boolean isOldLicense) {
         this.isOldLicense = isOldLicense;
+    }
+
+    public List<LicenseDocumentType> getDocumentTypes() {
+        return documentTypes;
+    }
+
+    public void setDocumentTypes(List<LicenseDocumentType> documentTypes) {
+        this.documentTypes = documentTypes;
     }
 
 }
