@@ -121,9 +121,6 @@
 												</table>
 											</s:push>
 										</s:form>
-										<div>
-											<%@ include file="../common/documentView.jsp" %>
-										</div>
 									</div>
 								</center>
 							</div>
@@ -131,7 +128,9 @@
 					</tr>
 				</tbody>
 			</table>
-			
+			<div>
+				<%@ include file="../common/documentView.jsp" %>
+			</div>
 		</div>
 		<div align="center" class="buttonbottom" id="buttondiv">
 			<table>

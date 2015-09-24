@@ -100,25 +100,6 @@
 												</tr>											
 											</table>
 											<div>
-												<%-- <table>
-													<tr class="buttonbottom" id="buttondiv" style="align: middle">
-													<s:if test="%{roleName.contains('TLAPPROVER')}">
-														<td>
-															<s:submit type="submit" cssClass="buttonsubmit" value="Approve" id="Approve" method="approve" onclick="return validateForm(this);" />
-														</td>
-														</s:if>
-														<td>
-															<s:submit type="submit" cssClass="buttonsubmit" value="Forward" id="Forward" method="approve" onclick="return validateForm(this);" />
-														</td>
-														<td>
-															<s:submit type="submit" cssClass="buttonsubmit" value="Reject" id="Reject" method="approve" onclick="return validateForm(this);" />
-														</td>
-														<td>
-															<input type="button" value="Close" id="closeButton" onclick="javascript:window.close();" class="button" />
-														</td>
-													</tr>
-												</table> --%>
-												
 												<%@ include file="../common/commonWorkflowMatrix.jsp" %>
 												<%@ include file="../common/commonWorkflowMatrix-button.jsp" %>
 											</div>

@@ -45,54 +45,54 @@
 		window.open(sUrl,"window",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');	
 	}
 </script>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-	<tr>
-		<td colspan="5">
-			<div class="subheadnew text-left">
-				<s:text name="docsectiontitle" />
-			</div>
-		</td>
-	</tr>
-
-	<tr>
-		<td colspan="5">
-			<table class="tablebottom" id="nameTable" width="100%" border="0" cellpadding="0" cellspacing="0">
-				<tbody>
-					<tr>
-						<th class="bluebgheadtd" style="text-align: center"><s:text name="doctable.sno" /></th>
-						<th class="bluebgheadtd" style="text-align: center"><s:text name="doctable.doctype" /></th>
-						<th class="bluebgheadtd" style="text-align: center"><s:text name="upload.file" /></th>
-					</tr>
-					<s:iterator value="documentTypes" status="status" var="documentType">
-						<tr>
-							<td class="blueborderfortd" style="text-align: center;width:10%">
-								<span><s:property value="#status.index + 1"/></span>
-							</td>
-							<td class="blueborderfortd" style="text-align: center;width:70%">
-								<s:property value="name" /><s:if test="mandatory"><span class="mandatory1">*</span></s:if>
-								<s:hidden name="documents[%{#status.index}].type.id" value="%{id}"></s:hidden>
-							</td>
-							<td class="blueborderfortd" style="text-align: center;width:30%">
-								<s:if test="%{documents.isEmpty()}">
-									<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" />
-								</s:if>
-								<s:elseif test="%{documents[#status.index].files.isEmpty()}">
-									<s:hidden name="documents[%{#status.index}].id"/>
-									<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" />
-								</s:elseif>
-								<s:else>
-									<s:iterator value="%{documents[#status.index].files}">
-										<s:hidden name="documents[%{#status.index}].id"/>
-										<a href="javascript:viewDocument('<s:property value="fileStoreId"/>')"> 
-					 						<s:property value="%{fileName}"/>
-										</a> 
-									</s:iterator>	
-								</s:else>
-							</td>
-						</tr>
-					</s:iterator>
-				</tbody>
-			</table>
-		</td>
-	</tr>
-</table>
+<div class="col-sm-12 view-content header-color hidden-xs">
+	<div class="col-sm-1 table-div-column"><s:text name="doctable.sno" /></div>
+    <div class="col-sm-5 table-div-column"><s:text name="doctable.docname" /></div>
+    <div class="col-sm-3 table-div-column"><s:text name="doctable.checklist"/></div>
+    <div class="col-sm-3 table-div-column"><s:text name="doctable.attach.doc" /></div>	
+</div>
+<s:iterator value="documentTypes" status="status" var="documentType">
+	<div class="form-group">
+    	<div class="col-sm-1 text-center"><s:property value="#status.index + 1"/></div>
+        <div class="col-sm-5 text-center">
+        	<s:property value="name" /><s:if test="mandatory"><span class="mandatory"></span></s:if>
+			<s:hidden name="documents[%{#status.index}].type.id" value="%{id}"/>
+		</div>
+       	<div class="col-sm-3 text-center">
+       		<s:if test="mandatory">
+       			<s:checkbox name="documents[%{#status.index}].enclosed" required="true"/>
+       		</s:if>
+       		<s:else>
+       			<s:checkbox name="documents[%{#status.index}].enclosed"/>
+       		</s:else>
+       	</div>
+       	<div class="col-sm-3 text-center">
+       		<s:if test="%{documents.isEmpty()}">
+       			<s:if test="mandatory">
+					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" required="true"/>
+				</s:if>
+				<s:else>
+					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button"/>
+				</s:else>
+			</s:if>
+			<s:elseif test="%{documents[#status.index].files.isEmpty()}">
+				<s:hidden name="documents[%{#status.index}].id"/>
+				<s:if test="mandatory">
+					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" required="true"/>
+				</s:if>
+				<s:else>
+					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button"/>
+				</s:else>
+			</s:elseif>
+			<s:else>
+				<s:iterator value="%{documents[#status.index].files}">
+					<s:hidden name="documents[%{#status.index}].id"/>
+					<a href="javascript:viewDocument('<s:property value="fileStoreId"/>')"> 
+ 						<s:property value="%{fileName}"/>
+					</a> 
+				</s:iterator>	
+			</s:else>
+       	</div>
+       	<div>&nbsp;</div>
+   	</div>
+</s:iterator>

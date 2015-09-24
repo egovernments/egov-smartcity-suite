@@ -478,7 +478,12 @@
 															</td>
 														</tr>
 													</s:if>
-													<%@ include file="../common/documentUpload.jsp" %>
+													<tr>
+													    <td colspan="5">
+															<%@ include file="../common/documentUpload.jsp" %>
+														</td>
+													</tr>
+													</div>
 													<s:if test="%{#attr.isOldLicense == false}">
 													    <tr>
 													    	<td colspan="5">
@@ -493,34 +498,6 @@
 											<div class="mandatory1" style="font-size: 11px;" align="left">
 												* Mandatory Fields
 											</div>
-											<%-- <div>
-												<table>
-													<tr class="buttonbottom" id="buttondiv" style="align: middle">
-														<s:if test="%{#attr.isOldLicense == false}">
-														 <s:if test="%{roleName.contains('TLAPPROVER')}">
-															<td>
-																<s:submit type="submit" cssClass="buttonsubmit" value="Approve" id="Approve" method="edit" onclick="return validateForm(this);" />
-															</td>
-															</s:if>
-															<td>
-																<s:submit type="submit" cssClass="buttonsubmit" value="Forward" id="Forward" method="edit" onclick="return validateForm(this);" />
-															</td>
-															<td>
-																<s:submit type="submit" cssClass="buttonsubmit" value="Reject" id="Reject" method="edit" onclick="return validateForm(this);" />
-															</td>
-														</s:if>
-														<s:else>
-															<td colspan="3">
-																<s:hidden name="isOldLicense" value="%{isOldLicense}" />
-																<s:submit type="submit" cssClass="buttonsubmit" value="Save" id="Save" method="edit" onclick="return validateForm(this);" />
-															</td>
-														</s:else>
-														<td>
-															<input type="button" value="Close" id="closeButton" onclick="javascript: window.close();" class="button" />
-														</td>
-													</tr>
-												</table>
-											</div> --%>
 										</s:form>
 									</s:push>
 								</div>

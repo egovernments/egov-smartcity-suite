@@ -45,48 +45,31 @@
 		window.open(sUrl,"window",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');	
 	}
 </script>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-	<tr>
-		<td colspan="5">
-			<div class="subheadnew text-left">
-				<s:text name="docsectiontitle" />
-			</div>
-		</td>
-	</tr>
-
-	<tr>
-		<td colspan="5">
-			<table class="tablebottom" id="nameTable" width="100%" border="0" cellpadding="0" cellspacing="0">
-				<tbody>
-					<tr>
-						<th class="bluebgheadtd"><s:text name="doctable.sno" /></th>
-						<th class="bluebgheadtd"><s:text name="doctable.doctype" /></th>
-						<th class="bluebgheadtd"><s:text name="file" /></th>
-					</tr>
-					<s:iterator value="model.documents" status="status" var="document">
-						<tr>
-							<td class="blueborderfortd" style="text-align: center">
-								<s:property value="#status.index + 1"/>
-							</td>
-							<td class="blueborderfortd" style="text-align: center">
-								<s:property value="%{type.name}" />
-							</td>
-							<td class="blueborderfortd" style="text-align: center">
-								<s:if test="#document.files.isEmpty()">
-									N/A
-								</s:if>
-								<s:else>
-									<s:iterator value="#document.files">
-										<a href="javascript:viewDocument('<s:property value="fileStoreId"/>')"> 
-				 							<s:property value="%{fileName}"/>
-										</a> 
-									</s:iterator>	
-								</s:else>
-							</td>
-						</tr>
-					</s:iterator>
-				</tbody>
-			</table>
-		</td>
-	</tr>
-</table>
+<div class="col-sm-12 view-content header-color hidden-xs">
+	<div class="col-sm-1 table-div-column"><s:text name="doctable.sno" /></div>
+    <div class="col-sm-5 table-div-column"><s:text name="doctable.docname" /></div>
+    <div class="col-sm-3 table-div-column"><s:text name="doctable.checklist"/></div>
+    <div class="col-sm-3 table-div-column"><s:text name="doctable.attach.doc" /></div>	
+</div>
+<s:iterator value="model.documents" status="status" var="document">
+	<div class="form-group">
+    	<div class="col-sm-1 text-center"><s:property value="#status.index + 1"/></div>
+        <div class="col-sm-5 text-center">
+        	<s:property value="%{type.name}" />
+		</div>
+       	<div class="col-sm-3 text-center"><s:property value="#document.enclosed"/></div>
+       	<div class="col-sm-3 text-center">
+       		<s:if test="#document.files.isEmpty()">
+				N/A
+			</s:if>
+			<s:else>
+				<s:iterator value="#document.files">
+					<a href="javascript:viewDocument('<s:property value="fileStoreId"/>')"> 
+						<s:property value="%{fileName}"/>
+					</a> 
+				</s:iterator>	
+			</s:else>
+       	</div>
+       	<div>&nbsp;</div>
+   	</div>
+</s:iterator>

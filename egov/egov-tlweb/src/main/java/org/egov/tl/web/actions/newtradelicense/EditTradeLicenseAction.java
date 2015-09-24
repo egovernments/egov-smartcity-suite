@@ -239,6 +239,7 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
                     document.setUploads(modifiedDocument.getUploads());
                     document.setUploadsContentType(modifiedDocument.getUploadsContentType());
                     document.setUploadsFileName(modifiedDocument.getUploadsFileName());
+                    document.setEnclosed(modifiedDocument.isEnclosed());
                 }
             }
         }
