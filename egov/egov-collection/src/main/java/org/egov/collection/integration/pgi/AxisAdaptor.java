@@ -46,14 +46,22 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.integration.models.ResponseAXIS;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.utils.EGovConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.representation.Form;
 
 // import com.billdesk.pgidsk.PGIUtil;
 
@@ -97,14 +105,13 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         fields.put(CollectionConstants.AXIS_TICKET_NO, receiptHeader.getConsumerCode());
         final StringBuilder returnUrl = new StringBuilder();
         returnUrl.append(paymentServiceDetails.getCallBackurl()).append("?paymentServiceId=")
-                .append(paymentServiceDetails.getId());
+        .append(paymentServiceDetails.getId());
         fields.put(CollectionConstants.AXIS_RETURN_URL, returnUrl.toString());
-        // fields.put(CollectionConstants.AXIS_AMOUNT,
-        // receiptHeader.getTotalAmount().setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT,
-        // BigDecimal.ROUND_UP).toString());
-        fields.put(CollectionConstants.AXIS_AMOUNT, "400");
-        // fields.put("AgainLink",
-        // "http://dev4.governation.com/collection/citizen/onlineReceipt-newform.action");
+        fields.put(
+                CollectionConstants.AXIS_AMOUNT,
+                receiptHeader.getTotalAmount()
+                        .setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP).toString());
+        // fields.put(CollectionConstants.AXIS_AMOUNT, "400");
         if (CollectionConstants.AXIS_SECURE_SECRET != null && CollectionConstants.AXIS_SECURE_SECRET.length() > 0) {
             final String secureHash = hashAllFields(fields);
             fields.put(CollectionConstants.AXIS_SECURE_HASH, secureHash);
@@ -346,4 +353,69 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         }
 
     } // appendQueryFields()
+
+    public PaymentResponse createOfflinePaymentRequest(final ServiceDetails paymentServiceDetails,
+            final OnlinePayment onlinePayment) {
+        LOGGER.debug("Inside createOfflinePaymentRequest");
+
+        final PaymentResponse axisResponse = new DefaultPaymentResponse();
+        try {
+            final Client client = Client.create();
+            final WebResource resource = client.resource(EGovConfig.getMessage(
+                    CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_RECONCILE_URL));
+            final Form formData = new Form();
+            formData.add(CollectionConstants.AXIS_PAYMENT_CLIENT, paymentServiceDetails.getServiceUrl());
+            formData.add(CollectionConstants.AXIS_VERSION, EGovConfig.getMessage(
+                    CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_VERSION));
+            formData.add(CollectionConstants.MESSAGEKEY_AXIS_COMMAND_QUERY, EGovConfig.getMessage(
+                    CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_COMMAND));
+            formData.add(CollectionConstants.AXIS_ACCESS_CODE, EGovConfig.getMessage(
+                    CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_ACCESS_CODE));
+            formData.add(CollectionConstants.AXIS_MERCHANT, EGovConfig.getMessage(
+                    CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_MERCHANT));
+            formData.add(CollectionConstants.AXIS_MERCHANT_TXN_REF, onlinePayment.getReceiptHeader().getId().toString());
+            formData.add(CollectionConstants.AXIS_OPERATOR_ID, EGovConfig.getMessage(
+                    CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_OPERATOR_ID));
+            formData.add(CollectionConstants.AXIS_PASSWORD, EGovConfig.getMessage(
+                    CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_PASSWORD));
+            LOGGER.debug("formData: " + formData);
+            final ResponseAXIS responseAxis = resource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(
+                    ResponseAXIS.class, formData);
+
+            axisResponse.setAdditionalInfo6(onlinePayment.getReceiptHeader().getConsumerCode().replace("-", "")
+                    .replace("/", ""));
+            LOGGER.debug("ResponseAXIS: " + responseAxis.toString());
+            if (null != responseAxis.getErrorCode() && !"".equals(responseAxis.getErrorCode())
+                    && null != responseAxis.getError() && !"".equals(responseAxis.getError())) {
+                axisResponse.setReceiptId(onlinePayment.getReceiptHeader().getId().toString());
+                axisResponse.setAuthStatus(responseAxis.getErrorCode());
+                axisResponse.setErrorDescription(responseAxis.getError());
+            } else {
+                axisResponse.setAuthStatus(null != responseAxis.getStatus()
+                        && responseAxis.getStatus().equals("Processed") ? "0300" : responseAxis.getStatus());
+                axisResponse.setErrorDescription(responseAxis.getStatus());
+                axisResponse.setReceiptId(responseAxis.getReferenceNo());
+                if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(axisResponse.getAuthStatus())) {
+                    axisResponse.setTxnReferenceNo(responseAxis.getTransactionId());
+                    axisResponse.setTxnAmount(new BigDecimal(responseAxis.getAmount()));
+                    final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                    Date transactionDate = null;
+                    try {
+                        transactionDate = sdf.parse(responseAxis.getDateTime());
+                        axisResponse.setTxnDate(transactionDate);
+                    } catch (final ParseException e) {
+                        LOGGER.error("Error occured in parsing the transaction date [" + responseAxis.getDateTime()
+                                + "]", e);
+                        throw new ApplicationException(".transactiondate.parse.error", e);
+                    }
+                }
+            }
+            LOGGER.debug("receiptid=" + axisResponse.getReceiptId() + "consumercode="
+                    + axisResponse.getAdditionalInfo6());
+        } catch (final Exception exp) {
+            exp.printStackTrace();
+        }
+        return axisResponse;
+    }
+
 }

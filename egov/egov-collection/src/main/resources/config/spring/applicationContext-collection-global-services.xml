@@ -112,10 +112,41 @@
          <constructor-arg index="0" ref="receiptHeaderPersistenceService"/>
    </bean>
    
+   	<bean class="org.egov.collection.service.ChallanService" id="challanService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.collection.entity.Challan" />
+		<property name="collectionsUtil" ref="collectionsUtil" />
+		<!-- <property name="challanWorkflowService" ref="challanWorkflowService" /> -->
+	</bean>
+	
+	<bean id="serviceDetailsService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.infstr.models.ServiceDetails" />
+	</bean>
+	
+	<bean id="xmlHandler" class="org.egov.collection.handler.BillCollectXmlHandler">
+	</bean>
+	
+	<bean id="bankService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.commons.Bank" />
+	</bean>
+   
    <bean id="WTCollectionsInterface" class="org.egov.wtms.application.service.collection.WaterTaxCollection" scope="prototype">
    </bean>
 
 	<bean id="TLCollectionsInterface" class="org.egov.tl.domain.service.integration.LicenseBillService" scope="prototype"/>
 	
+	<bean id=" BDPGIPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.BillDeskAdaptor" />
+	
 	<bean id="AXISPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.AxisAdaptor"/>
+	
+	<bean class="org.egov.collection.integration.services.ReconciliationService" id="reconciliationService" scope="prototype">
+		<property name="receiptHeaderService" ref="receiptHeaderService"/>
+		<property name="collectionCommon" ref="collectionCommon"/>
+		<property name="collectionsUtil" ref="collectionsUtil"/>
+	</bean>
+	
+	<bean class="org.egov.collection.integration.services.SchedularService" id="schedularService" scope="prototype">
+	   <property name="persistenceService" ref="persistenceService" />
+	   <property name="receiptHeaderService" ref="receiptHeaderService" />
+	   <property name="reconciliationService" ref="reconciliationService" />
+	</bean>
 </beans>

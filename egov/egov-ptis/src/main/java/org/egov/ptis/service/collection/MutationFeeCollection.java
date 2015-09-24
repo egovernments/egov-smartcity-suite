@@ -42,8 +42,11 @@ package org.egov.ptis.service.collection;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING;
 
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
@@ -112,5 +115,11 @@ public class MutationFeeCollection extends TaxCollection {
 
     public void setPersistenceService(PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
+    }
+
+    @Override
+    public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

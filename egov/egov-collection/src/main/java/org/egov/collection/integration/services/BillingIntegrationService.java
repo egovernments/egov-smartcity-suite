@@ -41,6 +41,7 @@ package org.egov.collection.integration.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.egov.collection.entity.ReceiptDetail;
@@ -119,5 +120,19 @@ public interface BillingIntegrationService {
 
     public void apportionPaidAmount(String billReferenceNumber, BigDecimal actualAmountPaid,
             ArrayList<ReceiptDetail> receiptDetailsArray);
+    
+    /**
+     * Collection system will invoke this method only when this receipt status is PENDING 
+     * and there is one more receipt in system created on later/same day with status as 
+     * APPROVED/SUBMITTED/TO_BE_SUBMITTED  
+     * @param billReferenceNumber
+     *                Bill Reference Number of the bill send by billing system
+     * @param actualAmountPaid
+     *                Actual amount paid by the citizen
+     * @return Reconstructed List of ReceiptDetail objects
+     * 
+     */
+    public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid);
+    
 
 }

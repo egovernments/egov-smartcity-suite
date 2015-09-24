@@ -51,6 +51,7 @@ import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
@@ -90,6 +91,7 @@ import org.egov.pims.utils.EisManagersUtill;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CollectionsUtil {
     private final Map<String, EgwStatus> statusMap = new HashMap<String, EgwStatus>();
@@ -757,6 +759,17 @@ public class CollectionsUtil {
         return searchPositionService.getPositionBySearchParameters(beginsWith, desId, deptId,
                 jurdId != null ? Long.valueOf(jurdId) : null, roleId, userDate, maxResults);
 
+    }
+    
+    public BillingIntegrationService getBillingService(String code) {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] { "classpath*:org/egov/infstr/beanfactory/globalApplicationContext.xml",
+                        "classpath*:org/egov/infstr/beanfactory/egiApplicationContext.xml", "classpath*:org/egov/infstr/beanfactory/applicationContext-pims.xml",
+                        "classpath*:org/egov/infstr/beanfactory/applicationContext-egf.xml", "classpath*:org/egov/infstr/beanfactory/applicationContext-eportal.xml",
+                        "classpath*:org/egov/infstr/beanfactory/applicationContext-ptis.xml", "classpath*:org/egov/infstr/beanfactory/applicationContext-erpcollections.xml",
+                        "classpath*:org/egov/infstr/beanfactory/applicationContext-bpa.xml" });
+        BillingIntegrationService billingService = (BillingIntegrationService) applicationContext.getBean(code
+                        + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+        return billingService;
     }
 
     public User getUserById(final Long userId) {

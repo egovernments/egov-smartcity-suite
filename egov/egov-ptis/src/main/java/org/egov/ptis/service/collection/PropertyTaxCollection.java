@@ -735,4 +735,10 @@ public class PropertyTaxCollection extends TaxCollection {
 	public void setPersistenceService(PersistenceService persistenceService) {
 		this.persistenceService = persistenceService;
 	}
+
+    @Override
+    public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

@@ -41,6 +41,7 @@ package org.egov.collection.integration.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -118,5 +119,10 @@ public class BillingIntegrationServiceStub implements BillingIntegrationService 
         xStream.registerConverter(new ReceiptInstrumentInfoConverter());
         xStream.alias("Bill-Receipt", BillReceiptInfoImpl.class);
         return xStream.toXML(billReceipts);
+    }
+    
+    @Override
+    public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid){
+            return new ArrayList<ReceiptDetail>(0);
     }
 }

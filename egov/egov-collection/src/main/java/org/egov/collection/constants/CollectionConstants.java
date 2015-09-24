@@ -325,11 +325,13 @@ public final class CollectionConstants {
     public static final String SERVICECODE_PGI_BILLDESK = "BDPGI";
     public static final String SERVICECODE_PROPERTYTAX = "PT";
     public static final String SERVICECODE_PROFESSIONALTAX = "PRFT";
+    public static final String SERVICECODE_AXIS="AXIS";
 
     // Online Payment Statuses
     public static final String ONLINEPAYMENT_STATUS_CODE_PENDING = "ONLINE_STATUS_PENDING";
     public static final String ONLINEPAYMENT_STATUS_CODE_SUCCESS = "ONLINE_STATUS_SUCCESS";
     public static final String ONLINEPAYMENT_STATUS_CODE_FAILURE = "ONLINE_STATUS_FAILURE";
+    public static final String ONLINEPAYMENT_STATUS_CODE_ABORTED = "ONLINE_STATUS_ABORTED";
     public static final String ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED = "TO_BE_REFUNDED";
     public static final String ONLINEPAYMENT_STATUS_CODE_REFUNDED = "ONLINE_STATUS_REFUNDED";
     public static final String ONLINEPAYMENT_STATUS_DESC_PENDING = "Pending";
@@ -444,7 +446,7 @@ public final class CollectionConstants {
 
     // AXIS payment gateway variables name
     public static final String ONLINE_PAYMENT_AXIS_MERCHANTID = "TESTEPAYCDMA";
-    public static final String AXIS_PAYMENT_CLIENT = "virtualPaymentClientURL";
+    public static final String AXIS_PAYMENT_CLIENT = "vpc_VirtualPaymentClientURL";
     public static final String AXIS_VERSION = "vpc_Version";
     public static final String AXIS_COMMAND = "vpc_Command";
     public static final String AXIS_ACCESS_CODE = "vpc_AccessCode";
@@ -454,19 +456,27 @@ public final class CollectionConstants {
     public static final String AXIS_RETURN_URL = "vpc_ReturnURL";
     public static final String AXIS_LOCALE = "vpc_Locale";
     public static final String AXIS_TICKET_NO = "vpc_TicketNumber";
-    public static final String AXIS_SECURE_HASH         = "vpc_SecureHash";
+    public static final String AXIS_OPERATOR_ID = "vpc_User";
+    public static final String AXIS_PASSWORD = "vpc_Password";
+    public static final String AXIS_SECURE_HASH = "vpc_SecureHash";
 
     public static final String MESSAGEKEY_AXIS_PAYMENT_CLIENT = "axis.payment.client";
     public static final String MESSAGEKEY_AXIS_VERSION = "axis.version";
     public static final String MESSAGEKEY_AXIS_COMMAND = "axis.command";
+    public static final String MESSAGEKEY_AXIS_COMMAND_QUERY ="axis.command.query";
     public static final String MESSAGEKEY_AXIS_ACCESS_CODE = "axis.access.code";
     public static final String MESSAGEKEY_AXIS_MERCHANT = "axis.merchant";
     public static final String MESSAGEKEY_AXIS_LOCALE = "axis.locale";
     public static final String MESSAGEKEY_AXIS_TICKET_NO = "axis.ticket.no";
+    public static final String MESSAGEKEY_AXIS_OPERATOR_ID = "axis.operator.id";
+    public static final String MESSAGEKEY_AXIS_PASSWORD = "axis.password";
+    public static final String MESSAGEKEY_AXIS_RECONCILE_URL   = "axis.reconcile.url";
     public static final String AXIS_SECURE_SECRET = "60D7AA77F54504B6057CCB7B3AEE86D4";
 
     // This is an array for creating hex chars
     public static final char[] AXIS_HEX_TABLE = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
         'B', 'C', 'D', 'E', 'F' };
+    
+    public static final String  AXIS_ABORTED_STATUS_CODE    = "3";
 
 }

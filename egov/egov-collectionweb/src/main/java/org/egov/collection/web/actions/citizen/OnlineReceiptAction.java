@@ -93,7 +93,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.models.ServiceDetails;
-import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
@@ -450,24 +449,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         }
     }
 
-    private List<InstrumentHeader> createOnlineInstrument(final Date transactionDate, final String transactionId,
-            final BigDecimal transactionAmt) {
-        final InstrumentHeader onlineInstrumentHeader = new InstrumentHeader();
-        List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>();
-        onlineInstrumentHeader.setInstrumentType(financialsUtil
-                .getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_ONLINE));
-
-        onlineInstrumentHeader.setTransactionDate(transactionDate);
-        onlineInstrumentHeader.setIsPayCheque(CollectionConstants.ZERO_INT);
-        onlineInstrumentHeader.setTransactionNumber(transactionId);
-        onlineInstrumentHeader.setInstrumentAmount(transactionAmt);
-
-        instrumentHeaderList.add(onlineInstrumentHeader);
-
-        instrumentHeaderList = receiptHeaderService.createInstrument(instrumentHeaderList);
-
-        return instrumentHeaderList;
-    }
 
     /**
      * @param receipts
@@ -482,12 +463,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED);
         receipt.setStatus(receiptStatus);
 
-        receipt.setReceiptInstrument(new HashSet(createOnlineInstrument(transactionDate, transactionId, transactionAmt)));
-
-        // receiptPayeeDetailsService.setReceiptNumber(receipt);
-
+        receipt.setReceiptInstrument(receiptHeaderService.createOnlineInstrument(transactionDate, transactionId, transactionAmt));
         receipt.setIsReconciled(Boolean.FALSE);
-
         receipt.getOnlinePayment().setAuthorisationStatusCode(authStatusCode);
         receipt.getOnlinePayment().setTransactionNumber(transactionId);
         receipt.getOnlinePayment().setTransactionAmount(transactionAmt);
@@ -498,7 +475,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         receipt.getOnlinePayment().setStatus(
                 collectionsUtil.getEgwStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                         CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS));
-
         receiptHeaderService.persist(receipt);
     }
 

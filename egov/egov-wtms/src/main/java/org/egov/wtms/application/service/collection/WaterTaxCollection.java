@@ -50,6 +50,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
+import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
@@ -323,5 +324,11 @@ public class WaterTaxCollection extends TaxCollection {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .getWaterConnectionDetailsByDemand(demand);
         waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
+    }
+
+    @Override
+    public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

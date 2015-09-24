@@ -24,16 +24,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -229,7 +229,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     || instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_ONLINE))
                 if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                         CollectionConstants.APPCONFIG_VALUE_RECEIPTVOUCHERTYPEFORCHEQUEDDCARD).equals(
-                                CollectionConstants.FINANCIAL_JOURNALVOUCHER_VOUCHERTYPE)) {
+                        CollectionConstants.FINANCIAL_JOURNALVOUCHER_VOUCHERTYPE)) {
                     headerdetails.put(VoucherConstant.VOUCHERNAME,
                             CollectionConstants.FINANCIAL_JOURNALVOUCHER_VOUCHERNAME);
                     headerdetails.put(VoucherConstant.VOUCHERTYPE,
@@ -268,7 +268,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         for (final ReceiptDetail receiptDetail : receiptDetailSet)
             if (receiptDetail.getCramount().compareTo(BigDecimal.ZERO) != 0
-            || receiptDetail.getDramount().compareTo(BigDecimal.ZERO) != 0) {
+                    || receiptDetail.getDramount().compareTo(BigDecimal.ZERO) != 0) {
 
                 final HashMap<String, Object> accountcodedetailsHashMap = new HashMap<String, Object>();
                 accountcodedetailsHashMap.put(VoucherConstant.GLCODE, receiptDetail.getAccounthead().getGlcode());
@@ -397,9 +397,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             } else
                 position = collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
             receiptHeader.transition().start().withSenderName(receiptHeader.getCreatedBy().getName())
-            .withComments(CollectionConstants.WF_STATE_RECEIPT_CREATED)
-            .withStateValue(CollectionConstants.WF_STATE_RECEIPT_CREATED).withOwner(position)
-            .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
+                    .withComments(CollectionConstants.WF_STATE_RECEIPT_CREATED)
+                    .withStateValue(CollectionConstants.WF_STATE_RECEIPT_CREATED).withOwner(position)
+                    .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
         }
 
         LOGGER.debug("Workflow state transition complete");
@@ -413,16 +413,16 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         if (receiptBulkUpload) {
             // transition the receipt header workflow to Approved state
             receiptHeader.transition().withSenderName(receiptHeader.getCreatedBy().getName())
-            .withComments("Approval of Data Migration Receipt Complete")
-            .withStateValue(CollectionConstants.WF_ACTION_APPROVE)
-            .withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy()))
-            .withDateInfo(new Date());
+                    .withComments("Approval of Data Migration Receipt Complete")
+                    .withStateValue(CollectionConstants.WF_ACTION_APPROVE)
+                    .withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy()))
+                    .withDateInfo(new Date());
             // End the Receipt header workflow
             receiptHeader.transition().end().withSenderName(receiptHeader.getCreatedBy().getName())
-            .withComments("Data Migration Receipt Approved - Workflow ends")
-            .withStateValue(CollectionConstants.WF_STATE_END)
-            .withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy()))
-            .withDateInfo(new Date());
+                    .withComments("Data Migration Receipt Approved - Workflow ends")
+                    .withStateValue(CollectionConstants.WF_STATE_END)
+                    .withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy()))
+                    .withDateInfo(new Date());
         }
     }
 
@@ -791,10 +791,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         .get(CollectionConstants.BANKREMITTANCE_VOUCHERDATE))
                         && arrayObjectInitialIndexTemp[2].equals(objHashMapTemp
                                 .get(CollectionConstants.BANKREMITTANCE_SERVICENAME))
-                                && arrayObjectInitialIndexTemp[6].equals(objHashMapTemp
-                                        .get(CollectionConstants.BANKREMITTANCE_FUNDCODE))
-                                        && arrayObjectInitialIndexTemp[7].equals(objHashMapTemp
-                                                .get(CollectionConstants.BANKREMITTANCE_DEPARTMENTCODE))) {
+                        && arrayObjectInitialIndexTemp[6].equals(objHashMapTemp
+                                .get(CollectionConstants.BANKREMITTANCE_FUNDCODE))
+                        && arrayObjectInitialIndexTemp[7].equals(objHashMapTemp
+                                .get(CollectionConstants.BANKREMITTANCE_DEPARTMENTCODE))) {
                     check = m;
                     break;
                 } else
@@ -871,7 +871,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
-                        CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
             voucherTypeForChequeDDCard = true;
 
         if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
@@ -978,13 +978,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                                     .findByNamedQuery(CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID,
                                             voucherHeaderCash.getId(), instrumentHeader.getId());
                             contraJournalVoucher.transition(true).start()
-                            .withSenderName(contraJournalVoucher.getCreatedBy().getName())
-                            .withComments("Voucher Created")
-                            .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                                    .withSenderName(contraJournalVoucher.getCreatedBy().getName())
+                                    .withComments("Voucher Created")
+                                    .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
                             contraJournalVoucher.transition(true).transition()
-                            .withSenderName(contraJournalVoucher.getCreatedBy().getName())
-                            .withComments(voucherWorkflowMsg)
-                            .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                                    .withSenderName(contraJournalVoucher.getCreatedBy().getName())
+                                    .withComments(voucherWorkflowMsg)
+                                    .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
                         }
 
                 }
@@ -997,7 +997,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     chequeQueryBuilder.append(instrumentStatusCondition);
                     chequeQueryBuilder.append("and instruments.instrumentType.type in ( ?, ?)");
                     chequeQueryBuilder
-                    .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
+                            .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
                     chequeQueryBuilder.append(receiptFundCondition);
                     chequeQueryBuilder.append(receiptDepartmentCondition);
 
@@ -1083,19 +1083,19 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                                         .findByNamedQuery(CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID,
                                                 voucherHeaderCheque.getId(), instrumentHeader.getId());
                                 contraJournalVoucher
-                                .transition(true)
-                                .start()
-                                .withSenderName(contraJournalVoucher.getCreatedBy().getName())
-                                .withComments(CollectionConstants.WF_STATE_NEW)
-                                .withOwner(
-                                        collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                                        .transition(true)
+                                        .start()
+                                        .withSenderName(contraJournalVoucher.getCreatedBy().getName())
+                                        .withComments(CollectionConstants.WF_STATE_NEW)
+                                        .withOwner(
+                                                collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
                                 contraJournalVoucher
-                                .transition(true)
-                                .transition()
-                                .withSenderName(contraJournalVoucher.getCreatedBy().getName())
-                                .withComments(voucherWorkflowMsg)
-                                .withOwner(
-                                        collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                                        .transition(true)
+                                        .transition()
+                                        .withSenderName(contraJournalVoucher.getCreatedBy().getName())
+                                        .withComments(voucherWorkflowMsg)
+                                        .withOwner(
+                                                collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
                             }
                         }
                 }
@@ -1189,19 +1189,19 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                                         .findByNamedQuery(CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID,
                                                 voucherHeaderCard.getId(), instrumentHeader.getId());
                                 contraJournalVoucher
-                                .transition(true)
-                                .start()
-                                .withSenderName(contraJournalVoucher.getCreatedBy().getName())
-                                .withComments(CollectionConstants.WF_STATE_NEW)
-                                .withOwner(
-                                        collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                                        .transition(true)
+                                        .start()
+                                        .withSenderName(contraJournalVoucher.getCreatedBy().getName())
+                                        .withComments(CollectionConstants.WF_STATE_NEW)
+                                        .withOwner(
+                                                collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
                                 contraJournalVoucher
-                                .transition(true)
-                                .transition()
-                                .withSenderName(contraJournalVoucher.getCreatedBy().getName())
-                                .withComments(voucherWorkflowMsg)
-                                .withOwner(
-                                        collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                                        .transition(true)
+                                        .transition()
+                                        .withSenderName(contraJournalVoucher.getCreatedBy().getName())
+                                        .withComments(voucherWorkflowMsg)
+                                        .withOwner(
+                                                collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
                             }
                         }
                 }
@@ -1295,19 +1295,19 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                                         .findByNamedQuery(CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID,
                                                 voucherHeaderCard.getId(), instrumentHeader.getId());
                                 contraJournalVoucher
-                                .transition(true)
-                                .start()
-                                .withSenderName(contraJournalVoucher.getCreatedBy().getName())
-                                .withComments(CollectionConstants.WF_STATE_NEW)
-                                .withOwner(
-                                        collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                                        .transition(true)
+                                        .start()
+                                        .withSenderName(contraJournalVoucher.getCreatedBy().getName())
+                                        .withComments(CollectionConstants.WF_STATE_NEW)
+                                        .withOwner(
+                                                collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
                                 contraJournalVoucher
-                                .transition(true)
-                                .transition()
-                                .withSenderName(contraJournalVoucher.getCreatedBy().getName())
-                                .withComments(voucherWorkflowMsg)
-                                .withOwner(
-                                        collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                                        .transition(true)
+                                        .transition()
+                                        .withSenderName(contraJournalVoucher.getCreatedBy().getName())
+                                        .withComments(voucherWorkflowMsg)
+                                        .withOwner(
+                                                collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
                             }
                         }
 
@@ -1408,9 +1408,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         if (position != null)
             receiptHeaderToBeCancelled.transition(true).end()
-            .withSenderName(receiptHeaderToBeCancelled.getCreatedBy().getName())
-            .withComments("Receipt Cancelled - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
-            .withOwner(position).withDateInfo(new Date());
+                    .withSenderName(receiptHeaderToBeCancelled.getCreatedBy().getName())
+                    .withComments("Receipt Cancelled - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
+                    .withOwner(position).withDateInfo(new Date());
     }
 
     /**
@@ -1714,14 +1714,31 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         if (receiptHeader.getStatus().getCode().equals(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED))
             // Receipt approved. end workflow for this receipt.
             receiptHeader.transition().end().withSenderName(receiptHeader.getCreatedBy().getName())
-            .withComments("Receipt Approved - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
-            .withOwner(ownerPosition).withDateInfo(new Date());
+                    .withComments("Receipt Approved - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
+                    .withOwner(ownerPosition).withDateInfo(new Date());
         else
             receiptHeader.transition().withSenderName(receiptHeader.getCreatedBy().getName()).withComments(remarks)
-            .withStateValue(wfState).withOwner(ownerPosition).withDateInfo(new Date())
-            .withNextAction(nextAction);
+                    .withStateValue(wfState).withOwner(ownerPosition).withDateInfo(new Date())
+                    .withNextAction(nextAction);
         getSession().flush();
         persistenceService.persist(receiptHeader);
+    }
+
+    public Set<InstrumentHeader> createOnlineInstrument(final Date transactionDate, final String transactionId,
+            final BigDecimal transactionAmt) {
+        final InstrumentHeader onlineInstrumentHeader = new InstrumentHeader();
+        Set<InstrumentHeader> instrumentHeaderSet = new HashSet<InstrumentHeader>();
+        onlineInstrumentHeader.setInstrumentType(financialsUtil
+                .getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_ONLINE));
+        onlineInstrumentHeader.setTransactionDate(transactionDate);
+        onlineInstrumentHeader.setIsPayCheque(CollectionConstants.ZERO_INT);
+        onlineInstrumentHeader.setTransactionNumber(transactionId);
+        onlineInstrumentHeader.setInstrumentAmount(transactionAmt);
+
+        final List<InstrumentHeader> instHeaderList = new ArrayList<InstrumentHeader>();
+        instHeaderList.add(onlineInstrumentHeader);
+        instrumentHeaderSet = new HashSet(createInstrument(instHeaderList));
+        return instrumentHeaderSet;
     }
 
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {

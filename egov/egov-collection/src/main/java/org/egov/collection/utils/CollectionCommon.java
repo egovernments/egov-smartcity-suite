@@ -288,17 +288,12 @@ public class CollectionCommon {
                 + (receiptHeader.getConsumerCode() != null ? " and consumer code: " + receiptHeader.getConsumerCode()
                         : ""));
         final Set<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>();
-        // for (ReceiptHeader receiptHeader : payeeDetails.getReceiptHeaders())
-        // {
         billReceipts.add(new BillReceiptInfoImpl(receiptHeader));
         if (serviceCode == null)
             serviceCode = receiptHeader.getService().getCode();
 
         if (receiptHeaderService.updateBillingSystem(serviceCode, billReceipts)) {
-            // for (ReceiptHeader receiptHeader :
-            // payeeDetails.getReceiptHeaders()) {
             receiptHeader.setIsReconciled(true);
-            // }
             // the receipts should be persisted again
             receiptHeaderService.persist(receiptHeader);
         }

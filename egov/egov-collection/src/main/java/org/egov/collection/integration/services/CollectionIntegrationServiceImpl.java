@@ -280,13 +280,12 @@ CollectionIntegrationService {
              * paytInfoATM.getInstrumentAmount(); }
              */
         }
-
-        instrumentHeaderList = receiptHeaderService.createInstrument(instrumentHeaderList);
+        Set<InstrumentHeader> instHeaderSet = new HashSet(receiptHeaderService.createInstrument(instrumentHeaderList));
         LOGGER.info("	Instrument List created	");
 
-        receiptHeader.setReceiptInstrument(new HashSet(instrumentHeaderList));
+        receiptHeader.setReceiptInstrument(instHeaderSet);
 
-        BigDecimal debitAmount = BigDecimal.ZERO;
+        BigDecimal debitAmount = BigDecimal.ZERO; 
 
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
             debitAmount = debitAmount.add(receiptDetail.getCramount());

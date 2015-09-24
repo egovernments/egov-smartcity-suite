@@ -695,4 +695,10 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     }
 
+    @Override
+    public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
