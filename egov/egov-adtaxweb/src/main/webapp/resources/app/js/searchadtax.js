@@ -79,6 +79,25 @@ $(document).ready(function(){
 				"visible": false
 			  }]
 				});
+		} else {
+			oTable.dataTable({
+				"sPaginationType": "bootstrap",
+				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+				"autoWidth": false,
+				"bDestroy": true,
+				"ajax": "/adtax/hoarding/search-list?"+$("#hoardingsearchform").serialize(),
+				"columns" : [
+				  { "mData"  : "agency",
+					"sTitle" : "Agency"
+				  },
+				  { "mData"  : "noofhoardings",
+					"sTitle" : "No of Hoarding"
+				  },
+				  { "mData"  : "agencyId",
+					"visible": false
+				  }]
+					});
 		}
 		e.stopPropagation();
 	});

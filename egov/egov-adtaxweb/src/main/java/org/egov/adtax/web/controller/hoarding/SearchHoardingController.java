@@ -48,6 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.egov.adtax.entity.AgencyAdaptor;
 import org.egov.adtax.entity.Hoarding;
 import org.egov.adtax.entity.HoardingAdaptor;
 import org.egov.adtax.entity.SubCategory;
@@ -105,8 +106,13 @@ public class SearchHoardingController extends GenericController {
 
     public String commonSearchResult(final Hoarding hoarding, final String searchType) {
         List<Hoarding> pageOfHoardings = null;
-        pageOfHoardings = hoardingService.searchByHoarding(hoarding);
-        return new StringBuilder("{ \"data\":").append(toJSON(pageOfHoardings, searchType)).append("}").toString();
+        if ("hoarding".equalsIgnoreCase(searchType)) {
+            pageOfHoardings = hoardingService.searchByHoarding(hoarding);
+            return new StringBuilder("{ \"data\":").append(toJSON(pageOfHoardings, searchType)).append("}").toString();
+        } else {
+            pageOfHoardings = hoardingService.searchByAgency(hoarding);
+            return new StringBuilder("{ \"data\":").append(toJSON(pageOfHoardings, searchType)).append("}").toString();
+        }
     }
 
     private String toJSON(final Object object, final String searchType) {
@@ -114,6 +120,8 @@ public class SearchHoardingController extends GenericController {
         Gson gson = null;
         if ("hoarding".equalsIgnoreCase(searchType))
             gson = gsonBuilder.registerTypeAdapter(Hoarding.class, new HoardingAdaptor()).create();
+        else
+            gson = gsonBuilder.registerTypeAdapter(Hoarding.class, new AgencyAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
     }

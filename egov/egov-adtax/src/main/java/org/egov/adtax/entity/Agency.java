@@ -39,13 +39,20 @@
  */
 package org.egov.adtax.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -94,6 +101,10 @@ public class Agency extends AbstractAuditable {
 
     @NotNull
     private Double depositAmount;
+
+    @OrderBy("ID DESC")
+    @OneToMany(mappedBy = "agency", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Hoarding> hoardings = new HashSet<Hoarding>(0);
 
     @Override
     protected void setId(final Long id) {
@@ -168,6 +179,14 @@ public class Agency extends AbstractAuditable {
 
     public void setDepositAmount(final Double depositAmount) {
         this.depositAmount = depositAmount;
+    }
+
+    public Set<Hoarding> getHoardings() {
+        return hoardings;
+    }
+
+    public void setHoardings(final Set<Hoarding> hoardings) {
+        this.hoardings = hoardings;
     }
 
 }

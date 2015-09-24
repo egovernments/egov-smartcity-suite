@@ -98,6 +98,7 @@ public class HoardingService {
             criteria.add(Restrictions.eq("revenueInspector.id", hoarding.getRevenueInspector().getId()));
         return criteria.list();
     }
+
     public List<Hoarding> searchByAgency(final Hoarding hoarding) {
         return Collections.EMPTY_LIST;
     }
