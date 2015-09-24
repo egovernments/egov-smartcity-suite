@@ -53,10 +53,10 @@
                         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.by.agency.or.hoarding" /></label>
                         <div class="col-sm-8">
                             <label class="radio-inline">
-                              <input type="radio" name="optradio" value="agency" checked><spring:message code="lbl.radio.agency"/>
+                              <input type="radio" name="searchType" value="agency" checked><spring:message code="lbl.radio.agency"/>
                             </label>
                             <label class="radio-inline">
-                              <input type="radio" name="optradio" value="hoarding"><spring:message code="lbl.radio.hoarding"/>
+                              <input type="radio" name="searchType" value="hoarding"><spring:message code="lbl.radio.hoarding"/>
                             </label>
                         </div>
                     </div>
@@ -116,7 +116,7 @@
                     	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.hoarding.status"/></label>
                         <div class="col-sm-3 add-margin">
                    			<form:select path="status" id="hoardingstatus" cssClass="form-control" 
-							cssErrorClass="form-control error" required="required">
+							cssErrorClass="form-control error">
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
 								<form:options items="${status}" />
 							</form:select>
@@ -125,7 +125,7 @@
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.ri.no"/></label>
                         <div class="col-sm-3 add-margin">
                         	<form:select path="revenueInspector" id="revenueinspector" cssClass="form-control" 
-							cssErrorClass="form-control error" required="required">
+							cssErrorClass="form-control error" >
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
 								<form:options items="${revenueinspectors}" itemLabel="name" itemValue="id" />
 							</form:select>
@@ -136,12 +136,18 @@
 	        </div>
         	<div class="row">
        			<div class="text-center">
-       				<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
+       				<button type="button" class="btn btn-primary" id="search"><spring:message code="lbl.submit"/></button>
            			<button class="btn btn-default"><spring:message code="lbl.close"/></button>
        			</div>
         	</div>
         </form:form>
+        <table class="table table-bordered datatable dt-responsive" id="adtax_search"></table>
 	</div>
 </div>
+
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/app/js/searchadtax.js'/>"></script>
-   

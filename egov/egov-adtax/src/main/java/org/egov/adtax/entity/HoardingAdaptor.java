@@ -56,7 +56,7 @@ public class HoardingAdaptor implements JsonSerializer<Hoarding> {
         jsonObject.addProperty("agency", null != hoarding.getAgency() ? hoarding.getAgency().getName() : "NA");
         jsonObject.addProperty("amount",
                 null != hoarding.getDemandId() ? hoarding.getDemandId().getBaseDemand().toString() : "NA");
-        jsonObject.addProperty("hoarindId", hoarding.getId());
+        jsonObject.addProperty("hoardingId", hoarding.getId());
         return jsonObject;
     }
 

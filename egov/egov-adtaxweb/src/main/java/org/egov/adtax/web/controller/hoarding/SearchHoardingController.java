@@ -40,7 +40,6 @@
 package org.egov.adtax.web.controller.hoarding;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.IOException;
 import java.util.List;
@@ -95,23 +94,26 @@ public class SearchHoardingController extends GenericController {
         return "hoarding-search";
     }
 
-    @RequestMapping(value = "/search", method = POST)
+    @RequestMapping(value = "/search-list", method = GET)
     public @ResponseBody void searchResult(@ModelAttribute final Hoarding hoarding, final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
-
-        final String hoardingJSONData = commonSearchResult(hoarding);
+        final String searchType = request.getParameter("searchType");
+        final String hoardingJSONData = commonSearchResult(hoarding, searchType);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(hoardingJSONData, response.getWriter());
     }
 
-    public String commonSearchResult(final Hoarding hoarding) {
-        final List<Hoarding> pageOfHoardings = hoardingService.searchHoarding(hoarding);
-        return new StringBuilder("{ \"data\":").append(toJSON(pageOfHoardings)).append("}").toString();
+    public String commonSearchResult(final Hoarding hoarding, final String searchType) {
+        List<Hoarding> pageOfHoardings = null;
+        pageOfHoardings = hoardingService.searchByHoarding(hoarding);
+        return new StringBuilder("{ \"data\":").append(toJSON(pageOfHoardings, searchType)).append("}").toString();
     }
 
-    private String toJSON(final Object object) {
+    private String toJSON(final Object object, final String searchType) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(Hoarding.class, new HoardingAdaptor()).create();
+        Gson gson = null;
+        if ("hoarding".equalsIgnoreCase(searchType))
+            gson = gsonBuilder.registerTypeAdapter(Hoarding.class, new HoardingAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
     }

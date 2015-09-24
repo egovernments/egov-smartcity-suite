@@ -38,6 +38,7 @@
  */
 package org.egov.adtax.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -73,14 +74,14 @@ public class HoardingService {
         return hoardingRepository.save(hoarding);
     }
 
-    public List<Hoarding> searchHoarding(final Hoarding hoarding) {
+    public List<Hoarding> searchByHoarding(final Hoarding hoarding) {
         final Criteria criteria = getCurrentSession().createCriteria(Hoarding.class, "hoarding")
                 .createAlias("hoarding.adminBoundry", "ward").createAlias("hoarding.adminBoundry.parent", "zone")
                 .createAlias("hoarding.category", "category").createAlias("hoarding.subCategory", "subCategory")
                 .createAlias("hoarding.revenueInspector", "revenueInspector").createAlias("hoarding.agency", "agency");
         if (null != hoarding.getHoardingNumber() && !hoarding.getHoardingNumber().isEmpty())
             criteria.add(Restrictions.eq("hoarding.hoardingNumber", hoarding.getHoardingNumber()));
-        if (null != hoarding.getAdminBoundry().getParent().getId())
+        if (null != hoarding.getAdminBoundry().getParent())
             criteria.add(Restrictions.eq("zone.id", hoarding.getAdminBoundry().getParent().getId()));
         if (null != hoarding.getAdminBoundry().getId())
             criteria.add(Restrictions.eq("ward.id", hoarding.getAdminBoundry().getId()));
@@ -96,5 +97,8 @@ public class HoardingService {
         if (null != hoarding.getRevenueInspector())
             criteria.add(Restrictions.eq("revenueInspector.id", hoarding.getRevenueInspector().getId()));
         return criteria.list();
+    }
+    public List<Hoarding> searchByAgency(final Hoarding hoarding) {
+        return Collections.EMPTY_LIST;
     }
 }
