@@ -49,7 +49,7 @@
 
 			<form:form method="post"
 				modelAttribute="waterConnectionDetails"
-				id="editmeter11WaterConnectionform"
+				id="editDemandWaterConnectionform"
 				cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 				<div class="page-container" id="page-container">
 				<div class="panel-heading">
@@ -69,7 +69,7 @@
 					<jsp:include page="commonappdetails-view.jsp" />
 					<div class="col-md-12">
 					
-						<table class="table table-bordered"    id="dcbOnlinePaymentTable" name="dcbOnlinePaymentTable" >
+						<table class="table table-bordered"    id="dcbOnlinePaymentTable"  >
 									<tr>
 										<th class="bluebgheadtd" width="2%">
 											Installment

@@ -48,7 +48,6 @@
 		{
 			if( obj.value -(document.forms[0].actualCollection[rowobj].value) < 0 )
 				{
-				alert(" Collection Amount should not be greater than Demand amount111");
 				document.forms[0].actualCollection[rowobj].value="";
 				return false;
 				}

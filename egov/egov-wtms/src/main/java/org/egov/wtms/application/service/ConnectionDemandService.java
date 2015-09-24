@@ -173,7 +173,7 @@ public class ConnectionDemandService {
                 donationDetails = donationDetailsService.findByDonationHeader(donationHeaderService
                         .findByCategoryandUsageandMinPipeSize(waterConnectionDetails.getCategory(),
                                 waterConnectionDetails.getUsageType(), waterConnectionDetails.getPipeSize()
-                                .getSizeInInch()));
+                                        .getSizeInInch()));
 
         if (donationDetails != null) {
             feeDetails.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, donationDetails.getAmount());
@@ -199,65 +199,53 @@ public class ConnectionDemandService {
         return egDemand;
     }
 
-	private EgDemandDetails createDemandDetails(final Double amount,
-			final String demandReason, final Installment installment) {
-		final EgDemandReason demandReasonObj = getDemandReasonByCodeAndInstallment(
-				demandReason, installment);
-		final EgDemandDetails demandDetail = new EgDemandDetails();
-		demandDetail.setAmount(BigDecimal.valueOf(amount));
-		demandDetail.setAmtCollected(BigDecimal.ZERO);
-		demandDetail.setAmtRebate(BigDecimal.ZERO);
-		demandDetail.setEgDemandReason(demandReasonObj);
-		demandDetail.setCreateDate(new Date());
-		demandDetail.setModifiedDate(new Date());
-		return demandDetail;
-	}
+    private EgDemandDetails createDemandDetails(final Double amount, final String demandReason,
+            final Installment installment) {
+        final EgDemandReason demandReasonObj = getDemandReasonByCodeAndInstallment(demandReason, installment);
+        final EgDemandDetails demandDetail = new EgDemandDetails();
+        demandDetail.setAmount(BigDecimal.valueOf(amount));
+        demandDetail.setAmtCollected(BigDecimal.ZERO);
+        demandDetail.setAmtRebate(BigDecimal.ZERO);
+        demandDetail.setEgDemandReason(demandReasonObj);
+        demandDetail.setCreateDate(new Date());
+        demandDetail.setModifiedDate(new Date());
+        return demandDetail;
+    }
 
     private EgDemandDetails createDemandDetailsrForDataEntry(final BigDecimal amount, final BigDecimal collectAmount,
-            final String demandReason, final String installment,DemandDetail demandObj,WaterConnectionDetails waterConnectionDetails) {
-        final Installment installObj = waterConnectionDetailsRepository.getInstallmentByDescription(
+            final String demandReason, final String installment, final DemandDetail demandTempObj,
+            final WaterConnectionDetails waterConnectionDetails) {
+        final Installment installObj = waterConnectionDetailsRepository.findInstallmentByDescription(
                 WaterTaxConstants.PROPERTY_MODULE_NAME, installment);
-         EgDemandDetails demandDetail=null;
-         EgDemandDetails  demandDetailsObj =waterConnectionDetailsRepository.getEgDemandDetailById(demandObj.getId(), waterConnectionDetails.getDemand().getId());
+        EgDemandDetails demandDetailBean = null;
+        final EgDemandDetails demandDetailsObj = waterConnectionDetailsRepository.findEgDemandDetailById(demandTempObj
+                .getId());
         final EgDemandReason demandReasonObj = getDemandReasonByCodeAndInstallment(demandReason, installObj);
-        if(demandDetailsObj!=null && demandObj.getId() !=null )
-    	   {
-    		   	demandDetail=demandDetailsObj;
-    		   	if(demandDetailsObj.getAmount().compareTo(amount) !=0){
-    		   	demandDetail.setAmount(amount);
-    		   	}
-    			if(demandDetailsObj.getAmtCollected().compareTo(collectAmount) !=0){
-   	        	demandDetail.setAmtCollected(collectAmount);
-    			}
-   	        	demandDetail.setEgDemandReason(demandReasonObj);
-   	        	demandDetail.setModifiedDate(new Date());
-    	   }
-    	   else
-    	   {
-    		   	demandDetail = new EgDemandDetails();
-    	        demandDetail.setAmount(amount);
-    	        demandDetail.setAmtCollected(collectAmount);
-    	        demandDetail.setAmtRebate(BigDecimal.ZERO);
-    	        demandDetail.setEgDemandReason(demandReasonObj);
-    	        demandDetail.setCreateDate(new Date());
-    	        demandDetail.setModifiedDate(new Date());
-    	       
-    	   }
-        return demandDetail;
+        if (demandDetailsObj != null && demandTempObj.getId() != null) {
+            demandDetailBean = demandDetailsObj;
+            if (demandDetailsObj.getAmount().compareTo(amount) != 0)
+                demandDetailBean.setAmount(amount);
+            if (demandDetailsObj.getAmtCollected().compareTo(collectAmount) != 0)
+                demandDetailBean.setAmtCollected(collectAmount);
+            demandDetailBean.setEgDemandReason(demandReasonObj);
+            demandDetailBean.setModifiedDate(new Date());
+        } else {
+            demandDetailBean = new EgDemandDetails();
+            demandDetailBean.setAmount(amount);
+            demandDetailBean.setAmtCollected(collectAmount);
+            demandDetailBean.setAmtRebate(BigDecimal.ZERO);
+            demandDetailBean.setEgDemandReason(demandReasonObj);
+            demandDetailBean.setCreateDate(new Date());
+            demandDetailBean.setModifiedDate(new Date());
+
+        }
+        return demandDetailBean;
     }
 
     public EgDemandReason getDemandReasonByCodeAndInstallment(final String demandReason, final Installment installment) {
         final Query demandQuery = getCurrentSession().getNamedQuery("DEMANDREASONBY_CODE_AND_INSTALLMENTID");
         demandQuery.setParameter(0, demandReason);
         demandQuery.setParameter(1, installment.getId());
-        final EgDemandReason demandReasonObj = (EgDemandReason) demandQuery.uniqueResult();
-        return demandReasonObj;
-    }
-
-    public EgDemandReason getDemandReasonByCode(final String demandReason) {
-        final Query demandQuery = getCurrentSession().getNamedQuery("DEMANDREASONBY_CODE_AND_INSTALLMENTID");
-        demandQuery.setParameter(0, demandReason);
-        // demandQuery.setParameter(1, installment.getId());
         final EgDemandReason demandReasonObj = (EgDemandReason) demandQuery.uniqueResult();
         return demandReasonObj;
     }
@@ -270,7 +258,7 @@ public class ConnectionDemandService {
                 if (WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE.equals(detail.getEgDemandReason()
                         .getEgDemandReasonMaster().getCode()))
                     splitAmount
-                    .put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE, detail.getAmount().doubleValue());
+                            .put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE, detail.getAmount().doubleValue());
                 else if (WaterTaxConstants.WATERTAX_DONATION_CHARGE.equals(detail.getEgDemandReason()
                         .getEgDemandReasonMaster().getCode()))
                     splitAmount.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, detail.getAmount().doubleValue());
@@ -505,23 +493,23 @@ public class ConnectionDemandService {
             demandObj = new EgDemand();
         else
             demandObj = waterConnectionDetails.getDemand();
-      
-         Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
-        for (final DemandDetail ddtempObj : waterConnectionDetails.getDemandDetailBeanList()){
-        	dmdDetailSet.add(createDemandDetailsrForDataEntry(ddtempObj.getActualAmount(),
-                    ddtempObj.getActualCollection(), ddtempObj.getReasonMaster(), ddtempObj.getInstallment(), ddtempObj,waterConnectionDetails));
-        }
-        
-        demandObj.setBaseDemand(demandObj.getBaseDemand().add(getToTalAmount(dmdDetailSet)));
-        demandObj.setAmtCollected(demandObj.getAmtCollected().add(getToTalCollectedAmount(dmdDetailSet)));
-      
-        final int listlength = waterConnectionDetails.getDemandDetailBeanList().size() - 1;
-        final Installment installObj = waterConnectionDetailsRepository.getInstallmentByDescription(
+        final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
+        for (final DemandDetail demanddetailBean : waterConnectionDetails.getDemandDetailBeanList())
+            if (!demanddetailBean.getActualAmount().equals(BigDecimal.ZERO)
+                    && demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) != 1) {
+                demandObj.setBaseDemand(getTotalAmountForBaseDemand(demanddetailBean, demandObj.getBaseDemand()));
+                demandObj.setAmtCollected(getTotalCollectedAmountForDemand(demanddetailBean,
+                        demandObj.getAmtCollected()));
+                dmdDetailSet.add(createDemandDetailsrForDataEntry(demanddetailBean.getActualAmount(),
+                        demanddetailBean.getActualCollection(), demanddetailBean.getReasonMaster(),
+                        demanddetailBean.getInstallment(), demanddetailBean, waterConnectionDetails));
+            }
+        demandObj.getEgDemandDetails().addAll(dmdDetailSet);
+        final int listlength = waterConnectionDetails.getDemand().getEgDemandDetails().size() - 1;
+        final Installment installObj = waterConnectionDetailsRepository.findInstallmentByDescription(
                 WaterTaxConstants.PROPERTY_MODULE_NAME, waterConnectionDetails.getDemandDetailBeanList()
                         .get(listlength).getInstallment());
         demandObj.setEgInstallmentMaster(installObj);
-        demandObj.getEgDemandDetails().addAll(dmdDetailSet);
-       
         demandObj.setModifiedDate(new Date());
         if (demandObj.getIsHistory() == null)
             demandObj.setIsHistory("N");
@@ -531,22 +519,43 @@ public class ConnectionDemandService {
         return waterConnectionDetails;
     }
 
-    public BigDecimal getToTalAmount(final Set<EgDemandDetails> demandDeatilslist) {
+    public BigDecimal getTotalAmountForBaseDemand(final DemandDetail demanddetailBean, final BigDecimal baseDemandAmount) {
         BigDecimal currentTotalAmount = BigDecimal.ZERO;
-        for (final EgDemandDetails de : demandDeatilslist){
-           currentTotalAmount = currentTotalAmount.add(de.getAmount());
-            
-        }
+        final EgDemandDetails demandDetailsObj = waterConnectionDetailsRepository
+                .findEgDemandDetailById(demanddetailBean.getId());
+        if (demanddetailBean.getId() == null)
+            currentTotalAmount = baseDemandAmount.add(demanddetailBean.getActualAmount());
+        else if (demanddetailBean.getActualAmount().compareTo(demandDetailsObj.getAmount()) == -1) {
+            final BigDecimal diffExtraless = demandDetailsObj.getAmount().subtract(demanddetailBean.getActualAmount());
+            currentTotalAmount = baseDemandAmount.subtract(diffExtraless);
+        } else if (demanddetailBean.getActualAmount().compareTo(demandDetailsObj.getAmount()) == 1) {
+            final BigDecimal diffExtra = demanddetailBean.getActualAmount().subtract(demandDetailsObj.getAmount());
+            currentTotalAmount = baseDemandAmount.add(diffExtra);
+        } else if (demanddetailBean.getActualAmount().compareTo(demandDetailsObj.getAmount()) == 0)
+            currentTotalAmount = baseDemandAmount;
         return currentTotalAmount;
+
     }
 
-    public BigDecimal getToTalCollectedAmount(final Set<EgDemandDetails> demandDeatilslist) {
+    public BigDecimal getTotalCollectedAmountForDemand(final DemandDetail demanddetailBean,
+            final BigDecimal demandAmountCollected) {
         BigDecimal currentTotalAmount = BigDecimal.ZERO;
-        for (final EgDemandDetails de : demandDeatilslist){
-        
-            currentTotalAmount = currentTotalAmount.add(de.getAmtCollected());
-        }
+        final EgDemandDetails demandDetailsObj = waterConnectionDetailsRepository
+                .findEgDemandDetailById(demanddetailBean.getId());
+        if (demanddetailBean.getId() == null)
+            currentTotalAmount = demandAmountCollected.add(demanddetailBean.getActualCollection());
+        else if (demanddetailBean.getActualCollection().compareTo(demandDetailsObj.getAmtCollected()) == -1) {
+            final BigDecimal diffExtraless = demandDetailsObj.getAmtCollected().subtract(
+                    demanddetailBean.getActualCollection());
+            currentTotalAmount = demandAmountCollected.subtract(diffExtraless);
+        } else if (demanddetailBean.getActualCollection().compareTo(demandDetailsObj.getAmtCollected()) == 1) {
+            final BigDecimal diffExtra = demanddetailBean.getActualCollection().subtract(
+                    demandDetailsObj.getAmtCollected());
+            currentTotalAmount = demandAmountCollected.add(diffExtra);
+        } else if (demanddetailBean.getActualCollection().compareTo(demandDetailsObj.getAmtCollected()) == 0)
+            currentTotalAmount = demandAmountCollected;
         return currentTotalAmount;
+
     }
 
     /**
@@ -703,8 +712,8 @@ public class ConnectionDemandService {
         if (waterConnectionDetails.getDemand() != null
                 && waterConnectionDetails.getDemand().getEgInstallmentMaster() != null)
             if (installment != null
-            && installment.getInstallmentNumber().equals(
-                    waterConnectionDetails.getDemand().getEgInstallmentMaster().getInstallmentNumber()))
+                    && installment.getInstallmentNumber().equals(
+                            waterConnectionDetails.getDemand().getEgInstallmentMaster().getInstallmentNumber()))
                 currrentInstallMentExist = true;
         return currrentInstallMentExist;
     }

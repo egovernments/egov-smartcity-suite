@@ -176,7 +176,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     connectionToBeDeactivated.setConnectionStatus(ConnectionStatus.INACTIVE);
                     connectionToBeDeactivated.setIsHistory(true);
                     waterConnectionDetailsRepository.saveAndFlush(connectionToBeDeactivated);
-                    waterConnectionDetailsService.updateIndexes(connectionToBeDeactivated);
+                   // waterConnectionDetailsService.updateIndexes(connectionToBeDeactivated);
                 }
                 wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
                         null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null);

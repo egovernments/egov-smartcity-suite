@@ -109,11 +109,11 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
             ConnectionStatus connectionStatus, Boolean isHistory);
 
     @Query("select dr from org.egov.demand.model.EgDemandReason dr where dr.egDemandReasonMaster.code =:code")
-    List<EgDemandReason> getDemandReasonByCode(@Param("code") String code);
+    List<EgDemandReason> findDemandReasonByCode(@Param("code") String code);
 
     @Query("select I from Installment I where I.module.name=:module and I.description =:description")
-    Installment getInstallmentByDescription(@Param("module") String code, @Param("description") String description);
-    
-    @Query("select D from EgDemandDetails D where D.id =:detId and D.egDemand.id =:demandId")
-    EgDemandDetails getEgDemandDetailById(@Param("detId") Long detId,@Param("demandId") Long demandId);
+    Installment findInstallmentByDescription(@Param("module") String code, @Param("description") String description);
+
+    @Query("select D from EgDemandDetails D where D.id =:detId")
+    EgDemandDetails findEgDemandDetailById(@Param("detId") Long detId);
 }
