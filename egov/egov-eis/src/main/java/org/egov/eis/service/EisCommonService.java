@@ -202,11 +202,12 @@ public class EisCommonService {
     }
 
     /**
-     * Returns employee for user
+     * Refer EmployeeService for getting Employee object by user id i.e. EmployeeService.getEmployeeById
      *
      * @param userId
      * @return PersonalInformation object
      */
+    @Deprecated
     public PersonalInformation getEmployeeByUserId(final Long userId) {
         return personalInformationService.getEmployeeByUserId(userId);
     }
