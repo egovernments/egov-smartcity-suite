@@ -63,7 +63,13 @@
             </snapshots>
         </repository>
     </repositories>
-
+	<distributionManagement>
+		<snapshotRepository>
+			<id>repo.egovernments.org</id>
+			<name>e-governments nexus repository</name>
+			<url>http://repo.egovernments.org/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
     <dependencyManagement>
         <dependencies>
             <dependency>
