@@ -46,14 +46,12 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.services.PersistenceService;
 
-@Result(name = WardSearchAction.SEARCH_RESULTS, location = "wardSearch-searchResults")
+@Result(name = WardSearchAction.SEARCH_RESULTS, location = "wardSearch-searchResults.jsp")
 @ParentPackage("egov")
 public class WardSearchAction extends BaseFormAction {
 
     private static final long serialVersionUID = -1549853362997914848L;
-    private PersistenceService<Boundary, Integer> boundaryService;
     public static final String SEARCH_RESULTS = "searchResults";
     private String query;
     private Boolean isBoundaryHistory;
@@ -72,10 +70,6 @@ public class WardSearchAction extends BaseFormAction {
         return null;
     }
 
-    public void setBoundaryService(final PersistenceService<Boundary, Integer> boundaryService) {
-        this.boundaryService = boundaryService;
-    }
-
     public Collection<Boundary> getBoundaryList() {
         final StringBuilder boundaryList = new StringBuilder(1000);
         boundaryList.append(" from Boundary where upper(boundaryType.name) in ('CITY','ZONE','WARD') "
@@ -83,10 +77,7 @@ public class WardSearchAction extends BaseFormAction {
         if (!isBoundaryHistory)
             boundaryList.append(" and isHistory = 'N' ");
         boundaryList.append(" order by name ");
-        return boundaryService.findAllBy(boundaryList.toString(), query.toUpperCase());
-    }
-
-    public void setBoundaryTypeName(final String boundaryTypeName) {
+        return getPersistenceService().findAllBy(boundaryList.toString(), query.toUpperCase());
     }
 
     public Boolean getIsBoundaryHistory() {
