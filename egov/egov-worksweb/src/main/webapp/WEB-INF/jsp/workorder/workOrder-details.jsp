@@ -356,7 +356,6 @@ var makeWODataTable = function() {
 		th1.className= 'whitebox4wk';
 		th1.innerHTML = '&nbsp;';
 	</s:if>
-		//woDataTable.addRow({SlNo:woDataTable.getRecordSet().getLength()+1});
     }
 </script>
                       <div id="header-container">

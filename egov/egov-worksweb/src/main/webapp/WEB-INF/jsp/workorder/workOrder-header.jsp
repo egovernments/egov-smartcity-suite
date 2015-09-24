@@ -70,55 +70,29 @@
 		     <s:hidden name="defaultDepartmentId" id="defaultDepartmentId"  />
 		     <s:hidden name="loggedInUserEmployeeCode" id="loggedInUserEmployeeCode"  />
 		</td>
-		<s:if test="%{!isRCEstimate}">
-			<td class="greyboxwk">
-				<s:if test="%{tenderResponse!=null && tenderResponse.tenderEstimate.abstractEstimate!=null}">
-						<s:text name='tenderNegotiation.estimateNo' /> :
-				</s:if>
-				<s:elseif test="%{tenderResponse!=null && tenderResponse.tenderEstimate.worksPackage!=null}">
-					<s:text name='tenderNegotiation.WorksPackageNo' /> :
-				</s:elseif>
-				</td>
-				<td class="greybox2wk">
-				<s:if test="%{tenderResponse!=null && tenderResponse.tenderEstimate.abstractEstimate!=null}">
-						<input type="text" name="estimateNo" id="estimateNo"
-							value='<s:property value="%{tenderResponse.tenderEstimate.abstractEstimate.estimateNumber}" />'
-							readonly="readonly" tabIndex="-1" class="selectboldwk" />
-				</s:if>
-				<s:elseif test="%{tenderResponse!=null && tenderResponse.tenderEstimate.worksPackage!=null}">
-					<input type="text" name="estimateNo" id="estimateNo"
-							value='<s:property value="%{tenderResponse.tenderEstimate.worksPackage.wpNumber}" />'
-							readonly="readonly" tabIndex="-1" class="selectboldwk" />
-							 <s:hidden name="packageNumber" id="packageNumber"  value="%{tenderResponse.tenderEstimate.worksPackage.wpNumber}"></s:hidden>
-				</s:elseif>
+		<td class="greyboxwk">
+			<s:if test="%{tenderResponse!=null && tenderResponse.tenderEstimate.abstractEstimate!=null}">
+					<s:text name='tenderNegotiation.estimateNo' /> :
+			</s:if>
+			<s:elseif test="%{tenderResponse!=null && tenderResponse.tenderEstimate.worksPackage!=null}">
+				<s:text name='tenderNegotiation.WorksPackageNo' /> :
+			</s:elseif>
 			</td>
-		</s:if>		
-		<s:elseif test="%{isRCEstimate}">
-			<td class="greyboxwk"><s:text name='workorder.ratecontract.number' /> :</td>
-			<td class="greybox2wk"><s:property value="%{abstractEstimate.rateContract.rcNumber}"/></td>
-		</s:elseif>
+			<td class="greybox2wk">
+			<s:if test="%{tenderResponse!=null && tenderResponse.tenderEstimate.abstractEstimate!=null}">
+					<input type="text" name="estimateNo" id="estimateNo"
+						value='<s:property value="%{tenderResponse.tenderEstimate.abstractEstimate.estimateNumber}" />'
+						readonly="readonly" tabIndex="-1" class="selectboldwk" />
+			</s:if>
+			<s:elseif test="%{tenderResponse!=null && tenderResponse.tenderEstimate.worksPackage!=null}">
+				<input type="text" name="estimateNo" id="estimateNo"
+						value='<s:property value="%{tenderResponse.tenderEstimate.worksPackage.wpNumber}" />'
+						readonly="readonly" tabIndex="-1" class="selectboldwk" />
+						 <s:hidden name="packageNumber" id="packageNumber"  value="%{tenderResponse.tenderEstimate.worksPackage.wpNumber}"></s:hidden>
+			</s:elseif>
+		</td>
 	</tr>
-		<s:if test="%{isRCEstimate}">
-		<tr>
-	        <td class="whiteboxwk"><s:text name="estimate.number" /> :</td>
-	        <td class="whitebox2wk"><s:property value="%{abstractEstimate.estimateNumber}"/></td>
-	        <td class="whiteboxwk"><s:text name="estimate.date" /> :</td>
-	        <td class="whitebox2wk"><s:date name="abstractEstimate.estimateDate" format="dd/MM/yyyy" /></td>
-   		</tr>
-   		<tr>
-	        <td class="greyboxwk"><s:text name="label.work.name" /> :</td>
-	        <td class="greybox2wk"><s:textarea name="comments" cols="60" rows="3" value="%{abstractEstimate.name}" /></td>
-	        <td class="greyboxwk"><s:text name="label.project.code" /> :</td>
-	        <td class="greybox2wk"><s:property value="%{abstractEstimate.projectCode.code}"/></td>
-   		</tr>
-   		<tr>
-	        <td class="whiteboxwk"><s:text name="estimate.amount" /> :</td>
-	        <td class="whitebox2wk"><s:property value='%{abstractEstimate.workValueIncludingTaxes.formattedString}' /></td>
-	        <td class="whiteboxwk"><s:text name="workorder.total" /> :</td>
-	        <td class="whitebox2wk"><input type="text" name="workOrderAmount" id="workOrderAmount"
-				readonly="readonly" tabIndex="-1" class="selectamountwk" value='<s:property value="%{workOrderAmount}" />' /></td>
-   		</tr>
-		</s:if>
+		
 	<tr>
 		<td class="whiteboxwk">
         	<s:if test="%{tenderResponse!=null && tenderResponse.tenderEstimate.abstractEstimate!=null}">
@@ -197,8 +171,7 @@
 		</td>	
    </tr>
    </s:if>
-   <s:if test="%{!isRCEstimate}">
-    <tr>
+   <tr>
    		<td class="greyboxwk">
 			<s:text name="workorder.amount"/> :
 		</td>
@@ -227,31 +200,23 @@
         	</s:elseif>
        </td>
    </tr>
-   </s:if>
     <tr>
 		<td class="whiteboxwk"><s:text name='tenderNegotiation.nameOfContractor'/> : </td>
 		<td class="whitebox2wk">
-			<s:if test="%{tenderResponseContractor!=null && !isRCEstimate}">
+			<s:if test="%{tenderResponseContractor!=null}">
 				<input type="text" name="contractorName" id="contractorName" 
 					value='<s:property value="%{tenderResponseContractor.contractor.name}" />' 
 				 		class="selectboldwk" readonly="readonly"/>
 				 <s:hidden name="contractor" id="contractor"  value="%{tenderResponseContractor.contractor.id}"></s:hidden>
 			</s:if>
-			<s:elseif test="%{isRCEstimate}">
-				  <s:property value="%{abstractEstimate.rateContract.contractor.name}" />
-				 <s:hidden name="contractor" id="contractor"  value="%{abstractEstimate.rateContract.contractor.id}"></s:hidden>
-			</s:elseif>
 		</td>
 		<td class="whiteboxwk"><s:text name="contractor.code"/> :</td>
 		<td class="whitebox2wk">
-		<s:if test="%{tenderResponseContractor!=null && !isRCEstimate}">
+		<s:if test="%{tenderResponseContractor!=null}">
 			<input type="text" name="contractorCode" id="contractorCode" 
 				value='<s:property value="%{tenderResponseContractor.contractor.code}"/>' 
 			 		class="selectboldwk" readonly="readonly"/>
 		</s:if>
-			<s:elseif test="%{isRCEstimate}">
-				<s:property value="%{abstractEstimate.rateContract.contractor.code}"/>
-			</s:elseif>
 		</td>
 	</tr>
     <tr>
@@ -332,7 +297,6 @@
 	    </td>
    </tr>
    
-   	<s:if test="%{!isRCEstimate}">
     <tr>
    		<td class="whiteboxwk">
    			 <s:text name="sec.deposit"/> :
@@ -371,32 +335,7 @@
 		<td class="whitebox2wk" colspan="3">
 			<s:textfield  name="defectLiabilityPeriod" value="%{defectLiabilityPeriod}" id="defectLiabilityPeriod" cssClass="selectamountwk" onblur="roundOffDLP()" />
 		</td>
-	</tr>		
-	</s:if>
-	<s:elseif test="%{isRCEstimate}">
-	 <tr>
-        <td class="whiteboxwk">
-        	<s:text name="labour.welfund"/> :
-        </td>
-        <td class="whitebox2wk" colspan="3">
-        	<s:textfield name="labourWelfareFund" value="%{labourWelfareFund}" id="labourWelfareFund" cssClass="selectamountwk" 
-        	onblur="roundOffEmdAmountDeposited()"/>
-        </td>
-   </tr>   
-   <tr>
-       <td class="greyboxwk">
-   			<span class="mandatory">*</span><s:text name="con.period"/> : 
-		</td>
-		<td class="greybox2wk">
-        	<s:textfield name="contractPeriod" value="%{contractPeriod}" id="contractPeriod" cssClass="selectwk" onkeypress="return isNumberKey(event)" />
-        </td>
-        <td class="greyboxwk" ><span class="mandatory">*</span>
-   			<s:text name="defect.liability.period"/> :</td>
-		<td class="greybox2wk" colspan="3">
-			<s:textfield  name="defectLiabilityPeriod" value="%{defectLiabilityPeriod}" id="defectLiabilityPeriod" cssClass="selectamountwk" onblur="roundOffDLP()" />
-		</td>
-   </tr>	
-	</s:elseif>
+	</tr>	
     <tr>
    		<td class="greyboxwk">
    			<span class="mandatory">*</span><s:text name="wo.allocated.to1"/> :

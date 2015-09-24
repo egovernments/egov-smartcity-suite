@@ -496,12 +496,7 @@ function validate(obj,text){
 									<tr>
 									  <td>
 									    <div id="workorder_details" style="display:none;">
-									     <s:if test="%{isRCEstimate}">
-									 	 	<%@ include file="workOrder-details-RCEstimate.jsp"%>
-									 	 </s:if>
-									 	 <s:else>
 									 	 	<%@ include file="workOrder-details.jsp"%>
-									 	 </s:else>
 									    </div>
 									  </td>
 									</tr>
@@ -585,10 +580,8 @@ function validate(obj,text){
 	      	showElements(['approverCommentsRow']);
 	      	links=document.workOrderForm.getElementsByTagName("a"); 
 	        disableLinks(links,['aprdDatelnk']);
-	        <s:if test="%{!isRCEstimate}">
-		     	if(woDataTable)
-		        	woDataTable.removeListener('cellClickEvent');		       
-		    </s:if>	   		       
+	     	if(woDataTable)
+	        	woDataTable.removeListener('cellClickEvent');
 				
 	 </s:if>
 	 <s:elseif test="%{sourcepage=='inbox' && model.egwStatus!=null && model.egwStatus.code=='NEW'}">
@@ -601,10 +594,8 @@ function validate(obj,text){
 	        links=document.workOrderForm.getElementsByTagName("a"); 
 	        disableLinks(links,['aprdDatelnk']);
 	        showElements(['approverCommentsRow']);
-	        <s:if test="%{!isRCEstimate}">
-		     	if(woDataTable)
-		        	woDataTable.removeListener('cellClickEvent');		       
-		    </s:if>	   	       
+	     	if(woDataTable)
+	        	woDataTable.removeListener('cellClickEvent');
 				
 	 </s:elseif>
 	 
@@ -642,15 +633,11 @@ function validate(obj,text){
       	$('workOrderDocUploadButton').hide();
       	links=document.workOrderForm.getElementsByTagName("a"); 
 	        disableLinks(links,['aprdDatelnk']);
-	    <s:if test="%{!isRCEstimate}">
-	     	if(woDataTable)
-	        	woDataTable.removeListener('cellClickEvent');		       
-	    </s:if>	   
+     	if(woDataTable)
+        	woDataTable.removeListener('cellClickEvent');
       </s:if>	
     }
 	
-
-
 	</SCRIPT>
 </body>
 </html>
