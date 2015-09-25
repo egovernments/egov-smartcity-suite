@@ -106,10 +106,10 @@
                         </div>
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.status"/><span class="mandatory"></span></label>
                         <div class="col-sm-3 add-margin">
-							<form:select path="status" id="status_dropdown" cssClass="form-control" 
+                        	<form:select path="status" id="status_dropdown" cssClass="form-control" 
 							cssErrorClass="form-control error" required="required">
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${agencystatus}" />
+								<form:options items="${status}" />
 							</form:select>
 							<form:errors path="status" cssClass="error-msg" />
                     	</div>

@@ -42,14 +42,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.egov.adtax.entity.Agency;
-import org.egov.adtax.entity.enums.AgencyStatus;
 import org.egov.adtax.service.AgencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -77,11 +74,6 @@ public class AgencyController {
     @ModelAttribute
     public Agency agency() {
         return new Agency();
-    }
-
-    @ModelAttribute("agencystatus")
-    public List<AgencyStatus> getAgencyStatus() {
-        return new ArrayList<AgencyStatus>(Arrays.asList(AgencyStatus.values()));
     }
 
     @ModelAttribute(value = "agencies")
