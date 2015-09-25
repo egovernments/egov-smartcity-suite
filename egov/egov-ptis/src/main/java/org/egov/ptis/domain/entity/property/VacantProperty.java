@@ -73,7 +73,7 @@ public class VacantProperty extends AbstractProperty {
     private Integer propertyDetailsID;
     private String water_Meter_Num;
     private String elec_Meter_Num;
-    private Integer no_of_floors;
+    private Integer noofFloors;
     private char fieldIrregular = 'N';
     private Date dateOfCompletion;
     private Property property;
@@ -147,7 +147,7 @@ public class VacantProperty extends AbstractProperty {
         this.propertyDetailsID = propertyDetailsID;
         this.water_Meter_Num = water_Meter_Num;
         this.elec_Meter_Num = elec_Meter_Num;
-        this.no_of_floors = no_of_floors;
+        this.noofFloors = noofFloors;
         this.fieldIrregular = fieldIrregular;
         this.dateOfCompletion = dateOfCompletion;
         this.property = property;
@@ -200,7 +200,7 @@ public class VacantProperty extends AbstractProperty {
         LOGGER.debug("BuildUpFloor.addFloor");
         if (floor != null) {
             getFloorDetails().add(floor);
-            no_of_floors = getFloorDetails().size();
+            noofFloors = getFloorDetails().size();
         }
     }
 
@@ -212,7 +212,7 @@ public class VacantProperty extends AbstractProperty {
     public void removeFloor(Floor floor) {
         LOGGER.debug("BuildUpFloor.removeFloor");
         getFloorDetails().remove(floor);
-        no_of_floors = getFloorDetails().size();
+        noofFloors = getFloorDetails().size();
     }
 
     /**
@@ -341,18 +341,15 @@ public class VacantProperty extends AbstractProperty {
         this.irregular = irregular;
     }
 
-    /**
-     * @return Returns the no_of_floors.
-     */
-    public Integer getNo_of_floors() {
-        return no_of_floors;
+
+    @Override
+    public Integer getNoofFloors() {
+        return noofFloors;
     }
 
-    /**
-     * @param no_of_floors The no_of_floors to set.
-     */
-    public void setNo_of_floors(Integer no_of_floors) {
-        this.no_of_floors = no_of_floors;
+    @Override
+    public void setNoofFloors(Integer noofFloors) {
+        this.noofFloors = noofFloors;
     }
 
     /**
@@ -647,7 +644,7 @@ public class VacantProperty extends AbstractProperty {
         StringBuilder objStr = new StringBuilder();
 
         objStr.append("Id: ").append(getId()).append("|Sital Area: ")
-                .append(getSitalArea().getArea()).append("|NoOfFloors: ").append(getNo_of_floors());
+                .append(getSitalArea().getArea()).append("|NoOfFloors: ").append(getNoofFloors());
 
         return objStr.toString();
     }

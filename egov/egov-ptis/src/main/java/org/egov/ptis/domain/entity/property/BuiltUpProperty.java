@@ -71,7 +71,7 @@ public class BuiltUpProperty extends AbstractProperty {
     private Integer propertyDetailsID;
     private String water_Meter_Num;
     private String elec_Meter_Num;
-    private Integer no_of_floors;
+    private Integer noofFloors;
     private char fieldIrregular = 'N';
     private Property property;
     private Date updatedTime;
@@ -116,7 +116,7 @@ public class BuiltUpProperty extends AbstractProperty {
             Area plinthArea, Area commVacantLand, Area nonResPlotArea, Boolean irregular,
             String surveyNumber, Character fieldVerified, Date fieldVerificationDate,
             List<Floor> floorDetails, Integer propertyDetailsID, String water_Meter_Num,
-            String elec_Meter_Num, Integer no_of_floors, char fieldIrregular, Property property,
+            String elec_Meter_Num, Integer noOFfloors, char fieldIrregular, Property property,
             Date updatedTime, PropertyUsage propertyUsage, Date dateOfCompletion,
             PropertyCreationReason creationReason, PropertyTypeMaster propertyTypeMaster,
             String propertyType, PropertyMutationMaster propertyMutationMaster, Character comZone,
@@ -144,7 +144,7 @@ public class BuiltUpProperty extends AbstractProperty {
         this.propertyDetailsID = propertyDetailsID;
         this.water_Meter_Num = water_Meter_Num;
         this.elec_Meter_Num = elec_Meter_Num;
-        this.no_of_floors = no_of_floors;
+        this.noofFloors = noofFloors;
         this.fieldIrregular = fieldIrregular;
         this.property = property;
         this.updatedTime = updatedTime;
@@ -263,15 +263,15 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the no_of_floors.
      */
-    public Integer getNo_of_floors() {
-        return no_of_floors;
+    public Integer getNoofFloors() {
+        return noofFloors;
     }
 
     /**
      * @param no_of_floors The no_of_floors to set.
      */
-    public void setNo_of_floors(Integer no_of_floors) {
-        this.no_of_floors = no_of_floors;
+    public void setNoofFloors(Integer noofFloors) {
+        this.noofFloors = noofFloors;
     }
 
     /**
@@ -368,7 +368,7 @@ public class BuiltUpProperty extends AbstractProperty {
         LOGGER.debug("BuildUpFloor.addFloor");
         if (floor != null) {
             getFloorDetails().add(floor);
-            no_of_floors = getFloorDetails().size();
+            noofFloors = getFloorDetails().size();
         }
     }
 
@@ -380,7 +380,7 @@ public class BuiltUpProperty extends AbstractProperty {
     public void removeFloor(Floor floor) {
         LOGGER.debug("BuildUpFloor.removeFloor");
         getFloorDetails().remove(floor);
-        no_of_floors = getFloorDetails().size();
+        noofFloors = getFloorDetails().size();
     }
 
     /**
@@ -673,7 +673,7 @@ public class BuiltUpProperty extends AbstractProperty {
 
         objStr.append("Id: ").append(getId()).append("|").append("Sital Area: ");
         objStr = (getSitalArea() != null) ? objStr.append(getSitalArea().getArea()) : objStr
-                .append("NULL").append("|NoOfFloors: ").append(getNo_of_floors());
+                .append("NULL").append("|NoOfFloors: ").append(getNoofFloors());
 
         return objStr.toString();
     }

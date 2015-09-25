@@ -82,12 +82,9 @@ public interface PropertyDetail extends Property {
      */
     public void removeFloor(Floor floor);
 
-    public Integer getNo_of_floors();
+    public Integer getNoofFloors();
 
-    /**
-     * @param no_of_floors The no_of_floors to set.
-     */
-    public void setNo_of_floors(Integer no_of_floors);
+    public void setNoofFloors(Integer noofFloors);
 
     /**
      * @return Returns the Water_Meter_Num

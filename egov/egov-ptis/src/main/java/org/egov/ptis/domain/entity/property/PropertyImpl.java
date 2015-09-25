@@ -443,7 +443,7 @@ public class PropertyImpl extends StateAware implements Property {
 					bup.isIrregular(), getPropertyDetail().getSurveyNumber(), getPropertyDetail().getFieldVerified(),
 					getPropertyDetail().getFieldVerificationDate(), cloneFlrDtls(), null, getPropertyDetail()
 							.getWater_Meter_Num(), getPropertyDetail().getElec_Meter_Num(), getPropertyDetail()
-							.getNo_of_floors(), getPropertyDetail().getFieldIrregular(), newProperty,
+							.getNoofFloors(), getPropertyDetail().getFieldIrregular(), newProperty,
 					getPropertyDetail().getDateOfCompletion(), getPropertyDetail().getPropertyUsage(),
 					getPropertyDetail().getUpdatedTime(), bup.getCreationReason(), getPropertyDetail()
 							.getPropertyTypeMaster(), getPropertyDetail().getPropertyType(), getPropertyDetail()
@@ -470,7 +470,7 @@ public class PropertyImpl extends StateAware implements Property {
 					vcp.getIrregular(), getPropertyDetail().getSurveyNumber(), getPropertyDetail().getFieldVerified(),
 					getPropertyDetail().getFieldVerificationDate(), cloneFlrDtls(), null, getPropertyDetail()
 							.getWater_Meter_Num(), getPropertyDetail().getElec_Meter_Num(), getPropertyDetail()
-							.getNo_of_floors(), getPropertyDetail().getFieldIrregular(), getPropertyDetail()
+							.getNoofFloors(), getPropertyDetail().getFieldIrregular(), getPropertyDetail()
 							.getDateOfCompletion(), newProperty, getPropertyDetail().getUpdatedTime(),
 					getPropertyDetail().getPropertyUsage(), vcp.getCreationReason(), getPropertyDetail()
 							.getPropertyTypeMaster(), getPropertyDetail().getPropertyType(), getPropertyDetail()

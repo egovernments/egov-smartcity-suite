@@ -56,7 +56,7 @@
 
 		<property name="fieldIrregular" column="IS_IRREGULAR" />
 
-		<property name="no_of_floors" column="NUM_FLOORS" type="integer" />
+		<property name="noofFloors" column="NUM_FLOORS" type="integer" />
 
 		<property name="dateOfCompletion" type="java.util.Date">
 			<column name="DATEOFCOMPLETION" length="10" />

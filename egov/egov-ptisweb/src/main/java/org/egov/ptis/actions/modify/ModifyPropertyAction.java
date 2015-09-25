@@ -843,8 +843,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                     && org.apache.commons.lang.StringUtils.equals(propTypeMstr.getId().toString(), propTypeId))
                 changePropertyDetail(propertyModel, new VacantProperty(), 0);
             else
-                changePropertyDetail(propertyModel, new BuiltUpProperty(), propertyModel.getPropertyDetail()
-                        .getNo_of_floors());
+                changePropertyDetail(propertyModel, new BuiltUpProperty(), propertyModel.getPropertyDetail().getNoofFloors());
 
         final Property modProperty = propService.modifyDemand(propertyModel, oldProperty);
 
@@ -901,7 +900,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         propDetail.setPropertyDetailsID(propertyDetail.getPropertyDetailsID());
         propDetail.setWater_Meter_Num(propertyDetail.getWater_Meter_Num());
         propDetail.setElec_Meter_Num(propertyDetail.getElec_Meter_Num());
-        propDetail.setNo_of_floors(numOfFloors);
+        propDetail.setNoofFloors(numOfFloors);
         propDetail.setFieldIrregular(propertyDetail.getFieldIrregular());
         propDetail.setDateOfCompletion(propertyDetail.getDateOfCompletion());
         propDetail.setProperty(propertyDetail.getProperty());
@@ -1120,7 +1119,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                     floor.setManualAlv(newFloorInfo.getManualAlv());
                     break;
                 }
-        property.getPropertyDetail().setNo_of_floors(property.getPropertyDetail().getFloorDetails().size());
+        property.getPropertyDetail().setNoofFloors(property.getPropertyDetail().getFloorDetails().size());
         property.setDocNumber(docnumber);
         LOGGER.debug("Exiting from createProperty");
         return property;

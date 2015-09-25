@@ -431,8 +431,9 @@ public class PropertyService {
                     property.getPropertyDetail().setTotalBuiltupArea(totBltUpArea);
 
                 }
+            property.getPropertyDetail().setNoofFloors(property.getPropertyDetail().getFloorDetailsProxy().size());
         } else {
-            property.getPropertyDetail().setNo_of_floors(0);
+            property.getPropertyDetail().setNoofFloors(0);
             property.getPropertyDetail().getFloorDetails().clear();
             totBltUpArea.setArea(totBltUpAreaVal);
             property.getPropertyDetail().setTotalBuiltupArea(totBltUpArea);
@@ -2129,7 +2130,7 @@ public class PropertyService {
         propDetail.setPropertyDetailsID(propertyDetail.getPropertyDetailsID());
         propDetail.setWater_Meter_Num(propertyDetail.getWater_Meter_Num());
         propDetail.setElec_Meter_Num(propertyDetail.getElec_Meter_Num());
-        propDetail.setNo_of_floors(numOfFloors);
+        propDetail.setNoofFloors(numOfFloors);
         propDetail.setFieldIrregular(propertyDetail.getFieldIrregular());
         propDetail.setDateOfCompletion(propertyDetail.getDateOfCompletion());
         propDetail.setProperty(propertyDetail.getProperty());
