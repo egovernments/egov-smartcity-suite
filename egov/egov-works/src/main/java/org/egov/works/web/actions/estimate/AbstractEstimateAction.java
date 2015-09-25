@@ -111,7 +111,8 @@ import net.sf.jasperreports.engine.JRException;
 @Results({ @Result(name = AbstractEstimateAction.PRINT, type = "stream", location = "XlsInputStream", params = {
         "inputName", "XlsInputStream", "contentType", "application/xls", "contentDisposition",
         "no-cache;filename=AbstractEstimate-BillOfQuantites.xls" }),
-        @Result(name = AbstractEstimateAction.NEW, location = "abstractEstimate-new.jsp") })
+        @Result(name = AbstractEstimateAction.NEW, location = "abstractEstimate-new.jsp"),
+        @Result(name = AbstractEstimateAction.MAPS, location = "abstractEstimate-maps.jsp") })
 public class AbstractEstimateAction extends BaseFormAction {
 
     private static final long serialVersionUID = -4801105778751138267L;
@@ -123,7 +124,7 @@ public class AbstractEstimateAction extends BaseFormAction {
     private static final String SOURCE_INBOX = "inbox";
     private static final String MODULE_NAME = "Works";
     private static final String KEY_NAME = "SKIP_BUDGET_CHECK";
-    private static final String MAPS = "maps";
+    public static final String MAPS = "maps";
     private AbstractEstimate abstractEstimate = new AbstractEstimate();
     private List<Activity> sorActivities = new LinkedList<Activity>();
     private List<Activity> nonSorActivities = new LinkedList<Activity>();
@@ -493,6 +494,7 @@ public class AbstractEstimateAction extends BaseFormAction {
         }
     }
 
+    @Action(value = "/estimate/abstractEstimate-maps")
     public String maps() {
         return MAPS;
     }

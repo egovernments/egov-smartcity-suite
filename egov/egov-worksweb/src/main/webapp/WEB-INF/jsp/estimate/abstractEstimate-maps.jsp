@@ -56,9 +56,6 @@ function getcurrentlats(){
 	} else {
  		alert('It seems like Geolocation, which is required for this page, is not enabled in your browser. Please use a browser which supports it.');
 	}
-	 ///jQuery('#latitude').val('13.078364');
-	 ///jQuery('#longitude').val('80.251694');
-	 ///createMap(document.getElementById('latitude').value,document.getElementById('longitude').value,true);
 }
 function errorFunction(){
 	alert("Error");
@@ -208,7 +205,7 @@ function createMap(paramLat,paramLong,paramDraggable)
 		<s:hidden id="latitude" name="latitude" />
 		<s:hidden id="longitude" name="longitude" />
 		<s:hidden id="address" name="address" />
-		<div id="map_canvas" style="position: relative; left: 0px; top: 0px; width: 100%; height: 90%; z-index: 0;"  ></div>
+		<div id="map_canvas" style="position: relative; left: 0px; top: 0px; width: 95%; height: 70%; z-index: 0;"  ></div>
 		<br/>
 		<div align="center" style="position: relative;  z-index: 0;">
 			<s:if test="%{mapMode=='edit'}">

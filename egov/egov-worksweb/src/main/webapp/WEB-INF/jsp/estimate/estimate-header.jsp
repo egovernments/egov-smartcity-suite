@@ -315,18 +315,18 @@ function openMap()
 	{
 		if(lat!='' && lon!='')
 		{
-			popup = window.open('${pageContext.request.contextPath}/estimate/abstractEstimate!maps.action?mapMode=edit&latitude='+lat+'&longitude='+lon,'popup_window', params);
+			popup = window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-maps.action?mapMode=edit&latitude='+lat+'&longitude='+lon,'popup_window', params);
 		}
 		else
 		{
-			popup = window.open('${pageContext.request.contextPath}/estimate/abstractEstimate!maps.action?mapMode=edit','popup_window', params);	
+			popup = window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-maps.action?mapMode=edit','popup_window', params);	
 		}
 	}	
 	else
 	{
 		if(lat!='' && lon!='')
 		{
-			popup = window.open('${pageContext.request.contextPath}/estimate/abstractEstimate!maps.action?mapMode=view&latitude='+lat+'&longitude='+lon,'popup_window', params);
+			popup = window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-maps.action?mapMode=view&latitude='+lat+'&longitude='+lon,'popup_window', params);
 		}
 		else
 			return;
