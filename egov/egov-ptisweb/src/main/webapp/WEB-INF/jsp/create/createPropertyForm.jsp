@@ -74,9 +74,9 @@
 		<td class="greybox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="mutationId"
 				id="mutationId" listKey="id" listValue="mutationName" list="dropdownData.MutationList" value="%{mutationId}"
 				cssClass="selectnew" onchange="makeMandatory();" /></td>
-		<td class="greybox"><s:text name="prntPropAssessmentNum" /> <span
+		<td class="greybox parentIndexText"><s:text name="prntPropAssessmentNum" /> <span
 			class="mandatory1" id="prntMandatory">*</span> :</td>
-		<td class="greybox"><s:textfield name="parentIndex" id="parentIndex" size="12" maxlength="10" onblur="validNumber(this);checkZero(this,'Parent Index');"></s:textfield></td>
+		<td class="greybox parentIndexText"><s:textfield name="parentIndex" id="parentIndex" size="12" maxlength="10" onblur="validNumber(this);checkZero(this,'Parent Index');"></s:textfield></td>
 
 	</tr>
 

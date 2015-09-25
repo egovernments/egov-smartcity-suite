@@ -60,6 +60,8 @@
    		var propType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
    		var appurtenantLandChecked = '<s:property value="%{propertyDetail.appurtenantLandChecked}"/>';
 		enableFieldsForPropTypeView(propType,appurtenantLandChecked);
+		var mutationReason = '<s:property value="%{propertyDetail.propertyMutationMaster.mutationName}"/>';
+		showMutationFields(mutationReason);
 		if(appurtenantLandChecked == null) {
 			jQuery('#appurtenantRow').hide();
 		}

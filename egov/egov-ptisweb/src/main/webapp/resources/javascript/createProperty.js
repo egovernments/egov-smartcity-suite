@@ -417,11 +417,18 @@ function openWindow(fileName) {
 function makeMandatory() {
 	var reason = document.forms[0].mutationId.options[document.forms[0].mutationId.selectedIndex].text;
 	if (reason == "BIFURCATION") {
-		document.getElementById("parentIndex").readOnly = false;
-		document.getElementById("parentIndex").className = "";
+		jQuery('td.parentIndexText').show();
 	} else {
-		document.getElementById("parentIndex").readOnly = true;
-		document.getElementById("parentIndex").className = "hiddentext";
+		jQuery('#parentIndex').val("");
+		jQuery('td.parentIndexText').hide();
+	}
+}
+
+function showMutationFields(mutationReason) {
+	if (mutationReason == "BIFURCATION") {
+		jQuery('td.parentIndexText').show();
+	} else {
+		jQuery('td.parentIndexText').hide();
 	}
 }
 
