@@ -37,25 +37,26 @@
 
  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.adtax.entity;
+package org.egov.adtax.web.adaptor;
 
 import java.lang.reflect.Type;
+
+import org.egov.adtax.entity.AgencyWiseResult;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public class AgencyAdaptor implements JsonSerializer<Agency> {
+public class AgencyAdaptor implements JsonSerializer<AgencyWiseResult> {
 
     @Override
-    public JsonElement serialize(final Agency agency, final Type type,
+    public JsonElement serialize(final AgencyWiseResult agencyWiseResult, final Type type,
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("noofhoardings",
-                null != agency.getHoardings() ? String.valueOf(agency.getHoardings().size()) : "NA");
-        jsonObject.addProperty("agency", null != agency ? agency.getName() : "NA");
-        jsonObject.addProperty("agencyId", agency.getId());
+        jsonObject.addProperty("noOfHoardings", agencyWiseResult.getCount());
+        jsonObject.addProperty("agency", agencyWiseResult.getAgency().getName());
+        jsonObject.addProperty("agencyId", agencyWiseResult.getAgency().getId());
         return jsonObject;
     }
 

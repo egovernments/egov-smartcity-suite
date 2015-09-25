@@ -37,9 +37,11 @@
 
  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.adtax.entity;
+package org.egov.adtax.web.adaptor;
 
 import java.lang.reflect.Type;
+
+import org.egov.adtax.entity.Hoarding;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
