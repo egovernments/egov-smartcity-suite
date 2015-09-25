@@ -104,7 +104,11 @@
 			</c:otherwise>		
 		</c:choose> 
 		<form:errors path="applicationDocs[${status.index}].files" cssClass="add-margin error-msg" />
+		<div class="add-margin error-msg" ><font size="2">
+								<spring:message code="lbl.mesg.document"/>	
+								</font></div>
 	</div> 
+	
 </div>
 </c:forEach> 
 </c:when>
