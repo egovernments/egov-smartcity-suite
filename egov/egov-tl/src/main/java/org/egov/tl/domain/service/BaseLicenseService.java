@@ -321,9 +321,8 @@ public abstract class BaseLicenseService {
      * @return
      */
     public String getNextRunningNumber(final String feeType) {
-        final Sequence seq = sequenceGenerator.getNextNumberWithFormat(feeType, Constants.APPLICATIONNO_LENGTH,
-                new Character('0'));
-        return seq.getFormattedNumber();
+        String str = sequenceNumberGenerator.getNextSequence(feeType).toString();
+        return org.apache.commons.lang.StringUtils.leftPad(str, Constants.APPLICATIONNO_LENGTH, "0");
     }
 
     /**
@@ -511,8 +510,7 @@ public abstract class BaseLicenseService {
     }*/
 
     public String getNextRunningLicenseNumber(final String feeType) {
-        final String str = sequenceNumberGenerator.getNextSequence(feeType).toString();
-        return str;
+        return sequenceNumberGenerator.getNextSequence(feeType).toString();
     }
 
     /**
@@ -534,7 +532,8 @@ public abstract class BaseLicenseService {
     public void renew(License license) {
         final LicenseAppType appType = getLicenseApplicationTypeForRenew();
         final NatureOfBusiness nature = getNatureOfBusiness();
-        final List<FeeMatrix> feeList = feeService.getFeeList(license.getTradeName(), appType, nature);
+        //commented need to be completed after fee matrix
+        final List<FeeMatrix> feeList = new ArrayList<FeeMatrix>();//feeService.getFeeList(license.getTradeName(), appType, nature); 
         final BigDecimal totalAmount = BigDecimal.ZERO;
         // feeService.calculateFee(license, license.getTradeName(), getLicenseApplicationTypeForRenew(),
         // getNatureOfBusiness(), BigDecimal.ZERO, BigDecimal.ZERO);
@@ -567,11 +566,11 @@ public abstract class BaseLicenseService {
             feeType = getFeeTypeForElectricalLicense(license);
         else
             feeType = license.getClass().getSimpleName().toUpperCase();
-        final String runningApplicationNumber = getNextRunningNumber(feeType + "_APPLICATION_NUMBER");
+        final String runningApplicationNumber = getNextRunningNumber("egtl_application_number");
         license = license.renew(feeList, appType, nature, installment, egDemandReasonMasters, totalAmount,
                 runningApplicationNumber, license.getFeeTypeStr(), getModuleName(), renewalDate);
-        HibernateUtil.getCurrentSession().flush();
-        HibernateUtil.getCurrentSession().refresh(license);
+        /*HibernateUtil.getCurrentSession().flush();
+        HibernateUtil.getCurrentSession().refresh(license);*/
         license = additionalOperations(license, egDemandReasonMasters, installment);
         persistenceService.update(license);
 

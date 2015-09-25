@@ -202,8 +202,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
     @SkipValidation
     public String beforeRenew() {
-
-        return "beforeRenew";
+        return Constants.BEFORE_RENEWAL;
     }
 
     @SkipValidation

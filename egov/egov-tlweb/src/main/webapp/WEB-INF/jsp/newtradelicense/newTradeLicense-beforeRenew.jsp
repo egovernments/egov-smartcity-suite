@@ -63,6 +63,11 @@
 					printWin.close();
 				}		
 			}
+
+			function onSubmit() {
+				document.forms[0].action = 'newTradeLicense-renewal.action';
+				document.forms[0].submit;
+			}
 		</script>
 	</head>
 	<body>
@@ -184,7 +189,7 @@
                       <table>
                         <tr class="buttonbottom" id="buttondiv" style="align: middle">
                           <td>
-                            <s:submit type="submit" cssClass="buttonsubmit" value="Save" id="Save" method="renew"  />
+                            <s:submit type="submit" cssClass="buttonsubmit" value="Save" id="Save" method="renew" onclick="return onSubmit();"  />
                           </td>
                           <td>
                             <input type="button" value="Close" onclick="javascript:window.close()" class="button" />

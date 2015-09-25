@@ -332,7 +332,6 @@ String path = request.getContextPath();
 	function callEdit(obj, id){
 		path='<%=path%>';	
 		licenseId = id;
-		alert(obj+"-------------"+"---------------"+id);   
 		var actionValue = obj.options[obj.selectedIndex].value;
 		if(actionValue!=-1&& actionValue!=-2&& actionValue!=-3){
 			window.open(path+actionValue+Number(id),"winPop","scrollbars=yes,menubar=no,resizable=yes,toolbar=no,location=no,status=no,alwaysLowered=yes");

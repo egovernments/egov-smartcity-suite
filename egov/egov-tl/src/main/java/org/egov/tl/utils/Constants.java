@@ -439,6 +439,7 @@ public class Constants {
     public static final String TOTAL_ISSUED = "TOTAL_ISSUED";
     public static final String TOTAL_LATEREN = "TOTAL_LATEREN";
     public static final int AMOUNT_PRECISION_DEFAULT = 2;
+    public static final String BEFORE_RENEWAL = "beforeRenew";
     public static final String ACKNOWLEDGEMENT_RENEW = "acknowledgement_renew";
     public static final BigDecimal CHQ_BOUNCE_PENALTY = BigDecimal.valueOf(1000);
     public static final String DEMANDRSN_STR_CHQ_BOUNCE_PENALTY = "CHEQUE BOUNCE PENALTY";

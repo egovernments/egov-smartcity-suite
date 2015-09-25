@@ -82,18 +82,18 @@
 				<s:form name="certificateform" action="viewTradeLicense">
 					<s:push value="model">
 						<table width="100%" border="0" cellpadding="5" cellspacing="5" style="margin-left: 25px">
-							<tr>
+							<%-- <tr>
 								<td colspan="4" align="center">
-									<img src="/egi/images/<%-- <%=logoName%> --%>" width="91" height="90" />
+									<img src="/egi/images/<%=logoName%>" width="91" height="90" />
 								</td>
 							</tr>
 
 							<tr>
 								<td colspan="4" align="center" style="font-size: 15px; font-weight: bolder;">
-									<%-- <%=cityName%> --%>
+									<%=cityName%>
 									<br />
 								</td>
-							</tr>
+							</tr> --%>
 							<tr>
 								<td colspan="4" align="center" style="font-size: 15px; font-weight: bolder;">
 									<s:text name="license.acknowledgement.slip.for.renew.tradelicense" />
