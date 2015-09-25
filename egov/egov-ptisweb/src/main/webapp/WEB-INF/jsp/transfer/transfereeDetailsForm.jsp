@@ -54,12 +54,11 @@
 								    <tr>
 								    	<th class="bluebgheadtd"><s:text name="adharno"/></th>
 								    	<th class="bluebgheadtd"><s:text name="MobileNumber" />(without +91)<span class="mandatory1">*</span></th>
-								    	<th class="bluebgheadtd"><s:text name="salutation"/></th>
 										<th class="bluebgheadtd"><s:text name="OwnerName"/><span class="mandatory1">*</span></th>
 										<th class="bluebgheadtd"><s:text name="gender"/><span class="mandatory1">*</span></th>
 										<th class="bluebgheadtd"><s:text name="EmailAddress"/></th>
-										<th class="bluebgheadtd"><s:text name="GuardianRelation"/></th>
-										<th class="bluebgheadtd"><s:text name="Guardian"/></th>
+										<th class="bluebgheadtd"><s:text name="GuardianRelation"/><span class="mandatory1">*</span></th>
+										<th class="bluebgheadtd"><s:text name="Guardian"/><span class="mandatory1">*</span></th>
 										<th class="bluebgheadtd">Add/Delete</th>
 									</tr>
 									<s:if test="%{transfereeInfos.size == 0}">
@@ -70,10 +69,6 @@
 										 <td class="blueborderfortd" align="center">
 								        	<s:textfield name="transfereeInfos[0].mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="" data-optional="0" data-errormsg="Mobile no is mandatory!"
 								        		onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');"/>
-								        </td>
-										<td class="blueborderfortd" align="center">
-								            <s:select name="transfereeInfos[0].salutation" id="transfereeInfos[0].salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }" value="%{transfereeInfos[0].salutation}"
-				                             cssClass="selectwk"></s:select>
 								        </td>
 								        <td class="blueborderfortd" align="center">
 								        	<s:textfield name="transfereeInfos[0].name" maxlength="100" size="20" id="ownerName"  value=""  data-optional="0" data-errormsg="Owner name is mandatory!"
@@ -90,11 +85,11 @@
 								        </td>
 								        <td class="blueborderfortd" align="center">
 								        		 <s:select id="transfereeInfos[0].guardianRelation" name="transfereeInfos[0].guardianRelation" value="%{transfereeInfos[0].guardianRelation}"
-				                                     headerValue="Choose" headerKey="" list="guardianRelationMap"/>
+				                                     headerValue="Choose" headerKey="" list="guardianRelationMap" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
 								        </td>
 								         <td class="blueborderfortd" align="center">
 								        	<s:textfield name="transfereeInfos[0].guardian" maxlength="100" size="20" 
-								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
+								        		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Guardian name is mandatory!"/>
 								        </td>
 								        <td class="blueborderfortd">
 								        	<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
@@ -112,10 +107,6 @@
 								        	<s:textfield name="transfereeInfos[%{#status.index}].mobileNumber" maxlength="10" size="20" data-optional="0" data-errormsg="Mobile no is mandatory!"
 								        		onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');"/>
 								        </td>
-										<td class="blueborderfortd" align="center">
-								        	<s:select name="transfereeInfos[%{#status.index}].salutation" id="transfereeInfos[%{#status.index}].salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }"
-				                                   cssClass="selectwk"></s:select>
-								        </td>
 								        <td class="blueborderfortd" align="center">
 								        	<s:textfield name="transfereeInfos[%{#status.index}].name" maxlength="100" size="20" data-optional="0" data-errormsg="Owner name is mandatory!"
 								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
@@ -132,12 +123,12 @@
 								        </td>
 								        <td class="blueborderfortd" align="center">
 								         <s:select id="transfereeInfos[%{#status.index}].guardianRelation" name="transfereeInfos[%{#status.index}].guardianRelation" value="%{transfereeInfos[#status.index].guardianRelation}"
-				                                     headerValue="Choose" headerKey="" list="guardianRelationMap"/>
+				                                     headerValue="Choose" headerKey="" list="guardianRelationMap" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
 								
 								        </td>
 								        <td class="blueborderfortd" align="center">
 								        	<s:textfield name="transfereeInfos[%{#status.index}].guardian" maxlength="100" size="20"
-								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
+								        		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Guardian name is mandatory!"/>
 								        </td>
 								        
 								        <td class="blueborderfortd">
@@ -177,7 +168,6 @@
 						jQuery("select[name='transfereeInfos["+ rowidx +"].gender']").attr('disabled','disabled');
 						jQuery("input[name='transfereeInfos["+ rowidx +"].mobileNumber']").val(userInfoObj.phone);
 						jQuery("input[name='transfereeInfos["+ rowidx +"].mobileNumber']").attr('readonly', true);
-						jQuery("select[name='transfereeInfos["+ rowidx +"].salutation']").attr('disabled', 'disabled');
 						jQuery("input[name='transfereeInfos["+ rowidx +"].emailId").attr('readonly', true);
 						jQuery("select[name='transfereeInfos["+ rowidx +"].guardianRelation']").attr('disabled', 'disabled');
 						jQuery("input[name='transfereeInfos["+ rowidx +"].guardian']").val(userInfoObj.careof);
@@ -190,7 +180,6 @@
 						jQuery("select[name='transfereeInfos["+ rowidx +"].gender']").val("");
 						jQuery("input[name='transfereeInfos["+ rowidx +"].mobileNumber']").val("").attr('readonly', false);
 						//jQuery("input[name='transfereeInfos["+ rowidx +"].mobileNumber']").attr('readonly', true);
-						jQuery("select[name='transfereeInfos["+ rowidx +"].salutation']").removeAttr('disabled');
 						jQuery("input[name='transfereeInfos["+ rowidx +"].emailId").attr('readonly', false);
 						jQuery("select[name='transfereeInfos["+ rowidx +"].guardianRelation']").removeAttr('disabled');
 						jQuery("input[name='transfereeInfos["+ rowidx +"].guardian']").attr('readonly', false);
@@ -216,7 +205,6 @@
    					jQuery("input[name='transfereeInfos["+ rowidx +"].name']").val(response.name);
    					jQuery("select[name='transfereeInfos["+ rowidx +"].gender']").val(response.gender);
    					jQuery("input[name='transfereeInfos["+ rowidx +"].mobileNumber']").val(response.mobileNumber);
-   					jQuery("select[name='transfereeInfos["+ rowidx +"].salutation']").val(response.salutaion);
    					jQuery("input[name='transfereeInfos["+ rowidx +"].emailId").val(response.email);
    					jQuery("select[name='transfereeInfos["+ rowidx +"].guardianRelation']").val(response.guardianRelarion);
    					jQuery("input[name='transfereeInfos["+ rowidx +"].guardian']").val(response.guardian);

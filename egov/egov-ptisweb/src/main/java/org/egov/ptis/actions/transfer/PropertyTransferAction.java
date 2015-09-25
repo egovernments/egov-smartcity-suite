@@ -451,6 +451,10 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     addActionError(getText("mandatory.ownerName"));
                 if (StringUtils.isBlank(propOwnerInfo.getMobileNumber()))
                     addActionError(getText("mandatory.mobilenumber"));
+                if (StringUtils.isBlank(propOwnerInfo.getGuardianRelation()))
+                    addActionError(getText("mandatory.guardianrelation"));
+                if (StringUtils.isBlank(propOwnerInfo.getGuardian()))
+                    addActionError(getText("mandatory.guardian"));
             }
 
         if (getMutationId() != null && !userDesignation.equalsIgnoreCase(REVENUE_CLERK_DESGN)) {

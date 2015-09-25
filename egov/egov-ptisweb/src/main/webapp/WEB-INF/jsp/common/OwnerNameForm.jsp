@@ -43,12 +43,11 @@
     <tr>
     <th class="bluebgheadtd"><s:text name="adharno"/></th>
     <th class="bluebgheadtd"><s:text name="MobileNumber" /> <span class="mandatory1">*</span></th>
-    <th class="bluebgheadtd"><s:text name="salutation"/></th>
     <th class="bluebgheadtd"><s:text name="OwnerName"/><span class="mandatory1">*</span></th>
     <th class="bluebgheadtd"><s:text name="gender"/><span class="mandatory1">*</span></th>
 	<th class="bluebgheadtd"><s:text name="EmailAddress"/></th>
-	<th class="bluebgheadtd"><s:text name="GuardianRelation"/></th>
-	<th class="bluebgheadtd"><s:text name="Guardian"/></th>
+	<th class="bluebgheadtd"><s:text name="GuardianRelation"/><span class="mandatory1">*</span></th>
+	<th class="bluebgheadtd"><s:text name="Guardian"/><span class="mandatory1">*</span></th>
 	<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
     </tr>
     <s:if test="%{basicProperty.propertyOwnerInfoProxy.size == 0}">
@@ -62,15 +61,11 @@
         	+91 <s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.mobileNumber}" 
         		onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');" data-idx="0" data-optional="0" data-errormsg="Mobile no is mandatory!"/>
 		<td class="blueborderfortd" align="center">
-           <s:select name="basicProperty.propertyOwnerInfoProxy[0].owner.salutation" id="propertyOwnerInfo[0].owner.salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }" value="%{basicProperty.propertyOwnerInfoProxy[0].owner.salutation}"
-				cssClass="selectwk"></s:select>
-        </td>
-		<td class="blueborderfortd" align="center">
         	<s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.name" maxlength="32" size="20" id="ownerName"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.name}" 
         		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Owner name is mandatory!"/>
         </td>
         <td class="blueborderfortd" align="center"><s:select id="gender" name="basicProperty.propertyOwnerInfoProxy[0].owner.gender" value="%{basicProperty.propertyOwnerInfoProxy[0].owner.gender}"
-				headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()" cssClass="selectwk">
+				headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()" cssClass="selectwk" data-optional="0" data-errormsg="Gender is mandatory!">
 		</s:select></td>
         <td class="blueborderfortd" align="center">
         	<s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.emailId" maxlength="32" size="20" id="emailId"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.emailId}" 
@@ -78,11 +73,11 @@
         </td>
         <td class="blueborderfortd" align="center">
             <s:select id="basicProperty.propertyOwnerInfoProxy[0].owner.guardianRelation" name="basicProperty.propertyOwnerInfoProxy[0].owner.guardianRelation" value="%{basicProperty.propertyOwnerInfoProxy[0].owner.guardianRelation}"
-				 headerValue="Choose" headerKey="" list="guardianRelationMap"/>
+				 headerValue="Choose" headerKey="" list="guardianRelationMap" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
 		</td>
          <td class="blueborderfortd" align="center">
         	<s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.guardian" maxlength="32" size="20" id="guardian"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.guardian}" 
-        		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1"/>
+        		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Guardian name is mandatory!"/>
         </td>
         
         <td class="blueborderfortd">
@@ -104,16 +99,12 @@
         			+91 <s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.mobileNumber}" 
         				onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');" data-idx="%{#ownerStatus.index}" data-optional="0" data-errormsg="Mobile no is mandatory!" />
         		</td>
-			  <td class="blueborderfortd" align="center">
-               <s:select name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.salutation" id="salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.salutation}"
-				cssClass="selectwk"></s:select>
-            </td>
         		<td class="blueborderfortd" align="center">
         			<s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.name" maxlength="32" size="20" id="ownerName" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.name}" 
         				onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Owner name is mandatory!"/>
         		</td>
         		<td class="blueborderfortd" align="center"><s:select id="gender" name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.gender" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.gender}"
-				headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()">
+				headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()" data-optional="0" data-errormsg="Gender is mandatory!">
 		       </s:select></td>
         		<td class="blueborderfortd" align="center">
         			<s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.emailId" maxlength="32" size="20" id="emailId" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.emailId}" 
@@ -121,11 +112,11 @@
         		</td>
         		<td class="blueborderfortd" align="center">
         		    <s:select id="guardianRelation" name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.guardianRelation" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.guardianRelation}"
-				headerValue="Choose" headerKey="" list="guardianRelationMap"/>
+				headerValue="Choose" headerKey="" list="guardianRelationMap" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
         	    </td>
         		<td class="blueborderfortd" align="center">
         	        <s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.guardian" maxlength="32" size="20" id="guardian"  value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.guardian}" 
-        		   onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1"/>
+        		   onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Guardian name is mandatory!"/>
                 </td>
         		<td class="blueborderfortd">
         			<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
@@ -160,7 +151,6 @@
 					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").attr('disabled','disabled');
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.mobileNumber']").val(userInfoObj.phone);
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.mobileNumber']").attr('readonly', true);
-					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.salutation']").attr('disabled', 'disabled');
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.emailId").attr('readonly', true);
 					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardianRelation']").attr('disabled', 'disabled');
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardian']").attr('readonly', true);
@@ -171,7 +161,6 @@
 					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender").removeAttr('disabled');
 					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").val("");
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.mobileNumber']").val("").attr('readonly', false);
-					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.salutation']").removeAttr('disabled');
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.emailId").attr('readonly', false);
 					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardianRelation']").removeAttr('disabled');
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardian']").attr('readonly', false);
@@ -197,7 +186,6 @@
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.name']").val(response.name);
 					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").val(response.gender);
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.mobileNumber']").val(response.mobileNumber);
-					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.salutation']").val(response.salutaion);
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.emailId").val(response.email);
 					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardianRelation']").val(response.guardianRelarion);
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardian']").val(response.guardian);

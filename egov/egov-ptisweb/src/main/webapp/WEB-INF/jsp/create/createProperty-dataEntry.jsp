@@ -205,7 +205,7 @@ function loadOnStartUp() {
 
 function onSubmit() { 
 
-	jQuery('#salutation, #gender, #guardianRelation').removeAttr('disabled');
+	jQuery('#gender, #guardianRelation').removeAttr('disabled');
     
 	document.forms[0].action = 'createProperty-createDataEntry.action';
 	<s:if test="mode=='edit'">

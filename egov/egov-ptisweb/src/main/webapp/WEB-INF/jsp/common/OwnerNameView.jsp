@@ -42,7 +42,6 @@
   <tr>
 	<th class="bluebgheadtd"><s:text name="adharno"/></th>
 	<th class="bluebgheadtd"><s:text name="MobileNumber" /> (without +91)</th>
-	<th class="bluebgheadtd"><s:text name="salutation"/></th>
     <th class="bluebgheadtd"><s:text name="OwnerName"/></th>
     <th class="bluebgheadtd"><s:text name="gender"/></th>
 	<th class="bluebgheadtd"><s:text name="EmailAddress"/></th>
@@ -57,9 +56,6 @@
         		</td>
         		<td class="blueborderfortd" align="center">
         		   <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.mobileNumber}" /></span>
-        		</td>
-        		<td class="blueborderfortd" align="center">
-        			<span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.salutation}" default="N/A" /></span>
         		</td>
         		<td class="blueborderfortd" align="center">
         		    <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.name}" /></span>

@@ -60,7 +60,7 @@
 	    var isFirstInstVisible = true;
 		
 	    function addNewInstallment() {
-	    	newDemandRsnsCount = document.getElementById("mapSize").size;
+	    	newDemandRsnsCount = document.getElementById("mapSize").value;
 			var rowIndex = document.getElementById("newInstallmentRow").rowIndex;
 			var trClones = new Array();
 			var instDetailsTable = document.getElementById("instDetails");
@@ -68,16 +68,18 @@
 				for (var i = 0; i < noOfDemandRsns; i++) {
 					var row = instDetailsTable.rows[i+instDetailsRowIndex];
 					row.style.display = "table-row";
+					
 				}
 				newInstallmentCount++;
 				isFirstInstVisible = true;
 			} else {
-				for (var i = rowIndex, k = 0; i < (rowIndex + newDemandRsnsCount); i++, k++) {				
+				var newRows = Number(rowIndex) + Number(newDemandRsnsCount);
+				for (var i = rowIndex, k = 0; i < newRows; i++, k++) {				
 					trClones[k] = instDetailsTable.rows[i].cloneNode(true);	
 				}
 				
 				for (var j = 0; j < k; j++) {
-					if (j == 0) {					
+					if (j == 0) {
 						instDetailsTable.tBodies[0].insertBefore(trClones[j], instDetailsTable.rows[rowIndex]);	
 					} else {
 						instDetailsTable.tBodies[0].insertBefore(trClones[j], instDetailsTable.rows[rowIndex+j]);
@@ -113,7 +115,12 @@
 			// New index for textfield name & value attribute	
 			var newInstallments = newInstallmentCount;
 			var z = 0;
-			var li = (parseInt(document.getElementById("lastIdx").value) + 1);
+			var li = 0;
+			if(document.getElementById("lastIdx").value == "") {
+				li = (parseInt(document.getElementById("mapSize").value));
+			} else {
+				li = (parseInt(document.getElementById("lastIdx").value) + 1);
+			}
 			for (var i = 0; i < noOfDemandRsns; i++) {
 				var row = instDetailsTable.rows[i+instDetailsRowIndex];				
 				var attrValueInstallment = "demandDetailBeanList["+li+"].installment.id";
@@ -336,9 +343,9 @@
 											} 
 										</script>	
 									<%-- </s:if>	 --%>			
-										<script type="text/javascript">
+										<!-- <script type="text/javascript">
 											var newInstCountOnError = 0;
-										</script>		
+										</script>		 -->
 										<s:set value="%{demandDetailBeanList.size()}" var="listSize" />										
 										<s:set value="0" var="count" />						
 										<s:set value="#listSize" var="j" />

@@ -139,7 +139,6 @@
 									<tr>
 										<th class="bluebgheadtd"><s:text name="adharno" /></th>
 										<th class="bluebgheadtd"><s:text name="MobileNumber" /></th>
-										<th class="bluebgheadtd"><s:text name="salutation" /></th>
 										<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
 										<th class="bluebgheadtd"><s:text name="gender" /></th>
 										<th class="bluebgheadtd"><s:text name="EmailAddress" /></th>
@@ -153,8 +152,6 @@
 												class="bold"><s:property value="owner.aadhaarNumber" /></span></td>
 											<td class="blueborderfortd" align="center"><span
 												class="bold"><s:property value="owner.mobileNumber" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property value="owner.salutation" /></span></td>
 											<td class="blueborderfortd" align="center"><span
 												class="bold"><s:property value="owner.name" /></span></td>
 											<td class="blueborderfortd" align="center"><span
@@ -186,9 +183,7 @@
 								class="tablebottom" id="nameTable">
 								<tr>
 									<th class="bluebgheadtd"><s:text name="adharno" /></th>
-									<th class="bluebgheadtd"><s:text name="MobileNumber" />(without
-										+91)</th>
-									<th class="bluebgheadtd"><s:text name="salutation" /></th>
+									<th class="bluebgheadtd"><s:text name="MobileNumber" />(without +91)</th>
 									<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
 									<th class="bluebgheadtd"><s:text name="gender" /></th>
 									<th class="bluebgheadtd"><s:text name="EmailAddress" /></th>
@@ -204,10 +199,6 @@
 										<td class="blueborderfortd" align="center"><span
 											class="bold"><s:property
 													value="%{transfereeInfos[#ownerStatus.index].mobileNumber}" /></span>
-										</td>
-										<td class="blueborderfortd" align="center"><span
-											class="bold"><s:property
-													value="%{transfereeInfos[#ownerStatus.index].salutation}" /></span>
 										</td>
 										<td class="blueborderfortd" align="center"><span
 											class="bold"><s:property

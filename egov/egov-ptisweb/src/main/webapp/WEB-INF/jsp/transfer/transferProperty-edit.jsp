@@ -154,7 +154,6 @@
 								<tbody>
 									<tr>
 										<th class="bluebgheadtd"><s:text name="adharno" /></th>
-										<th class="bluebgheadtd"><s:text name="salutation" /></th>
 										<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
 										<th class="bluebgheadtd"><s:text name="gender" /></th>
 										<th class="bluebgheadtd"><s:text name="MobileNumber" /></th>
@@ -168,8 +167,6 @@
 										<tr>
 											<td class="blueborderfortd" align="center"><s:property
 													value="owner.aadhaarNumber" /></td>
-											<td class="blueborderfortd" align="center"><s:property
-													value="owner.salutation" /></td>
 											<td class="blueborderfortd" align="center"><s:property
 													value="owner.name" /></td>
 											<td class="blueborderfortd" align="center"><s:property

@@ -83,7 +83,7 @@ public class PropertyMutation extends StateAware {
 
     @Override
     public String getStateDetails() {
-        return "Transfer Property"+ " - " +this.getApplicationNo();
+        return "Transfer Property"+ " - " +this.basicProperty.getUpicNo();
     }
 
     public PropertyMutationMaster getMutationReason() {

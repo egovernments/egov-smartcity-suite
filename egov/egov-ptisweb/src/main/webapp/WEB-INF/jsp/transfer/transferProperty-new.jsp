@@ -149,10 +149,9 @@
 								<tbody>
 									<tr>
 										<th class="bluebgheadtd"><s:text name="adharno" /></th>
-										<th class="bluebgheadtd"><s:text name="salutation" /></th>
+										<th class="bluebgheadtd"><s:text name="MobileNumber" /></th>
 										<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
 										<th class="bluebgheadtd"><s:text name="gender" /></th>
-										<th class="bluebgheadtd"><s:text name="MobileNumber" /></th>
 										<th class="bluebgheadtd"><s:text name="EmailAddress" /></th>
 										<th class="bluebgheadtd"><s:text name="GuardianRelation" /></th>
 										<th class="bluebgheadtd"><s:text name="Guardian" /></th>
@@ -163,13 +162,11 @@
 											<td class="blueborderfortd" align="center"><s:property
 													value="owner.aadhaarNumber" /></td>
 											<td class="blueborderfortd" align="center"><s:property
-													value="owner.salutation" /></td>
+													value="owner.mobileNumber" /></td>
 											<td class="blueborderfortd" align="center"><s:property
 													value="owner.name" /></td>
 											<td class="blueborderfortd" align="center"><s:property
 													value="owner.gender" /></td>
-											<td class="blueborderfortd" align="center"><s:property
-													value="owner.mobileNumber" /></td>
 											<td class="blueborderfortd" align="center"><s:property
 													value="owner.emailId" /></td>
 											<td class="blueborderfortd" align="center"><s:property
