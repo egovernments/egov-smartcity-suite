@@ -86,7 +86,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ParentPackage("egov")
 @Results({ @Result(name = "view", location = "viewProperty-view.jsp") })
 public class ViewPropertyAction extends BaseFormAction {
-	
+
 	private static final long serialVersionUID = 4609817011534083012L;
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	private String propertyId;
@@ -161,7 +161,7 @@ public class ViewPropertyAction extends BaseFormAction {
 				viewMap.put("totalArrDue", BigDecimal.ZERO);
 			}
 			Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
-			if (ptDemand.getDmdCalculations() != null)
+			if (ptDemand.getDmdCalculations() != null && ptDemand.getDmdCalculations().getAlv() != null)
 				viewMap.put("ARV", ptDemand.getDmdCalculations().getAlv());
 			else
 				viewMap.put("ARV", BigDecimal.ZERO);
