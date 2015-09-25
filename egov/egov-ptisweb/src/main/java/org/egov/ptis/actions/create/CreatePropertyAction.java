@@ -230,8 +230,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private Address ownerAddress;
     Date propCompletionDate = null;
     @Autowired
-    private UserService userService;
-    @Autowired
     private BoundaryService boundaryService;
     @Autowired
     private SecurityUtils securityUtils;
@@ -814,8 +812,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
         final Address propAddr = new PropertyAddress();
         propAddr.setHouseNoBldgApt(getHouseNumber());
-        propAddr.setAreaLocalitySector(boundaryService.getBoundaryById(getBlockId()).getName());
-        propAddr.setStreetRoadLine(boundaryService.getBoundaryById(getLocality()).getName());
+        propAddr.setAreaLocalitySector(boundaryService.getBoundaryById(getLocality()).getName());
+        propAddr.setStreetRoadLine(boundaryService.getBoundaryById(getBlockId()).getName());
         if (getPinCode() != null && !getPinCode().isEmpty())
             propAddr.setPinCode(getPinCode());
         if (!(property.getPropertyDetail().isCorrAddressDiff() != null && property.getPropertyDetail()
@@ -1345,10 +1343,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     public void setElectionWardId(final Long electionWardId) {
         this.electionWardId = electionWardId;
-    }
-
-    public void setUserService(final UserService userService) {
-        this.userService = userService;
     }
 
     public void setEisCommonService(final EisCommonService eisCommonService) {
