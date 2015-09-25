@@ -38,17 +38,19 @@
  */
 package org.egov.adtax.service;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.adtax.entity.AgencyWiseResult;
 import org.egov.adtax.entity.Hoarding;
 import org.egov.adtax.repository.HoardingRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,11 +76,14 @@ public class HoardingService {
         return hoardingRepository.save(hoarding);
     }
 
-    public List<Hoarding> searchByHoarding(final Hoarding hoarding) {
+    public List<Object[]> searchBySearchType(final Hoarding hoarding, final String searchType) {
         final Criteria criteria = getCurrentSession().createCriteria(Hoarding.class, "hoarding")
                 .createAlias("hoarding.adminBoundry", "ward").createAlias("hoarding.adminBoundry.parent", "zone")
                 .createAlias("hoarding.category", "category").createAlias("hoarding.subCategory", "subCategory")
                 .createAlias("hoarding.revenueInspector", "revenueInspector").createAlias("hoarding.agency", "agency");
+        if ("agency".equalsIgnoreCase(searchType))
+            criteria.setProjection(Projections.projectionList().add(Projections.groupProperty("agency"), "agency")
+                    .add(Projections.rowCount(), "count")).setResultTransformer(Transformers.aliasToBean(AgencyWiseResult.class));
         if (null != hoarding.getHoardingNumber() && !hoarding.getHoardingNumber().isEmpty())
             criteria.add(Restrictions.eq("hoarding.hoardingNumber", hoarding.getHoardingNumber()));
         if (null != hoarding.getAdminBoundry().getParent())
@@ -93,13 +98,29 @@ public class HoardingService {
             criteria.add(Restrictions.eq("agency.name", hoarding.getAgency().getName()));
         if (null != hoarding.getStatus())
             criteria.add(Restrictions.eq("hoarding.status", hoarding.getStatus()));
-
         if (null != hoarding.getRevenueInspector())
             criteria.add(Restrictions.eq("revenueInspector.id", hoarding.getRevenueInspector().getId()));
         return criteria.list();
     }
 
-    public List<Hoarding> searchByAgency(final Hoarding hoarding) {
-        return Collections.EMPTY_LIST;
-    }
+    /*
+     * public List<Object[]> searchByAgency(final Hoarding hoarding) { final Criteria criteria =
+     * getCurrentSession().createCriteria(Hoarding.class, "hoarding") .createAlias("hoarding.adminBoundry",
+     * "ward").createAlias("hoarding.adminBoundry.parent", "zone") .createAlias("hoarding.category",
+     * "category").createAlias("hoarding.subCategory", "subCategory") .createAlias("hoarding.revenueInspector",
+     * "revenueInspector").createAlias("hoarding.agency", "agency").
+     * setProjection(Projections.projectionList().add(Projections.groupProperty("agency"), "agency"). add(Projections.rowCount(),
+     * "count")); if (null != hoarding.getHoardingNumber() && !hoarding.getHoardingNumber().isEmpty())
+     * criteria.add(Restrictions.eq("hoarding.hoardingNumber", hoarding.getHoardingNumber())); if (null !=
+     * hoarding.getAdminBoundry().getParent()) criteria.add(Restrictions.eq("zone.id",
+     * hoarding.getAdminBoundry().getParent().getId())); if (null != hoarding.getAdminBoundry().getId())
+     * criteria.add(Restrictions.eq("ward.id", hoarding.getAdminBoundry().getId())); if (null != hoarding.getCategory())
+     * criteria.add(Restrictions.eq("category.id", hoarding.getCategory().getId())); if (null != hoarding.getSubCategory())
+     * criteria.add(Restrictions.eq("subCategory.id", hoarding.getSubCategory().getId())); if (null !=
+     * hoarding.getAgency().getName() && !hoarding.getAgency().getName().isEmpty()) criteria.add(Restrictions.eq("agency.name",
+     * hoarding.getAgency().getName())); if (null != hoarding.getStatus()) criteria.add(Restrictions.eq("hoarding.status",
+     * hoarding.getStatus())); if (null != hoarding.getRevenueInspector()) criteria.add(Restrictions.eq("revenueInspector.id",
+     * hoarding.getRevenueInspector().getId())); criteria.setResultTransformer(Transformers.aliasToBean(AgencyWiseResult.class));
+     * return criteria.list(); }
+     */
 }

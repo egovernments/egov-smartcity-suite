@@ -48,12 +48,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.egov.adtax.entity.AgencyAdaptor;
+import org.egov.adtax.entity.AgencyWiseResult;
 import org.egov.adtax.entity.Hoarding;
-import org.egov.adtax.entity.HoardingAdaptor;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.service.HoardingService;
 import org.egov.adtax.service.SubCategoryService;
+import org.egov.adtax.web.adaptor.AgencyAdaptor;
+import org.egov.adtax.web.adaptor.HoardingAdaptor;
 import org.egov.adtax.web.controller.GenericController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -105,14 +106,8 @@ public class SearchHoardingController extends GenericController {
     }
 
     public String commonSearchResult(final Hoarding hoarding, final String searchType) {
-        List<Hoarding> pageOfHoardings = null;
-        if ("hoarding".equalsIgnoreCase(searchType)) {
-            pageOfHoardings = hoardingService.searchByHoarding(hoarding);
-            return new StringBuilder("{ \"data\":").append(toJSON(pageOfHoardings, searchType)).append("}").toString();
-        } else {
-            pageOfHoardings = hoardingService.searchByAgency(hoarding);
-            return new StringBuilder("{ \"data\":").append(toJSON(pageOfHoardings, searchType)).append("}").toString();
-        }
+        final List<Object[]> searchResult = hoardingService.searchBySearchType(hoarding, searchType);
+        return new StringBuilder("{ \"data\":").append(toJSON(searchResult, searchType)).append("}").toString();
     }
 
     private String toJSON(final Object object, final String searchType) {
@@ -121,7 +116,7 @@ public class SearchHoardingController extends GenericController {
         if ("hoarding".equalsIgnoreCase(searchType))
             gson = gsonBuilder.registerTypeAdapter(Hoarding.class, new HoardingAdaptor()).create();
         else
-            gson = gsonBuilder.registerTypeAdapter(Hoarding.class, new AgencyAdaptor()).create();
+            gson = gsonBuilder.registerTypeAdapter(AgencyWiseResult.class, new AgencyAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
     }
