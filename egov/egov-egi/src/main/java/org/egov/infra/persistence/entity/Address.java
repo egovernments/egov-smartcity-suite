@@ -306,7 +306,8 @@ public abstract class Address extends AbstractPersistable<Long> {
             builder.append(state).append(", ");
         if (country != null)
             builder.append(country).append(", ");
-        builder.append("PIN : ").append(pinCode);
+        if (pinCode != null)
+        	builder.append("PIN : ").append(pinCode);
         return builder.toString();
     }
 }
