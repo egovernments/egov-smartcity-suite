@@ -40,6 +40,7 @@
 package org.egov.adtax.web.controller.hoarding;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.io.IOException;
 import java.util.List;
@@ -57,7 +58,6 @@ import org.egov.adtax.web.adaptor.AgencyAdaptor;
 import org.egov.adtax.web.adaptor.HoardingAdaptor;
 import org.egov.adtax.web.controller.GenericController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -86,7 +86,7 @@ public class SearchHoardingController extends GenericController {
         return new Hoarding();
     }
 
-    @RequestMapping(value = "/subcategories-by-category", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/subcategories-by-category", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<SubCategory> hoardingSubcategories(@RequestParam final Long categoryId) {
         return subCategoryService.getAllActiveSubCategoryByCategoryId(categoryId);
     }
@@ -96,12 +96,11 @@ public class SearchHoardingController extends GenericController {
         return "hoarding-search";
     }
 
-    @RequestMapping(value = "/search-list", method = GET)
+    @RequestMapping(value = "/search-list", method = GET, produces=APPLICATION_JSON_VALUE)
     public @ResponseBody void searchResult(@ModelAttribute final Hoarding hoarding, final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
         final String searchType = request.getParameter("searchType");
         final String hoardingJSONData = commonSearchResult(hoarding, searchType);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(hoardingJSONData, response.getWriter());
     }
 
