@@ -116,7 +116,7 @@
 	</tr>
 	<tr>
 	<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="20%"><s:text name="extent.appurtntland"/> :</td>
+		<td class="greybox" width="20%"><s:text name="isextent.appurtntland"/> :</td>
 		<td class="greybox" width="20%">
 		<s:if test="propertyDetail.appurtenantLandChecked == true">
 				<span class="bold">Yes</span>

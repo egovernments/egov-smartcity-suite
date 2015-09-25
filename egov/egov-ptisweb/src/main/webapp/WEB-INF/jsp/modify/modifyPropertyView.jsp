@@ -211,7 +211,7 @@
 	
 	<tr class="appurtenant">
 		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="extent.appurtntland" /> : </td>
+		<td class="bluebox"><s:text name="isextent.appurtntland" /> : </td>
 		<td class="bluebox"><s:checkbox name="propertyDetail.appurtenantLandChecked" disabled="true" id="appurtenantLandChecked"/>
 		</td>
 		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>

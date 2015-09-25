@@ -192,7 +192,7 @@
 	
 	<tr class="appurtenant">
 		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="extent.appurtntland" /> : 
+		<td class="bluebox"><s:text name="isextent.appurtntland" /> : 
 		<td class="bluebox"><s:checkbox name="property.propertyDetail.appurtenantLandChecked" id="appurtenantLandChecked"
 				value="%{property.propertyDetail.appurtenantLandChecked}" onclick="enableAppartnaumtLandDetails();" />
 		</td>
