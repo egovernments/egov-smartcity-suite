@@ -91,8 +91,8 @@ $(document).ready(function(){
 				  { "mData"  : "agency",
 					"sTitle" : "Agency"
 				  },
-				  { "mData"  : "noofhoardings",
-					"sTitle" : "No of Hoarding"
+				  { "mData"  : "noOfHoardings",
+					"sTitle" : "No of Hoardings"
 				  },
 				  { "mData"  : "agencyId",
 					"visible": false

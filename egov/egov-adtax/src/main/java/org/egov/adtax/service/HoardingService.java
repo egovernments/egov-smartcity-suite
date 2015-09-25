@@ -103,24 +103,4 @@ public class HoardingService {
         return criteria.list();
     }
 
-    /*
-     * public List<Object[]> searchByAgency(final Hoarding hoarding) { final Criteria criteria =
-     * getCurrentSession().createCriteria(Hoarding.class, "hoarding") .createAlias("hoarding.adminBoundry",
-     * "ward").createAlias("hoarding.adminBoundry.parent", "zone") .createAlias("hoarding.category",
-     * "category").createAlias("hoarding.subCategory", "subCategory") .createAlias("hoarding.revenueInspector",
-     * "revenueInspector").createAlias("hoarding.agency", "agency").
-     * setProjection(Projections.projectionList().add(Projections.groupProperty("agency"), "agency"). add(Projections.rowCount(),
-     * "count")); if (null != hoarding.getHoardingNumber() && !hoarding.getHoardingNumber().isEmpty())
-     * criteria.add(Restrictions.eq("hoarding.hoardingNumber", hoarding.getHoardingNumber())); if (null !=
-     * hoarding.getAdminBoundry().getParent()) criteria.add(Restrictions.eq("zone.id",
-     * hoarding.getAdminBoundry().getParent().getId())); if (null != hoarding.getAdminBoundry().getId())
-     * criteria.add(Restrictions.eq("ward.id", hoarding.getAdminBoundry().getId())); if (null != hoarding.getCategory())
-     * criteria.add(Restrictions.eq("category.id", hoarding.getCategory().getId())); if (null != hoarding.getSubCategory())
-     * criteria.add(Restrictions.eq("subCategory.id", hoarding.getSubCategory().getId())); if (null !=
-     * hoarding.getAgency().getName() && !hoarding.getAgency().getName().isEmpty()) criteria.add(Restrictions.eq("agency.name",
-     * hoarding.getAgency().getName())); if (null != hoarding.getStatus()) criteria.add(Restrictions.eq("hoarding.status",
-     * hoarding.getStatus())); if (null != hoarding.getRevenueInspector()) criteria.add(Restrictions.eq("revenueInspector.id",
-     * hoarding.getRevenueInspector().getId())); criteria.setResultTransformer(Transformers.aliasToBean(AgencyWiseResult.class));
-     * return criteria.list(); }
-     */
 }
