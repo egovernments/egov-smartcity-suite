@@ -51,7 +51,8 @@ import org.springframework.core.env.Environment;
 @PropertySource(value = {
         "classpath:config/application-config.properties",
         "classpath:config/egov-erp-override.properties",
-        "classpath:config/egov-erp-${user.name}.properties" }, ignoreResourceNotFound = true)
+        "classpath:config/egov-erp-${user.name}.properties",
+        "classpath:config/application-config-${client.id}.properties" }, ignoreResourceNotFound = true)
 @Order(0)
 public class ApplicationProperties {
 

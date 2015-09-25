@@ -58,19 +58,19 @@ public abstract class AadhaarInfo implements Serializable {
     protected String careof;
     protected boolean valid;
 
-    abstract String getName();
+    public abstract String getName();
 
-    abstract String getPhone();
+    public abstract String getPhone();
 
-    abstract String getDob();
+    public abstract String getDob();
 
-    abstract String getUid();
+    public abstract String getUid();
 
-    abstract String getGender();
+    public abstract String getGender();
 
-    abstract String getCareof();
+    public abstract String getCareof();
 
-    abstract String getEid();
+    public abstract String getEid();
 
     public boolean getValid() {
         return StringUtils.isNotBlank(getUid()) || StringUtils.isNotBlank(getEid());
