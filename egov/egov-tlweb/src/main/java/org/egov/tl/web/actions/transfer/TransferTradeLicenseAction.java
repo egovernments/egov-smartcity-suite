@@ -55,6 +55,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -108,6 +109,8 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
     private BoundaryService boundaryService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private SecurityUtils securityUtils;
 
     public TransferTradeLicenseAction() {
         super();
@@ -141,7 +144,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
     @Override
     public void prepareNewForm() {
         setupWorkflowDetails();
-        final Integer userId = (Integer) session().get(Constants.SESSIONLOGINID);
+        final Long userId = securityUtils.getCurrentUser().getId();
         if (userId != null)
             setRoleName(licenseUtils.getRolesForUserId(userId));
         addDropdownData(Constants.DROPDOWN_ZONE_LIST, licenseUtils.getAllZone());
@@ -299,7 +302,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
         System.out.println(tl.getLicenseTransfer().getBoundary().getId());
         System.out.println(tl.getLicenseTransfer().getBoundary().getName());
         loadAjaxedDropDowns();
-        final Integer userId = (Integer) session().get(Constants.SESSIONLOGINID);
+        final Long userId = securityUtils.getCurrentUser().getId();
         if (userId != null)
             setRoleName(licenseUtils.getRolesForUserId(userId));
         LOGGER.debug("Exiting from the showForApproval method:<<<<<<<<<<>>>>>>>>>>>>>:");

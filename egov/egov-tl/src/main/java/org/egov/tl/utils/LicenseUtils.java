@@ -549,12 +549,12 @@ public class LicenseUtils {
         return violationReceiptList;
     }
 
-    public String getRolesForUserId(final Integer userId) {
+    public String getRolesForUserId(final Long userId) {
         LOGGER.debug("Entered into getRolesForUserId method");
         LOGGER.debug("User id : " + userId);
         String roleName;
         final List<String> roleNameList = new ArrayList<String>();
-        final User user = userService.getUserById(Long.valueOf(userId));
+        final User user = userService.getUserById(userId);
         for (final Role role : user.getRoles()) {
             roleName = role.getName() != null ? role.getName() : "";
             roleNameList.add(roleName.toUpperCase());

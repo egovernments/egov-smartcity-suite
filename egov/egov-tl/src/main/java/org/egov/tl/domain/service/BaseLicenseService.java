@@ -64,6 +64,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.validation.exception.ValidationException;
@@ -96,6 +97,8 @@ public abstract class BaseLicenseService {
     @Autowired
     protected PersistenceService persistenceService;
     protected SequenceGenerator sequenceGenerator;
+    @Autowired
+    private SequenceNumberGenerator sequenceNumberGenerator;
     @Autowired
     protected InstallmentHibDao installmentDao;
     @Autowired
@@ -508,8 +511,8 @@ public abstract class BaseLicenseService {
     }*/
 
     public String getNextRunningLicenseNumber(final String feeType) {
-        final Sequence seq = sequenceGenerator.getNextNumberWithFormat(feeType, Constants.LICENSENO_LENGTH, new Character('0'));
-        return seq.getFormattedNumber();
+        final String str = sequenceNumberGenerator.getNextSequence(feeType).toString();
+        return str;
     }
 
     /**

@@ -41,10 +41,6 @@ package org.egov.tl.web.actions.search.web;
 
 import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
 
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -54,14 +50,17 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.displaytag.pagination.PaginatedList;
 import org.displaytag.tags.TableTagParameters;
 import org.displaytag.util.ParamEncoder;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.services.Page;
@@ -77,6 +76,7 @@ import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
@@ -87,7 +87,6 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Validations
 @Results({ @Result(name = NEW, location = "searchTrade-new.jsp") })
 public class SearchTradeAction extends BaseFormAction {
-    private static final Logger LOGGER = Logger.getLogger(SearchTradeAction.class);
     private static final long serialVersionUID = 1L;
     private PaginatedList pagedResults;
     private int page;
@@ -96,6 +95,8 @@ public class SearchTradeAction extends BaseFormAction {
     private LicenseUtils licenseUtils;
     private final List<String> noticelist = new ArrayList<String>();
     private String roleName;
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Action(value="/search/web/searchTrade-newForm")
     public String newForm() {
@@ -131,7 +132,7 @@ public class SearchTradeAction extends BaseFormAction {
         addDropdownData(Constants.DROPDOWN_ZONE_LIST, licenseUtils.getAllZone());
         addDropdownData(Constants.DROPDOWN_TRADENAME_LIST, licenseUtils.getAllTradeNames("TradeLicense"));
         addDropdownData(Constants.DROPDOWN_NOTICE_LIST, noticelist);
-        final Integer userId = (Integer) session().get(Constants.SESSIONLOGINID);
+        final Long userId = securityUtils.getCurrentUser().getId();
         if (userId != null)
             setRoleName(licenseUtils.getRolesForUserId(userId));
     }

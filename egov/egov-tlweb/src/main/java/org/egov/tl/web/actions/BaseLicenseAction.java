@@ -431,7 +431,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     public String showForApproval() {
         getSession().put("model.id", license().getId());
         String result = "approve";
-        final Integer userId = Integer.valueOf(securityUtils.getCurrentUser().getId().intValue());
+        final Long userId = securityUtils.getCurrentUser().getId();
         if (userId != null)
             setRoleName(licenseUtils.getRolesForUserId(userId));
         if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_CREATENEWLICENSE)) {

@@ -55,6 +55,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.persistence.entity.PermanentAddress;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseDocument;
@@ -86,6 +87,8 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
     private boolean isOldLicense = false;
     @Autowired
     private BoundaryService boundaryService;
+    @Autowired
+    private SecurityUtils securityUtils;
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
 
     public EditTradeLicenseAction() {
@@ -138,7 +141,7 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
             addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSEE, new ArrayList(tradeLicense.getLicensee().getBoundary()
                     .getParent().getChildren()));
 
-        final Integer userId = (Integer) session().get(Constants.SESSIONLOGINID);
+        final Long userId = securityUtils.getCurrentUser().getId(); 
         if (userId != null)
             setRoleName(licenseUtils.getRolesForUserId(userId));
 

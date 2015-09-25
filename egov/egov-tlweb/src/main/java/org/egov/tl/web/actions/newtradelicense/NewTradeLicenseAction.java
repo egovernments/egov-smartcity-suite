@@ -40,6 +40,7 @@
 package org.egov.tl.web.actions.newtradelicense;
 
 
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
 
 import java.math.BigDecimal;
@@ -56,10 +57,12 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.persistence.entity.PermanentAddress;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseDocumentType;
+import org.egov.tl.domain.entity.LicenseStatus;
 import org.egov.tl.domain.entity.Licensee;
 import org.egov.tl.domain.entity.MotorDetails;
 import org.egov.tl.domain.entity.TradeLicense;
@@ -113,6 +116,20 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @Action(value = "/newtradelicense/newTradeLicense-approve")
     public String approve() {
         tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", getSession().get("model.id"));
+        if (BUTTONAPPROVE.equals(workFlowAction)) {
+            license().setCreationAndExpiryDate();
+            if (!license().isPaid())
+                throw new ValidationException("applicationNumber", "license.fee.notcollected", license().getApplicationNumber());
+            if (license().getIsUpgrade() == null && license().getTempLicenseNumber() == null) {
+                final String nextRunningLicenseNumber = service().getNextRunningLicenseNumber(
+                        "egtl_" + license().getFeeTypeStr()
+                                + "_license_number");
+                license().generateLicenseNumber(nextRunningLicenseNumber);
+            }
+            final LicenseStatus activeStatus = (LicenseStatus) persistenceService
+                    .find("from org.egov.tl.domain.entity.LicenseStatus where code='ACT'");
+            license().setStatus(activeStatus);
+        }
         return super.approve();
     }
 

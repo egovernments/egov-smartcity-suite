@@ -50,6 +50,7 @@ import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.infra.workflow.service.WorkflowService;
@@ -70,7 +71,6 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
     private static final long serialVersionUID = 1L;
     private TradeService ts;
     protected TradeLicense tradeLicense = new TradeLicense();
-    // private DocumentManagerService<Notice> documentManagerService;
     private String rejectreason;
     private HttpSession session = null;
     private HttpServletRequest requestObj;
@@ -78,6 +78,8 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
     private final String CITIZENUSER = "citizenUser";
     @Autowired
     private UserService userService;
+    @Autowired
+    private SecurityUtils securityUtils;
 
     /**
      * @return the rejectreason
@@ -246,7 +248,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
     @ValidationErrorPageExt(action = "approve", makeCall = true, toMethod = "setupWorkflowDetails")
     public String approve() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
-        final Integer userId = (Integer) session().get(Constants.SESSIONLOGINID);
+        final Long userId = securityUtils.getCurrentUser().getId();
         if (userId != null)
             setRoleName(licenseUtils.getRolesForUserId(userId));
         final String docNumber = tradeLicense.getDocNumber();
@@ -262,7 +264,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
             action = "approveRenew", makeCall = true, toMethod = "setupWorkflowDetails")
     public String approveRenew() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
-        final Integer userId = (Integer) session().get(Constants.SESSIONLOGINID);
+        final Long userId = securityUtils.getCurrentUser().getId();
         if (userId != null)
             setRoleName(licenseUtils.getRolesForUserId(userId));
         tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", tradeLicense.getId());

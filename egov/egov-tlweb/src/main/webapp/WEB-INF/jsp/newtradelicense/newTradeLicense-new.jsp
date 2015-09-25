@@ -281,7 +281,6 @@
 										<tr>
 											<td align="left" style="color: #FF0000">
 												<s:actionerror cssStyle="color: #FF0000" />
-												<s:fielderror/>
 												<s:actionmessage />
 											</td>
 										</tr>

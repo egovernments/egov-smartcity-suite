@@ -50,6 +50,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.domain.entity.License;
@@ -59,6 +60,7 @@ import org.egov.tl.domain.entity.objection.LicenseObjection;
 import org.egov.tl.domain.service.objection.ObjectionService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -84,6 +86,8 @@ public class ObjectionAction extends GenericWorkFlowAction {
     protected ObjectionService objectionService;
     private License license;
     private String roleName;
+    @Autowired
+    private SecurityUtils securityUtils;
 
     public LicenseStatusValues getLsv() {
         return lsv;
@@ -205,7 +209,7 @@ public class ObjectionAction extends GenericWorkFlowAction {
      */
     public void prepareShowForApproval() {
         prepareNewForm();
-        final Integer userId = (Integer) session().get(Constants.SESSIONLOGINID);
+        final Long userId = securityUtils.getCurrentUser().getId();
         if (userId != null)
             setRoleName(licenseUtils.getRolesForUserId(userId));
         activityTypeList = new ArrayList<String>();
