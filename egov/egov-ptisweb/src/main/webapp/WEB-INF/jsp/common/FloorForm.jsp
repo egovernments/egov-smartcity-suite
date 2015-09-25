@@ -76,6 +76,8 @@
 						data-optional="0" data-errormsg="Classification of building is required!"/>
 				</div>
 			</td>
+			<egov:ajaxdropdown id="floorUsage" fields="['Text','Value']" dropdownId="floorUsage"
+			url="common/ajaxCommon-usageByPropType.action" />
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select headerKey="" headerValue="%{getText('default.select')}"
@@ -190,6 +192,8 @@
 						</s:else>
 					</div>
 				</td>
+				<egov:ajaxdropdown id="floorUsage" fields="['Text','Value']" dropdownId="floorUsage"
+			          url="/common/ajaxCommon-usageByPropType.action" />
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:if test="%{#floorsstatus.index==0}">

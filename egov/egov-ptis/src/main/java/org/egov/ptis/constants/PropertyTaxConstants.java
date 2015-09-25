@@ -1144,4 +1144,8 @@ public interface PropertyTaxConstants {
     public static final String ALTERATION_OF_ASSESSMENT = "Alteration of Assessment";
     public static final String BIFURCATION_OF_ASSESSMENT = "Bifurcation of Assessment";
     public static final String AMALGAMATION_OF_ASSESSMENT = "Amalgamation of Assessment";
+    
+    public static final String CATEGORY_RESIDENTIAL = "RESIDENTIAl";
+    public static final String CATEGORY_NON_RESIDENTIAL = "NON_RESIDENTIAL";
+    public static final String CATEGORY_MIXED = "MIXED";
 }

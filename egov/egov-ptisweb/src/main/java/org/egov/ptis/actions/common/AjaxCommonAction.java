@@ -48,6 +48,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LA
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -111,7 +114,8 @@ import org.springframework.transaction.annotation.Transactional;
 		@Result(name = "designationList", location = "ajaxCommon-designationList.jsp"),
 		@Result(name = "userList", location = "ajaxCommon-userList.jsp"),
 		@Result(name = "propCategory", location = "ajaxCommon-propCategory.jsp"),
-		@Result(name = "checkExistingCategory", location = "ajaxCommon-checkExistingCategory.jsp") })
+		@Result(name = "checkExistingCategory", location = "ajaxCommon-checkExistingCategory.jsp"),
+		@Result(name = "usage", location = "ajaxCommon-usage.jsp")})
 public class AjaxCommonAction extends BaseFormAction implements ServletResponseAware {
 
 	private static final String AJAX_RESULT = "AJAX_RESULT";
@@ -156,6 +160,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	private Long structureClassId;
 	private Date categoryFromDate;
 	private String validationMessage="";
+	private String propTypeCategory;
 	private static final String RESULT_CHECK_EXISTING_CATEGORY = "checkExistingCategory";
 
 
@@ -441,6 +446,19 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 		}
 		return RESULT_CHECK_EXISTING_CATEGORY;
 	}
+	
+	@Action(value = "/ajaxCommon-usageByPropType")
+	public String usageByPropType() {
+            LOGGER.debug("Entered into usageByPropType, propTypeId: " + propTypeId);
+            if(propTypeCategory.equals(CATEGORY_MIXED))
+                propUsageList = getPersistenceService().findAllBy("From PropertyUsage");
+            else if(propTypeCategory.equals(CATEGORY_RESIDENTIAL))
+                propUsageList = getPersistenceService().findAllBy("From PropertyUsage where isResidential = true");
+            else if(propTypeCategory.equals(CATEGORY_NON_RESIDENTIAL))
+                propUsageList = getPersistenceService().findAllBy("From PropertyUsage where isResidential = false");
+            LOGGER.debug("Exiting from usageByPropType, No of Usages: " + ((propUsageList != null) ? propUsageList : ZERO));
+            return USAGE;
+          }
 	 
 	public Long getZoneId() {
 		return zoneId;
@@ -702,4 +720,13 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	public void setValidationMessage(String validationMessage) {
 		this.validationMessage = validationMessage;
 	}
+
+        public String getPropTypeCategory() {
+               return propTypeCategory;
+        }
+
+        public void setPropTypeCategory(String propTypeCategory) {
+              this.propTypeCategory = propTypeCategory;
+        }
+	
 }

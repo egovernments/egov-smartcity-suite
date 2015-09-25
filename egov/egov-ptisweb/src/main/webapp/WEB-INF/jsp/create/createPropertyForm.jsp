@@ -25,7 +25,7 @@
 		<td class="greybox">
 		   <s:select headerKey="" headerValue="%{getText('default.select')}" name="propertyDetail.categoryType"
 				id="propTypeCategoryId" listKey="key" listValue="value" list="propTypeCategoryMap" value="%{propertyDetail.categoryType}"
-				cssClass="selectnew"/>
+				cssClass="selectnew" onchange="populateUsages();"/>
 		</td>
 	</tr>
 	
