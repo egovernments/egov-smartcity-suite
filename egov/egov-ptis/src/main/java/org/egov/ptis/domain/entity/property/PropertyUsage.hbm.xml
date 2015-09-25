@@ -71,6 +71,6 @@
 		<property name="fromDate" column="FROM_DATE" type="date" />
 		<property name="toDate" column="TO_DATE" type="date" />
 		<property name="isEnabled" column="IS_ENABLED" type="integer" />
-		<property name="resdOrNonResd" column="RESD_OR_NONRESD" type="string" />
+		<property name="isResidential" column="ISRESIDENTIAL" type="boolean" />
 	</class>
 </hibernate-mapping>
