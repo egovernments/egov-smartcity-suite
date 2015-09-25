@@ -345,8 +345,12 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
                         newOwner.setUsername(propertyTaxUtil.generateUserName(transferee.getName()));
                         newOwners.add(newOwner);
                     }
-                } else
+                } else {
+                    user.setEmailId(transferee.getEmailId());
+                    user.setGuardian(transferee.getGuardian());
+                    user.setGuardianRelation(transferee.getGuardianRelation());
                     newOwners.add(user);
+                }
             } else
                 newOwners.add(transferee);
         });

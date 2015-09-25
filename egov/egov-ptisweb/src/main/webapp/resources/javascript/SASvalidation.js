@@ -819,7 +819,7 @@ function deleteOwner(obj)
 		
 		//regenerate index existing inputs in table row
 		jQuery("#nameTable tr:not(:first)").each(function() {
-			jQuery(this).find("input, select").each(function() {
+			jQuery(this).find("input, select,input:checkbox").each(function() {
 			   jQuery(this).attr({
 			      'id': function(_, id) {  
 			    	  return id.replace(/\[.\]/g, '['+ idx +']'); 
@@ -962,6 +962,7 @@ function addOwner() {
 							
 							jQuery(this).attr('readonly', false);
 							jQuery(this).removeAttr('disabled');
+							jQuery(this).prop('checked', false);
 							
 							/*if (jQuery(this).data('idx')) {
 								jQuery(this).data('idx', nextIdx);

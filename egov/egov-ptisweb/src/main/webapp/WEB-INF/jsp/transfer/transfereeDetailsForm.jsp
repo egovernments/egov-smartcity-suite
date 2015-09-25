@@ -67,8 +67,9 @@
 										   <s:textfield name="transfereeInfos[0].aadhaarNumber" size="12" maxlength="12" value=""  data-idx="0" onblur="getAadharDetailsForTransferee(this);" cssClass="txtaadhar"></s:textfield>
 										</td>
 										 <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[0].mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="" data-optional="0" data-errormsg="Mobile no is mandatory!"
+								        	<s:textfield name="transfereeInfos[0].mobileNumber" maxlength="10" size="20" id="mobileNumber"  value=""  data-idx="0" data-optional="0" data-errormsg="Mobile no is mandatory!"
 								        		onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');"/>
+								        	<s:checkbox name="editMobileno[0]" id="editMobileno[0]" onclick="enableMobileNumber(this);" data-idx="0" data-toggle="tooltip" data-placement="top" title="Citizen confirmed that his/her mobile no is changed" />
 								        </td>
 								        <td class="blueborderfortd" align="center">
 								        	<s:textfield name="transfereeInfos[0].name" maxlength="100" size="20" id="ownerName"  value=""  data-optional="0" data-errormsg="Owner name is mandatory!"
@@ -104,8 +105,9 @@
 										   <s:textfield name="transfereeInfos[%{#status.index}].aadhaarNumber" data-idx="%{#status.index}" onblur="getAadharDetailsForTransferee(this);" cssClass="txtaadhar" size="12" maxlength="12"></s:textfield>
 										</td>
 										<td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].mobileNumber" maxlength="10" size="20" data-optional="0" data-errormsg="Mobile no is mandatory!"
+								        	<s:textfield name="transfereeInfos[%{#status.index}].mobileNumber" maxlength="10" size="20" data-optional="0" data-errormsg="Mobile no is mandatory!" data-idx="%{#status.index}"
 								        		onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');"/>
+								        <s:checkbox name="editMobileno[%{#ownerStatus.index}]" id="editMobileno[%{#ownerStatus.index}]" onclick="enableMobileNumber(this);" data-idx="%{#status.index}" data-toggle="tooltip" data-placement="top" title="Citizen confirmed that his/her mobile no is changed" />
 								        </td>
 								        <td class="blueborderfortd" align="center">
 								        	<s:textfield name="transfereeInfos[%{#status.index}].name" maxlength="100" size="20" data-optional="0" data-errormsg="Owner name is mandatory!"
@@ -194,7 +196,10 @@
        	   var mobileNo = jQuery(obj).val();
        	   var rowidx= jQuery(obj).data('idx');
        	   console.log('calling :) ->'+rowidx + ' ->'+ mobileNo);
-       	   jQuery.ajax({
+        if(jQuery("input[name='editMobileno["+ rowidx +"]']").is(':checked') ==  true) {
+        	jQuery("input[name='editMobileno["+ rowidx +"]']").prop('checked', false);
+        } else {
+               jQuery.ajax({
    				type: "GET",
    				url: "/ptis/common/ajaxCommon-getUserByMobileNo.action",
    				cache: true,
@@ -211,5 +216,16 @@
    			    }
               });
           }
-	       
+        }
+
+          function enableMobileNumber(obj) { 
+       	   var rowidx= jQuery(obj).data('idx');
+       	   alert("rowidx"+rowidx);
+       	   alert("check"+obj.checked);
+       	   if(obj.checked == true) {
+       		   jQuery("input[name='transfereeInfos["+ rowidx +"].mobileNumber']").attr('readonly', false);
+           	   } else {
+           		jQuery("input[name='transfereeInfos["+ rowidx +"].mobileNumber']").attr('readonly', true);
+               }
+            }
 	</script>
