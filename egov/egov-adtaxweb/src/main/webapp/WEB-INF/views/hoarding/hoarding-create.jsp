@@ -270,10 +270,12 @@
 								<spring:message code="lbl.rev.zone"/>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:select path="revenueBoundary.parent" id="revenueBoundaryParent" cssClass="form-control" cssErrorClass="form-control error">
-										<form:option value=""><spring:message code="lbl.select" /></form:option>
-										<form:options items="${revenueZones}" itemLabel="name" itemValue="id"/>
-									</form:select>
+									<select id="revenueBoundaryParent" class="form-control">
+										<option value=""><spring:message code="lbl.select" /></option>
+										<c:forEach items="${revenueZones}" var="revZone">
+											<option value="${revZone.id}">${revZone.name}</option>
+										</c:forEach>
+									</select>
 									<form:errors path="revenueBoundary.parent" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
