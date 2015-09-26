@@ -44,6 +44,8 @@ import static java.util.Arrays.asList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.ws.rs.FormParam;
+
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
@@ -54,7 +56,6 @@ import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
 import org.egov.wtms.elasticSearch.entity.ApplicationSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -70,9 +71,11 @@ public class RestApplicationSearchController {
     @Autowired
     private SearchService searchService;
 
-    @RequestMapping(value = "/watertax/searchapplication", method = RequestMethod.PUT)
+    @RequestMapping(value = "/watertax/searchapplication", method = RequestMethod.POST)
     @ResponseBody
-    public String searchApplication(@RequestBody final ApplicationSearchRequest searchRequest) {
+    public String searchApplication(@FormParam("applicationNumber") final String applicationNumber) {
+        ApplicationSearchRequest searchRequest = new ApplicationSearchRequest();
+        searchRequest.setApplicationNumber(applicationNumber);
         final SearchResult searchResult = searchService.search(asList(Index.APPLICATION.toString()),
                 asList(IndexType.APPLICATIONSEARCH.toString()), searchRequest.searchQuery(),
                 searchRequest.searchFilters(), Sort.NULL, Page.NULL);
