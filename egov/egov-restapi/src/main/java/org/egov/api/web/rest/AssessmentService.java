@@ -49,11 +49,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -78,761 +74,636 @@ import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
 /**
- * The AssessmentService class is used as the RESTFul service to handle user
- * request and response.
+ * The AssessmentService class is used as the RESTFul service to handle user request and response.
  * 
  * @author ranjit
  *
  */
-@Component
-@Path("/")
+@RestController
 public class AssessmentService {
 
-	@Autowired
-	private PropertyExternalService propertyExternalService;
+    @Autowired
+    private PropertyExternalService propertyExternalService;
 
-	/**
-	 * This method is used for handling user request for assessment details.
-	 * 
-	 * @param assessmentNumber
-	 *            - assessment number i.e. property id
-	 * @return
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/assessmentDetails")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getAssessmentDetails(@FormParam("assessmentNo") String assessmentNo)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		AssessmentDetails assessmentDetail = propertyExternalService.loadAssessmentDetails(assessmentNo,
-				PropertyExternalService.FLAG_FULL_DETAILS);
+    /**
+     * This method is used for handling user request for assessment details.
+     * 
+     * @param assessmentNumber - assessment number i.e. property id
+     * @return
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/assessmentDetails", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getAssessmentDetails(@FormParam("assessmentNo") String assessmentNo)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        AssessmentDetails assessmentDetail = propertyExternalService.loadAssessmentDetails(assessmentNo,
+                PropertyExternalService.FLAG_FULL_DETAILS);
 
-		return getJSONResponse(assessmentDetail);
-	}
+        return getJSONResponse(assessmentDetail);
+    }
 
-	/**
-	 * This method is used get the property tax details.
-	 * 
-	 * @param assessmentNo
-	 *            - assessment no
-	 * @return
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/propertyTaxDetails")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getPropertyTaxDetails(@FormParam("assessmentNo") String assessmentNo)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
-		if (null != assessmentNo) {
-			propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo);
-		} else {
-			ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
-			propertyTaxDetails.setErrorDetails(errorDetails);
-		}
-		return getJSONResponse(propertyTaxDetails);
-	}
+    /**
+     * This method is used get the property tax details.
+     * 
+     * @param assessmentNo - assessment no
+     * @return
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/propertyTaxDetails", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getPropertyTaxDetails(@FormParam("assessmentNo") String assessmentNo)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
+        if (null != assessmentNo) {
+            propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo);
+        } else {
+            ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
+            propertyTaxDetails.setErrorDetails(errorDetails);
+        }
+        return getJSONResponse(propertyTaxDetails);
+    }
 
-	/**
-	 * This method id used to search the property based on boundary details.
-	 * 
-	 * @param circleName
-	 *            - boundary as circle name
-	 * @param zoneName
-	 *            - boundary as zone name
-	 * @param wardName
-	 *            - boundary as ward name
-	 * @param blockName
-	 *            - boundary as block name
-	 * @param ownerName
-	 *            - owner name
-	 * @param doorNo
-	 *            - door number
-	 * @return
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/propertyTaxDetailsByBoundary")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getPropertyTaxDetails(@FormParam("circleName") String circleName,
-			@FormParam("zoneName") String zoneName, @FormParam("wardName") String wardName,
-			@FormParam("blockName") String blockName, @FormParam("ownerName") String ownerName,
-			@FormParam("doorNo") String doorNo, @FormParam("aadhaarNumber") String aadhaarNumber,
-			@FormParam("mobileNumber") String mobileNumber)
-					throws JsonGenerationException, JsonMappingException, IOException {
-		List<PropertyTaxDetails> propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(circleName,
-				zoneName, wardName, blockName, ownerName, doorNo, aadhaarNumber, mobileNumber);
-		return getJSONResponse(propertyTaxDetailsList);
-	}
+    /**
+     * This method id used to search the property based on boundary details.
+     * 
+     * @param circleName - boundary as circle name
+     * @param zoneName - boundary as zone name
+     * @param wardName - boundary as ward name
+     * @param blockName - boundary as block name
+     * @param ownerName - owner name
+     * @param doorNo - door number
+     * @return
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/propertyTaxDetailsByBoundary", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getPropertyTaxDetails(@FormParam("circleName") String circleName,
+            @FormParam("zoneName") String zoneName, @FormParam("wardName") String wardName,
+            @FormParam("blockName") String blockName, @FormParam("ownerName") String ownerName,
+            @FormParam("doorNo") String doorNo, @FormParam("aadhaarNumber") String aadhaarNumber,
+            @FormParam("mobileNumber") String mobileNumber)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        List<PropertyTaxDetails> propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(circleName,
+                zoneName, wardName, blockName, ownerName, doorNo, aadhaarNumber, mobileNumber);
+        return getJSONResponse(propertyTaxDetailsList);
+    }
 
-	/**
-	 * This method is used to pay the property tax.
-	 * 
-	 * @param assessmentNo
-	 *            - assessment number
-	 * @param paymentMode
-	 *            - mode of payment
-	 * @param totalAmount
-	 *            - total amount paid
-	 * @param paidBy
-	 *            - payer name
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/payPropertyTax")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	public String payPropertyTax(@FormParam("assessmentNo") String assessmentNo,
-			@FormParam("paymentMode") String paymentMode, @FormParam("totalAmount") BigDecimal totalAmount,
-			@FormParam("paidBy") String paidBy) throws JsonGenerationException, JsonMappingException, IOException {
-		String responseJson = new String();
+    /**
+     * This method is used to pay the property tax.
+     * 
+     * @param assessmentNo - assessment number
+     * @param paymentMode - mode of payment
+     * @param totalAmount - total amount paid
+     * @param paidBy - payer name
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/payPropertyTax", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED, produces = MediaType.APPLICATION_JSON)
+    public String payPropertyTax(@FormParam("assessmentNo") String assessmentNo,
+            @FormParam("paymentMode") String paymentMode, @FormParam("totalAmount") BigDecimal totalAmount,
+            @FormParam("paidBy") String paidBy) throws JsonGenerationException, JsonMappingException, IOException {
+        String responseJson = new String();
 
-		ErrorDetails errorDetails = propertyExternalService.validatePaymentDetails(assessmentNo, paymentMode,
-				totalAmount, paidBy);
-		if (null != errorDetails) {
-			responseJson = getJSONResponse(errorDetails);
-		} else {
-			ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(assessmentNo, paymentMode,
-					totalAmount, paidBy);
-			responseJson = getJSONResponse(receiptDetails);
-		}
+        ErrorDetails errorDetails = propertyExternalService.validatePaymentDetails(assessmentNo, paymentMode,
+                totalAmount, paidBy);
+        if (null != errorDetails) {
+            responseJson = getJSONResponse(errorDetails);
+        } else {
+            ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(assessmentNo, paymentMode,
+                    totalAmount, paidBy);
+            responseJson = getJSONResponse(receiptDetails);
+        }
 
-		return responseJson;
-	}
+        return responseJson;
+    }
 
-	/**
-	 * This method is used to pay the water tax.
-	 * 
-	 * @param consumerNo
-	 *            - consumer number
-	 * @param paymentMode
-	 *            - mode of payment
-	 * @param totalAmount
-	 *            - total amount paid
-	 * @param paidBy
-	 *            - payer's name
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/payWaterTax")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	public String payWateTax(@FormParam("consumerNo") String consumerNo, @FormParam("paymentMode") String paymentMode,
-			@FormParam("totalAmount") BigDecimal totalAmount, @FormParam("paidBy") String paidBy)
-					throws JsonGenerationException, JsonMappingException, IOException {
-		ErrorDetails errorDetails = propertyExternalService.validatePaymentDetails(consumerNo, paymentMode, totalAmount,
-				paidBy);
-		if (null != errorDetails) {
-			return getJSONResponse(errorDetails);
-		} else {
-			errorDetails = propertyExternalService.payWaterTax(consumerNo, paymentMode, totalAmount, paidBy);
-			return getJSONResponse(errorDetails);
-		}
-	}
+    /**
+     * This method is used to pay the water tax.
+     * 
+     * @param consumerNo - consumer number
+     * @param paymentMode - mode of payment
+     * @param totalAmount - total amount paid
+     * @param paidBy - payer's name
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/payWaterTax", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED, produces = MediaType.APPLICATION_JSON)
+    public String payWateTax(@FormParam("consumerNo") String consumerNo, @FormParam("paymentMode") String paymentMode,
+            @FormParam("totalAmount") BigDecimal totalAmount, @FormParam("paidBy") String paidBy)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        ErrorDetails errorDetails = propertyExternalService.validatePaymentDetails(consumerNo, paymentMode, totalAmount,
+                paidBy);
+        if (null != errorDetails) {
+            return getJSONResponse(errorDetails);
+        } else {
+            errorDetails = propertyExternalService.payWaterTax(consumerNo, paymentMode, totalAmount, paidBy);
+            return getJSONResponse(errorDetails);
+        }
+    }
 
-	/**
-	 * This method is used to get the property type master details
-	 *
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/ownershipCategories")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getOwnershipCategories() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> propTypeMasterDetailsList = propertyExternalService
-				.getPropertyTypeMasterDetails();
-		return getJSONResponse(propTypeMasterDetailsList);
-	}
+    /**
+     * This method is used to get the property type master details
+     *
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/ownershipCategories", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getOwnershipCategories() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> propTypeMasterDetailsList = propertyExternalService
+                .getPropertyTypeMasterDetails();
+        return getJSONResponse(propTypeMasterDetailsList);
+    }
 
-	@POST
-	@Path("/property/ownershipCategoryByCode")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getOwnershipCategoryByCode(@FormParam("ownershipCategoryCode") String ownershipCategoryCode)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		PropertyTypeMaster propertyTypeMaster = propertyExternalService
-				.getPropertyTypeMasterByCode(ownershipCategoryCode);
-		return getJSONResponse(propertyTypeMaster);
-	}
+    /**
+     * This method returns Ownership Category for the given code.
+     * @param ownershipCategoryCode
+     * @return
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/ownershipCategoryByCode", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getOwnershipCategoryByCode(@FormParam("ownershipCategoryCode") String ownershipCategoryCode)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        PropertyTypeMaster propertyTypeMaster = propertyExternalService
+                .getPropertyTypeMasterByCode(ownershipCategoryCode);
+        return getJSONResponse(propertyTypeMaster);
+    }
 
-	/**
-	 * This method is used to get the property type based on ownership category
-	 * 
-	 * @param categoryCode
-	 *            - property category code
-	 * @return
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/propertyTypesByOwnership")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getPropertyTypeCategoryDetails(@FormParam("ownershipCategoryCode") String ownershipCategoryCode)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
-				.getPropertyTypeCategoryDetails(ownershipCategoryCode);
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get the property type based on ownership category
+     * 
+     * @param categoryCode - property category code
+     * @return
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/propertyTypesByOwnership", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getPropertyTypeCategoryDetails(@FormParam("ownershipCategoryCode") String ownershipCategoryCode)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
+                .getPropertyTypeCategoryDetails(ownershipCategoryCode);
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to get the property type based one category
-	 * 
-	 * @return
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/propertyTypes")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getPropertyTypes() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getPropertyTypes();
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get the property type based one category
+     * 
+     * @return
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/propertyTypes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getPropertyTypes() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getPropertyTypes();
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to get all the apartments and complexes.
-	 * 
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/apartments")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getApartmentsAndComplexes() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
-				.getApartmentsAndComplexes();
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get all the apartments and complexes.
+     * 
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/apartments", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getApartmentsAndComplexes() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
+                .getApartmentsAndComplexes();
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to get reasons for create the property.
-	 *
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/createPropertyReasons")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getCreatePropertyReasons() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
-				.getReasonsForCreateProperty();
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get reasons for create the property.
+     *
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/createPropertyReasons", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getCreatePropertyReasons() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
+                .getReasonsForCreateProperty();
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to get all localities.
-	 *
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/localities")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getLocalities() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getLocalities();
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get all localities.
+     *
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/localities", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getLocalities() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getLocalities();
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to get all localities.
-	 *
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/boundaryByLocalityCode")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getBoundaryByLocalityCode(@FormParam("localityCode") String localityCode)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		LocalityDetails localityDetails = propertyExternalService.getLocalityDetailsByLocalityCode(localityCode);
-		return getJSONResponse(localityDetails);
-	}
+    /**
+     * This method is used to get all localities.
+     *
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/boundaryByLocalityCode", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getBoundaryByLocalityCode(@FormParam("localityCode") String localityCode)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        LocalityDetails localityDetails = propertyExternalService.getLocalityDetailsByLocalityCode(localityCode);
+        return getJSONResponse(localityDetails);
+    }
 
-	/**
-	 * This method is used to get all list of all the election wards.
-	 *
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/electionWards")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getElectionWards() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getElectionBoundaries();
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get all list of all the election wards.
+     *
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/electionWards", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getElectionWards() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getElectionBoundaries();
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to get all list of all the enumeration blocks.
-	 *
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/enumerationBlocks")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getEnumerationBlocks() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getEnumerationBlocks();
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get all list of all the enumeration blocks.
+     *
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/enumerationBlocks", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getEnumerationBlocks() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getEnumerationBlocks();
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to get all types of floors.
-	 *
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/floorTypes")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getFloorTypes() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getFloorTypes();
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get all types of floors.
+     *
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/floorTypes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getFloorTypes() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getFloorTypes();
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to get all type of roofs.
-	 *
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/roofTypes")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getRoofTypes() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getRoofTypes();
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get all type of roofs.
+     *
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/roofTypes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getRoofTypes() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getRoofTypes();
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to get all list of all type of walls.
-	 *
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/wallTypes")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getWallTypes() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getWallTypes();
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get all list of all type of walls.
+     *
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/wallTypes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getWallTypes() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getWallTypes();
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to get all list of all type of woods
-	 *
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/woodTypes")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getWoodTypes() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getWoodTypes();
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get all list of all type of woods
+     *
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/woodTypes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getWoodTypes() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getWoodTypes();
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to get all list of floor numbers.
-	 *
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/floors")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getFloors() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
-		TreeMap<Integer, String> floorMap = PropertyTaxConstants.FLOOR_MAP;
-		Set<Integer> keys = floorMap.keySet();
-		for (Integer key : keys) {
-			MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
-			mstrCodeNamePairDetails.setCode(key.toString());
-			mstrCodeNamePairDetails.setName(floorMap.get(key));
-			mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
-		}
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get all list of floor numbers.
+     *
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/floors", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getFloors() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+        TreeMap<Integer, String> floorMap = PropertyTaxConstants.FLOOR_MAP;
+        Set<Integer> keys = floorMap.keySet();
+        for (Integer key : keys) {
+            MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+            mstrCodeNamePairDetails.setCode(key.toString());
+            mstrCodeNamePairDetails.setName(floorMap.get(key));
+            mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+        }
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to get all classifications of the property
-	 * structures.
-	 * 
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/propertyClassifications")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getPropertyClassifications() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
-				.getBuildingClassifications();
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get all classifications of the property structures.
+     * 
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/propertyClassifications", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getPropertyClassifications() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
+                .getBuildingClassifications();
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to get nature of usages of the property.
-	 * 
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/propertyUsages")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getPropertUsages() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getNatureOfUsages();
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get nature of usages of the property.
+     * 
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/propertyUsages", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getPropertUsages() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getNatureOfUsages();
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to get all list of occupancies.
-	 * 
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/occupancyTypes")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getOccupancyTypes() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getOccupancies();
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get all list of occupancies.
+     * 
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/occupancyTypes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getOccupancyTypes() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getOccupancies();
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to get all the tax exemption categories.
-	 * 
-	 * @param username
-	 *            - usernam credential
-	 * @param password
-	 *            - password credential
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/exemptionCategories")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getTaxExemptionCategories() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getExemptionCategories();
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get all the tax exemption categories.
+     * 
+     * @param username - usernam credential
+     * @param password - password credential
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/exemptionCategories", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getTaxExemptionCategories() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getExemptionCategories();
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to get drainages.
-	 * 
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/drainages")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getDrainages() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
-		for (DrainageEnum drngEnum : DrainageEnum.values()) {
-			MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
-			mstrCodeNamePairDetails.setCode(drngEnum.getCode());
-			mstrCodeNamePairDetails.setName(drngEnum.name());
-			mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
-		}
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get drainages.
+     * 
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/drainages", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getDrainages() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+        for (DrainageEnum drngEnum : DrainageEnum.values()) {
+            MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+            mstrCodeNamePairDetails.setCode(drngEnum.getCode());
+            mstrCodeNamePairDetails.setName(drngEnum.name());
+            mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+        }
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to get all approver departments.
-	 * 
-	 * @return responseJson - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("/property/approverDepartments")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getApproverDepartments() throws JsonGenerationException, JsonMappingException, IOException {
-		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getApproverDepartments();
-		return getJSONResponse(mstrCodeNamePairDetailsList);
-	}
+    /**
+     * This method is used to get all approver departments.
+     * 
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/approverDepartments", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public String getApproverDepartments() throws JsonGenerationException, JsonMappingException, IOException {
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getApproverDepartments();
+        return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
 
-	/**
-	 * This method is used to create property.
-	 * 
-	 * @param propertyTypeMasterCode
-	 *            - category of ownership code
-	 * @param propertyCategoryCode
-	 *            - property type code
-	 * @param apartmentCmplxCode
-	 *            - apartment/complex code
-	 * @param ownerDetails
-	 *            - a list of owner details
-	 * @param mutationReasonCode
-	 *            - reason for creation or mutation code
-	 * @param extentOfSite
-	 *            - extent of site
-	 * @param isExtentAppurtenantLand
-	 *            - extent appurtenant land
-	 * @param occupancyCertificationNo
-	 *            - occupancy certification number
-	 * @param isSuperStructure
-	 *            - super structure
-	 * @param isBuildingPlanDetails
-	 *            - building plan details
-	 * @param regdDocNo
-	 *            - registration document number
-	 * @param regdDocDate
-	 *            - registration document date
-	 * @param localityCode
-	 *            - locality code
-	 * @param street
-	 *            - street name
-	 * @param electionWardCode
-	 *            - election ward code
-	 * @param doorNo
-	 *            - door number
-	 * @param enumerationBlockCode
-	 *            - enumeration block code
-	 * @param pinCode
-	 *            - pin code
-	 * @param isCorrAddrDiff
-	 *            - is correspondence address different
-	 * @param corrAddr1
-	 *            - correspondence address 1
-	 * @param corrAddr2
-	 *            - correspondence address 2
-	 * @param corrPinCode
-	 *            - correspondence address pin code
-	 * @param hasLift
-	 *            - has lift
-	 * @param hasToilet
-	 *            - has toilet
-	 * @param hasWaterTap
-	 *            - has water tap
-	 * @param hasElectricity
-	 *            - has electricity
-	 * @param hasAttachedBathroom
-	 *            - has attached bathroom
-	 * @param hasWaterHarvesting
-	 *            - has water harvesting
-	 * @param floorTypeCode
-	 *            - floor type code
-	 * @param roofTypeCode
-	 *            - roof type code
-	 * @param wallTypeCode
-	 *            - wall type code
-	 * @param woodTypeCode
-	 *            - wood type code
-	 * @param floorDetails
-	 *            - a list of floor details
-	 * @param surveyNumber
-	 *            - survey number
-	 * @param pattaNumber
-	 *            - patta number
-	 * @param vacantLandArea
-	 *            - vacant land area value
-	 * @param marketValue
-	 *            - market value
-	 * @param currentCapitalValue
-	 *            - current capital value
-	 * @param completionDate
-	 *            - date of completion
-	 * @param northBoundary
-	 *            - north boundary
-	 * @param southBoundary
-	 *            - south boundary
-	 * @param eastBoundary
-	 *            - east boundary
-	 * @param westBoundary
-	 *            - west boundary
-	 * @param photoAsmntStream-
-	 *            photo of assessment input stream object
-	 * @param photoAsmntDisp-
-	 *            photo of assessment content disposition object
-	 * @param bldgPermCopyStream-
-	 *            building permission copy input stream object
-	 * @param bldgPermCopyDisp-
-	 *            building permission copy content disposition object
-	 * @param atstdCopyPropDocStream-
-	 *            attested copy of property document input stream object
-	 * @param atstdCopyPropDocDisp-
-	 *            attested copy of property document content disposition
-	 * @param nonJudcStampStream
-	 *            - non judicial stamp input stream object
-	 * @param nonJudcStampDisp
-	 *            - non judicial stamp content disposition object
-	 * @param afdvtBondStream
-	 *            - affidavit bond paper input stream object
-	 * @param afdvtBondDisp
-	 *            - affidavit bond paper content disposition object
-	 * @param deathCertCopyStream
-	 *            - death certificate copy input stream object
-	 * @param deathCertCopyDisp
-	 *            - death certificate copy content disposition object
-	 * 
-	 * @return - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 * @throws ParseException
-	 */
-	@POST
-	@Path("/property/createProperty")
-	@Consumes({MediaType.MULTIPART_FORM_DATA})
-	@Produces(MediaType.APPLICATION_JSON)
-	public String createProperty(@FormDataParam("propertyTypeMasterCode") String propertyTypeMasterCode,
-			@FormDataParam("propertyCategoryCode") String propertyCategoryCode,
-			@FormDataParam("apartmentCmplxCode") String apartmentCmplxCode,
-			@FormDataParam("ownerDetails") String ownerDetails,
-			@FormDataParam("mutationReasonCode") String mutationReasonCode,
-			@FormDataParam("extentOfSite") String extentOfSite,
-			@FormDataParam("isExtentAppurtenantLand") String isExtentAppurtenantLand,
-			@FormDataParam("occupancyCertificationNo") String occupancyCertificationNo,
-			@FormDataParam("isSuperStructure") Boolean isSuperStructure,
-			@FormDataParam("isBuildingPlanDetails") Boolean isBuildingPlanDetails,
-			@FormDataParam("regdDocNo") String regdDocNo, @FormDataParam("regdDocDate") String regdDocDate,
-			@FormDataParam("localityCode") String localityCode, @FormDataParam("street") String street,
-			@FormDataParam("electionWardCode") String electionWardCode, @FormDataParam("doorNo") String doorNo,
-			@FormDataParam("enumerationBlockCode") String enumerationBlockCode,
-			@FormDataParam("pinCode") String pinCode, @FormDataParam("isCorrAddrDiff") Boolean isCorrAddrDiff,
-			@FormDataParam("corrAddr1") String corrAddr1, @FormDataParam("corrAddr2") String corrAddr2,
-			@FormDataParam("corrPinCode") String corrPinCode, @FormDataParam("hasLift") Boolean hasLift,
-			@FormDataParam("hasToilet") Boolean hasToilet, @FormDataParam("hasWaterTap") Boolean hasWaterTap,
-			@FormDataParam("hasElectricity") Boolean hasElectricity,
-			@FormDataParam("hasAttachedBathroom") String hasAttachedBathroom,
-			@FormDataParam("hasWaterHarvesting") String hasWaterHarvesting,
-			@FormDataParam("floorTypeCode") String floorTypeCode, @FormDataParam("roofTypeCode") String roofTypeCode,
-			@FormDataParam("wallTypeCode") String wallTypeCode, @FormDataParam("woodTypeCode") String woodTypeCode,
-			@FormDataParam("floorDetails") String floorDetails, @FormDataParam("surveyNumber") String surveyNumber,
-			@FormDataParam("pattaNumber") String pattaNumber, @FormDataParam("vacantLandArea") Double vacantLandArea,
-			@FormDataParam("marketValue") Double marketValue,
-			@FormDataParam("currentCapitalValue") Double currentCapitalValue,
-			@FormDataParam("completionDate") String completionDate,
-			@FormDataParam("northBoundary") String northBoundary, @FormDataParam("southBoundary") String southBoundary,
-			@FormDataParam("eastBoundary") String eastBoundary, @FormDataParam("westBoundary") String westBoundary,
-			@FormDataParam("photoAsmnt") InputStream photoAsmntStream,
-			@FormDataParam("photoAsmnt") FormDataContentDisposition photoAsmntDisp,
-			@FormDataParam("bldgPermCopy") InputStream bldgPermCopyStream,
-			@FormDataParam("bldgPermCopy") FormDataContentDisposition bldgPermCopyDisp,
-			@FormDataParam("atstdCopyPropDoc") InputStream atstdCopyPropDocStream,
-			@FormDataParam("atstdCopyPropDoc") FormDataContentDisposition atstdCopyPropDocDisp,
-			@FormDataParam("nonJudcStamp") InputStream nonJudcStampStream,
-			@FormDataParam("nonJudcStamp") FormDataContentDisposition nonJudcStampDisp,
-			@FormDataParam("afdvtBond") InputStream afdvtBondStream,
-			@FormDataParam("afdvtBond") FormDataContentDisposition afdvtBondDisp,
-			@FormDataParam("deathCertCopy") InputStream deathCertCopyStream,
-			@FormDataParam("deathCertCopy") FormDataContentDisposition deathCertCopyDisp)
-					throws JsonGenerationException, JsonMappingException, IOException, ParseException {
-		EgovThreadLocals.setUserId(Long.valueOf("38"));
-		List<FloorDetails> floorDetailsList = new ObjectMapper().readValue(floorDetails.toString(),
-				new TypeReference<Collection<FloorDetails>>() {
-				});
-		List<OwnerDetails> ownerDetailsList = new ObjectMapper().readValue(ownerDetails.toString(),
-				new TypeReference<Collection<OwnerDetails>>() {
-				});
-		List<Document> documents = propertyExternalService.getDocuments(photoAsmntStream, photoAsmntDisp,
-				bldgPermCopyStream, bldgPermCopyDisp, atstdCopyPropDocStream, atstdCopyPropDocDisp, nonJudcStampStream,
-				nonJudcStampDisp, afdvtBondStream, afdvtBondDisp, deathCertCopyStream, deathCertCopyDisp);
-		NewPropertyDetails newPropertyDetails = propertyExternalService.createNewProperty(propertyTypeMasterCode,
-				propertyCategoryCode, apartmentCmplxCode, ownerDetailsList, mutationReasonCode, extentOfSite,
-				isExtentAppurtenantLand, occupancyCertificationNo, isSuperStructure, isBuildingPlanDetails, regdDocNo,
-				regdDocDate, localityCode, street, electionWardCode, doorNo, enumerationBlockCode, pinCode,
-				isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, hasLift, hasToilet, hasWaterTap, hasElectricity,
-				hasAttachedBathroom, hasWaterHarvesting, floorTypeCode, roofTypeCode, wallTypeCode, woodTypeCode,
-				floorDetailsList, surveyNumber, pattaNumber, vacantLandArea, marketValue, currentCapitalValue,
-				completionDate, northBoundary, southBoundary, eastBoundary, westBoundary, documents);
-		return getJSONResponse(newPropertyDetails);
-	}
+    /**
+     * This method is used to create property.
+     * 
+     * @param propertyTypeMasterCode - category of ownership code
+     * @param propertyCategoryCode - property type code
+     * @param apartmentCmplxCode - apartment/complex code
+     * @param ownerDetails - a list of owner details
+     * @param mutationReasonCode - reason for creation or mutation code
+     * @param extentOfSite - extent of site
+     * @param isExtentAppurtenantLand - extent appurtenant land
+     * @param occupancyCertificationNo - occupancy certification number
+     * @param isSuperStructure - super structure
+     * @param isBuildingPlanDetails - building plan details
+     * @param regdDocNo - registration document number
+     * @param regdDocDate - registration document date
+     * @param localityCode - locality code
+     * @param street - street name
+     * @param electionWardCode - election ward code
+     * @param doorNo - door number
+     * @param enumerationBlockCode - enumeration block code
+     * @param pinCode - pin code
+     * @param isCorrAddrDiff - is correspondence address different
+     * @param corrAddr1 - correspondence address 1
+     * @param corrAddr2 - correspondence address 2
+     * @param corrPinCode - correspondence address pin code
+     * @param hasLift - has lift
+     * @param hasToilet - has toilet
+     * @param hasWaterTap - has water tap
+     * @param hasElectricity - has electricity
+     * @param hasAttachedBathroom - has attached bathroom
+     * @param hasWaterHarvesting - has water harvesting
+     * @param floorTypeCode - floor type code
+     * @param roofTypeCode - roof type code
+     * @param wallTypeCode - wall type code
+     * @param woodTypeCode - wood type code
+     * @param floorDetails - a list of floor details
+     * @param surveyNumber - survey number
+     * @param pattaNumber - patta number
+     * @param vacantLandArea - vacant land area value
+     * @param marketValue - market value
+     * @param currentCapitalValue - current capital value
+     * @param completionDate - date of completion
+     * @param northBoundary - north boundary
+     * @param southBoundary - south boundary
+     * @param eastBoundary - east boundary
+     * @param westBoundary - west boundary
+     * @param photoAsmntStream- photo of assessment input stream object
+     * @param photoAsmntDisp- photo of assessment content disposition object
+     * @param bldgPermCopyStream- building permission copy input stream object
+     * @param bldgPermCopyDisp- building permission copy content disposition object
+     * @param atstdCopyPropDocStream- attested copy of property document input stream object
+     * @param atstdCopyPropDocDisp- attested copy of property document content disposition
+     * @param nonJudcStampStream - non judicial stamp input stream object
+     * @param nonJudcStampDisp - non judicial stamp content disposition object
+     * @param afdvtBondStream - affidavit bond paper input stream object
+     * @param afdvtBondDisp - affidavit bond paper content disposition object
+     * @param deathCertCopyStream - death certificate copy input stream object
+     * @param deathCertCopyDisp - death certificate copy content disposition object
+     * 
+     * @return - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     * @throws ParseException
+     */
+    @RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes=MediaType.MULTIPART_FORM_DATA, produces = MediaType.APPLICATION_JSON)
+    public String createProperty(@FormDataParam("propertyTypeMasterCode") String propertyTypeMasterCode,
+            @FormDataParam("propertyCategoryCode") String propertyCategoryCode,
+            @FormDataParam("apartmentCmplxCode") String apartmentCmplxCode,
+            @FormDataParam("ownerDetails") String ownerDetails,
+            @FormDataParam("mutationReasonCode") String mutationReasonCode,
+            @FormDataParam("extentOfSite") String extentOfSite,
+            @FormDataParam("isExtentAppurtenantLand") String isExtentAppurtenantLand,
+            @FormDataParam("occupancyCertificationNo") String occupancyCertificationNo,
+            @FormDataParam("isSuperStructure") Boolean isSuperStructure,
+            @FormDataParam("isBuildingPlanDetails") Boolean isBuildingPlanDetails,
+            @FormDataParam("regdDocNo") String regdDocNo, @FormDataParam("regdDocDate") String regdDocDate,
+            @FormDataParam("localityCode") String localityCode, @FormDataParam("street") String street,
+            @FormDataParam("electionWardCode") String electionWardCode, @FormDataParam("doorNo") String doorNo,
+            @FormDataParam("enumerationBlockCode") String enumerationBlockCode,
+            @FormDataParam("pinCode") String pinCode, @FormDataParam("isCorrAddrDiff") Boolean isCorrAddrDiff,
+            @FormDataParam("corrAddr1") String corrAddr1, @FormDataParam("corrAddr2") String corrAddr2,
+            @FormDataParam("corrPinCode") String corrPinCode, @FormDataParam("hasLift") Boolean hasLift,
+            @FormDataParam("hasToilet") Boolean hasToilet, @FormDataParam("hasWaterTap") Boolean hasWaterTap,
+            @FormDataParam("hasElectricity") Boolean hasElectricity,
+            @FormDataParam("hasAttachedBathroom") String hasAttachedBathroom,
+            @FormDataParam("hasWaterHarvesting") String hasWaterHarvesting,
+            @FormDataParam("floorTypeCode") String floorTypeCode, @FormDataParam("roofTypeCode") String roofTypeCode,
+            @FormDataParam("wallTypeCode") String wallTypeCode, @FormDataParam("woodTypeCode") String woodTypeCode,
+            @FormDataParam("floorDetails") String floorDetails, @FormDataParam("surveyNumber") String surveyNumber,
+            @FormDataParam("pattaNumber") String pattaNumber, @FormDataParam("vacantLandArea") Double vacantLandArea,
+            @FormDataParam("marketValue") Double marketValue,
+            @FormDataParam("currentCapitalValue") Double currentCapitalValue,
+            @FormDataParam("completionDate") String completionDate,
+            @FormDataParam("northBoundary") String northBoundary, @FormDataParam("southBoundary") String southBoundary,
+            @FormDataParam("eastBoundary") String eastBoundary, @FormDataParam("westBoundary") String westBoundary,
+            @FormDataParam("photoAsmnt") InputStream photoAsmntStream,
+            @FormDataParam("photoAsmnt") FormDataContentDisposition photoAsmntDisp,
+            @FormDataParam("bldgPermCopy") InputStream bldgPermCopyStream,
+            @FormDataParam("bldgPermCopy") FormDataContentDisposition bldgPermCopyDisp,
+            @FormDataParam("atstdCopyPropDoc") InputStream atstdCopyPropDocStream,
+            @FormDataParam("atstdCopyPropDoc") FormDataContentDisposition atstdCopyPropDocDisp,
+            @FormDataParam("nonJudcStamp") InputStream nonJudcStampStream,
+            @FormDataParam("nonJudcStamp") FormDataContentDisposition nonJudcStampDisp,
+            @FormDataParam("afdvtBond") InputStream afdvtBondStream,
+            @FormDataParam("afdvtBond") FormDataContentDisposition afdvtBondDisp,
+            @FormDataParam("deathCertCopy") InputStream deathCertCopyStream,
+            @FormDataParam("deathCertCopy") FormDataContentDisposition deathCertCopyDisp)
+            throws JsonGenerationException, JsonMappingException, IOException, ParseException {
+        EgovThreadLocals.setUserId(Long.valueOf("38"));
+        List<FloorDetails> floorDetailsList = new ObjectMapper().readValue(floorDetails.toString(),
+                new TypeReference<Collection<FloorDetails>>() {
+                });
+        List<OwnerDetails> ownerDetailsList = new ObjectMapper().readValue(ownerDetails.toString(),
+                new TypeReference<Collection<OwnerDetails>>() {
+                });
+        List<Document> documents = propertyExternalService.getDocuments(photoAsmntStream, photoAsmntDisp,
+                bldgPermCopyStream, bldgPermCopyDisp, atstdCopyPropDocStream, atstdCopyPropDocDisp, nonJudcStampStream,
+                nonJudcStampDisp, afdvtBondStream, afdvtBondDisp, deathCertCopyStream, deathCertCopyDisp);
+        NewPropertyDetails newPropertyDetails = propertyExternalService.createNewProperty(propertyTypeMasterCode,
+                propertyCategoryCode, apartmentCmplxCode, ownerDetailsList, mutationReasonCode, extentOfSite,
+                isExtentAppurtenantLand, occupancyCertificationNo, isSuperStructure, isBuildingPlanDetails, regdDocNo,
+                regdDocDate, localityCode, street, electionWardCode, doorNo, enumerationBlockCode, pinCode,
+                isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, hasLift, hasToilet, hasWaterTap, hasElectricity,
+                hasAttachedBathroom, hasWaterHarvesting, floorTypeCode, roofTypeCode, wallTypeCode, woodTypeCode,
+                floorDetailsList, surveyNumber, pattaNumber, vacantLandArea, marketValue, currentCapitalValue,
+                completionDate, northBoundary, southBoundary, eastBoundary, westBoundary, documents);
+        return getJSONResponse(newPropertyDetails);
+    }
 
-	/**
-	 * This method is used to prepare jSON response.
-	 * 
-	 * @param obj
-	 *            - a POJO object
-	 * @return jsonResponse - JSON response string
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	private String getJSONResponse(Object obj) throws JsonGenerationException, JsonMappingException, IOException {
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
-		String jsonResponse = objectMapper.writeValueAsString(obj);
-		return jsonResponse;
-	}
+    /**
+     * This method is used to prepare jSON response.
+     * 
+     * @param obj - a POJO object
+     * @return jsonResponse - JSON response string
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    private String getJSONResponse(Object obj) throws JsonGenerationException, JsonMappingException, IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
+        String jsonResponse = objectMapper.writeValueAsString(obj);
+        return jsonResponse;
+    }
 
-	/**
-	 * This method is used to get the error details for invalid credentials.
-	 * 
-	 * @return
-	 */
-	private ErrorDetails getInvalidCredentialsErrorDetails() {
-		ErrorDetails errorDetails = new ErrorDetails();
-		errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_INVALIDCREDENTIALS);
-		errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_INVALIDCREDENTIALS);
-		return errorDetails;
-	}
+    /**
+     * This method is used to get the error details for invalid credentials.
+     * 
+     * @return
+     */
+    private ErrorDetails getInvalidCredentialsErrorDetails() {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_INVALIDCREDENTIALS);
+        errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_INVALIDCREDENTIALS);
+        return errorDetails;
+    }
 
-	/**
-	 * This method is used to get the error details for communication failure.
-	 * 
-	 * @return
-	 */
-	private ErrorDetails getRequestFailedErrorDetails() {
-		ErrorDetails errorDetails = new ErrorDetails();
-		errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_COMMUNICATION_FAILURE);
-		errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_COMMUNICATION_FAILURE);
-		return errorDetails;
-	}
+    /**
+     * This method is used to get the error details for communication failure.
+     * 
+     * @return
+     */
+    private ErrorDetails getRequestFailedErrorDetails() {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_COMMUNICATION_FAILURE);
+        errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_COMMUNICATION_FAILURE);
+        return errorDetails;
+    }
 
 }
