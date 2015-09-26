@@ -541,13 +541,9 @@ INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmod
 
 ---------------------END-----------------------------
 
+drop sequence seq_eg_user;
+create sequence seq_eg_user start with 70;
 
 
 
 
-INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (384, 'EIS', true, 'eis', NULL, 'EIS', 2);
-INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (385, 'EIS Masters', true, 'eis', 384, 'Masters', 1);
-INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (386, 'Employee', true, 'eis', 385, 'Employee', 1);
-INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (387, 'Designation', true, 'eis', 385, 'Designation', 2);
-INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (388, 'Position', true, 'eis', 385, 'Position', 3);
-INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (398, 'EIS-COMMON', false, 'eis', 384, 'EIS-COMMON', NULL);

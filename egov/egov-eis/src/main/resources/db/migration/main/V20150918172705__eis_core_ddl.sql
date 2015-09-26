@@ -378,3 +378,76 @@ CREATE VIEW view_egeis_employee AS
      JOIN egeis_assignment ea ON (((ea.employee)::numeric = ee.id)));
 -----------------END---------------  
 
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (384, 'EIS', true, 'eis', NULL, 'EIS', 2);
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (385, 'EIS Masters', true, 'eis', 384, 'Masters', 1);
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (386, 'Employee', true, 'eis', 385, 'Employee', 1);
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (387, 'Designation', true, 'eis', 385, 'Designation', 2);
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (388, 'Position', true, 'eis', 385, 'Position', 3);
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (398, 'EIS-COMMON', false, 'eis', 384, 'EIS-COMMON', NULL);
+
+insert into eg_action values(nextval('seq_eg_action'),'EmpDesigAutoComplete','/employee/ajax/designations','',(select id from eg_module where name='Employee'),null,'EmpDesigAutoComplete',false,'eis',0,1,'2015-08-17 15:37:16.114851',1,'2015-08-17 15:37:16.114851',384);
+insert into eg_action values(nextval('seq_eg_action'),'EmpPosAutoComplete','/employee/ajax/positions','',(select id from eg_module where name='Employee'),null,'EmpPosAutoComplete',false,'eis',0,1,'2015-08-17 15:37:16.114851',1,'2015-08-17 15:37:16.114851',384);
+insert into eg_action values(nextval('seq_eg_action'),'Search Employee','/employee/search','',(select id from eg_module where name='Employee'),1,'Update/View',true,'eis',0,1,'2015-08-17 15:37:16.114851',1,'2015-08-17 15:37:16.114851',384);
+
+
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='EmpDesigAutoComplete'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='EmpPosAutoComplete'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Search Employee'));
+
+
+
+insert into eg_action values(nextval('seq_eg_action'),'EmpMaster','/employeeMaster/employeeMaster-newForm.action',null,(select id from eg_module where name='EIS-COMMON'),4,'New Emp Create',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+insert into eg_action values(nextval('seq_eg_action'),'Create Designation','/designation/create',null,(select id from eg_module where name='Designation'),null,'Create',true,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+insert into eg_action values(nextval('seq_eg_action'),'View Designation','/designation/view',null,(select id from eg_module where name='Designation'),null,'View',true,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+insert into eg_action values(nextval('seq_eg_action'),'Create Employee','/employee/create',null,(select id from eg_module where name='Employee'),null,'Create',true,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+insert into eg_action values(nextval('seq_eg_action'),'Search Position','/position/search',null,(select id from eg_module where name='Position'),null,'Search',true,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+insert into eg_action values(nextval('seq_eg_action'),'Create Position','/position/create',null,(select id from eg_module where name='Position'),null,'Create',true,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+insert into eg_action values(nextval('seq_eg_action'),'Update Designation','/designation/update',null,(select id from eg_module where name='Designation'),null,'Update',true,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+insert into eg_action values(nextval('seq_eg_action'),'load designation','/designation/ajax/result',null,(select id from eg_module where name='Designation'),null,'load designation',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+insert into eg_action values(nextval('seq_eg_action'),'Ajax Call in Search Position','/position/resultList-update',null,(select id from eg_module where name='Position'),null,'Create',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='EmpMaster'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Create Designation'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='View Designation'));
+
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Create Employee'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Search Position'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Create Position'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Update Designation'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='load designation'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Ajax Call in Search Position'));
+
+insert into eg_action values(nextval('seq_eg_action'),'Update Position','/position/position-update',null,388,null,'Create',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+insert into eg_action values(nextval('seq_eg_action'),'getAllDesigAjax','/common/employeeSearch-getAllDesignations.action',null,398,null,'getAllDesigAjax',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+insert into eg_action values(nextval('seq_eg_action'),'getAllUnmappedUsers','/common/employeeSearch-getAllUnmappedUsers.action',null,398,null,'getAllUnmappedUsers',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+insert into eg_action values(nextval('seq_eg_action'),'getPositionsForAssignment','/common/employeeSearch-getPositionsForDeptDesig.action',null,398,null,'getPositionsForAssignment',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+insert into eg_action values(nextval('seq_eg_action'),'empMasterSave','/common/employeeSearch-save.action',null,398,null,'empMasterSave',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+insert into eg_action values(nextval('seq_eg_action'),'Update Employee','/employee/update',null,(select id from eg_module where name='Employee'),null,'Update',false,'eis',0,1,'2015-08-17 15:37:16.114851',1,'2015-08-17 15:37:16.114851',384);
+insert into eg_action values(nextval('seq_eg_action'),'View Employee','/employee/view',null,(select id from eg_module where name='Employee'),null,'View',false,'eis',0,1,'2015-08-17 15:37:16.114851',1,'2015-08-17 15:37:16.114851',384);
+
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Update Position'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='getAllDesigAjax'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='getAllUnmappedUsers'));
+
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='getPositionsForAssignment'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='empMasterSave'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Update Employee'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='View Employee'));
+
+
+insert into eg_action values(nextval('seq_eg_action'),'EmpSearchAjax','/employee/ajax/employees','',(select id from eg_module where name='Employee'),null,'EmpSearchAjax',false,'eis',0,1,'2015-08-17 15:37:17.518114',1,'2015-08-17 15:37:17.518114',384);
+insert into eg_action values(nextval('seq_eg_action'),'empMasterModify','/common/employeeSearch-loadEmployee.action','mode=Modify&empId=',398,null,'empMasterModify',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+insert into eg_action values(nextval('seq_eg_action'),'empMasterView','/common/employeeSearch-loadEmployee.action','mode=View&empId=',398,null,'empMasterView',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+insert into eg_action values(nextval('seq_eg_action'),'empCodeUniqueCheck','/employeeMaster/employeeMaster-checkEmpCodeForUniqueness.action','',398,null,'empCodeUniqueCheck',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+insert into eg_action values(nextval('seq_eg_action'),'panNoUniqueCheck','/employeeMaster/employeeMaster-checkPanNoForUniqueness.action','',398,null,'panNoUniqueCheck',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+
+
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='EmpSearchAjax'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='empMasterModify'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='empMasterView'));
+
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='empCodeUniqueCheck'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='panNoUniqueCheck'));
+
+update eg_action set queryparams=null where queryparams='';
+----------------------------
