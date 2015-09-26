@@ -37,10 +37,14 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.api.model;
+package org.egov.wtms.elasticSearch.entity;
 
 import static org.egov.search.domain.Filter.queryStringFilter;
+import static org.egov.search.domain.Filter.rangeFilter;
+import static org.egov.search.domain.Filter.termsStringFilter;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,14 +52,66 @@ import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
 import org.jboss.logging.Logger;
 
-public class ConnectionSearchRequest {
+public class ApplicationSearchRequest {
     private String searchText;
+    private String moduleName;
+    private String applicationType;
+    private String applicationNumber;
     private String consumerCode;
     private String applicantName;
-    private String locality;
     private String mobileNumber;
+    private String fromDate;
+    private String toDate;
+    SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
 
-    private static final Logger logger = Logger.getLogger(ConnectionSearchRequest.class);
+    private static final Logger logger = Logger.getLogger(ApplicationSearchRequest.class);
+
+    public void setFromDate(final String fromDate) {
+        if (null != fromDate)
+            try {
+                if (logger.isDebugEnabled())
+                    logger.debug("Date Range From start.. :" + ft.format(dtft.parse(fromDate)));
+                this.fromDate = ft.format(dtft.parse(fromDate));
+            } catch (final ParseException e) {
+                e.printStackTrace();
+            }
+    }
+
+    public void setToDate(final String toDate) {
+        if (null != toDate)
+            try {
+                if (logger.isDebugEnabled())
+                    logger.debug("Date Range Till .. :" + ft.format(dtft.parse(toDate)));
+                this.toDate = ft.format(dtft.parse(toDate));
+            } catch (final ParseException e) {
+                e.printStackTrace();
+            }
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(final String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    public String getApplicationType() {
+        return applicationType;
+    }
+
+    public void setApplicationType(final String applicationType) {
+        this.applicationType = applicationType;
+    }
+
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
+
+    public void setApplicationNumber(final String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
 
     public String getConsumerCode() {
         return consumerCode;
@@ -73,14 +129,6 @@ public class ConnectionSearchRequest {
         this.applicantName = applicantName;
     }
 
-    public String getLocality() {
-        return locality;
-    }
-
-    public void setLocality(final String locality) {
-        this.locality = locality;
-    }
-
     public String getMobileNumber() {
         return mobileNumber;
     }
@@ -89,8 +137,12 @@ public class ConnectionSearchRequest {
         this.mobileNumber = mobileNumber;
     }
 
-    public String getSearchText() {
-        return searchText;
+    public String getFromDate() {
+        return fromDate;
+    }
+
+    public String getToDate() {
+        return toDate;
     }
 
     public void setSearchText(final String searchText) {
@@ -98,13 +150,17 @@ public class ConnectionSearchRequest {
     }
 
     public Filters searchFilters() {
-        final List<Filter> andFilters = new ArrayList<>();
-        andFilters.add(queryStringFilter("searchable.consumername", applicantName));
-        andFilters.add(queryStringFilter("clauses.consumercode", consumerCode));
-        andFilters.add(queryStringFilter("searchable.locality", locality));
-        andFilters.add(queryStringFilter("clauses.mobilenumber", mobileNumber));
+        final List<Filter> andFilters = new ArrayList<>(0);
+        andFilters.add(queryStringFilter("searchable.applicationnumber", applicationNumber));
+        andFilters.add(termsStringFilter("clauses.modulename", moduleName));
+        andFilters.add(termsStringFilter("clauses.applicationtype", applicationType));
+        andFilters.add(queryStringFilter("searchable.applicantname", applicantName));
+        andFilters.add(queryStringFilter("searchable.consumercode", consumerCode));
+        andFilters.add(queryStringFilter("searchable.mobilenumber", mobileNumber));
+        andFilters.add(rangeFilter("searchable.applicationdate", fromDate, toDate));
         if (logger.isDebugEnabled())
             logger.debug("finished filters");
+        logger.info("$$$$$$$$$$$$$$$$ Filters : " + andFilters);
         return Filters.withAndFilters(andFilters);
     }
 

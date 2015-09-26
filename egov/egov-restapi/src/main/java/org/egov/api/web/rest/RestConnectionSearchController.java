@@ -41,13 +41,13 @@ package org.egov.api.web.rest;
 
 import static java.util.Arrays.asList;
 
-import org.egov.api.model.ConnectionSearchRequest;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.search.domain.Page;
 import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
+import org.egov.wtms.elasticSearch.entity.ConnectionSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

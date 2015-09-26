@@ -47,7 +47,7 @@ import org.egov.search.domain.Page;
 import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
-import org.egov.wtms.web.contract.ConnectionSearchRequest;
+import org.egov.wtms.elasticSearch.entity.ConnectionSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
