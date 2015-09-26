@@ -65,7 +65,9 @@ public class HoardingService {
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-
+    @Autowired
+    private AdvertisementDemandService advertisementDemandService;
+    
     @Autowired
     public HoardingService(final HoardingRepository hoardingRepository) {
         this.hoardingRepository = hoardingRepository;
@@ -73,6 +75,11 @@ public class HoardingService {
 
     @Transactional
     public Hoarding createHoarding(final Hoarding hoarding) {
+        
+        if(hoarding!=null && hoarding.getId()==null)
+            hoarding.setDemandId(advertisementDemandService.createDemand(hoarding));
+        
+        
         return hoardingRepository.save(hoarding);
     }
 

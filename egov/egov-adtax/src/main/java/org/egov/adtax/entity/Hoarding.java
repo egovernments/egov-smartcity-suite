@@ -197,8 +197,8 @@ public class Hoarding extends AbstractAuditable {
     @Enumerated(EnumType.ORDINAL)
     private HoardingDuration advertisementDuration;
 
-    @ManyToOne
-    @JoinColumn(name = "demandid", nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "demandid", nullable = false)
     private EgDemand demandId;
 
     private double longitude;

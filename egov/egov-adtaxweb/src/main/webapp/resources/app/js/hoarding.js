@@ -36,9 +36,24 @@ $(document).ready(function(){
        console.log('came');
        $(this).parent().before('<div class="col-sm-3 add-margin"> <input type="file" class="form-control" required> </div>');
    });
-
+   
+   $('#measurement').change(function(){
+	   calculateTax();
+	});
+   $('#subCategory').change(function(){
+	   calculateTax();
+	});
+   $('#unitOfMeasure').change(function(){
+	   calculateTax();
+	});
+   $('#rateClass').change(function(){
+	   calculateTax();
+	});
+  
+   
    $('#category').change(function(){
-		if (this.value === '') {
+	   
+	   if (this.value === '') {
 			return;
 		} else {
 			$.ajax({
@@ -126,6 +141,7 @@ $(document).ready(function(){
 	   });
    });
    
+  
    function format_lat_long(latorlong) {
 		var loc_arry = latorlong.split(",");
 		var degree= parseFloat(loc_arry[0]);
@@ -135,6 +151,35 @@ $(document).ready(function(){
 		
 		return formatted;
 	}
+   
+   function calculateTax()
+   {
+	      
+	   if ($('#rateClass').val() === '' || $('#unitOfMeasure').val() === '' ||  $('#subCategory').val() === '' || $('#measurement').val() === '') {
+			return;
+		} else {
+		
+		//	alert('All fields are entered');	
+			$.ajax({
+				type: "GET",
+				url: "calculateTaxAmount",
+				cache: true,
+				dataType: "json",
+				data:{
+					'unitOfMeasureId' : $('#unitOfMeasure').val(),
+					'measurement' : $('#measurement').val(),
+					'subCategoryId' : $('#subCategory').val(),
+					'rateClassId' : $('#rateClass').val()
+					}
+			}).done(function(value) {
+				//alert(value);
+				$('#taxAmount').val(value); 
+			
+			});
+		}
+	
+   }
+   
    $('#category').trigger('change');
    $('#adminBoundryParent').trigger('change');
    $('#revenueBoundryParent').trigger('change');

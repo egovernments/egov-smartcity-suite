@@ -13,10 +13,9 @@ import org.egov.adtax.entity.AdvertisementRatesDetails;
 import org.egov.adtax.entity.HoardingCategory;
 import org.egov.adtax.entity.RatesClass;
 import org.egov.adtax.entity.UnitOfMeasure;
-import org.egov.adtax.repository.AdvertisementRateDetailRepository;
+import org.egov.adtax.service.AdvertisementRateService;
 import org.egov.adtax.service.HoardingCategoryService;
 import org.egov.adtax.service.RatesClassService;
-import org.egov.adtax.service.AdvertisementRateService;
 import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.service.UnitOfMeasureService;
 import org.slf4j.Logger;
@@ -39,9 +38,6 @@ public class ScheduleOfRateController {
 
     @Autowired
     private AdvertisementRateService advertisementRateService;
-
-    @Autowired
-    private AdvertisementRateDetailRepository advertisementRateDetailRepository;
 
     @Autowired
     private HoardingCategoryService hoardingCategoryService;
@@ -87,14 +83,14 @@ public class ScheduleOfRateController {
      * @return
      */
     @RequestMapping(value = "/search", method = POST)
-    public String create(@Valid @ModelAttribute AdvertisementRate rate, final BindingResult errors,
+    public String searchForm (@Valid @ModelAttribute AdvertisementRate rate, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model) {
         List<AdvertisementRatesDetails> advertisementRatesDetails = new ArrayList<AdvertisementRatesDetails>();
        
         if (validateScheduleOfRateSearch(rate, model))
             return "scheduleOfRate-form";
 
-        advertisementRatesDetails = advertisementRateDetailRepository
+        advertisementRatesDetails = advertisementRateService
                 .findScheduleOfRateDetailsByCategorySubcategoryUomAndClass(rate.getCategory(), rate.getSubCategory(),
                         rate.getUnitofmeasure(), rate.getClasstype());
 
@@ -118,7 +114,7 @@ public class ScheduleOfRateController {
      * @return
      */
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String searchForm(@ModelAttribute AdvertisementRate rate, final RedirectAttributes redirectAttrs,
+    public String create(@ModelAttribute AdvertisementRate rate, final RedirectAttributes redirectAttrs,
             final Model model) {
 
         AdvertisementRate existingRateobject = null;

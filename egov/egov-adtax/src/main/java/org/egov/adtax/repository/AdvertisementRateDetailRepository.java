@@ -61,5 +61,9 @@ public interface AdvertisementRateDetailRepository extends JpaRepository<Adverti
    Double getAmountByCategorySubcategoryUomAndClass(@Param("category") HoardingCategory category,
             @Param("subCategory") SubCategory subCategory, @Param("uom") UnitOfMeasure unitOfMeasure, @Param("ratesClass") RatesClass ratesClass
             , @Param("units") Double units);
+   
+    @Query("select A.amount from AdvertisementRatesDetails A where  A.unitFrom < :units and A.unitTo >= :units  and A.advertisementRate.classtype.id=:ratesClass and A.advertisementRate.unitofmeasure.id=:uom and A.advertisementRate.subCategory.id=:subCategory and A.advertisementRate.active=true")
+    Double getAmountBySubcategoryUomClassAndMeasurement(  @Param("units") Double measurement,   @Param("subCategory")  Long subCategoryId,  @Param("uom") Long unitOfMeasureId,
+            @Param("ratesClass") Long rateClassId);
 
 }

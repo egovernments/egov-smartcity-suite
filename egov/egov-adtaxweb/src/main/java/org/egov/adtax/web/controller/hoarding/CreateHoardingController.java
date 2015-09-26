@@ -42,6 +42,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -54,6 +55,7 @@ import org.egov.adtax.entity.RatesClass;
 import org.egov.adtax.entity.RevenueInspector;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.UnitOfMeasure;
+import org.egov.adtax.service.AdvertisementRateService;
 import org.egov.adtax.service.HoardingCategoryService;
 import org.egov.adtax.service.HoardingDocumentTypeService;
 import org.egov.adtax.service.HoardingService;
@@ -94,6 +96,8 @@ public class CreateHoardingController {
     private @Autowired FileStoreUtils fileStoreUtils;
 
     private @Autowired BoundaryService boundaryService;
+
+    private @Autowired AdvertisementRateService advertisementRateService;
 
     @ModelAttribute
     public Hoarding hoarding() {
@@ -139,7 +143,20 @@ public class CreateHoardingController {
     public @ResponseBody List<Boundary> childBoundaries(@RequestParam final Long parentBoundaryId) {
         return boundaryService.getActiveChildBoundariesByBoundaryId(parentBoundaryId);
     }
-
+    
+    
+    @RequestMapping(value = "calculateTaxAmount", method = GET, produces = APPLICATION_JSON_VALUE)
+    public @ResponseBody Double getTaxAmount(@RequestParam final Long unitOfMeasureId,
+            @RequestParam final Double measurement,
+            @RequestParam final Long subCategoryId,
+            @RequestParam final Long rateClassId) {
+        Double rate = Double.valueOf(0);
+        rate= advertisementRateService.getAmountBySubcategoryUomClassAndMeasurement(subCategoryId, unitOfMeasureId, rateClassId, measurement);
+        if(rate==null) return Double.valueOf(0);      
+        //TODO MULTIPLY WITH MEASUREMENT TO GET TOTAL AMOUNT. 
+        return (BigDecimal.valueOf(rate).multiply(BigDecimal.valueOf(measurement)).setScale(2, BigDecimal.ROUND_HALF_UP)).doubleValue();
+    }
+    
     @RequestMapping(value = "subcategories", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<SubCategory> hoardingSubcategories(@RequestParam final Long categoryId) {
         return subCategoryService.getAllActiveSubCategoryByCategoryId(categoryId);

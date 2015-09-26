@@ -105,6 +105,17 @@ public class AdvertisementRateService {
 
         return rate;
     }
+
+    public Double getAmountBySubcategoryUomClassAndMeasurement(Long subCategoryId, Long unitOfMeasureId,
+            Long rateClassId, Double measurement) {
+        Double rate = Double.valueOf(0);
+
+        if (measurement != null && subCategoryId != null && unitOfMeasureId != null && rateClassId != null )
+            rate = rateDetailRepository.getAmountBySubcategoryUomClassAndMeasurement(measurement, subCategoryId, unitOfMeasureId,
+                    rateClassId);
+        if(rate==null) return Double.valueOf(0);
+        return rate;
+    }
     
 
 }
