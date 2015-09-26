@@ -193,6 +193,8 @@ update egf_accountcode_purpose set id = 11 where name = 'Fixed Assets';
 update egf_accountcode_purpose set id = 15 where name = 'Accumulated Depreciation';
 update egf_accountcode_purpose set id = 17 where name = 'Depreciation Expense Account';
 update egf_accountcode_purpose set id = 18 where name = 'Revaluation Reserve Account';
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values 
+(121,'Cash In Transit',current_date,1,current_date,1);
 ------------------------END-------------------
 -----------------START-----------------------------------
 INSERT INTO EGF_INSTRUMENTTYPE (ID,TYPE,ISACTIVE,CREATEDBY,LASTMODIFIEDBY,CREATEDDATE,LASTMODIFIEDDATE) values (nextval('SEQ_EGF_INSTRUMENTTYPE'),'cash','1',1,1, current_timestamp, current_timestamp);
