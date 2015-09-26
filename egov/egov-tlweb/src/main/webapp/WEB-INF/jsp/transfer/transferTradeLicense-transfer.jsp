@@ -44,14 +44,20 @@
 <sx:head />
 <script>
 		  	function validateForm(obj) {
-			    if (validateApprover(obj) == false) {
+			    if (validateForm_transferTradeLicense() == false) {
 			      return false;
 			    } else {
 			      clearWaterMark();
-			      return true;
+			      onSubmit();
 			    }
 			  }
-		
+
+		  	function clearWaterMark(){
+				if(document.getElementById('applicationDate') && document.getElementById('applicationDate').value=='dd/MM/yyyy') {
+					document.getElementById('applicationDate').value = '';
+				}				
+			}
+			
 			function checkLength(obj,val){
 				if(obj.value.length>val) {
 					alert('Max '+val+' digits allowed')
@@ -60,7 +66,7 @@
 			}	
 
 			function onSubmit() {
-        		document.forms[0].action = 'transferTradeLicense-create';
+        		document.forms[0].action = 'transferTradeLicense-create.action';
         		document.forms[0].submit;
         	}
 			
@@ -79,8 +85,9 @@
 								</div>
 								<table>
 									<tr>
-										<td align="left" style="color: #FF0000"><s:actionerror
-												cssStyle="color: #FF0000" /> <s:fielderror /> <s:actionmessage />
+										<td align="left" style="color: #FF0000">
+											<s:actionerror cssStyle="color: #FF0000" />
+											<s:actionmessage />
 										</td>
 									</tr>
 								</table>
@@ -88,6 +95,7 @@
 									name="registrationForm" validate="true">
 									<s:token />
 									<s:push value="model">
+										<s:hidden name="id"/>
 										<c:set var="trclass" value="greybox" />
 										<table border="0" cellpadding="0" cellspacing="0" width="100%">
 											<tbody>
@@ -226,7 +234,7 @@
 																onChange="setupLicenseeAjaxDivision(this);" /> <egov:ajaxdropdown
 																id="populateLicenseeDivision" fields="['Text','Value']"
 																dropdownId='licenseedivision'
-																url='domain/commonAjax-populateDivisions.action' /></td>
+																url='domain/commonTradeLicenseAjax-populateDivisions.action' /></td>
 														<td class="<c:out value="${trclass}"/>"><s:text
 																name="license.division" /></td>
 														<td class="<c:out value="${trclass}"/>"><s:select
@@ -288,13 +296,11 @@
 															name='license.housenumber' /> <span class="mandatory1">*</span>
 													</td>
 													<td class="<c:out value="${trclass}"/>"><s:textfield
-															name="licenseTransfer.oldAddress.houseNo"
-															value="%{licensee.address.houseNo}" maxlength="10" /></td>
-													<td class="<c:out value="${trclass}"/>"><s:text
-															name='license.housenumber.old' /></td>
-													<td class="<c:out value="${trclass}"/>">
-														<s:textfield name="licenseTransfer.oldAddress.streetAddress2" maxlength="10" value="%{licensee.address.streetAddress2}"/></td>
-												</tr>
+															name="licenseTransfer.oldAddress.houseNoBldgApt"
+															value="%{licensee.address.houseNoBldgApt}" maxlength="10" /></td>
+													<td class="<c:out value="${trclass}"/>" colspan="2">
+														&nbsp;
+													</td>
 												<c:choose>
 													<c:when test="${trclass=='greybox'}">
 														<c:set var="trclass" value="bluebox" />
@@ -308,8 +314,8 @@
 													<td class="<c:out value="${trclass}"/>"><s:text
 															name='license.remainingaddress' /></td>
 													<td class="<c:out value="${trclass}"/>" colspan="3"><s:textarea
-															name="licenseTransfer.oldAddress.streetAddress1"
-															value="%{licensee.address.streetAddress1}" rows="3"
+															name="licenseTransfer.oldAddress.streetRoadLine"
+															value="%{licensee.address.streetRoadLine}" rows="3"
 															cols="40" maxlength="500" /></td>
 												</tr>
 												<c:choose>
@@ -388,29 +394,29 @@
 															name="licenseTransfer.oldUid" value="%{licensee.uid}"
 															onBlur="checkLength(this,12)" maxlength="12" /></td>
 												</tr>
-												<tr>
+												<%-- <tr>
 													<td colspan="5">
 														<%@ include file='../common/commonWorkflowMatrix.jsp'%>
 														<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
 													</td>
-												</tr>
+												</tr> --%>
 											</tbody>
 										</table>
 
 										<div class="mandatory1" style="font-size: 11px;" align="left">
 											* Mandatory Fields</div>
-										<%-- <div>
+										<div>
 											<table>
 												<tr class="buttonbottom" id="buttondiv"
 													style="align: middle">
-													<s:if test="%{roleName.contains('TLAPPROVER')}">
+													<%-- <s:if test="%{roleName.contains('TLAPPROVER')}">
 													<td><s:submit cssClass="buttonsubmit" value="Approve"
 															id="Approve" method="create"
 															onclick="return validateForm(this);" /></td>
 															</s:if>
 													<td><s:submit cssClass="buttonsubmit" value="Forward"
 															id="Forward" method="create"
-															onclick="return validateForm(this);" /></td>
+															onclick="return validateForm(this);" /></td> --%>
 													<td><s:submit type="submit" cssClass="buttonsubmit"
 															value="Save" id="Save" method="create"
 															onclick="return validateForm(this);" /></td>
@@ -419,7 +425,7 @@
 														class="button" /></td>
 												</tr>
 											</table>
-										</div> --%>
+										</div>
 									</s:push>
 								</s:form>
 							</div>

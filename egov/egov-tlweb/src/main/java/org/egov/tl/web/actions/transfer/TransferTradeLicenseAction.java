@@ -81,15 +81,15 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @RequiredFieldValidator(fieldName = "licenseTransfer.oldApplicantName", message = "", key = Constants.REQUIRED),
         @RequiredFieldValidator(fieldName = "licenseTransfer.oldApplicationDate", message = "", key = Constants.REQUIRED),
         @RequiredFieldValidator(fieldName = "licenseTransfer.oldNameOfEstablishment", message = "", key = Constants.REQUIRED),
-        @RequiredFieldValidator(fieldName = "licenseTransfer.oldAddress.houseNo", message = "", key = Constants.REQUIRED),
+        /*@RequiredFieldValidator(fieldName = "licenseTransfer.oldAddress.houseNoBldgApt", message = "", key = Constants.REQUIRED),*/
         @RequiredFieldValidator(fieldName = "licenseeZoneId", message = "", key = Constants.REQUIRED) },
 
         emails = { @EmailValidator(message = "Please enter the valid Email Id", fieldName = "licenseTransfer.oldEmailId", key = "Please enter the valid Email Id") }, stringLengthFields = {
         @StringLengthFieldValidator(fieldName = "licenseTransfer.oldNameOfEstablishment", maxLength = "100", message = "", key = "Name of Establishment can be upto 100 characters"),
         @StringLengthFieldValidator(fieldName = "licenseTransfer.oldApplicantName", maxLength = "100", message = "", key = "Applicant Name can be upto 100 characters"),
-        @StringLengthFieldValidator(fieldName = "licenseTransfer.oldAddress.houseNo", maxLength = "10", message = "", key = "Maximum  length for house number is 10"),
-        @StringLengthFieldValidator(fieldName = "licenseTransfer.oldAddress.streetAddress2", maxLength = "10", message = "", key = "Maximum  length for house number is 10"),
-        @StringLengthFieldValidator(fieldName = "licenseTransfer.oldAddress.streetAddress1", maxLength = "500", message = "", key = "Remaining address can be upto 500 characters long"),
+        /*@StringLengthFieldValidator(fieldName = "licenseTransfer.oldAddress.houseNoBldgApt", maxLength = "10", message = "", key = "Maximum  length for house number is 10"),*/
+        /*@StringLengthFieldValidator(fieldName = "licenseTransfer.oldAddress.streetAddress2", maxLength = "10", message = "", key = "Maximum  length for house number is 10"),*/
+        @StringLengthFieldValidator(fieldName = "licenseTransfer.oldAddress.streetRoadLine", maxLength = "500", message = "", key = "Remaining address can be upto 500 characters long"),
         @StringLengthFieldValidator(fieldName = "licenseTransfer.oldPhoneNumber", maxLength = "15", message = "", key = "Maximum  length for Phone number is 15"),
         @StringLengthFieldValidator(fieldName = "licenseTransfer.oldMobileNumber", maxLength = "15", message = "", key = "Maximum length for Phone Number is 15"),
         @StringLengthFieldValidator(fieldName = "licenseTransfer.oldHomePhoneNumber", maxLength = "15", message = "", key = "Phone number should be upto 15 numbers"),
@@ -169,7 +169,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
 
     @Override
     @ValidationErrorPage("transfer")
-@Action(value="/transfer/transferTradeLicense-create")
+    @Action(value="/transfer/transferTradeLicense-create")
     public String create() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tl);
         if (tl.getLicenseeZoneId() != null && tl.getLicenseTransfer().getBoundary() == null) {
@@ -180,7 +180,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
         tl = (TradeLicense) persistenceService.find("from TradeLicense where id=?", tl.getId());
         ts.transferLicense(tl, licenseTransfer);
         try {
-            ts.initiateWorkFlowForTransfer(license(), workflowBean);
+            //ts.initiateWorkFlowForTransfer(license(), workflowBean);
             /*
              * if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONAPPROVE)) doAuditing(AuditModule.TL,
              * AuditEntity.TL_LIC, "TRANSFER LICENSE", tl.getAuditDetails());
@@ -190,6 +190,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
                     "File is some other workflow cannot proceed with the action")));
         }
         setMessages();
+        persistenceService.persist(tl);
         LOGGER.debug("Exiting from the create method:<<<<<<<<<<>>>>>>>>>>>>>:");
         return "message";
     }
@@ -231,11 +232,11 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
 
     private void setMessages() {
         LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tl);
-        if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONSAVE)) {
+        /*if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONSAVE)) {*/
             userService.getUserById(license().getCreatedBy().getId());
             addActionMessage(this.getText("license.transfer.submission.succesful")
                     + license().getLicenseTransfer().getOldApplicationNumber());
-        } else if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONAPPROVE)) {
+        /*} else if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONAPPROVE)) {
             final User userByID = userService.getUserById(license().getCreatedBy().getId());
             addActionMessage(this.getText("license.transfer.approved.and.sent.to") + " " + userByID.getName() + " "
                     + this.getText("license.for.certificate.generation"));
@@ -249,7 +250,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
             else
                 addActionMessage(this.getText("license.transfer.rejected") + license().getCreatedBy().getName());
         } else if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONGENERATEDCERTIFICATE))
-            addActionMessage(this.getText("license.transfer.certifiacte.print.complete.recorded"));
+            addActionMessage(this.getText("license.transfer.certifiacte.print.complete.recorded"));*/
         LOGGER.debug("Exiting from the setMessages method:<<<<<<<<<<>>>>>>>>>>>>>:");
     }
 

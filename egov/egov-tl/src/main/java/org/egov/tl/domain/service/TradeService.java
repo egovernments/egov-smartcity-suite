@@ -52,6 +52,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
@@ -77,6 +78,8 @@ public class TradeService extends BaseLicenseService {
     private SecurityUtils securityUtils;
     @Autowired
     private AssignmentService assignmentService;
+    @Autowired
+    private ApplicationNumberGenerator applicationNumberGenerator;
 
     public PersistenceService<TradeLicense, Long> getTps() {
         return tps;
@@ -116,8 +119,7 @@ public class TradeService extends BaseLicenseService {
     }
 
     public void transferLicense(final TradeLicense tl, final LicenseTransfer licenseTransfer) {
-        final String runningApplicationNumber = getNextRunningNumber(tl.getClass().getSimpleName().toUpperCase()
-                + "_APPLICATION_NUMBER");
+        final String runningApplicationNumber = applicationNumberGenerator.generate();
         final String currentApplno = tl.getApplicationNumber();
         final String generatedApplicationNumber = tl.generateApplicationNumber(runningApplicationNumber);
         tl.setApplicationNumber(currentApplno);
@@ -125,7 +127,6 @@ public class TradeService extends BaseLicenseService {
         licenseTransfer.setType("TradeLicense");
         tl.setLicenseTransfer(licenseTransfer);
         licenseTransfer.setOldApplicationNumber(generatedApplicationNumber);
-        persistenceService.persist(tl);
     }
 
     public void initiateWorkFlowForTransfer(final License license, final WorkflowBean workflowBean) {
