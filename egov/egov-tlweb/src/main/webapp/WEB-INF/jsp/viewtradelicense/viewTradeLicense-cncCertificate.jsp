@@ -53,7 +53,6 @@
 	function printLicense() {
 		document.getElementById('printDiv').style.display = 'none';
 		window.print();
-		//document.getElementById('printDiv').style.display = '';
 	}
 
 	function submitandclose() {
@@ -68,13 +67,6 @@
 		}
 	}
 </script>
-		<%-- <%
-			String cityUrl = (String) session.getAttribute("cityurl");
-			CityWebsiteDAO cityWebsiteDAO = new CityWebsiteDAO();
-			CityWebsite cityWebsite = cityWebsiteDAO.getCityWebSiteByURL(cityUrl);
-			String cityName = cityWebsite.getCityName();
-			String logoName = cityWebsite.getLogo();
-		%> --%>
 	</head>
 	<body onload="refreshInbox()">
 		<div id="content">
@@ -84,13 +76,7 @@
 					<s:push value="model">
 						<table width="100%" border="0" cellpadding="5" cellspacing="5" style="margin-left: 30px; font-size: 14px">
 							<tr>
-								<td colspan="4" align="center">
-									<img src="/egi/images/<%-- <%=logoName%> --%>" width="91" height="90" />
-								</td>
-							</tr>
-							<tr>
 								<td colspan="4" align="center" style="font-size: 15px; font-weight: bolder;">
-									<%-- <%=cityName%> --%>
 									<br />
             	                    <s:text name="tradelicense.certificate.title" />
 									<s:if test="%{#parameters.duplicate}">
