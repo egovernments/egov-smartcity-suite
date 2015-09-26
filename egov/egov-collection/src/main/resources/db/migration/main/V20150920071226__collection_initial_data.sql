@@ -295,3 +295,22 @@ Insert into eg_roleaction (roleid,actionid) values ((select id from eg_role wher
 Insert into eg_roleaction (roleid,actionid) values ((select id from eg_role where name='CSC Operator'),(select id from eg_action where name='BankRemittanceCreate'));
 Insert into eg_roleaction (roleid,actionid) values ((select id from eg_role where name='Remitter'),(select id from eg_action where name='BankRemittanceCreate'));
 ------------------END---------------------
+-------------------START-------------------
+Insert into eg_wf_types (id,module,type,link,createdby,createddate,lastmodifiedby,lastmodifieddate,renderyn,groupyn,typefqn,displayname,version) values (nextval('seq_eg_wf_types'),(select id from eg_module where name='Collection'),'ReceiptHeader','/collection/receipts/collectionsWorkflow-listWorkflow.action?inboxItemDetails=:ID',1,now(),1,now(), 'Y', 'N', 'org.egov.collection.entity.ReceiptHeader', 'Collections Receipt Header', 0 );
+Insert into EG_WF_ACTIONS (ID,TYPE,NAME,DESCRIPTION,CREATED_BY,CREATED_DATE,MODIFIED_BY,MODIFIED_DATE) values (nextval('EG_WF_ACTIONS_SEQ'),'ReceiptHeader','Create Receipt','Create Receipt',1,now(),1,now());
+Insert into EG_WF_ACTIONS (ID,TYPE,NAME,DESCRIPTION,CREATED_BY,CREATED_DATE,MODIFIED_BY,MODIFIED_DATE) values (nextval('EG_WF_ACTIONS_SEQ'),'ReceiptHeader','Submit for Approval','Submit for Approval',1,now(),1,now());
+Insert into EG_WF_ACTIONS (ID,TYPE,NAME,DESCRIPTION,CREATED_BY,CREATED_DATE,MODIFIED_BY,MODIFIED_DATE) values (nextval('EG_WF_ACTIONS_SEQ'),'ReceiptHeader','Approve','Approve',1,now(),1,now());
+Insert into EG_WF_ACTIONS (ID,TYPE,NAME,DESCRIPTION,CREATED_BY,CREATED_DATE,MODIFIED_BY,MODIFIED_DATE) values (nextval('EG_WF_ACTIONS_SEQ'),'ReceiptHeader','Reject','Reject',1,now(),1,now());
+-------------------END----------------------
+-------------------START--------------------
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'ReceiptHeader','To Be Submitted',to_date('22-11-09','DD-MM-RR'),'TO_BE_SUBMITTED',1);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'ReceiptHeader','Submitted',to_date('22-11-09','DD-MM-RR'),'SUBMITTED',2);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'ReceiptHeader','Approved',to_date('22-11-09','DD-MM-RR'),'APPROVED',3);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'ReceiptHeader','Cancelled',to_date('22-11-09','DD-MM-RR'),'CANCELLED',4);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'ReceiptHeader','Pending',to_date('23-01-10','DD-MM-RR'),'PENDING',5);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'OnlinePayment','Pending',to_date('28-03-10','DD-MM-RR'),'ONLINE_STATUS_PENDING',1);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'OnlinePayment','Success',to_date('28-03-10','DD-MM-RR'),'ONLINE_STATUS_SUCCESS',2);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'OnlinePayment','Failure',to_date('28-03-10','DD-MM-RR'),'ONLINE_STATUS_FAILURE',3);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'OnlinePayment','To Be Refunded',to_date('28-03-10','DD-MM-RR'),'TO_BE_REFUNDED',4);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'OnlinePayment','Refunded',to_date('14-07-10','DD-MM-RR'),'ONLINE_STATUS_REFUNDED',4);
+--------------------END-----------------------
