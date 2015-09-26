@@ -44,7 +44,7 @@
         <module>egov-dashboardweb</module>
         <module>egov-tlweb</module>
         <module>egov-ear</module>
-        <!-- <module>egov-restapi</module> -->
+        <module>egov-restapi</module>
     </modules>
 
     <properties>
