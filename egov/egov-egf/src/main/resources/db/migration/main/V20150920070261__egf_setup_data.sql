@@ -194,3 +194,9 @@ update egf_accountcode_purpose set id = 15 where name = 'Accumulated Depreciatio
 update egf_accountcode_purpose set id = 17 where name = 'Depreciation Expense Account';
 update egf_accountcode_purpose set id = 18 where name = 'Revaluation Reserve Account';
 ------------------------END-------------------
+-----------------START-----------------------------------
+INSERT INTO EGF_INSTRUMENTTYPE (ID,TYPE,ISACTIVE,CREATEDBY,LASTMODIFIEDBY,CREATEDDATE,LASTMODIFIEDDATE) values (nextval('SEQ_EGF_INSTRUMENTTYPE'),'cash','1',1,1, current_timestamp, current_timestamp);
+INSERT INTO EGF_INSTRUMENTTYPE (ID,TYPE,ISACTIVE,CREATEDBY,LASTMODIFIEDBY,CREATEDDATE,LASTMODIFIEDDATE) values (nextval('SEQ_EGF_INSTRUMENTTYPE'),'cheque','1',1,1, current_timestamp, current_timestamp);
+INSERT INTO EGF_INSTRUMENTTYPE (ID,TYPE,ISACTIVE,CREATEDBY,LASTMODIFIEDBY,CREATEDDATE,LASTMODIFIEDDATE) values (nextval('SEQ_EGF_INSTRUMENTTYPE'),'dd','1',1,1, current_timestamp, current_timestamp);
+INSERT INTO EGF_INSTRUMENTTYPE (ID,TYPE,ISACTIVE,CREATEDBY,LASTMODIFIEDBY,CREATEDDATE,LASTMODIFIEDDATE) values (nextval('SEQ_EGF_INSTRUMENTTYPE'),'online','1',1,1, current_timestamp, current_timestamp);
+-------------------------END-----------------------------
