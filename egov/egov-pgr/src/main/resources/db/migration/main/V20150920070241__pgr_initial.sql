@@ -79,7 +79,6 @@ Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, di
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1060,'load position for escalation','/ajax-positionsByDepartmentAndDesignation',null,390,null,'load position for escalation','false','pgr',0,1,'2015-07-15 19:14:59.382359',1,'2015-07-15 19:14:59.382359',36);
 INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (1177, 'AjaxCallInReportForcomplaintType', '/complaint/pgrreport/complaintTypes', NULL, 410, NULL, 'AjaxCallInReportForcomplaintType', false, 'pgr', 0, 1, '2015-08-28 10:45:30.32226', 1, '2015-08-28 10:45:30.32226', 36);
 INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (1178, 'Complaint Type Wise Report', '/report/complaintTypeReport', NULL, 410, NULL, 'Search By Complaint Type', true, 'pgr', 0, 1, '2015-08-28 10:45:30.32226', 1, '2015-08-28 10:45:30.32226', 36);
-INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (1179, 'Complaint Type Wise Report search result', '/report/complaintTypeReport/resultList-update', NULL, 410, NULL, 'Complaint Type Wise Report search result', false, 'pgr', 0, 1, '2015-08-28 10:45:30.32226', 1, '2015-08-28 10:45:30.32226', 36);
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1141,'SearchComplaintFormOfficial','/complaint/search',null,301,1,'Search Complaint','true','pgr',0,1,'2015-07-15 00:00:00.0',1,'2015-07-15 00:00:00.0',36);
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1168,'Ageing Report By Boundary wise','/report/ageingReportByBoundary',null,408,null,'By Boundary wise','true','pgr',0,1,'2015-07-21 15:50:09.010027',1,'2015-07-21 15:50:09.010027',36);
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1169,'Ageing Report By Department wise','/report/ageingReportByDept',null,408,null,'By Department wise','true','pgr',0,1,'2015-07-21 15:50:09.010027',1,'2015-07-21 15:50:09.010027',36);
@@ -89,9 +88,8 @@ Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, di
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1174,'Drill Down Report search result','/report/drillDown/resultList-update',null,407,null,'Drill Down Report search result','false','pgr',0,1,'2015-07-22 10:18:25.67205',1,'2015-07-22 10:18:25.67205',36);
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1176,'complaintTypeSuccess','/complainttype/success',null,383,null,'complaintTypeSuccess','false','pgr',0,1,'2015-07-25 12:53:16.773149',1,'2015-07-25 12:53:16.773149',36);
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1208,'AjaxCallInReportForcomplaintType','/complaint/pgrreport/complaintTypes',null,410,null,'AjaxCallInReportForcomplaintType','false','pgr',0,1,'2015-07-27 13:06:23.714353',1,'2015-07-27 13:06:23.714353',36);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1209,'Complaint Type Wise Report','/report/complaintTypeReport',null,410,null,'Search By Complaint Type','true','pgr',0,1,'2015-07-27 13:06:23.714353',1,'2015-07-27 13:06:23.714353',36);
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1210,'Complaint Type Wise Report search result','/report/complaintTypeReport/resultList-update',null,410,null,'Complaint Type Wise Report search result','false','pgr',0,1,'2015-07-27 13:06:23.714353',1,'2015-07-27 13:06:23.714353',36);
-Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1239,'complaint downloadfile','/complaint/downloadfile',null,301,null,'Complaint downloadfile','true','pgr',0,1,'2015-08-07 21:11:19.734845',1,'2015-08-07 21:11:19.734845',36);
+Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1239,'complaint downloadfile','/complaint/downloadfile',null,301,null,'Complaint downloadfile','false','pgr',0,1,'2015-08-07 21:11:19.734845',1,'2015-08-07 21:11:19.734845',36);
 
 ------------------END---------------------
 
@@ -211,7 +209,6 @@ SELECT pg_catalog.setval('seq_eg_role', 17, true);
 
 
 INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 4,1);
-INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 4,13);
 INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 4,14);
 INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 4,15);
 INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 4,16);
@@ -325,8 +322,8 @@ INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 4,1172);
 INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 4,1173);
 INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 4,1174);
 INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 4,1176);
+INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 4,1178);
 INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 4,1208);
-INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 4,1209);
 INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 4,1210);
 INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 7,1239);
 INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 1,1239);

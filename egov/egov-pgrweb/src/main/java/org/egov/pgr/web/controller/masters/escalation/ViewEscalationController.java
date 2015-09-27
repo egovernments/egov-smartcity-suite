@@ -194,7 +194,7 @@ public class ViewEscalationController {
             }
 
         redirectAttrs.addFlashAttribute("escalationForm", escalationForm);
-        redirectAttrs.addFlashAttribute("message", "msg.escaltion.success");
+        model.addAttribute("message", "msg.escaltion.success");
 
         return "escalation-success";
 

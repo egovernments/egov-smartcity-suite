@@ -61,7 +61,7 @@
 						</spring:message><span class="mandatory"></span></label>
 						<div class="col-sm-6 add-margin">
                             <form:select path="name"
-                                         id="comp_type" cssClass="form-control" cssErrorClass="form-control error" >
+                                         id="comp_type" cssClass="form-control" cssErrorClass="form-control error" required="required">
                                 <form:option value=""> <spring:message code="lbl.select"/> </form:option>
                                 <form:options items="${complaintTypes}" itemValue="code" itemLabel="name"/>
                             </form:select>

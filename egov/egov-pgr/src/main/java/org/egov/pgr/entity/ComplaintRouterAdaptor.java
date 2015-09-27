@@ -51,9 +51,8 @@ public class ComplaintRouterAdaptor implements JsonSerializer<ComplaintRouter> {
     @Override
     public JsonElement serialize(final ComplaintRouter compaintRouter, final Type type,
             final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("boundaryType", null != compaintRouter.getBoundary().getBoundaryType() ? compaintRouter
-                .getBoundary().getBoundaryType().getName() : "NA");
+       final JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("boundaryType", null != compaintRouter.getBoundary() ? compaintRouter.getBoundary().getBoundaryType().getName() : "NA");
         jsonObject.addProperty("boundary", null != compaintRouter.getBoundary() ? compaintRouter.getBoundary()
                 .getName() : "NA");
         jsonObject.addProperty("complaintType", null != compaintRouter.getComplaintType() ? compaintRouter
