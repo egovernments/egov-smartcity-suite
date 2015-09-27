@@ -124,6 +124,7 @@ Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, di
 INSERT INTO EG_ACTION (ID,NAME,createddate,URL,QUERYPARAMS,parentmodule,ORDERNUMBER,DISPLAYNAME, ENABLED, CONTEXTROOT, APPLICATION) VALUES (nextval('SEQ_EG_ACTION'), 'AjaxDesignationDropdown',current_date , '/workflow/ajaxWorkFlow-getDesignationsByObjectType.action', NULL, (select ID from eg_module where name like 'Workflow'), 6, 'AjaxDesignationDropdown', false, 'eis',(SELECT id FROM eg_module WHERE name='EIS' AND parentmodule IS NULL));
 INSERT INTO EG_ACTION (ID,NAME,createddate,URL,QUERYPARAMS,parentmodule,ORDERNUMBER,DISPLAYNAME, ENABLED, CONTEXTROOT, APPLICATION) VALUES (nextval('SEQ_EG_ACTION'), 'AjaxApproverDropdown',current_date ,'/workflow/ajaxWorkFlow-getPositionByPassingDesigId.action', NULL,  (select ID from eg_module where name like 'Workflow'), 6, 'AjaxApproverDropdown', false, 'eis',(SELECT id FROM eg_module WHERE name='EIS' AND parentmodule IS NULL));
 INSERT INTO EG_ACTION(ID, NAME, URL, QUERYPARAMS, PARENTMODULE, ORDERNUMBER, DISPLAYNAME, ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDDATE,LASTMODIFIEDBY,APPLICATION) Values (nextval('SEQ_EG_ACTION'), 'CitizenInboxForm', '/home',NULL, (SELECT id FROM eg_module WHERE name='EGI-COMMON'), 0, 'User Login', false,'portal',0,1,now(),now(),1,(SELECT id FROM eg_module WHERE name='Administration' and parentmodule is NULL));
+INSERT INTO eg_action(id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate,application) VALUES (nextval('seq_eg_action'), 'Property Usage by type', '/common/ajaxCommon-usageByPropType.action', null,(select id from eg_module where name='New Property'), 0, 'Property Usage by type', false, 'ptis', 0, 1, now(), 1, now(),(select id from eg_module where name='Property Tax' and parentmodule is null)); 
 ------------------END---------------------
 -----------------START-------------------
 
@@ -473,6 +474,10 @@ INSERT INTO eg_roleaction (actionid,roleid) VALUES ((SELECT id FROM eg_action WH
 INSERT INTO eg_roleaction (actionid,roleid) VALUES ((SELECT id FROM eg_action WHERE name='AadhaarInfo' and contextroot='egi'),(SELECT id FROM eg_role WHERE name ='CSC Operator'));
 INSERT INTO eg_roleaction (actionid,roleid) VALUES ((SELECT id FROM eg_action WHERE name='AadhaarInfo' and contextroot='egi'),(SELECT id FROM eg_role WHERE name ='Property Verifier'));
 INSERT INTO eg_roleaction (actionid,roleid) VALUES ((SELECT id FROM eg_action WHERE name='AadhaarInfo' and contextroot='egi'),(SELECT id FROM eg_role WHERE name ='Property Approver'));
+INSERT INTO eg_roleaction  (actionid,roleid) VALUES ((SELECT id FROM eg_action WHERE name='Property Usage by type' and contextroot='ptis'),(SELECT id FROM eg_role WHERE name ='ULB Operator'));
+INSERT INTO eg_roleaction  (actionid,roleid) VALUES ((SELECT id FROM eg_action WHERE name='Property Usage by type' and contextroot='ptis'),(SELECT id FROM eg_role WHERE name ='CSC Operator'));
+INSERT INTO eg_roleaction  (actionid,roleid) VALUES ((SELECT id FROM eg_action WHERE name='Property Usage by type' and contextroot='ptis'),(SELECT id FROM eg_role WHERE name ='Property Verifier'));
+INSERT INTO eg_roleaction  (actionid,roleid) VALUES ((SELECT id FROM eg_action WHERE name='Property Usage by type' and contextroot='ptis'),(SELECT id FROM eg_role WHERE name ='Property Approver'));
 ------------------END---------------------
 
 -----------------START-------------------
@@ -632,12 +637,12 @@ Insert into EGPT_EXEMPTION_REASON (id,version,name,code,createddate,lastmodified
 ------------------END---------------------
 
 -----------------START-------------------
-Insert into EGPT_PROPERTY_USAGE_MASTER (id,usg_name,modified_date,usage_factor,usg_name_local,code,order_id,from_date,to_date,is_enabled,created_by,modified_by,created_date) values (nextval('seq_property_usage_master'),'Residence','2015-07-15',4.0,'Residential','RESD',1,'0001-04-01',to_timestamp('0001-03-31 00:00:00.0','null'),1,1,1,'2015-07-15');
-Insert into EGPT_PROPERTY_USAGE_MASTER (id,usg_name,modified_date,usage_factor,usg_name_local,code,order_id,from_date,to_date,is_enabled,created_by,modified_by,created_date) values (nextval('seq_property_usage_master'),'Shops','2015-07-15',4.0,'Shops','SHOP',2,'0001-04-01',to_timestamp('0001-03-31 00:00:00.0','null'),1,1,1,'2015-07-15');
-Insert into EGPT_PROPERTY_USAGE_MASTER (id,usg_name,modified_date,usage_factor,usg_name_local,code,order_id,from_date,to_date,is_enabled,created_by,modified_by,created_date) values (nextval('seq_property_usage_master'),'Office/banks','2015-07-15',4.0,'Office/banks','OFFICE',3,'0001-04-01',to_timestamp('0001-03-31 00:00:00.0','null'),1,1,1,'2015-07-15');
-Insert into EGPT_PROPERTY_USAGE_MASTER (id,usg_name,modified_date,usage_factor,usg_name_local,code,order_id,from_date,to_date,is_enabled,created_by,modified_by,created_date) values (nextval('seq_property_usage_master'),'Hospitals/ Nursing Homes','2015-07-15',4.0,'Hospitals/ Nursing Homes','Hospital',4,'0001-04-01',to_timestamp('0001-03-31 00:00:00.0','null'),1,1,1,'2015-07-15');
-Insert into EGPT_PROPERTY_USAGE_MASTER (id,usg_name,modified_date,usage_factor,usg_name_local,code,order_id,from_date,to_date,is_enabled,created_by,modified_by,created_date) values (nextval('seq_property_usage_master'),'Educational Institutions','2015-07-15',4.0,'Educational Institutions','EDUCATION',3,'0001-04-01',to_timestamp('0001-03-31 00:00:00.0','null'),1,1,1,'2015-07-15');
-Insert into EGPT_PROPERTY_USAGE_MASTER (id,usg_name,modified_date,usage_factor,usg_name_local,code,order_id,from_date,to_date,is_enabled,created_by,modified_by,created_date) values (nextval('seq_property_usage_master'),'Hotels/lodges/ Restarants','2015-07-15',4.0,'Hotels/lodges/ Restarants','HOTEL',3,'0001-04-01',to_timestamp('0001-03-31 00:00:00.0','null'),1,1,1,'2015-07-15');
+Insert into EGPT_PROPERTY_USAGE_MASTER (id,usg_name,modified_date,usage_factor,usg_name_local,code,order_id,from_date,to_date,is_enabled,created_by,modified_by,created_date,ISRESIDENTIAL) values (nextval('seq_property_usage_master'),'Residence','2015-07-15',4.0,'Residential','RESD',1,'0001-04-01',to_timestamp('0001-03-31 00:00:00.0','null'),1,1,1,'2015-07-15',true);
+Insert into EGPT_PROPERTY_USAGE_MASTER (id,usg_name,modified_date,usage_factor,usg_name_local,code,order_id,from_date,to_date,is_enabled,created_by,modified_by,created_date,ISRESIDENTIAL) values (nextval('seq_property_usage_master'),'Shops','2015-07-15',4.0,'Shops','SHOP',2,'0001-04-01',to_timestamp('0001-03-31 00:00:00.0','null'),1,1,1,'2015-07-15',false);
+Insert into EGPT_PROPERTY_USAGE_MASTER (id,usg_name,modified_date,usage_factor,usg_name_local,code,order_id,from_date,to_date,is_enabled,created_by,modified_by,created_date,ISRESIDENTIAL) values (nextval('seq_property_usage_master'),'Office/banks','2015-07-15',4.0,'Office/banks','OFFICE',3,'0001-04-01',to_timestamp('0001-03-31 00:00:00.0','null'),1,1,1,'2015-07-15',false);
+Insert into EGPT_PROPERTY_USAGE_MASTER (id,usg_name,modified_date,usage_factor,usg_name_local,code,order_id,from_date,to_date,is_enabled,created_by,modified_by,created_date,ISRESIDENTIAL) values (nextval('seq_property_usage_master'),'Hospitals/ Nursing Homes','2015-07-15',4.0,'Hospitals/ Nursing Homes','Hospital',4,'0001-04-01',to_timestamp('0001-03-31 00:00:00.0','null'),1,1,1,'2015-07-15',false);
+Insert into EGPT_PROPERTY_USAGE_MASTER (id,usg_name,modified_date,usage_factor,usg_name_local,code,order_id,from_date,to_date,is_enabled,created_by,modified_by,created_date,ISRESIDENTIAL) values (nextval('seq_property_usage_master'),'Educational Institutions','2015-07-15',4.0,'Educational Institutions','EDUCATION',3,'0001-04-01',to_timestamp('0001-03-31 00:00:00.0','null'),1,1,1,'2015-07-15',false);
+Insert into EGPT_PROPERTY_USAGE_MASTER (id,usg_name,modified_date,usage_factor,usg_name_local,code,order_id,from_date,to_date,is_enabled,created_by,modified_by,created_date,ISRESIDENTIAL) values (nextval('seq_property_usage_master'),'Hotels/lodges/ Restarants','2015-07-15',4.0,'Hotels/lodges/ Restarants','HOTEL',3,'0001-04-01',to_timestamp('0001-03-31 00:00:00.0','null'),1,1,1,'2015-07-15',false);
 ------------------END---------------------
 
 -----------------START-------------------
@@ -752,5 +757,8 @@ INSERT INTO eg_userrole  (userid,roleid) VALUES ((SELECT id FROM eg_user WHERE u
 DELETE FROM eg_userrole  where roleid in(SELECT id FROM eg_role WHERE name='CSC Operator') and userid in(SELECT id FROM eg_user WHERE name='satyam');
 ------------------END---------------------
 
+-----------------START-------------------
+INSERT INTO eg_wf_types (id,module,type,link,createdby,createddate,lastmodifiedby,lastmodifieddate,renderyn,groupyn,typefqn,displayname) VALUES (nextval('seq_eg_wf_types'),(SELECT id FROM eg_module WHERE name='Property Tax'),'PropertyImpl',':ID',1,now(),1,now(), 'Y', 'N','org.egov.ptis.domain.entity.property.PropertyImpl', 'Property' );
 
-
+insert into eg_wf_types values(nextval('seq_eg_wf_types'),(SELECT id FROM eg_module WHERE name='Property Tax'),'PropertyMutation','/ptis/property/transfer/view.action?mutationId=:ID',1,now(),1,now(),'Y','N','org.egov.ptis.domain.entity.property.PropertyMutation','Property Owner Transfer',0);
+------------------END---------------------

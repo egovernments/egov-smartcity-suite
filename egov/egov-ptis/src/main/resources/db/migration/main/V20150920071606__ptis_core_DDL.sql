@@ -111,7 +111,7 @@ CREATE TABLE egpt_property_usage_master
   created_by bigint,
   modified_by bigint,
   created_date date,
-  ISRESIDENTIAL boolean NOT NULL DEFAULT false,
+  ISRESIDENTIAL boolean NOT NULL,
   CONSTRAINT pk_egpt_property_usage_master PRIMARY KEY (id)
 );
 COMMENT ON TABLE egpt_property_usage_master IS 'Master table for property usages';

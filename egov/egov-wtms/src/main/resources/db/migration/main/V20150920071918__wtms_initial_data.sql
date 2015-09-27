@@ -228,7 +228,5 @@ INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatu
 ------------------END---------------------
 -----------------START--------------------
 
-SELECT pg_catalog.setval('seq_eg_wf_types', 12, false);
-
 INSERT INTO eg_wf_types (id, module, type, link, createdby, createddate, lastmodifiedby, lastmodifieddate, renderyn, groupyn, typefqn, displayname, version) VALUES (nextval('seq_eg_wf_types'), 2, 'WaterConnectionDetails', '/wtms/application/update/:ID', 1, '2015-08-28 10:45:18.201078', 1, '2015-08-28 10:45:18.201078', 'Y', 'N', 'org.egov.wtms.application.entity.WaterConnectionDetails', 'Water Tap Connection', 0);
 ------------------END---------------------
