@@ -51,9 +51,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ApplicationTenantResolverFilter implements Filter {
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationTenantResolverFilter.class);
 
     @Autowired
     private ApplicationProperties applicationProperties;
@@ -61,9 +64,10 @@ public class ApplicationTenantResolverFilter implements Filter {
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
         final String domainURL = WebUtils.extractRequestedDomainName((HttpServletRequest) request);
-        if (applicationProperties.multiTenancyEnabled())
-            EgovThreadLocals.setTenantID(applicationProperties.getProperty("tenant." + domainURL));
+        EgovThreadLocals.setTenantID(applicationProperties.getProperty("tenant." + domainURL));
+        LOG.debug("Resolved tenant as {} ", EgovThreadLocals.getTenantID());
         EgovThreadLocals.setDomainName(domainURL);
+        LOG.debug("Resolved domain as {} ", EgovThreadLocals.getTenantID());
         chain.doFilter(request, response);
     }
 
