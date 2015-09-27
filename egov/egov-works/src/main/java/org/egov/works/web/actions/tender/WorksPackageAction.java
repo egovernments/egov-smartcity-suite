@@ -142,7 +142,6 @@ public class WorksPackageAction extends BaseFormAction {
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         ajaxEstimateAction.setAssignmentService(assignmentService);
-        ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         ajaxEstimateAction.setAbstractEstimateService(abstractEstimateService);
         ajaxEstimateAction.setEisService(eisService);
         super.prepare();

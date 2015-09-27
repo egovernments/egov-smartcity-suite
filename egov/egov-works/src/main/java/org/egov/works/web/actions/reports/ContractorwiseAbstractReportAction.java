@@ -179,7 +179,6 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         ajaxEstimateAction.setAssignmentService(assignmentService);
-        ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         populateCategoryList(ajaxEstimateAction, getWorksType() == -1 ? false : getWorksType() != -1);
         addDropdownData("fundList", commonsService.getAllActiveIsLeafFunds());
         addDropdownData("functionList", commonsService.getAllFunction());

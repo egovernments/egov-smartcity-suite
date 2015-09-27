@@ -288,7 +288,6 @@ public class AbstractEstimateAction extends BaseFormAction {
     public void prepare() {
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
-        ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         ajaxEstimateAction.setEisService(eisService);
 
         if (id != null && EDIT.equals("edit")) {

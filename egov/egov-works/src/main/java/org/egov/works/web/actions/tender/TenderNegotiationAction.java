@@ -331,7 +331,6 @@ public class TenderNegotiationAction extends SearchFormAction {
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         ajaxEstimateAction.setAssignmentService(assignmentService);
-        ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         ajaxEstimateAction.setAbstractEstimateService(abstractEstimateService);
         ajaxEstimateAction.setEisService(eisService);
         tenderResponseService.setPersonalInformationService(personalInformationService);

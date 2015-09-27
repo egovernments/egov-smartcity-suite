@@ -300,7 +300,6 @@ public class MeasurementBookAction extends BaseFormAction {
                 final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
                 ajaxEstimateAction.setPersistenceService(getPersistenceService());
                 ajaxEstimateAction.setAssignmentService(assignmentService);
-                ajaxEstimateAction.setPersonalInformationService(personalInformationService);
                 ajaxEstimateAction.setEisService(eisService);
                 ajaxEstimateAction.setExecutingDepartment(workOrderEstimateList.get(0).getEstimate()
                         .getExecutingDepartment().getId());

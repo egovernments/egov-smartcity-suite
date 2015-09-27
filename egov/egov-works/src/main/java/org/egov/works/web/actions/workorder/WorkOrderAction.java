@@ -253,7 +253,6 @@ public class WorkOrderAction extends BaseFormAction {
         ajaxWorkOrderAction.setPersonalInformationService(personalInformationService);
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         ajaxEstimateAction.setAssignmentService(assignmentService);
-        ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         ajaxEstimateAction.setAbstractEstimateService(abstractEstimateService);
         ajaxEstimateAction.setEisService(eisService);
         addDropdownData("executingDepartmentList",
@@ -369,7 +368,6 @@ public class WorkOrderAction extends BaseFormAction {
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         ajaxEstimateAction.setAssignmentService(assignmentService);
-        ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         ajaxEstimateAction.setEisService(eisService);
         if (workOrder != null && workOrder.getWorkOrderPreparedBy() != null)
             loggedInUserEmployeeCode = workOrder.getWorkOrderPreparedBy().getEmployeeCode();

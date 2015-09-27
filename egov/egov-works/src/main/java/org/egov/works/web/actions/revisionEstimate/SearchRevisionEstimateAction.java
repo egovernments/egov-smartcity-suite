@@ -150,7 +150,6 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         ajaxEstimateAction.setAssignmentService(assignmentService);
-        ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         addDropdownData(
                 "statusList",
                 persistenceService

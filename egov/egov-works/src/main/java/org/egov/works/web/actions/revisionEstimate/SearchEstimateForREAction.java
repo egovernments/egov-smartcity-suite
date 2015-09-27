@@ -118,7 +118,6 @@ public class SearchEstimateForREAction extends SearchFormAction {
         super.prepare();
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
-        ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         addDropdownData("executingDepartmentList", worksService.getAllDeptmentsForLoggedInUser());
         addDropdownData("typeList", persistenceService.findAllBy("from NatureOfWork "));
         addDropdownData("parentCategoryList",

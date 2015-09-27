@@ -73,7 +73,6 @@ import org.egov.infstr.models.Money;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.dao.DesignationMasterDAO;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.masters.Overhead;
 import org.egov.works.models.tender.WorksPackage;
@@ -577,9 +576,6 @@ public class AjaxEstimateAction extends BaseFormAction {
 
     public void setWorktotalValue(final Money worktotalValue) {
         this.worktotalValue = worktotalValue;
-    }
-
-    public void setPersonalInformationService(final PersonalInformationService personalInformationService) {
     }
 
     public boolean getIsSkipDeptChange() {
