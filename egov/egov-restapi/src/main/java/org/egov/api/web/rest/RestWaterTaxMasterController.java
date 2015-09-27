@@ -48,7 +48,6 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
 import org.egov.search.domain.Document;
-import org.egov.wtms.application.rest.WaterTaxDue;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DocumentNames;
@@ -65,7 +64,6 @@ import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.masters.service.WaterSourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -75,7 +73,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 @RestController
-public class RestWaterTaxController {
+public class RestWaterTaxMasterController {
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
@@ -97,27 +95,6 @@ public class RestWaterTaxController {
 
     @Autowired
     private PropertyTypeService propertyTypeService;
-
-    /*
-     * Returns Total tax due for the water connection for a given ConsumerCode
-     */
-    @RequestMapping(value = "/watercharges/due/bycode/{consumerCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public WaterTaxDue getWaterTaxDueByConsumerCode(@PathVariable final String consumerCode)
-            throws JsonGenerationException, JsonMappingException, IOException {
-        return connectionDemandService.getDueDetailsByConsumerCode(consumerCode);
-
-    }
-
-    /*
-     * Returns Total tax due for list of water connections for a given PropertyIdentifier
-     */
-    @RequestMapping(value = {
-            "/watercharges/due/byptno/{assessmentNumber}" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public WaterTaxDue getWaterTaxDueByPropertyId(@PathVariable final String assessmentNumber)
-            throws JsonGenerationException, JsonMappingException, IOException {
-        return connectionDemandService.getDueDetailsByPropertyId(assessmentNumber);
-
-    }
 
     @RequestMapping(value = "/watercharges/categories", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getConnectionCategoryList() throws JsonGenerationException, JsonMappingException, IOException {
