@@ -8,6 +8,6 @@ INSERT INTO eg_roleaction (ROLEID, ACTIONID) values ((select id from eg_role whe
 INSERT INTO eg_roleaction (ROLEID, ACTIONID) values ((select id from eg_role where name LIKE 'Citizen') ,(select id FROM eg_action  WHERE name = 'CitizenInboxForm'));
 INSERT INTO eg_roleaction (ROLEID, ACTIONID) values ((select id from eg_role where name LIKE 'Citizen') ,(select id FROM eg_action  WHERE name = 'AddFavourite'));
 INSERT INTO eg_roleaction (ROLEID, ACTIONID) values ((select id from eg_role where name LIKE 'Citizen') ,(select id FROM eg_action  WHERE name = 'Official Home Page'));
-INSERT INTO eg_roleaction (ROLEID, ACTIONID) values ((select id from eg_role where name LIKE 'SuperUser') ,(select id FROM eg_action  WHERE name = 'RefreshCitizenInbox'));
-INSERT INTO eg_roleaction (ROLEID, ACTIONID) values ((select id from eg_role where name LIKE 'SuperUser') ,(select id FROM eg_action  WHERE name = 'CitizenInboxForm'));
+INSERT INTO eg_roleaction (ROLEID, ACTIONID) values ((select id from eg_role where name LIKE 'Super User') ,(select id FROM eg_action  WHERE name = 'RefreshCitizenInbox'));
+INSERT INTO eg_roleaction (ROLEID, ACTIONID) values ((select id from eg_role where name LIKE 'Super User') ,(select id FROM eg_action  WHERE name = 'CitizenInboxForm'));
 ---------------------END-----------------------------
