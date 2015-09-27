@@ -51,6 +51,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+@Deprecated
+/*
+ * Moved to egov-restapi
+ */
 public class ConnectionSearchAdaptor implements JsonSerializer<SearchResult> { 
 
     @Override

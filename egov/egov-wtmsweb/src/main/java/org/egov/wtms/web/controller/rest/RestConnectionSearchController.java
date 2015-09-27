@@ -58,6 +58,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+@Deprecated
+/*
+ * Moved to egov-restapi
+ */
 @RestController
 public class RestConnectionSearchController {
 

@@ -86,6 +86,10 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Connection Service class provided RESTful services to create water connection
  */
+@Deprecated
+/*
+ * Moved to egov-restapi
+ */
 @RestController
 public class RestNewConnectionController {
     private static final long TTL_FOR_TOKEN_SECS = 30 * 60;
