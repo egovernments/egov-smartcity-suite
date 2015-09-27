@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -48,6 +47,15 @@ public class EgovThreadLocals {
     private static ThreadLocal<ServletContext> servletContext = new ThreadLocal<>();
     private static ThreadLocal<String> tenantID = new ThreadLocal<>();
     private static ThreadLocal<String> cityCode = new ThreadLocal<>();
+    private static ThreadLocal<String> cityName = new ThreadLocal<>();
+
+    public static String getCityName() {
+        return cityName.get();
+    }
+
+    public static void setCityName(final String citiName) {
+        cityName.set(citiName);
+    }
 
     public static String getCityCode() {
         return cityCode.get();
@@ -94,6 +102,7 @@ public class EgovThreadLocals {
         setUserId(null);
         setTenantID(null);
         setCityCode(null);
+        setCityName(null);
         setServletContext(null);
     }
 
