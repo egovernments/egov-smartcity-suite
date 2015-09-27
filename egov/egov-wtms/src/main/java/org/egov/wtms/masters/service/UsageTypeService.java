@@ -119,6 +119,7 @@ public class UsageTypeService {
             final UsageType usageTypeRest = new UsageType();
             usageTypeRest.setCode(usageType.getCode());
             usageTypeRest.setName(usageType.getName());
+            usageTypeRest.setActive(usageType.isActive());
             prepareListForRest.add(usageTypeRest);
         }
         return prepareListForRest;

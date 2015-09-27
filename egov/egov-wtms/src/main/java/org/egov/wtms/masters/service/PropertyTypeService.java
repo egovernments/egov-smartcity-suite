@@ -114,8 +114,9 @@ public class PropertyTypeService {
         for (final PropertyType propertyType : propertyTypeList) {
             final PropertyType propertyTypeRest = new PropertyType();
             propertyTypeRest.setCode(propertyType.getCode());
-            propertyTypeRest.setCode(propertyType.getName());
+            propertyTypeRest.setName(propertyType.getName());
             propertyTypeRest.setConnectionEligibility(propertyType.getConnectionEligibility());
+            propertyTypeRest.setActive(propertyType.isActive());
             prepareListForRest.add(propertyTypeRest);
         }
         return prepareListForRest;

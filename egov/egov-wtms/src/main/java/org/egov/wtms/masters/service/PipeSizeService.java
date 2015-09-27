@@ -111,6 +111,7 @@ public class PipeSizeService {
             pipeSizeRest.setCode(pipeSize.getCode());
             pipeSizeRest.setSizeInInch(pipeSize.getSizeInInch());
             pipeSizeRest.setSizeInMilimeter(pipeSize.getSizeInMilimeter());
+            pipeSizeRest.setActive(pipeSize.isActive());
             prepareListForRest.add(pipeSizeRest);
         }
         return prepareListForRest;

@@ -115,6 +115,7 @@ public class DocumentNamesService {
             final DocumentNames documentNamesRest = new DocumentNames();
             documentNamesRest.setDocumentName(documentNames.getDocumentName());
             documentNamesRest.setRequired(documentNames.isRequired());
+            documentNamesRest.setActive(documentNames.isActive());
             documentNamesRest.setApplicationTypeName(documentNames.getApplicationType().getName());
             prepareListForRest.add(documentNamesRest);
         }

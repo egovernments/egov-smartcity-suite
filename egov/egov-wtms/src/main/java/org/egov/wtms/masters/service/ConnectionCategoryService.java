@@ -123,6 +123,7 @@ public class ConnectionCategoryService {
             final ConnectionCategory connectionCategoryRest = new ConnectionCategory();
             connectionCategoryRest.setCode(connectionCategory.getCode());
             connectionCategoryRest.setName(connectionCategory.getName());
+            connectionCategoryRest.setActive(connectionCategory.isActive());
             prepareListForRest.add(connectionCategoryRest);
         }
         return prepareListForRest;

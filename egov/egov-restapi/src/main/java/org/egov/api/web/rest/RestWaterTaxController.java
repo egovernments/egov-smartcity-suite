@@ -41,13 +41,13 @@ package org.egov.api.web.rest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
+import org.egov.search.domain.Document;
 import org.egov.wtms.application.rest.WaterTaxDue;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
@@ -70,27 +70,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 @RestController
 public class RestWaterTaxController {
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
-    
+
     @Autowired
     private ConnectionCategoryService connectionCategoryService;
-    
+
     @Autowired
     private UsageTypeService usageTypeService;
-    
+
     @Autowired
     private DocumentNamesService documentNamesService;
-    
+
     @Autowired
     private PipeSizeService pipeSizeService;
-    
+
     @Autowired
     private WaterSourceService waterSourceService;
-    
+
     @Autowired
     private PropertyTypeService propertyTypeService;
 
@@ -114,65 +118,65 @@ public class RestWaterTaxController {
         return connectionDemandService.getDueDetailsByPropertyId(assessmentNumber);
 
     }
-    
+
     @RequestMapping(value = "/watercharges/categories", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getConnectionCategoryList() throws JsonGenerationException, JsonMappingException, IOException {
-        List<ConnectionCategory> connectionCategoryList = connectionCategoryService.getConnectionCategoryListForRest();
+        final List<ConnectionCategory> connectionCategoryList = connectionCategoryService.getConnectionCategoryListForRest();
         return getJSONResponse(connectionCategoryList);
     }
-    
+
     @RequestMapping(value = "/watercharges/usagetypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getUsageTypeList() throws JsonGenerationException, JsonMappingException, IOException {
-        List<UsageType> usageTypeList = usageTypeService.getUsageTypeListForRest();
+        final List<UsageType> usageTypeList = usageTypeService.getUsageTypeListForRest();
         return getJSONResponse(usageTypeList);
     }
-    
+
     @RequestMapping(value = "/watercharges/documentnames", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getDocumentNameList() throws JsonGenerationException, JsonMappingException, IOException {
-        List<DocumentNames> documentNamesList = documentNamesService.getDocumentNamesListForRest();
+        final List<DocumentNames> documentNamesList = documentNamesService.getDocumentNamesListForRest();
         return getJSONResponse(documentNamesList);
     }
-    
+
     @RequestMapping(value = "/watercharges/pipesizes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getPipeSizeList() throws JsonGenerationException, JsonMappingException, IOException {
-        List<PipeSize> pipeSizeList = pipeSizeService.getPipeSizeListForRest();
+        final List<PipeSize> pipeSizeList = pipeSizeService.getPipeSizeListForRest();
         return getJSONResponse(pipeSizeList);
     }
-    
+
     @RequestMapping(value = "/watercharges/watersourcetypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getWaterSourceTypes() throws JsonGenerationException, JsonMappingException, IOException {
-        List<WaterSource> waterSourceList = waterSourceService.getWaterSourceListForRest();
+        final List<WaterSource> waterSourceList = waterSourceService.getWaterSourceListForRest();
         return getJSONResponse(waterSourceList);
     }
-    
+
     @RequestMapping(value = "/watercharges/waterconnectiontypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getWaterConnectionTypes() throws JsonGenerationException, JsonMappingException, IOException {
-        List<String> connectionTypeList = new ArrayList<String>(0);
+        final List<String> connectionTypeList = new ArrayList<String>(0);
         connectionTypeList.add(ConnectionType.METERED.name());
         connectionTypeList.add(ConnectionType.NON_METERED.name());
         return getJSONResponse(connectionTypeList);
     }
-    
+
     @RequestMapping(value = "/watercharges/propertytypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getPropertyTypes() throws JsonGenerationException, JsonMappingException, IOException {
-        List<PropertyType> propertyTypeList = propertyTypeService.getPropertyTypeListForRest();
+        final List<PropertyType> propertyTypeList = propertyTypeService.getPropertyTypeListForRest();
         return getJSONResponse(propertyTypeList);
     }
-    
+
     /**
      * This method is used to prepare jSON response.
-     * 
+     *
      * @param obj - a POJO object
      * @return jsonResponse - JSON response string
      * @throws JsonGenerationException
      * @throws JsonMappingException
      * @throws IOException
      */
-    private String getJSONResponse(Object obj) throws JsonGenerationException, JsonMappingException, IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
-        String jsonResponse = objectMapper.writeValueAsString(obj);
-        return jsonResponse;
+    private String getJSONResponse(final Object obj) throws JsonGenerationException, JsonMappingException, IOException {
+        final Gson jsonCreator = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
+                .disableHtmlEscaping().create();
+        return jsonCreator.toJson(obj, new TypeToken<Collection<Document>>() {
+        }.getType());
     }
 
 }

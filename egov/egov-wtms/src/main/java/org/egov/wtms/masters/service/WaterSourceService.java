@@ -110,6 +110,7 @@ public class WaterSourceService {
             final WaterSource waterSourceRest = new WaterSource();
             waterSourceRest.setCode(waterSource.getCode());
             waterSourceRest.setWaterSourceType(waterSource.getWaterSourceType());
+            waterSourceRest.setActive(waterSource.isActive());
             prepareListForRest.add(waterSourceRest);
         }
         return prepareListForRest;
