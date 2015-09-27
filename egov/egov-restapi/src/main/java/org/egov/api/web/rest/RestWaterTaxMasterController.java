@@ -42,7 +42,9 @@ package org.egov.api.web.rest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -128,9 +130,13 @@ public class RestWaterTaxMasterController {
 
     @RequestMapping(value = "/watercharges/waterconnectiontypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getWaterConnectionTypes() throws JsonGenerationException, JsonMappingException, IOException {
-        final List<String> connectionTypeList = new ArrayList<String>(0);
-        connectionTypeList.add(ConnectionType.METERED.name());
-        connectionTypeList.add(ConnectionType.NON_METERED.name());
+        final List<Map<String,String>> connectionTypeList = new ArrayList<Map<String,String>>(0);
+        Map<String,String> meteredTypeMap =  new HashMap<String, String>(0);
+        meteredTypeMap.put("code", ConnectionType.METERED.toString());
+        Map<String,String> nonMeteredTypeMap =  new HashMap<String, String>(0);
+        nonMeteredTypeMap.put("code", ConnectionType.NON_METERED.toString());
+        connectionTypeList.add(meteredTypeMap);
+        connectionTypeList.add(nonMeteredTypeMap);
         return getJSONResponse(connectionTypeList);
     }
 
