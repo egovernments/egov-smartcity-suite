@@ -65,9 +65,9 @@ public class ApplicationTenantResolverFilter implements Filter {
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
         final String domainURL = WebUtils.extractRequestedDomainName((HttpServletRequest) request);
         EgovThreadLocals.setTenantID(applicationProperties.getProperty("tenant." + domainURL));
-        LOG.debug("Resolved tenant as {} ", EgovThreadLocals.getTenantID());
+        LOG.info("Resolved tenant as  "+ EgovThreadLocals.getTenantID());
         EgovThreadLocals.setDomainName(domainURL);
-        LOG.debug("Resolved domain as {} ", EgovThreadLocals.getTenantID());
+        LOG.info("Resolved domain as  "+ EgovThreadLocals.getDomainName());
         chain.doFilter(request, response);
     }
 
