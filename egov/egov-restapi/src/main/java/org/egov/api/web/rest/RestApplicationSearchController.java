@@ -41,21 +41,15 @@ package org.egov.api.web.rest;
 
 import static java.util.Arrays.asList;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.ws.rs.FormParam;
-
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
-import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
-import org.egov.search.domain.Document;
 import org.egov.search.domain.Page;
 import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
 import org.egov.wtms.elasticSearch.entity.ApplicationSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -63,7 +57,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 @RestController
 public class RestApplicationSearchController {
@@ -73,21 +66,20 @@ public class RestApplicationSearchController {
 
     @RequestMapping(value = "/watercharges/searchapplication", method = RequestMethod.POST)
     @ResponseBody
-    public String searchApplication(@FormParam("applicationNumber") final String applicationNumber) {
-        final ApplicationSearchRequest searchRequest = new ApplicationSearchRequest();
+    public String searchApplication(@RequestBody final ApplicationSearchRequest searchRequest) {
+        String applicationNumber =  searchRequest.getApplicationNumber() != null ? "\""+searchRequest.getApplicationNumber()+"\"" : "";
         searchRequest.setApplicationNumber(applicationNumber);
         final SearchResult searchResult = searchService.search(asList(Index.APPLICATION.toString()),
                 asList(IndexType.APPLICATIONSEARCH.toString()), searchRequest.searchQuery(),
                 searchRequest.searchFilters(), Sort.NULL, Page.NULL);
-
-        final List<Document> documents = searchResult.getDocuments();
-        final Gson jsonCreator = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
-                .disableHtmlEscaping().create();
-        final String json = jsonCreator.toJson(documents, new TypeToken<Collection<Document>>() {
-        }.getType());
-
+        return convertSearchResultToJson(searchResult);
+    }
+    
+    private String convertSearchResultToJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(SearchResult.class, new ApplicationSearchAdaptor()).create();
+        final String json = gson.toJson(object);
         return json;
-
     }
 
 }
