@@ -71,7 +71,7 @@ public class RestApplicationSearchController {
     @Autowired
     private SearchService searchService;
 
-    @RequestMapping(value = "/watertax/searchapplication", method = RequestMethod.POST)
+    @RequestMapping(value = "/watercharges/searchapplication", method = RequestMethod.POST)
     @ResponseBody
     public String searchApplication(@FormParam("applicationNumber") final String applicationNumber) {
         ApplicationSearchRequest searchRequest = new ApplicationSearchRequest();

@@ -61,7 +61,7 @@ public class RestWaterTaxController {
     /*
      * Returns Total tax due for the water connection for a given ConsumerCode
      */
-    @RequestMapping(value = "/watertax/due/bycode/{consumerCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/watercharges/due/bycode/{consumerCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public WaterTaxDue getWaterTaxDueByConsumerCode(@PathVariable final String consumerCode)
             throws JsonGenerationException, JsonMappingException, IOException {
         return connectionDemandService.getDueDetailsByConsumerCode(consumerCode);
@@ -72,7 +72,7 @@ public class RestWaterTaxController {
      * Returns Total tax due for list of water connections for a given PropertyIdentifier
      */
     @RequestMapping(value = {
-    "rest/watertax/due/byptno/{assessmentNumber}" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    "/watercharges/due/byptno/{assessmentNumber}" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public WaterTaxDue getWaterTaxDueByPropertyId(@PathVariable final String assessmentNumber)
             throws JsonGenerationException, JsonMappingException, IOException {
         return connectionDemandService.getDueDetailsByPropertyId(assessmentNumber);

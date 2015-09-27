@@ -64,7 +64,7 @@ public class RestConnectionSearchController {
     @Autowired
     private SearchService searchService;
 
-    @RequestMapping(value = "/watertax/searchconnection", method = RequestMethod.POST)
+    @RequestMapping(value = "/watercharges/searchconnection", method = RequestMethod.POST)
     @ResponseBody
     public String searchConnection(@RequestBody final ConnectionSearchRequest searchRequest) {
         final SearchResult searchResult = searchService.search(asList(Index.WATERTAX.toString()),

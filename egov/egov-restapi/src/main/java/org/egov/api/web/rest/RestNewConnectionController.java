@@ -132,7 +132,7 @@ public class RestNewConnectionController {
         return entityManager.unwrap(Session.class);
     }
 
-    @RequestMapping(value = "/watertax/token", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/watercharges/token", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getToken() throws JsonGenerationException, JsonMappingException, IOException {
         final String strQuery = "select md from EgModules md where md.name=:name";
         final Query hql = getCurrentSession().createQuery(strQuery);
@@ -144,7 +144,7 @@ public class RestNewConnectionController {
 
     }
 
-    @RequestMapping(value = "/watertax/newconnection", method = RequestMethod.POST)
+    @RequestMapping(value = "/watercharges/newconnection", method = RequestMethod.POST)
     public String createNewConnection(
             @Valid @RequestBody final ConnectionInfo connectionInfo,
             @PathVariable final String token) {
