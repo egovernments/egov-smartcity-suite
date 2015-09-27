@@ -62,6 +62,7 @@ public class ApplicationSearchAdaptor implements JsonSerializer<SearchResult> {
             JsonObject jsonObject = new JsonObject();
             clausesMap = (HashMap) document.getResource().get("clauses");
             jsonObject.addProperty("applicationtype", clausesMap.get("applicationtype").toString());
+            jsonObject.addProperty("status", clausesMap.get("status").toString());
 
             searchableMap = (HashMap) document.getResource().get("searchable");
             jsonObject.addProperty("applicationnumber", searchableMap.get("applicationnumber").toString());
