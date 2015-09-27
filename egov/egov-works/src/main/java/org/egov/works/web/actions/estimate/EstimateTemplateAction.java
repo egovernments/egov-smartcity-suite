@@ -51,25 +51,23 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.common.entity.UOM;
 import org.egov.commons.EgwTypeOfWork;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.pims.service.EmployeeServiceOld;
-import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.EstimateTemplate;
 import org.egov.works.models.estimate.EstimateTemplateActivity;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.utils.WorksConstants;
-import org.egov.works.web.actions.masters.MilestoneTemplateAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 @Results({
-	@Result(name = EstimateTemplateAction.NEW, location = "estimateTemplate-new.jsp"),
-	@Result(name = EstimateTemplateAction.SEARCH, location = "estimateTemplate-search.jsp")
+        @Result(name = EstimateTemplateAction.NEW, location = "estimateTemplate-new.jsp"),
+        @Result(name = EstimateTemplateAction.SEARCH, location = "estimateTemplate-search.jsp")
 })
 public class EstimateTemplateAction extends SearchFormAction {
 
@@ -79,9 +77,9 @@ public class EstimateTemplateAction extends SearchFormAction {
     private List<EstimateTemplateActivity> sorActivities = new LinkedList<EstimateTemplateActivity>();
     private List<EstimateTemplateActivity> nonSorActivities = new LinkedList<EstimateTemplateActivity>();
     @Autowired
-    private EmployeeServiceOld employeeService;
-    //@Autowired
-    /*private PersonalInformationService personalInformationService;*/
+    private AssignmentService assignmentService;
+    // @Autowired
+    /* private PersonalInformationService personalInformationService; */
     private PersistenceService<EstimateTemplate, Long> estimateTemplateService;
     private String mode = null;
     private Long id;
@@ -92,6 +90,7 @@ public class EstimateTemplateAction extends SearchFormAction {
 
     private String checkDWRelatedSORs;
     public static final String SEARCH = "search";
+
     public String getCheckDWRelatedSORs() {
         return checkDWRelatedSORs;
     }
@@ -127,9 +126,9 @@ public class EstimateTemplateAction extends SearchFormAction {
             estimateTemplate = estimateTemplateService.findById(id, false);
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
-        ajaxEstimateAction.setEmployeeService(employeeService);
-        //TODO: Need to uncomment
-        //ajaxEstimateAction.setPersonalInformationService(personalInformationService);
+        ajaxEstimateAction.setAssignmentService(assignmentService);
+        // TODO: Need to uncomment
+        // ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         super.prepare();
         setupDropdownDataExcluding("workType", "subType");
         addDropdownData("parentCategoryList",
@@ -221,11 +220,9 @@ public class EstimateTemplateAction extends SearchFormAction {
         return status;
     }
 
-    /*@Override
-    public String search() {
-        estimateTemplate.setStatus(1);
-        return "search";
-    }*/
+    /*
+     * @Override public String search() { estimateTemplate.setStatus(1); return "search"; }
+     */
 
     public String searchDetails() {
         if (estimateTemplate.getWorkType() == null || estimateTemplate.getWorkType().getId() == -1) {
@@ -237,18 +234,6 @@ public class EstimateTemplateAction extends SearchFormAction {
         super.search();
         return "search";
     }
-
-    public EmployeeServiceOld getEmployeeService() {
-        return employeeService;
-    }
-
-    public void setEmployeeService(final EmployeeServiceOld employeeService) {
-        this.employeeService = employeeService;
-    }
-
-    /*public void setPersonalInformationService(final PersonalInformationService personalInformationService) {
-        this.personalInformationService = personalInformationService;
-    }*/
 
     public List<EstimateTemplateActivity> getSorActivities() {
         return sorActivities;

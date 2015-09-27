@@ -60,6 +60,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -111,7 +112,9 @@ public class MeasurementBookAction extends BaseFormAction {
     private String messageKey;
     private Long id;
     @Autowired
-    private EmployeeServiceOld employeeService;
+    private AssignmentService assignmentService;
+    @Autowired
+    private EmployeeServiceOld employeeServiceOld;
     @Autowired
     private UserService userService;
     private EmployeeView mbPreparedByView;
@@ -196,7 +199,7 @@ public class MeasurementBookAction extends BaseFormAction {
     public void prepare() {
         final AjaxMeasurementBookAction ajaxMBAction = new AjaxMeasurementBookAction();
         ajaxMBAction.setPersistenceService(getPersistenceService());
-        ajaxMBAction.setEmployeeService(employeeService);
+        ajaxMBAction.setAssignmentService(assignmentService);
         ajaxMBAction.setPersonalInformationService(personalInformationService);
         if (id != null) {
             mbHeader = measurementBookService.findById(id, false);
@@ -257,10 +260,10 @@ public class MeasurementBookAction extends BaseFormAction {
         PersonalInformation personalInformation = null;
         final Long loggedInUserId = worksService.getCurrentLoggedInUserId();
         if (loggedInUserId != null)
-            personalInformation = employeeService.getEmpForUserId(loggedInUserId);
+            personalInformation = employeeServiceOld.getEmpForUserId(loggedInUserId);
         Assignment assignment = null;
         if (personalInformation != null)
-            assignment = employeeService.getLatestAssignmentForEmployee(personalInformation.getIdPersonalInformation());
+            assignment = employeeServiceOld.getLatestAssignmentForEmployee(personalInformation.getIdPersonalInformation());
         return assignment;
     }
 
@@ -296,7 +299,7 @@ public class MeasurementBookAction extends BaseFormAction {
                     || mbHeader != null && mbHeader.getEgwStatus().getCode().equalsIgnoreCase("REJECTED")) {
                 final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
                 ajaxEstimateAction.setPersistenceService(getPersistenceService());
-                ajaxEstimateAction.setEmployeeService(employeeService);
+                ajaxEstimateAction.setAssignmentService(assignmentService);
                 ajaxEstimateAction.setPersonalInformationService(personalInformationService);
                 ajaxEstimateAction.setEisService(eisService);
                 ajaxEstimateAction.setExecutingDepartment(workOrderEstimateList.get(0).getEstimate()
@@ -343,7 +346,7 @@ public class MeasurementBookAction extends BaseFormAction {
 
     protected void setMBPreparedBy(final Integer idPersonalInformation) {
         if (validMBPreparedBy(idPersonalInformation)) {
-            mbHeader.setMbPreparedBy(employeeService.getEmloyeeById(idPersonalInformation));
+            mbHeader.setMbPreparedBy(employeeServiceOld.getEmloyeeById(idPersonalInformation));
             mbPreparedByView = (EmployeeView) getPersistenceService().find("from EmployeeView where id = ?",
                     idPersonalInformation);
         }
@@ -468,7 +471,7 @@ public class MeasurementBookAction extends BaseFormAction {
         for (final MBHeader mbh : results) {
             if (!mbh.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                     && !mbh.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
-                final PersonalInformation emp = employeeService.getEmployeeforPosition(mbh.getCurrentState()
+                final PersonalInformation emp = employeeServiceOld.getEmployeeforPosition(mbh.getCurrentState()
                         .getOwnerPosition());
                 if (emp != null && StringUtils.isNotBlank(emp.getEmployeeName()))
                     mbh.setOwner(emp.getEmployeeName());
@@ -542,7 +545,7 @@ public class MeasurementBookAction extends BaseFormAction {
     private void setApprovedQtyAndPrevCumlVal() {
         final AjaxMeasurementBookAction ajaxMBAction = new AjaxMeasurementBookAction();
         ajaxMBAction.setPersistenceService(getPersistenceService());
-        ajaxMBAction.setEmployeeService(employeeService);
+        ajaxMBAction.setAssignmentService(assignmentService);
         ajaxMBAction.setPersonalInformationService(personalInformationService);
         ajaxMBAction.setMeasurementBookService(measurementBookService);
 
@@ -848,7 +851,7 @@ public class MeasurementBookAction extends BaseFormAction {
         mbHeader.setEgwStatus(commonsService.getStatusByModuleAndCode("MBHeader",
                 MBHeader.MeasurementBookStatus.CANCELLED.toString()));
 
-        final PersonalInformation prsnlInfo = employeeService.getEmpForUserId(worksService.getCurrentLoggedInUserId());
+        final PersonalInformation prsnlInfo = employeeServiceOld.getEmpForUserId(worksService.getCurrentLoggedInUserId());
         String empName = "";
         if (prsnlInfo.getEmployeeFirstName() != null)
             empName = prsnlInfo.getEmployeeFirstName();
@@ -900,10 +903,6 @@ public class MeasurementBookAction extends BaseFormAction {
 
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public void setEmployeeService(final EmployeeServiceOld employeeService) {
-        this.employeeService = employeeService;
     }
 
     public EmployeeView getMbPreparedByView() {
@@ -1114,10 +1113,6 @@ public class MeasurementBookAction extends BaseFormAction {
 
     public void setWorkOrderId(final Long workOrderId) {
         this.workOrderId = workOrderId;
-    }
-
-    public EmployeeServiceOld getEmployeeService() {
-        return employeeService;
     }
 
     public Long getEstimateId() {

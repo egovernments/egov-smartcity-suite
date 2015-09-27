@@ -69,6 +69,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -142,7 +143,9 @@ public class WorkOrderAction extends BaseFormAction {
     private AbstractEstimateService abstractEstimateService;
     private PersistenceService<SetStatus, Long> worksStatusService;
     @Autowired
-    private EmployeeServiceOld employeeService;
+    private AssignmentService assignmentService;
+    @Autowired
+    private EmployeeServiceOld employeeServiceOld;
     @Autowired
     private UserService userService;
     @Autowired
@@ -249,7 +252,7 @@ public class WorkOrderAction extends BaseFormAction {
         ajaxWorkOrderAction.setPersistenceService(getPersistenceService());
         ajaxWorkOrderAction.setPersonalInformationService(personalInformationService);
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
-        ajaxEstimateAction.setEmployeeService(employeeService);
+        ajaxEstimateAction.setAssignmentService(assignmentService);
         ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         ajaxEstimateAction.setAbstractEstimateService(abstractEstimateService);
         ajaxEstimateAction.setEisService(eisService);
@@ -292,13 +295,13 @@ public class WorkOrderAction extends BaseFormAction {
             tenderRespContrId = tenderResponseContractor.getId();
 
             if (workOrder.getEngineerIncharge() != null && getAssignedTo1() == null)
-                setAssignedTo1(Long.valueOf(employeeService
+                setAssignedTo1(Long.valueOf(employeeServiceOld
                         .getAssignmentByEmpAndDate(new Date(),
                                 workOrder.getEngineerIncharge().getIdPersonalInformation())
                         .getDesignation()
                         .getId()));
             if (workOrder.getEngineerIncharge2() != null && getAssignedTo2() == null)
-                setAssignedTo2(Long.valueOf(employeeService
+                setAssignedTo2(Long.valueOf(employeeServiceOld
                         .getAssignmentByEmpAndDate(new Date(),
                                 workOrder.getEngineerIncharge2().getIdPersonalInformation())
                         .getDesignation()
@@ -365,7 +368,7 @@ public class WorkOrderAction extends BaseFormAction {
     private List getUsersInDepartment() {
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
-        ajaxEstimateAction.setEmployeeService(employeeService);
+        ajaxEstimateAction.setAssignmentService(assignmentService);
         ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         ajaxEstimateAction.setEisService(eisService);
         if (workOrder != null && workOrder.getWorkOrderPreparedBy() != null)
@@ -820,7 +823,7 @@ public class WorkOrderAction extends BaseFormAction {
             if (workOrder.getCurrentState() != null)
                 if (!workOrder.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                         && !workOrder.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
-                    final PersonalInformation emp = employeeService.getEmployeeforPosition(workOrder.getCurrentState()
+                    final PersonalInformation emp = employeeServiceOld.getEmployeeforPosition(workOrder.getCurrentState()
                             .getOwnerPosition());
                     if (emp != null && StringUtils.isNotBlank(emp.getEmployeeName()))
                         workOrder.setOwner(emp.getEmployeeName());
@@ -955,16 +958,16 @@ public class WorkOrderAction extends BaseFormAction {
 
     private PersonalInformation getEmployee() {
         if (workOrder.getWorkOrderPreparedBy() == null)
-            return employeeService.getEmpForUserId(worksService.getCurrentLoggedInUserId());
+            return employeeServiceOld.getEmpForUserId(worksService.getCurrentLoggedInUserId());
         else
             return workOrder.getWorkOrderPreparedBy();
     }
 
     private Assignment getAssignment(final PersonalInformation pi) {
         if (workOrder.getWorkOrderPreparedBy() == null)
-            return employeeService.getAssignmentByEmpAndDate(new Date(), pi.getIdPersonalInformation());
+            return employeeServiceOld.getAssignmentByEmpAndDate(new Date(), pi.getIdPersonalInformation());
         else
-            return employeeService.getAssignmentByEmpAndDate(new Date(), workOrder.getWorkOrderPreparedBy()
+            return employeeServiceOld.getAssignmentByEmpAndDate(new Date(), workOrder.getWorkOrderPreparedBy()
                     .getIdPersonalInformation());
     }
 
@@ -1009,7 +1012,7 @@ public class WorkOrderAction extends BaseFormAction {
         final List<StateHistory> history = wo.getStateHistory();
         for (final StateHistory st : history)
             if (st.getValue().equalsIgnoreCase(WORKFLOW_ENDS)) {
-                final PersonalInformation pInfo = employeeService.getEmployeeforPosition(st.getOwnerPosition());
+                final PersonalInformation pInfo = employeeServiceOld.getEmployeeforPosition(st.getOwnerPosition());
                 if (pInfo != null && StringUtils.isNotBlank(pInfo.getName()))
                     approver = approver + pInfo.getName();
             }
@@ -1094,10 +1097,6 @@ public class WorkOrderAction extends BaseFormAction {
 
     public void setTenderResponse(final TenderResponse tenderResponse) {
         this.tenderResponse = tenderResponse;
-    }
-
-    public void setEmployeeService(final EmployeeServiceOld employeeService) {
-        this.employeeService = employeeService;
     }
 
     public void setDepartmentService(final DepartmentService departmentService) {
@@ -1548,7 +1547,7 @@ public class WorkOrderAction extends BaseFormAction {
                 .setEgwStatus(commonsService.getStatusByModuleAndCode(WO_OBJECT_TYPE, WorksConstants.CANCELLED_STATUS));
 
         if (workOrder.getCurrentState() != null) {
-            final PersonalInformation prsnlInfo = employeeService.getEmpForUserId(worksService
+            final PersonalInformation prsnlInfo = employeeServiceOld.getEmpForUserId(worksService
                     .getCurrentLoggedInUserId());
             String empName = "";
             if (prsnlInfo.getEmployeeFirstName() != null)

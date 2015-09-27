@@ -59,6 +59,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.service.CommonsService;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -101,7 +102,9 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
     private Date fromDate;
     private Date toDate;
     @Autowired
-    private EmployeeServiceOld employeeService;
+    private EmployeeServiceOld employeeServiceOld;
+    @Autowired
+    private AssignmentService assignmentService;
     private PersonalInformationService personalInformationService;
     public static final String SEARCH = "search";
     public static final Locale LOCALE = new Locale("en", "IN");
@@ -146,7 +149,7 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
         super.prepare();
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
-        ajaxEstimateAction.setEmployeeService(employeeService);
+        ajaxEstimateAction.setAssignmentService(assignmentService);
         ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         addDropdownData(
                 "statusList",
@@ -284,7 +287,7 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
         validateARFForRE(re);
 
         revWorkOrder.setEgwStatus(commonsService.getStatusByModuleAndCode("WorkOrder", "CANCELLED"));
-        final PersonalInformation prsnlInfo = employeeService.getEmpForUserId(worksService.getCurrentLoggedInUserId());
+        final PersonalInformation prsnlInfo = employeeServiceOld.getEmpForUserId(worksService.getCurrentLoggedInUserId());
         String empName = "";
         re.setEgwStatus(commonsService.getStatusByModuleAndCode("AbstractEstimate", "CANCELLED"));
         if (prsnlInfo.getEmployeeFirstName() != null)
@@ -471,7 +474,7 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
             final WorkOrderEstimate woe = (WorkOrderEstimate) row;
             if (!woe.getEstimate().getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                     && !woe.getEstimate().getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
-                final PersonalInformation emp = employeeService.getEmployeeforPosition(woe.getEstimate().getState()
+                final PersonalInformation emp = employeeServiceOld.getEmployeeforPosition(woe.getEstimate().getState()
                         .getOwnerPosition());
                 if (emp != null)
                     if (emp.getUserMaster() != null)
@@ -506,10 +509,6 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
 
     public void setToDate(final Date toDate) {
         this.toDate = toDate;
-    }
-
-    public void setEmployeeService(final EmployeeServiceOld employeeService) {
-        this.employeeService = employeeService;
     }
 
     public void setPersonalInformationService(final PersonalInformationService personalInformationService) {

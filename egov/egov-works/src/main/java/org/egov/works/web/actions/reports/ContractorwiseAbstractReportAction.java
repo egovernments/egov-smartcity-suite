@@ -62,6 +62,7 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CommonsService;
 import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -72,7 +73,6 @@ import org.egov.infstr.search.SearchQuerySQL;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.model.budget.BudgetGroup;
-import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.services.WorkProgressAbstractReportService;
 import org.egov.works.services.WorksService;
@@ -112,7 +112,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
     private Integer scheme = -1;
     private Integer subScheme = -1;
     @Autowired
-    private EmployeeServiceOld employeeService;
+    private AssignmentService assignmentService;
     private PersonalInformationService personalInformationService;
     @Autowired
     private CommonsService commonsService;
@@ -178,7 +178,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
                 getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
-        ajaxEstimateAction.setEmployeeService(employeeService);
+        ajaxEstimateAction.setAssignmentService(assignmentService);
         ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         populateCategoryList(ajaxEstimateAction, getWorksType() == -1 ? false : getWorksType() != -1);
         addDropdownData("fundList", commonsService.getAllActiveIsLeafFunds());
@@ -985,10 +985,6 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
 
     public void setSubScheme(final Integer subScheme) {
         this.subScheme = subScheme;
-    }
-
-    public void setEmployeeService(final EmployeeServiceOld employeeService) {
-        this.employeeService = employeeService;
     }
 
     public void setPersonalInformationService(final PersonalInformationService personalInformationService) {

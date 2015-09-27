@@ -50,9 +50,9 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.Activity;
@@ -80,14 +80,14 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
     private Date asOnDate;
     private double marketRateAmount = 0;
     private WorksPackageService workspackageService;
+    @Autowired
+    private AssignmentService assignmentService;
     private TenderResponse tenderResp = new TenderResponse();
     // for prepared by
     private static final String USERS_IN_DEPT = "usersInDept";
     private static final String DESIGN_FOR_EMP = "designForEmp";
     private Integer executingDepartment;
-    private Integer empID;
-    @Autowired
-    private EmployeeServiceOld employeeService;
+    private Long empID;
     private List usersInExecutingDepartment;
     private Assignment assignment;
     private String tenderNo;
@@ -186,7 +186,7 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
     // for preparedby
     public String designationForUser() {
         try {
-            assignment = employeeService.getLatestAssignmentForEmployee(empID);
+            assignment = assignmentService.getPrimaryAssignmentForEmployee(empID);
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("user.find.error", e);
         }
@@ -308,6 +308,10 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
         return SUCCESS;
     }
 
+    public void setAssignmentService(final AssignmentService assignmentService) {
+        this.assignmentService = assignmentService;
+    }
+
     public void setAbstractEstimateService(final AbstractEstimateService abstractEstimateService) {
         this.abstractEstimateService = abstractEstimateService;
     }
@@ -328,12 +332,7 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
         this.marketRateAmount = marketRateAmount;
     }
 
-    // for prepared by
-    public void setEmployeeService(final EmployeeServiceOld employeeService) {
-        this.employeeService = employeeService;
-    }
-
-    public void setEmpID(final Integer empID) {
+    public void setEmpID(final Long empID) {
         this.empID = empID;
     }
 

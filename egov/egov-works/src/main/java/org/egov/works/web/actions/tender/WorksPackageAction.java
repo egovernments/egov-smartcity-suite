@@ -55,6 +55,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -94,7 +95,9 @@ public class WorksPackageAction extends BaseFormAction {
     private String createdBySelection = "no";
     private WorksService worksService;
     @Autowired
-    private EmployeeServiceOld employeeService;
+    private AssignmentService assignmentService;
+    @Autowired
+    private EmployeeServiceOld employeeServiceOld;
     private DepartmentService departmentService;
     private WorksPackage worksPackage = new WorksPackage();
     private String designation;
@@ -138,7 +141,7 @@ public class WorksPackageAction extends BaseFormAction {
     public void prepare() {
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
-        ajaxEstimateAction.setEmployeeService(employeeService);
+        ajaxEstimateAction.setAssignmentService(assignmentService);
         ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         ajaxEstimateAction.setAbstractEstimateService(abstractEstimateService);
         ajaxEstimateAction.setEisService(eisService);
@@ -233,7 +236,7 @@ public class WorksPackageAction extends BaseFormAction {
             validateEstimateForUniqueness();
 
         }
-        worksPackage.setPreparedBy(employeeService.getEmloyeeById(empId));
+        worksPackage.setPreparedBy(employeeServiceOld.getEmloyeeById(empId));
         try {
             workspackageService.setWorksPackageNumber(worksPackage,
                     abstractEstimateService.getCurrentFinancialYear(worksPackage.getPackageDate()));
@@ -449,10 +452,6 @@ public class WorksPackageAction extends BaseFormAction {
         this.createdBySelection = createdBySelection;
     }
 
-    public void setEmployeeService(final EmployeeServiceOld employeeService) {
-        this.employeeService = employeeService;
-    }
-
     public void setDepartmentService(final DepartmentService departmentService) {
         this.departmentService = departmentService;
     }
@@ -479,16 +478,16 @@ public class WorksPackageAction extends BaseFormAction {
 
     private PersonalInformation getEmployee() {
         if (worksPackage.getPreparedBy() == null)
-            return employeeService.getEmpForUserId(worksService.getCurrentLoggedInUserId());
+            return employeeServiceOld.getEmpForUserId(worksService.getCurrentLoggedInUserId());
         else
             return worksPackage.getPreparedBy();
     }
 
     private Assignment getAssignment(final PersonalInformation pi) {
         if (worksPackage.getPreparedBy() == null)
-            return employeeService.getAssignmentByEmpAndDate(new Date(), pi.getIdPersonalInformation());
+            return employeeServiceOld.getAssignmentByEmpAndDate(new Date(), pi.getIdPersonalInformation());
         else
-            return employeeService.getAssignmentByEmpAndDate(new Date(), worksPackage.getPreparedBy()
+            return employeeServiceOld.getAssignmentByEmpAndDate(new Date(), worksPackage.getPreparedBy()
                     .getIdPersonalInformation());
     }
 

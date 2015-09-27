@@ -51,6 +51,7 @@ import javax.script.ScriptContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
@@ -59,7 +60,6 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.dao.DesignationMasterDAO;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.measurementbook.MBHeader;
@@ -83,9 +83,9 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
 
     private MeasurementBookService measurementBookService;
     @Autowired
-    private EmployeeServiceOld employeeService;
+    private AssignmentService assignmentService;
     private Assignment assignment;
-    private Integer empID;
+    private Long empID;
     private Long executingDepartment;
     private List usersInExecutingDepartment;
     private WorkOrder workOrder;
@@ -129,7 +129,7 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
 
     public String designationForUser() {
         try {
-            assignment = employeeService.getLatestAssignmentForEmployee(empID);
+            assignment = assignmentService.getPrimaryAssignmentForEmployee(empID);
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("user.find.error", e);
         }
@@ -304,11 +304,11 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
         return "mblatestDateResult";
     }
 
-    public void setEmployeeService(final EmployeeServiceOld employeeService) {
-        this.employeeService = employeeService;
+    public void setAssignmentService(final AssignmentService assignmentService) {
+        this.assignmentService = assignmentService;
     }
 
-    public void setEmpID(final Integer empID) {
+    public void setEmpID(final Long empID) {
         this.empID = empID;
     }
 

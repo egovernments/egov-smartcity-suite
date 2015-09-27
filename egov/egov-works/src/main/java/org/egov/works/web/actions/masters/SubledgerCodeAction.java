@@ -63,6 +63,7 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Department;
@@ -77,7 +78,6 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.model.bills.EgBillregister;
-import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.models.estimate.ProjectCodeGenerator;
@@ -100,7 +100,7 @@ public class SubledgerCodeAction extends BaseFormAction {
     private DepositCode depositCode = new DepositCode();
     private static final Logger logger = Logger.getLogger(SubledgerCodeAction.class);
     @Autowired
-    private EmployeeServiceOld employeeService;
+    private AssignmentService assignmentService;
     @Autowired
     private CommonsService commonsService;
     private static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";
@@ -158,7 +158,7 @@ public class SubledgerCodeAction extends BaseFormAction {
         }
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
-        ajaxEstimateAction.setEmployeeService(employeeService);
+        ajaxEstimateAction.setAssignmentService(assignmentService);
         final AjaxFinancialDetailAction ajaxFinancialDetailAction = new AjaxFinancialDetailAction();
         ajaxFinancialDetailAction.setPersistenceService(getPersistenceService());
         super.prepare();
@@ -420,14 +420,6 @@ public class SubledgerCodeAction extends BaseFormAction {
     @Action(value = "/masters/subledgerCode-newform")
     public String newform() {
         return NEW;
-    }
-
-    public EmployeeServiceOld getEmployeeService() {
-        return employeeService;
-    }
-
-    public void setEmployeeService(final EmployeeServiceOld employeeService) {
-        this.employeeService = employeeService;
     }
 
     public CommonsService getCommonsService() {

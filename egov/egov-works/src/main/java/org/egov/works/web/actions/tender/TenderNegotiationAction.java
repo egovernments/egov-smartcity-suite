@@ -63,6 +63,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
@@ -159,7 +160,9 @@ public class TenderNegotiationAction extends SearchFormAction {
     private static final String ACTION_NAME = "actionName";
     private String sourcepage = "";
     @Autowired
-    private EmployeeServiceOld employeeService;
+    private AssignmentService assignmentService;
+    @Autowired
+    private EmployeeServiceOld employeeServiceOld;
 
     private String nsActionName;
     private String option;
@@ -242,7 +245,7 @@ public class TenderNegotiationAction extends SearchFormAction {
 
     protected PersonalInformation getEmployee() {
         if (tenderResponse.getNegotiationPreparedBy() == null)
-            return employeeService.getEmpForUserId(worksService.getCurrentLoggedInUserId());
+            return employeeServiceOld.getEmpForUserId(worksService.getCurrentLoggedInUserId());
         else
             return tenderResponse.getNegotiationPreparedBy();
     }
@@ -323,11 +326,11 @@ public class TenderNegotiationAction extends SearchFormAction {
     public void prepare() {
         final AjaxTenderNegotiationAction ajaxTenderNegotiationAction = new AjaxTenderNegotiationAction();
         ajaxTenderNegotiationAction.setPersistenceService(getPersistenceService());
-        ajaxTenderNegotiationAction.setEmployeeService(employeeService);
+        ajaxTenderNegotiationAction.setAssignmentService(assignmentService);
         ajaxTenderNegotiationAction.setPersonalInformationService(personalInformationService);
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
-        ajaxEstimateAction.setEmployeeService(employeeService);
+        ajaxEstimateAction.setAssignmentService(assignmentService);
         ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         ajaxEstimateAction.setAbstractEstimateService(abstractEstimateService);
         ajaxEstimateAction.setEisService(eisService);
@@ -440,9 +443,9 @@ public class TenderNegotiationAction extends SearchFormAction {
 
     protected Assignment getAssignment(final PersonalInformation pi) {
         if (tenderResponse.getNegotiationPreparedBy() == null)
-            return employeeService.getAssignmentByEmpAndDate(new Date(), pi.getIdPersonalInformation());
+            return employeeServiceOld.getAssignmentByEmpAndDate(new Date(), pi.getIdPersonalInformation());
         else
-            return employeeService.getAssignmentByEmpAndDate(new Date(), tenderResponse.getNegotiationPreparedBy()
+            return employeeServiceOld.getAssignmentByEmpAndDate(new Date(), tenderResponse.getNegotiationPreparedBy()
                     .getIdPersonalInformation());
     }
 
@@ -1116,10 +1119,6 @@ public class TenderNegotiationAction extends SearchFormAction {
         this.sourcepage = sourcepage;
     }
 
-    public void setEmployeeService(final EmployeeServiceOld employeeService) {
-        this.employeeService = employeeService;
-    }
-
     public WorkOrder getWorkOrder() {
         return workOrder;
     }
@@ -1296,7 +1295,7 @@ public class TenderNegotiationAction extends SearchFormAction {
         if (tenderHeader != null && tenderHeader.getTenderNo() != null) {
             final AjaxTenderNegotiationAction ajaxTenderNegotiationAction = new AjaxTenderNegotiationAction();
             ajaxTenderNegotiationAction.setPersistenceService(getPersistenceService());
-            ajaxTenderNegotiationAction.setEmployeeService(employeeService);
+            ajaxTenderNegotiationAction.setAssignmentService(assignmentService);
             ajaxTenderNegotiationAction.setTenderNo(tenderHeader.getTenderNo());
             ajaxTenderNegotiationAction.setId(id);
             if (ajaxTenderNegotiationAction.getTendernoCheck())
@@ -1323,7 +1322,7 @@ public class TenderNegotiationAction extends SearchFormAction {
             }
             if (!tenderResponse.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                     && !tenderResponse.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
-                final PersonalInformation emp = employeeService.getEmployeeforPosition(tenderResponse.getCurrentState()
+                final PersonalInformation emp = employeeServiceOld.getEmployeeforPosition(tenderResponse.getCurrentState()
                         .getOwnerPosition());
                 if (emp != null && StringUtils.isNotBlank(emp.getEmployeeName()))
                     if (tenderResponse.getTenderEstimate().getAbstractEstimate() == null)
@@ -1631,7 +1630,7 @@ public class TenderNegotiationAction extends SearchFormAction {
         tenderResponse.setEgwStatus(commonsService.getStatusByModuleAndCode("TenderResponse",
                 WorksConstants.CANCELLED_STATUS));
 
-        final PersonalInformation prsnlInfo = employeeService.getEmpForUserId(worksService.getCurrentLoggedInUserId());
+        final PersonalInformation prsnlInfo = employeeServiceOld.getEmpForUserId(worksService.getCurrentLoggedInUserId());
         String empName = "";
         if (prsnlInfo.getEmployeeFirstName() != null)
             empName = prsnlInfo.getEmployeeFirstName();

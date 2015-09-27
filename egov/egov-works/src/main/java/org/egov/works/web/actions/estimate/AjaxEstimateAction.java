@@ -63,6 +63,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
@@ -72,7 +73,6 @@ import org.egov.infstr.models.Money;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.dao.DesignationMasterDAO;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.masters.Overhead;
@@ -101,9 +101,9 @@ public class AjaxEstimateAction extends BaseFormAction {
     private static final String PROJECT_CODE_SEARCH_RESULTS = "projectCodeSearchResults";
     private static final String DRAFT_ESTIMATE_NUMBER_SEARCH_RESULTS = "draftEstimateNoSearchResults";
     private Long executingDepartment;
-    private Integer empID;
+    private Long empID;
     @Autowired
-    private EmployeeServiceOld employeeServiceOld;
+    private AssignmentService assignmentService;
     private List usersInExecutingDepartment;
     private Assignment assignment;
     private List subCategories;
@@ -165,7 +165,7 @@ public class AjaxEstimateAction extends BaseFormAction {
 
     public String designationForUser() {
         try {
-            assignment = employeeServiceOld.getLatestAssignmentForEmployee(empID);
+            assignment = assignmentService.getPrimaryAssignmentForEmployee(empID);
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("user.find.error", e);
         }
@@ -427,8 +427,8 @@ public class AjaxEstimateAction extends BaseFormAction {
         return usersInExecutingDepartment;
     }
 
-    public void setEmployeeService(final EmployeeServiceOld employeeServiceOld) {
-        this.employeeServiceOld = employeeServiceOld;
+    public void setAssignmentService(final AssignmentService assignmentService) {
+        this.assignmentService = assignmentService;
     }
 
     public void setExecutingDepartment(final Long executingDepartment) {
@@ -475,11 +475,11 @@ public class AjaxEstimateAction extends BaseFormAction {
         this.validOverheads = validOverheads;
     }
 
-    public Integer getEmpID() {
+    public Long getEmpID() {
         return empID;
     }
 
-    public void setEmpID(final Integer empID) {
+    public void setEmpID(final Long empID) {
         this.empID = empID;
     }
 
