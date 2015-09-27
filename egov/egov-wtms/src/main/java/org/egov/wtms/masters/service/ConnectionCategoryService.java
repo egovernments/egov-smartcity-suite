@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.masters.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
@@ -112,6 +113,19 @@ public class ConnectionCategoryService {
             return connectionCategoryRepository.getAllCategoryTypesByPropertyTypeNotInBPL(propertyType);
         else
             return connectionCategoryRepository.getAllCategoryTypesByPropertyType(propertyType);
+    }
+
+    public List<ConnectionCategory> getConnectionCategoryListForRest() {
+        final List<ConnectionCategory> connectionCategoryList = connectionCategoryRepository.findByActiveTrueOrderByNameAsc();
+        final List<ConnectionCategory> prepareListForRest = new ArrayList<ConnectionCategory>(0);
+
+        for (final ConnectionCategory connectionCategory : connectionCategoryList) {
+            final ConnectionCategory connectionCategoryRest = new ConnectionCategory();
+            connectionCategoryRest.setCode(connectionCategory.getCode());
+            connectionCategoryRest.setName(connectionCategory.getName());
+            prepareListForRest.add(connectionCategoryRest);
+        }
+        return prepareListForRest;
     }
 
 }

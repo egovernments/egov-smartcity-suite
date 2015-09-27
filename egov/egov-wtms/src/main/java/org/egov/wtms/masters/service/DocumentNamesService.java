@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.masters.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.wtms.masters.entity.ApplicationType;
@@ -100,6 +101,24 @@ public class DocumentNamesService {
 
     public List<DocumentNames> getAllActiveDocumentNamesByApplicationType(final ApplicationType applicationType) {
         return documentNamesRepository.findByActiveTrueAndApplicationTypeOrderByIdAsc(applicationType);
+    }
+
+    public List<DocumentNames> getAllActiveDocumentNames() {
+        return documentNamesRepository.findByActiveTrueOrderByIdAsc();
+    }
+
+    public List<DocumentNames> getDocumentNamesListForRest() {
+        final List<DocumentNames> documentNamesList = documentNamesRepository.findByActiveTrueOrderByIdAsc();
+        final List<DocumentNames> prepareListForRest = new ArrayList<DocumentNames>(0);
+
+        for (final DocumentNames documentNames : documentNamesList) {
+            final DocumentNames documentNamesRest = new DocumentNames();
+            documentNamesRest.setDocumentName(documentNames.getDocumentName());
+            documentNamesRest.setRequired(documentNames.isRequired());
+            documentNamesRest.setApplicationTypeName(documentNames.getApplicationType().getName());
+            prepareListForRest.add(documentNamesRest);
+        }
+        return prepareListForRest;
     }
 
 }

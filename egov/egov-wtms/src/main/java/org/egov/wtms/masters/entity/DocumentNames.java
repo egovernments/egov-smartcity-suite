@@ -47,6 +47,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -81,6 +82,9 @@ public class DocumentNames extends AbstractAuditable {
     private boolean required;
 
     private boolean active;
+    
+    @Transient
+    private String applicationTypeName; 
 
     @Override
     public Long getId() {
@@ -130,6 +134,14 @@ public class DocumentNames extends AbstractAuditable {
 
     public void setActive(final boolean active) {
         this.active = active;
+    }
+
+    public String getApplicationTypeName() {
+        return applicationTypeName;
+    }
+
+    public void setApplicationTypeName(String applicationTypeName) {
+        this.applicationTypeName = applicationTypeName;
     }
 
 }

@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.masters.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.wtms.masters.entity.PipeSize;
@@ -96,10 +97,23 @@ public class PipeSizeService {
     public List<PipeSize> getAllActivePipeSize() {
         return pipeSizeRepository.findByActiveTrueOrderBySizeInInchAsc();
     }
-    
 
     public List<PipeSize> getAllPipeSizesByPropertyType(final Long propertyType) {
         return pipeSizeRepository.getAllPipeSizesByPropertyType(propertyType);
+    }
+
+    public List<PipeSize> getPipeSizeListForRest() {
+        final List<PipeSize> pipeSizeList = pipeSizeRepository.findByActiveTrueOrderBySizeInInchAsc();
+        final List<PipeSize> prepareListForRest = new ArrayList<PipeSize>(0);
+
+        for (final PipeSize pipeSize : pipeSizeList) {
+            final PipeSize pipeSizeRest = new PipeSize();
+            pipeSizeRest.setCode(pipeSize.getCode());
+            pipeSizeRest.setSizeInInch(pipeSize.getSizeInInch());
+            pipeSizeRest.setSizeInMilimeter(pipeSize.getSizeInMilimeter());
+            prepareListForRest.add(pipeSizeRest);
+        }
+        return prepareListForRest;
     }
 
 }

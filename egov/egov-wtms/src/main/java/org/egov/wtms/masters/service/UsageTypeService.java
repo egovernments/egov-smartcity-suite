@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.masters.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.wtms.masters.entity.UsageType;
@@ -108,6 +109,19 @@ public class UsageTypeService {
 
     public List<UsageType> getAllUsageTypesByPropertyType(final Long propertyType) {
         return usageTypeRepository.getAllUsageTypesByPropertyType(propertyType);
+    }
+
+    public List<UsageType> getUsageTypeListForRest() {
+        final List<UsageType> usageTypeList = usageTypeRepository.findByActiveTrueOrderByIdAsc();
+        final List<UsageType> prepareListForRest = new ArrayList<UsageType>(0);
+
+        for (final UsageType usageType : usageTypeList) {
+            final UsageType usageTypeRest = new UsageType();
+            usageTypeRest.setCode(usageType.getCode());
+            usageTypeRest.setName(usageType.getName());
+            prepareListForRest.add(usageTypeRest);
+        }
+        return prepareListForRest;
     }
 
 }

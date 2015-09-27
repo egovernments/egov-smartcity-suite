@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.masters.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.wtms.masters.entity.WaterSource;
@@ -99,6 +100,19 @@ public class WaterSourceService {
 
     public List<WaterSource> getAllActiveWaterSourceTypes() {
         return waterSourceRepository.findByActiveTrueOrderByWaterSourceTypeAsc();
+    }
+
+    public List<WaterSource> getWaterSourceListForRest() {
+        final List<WaterSource> waterSourceList = waterSourceRepository.findByActiveTrueOrderByWaterSourceTypeAsc();
+        final List<WaterSource> prepareListForRest = new ArrayList<WaterSource>(0);
+
+        for (final WaterSource waterSource : waterSourceList) {
+            final WaterSource waterSourceRest = new WaterSource();
+            waterSourceRest.setCode(waterSource.getCode());
+            waterSourceRest.setWaterSourceType(waterSource.getWaterSourceType());
+            prepareListForRest.add(waterSourceRest);
+        }
+        return prepareListForRest;
     }
 
 }
