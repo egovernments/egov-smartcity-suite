@@ -62,14 +62,14 @@ public class ConnectionSearchAdaptor implements JsonSerializer<SearchResult> {
             JsonObject jsonObject = new JsonObject();
             clausesMap = (HashMap) document.getResource().get("clauses");
             jsonObject.addProperty("consumercode", clausesMap.get("consumercode").toString());
-            jsonObject.addProperty("propertyid", clausesMap.get("propertyid").toString());
+            jsonObject.addProperty("assessmentnumber", clausesMap.get("propertyid").toString());
             jsonObject.addProperty("applicationtype", clausesMap.get("applicationcode").toString().toLowerCase());
-            jsonObject.addProperty("usage", clausesMap.get("usage").toString().toLowerCase());
+            jsonObject.addProperty("usagetype", clausesMap.get("usage").toString().toLowerCase());
             jsonObject.addProperty("mobilenumber", clausesMap.get("mobilenumber").toString());
             jsonObject.addProperty("zone", clausesMap.get("zone").toString());
             jsonObject.addProperty("ward", clausesMap.get("ward").toString());
             jsonObject.addProperty("totaldue", Integer.toString((Integer) clausesMap.get("totaldue")));
-            jsonObject.addProperty("watertaxdue", Double.toString((Double) clausesMap.get("waterTaxDue")));
+            jsonObject.addProperty("currentdue", Integer.toString((Integer) clausesMap.get("waterTaxDue")));
             jsonObject.addProperty("connectiontype", clausesMap.get("connectiontype").toString().toLowerCase());
 
             searchableMap = (HashMap) document.getResource().get("searchable");
