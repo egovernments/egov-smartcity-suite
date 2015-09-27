@@ -797,7 +797,7 @@ CREATE TABLE egf_instrumentheader (
     bankaccountid bigint,
     payto character varying(250),
     ispaycheque character(1),
-    instrumenttype character varying(20),
+    instrumenttype bigint,
     bankid bigint,
     detailkeyid bigint,
     detailtypeid bigint,
