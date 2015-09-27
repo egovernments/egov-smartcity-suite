@@ -1,5 +1,6 @@
 ---------------------START---------------------------
-INSERT INTO EG_ACTION(ID, NAME, ENTITYID, TASKID, UPDATEDTIME, URL, QUERYPARAMS, URLORDERID, MODULE_ID, ORDER_NUMBER, DISPLAY_NAME, IS_ENABLED, ACTION_HELP_URL, CONTEXT_ROOT) Values (nextval('SEQ_EG_ACTION'), 'RefreshCitizenInbox', NULL, NULL, now(), '/home/refreshInbox', NULL, NULL, NULL, 0, 'Refresh Citizen Inboxe', 0, NULL, 'portal');
+Insert into EG_ACTION (id,name,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate,lastmodifiedby,lastmodifieddate,application) values (nextval('SEQ_EG_ACTION'),'RefreshCitizenInbox','/home/refreshInbox',null,(select id from eg_module where name='EGI-COMMON'),0,'Refresh Citizen Inboxe','false','portal',0,1,to_timestamp('2015-08-15 11:02:31.028333','null'),1,to_timestamp('2015-08-15 11:02:31.028333','null'),(select id from eg_module where name='Administration'));
+
 
 INSERT INTO EG_ROLEACTION_MAP (ROLEID, ACTIONID) values ((select id from eg_role where name LIKE 'Citizen') ,(select id FROM eg_action  WHERE name = 'RefreshCitizenInbox'));
 INSERT INTO EG_ROLEACTION_MAP (ROLEID, ACTIONID) values ((select id from eg_role where name LIKE 'Citizen') ,(select id FROM eg_action  WHERE name = 'OfficialChangePassword'));
