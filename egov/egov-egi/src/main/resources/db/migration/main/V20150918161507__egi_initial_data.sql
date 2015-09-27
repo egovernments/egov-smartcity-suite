@@ -60,6 +60,17 @@ INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, di
 INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (1192, 'GisFileDownload', '/downloadfile/gis', NULL, 411, 1, 'GisFileDownload', false, 'egi', 0, 1, '2015-08-28 10:45:31.664804', 1, '2015-08-28 10:45:31.664804', 1);
 INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (1224, 'AadhaarInfo', '/aadhaar', NULL, 237, 0, 'AadhaarInfo', false, 'egi', 0, 1, '2015-08-28 10:45:34.775828', 1, '2015-08-28 10:45:34.775828', 1);
 INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (37, 'Official Home Page', '/home', NULL, 237, 0, 'User Login', false, 'egi', 0, 1, '2015-08-28 10:43:35.552035', 1, '2015-08-28 10:43:35.552035', 1);
+
+
+
+DROP SEQUENCE SEQ_EG_ACTION;
+
+CREATE SEQUENCE SEQ_EG_ACTION
+    START WITH 1343
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 ------------------END---------------------
 
 -----------------START--------------------

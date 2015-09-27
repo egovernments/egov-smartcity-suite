@@ -14,7 +14,7 @@ INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname
 
 
 -----------------START--------------------
-INSERT INTO eg_address (housenobldgapt, subdistrict, postoffice, landmark, country, userid, type, streetroadline, citytownvillage, arealocalitysector, district, state, pincode, id, version) VALUES ('001', NULL, NULL, 'Bank Road', NULL, 1, 'PROPERTYADDRESS', NULL, NULL, NULL, NULL, NULL, '532001', 1, 0);
+INSERT INTO eg_address (housenobldgapt, subdistrict, postoffice, landmark, country, userid, type, streetroadline, citytownvillage, arealocalitysector, district, state, pincode, id, version) VALUES ('001', NULL, NULL, 'Bank Road', NULL, 1, 'PROPERTYADDRESS', NULL, NULL, NULL, NULL, NULL, '532001',nextval('seq_eg_address'), 0);
 ------------------END---------------------
 
 -----------------START-------------------

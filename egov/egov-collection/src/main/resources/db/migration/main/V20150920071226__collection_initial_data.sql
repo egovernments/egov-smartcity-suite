@@ -296,6 +296,15 @@ Insert into eg_roleaction (roleid,actionid) values ((select id from eg_role wher
 Insert into eg_roleaction (roleid,actionid) values ((select id from eg_role where name='Remitter'),(select id from eg_action where name='BankRemittanceCreate'));
 ------------------END---------------------
 -------------------START-------------------
+
+DROP SEQUENCE seq_eg_wf_types;
+
+CREATE SEQUENCE seq_eg_wf_types
+    START WITH 11
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 Insert into eg_wf_types (id,module,type,link,createdby,createddate,lastmodifiedby,lastmodifieddate,renderyn,groupyn,typefqn,displayname,version) values (nextval('seq_eg_wf_types'),(select id from eg_module where name='Collection'),'ReceiptHeader','/collection/receipts/collectionsWorkflow-listWorkflow.action?inboxItemDetails=:ID',1,now(),1,now(), 'Y', 'N', 'org.egov.collection.entity.ReceiptHeader', 'Collections Receipt Header', 0 );
 Insert into EG_WF_ACTIONS (ID,TYPE,NAME,DESCRIPTION,CREATED_BY,CREATED_DATE,MODIFIED_BY,MODIFIED_DATE) values (nextval('EG_WF_ACTIONS_SEQ'),'ReceiptHeader','Create Receipt','Create Receipt',1,now(),1,now());
 Insert into EG_WF_ACTIONS (ID,TYPE,NAME,DESCRIPTION,CREATED_BY,CREATED_DATE,MODIFIED_BY,MODIFIED_DATE) values (nextval('EG_WF_ACTIONS_SEQ'),'ReceiptHeader','Submit for Approval','Submit for Approval',1,now(),1,now());
