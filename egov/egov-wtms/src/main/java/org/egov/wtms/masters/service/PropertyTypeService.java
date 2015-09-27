@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.wtms.masters.entity.PropertyType;
-import org.egov.wtms.masters.entity.WaterSource;
 import org.egov.wtms.masters.repository.PropertyTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -106,7 +105,7 @@ public class PropertyTypeService {
     public List<PropertyType> getAllActivePropertyTypes() {
         return propertyTypeRepository.findByActiveTrueOrderByNameAsc();
     }
-    
+
     public List<PropertyType> getPropertyTypeListForRest() {
         final List<PropertyType> propertyTypeList = propertyTypeRepository.findByActiveTrueOrderByNameAsc();
         final List<PropertyType> prepareListForRest = new ArrayList<PropertyType>(0);

@@ -74,12 +74,12 @@ public class RestApplicationSearchController {
     @RequestMapping(value = "/watercharges/searchapplication", method = RequestMethod.POST)
     @ResponseBody
     public String searchApplication(@FormParam("applicationNumber") final String applicationNumber) {
-        ApplicationSearchRequest searchRequest = new ApplicationSearchRequest();
+        final ApplicationSearchRequest searchRequest = new ApplicationSearchRequest();
         searchRequest.setApplicationNumber(applicationNumber);
         final SearchResult searchResult = searchService.search(asList(Index.APPLICATION.toString()),
                 asList(IndexType.APPLICATIONSEARCH.toString()), searchRequest.searchQuery(),
                 searchRequest.searchFilters(), Sort.NULL, Page.NULL);
-        
+
         final List<Document> documents = searchResult.getDocuments();
         final Gson jsonCreator = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
                 .disableHtmlEscaping().create();

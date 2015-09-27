@@ -112,7 +112,7 @@ public class RestWaterTaxController {
      * Returns Total tax due for list of water connections for a given PropertyIdentifier
      */
     @RequestMapping(value = {
-    "/watercharges/due/byptno/{assessmentNumber}" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+            "/watercharges/due/byptno/{assessmentNumber}" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public WaterTaxDue getWaterTaxDueByPropertyId(@PathVariable final String assessmentNumber)
             throws JsonGenerationException, JsonMappingException, IOException {
         return connectionDemandService.getDueDetailsByPropertyId(assessmentNumber);

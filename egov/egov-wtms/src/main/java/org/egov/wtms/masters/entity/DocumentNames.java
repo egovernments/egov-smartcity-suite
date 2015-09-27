@@ -82,9 +82,9 @@ public class DocumentNames extends AbstractAuditable {
     private boolean required;
 
     private boolean active;
-    
+
     @Transient
-    private String applicationTypeName; 
+    private String applicationTypeName;
 
     @Override
     public Long getId() {
@@ -140,7 +140,7 @@ public class DocumentNames extends AbstractAuditable {
         return applicationTypeName;
     }
 
-    public void setApplicationTypeName(String applicationTypeName) {
+    public void setApplicationTypeName(final String applicationTypeName) {
         this.applicationTypeName = applicationTypeName;
     }
 

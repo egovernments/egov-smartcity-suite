@@ -54,7 +54,7 @@ public interface DocumentNamesRepository extends JpaRepository<DocumentNames, Lo
     List<DocumentNames> findByApplicationType(ApplicationType applicationType);
 
     List<DocumentNames> findByActiveTrueAndApplicationTypeOrderByIdAsc(ApplicationType applicationType);
-    
+
     List<DocumentNames> findByActiveTrueOrderByIdAsc();
 
 }
