@@ -55,6 +55,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
@@ -77,6 +81,9 @@ import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@ParentPackage("egov")
+@Results({
+        @Result(name = AjaxEstimateAction.SUBCATEGORIES, location = "ajaxEstimate-subcategories.jsp") })
 public class AjaxEstimateAction extends BaseFormAction {
 
     private static final long serialVersionUID = 4566034960012106080L;
@@ -85,7 +92,7 @@ public class AjaxEstimateAction extends BaseFormAction {
 
     private static final String USERS_IN_DEPT = "usersInDept";
     private static final String DESIGN_FOR_EMP = "designForEmp";
-    private static final String SUBCATEGORIES = "subcategories";
+    public static final String SUBCATEGORIES = "subcategories";
     private static final String OVERHEADS = "overheads";
     private static final String WORKFLOW_USER_LIST = "workflowUsers";
     private static final String WORKFLOW_DESIG_LIST = "workflowDesignations";
@@ -96,7 +103,7 @@ public class AjaxEstimateAction extends BaseFormAction {
     private Long executingDepartment;
     private Integer empID;
     @Autowired
-    private EmployeeServiceOld employeeService;
+    private EmployeeServiceOld employeeServiceOld;
     private List usersInExecutingDepartment;
     private Assignment assignment;
     private List subCategories;
@@ -158,7 +165,7 @@ public class AjaxEstimateAction extends BaseFormAction {
 
     public String designationForUser() {
         try {
-            assignment = employeeService.getLatestAssignmentForEmployee(empID);
+            assignment = employeeServiceOld.getLatestAssignmentForEmployee(empID);
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("user.find.error", e);
         }
@@ -209,6 +216,7 @@ public class AjaxEstimateAction extends BaseFormAction {
         return USERS_IN_DEPT;
     }
 
+    @Action(value = "/estimate/ajaxEstimate-subcategories")
     public String subcategories() {
         subCategories = getPersistenceService().findAllBy("from EgwTypeOfWork where parentid.id=?", category);
         return SUBCATEGORIES;
@@ -419,8 +427,8 @@ public class AjaxEstimateAction extends BaseFormAction {
         return usersInExecutingDepartment;
     }
 
-    public void setEmployeeService(final EmployeeServiceOld employeeService) {
-        this.employeeService = employeeService;
+    public void setEmployeeService(final EmployeeServiceOld employeeServiceOld) {
+        this.employeeServiceOld = employeeServiceOld;
     }
 
     public void setExecutingDepartment(final Long executingDepartment) {

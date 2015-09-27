@@ -198,7 +198,7 @@ function searchTemplate(){
  		<tr>
                 <td class="whiteboxwk"><span class="mandatory">*</span><s:text name="estimate.work.type" />:</td>
                 <td class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="parentCategory" id="parentCategory" cssClass="selectwk" list="dropdownData.parentCategoryList" listKey="id" listValue="description" value="%{parentCategory.id}" onChange="setupSubTypes(this);"/>
-                <egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='category' url='estimate/ajaxEstimate!subcategories.action' selectedValue="%{category.id}"  afterSuccess="loadSubType" />
+                <egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='category' url='estimate/ajaxEstimate-subcategories.action' selectedValue="%{category.id}"  afterSuccess="loadSubType" />
                 </td>
 
                 <td class="whiteboxwk"><s:text name="estimate.work.subtype" />:</td>

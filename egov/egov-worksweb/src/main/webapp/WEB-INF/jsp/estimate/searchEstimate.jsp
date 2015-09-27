@@ -898,7 +898,7 @@ function jurisdictionSearchParameters(){
 														onChange="setupSubTypes(this);" />
 													<egov:ajaxdropdown id="categoryDropdown"
 														fields="['Text','Value']" dropdownId='category'
-														url='estimate/ajaxEstimate!subcategories.action'
+														url='estimate/ajaxEstimate-subcategories.action'
 														selectedValue="%{category.id}" />
 												</td>
 
