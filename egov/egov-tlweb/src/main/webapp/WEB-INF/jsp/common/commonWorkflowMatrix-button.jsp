@@ -22,6 +22,13 @@
 	        alert("Please Select the Approver ");
 			return false;
 	    }
+	    if ((name=="Reject" || name=="reject")) {
+			var approverComments = document.getElementById("approverComments").value;
+	    	if (approverComments == null || approverComments == "") {
+	    		alert("Please Enter Approver Remarks ");
+				return false;
+	    	}
+		}
 	    </s:if>
 	    return  onSubmit();
 	}
