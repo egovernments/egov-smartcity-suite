@@ -5,6 +5,9 @@ INSERT INTO eg_module(id, name, enabled, contextroot, parentmodule, displayname,
 INSERT INTO eg_module(id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (nextval('SEQ_EG_MODULE'), 'WaterTaxReports', false, null, (select id from eg_module where name='Water Tax Management'), 'Reports', 3);
 ------------------END---------------------
 -----------------START--------------------
+ insert into eg_modules (id,name,description) values(nextval('seq_eg_modules'),'Water Tax','Water Tax Module');
+------------------END---------------------
+-----------------START--------------------
 Insert into EG_ACTION (id,name,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate,lastmodifiedby,lastmodifieddate,application) values (nextval('SEQ_EG_ACTION'),'WaterTaxCreateNewConnectionNewForm','/application/newConnection-newform',null,(select id from eg_module where name='WaterTaxTransactions'),1,'New Water Tap Connection','true','wtms',0,1,to_timestamp('2015-08-15 11:02:43.968604','null'),1,to_timestamp('2015-08-15 11:02:43.968604','null'),(select id from eg_module where name='Water Tax Management'));
 Insert into EG_ACTION (id,name,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate,lastmodifiedby,lastmodifieddate,application) values (nextval('SEQ_EG_ACTION'),'WaterTaxCreateNewConnection','/application/newConnection-create',null,(select id from eg_module where name='WaterTaxTransactions'),1,'WaterTaxCreateNewConnection','false','wtms',0,1,to_timestamp('2015-08-15 11:02:46.030564','null'),1,to_timestamp('2015-08-15 11:02:46.030564','null'),(select id from eg_module where name='Water Tax Management'));
 Insert into EG_ACTION (id,name,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate,lastmodifiedby,lastmodifieddate,application) values (nextval('SEQ_EG_ACTION'),'ViewWaterConnection','/application/view/',null,(select id from eg_module where name='WaterTaxTransactions'),null,'View Water Connection','false','wtms',0,1,to_timestamp('2015-08-15 11:02:48.457381','null'),1,to_timestamp('2015-08-15 11:02:48.457381','null'),(select id from eg_module where name='Water Tax Management'));
@@ -153,6 +156,8 @@ Insert into eg_roleaction (roleid,actionid) values ((select id from eg_role wher
 Insert into eg_roleaction (roleid,actionid) values ((select id from eg_role where name='Property Administrator'),(select id from eg_action where name='getchairpersontableajax'));
 Insert into eg_roleaction (roleid,actionid) values ((select id from eg_role where name='Super User'),(select id from eg_action where name='ajaxForExistredMeterReading'));
 Insert into eg_roleaction (roleid,actionid) values ((select id from eg_role where name='ULB Operator'),(select id from eg_action where name='ajaxForExistredMeterReading'));
+INSERT INTO eg_roleaction (roleid,actionid) VALUES ((SELECT id FROM eg_role where name='CSC Operator'),(SELECT id FROM eg_action WHERE name='UpdateWaterConnectionApplication' and contextroot='wtms'));
+INSERT INTO eg_roleaction (roleid,actionid) VALUES ((SELECT id FROM eg_role where name='Employee'),(SELECT id FROM eg_action WHERE name='UpdateWaterConnectionApplication' and contextroot='wtms'));
 ------------------END---------------------
 -----------------START--------------------
 Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG_VALUES'),'SENDSMSFORWATERTAX','SMS Notification for Water Tax module is enabled or not',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
@@ -193,6 +198,9 @@ INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) V
 nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='RolesForSearchWAterTaxConnection'), current_date, 'CSC Operator',0);
 INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES ( 
 nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='RolesForSearchWAterTaxConnection'), current_date, 'ULB Operator',0);
+INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES ( 
+nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='ROLEFORNONEMPLOYEEINWATERTAX'),current_date, 'Water Tax Management',0);
+
 ------------------END---------------------
 -----------------START-------------------
 
@@ -230,3 +238,28 @@ INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatu
 
 INSERT INTO eg_wf_types (id, module, type, link, createdby, createddate, lastmodifiedby, lastmodifieddate, renderyn, groupyn, typefqn, displayname, version) VALUES (nextval('seq_eg_wf_types'), 2, 'WaterConnectionDetails', '/wtms/application/update/:ID', 1, '2015-08-28 10:45:18.201078', 1, '2015-08-28 10:45:18.201078', 'Y', 'N', 'org.egov.wtms.application.entity.WaterConnectionDetails', 'Water Tap Connection', 0);
 ------------------END---------------------
+-----------------START--------------------
+Insert into egw_status (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (
+nextval('SEQ_EGW_STATUS'),'WATERTAXAPPLICATION','CREATED',now(),'CREATED',1);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID)
+ values (nextval('SEQ_EGW_STATUS'),'WATERTAXAPPLICATION','verified',now(),
+ 'VERIFIED',1);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID)
+ values (nextval('SEQ_EGW_STATUS'),'WATERTAXAPPLICATION','Estimation Notice Generated',now(),
+ 'ESTIMATIONNOTICEGENERATED',1);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID)
+ values (nextval('SEQ_EGW_STATUS'),'WATERTAXAPPLICATION','Estimation Amount Paid',now(),
+ 'ESTIMATIONAMOUNTPAID',1);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID)
+ values (nextval('SEQ_EGW_STATUS'),'WATERTAXAPPLICATION','Approved',now(),
+ 'APPROVED',1);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID)
+ values (nextval('SEQ_EGW_STATUS'),'WATERTAXAPPLICATION','Work Order Generated',now(),
+ 'WORKORDERGENERATED',1);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID)
+ values (nextval('SEQ_EGW_STATUS'),'WATERTAXAPPLICATION','Sanctioned',now(),
+ 'SANCTIONED',1);
+
+------------------END---------------------
+
+
