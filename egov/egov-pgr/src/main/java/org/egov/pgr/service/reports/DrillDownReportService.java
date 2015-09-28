@@ -159,18 +159,18 @@ public class DrillDownReportService {
             if (boundary.equalsIgnoreCase("NOT AVAILABLE"))
                 query.append(" and  bndryparent.name is null ");
             else {
-                query.append(" and upper(bndryparent.name)= '");
+                query.append(" and upper(trim(bndryparent.name))= '");
                 query.append(boundary.toUpperCase()).append("' ");
             }
         if (department != null && !"".equals(department))
             if (department.equalsIgnoreCase("NOT AVAILABLE"))
                 query.append(" and  dept.name is null ");
             else {
-                query.append(" and upper(dept.name)=  '");
+                query.append(" and upper(trim(dept.name))=  '");
                 query.append(department.toUpperCase()).append("' ");
             }
         if (complainttype != null && !"".equals(complainttype)) {
-            query.append(" and upper(ctype.name)= '");
+            query.append(" and upper(trim(ctype.name))= '");
             query.append(complainttype.toUpperCase()).append("' ");
         }
 

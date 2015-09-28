@@ -152,7 +152,7 @@ function callajaxdatatableForDrilDownReport() {
 							"sTitle" : "Inprocess"
 						}, {
 							"data" : "completed",
-							"sTitle" : "Completed"
+							"sTitle" : "Disposed"
 						}, {
 							"data" : "rejected",
 							"sTitle" : "Rejected"
@@ -300,7 +300,7 @@ function callAjaxByDepartment() {
 							"sTitle" : "Inprocess"
 						}, {
 							"data" : "completed",
-							"sTitle" : "Completed"
+							"sTitle" : "Disposed"
 						}, {
 							"data" : "rejected",
 							"sTitle" : "Rejected"
@@ -401,7 +401,7 @@ function callAjaxByComplaintType() {
 							"sTitle" : "Inprocess"
 						}, {
 							"data" : "completed",
-							"sTitle" : "Completed"
+							"sTitle" : "Disposed"
 						}, {
 							"data" : "rejected",
 							"sTitle" : "Rejected"
@@ -500,7 +500,7 @@ function callAjaxByUserNameType() {
 							"sTitle" : "Inprocess"
 						}, {
 							"data" : "completed",
-							"sTitle" : "Completed"
+							"sTitle" : "Disposed"
 						}, {
 							"data" : "rejected",
 							"sTitle" : "Rejected"
