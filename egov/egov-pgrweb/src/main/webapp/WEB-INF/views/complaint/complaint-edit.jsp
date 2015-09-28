@@ -197,3 +197,4 @@ if(zoneId !== ''){
 }else $("#ct-sel-jurisd").val('');     
 </script>
 <script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
+<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
