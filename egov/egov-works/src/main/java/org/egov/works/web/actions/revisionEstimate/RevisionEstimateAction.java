@@ -411,7 +411,6 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
             revisionEstimate.setType(abstractEstimate.getType());
             revisionEstimate.setExecutingDepartment(abstractEstimate.getExecutingDepartment());
             revisionEstimate.setUserDepartment(abstractEstimate.getUserDepartment());
-            revisionEstimate.setEstimatePreparedBy(abstractEstimate.getEstimatePreparedBy());
             revisionEstimate.setWard(abstractEstimate.getWard());
             revisionEstimate.setDepositCode(abstractEstimate.getDepositCode());
             revisionEstimate.setFundSource(abstractEstimate.getFundSource());

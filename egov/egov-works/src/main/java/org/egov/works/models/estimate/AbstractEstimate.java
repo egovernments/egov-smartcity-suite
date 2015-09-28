@@ -65,7 +65,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.Money;
 import org.egov.infstr.utils.StringUtils;
-import org.egov.pims.model.PersonalInformation;
 import org.egov.works.models.masters.DepositCode;
 import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.models.revisionEstimate.RevisionType;
@@ -108,8 +107,6 @@ public class AbstractEstimate extends StateAware {
     private Department userDepartment;
 
     private Department executingDepartment;
-
-    private PersonalInformation estimatePreparedBy;
 
     private BigDecimal budgetAvailable = new BigDecimal("0.0");
 
@@ -240,15 +237,6 @@ public class AbstractEstimate extends StateAware {
 
     public void setExecutingDepartment(final Department executingDepartment) {
         this.executingDepartment = executingDepartment;
-    }
-
-    @Required(message = "estimate.preparedBy.null")
-    public PersonalInformation getEstimatePreparedBy() {
-        return estimatePreparedBy;
-    }
-
-    public void setEstimatePreparedBy(final PersonalInformation estimatePreparedBy) {
-        this.estimatePreparedBy = estimatePreparedBy;
     }
 
     @Required(message = "estimate.ward.null")

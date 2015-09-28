@@ -102,7 +102,7 @@ function ismaxlength(obj){
 
               <tr>
                 <td class="whiteboxwk"><s:text name="milestone.estimate.preparedBy" />:</td>
-                <td class="whitebox2wk"><s:textfield  value="%{model.workOrderEstimate.estimate.estimatePreparedBy.employeeName}" id="preparedBy" cssClass="selectwk" />
+                <td class="whitebox2wk"><s:textfield  value="%{model.workOrderEstimate.estimate.createdBy.name}" id="preparedBy" cssClass="selectwk" />
                 </td>
                 <td class="whiteboxwk"><s:text name="milestone.estimate.projectcode" />:</td>
                 <td class="whitebox2wk"><s:textfield  value="%{model.workOrderEstimate.estimate.projectCode.code}" id="projectcode" cssClass="selectwk" />

@@ -193,7 +193,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
             document.add(spacer());
             document.add(multiyearTable);
             document.add(spacer());
-            document.add(makePara("Prepared By: " + estimate.getEstimatePreparedBy().getEmployeeName()));
+            document.add(makePara("Estimate Created By: " + estimate.getCreatedBy().getName()));
             document.add(spacer());
             document.add(spacer());
             document.add(makePara("Checked By: "));

@@ -500,7 +500,7 @@ public class SearchEstimateAction extends SearchFormAction {
 
         if (SEARCH_ESTIMATE_FOR_MILESTONE.equalsIgnoreCase(source) || VIEW_MILESTONE.equalsIgnoreCase(source))
             if (empId != null && empId != -1) {
-                query.append(" and woe.estimate.estimatePreparedBy.idPersonalInformation = ?");
+                query.append(" and woe.estimate.createdBy.id = ?");
                 paramList.add(empId);
             }
 
@@ -818,7 +818,7 @@ public class SearchEstimateAction extends SearchFormAction {
             }
 
             if (empId != null && empId != -1) {
-                sb.append(" and ae.estimatePreparedBy.idPersonalInformation=? ");
+                sb.append(" and ae.createdBy.id=? ");
                 paramList.add(empId);
             }
             if (estimates.getCategory() != null) {

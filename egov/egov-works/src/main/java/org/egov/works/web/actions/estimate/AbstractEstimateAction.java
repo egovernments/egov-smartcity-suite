@@ -71,8 +71,6 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.entity.EmployeeView;
-import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
@@ -136,10 +134,7 @@ public class AbstractEstimateAction extends BaseFormAction {
     @Autowired
     private EisCommonService eisCommonService;
     @Autowired
-    private AssignmentService assignmentService;
-    @Autowired
     private UserService userService;
-    private EmployeeView estimatePreparedByView;
 
     // TODO:Fixme - Commented out for time being.. workflow needs to be implemented based on matrix
     // private WorkflowService<AbstractEstimate> workflowService;
@@ -162,7 +157,6 @@ public class AbstractEstimateAction extends BaseFormAction {
     private String mode = "";
     private boolean isAllowEstDateModify = false;
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", new Locale("en", "IN"));
-    private String loggedInUserEmployeeCode;
 
     private String employeeName;
     private String designation;
@@ -293,19 +287,8 @@ public class AbstractEstimateAction extends BaseFormAction {
         if (id != null && EDIT.equals("edit")) {
             abstractEstimate = abstractEstimateService.findById(id, false);
             abstractEstimate = abstractEstimateService.merge(abstractEstimate);
-            if (abstractEstimate != null && abstractEstimate.getEstimatePreparedBy() != null)
-                estimatePreparedByView = (EmployeeView) getPersistenceService().find("from EmployeeView where id = ?",
-                        abstractEstimate.getEstimatePreparedBy().getIdPersonalInformation());
         }
-
         super.prepare();
-
-        // estimatePreparedBy has to be handled differently (as its id is
-        // idPersonalInformation)
-        // do not set estimate prepared by if the request is from search/inbox
-        // page
-        if (!(SOURCE_SEARCH.equals(getSourcepage()) || SOURCE_INBOX.equals(getSourcepage())))
-            setEstimatePreparedBy(getIdPersonalInformationFromParams());
 
         final CFinancialYear financialYear = getCurrentFinancialYear();
         if (financialYear != null)
@@ -328,12 +311,9 @@ public class AbstractEstimateAction extends BaseFormAction {
                 getPersistenceService().findAllBy("from ScheduleCategory order by upper(code)"));
 
         final Assignment latestAssignment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser();
-        if (latestAssignment != null) {
+        if (latestAssignment != null)
             departmentId = latestAssignment.getDepartment().getId();
-            loggedInUserEmployeeCode = latestAssignment.getEmployee().getCode();
-        }
         populateCategoryList(ajaxEstimateAction, abstractEstimate.getParentCategory() != null);
-        populatePreparedByList(ajaxEstimateAction, abstractEstimate.getExecutingDepartment() != null);
         populateOverheadsList(ajaxEstimateAction, abstractEstimate.getEstimateDate() != null);
 
         // TODO:Fixme - some issue with this API in EGF. So commented out for time being and loading empty list
@@ -345,35 +325,6 @@ public class AbstractEstimateAction extends BaseFormAction {
                 && abstractEstimate.getEgwStatus().getCode()
                         .equals(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()))
             getUsersInOldAndNewExecutingDepartment();
-        // Estimate Prepared by drop-down will show the logged in user Name
-        if (abstractEstimate != null && abstractEstimate.getId() == null
-                && abstractEstimate.getExecutingDepartment() == null
-                && abstractEstimate.getEstimatePreparedBy() == null) {
-            final PersonalInformation loggedInEmp = eisCommonService.getEmployeeByUserId(worksService
-                    .getCurrentLoggedInUserId());
-            if (loggedInEmp != null) {
-                final Assignment assignment = assignmentService
-                        .getPrimaryAssignmentForEmployeeByToDate(loggedInEmp.getIdPersonalInformation().longValue(), new Date());
-                abstractEstimate.setExecutingDepartment(assignment.getDepartment());
-                abstractEstimate.setEstimatePreparedBy(loggedInEmp);
-                estimatePreparedByView = (EmployeeView) getPersistenceService().find("from EmployeeView where id = ?",
-                        abstractEstimate.getEstimatePreparedBy().getIdPersonalInformation());
-                if (assignment != null && assignment.getEmployee() != null)
-                    loggedInUserEmployeeCode = assignment.getEmployee().getCode();
-            }
-            populatePreparedByList(ajaxEstimateAction, abstractEstimate.getExecutingDepartment() != null);
-        }
-    }
-
-    protected Integer getIdPersonalInformationFromParams() {
-        final String[] ids = parameters.get("estimatePreparedBy");
-        if (ids != null && ids.length > 0) {
-            parameters.remove("estimatePreparedBy");
-            final String id = ids[0];
-            if (id != null && id.length() > 0)
-                return Integer.parseInt(id);
-        }
-        return null;
     }
 
     public String moveEstimate() {
@@ -564,28 +515,6 @@ public class AbstractEstimateAction extends BaseFormAction {
             addDropdownData("categoryList", Collections.emptyList());
     }
 
-    protected void populatePreparedByList(final AjaxEstimateAction ajaxEstimateAction,
-            final boolean executingDeptPopulated) {
-        if (executingDeptPopulated) {
-            ajaxEstimateAction.setExecutingDepartment(abstractEstimate.getExecutingDepartment().getId());
-            if (id == null
-                    || abstractEstimate.getEgwStatus() != null
-                            && (abstractEstimate.getEgwStatus().getCode()
-                                    .equals(AbstractEstimate.EstimateStatus.REJECTED.toString()) || abstractEstimate
-                                            .getEgwStatus().getCode().equals("NEW")))
-                if (StringUtils.isNotBlank(loggedInUserEmployeeCode)
-                        && (estimatePreparedByView == null || loggedInUserEmployeeCode
-                                .equalsIgnoreCase(estimatePreparedByView.getCode())))
-                    // Extra condition is added since estimate can be rejected
-                    // in 2 usecases
-                    ajaxEstimateAction.setEmployeeCode(loggedInUserEmployeeCode);
-
-            ajaxEstimateAction.usersInExecutingDepartment();
-            addDropdownData("preparedByList", ajaxEstimateAction.getUsersInExecutingDepartment());
-        } else
-            addDropdownData("preparedByList", Collections.emptyList());
-    }
-
     protected void populateOverheadsList(final AjaxEstimateAction ajaxEstimateAction, final boolean estimateDatePresent) {
         if (estimateDatePresent) {
             ajaxEstimateAction.setEstDate(abstractEstimate.getEstimateDate());
@@ -635,25 +564,6 @@ public class AbstractEstimateAction extends BaseFormAction {
         if (SAVE_ACTION.equals(actionName) && abstractEstimate.getEgwStatus() == null)
             abstractEstimate.setEgwStatus(commonsService.getStatusByModuleAndCode("AbstractEstimate", "NEW"));
         abstractEstimate = abstractEstimateService.persist(abstractEstimate);
-    }
-
-    protected void setEstimatePreparedBy(final Integer idPersonalInformation) {
-
-        if (validEstimatePreparedBy(idPersonalInformation)) {
-            abstractEstimate.setEstimatePreparedBy(personalInformationService.findById(idPersonalInformation, false));
-            estimatePreparedByView = (EmployeeView) getPersistenceService().find("from EmployeeView where id = ?",
-                    idPersonalInformation);
-        } else {
-            abstractEstimate.setEstimatePreparedBy(null);
-            estimatePreparedByView = null;
-        }
-    }
-
-    protected boolean validEstimatePreparedBy(final Integer idPersonalInformation) {
-        if (idPersonalInformation != null && idPersonalInformation > 0)
-            return true;
-
-        return false;
     }
 
     protected void populateSorActivities() {
@@ -976,14 +886,6 @@ public class AbstractEstimateAction extends BaseFormAction {
             return commonsService.getFinYearByDate(new Date());
     }
 
-    public EmployeeView getEstimatePreparedByView() {
-        return estimatePreparedByView;
-    }
-
-    public void setEstimatePreparedByView(final EmployeeView estimatePreparedByView) {
-        this.estimatePreparedByView = estimatePreparedByView;
-    }
-
     public List<MultiYearEstimate> getActionMultiYearEstimateValues() {
         return actionMultiYearEstimateValues;
     }
@@ -1185,14 +1087,6 @@ public class AbstractEstimateAction extends BaseFormAction {
 
     public void setEisService(final EisUtilService eisService) {
         this.eisService = eisService;
-    }
-
-    public String getLoggedInUserEmployeeCode() {
-        return loggedInUserEmployeeCode;
-    }
-
-    public void setLoggedInUserEmployeeCode(final String loggedInUserEmployeeCode) {
-        this.loggedInUserEmployeeCode = loggedInUserEmployeeCode;
     }
 
     public double getUtilizedAmount() {

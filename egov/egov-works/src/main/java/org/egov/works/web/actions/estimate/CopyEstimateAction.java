@@ -97,7 +97,6 @@ public class CopyEstimateAction extends BaseFormAction {
         copyEstimate.setParentCategory(abstractEstimate.getParentCategory());
         copyEstimate.setUserDepartment(abstractEstimate.getUserDepartment());
         copyEstimate.setExecutingDepartment(abstractEstimate.getExecutingDepartment());
-        copyEstimate.setEstimatePreparedBy(loggedInEmp);
         copyEstimate.setFundSource(abstractEstimate.getFundSource());
         copyEstimate.setEgwStatus(commonsService.getStatusByModuleAndCode("AbstractEstimate", "NEW"));
 

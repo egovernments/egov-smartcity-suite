@@ -440,23 +440,7 @@ jq(document).on('click', '#woView', function(){
               </td>
 	            <td class="whiteboxwk">&nbsp;</td>
 	            <td class="whiteboxwk">&nbsp;</td>
-            </tr>
-            
-              <tr>
-                <td width="17%" class="whiteboxwk"><span class="mandatory">*</span><span class="epstylewk"><s:text name="estimate.preparedBy" />:</span></td>
-                <td width="17%" class="whitebox2wk">
-                <s:hidden name="loggedInUserEmployeeCode" id="loggedInUserEmployeeCode"/>                
-                <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="estimatePreparedBy" value="%{estimatePreparedBy.idPersonalInformation}" id="preparedBy" cssClass="selectwk" list="dropdownData.preparedByList" listKey="id" listValue="employeeName" onchange='showDesignation(this);'/>     
-                </td>
-                <s:if test="%{dropdownData.preparedByList.size==1}" >
-	                <script>
-	                	disablePreparedBy();
-	                </script>
-                </s:if>
-                <td width="12%" class="whiteboxwk"><s:text name="estimate.designation" />:</td>
-                <td width="54%" class="whitebox2wk"><s:textfield name="designation" value="%{estimatePreparedByView.desigId.designationName}" type="text" readonly="true" disabled="disabled" cssClass="selectboldwk" id="designation" size="45" tabIndex="-1" /></td>
-
-              </tr>	     
+            </tr>            
             </table></td>
           </tr>
           

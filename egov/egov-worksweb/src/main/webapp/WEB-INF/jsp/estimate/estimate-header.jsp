@@ -57,45 +57,11 @@ function warn(type){
     YAHOO.lang.later(3000,null,function(){dom.get(type+"Warning").style.display='none';});
 }
 
-function setupPreparedByList(elem){
-    deptId=elem.options[elem.selectedIndex].value;    
-    populatepreparedBy({executingDepartment:deptId,employeeCode:dom.get("loggedInUserEmployeeCode").value});
-}
-function clearDesignation(elem) {
-    dom.get("designation").value='';
-}
-
 function setupSubTypes(elem){
     categoryId=elem.options[elem.selectedIndex].value;
     populatecategory({category:categoryId});
 }
-function populatepreparedBy(params){
-	makeJSONCall(['Text','Value','Designation'],'/egworks/estimate/ajaxEstimate!usersInExecutingDepartment.action',params,preparedBySuccessHandler,preparedByFailureHandler) ;
-}
-preparedBySuccessHandler=function(req,res){
-	enablePreparedBy();
-	preparedByDropdown=dom.get("preparedBy");
-	var resLength =res.results.length+1;
-	var dropDownLength = preparedByDropdown.length;
-	for(i=0;i<res.results.length;i++){
-	preparedByDropdown.options[i+1]=new Option(res.results[i].Text,res.results[i].Value);
-	if(res.results[i].Value=='null') preparedBy.Dropdown.selectedIndex = i;
-	preparedByDropdown.options[i+1].Designation=res.results[i].Designation;
-	}
-	while(dropDownLength>resLength)
-	{
-		preparedByDropdown.options[res.results.length+1] = null;
-		dropDownLength=dropDownLength-1;
-	}
-	document.getElementById('preparedBy').value='<s:property value="%{estimatePreparedBy.idPersonalInformation}" />';
-	if(res.results.length == 1) {
-		disablePreparedBy();
-		document.getElementById('designation').value='<s:property value="%{estimatePreparedByView.desigId.designationName}" />';
-	}
-}
-preparedByFailureHandler=function(){
-	alert('Unable to load preparedBy');
-}
+
 var wardSearchSelectionHandler = function(sType, arguments) { 
             var oData = arguments[2];
             dom.get("wardSearch").value=oData[0];
@@ -378,7 +344,7 @@ function jurisdictionSearchParameters(){
                 <td width="21%" class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="userDepartment" id="userDepartment" cssClass="selectwk" list="dropdownData.userDepartmentList" onchange="clearMsg(this);" listKey="id" listValue="name" value="%{userDepartment.id}"/>
 
                 <td width="15%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="estimate.executing.department" />:</td>
-                <td width="53%" class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="executingDepartment" id="executingDepartment" cssClass="selectwk" list="dropdownData.executingDepartmentList" listKey="id" listValue="name" value="%{executingDepartment.id}" onChange="setupPreparedByList(this);clearDesignation(this);"/>
+                <td width="53%" class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="executingDepartment" id="executingDepartment" cssClass="selectwk" list="dropdownData.executingDepartmentList" listKey="id" listValue="name" value="%{executingDepartment.id}" />
                 </td>
               </tr>
               <tr>

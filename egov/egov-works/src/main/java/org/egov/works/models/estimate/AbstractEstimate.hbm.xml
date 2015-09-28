@@ -103,10 +103,6 @@
 			<property name="value" type="double" precision="2"
 				scale="20" column="ESTIMATE_VALUE"  />
 		</component>
-		<many-to-one name="estimatePreparedBy"
-			class="org.egov.pims.model.PersonalInformation">
-			<column name="PREPAREDBY" not-null="true"/>
-		</many-to-one>
 		<many-to-one name="fundSource" class="org.egov.commons.Fundsource" fetch="select">
 			<column name="FUNDSOURCE_ID" not-null="true"/>
 		</many-to-one>
