@@ -152,7 +152,7 @@ public class ComplaintService {
             complaint.setCrn(applicationNumberGenerator.generate());
         final User user = securityUtils.getCurrentUser();
         complaint.getComplainant().setUserDetail(user);
-        if (!securityUtils.isCurrentUserAnonymous() && securityUtils.currentUserType().equals(UserType.CITIZEN)) {
+        if (!SecurityUtils.isCurrentUserAnonymous() && securityUtils.currentUserType().equals(UserType.CITIZEN)) {
             complaint.getComplainant().setEmail(user.getEmailId());
             complaint.getComplainant().setName(user.getName());
             complaint.getComplainant().setMobile(user.getMobileNumber());
@@ -364,7 +364,6 @@ public class ComplaintService {
     }
 
     public void sendEmailandSms(final Complaint complaint) {
-
         final String formattedCreatedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm")
                 .format(complaint.getCreatedDate());
 
@@ -385,6 +384,20 @@ public class ComplaintService {
                 .append("). Please use this number for all future references.");
         messagingService.sendEmail(complaint.getComplainant().getEmail(), emailSubject.toString(), emailBody.toString());
         messagingService.sendSMS(complaint.getComplainant().getMobile(), smsBody.toString());
+        final Position owner = complaint.getState().getOwnerPosition();
+        if (null != owner && null != owner.getDeptDesig()) {
+            final User user = eisCommonService.getUserForPosition(owner.getId(), new Date());
+            if (null != user) {
+                final StringBuffer smsBodyOfficial = new StringBuffer().append("New Complaint for ")
+                        .append(complaint.getComplaintType().getName())
+                        .append(" is registered by ").append(complaint.getComplainant().getName() == null ? "Anonymous User"
+                                : complaint.getComplainant().getName())
+                        .append(", ")
+                        .append(complaint.getComplainant().getMobile() == null ? "" : complaint.getComplainant().getMobile())
+                        .append(" at ").append(complaint.getLocation().getName());
+                messagingService.sendSMS(user.getMobileNumber(), smsBodyOfficial.toString());
+            }
+        }
 
     }
 
