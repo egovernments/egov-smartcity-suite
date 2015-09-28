@@ -168,6 +168,7 @@
 <script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/app/complaint.js'/>"></script>
+<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 <script>
 	var complaintTypeId= '${complaint.complaintType.id}';
 	if(complaintTypeId !== ''){

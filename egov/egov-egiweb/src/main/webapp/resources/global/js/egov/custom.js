@@ -120,6 +120,7 @@ $(document).ready(function()
 	
 	try { 
 		$('[data-toggle="tooltip"]').tooltip({
+			'placement': 'bottom'
 		});
 		}catch(e){
 		console.warn("No tooltip");
@@ -159,10 +160,10 @@ $(document).ready(function()
         $(".alert-danger").alert('close');
     }); */
 	
-	$('.inboxload').click(function(){
+	/*$('.inboxload').click(function(){
 		window.close();
 		parent.window.opener.inboxloadmethod();
-	});
+	});*/
 	
 	
 	/*
