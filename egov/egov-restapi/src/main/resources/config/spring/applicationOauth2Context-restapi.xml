@@ -50,8 +50,8 @@
 	<security:http auto-config="true" use-expressions="true" create-session="never" entry-point-ref="oauthAuthenticationEntryPoint" 
 		access-decision-manager-ref="accessDecisionManager" xmlns="http://www.springframework.org/schema/security">
 		<security:anonymous enabled="false" />
-		<security:intercept-url pattern="/rest/property/**" access="hasRole('ROLE_EMPLOYEE')" />
-		<security:intercept-url pattern="/rest/watertax/**" access="hasRole('ROLE_EMPLOYEE')" />
+		<security:intercept-url pattern="/property/**" access="hasRole('ROLE_EMPLOYEE')" />
+		<security:intercept-url pattern="/watertax/**" access="hasRole('ROLE_EMPLOYEE')" />
 		<security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER"/>
 		<security:access-denied-handler ref="oauthAccessDeniedHandler"/>
 		<security:csrf disabled="true"/>

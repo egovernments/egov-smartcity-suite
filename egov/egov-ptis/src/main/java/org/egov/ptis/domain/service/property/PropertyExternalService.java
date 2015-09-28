@@ -43,7 +43,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -146,6 +148,7 @@ import org.egov.ptis.domain.model.ReceiptDetails;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
 
@@ -162,7 +165,7 @@ public class PropertyExternalService {
 	private ApplicationContextBeanProvider beanProvider;
 	private Long userId;
 	private BasicProperty basicProperty;
-	private Property property;
+	private PropertyImpl property;
 	AssessmentDetails assessmentDetail;
 
 	@Autowired
@@ -206,7 +209,7 @@ public class PropertyExternalService {
 		validate();
 		initiateBasicProperty();
 		if (basicProperty != null) {
-			property = basicProperty.getProperty();
+			property = (PropertyImpl) basicProperty.getProperty();
 			if (flag.equals(FLAG_MOBILE_EMAIL)) {
 				loadPrimaryMobileAndEmail();
 			}
@@ -727,10 +730,10 @@ public class PropertyExternalService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<MasterCodeNamePairDetails> getReasonsForCreateProperty() {
+	public List<MasterCodeNamePairDetails> getReasonsForChangeProperty(String reason) {
 		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
 		Query qry = entityManager.createQuery("from PropertyMutationMaster pmm where pmm.type = :type");
-		qry.setParameter("type", PropertyTaxConstants.PROP_CREATE_RSN);
+		qry.setParameter("type", reason);
 		List<PropertyMutationMaster> propMutationMasterList = (List<PropertyMutationMaster>)qry.getResultList();
 		if (null != propMutationMasterList) {
 			for (PropertyMutationMaster propMutationMaster : propMutationMasterList) {
@@ -1028,6 +1031,8 @@ public class PropertyExternalService {
 		processAndStoreDocumentsWithReason(basicProperty, PropertyTaxConstants.DOCS_CREATE_PROPERTY);
 		basicProperty.setPropertyOwnerInfoProxy(getPropertyOwnerInfoList(ownerDetailsList));
 		basicPropertyService.createOwners(property, basicProperty, basicProperty.getAddress());
+		transitionWorkFlow(property);
+		basicPropertyService.applyAuditing(property.getState());
 		basicProperty = basicPropertyService.persist(basicProperty);
 		if (null != basicProperty) {
 			newPropertyDetails = new NewPropertyDetails();
@@ -1074,7 +1079,8 @@ public class PropertyExternalService {
 		// Set PropertyMutationMaster object
 		PropertyMutationMaster propertyMutationMaster = getPropertyMutationMaster(mutationReasonCode);
 		basicProperty.setPropertyMutationMaster(propertyMutationMaster);
-
+		basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PROP_CREATE_RSN, null, null,
+                null, null, null)); 
 		// Set isBillCreated property value as false
 		basicProperty.setIsBillCreated(PropertyTaxConstants.STATUS_BILL_NOTCREATED);
 
@@ -1095,12 +1101,12 @@ public class PropertyExternalService {
 		propertyImpl.setDocuments(documents);
 		TaxExeptionReason taxExemptedReason = getTaxExemptionReasonByCode(floorDetailsList.get(0).getExemptionCategoryCode());
 		propertyImpl.setTaxExemptedReason(taxExemptedReason);
-		propertyImpl = transitionWorkFlow(propertyImpl); //Setting approver
 		property = propService.createProperty(propertyImpl, extentOfSite, mutationReasonCode,
 				propertyTypeMaster.getId().toString(), propertyUsage.getId().toString(),
 				propertyOccupation.getId().toString(), PropertyTaxConstants.STATUS_ISACTIVE, regdDocNo, nonResPlotArea,
 				floorType.getId(), roofType.getId(), wallType.getId(), woodType.getId(), taxExemptedReason.getId());
 		property.setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
+		property.setPropertyModifyReason(PROP_CREATE_RSN);
 		basicProperty.addProperty(property);
 		Date propCompletionDate = null;
 		if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
@@ -1177,9 +1183,10 @@ public class PropertyExternalService {
 		propertyID.setWard(ward);
 		propertyID.setZone(zone);
 		propertyID.setLocality(locality);
-		propertyID.setCreatedDate(new Date());
-		propertyID.setModifiedDate(new Date());
+		/*propertyID.setCreatedDate(new Date());
+		propertyID.setModifiedDate(new Date());*/
 		propertyID.setLocality(locality);
+		propertyID.setBasicProperty(basicProperty);
 		Boundary electionBoundary = getElectionBoundaryByCode(electionBoundaryCode);
 		if (null != electionBoundary) {
 			propertyID.setElectionBoundary(electionBoundary);
@@ -1503,6 +1510,56 @@ public class PropertyExternalService {
 		return documents;
 	}
 	
+	public List<Document> getDocuments(MultipartFile photoAsmntDisp, MultipartFile bldgPermCopyDisp, MultipartFile atstdCopyPropDocDisp, MultipartFile nonJudcStampDisp, MultipartFile afdvtBondDisp, MultipartFile deathCertCopyDisp) throws IOException {
+		List<Document> documents = new ArrayList<Document>();
+		DocumentType documentType = null;
+		Document document = null;
+		
+		if (!photoAsmntDisp.isEmpty() && photoAsmntDisp != null) {
+			documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_PHOTO_OF_ASSESSMENT_CODE);
+			document = createDocument(photoAsmntDisp.getInputStream(), photoAsmntDisp.getName());
+			document.setType(documentType);
+			documents.add(document);
+		}
+
+		if (!bldgPermCopyDisp.isEmpty() && bldgPermCopyDisp != null) {
+			documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_BUILDING_PERMISSION_COPY_CODE);
+			document = createDocument(bldgPermCopyDisp.getInputStream(), bldgPermCopyDisp.getName());
+			document.setType(documentType);
+			documents.add(document);
+		}
+
+		if (!atstdCopyPropDocDisp.isEmpty() && atstdCopyPropDocDisp != null) {
+			documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_ATTESTED_COPY_PROPERTY_DOCUMENT_CODE);
+			document = createDocument(atstdCopyPropDocDisp.getInputStream(), atstdCopyPropDocDisp.getName());
+			document.setType(documentType);
+			documents.add(document);
+		}
+
+		if (!nonJudcStampDisp.isEmpty() && nonJudcStampDisp != null) {
+			documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_NON_JUDICIAL_STAMP_PAPERS_CODE);
+			document = createDocument(nonJudcStampDisp.getInputStream(), nonJudcStampDisp.getName());
+			document.setType(documentType);
+			documents.add(document);
+		}
+
+		if (!afdvtBondDisp.isEmpty() && afdvtBondDisp != null) {
+			documentType = getDocumentTypeByCode(
+					PropertyTaxConstants.THIRD_PARTY_NOTARIZED_AFFIDAVIT_CUM_IDEMNITY_BOND_CODE);
+			document = createDocument(afdvtBondDisp.getInputStream(), afdvtBondDisp.getName());
+			document.setType(documentType);
+			documents.add(document);
+		}
+
+		if (!deathCertCopyDisp.isEmpty() && deathCertCopyDisp != null) {
+			documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_DEATH_CERTIFICATE_COPY_CODE);
+			document = createDocument(deathCertCopyDisp.getInputStream(), deathCertCopyDisp.getName());
+			document.setType(documentType);
+			documents.add(document);
+		}
+		return documents;
+	}
+	
 	/**
 	 * This method is used to create Document object to upload the files.
 	 * 
@@ -1522,6 +1579,25 @@ public class PropertyExternalService {
 			fileNames.add(formDataContentDisposition.getFileName());
 			document.setUploadsFileName(fileNames);
 			file = writeToFile(inputStream, formDataContentDisposition.getFileName());
+			files.add(file);
+			document.setUploads(files);
+			contentTypes.add(MessageFormat.format(PropertyTaxConstants.THIRD_PARTY_CONTENT_TYPE,
+					FilenameUtils.getExtension(file.getPath())));
+			document.setUploadsContentType(contentTypes);
+		}
+		return document;
+	}
+	
+	private Document createDocument(InputStream inputStream, String fileName) {
+		Document document = new Document();
+		List<File> files = new ArrayList<File>();
+		List<String> contentTypes = new ArrayList<String>();
+		List<String> fileNames = new ArrayList<String>();
+		File file = null;
+		if (inputStream != null && fileName != null) {
+			fileNames.add(fileName);
+			document.setUploadsFileName(fileNames);
+			file = writeToFile(inputStream, fileName);
 			files.add(file);
 			document.setUploads(files);
 			contentTypes.add(MessageFormat.format(PropertyTaxConstants.THIRD_PARTY_CONTENT_TYPE,
@@ -1559,7 +1635,6 @@ public class PropertyExternalService {
 	
 	private PropertyImpl transitionWorkFlow(final PropertyImpl property) {
         DateTime currentDate = new DateTime();
-        Date createdDate = new Date();
         User user = userService.getUserById(EgovThreadLocals.getUserId());
         String approverComments = "Property has been successfully forwarded.";
         String currentState = "Created";
@@ -1570,8 +1645,20 @@ public class PropertyExternalService {
                 null, PropertyTaxConstants.NEW_ASSESSMENT, currentState, null);
         property.transition().start().withSenderName(user.getName()).withComments(approverComments)
                 .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                .withNextAction(wfmatrix.getNextAction()).setCreatedDate(createdDate);
-    
+                .withNextAction(wfmatrix.getNextAction());
         return property;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<MasterCodeNamePairDetails> getDocumentTypes() {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		List<DocumentType> documentTypesList = (List<DocumentType>)entityManager.createQuery("from DocumentType order by id").getResultList();
+		for (DocumentType documentType : documentTypesList) {
+			MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+			mstrCodeNamePairDetails.setCode(documentType.getId().toString());
+			mstrCodeNamePairDetails.setName(documentType.getName());
+			mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+		}
+		return mstrCodeNamePairDetailsList;
 	}
 }

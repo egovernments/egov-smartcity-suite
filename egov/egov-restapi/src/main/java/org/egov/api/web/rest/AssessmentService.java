@@ -40,7 +40,6 @@
 package org.egov.api.web.rest;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -49,7 +48,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -76,10 +79,11 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataParam;
+
 
 /**
  * The AssessmentService class is used as the RESTFul service to handle user request and response.
@@ -304,7 +308,7 @@ public class AssessmentService {
     @RequestMapping(value = "/property/createPropertyReasons", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
     public String getCreatePropertyReasons() throws JsonGenerationException, JsonMappingException, IOException {
         List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
-                .getReasonsForCreateProperty();
+                .getReasonsForChangeProperty(PropertyTaxConstants.PROP_CREATE_RSN);
         return getJSONResponse(mstrCodeNamePairDetailsList);
     }
 
@@ -602,48 +606,42 @@ public class AssessmentService {
      * @throws ParseException
      */
     @RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes=MediaType.MULTIPART_FORM_DATA, produces = MediaType.APPLICATION_JSON)
-    public String createProperty(@FormDataParam("propertyTypeMasterCode") String propertyTypeMasterCode,
-            @FormDataParam("propertyCategoryCode") String propertyCategoryCode,
-            @FormDataParam("apartmentCmplxCode") String apartmentCmplxCode,
-            @FormDataParam("ownerDetails") String ownerDetails,
-            @FormDataParam("mutationReasonCode") String mutationReasonCode,
-            @FormDataParam("extentOfSite") String extentOfSite,
-            @FormDataParam("isExtentAppurtenantLand") String isExtentAppurtenantLand,
-            @FormDataParam("occupancyCertificationNo") String occupancyCertificationNo,
-            @FormDataParam("isSuperStructure") Boolean isSuperStructure,
-            @FormDataParam("isBuildingPlanDetails") Boolean isBuildingPlanDetails,
-            @FormDataParam("regdDocNo") String regdDocNo, @FormDataParam("regdDocDate") String regdDocDate,
-            @FormDataParam("localityCode") String localityCode, @FormDataParam("street") String street,
-            @FormDataParam("electionWardCode") String electionWardCode, @FormDataParam("doorNo") String doorNo,
-            @FormDataParam("enumerationBlockCode") String enumerationBlockCode,
-            @FormDataParam("pinCode") String pinCode, @FormDataParam("isCorrAddrDiff") Boolean isCorrAddrDiff,
-            @FormDataParam("corrAddr1") String corrAddr1, @FormDataParam("corrAddr2") String corrAddr2,
-            @FormDataParam("corrPinCode") String corrPinCode, @FormDataParam("hasLift") Boolean hasLift,
-            @FormDataParam("hasToilet") Boolean hasToilet, @FormDataParam("hasWaterTap") Boolean hasWaterTap,
-            @FormDataParam("hasElectricity") Boolean hasElectricity,
-            @FormDataParam("hasAttachedBathroom") String hasAttachedBathroom,
-            @FormDataParam("hasWaterHarvesting") String hasWaterHarvesting,
-            @FormDataParam("floorTypeCode") String floorTypeCode, @FormDataParam("roofTypeCode") String roofTypeCode,
-            @FormDataParam("wallTypeCode") String wallTypeCode, @FormDataParam("woodTypeCode") String woodTypeCode,
-            @FormDataParam("floorDetails") String floorDetails, @FormDataParam("surveyNumber") String surveyNumber,
-            @FormDataParam("pattaNumber") String pattaNumber, @FormDataParam("vacantLandArea") Double vacantLandArea,
-            @FormDataParam("marketValue") Double marketValue,
-            @FormDataParam("currentCapitalValue") Double currentCapitalValue,
-            @FormDataParam("completionDate") String completionDate,
-            @FormDataParam("northBoundary") String northBoundary, @FormDataParam("southBoundary") String southBoundary,
-            @FormDataParam("eastBoundary") String eastBoundary, @FormDataParam("westBoundary") String westBoundary,
-            @FormDataParam("photoAsmnt") InputStream photoAsmntStream,
-            @FormDataParam("photoAsmnt") FormDataContentDisposition photoAsmntDisp,
-            @FormDataParam("bldgPermCopy") InputStream bldgPermCopyStream,
-            @FormDataParam("bldgPermCopy") FormDataContentDisposition bldgPermCopyDisp,
-            @FormDataParam("atstdCopyPropDoc") InputStream atstdCopyPropDocStream,
-            @FormDataParam("atstdCopyPropDoc") FormDataContentDisposition atstdCopyPropDocDisp,
-            @FormDataParam("nonJudcStamp") InputStream nonJudcStampStream,
-            @FormDataParam("nonJudcStamp") FormDataContentDisposition nonJudcStampDisp,
-            @FormDataParam("afdvtBond") InputStream afdvtBondStream,
-            @FormDataParam("afdvtBond") FormDataContentDisposition afdvtBondDisp,
-            @FormDataParam("deathCertCopy") InputStream deathCertCopyStream,
-            @FormDataParam("deathCertCopy") FormDataContentDisposition deathCertCopyDisp)
+    public String createProperty(@RequestParam("propertyTypeMasterCode") String propertyTypeMasterCode,
+            @RequestParam("propertyCategoryCode") String propertyCategoryCode,
+            @RequestParam("apartmentCmplxCode") String apartmentCmplxCode,
+            @RequestParam("ownerDetails") String ownerDetails,
+            @RequestParam("mutationReasonCode") String mutationReasonCode,
+            @RequestParam("extentOfSite") String extentOfSite,
+            @RequestParam("isExtentAppurtenantLand") String isExtentAppurtenantLand,
+            @RequestParam("occupancyCertificationNo") String occupancyCertificationNo,
+            @RequestParam("isSuperStructure") Boolean isSuperStructure,
+            @RequestParam("isBuildingPlanDetails") Boolean isBuildingPlanDetails,
+            @RequestParam("regdDocNo") String regdDocNo, @RequestParam("regdDocDate") String regdDocDate,
+            @RequestParam("localityCode") String localityCode, @RequestParam("street") String street,
+            @RequestParam("electionWardCode") String electionWardCode, @RequestParam("doorNo") String doorNo,
+            @RequestParam("enumerationBlockCode") String enumerationBlockCode,
+            @RequestParam("pinCode") String pinCode, @RequestParam("isCorrAddrDiff") Boolean isCorrAddrDiff,
+            @RequestParam("corrAddr1") String corrAddr1, @RequestParam("corrAddr2") String corrAddr2,
+            @RequestParam("corrPinCode") String corrPinCode, @RequestParam("hasLift") Boolean hasLift,
+            @RequestParam("hasToilet") Boolean hasToilet, @RequestParam("hasWaterTap") Boolean hasWaterTap,
+            @RequestParam("hasElectricity") Boolean hasElectricity,
+            @RequestParam("hasAttachedBathroom") String hasAttachedBathroom,
+            @RequestParam("hasWaterHarvesting") String hasWaterHarvesting,
+            @RequestParam("floorTypeCode") String floorTypeCode, @RequestParam("roofTypeCode") String roofTypeCode,
+            @RequestParam("wallTypeCode") String wallTypeCode, @RequestParam("woodTypeCode") String woodTypeCode,
+            @RequestParam("floorDetails") String floorDetails, @RequestParam("surveyNumber") String surveyNumber,
+            @RequestParam("pattaNumber") String pattaNumber, @RequestParam("vacantLandArea") Double vacantLandArea,
+            @RequestParam("marketValue") Double marketValue,
+            @RequestParam("currentCapitalValue") Double currentCapitalValue,
+            @RequestParam("completionDate") String completionDate,
+            @RequestParam("northBoundary") String northBoundary, @RequestParam("southBoundary") String southBoundary,
+            @RequestParam("eastBoundary") String eastBoundary, @RequestParam("westBoundary") String westBoundary,
+            @RequestParam(value = "photoAsmnt", required=false) MultipartFile photoAsmntDisp,
+            @RequestParam(value = "bldgPermCopy", required=false) MultipartFile bldgPermCopyDisp,
+            @RequestParam(value = "atstdCopyPropDoc", required=false) MultipartFile atstdCopyPropDocDisp,
+            @RequestParam(value = "nonJudcStamp", required=false) MultipartFile nonJudcStampDisp,
+            @RequestParam(value = "afdvtBond", required=false) MultipartFile afdvtBondDisp,
+            @RequestParam(value = "deathCertCopy", required=false) MultipartFile deathCertCopyDisp)
             throws JsonGenerationException, JsonMappingException, IOException, ParseException {
         EgovThreadLocals.setUserId(Long.valueOf("38"));
         List<FloorDetails> floorDetailsList = new ObjectMapper().readValue(floorDetails.toString(),
@@ -652,9 +650,8 @@ public class AssessmentService {
         List<OwnerDetails> ownerDetailsList = new ObjectMapper().readValue(ownerDetails.toString(),
                 new TypeReference<Collection<OwnerDetails>>() {
                 });
-        List<Document> documents = propertyExternalService.getDocuments(photoAsmntStream, photoAsmntDisp,
-                bldgPermCopyStream, bldgPermCopyDisp, atstdCopyPropDocStream, atstdCopyPropDocDisp, nonJudcStampStream,
-                nonJudcStampDisp, afdvtBondStream, afdvtBondDisp, deathCertCopyStream, deathCertCopyDisp);
+        List<Document> documents = propertyExternalService.getDocuments(photoAsmntDisp,
+                bldgPermCopyDisp, atstdCopyPropDocDisp, nonJudcStampDisp, afdvtBondDisp, deathCertCopyDisp);
         NewPropertyDetails newPropertyDetails = propertyExternalService.createNewProperty(propertyTypeMasterCode,
                 propertyCategoryCode, apartmentCmplxCode, ownerDetailsList, mutationReasonCode, extentOfSite,
                 isExtentAppurtenantLand, occupancyCertificationNo, isSuperStructure, isBuildingPlanDetails, regdDocNo,
@@ -705,5 +702,40 @@ public class AssessmentService {
         errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_COMMUNICATION_FAILURE);
         return errorDetails;
     }
-
+/**
+	 * This method is used to get all the tax exemption categories.
+	 * 
+	 * @param username
+	 *            - usernam credential
+	 * @param password
+	 *            - password credential
+	 * @return responseJson - server response in JSON format
+	 * @throws JsonGenerationException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	@POST
+	@Path("/property/documentTypes")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getDocumentTypes() throws JsonGenerationException, JsonMappingException, IOException {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getDocumentTypes();
+		return getJSONResponse(mstrCodeNamePairDetailsList);
+	}
+	
+	/**
+	 * This method is used to get reasons for create the property.
+	 *
+	 * @return responseJson - server response in JSON format
+	 * @throws JsonGenerationException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	@POST
+	@Path("/property/mutationReasons")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getMutatioReasons() throws JsonGenerationException, JsonMappingException, IOException {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
+				.getReasonsForChangeProperty(PropertyTaxConstants.PROP_MUTATION_RSN);
+		return getJSONResponse(mstrCodeNamePairDetailsList);
+	}
 }

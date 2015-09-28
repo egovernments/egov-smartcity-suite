@@ -440,7 +440,7 @@ public class AssessmentService {
 		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
 		Boolean isAuthenticatedUser = true;
 		if (isAuthenticatedUser) {
-			mstrCodeNamePairDetailsList = propertyExternalService.getReasonsForCreateProperty();
+			mstrCodeNamePairDetailsList = propertyExternalService.getReasonsForChangeProperty(PropertyTaxConstants.PROP_CREATE_RSN);
 			responseJson = getJSONResponse(mstrCodeNamePairDetailsList);
 		} else {
 			errorDetails = getInvalidCredentialsErrorDetails();
