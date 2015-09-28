@@ -68,6 +68,7 @@ import org.egov.common.entity.UOM;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Fundsource;
+import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
@@ -177,6 +178,8 @@ public class AbstractEstimateAction extends BaseFormAction {
     private BigDecimal paymentReleased = BigDecimal.ZERO;
     private EgovCommon egovCommon;
     private ContractorBillService contractorBillService;
+    @Autowired
+    private FundSourceHibernateDAO fundSourceHibernateDAO;
 
     public String getMessageKey() {
         return messageKey;
@@ -315,10 +318,7 @@ public class AbstractEstimateAction extends BaseFormAction {
             departmentId = latestAssignment.getDepartment().getId();
         populateCategoryList(ajaxEstimateAction, abstractEstimate.getParentCategory() != null);
         populateOverheadsList(ajaxEstimateAction, abstractEstimate.getEstimateDate() != null);
-
-        // TODO:Fixme - some issue with this API in EGF. So commented out for time being and loading empty list
-        // addDropdownData("fundSourceList", fundSourceHibernateDAO.findAllActiveIsLeafFundSources());
-        addDropdownData("fundSourceList", Collections.emptyList());
+        addDropdownData("fundSourceList", fundSourceHibernateDAO.findAllActiveIsLeafFundSources());
 
         if (abstractEstimate != null
                 && abstractEstimate.getEgwStatus() != null
