@@ -200,9 +200,10 @@ public class WaterTaxSearchController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<Document> searchConnection(@ModelAttribute final ConnectionSearchRequest searchRequest) {
+        Sort sort = Sort.by().field("common.createdDate", SortOrder.DESC);
         final SearchResult searchResult = searchService.search(asList(Index.WATERTAX.toString()),
                 asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(),
-                searchRequest.searchFilters(), Sort.by().field("common.createdDate", SortOrder.DESC), Page.NULL);
+                searchRequest.searchFilters(), sort, Page.NULL);
         return searchResult.getDocuments();
 
     }

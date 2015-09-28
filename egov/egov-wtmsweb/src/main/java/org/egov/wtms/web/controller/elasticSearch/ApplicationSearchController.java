@@ -104,9 +104,10 @@ public class ApplicationSearchController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<Document> searchComplaints(@ModelAttribute final ApplicationSearchRequest searchRequest) {
+        Sort sort = Sort.by().field("searchable.applicationdate", SortOrder.DESC);
         final SearchResult searchResult = searchService.search(asList(Index.APPLICATION.toString()),
                 asList(IndexType.APPLICATIONSEARCH.toString()), searchRequest.searchQuery(),
-                searchRequest.searchFilters(), Sort.by().field("searchable.applicationdate", SortOrder.DESC), Page.NULL);
+                searchRequest.searchFilters(), sort, Page.NULL);
 
         return searchResult.getDocuments();
 
