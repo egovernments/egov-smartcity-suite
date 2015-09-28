@@ -88,7 +88,7 @@ public class WaterTaxSearchController {
     }
 
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection"
+     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
      * List Contals 1st Entry "CSC Operator" order by value asc
      * 
      * @return String if Logged in User is CSC Operattor
@@ -109,7 +109,7 @@ public class WaterTaxSearchController {
     }
 
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection"
+     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
      * List Contals 4th Entry "ULB Operator" order by value asc
      * 
      * @return String if Logged in User is ULB Operattor
@@ -130,7 +130,7 @@ public class WaterTaxSearchController {
     }
 
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection"
+     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
      * List Contals 2nd Entry "Super User" order by value asc
      * 
      * @return String if Logged in User is SUPER USER
@@ -151,7 +151,7 @@ public class WaterTaxSearchController {
     }
 
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection"
+     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
      * List Contals 3th Entry "Water Tax Approver" order by value asc
      * 
      * @return String if Logged in User is Water Tax Approver
@@ -172,7 +172,7 @@ public class WaterTaxSearchController {
     }
 
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWAterTaxConnection"
+     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
      * List Contals 5th Entry "Operator"
      * 
      * @return String if Logged in User is Operator
