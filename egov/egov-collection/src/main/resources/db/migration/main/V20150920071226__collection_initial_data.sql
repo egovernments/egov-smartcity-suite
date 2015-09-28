@@ -294,6 +294,17 @@ Insert into eg_roleaction (roleid,actionid) values ((select id from eg_role wher
 Insert into eg_roleaction (roleid,actionid) values ((select id from eg_role where name='ULB Operator'),(select id from eg_action where name='BankRemittanceCreate'));
 Insert into eg_roleaction (roleid,actionid) values ((select id from eg_role where name='CSC Operator'),(select id from eg_action where name='BankRemittanceCreate'));
 Insert into eg_roleaction (roleid,actionid) values ((select id from eg_role where name='Remitter'),(select id from eg_action where name='BankRemittanceCreate'));
+INSERT INTO eg_roleaction (roleid,actionid) values ((SELECT id FROM eg_role where name='Remitter'),(SELECT id FROM eg_action where name='Official Home Page'));
+INSERT INTO eg_roleaction (roleid,actionid) values((SELECT id FROM eg_role  WHERE name='Remitter'),(SELECT id from eg_action WHERE name='CitizenInboxForm' and contextroot='portal'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where name = 'Remitter'),(select id FROM eg_action  WHERE NAME = 'Inbox' and CONTEXTROOT='egi'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where name = 'Remitter'),(select id FROM eg_action  WHERE NAME = 'InboxDraft' and CONTEXTROOT='egi'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where name = 'Remitter'),(select id FROM eg_action  WHERE NAME = 'InboxHistory' and CONTEXTROOT='egi'));
+insert into eg_roleaction(Select id,(select id from eg_action where name='OfficialsProfileEdit') from eg_role where name='Remitter');
+insert into eg_roleaction(Select id,(select id from eg_action where name='OfficialSentFeedBack') from eg_role where name='Remitter');
+insert into eg_roleaction(Select id,(select id from eg_action where name='OfficialChangePassword') from eg_role where name='Remitter');
+insert into eg_roleaction(Select id,(select id from eg_action where name='AddFavourite') from eg_role where name='Remitter');
+insert into eg_roleaction(Select id,(select id from eg_action where name='RemoveFavourite') from eg_role where name='Remitter');
+
 ------------------END---------------------
 -------------------START-------------------
 

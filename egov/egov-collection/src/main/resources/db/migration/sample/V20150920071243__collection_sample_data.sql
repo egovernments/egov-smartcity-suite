@@ -22,3 +22,6 @@ INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) V
 INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, VERSION, MODULE ) VALUES (nextval('SEQ_EG_APPCONFIG'), 'COLLECTIONDESIGNATIONFORCSCOPERATORASCLERK','Designation for Collection workflow',0, (select id from eg_module where name='Collection')); 
 INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES (nextval('SEQ_EG_APPCONFIG_VALUES'),(SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='COLLECTIONDESIGNATIONFORCSCOPERATORASCLERK'),current_date, 'Revenue Clerk',0);
 -------------------END---------------------
+-------------------START------------------
+INSERT into eg_userrole values((select id from eg_role  where name  = 'Remitter'),(select id from eg_user where username ='sumit'));
+-------------------END--------------------
