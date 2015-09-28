@@ -219,7 +219,7 @@
 									<tr>
 										<th>Date</th>
 										<th>Sender</th>
-										<th>Task</th>
+										<th>Nature of Work</th>
 										<th>Status</th>
 										<th>Details</th>
 										<th></th>
@@ -244,7 +244,7 @@
 									<tr>
 										<th>Date</th>
 										<th>Sender</th>
-										<th>Task</th>
+										<th>Nature of Work</th>
 										<th>Status</th>
 										<th>Details</th>
 									</tr>
@@ -270,7 +270,7 @@
 									<tr>
 										<th>Date</th>
 										<th>Sender</th>
-										<th>Task</th>
+										<th>Nature of Work</th>
 										<th>Status</th>
 										<th>Details</th>
 									</tr>
@@ -426,7 +426,7 @@
 										<tr>
 											<th>Date</th>
 											<th>Sender</th>
-											<th>Task</th>
+											<th>Nature of Work</th>
 											<th>Status</th>
 											<th>Comments</th>
 										</tr>
