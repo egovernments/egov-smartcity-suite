@@ -39,6 +39,9 @@
 #-------------------------------------------------------------------------------*/
 var tableContainer;
 jQuery(document).ready(function ($) {
+	
+		$.fn.dataTable.moment( 'DD/MM/YYYY' );
+	
 	    $(":input").inputmask();
 		
 	    $(".datepicker").datepicker({
@@ -74,7 +77,8 @@ jQuery(document).ready(function ($) {
 					{title: 'Applicant Name', data: 'resource.searchable.applicantname'},
 					{title: 'Applicant Address', data: 'resource.searchable.applicantAddress'},
 					{title: 'Status', data: 'resource.clauses.status'}
-					]
+					],
+					"aaSorting": [[3, 'desc']]
 				});
 			})
 		});
