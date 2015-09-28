@@ -39,6 +39,7 @@
  */
 package org.egov.works.web.actions.masters;
 
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.ContractorGrade;
 import org.egov.infra.validation.regex.Constants;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
@@ -58,7 +60,10 @@ import org.egov.works.utils.WorksConstants;
 
 @Results({
 	@Result(name = ContractorGradeAction.NEW, location = "contractorGrade-new.jsp"),
-	@Result(name = ContractorGradeAction.SEARCH, location = "contractorGrade-searchPage.jsp")
+	@Result(name = ContractorGradeAction.SEARCH, location = "contractorGrade-searchPage.jsp"),
+	@Result(name = ContractorGradeAction.INDEX, location = "contractorGrade-index.jsp"),
+	@Result(name = ContractorGradeAction.EDIT, location = "contractorGrade-edit.jsp"),
+	@Result(name = "searchPage", location = "contractorGrade-index.jsp"),
 })
 @ParentPackage("egov")
 public class ContractorGradeAction extends SearchFormAction {
@@ -68,6 +73,8 @@ public class ContractorGradeAction extends SearchFormAction {
     private PersistenceService<ContractorGrade, Long> contractorGradeService;
     private List<ContractorGrade> contractorGradeList = null;
     public static final String SEARCH = "search";
+    public static final String INDEX = "index";
+    public static final String EDIT = "edit";
     private Long id;
     private String grade;
     private double minAmount = -1L;
@@ -77,6 +84,7 @@ public class ContractorGradeAction extends SearchFormAction {
     private List<String> maxAmountList;
     private List<String> minAmountList;
 
+    @Action(value = "/masters/contractorGrade-save")
     public String save() {
         contractorGrade = contractorGradeService.persist(contractorGrade);
         final String messageKey = "contractor.grade.save.success";
@@ -84,7 +92,6 @@ public class ContractorGradeAction extends SearchFormAction {
         contractorGradeList = new ArrayList<ContractorGrade>();
         contractorGradeList.add(contractorGrade);
         return INDEX;
-
     }
 
     @Action(value = "/masters/contractorGrade-newform")
@@ -93,7 +100,6 @@ public class ContractorGradeAction extends SearchFormAction {
     }
     
     @Override
-    @Action(value = "/masters/contractorGrade-search")
     public String search() {
         return SEARCH;
     }
@@ -106,9 +112,9 @@ public class ContractorGradeAction extends SearchFormAction {
     public void prepare() {
         if (id != null)
             contractorGrade = contractorGradeService.findById(id, false);
-        final List<Double> tempMaxAmountList = persistenceService
+        final List<BigDecimal> tempMaxAmountList = persistenceService
                 .findAllByNamedQuery("getContractorGradeMaxAmountList");
-        final List<Double> tempMinAmountList = persistenceService
+        final List<BigDecimal> tempMinAmountList = persistenceService
                 .findAllByNamedQuery("getContractorGradeMinAmountList");
         maxAmountList = new ArrayList<String>();
         minAmountList = new ArrayList<String>();
@@ -117,11 +123,11 @@ public class ContractorGradeAction extends SearchFormAction {
         numberFormat.setMinimumFractionDigits(2);
         numberFormat.setMaximumFractionDigits(2);
         numberFormat.setGroupingUsed(false);
-        for (final Double maxValue : tempMaxAmountList) {
+        for (final BigDecimal maxValue : tempMaxAmountList) {
             final String max = numberFormat.format(maxValue.doubleValue());
             getMaxAmountList().add(max);
         }
-        for (final Double minValue : tempMinAmountList) {
+        for (final BigDecimal minValue : tempMinAmountList) {
             final String min = numberFormat.format(minValue.doubleValue());
             getMinAmountList().add(min);
         }
@@ -134,6 +140,7 @@ public class ContractorGradeAction extends SearchFormAction {
         return INDEX;
     }
 
+    @Action(value = "/masters/contractorGrade-edit")
     public String edit() {
         contractorGrade = contractorGradeService.findById(contractorGrade.getId(), false);
         return EDIT;
@@ -144,6 +151,7 @@ public class ContractorGradeAction extends SearchFormAction {
         return list();
     }
 
+    @Action(value = "/masters/contractorGrade-searchGradeDetails")
     public String searchGradeDetails() {
         boolean hasNoErrors = true;
 
@@ -178,12 +186,12 @@ public class ContractorGradeAction extends SearchFormAction {
         setPageSize(WorksConstants.PAGE_SIZE);
         search();
 
-        if (searchResult.getFullListSize() == 0)
+        if (searchResult != null && searchResult.getFullListSize() == 0)
             setDisplData("noData");
         else
             setDisplData(WorksConstants.YES);
 
-        return "searchPage";
+        return SEARCH;
     }
 
     public String getDisplData() {

@@ -46,7 +46,7 @@
      
 	function validate(){	
 		
-		document.forms[0].action='<%=request.getContextPath()%>/masters/contractorGrade!searchGradeDetails.action?mode=search';
+		document.forms[0].action='<%=request.getContextPath()%>/masters/contractorGrade-searchGradeDetails.action?mode=search';
 		
 		document.forms[0].submit();
 		
@@ -64,7 +64,7 @@
         		<s:actionmessage theme="simple"/>
         	</div>
     	</s:if>
-		 <s:form name="searchGradeForm" id="searchGradeForm" action="/masters/contractorGrade!searchGradeDetails.action" theme="simple">			
+		 <s:form name="searchGradeForm" id="searchGradeForm" action="/masters/contractorGrade-searchGradeDetails.action" theme="simple">			
 			<div class="navibarshadowwk">
 			</div>
 			<div class="formmainbox">
@@ -170,6 +170,7 @@
 										<tr>
 											<td>
 											<s:if test="%{searchResult.fullListSize != 0 && displData=='yes'}">
+												AAAAAAAAAAAAAAAAAAAAAAA
 												<display:table name="searchResult" pagesize="30" uid="currentRow"
 													cellpadding="0" cellspacing="0" requestURI=""
 													style="border:1px;width:100%;empty-cells:show;border-collapse:collapse;">
@@ -234,6 +235,7 @@
 												</display:table>
 												</s:if>
 												<s:elseif test="%{searchResult.fullListSize == 0 && displData=='noData'}">
+													EEEEEEEEEEEEEEEEEEEEEEEee
 													<div >	
 														<table width="100%" border="0" cellpadding="0"
 														cellspacing="0">

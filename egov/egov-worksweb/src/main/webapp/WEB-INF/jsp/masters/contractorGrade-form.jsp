@@ -62,9 +62,9 @@
         
         <tr>
 				<td class="greyboxwk"><span class="mandatory">*</span><s:text name="contractor.grade.master.minamount" />:</td>
-            	<td class="greybox2wk"><s:textfield name="minAmount"  id="minAmount"  cssClass="amount" value="%{minAmount}" /></td>
+            	<td class="greybox2wk"><s:textfield name="minAmount"  id="minAmount"  cssClass="amount" value="%{minAmount}" placeholder="0" /></td>
                 <td class="greyboxwk"><span class="mandatory">*</span><s:text name="contractor.grade.master.maxamount" />:</td>
-            	<td class="greybox2wk"><s:textfield name="maxAmount"  id="maxAmount"  cssClass="amount" value="%{maxAmount}" /></td>
+            	<td class="greybox2wk"><s:textfield name="maxAmount"  id="maxAmount"  cssClass="amount" value="%{maxAmount}" placeholder="0" /></td>
         </tr>
        <tr>
 	          	<td colspan="4" class="shadowwk"></td>

@@ -101,23 +101,23 @@
 														<table width="100" border="0" cellpadding="0" cellspacing="2">
 															<tr>                    		
 																<td width="20">
-																	<a href="${pageContext.request.contextPath}/masters/contractorGrade!edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
+																	<a href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
 																		<s:text name="sor.edit" /></a>
 																</td>
 																<td width="20">
-																	<a href="${pageContext.request.contextPath}/masters/contractorGrade!edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
+																	<a href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
 																		<img src='/egi/resources/erp2/images/page_edit.png' alt="Edit Data" width="16" height="16" border="0" align="absmiddle" />
 																	</a>
 																</td>
 																<td width="20">&#47;
 																</td>
 																<td width="20">
-																	<a href="${pageContext.request.contextPath}/masters/contractorGrade!edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
+																	<a href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
 																		<s:text name="sor.view" />
 																	</a>
 																</td>
 																<td width="20">
-																	<a href="${pageContext.request.contextPath}/masters/contractorGrade!edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
+																	<a href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
 																		<img src='/egi/resources/erp2/images/book_open.png' alt="View Data" width="16" height="16" border="0" align="absmiddle" />
 																	</a>
 																</td>
