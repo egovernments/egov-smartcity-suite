@@ -1,4 +1,4 @@
-package org.egov.wtms.application.rest;
+package org.egov.api.model;
 
 import javax.validation.constraints.NotNull;
 

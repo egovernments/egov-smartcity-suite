@@ -40,13 +40,11 @@
 package org.egov.wtms.web.controller.rest;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.validation.Valid;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
@@ -57,12 +55,8 @@ import org.egov.commons.EgModules;
 import org.egov.infra.security.token.entity.Token;
 import org.egov.infra.security.token.service.TokenService;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.wtms.application.entity.WaterConnectionDetails;
-import org.egov.wtms.application.rest.ConnectionInfo;
 import org.egov.wtms.application.service.NewConnectionService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.masters.entity.enums.ConnectionStatus;
-import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
@@ -75,10 +69,7 @@ import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -148,7 +139,7 @@ public class RestNewConnectionController {
 
     }
 
-    @RequestMapping(value = "rest/watertax/newconnection/{token}", method = RequestMethod.POST)
+    /*@RequestMapping(value = "rest/watertax/newconnection/{token}", method = RequestMethod.POST)
     public String createNewConnection(
             @Valid @RequestBody final ConnectionInfo connectionInfo,
             @PathVariable final String token){
@@ -209,7 +200,7 @@ public class RestNewConnectionController {
         }
         return waterConnectionDetails;
     }
-
+*/
     private String validatePropertyID(final String propertyid) throws IOException {
         final String errorMessage = newConnectionService.checkValidPropertyAssessmentNumber(propertyid);
         if (errorMessage != null && !errorMessage.equals(""))
