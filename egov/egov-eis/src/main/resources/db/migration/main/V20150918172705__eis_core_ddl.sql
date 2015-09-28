@@ -450,4 +450,8 @@ insert into eg_roleaction values((select id from eg_role where name='Super User'
 insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='panNoUniqueCheck'));
 
 update eg_action set queryparams=null where queryparams='';
+
+insert into eg_action values(nextval('seq_eg_action'),'Position count in Search Position','/position/position-getTotalPositionCount',null,(select id from eg_module where name='Position'),null,'search position',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Position count in Search Position'));
+
 ----------------------------
