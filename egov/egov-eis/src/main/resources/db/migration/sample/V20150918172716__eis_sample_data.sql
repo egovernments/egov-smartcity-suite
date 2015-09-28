@@ -544,9 +544,6 @@ INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmod
 drop sequence seq_eg_user;
 create sequence seq_eg_user start with 70;
 
---------------------START--------------------------
-INSERT INTO egeis_assignment (id,fund,function,designation,functionary,department,position,grade,lastmodifiedby,lastmodifieddate,createddate,createdby,fromdate,todate,version,employee,isprimary) VALUES(nextval('seq_egeis_assignment'),(SELECT id FROM fund WHERE name='Municipal Fund'),null,(SELECT id FROM eg_designation WHERE name='Section manager'),null,(SELECT id FROM eg_department WHERE name='Revenue'),(SELECT id FROM eg_position WHERE name='R-SECTION MANAGER-1'),1,1,now(),now(),1,'01-Apr-2015','31-Mar-2020',1,(SELECT id FROM egeis_employee WHERE code='E062'),true);
----------------------END----------------------------
 
 
 
