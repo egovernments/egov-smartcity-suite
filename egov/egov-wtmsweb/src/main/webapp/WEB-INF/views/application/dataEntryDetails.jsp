@@ -50,7 +50,7 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.monthlyfees" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:input id="monthlyFee" path="existingConnection.monthlyFee" class="form-control text-right patternvalidation" maxlength="6" data-pattern="number"  />  
+		<form:input id="monthlyFee" path="existingConnection.monthlyFee" class="form-control text-right patternvalidation" maxlength="6" data-pattern="number" required="required" />  
 		<form:errors path="existingConnection.monthlyFee" cssClass="add-margin error-msg" />	
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
