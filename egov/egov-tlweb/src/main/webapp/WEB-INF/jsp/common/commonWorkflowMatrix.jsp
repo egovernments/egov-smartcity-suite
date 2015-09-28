@@ -106,7 +106,7 @@ function populateApprover() {
 <s:hidden id="pendingActions" name="pendingActions" value="%{pendingActions}"/>
 <s:hidden id="approverName" name="approverName" />
 
-<s:if test="%{#request.approverOddTextCss==null}">
+<%-- <s:if test="%{#request.approverOddTextCss==null}">
       <c:set var="approverOddTextCss" value="greybox" scope="request"/>
        <c:set var="approverOddCSS" value="greybox" scope="request"/>
 </s:if>
@@ -114,7 +114,7 @@ function populateApprover() {
 <s:if test="%{#request.approverEvenTextCSS==null}">
    <c:set var="approverEvenTextCSS" value="bluebox" scope="request"/>
      <c:set var="approverEvenCSS" value="bluebox" scope="request"/>
-</s:if>
+</s:if> --%>
 
  <table width="100%" border="0" cellspacing="0" cellpadding="0">
  <tr>
@@ -124,9 +124,9 @@ function populateApprover() {
 		
 	</tr>
 	  	<tr>   
-	  	 	 <td class="${approverOddCSS}" width="5%">&nbsp;</td>
-			 <td class="${approverOddCSS}" id="deptLabel" width="14%"><s:text name="wf.approver.department"/>:</td>
-			 <td class="${approverOddTextCss}" width="14%">
+	  	 	 <td class="greybox" width="5%">&nbsp;</td>
+			 <td class="greybox" id="deptLabel" width="14%"><s:text name="wf.approver.department"/>:</td>
+			 <td class="greybox" width="14%">
 				<s:select name="approverDepartment" id="approverDepartment" list="dropdownData.approverDepartmentList" 
 					listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"  
 					value="%{approverDepartment}"  onchange="loadDesignationFromMatrix();"
@@ -134,18 +134,18 @@ function populateApprover() {
 				<egov:ajaxdropdown fields="['Text','Value']" url="workflow/ajaxWorkFlow-getDesignationsByObjectType.action" id="approverDesignation" dropdownId="approverDesignation" 
 					contextToBeUsed="/eis"/>
 			</td>
-			<td class="${approverOddCSS}" width="14%"><s:text name="wf.approver.designation"/>:</td>
-			<td class="${approverOddTextCss}" width="14%">
+			<td class="greybox" width="14%"><s:text name="wf.approver.designation"/>:</td>
+			<td class="greybox" width="14%">
 				<s:select id="approverDesignation" name="approverDesignation" list="dropdownData.designationList" listKey="designationId" headerKey="-1" listValue="designationName" headerValue="----Choose----" 
 					onchange="populateApprover();" onfocus="callAlertForDepartment();" cssClass="dropDownCss" />
 				<egov:ajaxdropdown id="approverPositionId" fields="['Text','Value']" dropdownId="approverPositionId" 
 					url="workflow/ajaxWorkFlow-getPositionByPassingDesigId.action" contextToBeUsed="/eis" />
 			</td>
-			<td class="${approverOddCSS}" width="14%"><s:text name="wf.approver"/>:</td>
-			<td class="${approverOddTextCss}" width="14%">
+			<td class="greybox" width="14%"><s:text name="wf.approver"/>:</td>
+			<td class="greybox" width="14%">
 			  	<s:select id="approverPositionId"  name="approverPositionId" list="dropdownData.approverList" headerKey="-1" headerValue="----Choose----" listKey="id" listValue="firstName"  onfocus="callAlertForDesignation();" 
 			  			value="%{approverPositionId}" cssClass="dropDownCss" /></td> 
-			<td class="${approverOddCSS}" width="5%">&nbsp;</td>
+			<td class="greybox" width="5%">&nbsp;</td>
 		</tr>
 		</table>
 </s:if>
@@ -154,15 +154,15 @@ function populateApprover() {
  <div id="workflowCommentsDiv" align="center">
          <table width="100%">
          <tr>
-           <td width="10%" class="${approverEvenCSS}">&nbsp;</td>
-           <td width="20%" class="${approverEvenCSS}">&nbsp;</td>
-           <td class="${approverEvenCSS}" width="13%"><s:text name="wf.approver.remarks"/>: </td>
-           <td class="${approverEvenTextCSS}"> 
+           <td width="10%" class="greybox">&nbsp;</td>
+           <td width="20%" class="greybox">&nbsp;</td>
+           <td class="greybox" width="13%"><s:text name="wf.approver.remarks"/>: </td>
+           <td class="greybox"> 
            	<textarea id="approverComments" name="approverComments" rows="2" cols="35" ></textarea>  
            </td>
-           <td class="${approverEvenCSS}">&nbsp;</td>
-           <td width="10%" class="${approverEvenCSS}">&nbsp;</td>
-           <td  class="${approverEvenCSS}">&nbsp;</td>
+           <td class="greybox">&nbsp;</td>
+           <td width="10%" class="greybox">&nbsp;</td>
+           <td  class="greybox">&nbsp;</td>
            </tr>
          </table>
   </div>       

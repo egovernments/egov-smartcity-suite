@@ -73,8 +73,25 @@ h1.its, h2.its, h3.its, h4.its, h5.its, h6.its, p.its, strong.its, form.its, div
 		}
 		table.its thead th
 		{
-		display:table-header-group
-border:1px solid red;
+		 display:table-header-group
+		border:1px solid red;
+		}	
+	
+	table.its thead th
+	{
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-right-style: solid;
+    border-bottom-style: solid;
+    border-right-color: #6b4f2c;
+    border-bottom-color: #6b4f2c;
+    font-family: semibold;
+    font-size: 10px;
+    font-weight: bold;
+    color: #FFF;
+    padding: 4px;
+    background-color: #6b4f2c;
+    background-image: none;
 
 	}	 				
 
@@ -446,4 +463,3 @@ table.its td.widthAlignSmall {
     COLOR: #00438c;
     FONT-FAMILY: Verdana, Geneva, Arial, Helvetica, sans-serif;
 }
-

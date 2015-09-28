@@ -41,7 +41,8 @@
 <html>
 	<head>
 		<title><s:text name="license.search" /></title>
-		<link href="/resources/css/license/searchTrade.css" rel="stylesheet" type="text/css"></link>
+		<link href="/tl/resources/css/license/searchTrade.css" rel="stylesheet" type="text/css"></link>
+		<link href="/tl/resources/css/displaytable.css" rel="stylesheet" type="text/css"></link>
 		<script type="text/javascript" src="/tl/resources/javascript/license/searchTrade.js"></script>
 	</head>
 	<body onload="init()">
@@ -70,10 +71,11 @@
 												<s:reset name="button" cssClass="button" id="button" value="Reset" />
 												<input name="button2" type="button" class="button" id="button" onclick="window.close()" value="Close" />
 											</div>
-											<%@ include file='searchTrade-result.jsp'%>
+											
 										</s:form>
 									</s:push>
 								</div>
+								<%@ include file='searchTrade-result.jsp'%>
 							</center>
 						</div>
 					</td>

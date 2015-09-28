@@ -43,14 +43,14 @@ String path = request.getContextPath();
 %>
 
 <s:if test="pagedResults != null && pagedResults.getList() != null && !pagedResults.getList().isEmpty()">
-	<br />
 	<fieldset>
-		<legend align="center">
+		<legend align="left" style="margin:0;border:0;">
+			<br />
 			<b>Search Result</b>
 		</legend>
 		
 		<s:if test="(noticeNumber==null && docNumber==null && noticeType=='-1' && noticeFromDate==null && noticeToDate==null) || (noticeNumber=='' && docNumber=='' && noticeType=='-1' && noticeFromDate==null && noticeToDate==null)">
-			<display:table name="pagedResults" uid="license" style="background-color:#e8edf1;width:98%;padding:0px;margin:10 0 0 5px;" pagesize="20" export="true" requestURI="searchTrade!search.action?reportSize=${reportSize}" excludedParams="reportSize" cellpadding="0" cellspacing="0">
+			<display:table class="its" name="pagedResults" uid="license" style="background-color:#e8edf1;width:98%;padding:0px;margin:10 0 0 5px;" pagesize="20" export="true" requestURI="searchTrade!search.action?reportSize=${reportSize}" excludedParams="reportSize" cellpadding="0" cellspacing="0">
 				<display:column class="blueborderfortd" title="S.No" style="border-left:1px solid #E9E9E9">
 					<s:property value="%{#attr.license_rowNum+(page == 0  ? 0: (page-1))*10}" />
 				</display:column>
@@ -246,7 +246,7 @@ String path = request.getContextPath();
 			</display:table>
 		</s:if>
 		<s:else>
-			<display:table name="pagedResults" uid="license" style="background-color:#e8edf1;width:98%;padding:0px;margin:10 0 0 5px;" pagesize="20" requestURI="searchTrade!search.action?reportSize=${reportSize}" excludedParams="reportSize" cellpadding="0" cellspacing="0">
+			<display:table class="its" name="pagedResults" uid="license" style="background-color:#e8edf1;width:98%;padding:0px;margin:10 0 0 5px;" pagesize="20" requestURI="searchTrade!search.action?reportSize=${reportSize}" excludedParams="reportSize" cellpadding="0" cellspacing="0">
 				<display:column class="blueborderfortd" title="S.No" style="border-left:1px solid #E9E9E9">
 					<s:property value="%{#attr.license_rowNum+(page == 0  ? 0: (page-1))*10}" />
 				</display:column>
