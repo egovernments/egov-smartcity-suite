@@ -73,10 +73,7 @@ jQuery(document).ready(function ($) {
 					},
 					{title: 'Applicant Name', data: 'resource.searchable.applicantname'},
 					{title: 'Applicant Address', data: 'resource.searchable.applicantAddress'},
-					
 					{title: 'Status', data: 'resource.clauses.status'}
-					
-					
 					]
 				});
 			})

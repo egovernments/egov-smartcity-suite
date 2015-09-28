@@ -68,6 +68,7 @@ jQuery(document).ready(function($) {
 			           {title : 'Total Due',data : 'resource.clauses.totaldue'},
 			           {title : 'Status',data : 'resource.clauses.status'},
 			           {title : 'conntype',data : 'resource.clauses.connectiontype',"bVisible" : false},
+			           {title : 'conndate',data : 'resource.common.createdDate',"bVisible" : false},
 			           {title : 'WaterTax Due',data : 'resource.clauses.waterTaxDue'},
 				       {title : 'Actions',
 			        	   render : function(data,type,full) {
