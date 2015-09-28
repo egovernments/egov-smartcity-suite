@@ -49,6 +49,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
 	<form:hidden path="" id="statuscode" value="${waterConnectionDetails.status.code}"/>
 	<form:hidden path="" id="wfstate" value="${waterConnectionDetails.state.id}"/> 
+	<form:input type="text" path="" id="closerConnection" value="${waterConnectionDetails.closeConnectionType}"/> 
 	<input type="hidden" id="currentUser" value="${currentUser}"/>  
 	<input type="hidden" id="meterFocus" value="${meterFocus}"/>
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
@@ -98,7 +99,9 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 		<c:if test="${waterConnectionDetails.status.code == 'WORKORDERGENERATED'}">
 			<jsp:include page="tapexecutiondetails-form.jsp"></jsp:include>
 		</c:if>
-			
+		<c:if test="${(waterConnectionDetails.status.code =='CLOSERINITIATED'  ||  waterConnectionDetails.status.code =='CLOSERAPPROVED'  || waterConnectionDetails.status.code =='CLOSERINPROGRESS'||waterConnectionDetails.status.code =='CLOSERSANCTIONED') }">
+			<jsp:include page="closerForm-details.jsp"></jsp:include>
+			</c:if>
 </div>	
 	 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 	 	<jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>

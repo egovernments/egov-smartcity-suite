@@ -225,6 +225,11 @@ public class WaterConnectionDetails extends StateAware {
     @Transient
     private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>(0);
 
+    private Character closeConnectionType;
+
+    @Length(max = 1024)
+    private String closeconnectionreason;
+
     public List<MeterReadingConnectionDetails> getMeterConnection() {
         return meterConnection;
     }
@@ -534,6 +539,22 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setNonmeteredBillDetails(final Set<NonMeteredConnBillDetails> nonmeteredBillDetails) {
         this.nonmeteredBillDetails = nonmeteredBillDetails;
+    }
+
+    public Character getCloseConnectionType() {
+        return closeConnectionType;
+    }
+
+    public void setCloseConnectionType(final Character closeConnectionType) {
+        this.closeConnectionType = closeConnectionType;
+    }
+
+    public String getCloseconnectionreason() {
+        return closeconnectionreason;
+    }
+
+    public void setCloseconnectionreason(final String closeconnectionreason) {
+        this.closeconnectionreason = closeconnectionreason;
     }
 
 }

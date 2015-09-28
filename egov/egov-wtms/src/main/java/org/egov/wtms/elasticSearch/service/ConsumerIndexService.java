@@ -63,6 +63,7 @@ public class ConsumerIndexService {
         consumerSearch.setZone(assessmentDetails.getBoundaryDetails().getZoneName());
         consumerSearch.setWard(assessmentDetails.getBoundaryDetails().getWardName());
         consumerSearch.setTotalDue(assessmentDetails.getPropertyDetails().getTaxDue());
+        consumerSearch.setClosureType(waterConnectionDetails.getCloseConnectionType());
         consumerSearch.setLocality(assessmentDetails.getPropertyAddress() != null ? assessmentDetails
                 .getPropertyAddress() : "");
         consumerSearch.setPropertyId(waterConnectionDetails.getConnection().getPropertyIdentifier());

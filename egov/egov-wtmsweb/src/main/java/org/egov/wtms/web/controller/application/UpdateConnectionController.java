@@ -42,7 +42,9 @@ package org.egov.wtms.web.controller.application;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -116,23 +118,33 @@ public class UpdateConnectionController extends GenericConnectionController {
 
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationNumber) {
-      final WaterConnectionDetails  waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
+        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .findByApplicationNumber(applicationNumber);
         return waterConnectionDetails;
     }
 
     @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String applicationNumber, final HttpServletRequest request) {
-        final WaterConnectionDetails   waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
+        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .findByApplicationNumber(applicationNumber);
         return loadViewData(model, request, waterConnectionDetails);
     }
 
     private String loadViewData(final Model model, final HttpServletRequest request,
             final WaterConnectionDetails waterConnectionDetails) {
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
-        model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
+        if (waterConnectionDetails.getCloseConnectionType() != null) {
+            model.addAttribute("additionalRule", "CLOSECONNECTION");
+            model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
+            final Map<String, String> connectionTypeMap = new LinkedHashMap<String, String>();
+            connectionTypeMap.put(WaterTaxConstants.PERMENENTCLOSECODE.toString(), WaterTaxConstants.PERMENENTCLOSE);
+            connectionTypeMap.put(WaterTaxConstants.TEMPERARYCLOSECODE.toString(), WaterTaxConstants.TEMPERARYCLOSE);
+            model.addAttribute("radioButtonMap", connectionTypeMap);
+        } else
+            model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
-        
+
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
         model.addAttribute(
@@ -144,7 +156,7 @@ public class UpdateConnectionController extends GenericConnectionController {
 
         if (waterConnectionDetails.getStatus() != null
                 && waterConnectionDetails.getStatus().getCode()
-                        .equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)) {
+                .equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)) {
             final ChairPerson chairPerson = chairPersonService.getActiveChairPersonAsOnCurrentDate();
             model.addAttribute("chairPerson", chairPerson);
         }
@@ -153,8 +165,8 @@ public class UpdateConnectionController extends GenericConnectionController {
             waterConnectionDetails.getConnection().setInitialReading(null);
             waterConnectionDetails.getConnection().setMeterSerialNumber("");
         }
-
         appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
+
         return "newconnection-edit";
     }
 
@@ -182,12 +194,19 @@ public class UpdateConnectionController extends GenericConnectionController {
                             .getApplicationType().getCode(), "fieldInspection"));
             model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
             model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
-        } else
+        } else if (waterConnectionDetails.getCloseConnectionType() != null)
+            model.addAttribute("approvalPositionExist", waterConnectionDetailsService
+                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, "CLOSECONNECTION", ""));
+        else
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
                     .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, waterConnectionDetails
                             .getApplicationType().getCode(), ""));
         if (waterConnectionDetails.getCurrentState().getValue().equals("Rejected"))
             model.addAttribute("mode", "");
+        if (waterConnectionDetails.getCloseConnectionType() != null
+                && waterConnectionDetails.getState().getValue().equals("Rejected"))
+            model.addAttribute("mode", "closeredit");
+
     }
 
     @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.POST)
@@ -243,9 +262,14 @@ public class UpdateConnectionController extends GenericConnectionController {
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
         if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
-            approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(
-                    waterConnectionDetails, approvalPosition, waterConnectionDetails.getApplicationType().getCode(),
-                    mode);
+            if (waterConnectionDetails.getCloseConnectionType() != null)
+                approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(
+                        waterConnectionDetails, approvalPosition, request.getParameter("additionalRule"), mode);
+            else
+                approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(
+                        waterConnectionDetails, approvalPosition,
+                        waterConnectionDetails.getApplicationType().getCode(), mode);
+
         appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
 
         if (!resultBinder.hasErrors()) {
@@ -263,17 +287,22 @@ public class UpdateConnectionController extends GenericConnectionController {
             if (workFlowAction != null && !workFlowAction.isEmpty()
                     && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_ESTIMATION_NOTICE_BUTTON))
                 return "redirect:/application/estimationNotice?pathVar="
-                        + waterConnectionDetails.getApplicationNumber();
+                + waterConnectionDetails.getApplicationNumber();
 
             if (null != workFlowAction && !workFlowAction.isEmpty()
                     && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON))
                 return "redirect:/application/workorder?pathVar=" + waterConnectionDetails.getApplicationNumber();
+            if (workFlowAction != null && !workFlowAction.isEmpty()
+                    && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_CLOSERACKNOWLDGEENT_BUTTON))
+                return "redirect:/application/acknowlgementNotice?pathVar="
 
+                + waterConnectionDetails.getApplicationNumber();
             final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                     + waterTaxUtils.getApproverUserName(approvalPosition);
             return "redirect:/application/application-success?pathVars=" + pathVars;
         } else {
-            if(waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED))
+            if (waterConnectionDetails.getStatus().getCode()
+                    .equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED))
                 model.addAttribute("meterFocus", true);
             return loadViewData(model, request, waterConnectionDetails);
         }
@@ -288,7 +317,7 @@ public class UpdateConnectionController extends GenericConnectionController {
             errors.rejectValue("approvalDate", "approvalDate.required");
     }
 
-    private void populateEstimationDetails(WaterConnectionDetails waterConnectionDetails) {
+    private void populateEstimationDetails(final WaterConnectionDetails waterConnectionDetails) {
         final List<ConnectionEstimationDetails> estimationDetails = new ArrayList<ConnectionEstimationDetails>();
         if (!waterConnectionDetails.getEstimationDetails().isEmpty())
             for (final ConnectionEstimationDetails estimationDetail : waterConnectionDetails.getEstimationDetails())

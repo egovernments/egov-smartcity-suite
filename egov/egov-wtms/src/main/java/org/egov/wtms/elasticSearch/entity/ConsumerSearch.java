@@ -49,6 +49,9 @@ public class ConsumerSearch implements Indexable {
 
     @Searchable(name = "connectiontype", group = Searchable.Group.CLAUSES)
     private String connectionType;
+    
+    @Searchable(name = "closureType", group = Searchable.Group.SEARCHABLE)
+    private Character closureType;
 
     @Searchable(name = "waterTaxDue", group = Searchable.Group.CLAUSES)
     private BigDecimal waterTaxDue;
@@ -235,5 +238,15 @@ public class ConsumerSearch implements Indexable {
     public void setWaterTaxDue(final BigDecimal waterTaxDue) {
         this.waterTaxDue = waterTaxDue;
     }
+
+    public Character getClosureType() {
+        return closureType;
+    }
+
+    public void setClosureType(Character closureType) {
+        this.closureType = closureType;
+    }
+
+    
 
 }

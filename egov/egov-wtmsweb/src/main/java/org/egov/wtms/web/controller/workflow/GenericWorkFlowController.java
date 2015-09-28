@@ -116,7 +116,7 @@ public abstract class GenericWorkFlowController {
      */
     public List<String> getValidActions(final StateAware model, final WorkflowContainer container) {
         List<String> validActions = Collections.emptyList();
-        if (null == model || null == model.getId())
+        if (null == model || null == model.getId() || model.getCurrentState().getValue().equals("Closed"))
             validActions = Arrays.asList("Forward");
         else if (null != model.getCurrentState())
             validActions = customizedWorkFlowService.getNextValidActions(model.getStateType(), container

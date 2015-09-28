@@ -45,6 +45,7 @@ $(document).ready(function()
 	var currentUser=$('#currentUser').val();
 	var mode =$('#mode').val();
 	$('#approvalComent').show();
+	var closerConnection=$('#closerConnection').val();
 	var approvalPositionExist=$('#approvalPositionExist').val();
 	if(approvalPositionExist!=0 && ((status=='CREATED' && wfstate!=null )|| status=='VERIFIED' || status=='ESTIMATIONNOTICEGENERATED' ||status=='ESTIMATIONAMOUNTPAID' || status=='WORKORDERGENERATED' || status=='APPROVED'))
 		{
@@ -54,6 +55,23 @@ $(document).ready(function()
 		$('#approvalDesignation').removeAttr('required');
 		$('#approvalPosition').removeAttr('required');
 		}
+	if(approvalPositionExist!=0 && (mode=='' && closerConnection !=null ))
+	{
+	$(".show-row").hide(); 
+	$('#approverDetailHeading').hide();
+	$('#approvalDepartment').removeAttr('required');
+	$('#approvalDesignation').removeAttr('required');
+	$('#approvalPosition').removeAttr('required');
+	}
+	if(approvalPositionExist!=0 && (mode=='closeredit' && closerConnection !=null ))
+	{
+		$(".show-row").show(); 
+		$('#approverDetailHeading').show();
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+	}
+	
 	 if(approvalPositionExist!=0 && status=='CREATED' && (mode =='edit' || mode==''))
 		{
 			$(".show-row").show(); 
@@ -112,6 +130,10 @@ $(document).ready(function()
 			var action = document.getElementById("workFlowAction").value;
 			 var status=$('#statuscode').val();
 			 if((action == 'Generate Estimation Notice' && status=='VERIFIED') || (action == 'Generate WorkOrder' && status=='APPROVED')) {
+				 document.forms[0].submit();	
+			 }
+			 if((action == 'Forward' && status=='CLOSERINITIATED')) {
+				 document.getElementById("mode").value=mode;
 				 document.forms[0].submit();	
 			 }
 			 

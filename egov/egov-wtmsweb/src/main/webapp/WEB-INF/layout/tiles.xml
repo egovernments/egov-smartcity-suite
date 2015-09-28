@@ -83,6 +83,11 @@
         <put-attribute name="body" value="/WEB-INF/views/application/newConnection-edit.jsp"/> 
     </definition>
     
+		<definition name="connection-closeForm" extends="base_layout">
+        <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/connection-closeForm.jsp"/> 
+    </definition>
+    
 	<definition name="newconnection-meterEntry" extends="base_layout">
         <put-attribute name="page-title" value="title.viewMeterapplication" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newconnection-meterEntry.jsp"/> 

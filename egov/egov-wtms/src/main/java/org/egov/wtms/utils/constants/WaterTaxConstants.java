@@ -103,6 +103,10 @@ public class WaterTaxConstants {
     public static final String BILLTYPE_MANUAL = "MANUAL";
     public static final String CITIZENUSER = "9999999999";
     public static final String BILLTYPE_ONLINE = "ONLINE";
+    public static final String PERMENENTCLOSE = "Permanent";
+    public static final String TEMPERARYCLOSE = "Temporary";
+    public static final String PERMENENTCLOSECODE = "P";
+    public static final String TEMPERARYCLOSECODE = "T";
 
     public static final String WF_STATE_REJECTED = "Rejected";
     public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
@@ -131,6 +135,11 @@ public class WaterTaxConstants {
     public static final String APPLICATION_STATUS_WOGENERATED = "WORKORDERGENERATED";
     public static final String APPLICATION_STATUS_SANCTIONED = "SANCTIONED";
     public static final String APPLICATION_STATUS_CANCELLED = "CANCELLED";
+    
+    public static final String APPLICATION_STATUS_CLOSERiNTITIATED = "CLOSERINITIATED";
+    public static final String APPLICATION_STATUS_CLOSERINPROGRESS = "CLOSERINPROGRESS";
+    public static final String APPLICATION_STATUS_CLOSERAPRROVED = "CLOSERAPPROVED";
+    public static final String APPLICATION_STATUS_CLOSERSANCTIONED = "CLOSERSANCTIONED";
 
     // appconfig key
     public static final String SENDSMSFORWATERTAX = "SENDSMSFORWATERTAX";
@@ -159,6 +168,7 @@ public class WaterTaxConstants {
 
     public static final String WATERTAXREASONCODE = "WTAXCHARGES";
     public static final String WF_ESTIMATION_NOTICE_BUTTON = "Generate Estimation Notice";
+    public static final String WF_CLOSERACKNOWLDGEENT_BUTTON = "Generate Acknowledgement";
     public static final String WATER_RATES_NONMETERED_PTMODULE = "Property Tax";
 
     public static final String CURR_DUE = "CurrentDue";

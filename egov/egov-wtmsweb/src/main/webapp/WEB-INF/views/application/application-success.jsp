@@ -90,7 +90,18 @@
 							<span><spring:message code="msg.newconnection.ack.success" /></span>
 								<span ><spring:message code="msg.sussess.forward" />${approverName}</span>
 							</c:when>
-						
+						<c:when test="${waterConnectionDetails.closeConnectionType != null && waterConnectionDetails.state.code != 'CLOSERAPPROVED'}">
+							<span><spring:message code="msg.closeconnection.ack.success" /></span>
+								<span ><spring:message code="msg.sussess.forward" />${approverName}</span>
+						</c:when>
+							<c:when test="${waterConnectionDetails.closeConnectionType != null && waterConnectionDetails.state.code == 'CLOSERAPPROVED'}">
+							<span><spring:message code="msg.connection.approved.success" />${approverName}</span>
+								
+						</c:when>
+						<c:when test="${waterConnectionDetails.closeConnectionType != null && waterConnectionDetails.state.code == 'CLOSERSANCTIONED'}">
+							<span><spring:message code="msg.connection.disconnected" /></span>
+								
+						</c:when>
 				</c:choose>
 				</div>
 			</div>
