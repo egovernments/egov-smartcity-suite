@@ -82,8 +82,8 @@ public class ApplicationNumberGenerator {
             } catch (final SQLGrammarException e) {
                 sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
             }
-            return String.format("%s-%s-%05d", DateTimeFormat.forPattern("ddMMyy").print(currentDate),
-                    upperCase(randomAlphabetic(2)), sequenceNumber);
+            return String.format("%05d-%s-%s",sequenceNumber, DateTimeFormat.forPattern("yyyy").print(currentDate),
+                    upperCase(randomAlphabetic(2)));
         } catch (final SQLException e) {
             throw new ApplicationRuntimeException("Error occurred while generating Application Number", e);
         }
