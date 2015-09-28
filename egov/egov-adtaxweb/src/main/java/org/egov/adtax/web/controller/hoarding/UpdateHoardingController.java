@@ -36,41 +36,39 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.adtax.service;
+package org.egov.adtax.web.controller.hoarding;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.List;
 
 import org.egov.adtax.entity.Hoarding;
-import org.egov.adtax.repository.HoardingRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.egov.adtax.service.HoardingService;
+import org.egov.adtax.web.controller.GenericController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-@Service
-public class HoardingService {
+@Controller
+@RequestMapping("/hoarding")
+public class UpdateHoardingController extends GenericController {
 
-    private final HoardingRepository hoardingRepository;
+    private HoardingService hoardingService;
 
-    @Autowired
-    private AdvertisementDemandService advertisementDemandService;
-
-    @Autowired
-    public HoardingService(final HoardingRepository hoardingRepository) {
-        this.hoardingRepository = hoardingRepository;
+    @ModelAttribute
+    public Hoarding hoarding() {
+        return new Hoarding();
     }
 
-    @Transactional
-    public Hoarding createHoarding(final Hoarding hoarding) {
-        if (hoarding != null && hoarding.getId() == null)
-            hoarding.setDemandId(advertisementDemandService.createDemand(hoarding));
-        return hoardingRepository.save(hoarding);
+    @RequestMapping(value = "search-for-update", method = GET)
+    public String searchHoardingForm() {
+        return "hoarding-search-for-update";
     }
 
-    public List<Object[]> searchBySearchType(final Hoarding hoarding, final String searchType) {
-        return hoardingRepository.fetchHoardingsBySearchType(hoarding, searchType);
-    }
-
-    public List<Hoarding> getHoardingsLike(final Hoarding hoarding) {
-        return hoardingRepository.fetchHoardingsLike(hoarding);
+    @RequestMapping(value = "search-for-update", method = POST)
+    public String searchHoarding(@ModelAttribute Hoarding hoarding) {
+        List<Hoarding> hoardings = hoardingService.getHoardingsLike(hoarding);
+        return "hoarding-search-for-update";
     }
 }

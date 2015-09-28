@@ -98,6 +98,11 @@
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-create.jsp"/>
     </definition>
     
+    <definition name="hoarding-search-for-update" extends="base_layout">
+    	<put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-search-for-update.jsp"/>
+    </definition>
+    
     <definition name="hoarding-search" extends="base_layout">
     	<put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-search.jsp"/>

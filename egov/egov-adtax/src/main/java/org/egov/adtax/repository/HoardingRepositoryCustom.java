@@ -36,41 +36,15 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.adtax.service;
+package org.egov.adtax.repository;
 
 import java.util.List;
 
 import org.egov.adtax.entity.Hoarding;
-import org.egov.adtax.repository.HoardingRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-public class HoardingService {
+public interface HoardingRepositoryCustom {
 
-    private final HoardingRepository hoardingRepository;
+    List<Hoarding> fetchHoardingsLike(Hoarding hoarding);
 
-    @Autowired
-    private AdvertisementDemandService advertisementDemandService;
-
-    @Autowired
-    public HoardingService(final HoardingRepository hoardingRepository) {
-        this.hoardingRepository = hoardingRepository;
-    }
-
-    @Transactional
-    public Hoarding createHoarding(final Hoarding hoarding) {
-        if (hoarding != null && hoarding.getId() == null)
-            hoarding.setDemandId(advertisementDemandService.createDemand(hoarding));
-        return hoardingRepository.save(hoarding);
-    }
-
-    public List<Object[]> searchBySearchType(final Hoarding hoarding, final String searchType) {
-        return hoardingRepository.fetchHoardingsBySearchType(hoarding, searchType);
-    }
-
-    public List<Hoarding> getHoardingsLike(final Hoarding hoarding) {
-        return hoardingRepository.fetchHoardingsLike(hoarding);
-    }
+    List<Object[]> fetchHoardingsBySearchType(Hoarding hoarding, String searchType);
 }
