@@ -83,6 +83,7 @@ public class ObjectionAction extends GenericWorkFlowAction {
     private Map<Integer, String> objectionReasons;
     private LicenseStatusValues lsv;
     private LicenseObjection objection = new LicenseObjection();
+    @Autowired
     protected ObjectionService objectionService;
     private License license;
     private String roleName;
@@ -137,14 +138,6 @@ public class ObjectionAction extends GenericWorkFlowAction {
 
     public ObjectionAction() {
         super();
-    }
-
-    public ObjectionService getObjectionService() {
-        return objectionService;
-    }
-
-    public void setObjectionService(final ObjectionService objectionService) {
-        this.objectionService = objectionService;
     }
 
     public License getLicense() {

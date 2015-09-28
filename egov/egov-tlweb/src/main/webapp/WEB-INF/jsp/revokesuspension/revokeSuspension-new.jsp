@@ -67,7 +67,7 @@
 										<s:push value="model">
 											<table width="99%" border="0" cellspacing="0" cellpadding="0">
 												<s:push value="license">
-												<%@ include file='../web/objection/viewLicense.jsp'%>
+												<%@ include file='../objection/viewLicense.jsp'%>
 												</s:push>
 												<%@ include file='../common/licenseobjectionview.jsp'%>
 												<tr>

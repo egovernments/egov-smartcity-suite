@@ -44,8 +44,12 @@
 		<title><s:text name="page.title.objectlicense" /></title>
 		<sx:head />
 		<script>
-		   function validateForm(obj) {
-		    	return validateApprover(obj);
+			function validateForm(obj) {
+				if (validateForm_objection() == false) {
+					return false;
+			    } else {
+			    	return onSubmit();
+			    }
 	  	   }
 
 		   function onSubmit() {
@@ -148,8 +152,8 @@
 												<tr style="display: none">
 													<td colspan="5">
 														<c:set value="bluebox" var="trclass" />
-														<%@ include file='../../common/commonWorkflowMatrix.jsp'%>
-														<%@ include file='../../common/commonWorkflowMatrix-button.jsp'%>
+														<%@ include file='../common/commonWorkflowMatrix.jsp'%>
+														<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
 													</td>
 												</tr>
 											</table>
@@ -158,7 +162,7 @@
 											</div>
 
 											<div class="buttonbottom">
-												<%-- <table>
+												<table>
 													<tr class="buttonbottom" id="buttondiv" style="align: middle">
 														<td>
 															<s:submit name="submit" type="submit" cssClass="buttonsubmit" id="button2" method="create" value="Save" onclick="return validateForm(this);" tabindex="1" />
@@ -167,9 +171,9 @@
 															<input name="close" type="button" class="button" id="button" onclick="window.close()" value="Close" tabindex="1" />
 														</td>
 													</tr>
-												</table> --%>
-												<%@ include file='../../common/commonWorkflowMatrix.jsp'%>
-												<%@ include file='../../common/commonWorkflowMatrix-button.jsp'%>
+												</table>
+												<%-- <%@ include file='../common/commonWorkflowMatrix.jsp'%>
+												<%@ include file='../common/commonWorkflowMatrix-button.jsp'%> --%>
 											</div>
 										</s:push>
 									</s:form>

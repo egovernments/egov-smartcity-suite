@@ -331,7 +331,7 @@
 													<td class="<c:out value="${trclass}"/>">
 														<s:text name='license.deduction' />
 													</td>
-													<td class="<c:out value="${trclass}"/>" <s:textfield name="deduction"  maxlength="8" onKeyPress="return numbersforamount(this, event)" onBlur="checkLength(this,8),formatCurrency(deduction)" /></td>
+													<td class="<c:out value="${trclass}"/>"> <s:textfield name="deduction"  maxlength="8" onKeyPress="return numbersforamount(this, event)" onBlur="checkLength(this,8),formatCurrency(deduction)" /></td>
 												</tr>
 												<c:choose>
 													<c:when test="${trclass=='greybox'}">

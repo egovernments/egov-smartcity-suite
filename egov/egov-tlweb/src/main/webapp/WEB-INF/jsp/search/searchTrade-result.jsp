@@ -192,7 +192,7 @@ String path = request.getContextPath();
 							</s:if>
 							<s:if test="%{roleName.contains('TLCREATOR')}">
 								<s:if test="%{#attr.license.licenseNumber != null && #attr.license.licenseNumber != ''}">
-									<option value="/objection/objection!newForm.action?licenseId=">
+									<option value="/objection/objection-newForm.action?licenseId=">
 										<s:text name="Record Objection" />
 									</option>
 								</s:if>

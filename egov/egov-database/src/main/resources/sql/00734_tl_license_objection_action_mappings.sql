@@ -1,0 +1,2 @@
+INSERT INTO eg_roleaction (actionid, roleid) values ((select id from eg_action where name = 'Trade License Objection New Form'), (select id from eg_role where name = 'TLCreator'));
+INSERT INTO eg_roleaction (actionid, roleid) values ((select id from eg_action where name = 'objection-create'), (select id from eg_role where name = 'TLCreator'));
