@@ -39,7 +39,7 @@
  */
 package org.egov.works.web.actions.estimate;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -55,6 +55,7 @@ public class WardSearchAction extends BaseFormAction {
     public static final String SEARCH_RESULTS = "searchResults";
     private String query;
     private Boolean isBoundaryHistory;
+    private List<Boundary> boundaryList;
 
     public void setQuery(final String query) {
         this.query = query;
@@ -62,6 +63,7 @@ public class WardSearchAction extends BaseFormAction {
 
     @Action(value = "/estimate/wardSearch-searchAjax")
     public String searchAjax() {
+        boundaryList = getJurisdictionList();
         return SEARCH_RESULTS;
     }
 
@@ -70,14 +72,14 @@ public class WardSearchAction extends BaseFormAction {
         return null;
     }
 
-    public Collection<Boundary> getBoundaryList() {
-        final StringBuilder boundaryList = new StringBuilder(1000);
-        boundaryList.append(" from Boundary where upper(boundaryType.name) in ('CITY','ZONE','WARD') "
-                + " and upper(boundaryType.heirarchyType.name)='ADMINISTRATION' and upper(name) like '%' || ? || '%' ");
+    public List<Boundary> getJurisdictionList() {
+        final StringBuilder boundaryListQuery = new StringBuilder(1000);
+        boundaryListQuery.append(" from Boundary where upper(boundaryType.name) in ('CITY','ZONE','WARD') "
+                + " and upper(boundaryType.hierarchyType.name)='ADMINISTRATION' and upper(name) like '%' || ? || '%' ");
         if (!isBoundaryHistory)
-            boundaryList.append(" and isHistory = 'N' ");
-        boundaryList.append(" order by name ");
-        return getPersistenceService().findAllBy(boundaryList.toString(), query.toUpperCase());
+            boundaryListQuery.append(" and isHistory = false ");
+        boundaryListQuery.append(" order by name ");
+        return getPersistenceService().findAllBy(boundaryListQuery.toString(), query.toUpperCase());
     }
 
     public Boolean getIsBoundaryHistory() {
@@ -86,6 +88,10 @@ public class WardSearchAction extends BaseFormAction {
 
     public void setIsBoundaryHistory(final Boolean isBoundaryHistory) {
         this.isBoundaryHistory = isBoundaryHistory;
+    }
+
+    public List<Boundary> getBoundaryList() {
+        return boundaryList;
     }
 
 }
