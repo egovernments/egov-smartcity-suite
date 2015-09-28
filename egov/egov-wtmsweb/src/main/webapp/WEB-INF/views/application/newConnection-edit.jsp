@@ -49,7 +49,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
 	<form:hidden path="" id="statuscode" value="${waterConnectionDetails.status.code}"/>
 	<form:hidden path="" id="wfstate" value="${waterConnectionDetails.state.id}"/> 
-	<form:input type="text" path="" id="closerConnection" value="${waterConnectionDetails.closeConnectionType}"/> 
+	<input type="hidden" id="closerConnection" value="${waterConnectionDetails.closeConnectionType}"/> 
 	<input type="hidden" id="currentUser" value="${currentUser}"/>  
 	<input type="hidden" id="meterFocus" value="${meterFocus}"/>
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>

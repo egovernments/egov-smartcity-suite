@@ -338,7 +338,7 @@ public class WaterConnectionDetailsService {
                 .save(waterConnectionDetails);
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = getInitialisedWorkFlowBean();
         if (waterConnectionDetails.getCloseConnectionType() != null)
-            additionalRule = "CLOSECONNECTION";
+            additionalRule = WaterTaxConstants.WORKFLOW_ADDITIONALRULE;
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(updatedWaterConnectionDetails,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
         if (!workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))

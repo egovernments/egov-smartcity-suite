@@ -113,7 +113,7 @@ public class CloserConnectionController extends GenericConnectionController {
     private String loadViewData(final Model model, final HttpServletRequest request,
             final WaterConnectionDetails waterConnectionDetails) {
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
-        model.addAttribute("additionalRule", "CLOSECONNECTION");
+        model.addAttribute("additionalRule", WaterTaxConstants.WORKFLOW_ADDITIONALRULE);
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
         final Map<String, String> connectionTypeMap = new LinkedHashMap<String, String>();

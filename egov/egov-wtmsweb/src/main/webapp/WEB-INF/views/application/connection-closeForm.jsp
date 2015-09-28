@@ -60,7 +60,7 @@
 				<jsp:include page="connectiondetails-view.jsp"></jsp:include>
 				
 		</div>
-		<c:if test="${validationMessage !=null}">
+		<c:if test="${validationMessage==''}">
 	<div class="panel panel-primary" data-collapsed="0">
 								<div class="panel-heading">
 									<div class="panel-title">
@@ -91,7 +91,7 @@
 </c:if>
 </div>			
 				
-				<c:if test="${validationMessage !=null}">
+				<c:if test="${validationMessage==''}">
 						<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 							<div class="buttonbottom" align="center">
 							<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
