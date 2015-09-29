@@ -18,6 +18,9 @@ $(document).ready(function(){
 			"autoWidth" : false,
 			 ajax : "/wtms/application/ajax-chairpersontable",
 			 columns : [ {
+					"sTitle" : "S.no",
+				},
+				{
 					"mData" : "chairPerson",
 					"sTitle" : "Chair Person",
 				}, 
@@ -33,12 +36,19 @@ $(document).ready(function(){
 				}],
 				"fnInitComplete": function(oSettings, json) {
 					$('#chairperson-table tbody tr:eq(0) td:last').addClass('error-msg view-content');
-				}
+				},
+				"fnRowCallback" : function(nRow, aData, iDisplayIndex){
+	                $("td:first", nRow).html(iDisplayIndex +1);
+	               return nRow;
+	            }
 		});
+		
+		
 	}
+	
 	//add chairperson
-	    $('button').on('click', function () {
-	        var name = $('input').val();
+	$( "form" ).submit(function( event ) {
+		var name = $('input').val();
 	       if (name != ''){
 	        $.ajax({
 	            url: '/wtms/application/ajax-chairPersonName',
@@ -48,9 +58,12 @@ $(document).ready(function(){
 	            },
 	            dataType : 'json'
 	        });
-	    }
+	       }
 	        alert("Chair person name updated in drop down successfully");
 	        loadingTable();
-	         });
+		});
+	
+	
+	
 	   
 });

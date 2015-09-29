@@ -51,7 +51,7 @@
 						</div>
 					</div>
 					<div class="form-group text-center" >
-						<button type="button" class="btn btn-primary" id="buttonid"><spring:message code="lbl.add"/></button>
+						<button type="submit" class="btn btn-primary" id="buttonid"><spring:message code="lbl.add"/></button>
 						<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
 					</div>
 	         </form>

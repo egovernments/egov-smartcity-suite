@@ -41,6 +41,7 @@
 package org.egov.wtms.web.controller.application;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 
 import org.egov.commons.entity.ChairPerson;
 
@@ -55,12 +56,10 @@ public class ChairPersonAdaptor implements JsonSerializer<ChairPerson> {
     public JsonElement serialize(final ChairPerson chairPerson, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("chairPerson", chairPerson.getName());
-        jsonObject.addProperty("fromDate", chairPerson.getFromDate().toString());
-        jsonObject.addProperty("toDate", chairPerson.getToDate() != null ? chairPerson.getToDate().toString()
+        jsonObject.addProperty("fromDate", new SimpleDateFormat("MM-dd-yyyy").format(chairPerson.getFromDate()));
+        jsonObject.addProperty("toDate", chairPerson.getToDate() != null ? new SimpleDateFormat("MM-dd-yyyy").format(chairPerson.getFromDate())
                 : "Till Date");
         jsonObject.addProperty("status", chairPerson.isActive() ? "ACTIVE" : "IN ACTIVE");
         return jsonObject;
-
     }
-
 }
