@@ -380,8 +380,9 @@ public class ComplaintService {
                 .append(formattedCreatedDate);
         final StringBuffer emailSubject = new StringBuffer().append("Registered Complaint -").append(complaint.getCrn())
                 .append(" successfuly");
-        final StringBuffer smsBody = new StringBuffer().append("Dear ").append(complaint.getComplainant().getName())
-                .append(", Thank you for registering a complaint (").append(complaint.getCrn())
+        final StringBuffer smsBody = new StringBuffer().append("Your complaint for ")
+                .append(complaint.getComplaintType().getName())
+                .append(" has been registered successfully with tracking number (").append(complaint.getCrn())
                 .append("). Please use this number for all future references.");
         messagingService.sendEmail(complaint.getComplainant().getEmail(), emailSubject.toString(), emailBody.toString());
         messagingService.sendSMS(complaint.getComplainant().getMobile(), smsBody.toString());
