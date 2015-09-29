@@ -63,7 +63,6 @@ import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -72,7 +71,6 @@ import org.egov.infstr.models.Money;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetUsage;
-import org.egov.pims.model.PersonalInformation;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.AbstractEstimateAppropriation;
 import org.egov.works.models.estimate.BudgetFolioDetail;
@@ -83,7 +81,6 @@ import org.egov.works.models.estimate.FinancialDetail;
 import org.egov.works.models.estimate.MultiYearEstimate;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.models.estimate.ProjectCodeGenerator;
-import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -99,12 +96,8 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     private BudgetDetailsDAO budgetDetailsDAO;
     @Autowired
     private AppConfigValueService appConfigValuesService;
-
-    @Autowired
-    private EisCommonService eisCommonService;
     @Autowired
     private AssignmentService assignmentService;
-    private PersistenceService<TenderResponse, Long> tenderResponseService;
     private BudgetGroupDAO budgetGroupDAO;
     @Autowired
     private CommonsService commonsService;
@@ -130,13 +123,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 
     public AbstractEstimateService() {
         setType(AbstractEstimate.class);
-    }
-
-    @Override
-    public AbstractEstimate create(final AbstractEstimate entity) {
-        final AbstractEstimate saved = super.create(entity);
-        setEstimateNumber(saved);
-        return saved;
     }
 
     @Override
@@ -304,8 +290,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 
     public boolean releaseBudgetOnReject(final FinancialDetail financialDetail) throws ValidationException {
 
-        // CFinancialYear finYear
-        // =financialDetail.getAbstractEstimate().getLeastFinancialYearForEstimate();
         final AbstractEstimateAppropriation estimateAppropriation = estimateAppropriationService.findByNamedQuery(
                 "getLatestBudgetUsageForEstimate", financialDetail.getAbstractEstimate().getId());
         final List<Long> budgetheadid = new ArrayList<Long>();
@@ -561,7 +545,8 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
      */
     public Map<String, List> getApprovedAppropriationDetailsForBugetHead(final AbstractEstimate viewEstimate,
             final BigDecimal totalGrantPerc) {
-        logger.debug("1---inside getApprovedAppropriationDetailsForBugetHead------");
+        if (logger.isDebugEnabled())
+            logger.debug("1---inside getApprovedAppropriationDetailsForBugetHead------");
         final List<BudgetFolioDetail> approvedBudgetFolioResultList = new ArrayList<BudgetFolioDetail>();
         final Map<String, Object> queryParamMap = new HashMap<String, Object>();
         FinancialDetail fd = null;
@@ -645,7 +630,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     public void addFinancialYearToQuery(final FinancialDetail fd, final Map<String, Object> queryParamMap) {
         if (fd.getAbstractEstimate().getLeastFinancialYearForEstimate().getStartingDate() != null)
             queryParamMap.put(FROM_DATE, fd.getAbstractEstimate().getLeastFinancialYearForEstimate().getStartingDate());
-        // if(fd.getAbstractEstimate().getLeastFinancialYearForEstimate().getEndingDate()!=null)
         queryParamMap.put(TO_DATE, new Date());
     }
 
@@ -766,31 +750,15 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         return budgetDetailsDAO;
     }
 
-    public boolean validateCancelEstimate(final AbstractEstimate abstractEstimate) {
-        boolean flag = false;
-        final List<TenderResponse> tenderResponse = tenderResponseService.findAllByNamedQuery(
-                "MY_NONCANCELLED_NEGOTIATIONSTATEMENTS", abstractEstimate.getId());
-        if (tenderResponse.isEmpty())
-            flag = true;
-        return flag;
-    }
-
-    public void setTenderResponseService(final PersistenceService<TenderResponse, Long> tenderResponseService) {
-        this.tenderResponseService = tenderResponseService;
-    }
-
     public void setWorksService(final WorksService worksService) {
         this.worksService = worksService;
     }
 
     public Assignment getLatestAssignmentForCurrentLoginUser() {
-        PersonalInformation personalInformation = null;
         final Long currentLoginUserId = worksService.getCurrentLoggedInUserId();
-        if (currentLoginUserId != null && currentLoginUserId != 0)
-            personalInformation = eisCommonService.getEmployeeByUserId(currentLoginUserId);
         Assignment assignment = null;
-        if (personalInformation != null)
-            assignment = assignmentService.getPrimaryAssignmentForEmployee(personalInformation.getId().longValue());
+        if (currentLoginUserId != null)
+            assignment = assignmentService.getPrimaryAssignmentForEmployee(currentLoginUserId);
         return assignment;
     }
 
@@ -847,8 +815,10 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 
     public BigDecimal getBudgetAvailable(final Integer departmentId, final Long functionId, final Integer fundId,
             final Long budgetGroupId, final Long finYearId) throws ValidationException {
-        logger.info("Start of getBudgetAvailable(Long functionId,Integer fundId,Long budgetGroupId,Long finYearId) : functionId="
-                + functionId + "fundId:" + fundId + "budgetGroupId=" + budgetGroupId + "finYearId=" + finYearId);
+        if (logger.isDebugEnabled())
+            logger.debug(
+                    "Start of getBudgetAvailable(Long functionId,Integer fundId,Long budgetGroupId,Long finYearId) : functionId="
+                            + functionId + "fundId:" + fundId + "budgetGroupId=" + budgetGroupId + "finYearId=" + finYearId);
         final List<Long> budgetheadid = new ArrayList<Long>();
         if (functionId == null || fundId == null || budgetGroupId == null || finYearId == null || departmentId == null)
             throw new ApplicationRuntimeException(
@@ -936,8 +906,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName("DEPOSITCODE");
         final AbstractEstimateAppropriation estimateAppropriation = estimateAppropriationService.findByNamedQuery(
                 "getLatestDepositWorksUsageForEstimate", financialDetail.getAbstractEstimate().getId());
-        // double
-        // estimateAmount=financialDetail.getAbstractEstimate().getTotalAmount().getValue();
         final BigDecimal creditBalance = egovCommon.getDepositAmountForDepositCode(new Date(), financialDetail.getCoa()
                 .getGlcode(), financialDetail.getFund().getCode(), accountdetailtype.getId(), financialDetail
                         .getAbstractEstimate().getDepositCode().getId().intValue());
@@ -1047,8 +1015,9 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     public Double getEstimateAppropriationAmountForFinyear(final AbstractEstimate estimate, final Integer finYearId) {
         Double percentage = 0.0;
         Double appropriationAmount = 0.0;
-        logger.debug("start of getEstimateAppropriationAmountByFinyear() || estimate number="
-                + estimate.getEstimateNumber());
+        if (logger.isDebugEnabled())
+            logger.debug("start of getEstimateAppropriationAmountByFinyear() || estimate number="
+                    + estimate.getEstimateNumber());
         if (estimate == null || finYearId == null)
             throw new ApplicationRuntimeException("Invalid argument passed to getEstimateAppropriationAmountForFinyear()");
         for (final MultiYearEstimate multiYearEstimate : estimate.getMultiYearEstimates())
@@ -1058,8 +1027,9 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
             }
         if (percentage != 0.0)
             appropriationAmount = estimate.getTotalAmount().getValue() * (percentage / 100);
-        logger.debug("end of getEstimateAppropriationAmountByFinyear() ||appropariation amount=" + appropriationAmount
-                + "||estimate number ||" + estimate.getEstimateNumber() + " Finyear ||" + finYearId);
+        if (logger.isDebugEnabled())
+            logger.debug("end of getEstimateAppropriationAmountByFinyear() ||appropariation amount=" + appropriationAmount
+                    + "||estimate number ||" + estimate.getEstimateNumber() + " Finyear ||" + finYearId);
         return appropriationAmount;
 
     }

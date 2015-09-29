@@ -362,7 +362,7 @@ function jurisdictionSearchParameters(){
                 <td class="greyboxwk"><span class="mandatory">*</span><s:text name="estimate.date" />:</td>
 
                 <td class="greybox2wk"><s:date name="estimateDate" var="estDateFormat" format="dd/MM/yyyy"/><s:textfield name="estimateDate" value="%{estDateFormat}" id="estimateDate" cssClass="selectwk" onBlur="dateChange()" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-                    <a id="estDatePicker" href="javascript:show_calendar('forms[0].estimateDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
+                    <a id="estDatePicker" href="javascript:show_calendar('forms[0].estimateDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" style="display:none"/>
                     <input type='hidden' id='hiddenEstimateDate' name='hiddenEstimateDate'/>
 					<span class='warning' id="dateChangedWarning"></span></td>
                 </td>

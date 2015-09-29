@@ -98,13 +98,9 @@
 		<property name="projectcodeGenerator" ref="projectcodeGenerator" />
 		<property name="budgetNumberGenerator" ref="budgetNumberGenerator" />
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
-		<!-- <property name="genericHibDao" ref="genericHibDao" />
-		<property name="employeeServiceOld" ref="employeeServiceOld" /> -->
 		<property name="egovCommon" ref="egovCommon" />
-		<property name="tenderResponseService" ref="tenderResponseService" />
 		<property name="estimateAppropriationService" ref="estimateAppropriationService" />
 		<property name="worksService" ref="worksService" />
-		<!-- <property name="commonsService" ref="commonsService" /> -->
 		<property name="depositWorksUsageService" ref="depositWorksUsageService" />
 		<property name="budgetUsageService" ref="budgetUsageService" />
 		<property name="workOrderService" ref="workOrderService" />
@@ -190,10 +186,6 @@
 
 	<bean class="org.egov.works.services.WorksService" id="worksService"
 		scope="prototype">
-		<!--<property name="genericHibDao" ref="genericHibDao" />
-		<property name="employeeServiceOld" ref="employeeServiceOld" /> -->
-		<property name="commonsService" ref="commonsService" />
-		<property name="eisService" ref="eisService" />
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
 

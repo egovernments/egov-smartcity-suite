@@ -83,19 +83,6 @@ function showHideMap()
 		}	
 	}		
 }
-function showDesignation(elem){
-	var empId = elem.options[elem.selectedIndex].value;
-    makeJSONCall(["Designation"],'${pageContext.request.contextPath}/estimate/ajaxEstimate!designationForUser.action',{empID:empId},designationLoadHandler,designationLoadFailureHandler) ;
-}
-
-function disablePreparedBy(){
-	document.getElementById('preparedBy').disabled = true;
-}
-
-function enablePreparedBy(){
-	document.getElementById('preparedBy').disabled = false;
-}
-
 
 function hideSORTab(){
   document.getElementById('estimate_sor').style.display='none';
@@ -305,13 +292,13 @@ function validate(text){
 
 jq(document).on('click', '#wpView', function(){
 	var wpId = jq(this).attr("data-wpId");
-    var url="${pageContext.request.contextPath}/tender/worksPackage!edit.action?id="+wpId+"&sourcepage=search";
+    var url="${pageContext.request.contextPath}/tender/worksPackage-edit.action?id="+wpId+"&sourcepage=search";
     window.open(url,'','height=650,width=980,scrollbars=yes,status=yes');
 });
 
 jq(document).on('click', '#woView', function(){
 	var woId = jq(this).attr("data-woId");
-	var url = "${pageContext.request.contextPath}/workorder/workOrder!edit.action?id="+woId+"&mode=search";
+	var url = "${pageContext.request.contextPath}/workorder/workOrder-edit.action?id="+woId+"&mode=search";
 	window.open(url,'', 'height=650,width=980,scrollbars=yes,status=yes');
 });
 
@@ -332,7 +319,7 @@ jq(document).on('click', '#woView', function(){
     </s:if>
       <s:form theme="simple" name="abstractEstimateForm" onsubmit="return validateDataBeforeSubmit(this);">
        <s:if test="%{sourcepage!='search'}">
-      	<s:token/>
+      	<s:token name="%{tokenName()}"/>
       </s:if>
 <s:push value="model">
 <s:if test="%{model.estimateNumber!=null}">
@@ -473,6 +460,8 @@ jq(document).on('click', '#woView', function(){
 <!-- Action buttons have to displayed only if the page is directed from the inbox -->	
 <s:if test="%{(hasErrors() || sourcepage=='inbox' || model.egwStatus==null || model.egwStatus.code=='NEW' 
 || model.egwStatus.code=='REJECTED') && (sourcepage=='inbox' || model.egwStatus==null || hasErrors())}">
+<!-- TODO:Fixeme - hard coded save button for time being till we implement common workflow -->
+<s:submit type="submit" cssClass="buttonfinal" value="SAVE" id="save" name="save" method="save" onclick="document.abstractEstimateForm.actionName.value='save';return validate('save');"/>	  	
 	<s:iterator value="%{validActions}"> 
 	  <s:if test="%{description!=''}">
 	  	<s:if test="%{description=='CANCEL' && model.estimateNumber!=null}">
@@ -490,7 +479,7 @@ jq(document).on('click', '#woView', function(){
 </s:if>
 
 <s:if test="%{model.id==null}">
-	  <input type="button" class="buttonfinal" value="CLEAR" id="button" name="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate!newform.action','_self');"/>
+	  <input type="button" class="buttonfinal" value="CLEAR" id="button" name="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-newform.action','_self');"/>
 </s:if>
 <s:if test="%{sourcepage!='search'}">
 	<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="confirmClose('<s:text name='estimate.close.confirm'/>');"/>

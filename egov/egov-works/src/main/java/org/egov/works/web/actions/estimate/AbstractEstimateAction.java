@@ -308,13 +308,17 @@ public class AbstractEstimateAction extends BaseFormAction {
         addDropdownData("scheduleCategoryList",
                 getPersistenceService().findAllBy("from ScheduleCategory order by upper(code)"));
 
-        final Assignment latestAssignment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser();
-        if (latestAssignment != null)
-            departmentId = latestAssignment.getDepartment().getId();
         populateCategoryList(ajaxEstimateAction, abstractEstimate.getParentCategory() != null);
         populateOverheadsList(ajaxEstimateAction, abstractEstimate.getEstimateDate() != null);
         addDropdownData("fundSourceList", fundSourceHibernateDAO.findAllActiveIsLeafFundSources());
 
+        final Assignment latestAssignment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser();
+        if (latestAssignment != null) {
+            departmentId = latestAssignment.getDepartment().getId();
+            // Executing department needs to be defaulted to logged in user Primary assignment department
+            if (abstractEstimate != null && abstractEstimate.getId() == null && abstractEstimate.getExecutingDepartment() == null)
+                abstractEstimate.setExecutingDepartment(latestAssignment.getDepartment());
+        }
     }
 
     public String moveEstimate() {
