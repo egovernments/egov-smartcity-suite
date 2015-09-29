@@ -66,6 +66,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pims.commons.Position;
 import org.egov.search.domain.Searchable;
@@ -155,6 +156,9 @@ public class Complaint extends StateAware {
     @JoinColumn(name = "department", nullable = false)
     @Searchable
     private Department department;
+
+    @Enumerated(EnumType.ORDINAL)
+    private CitizenFeedback citizenFeedback;
 
     /*
      * For indexing the below fields are kept. These will not be added to the database. This will be available only in index.
@@ -396,6 +400,14 @@ public class Complaint extends StateAware {
         return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s", getCrn(),
                 getComplaintType().getName(), formatter.print(new DateTime(getCreatedDate())),
                 formatter.print(getEscalationDate()));
+    }
+
+    public CitizenFeedback getCitizenFeedback() {
+        return citizenFeedback;
+    }
+
+    public void setCitizenFeedback(final CitizenFeedback citizenFeedback) {
+        this.citizenFeedback = citizenFeedback;
     }
 
 }

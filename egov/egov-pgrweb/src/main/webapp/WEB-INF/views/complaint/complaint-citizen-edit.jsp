@@ -81,7 +81,20 @@
 						maxlength="400" name="approvalComent"></textarea>
 				</div>
 			</div>
-	
+			<c:if test="${complaint.status.name == 'COMPLETED'}">
+				<div class="form-group">
+					<div class="col-md-3 col-xs-6 add-margin">
+						<spring:message code="lbl.feedback" /><span class="mandatory"></span>
+					</div>
+					<div class="col-md-3 col-xs-6 add-margin">
+						<form:select path="citizenFeedback" id="feedback_dropdown" cssClass="form-control" 
+							cssErrorClass="form-control error" >
+						<form:options items="${citizenFeedback}" />
+						</form:select>
+						<form:errors path="citizenFeedback" cssClass="error-msg" />
+					</div>
+				</div>
+			</c:if>
 	<div class="form-group">
 		<div class="text-center">
 			 <button type="submit" class="btn btn-success">
