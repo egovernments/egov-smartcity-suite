@@ -102,12 +102,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-@SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validations
 @Results({ @Result(name = BillGenerationAction.BILL, location = "billGeneration-bill.jsp"),
-    @Result(name = BillGenerationAction.STATUS_BILLGEN, location = "billGeneration-billsGenStatus.jsp"),
-    @Result(name = BillGenerationAction.ACK, location = "billGeneration-ack.jsp")
+        @Result(name = BillGenerationAction.STATUS_BILLGEN, location = "billGeneration-billsGenStatus.jsp"),
+        @Result(name = BillGenerationAction.ACK, location = "billGeneration-ack.jsp"),
+        @Result(name = BillGenerationAction.COMMON_FORM, location = "searchProperty-commonForm.jsp")
 })
 public class BillGenerationAction extends PropertyTaxBaseAction {
     /**
@@ -116,7 +116,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
     private static final long serialVersionUID = -6600897692089941070L;
 
     private final Logger LOGGER = Logger.getLogger(getClass());
-
+    protected static final String COMMON_FORM = "commonForm";
     public static final String BILL = "bill";
     public static final String STATUS_BILLGEN = "billsGenStatus";
     private static final String STATUS_BILLGEN_BY_PARTNO = "statusByPartNo";
@@ -180,6 +180,10 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
         try {
             if (basicPropertyDAO != null)
                 basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
+            if (basicProperty.getProperty().getIsExemptedFromTax()) {
+                addActionError(getText("error.msg.taxExempted"));
+                return COMMON_FORM;
+            }
             property = (PropertyImpl) basicProperty.getProperty();
 
             final EgBill egBill = (EgBill) persistenceService.find("FROM EgBill WHERE module = ? "
@@ -236,21 +240,21 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
         final StringBuilder billQueryString = new StringBuilder();
         final StringBuilder propQueryString = new StringBuilder();
         billQueryString
-        .append("select bndry.boundaryNum, count(bndry.boundaryNum) ")
-        .append("from EgBill bill, BoundaryImpl bndry, PtNotice notice left join notice.basicProperty bp ")
-        .append("where bp.propertyID.ward.id=bndry.id ").append("and bp.active = true ")
-        .append("and bill.is_History = 'N' ").append("and :FromDate <= bill.issueDate ")
-        .append("and :ToDate >= bill.issueDate ")
-        .append("and bill.egBillType.code = :BillType ")
-        .append("and bill.billNo = notice.noticeNo ")
-        .append("and notice.noticeType = 'Bill' ")
-        .append("and notice.noticeFile is not null ").append("group by bndry.boundaryNum ")
-        .append("order by bndry.boundaryNum");
+                .append("select bndry.boundaryNum, count(bndry.boundaryNum) ")
+                .append("from EgBill bill, BoundaryImpl bndry, PtNotice notice left join notice.basicProperty bp ")
+                .append("where bp.propertyID.ward.id=bndry.id ").append("and bp.active = true ")
+                .append("and bill.is_History = 'N' ").append("and :FromDate <= bill.issueDate ")
+                .append("and :ToDate >= bill.issueDate ")
+                .append("and bill.egBillType.code = :BillType ")
+                .append("and bill.billNo = notice.noticeNo ")
+                .append("and notice.noticeType = 'Bill' ")
+                .append("and notice.noticeFile is not null ").append("group by bndry.boundaryNum ")
+                .append("order by bndry.boundaryNum");
 
         propQueryString.append("select bndry.boundaryNum, count(bndry.boundaryNum) ")
-        .append("from BoundaryImpl bndry, PropertyID pid left join pid.basicProperty bp ")
-        .append("where bp.active = true and pid.ward.id = bndry.id ")
-        .append("group by bndry.boundaryNum ").append("order by bndry.boundaryNum");
+                .append("from BoundaryImpl bndry, PropertyID pid left join pid.basicProperty bp ")
+                .append("where bp.active = true and pid.ward.id = bndry.id ")
+                .append("group by bndry.boundaryNum ").append("order by bndry.boundaryNum");
         final Query billQuery = getPersistenceService().getSession().createQuery(
                 billQueryString.toString());
         billQuery.setDate("FromDate", currInst.getFromDate());
@@ -305,23 +309,23 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
         final StringBuilder propQueryString = new StringBuilder();
 
         billQueryString
-        .append("select bp.partNo, count(bp.partNo) ")
-        .append("from EgBill bill, BoundaryImpl bndry, PtNotice notice left join notice.basicProperty bp ")
-        .append("where bp.propertyID.ward.id=bndry.id ")
-        .append("and bndry.boundaryNum = :bndryNum ").append("and bill.is_History = 'N' ")
-        .append("and :FromDate <= bill.issueDate ")
-        .append("and :ToDate >= bill.issueDate ")
-        .append("and bill.egBillType.code = :BillType ")
-        .append("and bill.billNo = notice.noticeNo ")
-        .append("and notice.noticeType = 'Bill' ")
-        .append("and notice.noticeFile is not null ").append("group by bp.partNo ")
-        .append("order by bp.partNo");
+                .append("select bp.partNo, count(bp.partNo) ")
+                .append("from EgBill bill, BoundaryImpl bndry, PtNotice notice left join notice.basicProperty bp ")
+                .append("where bp.propertyID.ward.id=bndry.id ")
+                .append("and bndry.boundaryNum = :bndryNum ").append("and bill.is_History = 'N' ")
+                .append("and :FromDate <= bill.issueDate ")
+                .append("and :ToDate >= bill.issueDate ")
+                .append("and bill.egBillType.code = :BillType ")
+                .append("and bill.billNo = notice.noticeNo ")
+                .append("and notice.noticeType = 'Bill' ")
+                .append("and notice.noticeFile is not null ").append("group by bp.partNo ")
+                .append("order by bp.partNo");
 
         propQueryString.append("select bp.partNo, count(bp.partNo) ")
-        .append("from BoundaryImpl bndry, PropertyID pid left join pid.basicProperty bp ")
-        .append("where bp.active = true and pid.ward.id = bndry.id ")
-        .append("and bndry.boundaryNum = :bndryNum ").append("group by bp.partNo ")
-        .append("order by bp.partNo");
+                .append("from BoundaryImpl bndry, PropertyID pid left join pid.basicProperty bp ")
+                .append("where bp.active = true and pid.ward.id = bndry.id ")
+                .append("and bndry.boundaryNum = :bndryNum ").append("group by bp.partNo ")
+                .append("order by bp.partNo");
 
         final Query billQuery = getPersistenceService().getSession().createQuery(
                 billQueryString.toString());

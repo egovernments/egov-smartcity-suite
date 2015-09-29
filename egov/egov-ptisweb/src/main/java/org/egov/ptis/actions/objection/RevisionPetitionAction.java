@@ -160,15 +160,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * @author pradeep
  */
-@SuppressWarnings("serial")
 @ParentPackage("egov")
 @Results({ @Result(name = "new", location = "revisionPetition-new.jsp"),
-        @Result(name = "message", location = "revisionPetition-message.jsp"),
-        @Result(name = "notice", location = "revisionPetition-notice.jsp"),
-        @Result(name = "view", location = "revisionPetition-view.jsp") })
+    @Result(name = "message", location = "revisionPetition-message.jsp"),
+    @Result(name = "notice", location = "revisionPetition-notice.jsp"),
+    @Result(name = "view", location = "revisionPetition-view.jsp"),
+    @Result(name = RevisionPetitionAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp") })
 public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     private static final long serialVersionUID = 1L;
+    protected static final String COMMON_FORM = "commonForm";
     private final String REJECTED = "Rejected";
     public static final String STRUTS_RESULT_MESSAGE = "message";
     private static final String REVISION_PETITION_CREATED = "CREATED";
@@ -324,7 +325,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     /**
      * Method to create new revision petition.
-     * 
+     *
      * @return NEW
      */
     @SkipValidation
@@ -333,6 +334,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into newForm");
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(propertyId, null);
+        if (basicProperty.getProperty().getStatus().equals(PropertyTaxConstants.STATUS_ISACTIVE)) {
+            addActionError(getText("revPetition.demandActive"));
+            return COMMON_FORM;
+        }
+
         getPropertyView(propertyId);
 
         if (objection != null && objection.getBasicProperty() != null && objection.getBasicProperty().isUnderWorkflow()) {
@@ -346,7 +353,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     /**
      * Create revision petition.
-     * 
+     *
      * @return
      */
     @Action(value = "/revPetition/revPetition")
@@ -376,7 +383,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     /**
      * Method to add hearing date
-     * 
+     *
      * @return
      */
     @Action(value = "/revPetition/revPetition-addHearingDate")
@@ -388,13 +395,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
         // Commented for time being. Client confirmation required.
         /*
-         * if (objection.getHearings().get(objection.getHearings().size() -
-         * 1).getPlannedHearingDt() .before(objection.getRecievedOn())) {
-         * objection.setHearings(Collections.emptyList());
-         * addActionMessage(getText
-         * ("receivedon.greaterThan.plannedhearingdate").
-         * concat("").concat(dateformat.format(objection.getRecievedOn())));
-         * return "view"; } else {
+         * if (objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt()
+         * .before(objection.getRecievedOn())) { objection.setHearings(Collections.emptyList()); addActionMessage(getText
+         * ("receivedon.greaterThan.plannedhearingdate"). concat("").concat(dateformat.format(objection.getRecievedOn()))); return
+         * "view"; } else {
          */
         updateStateAndStatus(objection);
         reportOutput = createHearingNoticeReport(reportOutput, objection);
@@ -460,7 +464,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     /**
      * Generate Hearing notice
-     * 
+     *
      * @return
      */
     @ValidationErrorPage(value = "view")
@@ -579,7 +583,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     /**
      * Allows the user to record whether the objection is accepted or rejected.
-     * 
+     *
      * @return
      */
     @ValidationErrorPage(value = "view")
@@ -597,12 +601,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         }
         // Commented for time being. Client confirmation required.
         /*
-         * else if (objection.getDateOfOutcome() != null &&
-         * objection.getRecievedOn().after(objection.getDateOfOutcome())) {
-         * addActionMessage
-         * (getText("dateOfOutcome.greaterThan.recievedOn").concat
-         * (" ").concat(dateformat.format(objection.getRecievedOn()))); return
-         * "view"; }
+         * else if (objection.getDateOfOutcome() != null && objection.getRecievedOn().after(objection.getDateOfOutcome())) {
+         * addActionMessage (getText("dateOfOutcome.greaterThan.recievedOn").concat
+         * (" ").concat(dateformat.format(objection.getRecievedOn()))); return "view"; }
          */
 
         if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
@@ -650,7 +651,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             reportParams.put("wardNumber", objection.getBasicProperty().getBoundary() != null ? objection
                     .getBasicProperty().getBoundary().getName() : "");
             reportParams.put("HalfYearPropertyTaxTo", currentDemand.get(CURR_DMD_STR).divide(BigDecimal.valueOf(2))
-                    .setScale(2)); 
+                    .setScale(2));
             reportParams.put("HalfYearPropertyTaxFrom", earlierDemand.get(CURR_DMD_STR).divide(BigDecimal.valueOf(2))
                     .setScale(2));
             reportParams.put("AnnualPropertyTaxTo", currentDemand.get(CURR_DMD_STR).setScale(2).toString());
@@ -702,7 +703,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         noticeService.saveNotice(
                 objection.getObjectionNumber().concat(
                         PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_SPECIALNOTICE_PREFIX),
-                PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE, objection.getBasicProperty(), specialNoticePdf);
+                        PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE, objection.getBasicProperty(), specialNoticePdf);
     }
 
     /**
@@ -835,17 +836,16 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_CODE_ASSESSED));
             objection.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
             /*
-             * Mean if commissioner reject revision petition, then current
-             * workflow property will become history record.
+             * Mean if commissioner reject revision petition, then current workflow property will become history record.
              */
             objection.getProperty().setStatus(STATUS_ISHISTORY);
 
             objection.end().withStateValue(PropertyTaxConstants.WFLOW_ACTION_END).withOwner(position).withOwner(user)
-                    .withComments(approverComments);
+            .withComments(approverComments);
 
         } else
             updateStateAndStatus(objection); // If objection not rejected, then
-                                             // print special notice.
+        // print special notice.
         getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
         reportOutput = createEndoresement(reportOutput, objection);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
@@ -853,8 +853,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         noticeService.saveNotice(
                 objection.getObjectionNumber().concat(
                         PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT_PREFIX),
-                PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT, objection.getBasicProperty(),
-                endoresementPdf);
+                        PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT, objection.getBasicProperty(),
+                        endoresementPdf);
 
         revisionPetitionService.updateRevisionPetition(objection);
 
@@ -907,7 +907,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             objection.getProperty().setStatus(STATUS_ISACTIVE);
 
             objection.end().withStateValue(PropertyTaxConstants.WFLOW_ACTION_END).withOwner(position).withOwner(user)
-                    .withComments(approverComments);
+            .withComments(approverComments);
         }
 
         generateSpecialNotice(objection.getProperty(), (BasicPropertyImpl) objection.getBasicProperty());
@@ -1125,8 +1125,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 user = eisCommonService.getUserForPosition(position.getId(), new Date());
 
             objection.start().withNextAction(wfmatrix.getPendingActions()).withStateValue(wfmatrix.getCurrentState())
-                    .withDateInfo(new DateTime().toDate()).withOwner(position).withSenderName(loggedInUser.getName())
-                    .withOwner(user).withComments(approverComments);
+            .withDateInfo(new DateTime().toDate()).withOwner(position).withSenderName(loggedInUser.getName())
+            .withOwner(user).withComments(approverComments);
 
             if (loggedUserIsEmployee && user != null)
                 addActionMessage(getText("objection.forward", new String[] { user.getUsername() }));
@@ -1141,7 +1141,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
                 wfmatrix = revisionPetitionWorkFlowService.getPreviousStateFromWfMatrix(objection.getStateType(), null,
                         null, getAdditionalRule(), objection.getCurrentState().getValue(), objection.getCurrentState()
-                                .getNextAction());
+                        .getNextAction());
                 if (approverPositionId == null || approverPositionId != -1)
                     position = objection.getCurrentState().getOwnerPosition();
             }
@@ -1178,9 +1178,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 || workFlowAction.equalsIgnoreCase("forward to approver")) {
             if (wfmatrix != null
                     && (wfmatrix.getNextStatus() != null
-                            && wfmatrix.getNextStatus().equalsIgnoreCase(PropertyTaxConstants.OBJECTION_HEARING_FIXED)
-                            || wfmatrix.getCurrentState().equalsIgnoreCase(
-                                    PropertyTaxConstants.REVISIONPETITION_INSPECTIONVERIFIED) || wfmatrix
+                    && wfmatrix.getNextStatus().equalsIgnoreCase(PropertyTaxConstants.OBJECTION_HEARING_FIXED)
+                    || wfmatrix.getCurrentState().equalsIgnoreCase(
+                            PropertyTaxConstants.REVISIONPETITION_INSPECTIONVERIFIED) || wfmatrix
                             .getCurrentState().equalsIgnoreCase(PropertyTaxConstants.REVISIONPETITION_WF_REGISTERED))) {
                 for (final StateHistory stateHistoryObj : objection.getState().getHistory()) {
                     if (stateHistoryObj.getValue().equalsIgnoreCase(PropertyTaxConstants.REVISIONPETITION_CREATED)) {
@@ -1200,7 +1200,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                         // Ulb operator, then only we need to change status.
                         if (objection.getEgwStatus() != null
                                 && objection.getEgwStatus().getCode()
-                                        .equalsIgnoreCase(PropertyTaxConstants.OBJECTION_CREATED))
+                                .equalsIgnoreCase(PropertyTaxConstants.OBJECTION_CREATED))
                             updateRevisionPetitionStatus(wfmatrix, objection,
                                     PropertyTaxConstants.OBJECTION_HEARING_FIXED);
 
@@ -1211,7 +1211,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 if (!positionFoundInHistory && objection.getState() != null)
                     if (objection.getState().getValue().equalsIgnoreCase(PropertyTaxConstants.REVISIONPETITION_CREATED)
                             || objection.getState().getValue()
-                                    .equalsIgnoreCase(PropertyTaxConstants.REVISIONPETITION_WF_REGISTERED)) {
+                            .equalsIgnoreCase(PropertyTaxConstants.REVISIONPETITION_WF_REGISTERED)) {
                         positionFoundInHistory = true;
                         updateRevisionPetitionStatus(wfmatrix, objection, PropertyTaxConstants.OBJECTION_HEARING_FIXED);
                         position = getWorkFlowInitiator(objection, position);
@@ -1222,14 +1222,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             // Date());
 
             objection.transition(true).withStateValue(wfmatrix.getNextState()).withOwner(position)
-                    .withSenderName(loggedInUser.getName()).withDateInfo(new DateTime().toDate())
-                    .withNextAction(wfmatrix.getNextAction()).withComments(approverComments);
+            .withSenderName(loggedInUser.getName()).withDateInfo(new DateTime().toDate())
+            .withNextAction(wfmatrix.getNextAction()).withComments(approverComments);
 
             if (wfmatrix.getNextAction() != null && wfmatrix.getNextAction().equalsIgnoreCase("END"))
                 objection.end().withStateValue(wfmatrix.getNextState())
-                        .withOwner(objection.getCurrentState().getOwnerPosition())
-                        .withSenderName(loggedInUser.getName()).withNextAction(wfmatrix.getNextAction())
-                        .withDateInfo(new DateTime().toDate()).withComments(approverComments);
+                .withOwner(objection.getCurrentState().getOwnerPosition())
+                .withSenderName(loggedInUser.getName()).withNextAction(wfmatrix.getNextAction())
+                .withDateInfo(new DateTime().toDate()).withComments(approverComments);
 
             if (wfmatrix.getNextStatus() != null)
                 updateRevisionPetitionStatus(wfmatrix, objection, null);
@@ -1254,9 +1254,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
             if (position != null) {
                 objection.transition(true).withNextAction(wfmatrix.getNextAction())
-                        .withStateValue(PropertyTaxConstants.WF_STATE_REJECTED).withOwner(position)
-                        .withSenderName(loggedInUser.getName()).withDateInfo(new DateTime().toDate())
-                        .withComments(approverComments);
+                .withStateValue(PropertyTaxConstants.WF_STATE_REJECTED).withOwner(position)
+                .withSenderName(loggedInUser.getName()).withDateInfo(new DateTime().toDate())
+                .withComments(approverComments);
 
                 final Assignment assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(
                         position.getId(), new Date());
@@ -1278,16 +1278,16 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                             .getCurrentState().getValue()
                             .equalsIgnoreCase(PropertyTaxConstants.REVISIONPETITION_CREATED))) {
                 objection.end().withStateValue(wfmatrix.getNextState()).withOwner(position)
-                        .withSenderName(loggedInUser.getName()).withNextAction(wfmatrix.getNextAction())
-                        .withDateInfo(new DateTime().toDate()).withComments(approverComments);
+                .withSenderName(loggedInUser.getName()).withNextAction(wfmatrix.getNextAction())
+                .withDateInfo(new DateTime().toDate()).withComments(approverComments);
 
                 updateRevisionPetitionStatus(wfmatrix, objection, REJECTED);
 
             } else {// ASSUMPTION HERE IS WE ALREADY HAVE PREVIOUS WF MATRIX
-                    // DATA.
+                // DATA.
                 objection.transition(true).withStateValue(wfmatrix.getCurrentState()).withOwner(position)
-                        .withSenderName(loggedInUser.getName()).withDateInfo(new DateTime().toDate())
-                        .withNextAction(wfmatrix.getPendingActions()).withComments(approverComments);
+                .withSenderName(loggedInUser.getName()).withDateInfo(new DateTime().toDate())
+                .withNextAction(wfmatrix.getPendingActions()).withComments(approverComments);
 
                 if (workFlowAction.equalsIgnoreCase("Reject"))
                     updateRevisionPetitionStatus(wfmatrix, objection, null);
@@ -1300,8 +1300,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
         } else if (workFlowAction.equalsIgnoreCase("Print Endoresement")) {
             objection.transition(true).withStateValue(wfmatrix.getNextState()).withOwner(position)
-                    .withSenderName(loggedInUser.getName()).withDateInfo(new DateTime().toDate())
-                    .withNextAction(wfmatrix.getNextAction()).withComments(approverComments);
+            .withSenderName(loggedInUser.getName()).withDateInfo(new DateTime().toDate())
+            .withNextAction(wfmatrix.getNextAction()).withComments(approverComments);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("revisionpetitionaction ||ended  workflow for objection");
 
@@ -1361,17 +1361,17 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         propService.createProperty(objection.getProperty(), getAreaOfPlot() != null ? getAreaOfPlot() : "",
                 reasonForModify, propTypeObjId != null ? propTypeObjId : null, objection.getProperty()
                         .getPropertyDetail().getPropertyUsage() != null ? objection.getProperty().getPropertyDetail()
-                        .getPropertyUsage().getId().toString() : null, objection.getProperty().getPropertyDetail()
-                        .getPropertyOccupation() != null ? objection.getProperty().getPropertyDetail()
-                        .getPropertyOccupation().getId().toString() : null, STATUS_WORKFLOW, objection.getProperty()
-                        .getDocNumber(), "",
-                objection.getProperty().getPropertyDetail().getFloorType() != null ? objection.getProperty()
-                        .getPropertyDetail().getFloorType().getId() : null, objection.getProperty().getPropertyDetail()
-                        .getRoofType() != null ? objection.getProperty().getPropertyDetail().getRoofType().getId()
-                        : null, objection.getProperty().getPropertyDetail().getWallType() != null ? objection
-                        .getProperty().getPropertyDetail().getWallType().getId() : null, objection.getProperty()
-                        .getPropertyDetail().getWoodType() != null ? objection.getProperty().getPropertyDetail()
-                        .getWoodType().getId() : null, taxExemptedReason);
+                                .getPropertyUsage().getId().toString() : null, objection.getProperty().getPropertyDetail()
+                                .getPropertyOccupation() != null ? objection.getProperty().getPropertyDetail()
+                                        .getPropertyOccupation().getId().toString() : null, STATUS_WORKFLOW, objection.getProperty()
+                                        .getDocNumber(), "",
+                                        objection.getProperty().getPropertyDetail().getFloorType() != null ? objection.getProperty()
+                                                .getPropertyDetail().getFloorType().getId() : null, objection.getProperty().getPropertyDetail()
+                                                .getRoofType() != null ? objection.getProperty().getPropertyDetail().getRoofType().getId()
+                                                        : null, objection.getProperty().getPropertyDetail().getWallType() != null ? objection
+                                                                .getProperty().getPropertyDetail().getWallType().getId() : null, objection.getProperty()
+                                                                .getPropertyDetail().getWoodType() != null ? objection.getProperty().getPropertyDetail()
+                                                                        .getWoodType().getId() : null, taxExemptedReason);
 
         updatePropertyID(objection.getBasicProperty());
         final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
@@ -1380,7 +1380,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (oldPropTypeId == propTypeMstr.getId() && Long.parseLong(propTypeObjId) != propTypeMstr.getId()
                 || oldPropTypeId != propTypeMstr.getId() && Long.parseLong(propTypeObjId) == propTypeMstr.getId())
             if (propTypeMstr != null
-                    && org.apache.commons.lang.StringUtils.equals(propTypeMstr.getId().toString(), propTypeObjId))
+            && org.apache.commons.lang.StringUtils.equals(propTypeMstr.getId().toString(), propTypeObjId))
                 propService.changePropertyDetail(objection.getProperty(), new VacantProperty(), 0);
             else
                 propService.changePropertyDetail(objection.getProperty(), new BuiltUpProperty(), objection
@@ -1416,17 +1416,17 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         validateProperty(
                 objection.getProperty(),
                 getAreaOfPlot() != null ? getAreaOfPlot() : "",
-                objection.getProperty().getPropertyDetail().getDateOfCompletion() != null ? dateformat.format(
-                        objection.getProperty().getPropertyDetail().getDateOfCompletion()).toString() : "",
-                eastBoundary, westBoundary, southBoundary, northBoundary, propTypeObjId != null ? propTypeObjId : null,
-                ownerName, ownerName, objection.getProperty().getPropertyDetail().getFloorType() != null ? objection
-                        .getProperty().getPropertyDetail().getFloorType().getId() : null, objection.getProperty()
-                        .getPropertyDetail().getRoofType() != null ? objection.getProperty().getPropertyDetail()
-                        .getRoofType().getId() : null,
-                objection.getProperty().getPropertyDetail().getWallType() != null ? objection.getProperty()
-                        .getPropertyDetail().getWallType().getId() : null, objection.getProperty().getPropertyDetail()
-                        .getWoodType() != null ? objection.getProperty().getPropertyDetail().getWoodType().getId()
-                        : null);
+                        objection.getProperty().getPropertyDetail().getDateOfCompletion() != null ? dateformat.format(
+                                objection.getProperty().getPropertyDetail().getDateOfCompletion()).toString() : "",
+                                eastBoundary, westBoundary, southBoundary, northBoundary, propTypeObjId != null ? propTypeObjId : null,
+                                        ownerName, ownerName, objection.getProperty().getPropertyDetail().getFloorType() != null ? objection
+                                                .getProperty().getPropertyDetail().getFloorType().getId() : null, objection.getProperty()
+                                                .getPropertyDetail().getRoofType() != null ? objection.getProperty().getPropertyDetail()
+                                                        .getRoofType().getId() : null,
+                                                        objection.getProperty().getPropertyDetail().getWallType() != null ? objection.getProperty()
+                                                                .getPropertyDetail().getWallType().getId() : null, objection.getProperty().getPropertyDetail()
+                                                                .getWoodType() != null ? objection.getProperty().getPropertyDetail().getWoodType().getId()
+                                                                        : null);
 
     }
 

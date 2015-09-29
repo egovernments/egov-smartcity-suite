@@ -42,6 +42,12 @@ package org.egov.ptis.actions.search;
 import static java.math.BigDecimal.ZERO;
 import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_COLLECT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMAND_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
@@ -89,13 +95,29 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Validations
-@Results({ @Result(name = NEW, location = "searchProperty-new.jsp"),
-    @Result(name = SearchPropertyAction.TARGET, location = "searchProperty-result.jsp") })
+@Results({
+        @Result(name = NEW, location = "searchProperty-new.jsp"),
+        @Result(name = SearchPropertyAction.TARGET, location = "searchProperty-result.jsp"),
+        @Result(name = SearchPropertyAction.COMMON_FORM, location = "searchProperty-commonForm.jsp"),
+        @Result(name = APPLICATION_TYPE_ALTER_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
+                "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "ADD_OR_ALTER" }),
+        @Result(name = APPLICATION_TYPE_BIFURCATE_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
+                "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "BIFURCATE" }),
+        @Result(name = APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "new", params = {
+                "namespace", "/property/transfer", "assessmentNo", "${assessmentNum}" }),
+        @Result(name = APPLICATION_TYPE_REVISION_PETITION, type = "redirectAction", location = "revPetition-newForm", params = {
+                "namespace", "/revPetition", "propertyId", "${assessmentNum}" }),
+        @Result(name = APPLICATION_TYPE_COLLECT_TAX, type = "redirectAction", location = "collectPropertyTax-generateBill", params = {
+                "namespace", "/collection", "propertyId", "${assessmentNum}" }),
+        @Result(name = APPLICATION_TYPE_DEMAND_BILL, type = "redirectAction", location = "billGeneration-generateBill", params = {
+                "namespace", "/bills", "indexNumber", "${assessmentNum}" }),
+})
 public class SearchPropertyAction extends BaseFormAction {
     /**
      *
      */
     private static final long serialVersionUID = 6978874588028662454L;
+    protected static final String COMMON_FORM = "commonForm";
     private final Logger LOGGER = Logger.getLogger(getClass());
     public static final String TARGET = "result";
     private Long zoneId;
@@ -121,6 +143,7 @@ public class SearchPropertyAction extends BaseFormAction {
     private boolean isDemandActive;
     private String fromDemand;
     private String toDemand;
+    private String applicationType;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -143,12 +166,56 @@ public class SearchPropertyAction extends BaseFormAction {
     }
 
     /**
-     * @return - Gets forwared to Search Property Screen for officials
+     * @return - Gets forwarded to Search Property Screen for officials
      */
     @SkipValidation
     @Action(value = "/search/searchProperty-searchForm")
     public String searchForm() {
         return NEW;
+    }
+
+    /**
+     * Generalised method to give search property screen to perform different transactions like alter, bifurcate, transfer etc
+     * @return
+     */
+    @SkipValidation
+    @Action(value = "/search/searchProperty-commonForm")
+    public String commonForm() {
+        return COMMON_FORM;
+    }
+
+    /**
+     * Generalised method to redirect the form page to different transactional form pages
+     * @return
+     */
+    @ValidationErrorPage(value = COMMON_FORM)
+    @Action(value = "/search/searchProperty-commonSearch")
+    public String commonSearch() {
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(assessmentNum, null);
+        if (basicProperty == null) {
+            addActionError(getText("validation.property.doesnot.exists"));
+            return COMMON_FORM;
+        }
+        checkIsDemandActive(basicProperty.getProperty());
+        if (APPLICATION_TYPE_REVISION_PETITION.equals(applicationType)) {
+            if (isDemandActive) {
+                addActionError(getText("revPetition.demandActive"));
+                return COMMON_FORM;
+            }
+        } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)
+                || APPLICATION_TYPE_BIFURCATE_ASSESSENT.equals(applicationType)
+                || APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)) {
+            if (!isDemandActive) {
+                addActionError(getText("error.msg.demandInactive"));
+                return COMMON_FORM;
+            }
+        } else if (APPLICATION_TYPE_DEMAND_BILL.equals(applicationType))
+            if (basicProperty.getProperty().getIsExemptedFromTax()) {
+                addActionError(getText("error.msg.taxExempted"));
+                return COMMON_FORM;
+            }
+
+        return applicationType;
     }
 
     /**
@@ -189,7 +256,6 @@ public class SearchPropertyAction extends BaseFormAction {
      * @return to official search property result screen
      * @description searches property based on Boundary : zone and ward
      */
-    @SuppressWarnings("unchecked")
     @ValidationErrorPage(value = "new")
     @Action(value = "/search/searchProperty-srchByBndry")
     public String srchByBndry() {
@@ -229,7 +295,6 @@ public class SearchPropertyAction extends BaseFormAction {
      * @return to official search property result screen
      * @description searches property based on location boundary
      */
-    @SuppressWarnings("unchecked")
     @ValidationErrorPage(value = "new")
     @Action(value = "/search/searchProperty-srchByLocation")
     public String srchByLocation() {
@@ -266,7 +331,6 @@ public class SearchPropertyAction extends BaseFormAction {
      * @return to official search property result screen
      * @description searches property based on Demand
      */
-    @SuppressWarnings("unchecked")
     @ValidationErrorPage(value = "new")
     @Action(value = "/search/searchProperty-searchByDemand")
     public String searchByDemand() {
@@ -298,7 +362,6 @@ public class SearchPropertyAction extends BaseFormAction {
      * @see org.egov.infra.web.struts.actions.BaseFormAction#prepare()
      */
     @Override
-    @SuppressWarnings("unchecked")
     public void prepare() {
         final List<Boundary> zoneList = boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", ADMIN_HIERARCHY_TYPE);
@@ -316,11 +379,10 @@ public class SearchPropertyAction extends BaseFormAction {
     }
 
     /**
-     * @Description Loads ward dropdown for selected zone
+     * @Description Loads ward drop down for selected zone
      * @param zoneExists
      * @param wardExists
      */
-    @SuppressWarnings("unchecked")
     @SkipValidation
     private void prepareWardDropDownData(final boolean zoneExists, final boolean wardExists) {
         if (LOGGER.isDebugEnabled()) {
@@ -336,15 +398,15 @@ public class SearchPropertyAction extends BaseFormAction {
     }
 
     @Override
-    public void validate() { 
+    public void validate() {
         if (org.apache.commons.lang.StringUtils.equals(mode, "assessment")) {
             if (org.apache.commons.lang.StringUtils.isEmpty(assessmentNum) || org.apache.commons.lang.StringUtils
                     .isBlank(assessmentNum))
                 addActionError(getText("mandatory.assessmentNo"));
         } else if (org.apache.commons.lang.StringUtils.equals(mode, "bndry")) {
-            if (zoneId == null || zoneId == -1) 
+            if (zoneId == null || zoneId == -1)
                 addActionError(getText("mandatory.zone"));
-            if (wardId == null || wardId == -1)  
+            if (wardId == null || wardId == -1)
                 addActionError(getText("mandatory.ward"));
         } else if (org.apache.commons.lang.StringUtils.equals(mode, "location")) {
             if (locationId == null || locationId == -1)
@@ -662,6 +724,14 @@ public class SearchPropertyAction extends BaseFormAction {
 
     public void setAssessmentNum(final String assessmentNum) {
         this.assessmentNum = assessmentNum;
+    }
+
+    public String getApplicationType() {
+        return applicationType;
+    }
+
+    public void setApplicationType(final String applicationType) {
+        this.applicationType = applicationType;
     }
 
 }

@@ -172,14 +172,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ParentPackage("egov")
 @ResultPath(value = "/WEB-INF/jsp")
 @Results({ @Result(name = ModifyPropertyAction.RESULT_ACK, location = "modify/modifyProperty-ack.jsp"),
-        @Result(name = ModifyPropertyAction.EDIT, location = "modify/modifyProperty-new.jsp"),
-        @Result(name = ModifyPropertyAction.NEW, location = "modify/modifyProperty-new.jsp"),
-        @Result(name = ModifyPropertyAction.VIEW, location = "modify/modifyProperty-view.jsp"),
-        @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
-        @Result(name = ModifyPropertyAction.BALANCE, location = "modify/modifyProperty-balance.jsp"),
-        @Result(name = ModifyPropertyAction.PRINT_ACK, location = "modify/modifyProperty-printAck.jsp") })
+    @Result(name = ModifyPropertyAction.EDIT, location = "modify/modifyProperty-new.jsp"),
+    @Result(name = ModifyPropertyAction.NEW, location = "modify/modifyProperty-new.jsp"),
+    @Result(name = ModifyPropertyAction.VIEW, location = "modify/modifyProperty-view.jsp"),
+    @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
+    @Result(name = ModifyPropertyAction.BALANCE, location = "modify/modifyProperty-balance.jsp"),
+    @Result(name = ModifyPropertyAction.PRINT_ACK, location = "modify/modifyProperty-printAck.jsp"),
+    @Result(name = ModifyPropertyAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp") })
 @Namespace("/modify")
 public class ModifyPropertyAction extends PropertyTaxBaseAction {
+    protected static final String COMMON_FORM = "commonForm";
     private static final String PROPERTY_MODIFY_REJECT_SUCCESS = "property.modify.reject.success";
     private static final String PROPERTY_MODIFY_FINAL_REJECT_SUCCESS = "property.modify.final.reject.success";
     private static final String PROPERTY_MODIFY_APPROVE_SUCCESS = "property.modify.approve.success";
@@ -323,6 +325,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     public String modifyForm() {
         LOGGER.debug("Entered into modifyForm, \nIndexNumber: " + indexNumber + ", BasicProperty: " + basicProp
                 + ", OldProperty: " + oldProperty + ", PropertyModel: " + propertyModel);
+        if (propertyModel.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
+            addActionError(getText("error.msg.demandInactive"));
+            return COMMON_FORM;
+        }
         String target = "";
         target = populateFormData(Boolean.FALSE);
         LOGGER.debug("modifyForm: IsAuthProp: " + getIsAuthProp() + ", AreaOfPlot: " + getAreaOfPlot()
@@ -352,7 +358,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     }
 
     /**
-     * Populates form data to be dispalyed
+     * Populates form data to be displayed
      * @param fromInbox
      * @return
      */
@@ -840,7 +846,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 && Long.parseLong(propTypeId) == propTypeMstr.getId())
                 && !propertyModel.getStatus().equals('W'))
             if (propTypeMstr != null
-                    && org.apache.commons.lang.StringUtils.equals(propTypeMstr.getId().toString(), propTypeId))
+            && org.apache.commons.lang.StringUtils.equals(propTypeMstr.getId().toString(), propTypeId))
                 changePropertyDetail(propertyModel, new VacantProperty(), 0);
             else
                 changePropertyDetail(propertyModel, new BuiltUpProperty(), propertyModel.getPropertyDetail().getNoofFloors());

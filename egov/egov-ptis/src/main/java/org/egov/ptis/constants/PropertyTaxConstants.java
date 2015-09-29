@@ -1118,6 +1118,9 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_ALTER_ASSESSENT = "Alter_Assessment";
     public static final String APPLICATION_TYPE_BIFURCATE_ASSESSENT = "Bifuracate_Assessment";
     public static final String APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP = "Transfer_of_Ownership";
+    public static final String APPLICATION_TYPE_COLLECT_TAX = "Collect_Tax";
+    public static final String APPLICATION_TYPE_DEMAND_BILL = "Generate_demand_bill";
+   
 
     // AppConfig values
     public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";
