@@ -61,7 +61,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 import org.json.simple.JSONObject;
 
 @Entity
-@Unique(id = "id", tableName = "egpgr_complainttype", fields = { "name", "code" }, columnName = { "name", "code" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "egpgr_complainttype", fields = { "name", "code" }, columnName = { "name",
+        "code" }, enableDfltMsg = true)
 @Table(name = "egpgr_complainttype")
 @Searchable
 @SequenceGenerator(name = ComplaintType.SEQ_COMPLAINTTYPE, sequenceName = ComplaintType.SEQ_COMPLAINTTYPE, allocationSize = 1)
@@ -90,15 +91,17 @@ public class ComplaintType extends AbstractAuditable {
     @JoinColumn(name = "department")
     private Department department;
 
-    @Column(name = "isActive")
-    private boolean isActive;
-
     @Length(max = 100)
     @SafeHtml
     private String description;
-    
+
     @NotNull
     private Integer slaHours;
+
+    @Column(name = "isActive")
+    private boolean isActive;
+
+    private boolean hasFinancialImpact;
 
     @Override
     public Long getId() {
@@ -158,7 +161,15 @@ public class ComplaintType extends AbstractAuditable {
         return slaHours;
     }
 
-    public void setSlaHours(Integer slaHours) {
+    public void setSlaHours(final Integer slaHours) {
         this.slaHours = slaHours;
+    }
+
+    public boolean isHasFinancialImpact() {
+        return hasFinancialImpact;
+    }
+
+    public void setHasFinancialImpact(final boolean hasFinancialImpact) {
+        this.hasFinancialImpact = hasFinancialImpact;
     }
 }

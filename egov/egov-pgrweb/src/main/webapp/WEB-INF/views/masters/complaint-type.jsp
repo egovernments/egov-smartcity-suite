@@ -102,7 +102,6 @@
 							<form:errors path="department" cssClass="error-msg" />
 						</div>
 					</div>
-
 					<div class="form-group">
 						<label for="field-1" class="col-sm-3 col-xs-2 control-label">
 						<spring:message	code="lbl.isactive"></spring:message></label>
@@ -121,6 +120,14 @@
 							<form:errors path="slaHours" cssClass="error-msg" />
 						</div>
 					</div>
+					<div class="form-group">
+						<label for="field-1" class="col-sm-3 col-xs-2 control-label">
+						<spring:message	code="lbl.hasFinImpact"></spring:message></label>
+						<div class="col-sm-3 col-xs-8 add-margin">
+							<form:checkbox path="hasFinancialImpact" id="hasFinancialImpact" />
+							<form:errors path="hasFinancialImpact" cssClass="error-msg" />
+						</div>
+					</div>  
 					<div class="form-group">
 						<label class="col-sm-3 control-label"> 
 						<spring:message	code="lbl.complaintTypeDesc" /></label>

@@ -107,7 +107,17 @@
 							<c:out value="${complaintType.slaHours}"></c:out>
 						</div>
 					</div>
-
+					<div class="row">
+						<label for="field-1" class="col-md-3 col-xs-6 add-margin">
+						<spring:message	code="lbl.hasFinImpact"></spring:message></label>
+						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-hasfinimpact">
+							<c:choose>
+								<c:when test="${complaintType.hasFinancialImpact == true}">
+						           Yes</c:when>
+								<c:otherwise>No</c:otherwise>
+							</c:choose>
+						</div>
+					</div>
 					<div class="row text-center">
 						<div class="row">
 							<div class="text-center">
