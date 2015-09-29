@@ -39,6 +39,9 @@
 #-------------------------------------------------------------------------------*/
 var tableContainer;
 jQuery(document).ready(function($) {
+	
+		$.fn.dataTable.moment( 'DD/MM/YYYY' );
+	
 		$(":input").inputmask();
 		tableContainer = $("#aplicationSearchResults");
 		var cscUserRole = $('#cscUserRole').val();
@@ -175,7 +178,8 @@ jQuery(document).ready(function($) {
 
 			        	   }
 
-						} ]
+						} ],
+						"aaSorting": [[8, 'desc']],
 			});
 			})
 		});
