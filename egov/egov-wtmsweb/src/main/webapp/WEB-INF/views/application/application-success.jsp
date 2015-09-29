@@ -102,6 +102,9 @@
 							<span><spring:message code="msg.connection.disconnected" /></span>
 								
 						</c:when>
+						<c:when test="${waterConnectionDetails.state.value== 'Rejected' && waterConnectionDetails.closeConnectionType != null}">
+							<span><spring:message code="msg.closure.rejection.success" /></span>
+							</c:when>
 				</c:choose>
 				</div>
 			</div>

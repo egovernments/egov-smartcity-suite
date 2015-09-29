@@ -136,7 +136,20 @@ $(document).ready(function()
 				 document.getElementById("mode").value=mode;
 				 document.forms[0].submit();	
 			 }
-			 
+			  if(status=='CLOSERINITIATED' && action == 'Reject' ) {
+				 
+				 $('#Reject').attr('formnovalidate','true');	
+				 var approvalComent=$('#approvalComent').val();
+				  if(approvalComent == "") {
+						alert("Please enter rejection comments!");
+						$('#approvalComent').focus();
+						return false;
+				  }
+				  else {
+					  validateWorkFlowApprover(action);
+					  document.forms[0].submit();
+				  }
+			  }
 			 if(status=='CREATED' && action == 'Submit' && mode == 'fieldInspection') {
 				 $('#approvalComent').removeAttr('required');	
 	    		 if($('form').valid())	{

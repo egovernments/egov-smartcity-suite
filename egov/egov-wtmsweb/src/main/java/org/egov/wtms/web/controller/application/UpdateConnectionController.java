@@ -180,7 +180,7 @@ public class UpdateConnectionController extends GenericConnectionController {
             model.addAttribute("mode", "edit");
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
                     .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, waterConnectionDetails
-                            .getApplicationType().getCode(), "edit"));
+                            .getApplicationType().getCode(), "edit",""));
         }
         // "edit" mode for AE inbox record FROM CSC and Record from Clerk
         else if (recordCreatedBYNonEmployee && request.getAttribute("mode") == null
@@ -191,16 +191,16 @@ public class UpdateConnectionController extends GenericConnectionController {
             model.addAttribute("mode", "fieldInspection");
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
                     .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, waterConnectionDetails
-                            .getApplicationType().getCode(), "fieldInspection"));
+                            .getApplicationType().getCode(), "fieldInspection",""));
             model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
             model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
         } else if (waterConnectionDetails.getCloseConnectionType() != null)
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
-                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, "CLOSECONNECTION", ""));
+                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, "CLOSECONNECTION", "",""));
         else
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
                     .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, waterConnectionDetails
-                            .getApplicationType().getCode(), ""));
+                            .getApplicationType().getCode(), "",""));
         if (waterConnectionDetails.getCurrentState().getValue().equals("Rejected"))
             model.addAttribute("mode", "");
         if (waterConnectionDetails.getCloseConnectionType() != null
@@ -264,11 +264,11 @@ public class UpdateConnectionController extends GenericConnectionController {
         if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
             if (waterConnectionDetails.getCloseConnectionType() != null)
                 approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(
-                        waterConnectionDetails, approvalPosition, request.getParameter("additionalRule"), mode);
+                        waterConnectionDetails, approvalPosition, request.getParameter("additionalRule"), mode,workFlowAction);
             else
                 approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(
                         waterConnectionDetails, approvalPosition,
-                        waterConnectionDetails.getApplicationType().getCode(), mode);
+                        waterConnectionDetails.getApplicationType().getCode(), mode,workFlowAction);
 
         appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
 

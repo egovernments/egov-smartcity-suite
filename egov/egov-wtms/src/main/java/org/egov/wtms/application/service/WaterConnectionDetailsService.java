@@ -440,7 +440,7 @@ public class WaterConnectionDetailsService {
     }
 
     public Long getApprovalPositionByMatrixDesignation(final WaterConnectionDetails waterConnectionDetails,
-            Long approvalPosition, final String additionalRule, final String mode) {
+            Long approvalPosition, final String additionalRule, final String mode,final String workFlowAction) {
         final WorkFlowMatrix wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails
                 .getStateType(), null, null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null);
         if (waterConnectionDetails.getStatus() != null && waterConnectionDetails.getStatus().getCode() != null)
@@ -464,12 +464,13 @@ public class WaterConnectionDetailsService {
                 approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                         waterConnectionDetails);
             else if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED)
-                    || waterConnectionDetails.getStatus().getCode()
-                    .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED)) {
+                    || (!workFlowAction.equals(WFLOW_ACTION_STEP_REJECT) &&  waterConnectionDetails.getStatus().getCode()
+                    .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED))) {
                 final Position posobj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation());
                 if (posobj != null)
                     approvalPosition = posobj.getId();
             }
+           
         return approvalPosition;
     }
 

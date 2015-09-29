@@ -97,7 +97,7 @@ public class CloserConnectionService {
             if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
                 validationMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
                         assessmentDetails.getPropertyDetails().getTaxDue().toString(),
-                        parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "changeOfUsage" }, null);
+                        parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "Closure" }, null);
         } else if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE)) {
             if (parentWaterConnectionDetail.getDemand().getBaseDemand().doubleValue()
                     - parentWaterConnectionDetail.getDemand().getAmtCollected().doubleValue() > 0)
