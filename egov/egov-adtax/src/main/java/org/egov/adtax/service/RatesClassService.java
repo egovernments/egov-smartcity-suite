@@ -69,5 +69,13 @@ public class RatesClassService {
     public RatesClass getRateClassById(final Long id) {
         return ratesClassRepository.findOne(id);
     }
+    
+    public RatesClass getRatesClassByDescription(final String description){
+        return ratesClassRepository.findByDescription(description);
+    }
+    @Transactional
+    public RatesClass createRatesClass(final RatesClass ratesClass) {
+        return ratesClassRepository.save(ratesClass);
+    }
 
 }

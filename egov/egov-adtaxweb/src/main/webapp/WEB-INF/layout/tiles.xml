@@ -117,4 +117,14 @@
     	<put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-view.jsp"/>
     </definition>
+    
+    <definition name="ratesClass-form" extends="base_layout">
+    	<put-attribute name="page-title" value="title.ratesClass.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/ratesClass/ratesClass-form.jsp"/>
+    </definition>
+    
+    <definition name="ratesClass/ratesClass-success" extends="base_layout">
+    	<put-attribute name="page-title" value="title.ratesClass.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/ratesClass/ratesClass-success.jsp"/>
+    </definition>
 </tiles-definitions>
