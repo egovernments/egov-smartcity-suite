@@ -173,7 +173,11 @@
 				document.ModifyPropertyForm.action="../bills/billGeneration!generateBill.action?indexNumber=<s:property value='%{basicProp.upicNo}'/>";
 				document.ModifyPropertyForm.submit();
 				undoLoadingMask();
-			}				  
+			}				
+
+			jQuery(window).unload(function(){
+				parent.window.opener.inboxloadmethod();
+			});  
 </script>
 	</head>
 	<body onload="loadOnStartUp();">

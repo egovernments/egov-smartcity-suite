@@ -336,6 +336,10 @@
 				alert("Atleast one owner details is mandatory!");
 			}
 		}
+
+		jQuery(window).unload(function(){
+			parent.window.opener.inboxloadmethod();
+		});
 	</script>
 </body>
 </html>

@@ -117,6 +117,10 @@
   	function populateApprover() {
   		getUsersByDesignationAndDept();
   	}  
+
+  	jQuery(window).unload(function(){
+		parent.window.opener.inboxloadmethod();
+	});
 </script>
 </head>
 

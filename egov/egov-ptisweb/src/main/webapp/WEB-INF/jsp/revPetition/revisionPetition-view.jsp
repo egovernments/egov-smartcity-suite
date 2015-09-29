@@ -212,6 +212,10 @@
 
 				return true;
 			}
+
+			jQuery(window).unload(function(){
+				parent.window.opener.inboxloadmethod();
+			});
 			
   
 		</script>

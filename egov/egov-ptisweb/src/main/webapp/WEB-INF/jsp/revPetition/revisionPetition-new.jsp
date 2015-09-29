@@ -79,6 +79,10 @@
 			
 				return true;
 			}
+
+			jQuery(window).unload(function(){
+				parent.window.opener.inboxloadmethod();
+			});
 			
 		</script>
 		<link href="<c:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
