@@ -41,8 +41,15 @@
  * Includes all the validations for create property
  */
 jQuery.noConflict();
-function enableAppartnaumtLandDetails() {
+function makePropertyTypeMandatory() {
 	var propertyType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
+	if (propertyType == "select") {
+		alert("Please select category of ownership");
+		return false;
+	}
+}
+
+function enableAppartnaumtLandDetails() {
 	if (document.forms[0].appurtenantLandChecked.checked == true) {
 		jQuery('tr.vacantlanddetaills').show();
 		jQuery('#appurtenantRow').show();
@@ -102,6 +109,7 @@ function enableFieldsForPropType() {
 			jQuery('tr.construction').show();
 			jQuery('tr.amenities').show();
 			jQuery('#extentAppartenauntLand').val("");
+			jQuery("#appurtenantLandChecked").prop('checked', false);
 			jQuery('#appurtenantRow').hide();
 			jQuery('tr.extentSite').show();
 			jQuery('tr.appurtenant').show();

@@ -173,7 +173,7 @@
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="isextent.appurtntland" /> : 
 		<td class="bluebox"><s:checkbox name="propertyDetail.appurtenantLandChecked" id="appurtenantLandChecked"
-				value="%{propertyDetail.appurtenantLandChecked}" onclick="enableAppartnaumtLandDetails();" />
+				value="%{propertyDetail.appurtenantLandChecked}" onclick="enableAppartnaumtLandDetails();" onfocus="makePropertyTypeMandatory();"/>
 		</td>
 		<td class="bluebox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="bluebox"><s:textfield maxlength="64" name="propertyDetail.occupancyCertificationNo" id="certificationNumber" value="%{propertyDetail.occupancyCertificationNo}"/></td>
