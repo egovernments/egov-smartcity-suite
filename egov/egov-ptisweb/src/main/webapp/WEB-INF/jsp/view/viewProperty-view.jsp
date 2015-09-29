@@ -120,8 +120,6 @@
 							onclick="window.location='../modify/modifyProperty-modifyForm.action?modifyRsn=BIFURCATE&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
 						<input type="button" class="buttonsubmit" name="btnTrnsProperty" id="btnTrnsProperty" value="Transfer Ownership"
 							onclick="window.location='../property/transfer/new.action?assessmentNo=<s:property value="%{basicProperty.upicNo}" />';" />
-						<input type="button" class="buttonsubmit" name="btnDemolitionProperty" id="btnDemolitionProperty" value="Demolition"
-							onclick="window.location='/ptis/property/demolition/<s:property value="%{basicProperty.upicNo}"/>'" />
 					</s:if>
 					<s:else>
 						<input type="button" class="buttonsubmit" name="objection" id="objection" value="Create Revision Petition"
