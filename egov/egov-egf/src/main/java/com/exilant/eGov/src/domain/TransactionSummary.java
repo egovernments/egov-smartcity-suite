@@ -72,7 +72,7 @@ public class TransactionSummary {
 	private String updateQuery = "UPDATE TransactionSummary SET";
 	private boolean isId = false, isField = false;
 	private static final Logger LOGGER = Logger
-			.getLogger(SupplierBillDetail.class);
+			.getLogger(TransactionSummary.class);
 
 	public void setId(String aId) {
 		id = aId;

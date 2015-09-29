@@ -62,7 +62,6 @@ import com.exilant.eGov.src.domain.GeneralLedger;
 import com.exilant.eGov.src.domain.GeneralLedgerDetail;
 import com.exilant.eGov.src.domain.VoucherHeader;
 import com.exilant.eGov.src.domain.VoucherMIS;
-import com.exilant.eGov.src.domain.egfRecordStatus;
 import com.exilant.eGov.src.transactions.ExilPrecision;
 import com.exilant.eGov.src.transactions.PreDefinedAccCodes;
 import com.exilant.exility.common.DataCollection;
@@ -190,13 +189,13 @@ private void loadData(String cgNo) throws TaskFailedException{
 	//vcDetail=de.extractIntoMap(vdSql+vcHID+extraSQL,"id",VoucherDetail.class);
 	//load General Ledger
 	gLedger=de.extractIntoMap(glSql+vcHID+extraSQL,"voucherLineId",GeneralLedger.class);
-	egfDetail=de.extractIntoMap(egfSql+vcHID,"id",egfRecordStatus.class);
+	//egfDetail=de.extractIntoMap(egfSql+vcHID,"id",egfRecordStatus.class);
 }
 private String postInVoucherHeader(String cgNo,String newVcNo,String effDate,String cgvNo,String uId) throws Exception{
 	String today;
 	//String oldVdId="";
 	VoucherHeader vhObj=(VoucherHeader)vcHeader.get(cgNo);
-	egfRecordStatus egfstatus = new egfRecordStatus();
+	//egfRecordStatus egfstatus = new egfRecordStatus();
 	EGovernCommon egCom=new EGovernCommon();
 	if(vhObj.getStatus().equals("1")){
 		throw new TaskFailedException("Already Reversed");
@@ -218,14 +217,14 @@ private String postInVoucherHeader(String cgNo,String newVcNo,String effDate,Str
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("dateformat is  "+ dateformat);
 	
 	//insert the old one with status as reversed for egf_record_status
-	egfstatus.setVoucherheaderId(String.valueOf(vhObj.getId()));
+/*	egfstatus.setVoucherheaderId(String.valueOf(vhObj.getId()));
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("vhobj type "+ vhObj.getType());
 	egfstatus.setStatus("2");
 	egfstatus.setRecord_Type(vhObj.getName()+" "+vhObj.getType());
 	egfstatus.setEffectiveDate(dateformat);
 	egfstatus.setUserId(uId);
 	//egfstatus.update(con);
-	egfstatus.insert();
+	egfstatus.insert();*/
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("inserted in  EGF as status 2");
 	
 	//insert the old one with status as new
@@ -252,7 +251,7 @@ private String postInVoucherHeader(String cgNo,String newVcNo,String effDate,Str
 	vhObj.setCreatedby(uId);
 	vhObj.insert();
 
-	//	insert the old one with status as cancelled for egf_record_status
+/*	//	insert the old one with status as cancelled for egf_record_status
 
 	egfRecordStatus egfstatus1 = new egfRecordStatus();
 	egfstatus1.setVoucherheaderId(String.valueOf(vhObj.getId()));
@@ -261,7 +260,7 @@ private String postInVoucherHeader(String cgNo,String newVcNo,String effDate,Str
 	egfstatus1.setEffectiveDate(formatter.format(sdf.parse(today)));
 	egfstatus1.setUserId(uId);
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("INSERTING VOUCHER STATUS");
-	egfstatus1.insert();
+	egfstatus1.insert();*/
 
 	//Post to VoucherMIS table
 	//if(fieldID != null)

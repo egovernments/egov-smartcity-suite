@@ -74,7 +74,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.domain.VoucherHeader;
 import com.exilant.eGov.src.domain.VoucherMIS;
-import com.exilant.eGov.src.domain.egfRecordStatus;
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
@@ -1289,7 +1288,7 @@ public BigDecimal getAccountBalance(String recDate,String bankAccountId) throws 
 	 //public void setId(String aId){ id = aId; }//Added by sumit for EGF_RECORD_STATUS table
 
 	public void UpdateVoucherStatus(DataCollection datacol,String type,int voucherHeaderId)throws TaskFailedException {
-	 	egfRecordStatus egfstatus = new egfRecordStatus();
+	 //	egfRecordStatus egfstatus = new egfRecordStatus();
 	 	String today;
 	 	try
 	 	{
@@ -1306,12 +1305,12 @@ public BigDecimal getAccountBalance(String recDate,String bankAccountId) throws 
 			SimpleDateFormat formatter = dtFormat;
 			today=cm.getCurrentDateTime();
 
-			egfstatus.setEffectiveDate(formatter.format(sdf.parse( today )));
+/*			egfstatus.setEffectiveDate(formatter.format(sdf.parse( today )));
 	 		egfstatus.setVoucherheaderId(String.valueOf(voucherHeaderId));
 	 		egfstatus.setRecord_Type(type);
 	 		egfstatus.setStatus(String.valueOf(recStatus));
 	 		egfstatus.setUserId(datacol.getValue("current_UserID"));
-	 		egfstatus.insert();
+	 		egfstatus.insert();*/
 	 	}catch(Exception e){
 	 		datacol.addMessage(EXILRPERROR,"Voucher Status not inserted");
 	 		LOGGER.error(e.getMessage(), e);
@@ -1322,7 +1321,7 @@ public BigDecimal getAccountBalance(String recDate,String bankAccountId) throws 
 /**
  * Overloaded UpdateVoucherStatus method without datacol parameter
  */
-	public void UpdateVoucherStatus(String type,int voucherHeaderId,int userId)throws TaskFailedException,Exception,ParseException
+/*	public void UpdateVoucherStatus(String type,int voucherHeaderId,int userId)throws TaskFailedException,Exception,ParseException
 	{
 	 	try
 	 	{
@@ -1354,7 +1353,7 @@ public BigDecimal getAccountBalance(String recDate,String bankAccountId) throws 
 	 		throw taskExc;
 	 	}
 
-	 }
+	 }*/
 
 	 public String getStartDate( String finId) throws TaskFailedException
 		{
@@ -1565,18 +1564,18 @@ public BigDecimal getAccountBalance(String recDate,String bankAccountId) throws 
 		try{
 			ps=HibernateUtil.getCurrentSession().createSQLQuery(getRefVoucher);
 			vh.setId(voucherHeaderId);
-			egfRecordStatus egfstatus= new egfRecordStatus();
+			//egfRecordStatus egfstatus= new egfRecordStatus();
 			SimpleDateFormat sdf =sdfFormatddMMyyyy;
 			SimpleDateFormat formatter = dtFormat;
 			EGovernCommon cm=new EGovernCommon();
 			today=cm.getCurrentDate();
 	
-			if(LOGGER.isDebugEnabled())     LOGGER.debug("Update the egf_record_status table of original voucher");
+/*			if(LOGGER.isDebugEnabled())     LOGGER.debug("Update the egf_record_status table of original voucher");
 			egfstatus.setEffectiveDate(formatter.format(sdf.parse( today )));
 			egfstatus.setStatus("4");
 			egfstatus.setVoucherheaderId(voucherHeaderId);
 			egfstatus.update();
-			if(LOGGER.isDebugEnabled())     LOGGER.debug("Update the original voucher");
+*/			if(LOGGER.isDebugEnabled())     LOGGER.debug("Update the original voucher");
 			vh.setStatus(""+4);
 			vh.update();
 	
@@ -1584,13 +1583,13 @@ public BigDecimal getAccountBalance(String recDate,String bankAccountId) throws 
 			ps.setString(1,voucherHeaderId);
 			rs=ps.list();
 			for(Object[] element : rs){
-				egfRecordStatus egfstatusRef= new egfRecordStatus();
+				//egfRecordStatus egfstatusRef= new egfRecordStatus();
 				String refVhid=(element[0].toString());
 				vh.setId(refVhid);
-				egfstatusRef.setEffectiveDate(formatter.format(sdf.parse( today )));
+				/*egfstatusRef.setEffectiveDate(formatter.format(sdf.parse( today )));
 				egfstatusRef.setStatus("4");
 				egfstatusRef.setVoucherheaderId(refVhid);
-				egfstatusRef.update();
+				egfstatusRef.update();*/
 				vh.setStatus(""+4); if(LOGGER.isDebugEnabled())     LOGGER.debug("before voucher update");
 				vh.update();
 			}

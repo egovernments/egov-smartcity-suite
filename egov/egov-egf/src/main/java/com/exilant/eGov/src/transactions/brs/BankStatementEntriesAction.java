@@ -98,7 +98,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.domain.BankBranch;
 import com.exilant.eGov.src.domain.BankEntries;
-import com.exilant.eGov.src.domain.Fund;
+import org.egov.commons.Fund;
 import com.exilant.eGov.src.transactions.CommonMethodsI;
 import com.exilant.eGov.src.transactions.CommonMethodsImpl;
 import com.exilant.exility.common.TaskFailedException;
@@ -193,7 +193,9 @@ public class BankStatementEntriesAction extends DispatchAction {
                                 ArrayList al=be.getRecords((String)bankRecForm.get(ACCID));
                                 //List instrumentList=getInstrumentListByAccountId(Integer.valueOf((String)bankRecForm.get(ACCID)));
                                 Fund fu=new Fund();
-                                HashMap fudList=fu.getFundList(null);
+                                //TODO- make changes for using Fund from commons
+                              //  HashMap fudList=fu.getFundList(null);
+                                HashMap fudList=null;
                                 
                                 
                                 List departmentList = deptManager.getAllDepartments();

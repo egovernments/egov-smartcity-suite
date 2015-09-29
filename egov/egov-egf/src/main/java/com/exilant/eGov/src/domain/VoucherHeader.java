@@ -595,16 +595,16 @@ public class VoucherHeader {
 		if(LOGGER.isInfoEnabled())     LOGGER.info("getRefVoucher   " + getRefVoucher);
 		ps = HibernateUtil.getCurrentSession().createSQLQuery(getRefVoucher);
 		vh.setId(vid);
-		egfRecordStatus egfstatus = new egfRecordStatus();
+		//egfRecordStatus egfstatus = new egfRecordStatus();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
 		EGovernCommon cm = new EGovernCommon();
 		today = cm.getCurrentDate();
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Update the egf_record_status table of original voucher");
-		egfstatus.setEffectiveDate(formatter.format(sdf.parse(today)));
+/*		egfstatus.setEffectiveDate(formatter.format(sdf.parse(today)));
 		egfstatus.setStatus("4");
 		egfstatus.setVoucherheaderId(vid);
-		egfstatus.update();
+		egfstatus.update();*/
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Update the original voucher");
 		vh.setStatus("" + 4);
 		vh.update();
@@ -614,13 +614,13 @@ public class VoucherHeader {
 		rs = ps.list();
 		// if(LOGGER.isInfoEnabled())     LOGGER.info("if any related vouchers exist then we need to  that also.");
 		for(Object[] element : rs){
-			egfRecordStatus egfstatusRef = new egfRecordStatus();
+			//egfRecordStatus egfstatusRef = new egfRecordStatus();
 			String refVhid = element[0].toString();
 			vh.setId(refVhid);
-			egfstatusRef.setEffectiveDate(formatter.format(sdf.parse(today)));
+/*			egfstatusRef.setEffectiveDate(formatter.format(sdf.parse(today)));
 			egfstatusRef.setStatus("4");
 			egfstatusRef.setVoucherheaderId(refVhid);
-			egfstatusRef.update();
+			egfstatusRef.update();*/
 			vh.setStatus("" + 4);
 			if(LOGGER.isInfoEnabled())     LOGGER.info("before voucher update");
 			vh.update();

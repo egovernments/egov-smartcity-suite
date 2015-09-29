@@ -49,8 +49,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.VoucherDetails;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.exilant.eGov.src.domain.EGBillPayeeDetails;
+import org.egov.model.bills.EgBillPayeedetails;
 
 /**
  * @author mani
@@ -85,15 +84,15 @@ public class BillReport {
 	public void setBill(EgBillregister bill) {
 		this.bill = bill;
 	}
-	public EGBillPayeeDetails getBillPayeeDetails() {
+	public EgBillPayeedetails getBillPayeeDetails() {
 		return billPayeeDetails;
 	}
-	public void setBillPayeeDetails(EGBillPayeeDetails billPayeeDetails) {
+	public void setBillPayeeDetails(EgBillPayeedetails billPayeeDetails) {
 		this.billPayeeDetails = billPayeeDetails;
 	}
 	VoucherDetails voucherDetails;
 	EgBillregister bill;
-	EGBillPayeeDetails billPayeeDetails;
+	EgBillPayeedetails billPayeeDetails;
 	Map<String,Object> budgetApprDetails;
 	public Map<String,Object>  getBudgetApprDetails() {
 		return budgetApprDetails;
