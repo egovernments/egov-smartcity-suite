@@ -140,7 +140,7 @@ public class WaterTaxConstants {
     public static final String APPLICATION_STATUS_CLOSERINPROGRESS = "CLOSERINPROGRESS";
     public static final String APPLICATION_STATUS_CLOSERAPRROVED = "CLOSERAPPROVED";
     public static final String APPLICATION_STATUS_CLOSERSANCTIONED = "CLOSERSANCTIONED";
-    public static final String  WORKFLOW_ADDITIONALRULE = "CLOSECONNECTION";
+    public static final String  WORKFLOW_CLOSUREADDITIONALRULE = "CLOSECONNECTION";
     
     // appconfig key
     public static final String SENDSMSFORWATERTAX = "SENDSMSFORWATERTAX";

@@ -47,6 +47,7 @@ import javax.validation.Valid;
 
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.service.CloserConnectionService;
@@ -113,7 +114,7 @@ public class CloserConnectionController extends GenericConnectionController {
     private String loadViewData(final Model model, final HttpServletRequest request,
             final WaterConnectionDetails waterConnectionDetails) {
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
-        model.addAttribute("additionalRule", WaterTaxConstants.WORKFLOW_ADDITIONALRULE);
+        model.addAttribute("additionalRule", WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE);
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
         final Map<String, String> connectionTypeMap = new LinkedHashMap<String, String>();
@@ -126,6 +127,7 @@ public class CloserConnectionController extends GenericConnectionController {
                 "connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(
                         waterConnectionDetails.getConnectionType().name()));
+        //waterConnectionDetails.getApplicationDocs().add(new ApplicationDocuments());
         model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("validationMessage",
@@ -151,7 +153,10 @@ public class CloserConnectionController extends GenericConnectionController {
 
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
-
+        
+       /* String docName=request.getParameter("documentNumber");
+        processAndStoreApplicationDocuments(waterConnectionDetails);*/
+        
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
         waterConnectionDetails.setCloseConnectionType(request.getParameter("closeConnectionType").charAt(0));
