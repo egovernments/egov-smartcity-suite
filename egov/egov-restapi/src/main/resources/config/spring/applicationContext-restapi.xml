@@ -58,5 +58,4 @@
 	</bean>
     
 	<bean name="apiFilter" class="org.egov.api.filter.ApiFilter" />
-	<bean id="propertyExternalService" class="org.egov.ptis.domain.service.property.PropertyExternalService" scope="prototype"/>
 </beans>
