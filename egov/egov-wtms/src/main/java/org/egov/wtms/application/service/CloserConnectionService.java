@@ -102,11 +102,11 @@ public class CloserConnectionService {
             if (parentWaterConnectionDetail.getDemand().getBaseDemand().doubleValue()
                     - parentWaterConnectionDetail.getDemand().getAmtCollected().doubleValue() > 0)
                 validationMessage = messageSource
-                        .getMessage("err.validate.primary.connection.wtdue.forchangeofuse", null, null);
-            if (parentWaterConnectionDetail.getConnection().getId() != null)
+                        .getMessage("err.validate.primary.connection.wtdue.forclosureConnection", null, null);
+    /*        if (parentWaterConnectionDetail.getConnection().getId() != null)
                 if (waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0)
                     validationMessage = messageSource.getMessage("err.validate.additional.connection.wtdue.forchangeofuse",
-                            null, null);
+                            null, null);*/
         } else if (null != inWorkflow)
             validationMessage = messageSource.getMessage(
                     "err.validate.changeofUse.application.inprocess",
