@@ -242,9 +242,7 @@
 				<s:text name="Ward" />
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				<s:property
-					value="%{basicProperty.propertyID.ward.boundaryNum}" />-<s:property
-					default="N/A" value="%{basicProperty.propertyID.ward.name}" />
+				<s:property	default="N/A" value="%{basicProperty.propertyID.ward.name}" />
 			</div>
 		</div>
 		<div class="row add-border">
