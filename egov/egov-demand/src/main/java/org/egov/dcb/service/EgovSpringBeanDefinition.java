@@ -55,8 +55,7 @@ public class EgovSpringBeanDefinition {
 			                "config/spring/applicationContext-eis.xml",
 			                "config/spring/applicationContext-egf.xml",
 			                "config/spring/applicationContext-egf-global-services.xml",
-			                "config/spring/applicationContext-collection-global-services.xml",
-                                        "config/spring/applicationContext-collection.xml"
+			                "config/spring/applicationContext-collection-global-services.xml"
 					})
 			.getBean("beanProvider");
 
