@@ -116,8 +116,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import com.exilant.eGov.src.domain.Bank;
-
+//import com.exilant.eGov.src.domain.Bank;
+import org.egov.commons.Bank;
 
 /**
  * @author msahoo

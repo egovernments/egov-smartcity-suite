@@ -61,7 +61,7 @@ import com.exilant.GLEngine.Transaxtion;
 import com.exilant.GLEngine.TransaxtionParameter;
 import com.exilant.eGov.src.common.DataValidator;
 import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.eGov.src.domain.BankAccount;
+import org.egov.commons.Bankaccount;
 import com.exilant.eGov.src.domain.BankReconciliation;
 import com.exilant.eGov.src.domain.VoucherHeader;
 import com.exilant.exility.common.AbstractTask;
@@ -146,7 +146,7 @@ public class BankEntry extends AbstractTask{
 			if(!cm.isUniqueVN(dc,voucherNumber))
 			throw new TaskFailedException();
 			postInVoucherHeader(dc,conn);
-			postInBankAccount(dc);
+			//postInBankAccount(dc);
 			postInBankReconciliation(dc);
 			postInVoucherDetail(dc, transactions);
 			/*added the necessary data to each of objects*/
@@ -209,9 +209,9 @@ public class BankEntry extends AbstractTask{
 		voucherHeaderId = vh.getId();
 	}
 
-	private void postInBankAccount (DataCollection dc) throws TaskFailedException
+/*	private void postInBankAccount (DataCollection dc) throws TaskFailedException
 	{
-		BankAccount ba = new BankAccount();
+	    Bankaccount ba = new Bankaccount();
 	   	try{
 	   		String sql = "select currentBalance from bankAccount where id = ?  for update";
 	   		pstmt = connection.prepareStatement(sql);
@@ -246,15 +246,15 @@ public class BankEntry extends AbstractTask{
    				throw taskExc;
    			}
 
-	   		ba.setId(dc.getValue("bankAccount_id"));
-	   		ba.setCurrentBalance(balAvailable + "");
+	   		ba.setId((Long)(dc.getValue("bankAccount_id").toString()));
+	   		//ba.setCurrentBalance(balAvailable + "");
 	   		ba.update();
 	   	}catch(SQLException sqlEx){
 	   		LOGGER.error(sqlEx.getMessage(), sqlEx);
 	   		dc.addMessage("exilError","no record for account id " + dc.getValue("bankAccount_id") + " in Bankaccount");
 			throw taskExc;
 	   	}
-	}
+	}*/
 
 	private void postInBankReconciliation(DataCollection dc) throws TaskFailedException
 	{
