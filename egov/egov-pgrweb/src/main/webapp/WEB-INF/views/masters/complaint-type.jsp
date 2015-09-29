@@ -110,9 +110,17 @@
 							<form:checkbox path="isActive" id="comp_type_isactive" />
 							<form:errors path="isActive" cssClass="error-msg" />
 						</div>
-
 					</div>
-					
+					<div class="form-group">
+						<label class="col-sm-3 control-label"> 
+						<spring:message	code="lbl.slahrs" /></label>
+						<div class="col-sm-6 add-margin">
+							<form:input path="slaHours" id="slahours"
+								cssClass="form-control"
+								cssErrorClass="form-control error" />
+							<form:errors path="slaHours" cssClass="error-msg" />
+						</div>
+					</div>
 					<div class="form-group">
 						<label class="col-sm-3 control-label"> 
 						<spring:message	code="lbl.complaintTypeDesc" /></label>

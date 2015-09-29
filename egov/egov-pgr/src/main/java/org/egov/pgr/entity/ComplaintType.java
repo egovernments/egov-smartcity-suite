@@ -48,6 +48,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -95,6 +96,9 @@ public class ComplaintType extends AbstractAuditable {
     @Length(max = 100)
     @SafeHtml
     private String description;
+    
+    @NotNull
+    private Integer slaHours;
 
     @Override
     public Long getId() {
@@ -148,5 +152,13 @@ public class ComplaintType extends AbstractAuditable {
 
     public JSONObject toJsonObject() {
         return Serializer.fromJson(Serializer.toJson(this), JSONObject.class);
+    }
+
+    public Integer getSlaHours() {
+        return slaHours;
+    }
+
+    public void setSlaHours(Integer slaHours) {
+        this.slaHours = slaHours;
     }
 }

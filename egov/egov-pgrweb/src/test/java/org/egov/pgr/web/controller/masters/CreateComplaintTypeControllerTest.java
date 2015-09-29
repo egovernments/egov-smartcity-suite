@@ -134,9 +134,10 @@ public class CreateComplaintTypeControllerTest extends AbstractContextController
 
     @Test
     public void shouldCreateNewComplaintType() throws Exception {
+        final Integer slaHours = 24;
         this.mockMvc.perform(post("/complainttype/create")
                 .param("department", "1")
-                .param("name", "new-complaint-type").param("code", "test"))
+                .param("name", "new-complaint-type").param("code", "test").param("slaHours", "24"))
                 .andExpect(model().hasNoErrors())
                 .andExpect(view().name("redirect:/complainttype/success/new-complaint-type"));
 

@@ -110,6 +110,7 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
         ComplaintType complaintType = new ComplaintType();
         complaintType.setDepartment(department);
         complaintType.setCode("existing");
+        complaintType.setSlaHours(24);
         when(complaintTypeService.findByCode(code)).thenReturn(complaintType);
     }
 
@@ -121,6 +122,7 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
 
         ComplaintType complaintType = new ComplaintType();
         complaintType.setCode("existing");
+        complaintType.setSlaHours(24);
         code = "existing";
         when(departmentService.getAllDepartments()).thenReturn(departments);
 
@@ -138,6 +140,7 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
     public void shouldUpdateComplaintType() throws Exception {
         ComplaintType complaintType = new ComplaintType();
         complaintType.setCode("existing");
+        complaintType.setSlaHours(24);
         when(complaintTypeService.updateComplaintType(any(ComplaintType.class))).thenReturn(complaintType);
         this.mockMvc.perform(post("/complainttype/update/existing")
                 .param("name", "existing-complaint-type").param("code", "Test"))

@@ -100,6 +100,12 @@
 								<c:otherwise><spring:message code="msg.not.applicable"/></c:otherwise>
 							</c:choose>
 						</div>
+						<div class="col-md-3 col-xs-6 add-margin">
+							<spring:message code="lbl.slahrs" />
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-slahrs">
+							<c:out value="${complaintType.slaHours}"></c:out>
+						</div>
 					</div>
 
 					<div class="row text-center">
