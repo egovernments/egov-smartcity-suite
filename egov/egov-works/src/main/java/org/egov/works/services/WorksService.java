@@ -59,13 +59,16 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsService;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeView;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
@@ -74,9 +77,7 @@ import org.egov.masters.dao.MastersDAOFactory;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.works.utils.WorksConstants;
@@ -88,12 +89,15 @@ public class WorksService {
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
-    private EmployeeServiceOld employeeServiceOld;
-    @Autowired
     private CommonsService commonsService;
     private PersistenceService persistenceService;
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+    @Autowired
     private EisUtilService eisService;
+    @Autowired
+    private EmployeeService employeeService;
+    @Autowired
+    private AssignmentService assignmentService;
 
     /**
      * This method will return the value in AppConfigValue table for the given module and key.
@@ -149,16 +153,10 @@ public class WorksService {
         final DeptDesig deptDesig = position.getDeptDesig();
         final Designation designationMaster = deptDesig.getDesignation();
         designationName = designationMaster.getName();
-        PersonalInformation personalInformation = null;
-        try {
-            personalInformation = employeeServiceOld.getEmpForPositionAndDate(date,
-                    Integer.parseInt(position.getId().toString()));
-        } catch (final Exception e) {
-            logger.debug("exception " + e);
-        }
+        final Employee employee = assignmentService.getPrimaryAssignmentForPositionAndDate(position.getId(), date).getEmployee();
 
-        if (personalInformation != null && personalInformation.getEmployeeName() != null)
-            empName = personalInformation.getEmployeeName();
+        if (employee != null && employee.getName() != null)
+            empName = employee.getName();
 
         return empName + "@" + designationName;
     }
@@ -245,15 +243,15 @@ public class WorksService {
     public boolean validateWorkflowForUser(final StateAware wfObj, final User user) {
 
         boolean validateUser = true;
-        List<Position> positionList = null;
+        List<Assignment> assignmentList = null;
+        final List<Position> positionList = new ArrayList<Position>();
         if (user != null && wfObj.getCurrentState() != null
                 && !wfObj.getCurrentState().getValue().equals(WorksConstants.END)) {
-            try {
-                positionList = employeeServiceOld.getPositionsForUser(user, new Date());
-            } catch (final ApplicationException egovExp) {
-                throw new ApplicationRuntimeException("Error: In getting position for user ", egovExp);
-            }
-            if (positionList.contains(wfObj.getCurrentState().getOwnerPosition()))
+            assignmentList = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date());
+            for (final Assignment assignment : assignmentList)
+                positionList.add(assignment.getPosition());
+
+            if (!positionList.isEmpty() && positionList.contains(wfObj.getCurrentState().getOwnerPosition()))
                 validateUser = false;
         }
 
@@ -1076,7 +1074,7 @@ public class WorksService {
     public List<Department> getAllDeptmentsForLoggedInUser() {
         // load the primary and secondary assignment departments of the logged
         // in user
-        final PersonalInformation employee = employeeServiceOld.getEmpForUserId(getCurrentLoggedInUserId());
+        final Employee employee = employeeService.getEmployeeById(getCurrentLoggedInUserId());
         final HashMap<String, String> paramMap = new HashMap<String, String>();
         paramMap.put("code", employee.getCode());
         final List<EmployeeView> listEmployeeView = eisService.getEmployeeInfoList(paramMap);
@@ -1094,7 +1092,7 @@ public class WorksService {
 
     public Department getDepartmentByName(final String deptName) {
         Department dept = null;
-        dept = (Department) persistenceService.find("from DepartmentImpl where deptName=?", deptName);
+        dept = (Department) persistenceService.find("from Department where name=?", deptName);
 
         return dept;
     }
@@ -1111,10 +1109,6 @@ public class WorksService {
 
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
-    }
-
-    public void setEisService(final EisUtilService eisService) {
-        this.eisService = eisService;
     }
 
     /**

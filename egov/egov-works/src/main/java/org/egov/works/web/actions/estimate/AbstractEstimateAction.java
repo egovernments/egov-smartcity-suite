@@ -70,9 +70,9 @@ import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Fundsource;
 import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.service.CommonsService;
-import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.EisCommonService;
+import org.egov.eis.entity.Employee;
+import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -86,9 +86,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.model.budget.BudgetUsage;
-import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.Activity;
 import org.egov.works.models.estimate.AssetsForEstimate;
@@ -133,7 +131,7 @@ public class AbstractEstimateAction extends BaseFormAction {
     private AbstractEstimateService abstractEstimateService;
 
     @Autowired
-    private EisCommonService eisCommonService;
+    private EmployeeService employeeService;
     @Autowired
     private UserService userService;
 
@@ -150,7 +148,6 @@ public class AbstractEstimateAction extends BaseFormAction {
     private String approverComments;
     private Long stateValue;
     private String estimateValue;
-    private List usersInOldAndNewExecutingDepartment;
     private ReportService reportService;
     public static final String BOQ = "Bill Of Qunatities";
     private InputStream xlsInputStream;
@@ -162,8 +159,6 @@ public class AbstractEstimateAction extends BaseFormAction {
     private String employeeName;
     private String designation;
     private WorksService worksService;
-    @Autowired
-    private PersonalInformationService personalInformationService;
     private Long estimateId;
     private String cancellationReason;
     private String cancelRemarks;
@@ -171,12 +166,12 @@ public class AbstractEstimateAction extends BaseFormAction {
     private String mapMode;
     private String latitude;
     private String longitude;
+    @Autowired
     private EisUtilService eisService;
     private boolean digitalSign;
     private List<Object> woDetails;
     private List<Object> wpDetails;
     private BigDecimal paymentReleased = BigDecimal.ZERO;
-    private EgovCommon egovCommon;
     private ContractorBillService contractorBillService;
     @Autowired
     private FundSourceHibernateDAO fundSourceHibernateDAO;
@@ -320,11 +315,6 @@ public class AbstractEstimateAction extends BaseFormAction {
         populateOverheadsList(ajaxEstimateAction, abstractEstimate.getEstimateDate() != null);
         addDropdownData("fundSourceList", fundSourceHibernateDAO.findAllActiveIsLeafFundSources());
 
-        if (abstractEstimate != null
-                && abstractEstimate.getEgwStatus() != null
-                && abstractEstimate.getEgwStatus().getCode()
-                        .equals(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()))
-            getUsersInOldAndNewExecutingDepartment();
     }
 
     public String moveEstimate() {
@@ -697,21 +687,6 @@ public class AbstractEstimateAction extends BaseFormAction {
         }
     }
 
-    public void getUsersInOldAndNewExecutingDepartment() {
-        try {
-            final HashMap<String, Object> criteriaParams = new HashMap<String, Object>();
-            criteriaParams.put("departmentId", abstractEstimate.getExecutingDepartment().getId());
-            usersInOldAndNewExecutingDepartment = personalInformationService.getListOfEmployeeViewBasedOnCriteria(
-                    criteriaParams, -1, -1);
-
-            if (usersInOldAndNewExecutingDepartment == null || usersInOldAndNewExecutingDepartment.size() == 0)
-                usersInOldAndNewExecutingDepartment = Collections.EMPTY_LIST;
-        } catch (final Exception e) {
-            throw new ApplicationRuntimeException("user.find.error", e);
-        }
-        addDropdownData("preparedByList", usersInOldAndNewExecutingDepartment);
-    }
-
     protected boolean validMultiYearEstimate(final MultiYearEstimate multiYearEstimate) {
         if (multiYearEstimate != null && multiYearEstimate.getFinancialYear() != null
                 && multiYearEstimate.getFinancialYear().getId() != null
@@ -725,15 +700,10 @@ public class AbstractEstimateAction extends BaseFormAction {
         abstractEstimate = abstractEstimateService.findById(estimateId, false);
 
         final String oldEstimateNo = abstractEstimate.getEstimateNumber();
-
-        final PersonalInformation prsnlInfo = eisCommonService.getEmployeeByUserId(worksService
-                .getCurrentLoggedInUserId());
+        final Employee employee = employeeService.getEmployeeById(worksService.getCurrentLoggedInUserId());
         String empName = "";
-        if (prsnlInfo.getEmployeeFirstName() != null)
-            empName = prsnlInfo.getEmployeeFirstName();
-        if (prsnlInfo.getEmployeeLastName() != null)
-            empName = empName.concat(" ").concat(prsnlInfo.getEmployeeLastName());
-
+        if (employee != null)
+            empName = employee.getName();
         if (cancelRemarks != null && StringUtils.isNotBlank(cancelRemarks))
             cancellationReason.concat(" : ").concat(cancelRemarks).concat(". ")
                     .concat(getText("estimate.cancel.cancelledby")).concat(": ").concat(empName);
@@ -945,14 +915,6 @@ public class AbstractEstimateAction extends BaseFormAction {
         this.assetStatus = assetStatus;
     }
 
-    public CommonsService getCommonsService() {
-        return commonsService;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
-    }
-
     public Integer getApproverUserId() {
         return approverUserId;
     }
@@ -1085,10 +1047,6 @@ public class AbstractEstimateAction extends BaseFormAction {
         this.longitude = longitude;
     }
 
-    public void setEisService(final EisUtilService eisService) {
-        this.eisService = eisService;
-    }
-
     public double getUtilizedAmount() {
         return utilizedAmount;
     }
@@ -1103,14 +1061,6 @@ public class AbstractEstimateAction extends BaseFormAction {
 
     public void setDigitalSign(final boolean digitalSign) {
         this.digitalSign = digitalSign;
-    }
-
-    public EgovCommon getEgovCommon() {
-        return egovCommon;
-    }
-
-    public void setEgovCommon(final EgovCommon egovCommon) {
-        this.egovCommon = egovCommon;
     }
 
     public BigDecimal getPaymentReleased() {
