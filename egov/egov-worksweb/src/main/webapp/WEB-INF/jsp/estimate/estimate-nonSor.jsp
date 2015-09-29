@@ -65,7 +65,7 @@
 var uomDropdownOptions=[{label:"--- Select ---", value:"0"},
 
     <s:iterator var="s" value="dropdownData.uomList" status="status">  
-    {"label":"<s:property value="%{egUomcategory.category}"/> -- <s:property value="%{uom}" />" ,
+    {"label":"<s:property value="%{uomcategory.category}"/> -- <s:property value="%{uom}" />" ,
     "value":"<s:property value="%{id}" />"
     }<s:if test="!#status.last">,</s:if>
     </s:iterator>       

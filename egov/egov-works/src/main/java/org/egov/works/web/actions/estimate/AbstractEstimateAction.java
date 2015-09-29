@@ -68,6 +68,7 @@ import org.egov.common.entity.UOM;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Fundsource;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
@@ -109,7 +110,9 @@ import net.sf.jasperreports.engine.JRException;
         "inputName", "XlsInputStream", "contentType", "application/xls", "contentDisposition",
         "no-cache;filename=AbstractEstimate-BillOfQuantites.xls" }),
         @Result(name = AbstractEstimateAction.NEW, location = "abstractEstimate-new.jsp"),
-        @Result(name = AbstractEstimateAction.MAPS, location = "abstractEstimate-maps.jsp") })
+        @Result(name = AbstractEstimateAction.MAPS, location = "abstractEstimate-maps.jsp"),
+        @Result(name = AbstractEstimateAction.EDIT, location = "abstractEstimate-edit.jsp"),
+        @Result(name = AbstractEstimateAction.SUCCESS, location = "abstractEstimate-success.jsp") })
 public class AbstractEstimateAction extends BaseFormAction {
 
     private static final long serialVersionUID = -4801105778751138267L;
@@ -175,6 +178,8 @@ public class AbstractEstimateAction extends BaseFormAction {
     private ContractorBillService contractorBillService;
     @Autowired
     private FundSourceHibernateDAO fundSourceHibernateDAO;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     public String getMessageKey() {
         return messageKey;
@@ -321,7 +326,8 @@ public class AbstractEstimateAction extends BaseFormAction {
         }
     }
 
-    public String moveEstimate() {
+    @Action(value = "/estimate/abstractEstimate-save")
+    public String save() {
         final String actionName = parameters.get("actionName")[0];
         if (actionName != null
                 && !(actionName.equals("reject") || actionName.equals("save") || actionName
@@ -556,7 +562,7 @@ public class AbstractEstimateAction extends BaseFormAction {
 
         }
         if (SAVE_ACTION.equals(actionName) && abstractEstimate.getEgwStatus() == null)
-            abstractEstimate.setEgwStatus(commonsService.getStatusByModuleAndCode("AbstractEstimate", "NEW"));
+            abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("AbstractEstimate", "NEW"));
         abstractEstimate = abstractEstimateService.persist(abstractEstimate);
     }
 
@@ -748,7 +754,7 @@ public class AbstractEstimateAction extends BaseFormAction {
          * owner, null);
          *******/
 
-        abstractEstimate.setEgwStatus(commonsService.getStatusByModuleAndCode("AbstractEstimate",
+        abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("AbstractEstimate",
                 AbstractEstimate.EstimateStatus.CANCELLED.toString()));
         getBudgetUsageListForEstimateNumber(oldEstimateNo);
 

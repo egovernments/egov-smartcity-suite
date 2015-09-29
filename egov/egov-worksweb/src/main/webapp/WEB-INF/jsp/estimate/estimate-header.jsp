@@ -198,13 +198,6 @@ function validateHeaderBeforeSubmit(abstractEstimateForm) {
         window.scroll(0,0);
         return false;
 	}
-
-   	if(dom.get('preparedBy').value==-1 || dom.get('preparedBy').value==0 || dom.get('preparedBy').value== '') {
-   	  	 dom.get("worktypeerror").style.display='';
-         dom.get("worktypeerror").innerHTML='<s:text name="estimate.preparedBy.null" />';
-         window.scroll(0,0);
-         return false;   
-    }
    	else{
         dom.get("worktypeerror").style.display='none';
         dom.get("worktypeerror").innerHTML='';
@@ -248,7 +241,6 @@ function resetDetails(){
 	resetNonSorTable();
     var elem = document.getElementById('type');
     resetOverheads();
-    // resetOverheads('0');
 }
 
 function resetPreviousDate(){
@@ -385,9 +377,9 @@ function jurisdictionSearchParameters(){
               </tr>
               <tr id="latlonDiv" style="display:none;">
 	                <td width="11%" class="whiteboxwk"><s:text name="estimate.latitude" />:</td>
-	                <td width="21%" class="whitebox2wk"><s:textfield name="latitude" value="%{latitude}" id="latitude" readonly='true' cssClass="selectwk" /></td>
+	                <td width="21%" class="whitebox2wk"><s:textfield name="latitude" value="%{latitude}" id="latitude" readonly='true' cssClass="selectwk" tabindex="-1" /></td>
 	                <td width="15%" class="whiteboxwk"><s:text name="estimate.longitude" />:</td>
-	                <td width="53%" class="whitebox2wk"><s:textfield name="longitude" value="%{longitude}" id="longitude" readonly='true' cssClass="selectwk" /></td>
+	                <td width="53%" class="whitebox2wk"><s:textfield name="longitude" value="%{longitude}" id="longitude" readonly='true' cssClass="selectwk" tabindex="-1"/></td>
               </tr>
               <tr>
                 <td class="greyboxwk"><span class="mandatory">*</span><s:text name="estimate.work.name" />:</td>

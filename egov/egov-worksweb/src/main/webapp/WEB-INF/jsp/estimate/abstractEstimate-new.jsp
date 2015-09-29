@@ -247,7 +247,6 @@ function validateCancel() {
 		return false;
 	}
 	else {
-		dom.get("preparedBy").disabled=false;
 		return true;
 	}
 }
@@ -285,8 +284,10 @@ function validate(text){
 	if(!validateUser(text))
 		return false;
 	enableFields();
-	setDocumentValues();
-	return true;
+	//setDocumentValues();
+	document.abstractEstimateForm.action='${pageContext.request.contextPath}/estimate/abstractEstimate-save.action';
+	document.abstractEstimateForm.submit();
+	//return true;
 }
 
 
@@ -423,7 +424,7 @@ jq(document).on('click', '#woView', function(){
             <td><table width="100%" align="center" border="0" cellspacing="0" cellpadding="0">
             <tr>
 	            <td width="17%" class="whiteboxwk"><s:text name="estimate.value" />:</td>
-                <td width="17%" class="whitebox2wk"><s:textfield name="estimateValue" value="%{estimateValue}"  id="estimateValue" cssClass="selectamountwk" readonly="true" align="right" />
+                <td width="17%" class="whitebox2wk"><s:textfield name="estimateValue" value="%{estimateValue}"  id="estimateValue" cssClass="selectamountwk" readonly="true" align="right" tabindex="-1" />
               </td>
 	            <td class="whiteboxwk">&nbsp;</td>
 	            <td class="whiteboxwk">&nbsp;</td>
@@ -461,7 +462,7 @@ jq(document).on('click', '#woView', function(){
 <s:if test="%{(hasErrors() || sourcepage=='inbox' || model.egwStatus==null || model.egwStatus.code=='NEW' 
 || model.egwStatus.code=='REJECTED') && (sourcepage=='inbox' || model.egwStatus==null || hasErrors())}">
 <!-- TODO:Fixeme - hard coded save button for time being till we implement common workflow -->
-<s:submit type="submit" cssClass="buttonfinal" value="SAVE" id="save" name="save" method="save" onclick="document.abstractEstimateForm.actionName.value='save';return validate('save');"/>	  	
+<input type="submit" class="buttonfinal" value="SAVE" id="save" name="save" method="save" onclick="document.abstractEstimateForm.actionName.value='save';return validate('save');" />	  	
 	<s:iterator value="%{validActions}"> 
 	  <s:if test="%{description!=''}">
 	  	<s:if test="%{description=='CANCEL' && model.estimateNumber!=null}">
