@@ -88,13 +88,12 @@ public class MutationFeeCollection extends TaxCollection {
     @Transactional
     public void updateDemandDetails(final BillReceiptInfo bri) {
         final User user = securityUtils.getCurrentUser();
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
         final PropertyMutation propertyMutation = propertyTransferService.getPropertyMutationByApplicationNo(getEgBill(
                 bri.getBillReferenceNum()).getConsumerId());
         propertyMutation.setReceiptDate(bri.getReceiptDate());
         propertyMutation.setReceiptNum(bri.getReceiptNum());
-        propertyMutation.transition(true).withSenderName(user.getName()).withDateInfo(new Date())
-                .withOwner(userAssignment.getPosition()).withStateValue(PropertyTaxConstants.TRANSFER_FEE_COLLECTED)
+        propertyMutation.transition(true).withSenderName(propertyMutation.getState().getSenderName()).withDateInfo(new Date())
+                .withOwner(propertyMutation.getState().getOwnerPosition()).withStateValue(PropertyTaxConstants.TRANSFER_FEE_COLLECTED)
                 .withNextAction(WF_STATE_COMMISSIONER_APPROVAL_PENDING);
         persistenceService.persist(propertyMutation);
         persistenceService.getSession().flush();
