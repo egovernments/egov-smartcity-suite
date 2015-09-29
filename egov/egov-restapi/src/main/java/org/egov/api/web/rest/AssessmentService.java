@@ -107,7 +107,6 @@ public class AssessmentService {
             throws JsonGenerationException, JsonMappingException, IOException {
         AssessmentDetails assessmentDetail = propertyExternalService.loadAssessmentDetails(assessmentNo,
                 PropertyExternalService.FLAG_FULL_DETAILS);
-        System.out.println("propertyExternalService:"+propertyExternalService);
         return getJSONResponse(assessmentDetail);
     }
 
