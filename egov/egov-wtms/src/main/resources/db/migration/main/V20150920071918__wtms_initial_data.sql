@@ -43,6 +43,8 @@ Insert into EG_ACTION (id,name,url,queryparams,parentmodule,ordernumber,displayn
 Insert into EG_ACTION (id,name,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate,lastmodifiedby,lastmodifieddate,application) values (nextval('SEQ_EG_ACTION'),'getchairpersonname-ajax','/application/ajax-chairPersonName',null,(select id from eg_module where name='WaterTaxMasters'),null,'getchairpersonname','false','wtms',0,1,to_timestamp('2015-08-31 13:33:48.231263','null'),1,to_timestamp('2015-08-31 13:33:48.231263','null'),(select id from eg_module where name='Water Tax Management'));
 Insert into EG_ACTION (id,name,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate,lastmodifiedby,lastmodifieddate,application) values (nextval('SEQ_EG_ACTION'),'getchairpersontableajax','/application/ajax-chairpersontable',null,(select id from eg_module where name='WaterTaxMasters'),null,'getchairpersontable','false','wtms',0,1,to_timestamp('2015-08-31 13:33:48.231263','null'),1,to_timestamp('2015-08-31 13:33:48.231263','null'),(select id from eg_module where name='WaterTaxMasters'));
 Insert into EG_ACTION (id,name,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate,lastmodifiedby,lastmodifieddate,application) values (nextval('SEQ_EG_ACTION'),'ajaxForExistredMeterReading','/ajax-meterReadingEntryExist',null,(select id from eg_module where name='WaterTaxTransactions'),4,'ajaxForExistredMeterReading','false','wtms',0,1,to_timestamp('2015-09-15 10:44:14.929994','null'),1,to_timestamp('2015-09-15 10:44:14.929994','null'),(select id from eg_module where name='Water Tax Management'));
+INSERT INTO eg_action(id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version,createdby, createddate, lastmodifiedby, lastmodifieddate,application)VALUES (nextval('seq_eg_action'), 'CloseWaterConnectionApplication', '/application/close/', null,(select id from eg_module where name='Water Tax Management'), null, 'CloseWaterConnectionApplication', false,'wtms', 0, 1, now(), 1, now(),(Select id from eg_module where name='Water Tax Management' and parentmodule is null));
+INSERT INTO eg_action(id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version,createdby, createddate, lastmodifiedby, lastmodifieddate,application)VALUES (nextval('seq_eg_action'), 'CloseWaterConnectionAcknowldgement', '/application/acknowlgementNotice', null,(select id from eg_module where name='Water Tax Management'), null, 'CloseWaterConnectionApplication', false,'wtms', 0, 1, now(), 1, now(),(Select id from eg_module where name='Water Tax Management' and parentmodule is null));
 ------------------END---------------------
 -----------------START--------------------
 INSERT INTO eg_role(id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (nextval('seq_eg_role'), 'Water Tax Approver', 'Water Tax Approver', now(), 1, 1, now(), 0);
@@ -157,6 +159,10 @@ INSERT INTO eg_roleaction (roleid,actionid) VALUES ((SELECT id FROM eg_role wher
 INSERT INTO eg_roleaction (roleid,actionid) VALUES ((SELECT id FROM eg_role where name='CSC Operator'),(SELECT id FROM eg_action WHERE name='UpdateWaterConnectionApplication' and contextroot='wtms'));
 INSERT INTO eg_roleaction (roleid,actionid) VALUES ((SELECT id FROM eg_role where name='Property Administrator'),(SELECT id FROM eg_action WHERE name='UpdateWaterConnectionApplication' and contextroot='wtms'));
 INSERT INTO eg_roleaction (roleid,actionid) VALUES ((SELECT id FROM eg_role where name='Employee'),(SELECT id FROM eg_action WHERE name='UpdateWaterConnectionApplication' and contextroot='wtms'));
+INSERT INTO eg_roleaction (actionid,roleid) VALUES ((SELECT id FROM eg_action WHERE name='CloseWaterConnectionApplication' and contextroot='wtms'),(SELECT id FROM eg_role where name='ULB Operator'));
+INSERT INTO eg_roleaction (actionid,roleid) VALUES ((SELECT id FROM eg_action WHERE name='CloseWaterConnectionApplication' and contextroot='wtms'),(SELECT id FROM eg_role where name='CSC Operator'));
+INSERT INTO eg_roleaction (actionid,roleid) VALUES ((SELECT id FROM eg_action WHERE name='CloseWaterConnectionAcknowldgement' and contextroot='wtms'),(SELECT id FROM eg_role where name='ULB Operator'));
+INSERT INTO eg_roleaction (actionid,roleid) VALUES ((SELECT id FROM eg_action WHERE name='CloseWaterConnectionAcknowldgement' and contextroot='wtms'),(SELECT id FROM eg_role where name='CSC Operator'));
 
 ------------------END---------------------
 -----------------START--------------------
@@ -233,6 +239,14 @@ INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatu
 INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (nextval('eg_wf_matrix_seq'), 'ANY', 'WaterConnectionDetails', 'Created', NULL, NULL, NULL, 'ADDNLCONNECTION', 'NEW', 'Revenue Clerk approval pending', 'Revenue Clerk', 'Clerk Approved Pending', 'Forward', NULL, NULL, '2015-08-01', '2099-04-01');
 INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (nextval('eg_wf_matrix_seq'), 'ANY', 'WaterConnectionDetails', 'Rejected', NULL, NULL, 'Revenue Clerk', 'CHANGEOFUSE', 'Clerk approved', 'Asst.engineer approval pending', 'Assistant engineer', NULL, 'Forward,Reject', NULL, NULL, '2015-08-01', '2099-04-01');
 INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (nextval('eg_wf_matrix_seq'), 'ANY', 'WaterConnectionDetails', 'Created', NULL, NULL, NULL, 'CHANGEOFUSE', 'NEW', 'Revenue Clerk approval pending', 'Revenue Clerk', 'Clerk Approved Pending', 'Forward', NULL, NULL, '2015-08-01', '2099-04-01');
+INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate)VALUES (nextval('EG_WF_MATRIX_SEQ'), 'ANY','WaterConnectionDetails', 'NEW', NULL, NULL, 'Revenue Clerk', 'CLOSECONNECTION', 'Close Connection By AE', 'close approval pending By AE', 'Assistant engineer', 'Connection Initiated', 'Forward',NULL, NULL, '2015-08-01', '2099-04-01');
+INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate)VALUES (nextval('EG_WF_MATRIX_SEQ'), 'ANY','WaterConnectionDetails', 'Close Connection By AE', NULL, NULL, 'Assistant engineer', 'CLOSECONNECTION', 'Close approve By Comm', 'Close Approval by Commissioner', 'Commissioner', 'Assistant Engineer approved', 'Forward,Reject',NULL, NULL, '2015-08-01', '2099-04-01');
+INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate)VALUES (nextval('EG_WF_MATRIX_SEQ'), 'ANY','WaterConnectionDetails', 'Close approve By Comm', NULL, NULL, 'Commissioner', 'CLOSECONNECTION', 'Generate Acknowledgemnt', 'acknowledgemnt pending', 'Revenue Clerk', 'CloseApprov by Commissioner', 'Approve,Reject',NULL, NULL, '2015-08-01', '2099-04-01');
+INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate)VALUES (nextval('EG_WF_MATRIX_SEQ'), 'ANY','WaterConnectionDetails', 'Generate Acknowledgemnt',NULL, NULL, 'Revenue Clerk', 'CLOSECONNECTION', 'END', 'END', NULL,NULL,'Generate Acknowledgement',NULL, NULL, '2015-08-01', '2099-04-01');
+INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate)VALUES (nextval('EG_WF_MATRIX_SEQ'), 'ANY','WaterConnectionDetails', 'Rejected', NULL, NULL, 'Revenue Clerk', 'CLOSECONNECTION', 'Close Connection By AE', 'Close Connection approval pending By AE', 'Assistant engineer',NULL, 'Forward,Reject',NULL, NULL, '2015-08-01', '2099-04-01');
+------------------END---------------------
+-----------------START--------------------
+insert into eg_modules (id,name,description) values(2,'Water Tax','Water Tax Module');
 ------------------END---------------------
 -----------------START--------------------
 
@@ -259,6 +273,18 @@ Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID
 Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID)
  values (nextval('SEQ_EGW_STATUS'),'WATERTAXAPPLICATION','Sanctioned',now(),
  'SANCTIONED',1);
+ Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID)
+ values (nextval('SEQ_EGW_STATUS'),'WATERTAXAPPLICATION','CloserInitiated',now(),
+ 'CLOSERINITIATED',1);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID)
+ values (nextval('SEQ_EGW_STATUS'),'WATERTAXAPPLICATION','CloserInProgress',now(),
+ 'CLOSERINPROGRESS',1);
+ Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID)
+ values (nextval('SEQ_EGW_STATUS'),'WATERTAXAPPLICATION','CloserApproved',now(),
+ 'CLOSERAPPROVED',1);
+ Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID)
+ values (nextval('SEQ_EGW_STATUS'),'WATERTAXAPPLICATION','CloserSanctioned',now(),
+ 'CLOSERSANCTIONED',1);
 
 ------------------END---------------------
 

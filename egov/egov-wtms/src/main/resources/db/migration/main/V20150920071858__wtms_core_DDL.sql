@@ -446,6 +446,8 @@ CREATE TABLE egwtr_connectiondetails
   legacy boolean,
   numberofrooms integer,
   chairperson bigint,
+  closeConnectionReason character varying(1024),
+  closeConnectionType character(1),
   ishistory boolean,
   createdby bigint NOT NULL,
   createddate timestamp without time zone NOT NULL,
