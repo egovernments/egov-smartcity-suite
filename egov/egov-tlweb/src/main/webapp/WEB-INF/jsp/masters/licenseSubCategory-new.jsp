@@ -129,22 +129,22 @@
 						<s:hidden name="userMode" id="userMode"/>
 					
 						<div class="form-group">
-							<label for="field-1" class="col-sm-2 control-label text-right"><span class="mandatory"></span><s:text
-									name="licenseSubCategory.name.lbl" /> :</label>
+							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+									name="licenseSubCategory.name.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
 								<s:textfield id="name"	name="name" value="%{name}" cssClass="form-control"/>
 							</div>
 							
-							<label for="field-1" class="col-sm-2 control-label text-right"><span class="mandatory"></span><s:text
-									name="licenseSubCategory.code.lbl" /> :</label>
+							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+									name="licenseSubCategory.code.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
 								<s:textfield id="code"	name="code" value="%{code}" cssClass="form-control"/>
 							</div>
 						</div>
 						
 						<div class="form-group">
-							<label for="field-1" class="col-sm-2 control-label text-right"><span class="mandatory"></span><s:text
-									name="licenseSubCategory.category.lbl" /> :</label>
+							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+									name="licenseSubCategory.category.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
 								<s:select headerKey="-1"
 										headerValue="%{getText('default.select')}" name="categoryId"
@@ -162,7 +162,7 @@
 			<div class="row">
 				<div class="text-center">
 					<s:if test="%{userMode!='view'}">
-						<button type="button" id="btnsave" class="btn btn-success" onclick="return validateFormAndSubmit();">
+						<button type="button" id="btnsave" class="btn btn-primary" onclick="return validateFormAndSubmit();">
 							Save</button>
 					</s:if>
 					<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">

@@ -167,23 +167,23 @@
 						<s:hidden name="userMode" id="userMode"/>
 					
 						<div class="form-group">
-							<label for="field-1" class="col-sm-2 control-label text-right"><span class="mandatory"></span><s:text
-									name="uommaster.name.lbl" /> :</label>
+							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+									name="uommaster.name.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="name"	name="name" value="%{name}" onchange="return validateData(this,'name')"/>
+								<s:textfield id="name"	name="name" class="form-control" value="%{name}" onchange="return validateData(this,'name')"/>
 							</div>
 							
-							<label for="field-1" class="col-sm-2 control-label text-right"><span class="mandatory"></span><s:text
-									name="uommaster.code.lbl" /> :</label>
+							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+									name="uommaster.code.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="code"	name="code" value="%{code}" onchange="return validateData(this,'code')"/>
+								<s:textfield id="code"	name="code" class="form-control" value="%{code}" onchange="return validateData(this,'code')"/>
 							</div>
 						</div>
 						
 						<div class="form-group">
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="uommaster.active.lbl" /> :</label>
-							<div class="col-sm-3 add-margin">
+							<div class="col-sm-3 add-margin text-left">
 								<s:checkbox id="active"	name="active" value="%{active}"/>
 							</div>
 						</div>
@@ -195,7 +195,7 @@
 			<div class="row">
 				<div class="text-center">
 					<s:if test="%{userMode!='view'}">
-						<button type="button" id="btnsave" class="btn btn-success" onclick="return validateFormAndSubmit();">
+						<button type="button" id="btnsave" class="btn btn-primary" onclick="return validateFormAndSubmit();">
 							Submit</button>
 						<button type="button" id="btnReset" type="reset" class="btn btn-default" onclick="reload();">
 						Reset</button>

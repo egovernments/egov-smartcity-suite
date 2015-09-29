@@ -87,8 +87,8 @@
 					<div class="panel-body custom-form">
 						<s:hidden name="userMode" id="userMode"/>
 						<div class="form-group">
-							<label for="field-1" class="col-sm-2 control-label text-right"><span class="mandatory"></span><s:text
-									name="uommaster.lbl" /> :</label>
+							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+									name="uommaster.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
 								<s:select headerKey="-1"
 										headerValue="%{getText('default.select')}" name="uomId"
@@ -103,11 +103,11 @@
 
 			<div class="row">
 				<div class="text-center">
-					<button type="button" id="btnedit" class="btn btn-success" onclick="return validateFormAndSubmit('edit');">
+					<button type="button" id="btnedit" class="btn btn-primary" onclick="return validateFormAndSubmit('edit');">
 						Modify</button>
-					<button type="button" id="btnview" class="btn btn-success" onclick="return validateFormAndSubmit('view');">
+					<button type="button" id="btnview" class="btn btn-primary" onclick="return validateFormAndSubmit('view');">
 						View</button>
-					<button type="button" id="btnreset" class="btn btn-success" onclick="return reload();">
+					<button type="button" id="btnreset" class="btn btn-primary" onclick="return reload();">
 						Reset</button>
 					<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
 						Close</button>
