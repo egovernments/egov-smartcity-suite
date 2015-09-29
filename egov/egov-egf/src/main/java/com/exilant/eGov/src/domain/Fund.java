@@ -76,15 +76,10 @@ public class Fund {
 	private String type = null;
 	private String lLevel = null;
 	private String parentId = null;
-	private String openingDebitBalance = "0";
-	private String openingCreditBalance = "0";
-	private String transactionDebitAmount = "0";
-	private String transactionCreditAmount = "0";
 	private String isActive = "1";
 	private String lastModified = "1-Jan-1900";
 	private String created = "1-Jan-1900";
 	private String modifiedBy = "0";
-	private String payGlcodeId = null;
 	private static TaskFailedException taskExc;
 	private static final Logger LOGGER = Logger.getLogger(Fund.class);
 	private String updateQuery = "UPDATE fund SET";
@@ -102,10 +97,7 @@ public class Fund {
 		return Integer.valueOf(id).intValue();
 	}
 
-	public String getPayGlcodeId() {
-		return payGlcodeId;
-	}
-
+	
 	public void setCode(String aCode) {
 		code = aCode;
 		isField = true;
@@ -131,35 +123,7 @@ public class Fund {
 		isField = true;
 	}
 
-	public void setOpeningDebitBalance(String aOpeningDebitBalance) {
-		openingDebitBalance = aOpeningDebitBalance;
-		isField = true;
-	}
-
-	public void setOpeningCreditBalance(String aOpeningCreditBalance) {
-		openingCreditBalance = aOpeningCreditBalance;
-		isField = true;
-	}
-
-	public void setTranscDebitAmount(String aTransactionDebitAmount) {
-		transactionDebitAmount = aTransactionDebitAmount;
-		isField = true;
-	}
-
-	public void setTranscCreditAmount(String aTransactionCreditAmount) {
-		transactionCreditAmount = aTransactionCreditAmount;
-		isField = true;
-	}
-
-	public void setTransactionDebitAmount(String aTransactionDebitAmount) {
-		transactionDebitAmount = aTransactionDebitAmount;
-		isField = true;
-	}
-
-	public void setTransactionCreditAmount(String aTransactionCreditAmount) {
-		transactionCreditAmount = aTransactionCreditAmount;
-		isField = true;
-	}
+	
 
 	public void setIsActive(String aIsActive) {
 		isActive = aIsActive;
@@ -182,10 +146,6 @@ public class Fund {
 		isField = true;
 	}
 
-	public void setPayGlcodeId(String apayGlcodeId) {
-		payGlcodeId = apayGlcodeId;
-		isField = true;
-	}
 
 	public String getInterfundCode(String fundid, Connection connection)
 			throws SQLException, TaskFailedException {
@@ -216,11 +176,9 @@ public class Fund {
 		setCreated(created);
 		setLastModified(created);
 		setId(String.valueOf(PrimaryKeyGenerator.getNextKey("Fund")));
-		String insertQuery = "INSERT INTO Fund (Id, Code, Name, Type, Llevel, ParentId, OpeningDebitBalance, "
-				+ "OpeningCreditBalance, TransactionDebitAmount, TransactionCreditAmount, "
+		String insertQuery = "INSERT INTO Fund (Id, Code, Name, Type, Llevel, ParentId, "
 				+ "IsActive, LastModified, Created, ModifiedBy) " +
-
-				"VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				"VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
 		Query pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
@@ -230,10 +188,6 @@ public class Fund {
 		pst.setString(4, type);
 		pst.setString(5, lLevel);
 		pst.setString(6, parentId);
-		pst.setString(7, openingDebitBalance);
-		pst.setString(8, openingCreditBalance);
-		pst.setString(9, transactionDebitAmount);
-		pst.setString(10, transactionCreditAmount);
 		pst.setString(11, isActive);
 		pst.setString(12, lastModified);
 		pst.setString(13, created);
@@ -272,14 +226,6 @@ public class Fund {
 			query.append("lLevel=?,");
 		if (parentId != null)
 			query.append("parentId=?,");
-		if (openingDebitBalance != null)
-			query.append("openingDebitBalance=?,");
-		if (openingCreditBalance != null)
-			query.append("openingCreditBalance=?,");
-		if (transactionDebitAmount != null)
-			query.append("transactionDebitAmount=?,");
-		if (transactionCreditAmount != null)
-			query.append("transactionCreditAmount=?,");
 		if (isActive != null)
 			query.append("isActive=?,");
 		if (lastModified != null)
@@ -288,8 +234,6 @@ public class Fund {
 			query.append("created=?,");
 		if (modifiedBy != null)
 			query.append("modifiedBy=?,");
-		if (payGlcodeId != null)
-			query.append("payGlcodeId=?,");
 		int lastIndexOfComma = query.lastIndexOf(",");
 		query.deleteCharAt(lastIndexOfComma);
 		query.append(" where id=?");
@@ -306,14 +250,6 @@ public class Fund {
 				pstmt.setString(i++, lLevel);
 			if (parentId != null)
 				pstmt.setString(i++, parentId);
-			if (openingDebitBalance != null)
-				pstmt.setString(i++, openingDebitBalance);
-			if (openingCreditBalance != null)
-				pstmt.setString(i++, openingCreditBalance);
-			if (transactionDebitAmount != null)
-				pstmt.setString(i++, transactionDebitAmount);
-			if (transactionCreditAmount != null)
-				pstmt.setString(i++, transactionCreditAmount);
 			if (isActive != null)
 				pstmt.setString(i++, isActive);
 			if (lastModified != null)
@@ -322,8 +258,6 @@ public class Fund {
 				pstmt.setString(i++, created);
 			if (modifiedBy != null)
 				pstmt.setString(i++, modifiedBy);
-			if (payGlcodeId != null)
-				pstmt.setString(i++, payGlcodeId);
 			pstmt.setString(i++, id);
 
 			pstmt.executeUpdate();

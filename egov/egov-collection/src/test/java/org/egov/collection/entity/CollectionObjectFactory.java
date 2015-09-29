@@ -1078,10 +1078,6 @@ public class CollectionObjectFactory {
 		fund.setName(code);
 		fund.setCode(code + getRandomNumber());
 		fund.setLlevel(BigDecimal.valueOf(0));
-		fund.setOpeningdebitbalance(BigDecimal.valueOf(0));
-		fund.setOpeningcreditbalance(BigDecimal.valueOf(0));
-		fund.setTransactiondebitamount(BigDecimal.valueOf(0));
-		fund.setTransactioncreditamount(BigDecimal.valueOf(0));
 		fund.setIsactive(1);
 		fund.setCreated(new Date());
 		session.saveOrUpdate(fund);
