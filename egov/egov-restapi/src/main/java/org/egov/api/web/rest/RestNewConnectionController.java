@@ -182,13 +182,14 @@ public class RestNewConnectionController {
         final String response = validatePropertyID(connectionInfo.getPropertyID());
         final WaterConnectionDetails waterConnectionDetails = new WaterConnectionDetails();
         if (response.equals(SUCCESS)) {
+            waterConnectionDetails.getConnection().setPropertyIdentifier(connectionInfo.getPropertyID());
             waterConnectionDetails.setApplicationDate(new Date());
             waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.NEWCONNECTION));
             waterConnectionDetails.setCategory(connectionCategoryService.findByCode(connectionInfo.getCategory()));
             waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
             waterConnectionDetails
-            .setConnectionType(connectionInfo.getConnectionType().equals(ConnectionType.METERED) ? ConnectionType.METERED
-                    : ConnectionType.NON_METERED);
+                    .setConnectionType(connectionInfo.getConnectionType().equals(ConnectionType.METERED.toString()) ? ConnectionType.METERED
+                            : ConnectionType.NON_METERED);
             final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
                     waterConnectionDetails.getApplicationType(), waterConnectionDetails.getCategory());
             if (appProcessTime != null)
@@ -202,6 +203,11 @@ public class RestNewConnectionController {
             waterConnectionDetails.setUsageType(usageTypeService.findByCode(connectionInfo.getUsageType()));
             waterConnectionDetails.setWaterSource(waterSourceService
                     .findByCode(connectionInfo.getWaterSource()));
+            if (waterConnectionDetails.getUsageType().getCode().equals("Lodges")) {
+                waterConnectionDetails.setNumberOfRooms(connectionInfo.getNumberOfRooms());
+            } else {
+                waterConnectionDetails.setNumberOfPerson(connectionInfo.getNumberOfPersons());
+            }
         }
         return waterConnectionDetails;
     }
