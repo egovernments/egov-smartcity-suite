@@ -1112,7 +1112,7 @@ public class AssessmentService {
 			@FormDataParam("deathCertCopy") InputStream deathCertCopyStream,
 			@FormDataParam("deathCertCopy") FormDataContentDisposition deathCertCopyDisp,
 			@FormDataParam("username") String username, @FormDataParam("password") String password)
-					throws JsonGenerationException, JsonMappingException, IOException, ParseException {
+					throws JsonGenerationException, JsonMappingException, IOException, ParseException {/*
 		ErrorDetails errorDetails = null;
 		String responseJson = null;
 		Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
@@ -1145,7 +1145,8 @@ public class AssessmentService {
 			errorDetails = getInvalidCredentialsErrorDetails();
 			responseJson = getJSONResponse(errorDetails);
 		}
-		return responseJson;
+		return responseJson;*/
+		return null;
 	}
 
 	/**

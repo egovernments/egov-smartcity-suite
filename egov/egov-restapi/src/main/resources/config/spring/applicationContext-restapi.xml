@@ -47,7 +47,6 @@
 
     <import resource="classpath*:config/spring/applicationContext-search-all.xml" />
     <import resource="classpath*:config/spring/applicationContext-pgr.xml"/>
-	<import resource="applicationOauth2Context-restapi.xml"/>
 	
 	<context:component-scan base-package="org.egov.api">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>

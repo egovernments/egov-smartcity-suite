@@ -990,9 +990,14 @@ public class PropertyExternalService {
 	}
 	
 	public TaxExeptionReason getTaxExemptionReasonByCode(String exemptionReasonCode) {
+		TaxExeptionReason taxExeptionReason = null;
 		Query qry = entityManager.createQuery("from TaxExeptionReason ter where ter.code = :code");
-		qry.setParameter("code", exemptionReasonCode);
-		return (TaxExeptionReason)qry.getSingleResult();
+		qry.setParameter("code", ""+exemptionReasonCode);
+		List list = qry.getResultList();
+		if(null != list && !list.isEmpty()) {
+			taxExeptionReason = (TaxExeptionReason)qry.getSingleResult();
+		}
+		return taxExeptionReason;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -1008,7 +1013,7 @@ public class PropertyExternalService {
 		return mstrCodeNamePairDetailsList;
 	}
 	
-	public NewPropertyDetails createNewProperty(String propertyTypeMasterCode, String propertyCategoryCode,
+	public NewPropertyDetails createNewProperty(String propertyTypeMasterCode, String propertyCategoryCode, 
 			String apartmentCmplxCode, List<OwnerDetails> ownerDetailsList, String mutationReasonCode,
 			String extentOfSite, String isExtentAppurtenantLand, String occupancyCertificationNo,
 			Boolean isSuperStructure, Boolean isBuildingPlanDetails, String regdDocNo, String regdDocDate,
@@ -1022,7 +1027,7 @@ public class PropertyExternalService {
 					throws ParseException {
 
 		NewPropertyDetails newPropertyDetails = null;
-		BasicProperty basicProperty = createBasicProperty(propertyTypeMasterCode, mutationReasonCode, ownerDetailsList,
+		BasicProperty basicProperty = createBasicProperty(propertyTypeMasterCode, propertyCategoryCode, mutationReasonCode, ownerDetailsList,
 				extentOfSite, regdDocNo, regdDocDate, localityCode, street, doorNo, electionWardCode, pinCode,
 				isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, floorTypeCode, roofTypeCode, wallTypeCode,
 				woodTypeCode, floorDetailsList, completionDate, northBoundary, southBoundary, eastBoundary,
@@ -1045,7 +1050,7 @@ public class PropertyExternalService {
 		return newPropertyDetails;
 	}
 	
-	private BasicProperty createBasicProperty(String propertyTypeMasterCode, String mutationReasonCode,
+	private BasicProperty createBasicProperty(String propertyTypeMasterCode, String propertyCategoryCode, String mutationReasonCode,
 			List<OwnerDetails> ownerDetailsList, String extentOfSite, String regdDocNo, String regdDocDate,
 			String localityCode, String street, String doorNo, String electionWardCode, String pinCode,
 			Boolean isCorrAddrDiff, String corrAddr1, String corrAddr2, String corrPinCode, String floorTypeCode,
@@ -1104,10 +1109,12 @@ public class PropertyExternalService {
 		property = propService.createProperty(propertyImpl, extentOfSite, mutationReasonCode,
 				propertyTypeMaster.getId().toString(), propertyUsage.getId().toString(),
 				propertyOccupation.getId().toString(), PropertyTaxConstants.STATUS_ISACTIVE, regdDocNo, nonResPlotArea,
-				floorType.getId(), roofType.getId(), wallType.getId(), woodType.getId(), taxExemptedReason.getId());
+				floorType.getId(), roofType.getId(), wallType.getId(), woodType.getId(), taxExemptedReason != null ? taxExemptedReason.getId() : null);
 		property.setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
 		property.setPropertyModifyReason(PROP_CREATE_RSN);
+		property.getPropertyDetail().setCategoryType(propertyCategoryCode);
 		basicProperty.addProperty(property);
+		
 		Date propCompletionDate = null;
 		if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
 			propCompletionDate = propService
