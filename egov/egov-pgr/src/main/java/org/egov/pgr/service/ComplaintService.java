@@ -47,6 +47,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.ValidationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.service.CommonsService;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
@@ -148,7 +149,7 @@ public class ComplaintService {
     @Transactional
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public Complaint createComplaint(final Complaint complaint) throws ValidationException {
-        if (complaint.getCrn().isEmpty())
+        if (StringUtils.isBlank(complaint.getCrn()))
             complaint.setCrn(applicationNumberGenerator.generate());
         final User user = securityUtils.getCurrentUser();
         complaint.getComplainant().setUserDetail(user);

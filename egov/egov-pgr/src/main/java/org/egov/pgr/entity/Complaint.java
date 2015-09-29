@@ -87,7 +87,6 @@ public class Complaint extends StateAware {
     @GeneratedValue(generator = SEQ_COMPLAINT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
     @Column(name = "crn", unique = true)
     @Searchable(name = "crn", group = Searchable.Group.CLAUSES)
     private String crn = "";
@@ -141,7 +140,7 @@ public class Complaint extends StateAware {
     private ReceivingCenter receivingCenter;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "pgr_supportdocs", joinColumns = @JoinColumn(name = "filestoreid"), inverseJoinColumns = @JoinColumn(name = "complaintid"))
+    @JoinTable(name = "pgr_supportdocs", joinColumns = @JoinColumn(name = "filestoreid") , inverseJoinColumns = @JoinColumn(name = "complaintid") )
     private Set<FileStoreMapper> supportDocs = Collections.emptySet();
 
     @Searchable(name = "longitude")
@@ -158,8 +157,7 @@ public class Complaint extends StateAware {
     private Department department;
 
     /*
-     * For indexing the below fields are kept. These will not be added to the
-     * database. This will be available only in index.
+     * For indexing the below fields are kept. These will not be added to the database. This will be available only in index.
      */
     @Searchable(group = Searchable.Group.CLAUSES)
     @Transient
@@ -396,7 +394,8 @@ public class Complaint extends StateAware {
     public String getStateDetails() {
         final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy hh:mm a");
         return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s", getCrn(),
-                getComplaintType().getName(), formatter.print(new DateTime(getCreatedDate())), formatter.print(getEscalationDate()));
+                getComplaintType().getName(), formatter.print(new DateTime(getCreatedDate())),
+                formatter.print(getEscalationDate()));
     }
 
 }

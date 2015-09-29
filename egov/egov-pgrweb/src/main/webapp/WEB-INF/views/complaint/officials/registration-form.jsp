@@ -70,7 +70,7 @@
 					</div>
 					
 					<div class="form-group display-hide" id="regnoblock">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.crn"/><small id="crnReq" class="display-hide"><span class="mandatory"></span></small></label>
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.crn"/><small id="crnReq" class="display-hide"></small></label>
 						<div class="col-sm-6">
 							<form:input path="crn" id="crn" cssClass="form-control" placeholder="" disabled="true"/>
 							<form:errors path="crn" cssClass="add-margin error-msg"/>

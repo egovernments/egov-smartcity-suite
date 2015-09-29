@@ -234,7 +234,7 @@ function disableRC(){
 function enabledCRN() {
 	$('#regnoblock').show();
 	$("#crnReq").show();
-	$("#crn").attr('required','required');
+//	$("#crn").attr('required','required');
 	$("#crn").removeAttr('disabled');
 }
 

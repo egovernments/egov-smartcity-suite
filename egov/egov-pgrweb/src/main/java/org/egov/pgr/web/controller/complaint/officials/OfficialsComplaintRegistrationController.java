@@ -48,7 +48,6 @@ import javax.validation.ValidationException;
 
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ReceivingCenter;
-import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.service.ReceivingCenterService;
 import org.egov.pgr.web.controller.complaint.GenericComplaintController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,10 +77,6 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
     @RequestMapping(value = "register", method = POST)
     public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
             final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files) {
-
-        if (ReceivingMode.PAPER.equals(complaint.getReceivingMode()) && complaint.getReceivingCenter() != null
-                && complaint.getReceivingCenter().isCrnRequired() && complaint.getCrn().isEmpty())
-            resultBinder.rejectValue("crn", "crn.mandatory.for.receivingcenter");
 
         if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
             resultBinder.rejectValue("location", "location.required");
