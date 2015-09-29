@@ -109,7 +109,7 @@ public class CloserConnectionService {
                             null, null);*/
         } else if (null != inWorkflow)
             validationMessage = messageSource.getMessage(
-                    "err.validate.changeofUse.application.inprocess",
+                    "err.validate.closeconnection.application.inprocess",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
                             inWorkflow.getApplicationNumber() }, null);
         return validationMessage;
