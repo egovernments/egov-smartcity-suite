@@ -205,7 +205,9 @@ public class HomeController {
         menu.setItems(new LinkedList<Menu>());
         final List<MenuLink> favourites = moduleService.getUserFavouritesMenuLinks(user.getId());
         createApplicationMenu(menuLinks, favourites, user, menu);
-        createSelfServiceMenu(getEmployeeSelfService(menuLinks, user), menu);
+        final List<MenuLink> essMenus = getEmployeeSelfService(menuLinks, user);
+        if (!essMenus.isEmpty())
+            createSelfServiceMenu(essMenus, menu);
         createFavouritesMenu(favourites, menu);
 
         return "[" + new GsonBuilder().create().toJson(menu) + "]";
