@@ -145,13 +145,17 @@
 				Super Structure
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				N/A
+		   <s:if test="propertyDetail.structure == true">
+				<span class="bold">Yes</span>
+			</s:if> <s:else>
+				<span class="bold">No</span>
+			</s:else>
 			</div>
 			<div class="col-xs-3 add-margin">
 				Site Owner
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				N/A
+				<s:property default="N/A" value="%{propertyDetail.siteOwner}" />
 			</div>
 		</div>
 		<div class="row add-border">
@@ -180,13 +184,14 @@
 				BP Number
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				N/A
+				<s:property default="N/A" value="%{propertyDetail.buildingPermissionNo}" />
 			</div>
 			<div class="col-xs-3 add-margin">
 				BP Date
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				N/A
+				<s:date name="%{propertyDetail.buildingPermissionDate}" var="buildingPermNo" format="dd/MM/yyyy" />
+				<s:property default="N/A" value="%{#buildingPermNo}"/>
 			</div>
 		</div>
 		<div class="row add-border">
@@ -194,13 +199,13 @@
 				% of Deviation
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				N/A
+				<s:property default="N/A" value="%{propertyDetail.deviationPercentage}"/> 
 			</div>
 			<div class="col-xs-3 add-margin">
 				Reason for Creation
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				N/A
+				<s:property value="%{propertyDetail.propertyMutationMaster.mutationName}"/>
 			</div>
 		</div>
 		
@@ -266,7 +271,7 @@
 				Election Ward
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				N/A
+				<s:property default="N/A" value="%{basicProperty.propertyID.electionBoundary.name}" />
 			</div>
 			<div class="col-xs-3 add-margin">
 				EB Block
