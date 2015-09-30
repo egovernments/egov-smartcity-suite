@@ -157,13 +157,17 @@ function callajaxdatatableForDrilDownReport() {
 							"data" : "rejected",
 							"sTitle" : "Rejected"
 
-						}, {
+						},{
+							"data" : "withinsla",
+							"sTitle" : "Within SLA"
+						},{
+							"data" : "beyondsla",
+							"sTitle" : "Beyond SLA"
+						},{
 							"data" : "total",
 							"sTitle" : "Total"
 
-						} ,{
-							"visible": false
-						}],
+						} ],
 				"footerCallback" : function(row, data, start, end, display) {
 					var api = this.api(), data;
 					if (data.length == 0) {
@@ -177,6 +181,8 @@ function callajaxdatatableForDrilDownReport() {
 						updateTotalFooter(3, api);
 						updateTotalFooter(4, api);
 						updateTotalFooter(5, api);
+						updateTotalFooter(6, api);
+						updateTotalFooter(7, api);
 
 					}
 				},
@@ -308,11 +314,16 @@ function callAjaxByDepartment() {
 							"sTitle" : "Rejected"
 
 						}, {
+							"data" : "withinsla",
+							"sTitle" : "Within SLA"
+
+						}, {
+							"data" : "beyondsla",
+							"sTitle" : "Beyond SLA"
+						},{
 							"data" : "total",
 							"sTitle" : "Total"
 
-						},{
-							"visible": false
 						}],
 				"footerCallback" : function(row, data, start, end, display) {
 					var api = this.api(), data;
@@ -327,6 +338,8 @@ function callAjaxByDepartment() {
 						updateTotalFooter(3, api);
 						updateTotalFooter(4, api);
 						updateTotalFooter(5, api);
+						updateTotalFooter(6, api);
+						updateTotalFooter(7, api);
 
 					}
 				},
@@ -410,12 +423,17 @@ function callAjaxByComplaintType() {
 							"data" : "rejected",
 							"sTitle" : "Rejected"
 
+						},{
+							"data" : "withinsla",
+							"sTitle" : "Within SLA"
+
+						},{
+							"data" : "beyondsla",
+							"sTitle" : "Beyond SLA"
 						}, {
 							"data" : "total",
 							"sTitle" : "Total"
 
-						} ,{
-							"visible": false
 						}],
 				"footerCallback" : function(row, data, start, end, display) {
 					var api = this.api(), data;
@@ -430,6 +448,8 @@ function callAjaxByComplaintType() {
 						updateTotalFooter(3, api);
 						updateTotalFooter(4, api);
 						updateTotalFooter(5, api);
+						updateTotalFooter(6, api);
+						updateTotalFooter(7, api);
 
 					}
 				},
@@ -511,12 +531,17 @@ function callAjaxByUserNameType() {
 							"data" : "rejected",
 							"sTitle" : "Rejected"
 
+						},{
+							"data" : "withinsla",
+							"sTitle" : "Within SLA"
+
+						},{
+							"data" : "beyondsla",
+							"sTitle" : "Beyond SLA"
 						}, {
 							"data" : "total",
 							"sTitle" : "Total"
 
-						},{
-							"visible": false
 						}],
 				"footerCallback" : function(row, data, start, end, display) {
 					var api = this.api(), data;
@@ -531,6 +556,8 @@ function callAjaxByUserNameType() {
 						updateTotalFooter(3, api);
 						updateTotalFooter(4, api);
 						updateTotalFooter(5, api);
+						updateTotalFooter(6, api);
+						updateTotalFooter(7, api);
 
 					}
 				},

@@ -99,9 +99,16 @@ public class DrillDownReportService {
         query.append("   COUNT(CASE WHEN cs.name IN ('REGISTERED') THEN 1 END) registered , "
                 + " COUNT(CASE WHEN cs.name IN ('FORWARDED','PROCESSING','REOPENED','NOTCOMPLETED') THEN 1 END) inprocess, "
                 + " COUNT(CASE WHEN cs.name IN ('COMPLETED','WITHDRAWN','CLOSED') THEN 1 END) Completed, "
-                + " COUNT(CASE WHEN cs.name IN ('REJECTED') THEN 1 END) Rejected ");
-
-        query.append("  FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype ,egpgr_complaint cd  left JOIN eg_boundary bndry on cd.location =bndry.id left JOIN eg_boundary bndryparent on  bndry.parent=bndryparent.id  left JOIN eg_department dept on cd.department =dept.id left join eg_position pos on cd.assignee=pos.id  left join view_egeis_employee emp on pos.id=emp.position ");
+                + " COUNT(CASE WHEN cs.name IN ('REJECTED') THEN 1 END) Rejected ,");
+        query.append("SUM(CASE WHEN state.value in ('COMPLETED','REJECTED','WITHDRAWN') AND "
+                + "(cd.createddate - state.lastmodifieddate) < (interval '1h' * ctype.slahours) THEN 1 "
+                + "WHEN (state.value not in ('COMPLETED','REJECTED','WITHDRAWN') AND "
+                + "(cd.createddate - CURRENT_DATE) < (interval '1h' * ctype.slahours)) THEN 1 else 0 END) withinsla, ");
+        query.append(" SUM(CASE WHEN state.value in ('COMPLETED','REJECTED','WITHDRAWN') AND "
+                + "(cd.createddate - state.lastmodifieddate) > (interval '1h' * ctype.slahours) THEN 1 "
+                + "WHEN (state.value not in ('COMPLETED','REJECTED','WITHDRAWN') AND "
+                + "(cd.createddate - CURRENT_DATE ) > (interval '1h' * ctype.slahours)) THEN 1 ELSE 0 END) beyondsla ");
+        query.append(" FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype , eg_wf_states state, egpgr_complaint cd  left JOIN eg_boundary bndry on cd.location =bndry.id left JOIN eg_boundary bndryparent on  bndry.parent=bndryparent.id  left JOIN eg_department dept on cd.department =dept.id left join eg_position pos on cd.assignee=pos.id  left join view_egeis_employee emp on pos.id=emp.position ");
 
         buildWhereClause(fromDate, toDate, complaintDateType, query, department, boundary, complainttype, selecteduser);
 
@@ -140,7 +147,7 @@ public class DrillDownReportService {
             final StringBuffer query, final String department, final String boundary, final String complainttype,
             final String selecteduser) {
 
-        query.append(" WHERE cd.status  = cs.id and cd.complainttype= ctype.id  ");
+        query.append(" WHERE cd.status  = cs.id and cd.complainttype= ctype.id  and cd.state_id = state.id ");
 
         if (complaintDateType != null && complaintDateType.equals("lastsevendays"))
             query.append(" and cd.createddate >=   :fromDates ");

@@ -115,7 +115,7 @@ public class DrillDownReportController {
                     deptid, boundary, complainttypeid, userName);
             drillDownreportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
 
-            final List<AgeingReportResult> drillDownresult = drillDownreportQuery.list();
+            final List<DrillDownReportResult> drillDownresult = drillDownreportQuery.list();
             result = new StringBuilder("{ \"data\":").append(toJSONForComplaintType(drillDownresult)).append("}")
                     .toString();
 
