@@ -40,7 +40,7 @@ CREATE TABLE eg_user (
     aadhaarnumber character varying(20),
     type character varying(50),
     version numeric DEFAULT 0,
-    guardian character varying(32),
+    guardian character varying(100),
     guardianrelation character varying(32)
 );
 CREATE SEQUENCE seq_eg_user
