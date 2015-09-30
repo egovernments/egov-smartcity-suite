@@ -692,8 +692,9 @@ public class Constants {
     
     public static final String OWNERSHIP_TYPE_OWN = "Own";
     public static final String OWNERSHIP_TYPE_RENTED = "Rented";
-    public static final String OWNERSHIP_TYPE_STATEGOVERNMENT_LAND = "State Government Land";
-    public static final String OWNERSHIP_TYPE_CENTRALGOVERNMENT_LAND = "Central Government Land";
+    public static final String OWNERSHIP_TYPE_STATEGOVERNMENT = "State Government";
+    public static final String OWNERSHIP_TYPE_CENTRALGOVERNMENT = "Central Government";
+    public static final String OWNERSHIP_TYPE_ULB = "ULB";
     
     // OwnerShip Type
     public static final Map<String, String> OWNERSHIP_TYPE = new HashMap<String, String>() {
@@ -701,8 +702,10 @@ public class Constants {
         {
             put(OWNERSHIP_TYPE_OWN, OWNERSHIP_TYPE_OWN);
             put(OWNERSHIP_TYPE_RENTED, OWNERSHIP_TYPE_RENTED);
-            put(OWNERSHIP_TYPE_STATEGOVERNMENT_LAND, OWNERSHIP_TYPE_STATEGOVERNMENT_LAND);
-            put(OWNERSHIP_TYPE_CENTRALGOVERNMENT_LAND, OWNERSHIP_TYPE_CENTRALGOVERNMENT_LAND);
+            put(OWNERSHIP_TYPE_ULB, OWNERSHIP_TYPE_ULB);
+            put(OWNERSHIP_TYPE_STATEGOVERNMENT, OWNERSHIP_TYPE_STATEGOVERNMENT);
+            put(OWNERSHIP_TYPE_CENTRALGOVERNMENT, OWNERSHIP_TYPE_CENTRALGOVERNMENT);
+           
         }
     };
     

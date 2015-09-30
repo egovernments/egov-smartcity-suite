@@ -149,15 +149,11 @@
 					document.getElementById("hpheader").style.display='';
 					document.getElementById('totalHP').value=0;
 				} else {
-					for( var i=0; i<=motorcnt ;i++){
-						if(document.getElementById('installedMotorList['+i+'].noOfMachines') && document.getElementById('installedMotorList['+i+'].hp')){
-							document.getElementById('installedMotorList['+i+'].noOfMachines').style.display='none';
-							document.getElementById('installedMotorList['+i+'].noOfMachines').value='';
-							document.getElementById('installedMotorList['+i+'].hp').value='';
-							document.getElementById('installedMotorList['+i+'].hp').style.display='none';
-							document.getElementById('addImg'+i).style.display='none';
-							document.getElementById('delImg'+i).style.display='none';
-							document.getElementById('totalHP').value=0;
+					var table = document.getElementById('tb2Create');
+					var rowCount = table.rows.length;
+					if(rowCount>2){  // to skip table header
+						for (var i=rowCount-1; i >= 2; i--) {
+							table.deleteRow(i);
 						}
 					}
 					addMotorRowToTable(false);
@@ -168,6 +164,36 @@
 					document.getElementById("hpheader").style.display='none';
 				}
 			}
+			function removeRows(){  
+
+				var table = document.getElementById('tb2Create');
+				var rowCount = table.rows.length;
+				alert(rowCount);
+				for (var i=2; i <= rowCount; i++) {
+					alert("row"+i);
+				    table.deleteRow(i);
+				    
+				}
+			}	
+
+			/* function removeRow1(src){  
+				var tbl = document.getElementById('tb2Create');
+				var lastRow = tbl.rows.length;
+				if(lastRow>=3) {
+ 					var oRow = src.parentNode.parentNode;
+ 					if (oRow.rowIndex == 2) 
+ 					{
+ 						alert("Can not delete the first row!");
+ 						return;
+ 					}
+ 					else
+ 					{
+ 					document.all('tb2Create').deleteRow(oRow.rowIndex);
+ 					}
+ 					totalHP();  
+				 	detailchange();
+				}
+			} */
 			
 			function detailchange(){
 				document.getElementById("detailChanged").value = 'true';
@@ -422,8 +448,7 @@
 											    </div>
 											</div>
 											<div class="form-group">
-											   <!-- <table  width="47%" border="0" cellspacing="1" cellpadding="0" id="tb2Create" align="left"> -->
-											   <table class="table table-bordered" style="width:80%;margin:10px auto" id="tb2Create">
+											    <table class="table table-bordered" style="width:80%;margin:10px auto" id="tb2Create">
 															<th id="hpheader" style="display: none;" colspan="3" class="bluebgheadtd" align="center">
 																<b><s:text name="license.horsepower" /></b>
 															</th>
