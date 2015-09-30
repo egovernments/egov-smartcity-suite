@@ -647,6 +647,14 @@ INSERT INTO EG_DEMAND_REASON_MASTER ( ID, REASONMASTER, "category", ISDEBIT, mod
 ------------------END---------------------
 
 -----------------START-------------------
+drop sequence seq_eg_demand_reason;
+CREATE SEQUENCE seq_eg_demand_reason
+    START WITH 824
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
 Insert into EG_DEMAND_REASON (ID,ID_DEMAND_REASON_MASTER,ID_INSTALLMENT,PERCENTAGE_BASIS,ID_BASE_REASON,create_date,modified_date,GLCODEID) select nextval('seq_eg_demand_reason'), (select id from eg_demand_reason_master where reasonmaster='General Tax' and module=(select id from eg_module where name='Property Tax')), inst.id, null, null, current_timestamp, current_timestamp, (select id from chartofaccounts where name='Receivables for Property Taxes- Arrears') from eg_installment_master inst where inst.id_module=(select id from eg_module where name='Property Tax') and INSTALLMENT_YEAR < to_date('01-04-15','DD-MM-YY');
 Insert into EG_DEMAND_REASON (ID,ID_DEMAND_REASON_MASTER,ID_INSTALLMENT,PERCENTAGE_BASIS,ID_BASE_REASON,create_date,modified_date,GLCODEID) select nextval('seq_eg_demand_reason'), (select id from eg_demand_reason_master where reasonmaster='General Tax' and module=(select id from eg_module where name='Property Tax')), inst.id, null, null, current_timestamp, current_timestamp, (select id from chartofaccounts where name='Property Tax-Properties – General') from eg_installment_master inst where  inst.id_module=(select id from eg_module where name='Property Tax') and INSTALLMENT_YEAR = to_date('01-04-15','DD-MM-YY');
 Insert into EG_DEMAND_REASON (ID,ID_DEMAND_REASON_MASTER,ID_INSTALLMENT,PERCENTAGE_BASIS,ID_BASE_REASON,create_date,modified_date,GLCODEID) select nextval('seq_eg_demand_reason'), (select id from eg_demand_reason_master where reasonmaster='Vacant Land Tax' and module=(select id from eg_module where name='Property Tax')), inst.id, null, null, current_timestamp, current_timestamp, (select id from chartofaccounts where name='Receivables for Property Taxes- Arrears') from eg_installment_master inst where inst.id_module=(select id from eg_module where name='Property Tax');
