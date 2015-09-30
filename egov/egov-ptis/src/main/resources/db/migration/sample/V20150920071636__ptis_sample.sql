@@ -896,7 +896,7 @@ DELETE FROM eg_userrole  where roleid in(SELECT id FROM eg_role WHERE name='CSC 
 -----------------START-------------------
 INSERT INTO eg_wf_types (id,module,type,link,createdby,createddate,lastmodifiedby,lastmodifieddate,renderyn,groupyn,typefqn,displayname) VALUES (nextval('seq_eg_wf_types'),(SELECT id FROM eg_module WHERE name='Property Tax'),'PropertyImpl',':ID',1,now(),1,now(), 'Y', 'N','org.egov.ptis.domain.entity.property.PropertyImpl', 'Property' );
 insert into eg_wf_types values(nextval('seq_eg_wf_types'),(SELECT id FROM eg_module WHERE name='Property Tax'),'PropertyMutation','/ptis/property/transfer/view.action?mutationId=:ID',1,now(),1,now(),'Y','N','org.egov.ptis.domain.entity.property.PropertyMutation','Property Owner Transfer',0);
-INSERT INTO eg_wf_types (id,module,type,link,createdby,createddate,lastmodifiedby,lastmodifieddate,renderyn,groupyn,typefqn,displayname) VALUES (nextval('seq_eg_wf_types'),(SELECT id FROM eg_module WHERE name='Property Tax'),'Objection','/ptis/objection/objection-view.action?objectionId=:ID',1,now(),1,now(), 'Y', 'N','org.egov.ptis.domain.entity.objection.Objection', 'Revision Petition' ); 
+INSERT INTO eg_wf_types (id,module,type,link,createdby,createddate,lastmodifiedby,lastmodifieddate,renderyn,groupyn,typefqn,displayname) VALUES (nextval('seq_eg_wf_types'),(SELECT id FROM eg_module WHERE name='Property Tax'),'RevisionPetition','/ptis/revPetition/revPetition-view.action?objectionId=:ID',1,now(),1,now(), 'Y', 'N','org.egov.ptis.domain.entity.objection.RevisionPetition', 'Revision Petition' );
 ------------------END---------------------
 
 -----------------START-------------------

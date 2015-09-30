@@ -220,8 +220,6 @@
 
           function enableMobileNumber(obj) { 
        	   var rowidx= jQuery(obj).data('idx');
-       	   alert("rowidx"+rowidx);
-       	   alert("check"+obj.checked);
        	   if(obj.checked == true) {
        		   jQuery("input[name='transfereeInfos["+ rowidx +"].mobileNumber']").attr('readonly', false);
            	   } else {
