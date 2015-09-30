@@ -281,8 +281,8 @@ function validate(text){
 			return false;	
 		}
 	}
-	if(!validateUser(text))
-		return false;
+	/*if(!validateUser(text))
+		return false;*/
 	enableFields();
 	//setDocumentValues();
 	document.abstractEstimateForm.action='${pageContext.request.contextPath}/estimate/abstractEstimate-save.action';
@@ -433,18 +433,19 @@ jq(document).on('click', '#woView', function(){
           </tr>
           
           <tr><td>&nbsp;</td></tr>
-	  <tr> 
+          <!-- TODO:Fixeme - Commented out for time being Need to implement new workflow which is based on matrix and correspodning jsp needs to be included here -->
+	  	<!-- <tr> 
 		    <td>
 		    <div id="manual_workflow">
-		    <s:if test="%{sourcepage!='search'}">
-		         <%@ include file="workflowApproval.jsp"%>   
-		    </s:if>
+		    <s:if test="%{sourcepage!='search'}"> -->
+		         <!--%@ include file="workflowApproval.jsp"% -->   
+		   <!-- </s:if>
 		    </div>
 		    </td>
-            </tr>	
-            <tr>
-                <td  colspan="4" class="shadowwk"> </td>                  
-            </tr>          
+          </tr>	 -->  
+          <tr>
+          	<td colspan="4" class="shadowwk"> </td>                  
+          </tr>          
                    
          <tr>
             <td><div align="right" class="mandatory" style="font-size:11px;padding-right:20px;">* <s:text name="message.mandatory" /></div></td>
@@ -463,7 +464,7 @@ jq(document).on('click', '#woView', function(){
 || model.egwStatus.code=='REJECTED') && (sourcepage=='inbox' || model.egwStatus==null || hasErrors())}">
 <!-- TODO:Fixeme - hard coded save button for time being till we implement common workflow -->
 <input type="submit" class="buttonfinal" value="SAVE" id="save" name="save" method="save" onclick="document.abstractEstimateForm.actionName.value='save';return validate('save');" />	  	
-	<s:iterator value="%{validActions}"> 
+	<!--<s:iterator value="%{validActions}"> 
 	  <s:if test="%{description!=''}">
 	  	<s:if test="%{description=='CANCEL' && model.estimateNumber!=null}">
 			<s:submit type="submit" cssClass="buttonfinal" value="%{description}" id="%{name}" name="%{name}" method="cancel" onclick="return validateCancel();document.abstractEstimateForm.actionName.value='%{name}'"/>
@@ -472,7 +473,7 @@ jq(document).on('click', '#woView', function(){
 	  	  <s:submit type="submit" cssClass="buttonfinal" value="%{description}" id="%{name}" name="%{name}" method="moveEstimate" onclick="document.abstractEstimateForm.actionName.value='%{name}';return validate('%{name}');"/>	  	  
 	  </s:else>
 	  </s:if>
-	</s:iterator>
+	</s:iterator> -->
 	<s:if test="%{(model.egwStatus.code=='TECH_SANCTIONED' || model.egwStatus.code=='REJECTED') && 
 	(model.currentState.nextAction=='Pending Budgetary Appropriation' || model.currentState.nextAction=='Pending Deposit Code Appropriation') }">
 		 	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/financialDetail!add.action?estimateId=<s:property value='%{model.id}'/>&sourcepage=<s:property value='%{sourcepage}'/>&source=UpdateFinancialDetail', '_self');" class="buttonadd" value="Update Financial Details " id="updateFinancialDetailButton" name="updateFinancialDetailButton"/>
@@ -492,12 +493,13 @@ jq(document).on('click', '#woView', function(){
   	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimatePDF.action?estimateID=<s:property value='%{model.id}'/>');" class="buttonpdf" value="VIEW PDF" id="pdfButton" name="pdfButton"/>
   	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate!viewBillOfQuantitiesXls.action?sourcepage=boqPDF&id=<s:property value='%{model.id}'/>');" class="buttonpdf" value="VIEW BOQ XLS" id="BOQxlsButton" name="BOQxlsButton"/>
   </s:if>
-  <s:if test="%{sourcepage=='search' || (sourcepage=='inbox' && (model.egwStatus.code=='ADMIN_SANCTIONED' || model.egwStatus.code=='CANCELLED'))}">
+  <!-- TODO:Fixeme - Commented out for time being. Need to replace with new file upload feature -->
+ <!-- <s:if test="%{sourcepage=='search' || (sourcepage=='inbox' && (model.egwStatus.code=='ADMIN_SANCTIONED' || model.egwStatus.code=='CANCELLED'))}">
   	<input type="submit" class="buttonadd" value="View Document" id="docViewButton" onclick="viewDocument();return false;" />
   </s:if>
   <s:else>
   	<input type="submit" class="buttonadd" value="Upload Document" id="docUploadButton" onclick="showDocumentManager();return false;" />
-  </s:else>
+  </s:else> --> 
  <s:if test="%{(model.egwStatus.code=='TECH_SANCTIONED' && (model.currentState.nextAction!='Pending Budgetary Appropriation' 
  || model.currentState.nextAction=='Pending Deposit Code Appropriation')) || 
  
@@ -545,14 +547,13 @@ jq(document).on('click', '#woView', function(){
    
 <script>
     function disableTables(){
-    <s:if test="%{model.egwStatus.code!='NEW' && (model.egwStatus.code!='REJECTED' ||(model.egwStatus.code=='REJECTED' && 
-    (model.currentState.nextAction=='Pending Budgetary Appropriation' || model.currentState.nextAction=='Pending Deposit Code Appropriation')))}" >
-        multiYearEstimateDataTable.removeListener('cellClickEvent');
-        sorDataTable.removeListener('cellClickEvent');
-        nonSorDataTable.removeListener('cellClickEvent');
-        overheadsTable.removeListener('cellClickEvent');
-        assetsTable.removeListener('cellClickEvent');
-    </s:if>
+	    <s:if test="%{model.egwStatus.code!='NEW' && model.egwStatus.code!='REJECTED'}" >
+	        multiYearEstimateDataTable.removeListener('cellClickEvent');
+	        sorDataTable.removeListener('cellClickEvent');
+	        nonSorDataTable.removeListener('cellClickEvent');
+	        overheadsTable.removeListener('cellClickEvent');
+	        assetsTable.removeListener('cellClickEvent');
+	    </s:if>
     }
 	<s:if test="%{model.id!=null && model.egwStatus.code!='NEW'}" >
 	for(i=0;i<document.abstractEstimateForm.elements.length;i++){ 
@@ -592,10 +593,10 @@ jq(document).on('click', '#woView', function(){
 			}
 	</s:if>
 	
-	<s:if test="%{(model.egwStatus.code=='REJECTED' && model.currentState.nextAction!='Pending Budgetary Appropriation' && model.currentState.nextAction!='Pending Deposit Code Appropriation') || (model.egwStatus.code=='NEW' && model.currentState.nextAction=='')}">
+	<s:if test="%{model.egwStatus.code=='REJECTED'}">
 		enableFields();
 	</s:if>
-	<s:if test="%{(model.egwStatus.code=='CREATED' || model.egwStatus.code=='RESUBMITTED') && model.currentState.nextAction!=''}"> 		
+	<s:if test="%{model.egwStatus.code=='CREATED' || model.egwStatus.code=='RESUBMITTED'}"> 		
 		disableTables()
 		for(i=0;i<document.abstractEstimateForm.elements.length;i++){
         	document.abstractEstimateForm.elements[i].disabled=true;
@@ -638,202 +639,66 @@ jq(document).on('click', '#woView', function(){
 			document.abstractEstimateForm.pdfButton.disabled=false;
 			document.abstractEstimateForm.BOQxlsButton.readonly=false;
 			document.abstractEstimateForm.BOQxlsButton.disabled=false;
-		     <s:if test="%{model.egwStatus.code=='TECH_SANCTION_CHECKED' || 
-		     ((model.egwStatus.code=='CREATED' || 
-		     (model.egwStatus.code=='RESUBMITTED' && 
-		     model.currentState.nextAction!='Pending Budgetary Appropriation Check' && model.currentState.nextAction!='Pending Budgetary Appropriation Approval' && model.currentState.nextAction!='Pending Admin Sanction'
-		     && model.currentState.nextAction!='Pending Deposit Code Appropriation Check' && model.currentState.nextAction!='Pending Deposit Code Appropriation Approval' && model.currentState.nextAction!='Pending Admin Sanction Check')) 
-		     && model.currentState.nextAction!='')}">
-		     	disableTables();
-		     	if(document.abstractEstimateForm.tech_sanction){
-					document.abstractEstimateForm.tech_sanction.readonly=false;
-					document.abstractEstimateForm.tech_sanction.disabled=false;
-				}
-				document.abstractEstimateForm.reject.readonly=false;
-				document.abstractEstimateForm.reject.disabled=false;
-				
-			 </s:if>
-			 
-			 <s:if test="%{(model.egwStatus.code=='TECH_SANCTIONED' || model.egwStatus.code=='REJECTED') 
-			 && (model.currentState.nextAction=='Pending Budgetary Appropriation' || model.currentState.nextAction=='Pending Deposit Code Appropriation')}">
-		          	disableTables();
-		        if(document.abstractEstimateForm.updateFinancialDetailButton){  	
-					document.abstractEstimateForm.updateFinancialDetailButton.readonly=false;
-					document.abstractEstimateForm.updateFinancialDetailButton.disabled=false;
-				}
-				document.abstractEstimateForm.reject.readonly=false;
-				document.abstractEstimateForm.reject.disabled=false;	
-						
-			  </s:if>
-			 <s:if test="%{(model.egwStatus.code=='TECH_SANCTIONED' && 
-			 model.currentState.nextAction!='Pending Budgetary Appropriation' && model.currentState.nextAction!='Pending Deposit Code Appropriation'
-			 && model.currentState.nextAction!='Pending Admin Sanction Check' && model.currentState.nextAction!='Pending Admin Sanction') || 
-			 (model.egwStatus.code=='RESUBMITTED' && (model.currentState.nextAction=='Pending Budgetary Appropriation Check' || model.currentState.nextAction=='Pending Budgetary Appropriation Approval' || 
-			 model.currentState.nextAction=='Pending Deposit Code Appropriation Check' || model.currentState.nextAction=='Pending Deposit Code Appropriation Approval')) 
-			 || ((model.egwStatus.code=='BUDGETARY_APPR_CHECKED' && model.currentState.nextAction=='Pending Budgetary Appropriation Approval') ||
-			 (model.egwStatus.code=='DEPOSIT_CODE_APPR_CHECKED' && model.currentState.nextAction=='Pending Deposit Code Appropriation Approval'))}">
-				disableTables();
-				document.abstractEstimateForm.financialDetailButton.readonly=false;
-				document.abstractEstimateForm.financialDetailButton.disabled=false;
-				if(document.abstractEstimateForm.budget_appropriation){
- 					document.abstractEstimateForm.budget_appropriation.readonly=false;
-					document.abstractEstimateForm.budget_appropriation.disabled=false;
-				} 
-				 document.abstractEstimateForm.reject.readonly=false;
-				 document.abstractEstimateForm.reject.disabled=false;
-				 
-				 if(document.abstractEstimateForm.viewBudgetFolio!=null){
-					document.abstractEstimateForm.viewBudgetFolio.readonly=false;
-					document.abstractEstimateForm.viewBudgetFolio.disabled=false;
-				 }	
-				 if(document.abstractEstimateForm.depositfolioreportButton!=null){
-					document.abstractEstimateForm.depositfolioreportButton.readonly=false;
-					document.abstractEstimateForm.depositfolioreportButton.disabled=false;
-				 }	
-			</s:if>
+	    
+	     	if(document.abstractEstimateForm.tech_sanction){
+				document.abstractEstimateForm.tech_sanction.readonly=false;
+				document.abstractEstimateForm.tech_sanction.disabled=false;
+			}
+			document.abstractEstimateForm.reject.readonly=false;
+			document.abstractEstimateForm.reject.disabled=false;
 		
-			 <s:if test="%{model.egwStatus.code=='BUDGETARY_APPROPRIATION_DONE' || model.egwStatus.code=='DEPOSIT_CODE_APPR_DONE' || model.egwStatus.code=='ADMIN_CHECKED'}">
-		          		disableTables();
-		        if(document.abstractEstimateForm.admin_sanction){  		
-					document.abstractEstimateForm.admin_sanction.readonly=false;
-					document.abstractEstimateForm.admin_sanction.disabled=false;
-				}
-				document.abstractEstimateForm.reject.readonly=false;
-				document.abstractEstimateForm.reject.disabled=false;
-				document.abstractEstimateForm.financialDetailButton.readonly=false;
-				document.abstractEstimateForm.financialDetailButton.disabled=false;	
-				 <s:if test="%{appConfigValuesToSkipBudget.contains(model.type.name) }">
-				 if(document.abstractEstimateForm.viewBudgetFolio!=null)
-		 			document.abstractEstimateForm.viewBudgetFolio.style.display="none";
-	 			document.abstractEstimateForm.depositfolioreportButton.style.display='';
-	 			document.abstractEstimateForm.depositfolioreportButton.readonly=false;
-				document.abstractEstimateForm.depositfolioreportButton.disabled=false;	
-				 </s:if>	
-		  		<s:else>
-		 			document.abstractEstimateForm.viewBudgetFolio.style.display='';
-		 			if(document.abstractEstimateForm.depositfolioreportButton!=null)
-		 				document.abstractEstimateForm.depositfolioreportButton.style.display="none";
-		 			document.abstractEstimateForm.viewBudgetFolio.readonly=false;
-					document.abstractEstimateForm.viewBudgetFolio.disabled=false;	
-		 		</s:else>
-			  </s:if>
+	       if(document.abstractEstimateForm.updateFinancialDetailButton){  	
+				document.abstractEstimateForm.updateFinancialDetailButton.readonly=false;
+				document.abstractEstimateForm.updateFinancialDetailButton.disabled=false;
+			}	
+			document.abstractEstimateForm.financialDetailButton.readonly=false;
+			document.abstractEstimateForm.financialDetailButton.disabled=false;
 			
-			  <s:if test="%{model.egwStatus.code=='ADMIN_SANCTIONED'}">
-		          	disableTables();
-					document.abstractEstimateForm.financialDetailButton.readonly=false;
-					document.abstractEstimateForm.financialDetailButton.disabled=false;
-					if(document.abstractEstimateForm.viewBudgetFolio!=null) {
+			if(document.abstractEstimateForm.budget_appropriation){
+				document.abstractEstimateForm.budget_appropriation.readonly=false;
+				document.abstractEstimateForm.budget_appropriation.disabled=false;
+			} 
+			
+			if(document.abstractEstimateForm.viewBudgetFolio!=null){
 					document.abstractEstimateForm.viewBudgetFolio.readonly=false;
 					document.abstractEstimateForm.viewBudgetFolio.disabled=false;
-					}
-					if(document.abstractEstimateForm.depositfolioreportButton!=null) {	
-						document.abstractEstimateForm.depositfolioreportButton.readonly=false;
-						document.abstractEstimateForm.depositfolioreportButton.disabled=false;
-					}
-			  </s:if>
+			}	
+			 if(document.abstractEstimateForm.depositfolioreportButton!=null){
+				document.abstractEstimateForm.depositfolioreportButton.readonly=false;
+				document.abstractEstimateForm.depositfolioreportButton.disabled=false;
+			 }	
+			
+	        if(document.abstractEstimateForm.admin_sanction){  		
+				document.abstractEstimateForm.admin_sanction.readonly=false;
+				document.abstractEstimateForm.admin_sanction.disabled=false;
+			}
 	 </s:if>
 		
 	<s:if test="%{model.id==null && model.egwStatus.code=='CREATED'}"> 
 		document.abstractEstimateForm.cancel.visible=false;
 		document.abstractEstimateForm.pdfButton.visible=false;
 		document.abstractEstimateForm.BOQxlsButton.visible=false;
-		if(document.getElementById('approverCommentsRow')!=null)
-			document.getElementById('approverCommentsRow').style.display="none";
-	</s:if>
-	<s:if test="%{model.id!=null && (model.egwStatus.code=='CREATED' || model.egwStatus.code=='RESUBMITTED')}">
-		if(document.getElementById('approverCommentsRow')!=null)
-			document.getElementById('approverCommentsRow').style.display='';
 	</s:if>
 	
-	<s:if test="%{sourcepage=='inbox' && model.egwStatus.code!='ADMIN_SANCTIONED'}" >
-	     document.getElementById('approverCommentsRow').style.display='';
-	     document.getElementById('approverComments').readonly=false;	
-	     document.getElementById('approverComments').disabled=false;
-	     
-	   
-	</s:if>
-	
-	<s:if test="%{sourcepage=='search' || (sourcepage=='inbox' && (model.egwStatus.code=='ADMIN_SANCTIONED' || model.egwStatus.code=='CANCELLED'))}"> 
-  		document.abstractEstimateForm.docViewButton.readonly=false;
-		document.abstractEstimateForm.docViewButton.disabled=false;
-		
-  	</s:if>
-  	<s:else>
-  		document.abstractEstimateForm.docUploadButton.readonly=false;
-		document.abstractEstimateForm.docUploadButton.disabled=false;
-  	</s:else>
-	<s:if test="%{(sourcepage=='inbox' 
-		&& (model.egwStatus.code!='ADMIN_SANCTIONED' || model.egwStatus.code!='CANCELLED' 
-			|| model.egwStatus.code!='BUDGETARY_APPROPRIATION_DONE')) || hasErrors()}">
-  		document.abstractEstimateForm.departmentid.readonly=false;
-		document.abstractEstimateForm.departmentid.disabled=false;
-		document.abstractEstimateForm.designationId.readonly=false;
-		document.abstractEstimateForm.designationId.disabled=false;
-		document.abstractEstimateForm.approverUserId.readonly=false;
-		document.abstractEstimateForm.approverUserId.disabled=false;
-		
-  	</s:if>
-<s:if test="%{sourcepage=='search'}">          
-               var tempEstimateValue=Math.round(eval(document.getElementById("grandTotal").innerHTML)+eval(document.getElementById("nonSorGrandTotal").innerHTML)+eval(document.getElementById("overHeadTotalAmnt").innerHTML));
-               document.getElementById("estimateValue").value=roundTo(tempEstimateValue);
-               
-                document.getElementById('docViewButton').style.visibility='';
-                 document.getElementById('history').style.visibility='';
-                document.abstractEstimateForm.closeButton.readonly=false;
+	<s:if test="%{sourcepage=='search'}">          
+        var tempEstimateValue=Math.round(eval(document.getElementById("grandTotal").innerHTML)+eval(document.getElementById("nonSorGrandTotal").innerHTML)+eval(document.getElementById("overHeadTotalAmnt").innerHTML));
+        document.getElementById("estimateValue").value=roundTo(tempEstimateValue);
+       
+        document.getElementById('docViewButton').style.visibility='';
+        document.getElementById('history').style.visibility='';
+        document.abstractEstimateForm.closeButton.readonly=false;
 		document.abstractEstimateForm.closeButton.disabled=false;
-		 document.abstractEstimateForm.history.readonly=false;
+		document.abstractEstimateForm.history.readonly=false;
 		document.abstractEstimateForm.history.disabled=false;
-               	bodyOnLoad();
-                load(); 
+		
+       	bodyOnLoad();
+        load(); 
+        
         multiYearEstimateDataTable.removeListener('cellClickEvent');
         sorDataTable.removeListener('cellClickEvent');
         nonSorDataTable.removeListener('cellClickEvent');
         assetsTable.removeListener('cellClickEvent');
-        overheadsTable.removeListener('cellClickEvent');
-        <s:if test="%{model.currentState!=null && model.currentState.previous!=null && (model.egwStatus.code=='TECH_SANCTIONED' && 
-  model.currentState.nextAction!='Pending Budgetary Appropriation') || 
-
-  (model.egwStatus.code=='TECH_SANCTIONED' && 
-  model.currentState.nextAction!='Pending Budgetary Appropriation Check') ||
-  
- (model.egwStatus.code=='RESUBMITTED' && (model.currentState.nextAction=='Pending Budgetary Appropriation Check' || model.currentState.nextAction=='Pending Budgetary Appropriation Approval'
-  || model.currentState.nextAction=='Pending Deposit Code Appropriation Check' || model.currentState.nextAction=='Pending Deposit Code Appropriation Approval')) || 
-  
- (model.currentState.egwStatus.code=='ADMIN_SANCTIONED' || model.egwStatus.code=='BUDGETARY_APPR_CHECKED' || 
- model.egwStatus.code=='ADMIN_CHECKED' || model.egwStatus.code=='BUDGETARY_APPROPRIATION_DONE' || 
- model.egwStatus.code=='DEPOSIT_CODE_APPR_CHECKED' || model.egwStatus.code=='DEPOSIT_CODE_APPR_DONE') }">
-        if(document.abstractEstimateForm.viewBudgetFolio!=null){
-        	document.abstractEstimateForm.viewBudgetFolio.readonly=false;
-			document.abstractEstimateForm.viewBudgetFolio.disabled=false;
-			
-		}
-		
-		if(document.abstractEstimateForm.financialDetailButton!=null){
-        	document.abstractEstimateForm.financialDetailButton.readonly=false;
-			document.abstractEstimateForm.financialDetailButton.disabled=false;
-		}
-		
-		
-		</s:if>
-			 document.abstractEstimateForm.docViewButton.readonly=false;
-			document.abstractEstimateForm.docViewButton.disabled=false;
-		 <s:if test="%{appConfigValuesToSkipBudget.contains(model.type.name) }">
-		 if(document.abstractEstimateForm.viewBudgetFolio!=null)
-		 	document.abstractEstimateForm.viewBudgetFolio.style.display="none";
-		 	document.abstractEstimateForm.depositfolioreportButton.style.display='';
-		 	document.abstractEstimateForm.depositfolioreportButton.readonly=false;
-			document.abstractEstimateForm.depositfolioreportButton.disabled=false;
-		 </s:if>	
-		  <s:else>
-		 	document.abstractEstimateForm.viewBudgetFolio.style.display='';
-		 	document.abstractEstimateForm.depositfolioreportButton.style.display="none";
-		 </s:else>
-		 
-		 <s:if test="%{appConfigValuesToSkipBudget.contains(model.type.name) }">
-		 	document.abstractEstimateForm.depositfolioreportButton.style.display='';
-		 	document.abstractEstimateForm.depositfolioreportButton.readonly=false;
-			document.abstractEstimateForm.depositfolioreportButton.disabled=false;
-		 </s:if>	
+        overheadsTable.removeListener('cellClickEvent');      
   	</s:if>
   	
   	
@@ -844,10 +709,7 @@ jq(document).on('click', '#woView', function(){
       	}	
 	    document.abstractEstimateForm.closeButton.readonly=false;
 		document.abstractEstimateForm.closeButton.disabled=false;
-		
-	    document.abstractEstimateForm.docViewButton.readonly=false;
-		document.abstractEstimateForm.docViewButton.disabled=false;
-		
+				
 	    document.abstractEstimateForm.pdfButton.readonly=false;
 		document.abstractEstimateForm.pdfButton.disabled=false;
 		document.abstractEstimateForm.BOQxlsButton.readonly=false;
@@ -866,71 +728,6 @@ jq(document).on('click', '#woView', function(){
 		}
     }
 
-	<s:if test="%{sourcepage=='inbox' && (model.egwStatus.code=='TECH_SANCTIONED' || model.egwStatus.code=='REJECTED' )&& 
-	model.currentState.nextAction=='Pending Deposit Code Appropriation'}">
-		document.abstractEstimateForm.financialDetailButton.style.display="none";
-		if(document.abstractEstimateForm.viewBudgetFolio!=null)
-			document.abstractEstimateForm.viewBudgetFolio.style.display="none";
-		if(document.abstractEstimateForm.depositfolioreportButton!=null)
-			document.abstractEstimateForm.depositfolioreportButton.style.display="none";
-		if(document.abstractEstimateForm.updateFinancialDetailButton){ 	
-			document.abstractEstimateForm.updateFinancialDetailButton.readonly=false;
-			document.abstractEstimateForm.updateFinancialDetailButton.disabled=false;
-		}
-		 multiYearEstimateDataTable.removeListener('cellClickEvent');
-		document.abstractEstimateForm.reject.readonly=false;
-		document.abstractEstimateForm.reject.disabled=false;			
-	</s:if>
-	<s:if test="%{sourcepage=='inbox' && (model.egwStatus.code=='TECH_SANCTIONED' ||model.egwStatus.code=='REJECTED' 
-	|| model.egwStatus.code=='RESUBMITTED')  && model.currentState.nextAction=='Pending Admin Sanction'}"> 
-		//enableResolutionFields();
-		if(document.abstractEstimateForm.admin_sanction){
-			document.abstractEstimateForm.admin_sanction.readonly=false;
-			document.abstractEstimateForm.admin_sanction.disabled=false;
-		}
-		document.abstractEstimateForm.reject.readonly=false;
-		document.abstractEstimateForm.reject.disabled=false;
-		 multiYearEstimateDataTable.removeListener('cellClickEvent');
-		 <s:if test="%{appConfigValuesToSkipBudget.contains(model.type.name) }">
-			if(document.abstractEstimateForm.viewBudgetFolio!=null)
-				document.abstractEstimateForm.viewBudgetFolio.style.display="none";
-			document.abstractEstimateForm.depositfolioreportButton.readonly=false;
-			document.abstractEstimateForm.depositfolioreportButton.disabled=false;
-		 </s:if>
-		 <s:else>
-		 	document.abstractEstimateForm.viewBudgetFolio.style.display='';
-		 	document.abstractEstimateForm.depositfolioreportButton.style.display="none";
-		 </s:else>
-			
-		 <s:if test="%{model.egwStatus.code!='RESUBMITTED'}">
-		document.abstractEstimateForm.financialDetailButton.readonly=false;
-		document.abstractEstimateForm.financialDetailButton.disabled=false;	
-			 </s:if> 
-			
-	</s:if>
-	<s:if test="%{sourcepage=='inbox' && (model.egwStatus.code=='TECH_SANCTIONED'  ||model.egwStatus.code=='REJECTED' || 
-	model.egwStatus.code=='RESUBMITTED') && model.currentState.nextAction=='Pending Admin Sanction Check'}">
-	    document.abstractEstimateForm.financialDetailButton.readonly=false;
-		document.abstractEstimateForm.financialDetailButton.disabled=false;
-		if(document.abstractEstimateForm.admin_sanction){
-	 		document.abstractEstimateForm.admin_sanction.readonly=false;
-			document.abstractEstimateForm.admin_sanction.disabled=false;
-		}
-		document.abstractEstimateForm.reject.readonly=false;
-		document.abstractEstimateForm.reject.disabled=false;
-		 multiYearEstimateDataTable.removeListener('cellClickEvent');
-		 <s:if test="%{appConfigValuesToSkipBudget.contains(model.type.name)}">
-		 if(document.abstractEstimateForm.viewBudgetFolio!=null){
-			document.abstractEstimateForm.viewBudgetFolio.style.display="none";
-		 }
-		 document.abstractEstimateForm.depositfolioreportButton.style.display='';
-		</s:if>	
-		 <s:else>
-		 	document.abstractEstimateForm.viewBudgetFolio.style.display='';
-		 	document.abstractEstimateForm.depositfolioreportButton.style.display="none";
-		 </s:else>
-	</s:if>
-    
 	<s:if test="%{!isAllowEstDateModify}">
 		document.abstractEstimateForm.estimateDate.readonly=true;
 		document.abstractEstimateForm.estimateDate.disabled=true;

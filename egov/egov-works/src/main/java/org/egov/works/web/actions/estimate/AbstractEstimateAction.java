@@ -171,7 +171,6 @@ public class AbstractEstimateAction extends BaseFormAction {
     private String longitude;
     @Autowired
     private EisUtilService eisService;
-    private boolean digitalSign;
     private List<Object> woDetails;
     private List<Object> wpDetails;
     private BigDecimal paymentReleased = BigDecimal.ZERO;
@@ -187,7 +186,6 @@ public class AbstractEstimateAction extends BaseFormAction {
 
     private String currentFinancialYearId;
     private Long id;
-    private double utilizedAmount = 0d;
 
     public Long getId() {
         return id;
@@ -1055,22 +1053,6 @@ public class AbstractEstimateAction extends BaseFormAction {
 
     public void setLongitude(final String longitude) {
         this.longitude = longitude;
-    }
-
-    public double getUtilizedAmount() {
-        return utilizedAmount;
-    }
-
-    public void setUtilizedAmount(final double utilizedAmount) {
-        this.utilizedAmount = utilizedAmount;
-    }
-
-    public boolean getDigitalSign() {
-        return digitalSign;
-    }
-
-    public void setDigitalSign(final boolean digitalSign) {
-        this.digitalSign = digitalSign;
     }
 
     public BigDecimal getPaymentReleased() {
