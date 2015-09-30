@@ -62,8 +62,7 @@
 										<label class="col-sm-3 col-xs-12 control-label text-right"><spring:message  code="lbl.closerReason"/>
                                         </label>
                                         <div class="col-sm-8 col-xs-12 add-margin">
-                                           <form:input id="closeconnectionreason" path="closeconnectionreason" name="closeconnectionreason" readonly="readonly"
-                                           class="form-control"  />
+                                           <form:input id="closeconnectionreason" path="closeconnectionreason" name="closeconnectionreason" disabled="disabled"/>
 	
                     </div>
 				</div>

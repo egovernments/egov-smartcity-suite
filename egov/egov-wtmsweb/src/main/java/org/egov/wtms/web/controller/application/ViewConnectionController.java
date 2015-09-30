@@ -71,6 +71,10 @@ public class ViewConnectionController {
                 .findByConsumerCodeAndConnectionStatus(applicationNumber, ConnectionStatus.ACTIVE);
         if(details==null){
         details = waterConnectionDetailsService
+                .findByConsumerCodeAndConnectionStatus(applicationNumber, ConnectionStatus.CLOSED);
+        }
+        if(details==null){
+        details = waterConnectionDetailsService
                 .findByApplicationNumberOrConsumerCode(applicationNumber);
         }
         model.addAttribute("waterConnectionDetails", details);

@@ -39,7 +39,9 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,7 +55,9 @@ import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.service.CloserConnectionService;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.egov.wtms.web.contract.WorkflowContainer;
@@ -88,6 +92,8 @@ public class CloserConnectionController extends GenericConnectionController {
 
     @Autowired
     private SecurityUtils securityUtils;
+    @Autowired
+    private ApplicationTypeService applicationTypeService;
 
     @Autowired
     public CloserConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
@@ -100,14 +106,20 @@ public class CloserConnectionController extends GenericConnectionController {
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationCode) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCode(applicationCode);
+                .findByConsumerCodeAndConnectionStatus(applicationCode,ConnectionStatus.ACTIVE);
         return waterConnectionDetails;
     }
 
+    public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
+            @ModelAttribute final WaterConnectionDetails changeOfUse) {
+        changeOfUse.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.CHANGEOFUSE));
+        return waterConnectionDetailsService.getAllActiveDocumentNames(changeOfUse.getApplicationType());
+    }
+    
     @RequestMapping(value = "/close/{applicationCode}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String applicationCode, final HttpServletRequest request) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCode(applicationCode);
+                .findByConsumerCodeAndConnectionStatus(applicationCode,ConnectionStatus.ACTIVE);
         return loadViewData(model, request, waterConnectionDetails);
     }
 
@@ -153,10 +165,13 @@ public class CloserConnectionController extends GenericConnectionController {
 
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
-        
-       /* String docName=request.getParameter("documentNumber");
-        processAndStoreApplicationDocuments(waterConnectionDetails);*/
-        
+        final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
+        for (final ApplicationDocuments applicationDocument : waterConnectionDetails.getApplicationDocs()) {
+           applicationDocs.add(applicationDocument);
+           
+        }
+        waterConnectionDetails.setApplicationDocs(applicationDocs);
+        processAndStoreApplicationDocuments(waterConnectionDetails);
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
         waterConnectionDetails.setCloseConnectionType(request.getParameter("closeConnectionType").charAt(0));
