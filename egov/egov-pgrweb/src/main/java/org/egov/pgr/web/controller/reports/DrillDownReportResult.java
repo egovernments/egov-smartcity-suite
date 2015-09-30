@@ -21,6 +21,7 @@ public class DrillDownReportResult {
     private String boundaryname;
     private BigInteger complaintid;
     private BigDecimal complainttypeid; 
+    private BigInteger feedback;
 
 
 
@@ -157,6 +158,14 @@ public class DrillDownReportResult {
 
     public void setReopened(final BigInteger reopened) {
         this.reopened = reopened;
+    }
+
+    public BigInteger getFeedback() {
+        return feedback;
+    }
+
+    public void setFeedback(BigInteger feedback) {
+        this.feedback = feedback;
     }
 
 }

@@ -41,6 +41,8 @@ package org.egov.pgr.web.controller.reports;
 
 import java.lang.reflect.Type;
 
+import org.egov.pgr.entity.enums.CitizenFeedback;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -71,6 +73,9 @@ public class DrillDownReportWithcompTypeAdaptor implements JsonSerializer<DrillD
                     .getStatus().toString() : "Not Available");
             jsonObject.addProperty("complaintId",
                     null != drillDownReportObject.getComplaintid() ? drillDownReportObject.getComplaintid().toString()
+                            : "Not Available");
+            jsonObject.addProperty("feedback",
+                    null != drillDownReportObject.getFeedback() ? CitizenFeedback.values()[drillDownReportObject.getFeedback().intValue()].name()
                             : "Not Available");
         }
         return jsonObject;

@@ -320,6 +320,9 @@ function callAjaxByComplaintDetail() {
 							"data" : "status",
 							"sTitle" : "Status"
 
+						},{
+							"data" : "feedback",
+							"sTitle" : "Feedback" 
 						} ]
 
 			});
