@@ -223,12 +223,7 @@
 							</table>
 						</td>
 					</tr>
-					<tr>&nbsp;
-					</tr>
-					<tr>&nbsp;
-					</tr>
-					<tr>&nbsp;
-					</tr>
+					
 					<tr>
 						<td class="greybox2">&nbsp;</td>
 						<td class="greybox"><s:text name="transferreason"></s:text> :</td>
@@ -242,7 +237,7 @@
 						<td class="greybox2">&nbsp;</td>
 						<td class="greybox"><s:text name="docNum" />:</td>
 						<td class="greybox"><span class="bold"><s:property
-									value="%{deedNo}" /></span></td>
+									value="%{deedNo}" /></span>
 						</td>
 						<td class="greybox"><s:text name="docDate" />:</td>
 						<td class="greybox"><s:date name="deedDate" var="docDate"
@@ -268,14 +263,12 @@
 				<s:if
 					test="%{!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT) && 
 				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@TRANSFER_FEE_COLLECTED)}">
-					<table width="100%" border="0" cellspacing="0" cellpadding="0">
-						<tr>
+						<div>
 							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
-						</tr>
-						<tr>
+						</div>
+						<div>
 							<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-						</tr>
-					</table>
+						</div>
 				</s:if>
 				<s:elseif
 					test="%{model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)}">
