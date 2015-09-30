@@ -74,7 +74,7 @@
 				getAadharDetailsForTransferee(this);
 			}
 		});
-
+		loadDesignationFromMatrix();
 	}
 	function onSubmit() {
 		var actionName = document.getElementById("workFlowAction").value;

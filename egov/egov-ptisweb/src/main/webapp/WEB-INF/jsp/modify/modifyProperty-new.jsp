@@ -95,6 +95,7 @@
 		enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
 		enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
 		toggleFloorDetails();
+		loadDesignationFromMatrix();
 	}
 
 </script>

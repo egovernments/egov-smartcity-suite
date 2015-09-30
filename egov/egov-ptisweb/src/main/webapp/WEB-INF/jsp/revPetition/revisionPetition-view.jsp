@@ -73,6 +73,7 @@
 				enableOrDisableSiteOwnerDetails(jQuery('input[name="property.propertyDetail.structure"]'));
 				enableOrDisableBPADetails(jQuery('input[name="property.propertyDetail.buildingPlanDetailsChecked"]'));
 				toggleFloorDetailsView();
+				loadDesignationFromMatrix();
 			}
 			function enableAppartnaumtLandDetailsView() {
 				if (document.forms[0].appurtenantLandChecked.checked == true) {

@@ -74,7 +74,7 @@
 				getAadharDetailsForTransferee(this);
 			}
 		});
-
+		loadDesignationFromMatrix();
 	}
 </script>
 </head>

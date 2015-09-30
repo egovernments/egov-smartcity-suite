@@ -90,7 +90,15 @@ function loadDesignationFromMatrix() {
 function populateApprover() {
 	getUsersByDesignationAndDept();
 }
-	
+
+function setDesignation() {
+	document.getElementById("approverDesignation").value = '<s:property value="%{approverDesignation}"/>';
+	populateApprover();
+}
+
+function setApprover() {
+	document.getElementById("approverPositionId").value = '<s:property value="%{approverPositionId}"/>';
+} 
 </script>
 <s:if test="%{getNextAction()!='END'}">
 <s:if test="%{!'Closed'.equalsIgnoreCase(state.value)}">
@@ -132,14 +140,14 @@ function populateApprover() {
 					value="%{approverDepartment}"  onchange="loadDesignationFromMatrix();"
 					cssClass="dropDownCss" />
 				<egov:ajaxdropdown fields="['Text','Value']" url="workflow/ajaxWorkFlow-getDesignationsByObjectType.action" id="approverDesignation" dropdownId="approverDesignation" 
-					contextToBeUsed="/eis"/>
+					contextToBeUsed="/eis" afterSuccess="setDesignation();"/>
 			</td>
 			<td class="${approverOddCSS}" width="14%"><s:text name="wf.approver.designation"/>:</td>
 			<td class="${approverOddTextCss}" width="14%">
 				<s:select id="approverDesignation" name="approverDesignation" list="dropdownData.designationList" listKey="designationId" headerKey="-1" listValue="designationName" headerValue="----Choose----" 
 					onchange="populateApprover();" onfocus="callAlertForDepartment();" cssClass="dropDownCss" />
 				<egov:ajaxdropdown id="approverPositionId" fields="['Text','Value']" dropdownId="approverPositionId" 
-					url="workflow/ajaxWorkFlow-getPositionByPassingDesigId.action" contextToBeUsed="/eis" />
+					url="workflow/ajaxWorkFlow-getPositionByPassingDesigId.action" contextToBeUsed="/eis" afterSuccess="setApprover();"/>
 			</td>
 			<td class="${approverOddCSS}" width="14%"><s:text name="wf.approver"/>:</td>
 			<td class="${approverOddTextCss}" width="14%">
