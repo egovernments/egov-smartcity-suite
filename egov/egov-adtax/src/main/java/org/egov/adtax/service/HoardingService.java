@@ -38,10 +38,12 @@
  */
 package org.egov.adtax.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.adtax.entity.Hoarding;
 import org.egov.adtax.repository.HoardingRepository;
+import org.egov.adtax.search.contract.HoardingSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,11 +68,31 @@ public class HoardingService {
         return hoardingRepository.save(hoarding);
     }
 
+    @Transactional
+    public Hoarding updateHoarding(final Hoarding hoarding) {
+        return hoardingRepository.saveAndFlush(hoarding);
+    }
+
     public List<Object[]> searchBySearchType(final Hoarding hoarding, final String searchType) {
         return hoardingRepository.fetchHoardingsBySearchType(hoarding, searchType);
     }
 
-    public List<Hoarding> getHoardingsLike(final Hoarding hoarding) {
-        return hoardingRepository.fetchHoardingsLike(hoarding);
+    public Hoarding getHoardingByHoardingNumber(final String hoardingNumber) {
+        return hoardingRepository.findByHoardingNumber(hoardingNumber);
+    }
+
+    public List<HoardingSearch> getHoardingSearchResult(final HoardingSearch hoardingSearch) {
+        final List<Hoarding> hoardings = hoardingRepository.fetchHoardingsLike(hoardingSearch);
+        final List<HoardingSearch> hoardingSearchResults = new ArrayList<>();
+        hoardings.forEach(result -> {
+            final HoardingSearch hoardingSearchResult = new HoardingSearch();
+            hoardingSearchResult.setHoardingNumber(result.getHoardingNumber());
+            hoardingSearchResult.setApplicationNumber(result.getApplicationNumber());
+            hoardingSearchResult.setApplicationFromDate(result.getApplicationDate());
+            hoardingSearchResult.setAgencyName(result.getAgency().getName());
+            hoardingSearchResult.setStatus(result.getStatus());
+            hoardingSearchResults.add(hoardingSearchResult);
+        });
+        return hoardingSearchResults;
     }
 }

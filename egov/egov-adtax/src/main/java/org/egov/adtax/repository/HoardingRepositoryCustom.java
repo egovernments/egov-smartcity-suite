@@ -41,10 +41,11 @@ package org.egov.adtax.repository;
 import java.util.List;
 
 import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.search.contract.HoardingSearch;
 
 public interface HoardingRepositoryCustom {
 
-    List<Hoarding> fetchHoardingsLike(Hoarding hoarding);
+    List<Hoarding> fetchHoardingsLike(HoardingSearch hoarding);
 
     List<Object[]> fetchHoardingsBySearchType(Hoarding hoarding, String searchType);
 }

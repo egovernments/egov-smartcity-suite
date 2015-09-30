@@ -133,7 +133,7 @@ public class CreateHoardingController {
     public List<Boundary> revenueZones() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", "ELECTION");
     }
-    
+
     @ModelAttribute("zones")
     public List<Boundary> zones() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", "ADMINISTRATION");
@@ -143,20 +143,20 @@ public class CreateHoardingController {
     public @ResponseBody List<Boundary> childBoundaries(@RequestParam final Long parentBoundaryId) {
         return boundaryService.getActiveChildBoundariesByBoundaryId(parentBoundaryId);
     }
-    
-    
+
     @RequestMapping(value = "calculateTaxAmount", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody Double getTaxAmount(@RequestParam final Long unitOfMeasureId,
             @RequestParam final Double measurement,
             @RequestParam final Long subCategoryId,
             @RequestParam final Long rateClassId) {
         Double rate = Double.valueOf(0);
-        rate= advertisementRateService.getAmountBySubcategoryUomClassAndMeasurement(subCategoryId, unitOfMeasureId, rateClassId, measurement);
-        if(rate==null) return Double.valueOf(0);      
-        //TODO MULTIPLY WITH MEASUREMENT TO GET TOTAL AMOUNT. 
-        return (BigDecimal.valueOf(rate).multiply(BigDecimal.valueOf(measurement)).setScale(2, BigDecimal.ROUND_HALF_UP)).doubleValue();
+        rate = advertisementRateService.getAmountBySubcategoryUomClassAndMeasurement(subCategoryId, unitOfMeasureId, rateClassId, measurement);
+        if (rate == null)
+            return Double.valueOf(0);
+        // TODO MULTIPLY WITH MEASUREMENT TO GET TOTAL AMOUNT.
+        return BigDecimal.valueOf(rate).multiply(BigDecimal.valueOf(measurement)).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
-    
+
     @RequestMapping(value = "subcategories", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<SubCategory> hoardingSubcategories(@RequestParam final Long categoryId) {
         return subCategoryService.getAllActiveSubCategoryByCategoryId(categoryId);
@@ -189,9 +189,9 @@ public class CreateHoardingController {
         int index = 0;
         for (final HoardingDocument document : hoarding.getDocuments()) {
             if (document.getDoctype().isMandatory() && document.getAttachments()[0].getSize() == 0)
-                resultBinder.rejectValue("documents[" + index+ "].attachments", "hoarding.doc.mandatory");
+                resultBinder.rejectValue("documents[" + index + "].attachments", "hoarding.doc.mandatory");
             else if (document.isEnclosed() && document.getAttachments()[0].getSize() == 0)
-                resultBinder.rejectValue("documents[" + index+ "].attachments", "hoarding.doc.not.enclosed");
+                resultBinder.rejectValue("documents[" + index + "].attachments", "hoarding.doc.not.enclosed");
             index++;
         }
     }

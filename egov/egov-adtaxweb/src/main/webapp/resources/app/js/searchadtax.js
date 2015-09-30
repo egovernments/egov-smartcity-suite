@@ -1,5 +1,36 @@
 $(document).ready(function(){
+	$.fn.dataTable.moment( 'DD/MM/YYYY' );
+	var agency = new Bloodhound({
+		datumTokenizer: function (datum) {
+			return Bloodhound.tokenizers.whitespace(datum.value);
+		},
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		remote: {
+			url: '../agency/agencies?name=%QUERY',
+			filter: function (data) {
+				return $.map(data, function (ct) {
+					return {
+						name: ct.name,
+						value: ct.id
+					};
+				});
+			}
+		}
+	});
 	
+   agency.initialize(); // Instantiate the Typeahead UI
+	
+	$('.typeahead').typeahead({
+		  hint: true,
+		  highlight: true,
+		  minLength: 1
+		}, {
+		displayKey: 'name',
+		source: agency.ttAdapter()
+	}).on('typeahead:selected typeahead:autocompleted typeahead:matched', function(event, data){
+		$("#agencyId").val(data.value);    
+   });
+   
 	$('#subcategories').change(function(){
 		$("#subCategoryId").val($('#subcategories').val());    
 	});
@@ -100,6 +131,39 @@ $(document).ready(function(){
 					});
 		}
 		e.stopPropagation();
+	});
+	
+	var datatbl = $('#search-update-result-table');
+	$('#search-update').click(function(e){
+		datatbl.dataTable({
+			"ajax": {
+	            "url": "/adtax/hoarding/search-for-update",
+	            "type": "POST"
+	        },
+			"sPaginationType": "bootstrap",
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+			"bDestroy": true,
+			"autoWidth": false,
+			"columns" : [
+			  { "data" : "hoardingNumber", "title":"Hoarding No."},
+			  { "data" : "applicationNumber", "title": "Application No."},
+			  { "data" : "applicationFromDate", "title": "Application Date"},
+			  { "data" : "agencyName", "title": "Agency"},
+			  { "data" : "status", "title": "Hoarding Status"},
+			  { "data" : null, "target":-1,"defaultContent": '<span class="add-padding"><i class="fa fa-edit history-size" class="tooltip-secondary" data-toggle="tooltip" title="Edit"></i></span><span class="add-padding"><i class="fa fa-eye history-size" class="tooltip-secondary" data-toggle="tooltip" title="View"></i></span>'},
+			  ],
+			  "aaSorting": [[2, 'desc']]
+		});
+		e.stopPropagation();
+	});
+	$("#search-update-result-table").on('click','tbody tr td i.fa-edit',function(e) {
+		var hoardingNo = datatbl.fnGetData($(this).parent().parent().parent(),0);
+		window.open("update/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+	});
+	$("#search-update-result-table").on('click','tbody tr td i.fa-eye',function(e) {
+		var hoardingNo = datatbl.fnGetData($(this).parent().parent().parent(),0);
+		window.open("view/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 });
 

@@ -37,13 +37,13 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@page contentType="text/html;charset=UTF-8" language="java" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <div class="row">
     <div class="col-md-12">
-    	<form:form id="hoardingsearchform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="hoarding" commandName="hoarding">
+    	 <form:form id="hoardingsearchform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="hoardingSearch" commandName="hoardingSearch">
 	        <div class="panel panel-primary" data-collapsed="0">
 	            <div class="panel-heading">
 	                <div class="panel-title"></div>
@@ -51,13 +51,32 @@
 	               <div class="form-group">
                         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.agency.name"/></label>
                         <div class="col-sm-3 add-margin">
-                            <form:input type="text" class="form-control" id="agency" path="agency.name"/>
-                            <form:errors path="agency.name" cssClass="error-msg"/>
+                            <input type="text" class="form-control typeahead" autocomplete="off">
+							<form:hidden path="agency" id="agencyId" value="${hoarding.agency}" />
                         </div>
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.hoarding.no"/></label>
                         <div class="col-sm-3 add-margin">
                             <form:input type="text" class="form-control" id="hoardingnumber" path="hoardingNumber"/>
-							<form:errors path="hoardingNumber" cssClass="error-msg"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.application.no"/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:input type="text" class="form-control" id="applicationNumber" path="applicationNumber"/>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.hoarding.permission.no"/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:input type="text" class="form-control" id="permissionNumber" path="permissionNumber"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.application.frm.date"/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:input type="text" class="form-control datepicker" id="applicationFromDate" path="applicationFromDate"/>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.application.to.date"/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:input type="text" class="form-control datepicker" id="applicationToDate" path="applicationToDate"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -70,7 +89,6 @@
                        			</c:forEach>
                    			</select>
                    			<form:hidden path="category" id="category"/>
-							<form:errors path="category" cssClass="error-msg"/>
                         </div>
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.hoarding.subcategory"/></label>
                         <div class="col-sm-3 add-margin">
@@ -78,7 +96,6 @@
                        			<option value="0"> <spring:message code="lbl.select"/> </option>
                    			</select>
                    			<form:hidden path="subCategory" id="subCategoryId"/>
-							<form:errors path="subCategory" cssClass="error-msg"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -90,7 +107,7 @@
 					   				<option value="${zone.id}"> ${zone.name}</option>
 					   			</c:forEach>
 					  		</select>
-					  		<form:input type="hidden" id="zoneId" path="adminBoundry.parent" value="" />
+					  		<form:input type="hidden" id="zoneId" path="adminBoundryParent" value="" />
 					    </div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.ward"/></label>
 					    <div class="col-sm-3 add-margin">
@@ -124,18 +141,20 @@
 	        </div>
         	<div class="row">
        			<div class="text-center">
-       				<button type="button" class="btn btn-primary" id="search"><spring:message code="lbl.submit"/></button>
-           			<button class="btn btn-default"><spring:message code="lbl.close"/></button>
+       				<button type="button" class="btn btn-primary" id="search-update"><spring:message code="lbl.submit"/></button>
+           			<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+		    		<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
        			</div>
         	</div>
-        </form:form>
-        <table class="table table-bordered datatable dt-responsive" id="adtax_search"></table>
+        	</form:form>
+        	<table class="table table-bordered datatable dt-responsive" id="search-update-result-table"></table>
 	</div>
-</div>
 
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/app/js/searchadtax.js'/>"></script>

@@ -41,22 +41,41 @@ package org.egov.adtax.web.controller.hoarding;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.util.List;
+import javax.validation.Valid;
 
 import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.adtax.service.HoardingService;
 import org.egov.adtax.web.controller.GenericController;
+import org.egov.infra.config.properties.ApplicationProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/hoarding")
 public class UpdateHoardingController extends GenericController {
 
+    @Autowired
     private HoardingService hoardingService;
 
-    @ModelAttribute
+    @Autowired
+    private ApplicationProperties applicationProperties;
+
+    @ModelAttribute("hoardingSearch")
+    public HoardingSearch hoardingSearch() {
+        return new HoardingSearch();
+    }
+
+    @ModelAttribute("hoarding")
     public Hoarding hoarding() {
         return new Hoarding();
     }
@@ -66,9 +85,30 @@ public class UpdateHoardingController extends GenericController {
         return "hoarding-search-for-update";
     }
 
-    @RequestMapping(value = "search-for-update", method = POST)
-    public String searchHoarding(@ModelAttribute Hoarding hoarding) {
-        List<Hoarding> hoardings = hoardingService.getHoardingsLike(hoarding);
-        return "hoarding-search-for-update";
+    @RequestMapping(value = "search-for-update", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchHoarding(@ModelAttribute final HoardingSearch hoardingSearch) {
+        return "{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+                .toJson(hoardingService.getHoardingSearchResult(hoardingSearch)) + "}";
+    }
+
+    @RequestMapping(value = "view/{hoardingNumber}")
+    public String viewHoarding(@PathVariable final String hoardingNumber, final Model model) {
+        model.addAttribute("hoarding", hoardingService.getHoardingByHoardingNumber(hoardingNumber));
+        return "hoarding-view";
+    }
+
+    @RequestMapping(value = "update/{hoardingNumber}")
+    public String updateHoarding(@PathVariable final String hoardingNumber, final Model model) {
+        model.addAttribute("hoarding", hoardingService.getHoardingByHoardingNumber(hoardingNumber));
+        return "hoarding-update";
+    }
+
+    @RequestMapping(value = "update/{hoardingNumber}", method = POST)
+    public String updateHoarding(@PathVariable final String hoardingNumber, @Valid @ModelAttribute final Hoarding hoarding,
+            final BindingResult resultBinder) {
+        if (resultBinder.hasErrors())
+            return "hoarding-update";
+        hoardingService.updateHoarding(hoarding);
+        return "redirect:/hoarding/view/";
     }
 }

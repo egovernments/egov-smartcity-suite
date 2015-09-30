@@ -38,6 +38,8 @@
  */
 package org.egov.adtax.repository;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -45,9 +47,10 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.adtax.entity.AgencyWiseResult;
 import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.search.contract.HoardingSearch;
+import org.egov.infra.utils.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -59,8 +62,35 @@ public class HoardingRepositoryImpl implements HoardingRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public List<Hoarding> fetchHoardingsLike(final Hoarding hoarding) {
-        return entityManager.unwrap(Session.class).createCriteria(Hoarding.class).add(Example.create(hoarding)).list();
+    public List<Hoarding> fetchHoardingsLike(final HoardingSearch hoardingSearch) {
+        final Criteria hoardingCriteria = entityManager.unwrap(Session.class).createCriteria(Hoarding.class, "hoarding");
+        hoardingCriteria.createAlias("hoarding.adminBoundry", "adminBoundry").createAlias("adminBoundry.parent", "parentBoundry");
+        if (hoardingSearch.getAgency() != null)
+            hoardingCriteria.add(Restrictions.eq("agency.id", hoardingSearch.getAgency()));
+        if (isNotBlank(hoardingSearch.getHoardingNumber()))
+            hoardingCriteria.add(Restrictions.eq("hoardingNumber", hoardingSearch.getHoardingNumber()));
+        if (isNotBlank(hoardingSearch.getApplicationNumber()))
+            hoardingCriteria.add(Restrictions.eq("applicationNumber", hoardingSearch.getApplicationNumber()));
+        if (isNotBlank(hoardingSearch.getPermissionNumber()))
+            hoardingCriteria.add(Restrictions.eq("permissionNumber", hoardingSearch.getPermissionNumber()));
+        if (hoardingSearch.getAdminBoundryParent() != null)
+            hoardingCriteria.add(Restrictions.eq("parentBoundry.id", hoardingSearch.getAdminBoundryParent()));
+        if (hoardingSearch.getAdminBoundry() != null)
+            hoardingCriteria.add(Restrictions.eq("adminBoundry.id", hoardingSearch.getAdminBoundry()));
+        if (hoardingSearch.getCategory() != null)
+            hoardingCriteria.add(Restrictions.eq("category.id", hoardingSearch.getCategory()));
+        if (hoardingSearch.getSubCategory() != null)
+            hoardingCriteria.add(Restrictions.eq("subCategory.id", hoardingSearch.getSubCategory()));
+        if (hoardingSearch.getRevenueInspector() != null)
+            hoardingCriteria.add(Restrictions.eq("revenueInspector.id", hoardingSearch.getRevenueInspector()));
+        if (hoardingSearch.getStatus() != null)
+            hoardingCriteria.add(Restrictions.eq("status", hoardingSearch.getStatus()));
+        if (hoardingSearch.getApplicationFromDate() != null)
+            hoardingCriteria.add(Restrictions.gt("applicationDate", DateUtils.startOfDay(hoardingSearch.getApplicationFromDate())));
+        if (hoardingSearch.getApplicationToDate() != null)
+            hoardingCriteria.add(Restrictions.le("applicationDate", DateUtils.endOfDay(hoardingSearch.getApplicationToDate())));
+
+        return hoardingCriteria.list();
     }
 
     @Override

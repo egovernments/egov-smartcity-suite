@@ -41,7 +41,6 @@ package org.egov.infra.utils;
 import java.util.Date;
 
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.joda.time.Months;
 
 public class DateUtils {
@@ -63,7 +62,7 @@ public class DateUtils {
     }
 
     public static Date startOfDay(final Date date) {
-        return new DateTime().withTimeAtStartOfDay().toDate();
+        return new DateTime(date).withTimeAtStartOfDay().toDate();
     }
 
     public static Date[] getStartAndEndOfDay(final Date startDate, final Date endDate) {
