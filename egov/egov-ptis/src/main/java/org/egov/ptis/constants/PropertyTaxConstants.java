@@ -1143,6 +1143,7 @@ public interface PropertyTaxConstants {
     public static final Character SOURCEOFDATA_APPLICATION = 'A';
     public static final Character SOURCEOFDATA_MIGRATION = 'M';
     public static final Character SOURCEOFDATA_DATAENTRY = 'D';
+    public static final Character SOURCEOFDATA_MEESEWA = 'T';
 
     public static final String ALTERATION_OF_ASSESSMENT = "Alteration of Assessment";
     public static final String BIFURCATION_OF_ASSESSMENT = "Bifurcation of Assessment";

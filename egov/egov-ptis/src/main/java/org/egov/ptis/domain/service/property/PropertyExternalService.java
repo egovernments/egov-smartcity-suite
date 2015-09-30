@@ -1051,6 +1051,7 @@ public class PropertyExternalService {
         basicProperty.setRegdDocNo(regdDocNo);
         basicProperty.setRegdDocDate(convertStringToDate(regdDocDate));
         basicProperty.setActive(Boolean.TRUE);
+        basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
         // Creating Property Address object
         final String addressString = "";
         final PropertyAddress propAddress = createPropAddress(localityCode, street, doorNo, addressString, pinCode,
@@ -1176,6 +1177,7 @@ public class PropertyExternalService {
         final Boundary ward = getBoundaryAsWard(block);
         final Boundary zone = getBoundaryAsZone(ward);
         final Boundary locality = getBoundaryAsLocality(boundaryNo, boundaryName);
+        basicProperty.setBoundary(boundaryService.getBoundaryById(ward.getId()));
         propertyID.setArea(block);
         propertyID.setWard(ward);
         propertyID.setZone(zone);
