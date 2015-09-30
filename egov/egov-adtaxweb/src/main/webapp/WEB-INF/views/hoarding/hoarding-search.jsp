@@ -131,14 +131,15 @@
 							</form:select>
 							<form:errors path="revenueInspector" cssClass="error-msg"/>
                         </div>
-                    </div>
+                    </div> 			
+       		
 	            </div>
 	        </div>
         	<div class="row">
        			<div class="text-center">
        				<button type="button" class="btn btn-primary" id="search"><spring:message code="lbl.submit"/></button>
-           			<button class="btn btn-default"><spring:message code="lbl.close"/></button>
-       			</div>
+          		    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+          	</div>
         	</div>
         </form:form>
         <table class="table table-bordered datatable dt-responsive" id="adtax_search"></table>

@@ -349,10 +349,10 @@
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.hoarding.duration"/>
+								<spring:message code="lbl.hoarding.duration"/> 	<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:select path="advertisementDuration" id="advertisementDuration" cssClass="form-control" cssErrorClass="form-control error">
+									<form:select path="advertisementDuration" id="advertisementDuration" cssClass="form-control" cssErrorClass="form-control error" required="required">
 										<form:option value=""><spring:message code="lbl.select" /></form:option>
 										<form:options items="${advertisementDuration}"/>
 									</form:select>

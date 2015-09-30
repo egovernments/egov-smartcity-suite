@@ -127,4 +127,15 @@
     	<put-attribute name="page-title" value="title.ratesClass.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/ratesClass/ratesClass-success.jsp"/>
     </definition>
+
+  <definition name="collectAdvtax-redirection" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.collect.Advtax.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/collection/collectAdvtax-redirection.jsp"/>
+    </definition>
+ 
+  <definition name="collectAdvtax-error" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.collect.Advtax.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/collection/collectAdvtax-error.jsp"/>
+    </definition>
+    
 </tiles-definitions>

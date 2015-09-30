@@ -95,4 +95,8 @@ public class HoardingService {
         });
         return hoardingSearchResults;
     }
+    public Hoarding findByHoardingNumber(final String hoardingNumber) {
+        return hoardingRepository.findByHoardingNumber(hoardingNumber);
+    }
+    
 }

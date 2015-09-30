@@ -9,19 +9,19 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.utils.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import utils.AdvertisementTaxConstants;
 
 @Service
 @Transactional(readOnly = true)
@@ -48,17 +48,17 @@ public class AdvertisementDemandService {
         BigDecimal totalDemandAmount = BigDecimal.ZERO;
         if (hoarding != null && hoarding.getDemandId() == null) {
             if (hoarding.getTaxAmount() != null) {
-                demandDetailSet.add(createDemandDetail(
+                demandDetailSet.add(createDemandDetails(
                         BigDecimal.valueOf(hoarding.getTaxAmount()),
                         getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX,
-                                installment)));
+                                installment),BigDecimal.ZERO));
                 totalDemandAmount.add(BigDecimal.valueOf(hoarding.getTaxAmount()));
             }
             if (hoarding.getEncroachmentFee() != null) {
-                demandDetailSet.add(createDemandDetail(
+                demandDetailSet.add(createDemandDetails(
                         BigDecimal.valueOf(hoarding.getEncroachmentFee()),
                         getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE,
-                                installment)));
+                                installment),BigDecimal.ZERO));
                 totalDemandAmount.add(BigDecimal.valueOf(hoarding.getEncroachmentFee()));
             }
             demand = createDemand(demandDetailSet, installment, totalDemandAmount);
@@ -92,14 +92,17 @@ public class AdvertisementDemandService {
         return null;
     }
 
-    protected Installment getCurrentInstallment() {
+    public Installment getCurrentInstallment() {
         return installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(AdvertisementTaxConstants.MODULE_NAME), new Date(),
                 AdvertisementTaxConstants.YEARLY);
 
     }
 
-    protected EgDemandDetails createDemandDetail(BigDecimal amount, EgDemandReason demandReason) {
+    public EgDemandDetails createDemandDetails(BigDecimal dmdAmount,EgDemandReason egDemandReason, BigDecimal amtCollected) {
+        return EgDemandDetails.fromReasonAndAmounts(dmdAmount, egDemandReason, amtCollected);
+}
+   /* public EgDemandDetails createDemandDetail(BigDecimal amount, EgDemandReason demandReason) {
         EgDemandDetails dmdDet = new EgDemandDetails();
         dmdDet.setAmount(amount);
         dmdDet.setAmtCollected(BigDecimal.ZERO);
@@ -108,6 +111,44 @@ public class AdvertisementDemandService {
         dmdDet.setCreateDate(new Date());
         dmdDet.setModifiedDate(new Date());
         return dmdDet;
+    }*/
+
+    public Boolean checkAnyTaxIsPendingToCollect(Hoarding hoarding) {
+        Boolean pendingTaxCollection = false;
+
+        if (hoarding != null && hoarding.getDemandId()!= null) {
+            for (EgDemandDetails demandDtl : hoarding.getDemandId().getEgDemandDetails()) {
+                if ((demandDtl.getAmount().subtract(demandDtl.getAmtCollected())).compareTo(BigDecimal.ZERO) > 0) {
+                    pendingTaxCollection = true;
+                    break;
+
+                }
+            }
+        }
+
+        return pendingTaxCollection;
+
+    }
+    public BigDecimal checkPenaltyAmountByDemand(EgDemand demand) {
+        BigDecimal penaltyAmt = BigDecimal.ZERO;
+        Installment currentInstallment=  getCurrentInstallment();
+        if (demand!= null) {
+            for (EgDemandDetails demandDtl : demand.getEgDemandDetails()) {
+               //Mean if installment is different than current, then calculate penalty 
+                if (((demandDtl.getAmount().subtract(demandDtl.getAmtCollected())).compareTo(BigDecimal.ZERO) > 0) 
+                        //&& currentInstallment.getId()!=demandDtl.getEgDemandReason().getEgInstallmentMaster().getId()
+                        ) {
+                   BigDecimal amount=demandDtl.getAmount().subtract(demandDtl.getAmtCollected());
+                    final int noofmonths = DateUtils.noOfMonths(demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate(),new Date());
+                    if(noofmonths>0)
+                    penaltyAmt=penaltyAmt.add((amount.multiply(BigDecimal.valueOf(noofmonths))).divide(BigDecimal.valueOf(100)));
+                    //TODO: CHECK AGAIN
+                }
+            }
+        }
+
+        return penaltyAmt;
+
     }
 
 }
