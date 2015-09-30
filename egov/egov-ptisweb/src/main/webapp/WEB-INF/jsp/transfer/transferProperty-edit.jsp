@@ -248,11 +248,9 @@
 			Mandatory Fields</div>
 	</div>
 	<script type="text/javascript">
-		jQuery("#marketValue")
-				.blur(
-						function() {
-							var marketVal = parseInt(jQuery("#marketValue")
-									.val());
+		jQuery("#marketValue").blur(function() {
+			    if(jQuery("#marketValue").val().length >= 5) {
+							var marketVal = parseInt(jQuery("#marketValue").val());
 							var transferReason = document
 									.getElementById("transRsnId").options[document
 									.getElementById("transRsnId").selectedIndex].text;
@@ -270,7 +268,10 @@
 							}).done(function(value) {
 								jQuery("#mutationFee").val(roundoff(value));
 							});
-						});
+			    } else {
+			    	alert("Minimum five digit value is required for document value");
+				    }
+				});
 		function enableSaleDtls(obj) {
 			var selectedValue = obj.options[obj.selectedIndex].text;
 			if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SALES_DEED}" />') {
