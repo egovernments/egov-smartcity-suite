@@ -160,7 +160,7 @@ jQuery(document).ready(function($)
 				"sTitle" : "Boundary"
 			  }, 
 			  { "mData" : "complaintType",
-				"sTitle" : "Complaint Type"
+				"sTitle" : "Grievance Type"
 			  }, 
 			  { "mData" : "position",
 				"sTitle" : "Position"

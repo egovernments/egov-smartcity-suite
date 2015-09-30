@@ -117,7 +117,7 @@ jQuery(document)
 									columns : [
 											{
 												"data" : "name",
-												"sTitle" : "Complaint Type Name"
+												"sTitle" : "Grievance Type Name"
 											}, {
 												"mData" : getComplaintTypeIdWithDatakey,
 												"render" : function(data, type,row) {
@@ -325,17 +325,17 @@ function callAjaxByComplaintDetail() {
 							},
 						}, {
 							"mData" : "createddate",
-							"sTitle" : "Complaint Date"
+							"sTitle" : "Grievance Date"
 
 						}, {
 							"data" : "complainantname",
 							"sTitle" : "Complainant Name"
 						}, {
 							"data" : "boundaryname",
-							"sTitle" : "Complaint Address"
+							"sTitle" : "Grievance Address"
 						}, {
 							"data" : "details",
-							"sTitle" : "Complaint Details"
+							"sTitle" : "Grievance Details"
 						}, {
 							"data" : "status",
 							"sTitle" : "Status"

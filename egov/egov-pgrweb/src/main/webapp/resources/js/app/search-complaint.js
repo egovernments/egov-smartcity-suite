@@ -96,7 +96,7 @@ var tableContainer;
 				data: searchResult,
 				columns: [
 				{title: 'Complaint Number', data: 'resource.clauses.crn'},
-				{title: 'Complaint Type', data: 'resource.searchable.complaintType.name'},
+				{title: 'Grievance Type', data: 'resource.searchable.complaintType.name'},
 				{title: 'Name', data: 'resource.common.citizen.name'},
 				{title: 'Location', data: 'resource.common.boundary.name'},
 				{title: 'Status', data: 'resource.clauses.status.name'},

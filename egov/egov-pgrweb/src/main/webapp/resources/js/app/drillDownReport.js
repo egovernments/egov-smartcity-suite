@@ -408,7 +408,7 @@ function callAjaxByComplaintType() {
 								return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'ComplaintTypeWise\');" data-hiddenele="complainttypeid" data-eleval="'
 										+ data + '">' + data + '</a>';
 							},
-							"sTitle" : "Complaint Type Name"
+							"sTitle" : "Grievance Type Name"
 						}, {
 							"mData" : "registered",
 							"sTitle" : "Registered"
@@ -629,17 +629,17 @@ function callAjaxByComplaintDetail() {
 							},
 						}, {
 							"mData" : "createddate",
-							"sTitle" : "Complaint Date"
+							"sTitle" : "Grievance Date"
 
 						}, {
 							"data" : "complainantname",
 							"sTitle" : "Complainant Name"
 						}, {
 							"data" : "boundaryname",
-							"sTitle" : "Complaint Address"
+							"sTitle" : "Grievance Address"
 						}, {
 							"data" : "details",
-							"sTitle" : "Complaint Details"
+							"sTitle" : "Grievance Details"
 						}, {
 							"data" : "status",
 							"sTitle" : "Status"
