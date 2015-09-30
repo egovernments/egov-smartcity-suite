@@ -175,10 +175,8 @@
 				undoLoadingMask();
 			}				
 
-			jQuery(window).unload(function(){
-				parent.window.opener.inboxloadmethod();
-			});  
 </script>
+<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 	</head>
 	<body onload="loadOnStartUp();">
 		<div align="left" class="errortext">

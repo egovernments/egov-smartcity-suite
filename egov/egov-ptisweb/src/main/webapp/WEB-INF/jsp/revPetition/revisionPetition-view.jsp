@@ -213,12 +213,8 @@
 				return true;
 			}
 
-			jQuery(window).unload(function(){
-				parent.window.opener.inboxloadmethod();
-			});
-			
-  
 		</script>
+		<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 		<link href="<c:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
 	</head>
 	<body   onload="loadOnStartUp();" class="yui-skin-sam">
