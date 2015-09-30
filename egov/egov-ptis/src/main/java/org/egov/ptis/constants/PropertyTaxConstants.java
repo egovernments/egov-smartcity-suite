@@ -308,7 +308,8 @@ public interface PropertyTaxConstants {
         private static final long serialVersionUID = 4641144830413085281L;
 
         {
-            put("VACANTLAND", "Vacant Land");
+            put("VACANTLAND", "Private Land");
+            put("GOVTLAND", "Government Land");
         }
     };
 
@@ -584,6 +585,7 @@ public interface PropertyTaxConstants {
     public static final String PROPERTY_MODIFY_REASON_DATA_UPDATE = "DATA_UPDATE";
     public static final String PROPERTY_MODIFY_REASON_EDIT_OWNER = "EDIT_OWNER";
     public static final String PROPERTY_MODIFY_REASON_ADD_OR_ALTER = "ADD_OR_ALTER";
+    public static final String PROPERTY_MODIFY_REASON_EDIT_DATA_ENTRY = "EDIT_DATA_ENTRY";
     public static final List<String> modifyReasons = Arrays.asList(PROPERTY_MODIFY_REASON_AMALG,
             PROPERTY_MODIFY_REASON_BIFURCATE, PROPERTY_MODIFY_REASON_OBJ, PROPERTY_MODIFY_REASON_DATA_ENTRY,
             PROPERTY_MODIFY_REASON_DATA_UPDATE, PROPERTY_MODIFY_REASON_MODIFY);
