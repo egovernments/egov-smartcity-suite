@@ -66,22 +66,15 @@ public class DrillDownReportService {
             if (department != null && !"".equals(department)) {
 
                 if (complainttype != null && !"".equals(complainttype))
-                    query.append("  SELECT   emp.name||'~'|| pos.name    as name, "); // Next
-                                                                                      // is
-                                                                                      // userwise.
+                    query.append("  SELECT   emp.name||'~'|| pos.name    as name, ");
+                /* Next is userwise. */
                 else
-                    query.append(" SELECT ctype.name as name, "); // mean user
-                                                                  // selected
-                                                                  // boundary
-                                                                  // and
-                                                                  // department.
-                                                                  // Next is
-                                                                  // complaint
-                                                                  // type.
-            } else
-                query.append(" SELECT dept.name as name, "); // Mean get
-                                                             // department list
-                                                             // .
+                    query.append(" SELECT ctype.name as name, ");
+                /*
+                 * means user selected boundary and department. Next is complaint type.
+                 */ } else
+                query.append(" SELECT dept.name as name, "); /* Means get department list */
+
         } else if (department != null && !"".equals(department)) {
             if (complainttype != null && !"".equals(complainttype))
                 query.append("  SELECT   emp.name||'~'|| pos.name    as name, ");
@@ -108,7 +101,8 @@ public class DrillDownReportService {
                 + "(cd.createddate - state.lastmodifieddate) > (interval '1h' * ctype.slahours) THEN 1 "
                 + "WHEN (state.value not in ('COMPLETED','REJECTED','WITHDRAWN') AND "
                 + "(cd.createddate - CURRENT_DATE ) > (interval '1h' * ctype.slahours)) THEN 1 ELSE 0 END) beyondsla ");
-        query.append(" FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype , eg_wf_states state, egpgr_complaint cd  left JOIN eg_boundary bndry on cd.location =bndry.id left JOIN eg_boundary bndryparent on  bndry.parent=bndryparent.id  left JOIN eg_department dept on cd.department =dept.id left join eg_position pos on cd.assignee=pos.id  left join view_egeis_employee emp on pos.id=emp.position ");
+        query.append(
+                " FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype , eg_wf_states state, egpgr_complaint cd  left JOIN eg_boundary bndry on cd.location =bndry.id left JOIN eg_boundary bndryparent on  bndry.parent=bndryparent.id  left JOIN eg_department dept on cd.department =dept.id left join eg_position pos on cd.assignee=pos.id  left join view_egeis_employee emp on pos.id=emp.position ");
 
         buildWhereClause(fromDate, toDate, complaintDateType, query, department, boundary, complainttype, selecteduser);
 
@@ -222,8 +216,17 @@ public class DrillDownReportService {
             final String selecteduser) {
         final StringBuffer query = new StringBuffer();
 
-        query.append(" SELECT  distinct complainant.id as complaintid, crn,cd.createddate,complainant.name as complaintname,cd.details,cs.name as status , bndry.name as boundaryname , cd.citizenfeedback as feedback FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype ,egpgr_complaint cd left JOIN eg_boundary bndry on cd.location =bndry.id left JOIN eg_boundary bndryparent on  bndry.parent=bndryparent.id  left JOIN eg_department dept on cd.department =dept.id  left join eg_position pos on cd.assignee=pos.id left join view_egeis_employee emp on pos.id=emp.position ,"
-                + " egpgr_complainant complainant ");
+        query.append(
+                "SELECT distinct complainant.id as complaintid, crn,cd.createddate,complainant.name as complaintname,cd.details,cs.name as status , bndry.name as boundaryname , cd.citizenfeedback as feedback ,");
+        query.append(
+                "CASE WHEN state.value IN ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - state.lastmodifieddate) < (interval '1h' * ctype.slahours) THEN 'Yes' WHEN (state.value NOT IN ('COMPLETED','REJECTED','WITHDRAWN') ");
+        query.append(
+                "AND (cd.createddate - CURRENT_DATE) < (interval '1h' * ctype.slahours)) THEN 'Yes' ELSE 'No' END as issla ");
+        query.append(
+                "FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype ,eg_wf_states state ,egpgr_complaint cd left JOIN eg_boundary bndry "
+                        + "on cd.location =bndry.id left JOIN eg_boundary bndryparent on  bndry.parent=bndryparent.id  left JOIN eg_department dept "
+                        + "on cd.department =dept.id  left join eg_position pos on cd.assignee=pos.id left join view_egeis_employee emp "
+                        + "on pos.id=emp.position , egpgr_complainant complainant ");
 
         buildWhereClause(fromDate, toDate, complaintDateType, query, department, boundary, complainttype, selecteduser);
         query.append(" and complainant.id=cd.complainant   ");

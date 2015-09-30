@@ -103,7 +103,7 @@ public class AgeingReportService {
         if (typeofReport != null && !"".equals(typeofReport)
                 && typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_COMPLETED)) {
             query.append(" WHERE  cd.state_id=state.id and  cd.status  = cs.id and cd.complainttype= ctype.id  ");
-            query.append(" AND cs.name IN ('COMPLETED','REJECTED', 'WITHDRAWN','CLOSED','CLOSE') ");
+            query.append(" AND cs.name IN ('COMPLETED','REJECTED', 'WITHDRAWN','CLOSED') ");
         } else {
             query.append(" WHERE cd.status  = cs.id and cd.complainttype= ctype.id  ");
             query.append(" AND cs.name IN ('REGISTERED','FORWARDED', 'PROCESSING','REOPENED') ");

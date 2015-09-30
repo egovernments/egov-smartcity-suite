@@ -644,15 +644,15 @@ function callAjaxByComplaintDetail() {
 							"data" : "status",
 							"sTitle" : "Status"
 
-						},{
+						}, {
 							"data" : "feedback",
 							"sTitle" : "Feedback"
 
-						} /*, {
-									"data" : "complaintId",
-									"sTitle" : "complaintId"
+						}, {
+								"data" : "issla",
+								"sTitle" : "Within SLA(Yes or No)" 
 										
-								}*/]
+						}]
 
 			});
 }
