@@ -115,29 +115,16 @@
 				<div class="col-md-6 col-xs-6 table-header"><spring:message code="lbl.drilldownReport.resultHeader" /> </div>
 				<div class="col-md-12 form-group">
 					<table class="table table-bordered datatable dt-responsive table-hover" id="drilldownReport-table">
-						<thead>
-							<%--<c:choose>
-									<c:when test="${mode=='ByBoundary'}">
-										<th><spring:message code="lbl.drilldownReport.boundary" /></th>
-									</c:when>
-									<c:otherwise>
-										<th><spring:message code="lbl.drilldownReport.department" /></th>
-									</c:otherwise>
-								</c:choose>
-								<th><spring:message code="lbl.drilldownReport.registeredStatus" /></th>
-								<th><spring:message code="lbl.drilldownReport.inprocessStatus" /></th>
-								<th><spring:message code="lbl.drilldownReport.completedStatus" /></th>
-								<th><spring:message code="lbl.drilldownReport.rejectedStatus" /></th>
-								<th><b><spring:message code="lbl.drilldownReport.total" /></b></th>--%>
-						</thead> 
+						<thead></thead> 
 						<tfoot id="report-footer">
 						   <tr>
-						    <td><b><spring:message code="lbl.total"/></b></td>
-						    <td></td>
-						    <td></td>
-						    <td></td>
-						    <td></td>
-						    <td></td>
+								<td><b><spring:message code="lbl.total"/></b></td>
+						    	<td></td>
+						    	<td></td>
+						    	<td></td>
+						    	<td></td>
+						    	<td></td>
+						     	<td></td>
 							</tr>
 						</tfoot>
 					</table>

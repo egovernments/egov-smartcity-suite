@@ -161,7 +161,9 @@ function callajaxdatatableForDrilDownReport() {
 							"data" : "total",
 							"sTitle" : "Total"
 
-						} ],
+						} ,{
+							"visible": false
+						}],
 				"footerCallback" : function(row, data, start, end, display) {
 					var api = this.api(), data;
 					if (data.length == 0) {
@@ -309,7 +311,9 @@ function callAjaxByDepartment() {
 							"data" : "total",
 							"sTitle" : "Total"
 
-						} ],
+						},{
+							"visible": false
+						}],
 				"footerCallback" : function(row, data, start, end, display) {
 					var api = this.api(), data;
 					if (data.length == 0) {
@@ -410,7 +414,9 @@ function callAjaxByComplaintType() {
 							"data" : "total",
 							"sTitle" : "Total"
 
-						} ],
+						} ,{
+							"visible": false
+						}],
 				"footerCallback" : function(row, data, start, end, display) {
 					var api = this.api(), data;
 					if (data.length == 0) {
@@ -509,7 +515,9 @@ function callAjaxByUserNameType() {
 							"data" : "total",
 							"sTitle" : "Total"
 
-						} ],
+						},{
+							"visible": false
+						}],
 				"footerCallback" : function(row, data, start, end, display) {
 					var api = this.api(), data;
 					if (data.length == 0) {
@@ -608,6 +616,10 @@ function callAjaxByComplaintDetail() {
 						}, {
 							"data" : "status",
 							"sTitle" : "Status"
+
+						},{
+							"data" : "feedback",
+							"sTitle" : "Feedback"
 
 						} /*, {
 									"data" : "complaintId",
