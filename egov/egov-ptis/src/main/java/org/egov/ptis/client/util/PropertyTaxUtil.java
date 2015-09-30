@@ -260,7 +260,7 @@ public class PropertyTaxUtil {
                 .createQuery(
                         "from CFinancialYear cfinancialyear where ? between "
                                 + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list()
-                                .get(0);
+                .get(0);
     }
 
     public Category getCategoryForBoundary(final Boundary boundary) {
@@ -791,7 +791,7 @@ public class PropertyTaxUtil {
                 .getSession()
                 .createQuery(
                         "select min(inst.fromDate) from org.egov.commons.Installment inst where inst.module.name = :moduleName")
-                        .setString("moduleName", PTMODULENAME).uniqueResult();
+                .setString("moduleName", PTMODULENAME).uniqueResult();
     }
 
     /**
@@ -1043,7 +1043,7 @@ public class PropertyTaxUtil {
                                 + "and rd.description is not null " + "and rd.cramount > 0 "
                                 + "and rh.consumerCode like '" + consumerCode + "%' "
                                 + "group by substr(rd.description, length(rd.description)-6, length(rd.description))")
-                                .list();
+                .list();
 
         if (rcptHeaderList != null && !rcptHeaderList.isEmpty()) {
             String instStr = "";
@@ -1382,7 +1382,7 @@ public class PropertyTaxUtil {
                                 + "where p.basicProperty.active = true " + "and p.basicProperty.upicNo = :upicNo "
                                 + "and (p.remarks is null or p.remarks <> :propertyMigrationRemarks) "
                                 + "and pd.effective_date is not null").setString("upicNo", propertyId)
-                                .setString("propertyMigrationRemarks", PropertyTaxConstants.STR_MIGRATED_REMARKS).list();
+                .setString("propertyMigrationRemarks", PropertyTaxConstants.STR_MIGRATED_REMARKS).list();
 
         Date earliestModificationDate = null;
 
@@ -1529,21 +1529,21 @@ public class PropertyTaxUtil {
 
             prevMutationCode = prevProperty != null ? prevProperty.getPropertyDetail().getPropertyMutationMaster()
                     .getCode() : null;
-                    mutationCode = property.getPropertyDetail().getPropertyMutationMaster().getCode();
-                    nextMutationCode = i != noOfProperties - 1 ? allProperties.get(i + 1).getPropertyDetail()
-                            .getPropertyMutationMaster().getCode() : null;
+            mutationCode = property.getPropertyDetail().getPropertyMutationMaster().getCode();
+            nextMutationCode = i != noOfProperties - 1 ? allProperties.get(i + 1).getPropertyDetail()
+                    .getPropertyMutationMaster().getCode() : null;
 
-                            if (!mutationCode.equalsIgnoreCase(PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ))
-                                if (mutationsCodes.contains(mutationCode))
-                                    propertyAndEffectiveDate.put(getPropertyOccupancyDate(property), property);
-                                else {
+            if (!mutationCode.equalsIgnoreCase(PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ))
+                if (mutationsCodes.contains(mutationCode))
+                    propertyAndEffectiveDate.put(getPropertyOccupancyDate(property), property);
+                else {
 
-                                    if (isFirstDataEntry(prevMutationCode, mutationCode, prevProperty))
-                                        firstDataEntryEffectiveDate = getPropertyOccupancyDate(property);
+                    if (isFirstDataEntry(prevMutationCode, mutationCode, prevProperty))
+                        firstDataEntryEffectiveDate = getPropertyOccupancyDate(property);
 
-                                    if (mutationCode.equalsIgnoreCase(PROPERTY_MODIFY_REASON_DATA_ENTRY) && nextMutationCode == null)
-                                        propertyAndEffectiveDate.put(firstDataEntryEffectiveDate, property);
-                                }
+                    if (mutationCode.equalsIgnoreCase(PROPERTY_MODIFY_REASON_DATA_ENTRY) && nextMutationCode == null)
+                        propertyAndEffectiveDate.put(firstDataEntryEffectiveDate, property);
+                }
         }
 
         final Map<Date, Property> propertyByOccupancyDate = new TreeMap<Date, Property>();
@@ -2040,27 +2040,27 @@ public class PropertyTaxUtil {
         }
         // Arrear Demand query union Current Demand query
         unionQueryStr
-        .append(innerSelectQry1)
-        .append(arrear_innerCommonQry1)
-        .append(innerSelectQry0)
-        .append(arrear_innerCommonQry0)
-        .append(whereQry)
-        .append(arrearGroupBy)
-        .append(" union ")
-        .append(innerSelectQry1)
-        .append(current_innerCommonQry1)
-        .append(innerSelectQry0)
-        .append(current_innerCommonQry0)
-        .append(whereQry)
-        .append(collGroupBy);
+                .append(innerSelectQry1)
+                .append(arrear_innerCommonQry1)
+                .append(innerSelectQry0)
+                .append(arrear_innerCommonQry0)
+                .append(whereQry)
+                .append(arrearGroupBy)
+                .append(" union ")
+                .append(innerSelectQry1)
+                .append(current_innerCommonQry1)
+                .append(innerSelectQry0)
+                .append(current_innerCommonQry0)
+                .append(whereQry)
+                .append(collGroupBy);
         // Final Query : Retrieves arrear and current for the selected boundary.
         queryStr
-        .append(finalSelectQry)
-        .append(finalCommonQry)
-        .append(unionQueryStr)
-        .append(finalFrmQry)
-        .append(finalWhereQry)
-        .append(finalGrpQry);
+                .append(finalSelectQry)
+                .append(finalCommonQry)
+                .append(unionQueryStr)
+                .append(finalFrmQry)
+                .append(finalWhereQry)
+                .append(finalGrpQry);
 
         final SQLQuery query = persistenceService.getSession().createSQLQuery(queryStr.toString());
         return query;
@@ -2118,8 +2118,7 @@ public class PropertyTaxUtil {
                 .list();
         return propertyViewList;
     }
-    
-    
+
     /**
      * @param zoneId
      * @param wardId
@@ -2128,7 +2127,8 @@ public class PropertyTaxUtil {
      * @param toDate
      * @return
      */
-    public Query prepareQueryforTitleTransferReport(Long zoneId, Long wardId, Long areaId, String fromDate, String toDate) {
+    public Query prepareQueryforTitleTransferReport(final Long zoneId, final Long wardId, final Long areaId,
+            final String fromDate, final String toDate) {
         final StringBuffer query = new StringBuffer(300);
         new PropertyMutation();
         String boundaryCond = "";
@@ -2159,7 +2159,7 @@ public class PropertyTaxUtil {
         final Query qry = persistenceService.getSession().createQuery(query.toString());
         return qry;
     }
-    
+
     /**
      * @ Description : gets the property tax arrear amount for a property
      * @param basicPropId
