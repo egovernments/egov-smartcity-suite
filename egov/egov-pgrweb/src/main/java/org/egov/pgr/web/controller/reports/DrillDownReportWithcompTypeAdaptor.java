@@ -75,7 +75,11 @@ public class DrillDownReportWithcompTypeAdaptor implements JsonSerializer<DrillD
                     null != drillDownReportObject.getComplaintid() ? drillDownReportObject.getComplaintid().toString()
                             : "Not Available");
             jsonObject.addProperty("feedback",
-                    null != drillDownReportObject.getFeedback() ? CitizenFeedback.values()[drillDownReportObject.getFeedback().intValue()].name()
+                    null != drillDownReportObject.getFeedback()
+                            ? CitizenFeedback.values()[drillDownReportObject.getFeedback().intValue()].name()
+                            : "Not Available");
+            jsonObject.addProperty("issla",
+                    null != drillDownReportObject.getIssla() ? drillDownReportObject.getIssla()
                             : "Not Available");
         }
         return jsonObject;

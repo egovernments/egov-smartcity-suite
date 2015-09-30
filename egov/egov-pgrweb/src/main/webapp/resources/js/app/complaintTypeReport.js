@@ -157,6 +157,20 @@ jQuery(document)
 												"sTitle" : "Reopened"
 
 											}, {
+												"mData" : getComplaintTypeIdWithDatakey,
+												"render" : function(data, type,row) {
+													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Within SLA\');" data-hiddenele="boundary" data-eleval="'+ data.withinsla + '" data-complaintname="'+ data.complaintTyeId + '">'
+															+ data.withinsla + '</a>';
+												},
+												"sTitle" : "Within SLA"
+											},{
+												"mData" : getComplaintTypeIdWithDatakey,
+												"render" : function(data, type,row) {
+													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Beyond SLA\');" data-hiddenele="boundary" data-eleval="'+ data.beyondsla + '" data-complaintname="'+ data.complaintTyeId + '">'
+															+ data.beyondsla + '</a>';
+												},
+												"sTitle" : "Beyond SLA"
+											},{
 												"data" : "total",
 												"sTitle" : "Total"
 
@@ -175,7 +189,9 @@ jQuery(document)
 											updateTotalFooter(3, api, 'completed');
 											updateTotalFooter(4, api, 'rejected');
 											updateTotalFooter(5, api, 'reopened');
-											updateTotalFooter(6, api, '');
+											updateTotalFooter(6, api, 'withinsla');
+											updateTotalFooter(7, api, 'beyondsla');
+											updateTotalFooter(8, api, '');
 
 										}
 									},
@@ -205,6 +221,10 @@ jQuery(document)
 							 data={'complaintTyeId':row.complaintTyeId, 'rejected':row.rejected}
 						else if(meta.col===5)
 							 data={'complaintTyeId':row.complaintTyeId, 'reopened':row.reopened}
+						else if(meta.col===6)
+							 data={'complaintTyeId':row.complaintTyeId, 'withinsla':row.withinsla}
+						else if(meta.col===7)
+							 data={'complaintTyeId':row.complaintTyeId, 'beyondsla':row.beyondsla}
 							
 						 }
 						return data;
@@ -323,7 +343,10 @@ function callAjaxByComplaintDetail() {
 						},{
 							"data" : "feedback",
 							"sTitle" : "Feedback" 
-						} ]
+						},{
+							"data" : "issla",
+							"sTitle" : "Within SLA(Yes or No)" 
+						}  ]
 
 			});
 }
