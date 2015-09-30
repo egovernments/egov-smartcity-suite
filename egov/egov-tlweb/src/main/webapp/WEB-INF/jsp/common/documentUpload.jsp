@@ -93,6 +93,5 @@
 				</s:iterator>	
 			</s:else>
        	</div>
-       	<div>&nbsp;</div>
    	</div>
 </s:iterator>

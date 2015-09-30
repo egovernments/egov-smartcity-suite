@@ -222,6 +222,7 @@
 				noOfMachines.type = 'text';
 				noOfMachines.size = '10';
 				noOfMachines.onBlur= 'checkLength(this,3)';
+				noOfMachines.className = "form-control";
 				<s:if test="%{sControlDisabled}">
 				  noOfMachines.disabled="<s:property value='%{sControlDisabled}' />";
 				</s:if>
@@ -245,6 +246,7 @@
 				horsepower.type = 'text';
 				horsepower.size = '10';
 				horsepower.onBlur = 'checkLength(this,6)';
+				horsepower.className = "form-control";
 				<s:if test="%{sControlDisabled}">
 				  	horsepower.disabled="<s:property value='%{sControlDisabled}' />";
 				</s:if>
@@ -341,10 +343,8 @@
                         <div class="panel panel-primary" data-collapsed="0">
                             <div class="panel-heading">
                             
-                            	<div class="panel-heading">
-									<div class="panel-title text-left">
-											<s:text name='newtradeLicense.heading' /> 
-									</div>
+								<div class="panel-title" style="text-align:center">
+										<s:text name='newtradeLicense.heading' /> 
 								</div>
                             
                                 <ul class="nav nav-tabs" id="settingstab">
@@ -368,7 +368,7 @@
 											
 											<div class="form-group">
 											    <label class="col-sm-3 control-label text-right"><s:text name="license.motor.installed" /></label>
-											    <div class="col-sm-3 add-margin">
+											    <div class="col-sm-3 add-margin text-left">
 											         	<s:checkbox theme="simple" key="motorInstalled" tabindex="17" onclick="showhide('addmoremotor')" label="motorInstalled" id="motorInstalled" disabled="%{sDisabled}" />
 											    </div>
 											</div>
@@ -389,7 +389,7 @@
 											<div class="form-group" id="addmoremotor">
 											    <label class="col-sm-3 control-label text-right"><s:text name="license.total.horsepower" /><span class="mandatory"></span></label>
 											    <div class="col-sm-3 add-margin">	
-											    	<s:textfield name="totalHP" readonly="true" disabled="%{sDisabled}"  onBlur="trimAll(this.value);" id="totalHP" />
+											    	<s:textfield name="totalHP" readonly="true" disabled="%{sDisabled}"  onBlur="trimAll(this.value);" id="totalHP" cssClass="form-control" />
 											    </div>		
 											</div>
 											
@@ -397,7 +397,7 @@
 											<div class="form-group">
 											    <label class="col-sm-3 control-label text-right"><s:text name="license.total.workersCapacity" /><span class="mandatory"></span></label>
 											    <div class="col-sm-3 add-margin">	
-											    	<s:textfield name="workersCapacity" size="8" maxlength="8" onBlur="trimAll(this.value);" id="workersCapacity" />
+											    	<s:textfield name="workersCapacity" size="8" maxlength="8" onBlur="trimAll(this.value);" id="workersCapacity" cssClass="form-control" />
 											    </div>		
 											</div>
 											
@@ -427,10 +427,8 @@
                         </s:push>  
                     </s:form> 
                         
-                        <div class="buttonbottom">
-							<%@ include file='../common/commonWorkflowMatrix.jsp'%>
-							<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
-						</div>
+						<%@ include file='../common/commonWorkflowMatrix.jsp'%>
+						<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
                         
                             <!-- <div class="row">
                             <div class="text-center">

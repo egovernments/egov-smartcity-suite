@@ -83,7 +83,7 @@
 </div>
 
 <div class="form-group">
-    <label class="col-sm-2 control-label text-right"><s:text name='license.remarks.lbl' /></label>
+    <label class="col-sm-3 control-label text-right"><s:text name='license.remarks.lbl' /></label>
     <div class="col-sm-3 add-margin">
          <s:textarea name="remarks" id="remarks" value="%{remarks}" maxlength="250" class="form-control"/>
     </div>

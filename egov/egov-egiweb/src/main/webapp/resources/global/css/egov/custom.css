@@ -68,6 +68,7 @@ html, body {
 	font-family: regular;
 	font-size:19px;
 	color:#f5861f;
+	text-align:left;
 }
 
 th{
@@ -1125,6 +1126,7 @@ b, strong
   font-family:semibold;
   text-transform:uppercase;
   padding: 12px 15px 14px 15px;
+  font-size: 14px;
 }
 
 .nav-tabs>li >a:hover {

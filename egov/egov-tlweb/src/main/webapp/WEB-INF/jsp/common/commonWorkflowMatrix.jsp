@@ -116,53 +116,45 @@ function populateApprover() {
      <c:set var="approverEvenCSS" value="bluebox" scope="request"/>
 </s:if> --%>
 
- <table width="100%" border="0" cellspacing="0" cellpadding="0">
- <tr>
-			<div class="headingsmallbg">
-				<span class="bold"><s:text name="title.approval.information"/></span>
-			</div>
 		
-	</tr>
-	  	<tr>   
-	  	 	 <td class="greybox" width="5%">&nbsp;</td>
-			 <td class="greybox" id="deptLabel" width="14%"><s:text name="wf.approver.department"/>:</td>
-			 <td class="greybox" width="14%">
-				<s:select name="approverDepartment" id="approverDepartment" list="dropdownData.approverDepartmentList" 
+		<div class="panel-title">
+			<s:text name="title.approval.information"/>
+		</div>
+		
+		<div class="row">
+             <label class="col-sm-3 add-margin text-right"><s:text name="wf.approver.department"/></label>
+             <div class="col-sm-3 add-margin">
+                 <s:select name="approverDepartment" id="approverDepartment" list="dropdownData.approverDepartmentList" 
 					listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"  
 					value="%{approverDepartment}"  onchange="loadDesignationFromMatrix();"
-					cssClass="dropDownCss" />
+					cssClass="form-control" />
 				<egov:ajaxdropdown fields="['Text','Value']" url="workflow/ajaxWorkFlow-getDesignationsByObjectType.action" id="approverDesignation" dropdownId="approverDesignation" 
 					contextToBeUsed="/eis"/>
-			</td>
-			<td class="greybox" width="14%"><s:text name="wf.approver.designation"/>:</td>
-			<td class="greybox" width="14%">
-				<s:select id="approverDesignation" name="approverDesignation" list="dropdownData.designationList" listKey="designationId" headerKey="-1" listValue="designationName" headerValue="----Choose----" 
-					onchange="populateApprover();" onfocus="callAlertForDepartment();" cssClass="dropDownCss" />
+             </div>
+             <label class="col-sm-2 add-margin text-right"><s:text name="wf.approver.designation"/></label>
+             <div class="col-sm-3 add-margin">
+                 <s:select id="approverDesignation" name="approverDesignation" list="dropdownData.designationList" listKey="designationId" headerKey="-1" listValue="designationName" headerValue="----Choose----" 
+					onchange="populateApprover();" onfocus="callAlertForDepartment();" cssClass="form-control" />
 				<egov:ajaxdropdown id="approverPositionId" fields="['Text','Value']" dropdownId="approverPositionId" 
 					url="workflow/ajaxWorkFlow-getPositionByPassingDesigId.action" contextToBeUsed="/eis" />
-			</td>
-			<td class="greybox" width="14%"><s:text name="wf.approver"/>:</td>
-			<td class="greybox" width="14%">
-			  	<s:select id="approverPositionId"  name="approverPositionId" list="dropdownData.approverList" headerKey="-1" headerValue="----Choose----" listKey="id" listValue="firstName"  onfocus="callAlertForDesignation();" 
-			  			value="%{approverPositionId}" cssClass="dropDownCss" /></td> 
-			<td class="greybox" width="5%">&nbsp;</td>
-		</tr>
-		</table>
+             </div>
+         </div>
+         
+         <div class="row">
+             <label class="col-sm-3 add-margin text-right"><s:text name="wf.approver"/></label>
+             <div class="col-sm-3 add-margin">
+                 <s:select id="approverPositionId"  name="approverPositionId" list="dropdownData.approverList" headerKey="-1" headerValue="----Choose----" listKey="id" listValue="firstName"  onfocus="callAlertForDesignation();" 
+			  			value="%{approverPositionId}" cssClass="form-control" />
+             </div>
+         </div>
+         
 </s:if>
-<br/>
 
  <div id="workflowCommentsDiv" align="center">
-         <table width="100%">
-         <tr>
-           <td width="10%" class="greybox">&nbsp;</td>
-           <td width="20%" class="greybox">&nbsp;</td>
-           <td class="greybox" width="13%"><s:text name="wf.approver.remarks"/>: </td>
-           <td class="greybox"> 
-           	<textarea id="approverComments" name="approverComments" rows="2" cols="35" ></textarea>  
-           </td>
-           <td class="greybox">&nbsp;</td>
-           <td width="10%" class="greybox">&nbsp;</td>
-           <td  class="greybox">&nbsp;</td>
-           </tr>
-         </table>
+         <div class="row">
+             <label class="col-sm-3 add-margin text-right"><s:text name="wf.approver.remarks"/></label>
+             <div class="col-sm-8 add-margin">
+                 <textarea id="approverComments" name="approverComments" class="form-control" ></textarea>  
+             </div>
+         </div>
   </div>       

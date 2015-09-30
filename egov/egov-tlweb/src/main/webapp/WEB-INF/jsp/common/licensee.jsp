@@ -43,15 +43,11 @@
 	<div class="form-group">
 	    <label class="col-sm-3 control-label text-right"><s:text name='licensee.aadhaarNo' /></label>
 	    <div class="col-sm-3 add-margin">
-	        <div class="input-group">
 	           <s:textfield name="licensee.uid"  onBlur="checkLength(this,15)" onKeyPress="return numbersonly(this, event)"  maxlength="15" cssClass="form-control" />
-	        </div>
 	    </div>
 	    <label class="col-sm-2 control-label text-right"><s:text name='licensee.mobileNo' /><span class="mandatory"></span></label>
 	    <div class="col-sm-3 add-margin">
-	        <div class="input-group">
-	             <s:textfield name="licensee.mobilePhoneNumber" id="mobilePhoneNumber" class="form-control"  onKeyPress="return numbersonly(this, event)" onBlur="checkLength(this,15)" maxlength="15" required="required"/>
-	        </div>
+	             <s:textfield name="licensee.mobilePhoneNumber" id="mobilePhoneNumber" onKeyPress="return numbersonly(this, event)" onBlur="checkLength(this,15)" maxlength="15" cssClass="form-control" required="required"/>
 	    </div>
 	</div>
 	<div class="form-group">

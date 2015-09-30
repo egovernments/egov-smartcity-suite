@@ -33,22 +33,15 @@
 	    return  onSubmit();
 	}
 </script>
-<div class="buttonbottom" align="center">
+<div class="buttonbottom text-center">
 	<s:hidden id="workFlowAction" name="workFlowAction"/>
-	<table>
-		<tr>
-			<td>
-				<s:iterator value="%{getValidActions()}" var="name">
-					<s:if test="%{name!=''}">
-						<s:submit type="submit" cssClass="buttonsubmit" value="%{name}"
-							id="%{name}" name="%{name}"
-							onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');"  style="margin:0 10px"/>
-					</s:if>
-				</s:iterator> 
-			</td>
-			<td>
-				<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
-			</td>
-		</tr>
-	</table>
+	<div style="display:inline-block"><s:iterator value="%{getValidActions()}" var="name">
+		<s:if test="%{name!=''}">
+			<s:submit type="submit" cssClass="buttonsubmit" value="%{name}"
+				id="%{name}" name="%{name}"
+				onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');"  style="margin:0 10px"/>
+		</s:if>
+	</s:iterator></div> 
+	<div style="display:inline-block"><input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" /></div>
+	
 </div>
