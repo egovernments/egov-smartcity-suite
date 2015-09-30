@@ -47,8 +47,6 @@ package org.egov.billsaccounting.services;
 
 import java.util.Date;
 import java.util.List;
-
-import org.egov.billsaccounting.model.OtherBillDetail;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fundsource;
 import org.egov.infra.admin.master.entity.Department;
@@ -76,34 +74,5 @@ public interface CbillService
 	 */
 
 	
-	/**
-    * @param fundId
-    * @param fundSource
-    * @param vhFromDate
-    * @param vhToDate
-    * @param fromBillDate
-    * @param toBillDate
-    * @param billVhNoFrom
-    * @param billVhNoTo
-    * @return list of OtherBillDetail(Contingent Bills) filtered by optional conditions
-    */
-	public List<OtherBillDetail> getCBillFilterBy(Integer fundId, Fundsource fundSource, Date vhFromDate, Date vhToDate, Date fromBillDate, Date toBillDate, String billVhNoFrom, String billVhNoTo,Department dept,String functionary);
-	
-	/** 
-	 * @param id
-	 * @return OtherBillDetail
-	 */
-	public OtherBillDetail getOtherBillDetailById(Integer id);
-	
-	/** 
-	 * @param pymntVoucherheader
-	 * @return List of OtherBillDetail
-	 */
-	public List<OtherBillDetail> getOtherBillDetailByPymntVoucherheader(CVoucherHeader pymntVoucherheader);
-	/**
-	 * 
-	 * @param otherBillDetail  void
-	 */
-	public void createOtherBillDetail(OtherBillDetail otherBillDetail);
 
 }

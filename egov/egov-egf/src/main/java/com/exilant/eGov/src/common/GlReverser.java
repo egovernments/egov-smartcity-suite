@@ -63,7 +63,7 @@ import com.exilant.eGov.src.domain.GeneralLedgerDetail;
 import com.exilant.eGov.src.domain.VoucherHeader;
 import com.exilant.eGov.src.domain.VoucherMIS;
 import com.exilant.eGov.src.transactions.ExilPrecision;
-import com.exilant.eGov.src.transactions.PreDefinedAccCodes;
+
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.dataservice.DataExtractor;
@@ -413,7 +413,7 @@ public void reverseSubLedger(String cgNo,String newVcno,String effDate,String cg
 
 private void postInGeneralLedger(String newVdId,String oldVdId,String newVhId,double diffDbAmount,int usage)throws TaskFailedException,SQLException{
 	String oldGlId="";//,diffGlID="";
-	PreDefinedAccCodes pAccCodes=new PreDefinedAccCodes();
+	//PreDefinedAccCodes pAccCodes=new PreDefinedAccCodes();
 	GeneralLedger glObj=(GeneralLedger)gLedger.get(oldVdId);
 	glObj.setVoucherLineId(newVdId);
 	glObj.setVoucherHeaderId(newVhId);
@@ -429,9 +429,10 @@ private void postInGeneralLedger(String newVdId,String oldVdId,String newVhId,do
 	}else if(Double.parseDouble(glObj.getCreditAmount())>0 && usage==0){
 		//it has all the chartofaccounts loaded as hashmap so get glid by giving glcode
 		//CodeValidator cv=CodeValidator.getInstance();
-		GLAccount glAcc=(GLAccount)ChartOfAccounts.getGlAccountCodes().get(pAccCodes.getBankChargeCode());
-		glObj.setGlCode(pAccCodes.getBankChargeCode());
-		glObj.setGlCodeId(String.valueOf(glAcc.getId()));
+//TODO- replace with appconfig or purpose
+	    //GLAccount glAcc=(GLAccount)ChartOfAccounts.getGlAccountCodes().get(pAccCodes.getBankChargeCode());
+		//glObj.setGlCode(pAccCodes.getBankChargeCode());
+		//glObj.setGlCodeId(String.valueOf(glAcc.getId()));
 		glObj.setDebitAmount(String.valueOf(diffDbAmount));
 		glObj.setCreditAmount("0");
 		//glDetAmt=glObj.getdebitAmount();

@@ -116,7 +116,6 @@ import org.egov.pims.commons.Position;
 import org.egov.pims.dao.PersonalInformationDAO;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.services.bills.BillsService;
-import org.egov.services.voucher.EgfRecordStatusService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
@@ -218,9 +217,7 @@ public class CreateVoucher {
 
     @Autowired
     private VoucherService voucherService;
-    @Autowired
-    private EgfRecordStatusService egfRecordStatusService;
-    
+
     @Autowired
     private BoundaryService boundaryService;
 
@@ -233,14 +230,13 @@ public class CreateVoucher {
     private static final String REVERSAL_VOUCHER_NUMBER = "Reversal voucher number";
     protected List<String> headerFields = new ArrayList<String>();
     protected List<String> mandatoryFields = new ArrayList<String>();
-    
+
     private CbillService cBillmgr;
     @Autowired
     private DepartmentService deptM;
     @Autowired
     private BoundaryService boundary;
 
-   
     @Autowired
     private UserService userMngr;
     @Autowired
@@ -338,7 +334,8 @@ public class CreateVoucher {
                             "select vh from CVoucherHeader vh where vh.id = ? and vh.status!=?", billMis.getVoucherHeader()
                                     .getId(), FinancialConstants.CANCELLEDVOUCHERSTATUS);
                     if (result != null) {
-                        throw new ApplicationRuntimeException("Voucher " + result.getVoucherNumber() + " already exists for this bill ");
+                        throw new ApplicationRuntimeException("Voucher " + result.getVoucherNumber()
+                                + " already exists for this bill ");
                     }
                 }
             } catch (Exception e) {
@@ -901,11 +898,11 @@ public class CreateVoucher {
         Boundary boundaryForUser = null;
         if (department.getCode().equalsIgnoreCase("A"))
         {
-                HierarchyType hierarchyTypeByName = hierarchyTypeService.getHierarchyTypeByName("ADMINISTRATION");
-                List topBoundaries = boundaryService.getTopLevelBoundaryByHierarchyType(hierarchyTypeByName);
-                if (topBoundaries != null && topBoundaries.size() > 0)
-                    boundaryForUser = (Boundary) topBoundaries.get(0);
-                functionaryName = "Compilation";
+            HierarchyType hierarchyTypeByName = hierarchyTypeService.getHierarchyTypeByName("ADMINISTRATION");
+            List topBoundaries = boundaryService.getTopLevelBoundaryByHierarchyType(hierarchyTypeByName);
+            if (topBoundaries != null && topBoundaries.size() > 0)
+                boundaryForUser = (Boundary) topBoundaries.get(0);
+            functionaryName = "Compilation";
         } else
         {
             boundaryForUser = vs.getBoundaryForUser(voucherheader);
@@ -1414,22 +1411,6 @@ public class CreateVoucher {
         return cgnType;
     }
 
-    protected void insertIntoRecordStatus(final CVoucherHeader voucherHeader) {
-
-        EgfRecordStatus recordStatus = new EgfRecordStatus();
-        String code = EGovConfig.getProperty("egf_config.xml", "confirmoncreate", "", voucherHeader.getType());
-        if ("N".equalsIgnoreCase(code)) {
-            recordStatus.setStatus(Integer.valueOf(1));
-        } else {
-            recordStatus.setStatus(Integer.valueOf(0));
-        }
-        recordStatus.setUpdatedtime(new Date());
-        recordStatus.setVoucherheader(voucherHeader);
-        recordStatus.setRecordType(voucherHeader.getType());
-        recordStatus.setUserid(EgovThreadLocals.getUserId().intValue());
-        egfRecordStatusService.persist(recordStatus);
-    }
-
     /**
      * This method will validate all the master data that are passed. This will also check if the data send are correct with
      * respect to the inter master dependency.
@@ -1544,7 +1525,8 @@ public class CreateVoucher {
     }
 
     @SuppressWarnings("deprecation")
-    public CVoucherHeader createVoucherHeader(final HashMap<String, Object> headerdetails) throws ApplicationRuntimeException, Exception {
+    public CVoucherHeader createVoucherHeader(final HashMap<String, Object> headerdetails) throws ApplicationRuntimeException,
+            Exception {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("START | createVoucherHeader");
         // Connection con = null;
@@ -1924,8 +1906,8 @@ public class CreateVoucher {
                     null != subdetailDetailMap.get(VoucherConstant.CREDITAMOUNT)
                     && !new BigDecimal((subdetailDetailMap.get(VoucherConstant.CREDITAMOUNT).toString())).equals(BigDecimal.ZERO)) {
                 /*
-                 * Commenting out throw ApplicationRuntimeException since we are using the same API for create Journal Voucher. There we
-                 * are not setting the TDS id..
+                 * Commenting out throw ApplicationRuntimeException since we are using the same API for create Journal Voucher.
+                 * There we are not setting the TDS id..
                  */
                 // throw new ApplicationRuntimeException("Recovery detail is missing for glcode :"+glcode);
             }
@@ -1952,7 +1934,8 @@ public class CreateVoucher {
                 qry.setInteger("detailTypeId", Integer.valueOf(detailtypeid));
                 qry.setCacheable(true);
                 if (null == qry.list() || qry.list().size() == 0) {
-                    throw new ApplicationRuntimeException("The subledger type mapped to this account code is not correct " + glcode);
+                    throw new ApplicationRuntimeException("The subledger type mapped to this account code is not correct "
+                            + glcode);
                 }
             } else {
                 throw new ApplicationRuntimeException("Subledger type value is missing for account code " + glcode);
@@ -2009,8 +1992,9 @@ public class CreateVoucher {
                 // changed since equals does considers decimal values eg 20.0 is not equal to 2
                 if (subledAmtmap.get(VoucherConstant.DEBIT + glcode).compareTo(accDetAmtMap.get(VoucherConstant.DEBIT + glcode)) != 0) {
 
-                    throw new ApplicationRuntimeException("Total of subleger debit amount is not matching with the account code amount "
-                            + glcode);
+                    throw new ApplicationRuntimeException(
+                            "Total of subleger debit amount is not matching with the account code amount "
+                                    + glcode);
                 }
             }
             if (null != subledAmtmap.get(VoucherConstant.CREDIT + glcode)) {
@@ -2510,7 +2494,8 @@ public class CreateVoucher {
      * @return
      */
 
-    public CVoucherHeader reverseVoucher(List<HashMap<String, Object>> paramList) throws ApplicationRuntimeException, ParseException
+    public CVoucherHeader reverseVoucher(List<HashMap<String, Object>> paramList) throws ApplicationRuntimeException,
+            ParseException
     {
         // -- Reversal Voucher date check ----
         CVoucherHeader reversalVoucherObj = new CVoucherHeader();

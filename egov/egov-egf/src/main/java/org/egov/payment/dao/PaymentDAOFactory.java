@@ -62,6 +62,5 @@ public abstract class PaymentDAOFactory
 		return HIBERNATE;
 	}
 	
-	public abstract SubledgerpaymentheaderHibernateDAO getSubledgerpaymentheaderDAO();
-    public abstract PaymentheaderHibernateDAO getPaymentheaderDAO();    
+	public abstract PaymentheaderHibernateDAO getPaymentheaderDAO();    
 }  

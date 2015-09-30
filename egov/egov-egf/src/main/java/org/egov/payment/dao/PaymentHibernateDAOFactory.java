@@ -44,10 +44,8 @@
  * EGOVERNMENTS PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 package org.egov.payment.dao;
-
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.payment.Paymentheader;
-import org.egov.payment.model.Subledgerpaymentheader;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 /**
@@ -64,10 +62,7 @@ public class PaymentHibernateDAOFactory extends PaymentDAOFactory {
 		// returns a reference to the current Session.	        
 		return HibernateUtil.getCurrentSession();
     }
-	public SubledgerpaymentheaderHibernateDAO getSubledgerpaymentheaderDAO()
-	{
-		return new SubledgerpaymentheaderHibernateDAO(Subledgerpaymentheader.class,getCurrentSession());
-	}
+	
 	public PaymentheaderHibernateDAO getPaymentheaderDAO()
 	{
 		return new PaymentheaderHibernateDAO(Paymentheader.class,getCurrentSession());

@@ -51,8 +51,6 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.model.payment.Paymentheader;
 import org.egov.payment.dao.PaymentDAOFactory;
 import org.egov.payment.dao.PaymentheaderHibernateDAO;
-import org.egov.payment.dao.SubledgerpaymentheaderHibernateDAO;
-import org.egov.payment.model.Subledgerpaymentheader;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -64,11 +62,6 @@ public class PaymentService
 {
 	 
 	
-	public List<Subledgerpaymentheader> getSubledgerpaymentheaderByVoucherHeader(CVoucherHeader voucherHeader)
-	{
-		SubledgerpaymentheaderHibernateDAO slphDao=PaymentDAOFactory.getDAOFactory().getSubledgerpaymentheaderDAO();
-		return slphDao.getSubledgerpaymentheaderByVoucherHeader(voucherHeader);
-	}
 	public List<Paymentheader> getPaymentheaderByVoucherHeader(CVoucherHeader voucherHeader)
 	{
 		PaymentheaderHibernateDAO phDao=PaymentDAOFactory.getDAOFactory().getPaymentheaderDAO();

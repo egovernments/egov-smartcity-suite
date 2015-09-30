@@ -399,9 +399,7 @@
      <bean id="schemeService" class="org.egov.services.masters.SchemeService"  scope="prototype">
       <property name="type" value="org.egov.commons.Scheme" />
      </bean>
-     <bean id="egfRecordStatusService" class="org.egov.services.voucher.EgfRecordStatusService"  scope="prototype">
-      <property name="type" value="org.egov.commons.EgfRecordStatus" />
-     </bean>
+   
      <!-- <bean id="eBConsumerService" class="org.egov.eb.service.master.EBConsumerService" parent="persistenceService" scope="prototype">
       <property name="type" value="org.egov.eb.domain.master.entity.EBConsumer" />
      </bean> -->

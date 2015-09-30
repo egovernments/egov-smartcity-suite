@@ -1,10 +1,10 @@
 <%@page import="org.springframework.beans.factory.annotation.Autowired"%>
 <%@ page language="java" import="java.sql.*,java.util.HashMap,java.util.*,java.text.*,
 org.egov.infstr.utils.HibernateUtil,org.egov.infra.admin.master.entity.Department,
-org.egov.commons.CVoucherHeader,org.egov.billsaccounting.model.OtherBillDetail,  java.text.*,java.math.BigDecimal,
+org.egov.commons.CVoucherHeader,java.text.*,java.math.BigDecimal,
 org.egov.commons.Fundsource,org.egov.commons.Relation,org.egov.commons.dao.FundSourceHibernateDAO,
 org.egov.infstr.utils.EGovConfig,org.egov.infra.admin.master.service.DepartmentService,
-org.egov.billsaccounting.model.Salarybilldetail,org.egov.commons.Bankaccount,org.springframework.beans.factory.annotation.Autowired" %>
+org.egov.commons.Bankaccount,org.springframework.beans.factory.annotation.Autowired" %>
 
 <%
 //System.out.println("process");
