@@ -43,27 +43,35 @@
 jQuery(document).ready(function(){
 	 jQuery('#boundary').change(function() {
 		console.log("came jursidiction"+jQuery('#boundary').val());
-		jQuery.ajax({
-			url: "../domain/commonTradeLicenseAjax-blockByLocality.action",
-			type: "GET",
-			data: {
-				locality : jQuery('#boundary').val()
-			},
-			cache: false,
-			dataType: "json",
-			success: function (response) {
-				jQuery('#zoneName').val(response.zoneName);
-				jQuery('#wardName').val(response.wardName);
-			}, 
-			error: function (response) {
-				console.log("failed");
-				jQuery('#zoneName').val('');
-				jQuery('#wardName').val('');
-				alert("No boundary details mapped for locality")
-			}
-		});
+		getZoneWard();
 	});
+	<s:if test="%{hasErrors()}">
+	 if(jQuery('#boundary').val()!='-1')
+		 getZoneWard();
+	</s:if> 
 });
+
+function getZoneWard(){
+	jQuery.ajax({
+		url: "../domain/commonTradeLicenseAjax-blockByLocality.action",
+		type: "GET",
+		data: {
+			locality : jQuery('#boundary').val()
+		},
+		cache: false,
+		dataType: "json",
+		success: function (response) {
+			jQuery('#zoneName').val(response.zoneName);
+			jQuery('#wardName').val(response.wardName);
+		}, 
+		error: function (response) {
+			console.log("failed");
+			jQuery('#zoneName').val('');
+			jQuery('#wardName').val('');
+			alert("No boundary details mapped for locality")
+		}
+	});
+}
 </script>
 
 <div class="panel-heading custom_form_panel_heading">
@@ -73,15 +81,15 @@ jQuery(document).ready(function(){
     <label class="col-sm-3 control-label text-right"><s:text name='license.propertyNo.lbl' /></label>
     <div class="col-sm-3 add-margin">
         <div class="input-group">
-         	<s:textfield name="propertyNo" id="propertyNo" value="%{propertyNo}" maxlength="15" onKeyPress="return numbersonly(this, event)" onBlur="checkLength(this,15)" class="form-control"/>
-            <span class="input-group-addon"> <i class="fa fa-search specific"></i></span>
+         	<s:textfield name="propertyNo" id="propertyNo" value="%{propertyNo}" maxlength="15" onKeyPress="return numbersonly(this, event)" onBlur="checkLength(this,15);" onChange="resetOnPropertyNumChange();" class="form-control"/>
+            <span class="input-group-addon" onclick="callPropertyTaxRest();"> <i class="fa fa-search specific"></i></span>
         </div>
     </div>
   
     <label class="col-sm-2 control-label text-right"><s:text name='license.locality.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:select name="boundary" id="boundary" list="dropdownData.localityList"
-	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{boundary}" class="form-control" required="required"/>
+	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{boundary.id}" class="form-control" required="required"/>
     </div>
 </div>
 <div class="form-group">

@@ -312,6 +312,55 @@
     		function onSubmit() {
     			return validateForm(this);
         	}
+
+			// Calls propertytax REST api to retrieve property details for an assessment no
+			// url : contextpath/ptis/rest/property/assessmentno (ex: contextpath/ptis/rest/property/1085000001)
+    		function callPropertyTaxRest(){
+               	var propertyNo = jQuery("#propertyNo").val();
+            	if(propertyNo!="" && propertyNo!=null){
+					console.log(propertyNo); 
+					jQuery.ajax({
+						url: "/ptis/rest/property/" + propertyNo,
+						type:"GET",
+						contentType:"application/x-www-form-urlencoded",
+						success:function(data){
+							if(data.errorDetails.errorCode != null && data.errorDetails.errorCode != ''){
+								alert(data.errorDetails.errorMessage);
+							} else{
+								if(data.boundaryDetails!=null){
+									jQuery("#zoneName").val(data.boundaryDetails.zoneName);
+									jQuery("#wardName").val(data.boundaryDetails.wardName);
+									jQuery("#address").val(data.propertyAddress);
+								}
+							}
+						},
+						error:function(e){
+							console.log('error:'+e.message);
+							document.getElementById("propertyNo").value="";
+							resetOnPropertyNumChange();
+							alert("Error getting property details");
+						}
+					});
+            	} else{
+					showMessage('newLicense_error', '<s:text name="newlicense.propertyNo.null" />');
+            		document.getElementById("propertyNo").focus();
+                }
+            }
+
+            function resetOnPropertyNumChange(){
+            	var propertyNo = jQuery("#propertyNo").val();
+               	if(propertyNo!="" && propertyNo!=null){
+            		document.getElementById("address").disabled="true";
+	            	document.getElementById("boundary").disabled="true"; 
+            	} else {
+                    document.getElementById("address").disabled=false;
+	            	document.getElementById("boundary").disabled=false;  
+                }
+            	document.getElementById("boundary").value='-1';
+            	document.getElementById("zoneName").value="";
+            	document.getElementById("wardName").value="";
+            	document.getElementById("address").value="";
+            }
         	
  		</script>
  		

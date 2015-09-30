@@ -39,14 +39,12 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.newtradelicense;
 
-
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +53,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -81,14 +81,15 @@ import org.egov.tl.domain.service.masters.LicenseSubCategoryService;
 import org.egov.tl.domain.service.masters.UnitOfMeasurementService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
+import org.egov.tl.web.actions.domain.CommonTradeLicenseAjaxAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({ @Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
-        @Result(name = Constants.ACKNOWLEDGEMENT, location = "newTradeLicense-" + Constants.ACKNOWLEDGEMENT + ".jsp"),
-        @Result(name = Constants.MESSAGE, location = "newTradeLicense-" + Constants.MESSAGE + ".jsp"),
-        @Result(name = Constants.BEFORE_RENEWAL, location = "newTradeLicense-" + Constants.BEFORE_RENEWAL + ".jsp"),
-        @Result(name = Constants.ACKNOWLEDGEMENT_RENEW, location = "newTradeLicense-" + Constants.ACKNOWLEDGEMENT_RENEW + ".jsp")})
+    @Result(name = Constants.ACKNOWLEDGEMENT, location = "newTradeLicense-" + Constants.ACKNOWLEDGEMENT + ".jsp"),
+    @Result(name = Constants.MESSAGE, location = "newTradeLicense-" + Constants.MESSAGE + ".jsp"),
+    @Result(name = Constants.BEFORE_RENEWAL, location = "newTradeLicense-" + Constants.BEFORE_RENEWAL + ".jsp"),
+    @Result(name = Constants.ACKNOWLEDGEMENT_RENEW, location = "newTradeLicense-" + Constants.ACKNOWLEDGEMENT_RENEW + ".jsp") })
 public class NewTradeLicenseAction extends BaseLicenseAction {
 
     private static final long serialVersionUID = 1L;
@@ -108,7 +109,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @Autowired
     private UnitOfMeasurementService unitOfMeasurementService;
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", new Locale("en", "IN"));
-    
 
     public NewTradeLicenseAction() {
         super();
@@ -138,7 +138,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
             if (license().getTempLicenseNumber() == null) {
                 final String nextRunningLicenseNumber = service().getNextRunningLicenseNumber(
                         "egtl_" + license().getFeeTypeStr()
-                                + "_license_number");
+                        + "_license_number");
                 license().generateLicenseNumber(nextRunningLicenseNumber);
             }
             final LicenseStatus activeStatus = (LicenseStatus) persistenceService
@@ -148,12 +148,14 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         return super.approve();
     }
 
+    @Override
     @ValidationErrorPage(Constants.NEW)
     @Action(value = "/newtradelicense/newTradeLicense-create")
     public String create() {
-        LOGGER.debug("Trade license Creation Parameters:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Trade license Creation Parameters:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
         if (tradeLicense.getLicenseZoneId() != null && tradeLicense.getBoundary() == null) {
-            final Boundary boundary = boundaryService.getBoundaryById(tradeLicense.getLicenseZoneId()); 
+            final Boundary boundary = boundaryService.getBoundaryById(tradeLicense.getLicenseZoneId());
             tradeLicense.setBoundary(boundary);
         }
 
@@ -174,9 +176,10 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
             }
 
         }
-        LOGGER.debug(" Create Trade License Application Name of Establishment:<<<<<<<<<<>>>>>>>>>>>>>:"
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug(" Create Trade License Application Name of Establishment :"
                 + tradeLicense.getNameOfEstablishment());
-        return super.create(); 
+        return super.create();
     }
 
     @Override
@@ -185,15 +188,33 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         setDocumentTypes(service().getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
         tradeLicense.setHotelGradeList(tradeLicense.populateHotelGradeList());
         tradeLicense.setHotelSubCatList(ts.getHotelCategoriesForTrade());
-        setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE); 
+        setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE);
         final List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 LOCALITY, LOCATION_HIERARCHY_TYPE);
         addDropdownData("localityList", localityList);
         addDropdownData("tradeTypeList", baseLicenseService.getAllNatureOfBusinesses());
         addDropdownData("categoryList", licenseCategoryService.findAll());
-        addDropdownData("subCategoryList", Collections.EMPTY_LIST);
         addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
+        
+        final CommonTradeLicenseAjaxAction ajaxTradeLicenseAction = new CommonTradeLicenseAjaxAction();
+        populateSubCategoryList(ajaxTradeLicenseAction,tradeLicense.getCategory()!=null);
     }
+    
+    
+    /**
+     * @param ajaxTradeLicenseAction
+     * @param categoryPopulated
+     */
+    protected void populateSubCategoryList(final CommonTradeLicenseAjaxAction ajaxTradeLicenseAction, final boolean categoryPopulated)  {
+        if (categoryPopulated) {
+            ajaxTradeLicenseAction.setCategoryId(tradeLicense.getCategory().getId());
+            ajaxTradeLicenseAction.setLicenseSubCategoryService(licenseSubCategoryService);
+            ajaxTradeLicenseAction.populateSubCategory();
+            addDropdownData("subCategoryList", ajaxTradeLicenseAction.getSubCategoryList());
+        } else
+            addDropdownData("subCategoryList", Collections.emptyList());  
+    }
+    
 
     @Override
     @SkipValidation
@@ -267,7 +288,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         return documentTypes;
     }
 
-    public void setDocumentTypes(List<LicenseDocumentType> documentTypes) {
+    public void setDocumentTypes(final List<LicenseDocumentType> documentTypes) {
         this.documentTypes = documentTypes;
     }
 
@@ -275,9 +296,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         return ownerShipTypeMap;
     }
 
-    public void setOwnerShipTypeMap(Map<String, String> ownerShipTypeMap) {
+    public void setOwnerShipTypeMap(final Map<String, String> ownerShipTypeMap) {
         this.ownerShipTypeMap = ownerShipTypeMap;
     }
-
-
 }

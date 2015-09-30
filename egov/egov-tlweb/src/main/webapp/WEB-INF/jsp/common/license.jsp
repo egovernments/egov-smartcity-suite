@@ -52,21 +52,21 @@
     <label class="col-sm-2 control-label text-right"><s:text name='license.tradeType.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:select name="buildingType" id="buildingType" list="dropdownData.tradeTypeList"
-	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{buildingType}" class="form-control"  required="required" />
+	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{buildingType.id}" class="form-control"  required="required" />
     </div>
 </div>
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.category.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:select name="category" id="category" list="dropdownData.categoryList"
-	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{category}" class="form-control" onChange="setupAjaxSubCategory(this);" required="required"/>
+	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{category.id}" class="form-control" onChange="setupAjaxSubCategory(this);" required="required"/>
 	<egov:ajaxdropdown id="populateSubCategory" fields="['Text','Value']" dropdownId='subCategory' url='domain/commonTradeLicenseAjax-populateSubCategory.action' />
     </div>
     
     <label class="col-sm-2 control-label text-right"><s:text name='license.subCategory.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:select name="tradeName" id="subCategory" list="dropdownData.subCategoryList"
-	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{subCategory}" class="form-control" required="required" />
+	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{tradeName.id}" class="form-control" required="required" />
     </div>
 </div>
 
@@ -78,13 +78,13 @@
     <label class="col-sm-2 control-label text-right"><s:text name='license.uom.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
          <s:select name="uom" id="uom" list="dropdownData.uomList"
-	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{uom}" class="form-control" required="required" />
+	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{uom.id}" class="form-control" required="required" />
     </div>
 </div>
 
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.remarks.lbl' /></label>
     <div class="col-sm-3 add-margin">
-         <s:textarea name="remarks" id="remarks" value="%{remarks}" maxlength="250" class="form-control"/>
+         <s:textarea name="remarks" id="remarks" value="%{remarks}" maxlength="500" class="form-control"/>
     </div>
 </div>

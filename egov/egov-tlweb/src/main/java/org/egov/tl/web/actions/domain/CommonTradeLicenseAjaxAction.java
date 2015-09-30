@@ -83,7 +83,6 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
     private List<SubCategory> subCategoryList = new LinkedList<SubCategory>();
     @Autowired
     private BoundaryService boundaryService;
-    @Autowired
     private LicenseSubCategoryService licenseSubCategoryService;
     public static final String SUBCATEGORY = "subCategory";
     private Long locality;
@@ -214,6 +213,14 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
     @Override
     public void setServletResponse(final HttpServletResponse httpServletResponse) {
         response = httpServletResponse;
+    }
+
+    public void setLicenseSubCategoryService(LicenseSubCategoryService licenseSubCategoryService) {
+        this.licenseSubCategoryService = licenseSubCategoryService;
+    }
+
+    public LicenseSubCategoryService getLicenseSubCategoryService() {
+        return licenseSubCategoryService;
     }
 
 }
