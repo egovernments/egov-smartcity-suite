@@ -424,4 +424,26 @@ public class ComplaintService {
         return complaintRepository.findByNearestComplaint(securityUtils.getCurrentUser().getId(), new Float(lat),
                 new Float(lng), new Long(distance), limit, offset);
     }
+
+    public String getEmailBody(final Complaint complaint) {
+        final String formattedCreatedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm")
+                .format(complaint.getCreatedDate());
+        final StringBuffer emailBody = new StringBuffer()
+                .append(" %0D%0A Complaint Details -  %0D%0A %0D%0A CRN - ").append(complaint.getCrn())
+                .append(" %0D%0A Grievance Type -")
+                .append(complaint.getComplaintType().getName());
+        if (complaint.getDepartment() != null)
+            emailBody.append("  %0D%0A Grievance department  - ").append(complaint.getDepartment().getName());
+        if (complaint.getComplainant().getName() != null)
+            emailBody.append("  %0D%0A Complainant name - ").append(complaint.getComplainant().getName());
+        if (complaint.getComplainant().getMobile() != null)
+            emailBody.append("  %0D%0A Complainant mobile number - ").append(complaint.getComplainant().getMobile());
+        if (complaint.getLocation() != null)
+            emailBody.append("  %0D%0A Location details - ").append(complaint.getLocation().getName());
+
+        emailBody.append(" %0D%0A Grievance details - ").append(complaint.getDetails()).append(" %0D%0A Grievance status -")
+                .append(complaint.getStatus().getName()).append(" %0D%0A Grievance Registration Date - ")
+                .append(formattedCreatedDate);
+        return emailBody.toString();
+    }
 }

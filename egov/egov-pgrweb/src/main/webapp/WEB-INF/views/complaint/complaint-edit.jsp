@@ -178,9 +178,11 @@
 			</div>
 			<div class="form-group">
 				<div class="text-center">
-					<button type="submit" class="btn btn-success">
+		        	<button type="submit" class="btn btn-success">
 						<spring:message code="lbl.submit" />
 					</button>
+					<a href="mailto:email@example.com?subject=${mailSubject}&body=${mailBody}&attachment=${mailattachment}" 
+						class="btn btn-primary" ><spring:message code="lbl.send.mail"/></a>
 					<button type="reset" class="btn btn-default">
 						<spring:message code="lbl.reset" />
 					</button>

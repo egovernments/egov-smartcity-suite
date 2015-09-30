@@ -132,6 +132,9 @@ public class ComplaintUpdationController {
             if (complaint.getLocation() != null && complaint.getLocation().getParent() != null)
                 model.addAttribute("ward",
                         boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
+            model.addAttribute("mailSubject", "Complaint regarding " + complaint.getComplaintType().getName());
+
+            model.addAttribute("mailBody", complaintService.getEmailBody(complaint));
             return COMPLAINT_EDIT;
         }
     }
