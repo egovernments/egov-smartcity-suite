@@ -72,7 +72,9 @@ CREATE TABLE egpgr_complainttype (
     createddate timestamp without time zone,
     lastmodifieddate timestamp without time zone,
     createdby bigint,
-    lastmodifiedby bigint
+    lastmodifiedby bigint,
+    slahours integer NOT NULL,
+  	hasfinancialimpact boolean
 );
 
 
@@ -150,7 +152,8 @@ CREATE TABLE egpgr_complaint (
     state_id bigint,
     escalation_date timestamp without time zone,
     version bigint,
-    department bigint
+    department bigint,
+    citizenfeedback bigint
 );
 
 
