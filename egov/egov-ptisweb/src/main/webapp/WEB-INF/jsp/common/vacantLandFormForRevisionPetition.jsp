@@ -88,7 +88,7 @@
 			<table class="tablebottom" style="width: 100%;" id="boundaryData">
 				<tbody>
 				<tr>
-				   <td>
+				   <td colspan="4">
 				      <div class="headingsmallbg">
 				         <span class="bold"><s:text name="boundaries" /></span> 
 			          </div>

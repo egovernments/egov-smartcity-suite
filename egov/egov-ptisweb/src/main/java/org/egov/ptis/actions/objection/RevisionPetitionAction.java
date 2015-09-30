@@ -347,7 +347,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     new String[] { objection.getBasicProperty().getUpicNo() }));
             return STRUTS_RESULT_MESSAGE;
         }
-
+        setFloorDetails(objection.getBasicProperty().getProperty());
         return NEW;
     }
 
@@ -1005,7 +1005,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             LOGGER.debug("Entered into setFloorDetails, Property: " + property);
 
         final List<Floor> floors = property.getPropertyDetail().getFloorDetails();
-        property.getPropertyDetail().setFloorDetailsProxy(floors);
+        //property.getPropertyDetail().setFloorDetailsProxy(floors);
+        objection.getBasicProperty().getProperty().getPropertyDetail().setFloorDetails(floors);
 
         int i = 0;
         for (final Floor flr : floors) {
@@ -1453,7 +1454,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     }
 
     public List<Floor> getFloorDetails() {
-        return new ArrayList<Floor>(objection.getProperty().getPropertyDetail().getFloorDetails());
+        return new ArrayList<Floor>(objection.getBasicProperty().getProperty().getPropertyDetail().getFloorDetails());
     }
 
     public Map<String, String> getPropTypeCategoryMap() {
