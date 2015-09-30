@@ -185,8 +185,11 @@ public class HomeController {
     private String prepareOfficialHomePage(final User user, final HttpSession session, final ModelMap modelData) {
         modelData.addAttribute("menu", prepareApplicationMenu(moduleService.getMenuLinksForRoles(user.getRoles()), user));
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
-        modelData.addAttribute("app_version", manifest.getMainAttributes().getValue("Specification-Version"));
-        modelData.addAttribute("app_buildno", manifest.getMainAttributes().getValue("Implementation-Version"));
+        final String appVersion = manifest.getMainAttributes().getValue("Specification-Version");
+        final String appBuildNo = manifest.getMainAttributes().getValue("Implementation-Version");
+        modelData.addAttribute("app_version", appVersion);
+        modelData.addAttribute("app_buildno", appBuildNo);
+        session.setAttribute("app_release_no", appVersion + "_" + appBuildNo);
         return "home";
     }
 
