@@ -59,6 +59,7 @@ import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgBill;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -114,11 +115,11 @@ public class BillService {
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
-    private DemandNoticeInfo demandNoticeInfo;
-    @Autowired
     private WaterChargesIntegrationService waterChargesIntegrationService;
     @Autowired
     private BoundaryService boundaryService;
+    @Autowired
+    private CityService cityService;
 
     /**
      * Generates a Demand Notice or the Bill giving the break up of the tax amounts and the <code>EgBill</code>
@@ -138,7 +139,10 @@ public class BillService {
                 setBillNo(getBillNo() + "/" + STR_BILL_SHORTCUT + noOfBillGenerated);
             // To generate Notice having installment and reasonwise balance for
             // a property
+            DemandNoticeInfo demandNoticeInfo = new DemandNoticeInfo();
+            demandNoticeInfo.setCityService(cityService);
             demandNoticeInfo.setBasicProperty(basicProperty);
+            demandNoticeInfo.setOldAssessmentNo(basicProperty.getOldMuncipalNum());
             demandNoticeInfo.setBillNo(getBillNo());
             demandNoticeInfo.setLocality(basicProperty.getPropertyID().getLocality().getName());
             demandNoticeInfo.setBillPeriod(PropertyTaxUtil.getCurrentInstallment().getDescription());

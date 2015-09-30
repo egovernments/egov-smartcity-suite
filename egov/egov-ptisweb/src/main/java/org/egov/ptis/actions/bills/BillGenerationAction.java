@@ -84,7 +84,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
-import org.egov.ptis.client.model.calculator.DemandNoticeInfo;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -153,9 +152,6 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-
-    @Autowired
-    private DemandNoticeInfo demandNoticeInfo;
 
     @Autowired
     private PropertyDAO propertyDao;

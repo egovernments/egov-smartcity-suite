@@ -188,4 +188,12 @@ public class DemandNoticeInfo {
         this.billPeriod = billPeriod;
     }
 
+    public CityService getCityService() {
+        return cityService;
+    }
+
+    public void setCityService(CityService cityService) {
+        this.cityService = cityService;
+    }
+
 }
