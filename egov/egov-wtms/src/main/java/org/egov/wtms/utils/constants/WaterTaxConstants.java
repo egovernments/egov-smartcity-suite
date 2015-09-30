@@ -142,6 +142,11 @@ public class WaterTaxConstants {
     public static final String APPLICATION_STATUS_CLOSERSANCTIONED = "CLOSERSANCTIONED";
     public static final String  WORKFLOW_CLOSUREADDITIONALRULE = "CLOSECONNECTION";
     
+    public static final String  SEARCH_MENUTREE_APPLICATIONTYPE_CLOSURE= "CLOSURECONNECTION";
+    public static final String  SEARCH_MENUTREE_APPLICATIONTYPE_METERED = "METERENTRY";
+    public static final String  SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX = "COLLECTTAX";
+    
+    
     // appconfig key
     public static final String SENDSMSFORWATERTAX = "SENDSMSFORWATERTAX";
     public static final String WATERTAXWORKFLOWDEPARTEMENT = "DEPARTMENTFORWORKFLOW";
