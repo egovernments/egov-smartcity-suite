@@ -59,6 +59,7 @@ import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Fundsource;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.validation.exception.ValidationError;
@@ -70,7 +71,7 @@ import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.models.revisionEstimate.RevisionType;
 import org.hibernate.validator.constraints.Length;
 
-public class AbstractEstimate extends StateAware {
+public class AbstractEstimate extends StateAware implements Auditable {
 
     private static final long serialVersionUID = 5010991868891221454L;
 

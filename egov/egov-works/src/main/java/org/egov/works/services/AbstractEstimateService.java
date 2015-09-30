@@ -125,12 +125,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         setType(AbstractEstimate.class);
     }
 
-    @Override
-    public AbstractEstimate persist(final AbstractEstimate entity) {
-        final AbstractEstimate saved = super.persist(entity);
-        return saved;
-    }
-
     /**
      * This method invokes the script service to generate the budget appropriation number. This method is invoked from the work
      * flow rules.
