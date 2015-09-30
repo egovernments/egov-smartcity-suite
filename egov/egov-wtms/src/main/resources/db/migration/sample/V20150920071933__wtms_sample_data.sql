@@ -402,6 +402,194 @@ insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_hea
 insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'NON_METERED',(select id from egwtr_usage_type where code='HOTEL'),(select id from egwtr_water_source where code='GROUNDWATER'),(select id from egwtr_pipesize where code='2 Inch'),true,now(),now(),1,1,0);
 insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'NON_METERED',(select id from egwtr_usage_type where code='HOTEL'),(select id from egwtr_water_source where code='GROUNDWATER'),(select id from egwtr_pipesize where code='3 Inch'),true,now(),now(),1,1,0);
 insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='DOMESTIC'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='1/2 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='DOMESTIC'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='3/4 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='DOMESTIC'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='1 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='DOMESTIC'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='2 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='DOMESTIC'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='1/4 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='DOMESTIC'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='1/2 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='DOMESTIC'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='3/4 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='DOMESTIC'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='1 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='COMMERCIAL'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='1/2 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='DOMESTIC'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='2 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='COMMERCIAL'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='3/4 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='COMMERCIAL'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='1 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='COMMERCIAL'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='2 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='COMMERCIAL'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='3 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='COMMERCIAL'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='4 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='COMMERCIAL'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='1/4 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='COMMERCIAL'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='1/2 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='COMMERCIAL'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='3/4 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='COMMERCIAL'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='1 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='COMMERCIAL'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='2 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='COMMERCIAL'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='3 Inch'),true,now(),now(),1,1,0);
+Insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='COMMERCIAL'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='4 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='APARTMENT'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='1/2 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='APARTMENT'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='3/4 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='APARTMENT'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='1 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='APARTMENT'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='2 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='APARTMENT'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='1/4 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='APARTMENT'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='1/2 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='APARTMENT'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='3/4 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='APARTMENT'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='1 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='APARTMENT'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='2 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='HOTEL'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='1/2 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='HOTEL'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='3/4 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='HOTEL'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='1 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='HOTEL'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='2 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='HOTEL'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='3 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='HOTEL'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='4 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='HOTEL'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='1/4 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='HOTEL'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='1/2 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='HOTEL'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='3/4 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='HOTEL'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='1 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='HOTEL'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='2 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='HOTEL'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='3 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='HOTEL'),
+(select id from egwtr_water_source where code='GROUNDWATER'),
+(select id from egwtr_pipesize where code='4 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='INDUSTRIAL'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='1/2 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='INDUSTRIAL'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='3/4 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
+(select id from egwtr_usage_type where code='INDUSTRIAL'),
+(select id from egwtr_water_source where code='SURFACEWATER'),
+(select id from egwtr_pipesize where code='1 Inch'),true,now(),now(),1,1,0);
+insert into egwtr_water_rates_header  values (nextval('seq_egwtr_water_rates_header'),'METERED',
 (select id from egwtr_usage_type where code='INDUSTRIAL'),
 (select id from egwtr_water_source where code='SURFACEWATER'),
 (select id from egwtr_pipesize where code='2 Inch'),true,now(),now(),1,1,0);
