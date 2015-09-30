@@ -63,12 +63,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class CommonWaterTaxSearchController {
 
     private static final String COMMON_FORM_SEARCH = "waterTaxSearch-commonForm";
-    @Autowired
-    private WaterConnectionDetailsService waterConnectionDetailsService;
+   private final WaterConnectionDetailsService waterConnectionDetailsService;
 
     @Autowired
-    public CommonWaterTaxSearchController() {
-
+    public CommonWaterTaxSearchController(final WaterConnectionDetailsService waterConnectionDetailsService) {
+        this.waterConnectionDetailsService = waterConnectionDetailsService;
     }
 
     @ModelAttribute
