@@ -86,3 +86,4 @@
 
 <script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
 <script src="<c:url value='/resources/js/app/changeofuse.js'/>"></script>
+<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
