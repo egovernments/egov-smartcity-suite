@@ -262,9 +262,6 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
         final Long userId = securityUtils.getCurrentUser().getId();
         if (userId != null)
             setRoleName(licenseUtils.getRolesForUserId(userId));
-        final String docNumber = tradeLicense.getDocNumber();
-        tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", tradeLicense.getId());
-        tradeLicense.setDocNumber(docNumber);
         LOGGER.debug("Exiting from the approve method:<<<<<<<<<<>>>>>>>>>>>>>:");
         return super.approve();
     }

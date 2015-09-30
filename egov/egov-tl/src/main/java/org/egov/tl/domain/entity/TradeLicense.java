@@ -343,8 +343,7 @@ public class TradeLicense extends License {
         return new StringBuffer("[Name of the Establishment : ").
                 append(getNameOfEstablishment()).append(", Applicant Name : ").append(getLicensee().getApplicantName()).
                 append(", Application Date : ").append(DateUtils.getDefaultFormattedDate(getApplicationDate())).
-                append(", Address : ").append(licensee.getAddress().getHouseNoBldgApt()).append(", pincode : ")
-                .append(licensee.getAddress().getPinCode() == null ? "" : licensee.getAddress().getPinCode())
+                append(", Address : ").append(licensee.getAddress())
                 .append(", Trade Name : ").append(getTradeName().getName()).append(" ]").toString();
 
     }

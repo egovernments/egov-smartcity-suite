@@ -39,11 +39,26 @@
  ******************************************************************************/
 package org.egov.tl.domain.service.masters;
 
+import java.util.List;
+
 import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.domain.entity.SubCategory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LicenseSubCategoryService extends PersistenceService<SubCategory, Integer> {
+
+    public LicenseSubCategoryService() {
+        setType(SubCategory.class);
+    }
+
+    /**
+     * @Description returns SubCategory object that matches param name
+     * @param name
+     * @return
+     */
+    public List<SubCategory> findAllSubCategoryByCategory(final Long categoryId) {
+        return findAllBy("From SubCategory where category.id=? order by name", categoryId);
+    }
 
 }

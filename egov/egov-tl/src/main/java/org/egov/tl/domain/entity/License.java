@@ -66,13 +66,11 @@ import org.egov.tl.utils.LicenseUtils;
 public abstract class License extends StateAware {
 
     private static final long serialVersionUID = 1L;
-    protected PermanentAddress address;
     @Required(message = "license.applicationdate.err.required")
-    @ValidateDate(message = "license.applicationdate.err.properdate", allowPast = true, dateFormat = "dd/MM/yyyy")
     protected Date applicationDate;
     protected String applicationNumber;
     protected Boundary boundary;
-    protected String buildingType;
+    protected NatureOfBusiness buildingType;
     protected Date dateOfCreation;
     protected Date dateOfExpiry;
     protected String feeTypeStr;
@@ -98,11 +96,9 @@ public abstract class License extends StateAware {
     protected Set<LicenseStatusValues> licenseStatusValuesSet;
     protected LicenseTransfer licenseTransfer;
     protected String licenseCheckList;
-    protected String docNumber;
     protected BigDecimal deduction;
     protected Set<LicenseDemand> demandSet;
     protected BigDecimal swmFee;
-    protected String bioMedicalWasteReg;
     private String docImageNumber;
 
     // PWD
@@ -112,26 +108,23 @@ public abstract class License extends StateAware {
     protected String companyPanNumber;
     protected String vatNumber;
     protected String companyDetails;
-    protected String typeOfFirm;
     protected String namePowerOfAttorney;
-    protected String nameSoleProprietor;
-    protected String bankerName;
     protected String bankIfscCode;
     protected BigDecimal minSolvency;
-    protected String executeWorksWorth;
     protected BigDecimal avgAnnualTurnover;
-    protected BigDecimal costOfWorksHand;
     protected String feeExemption;
-    private Character isUpgrade;
-    private License egLicense;
-    private String bankAddress;
-    private String placeOfBusiness;
-    private LicenseSubType licenseSubType;
-    private List<LicenseSubType> licenseSubTypeList;
     private String officeEmailId;
-    private String contractorCode;
     protected BigDecimal violationFee;
+    
+    private String propertyNo;
+    private String ownershipType;
+    private String address;
+    private LicenseCategory category;
+    private BigDecimal workersCapacity;
 
+    private BigDecimal tradeArea_weight; 
+    private UnitOfMeasurement uom;
+    
     public abstract String generateApplicationNumber(String runningNumber);
 
     public abstract String generateLicenseNumber(String runningNumber);
@@ -169,10 +162,6 @@ public abstract class License extends StateAware {
         return this;
     }
 
-    public PermanentAddress getAddress() {
-        return address;
-    }
-
     public Date getApplicationDate() {
         return applicationDate;
     }
@@ -183,10 +172,6 @@ public abstract class License extends StateAware {
 
     public Boundary getBoundary() {
         return boundary;
-    }
-
-    public String getBuildingType() {
-        return buildingType;
     }
 
     public String getCompanyDetails() {
@@ -356,10 +341,6 @@ public abstract class License extends StateAware {
         this.isActive = isActive;
     }
 
-    public void setAddress(final PermanentAddress address) {
-        this.address = address;
-    }
-
     public void setApplicationDate(final Date applicationDate) {
         this.applicationDate = applicationDate;
     }
@@ -370,10 +351,6 @@ public abstract class License extends StateAware {
 
     public void setBoundary(final Boundary boundary) {
         this.boundary = boundary;
-    }
-
-    public void setBuildingType(final String buildingType) {
-        this.buildingType = buildingType;
     }
 
     public void setCompanyDetails(final String companyDetails) {
@@ -504,28 +481,12 @@ public abstract class License extends StateAware {
         this.licenseTransfer = licenseTransfer;
     }
 
-    public String getDocNumber() {
-        return docNumber;
-    }
-
-    public void setDocNumber(final String docNumber) {
-        this.docNumber = docNumber;
-    }
-
     public BigDecimal getSwmFee() {
         return swmFee;
     }
 
     public void setSwmFee(final BigDecimal swmFee) {
         this.swmFee = swmFee;
-    }
-
-    public String getBioMedicalWasteReg() {
-        return bioMedicalWasteReg;
-    }
-
-    public void setBioMedicalWasteReg(final String bioMedicalWasteReg) {
-        this.bioMedicalWasteReg = bioMedicalWasteReg;
     }
 
     public String getDocImageNumber() {
@@ -544,20 +505,8 @@ public abstract class License extends StateAware {
         return vatNumber;
     }
 
-    public String getTypeOfFirm() {
-        return typeOfFirm;
-    }
-
     public String getNamePowerOfAttorney() {
         return namePowerOfAttorney;
-    }
-
-    public String getNameSoleProprietor() {
-        return nameSoleProprietor;
-    }
-
-    public String getBankerName() {
-        return bankerName;
     }
 
     public String getFeeExemption() {
@@ -568,32 +517,16 @@ public abstract class License extends StateAware {
         return minSolvency;
     }
 
-    public String getExecuteWorksWorth() {
-        return executeWorksWorth;
-    }
-
     public void setMinSolvency(final BigDecimal minSolvency) {
         this.minSolvency = minSolvency;
-    }
-
-    public void setExecuteWorksWorth(final String executeWorksWorth) {
-        this.executeWorksWorth = executeWorksWorth;
     }
 
     public BigDecimal getAvgAnnualTurnover() {
         return avgAnnualTurnover;
     }
 
-    public BigDecimal getCostOfWorksHand() {
-        return costOfWorksHand;
-    }
-
     public void setAvgAnnualTurnover(final BigDecimal avgAnnualTurnover) {
         this.avgAnnualTurnover = avgAnnualTurnover;
-    }
-
-    public void setCostOfWorksHand(final BigDecimal costOfWorksHand) {
-        this.costOfWorksHand = costOfWorksHand;
     }
 
     public void setCompanyPanNumber(final String companyPanNumber) {
@@ -604,20 +537,8 @@ public abstract class License extends StateAware {
         this.vatNumber = vatNumber;
     }
 
-    public void setTypeOfFirm(final String typeOfFirm) {
-        this.typeOfFirm = typeOfFirm;
-    }
-
     public void setNamePowerOfAttorney(final String namePowerOfAttorney) {
         this.namePowerOfAttorney = namePowerOfAttorney;
-    }
-
-    public void setNameSoleProprietor(final String nameSoleProprietor) {
-        this.nameSoleProprietor = nameSoleProprietor;
-    }
-
-    public void setBankerName(final String bankerName) {
-        this.bankerName = bankerName;
     }
 
     public void setFeeExemption(final String feeExemption) {
@@ -630,30 +551,6 @@ public abstract class License extends StateAware {
 
     public void setBankIfscCode(final String bankIfscCode) {
         this.bankIfscCode = bankIfscCode;
-    }
-
-    public Character getIsUpgrade() {
-        return isUpgrade;
-    }
-
-    public void setIsUpgrade(final Character isUpgrade) {
-        this.isUpgrade = isUpgrade;
-    }
-
-    public String getBankAddress() {
-        return bankAddress;
-    }
-
-    public void setBankAddress(final String bankAddress) {
-        this.bankAddress = bankAddress;
-    }
-
-    public String getPlaceOfBusiness() {
-        return placeOfBusiness;
-    }
-
-    public void setPlaceOfBusiness(final String placeOfBusiness) {
-        this.placeOfBusiness = placeOfBusiness;
     }
 
     @Override
@@ -691,14 +588,14 @@ public abstract class License extends StateAware {
         str.append("  licenseeZoneId=").append(licenseeZoneId);
         str.append("  licenseTransfer=").append(licenseTransfer == null ? "null" : licenseTransfer.toString());
         str.append("  licenseCheckList=").append(licenseCheckList == null ? "null" : licenseCheckList.toString());
-        str.append("  docNumber=").append(docNumber == null ? "null" : docNumber.toString());
         str.append("  demandSet=").append(demandSet == null ? "null" : demandSet.toString());
         str.append("  feeTypeStr=").append(feeTypeStr == null ? "null" : feeTypeStr.toString());
         str.append("  SwmFee=").append(swmFee == null ? "null" : swmFee.toString());
-        str.append("  bioMedicalWasteReg=").append(bioMedicalWasteReg == null ? "null" : bioMedicalWasteReg.toString());
         str.append("  docImageNumber=").append(docImageNumber == null ? "null" : docImageNumber.toString());
-        str.append("  bankAddress=").append(bankAddress == null ? "null" : bankAddress.toString());
-        str.append("  placeOfBusiness=").append(placeOfBusiness == null ? "null" : placeOfBusiness.toString());
+        str.append("  propertyNo=").append(propertyNo == null ? "null" : propertyNo.toString());
+        str.append("  category=").append(category == null ? "null" : category.toString());
+        str.append("  ownershipType=").append(ownershipType == null ? "null" : ownershipType.toString());
+        str.append("  workersCapacity=").append(workersCapacity == null ? "null" : workersCapacity.toString());
         str.append("}");
         return str.toString();
     }
@@ -717,44 +614,12 @@ public abstract class License extends StateAware {
         this.officeEmailId = officeEmailId;
     }
 
-    public String getContractorCode() {
-        return contractorCode;
-    }
-
-    public void setContractorCode(final String contractorCode) {
-        this.contractorCode = contractorCode;
-    }
-
     public List<LicenseObjection> getObjections() {
         return objections;
     }
 
     public void setObjections(final List<LicenseObjection> objections) {
         this.objections = objections;
-    }
-
-    public License getEgLicense() {
-        return egLicense;
-    }
-
-    public void setEgLicense(final License egLicense) {
-        this.egLicense = egLicense;
-    }
-
-    public LicenseSubType getLicenseSubType() {
-        return licenseSubType;
-    }
-
-    public void setLicenseSubType(final LicenseSubType licenseSubType) {
-        this.licenseSubType = licenseSubType;
-    }
-
-    public List<LicenseSubType> getLicenseSubTypeList() {
-        return licenseSubTypeList;
-    }
-
-    public void setLicenseSubTypeList(final List<LicenseSubType> licenseSubTypeList) {
-        this.licenseSubTypeList = licenseSubTypeList;
     }
 
     public BigDecimal getViolationFee() {
@@ -778,11 +643,12 @@ public abstract class License extends StateAware {
         setNameOfEstablishment(getLicenseTransfer().getOldNameOfEstablishment());
         getLicenseTransfer().setOldNameOfEstablishment(tempNameOfEstalishment);
 
-        final Address tempAddress = licensee.getAddress();
         //TODO -- Commented for Phoenix migration
-        //getLicensee().setAddress(getLicenseTransfer().getOldAddress());*/
+       /* final Address tempAddress = licensee.getAddress();
+        //TODO -- Commented for Phoenix migration
+        //getLicensee().setAddress(getLicenseTransfer().getOldAddress());
         getLicenseTransfer().setOldAddress(tempAddress);
-
+        */
         final Boundary tempBoundary = getLicensee().getBoundary();
         getLicensee().setBoundary(getLicenseTransfer().getBoundary());
         getLicenseTransfer().setBoundary(tempBoundary);
@@ -910,5 +776,69 @@ public abstract class License extends StateAware {
 
     public String getAuditDetails() {
         return "";
+    }
+
+    public String getPropertyNo() {
+        return propertyNo;
+    }
+
+    public void setPropertyNo(String propertyNo) {
+        this.propertyNo = propertyNo;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public LicenseCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(LicenseCategory category) {
+        this.category = category;
+    }
+
+    public String getOwnershipType() {
+        return ownershipType;
+    }
+
+    public void setOwnershipType(String ownershipType) {
+        this.ownershipType = ownershipType;
+    }
+
+    public BigDecimal getTradeArea_weight() {
+        return tradeArea_weight;
+    }
+
+    public void setTradeArea_weight(BigDecimal tradeArea_weight) {
+        this.tradeArea_weight = tradeArea_weight;
+    }
+
+    public UnitOfMeasurement getUom() {
+        return uom;
+    }
+
+    public void setUom(UnitOfMeasurement uom) {
+        this.uom = uom;
+    }
+
+    public NatureOfBusiness getBuildingType() {
+        return buildingType;
+    }
+
+    public void setBuildingType(NatureOfBusiness buildingType) {
+        this.buildingType = buildingType;
+    }
+
+    public BigDecimal getWorkersCapacity() {
+        return workersCapacity;
+    }
+
+    public void setWorkersCapacity(BigDecimal workersCapacity) {
+        this.workersCapacity = workersCapacity;
     }
 }

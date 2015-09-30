@@ -573,10 +573,7 @@ public class LicenseUtils {
     {
         HashMap<String, Object> contractorMap = new HashMap<String, Object>();
         contractorMap = new HashMap<String, Object>();
-        if (!org.apache.commons.lang.StringUtils.isBlank(license.getContractorCode())
-                && !org.apache.commons.lang.StringUtils.isEmpty(license.getContractorCode()))
-            contractorMap.put(Constants.WORKS_KEY_CODE, license.getContractorCode());
-        else if (!org.apache.commons.lang.StringUtils.isBlank(license.getLicenseNumber())
+        if (!org.apache.commons.lang.StringUtils.isBlank(license.getLicenseNumber())
                 && !org.apache.commons.lang.StringUtils.isEmpty(license.getLicenseNumber()))
             contractorMap.put(Constants.WORKS_KEY_CODE, license.getLicenseNumber());
         String deptCode = null;
@@ -590,14 +587,6 @@ public class LicenseUtils {
         if (!org.apache.commons.lang.StringUtils.isBlank(license.getLicensee().getApplicantName())
                 && !org.apache.commons.lang.StringUtils.isEmpty(license.getLicensee().getApplicantName()))
             contractorMap.put(Constants.WORKS_KEY_NAME, license.getLicensee().getApplicantName());
-        final Address address = license.getLicensee().getAddress();
-        if (!org.apache.commons.lang.StringUtils.isBlank(address.getHouseNoBldgApt())
-                && !org.apache.commons.lang.StringUtils.isEmpty(address.getHouseNoBldgApt())) {
-            final String streetAddress = address.getHouseNoBldgApt();
-            if (address.getStreetRoadLine() != null)
-                streetAddress.concat(address.getStreetRoadLine());
-            contractorMap.put(Constants.WORKS_KEY_CORRES_ADDR, streetAddress);
-        }
         // contractorMap.put(Constants.WORKS_KEY_PAYMENT_ADDR ,"");
         if (!org.apache.commons.lang.StringUtils.isBlank(license.getLicensee().getApplicantName())
                 && !org.apache.commons.lang.StringUtils.isEmpty(license.getLicensee().getApplicantName()))

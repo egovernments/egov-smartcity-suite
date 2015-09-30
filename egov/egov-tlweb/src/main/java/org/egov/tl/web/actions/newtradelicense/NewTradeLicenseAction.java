@@ -41,12 +41,20 @@ package org.egov.tl.web.actions.newtradelicense;
 
 
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.LOCALITY;
+import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -56,7 +64,6 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.persistence.entity.PermanentAddress;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
@@ -69,15 +76,12 @@ import org.egov.tl.domain.entity.TradeLicense;
 import org.egov.tl.domain.entity.WorkflowBean;
 import org.egov.tl.domain.service.BaseLicenseService;
 import org.egov.tl.domain.service.TradeService;
+import org.egov.tl.domain.service.masters.LicenseCategoryService;
+import org.egov.tl.domain.service.masters.LicenseSubCategoryService;
+import org.egov.tl.domain.service.masters.UnitOfMeasurementService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.opensymphony.xwork2.validator.annotations.EmailValidator;
-import com.opensymphony.xwork2.validator.annotations.IntRangeFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Results({ @Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
@@ -94,13 +98,21 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @Autowired
     private BoundaryService boundaryService;
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
+    private Map<String, String> ownerShipTypeMap;
+    @Autowired
+    private LicenseCategoryService licenseCategoryService;
+    @Autowired
+    private LicenseSubCategoryService licenseSubCategoryService;
+    @Autowired
+    private BaseLicenseService baseLicenseService;
+    @Autowired
+    private UnitOfMeasurementService unitOfMeasurementService;
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", new Locale("en", "IN"));
+    
 
     public NewTradeLicenseAction() {
         super();
         tradeLicense.setLicensee(new Licensee());
-        tradeLicense.setAddress(new PermanentAddress());
-        tradeLicense.getLicensee().setAddress(new PermanentAddress());
-        
     }
 
     /* to log errors and debugging information */
@@ -110,6 +122,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @SkipValidation
     @Action(value = "/newtradelicense/newTradeLicense-newForm")
     public String newForm() {
+        tradeLicense.setApplicationDate(new Date());
         return super.newForm();
     }
 
@@ -122,7 +135,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
             license().setCreationAndExpiryDate();
             if (!license().isPaid())
                 throw new ValidationException("applicationNumber", "license.fee.notcollected", license().getApplicationNumber());
-            if (license().getIsUpgrade() == null && license().getTempLicenseNumber() == null) {
+            if (license().getTempLicenseNumber() == null) {
                 final String nextRunningLicenseNumber = service().getNextRunningLicenseNumber(
                         "egtl_" + license().getFeeTypeStr()
                                 + "_license_number");
@@ -135,53 +148,12 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         return super.approve();
     }
 
-    @Override
-    @Validations(requiredFields = {
-            @RequiredFieldValidator(fieldName = "licensee.applicantName", message = "", key = Constants.REQUIRED),
-            @RequiredFieldValidator(fieldName = "licenseeZoneId", message = "", key = Constants.REQUIRED),
-            @RequiredFieldValidator(fieldName = "licenseZoneId", message = "", key = Constants.REQUIRED),
-            @RequiredFieldValidator(fieldName = "tradeName", message = "", key = Constants.REQUIRED),
-           // @RequiredFieldValidator(fieldName = "applicationDate", message = "", key = Constants.REQUIRED),
-            @RequiredFieldValidator(fieldName = "licensee.gender", message = "", key = Constants.REQUIRED),
-            @RequiredFieldValidator(fieldName = "nameOfEstablishment", message = "", key = Constants.REQUIRED)
-           // @RequiredFieldValidator(fieldName = "address.houseNo", message = "", key = Constants.REQUIRED),
-            //@RequiredFieldValidator(fieldName = "licensee.address.houseNo", message = "", key = Constants.REQUIRED) 
-            },
-            emails = {
-            @EmailValidator(message = "Please enter the valid Email Id", fieldName = "licensee.emailId", key = "Please enter the valid Email Id")
-    },
-    stringLengthFields = {
-            @StringLengthFieldValidator(fieldName = "nameOfEstablishment", maxLength = "100", message = "", key = "Maximum length for Name of Establishment is 100"),
-            @StringLengthFieldValidator(fieldName = "remarks", maxLength = "500", message = "", key = "Maximum length for Remarks is 500"),
-            @StringLengthFieldValidator(fieldName = "address.streetAddress1", maxLength = "500", message = "", key = "Maximum length for remaining address is 500"),
-            @StringLengthFieldValidator(fieldName = "address.houseNo", maxLength = "10", message = "", key = "Maximum length for house number is 10"),
-            @StringLengthFieldValidator(fieldName = "address.streetAddress2", maxLength = "10", message = "", key = "Maximum length for house number is 10"),
-            @StringLengthFieldValidator(fieldName = "phoneNumber", maxLength = "15", message = "", key = "Maximum length for Phone Number is 15"),
-            @StringLengthFieldValidator(fieldName = "licensee.applicantName", maxLength = "100", message = "", key = "Maximum length for Applicant Name is 100"),
-            @StringLengthFieldValidator(fieldName = "licensee.nationality", maxLength = "50", message = "", key = "Maximum length for Nationality is 50"),
-            @StringLengthFieldValidator(fieldName = "licensee.fatherOrSpouseName", maxLength = "100", message = "", key = "Maximum length for Father Or SpouseName is 100"),
-            @StringLengthFieldValidator(fieldName = "licensee.qualification", maxLength = "50", message = "", key = "Maximum length for Qualification is 50"),
-            @StringLengthFieldValidator(fieldName = "licensee.panNumber", maxLength = "10", message = "", key = "Maximum length for PAN Number is 10"),
-          //  @StringLengthFieldValidator(fieldName = "licensee.address.houseNo", maxLength = "10", message = "", key = "Maximum length for house number is 10"),
-            @StringLengthFieldValidator(fieldName = "licensee.address.streetAddress2", maxLength = "10", message = "", key = "Maximum length for house number is 10"),
-            @StringLengthFieldValidator(fieldName = "licensee.address.streetAddress1", maxLength = "500", message = "", key = "Maximum length for remaining address is 500"),
-            @StringLengthFieldValidator(fieldName = "licensee.phoneNumber", maxLength = "15", message = "", key = "Maximum length for Phone Number is 15"),
-            @StringLengthFieldValidator(fieldName = "licensee.mobilePhoneNumber", maxLength = "15", message = "", key = "Maximum length for Phone Number is 15"),
-            @StringLengthFieldValidator(fieldName = "licensee.uid", maxLength = "12", message = "", key = "Maximum length for UID is 12")
-    },
-    intRangeFields = {
-            @IntRangeFieldValidator(fieldName = "noOfRooms", min = "1", max = "999", message = "", key = "Number of rooms should be in the range 1 to 999"),
-            /*@IntRangeFieldValidator(fieldName = "address.pinCode", min = "100000", max = "999999", message = "", key = "Minimum and Maximum length for Pincode is 6 and all Digit Cannot be 0"),*/
-            @IntRangeFieldValidator(fieldName = "licensee.age", min = "1", max = "100", message = "", key = "Age should be in the range of 1 to 100")
-            /*,@IntRangeFieldValidator(fieldName = "licensee.address.pinCode", min = "100000", max = "999999", message = "", key = "Minimum and Maximum length for Pincode is 6 and all Digit Cannot be 0")*/
-    }
-            )
     @ValidationErrorPage(Constants.NEW)
     @Action(value = "/newtradelicense/newTradeLicense-create")
     public String create() {
         LOGGER.debug("Trade license Creation Parameters:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
         if (tradeLicense.getLicenseZoneId() != null && tradeLicense.getBoundary() == null) {
-            final Boundary boundary = boundaryService.getBoundaryById(tradeLicense.getLicenseZoneId());
+            final Boundary boundary = boundaryService.getBoundaryById(tradeLicense.getLicenseZoneId()); 
             tradeLicense.setBoundary(boundary);
         }
 
@@ -204,7 +176,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         }
         LOGGER.debug(" Create Trade License Application Name of Establishment:<<<<<<<<<<>>>>>>>>>>>>>:"
                 + tradeLicense.getNameOfEstablishment());
-        return super.create();
+        return super.create(); 
     }
 
     @Override
@@ -213,6 +185,14 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         setDocumentTypes(service().getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
         tradeLicense.setHotelGradeList(tradeLicense.populateHotelGradeList());
         tradeLicense.setHotelSubCatList(ts.getHotelCategoriesForTrade());
+        setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE); 
+        final List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                LOCALITY, LOCATION_HIERARCHY_TYPE);
+        addDropdownData("localityList", localityList);
+        addDropdownData("tradeTypeList", baseLicenseService.getAllNatureOfBusinesses());
+        addDropdownData("categoryList", licenseCategoryService.findAll());
+        addDropdownData("subCategoryList", Collections.EMPTY_LIST);
+        addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
     }
 
     @Override
@@ -290,5 +270,14 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     public void setDocumentTypes(List<LicenseDocumentType> documentTypes) {
         this.documentTypes = documentTypes;
     }
+
+    public Map<String, String> getOwnerShipTypeMap() {
+        return ownerShipTypeMap;
+    }
+
+    public void setOwnerShipTypeMap(Map<String, String> ownerShipTypeMap) {
+        this.ownerShipTypeMap = ownerShipTypeMap;
+    }
+
 
 }

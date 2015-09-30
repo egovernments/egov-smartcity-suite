@@ -46,4 +46,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class LicenseCategoryService extends PersistenceService<LicenseCategory, Integer> {
 
+    public LicenseCategoryService() {
+        setType(LicenseCategory.class);
+    }
+
 }

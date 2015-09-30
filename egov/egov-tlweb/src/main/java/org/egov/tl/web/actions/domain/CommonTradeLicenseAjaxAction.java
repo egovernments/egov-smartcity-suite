@@ -39,47 +39,62 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.domain;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.ServletResponseAware;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.tl.domain.entity.SubCategory;
+import org.egov.tl.domain.service.masters.LicenseSubCategoryService;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Action;
+import org.springframework.http.MediaType;
 
-        
-@Results({ @Result(name = "AJAX_RESULT", type = "redirectAction", location = "returnStream", params = { "contentType", "text/plain" }),
-	@Result(name = "ward", location = "commonAjax-ward.jsp"),
-	@Result(name = "success", type = "redirectAction", location = "CommonTradeLicenseAjaxAction.action")
-	})
+@Results({
+    @Result(name = "AJAX_RESULT", type = "redirectAction", location = "returnStream", params = { "contentType", "text/plain" }),
+    @Result(name = "ward", location = "commonAjax-ward.jsp"),
+    @Result(name = "success", type = "redirectAction", location = "CommonTradeLicenseAjaxAction.action"),
+    @Result(name = CommonTradeLicenseAjaxAction.SUBCATEGORY, location = "commonTradeLicenseAjax-subCategory.jsp")
+})
 @ParentPackage("egov")
-public class CommonTradeLicenseAjaxAction extends BaseFormAction {
+public class CommonTradeLicenseAjaxAction extends BaseFormAction implements ServletResponseAware {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(CommonTradeLicenseAjaxAction.class);
     protected LicenseUtils licenseUtils;
     private int zoneId;
     private List<Boundary> divisionList = new LinkedList<Boundary>();
+    private Long categoryId;
+    private List<SubCategory> subCategoryList = new LinkedList<SubCategory>();
     @Autowired
     private BoundaryService boundaryService;
+    @Autowired
+    private LicenseSubCategoryService licenseSubCategoryService;
+    public static final String SUBCATEGORY = "subCategory";
+    private Long locality;
+    private HttpServletResponse response;
 
     /**
      * Populate wards.
      *
      * @return the string
      */
-    @Action(value="/domain/commonTradeLicenseAjax-populateDivisions") 
+    @Action(value = "/domain/commonTradeLicenseAjax-populateDivisions")
     public String populateDivisions() {
         try {
             final Boundary boundary = boundaryService.getBoundaryById(Long.valueOf(zoneId));
@@ -92,6 +107,44 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction {
             throw new ApplicationRuntimeException("Unable to load division information", e);
         }
         return "ward";
+    }
+
+    /**
+     * @return list of subcategory for a given category
+     */
+    @Action(value = "/domain/commonTradeLicenseAjax-populateSubCategory")
+    public String populateSubCategory() {
+        try {
+            if (categoryId != null)
+                subCategoryList = licenseSubCategoryService.findAllSubCategoryByCategory(categoryId);
+        } catch (final Exception e) {
+            LOGGER.error("populateSubCategory() - Error while loading subCategory ." + e.getMessage());
+            addFieldError("subCategory", "Unable to load Sub Category information");
+            throw new ApplicationRuntimeException("Unable to load Sub Category information", e);
+        }
+        return SUBCATEGORY;
+    }
+
+    /**
+     * @throws IOException
+     * @throws NoSuchObjectException
+     * @return zone and ward for a locality
+     */
+    @Action(value = "/domain/commonTradeLicenseAjax-blockByLocality")
+    public void blockByLocality() throws IOException, NoSuchObjectException {
+        LOGGER.debug("Entered into blockByLocality, locality: " + locality);
+
+        final Boundary blockBoundary = (Boundary) getPersistenceService().find(
+                "select CH.parent from CrossHierarchy CH where CH.child.id = ? ", getLocality());
+        final Boundary wardBoundary = blockBoundary.getParent();
+        final Boundary zoneBoundary = wardBoundary.getParent();
+
+        final JSONObject jsonObject = new JSONObject();
+        jsonObject.put("zoneName", zoneBoundary.getName());
+        jsonObject.put("wardName", wardBoundary.getName());
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        IOUtils.write(jsonObject.toString(), response.getWriter());
     }
 
     @Override
@@ -132,6 +185,35 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction {
 
     public void setDivisionList(final List<Boundary> divisionList) {
         this.divisionList = divisionList;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(final Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public List<SubCategory> getSubCategoryList() {
+        return subCategoryList;
+    }
+
+    public void setSubCategoryList(final List<SubCategory> subCategoryList) {
+        this.subCategoryList = subCategoryList;
+    }
+
+    public Long getLocality() {
+        return locality;
+    }
+
+    public void setLocality(final Long locality) {
+        this.locality = locality;
+    }
+
+    @Override
+    public void setServletResponse(final HttpServletResponse httpServletResponse) {
+        response = httpServletResponse;
     }
 
 }

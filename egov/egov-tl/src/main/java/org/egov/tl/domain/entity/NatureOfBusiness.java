@@ -44,7 +44,7 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
-@Unique(fields = { "tradeNature" }, id = "id", tableName = "EGTL_TRADE_NATURE", columnName = { "TRADE_NATURE" }, message = "masters.tradenature.isunique")
+@Unique(fields = { "name" }, id = "id", tableName = "EGTL_MSTR_BUSINESS_NATURE", columnName = { "NAME" }, message = "masters.tradenature.isunique")
 public class NatureOfBusiness extends BaseModel {
     /**
      *

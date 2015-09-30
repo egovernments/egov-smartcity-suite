@@ -39,71 +39,38 @@
 #------------------------------------------------------------------------------->
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<tr>
-	<td class="greybox">
-		&nbsp;
-	</td>
-	<td class="greybox">
-		<s:text name="licensee.applicantname" />
-		<span class="mandatory"></span>
-	</td>
-	<td class="greybox">
-		<s:textfield name="licensee.applicantName" id="applicantName" maxlength="100"/>
-	<td class="greybox">
-		<s:text name="licensee.nationality" />
-	</td>
-	<td class="greybox">
-		<s:textfield name="licensee.nationality" id="nationality" maxlength="50"/>
-	</td>
-</tr>
-<tr>
-	<td class="greybox">
-		&nbsp;
-	</td>
-	<td class="greybox">
-		<s:text name="licensee.fatherorspousename" />
-	</td>
-	<td class="greybox">
-		<s:textfield name="licensee.fatherOrSpouseName" maxlength="100" id="fatherOrSpouseName" />
-	<td class="greybox">
-		<s:text name="licensee.qualification" />
-	</td>
-	<td class="greybox">
-		<s:textfield name="licensee.qualification" id="qualification" maxlength="50" />
-	</td>
-</tr>
-<tr>
-	<td class="greybox">
-		&nbsp;
-	</td>
-	<td class="greybox">
-		<s:text name='licesee.age' />
-	</td>
-	<td class="greybox">
-		<s:textfield name="licensee.age" id="age" size="3" onKeyPress="return numbersonly(this, event)"  maxlength="3"/>
-	</td>
-	<td class="greybox">
-		<s:text name="licensee.gender" />
-		<span class="mandatory"></span>
-	</td>
-	<td class="greybox">
-		<s:radio name="licensee.gender" list="genderList" id="gender" />
-	</td>
-</tr>
-<tr>
-	<td class="greybox">
-		&nbsp;
-	</td>
-	<td class="greybox">
-		<s:text name='licensee.pannumber' />
-	</td>
-	<td class="greybox">
-		<s:textfield name="licensee.panNumber" id="licensee.panNumber" onblur="validatePan(this)" maxlength="10"/>
-	</td>
-	<td class="greybox">
-		&nbsp;
-	</td>
-	<td class="greybox">
-		&nbsp;
-	</td>
-</tr>
+
+	<div class="form-group">
+	    <label class="col-sm-3 control-label text-right"><s:text name='licensee.aadhaarNo' /></label>
+	    <div class="col-sm-3 add-margin">
+	        <div class="input-group">
+	           <s:textfield name="licensee.uid"  onBlur="checkLength(this,15)" onKeyPress="return numbersonly(this, event)"  maxlength="15" cssClass="form-control" />
+	        </div>
+	    </div>
+	    <label class="col-sm-2 control-label text-right"><s:text name='licensee.mobileNo' /><span class="mandatory"></span></label>
+	    <div class="col-sm-3 add-margin">
+	        <div class="input-group">
+	             <s:textfield name="licensee.mobilePhoneNumber" id="mobilePhoneNumber" class="form-control"  onKeyPress="return numbersonly(this, event)" onBlur="checkLength(this,15)" maxlength="15" required="required"/>
+	        </div>
+	    </div>
+	</div>
+	<div class="form-group">
+	    <label class="col-sm-3 control-label text-right"><s:text name='licensee.applicantName' /><span class="mandatory"></span></label>
+	    <div class="col-sm-3 add-margin">
+	       <s:textfield name="licensee.applicantName" id="applicantName" maxlength="32" cssClass="form-control" required="required"/>
+	    </div>
+	    <label class="col-sm-2 control-label text-right"><s:text name='licensee.father/spouse' /><span class="mandatory"></span></label>
+	    <div class="col-sm-3 add-margin">
+	      	<s:textfield name="licensee.fatherOrSpouseName" maxlength="32" id="fatherOrSpouseName" cssClass="form-control" required="required"/>
+	    </div>
+	</div>
+	<div class="form-group">
+	    <label class="col-sm-3 control-label text-right"><s:text name='licensee.emailId' /><span class="mandatory"></span></label>
+	    <div class="col-sm-3 add-margin">
+	        <s:textfield    name="licensee.emailId" id="emailId" onBlur="validateEmail(this);checkLength(this,32)" maxlength="32" cssClass="form-control" required="required"/>
+	    </div>
+	    <label class="col-sm-2 control-label text-right"><s:text name='licensee.applicantAddress' /><span class="mandatory"></span></label>
+	    <div class="col-sm-3 add-margin">
+	        <s:textarea name="licensee.address"  id="licenseeAddress" maxlength="256" cssClass="form-control" required="required"/>
+	    </div>
+	</div>

@@ -210,3 +210,9 @@ function lessThanOrEqualToCurrentDate(dt) {
 		return false;
 	}
 }
+function setupAjaxSubCategory(elem) {
+	category_id = elem.options[elem.selectedIndex].value;
+	populatesubCategory({
+		categoryId : category_id
+	});
+}

@@ -94,8 +94,6 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
     public EditTradeLicenseAction() {
         super();
         tradeLicense.setLicensee(new Licensee());
-        tradeLicense.setAddress(new PermanentAddress());
-        tradeLicense.getLicensee().setAddress(new PermanentAddress());
     }
 
     /* to log errors and debugging information */
@@ -201,9 +199,6 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
         tradeLicense = (TradeLicense) persistenceService.findById(modifiedTL.getId(), false);
 
         // Licensee details
-        tradeLicense.getLicensee().getAddress().setHouseNoBldgApt(modifiedTL.getLicensee().getAddress().getHouseNoBldgApt());
-        tradeLicense.getLicensee().getAddress().setStreetRoadLine(modifiedTL.getLicensee().getAddress().getStreetRoadLine());
-        tradeLicense.getLicensee().getAddress().setPinCode(modifiedTL.getLicensee().getAddress().getPinCode());
         tradeLicense.getLicensee().setPhoneNumber(modifiedTL.getLicensee().getPhoneNumber());
         tradeLicense.getLicensee().setMobilePhoneNumber(modifiedTL.getLicensee().getMobilePhoneNumber());
         tradeLicense.getLicensee().setEmailId(modifiedTL.getLicensee().getEmailId());
@@ -211,15 +206,11 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
         tradeLicense.setNameOfEstablishment(modifiedTL.getNameOfEstablishment());
 
         // License details
-        tradeLicense.getAddress().setHouseNoBldgApt(modifiedTL.getAddress().getHouseNoBldgApt());
-        tradeLicense.getAddress().setStreetRoadLine(modifiedTL.getAddress().getStreetRoadLine());
-        tradeLicense.getAddress().setPinCode(modifiedTL.getAddress().getPinCode());
         tradeLicense.setPhoneNumber(modifiedTL.getPhoneNumber());
         tradeLicense.setBuildingType(modifiedTL.getBuildingType());
         tradeLicense.setRentPaid(modifiedTL.getRentPaid());
         tradeLicense.setNoOfRooms(modifiedTL.getNoOfRooms());
         tradeLicense.setRemarks(modifiedTL.getRemarks());
-        tradeLicense.setDocNumber(modifiedTL.getDocNumber());
         if (modifiedTL.getLicenseZoneId() != null && modifiedTL.getBoundary() == null) {
             final Boundary licenseboundary = boundaryService.getBoundaryById(modifiedTL.getLicenseZoneId());
             tradeLicense.setBoundary(licenseboundary);

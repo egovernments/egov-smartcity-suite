@@ -186,7 +186,8 @@ public abstract class BaseLicenseService {
 
 	public String getFeeTypeForElectricalLicense(final License license) {
         String feeType = null;
-        if (license != null && license.getLicenseSubType() != null)
+        // commented as licenseSubType is removed from License 
+        /*if (license != null && license.getLicenseSubType() != null)
             if (license.getLicenseSubType().getCode().equals(Constants.MAINTENANCE_CONTRACTORS))
                 feeType = license.getLicenseSubType().getCode();
             else if (license.getLicenseSubType().getCode().equals(Constants.LIFT_CONTRACTORS))
@@ -206,7 +207,7 @@ public abstract class BaseLicenseService {
             else if (license.getLicenseSubType().getCode().equals(Constants.BOT_CONTRACTORS))
                 feeType = license.getLicenseSubType().getCode();
             else if (license.getLicenseSubType().getCode().equals(Constants.FIRE_CONTRACTORS))
-                feeType = license.getLicenseSubType().getCode();
+                feeType = license.getLicenseSubType().getCode();*/
         return feeType;
     }
 
@@ -679,5 +680,9 @@ public abstract class BaseLicenseService {
     public List<LicenseDocumentType> getDocumentTypesByTransaction(String transaction) {
         return (List<LicenseDocumentType>) persistenceService.findAllBy("from LicenseDocumentType where applicationType = ?",
                 transaction);
+    }
+    
+    public List<NatureOfBusiness> getAllNatureOfBusinesses() {
+        return (List<NatureOfBusiness>) persistenceService.findAllBy("from NatureOfBusiness order by name");
     }
 }

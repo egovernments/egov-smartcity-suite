@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.tl.domain.service.masters;
 
+import java.util.List;
+
 import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.domain.entity.UnitOfMeasurement;
 import org.springframework.stereotype.Service;
@@ -66,6 +68,13 @@ public class UnitOfMeasurementService extends PersistenceService<UnitOfMeasureme
      */
     public UnitOfMeasurement findUOMByCode(final String code) {
         return this.find("From UnitOfMeasurement where code=?", code);
+    }
+
+    /**
+     * @return list of active UOM's
+     */
+    public List<UnitOfMeasurement> findAllActiveUOM() {
+        return findAllBy("From UnitOfMeasurement where active='t'");
     }
 
 }

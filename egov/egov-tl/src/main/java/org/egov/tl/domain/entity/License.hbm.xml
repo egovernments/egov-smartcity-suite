@@ -56,36 +56,36 @@
 		<property name="dateOfExpiry" column="DATEOFEXPIRY" />
 		<property name="licenseCheckList" column="CHECKLIST" />
 		<property name="applicationNumber" column="APPL_NUM" />
-		<property name="docNumber" column="DOC_NUMBER"/>
 		<property name="applicationDate" column="APPL_DATE" />
-		<property name="bioMedicalWasteReg" column="BIO_MEDICAL_WASTE_REG" />
 		<property name="docImageNumber" column="DOC_IMAGE_NUMBER"/>
 		<property name="namePowerOfAttorney" column="POWER_OF_ATTORNEY" />
 		<property name="companyPanNumber" column="COMPANY_PAN_NUMBER" />
 		<property name="vatNumber" column="VAT_NUMBER" />
-		<property name="typeOfFirm" column="TYPE_OF_FIRM" />
-		<property name="nameSoleProprietor" column="NAME_SOLE_PROPRIETOR" />
-		<property name="bankerName" column="BANKER_NAME" />
 		<property name="minSolvency" column="MIN_SOLVENCY" />
-		<property name="executeWorksWorth" column="EXECUTE_WORKS_WORTH" />
 		<property name="avgAnnualTurnover" column="AVG_ANNUAL_TURNOVER" />
-		<property name="costOfWorksHand" column="COST_OF_WORKS_HAND" />
 		<property name="bankIfscCode" column="BANK_IFSC_CODE" />
 		<property name="feeExemption" column="FEE_EXEMPTION" />
-		<property name="isUpgrade" column="IS_UPGRADE" />
 		<property name="tempLicenseNumber" column="TEMP_LICENSE_NUMBER" />
-		<property name="bankAddress" column="BANK_ADDRESS"/>
-		<property name="placeOfBusiness" column="PLACE_OF_BUSINESS"/>
 		<property name="officeEmailId" column="OFFICE_EMAILID"/>
-		<property name="contractorCode" column="CONTRACTOR_CODE"/>	
+		<property name="propertyNo" column="PROPERTY_NO" type="java.lang.String"/>
+		<property name="ownershipType" column="OWNERSHIP_TYPE" type="java.lang.String" not-null="true" />
+		<many-to-one name="category" class="org.egov.tl.domain.entity.LicenseCategory" fetch="select" not-null="true" >
+			<column name="ID_CATEGORY" precision="22" scale="0" />
+		</many-to-one>
+		<property name="tradeArea_weight" column="TRADE_AREA_WEIGHT"  not-null="true" type="java.math.BigDecimal" />
+		<many-to-one name="uom" class="org.egov.tl.domain.entity.UnitOfMeasurement" fetch="select" not-null="true" >
+			<column name="ID_UOM" precision="22" scale="0" />
+		</many-to-one>
+		<property name="workersCapacity" column="WORKERS_CAPACITY" type="java.math.BigDecimal" />
+		<property  name="address" type="java.lang.String">
+			<column length="250" name="address" not-null="true" />
+		</property>
 		<bag name="objections" inverse="true" table="EGTL_OBJECTION" fetch="select">
 			<key>
 				<column name="ID_LICENSE"></column>
 			</key>
 			<one-to-many class="org.egov.tl.domain.entity.objection.LicenseObjection" />
 		</bag>
-		<many-to-one name="address" column="ID_ADDRESS" class="org.egov.infra.persistence.entity.PermanentAddress" cascade="all"
-			unique="true" />
 
 		<property name="createdDate" type="java.util.Date">
 			<column name="CREATEDDATE" not-null="true" />
@@ -119,7 +119,9 @@
 			<column name="ID_LICENSETRANSFER" precision="22" scale="0" />
 		</many-to-one>
 		<property name="nameOfEstablishment" column="NAME_OF_ESTAB" />
-		<property name="buildingType" column="BUILDINGTYPE" />
+		
+		<many-to-one name="buildingType" class="org.egov.tl.domain.entity.NatureOfBusiness" column="BUILDINGTYPE"/>
+		
 		<property name="noOfRooms" column="NOOFROOMS" type="java.lang.Integer" />
 		<property name="phoneNumber" column="PHONENUMBER" />
 
@@ -142,15 +144,6 @@
 			<one-to-many class="org.egov.tl.domain.entity.LicenseStatusValues" />
 		</set>
 		
-		<many-to-one name="egLicense" class="org.egov.tl.domain.entity.License" >
-            <column name="PARENT_ID"  />
-        </many-to-one>
-        
-        <many-to-one name="licenseSubType" class="org.egov.tl.domain.entity.LicenseSubType"
-					cascade="all">
-					<column name="ID_LICENSE_SUB_TYPE" />
-		</many-to-one>
-
 		<one-to-one name="licensee" lazy="proxy" class="org.egov.tl.domain.entity.Licensee" property-ref="license"
 			cascade="all" />
 

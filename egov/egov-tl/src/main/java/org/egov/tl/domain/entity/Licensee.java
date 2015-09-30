@@ -53,7 +53,6 @@ public class Licensee extends BaseModel {
     @Required(message = "licensee.name.err.required")
     @Length(min = 1, max = 256, message = "licensee.name.err.maxlength")
     private String applicantName;
-    private PermanentAddress address;
     private String nationality;
     private String fatherOrSpouseName;
     // private String spouseName;
@@ -66,6 +65,7 @@ public class Licensee extends BaseModel {
     private String uid;
     private String emailId;
     private Boundary boundary;
+    private String address;
 
     public Boundary getBoundary() {
         return boundary;
@@ -123,14 +123,6 @@ public class Licensee extends BaseModel {
 
     public void setApplicantName(final String applicantName) {
         this.applicantName = applicantName;
-    }
-
-    public PermanentAddress getAddress() {
-        return address;
-    }
-
-    public void setAddress(final PermanentAddress address) {
-        this.address = address;
     }
 
     public String getNationality() {
@@ -197,5 +189,13 @@ public class Licensee extends BaseModel {
         str.append("  boundary=").append(boundary == null ? "null" : boundary.toString());
         str.append("}");
         return str.toString();
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

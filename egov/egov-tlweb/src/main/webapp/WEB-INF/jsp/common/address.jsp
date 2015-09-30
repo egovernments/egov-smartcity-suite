@@ -39,60 +39,70 @@
 #------------------------------------------------------------------------------->
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<script>
+jQuery(document).ready(function(){
+	 jQuery('#boundary').change(function() {
+		console.log("came jursidiction"+jQuery('#boundary').val());
+		jQuery.ajax({
+			url: "../domain/commonTradeLicenseAjax-blockByLocality.action",
+			type: "GET",
+			data: {
+				locality : jQuery('#boundary').val()
+			},
+			cache: false,
+			dataType: "json",
+			success: function (response) {
+				jQuery('#zoneName').val(response.zoneName);
+				jQuery('#wardName').val(response.wardName);
+			}, 
+			error: function (response) {
+				console.log("failed");
+				jQuery('#zoneName').val('');
+				jQuery('#wardName').val('');
+				alert("No boundary details mapped for locality")
+			}
+		});
+	});
+});
+</script>
 
-<tr>
-	<td class="greybox" width="5%">
-	</td>
-	<td class="greybox" align="right">
-		<s:text name="license.zone" />
-		<span class="mandatory"></span>
-	</td>
-	<td class="greybox" align="left">
-		<s:select headerKey="" headerValue="%{getText('license.default.select')}" name="licenseZoneId" id="licenseZoneId" list="dropdownData.zoneList" listKey="id" listValue='name' onChange="setupAjaxDivision(this);" />
-		<egov:ajaxdropdown id="populateDivision" fields="['Text','Value']" dropdownId='division' url='domain/commonTradeLicenseAjax-populateDivisions.action' />
-	</td>
-	<td class="greybox">
-		<s:text name="license.division" />
-	</td>
-	<td class="greybox">
-		<s:select headerKey="" headerValue="%{getText('license.default.select')}" disabled="%{sDisabled}" name="boundary" id="division" list="dropdownData.divisionListLicense" listKey="id" listValue='name' value="boundary.id" onChange="setupAjaxArea(this);" />
-		<egov:ajaxdropdown id="populateArea" fields="['Text','Value']" dropdownId='area' url='domain/commonAjax-populateAreas.action' />
-	</td>
-</tr>
-<tr>
-	<td class="greybox" width="5%">
-	<td class="greybox">
-		<s:text name='license.housenumber' />
-		<span class="mandatory"></span>
-	</td>
-	<td class="greybox">
-		<s:textfield name="address.houseNoBldgApt" maxlength="10" />
-	</td>
-	<td class="greybox" colspan="2">
-		&nbsp;
-	</td>
-</tr>
-<tr>
-	<td class="greybox" width="5%">
-	<td class="<c:out value="${trclass}"/>">
-		<s:text name='license.remainingaddress' />
-	</td>
-	<td class="greybox" colspan="3">
-		<s:textarea name="address.streetRoadLine" maxlength="500" rows="3" cols="110" />
-	</td>
-</tr>
-<tr>
-	<td class="greybox" width="5%"></td>
-	<td class="greybox">
-		<s:text name='license.pincode' />
-	</td>
-	<td class="greybox">
-		<s:textfield name="address.pinCode" maxlength="6" onKeyPress="return numbersonly(this, event)"/>
-	</td>
-	<td class="greybox">
-		<s:text name='license.address.phonenumber' />
-	</td>
-	<td class="greybox">
-		<s:textfield name="phoneNumber" maxlength="15" onKeyPress="return numbersonly(this, event)"/>
-	</td>
-</tr>
+<div class="panel-heading custom_form_panel_heading">
+    <div class="panel-title"><s:text name='license.location.lbl' /></div>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><s:text name='license.propertyNo.lbl' /></label>
+    <div class="col-sm-3 add-margin">
+        <div class="input-group">
+         	<s:textfield name="propertyNo" id="propertyNo" value="%{propertyNo}" maxlength="15" onKeyPress="return numbersonly(this, event)" onBlur="checkLength(this,15)" class="form-control"/>
+            <span class="input-group-addon"> <i class="fa fa-search specific"></i></span>
+        </div>
+    </div>
+  
+    <label class="col-sm-2 control-label text-right"><s:text name='license.locality.lbl' /><span class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+        <s:select name="boundary" id="boundary" list="dropdownData.localityList"
+	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{boundary}" class="form-control" required="required"/>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><s:text name='license.zone.lbl' /><span class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+        <s:textfield name="zoneName" id="zoneName" value="%{zoneName}"  readOnly="true" class="form-control"/>
+    </div>
+    <label class="col-sm-2 control-label text-right"><s:text name='license.ward.lbl' /><span class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+        <s:textfield name="wardName" id="wardName" value="%{wardName}"  readOnly="true" class="form-control"/>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><s:text name='license.ownerShipType.lbl' /><span class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+        <s:select headerKey="-1" headerValue="%{getText('default.select')}" name="ownershipType"
+										id="ownershipType" listKey="key" listValue="value"
+										list="ownerShipTypeMap" cssClass="form-control" value="%{ownershipType}" required="required" />
+    </div>
+    <label class="col-sm-2 control-label text-right"><s:text name='license.address.lbl' /><span class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+         <s:textarea name="address" id="address" value="%{address}" maxlength="256" onBlur="checkLength(this,256)" class="form-control" required="required" />
+    </div>
+</div>

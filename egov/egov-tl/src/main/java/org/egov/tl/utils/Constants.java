@@ -40,6 +40,8 @@
 package org.egov.tl.utils;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeMap;
 
 public class Constants {
@@ -687,4 +689,23 @@ public class Constants {
     public static final String GLCODE_VIOLATIONFEE = "1402001";
     
     public static final String TRANSACTIONTYPE_CREATE_LICENSE = "Create License";
+    
+    public static final String OWNERSHIP_TYPE_OWN = "Own";
+    public static final String OWNERSHIP_TYPE_RENTED = "Rented";
+    public static final String OWNERSHIP_TYPE_STATEGOVERNMENT_LAND = "State Government Land";
+    public static final String OWNERSHIP_TYPE_CENTRALGOVERNMENT_LAND = "Central Government Land";
+    
+    // OwnerShip Type
+    public static final Map<String, String> OWNERSHIP_TYPE = new HashMap<String, String>() {
+
+        {
+            put(OWNERSHIP_TYPE_OWN, OWNERSHIP_TYPE_OWN);
+            put(OWNERSHIP_TYPE_RENTED, OWNERSHIP_TYPE_RENTED);
+            put(OWNERSHIP_TYPE_STATEGOVERNMENT_LAND, OWNERSHIP_TYPE_STATEGOVERNMENT_LAND);
+            put(OWNERSHIP_TYPE_CENTRALGOVERNMENT_LAND, OWNERSHIP_TYPE_CENTRALGOVERNMENT_LAND);
+        }
+    };
+    
+    public static final String LOCALITY = "locality";
+    public static final String LOCATION_HIERARCHY_TYPE = "LOCATION";
 }

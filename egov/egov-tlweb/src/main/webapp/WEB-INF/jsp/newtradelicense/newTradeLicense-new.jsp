@@ -39,33 +39,80 @@
 #------------------------------------------------------------------------------->
 <%@ include file="/includes/taglibs.jsp"%>
 <sx:head/>
+
 <html>
 	<head>
 		<title><s:text name="page.title.newtrade" /></title>
 		<script>
 	
 			function validateForm(obj) {
-				clearWaterMark();
-    			if(validateForm_newTradeLicense()==false) {
+				if (document.getElementById("mobilePhoneNumber").value == '' || document.getElementById("mobilePhoneNumber").value == null){
+					showMessage('newLicense_error', '<s:text name="newlicense.mobilephonenumber.null" />');
+					document.getElementById("mobilePhoneNumber").focus();
+					return false;
+				} else if (document.getElementById("applicantName").value == '' || document.getElementById("applicantName").value == null){
+					showMessage('newLicense_error', '<s:text name="newlicense.applicantname.null" />');
+					document.getElementById("applicantName").focus();
+					return false;
+				} else if (document.getElementById("fatherOrSpouseName").value == '' || document.getElementById("fatherOrSpouseName").value == null){
+					showMessage('newLicense_error', '<s:text name="newlicense.fatherorspousename.null" />');
+					document.getElementById("fatherOrSpouseName").focus();
+					return false;
+				} else if (document.getElementById("emailId").value == '' || document.getElementById("emailId").value == null){
+					showMessage('newLicense_error', '<s:text name="newlicense.email.null" />');
+					document.getElementById("emailId").focus();
+					return false;
+				} else if (document.getElementById("licenseeAddress").value == '' || document.getElementById("licenseeAddress").value == null){
+					showMessage('newLicense_error', '<s:text name="newlicense.licenseeaddress.null" />');
+					document.getElementById("licenseeAddress").focus();
+					return false;
+				} else if (document.getElementById("boundary").value == '-1'){
+					showMessage('newLicense_error', '<s:text name="newlicense.locality.null" />');
+					document.getElementById("boundary").focus();
+					return false;
+				} else if (document.getElementById("ownershipType").value == '-1'){
+					showMessage('newLicense_error', '<s:text name="newlicense.ownershiptype.null" />');
+					document.getElementById("ownershipType").focus();
+					return false;
+				} else if (document.getElementById("address").value == '' || document.getElementById("address").value == null){
+					showMessage('newLicense_error', '<s:text name="newlicense.licenseaddress.null" />');
+					document.getElementById("address").focus();
+					return false;
+				} else if (document.getElementById("buildingType").value == '-1'){
+					showMessage('newLicense_error', '<s:text name="newlicense.buildingtype.null" />');
+					document.getElementById("buildingType").focus();
+					return false;
+				} else if (document.getElementById("category").value == '-1'){
+					showMessage('newLicense_error', '<s:text name="newlicense.category.null" />');
+					document.getElementById("category").focus();
+					return false;
+				}  else if (document.getElementById("subCategory").value == '-1'){
+					showMessage('newLicense_error', '<s:text name="newlicense.subcategory.null" />');
+					document.getElementById("subCategory").focus();
+					return false;
+				}	else if (document.getElementById("tradeArea_weight").value == '' || document.getElementById("tradeArea_weight").value == null){
+					showMessage('newLicense_error', '<s:text name="newlicense.tradeareaweight.null" />');
+					document.getElementById("tradeArea_weight").focus();
+					return false;
+				}	else if (document.getElementById("uom").value == '-1'){
+					showMessage('newLicense_error', '<s:text name="newlicense.uom.null" />');
+					document.getElementById("uom").focus();
+					return false;
+				} else if (document.getElementById("workersCapacity").value == '' ||  document.getElementById("workersCapacity").value == null ||
+						 document.getElementById("workersCapacity").value == 0) {
+					showMessage('newLicense_error', '<s:text name="newlicense.workerscapacity.null" />');
+					document.getElementById("workersCapacity").focus();
+					return false;
+				}
+    			if(validateForm_newTradeLicense()==false) { 
     				return false;
     			} else { 
-        			document.forms[0].action = 'newTradeLicense-create.action';
-        			document.forms[0].submit;
+    				clearMessage('newLicense_error')
+        			document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-create.action';
+    		    	document.newTradeLicense.submit();
     			 } 
   			}
-  
-			function clearWaterMark(){
-				if(document.getElementById('applicationDate') && document.getElementById('applicationDate').value=='dd/mm/yyyy') {
-					document.getElementById('applicationDate').value = '';
-				}				
-			}
-			
-			function closethis() {
-			   if(confirm("Do you want to close this window ?")) {
-			       window.close();
-			   }			   
-			}
-				
+  			
 			function onBodyLoad(){
   				if (document.getElementById("motorInstalled").checked==true) {
 					document.getElementById("hpheader").style.display='';
@@ -173,8 +220,8 @@
 				cellRight.setAttribute("align","left");
 				noOfMachines = document.createElement('input');
 				noOfMachines.type = 'text';
-				noOfMachines.size = '8';
-				noOfMachines.onBlur= 'checkLength(this,6)';
+				noOfMachines.size = '3';
+				noOfMachines.onBlur= 'checkLength(this,3)';
 				<s:if test="%{sControlDisabled}">
 				  noOfMachines.disabled="<s:property value='%{sControlDisabled}' />";
 				</s:if>
@@ -196,7 +243,7 @@
 				cellRight.setAttribute("align","left");
 				horsepower = document.createElement('input');
 				horsepower.type = 'text';
-				horsepower.size = '12';
+				horsepower.size = '6';
 				horsepower.onBlur = 'checkLength(this,6)';
 				<s:if test="%{sControlDisabled}">
 				  	horsepower.disabled="<s:property value='%{sControlDisabled}' />";
@@ -223,6 +270,7 @@
 					oCell.innerHTML = "<img src='${pageContext.request.contextPath}/resources/image/addrow.gif' alt='Add' width='18' height='18' border='0' id='addImg"+motorcnt+"' onclick='addMotorRowToTable(false);'/> <img src='${pageContext.request.contextPath}/resources/image/removerow.gif' alt='Remove' id='delImg"+motorcnt+"' width='18' height='18' border='0' onclick='removeRow1(this);'/>";
 				</s:if>
 				 motorcnt++;  
+
 			}
 			
 			function removeRow1(src){  
@@ -264,156 +312,137 @@
         	}
         	
  		</script>
-
-	</head>
+ 		
+ 			</head>
 	<body onload="onBodyLoad()">
-		<table align="center" width="100%">
-			<tbody>
-				<tr>
-					<td>
-						<div align="center">
-							<center>
-								<div class="formmainbox">
-									<div class="subheadnew">
-										<s:text name="page.title.newtrade" />
+		<div id="newLicense_error" class="errorstyle" style="display:none;"></div> 
+                <div class="row">
+                    <div class="col-md-12">
+                     <div class="text-right error-msg" style="font-size:14px;"><s:text name="dateofapplication.lbl" /> : <s:date name="applicationDate"  format="dd/MM/yyyy"/></div>
+                 		<s:if test="%{hasErrors()}">
+							<div align="left">
+								<s:actionerror />
+								<s:fielderror/>
+							</div>			 
+						</s:if>
+						<s:if test="%{hasActionMessages()}">
+						<div class="messagestyle">
+							<s:actionmessage theme="simple" />
+						</div>
+						</s:if>
+                 	
+                 	<s:form name="newTradeLicense" action="newTradeLicense" theme="css_xhtml"  enctype="multipart/form-data" 
+					cssClass="form-horizontal form-groups-bordered" validate="true" >    
+					<s:push value="model"> 
+							<s:token/>
+							<s:hidden name="actionName" value="create" />
+							<s:hidden id="detailChanged" name="detailChanged" />
+							<s:hidden id="applicationDate" name="applicationDate" />
+                        <div class="panel panel-primary" data-collapsed="0">
+                            <div class="panel-heading">
+                            
+                            	<div class="panel-heading">
+									<div class="panel-title text-left">
+											<s:text name='newtradeLicense.heading' /> 
 									</div>
-									<table>
-										<tr>
-											<td align="left" style="color: #FF0000">
-												<s:actionerror cssStyle="color: #FF0000" />
-												<s:actionmessage />
-											</td>
-										</tr>
-									</table>
-									<s:form action="newTradeLicense" theme="css_xhtml"  enctype="multipart/form-data" name="newTradeLicense" validate="true">
-									<s:token/>
-										<s:hidden name="actionName" value="create" />
-										<s:hidden id="detailChanged" name="detailChanged" />
-										<c:set var="trclass" value="greybox" />
-										<table border="0" cellpadding="0" cellspacing="0" width="100%">
-											<tbody>
-												<tr>
-													<td colspan="5" class="headingwk">
-														<div class="subheadnew text-left">
-															<s:text name='license.title.applicantiondetails' />
-														</div>
-													</td>
-												</tr>
-												<%@ include file='../common/license.jsp'%>
-												<%@ include file='../common/address.jsp'%>
-												<tr>
-													<td colspan="5" class="headingwk">
-														<div class="subheadnew text-left">
-															<s:text name='license.title.applicantdetails' />
-														</div>
-													</td>
-												</tr>
-												<%@ include file='../common/licensee.jsp'%>
-												<%@ include file='../common/licenseeAddress.jsp'%>
-												
-												<tr>
-													<td class="greybox" width="5%"></td>
-													<td class="greybox">
-														<s:text name='license.othercharges' />
-													</td>
-													<td class="greybox">
-														<s:textfield name="otherCharges" maxlength="8" onKeyPress="return numbersforamount(this, event)" onBlur="checkLength(this,8),formatCurrency(otherCharges)" />
-													</td>
-													<td class="greybox">
-														<s:text name='license.deduction' />
-													</td>
-													<td class="greybox"> <s:textfield name="deduction"  maxlength="8" onKeyPress="return numbersforamount(this, event)" onBlur="checkLength(this,8),formatCurrency(deduction)" /></td>
-												</tr>
-												<tr>
-												<td class="greybox" width="5%"></td>
-													<td class="greybox">
-														<s:text name='license.swmfee' />
-													</td>
-													<td class="greybox">
-														<s:textfield name="swmFee" maxlength="8" onKeyPress="return numbersforamount(this, event)" onBlur="checkLength(this,8),formatCurrency(swmFee)" />
-													</td>
-													<td colspan="3" class="greybox" width="5%"></td>
-												</tr>
-												<tr>
-													<td colspan="5" class="headingwk">
-														<div class="subheadnew text-left">
-															<s:text name='license.title.motordetail' />
-														</div>
-													</td>
-												</tr>
-												<tr>
-													<td class="greybox" width="5%">
-													</td>
-													<td class="greybox">
-														<s:text name="license.motor.installed" />
-													</td>
-													<td class="greybox">
-														<s:checkbox theme="simple" key="motorInstalled" tabindex="17" onclick="showhide('addmoremotor')" label="motorInstalled" id="motorInstalled" disabled="%{sDisabled}" />
-													</td>
-													<td class="greybox" colspan="2"></td>
-												</tr>
-												<tr>
-													<td colspan="2" class="<greybox">
-													</td>
-													<td colspan="3" class="greybox">
-														<table width="47%" border="0" cellspacing="1" cellpadding="0" id="tb2Create" align="left">
+								</div>
+                            
+                                <ul class="nav nav-tabs" id="settingstab">
+                                    <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true">Trade Details</a></li>
+                                    <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false">Enlosed Documents</a></li>
+                                </ul>
+                            </div>
+                            
+                             <div class="panel-body custom-form">
+                                <div class="tab-content">
+                                    <div class="tab-pane fade active in" id="tradedetails">
+                                        <form role="form" class="form-horizontal form-groups-bordered">
+	                                         <%@ include file='../common/licensee.jsp'%>
+	                                          <%@ include file='../common/address.jsp'%>
+	                                         <%@ include file='../common/license.jsp'%>
+	                                         
+	                                         
+	                                         <div class="panel-heading custom_form_panel_heading">
+											    <div class="panel-title"><s:text name='license.title.feedetail' /></div>
+											</div>
+											
+											<div class="form-group">
+											    <label class="col-sm-3 control-label text-right"><s:text name="license.motor.installed" /></label>
+											    <div class="col-sm-3 add-margin">
+											         	<s:checkbox theme="simple" key="motorInstalled" tabindex="17" onclick="showhide('addmoremotor')" label="motorInstalled" id="motorInstalled" disabled="%{sDisabled}" />
+											    </div>
+											</div>
+											<div class="form-group">
+											   <!-- <table  width="47%" border="0" cellspacing="1" cellpadding="0" id="tb2Create" align="left"> -->
+											   <table class="table table-bordered" style="width:80%;margin:10px auto" id="tb2Create">
 															<th id="hpheader" style="display: none;" colspan="3" class="bluebgheadtd" align="center">
-																<b><s:text name="license.horsepower" /><span class="mandatory1">*</span> </b>
+																<b><s:text name="license.horsepower" /></b>
 															</th>
-														</table>
-													</td>
-												</tr>
-												<script>
+												</table>			
+											</div>
+											<script>
 												<s:iterator var="p" value="installedMotorList">
 													addMotorRowToTable(true,'<s:property value="key"/>',  '<s:property value="#p.hp"/>', '<s:property value="#p.noOfMachines"/>');
 												</s:iterator>
-												</script>
-												<tr id="addmoremotor">
-													<td colspan="2" class="greybox" />
-													<td colspan="2" class="greybox" align="center" class="bluebox1">
-														<s:text name="license.total.horsepower" />
-														:
-														<span class="mandatory1">*</span>
-														<span class="greybox"> 
-															<s:textfield readonly="true" disabled="%{sDisabled}" name="totalHP" size="12" onBlur="trimAll(this.value);" id="totalHP" /> 
-														</span>
-													</td>
-													<td colspan="1" class="<c:out value="${trclass}"/>"></td>
-												</tr>
-												<script>
-														if(document.getElementById("motorInstalled").checked){															
+											</script>
+											
+											<div class="form-group" id="addmoremotor">
+											    <label class="col-sm-3 control-label text-right"><s:text name="license.total.horsepower" /><span class="mandatory"></span></label>
+											    <div class="col-sm-3 add-margin">	
+											    	<s:textfield name="totalHP" readonly="true" disabled="%{sDisabled}"  onBlur="trimAll(this.value);" id="totalHP" />
+											    </div>		
+											</div>
+											
+											
+											<div class="form-group">
+											    <label class="col-sm-3 control-label text-right"><s:text name="license.total.workersCapacity" /><span class="mandatory"></span></label>
+											    <div class="col-sm-3 add-margin">	
+											    	<s:textfield name="workersCapacity" size="8" maxlength="8" onBlur="trimAll(this.value);" id="workersCapacity" />
+											    </div>		
+											</div>
+											
+											<script>
+														 if(document.getElementById("motorInstalled").checked){															
 															document.getElementById("addmoremotor").style.display='';
 														}else{
 															document.getElementById("addmoremotor").style.display='none';
-														}														
+														} 														
 														totalHP();
 												</script>
-											</tbody>
-										</table>
-										<div>
+                             			</form>
+                                    </div>
+                                    
+                                    <div class="tab-pane fade" id="tradeattachments">
+                                        <form role="form" class="form-horizontal form-groups-bordered">
+                                        <div>
 												<%@include file="../common/documentUpload.jsp" %>
 										</div>
-										<div class="buttonbottom">
-											<%-- <table>
-												<tr class="buttonbottom" id="buttondiv" style="align: middle">
-													<td>
-														<s:submit type="submit" cssClass="buttonsubmit" value="Save" id="Save" method="create" onclick="return validateForm(this);" style="margin:0 10px"/>
-													</td>
-													<td>
-														<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
-													</td>
-												</tr>
-											</table> --%> 
-											<%@ include file='../common/commonWorkflowMatrix.jsp'%>
-											<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
-										</div>
-									</s:form>
-								</div>
-							</center>
+                                            
+                                        </form>
+                                    </div>
+                                    
+                            	</div>
+                            </div>
+                        </div>
+                        </s:push>  
+                    </s:form> 
+                        
+                        <div class="buttonbottom">
+							<%@ include file='../common/commonWorkflowMatrix.jsp'%>
+							<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
 						</div>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</body>
+                        
+                            <!-- <div class="row">
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button class="btn btn-default">Close</button>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+                  
+        
+        <script src="../resources/app/js/newtrade.js"></script>
+       
+    </body>
 </html>
