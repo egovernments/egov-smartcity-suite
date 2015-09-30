@@ -491,7 +491,7 @@ jq(document).on('click', '#woView', function(){
 	</s:else>
 <s:if test="%{model.id!=null && model.estimateNumber!=null}">
   	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimatePDF.action?estimateID=<s:property value='%{model.id}'/>');" class="buttonpdf" value="VIEW PDF" id="pdfButton" name="pdfButton"/>
-  	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate!viewBillOfQuantitiesXls.action?sourcepage=boqPDF&id=<s:property value='%{model.id}'/>');" class="buttonpdf" value="VIEW BOQ XLS" id="BOQxlsButton" name="BOQxlsButton"/>
+  	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-viewBillOfQuantitiesXls.action?sourcepage=boqPDF&id=<s:property value='%{model.id}'/>');" class="buttonpdf" value="VIEW BOQ XLS" id="BOQxlsButton" name="BOQxlsButton"/>
   </s:if>
   <!-- TODO:Fixeme - Commented out for time being. Need to replace with new file upload feature -->
  <!-- <s:if test="%{sourcepage=='search' || (sourcepage=='inbox' && (model.egwStatus.code=='ADMIN_SANCTIONED' || model.egwStatus.code=='CANCELLED'))}">

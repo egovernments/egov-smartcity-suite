@@ -233,6 +233,7 @@ public class AbstractEstimateAction extends BaseFormAction {
     }
 
     @SkipValidation
+    @Action(value = "/estimate/abstractEstimate-viewBillOfQuantitiesXls")
     public String viewBillOfQuantitiesXls() throws JRException, Exception {
         final AbstractEstimate estimate = abstractEstimateService.findById(id, false);
         final ReportRequest reportRequest = new ReportRequest("BillOfQuantities", estimate.getSORActivities(),
