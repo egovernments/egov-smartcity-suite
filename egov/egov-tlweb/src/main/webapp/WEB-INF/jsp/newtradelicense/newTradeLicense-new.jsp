@@ -220,7 +220,7 @@
 				cellRight.setAttribute("align","left");
 				noOfMachines = document.createElement('input');
 				noOfMachines.type = 'text';
-				noOfMachines.size = '3';
+				noOfMachines.size = '10';
 				noOfMachines.onBlur= 'checkLength(this,3)';
 				<s:if test="%{sControlDisabled}">
 				  noOfMachines.disabled="<s:property value='%{sControlDisabled}' />";
@@ -234,7 +234,7 @@
 				if(browser=='Microsoft Internet Explorer'){
 				    noOfMachines.onblur=totalHP;
 				} else {
-				    noOfMachines.setAttribute('onBlur', 'checkLength(this,6);totalHP(this);' );
+				    noOfMachines.setAttribute('onBlur', 'checkLength(this,3);totalHP(this);' );
 				}
 				cellRight.appendChild(noOfMachines);
 				    
@@ -243,7 +243,7 @@
 				cellRight.setAttribute("align","left");
 				horsepower = document.createElement('input');
 				horsepower.type = 'text';
-				horsepower.size = '6';
+				horsepower.size = '10';
 				horsepower.onBlur = 'checkLength(this,6)';
 				<s:if test="%{sControlDisabled}">
 				  	horsepower.disabled="<s:property value='%{sControlDisabled}' />";
@@ -423,7 +423,7 @@
                                     
                             	</div>
                             </div>
-                        </div>
+                        </div> 
                         </s:push>  
                     </s:form> 
                         
