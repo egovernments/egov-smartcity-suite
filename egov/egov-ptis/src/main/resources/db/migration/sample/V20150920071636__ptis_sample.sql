@@ -895,6 +895,19 @@ DELETE FROM eg_userrole  where roleid in(SELECT id FROM eg_role WHERE name='CSC 
 
 -----------------START-------------------
 INSERT INTO eg_wf_types (id,module,type,link,createdby,createddate,lastmodifiedby,lastmodifieddate,renderyn,groupyn,typefqn,displayname) VALUES (nextval('seq_eg_wf_types'),(SELECT id FROM eg_module WHERE name='Property Tax'),'PropertyImpl',':ID',1,now(),1,now(), 'Y', 'N','org.egov.ptis.domain.entity.property.PropertyImpl', 'Property' );
-
 insert into eg_wf_types values(nextval('seq_eg_wf_types'),(SELECT id FROM eg_module WHERE name='Property Tax'),'PropertyMutation','/ptis/property/transfer/view.action?mutationId=:ID',1,now(),1,now(),'Y','N','org.egov.ptis.domain.entity.property.PropertyMutation','Property Owner Transfer',0);
+INSERT INTO eg_wf_types (id,module,type,link,createdby,createddate,lastmodifiedby,lastmodifieddate,renderyn,groupyn,typefqn,displayname) VALUES (nextval('seq_eg_wf_types'),(SELECT id FROM eg_module WHERE name='Property Tax'),'Objection','/ptis/objection/objection-view.action?objectionId=:ID',1,now(),1,now(), 'Y', 'N','org.egov.ptis.domain.entity.objection.Objection', 'Revision Petition' ); 
+------------------END---------------------
+
+-----------------START-------------------
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','CREATED',now(),'CREATED',1);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','HEARING DATE FIXED',now(),'HEARING DATE FIXED',2);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','HEARING COMPLETED',now(),'HEARING COMPLETED',3);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','INSPECTION COMPLETED',now(),'INSPECTION COMPLETED',4);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','OBJECTION ACCEPTED',now(),'OBJECTION ACCEPTED',5);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','OBJECTION REJECTED',now(),'OBJECTION REJECTED',6);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','GENERATE HEARING NOTICE',now(),'GENERATE HEARING NOTICE',7);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','GENERATE ENDORSEMENT NOTICE',now(),'GENERATE ENDORSEMENT NOTICE',8);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','INSPECTION VERIFY',now(),'INSPECTION VERIFY',7);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','Rejected',now(),'Rejected',1);
 ------------------END---------------------
