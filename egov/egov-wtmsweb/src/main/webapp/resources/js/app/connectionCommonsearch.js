@@ -42,7 +42,8 @@ jQuery(document).ready(function($) {
 	
 		
 		var modeval=$('#mode').val();
-			if(modeval!='' && modeval=='errorMode'){
+		var validmessage=$('#validMessage').val()
+			if(modeval!='' && modeval=='errorMode' && validmessage!='' ){
 				alert($('#validMessage').val());
 				$('#consumerCode').val('');
 				return false;

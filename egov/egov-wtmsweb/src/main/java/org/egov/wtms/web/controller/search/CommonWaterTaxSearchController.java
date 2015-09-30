@@ -63,12 +63,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class CommonWaterTaxSearchController {
 
     private static final String COMMON_FORM_SEARCH = "waterTaxSearch-commonForm";
-   private final WaterConnectionDetailsService waterConnectionDetailsService;
-
     @Autowired
-    public CommonWaterTaxSearchController(final WaterConnectionDetailsService waterConnectionDetailsService) {
-        this.waterConnectionDetailsService = waterConnectionDetailsService;
-    }
+    private  WaterConnectionDetailsService waterConnectionDetailsService;
 
     @ModelAttribute
     public ConnectionSearchRequest searchRequest() {
@@ -133,12 +129,12 @@ public class CommonWaterTaxSearchController {
                 && applicationType.equals(WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_METERED))
             if (!waterConnectionDetails.getLegacy()
                     && (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
-                            || waterConnectionDetails.getApplicationType().getCode()
-                            .equals(WaterTaxConstants.ADDNLCONNECTION) || waterConnectionDetails
-                            .getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE))
+                            || waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION) 
+                            || waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE))
                             && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
-                            && waterConnectionDetails.getConnectionType().equals(WaterTaxConstants.METERED))
+                            && waterConnectionDetails.getConnectionType().name().equals(WaterTaxConstants.CONNECTIONTYPE_METERED)){
                 return "redirect:/application/meterentry/" + waterConnectionDetails.getConnection().getConsumerCode();
+            }
             else {
                 model.addAttribute("mode", "errorMode");
                 resultBinder.rejectValue("consumerCode", "invalid.consumernuber");

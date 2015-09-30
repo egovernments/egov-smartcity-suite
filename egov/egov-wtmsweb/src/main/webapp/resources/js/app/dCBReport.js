@@ -322,11 +322,9 @@ function callAjaxByBoundary(event) {
 				} ]
 			});
 	jQuery('.loader-class').modal('hide');
-	if (modeVal != 'property') {
-		reportdatatable.fnSetColumnVis(1, false);
-	} else {
+	
 		reportdatatable.fnSetColumnVis(1, true);
-	}
+	
 
 }
 
