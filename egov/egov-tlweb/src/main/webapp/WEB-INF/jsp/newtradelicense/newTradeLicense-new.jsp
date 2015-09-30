@@ -206,7 +206,7 @@
 						var cellRight = row.insertCell(2);
 						cellRight.setAttribute("align","left");
 						adddel = document.createElement('label');
-						adddel.appendChild(document.createTextNode('Add/Del'))
+						adddel.appendChild(document.createTextNode('Actions'))
 						cellRight.appendChild(adddel);
 					</s:if>
 				}
@@ -269,7 +269,7 @@
 				  //3rd column
 				<s:if test="%{!sControlDisabled}">  
 					var oCell = row.insertCell(2);
-					oCell.innerHTML = "<img src='${pageContext.request.contextPath}/resources/image/addrow.gif' alt='Add' width='18' height='18' border='0' id='addImg"+motorcnt+"' onclick='addMotorRowToTable(false);'/> <img src='${pageContext.request.contextPath}/resources/image/removerow.gif' alt='Remove' id='delImg"+motorcnt+"' width='18' height='18' border='0' onclick='removeRow1(this);'/>";
+					oCell.innerHTML = "<span class='add-padding' style='cursor:pointer;' id='addImg"+motorcnt+"' onclick='addMotorRowToTable(false);'><i class='fa fa-plus'></i></span><span class='add-padding' style='cursor:pointer;' id='delImg"+motorcnt+"'  onclick='removeRow1(this);'><i class='fa fa-trash'></i></span>";
 				</s:if>
 				 motorcnt++;  
 
@@ -349,7 +349,7 @@
                             
                                 <ul class="nav nav-tabs" id="settingstab">
                                     <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true">Trade Details</a></li>
-                                    <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false">Enlosed Documents</a></li>
+                                    <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false">Enclosed Documents</a></li>
                                 </ul>
                             </div>
                             
@@ -397,7 +397,7 @@
 											<div class="form-group">
 											    <label class="col-sm-3 control-label text-right"><s:text name="license.total.workersCapacity" /><span class="mandatory"></span></label>
 											    <div class="col-sm-3 add-margin">	
-											    	<s:textfield name="workersCapacity" size="8" maxlength="8" onBlur="trimAll(this.value);" id="workersCapacity" cssClass="form-control" />
+											    	<s:textfield name="workersCapacity" size="8" maxlength="8" onBlur="trimAll(this.value);" id="workersCapacity" cssClass="form-control patternvalidation" data-pattern="number" />
 											    </div>		
 											</div>
 											

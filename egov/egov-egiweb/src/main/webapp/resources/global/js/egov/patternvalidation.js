@@ -1,4 +1,4 @@
-$(document).ready(function(){
+jQuery(document).ready(function(){
 
 	patternvalidation(); 
 	
@@ -36,9 +36,9 @@ var regexp_username = /[^a-zA-Z0-9_.]/g ;
 
 function patternvalidation(){
 	
-	$('.patternvalidation').on("input", function(){
+	jQuery('.patternvalidation').on("input", function(){
 		
-		var fn = window[$(this).data('pattern')];
+		var fn = window[jQuery(this).data('pattern')];
 		if(typeof fn === "function") {	
 			fn(this);
 		}
@@ -48,56 +48,56 @@ function patternvalidation(){
 }
 
 function alphabetwithspace(obj){
-	if($(obj).val().match(regexp_alphabet)){
-		$(obj).val( $(obj).val().replace(regexp_alphabet,'') );
+	if(jQuery(obj).val().match(regexp_alphabet)){
+		jQuery(obj).val( jQuery(obj).val().replace(regexp_alphabet,'') );
 	}
 }
 
 function alphabetwithspecialcharacters(obj){
-	if($(obj).val().match(regexp_alphabetspecialcharacters)){
-		$(obj).val( $(obj).val().replace(regexp_alphabetspecialcharacters,'') );
+	if(jQuery(obj).val().match(regexp_alphabetspecialcharacters)){
+		jQuery(obj).val( jQuery(obj).val().replace(regexp_alphabetspecialcharacters,'') );
 	}
 }
 
 function number(obj){
-	if($(obj).val().match(regexp_number)){
-		$(obj).val( $(obj).val().replace(regexp_number,'') );
+	if(jQuery(obj).val().match(regexp_number)){
+		jQuery(obj).val( jQuery(obj).val().replace(regexp_number,'') );
 	}
 }
 
 function alphanumericwithspace(obj){
-	if($(obj).val().match(regexp_alphanumeric)){
-		$(obj).val( $(obj).val().replace(regexp_alphanumeric,'') );
+	if(jQuery(obj).val().match(regexp_alphanumeric)){
+		jQuery(obj).val( jQuery(obj).val().replace(regexp_alphanumeric,'') );
 	}
 }
 
 function alphanumericwithspecialcharacters(obj){
-	if($(obj).val().match(regexp_alphanumericspecialcharacters)){
-		$(obj).val( $(obj).val().replace(regexp_alphanumericspecialcharacters,'') );
+	if(jQuery(obj).val().match(regexp_alphanumericspecialcharacters)){
+		jQuery(obj).val( jQuery(obj).val().replace(regexp_alphanumericspecialcharacters,'') );
 	}
 }
 
 function alphanumericwithspacehyphenunderscore(obj){
-	if($(obj).val().match(regexp_alphanumerichyphenunderscore)){
-		$(obj).val( $(obj).val().replace(regexp_alphanumerichyphenunderscore,'') );
+	if(jQuery(obj).val().match(regexp_alphanumerichyphenunderscore)){
+		jQuery(obj).val( jQuery(obj).val().replace(regexp_alphanumerichyphenunderscore,'') );
 	}
 }
 
 function decimalvalue(obj){
-	if($(obj).val().match(regexp_decimalvalue)){
-		$(obj).val( $(obj).val().replace(regexp_decimalvalue,'') );
+	if(jQuery(obj).val().match(regexp_decimalvalue)){
+		jQuery(obj).val( jQuery(obj).val().replace(regexp_decimalvalue,'') );
 	}
 }
 
 function alphanumerichyphenbackslash(obj){
-	if($(obj).val().match(regexp_alphanumerichyphenbackslash)){
-		$(obj).val( $(obj).val().replace(regexp_alphanumerichyphenbackslash,'') );
+	if(jQuery(obj).val().match(regexp_alphanumerichyphenbackslash)){
+		jQuery(obj).val( jQuery(obj).val().replace(regexp_alphanumerichyphenbackslash,'') );
 	}
 }
 
 function username(obj){
-	if($(obj).val().match(regexp_username)){
-		$(obj).val( $(obj).val().replace(regexp_username,'') );
+	if(jQuery(obj).val().match(regexp_username)){
+		jQuery(obj).val( jQuery(obj).val().replace(regexp_username,'') );
 	}
 }
 

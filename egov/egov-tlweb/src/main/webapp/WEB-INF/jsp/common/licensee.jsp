@@ -43,21 +43,21 @@
 	<div class="form-group">
 	    <label class="col-sm-3 control-label text-right"><s:text name='licensee.aadhaarNo' /></label>
 	    <div class="col-sm-3 add-margin">
-	           <s:textfield name="licensee.uid"  onBlur="checkLength(this,15)" onKeyPress="return numbersonly(this, event)"  maxlength="15" cssClass="form-control" />
+	           <s:textfield name="licensee.uid"  onBlur="checkLength(this,12)" onKeyPress="return numbersonly(this, event)"  maxlength="12" cssClass="form-control patternvalidation"  data-pattern="number" />
 	    </div>
 	    <label class="col-sm-2 control-label text-right"><s:text name='licensee.mobileNo' /><span class="mandatory"></span></label>
 	    <div class="col-sm-3 add-margin">
-	             <s:textfield name="licensee.mobilePhoneNumber" id="mobilePhoneNumber" onKeyPress="return numbersonly(this, event)" onBlur="checkLength(this,15)" maxlength="15" cssClass="form-control" required="required"/>
+	             <s:textfield name="licensee.mobilePhoneNumber" id="mobilePhoneNumber" onKeyPress="return numbersonly(this, event)" onBlur="checkLength(this,10)" maxlength="10" cssClass="form-control patternvalidation" data-pattern="number" required="required"/>
 	    </div>
 	</div>
 	<div class="form-group">
 	    <label class="col-sm-3 control-label text-right"><s:text name='licensee.applicantName' /><span class="mandatory"></span></label>
 	    <div class="col-sm-3 add-margin">
-	       <s:textfield name="licensee.applicantName" id="applicantName" maxlength="32" cssClass="form-control" required="required"/>
+	       <s:textfield name="licensee.applicantName" id="applicantName" maxlength="32" cssClass="form-control patternvalidation" data-pattern="alphabetwithspace" required="required"/>
 	    </div>
 	    <label class="col-sm-2 control-label text-right"><s:text name='licensee.father/spouse' /><span class="mandatory"></span></label>
 	    <div class="col-sm-3 add-margin">
-	      	<s:textfield name="licensee.fatherOrSpouseName" maxlength="32" id="fatherOrSpouseName" cssClass="form-control" required="required"/>
+	      	<s:textfield name="licensee.fatherOrSpouseName" maxlength="32" id="fatherOrSpouseName" cssClass="form-control patternvalidation" data-pattern="alphabetwithspace" required="required"/>
 	    </div>
 	</div>
 	<div class="form-group">
