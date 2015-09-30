@@ -343,7 +343,7 @@ public class AbstractEstimateAction extends BaseFormAction {
                 // case then do nothing(do not delete child tables and insert
                 // again)
             } else
-                saveEstimate(actionName);
+                populateEstimateDetails(actionName);
 
         if (actionName.equals("submit_for_approval")) {
             validateForAssetSelection();
@@ -353,25 +353,8 @@ public class AbstractEstimateAction extends BaseFormAction {
         try {
             abstractEstimateService.setEstimateNumber(abstractEstimate);
             abstractEstimate = abstractEstimateService.persist(abstractEstimate);
-        } catch (final ValidationException sequenceException) {
-            final List<ValidationError> errorList = sequenceException.getErrors();
-            for (final ValidationError error : errorList)
-                if (error.getMessage().contains("DatabaseSequenceFirstTimeException")) {
-                    prepare();
-                    abstractEstimate.getActivities().clear();
-                    abstractEstimate.getOverheadValues().clear();
-                    abstractEstimate.getAssetValues().clear();
-                    abstractEstimate.getMultiYearEstimates().clear();
-
-                    populateSorActivities();
-                    populateNonSorActivities();
-                    populateActivities();
-                    populateOverheads();
-                    populateAssets();
-                    populateMultiYearEstimates();
-
-                    throw new ValidationException(Arrays.asList(new ValidationError("error", error.getMessage())));
-                }
+        } catch (final ValidationException valException) {
+            throw new ValidationException(valException.getErrors());
         }
 
         // TODO:Fixme - Commented out for time being.. workflow needs to be implemented based on matrix
@@ -535,7 +518,7 @@ public class AbstractEstimateAction extends BaseFormAction {
         return NEW;
     }
 
-    private void saveEstimate(final String actionName) {
+    private void populateEstimateDetails(final String actionName) {
         abstractEstimate.getActivities().clear();
         abstractEstimate.getOverheadValues().clear();
         abstractEstimate.getAssetValues().clear();
@@ -561,7 +544,6 @@ public class AbstractEstimateAction extends BaseFormAction {
         }
         if (SAVE_ACTION.equals(actionName) && abstractEstimate.getEgwStatus() == null)
             abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("AbstractEstimate", "NEW"));
-        abstractEstimate = abstractEstimateService.persist(abstractEstimate);
     }
 
     protected void populateSorActivities() {
@@ -795,7 +777,6 @@ public class AbstractEstimateAction extends BaseFormAction {
     private Boolean isDepositWorksType() {
         boolean isDepositWorks = false;
         final List<String> depositTypeList = getAppConfigValuesToSkipBudget();
-        logger.info("lenght of appconfig values>>>>>> " + depositTypeList.size());
         for (final String type : depositTypeList)
             if (type.equals(abstractEstimate.getType().getName()))
                 isDepositWorks = true;

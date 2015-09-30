@@ -42,34 +42,23 @@ package org.egov.works.models.estimate;
 import javax.script.ScriptContext;
 
 import org.egov.commons.CFinancialYear;
+import org.egov.infra.persistence.utils.DBSequenceGenerator;
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.utils.SequenceGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class EstimateNumberGenerator {
-    public static final String SEQUENCE_TYPE = "ABSTRACTESTIMATE";
     @Autowired
-    private SequenceGenerator sequenceGenerator;
-    // private PersistenceService<Script, Long> scriptService;
+    private SequenceNumberGenerator squenceGenerator;
+    @Autowired
+    private DBSequenceGenerator dbSequenceGenerator;
     @Autowired
     private ScriptService scriptService;
 
     public String getEstimateNumber(final AbstractEstimate estimate, final CFinancialYear financialYear) {
-        try {
-            final ScriptContext scriptContext = ScriptService.createContext("estimate", estimate, "finYear",
-                    financialYear, "sequenceGenerator", sequenceGenerator);
-            return scriptService.executeScript("works.estimatenumber.generator", scriptContext).toString();
-        } catch (final ValidationException sequenceException) {
-            throw sequenceException;
-        }
-        /*
-         * List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT", "works.estimatenumber.generator"); try{ return
-         * scripts.get(0).eval(Script .createContext("estimate",estimate,"finYear"
-         * ,financialYear,"sequenceGenerator",sequenceGenerator)).toString(); } catch (ValidationException sequenceException) {
-         * throw sequenceException; }
-         */
+        final ScriptContext scriptContext = ScriptService.createContext("estimate", estimate, "finYear",
+                financialYear, "sequenceGenerator", squenceGenerator, "dbSequenceGenerator", dbSequenceGenerator);
+        return scriptService.executeScript("works.estimatenumber.generator", scriptContext).toString();
 
     }
-
 }
