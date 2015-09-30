@@ -602,16 +602,16 @@ INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatu
 ------------------END---------------------
 
 -----------------START-------------------
-Insert into EGPT_APPLICATION_TYPE (id,code,name,resolutiontime,description,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (nextval('seq_egpt_application_type'),'CREATE','CREATE',15,'Create Assessment',to_timestamp('2015-07-15 19:17:57.739424','null'),null,1,null,null);
-Insert into EGPT_APPLICATION_TYPE (id,code,name,resolutiontime,description,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (nextval('seq_egpt_application_type'),'MODIFY','MODIFY',15,'Alter Assessment',to_timestamp('2015-07-15 19:17:57.739424','null'),null,1,null,null);
-Insert into EGPT_APPLICATION_TYPE (id,code,name,resolutiontime,description,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (nextval('seq_egpt_application_type'),'TRANSFER','TRANSFER',15,'Transfer Assessment',to_timestamp('2015-07-15 19:17:57.739424','null'),null,1,null,null);
-------------------END---------------------
-
------------------START-------------------
 Insert into EGPT_APARTMENT (id,version,name,code,createddate,lastmodifieddate,createdby,lastmodifiedby) values (nextval('seq_egpt_apartment'),0,'Spring Fields Appartment','Spring',to_timestamp('2015-07-15 19:17:56.434462','null'),to_timestamp('2015-07-15 19:17:56.434462','null'),1,1);
 Insert into EGPT_APARTMENT (id,version,name,code,createddate,lastmodifieddate,createdby,lastmodifiedby) values (nextval('seq_egpt_apartment'),0,'Mantri Square','MS',to_timestamp('2015-07-15 19:17:56.434462','null'),to_timestamp('2015-07-15 19:17:56.434462','null'),1,1);
 Insert into EGPT_APARTMENT (id,version,name,code,createddate,lastmodifieddate,createdby,lastmodifiedby) values (nextval('seq_egpt_apartment'),0,'Alankara Plaza','A-plaza',to_timestamp('2015-07-15 19:17:56.434462','null'),to_timestamp('2015-07-15 19:17:56.434462','null'),1,1);
 Insert into EGPT_APARTMENT (id,version,name,code,createddate,lastmodifieddate,createdby,lastmodifiedby) values (nextval('seq_egpt_apartment'),0,'Nitesh Estates','Nitesh',to_timestamp('2015-07-15 19:17:56.434462','null'),to_timestamp('2015-07-15 19:17:56.434462','null'),1,1);
+------------------END---------------------
+
+-----------------START-------------------
+Insert into EGPT_APPLICATION_TYPE (id,code,name,resolutiontime,description,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (nextval('seq_egpt_application_type'),'CREATE','CREATE',15,'Create Assessment',to_timestamp('2015-07-15 19:17:57.739424','null'),null,1,null,null);
+Insert into EGPT_APPLICATION_TYPE (id,code,name,resolutiontime,description,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (nextval('seq_egpt_application_type'),'MODIFY','MODIFY',15,'Alter Assessment',to_timestamp('2015-07-15 19:17:57.739424','null'),null,1,null,null);
+Insert into EGPT_APPLICATION_TYPE (id,code,name,resolutiontime,description,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (nextval('seq_egpt_application_type'),'TRANSFER','TRANSFER',15,'Transfer Assessment',to_timestamp('2015-07-15 19:17:57.739424','null'),null,1,null,null);
 ------------------END---------------------
 
 -----------------START-------------------
