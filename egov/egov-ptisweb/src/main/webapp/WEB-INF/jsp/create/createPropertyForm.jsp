@@ -4,7 +4,7 @@
 	<tr id="assessmentRow" >
 						<td class="greybox" width="5%">&nbsp;</td>
 						<td class="greybox" width="25%"><s:text name="assessmentno"></s:text>
-							:</td>
+							<span class="mandatory1">*</span> :</td>
 						<td class="greybox" width="25%"><s:textfield name="upicNo"
 								id="upicNo" size="12" maxlength="12"></s:textfield></td>
 						<td class="greybox" width="25%">&nbsp;</td>

@@ -963,7 +963,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 + wardId + ", blockId: " + blockId + ", areaOfPlot: " + areaOfPlot + ", dateOfCompletion: "
                 + dateOfCompletion + ", taxExemptedReason: " + ", propTypeId: " + propTypeId + ", propUsageId: "
                 + propUsageId + ", propOccId: " + propOccId);
-
+        if (upicNo == null || upicNo.equals("")) {
+            addActionError(getText("mandatory.indexNumber"));
+            return "dataEntry";
+        }
         final long startTimeMillis = System.currentTimeMillis();
         final BasicProperty basicProperty = createBasicProp(PropertyTaxConstants.STATUS_ISACTIVE);
         basicProperty.setUnderWorkflow(false);
