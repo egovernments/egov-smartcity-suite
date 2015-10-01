@@ -245,7 +245,7 @@
 				var cellRight = row.insertCell(0);
 				cellRight.setAttribute("align","left");
 				noOfMachines = document.createElement('input');
-				noOfMachines.type = 'text';
+				noOfMachines.type = 'number';
 				noOfMachines.size = '10';
 				noOfMachines.onBlur= 'checkLength(this,3)';
 				noOfMachines.className = "form-control";
@@ -269,9 +269,9 @@
 				var cellRight = row.insertCell(1);
 				cellRight.setAttribute("align","left");
 				horsepower = document.createElement('input');
-				horsepower.type = 'text';
+				horsepower.type = 'number';
 				horsepower.size = '10';
-				horsepower.onBlur = 'checkLength(this,6)';
+				horsepower.onBlur = 'checkLength(this,3)';
 				horsepower.className = "form-control";
 				<s:if test="%{sControlDisabled}">
 				  	horsepower.disabled="<s:property value='%{sControlDisabled}' />";
@@ -287,7 +287,7 @@
 				if(browser=='Microsoft Internet Explorer'){
 				    horsepower.onblur=totalHP;
 				} else{
-				    horsepower.setAttribute('onBlur', 'checkLength(this,6);totalHP(this);' );
+				    horsepower.setAttribute('onBlur', 'checkLength(this,3);totalHP(this);' );
 				}
 				  
 				 cellRight.appendChild(horsepower);

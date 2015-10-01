@@ -46,7 +46,7 @@
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.nameOfEst.lbl' /></label>
     <div class="col-sm-3 add-margin">
-         	<s:textfield name="nameOfEstablishment" id="nameOfEstablishment" value="%{nameOfEstablishment}" maxlength="32" onBlur="checkLength(this,32)" class="form-control"/>
+         	<s:textfield name="nameOfEstablishment" pattern="[A-Za-z,. ]+" title="characters and . , space are only allowed" id="nameOfEstablishment" value="%{nameOfEstablishment}" maxlength="32" onBlur="checkLength(this,32)" class="form-control"/>
     </div>
   
     <label class="col-sm-2 control-label text-right"><s:text name='license.tradeType.lbl' /><span class="mandatory"></span></label>
@@ -73,7 +73,7 @@
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.premises.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:textfield name="tradeArea_weight" id="tradeArea_weight" value="%{tradeArea_weight}" class="form-control" required="required" />
+        <s:textfield name="tradeArea_weight" maxlength="8" id="tradeArea_weight" value="%{tradeArea_weight}" class="form-control" required="required" />
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='license.uom.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
