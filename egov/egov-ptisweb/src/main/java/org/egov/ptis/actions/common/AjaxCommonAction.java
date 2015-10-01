@@ -68,6 +68,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -419,6 +420,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	
 	 @Action(value = "/ajaxCommon-getUserByMobileNo")
 	    public void getUserByMobileNo() throws IOException {
+	     if (StringUtils.isNotBlank(mobileNumber)) {
 	        final User user = (User) getPersistenceService().find("From User where mobileNumber = ?",mobileNumber);
 	        final JSONObject jsonObject = new JSONObject();
 	        if (null != user) {
@@ -433,7 +435,8 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	        }
 	        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 	        IOUtils.write(jsonObject.toString(), response.getWriter());
-	    }
+	     }
+	  }
 
 	@Action(value = "/ajaxCommon-checkIfCategoryExists")
 	public String checkIfCategoryExists() {
