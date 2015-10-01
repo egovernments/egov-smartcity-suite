@@ -2183,7 +2183,7 @@ public class PropertyService {
                     document.getFiles().add(fileStore);
                 }
             }
-            if (document.getType() == null) {
+            if (document.getId() == null || document.getType() == null) {
                 document.setType(documentTypePersistenceService.load(document.getType().getId(), DocumentType.class));
             }
         });
