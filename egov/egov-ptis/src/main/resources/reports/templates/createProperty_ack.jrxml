@@ -99,7 +99,7 @@
 				<text><![CDATA[1. The applicant can contact the municipal commissioner, immediately if the special notice is not given as indicated above on the date fixed. ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="70" y="121" width="460" height="36" uuid="797325a9-1e60-4ccf-984f-d7d778f164dc"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="70" y="121" width="460" height="47" uuid="797325a9-1e60-4ccf-984f-d7d778f164dc"/>
 				<textElement>
 					<font isPdfEmbedded="true"/>
 				</textElement>
