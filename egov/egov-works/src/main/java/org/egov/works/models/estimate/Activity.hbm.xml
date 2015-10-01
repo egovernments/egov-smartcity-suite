@@ -78,12 +78,11 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         <property name="serviceTaxPerc" type="double">
             <column name="SERVICETAXPERC" precision="20" />
         </property>
-        
-         <property name="revisionType" column="REVISION_TYPE" >
-            	<type name="org.egov.infstr.models.EnumUserType">       
-				<param name="enumClassName">org.egov.works.models.revisionEstimate.RevisionType</param>     
+         <property name="revisionType" column="REVISION_TYPE">
+			<type name="org.hibernate.type.EnumType">       
+				<param name="enumClass">org.egov.works.models.revisionEstimate.RevisionType</param>     
 			</type>   
-		</property>
+		</property> 
         <many-to-one name="parent" column="PARENTID" />
         
    		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
