@@ -41,21 +41,18 @@ package org.egov.works.web.actions.estimate;
 
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFinancialYear;
 import org.egov.dao.budget.BudgetDetailsDAO;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.eis.entity.Employee;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -65,8 +62,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.commons.DeptDesig;
-import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.AbstractEstimateAppropriation;
 import org.egov.works.models.estimate.Activity;
@@ -77,7 +72,6 @@ import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.DepositWorksUsageService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.AbstractPDFGenerator;
-import org.egov.works.utils.DateConversionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.lowagie.text.Chunk;
@@ -96,10 +90,10 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
     private PersistenceService persistenceService = new PersistenceService();
     private PersistenceService<AbstractEstimateAppropriation, Long> estimateAppropriationService;
     private final AbstractEstimate estimate;
-    private final CFinancialYear financialYear;
     private String headerText;
     @Autowired
-    private EmployeeServiceOld employeeService;
+    private AssignmentService assignmentService;
+
     private BudgetDetailsDAO budgetDetailsDAO;
     private AbstractEstimateService abstractEstimateService;
     private static final String space1 = "\t  \t  \t  \t \t \t  \t  \t  \t \t \t \t"
@@ -111,7 +105,6 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
     private static final String MODULE_NAME = "Works";
     private static final String KEY_NAME = "SKIP_BUDGET_CHECK";
     private boolean skipBudget = false;
-    private static final String ELECTRICAL_DEPARTMENT = "L-Electrical";
     private List<StateHistory> history = null;
     private boolean shouldShowApprovalNumber;
     List<AbstractEstimateAppropriation> abstractEstimateAppropriationList = new LinkedList<AbstractEstimateAppropriation>();
@@ -120,12 +113,10 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
         this.budgetDetailsDAO = budgetDetailsDAO;
     }
 
-    public EstimatePDFGenerator(final AbstractEstimate estimate, final String headerText,
-            final CFinancialYear financialYear, final OutputStream out) {
+    public EstimatePDFGenerator(final AbstractEstimate estimate, final String headerText, final OutputStream out) {
         super(out, "portrait");
         this.estimate = estimate;
         this.headerText = headerText;
-        this.financialYear = financialYear;
     }
 
     public void generatePDF() throws ValidationException {
@@ -141,8 +132,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
                     Element.ALIGN_LEFT));
             document.add(makePara("User Department:" + estimate.getUserDepartment().getName(), Element.ALIGN_LEFT));
 
-            final CFinancialYear estimateFinancialYear = estimate.getMultiYearEstimates().isEmpty() ? financialYear
-                    : estimate.getMultiYearEstimates().get(0).getFinancialYear();
+            final CFinancialYear estimateFinancialYear = estimate.getMultiYearEstimates().get(0).getFinancialYear();
             addZoneYearHeader(estimate, estimateFinancialYear);
 
             document.add(makePara("Name of Work: " + estimate.getName(), Element.ALIGN_LEFT));
@@ -201,7 +191,6 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
             addZoneYearHeaderWithOutEstimateNo(estimate, estimateFinancialYear);
             document.add(createActivitiesTable(estimate));
             document.add(spacer());
-            checkIfShouldShowApprovalNumber();
             final PdfPTable approvaldetailsTable = createApprovalDetailsTable(estimate);
 
             if (approvaldetailsTable.getRows().size() != 1) {
@@ -340,19 +329,6 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
         }
     }
 
-    private void checkIfShouldShowApprovalNumber() {
-        final List<AppConfigValues> configList = abstractEstimateService.getAppConfigValue("Works",
-                "ESTIMATE_APPROVAL_NUMBER_DATE");
-        Date dateToCheck = null;
-        if (!configList.isEmpty())
-            try {
-                dateToCheck = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).parse(configList.get(0).getValue());
-            } catch (final ParseException e) {
-                throw new ApplicationRuntimeException("estimate.pdf.error", e);
-            }
-        shouldShowApprovalNumber = estimate.getCreatedDate().after(dateToCheck);
-    }
-
     private PdfPTable createMultiYearTable(final AbstractEstimate estimate) throws DocumentException {
         final PdfPTable multiyearTable = new PdfPTable(3);
         multiyearTable.setWidthPercentage(100);
@@ -389,11 +365,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
      */
     private PdfPTable createDepositAppropriationTable(final AbstractEstimate estimate) throws DocumentException,
             ApplicationException, ValidationException {
-        /*
-         * List<FinancialDetail> financialdetails=estimate.getFinancialDetails(); String
-         * appropriationNumber=estimate.getBudgetApprNo(); DepositWorksUsage depositWorksUsage
-         * =depositWorksUsageService.getDepositWorksUsage(estimate, appropriationNumber);
-         */int isReject = -1;
+        int isReject = -1;
         depositWorksUsageService = abstractEstimateService.getDepositWorksUsageService();
         BigDecimal totalUtilizedAmt = BigDecimal.ZERO;
         BigDecimal amtAppropriatedsofar = BigDecimal.ZERO;
@@ -417,22 +389,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
         }
 
         if (estimate.getBudgetApprNo() != null && estimate.getTotalAmount() != null && isReject == -1) {
-            /*
-             * if(estimate.getBudgetApprNo()!=null && estimate.getTotalAmount()!=null){ for(FinancialDetail
-             * financialDetail:financialdetails){ if(financialDetail.getCoa()!=null) {
-             * System.out.println("depositWorksUsage.getAppropriationDate()>>>>" +depositWorksUsage.getAppropriationDate());
-             * totalUtilizedAmt=depositWorksUsageService .getTotalUtilizedAmountForDepositWorks
-             * (financialDetail,depositWorksUsage.getCreatedDate()); System.out.println
-             * ("totalUtilizedAmt.doubleValue()>>>"+totalUtilizedAmt .doubleValue()); if(totalUtilizedAmt == null){
-             * totalUtilizedAmt=BigDecimal.ZERO; } amtAppropriated=new BigDecimal
-             * (totalUtilizedAmt.doubleValue()-estimate.getTotalAmount( ).getValue());
-             * totalDepositAmt=depositWorksUsageService.getTotalDepositWorksAmount (estimate.getDepositCode().getFund(),
-             * financialDetail.getCoa(), accountdetailtype, estimate.getDepositCode().getId(),
-             * depositWorksUsage.getAppropriationDate()); if(totalDepositAmt == null){ totalDepositAmt=BigDecimal.ZERO; }
-             * balOnHand=new BigDecimal (totalDepositAmt.doubleValue()-amtAppropriated.doubleValue()); balAftApropriation=new
-             * BigDecimal(balOnHand.doubleValue()-estimate .getTotalAmount().getValue()); addRow(depositWorksAppropriationTable,
-             * true,makePara("Deposit Code Appropriation Number" ),makePara(estimate.getBudgetApprNo()));
-             */addRow(depositWorksAppropriationTable, true, centerPara("Deposit Code"), centerPara(estimate
+            addRow(depositWorksAppropriationTable, true, centerPara("Deposit Code"), centerPara(estimate
                     .getDepositCode().getCode()));
             addRow(depositWorksAppropriationTable, true, centerPara("Account Code"), centerPara(estimate
                     .getFinancialDetails().get(0).getCoa().getGlcode()
@@ -443,15 +400,6 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
                     .getUserDepartment().getName()));
             addRow(depositWorksAppropriationTable, true, makePara("Amount of the Estimate "),
                     rightPara(toCurrency(estimate.getTotalAmount())));
-            /*
-             * addRow(depositWorksAppropriationTable, true,makePara("Total Deposit Amount"
-             * ),rightPara(toCurrency(totalDepositAmt.doubleValue()))); addRow(depositWorksAppropriationTable, true,makePara(
-             * "Amount Appropriated so far" ),rightPara(toCurrency(amtAppropriated.doubleValue())));
-             * addRow(depositWorksAppropriationTable, true,makePara("Balance on Hand"
-             * ),rightPara(toCurrency(balOnHand.doubleValue()))); addRow(depositWorksAppropriationTable, true,makePara(
-             * "Balance After Appropriation of this Estimate" ),rightPara(toCurrency(balAftApropriation.doubleValue())));
-             */// }
-              // }
             final PdfPTable appropriationDetailTable = new PdfPTable(6);
             addRow(appropriationDetailTable, true, makePara(7f, "Appropriation Number"),
                     makePara(7f, "Total Deposit Amount"), makePara(7f, "Amount Appropriated so far"),
@@ -598,7 +546,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
                 throw new ApplicationRuntimeException("Exception in getDeptFromBudgtAppropriationNo ");
             } else {
                 final String deptCode = strArr[0];
-                final Department dept = (Department) persistenceService.find(" from Department where deptCode=?",
+                final Department dept = (Department) persistenceService.find(" from Department where code=?",
                         deptCode);
                 if (dept == null) {
                     logger.error("No department found with prefix--" + deptCode);
@@ -620,13 +568,8 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
                 approvaldetailsTable.setWidths(new float[] { 2f, 1.5f, 1.5f, 1.5f, 2f });
             }
             approvaldetailsTable.setWidthPercentage(100);
-            if (shouldShowApprovalNumber)
-                addRow(approvaldetailsTable, true, makePara("Approval Step"), centerPara("Name"),
-                        centerPara("Designation"), centerPara("Approved on"), centerPara("Approval Number"),
-                        centerPara("Remarks"));
-            else
-                addRow(approvaldetailsTable, true, makePara("Approval Step"), centerPara("Name"),
-                        centerPara("Designation"), centerPara("Approved on"), centerPara("Remarks"));
+            addRow(approvaldetailsTable, true, makePara("Approval Step"), centerPara("Name"),
+                    centerPara("Designation"), centerPara("Approved on"), centerPara("Remarks"));
 
             if (estimate != null && estimate.getCurrentState() != null
                     && estimate.getCurrentState().getHistory() != null)
@@ -828,16 +771,11 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
              * } else{ positionId =ad.getPrevious().getOwner().getId(); deptdesig= ad.getPrevious().getOwner().getDeptDesigId();
              * desgName = deptdesig.getDesigId().getDesignationName(); }
              */
-            final PersonalInformation emp = employeeService.getEmpForPositionAndDate(ad.getCreatedDate(),
-                    Integer.parseInt(positionId.toString()));
-            if (shouldShowApprovalNumber)
-                addRow(approvaldetailsTable, true, makePara(state), makePara(emp.getEmployeeName()),
-                        makePara(desgName), makePara(DateUtils.getFormattedDate(ad.getCreatedDate(), "dd/MM/yyyy")),
-                        makePara(ad.getExtraInfo()), rightPara(ad.getComments()));
-            else
-                addRow(approvaldetailsTable, true, makePara(state), makePara(emp.getEmployeeName()),
-                        makePara(desgName), makePara(DateUtils.getFormattedDate(ad.getCreatedDate(), "dd/MM/yyyy")),
-                        rightPara(ad.getComments()));
+            final Employee employee = assignmentService.getPrimaryAssignmentForPositionAndDate(positionId, ad.getCreatedDate())
+                    .getEmployee();
+            addRow(approvaldetailsTable, true, makePara(state), makePara(employee.getName()),
+                    makePara(desgName), makePara(DateUtils.getFormattedDate(ad.getCreatedDate(), "dd/MM/yyyy")),
+                    rightPara(ad.getComments()));
         }
     }
 
@@ -888,14 +826,10 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
         headerTable.setWidthPercentage(100);
         headerTable.setWidths(new float[] { 1f, 1f });
         Paragraph financialYearPara = new Paragraph();
-        Paragraph rateYearPara = new Paragraph();
-        if (financialYear != null) {
+        if (financialYear != null)
             financialYearPara = makePara("Budget Year: " + financialYear.getFinYearRange(), Element.ALIGN_RIGHT);
-            rateYearPara = makePara("Schedule Rate Year: " + getSORYear(), Element.ALIGN_RIGHT);
-        }
         addRow(headerTable, false, makePara("Estimate Number: " + estimate.getEstimateNumber(), Element.ALIGN_LEFT),
                 financialYearPara);
-        addRow(headerTable, false, new Paragraph(), rateYearPara);
 
         document.add(headerTable);
         if (estimate.getWard() != null && "Ward".equalsIgnoreCase(estimate.getWard().getBoundaryType().getName())
@@ -918,13 +852,9 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
         headerTable.setWidthPercentage(100);
         headerTable.setWidths(new float[] { 1f, 1f });
         Paragraph financialYearPara = new Paragraph();
-        Paragraph rateYearPara = new Paragraph();
-        if (financialYear != null) {
+        if (financialYear != null)
             financialYearPara = makePara("Budget Year: " + financialYear.getFinYearRange(), Element.ALIGN_RIGHT);
-            rateYearPara = makePara("Schedule Rate Year: " + getSORYear(), Element.ALIGN_RIGHT);
-        }
         addRow(headerTable, false, new Paragraph(), financialYearPara);
-        addRow(headerTable, false, new Paragraph(), rateYearPara);
         document.add(headerTable);
         if (estimate.getWard() != null && "Ward".equalsIgnoreCase(estimate.getWard().getBoundaryType().getName())
                 && estimate.getWard().getParent() != null && estimate.getWard().getParent().getName() != null)
@@ -948,14 +878,6 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
         this.persistenceService = persistenceService;
     }
 
-    public EmployeeServiceOld getEmployeeService() {
-        return employeeService;
-    }
-
-    public void setEmployeeService(final EmployeeServiceOld employeeService) {
-        this.employeeService = employeeService;
-    }
-
     public String getHeaderText() {
         return headerText;
     }
@@ -974,44 +896,6 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
 
     public void setWorksService(final WorksService worksService) {
         this.worksService = worksService;
-    }
-
-    private String getSORYear() {
-        String year = "";
-        final List<AppConfigValues> appConfigList = worksService.getAppConfigValue("Works", "SCHEDULE_RATE_YEAR");
-        final String estimateDept = estimate.getExecutingDepartment().getName();
-        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy", new Locale("en", "IN"));
-        for (final AppConfigValues configValue : appConfigList) {
-            final String value[] = configValue.getValue().split(",");
-            if (ELECTRICAL_DEPARTMENT.equalsIgnoreCase(estimateDept)
-                    && value[1].equalsIgnoreCase(ELECTRICAL_DEPARTMENT)) {
-                final String date[] = value[0].split("-");
-                df = new SimpleDateFormat("dd/MM/yyyy", new Locale("en", "IN"));
-                try {
-                    final Date startDate = df.parse(date[0]);
-                    final Date endDate = df.parse(date[1]);
-                    final Date estDate = df.parse(df.format(estimate.getEstimateDate()));
-                    if (DateConversionUtil.isWithinDateRange(estDate, startDate, endDate))
-                        year = value[2];
-                } catch (final ParseException pe) {
-                    logger.error("Error in parsing date" + pe.getMessage());
-                }
-            } else if (!ELECTRICAL_DEPARTMENT.equalsIgnoreCase(estimateDept)
-                    && !value[1].equalsIgnoreCase(ELECTRICAL_DEPARTMENT)) {
-                final String date[] = value[0].split("-");
-                df = new SimpleDateFormat("dd/MM/yyyy", new Locale("en", "IN"));
-                try {
-                    final Date startDate = df.parse(date[0]);
-                    final Date endDate = df.parse(date[1]);
-                    final Date estDate = df.parse(df.format(estimate.getEstimateDate()));
-                    if (DateConversionUtil.isWithinDateRange(estDate, startDate, endDate))
-                        year = value[2];
-                } catch (final ParseException pe) {
-                    logger.error("Error in parsing date" + pe.getMessage());
-                }
-            }
-        }
-        return year;
     }
 
     public List<String> getAppConfigValuesToSkipBudget() {
@@ -1040,6 +924,10 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
     public void setAbstractEstimateAppropriationList(
             final List<AbstractEstimateAppropriation> abstractEstimateAppropriationList) {
         this.abstractEstimateAppropriationList = abstractEstimateAppropriationList;
+    }
+
+    public void setAssignmentService(final AssignmentService assignmentService) {
+        this.assignmentService = assignmentService;
     }
 
 }

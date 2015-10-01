@@ -134,11 +134,6 @@
 			ref="sequenceGenerator"/> -->
 	</bean>
 
-	<bean class="org.egov.works.web.actions.estimate.EstimatePDFGenerator"
-		id="estimatePDFGenerator">
-		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
-	</bean>
-
 	<bean class="org.egov.works.models.estimate.BudgetNumberGenerator"
 		id="budgetNumberGenerator">
 		<!--  <property name="sequenceGenerator" 

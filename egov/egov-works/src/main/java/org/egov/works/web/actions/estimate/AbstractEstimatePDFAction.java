@@ -46,13 +46,10 @@ import java.io.InputStream;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.service.CommonsService;
-import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksService;
@@ -69,9 +66,7 @@ public class AbstractEstimatePDFAction extends BaseFormAction {
     private InputStream estimatePDF;
     private AbstractEstimateService abstractEstimateService;
     @Autowired
-    private EmployeeServiceOld employeeService;
-    @Autowired
-    private CommonsService commonsService;
+    private AssignmentService assignmentService;
     private WorksService worksService;
 
     @Override
@@ -84,13 +79,10 @@ public class AbstractEstimatePDFAction extends BaseFormAction {
         if (estimateID != null) {
             final AbstractEstimate estimate = getAbstractEstimate();
             final Boundary b = getTopLevelBoundary(estimate.getWard());
-            final CFinancialYear financialYear = getCurrentFinancialYear();
             final ByteArrayOutputStream out = new ByteArrayOutputStream(1024 * 100);
-            final EstimatePDFGenerator pdfGenerator = new EstimatePDFGenerator(estimate, b == null ? "" : b.getName(),
-                    financialYear,
-                    out);
+            final EstimatePDFGenerator pdfGenerator = new EstimatePDFGenerator(estimate, b == null ? "" : b.getName(), out);
             pdfGenerator.setPersistenceService(getPersistenceService());
-            pdfGenerator.setEmployeeService(employeeService);
+            pdfGenerator.setAssignmentService(assignmentService);
             pdfGenerator.setBudgetDetailsDAO(abstractEstimateService.getBudgetDetailsDAO());
             pdfGenerator.setAbstractEstimateService(abstractEstimateService);
             pdfGenerator.setWorksService(worksService);
@@ -107,7 +99,7 @@ public class AbstractEstimatePDFAction extends BaseFormAction {
     }
 
     private AbstractEstimate getAbstractEstimate() {
-        return (AbstractEstimate) getPersistenceService().find("from AbstractEstimate e where e.id=?", estimateID);
+        return abstractEstimateService.findById(estimateID, false);
     }
 
     protected Boundary getTopLevelBoundary(final Boundary boundary) {
@@ -115,15 +107,6 @@ public class AbstractEstimatePDFAction extends BaseFormAction {
         while (b != null && b.getParent() != null)
             b = b.getParent();
         return b;
-    }
-
-    protected CFinancialYear getCurrentFinancialYear() {
-        /**
-         * for the year end process getCurrentFinancialYear API should return the next CFinancialYear object
-         */
-        return commonsService.getFinancialYearByFinYearRange(worksService.getWorksConfigValue("FINANCIAL_YEAR_RANGE"));
-        // return (CFinancialYear) getPersistenceService().find("from CFinancialYear cfinancialyear where ? between
-        // cfinancialyear.startingDate and cfinancialyear.endingDate",new java.util.Date());
     }
 
     public void setEstimateID(final Long estimateID) {
@@ -143,23 +126,8 @@ public class AbstractEstimatePDFAction extends BaseFormAction {
         this.abstractEstimateService = abstractEstimateService;
     }
 
-    public EmployeeServiceOld getemployeeService() {
-        return employeeService;
-    }
-
-    public void setEmployeeService(final EmployeeServiceOld employeeService) {
-        this.employeeService = employeeService;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
-    }
-
     public void setWorksService(final WorksService worksService) {
         this.worksService = worksService;
-    }
-
-    public void setBudgetDetailsDAO(final BudgetDetailsDAO budgetDetailsDAO) {
     }
 
 }
