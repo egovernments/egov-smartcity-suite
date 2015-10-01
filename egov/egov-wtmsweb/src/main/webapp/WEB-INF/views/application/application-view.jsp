@@ -72,7 +72,7 @@
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
 	</c:if>
 	<c:if test="${waterConnectionDetails.status.code != 'CREATED' && waterConnectionDetails.status.code != 'VERIFIED' 
-	&& waterConnectionDetails.status.code != 'CANCELLED' && waterConnectionDetails.fieldInspectionDetails != null && !legacy}">
+	&& waterConnectionDetails.status.code != 'CANCELLED' && waterConnectionDetails.fieldInspectionDetails != null && !legacy && waterConnectionDetails.applicationType.code !='CLOSINGCONNECTION'}">
 		<button type="submit" class="btn btn-primary" id="viewEstimationNotice"><spring:message code="lbl.printestimationnotice"/></button>
 	</c:if>
 	<c:if test="${!legacy&& (waterConnectionDetails.status.code == 'SANCTIONED' || waterConnectionDetails.status.code == 'WORKORDERGENERATED')}">

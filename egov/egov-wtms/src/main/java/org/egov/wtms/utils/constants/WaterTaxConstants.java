@@ -61,6 +61,7 @@ public class WaterTaxConstants {
     public static final String WATERTAX_DONATION_CHARGE = "WTAXDONATION";
     public static final String CONNECTION_FEE = "Connection fee";
     public static final String ADDNLCONNECTION = "ADDNLCONNECTION";
+    public static final String CLOSINGCONNECTION = "CLOSINGCONNECTION";
     public static final String CHANGEOFUSE = "CHANGEOFUSE";
     public static final String SMSEMAILTYPEADDITONALCONNCREATE = "additionalconncreate";
     public static final String SMSEMAILTYPEADDITONALCONNAPPROVE = "additionalconnapprove";

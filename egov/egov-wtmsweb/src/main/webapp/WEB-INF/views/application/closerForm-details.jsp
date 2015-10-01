@@ -54,7 +54,7 @@
 										<label class="col-sm-3 col-xs-12 control-label text-right"><spring:message  code="lbl.connectiontype"/>
                                         </label>
 						<div class="col-sm-6 add-margin dynamic-span capitalize">
-							<form:radiobuttons path="closeConnectionType" items="${radioButtonMap}"   name="closeConnectionType" element="span" readonly="readonly" /> 
+							<form:radiobuttons path="closeConnectionType" items="${radioButtonMap}"   name="closeConnectionType" element="span" /> 
 						</div>
 					</div>
 					</div>
@@ -62,11 +62,23 @@
 										<label class="col-sm-3 col-xs-12 control-label text-right"><spring:message  code="lbl.closerReason"/>
                                         </label>
                                         <div class="col-sm-8 col-xs-12 add-margin">
-                                           <form:input id="closeconnectionreason" path="closeconnectionreason" name="closeconnectionreason" disabled="disabled"/>
+                                           <form:input class="form-control" id="closeconnectionreason" path="closeconnectionreason" name="closeconnectionreason" />
 	
                     </div>
 				</div>
                                     
 </div>
+<script>
 
+var mode =$('#mode').val();
+if(mode !='closeredit'){
+$(':radio:not(:checked)').attr('disabled', true);
+$('#closeconnectionreason').attr('disabled', true);
+}
+else
+{
+	$('#closeconnectionreason').attr('disabled', false);
+	$(':radio:not(:checked)').attr('disabled', false);
+}
+</script>
 

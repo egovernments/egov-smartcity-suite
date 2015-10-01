@@ -55,6 +55,7 @@ import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.service.CloserConnectionService;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
@@ -111,9 +112,9 @@ public class CloserConnectionController extends GenericConnectionController {
     }
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
-            @ModelAttribute final WaterConnectionDetails changeOfUse) {
-        changeOfUse.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.CHANGEOFUSE));
-        return waterConnectionDetailsService.getAllActiveDocumentNames(changeOfUse.getApplicationType());
+            @ModelAttribute final WaterConnectionDetails waterConnectionDetails) {
+        waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.CLOSINGCONNECTION));
+        return waterConnectionDetailsService.getAllActiveDocumentNames(waterConnectionDetails.getApplicationType());
     }
     
     @RequestMapping(value = "/close/{applicationCode}", method = RequestMethod.GET)
@@ -139,9 +140,10 @@ public class CloserConnectionController extends GenericConnectionController {
                 "connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(
                         waterConnectionDetails.getConnectionType().name()));
-        //waterConnectionDetails.getApplicationDocs().add(new ApplicationDocuments());
+        waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.CLOSINGCONNECTION));
         model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
+        model.addAttribute("typeOfConnection", WaterTaxConstants.CLOSINGCONNECTION);
         model.addAttribute("validationMessage",
                 closerConnectionService.validateChangeOfUseConnection(waterConnectionDetails));
         return "connection-closeForm";
@@ -166,9 +168,20 @@ public class CloserConnectionController extends GenericConnectionController {
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
-        for (final ApplicationDocuments applicationDocument : waterConnectionDetails.getApplicationDocs()) {
-           applicationDocs.add(applicationDocument);
-           
+        int i = 0;
+        if (!waterConnectionDetails.getApplicationDocs().isEmpty()){
+            for (final ApplicationDocuments applicationDocument : waterConnectionDetails.getApplicationDocs()) {
+                if (applicationDocument.getDocumentNumber() == null && applicationDocument.getDocumentDate() != null) {
+                    final String fieldError = "applicationDocs[" + i + "].documentNumber";
+                    resultBinder.rejectValue(fieldError, "documentNumber.required");
+                }
+                if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() == null) {
+                    final String fieldError = "applicationDocs[" + i + "].documentDate";
+                    resultBinder.rejectValue(fieldError, "documentDate.required");
+                } else if (validApplicationDocument(applicationDocument))
+                    applicationDocs.add(applicationDocument);
+                i++;
+            }
         }
         waterConnectionDetails.setApplicationDocs(applicationDocs);
         processAndStoreApplicationDocuments(waterConnectionDetails);

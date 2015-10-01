@@ -54,6 +54,7 @@
 					<spring:message  code="lbl.basicdetails"/>
 				</div>
 			</div>
+			<form:hidden path="applicationType" id="applicationType.id" value="${waterConnectionDetails.applicationType.id}"/>
 			<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}">
 			<input id="applicationCode" type="hidden" value="<c:out value="${waterConnectionDetails.applicationNumber}" />" />  						
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
@@ -117,4 +118,5 @@ function validate(){
 </script>
 
 <script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
+<script src="<c:url value='/resources/js/app/documentsupload.js'/>"></script>
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

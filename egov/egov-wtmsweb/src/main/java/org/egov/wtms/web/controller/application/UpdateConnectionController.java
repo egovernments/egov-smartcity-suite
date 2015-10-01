@@ -203,7 +203,8 @@ public class UpdateConnectionController extends GenericConnectionController {
                             .getApplicationType().getCode(), "",""));
         if (waterConnectionDetails.getCurrentState().getValue().equals("Rejected"))
             model.addAttribute("mode", "");
-        if (waterConnectionDetails.getCloseConnectionType() != null
+        if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CLOSINGCONNECTION)
+                && waterConnectionDetails.getCloseConnectionType() != null
                 && waterConnectionDetails.getState().getValue().equals("Rejected"))
             model.addAttribute("mode", "closeredit");
 
