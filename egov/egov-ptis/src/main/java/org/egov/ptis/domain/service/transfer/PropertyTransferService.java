@@ -191,6 +191,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
 
     @Transactional
     public void updatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
+        processAndStoreDocument(propertyMutation.getDocuments());
         checkAllMandatoryDocumentsAttached(propertyMutation);
         createUserIfNotExist(propertyMutation.getTransfereeInfos());
         basicProperty.setUnderWorkflow(true);
@@ -370,7 +371,9 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
                     document.getFiles().add(fileStore);
                 }
             }
-            document.setType(documentTypePersistenceService.load(document.getType().getId(), DocumentType.class));
+            if (document.getType() == null) {
+                document.setType(documentTypePersistenceService.load(document.getType().getId(), DocumentType.class));
+            }
         });
     }
 

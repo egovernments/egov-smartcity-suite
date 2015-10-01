@@ -70,17 +70,29 @@
 							</td>
 							<td class="blueborderfortd" style="text-align: left">
 								<s:property value="name" /><s:if test="mandatory"><span class="mandatory1">*</span></s:if>
-								<s:hidden name="documents[%{#status.index}].type.id" value="%{id}"></s:hidden>
 							</td>
 							<td class="blueborderfortd" style="text-align: left">
 								<s:if test="%{documents.isEmpty()}">
-									<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" />
+									<s:hidden name="documents[%{#status.index}].type.id" value="%{id}"></s:hidden>
+					       			<s:if test="mandatory">
+										<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" required="true"/>
+									</s:if>
+									<s:else>
+										<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button"/>
+									</s:else>
 								</s:if>
 								<s:elseif test="%{documents[#status.index].files.isEmpty()}">
-									<span class="bold">N/A</span>
+									<s:hidden name="documents[%{#status.index}].id"/>
+									<s:if test="mandatory">
+										<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" required="true"/>
+									</s:if>
+									<s:else>
+										<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button"/>
+									</s:else>
 								</s:elseif>
 								<s:else>
 									<s:iterator value="%{documents[#status.index].files}">
+										<s:hidden name="documents[%{#status.index}].id"/>
 										<a href="javascript:viewDocument('<s:property value="fileStoreId"/>')"> 
 					 						<s:property value="%{fileName}"/>
 										</a> 
