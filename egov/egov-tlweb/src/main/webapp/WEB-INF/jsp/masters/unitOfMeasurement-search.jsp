@@ -100,19 +100,24 @@
 					</div>
 				</div>
 			</s:form>
-
+			
 			<div class="row">
 				<div class="text-center">
+				<s:if test="%{userMode=='edit'}">
 					<button type="button" id="btnedit" class="btn btn-primary" onclick="return validateFormAndSubmit('edit');">
 						Modify</button>
+					<button type="button" id="btnreset" class="btn btn-primary" onclick="return reload();">
+						Reset</button>	
+				</s:if>
+				<s:elseif test="%{userMode=='view'}">
 					<button type="button" id="btnview" class="btn btn-primary" onclick="return validateFormAndSubmit('view');">
 						View</button>
-					<button type="button" id="btnreset" class="btn btn-primary" onclick="return reload();">
-						Reset</button>
+				</s:elseif>
 					<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
 						Close</button>
 				</div>
 			</div>
+			
 		</div>
 		</div>
 	</div>

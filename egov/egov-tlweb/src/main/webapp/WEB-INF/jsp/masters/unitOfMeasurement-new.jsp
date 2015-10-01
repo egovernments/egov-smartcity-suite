@@ -51,7 +51,7 @@
 	<s:elseif test="%{userMode=='edit'}">
 		<s:text name='uommaster.modify' />
 	</s:elseif>	
-	<s:elseif test="%{userMode=='view'}">
+	<s:elseif test="%{userMode=='view' || userMode=='success'}">
 		<s:text name='uommaster.view' />
 	</s:elseif>	
 	</title>
@@ -59,7 +59,7 @@
 	<script>
 
 	function bodyOnLoad(){
-		if(dom.get("userMode").value=='view'){
+		if(dom.get("userMode").value=='view' || dom.get("userMode").value=='success'){
 			 dom.get("code").readOnly=true;
 			 dom.get("name").readOnly=true;
 			 dom.get("active").disabled=true;
@@ -95,6 +95,7 @@
 	}
 
 	function validateData(obj,param){
+		clearMessage('uom_error');
 		var screenType="uomMaster";
 		var name="";
 		var code="";
@@ -108,6 +109,7 @@
 
 	uomFailureHandler=function(){
 		   showMessage('uom_error','Unable to perform this action');
+		   return false;
 	}
 
 	uomSuccessHandler = function(req,res){
@@ -159,11 +161,14 @@
 							<s:elseif test="%{userMode=='view'}">
 								<s:text name='uommaster.view' />
 							</s:elseif>	
+							<s:else>
+								<s:text name='uommaster.lbl' />
+							</s:else>
 						</div>
 					</div>
 					<div class="panel-body custom-form">
 					
-						<s:hidden name="id" /> 
+						<s:hidden name="id"/> 
 						<s:hidden name="userMode" id="userMode"/>
 					
 						<div class="form-group">
@@ -194,7 +199,7 @@
 
 			<div class="row">
 				<div class="text-center">
-					<s:if test="%{userMode!='view'}">
+					<s:if test="%{userMode!='view' && userMode!='success'}">
 						<button type="button" id="btnsave" class="btn btn-primary" onclick="return validateFormAndSubmit();">
 							Submit</button>
 						<button type="button" id="btnReset" type="reset" class="btn btn-default" onclick="reload();">

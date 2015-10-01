@@ -48,9 +48,9 @@ public class UnitOfMeasurementAction extends BaseFormAction {
     }
 
     @Override
-    public void prepare() {
+    public void prepare() { 
         // In Modify and View Mode Load UOM dropdown.
-        if (userMode != null && !userMode.isEmpty() && userMode.equalsIgnoreCase(SEARCH))
+        if (userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT) || userMode.equalsIgnoreCase(VIEW)))
             setLicenseUomMap(getFormattedUOMMap(unitOfMeasurementService.findAll()));
         if (getId() != null)
             unitOfMeasurement = unitOfMeasurementService.findById(getId(), false);
@@ -85,20 +85,19 @@ public class UnitOfMeasurementAction extends BaseFormAction {
             userMode = NEW;
         return NEW;
     }
-
+   
+    
     /**
-     * This method is invoked to Search a form.
+     * This method is invoked to Edit a form.
      *
      * @return a <code>String</code> representing the value 'SEARCH'
      */
-    @Action(value = "/masters/unitOfMeasurement-searchform")
-    public String searchform() {
+    @Action(value = "/masters/unitOfMeasurement-edit")
+    public String edit() {
         if (userMode.equalsIgnoreCase(EDIT))
             userMode = EDIT;
         else if (userMode.equalsIgnoreCase(VIEW))
             userMode = VIEW;
-        else if (userMode.equalsIgnoreCase(SEARCH))
-            userMode = SEARCH;
         return SEARCH;
     }
 
@@ -116,8 +115,11 @@ public class UnitOfMeasurementAction extends BaseFormAction {
             LOGGER.error("Exception found while persisting License category: " + valEx.getErrors());
             throw new ValidationException(valEx.getErrors());
         }
-        addActionMessage("\'" + unitOfMeasurement.getCode() + "\' " + getText("license.uom.save.success"));
-        id = unitOfMeasurement.getId();
+        if (userMode.equalsIgnoreCase(NEW))
+            addActionMessage("\'" + unitOfMeasurement.getCode() + "\' " + getText("license.uom.save.success"));
+        else if (userMode.equalsIgnoreCase(EDIT))
+            addActionMessage("\'" + unitOfMeasurement.getCode() + "\' " + getText("license.uom.edit.success"));
+        userMode = SUCCESS;
         return NEW;
     }
 
