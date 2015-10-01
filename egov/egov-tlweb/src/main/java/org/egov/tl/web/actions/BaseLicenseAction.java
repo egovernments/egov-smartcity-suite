@@ -172,7 +172,6 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             this.setCheckList();
             service().processAndStoreDocument(license().getDocuments());
             service().create(license());
-            addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
             populateWorkflowBean();
             service().transitionWorkFlow(license(), workflowBean);
             persistenceService.applyAuditing(license().getState());
@@ -181,6 +180,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             loadAjaxedDropDowns();
             throw e;
         }
+        addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
         return Constants.ACKNOWLEDGEMENT;
     }
 

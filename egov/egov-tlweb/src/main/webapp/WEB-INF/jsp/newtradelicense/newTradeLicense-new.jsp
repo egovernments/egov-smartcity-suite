@@ -155,6 +155,7 @@
 						for (var i=rowCount-1; i >= 2; i--) {
 							table.deleteRow(i);
 						}
+						motorcnt=0;
 					}
 					addMotorRowToTable(false);
 					document.getElementById('totalHP').value=0;
@@ -164,37 +165,7 @@
 					document.getElementById("hpheader").style.display='none';
 				}
 			}
-			function removeRows(){  
 
-				var table = document.getElementById('tb2Create');
-				var rowCount = table.rows.length;
-				alert(rowCount);
-				for (var i=2; i <= rowCount; i++) {
-					alert("row"+i);
-				    table.deleteRow(i);
-				    
-				}
-			}	
-
-			/* function removeRow1(src){  
-				var tbl = document.getElementById('tb2Create');
-				var lastRow = tbl.rows.length;
-				if(lastRow>=3) {
- 					var oRow = src.parentNode.parentNode;
- 					if (oRow.rowIndex == 2) 
- 					{
- 						alert("Can not delete the first row!");
- 						return;
- 					}
- 					else
- 					{
- 					document.all('tb2Create').deleteRow(oRow.rowIndex);
- 					}
- 					totalHP();  
-				 	detailchange();
-				}
-			} */
-			
 			function detailchange(){
 				document.getElementById("detailChanged").value = 'true';
 			}
@@ -431,7 +402,6 @@
                              <div class="panel-body custom-form">
                                 <div class="tab-content">
                                     <div class="tab-pane fade active in" id="tradedetails">
-                                        <form role="form" class="form-horizontal form-groups-bordered">
 	                                         <%@ include file='../common/licensee.jsp'%>
 	                                          <%@ include file='../common/address.jsp'%>
 	                                         <%@ include file='../common/license.jsp'%>
@@ -483,38 +453,23 @@
 														} 														
 														totalHP();
 												</script>
-                             			</form>
                                     </div>
                                     
-                                    <div class="tab-pane fade" id="tradeattachments">
-                                        <form role="form" class="form-horizontal form-groups-bordered">
+                                    <div class="tab-pane fade" id="tradeattachments"> 
                                         <div>
 												<%@include file="../common/documentUpload.jsp" %>
 										</div>
-                                            
-                                        </form>
                                     </div>
                                     
                             	</div>
                             </div>
                         </div> 
+                        <%@ include file='../common/commonWorkflowMatrix.jsp'%>
+						<%@ include file='../common/commonWorkflowMatrix-button.jsp'%> 
                         </s:push>  
                     </s:form> 
-                        
-						<%@ include file='../common/commonWorkflowMatrix.jsp'%>
-						<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
-                        
-                            <!-- <div class="row">
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                                <button class="btn btn-default">Close</button>
-                            </div>
-                        </div> -->
                     </div>
                 </div>
-                  
-        
         <script src="../resources/app/js/newtrade.js"></script>
-       
     </body>
 </html>

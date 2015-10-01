@@ -152,15 +152,15 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     public String create() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Trade license Creation Parameters:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
-        if (tradeLicense.getLicenseZoneId() != null && tradeLicense.getBoundary() == null) {
+        /*if (tradeLicense.getLicenseZoneId() != null && tradeLicense.getBoundary() == null) {
             final Boundary boundary = boundaryService.getBoundaryById(tradeLicense.getLicenseZoneId());
             tradeLicense.setBoundary(boundary);
-        }
+        }*/
 
-        if (tradeLicense.getLicenseeZoneId() != null && tradeLicense.getLicensee().getBoundary() == null) {
+        /*if (tradeLicense.getLicenseeZoneId() != null && tradeLicense.getLicensee().getBoundary() == null) {
             final Boundary boundary = boundaryService.getBoundaryById(tradeLicense.getLicenseeZoneId());
             tradeLicense.getLicensee().setBoundary(boundary);
-        }
+        }*/
         if (tradeLicense.getInstalledMotorList() != null) {
             final Iterator<MotorDetails> motorDetails = tradeLicense.getInstalledMotorList().iterator();
             while (motorDetails.hasNext()) {
@@ -196,6 +196,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         
         final CommonTradeLicenseAjaxAction ajaxTradeLicenseAction = new CommonTradeLicenseAjaxAction();
         populateSubCategoryList(ajaxTradeLicenseAction,tradeLicense.getCategory()!=null);
+        
     }
     
     
