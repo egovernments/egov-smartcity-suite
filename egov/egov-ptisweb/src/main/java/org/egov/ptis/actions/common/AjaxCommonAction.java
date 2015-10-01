@@ -454,11 +454,11 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	public String usageByPropType() {
             LOGGER.debug("Entered into usageByPropType, propTypeId: " + propTypeId);
             if(propTypeCategory.equals(CATEGORY_MIXED))
-                propUsageList = getPersistenceService().findAllBy("From PropertyUsage");
+                propUsageList = getPersistenceService().findAllBy("From PropertyUsage order by usageName ");
             else if(propTypeCategory.equals(CATEGORY_RESIDENTIAL))
-                propUsageList = getPersistenceService().findAllBy("From PropertyUsage where isResidential = true");
+                propUsageList = getPersistenceService().findAllBy("From PropertyUsage where isResidential = true order by usageName ");
             else if(propTypeCategory.equals(CATEGORY_NON_RESIDENTIAL))
-                propUsageList = getPersistenceService().findAllBy("From PropertyUsage where isResidential = false");
+                propUsageList = getPersistenceService().findAllBy("From PropertyUsage where isResidential = false order by usageName ");
             LOGGER.debug("Exiting from usageByPropType, No of Usages: " + ((propUsageList != null) ? propUsageList : ZERO));
             return USAGE;
           }

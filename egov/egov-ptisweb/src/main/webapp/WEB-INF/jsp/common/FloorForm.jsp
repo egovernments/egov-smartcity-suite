@@ -77,7 +77,7 @@
 				</div>
 			</td>
 			<egov:ajaxdropdown id="floorUsage" fields="['Text','Value']" dropdownId="floorUsage"
-			url="common/ajaxCommon-usageByPropType.action" />
+			url="common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select headerKey="" headerValue="%{getText('default.select')}"
@@ -193,28 +193,17 @@
 					</div>
 				</td>
 				<egov:ajaxdropdown id="floorUsage" fields="['Text','Value']" dropdownId="floorUsage"
-			          url="/common/ajaxCommon-usageByPropType.action" />
+			          url="/common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-						<s:if test="%{#floorsstatus.index==0}">
 							<s:select headerKey=""
 								headerValue="%{getText('default.select')}"
 								name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].propertyUsage.id"
-								listKey="id" id="floorUsage" listValue="usageName"
-								list="dropdownData.UsageList" cssClass="selectnew"
-								value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].propertyUsage.id}"
-								cssStyle="width:100%" />
-						</s:if>
-						<s:else>
-							<s:select headerKey=""
-								headerValue="%{getText('default.select')}"
-								name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].propertyUsage.id"
-								listKey="id" id="floorUsage%{#floorsstatus.index-1}"
+								listKey="id" id="floorUsage"
 								listValue="usageName" list="dropdownData.UsageList"
 								cssClass="selectnew"
 								value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].propertyUsage.id}"
 								cssStyle="width:100%" />
-						</s:else>
 					</div>
 				</td>
 

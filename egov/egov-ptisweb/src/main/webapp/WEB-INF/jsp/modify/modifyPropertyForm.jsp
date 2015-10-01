@@ -155,6 +155,7 @@
 		   <s:select headerKey="-1"	headerValue="%{getText('default.select')}" name="propertyDetail.categoryType"
 				id="propTypeCategoryId" listKey="key" listValue="value" list="propTypeCategoryMap" value="%{propertyDetail.categoryType}"
 				cssClass="selectnew" onchange="populateUsages();"/>
+		<s:hidden name="propertyCategory" id="propertyCategory"/>
 		</td>
 	</tr>
 	
