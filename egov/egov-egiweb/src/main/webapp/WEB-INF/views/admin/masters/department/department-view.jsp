@@ -44,18 +44,16 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0">
-		<div class="panel-heading">
-				<div class="panel-title text-center no-float">
-					<strong><spring:message code="${message}"/></strong>
-				</div>
-				
-				<div class="panel-title">
+		<c:if test="${not empty message}">
+			<div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
+		</c:if>
+		<form:form id="departmentViewForm" method="post" modelAttribute="department" class="form-horizontal form-groups-bordered">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">
 						<strong><spring:message code="title.department.view"/></strong>
 					</div>
-			</div>
-		<form:form id="departmentViewForm" method="post" modelAttribute="department" class="form-horizontal form-groups-bordered">
-			
+				</div>
 				
 				<div class="panel-body">
 					<div class="row add-border">
@@ -79,10 +77,9 @@
 					<button type="submit" id="editDept" class="btn btn-primary"><spring:message code="lbl.edit"/></button>
 					<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close();"><spring:message code="lbl.close"/></button>
 				</div>
-		</div>
+			</div>
+			</div>
 		</form:form>
-		
-		</div>
 	</div>
 </div>
 <script src="<c:url value='/resources/js/app/department.js'/>"></script>

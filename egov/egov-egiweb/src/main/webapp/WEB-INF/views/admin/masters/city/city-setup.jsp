@@ -225,7 +225,7 @@
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
-										code="lbl.corp.name" /></label>
+										code="lbl.corp.name" /><span class="mandatory"></span></label>
 								<div class="col-sm-6" style="padding-top: 7px">
 									<div class="input-group">
 										<form:input path="preferences.municipalityName" id="latitude"

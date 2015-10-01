@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -95,25 +94,25 @@ public class BoundaryController {
     public String showCreateBoundaryForm(final Model model, final RedirectAttributes redirectAttributes) {
         model.addAttribute("isUpdate", false);
         final BoundaryType boundaryType = (BoundaryType) model.asMap().get("boundaryType");
-         
+
         if (boundaryService.validateBoundary(boundaryType)) {
             redirectAttributes.addFlashAttribute("warning", "msg.root.bndry.exists");
             return "redirect:/search-boundary";
-        } else{
-            if(boundaryType!=null && boundaryType.getParent()!=null)
-                model.addAttribute("parentBoundary",boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getParent().getId()));
+        } else {
+            if (boundaryType != null && boundaryType.getParent() != null)
+                model.addAttribute("parentBoundary", boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getParent().getId()));
             return "boundary-create";
         }
-           
+
     }
 
     @RequestMapping(value = "/update-boundary/{ids}", method = RequestMethod.GET)
     public String showUpdateBoundaryForm(final Model model) {
         model.addAttribute("isUpdate", true);
         final BoundaryType boundaryType = (BoundaryType) model.asMap().get("boundaryType");
-        if(boundaryType!=null && boundaryType.getParent()!=null)
-            model.addAttribute("parentBoundary",boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getParent().getId()));
-     
+        if (boundaryType != null && boundaryType.getParent() != null)
+            model.addAttribute("parentBoundary", boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getParent().getId()));
+
         return "boundary-create";
     }
 
@@ -138,7 +137,7 @@ public class BoundaryController {
         boundaryService.updateBoundary(boundary);
 
         redirectAttributes.addFlashAttribute("boundary", boundary);
-        redirectAttributes.addFlashAttribute("message", "err.bndry.update.success");
+        redirectAttributes.addFlashAttribute("message", "msg.bndry.update.success");
 
         final String pathVars = boundaryTypeObj.getHierarchyType().getId() + "," + boundaryTypeObj.getId();
 
