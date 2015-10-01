@@ -139,9 +139,10 @@
        			<div class="text-center">
        				<button type="button" class="btn btn-primary" id="search"><spring:message code="lbl.submit"/></button>
           		    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
-          	</div>
+          		</div>
         	</div>
         </form:form>
+        <br>
         <table class="table table-bordered datatable dt-responsive" id="adtax_search"></table>
 	</div>
 </div>

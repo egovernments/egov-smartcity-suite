@@ -1,5 +1,12 @@
 $(document).ready(function(){
-	$.fn.dataTable.moment( 'DD/MM/YYYY' );
+	
+	try{
+		$.fn.dataTable.moment( 'DD/MM/YYYY' );
+	}catch(e){
+		
+	}
+	
+	
 	var agency = new Bloodhound({
 		datumTokenizer: function (datum) {
 			return Bloodhound.tokenizers.whitespace(datum.value);

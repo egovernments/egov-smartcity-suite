@@ -119,20 +119,22 @@
 								</c:forEach>
 							</form:select>
 						</div>
-			</div>
+				</div>
 			
 			    	<div class="row">
-				<div class="text-center">
-					<button type="submit" id="scheduleOfRateSearch" class="btn btn-primary"><spring:message code="lbl.search"/></button>
-				    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
-				</div>
-			</div>
+						<div class="text-center">
+							<button type="submit" id="scheduleOfRateSearch" class="btn btn-primary"><spring:message code="lbl.search"/></button>
+						    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+						</div>
+					</div>
 			
 			<div id="noscheduleofrateDataFoundDiv" class="row container-msgs">
 			</div>
 			
 		<div id="schedleOfrateDiv" class="hidden">
 			</div>
+			</div>
+</div>
 		</form:form>
 			  
 		

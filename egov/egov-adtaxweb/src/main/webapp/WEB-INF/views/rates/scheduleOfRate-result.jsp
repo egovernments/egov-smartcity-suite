@@ -125,31 +125,32 @@
 									<c:out value="${rate.classtype.description}"></c:out>
 			
 						</div>
-			</div>
-			
-			    	<div class="row">
-				<div class="text-center">
-					<button type="submit" id="scheduleOfRateSearchAgain" class="btn btn-primary">Search Again</button>
-				    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 				</div>
-			</div>
 			
-			<div id="noscheduleofrateDataFoundDiv" class="row container-msgs">
-				<c:if test="${mode == 'noDataFound'}">
-					<div class="form-group">
+			    	<div class="form-group">
 						<div class="text-center">
-							<div class="panel-title view-content">
-								<spring:message code="lbl.scheduleorrate.label.NodataFound" />
-							</div>
-							<br>
-							<button type="button" id="addnewscheduleofrate"
+							<button type="submit" id="scheduleOfRateSearchAgain" class="btn btn-primary">Search Again</button>
+						    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+						</div>
+					</div>
+			
+			<div id="noscheduleofrateDataFoundDiv" class="container-msgs">
+				<c:if test="${mode == 'noDataFound'}">
+					<div class="panel-heading custom_form_panel_heading">
+						<div class="panel-title">
+							<spring:message code="lbl.scheduleorrate.label.NodataFound" />
+						</div>
+					</div>
+					<div class="form-group text-center">
+						<button type="button" id="addnewscheduleofrate"
 								class="btn btn-primary">
 								<spring:message
 									code="lbl.scheduleorrate.button.addnewscrate" />
 							</button>
-						</div>
 					</div>
 				</c:if>
+			</div>
+			</div>
 			</div>
 	</form:form>
 	<form:form id="scheduleOfRateformResult" method="post" class="form-horizontal form-groups-bordered" modelAttribute="rate" commandName="rate">
@@ -222,7 +223,6 @@
 				</table>
 				<div class="form-group">
 					<div class="text-center">
-						<br><br>
 						<button type="button" id="btn-add" class="btn btn-primary btn-add"><spring:message code="lbl.add.row"/></button>
 						<button type="submit" class="btn btn-primary schedleOfrateBtn" 
 						onclick="return checkUniqueDesignationSelected();" id="schedleOfrateBtn">

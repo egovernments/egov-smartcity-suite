@@ -114,7 +114,7 @@
 			<div class="row">
 				<div class="text-center">
 				<c:if test="${not empty message}">
-					<button type="submit" id="buttonEdit" class="btn btn-success">
+					<button type="submit" id="buttonEdit" class="btn btn-primary">
 						<spring:message code="lbl.edit" />
 					</button>
 				</c:if>
