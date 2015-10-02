@@ -109,12 +109,12 @@
     </definition>
     
     <definition name="hoarding-update" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
+    	<put-attribute name="page-title" value="title.adtax.update" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-update.jsp"/>
     </definition>
     
     <definition name="hoarding-view" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
+    	<put-attribute name="page-title" value="title.adtax.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-view.jsp"/>
     </definition>
     

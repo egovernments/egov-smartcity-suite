@@ -43,11 +43,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <div class="row">
 	<div class="col-md-12">
-		<c:if test="${not empty message}">
-			<div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
-		</c:if>
-		<form:form id="hoardingform" method="post" class="form-horizontal form-groups-bordered" 
-		modelAttribute="hoarding" commandName="hoarding" enctype="multipart/form-data">
+		<form:form id="hoardingformview" action="" class="form-horizontal form-groups-bordered" modelAttribute="hoarding" 
+		commandName="hoarding" >
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<ul class="nav nav-tabs" id="settingstab">
@@ -61,128 +58,104 @@
 				<div class="tab-content">
 					<div class="tab-pane fade active in" id="hoardingdetails">
 							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
+								<label class="col-sm-3 add-margin text-right">
 								<spring:message code="lbl.application.no"/>
-								<span class="mandatory"></span>
+								
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="applicationNumber" id="applicationNumber" required="required"/>
-                               		<form:errors path="applicationNumber" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content view-content">
+									${hoarding.applicationNumber}
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.application.date"/>
-								<span class="mandatory"></span>
+								
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control datepicker" path="applicationDate" id="applicationDate" required="required"/>
-                               		<form:errors path="applicationDate" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.applicationDate}
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.permission.no"/>
-								<span class="mandatory"></span>
+								
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="permissionNumber" id="permissionNumber" required="required"/>
-                               		<form:errors path="permissionNumber" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.permissionNumber}
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.hoarding.no"/>
-								<span class="mandatory"></span>
+								
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="hoardingNumber" id="hoardingNumber" required="required"/>
-                               		<form:errors path="hoardingNumber" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.hoardingNumber}
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.name"/>
-								<span class="mandatory"></span>
+								
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="hoardingName" id="hoardingName" required="required"/>
-                               		<form:errors path="hoardingName" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.hoardingName}
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.hoarding.type"/>
-								<span class="mandatory"></span></label>
-								<div class="col-sm-3 add-margin dynamic-span capitalize">
-									<form:radiobuttons path="type" element="span"/>
-									<form:errors path="type" cssClass="error-msg" />
+								</label>
+								<div class="col-sm-3 add-margin view-content dynamic-span capitalize">
+									${hoarding.type}
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.agency"/>
-								<span class="mandatory"></span></label>
-								<div class="col-sm-3 add-margin">
-									<input type="text" class="form-control typeahead" autocomplete="off" required="required" value="${hoarding.agency.name}">
-									<form:hidden path="agency" id="agencyId" value="${hoarding.agency.id}" />
-									<form:errors path="agency" cssClass="error-msg" />
+								</label>
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.agency.name}
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.hoarding.adv"/>
-								<span class="mandatory"></span></label>
-								<div class="col-sm-3 add-margin">
-									<form:textarea path="advertiser" cols="5" rows="2" class="form-control"  required="required" minlength="5" maxlength="125"/>
-                               		<form:errors path="advertiser" cssClass="error-msg" />
+								</label>
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.advertiser}
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.ad.particulars"/>
-								<span class="mandatory"></span>
+								
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:textarea path="advertisementParticular" cols="5" rows="2" class="form-control"  required="required" minlength="5" maxlength="512"/>
-									<form:errors path="advertisementParticular" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.advertisementParticular}
 								</div>
 									<label class="col-sm-2 control-label text-right">
 									<spring:message code="lbl.hoarding.prop.type"/>
-									<span class="mandatory"></span>
+									
 									</label>
-									<div class="col-sm-3 add-margin">
-										<form:select path="propertyType" id="propertyType" cssClass="form-control" cssErrorClass="form-control error" required="required">
-											<form:option value=""><spring:message code="lbl.select" /></form:option>
-											<form:options items="${hoardingPropertyType}"/>
-										</form:select>
-									<form:errors path="propertyType" cssClass="error-msg" />
+									<div class="col-sm-3 add-margin view-content">
+										${hoarding.propertyType}
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.prop.assesmt.no"/>
 								</label>
-								<div class="col-sm-3 add-margin">
-									<div class="input-group">
-										<form:input type="text" cssClass="form-control" path="propertyNumber" id="propertyNumber" /><span
-											class="input-group-addon"> <i
-											class="fa fa-search specific"></i></span>
-                               			<form:errors path="propertyNumber" cssClass="error-msg" />
-									</div>
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.propertyNumber}
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.owner.detail"/>
-								<span class="mandatory"></span>
+								
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:textarea path="ownerDetail" cols="5" rows="2" class="form-control"  required="required" minlength="5" maxlength="125"/>
-                               		<form:errors path="ownerDetail" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.ownerDetail}
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.status"/>
-								<span class="mandatory"></span>
+								
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:select path="status" id="status" cssClass="form-control" cssErrorClass="form-control error" required="required">
-										<form:option value=""><spring:message code="lbl.select" /></form:option>
-										<form:options items="${hoardingStatus}"/>
-									</form:select>
-									<form:errors path="status" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.status}
 								</div>
 								<div class="col-sm-5 add-margin">&nbsp;</div>
 							</div>
@@ -194,169 +167,124 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.category"/>
-								<span class="mandatory"></span></label>
-								<div class="col-sm-3 add-margin">
-									<form:select path="category" id="category" cssClass="form-control" cssErrorClass="form-control error" required="required">
-										<form:option value=""><spring:message code="lbl.select" /></form:option>
-										<form:options items="${hoardingCategories}" itemLabel="name" itemValue="id"/>
-									</form:select>
-									<form:errors path="category" cssClass="error-msg" />
+								</label>
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.category.name}
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.subcategory"/>
-								<span class="mandatory"></span>
+								
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:select path="subCategory" id="subCategory" cssClass="form-control" cssErrorClass="form-control error" required="required">
-										<form:option value=""><spring:message code="lbl.select"/></form:option>
-									</form:select>
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.subCategory.description}
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.measurement"/>
-								<span class="mandatory"></span>
+								
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="measurement" id="measurement" required="required"/>
-                               		<form:errors path="measurement" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.measurement}
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.uom"/>
-								<span class="mandatory"></span></label>
-								<div class="col-sm-3 add-margin">
-									<form:select path="unitOfMeasure" id="unitOfMeasure" cssClass="form-control" cssErrorClass="form-control error" required="required">
-										<form:option value=""><spring:message code="lbl.select" /></form:option>
-										<form:options items="${uom}" itemLabel="description" itemValue="id"/>
-									</form:select>
-									<form:errors path="unitOfMeasure" cssClass="error-msg" />
+								</label>
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.unitOfMeasure.description}
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.length"/>
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="length" id="length"/>
-                               		<form:errors path="length" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.length}
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.width"/>
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="width" id="width"/>
-                               		<form:errors path="width" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.width}
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.breadth"/>
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="breadth" id="breadth"/>
-                               		<form:errors path="breadth" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.breadth}
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.hoarding.total.height"/>
-								<span class="mandatory"></span>
+								
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="totalHeight" id="totalHeight" required="required"/>
-                               		<form:errors path="totalHeight" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.totalHeight}
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.rev.zone"/>
 								</label>
-								<div class="col-sm-3 add-margin">
-									<select id="revenueBoundaryParent" class="form-control">
-										<option value=""><spring:message code="lbl.select" /></option>
-										<c:forEach items="${revenueZones}" var="revZone">
-											<option value="${revZone.id}">${revZone.name}</option>
-										</c:forEach>
-									</select>
-									<form:errors path="revenueBoundary.parent" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content">
+									<c:out value="${hoarding.revenueBoundary.parent.parent.name}" default="N/A"/>
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.rev.ward"/>
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:select path="revenueBoundary" id="revenueBoundary" cssClass="form-control" cssErrorClass="form-control error">
-										<form:option value=""><spring:message code="lbl.select"/></form:option>
-									</form:select>
-									<form:errors path="revenueBoundary" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content">
+									<c:out value="${hoarding.revenueBoundary.parent.name}" default="N/A"/>
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.locality"/>
 								</label>
-								<div class="col-sm-3 add-margin">
-									<select class="form-control"><option>select
-											from below</option></select>
+								<div class="col-sm-3 add-margin view-content">
+									<c:out value="${hoarding.revenueBoundary.name}" default="N/A"/>
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.address"/>
-								<span class="mandatory"></span></label>
-								<div class="col-sm-3 add-margin">
-									<form:textarea path="address" cols="5" rows="2" class="form-control"  required="required" minlength="5" maxlength="512"/>
-                               		<form:errors path="address" cssClass="error-msg" />
+								</label>
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.address}
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.zone"/>
-								<span class="mandatory"></span></label>
-								<div class="col-sm-3 add-margin">
-									<form:select path="adminBoundry.parent" id="adminBoundryParent" cssClass="form-control" cssErrorClass="form-control error" required="required">
-										<form:option value=""><spring:message code="lbl.select" /></form:option>
-										<form:options items="${zones}" itemLabel="name" itemValue="id"/>
-									</form:select>
-									<form:errors path="adminBoundry.parent" cssClass="error-msg" />
+								</label>
+								<div class="col-sm-3 add-margin view-content">
+									<c:out value="${hoarding.adminBoundry.parent.name}" default="N/A"/>
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.ward"/>
-								<span class="mandatory"></span></label>
-								<div class="col-sm-3 add-margin">
-									<form:select path="adminBoundry" id="adminBoundry" cssClass="form-control" cssErrorClass="form-control error" required="required">
-										<form:option value=""><spring:message code="lbl.select"/></form:option>
-									</form:select>
-									<form:errors path="adminBoundry" cssClass="error-msg" />
+								</label>
+								<div class="col-sm-3 add-margin view-content">
+									<c:out value="${hoarding.adminBoundry.name}" default="N/A"/>
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.class"/>
-								<span class="mandatory"></span></label>
-								<div class="col-sm-3 add-margin">
-									<form:select path="rateClass" id="rateClass" cssClass="form-control" cssErrorClass="form-control error" required="required">
-										<form:option value=""><spring:message code="lbl.select" /></form:option>
-										<form:options items="${rateClasses}" itemLabel="description" itemValue="id"/>
-									</form:select>
-									<form:errors path="rateClass" cssClass="error-msg" />
+								</label>
+								<div class="col-sm-3 add-margin view-content">
+									<c:out value="${hoarding.rateClass.description}" default="N/A"/>
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.rev.inspector"/>
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:select path="revenueInspector" id="revenueInspector" cssClass="form-control" cssErrorClass="form-control error">
-										<form:option value=""><spring:message code="lbl.select" /></form:option>
-										<form:options items="${revenueInspectors}" itemLabel="name" itemValue="id"/>
-									</form:select>
-									<form:errors path="revenueInspector" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content">
+									<c:out value="${hoarding.revenueInspector.name}" default="N/A"/>
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.duration"/>
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:select path="advertisementDuration" id="advertisementDuration" cssClass="form-control" cssErrorClass="form-control error">
-										<form:option value=""><spring:message code="lbl.select" /></form:option>
-										<form:options items="${advertisementDuration}"/>
-									</form:select>
-									<form:errors path="advertisementDuration" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content">
+									<c:out value="${hoarding.advertisementDuration}" default="N/A"/>
 								</div>
 							</div>
 							<div class="panel-heading custom_form_panel_heading">
@@ -367,23 +295,19 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.tax"/>
-								<span class="mandatory"></span></label>
-								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="taxAmount" id="taxAmount" required="required"/>
-                               		<form:errors path="taxAmount" cssClass="error-msg" />
+								</label>
+								<div class="col-sm-3 add-margin view-content">
+									${hoarding.taxAmount}
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.hoarding.enc.fee"/>
 								</label>
-								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="encroachmentFee" id="encroachmentFee"/>
-                               		<form:errors path="encroachmentFee" cssClass="error-msg" />
+								<div class="col-sm-3 add-margin view-content">
+									<c:out value="${hoarding.encroachmentFee}" default="N/A"/>
 								</div>
 							</div>
 					</div>
 					<div class="tab-pane fade" id="hoardingattachments">
-						<c:choose>
-							<c:when test="${not empty hoardingDocumentTypes}">
 							<form:hidden path="latitude" id="latitude"/> 
 							<form:hidden path="longitude" id="longitude" /> 
 							<div class="col-sm-12 view-content header-color hidden-xs">
@@ -393,43 +317,28 @@
 								<div class="col-sm-3 table-div-column"><spring:message code="lbl.attachdocument"/></div>
 							</div>
 							
-							<c:forEach var="docs" items="${hoardingDocumentTypes}" varStatus="status">	
+							<c:forEach var="docs" items="${hoarding.documents}" varStatus="status">	
 								<div class="form-group">
 									<div class="col-sm-1 text-center">${status.index+1}</div>
-									<div class="col-sm-5 text-center">${docs.mandatory ? "<span
-									class='mandatory'></span>" : ""}${docs.name}
-									</div>
+									<div class="col-sm-5 text-center">${docs.doctype.name}</div>
+									<div class="col-sm-3 text-center">${docs.enclosed ? "Yes" : "No"}</div>
 									<div class="col-sm-3 text-center">
-										<input type="checkbox" ${hoarding.documents[status.index].enclosed ? "checked='checked'" : ""} 
-										name="documents[${status.index}].enclosed" ${docs.mandatory ? "required='required'" : ""}>
-									</div>
-									<div class="col-sm-3 text-center">
-										<input type="file" name="documents[${status.index}].attachments" class="form-control" >
-										<form:errors path="documents[${status.index}].attachments" cssClass="add-margin error-msg" />
-										<form:hidden path="documents[${status.index}].doctype" value="${docs.id}" /> 
+										<c:forEach var="file" items="${docs.files}">	
+										<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=ADTAX&toSave=true"> 
+											${file.fileName}
+										</a>
+										</c:forEach>
 									</div>
 								</div>
 							</c:forEach> 
-							</c:when>
-						</c:choose>
 					</div>
 				</div>
 			</div>
 
 		</div>
 		<div class="text-center">
-			<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
-			<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
 		    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 		</div>
 	</form:form>
 	</div>
 </div>
-<script>
-//this is to reset the sub combobox upon field error
-var subcategory = '${hoarding.subCategory.id}';
-var adminBoundry = '${hoarding.adminBoundry.id}';
-var revenueBoundary = '${hoarding.revenueBoundary.id}';
-</script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/app/js/hoarding.js'/>"></script>
