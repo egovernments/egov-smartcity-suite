@@ -39,12 +39,7 @@
 */
 
 $('#btnusagesearch').click( function () {
-	 $('#usages_table').dataTable({
-		 	"sPaginationType": "bootstrap",
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-			"autoWidth": false,
-			"bDestroy": true,
+	 $('#usages_table').dataTable({		 		        
 	        "ajax": {
 	        	url : "/ptis/usage/list",
 	        	dataSrc : function (json) {
@@ -52,6 +47,12 @@ $('#btnusagesearch').click( function () {
 	        			if (json.data[i].toDate == null) {
 	        				json.data[i].toDate = "N/A";
 	        			}
+	        			
+	        			if (json.data[i].isResidential == true) {
+		 					json.data[i].usageCode = 'Residential';
+	 					} else {
+	 						json.data[i].usageCode = 'Non Residential';
+	 					}
 	        		}
 	        		return json.data;
 	        	}
@@ -70,9 +71,16 @@ $('#btnusagesearch').click( function () {
 				"sTitle" : "Effective To"
 			}],
 			drawCallback: function () {
+				$('#table_container').show();
 				$('#usageRow').show();
+				$('#usages_table_length').remove();				
+				$('#usages_table_filter').addClass('text-right');				
 			}
 	    }); 
+});
 
-	
+$(document).ready(function(){
+    $('#table_search').keyup(function(){
+    	$('#usages_table').fnFilter(this.value);
+    });
 });

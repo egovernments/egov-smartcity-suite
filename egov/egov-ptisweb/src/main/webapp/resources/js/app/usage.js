@@ -38,9 +38,13 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 
-/*$('#btnusagesearch').click( function () {
-	$('#usageform').attr('method', 'get');
-	$('#usageform').attr('action', '/ptis/usage/list');
-	$('#usageform').submit();
-	alert($('#usageform').attr('action'));
-})*/
+$(':radio').change( function () {
+	alert('change fired' + $(':checked').val());
+	if ( $(':checked').val() == 'RESIDENTIAL' ) {
+		alert($('#isResidential').val());
+		$('#isResidential').val('true');
+	} else {
+		$('#isResidential').val('false');
+	}
+	alert($('#isResidential').val());
+})

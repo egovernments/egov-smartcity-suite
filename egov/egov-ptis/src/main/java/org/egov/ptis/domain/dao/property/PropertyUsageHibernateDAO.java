@@ -146,6 +146,7 @@ public class PropertyUsageHibernateDAO implements PropertyUsageDAO {
 	@Override
 	public PropertyUsage create(PropertyUsage propertyUsage) {
 		getCurrentSession().save(propertyUsage);
+		getCurrentSession().flush();
 		return propertyUsage;
 	}
 

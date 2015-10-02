@@ -52,6 +52,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * Controller to Create a new Usage Master
+ * 
+ * @author nayeem
+ *
+ */
+
 @Controller
 @RequestMapping(value = "/usage/create")
 public class CreateUsageController {
@@ -81,10 +88,11 @@ public class CreateUsageController {
             return "/usage/create";
 
         propertyUsage.setUsageCode(propertyUsage.getUsageName().toUpperCase());
+        propertyUsage.setIsEnabled(1);
         propertyUsageHibernateDAO.create(propertyUsage);
 
         redirectAttributes.addFlashAttribute("message", "msg.usage.create.success");
 
-        return "usage/create";
+        return "redirect:/usage/create";
     }
 }
