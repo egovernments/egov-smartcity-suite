@@ -37,60 +37,41 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.ptis.web.controller.masters.usage;
+package org.egov.ptis.master.service;
 
-import javax.validation.Valid;
-
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
-import org.egov.ptis.master.service.PropertyUsageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.stereotype.Service;
 
 /**
- * Controller to Create a new Usage Master
+ * Service for PropertyUsage
  * 
  * @author nayeem
  *
  */
-
-@Controller
-@RequestMapping(value = "/usage/create")
-public class CreateUsageController {
-
-    private final PropertyUsageService propertyUsageService;
+@Service
+public class PropertyUsageService {
+	
+	private final PropertyUsageDAO propertyUsageHibernateDAO;
 
     @Autowired
-    public CreateUsageController(final PropertyUsageService propertyUsageService) {
-        this.propertyUsageService = propertyUsageService;
+    public PropertyUsageService(final PropertyUsageDAO propertyUsageHibernateDAO) {
+        this.propertyUsageHibernateDAO = propertyUsageHibernateDAO;
     }
-
-    @ModelAttribute
-    public PropertyUsage propertyUsageModel() {
-        return new PropertyUsage();
-    }
-
-    @RequestMapping(method = RequestMethod.GET)
-    public String newForm(final Model model) {
-        return "usage-form";
-    }
-
-    @RequestMapping(method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute final PropertyUsage propertyUsage, final BindingResult errors,
-            final RedirectAttributes redirectAttributes) {
-
-        if (errors.hasErrors())
-            return "usage-form";
+    
+    public PropertyUsage create(PropertyUsage propertyUsage) {
+    	
+    	if (propertyUsage.getIsResidential()) {
+    		propertyUsage.setUsageCode(PropertyTaxConstants.PROPTYPE_RESD);
+    	} else {
+    		propertyUsage.setUsageCode(PropertyTaxConstants.PROPTYPE_NON_RESD);
+    	}
+    	
+        propertyUsage.setIsEnabled(1);
+        propertyUsageHibernateDAO.create(propertyUsage);
         
-        propertyUsageService.create(propertyUsage);
-        redirectAttributes.addFlashAttribute("message", "msg.usage.create.success");
-
-        return "redirect:/usage/create";
+        return propertyUsage;
     }
 }

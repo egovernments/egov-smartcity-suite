@@ -57,7 +57,7 @@
             <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
         </c:if>
         
-		<form:form  method="post" class="form-horizontal form-groups-bordered" id="usageform" modelAttribute="propertyUsage">
+		<form:form method="post" class="form-horizontal form-groups-bordered" id="usageform" modelAttribute="propertyUsage">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -99,14 +99,14 @@
 						</label>
 						<div class="col-sm-6 add-margin">
 							<form:input id="fromDate" path="fromDate" type="text" cssClass="form-control datepicker today" data-date-today-highlight="true" data-date-end-date="0d" />
-							<form:errors path="usageName" cssClass="error-msg"/>
+							<form:errors path="fromDate" cssClass="error-msg"/>
 						</div>
 					</div>												
 				</div>
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<button type="submit" id="usageAdd"
+					<button type="submit" 
 						class="btn btn-primary add-margin">
 						<spring:message code="lbl.button.add" />
 					</button>							
@@ -130,12 +130,10 @@
 	</div>
 </div>
 						
-
+						
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-
-<script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/> "></script>
 
 <script src="<c:url value='/resources/js/app/usage.js'/> "></script>
 <script src="<c:url value='/resources/js/app/viewusages.js'/> "></script>
