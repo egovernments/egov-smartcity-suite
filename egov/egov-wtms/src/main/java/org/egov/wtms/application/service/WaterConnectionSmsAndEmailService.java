@@ -390,36 +390,71 @@ public class WaterConnectionSmsAndEmailService {
             String body = "";
             String subject = "";
             if (waterTaxUtils.isSmsEnabled() && mobileNumber != null) {
-                if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION))
-                    smsMsg = waterTaxUtils.smsAndEmailBodyByCodeAndArgsForRejection("msg.newconncetionRejection.sms",
-                            approvalComent, applicantName);
+               if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)){
+                    final StringBuffer smsBody = new StringBuffer().append("Dear ").append(applicantName)
+                    .append(",Your new water tap connection application is being rejected and ").append("the reason for rejection ")
+                    .append(approvalComent).append(" Please get in touch with ULB official to raise a new application with proper information to get a water connection.")
+                    .append("\nThanks,").append(waterTaxUtils.getCityName());
+                   
+                    smsMsg = smsBody.toString();
+                   }
                 else if (waterConnectionDetails.getApplicationType().getCode()
-                        .equals(WaterTaxConstants.ADDNLCONNECTION))
-                    smsMsg = waterTaxUtils.smsAndEmailBodyByCodeAndArgsForRejection("msg.addconncetionRejection.sms",
-                            approvalComent, applicantName);
-                else if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE))
+                        .equals(WaterTaxConstants.ADDNLCONNECTION)){
+                    final StringBuffer smsBody = new StringBuffer().append("Dear ").append(applicantName)
+                            .append(",Your additional water tap connection application is being rejected and ").append("the reason for rejection ")
+                            .append(approvalComent).append(" Please get in touch with ULB official to raise a new application with proper information to get a water connection.")
+                            .append("\nThanks,").append(waterTaxUtils.getCityName());
+                    smsMsg=smsBody.toString();
+                   
+                }
+                else if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE)){
                     smsMsg = waterTaxUtils.smsAndEmailBodyByCodeAndArgsForRejection("msg.changeofuserejection.sms",
                             approvalComent, applicantName);
+                    final StringBuffer smsBody = new StringBuffer().append("Dear ").append(applicantName)
+                            .append(",Your change of use  connection application is being rejected and ").append("the reason for rejection ")
+                            .append(approvalComent).append(" Please get in touch with ULB official to raise a new application with proper information to get a water connection.")
+                            .append("\nThanks,").append(waterTaxUtils.getCityName());
+                    smsMsg=smsBody.toString();
+                }
                 waterTaxUtils.sendSMSOnWaterConnection(mobileNumber, smsMsg);
             }
 
             if (waterTaxUtils.isSmsEnabled() && email != null) {
                 if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)) {
-                    body = waterTaxUtils.smsAndEmailBodyByCodeAndArgsForRejection(
-                            "msg.newconncetionrejection.email.body", approvalComent, applicantName);
-                    subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs(
-                            "msg.newconncetionrejection.email.subject", waterConnectionDetails.getApplicationNumber());
+                    
+                    final StringBuffer bodyMsg = new StringBuffer().append("Dear ").append(applicantName)
+                            .append(",\n\nYour new water tap connection application is being rejected and the reason for rejection ")
+                            .append(approvalComent).append("\n \n Please get in touch with ULB official to raise a new application with proper information to get a water connection.")
+                            .append("\n\nThis is computer generated email and does not need any signature and also please  do not reply to this email.")
+                            .append("\n\nThanks ,\n").append(waterTaxUtils.getCityName());
+                    
+                    final StringBuffer subjectMsg = new StringBuffer().append("Water tap connection application").append(waterConnectionDetails.getApplicationNumber()).append("rejected.");
+                            
+                    body=bodyMsg.toString();
+                    
+                    subject = subjectMsg.toString();
+                    
                 } else if (waterConnectionDetails.getApplicationType().getCode()
                         .equals(WaterTaxConstants.ADDNLCONNECTION)) {
-                    body = waterTaxUtils.smsAndEmailBodyByCodeAndArgsForRejection(
-                            "msg.addconncetionrejection.email.body", approvalComent, applicantName);
-                    subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs(
-                            "msg.addconncetionrejection.email.subject", waterConnectionDetails.getApplicationNumber());
+                    final StringBuffer bodyMsg = new StringBuffer().append("Dear ").append(applicantName)
+                            .append(",\n\nYour Additional water tap connection application is being rejected and the reason for rejection ")
+                            .append(approvalComent).append("\n \n Please get in touch with ULB official to raise a new application with proper information to get a water connection.")
+                            .append("\n\nThis is computer generated email and does not need any signature and also please  do not reply to this email.")
+                            .append("\n\nThanks ,\n").append(waterTaxUtils.getCityName());
+                    body=bodyMsg.toString();
+                    
+                    final StringBuffer subjectMsg = new StringBuffer().append("Water tap connection application").append(waterConnectionDetails.getApplicationNumber()).append("rejected.");
+                    subject=subjectMsg.toString();
+                    
                 } else if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE)) {
-                    body = waterTaxUtils.smsAndEmailBodyByCodeAndArgsForRejection(
-                            "msg.changeofuserejection.email.body", approvalComent, applicantName);
-                    subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs("msg.changeofuserejection.email.subject",
-                            waterConnectionDetails.getApplicationNumber());
+                    final StringBuffer bodyMsg = new StringBuffer().append("Dear ").append(applicantName)
+                            .append(",\n\nYour Change Of use water tap connection application is being rejected and the reason for rejection ")
+                            .append(approvalComent).append("\n \n Please get in touch with ULB official to raise a new application with proper information to get a water connection.")
+                            .append("\n\nThis is computer generated email and does not need any signature and also please  do not reply to this email.")
+                            .append("\n\nThanks ,\n").append(waterTaxUtils.getCityName());
+                    body=bodyMsg.toString();
+                    final StringBuffer subjectMsg = new StringBuffer().append("Water tap connection application").append(waterConnectionDetails.getApplicationNumber()).append("rejected.");
+                    subject=subjectMsg.toString();
 
                 }
                 waterTaxUtils.sendEmailOnWaterConnection(email, body, subject);
