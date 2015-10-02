@@ -223,5 +223,10 @@ public class ConsumerSearch implements Indexable {
     public void setClosureType(final Character closureType) {
         this.closureType = closureType;
     }
+    
+    public String getUlbName() {
+        return ulbName;
+    }
+
 
 }
