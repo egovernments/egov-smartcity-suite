@@ -35,6 +35,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLIST
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
@@ -70,6 +71,7 @@ import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -230,21 +232,24 @@ public class WaterTaxUtils {
 
     public String smsAndEmailBodyByCodeAndArgsForRejection(final String code, final String approvalComment,
             final String applicantName) {
+        final Locale locale = LocaleContextHolder.getLocale();
         final String smsMsg = messageSource.getMessage(code, new String[] { applicantName, approvalComment,
-                getCityName() }, null);
+                getCityName() }, locale);
         return smsMsg;
     }
 
     public String emailBodyforApprovalEmailByCodeAndArgs(final String code,
             final WaterConnectionDetails waterConnectionDetails, final String applicantName) {
+        final Locale locale = LocaleContextHolder.getLocale();
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, null);
+                        waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, locale);
         return smsMsg;
     }
 
     public String emailSubjectforEmailByCodeAndArgs(final String code, final String applicationNumber) {
-        final String emailSubject = messageSource.getMessage(code, new String[] { applicationNumber }, null);
+        final Locale locale = LocaleContextHolder.getLocale();
+        final String emailSubject = messageSource.getMessage(code, new String[] { applicationNumber }, locale);
         return emailSubject;
     }
 
@@ -347,8 +352,8 @@ public class WaterTaxUtils {
         for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails)
 
             finalDueAmount = finalDueAmount
-                    + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
-                            .getDemand().getAmtCollected().doubleValue());
+            + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
+                    .getDemand().getAmtCollected().doubleValue());
 
         return finalDueAmount;
     }
