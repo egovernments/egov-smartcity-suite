@@ -1093,7 +1093,9 @@ public class PropertyExternalService {
         propertyImpl.setBasicProperty(basicProperty);
         propertyImpl.getPropertyDetail().setFloorDetailsProxy(getFloorList(floorDetailsList));
         propertyImpl.getBasicProperty().setPropertyID(propertyID);
-        propertyImpl.setDocuments(documents);
+        if(documents != null) {
+        	propertyImpl.setDocuments(documents);
+        }
         final TaxExeptionReason taxExemptedReason = getTaxExemptionReasonByCode(floorDetailsList.get(0)
                 .getExemptionCategoryCode());
         propertyImpl.setTaxExemptedReason(taxExemptedReason);

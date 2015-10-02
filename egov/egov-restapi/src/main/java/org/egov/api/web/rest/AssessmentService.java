@@ -56,7 +56,19 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.type.TypeReference;
+import org.egov.api.model.AmenitiesDetails;
+import org.egov.api.model.AssessmentsDetails;
+import org.egov.api.model.BuildingPlanDetails;
+import org.egov.api.model.ConstructionTypeDetails;
+import org.egov.api.model.CorrespondenceAddressDetails;
+import org.egov.api.model.CreatePropertyDetails;
+import org.egov.api.model.PayPropertyTaxDetails;
+import org.egov.api.model.PropertyAddressDetails;
+import org.egov.api.model.SurroundingBoundaryDetails;
+import org.egov.api.model.VacantLandDetails;
+import org.egov.api.util.ValidationUtil;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.Document;
@@ -73,6 +85,7 @@ import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -170,12 +183,19 @@ public class AssessmentService {
      * @throws JsonMappingException
      * @throws IOException
      */
-    @RequestMapping(value = "/property/payPropertyTax", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED, produces = MediaType.APPLICATION_JSON)
-    public String payPropertyTax(@FormParam("assessmentNo") String assessmentNo,
-            @FormParam("paymentMode") String paymentMode, @FormParam("totalAmount") BigDecimal totalAmount,
-            @FormParam("paidBy") String paidBy) throws JsonGenerationException, JsonMappingException, IOException {
+    @RequestMapping(value = "/property/payPropertyTax", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    public String payPropertyTax(@RequestBody String payPropertyTaxDetails) throws JsonGenerationException, JsonMappingException, IOException {
         String responseJson = new String();
 
+        ObjectMapper mapper = new ObjectMapper();
+		mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
+		mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);
+		PayPropertyTaxDetails payPropTaxDetails = mapper.readValue(payPropertyTaxDetails, PayPropertyTaxDetails.class);
+		String assessmentNo = payPropTaxDetails.getAssessmentNo();
+		String paymentMode = payPropTaxDetails.getPaymentMode();
+		BigDecimal totalAmount = payPropTaxDetails.getTotalAmount();
+		String paidBy = payPropTaxDetails.getPaidBy();
+        
         ErrorDetails errorDetails = propertyExternalService.validatePaymentDetails(assessmentNo, paymentMode,
                 totalAmount, paidBy);
         if (null != errorDetails) {
@@ -600,7 +620,7 @@ public class AssessmentService {
      * @throws IOException
      * @throws ParseException
      */
-    @RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes=MediaType.MULTIPART_FORM_DATA, produces = MediaType.APPLICATION_JSON)
+    @RequestMapping(value = "/property/createPropertyOld", method = RequestMethod.POST, consumes=MediaType.MULTIPART_FORM_DATA, produces = MediaType.APPLICATION_JSON)
     public String createProperty(@RequestParam("propertyTypeMasterCode") String propertyTypeMasterCode,
             @RequestParam("propertyCategoryCode") String propertyCategoryCode,
             @RequestParam("apartmentCmplxCode") String apartmentCmplxCode,
@@ -658,6 +678,92 @@ public class AssessmentService {
                 completionDate, northBoundary, southBoundary, eastBoundary, westBoundary, documents);
         return getJSONResponse(newPropertyDetails);
     }
+    
+	@RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes=MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	public String createPropertyNew(@RequestBody String createPropertyDetails)
+					throws JsonGenerationException, JsonMappingException, IOException, ParseException {
+		EgovThreadLocals.setUserId(Long.valueOf("40"));
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
+		mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);
+		CreatePropertyDetails createPropDetails = mapper.readValue(createPropertyDetails, CreatePropertyDetails.class);
+		
+		String propertyTypeMasterCode = createPropDetails.getPropertyTypeMasterCode();
+		String propertyCategoryCode = createPropDetails.getPropertyCategoryCode();
+		String apartmentCmplxCode = createPropDetails.getApartmentCmplxCode();
+		List<OwnerDetails> ownerDetailsList = createPropDetails.getOwnerDetails();
+		
+		AssessmentsDetails assessmentsDetails = createPropDetails.getAssessmentDetails();
+		String mutationReasonCode = assessmentsDetails.getMutationReasonCode();
+		String parentPropertyAssessmentNo = assessmentsDetails.getParentPropertyAssessmentNo();
+		String extentOfSite = assessmentsDetails.getExtentOfSite();
+		String isExtentAppurtenantLand = assessmentsDetails.getIsExtentAppurtenantLand();
+		String occupancyCertificationNo = assessmentsDetails.getOccupancyCertificationNo();
+		Boolean isSuperStructure = assessmentsDetails.getIsSuperStructure();
+		String siteOwnerName = assessmentsDetails.getSiteOwnerName();
+		Boolean isBuildingPlanDetails = assessmentsDetails.getIsBuildingPlanDetails();
+		BuildingPlanDetails buildingPlanDetails = assessmentsDetails.getBuildingPlanDetails();
+		String regdDocNo = assessmentsDetails.getRegdDocNo();
+		String regdDocDate = assessmentsDetails.getRegdDocDate();
+		
+		PropertyAddressDetails propAddressDetails = createPropDetails.getPropertyAddressDetails(); 
+		String localityCode = propAddressDetails.getLocalityCode();
+		String street = propAddressDetails.getStreet();
+		String electionWardCode = propAddressDetails.getElectionWardCode();
+		String doorNo = propAddressDetails.getDoorNo();
+		String enumerationBlockCode = propAddressDetails.getEnumerationBlockCode();
+		String pinCode = propAddressDetails.getPinCode();
+		Boolean isCorrAddrDiff = propAddressDetails.getIsCorrAddrDiff();
+		CorrespondenceAddressDetails corrAddressDetails = propAddressDetails.getCorrAddressDetails();
+		String corrAddr1 = corrAddressDetails.getCorrAddr1();
+		String corrAddr2 = corrAddressDetails.getCorrAddr2();
+		String corrPinCode = corrAddressDetails.getCorrPinCode();
+		
+		AmenitiesDetails amenitiesDetails = createPropDetails.getAmenitiesDetails();
+		Boolean hasLift = amenitiesDetails.hasLift();
+		Boolean hasToilet = amenitiesDetails.hasToilet();
+		Boolean hasWaterTap = amenitiesDetails.hasWaterTap();
+		Boolean hasElectricity = amenitiesDetails.hasElectricity();
+		String hasAttachedBathroom = amenitiesDetails.hasAttachedBathroom();
+		String hasWaterHarvesting = amenitiesDetails.hasWaterHarvesting();
+		Boolean hasCableConnection = amenitiesDetails.hasCableConnection();
+		
+		ConstructionTypeDetails constructionTypeDetails = createPropDetails.getConstructionTypeDetails();
+		String floorTypeCode = constructionTypeDetails.getFloorTypeCode();
+		String roofTypeCode = constructionTypeDetails.getRoofTypeCode();
+		String wallTypeCode = constructionTypeDetails.getWallTypeCode();
+		String woodTypeCode = constructionTypeDetails.getWoodTypeCode();
+		
+		List<FloorDetails> floorDetailsList = createPropDetails.getFloorDetails();
+		String completionDate = floorDetailsList.get(0).getConstructionDate();
+		
+		VacantLandDetails vacantLandDetails = createPropDetails.getVacantLandDetails();
+		String surveyNumber = vacantLandDetails.getSurveyNumber();
+		String pattaNumber = vacantLandDetails.getPattaNumber();
+		Double vacantLandArea = vacantLandDetails.getVacantLandArea();
+		Double marketValue = vacantLandDetails.getMarketValue();
+		Double currentCapitalValue = vacantLandDetails.getCurrentCapitalValue();
+		String effectiveDate = vacantLandDetails.getEffectiveDate();
+		
+		
+		SurroundingBoundaryDetails surroundingBoundaryDetails = createPropDetails.getSurroundingBoundaryDetails();
+		String northBoundary = surroundingBoundaryDetails.getNorthBoundary();
+		String southBoundary = surroundingBoundaryDetails.getSouthBoundary();
+		String eastBoundary = surroundingBoundaryDetails.getEastBoundary();
+		String westBoundary = surroundingBoundaryDetails.getWestBoundary();
+		
+		List<Document> documents = null;
+		
+		NewPropertyDetails newPropertyDetails = propertyExternalService.createNewProperty(propertyTypeMasterCode,
+				propertyCategoryCode, apartmentCmplxCode, ownerDetailsList, mutationReasonCode, extentOfSite,
+				isExtentAppurtenantLand, occupancyCertificationNo, isSuperStructure, isBuildingPlanDetails, regdDocNo,
+				regdDocDate, localityCode, street, electionWardCode, doorNo, enumerationBlockCode, pinCode,
+				isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, hasLift, hasToilet, hasWaterTap, hasElectricity,
+				hasAttachedBathroom, hasWaterHarvesting, floorTypeCode, roofTypeCode, wallTypeCode, woodTypeCode,
+				floorDetailsList, surveyNumber, pattaNumber, vacantLandArea, marketValue, currentCapitalValue,
+				completionDate, northBoundary, southBoundary, eastBoundary, westBoundary, documents);
+        return getJSONResponse(newPropertyDetails);
+	}
 
     /**
      * This method is used to prepare jSON response.

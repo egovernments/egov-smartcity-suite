@@ -44,21 +44,16 @@
 		<script type="text/javascript" src="./resources/javascript/jquery/jquery-1.7.2.min.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function(){
-				$("#authenticateBtn").click(function(){
-					authenticate();
+				$("#createProeprtyBtn").click(function(){
+					createProeprty();
 				});
 			});
-			function authenticate() {
+			function createProeprty() {
 				$.ajax({
-					url : 'oauth/token',
+					url : $("#urlField").val(),
 					type : 'POST',
 					dataType : 'JSON',
-					data : {
-						grant_type : 'password',
-						client_id : 'trusted-rest-client',
-						username : 'mahesh',
-						password : 'demo'
-					},
+					data : $("#createPropertyField").val(),
 					success : function(data) {
 						console.log(JSON.stringify(data));
 					},
@@ -70,6 +65,27 @@
 		</script>
 	</head>
 	<body>
-		<input id="authenticateBtn" type="button" value="Click Here" onclick="authenticate()"/>
+		<div id="create_proeprty">
+			<table>
+				<tr>
+					<td>Create Property Request JSON</td>
+					<td><textarea rows="5" cols="50" id="createPrpertyField">
+					</textarea> /></td>
+				</tr>
+				<tr>
+					<td>URL</td>
+					<td><input type="text" id="urlField" name="urlField" value=""></td>
+				</tr>				
+				<tr>
+					<td>Request JSON</td>
+					<td><textarea rows="5" cols="50" id="createPropertyField">
+					</textarea> /></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><input id="createProeprtyBtn" type="button" value="Create"></td>
+				</tr>
+			</table>
+		</div>
 	</body>
 </html>
