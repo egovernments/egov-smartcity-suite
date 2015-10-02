@@ -39,12 +39,9 @@
 #-------------------------------------------------------------------------------*/
 
 $(':radio').change( function () {
-	alert('change fired' + $(':checked').val());
 	if ( $(':checked').val() == 'RESIDENTIAL' ) {
-		alert($('#isResidential').val());
 		$('#isResidential').val('true');
 	} else {
 		$('#isResidential').val('false');
 	}
-	alert($('#isResidential').val());
 })
