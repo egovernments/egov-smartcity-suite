@@ -62,6 +62,7 @@ public class ApplicationSearchRequest {
     private String mobileNumber;
     private String fromDate;
     private String toDate;
+    private String ulbName;
     SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -145,12 +146,27 @@ public class ApplicationSearchRequest {
         return toDate;
     }
 
+    /**
+     * @return the ulbName
+     */
+    public String getUlbName() {
+        return ulbName;
+    }
+
+    /**
+     * @param ulbName the ulbName to set
+     */
+    public void setUlbName(String ulbName) {
+        this.ulbName = ulbName;
+    }
+
     public void setSearchText(final String searchText) {
         this.searchText = searchText;
     }
 
     public Filters searchFilters() {
         final List<Filter> andFilters = new ArrayList<>(0);
+        andFilters.add(termsStringFilter("clauses.ulbname", ulbName));
         andFilters.add(queryStringFilter("searchable.applicationnumber", applicationNumber));
         andFilters.add(termsStringFilter("clauses.modulename", moduleName));
         andFilters.add(termsStringFilter("clauses.applicationtype", applicationType));

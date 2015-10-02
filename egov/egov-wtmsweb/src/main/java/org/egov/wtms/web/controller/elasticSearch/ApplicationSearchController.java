@@ -46,7 +46,10 @@ import java.util.List;
 
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
+import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.search.domain.Document;
 import org.egov.search.domain.Page;
 import org.egov.search.domain.SearchResult;
@@ -70,12 +73,14 @@ public class ApplicationSearchController {
 
     private final ApplicationSearchService applicationSearchService;
     private final SearchService searchService;
+    private final CityService cityService;
 
     @Autowired
     public ApplicationSearchController(final ApplicationSearchService applicationSearchService,
-            final SearchService searchService) {
+            final SearchService searchService, final CityService cityService) {
         this.applicationSearchService = applicationSearchService;
         this.searchService = searchService;
+        this.cityService = cityService;
     }
 
     @RequestMapping(value = "/ajax-moduleTypepopulate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -104,6 +109,8 @@ public class ApplicationSearchController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<Document> searchComplaints(@ModelAttribute final ApplicationSearchRequest searchRequest) {
+        City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+        searchRequest.setUlbName(cityWebsite.getName());
         Sort sort = Sort.by().field("searchable.applicationdate", SortOrder.DESC);
         final SearchResult searchResult = searchService.search(asList(Index.APPLICATION.toString()),
                 asList(IndexType.APPLICATIONSEARCH.toString()), searchRequest.searchQuery(),
