@@ -46,10 +46,12 @@ import java.util.List;
 
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
+import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.search.domain.Document;
 import org.egov.search.domain.Page;
 import org.egov.search.domain.SearchResult;
@@ -71,6 +73,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class WaterTaxSearchController {
 
     private final SearchService searchService;
+    private final CityService cityService;
+    
     @Autowired
     private WaterTaxUtils waterTaxUtils;
 
@@ -78,8 +82,9 @@ public class WaterTaxSearchController {
     private SecurityUtils securityUtils;
 
     @Autowired
-    public WaterTaxSearchController(final SearchService searchService, final UserService userService) {
+    public WaterTaxSearchController(final SearchService searchService, final CityService cityService) {
         this.searchService = searchService;
+        this.cityService = cityService;
     }
 
     @ModelAttribute
@@ -200,6 +205,9 @@ public class WaterTaxSearchController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<Document> searchConnection(@ModelAttribute final ConnectionSearchRequest searchRequest) {
+        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+        searchRequest.setUlbName(cityWebsite.getName());
+
         Sort sort = Sort.by().field("common.createdDate", SortOrder.DESC);
         final SearchResult searchResult = searchService.search(asList(Index.WATERTAX.toString()),
                 asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(),

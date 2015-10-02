@@ -40,6 +40,7 @@
 package org.egov.wtms.elasticSearch.entity;
 
 import static org.egov.search.domain.Filter.queryStringFilter;
+import static org.egov.search.domain.Filter.termsStringFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,7 @@ public class ConnectionSearchRequest {
     private String applicantName;
     private String locality;
     private String mobileNumber;
+    private String ulbName;
 
     private static final Logger logger = Logger.getLogger(ConnectionSearchRequest.class);
 
@@ -89,8 +91,12 @@ public class ConnectionSearchRequest {
         this.mobileNumber = mobileNumber;
     }
 
-    public String getSearchText() {
-        return searchText;
+    public String getUlbName() {
+        return ulbName;
+    }
+
+    public void setUlbName(final String ulbName) {
+        this.ulbName = ulbName;
     }
 
     public void setSearchText(final String searchText) {
@@ -98,7 +104,8 @@ public class ConnectionSearchRequest {
     }
 
     public Filters searchFilters() {
-        final List<Filter> andFilters = new ArrayList<>();
+        final List<Filter> andFilters = new ArrayList<>(0);
+        andFilters.add(termsStringFilter("clauses.ulbname", ulbName));
         andFilters.add(queryStringFilter("searchable.consumername", applicantName));
         andFilters.add(queryStringFilter("clauses.consumercode", consumerCode));
         andFilters.add(queryStringFilter("searchable.locality", locality));

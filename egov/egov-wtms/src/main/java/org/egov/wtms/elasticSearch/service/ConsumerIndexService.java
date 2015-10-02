@@ -35,11 +35,15 @@ import java.util.Iterator;
 
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
+import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.search.elastic.annotation.Indexing;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.elasticSearch.entity.ConsumerSearch;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +51,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ConsumerIndexService {
 
+    @Autowired
+    private CityService cityService;
+    
     @Indexing(name = Index.WATERTAX, type = IndexType.CONNECTIONSEARCH)
     public ConsumerSearch createConsumerIndex(final WaterConnectionDetails waterConnectionDetails,
             final AssessmentDetails assessmentDetails) {
@@ -55,9 +62,10 @@ public class ConsumerIndexService {
         Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
         if (ownerNameItr != null && ownerNameItr.hasNext())
             mobileNumber = ownerNameItr.next().getMobileNumber();
-
+        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+        
         final ConsumerSearch consumerSearch = new ConsumerSearch(waterConnectionDetails.getConnection()
-                .getConsumerCode(), mobileNumber, waterConnectionDetails.getUsageType().getName(),
+                .getConsumerCode(), mobileNumber, waterConnectionDetails.getUsageType().getName(), cityWebsite.getName(), 
                 waterConnectionDetails.getCreatedDate());
 
         consumerSearch.setZone(assessmentDetails.getBoundaryDetails().getZoneName());

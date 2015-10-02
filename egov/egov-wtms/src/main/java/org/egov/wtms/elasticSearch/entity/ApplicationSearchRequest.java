@@ -146,17 +146,11 @@ public class ApplicationSearchRequest {
         return toDate;
     }
 
-    /**
-     * @return the ulbName
-     */
     public String getUlbName() {
         return ulbName;
     }
 
-    /**
-     * @param ulbName the ulbName to set
-     */
-    public void setUlbName(String ulbName) {
+    public void setUlbName(final String ulbName) {
         this.ulbName = ulbName;
     }
 
