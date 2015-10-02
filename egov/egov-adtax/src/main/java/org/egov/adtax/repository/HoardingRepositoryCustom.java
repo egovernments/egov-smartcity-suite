@@ -48,4 +48,5 @@ public interface HoardingRepositoryCustom {
     List<Hoarding> fetchHoardingsLike(HoardingSearch hoarding);
 
     List<Object[]> fetchHoardingsBySearchType(Hoarding hoarding, String searchType);
+    List<Hoarding> fetchHoardingsBySearchParams(Hoarding hoarding);
 }

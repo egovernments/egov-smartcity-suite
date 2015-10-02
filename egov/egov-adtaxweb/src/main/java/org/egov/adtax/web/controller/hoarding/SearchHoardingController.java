@@ -39,8 +39,8 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,14 +49,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.egov.adtax.entity.AgencyWiseResult;
 import org.egov.adtax.entity.Hoarding;
 import org.egov.adtax.entity.SubCategory;
+import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.adtax.service.HoardingService;
 import org.egov.adtax.service.SubCategoryService;
-import org.egov.adtax.web.adaptor.AgencyAdaptor;
-import org.egov.adtax.web.adaptor.HoardingAdaptor;
 import org.egov.adtax.web.controller.GenericController;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -64,7 +63,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 @Controller
@@ -72,6 +70,8 @@ import com.google.gson.GsonBuilder;
 public class SearchHoardingController extends GenericController {
 
     private final HoardingService hoardingService;
+    @Autowired
+    private ApplicationProperties applicationProperties;
 
     private final SubCategoryService subCategoryService;
 
@@ -100,16 +100,17 @@ public class SearchHoardingController extends GenericController {
     public @ResponseBody void searchResult(@ModelAttribute final Hoarding hoarding, final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
         final String searchType = request.getParameter("searchType");
-        final String hoardingJSONData = commonSearchResult(hoarding, searchType);
-        IOUtils.write(hoardingJSONData, response.getWriter());
-    }
+      //  final String hoardingJSONData = commonSearchResult(hoarding, searchType);
+        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+                .toJson(hoardingService.getHoardingSearchResult(hoarding, searchType)) + "}", response.getWriter());
+      }
 
     public String commonSearchResult(final Hoarding hoarding, final String searchType) {
-        final List<Object[]> searchResult = hoardingService.searchBySearchType(hoarding, searchType);
-        return new StringBuilder("{ \"data\":").append(toJSON(searchResult, searchType)).append("}").toString();
+        final List<HoardingSearch> searchResult = hoardingService.getHoardingSearchResult(hoarding, searchType);
+        return new StringBuilder("{ \"data\":").append(searchResult).append("}").toString();
     }
 
-    private String toJSON(final Object object, final String searchType) {
+    /*private String toJSON(final Object object, final String searchType) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         Gson gson = null;
         if ("hoarding".equalsIgnoreCase(searchType))
@@ -119,5 +120,5 @@ public class SearchHoardingController extends GenericController {
         final String json = gson.toJson(object);
         return json;
     }
-
+     */
 }

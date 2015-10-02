@@ -57,7 +57,7 @@ public class AdvertisementBillGeneratorController {
                return "collectAdvtax-error";
                } 
            
-            if (advertisementBillable != null) {
+            if (collectionType != null && !"".equals(collectionType)) {
                 advertisementBillable.setCollectionType(collectionType);
             } else {
                 advertisementBillable.setCollectionType("Hoarding");

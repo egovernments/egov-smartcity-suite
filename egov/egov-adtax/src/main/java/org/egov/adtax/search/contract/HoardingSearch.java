@@ -38,6 +38,7 @@
  */
 package org.egov.adtax.search.contract;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.egov.adtax.entity.enums.HoardingStatus;
@@ -56,7 +57,9 @@ public class HoardingSearch {
     private Long adminBoundryParent;
     private Long adminBoundry;
     private HoardingStatus status;
-
+    private BigDecimal pendingDemandAmount;
+    private BigDecimal penaltyAmount;
+    private int totalHoardingInAgency;
     public String getHoardingNumber() {
         return hoardingNumber;
     }
@@ -160,4 +163,29 @@ public class HoardingSearch {
     public void setStatus(final HoardingStatus status) {
         this.status = status;
     }
+
+    public BigDecimal getPendingDemandAmount() {
+        return pendingDemandAmount;
+    }
+
+    public void setPendingDemandAmount(BigDecimal pendingDemandAmount) {
+        this.pendingDemandAmount = pendingDemandAmount;
+    }
+
+    public BigDecimal getPenaltyAmount() {
+        return penaltyAmount;
+    }
+
+    public void setPenaltyAmount(BigDecimal penaltyAmount) {
+        this.penaltyAmount = penaltyAmount;
+    }
+
+    public int getTotalHoardingInAgency() {
+        return totalHoardingInAgency;
+    }
+
+    public void setTotalHoardingInAgency(int totalHoardingInAgency) {
+        this.totalHoardingInAgency = totalHoardingInAgency;
+    }
+    
 }

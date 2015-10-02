@@ -1,12 +1,9 @@
 $(document).ready(function(){
-	
 	try{
 		$.fn.dataTable.moment( 'DD/MM/YYYY' );
 	}catch(e){
 		
 	}
-	
-	
 	var agency = new Bloodhound({
 		datumTokenizer: function (datum) {
 			return Bloodhound.tokenizers.whitespace(datum.value);
@@ -96,9 +93,10 @@ $(document).ready(function(){
 	$('#search').click(function(e){
 		oTable= $('#adtax_search');
 		 var radioValue = $("input[name='searchType']:checked").val();
-		 var radioBtnVal = radioValue.replace(/^"?(.+?)"?$/,'$1');
+		 var radioBtnVal = radioValue.replace(/^"?(.+?)"?$/,'$1'); 
 
 		if(radioBtnVal=='hoarding'){
+	//		oTable.dataTable().clear();
 		oTable.dataTable({
 			"sPaginationType": "bootstrap",
 			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
@@ -107,17 +105,19 @@ $(document).ready(function(){
 			"bDestroy": true,
 			"ajax": "/adtax/hoarding/search-list?"+$("#hoardingsearchform").serialize(),
 			"columns" : [
-			  { "mData" : "hoardingNumber",
-				"sTitle" : "Hoarding No"
-			  },
-			  { "mData" : "agency",
-				"sTitle" : "Agency"
-			  },
-			  { "mData" : "hoardingId",
-				"visible": false
-			  }]
+						  { "data" : "hoardingNumber", "title":"Hoarding No."},
+						  { "data" : "applicationNumber", "title": "Application No."},
+						  { "data" : "applicationFromDate", "title": "Application Date"},
+						  { "data" : "agencyName", "title": "Agency"},
+						  { "data" : "pendingDemandAmount", "title": "Amount"},
+						  { "data" : "penaltyAmount", "title": "Penalty Amount"},
+						  { "data" : null, "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Collect</button>&nbsp;'}
+
+						  ],
+						  "aaSorting": [[2, 'desc']] 
 				});
 		} else {
+			//oTable.dataTable().clear();
 			oTable.dataTable({
 				"sPaginationType": "bootstrap",
 				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
@@ -126,15 +126,15 @@ $(document).ready(function(){
 				"bDestroy": true,
 				"ajax": "/adtax/hoarding/search-list?"+$("#hoardingsearchform").serialize(),
 				"columns" : [
-				  { "mData"  : "agency",
-					"sTitle" : "Agency"
-				  },
-				  { "mData"  : "noOfHoardings",
-					"sTitle" : "No of Hoardings"
-				  },
-				  { "mData"  : "agencyId",
-					"visible": false
-				  }]
+							  { "data" : "agencyName", "title": "Agency"},
+							  { "data" : "totalHoardingInAgency", "title": "No.of hoarding"},
+							  { "data" : "pendingDemandAmount", "title": "Total Amount"},
+							  { "data" : "penaltyAmount", "title": "Penalty Amount"},
+							  { "data" : "status", "title": "Hoarding Status"}	,
+							  { "data" : null, "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary collect-agencyWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Collect</button>&nbsp;'}
+
+							  ],
+							  "aaSorting": [[2, 'desc']]
 					});
 		}
 		e.stopPropagation();
@@ -168,9 +168,17 @@ $(document).ready(function(){
 		var hoardingNo = datatbl.fnGetData($(this).parent().parent().parent(),0);
 		window.open("update/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
+	
+	
 	$("#search-update-result-table").on('click','tbody tr td i.fa-eye',function(e) {
 		var hoardingNo = datatbl.fnGetData($(this).parent().parent().parent(),0);
 		window.open("view/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+	});
+	
+	$("#adtax_search").on('click','tbody tr td .collect-hoardingWiseFee',function(event) {
+		var hoardingNo = oTable.fnGetData($(this).parent().parent(),0);
+		window.open("generatebill/hoarding/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+
 	});
 });
 

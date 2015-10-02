@@ -63,9 +63,9 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.agency.name"/></label>
                         <div class="col-sm-3 add-margin">
-                            <form:input type="text" class="form-control" id="agency" path="agency.name"/>
-                            <form:errors path="agency.name" cssClass="error-msg"/>
-                        </div>
+                            <input type="text" class="form-control typeahead" autocomplete="off">
+							<form:hidden path="agency" id="agencyId" value="${hoarding.agency}" />
+                        </div> 
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.hoarding.no"/></label>
                         <div class="col-sm-3 add-margin">
                             <form:input type="text" class="form-control" id="hoardingnumber" path="hoardingNumber"/>
@@ -138,18 +138,20 @@
         	<div class="row">
        			<div class="text-center">
        				<button type="button" class="btn btn-primary" id="search"><spring:message code="lbl.submit"/></button>
+          		    <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
           		    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
-          		</div>
+          	</div>
         	</div>
         </form:form>
-        <br>
+         <br>
         <table class="table table-bordered datatable dt-responsive" id="adtax_search"></table>
 	</div>
 </div>
-
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/app/js/searchadtax.js'/>"></script>

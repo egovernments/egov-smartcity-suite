@@ -1,3 +1,42 @@
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+   accountability and the service delivery of the government  organizations.
+
+    Copyright (C) <2015>  eGovernments Foundation
+
+    The updated version of eGov suite of products as by eGovernments Foundation
+    is available at http://www.egovernments.org
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see http://www.gnu.org/licenses/ or
+    http://www.gnu.org/licenses/gpl.html .
+
+    In addition to the terms of the GPL license to be adhered to in using this
+    program, the following additional terms are to be complied with:
+
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
+
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
+
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
+
+  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.adtax.service.collection;
 
 import java.math.BigDecimal;
@@ -34,13 +73,14 @@ public class AdvertisementTaxCollection extends TaxCollection {
     private AdvertisementDemandService advertisementDemandService;
 
     @Override
-    public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid) {
+    public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber,
+            final BigDecimal actualAmountPaid) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void updateDemandDetails(BillReceiptInfo billRcptInfo) {
+    public void updateDemandDetails(final BillReceiptInfo billRcptInfo) {
         totalAmount = billRcptInfo.getTotalAmount();
         final EgDemand demand = getDemandByBillReferenceNumber(Long.valueOf(billRcptInfo.getBillReferenceNum()));
         final String indexNo = ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader()
@@ -51,13 +91,11 @@ public class AdvertisementTaxCollection extends TaxCollection {
                     + " and receipt event is " + billRcptInfo.getEvent() + ". Total Receipt amount is." + totalAmount
                     + " with receipt no." + billRcptInfo.getReceiptNum());
         }
-        if (billRcptInfo.getEvent().equals(EVENT_INSTRUMENT_BOUNCED)) {
+        if (billRcptInfo.getEvent().equals(EVENT_INSTRUMENT_BOUNCED))
             updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
-
-        } else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED)) {
+        else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED))
             updateDemandWithcollectdTaxDetails(demand, billRcptInfo, EVENT_RECEIPT_CREATED);
-
-        } else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED)) {
+        else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED)) {
             updateDemandWithcollectdTaxDetails(demand, billRcptInfo, EVENT_RECEIPT_CANCELLED);
             updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
 
@@ -67,12 +105,12 @@ public class AdvertisementTaxCollection extends TaxCollection {
 
     }
 
-    private BigDecimal updateDemandWithcollectdTaxDetails(EgDemand demand, BillReceiptInfo billReceiptInfo,
-            String eventType) {
+    private BigDecimal updateDemandWithcollectdTaxDetails(final EgDemand demand, final BillReceiptInfo billReceiptInfo,
+            final String eventType) {
 
         BigDecimal totalAmountCollected = BigDecimal.ZERO;
 
-        for (ReceiptAccountInfo recAccInfo : billReceiptInfo.getAccountDetails()) {
+        for (final ReceiptAccountInfo recAccInfo : billReceiptInfo.getAccountDetails()) {
             String demandMasterReasonDesc = null;
             if (recAccInfo.getDescription() != null) {
                 demandMasterReasonDesc = recAccInfo
@@ -103,7 +141,7 @@ public class AdvertisementTaxCollection extends TaxCollection {
         String demandMasterReasonDesc = null;
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-                    && !rcptAccInfo.getIsRevenueAccount()) {
+            && !rcptAccInfo.getIsRevenueAccount()) {
                 demandMasterReasonDesc = billRcptInfo
                         .getDescription()
                         .substring(
@@ -122,7 +160,7 @@ public class AdvertisementTaxCollection extends TaxCollection {
                                             + " for demandDetail " + demandDetail);
 
                         demandDetail
-                                .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                        .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
 
                     }
             }
@@ -138,26 +176,24 @@ public class AdvertisementTaxCollection extends TaxCollection {
         }
     }
 
-    private BigDecimal createOrUpdateDemandDetails(String demandMasterReasonDesc, EgDemand demand,
-            BillReceiptInfo billReceiptInfo, ReceiptAccountInfo recAccInfo) {
+    private BigDecimal createOrUpdateDemandDetails(final String demandMasterReasonDesc, final EgDemand demand,
+            final BillReceiptInfo billReceiptInfo, final ReceiptAccountInfo recAccInfo) {
         BigDecimal totalAmountCollected = BigDecimal.ZERO;
 
         Boolean demandReasonPartOfDemand = false;
 
         if (recAccInfo.getCrAmount() != null && recAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) > 0) {
             // updating the existing demand detail..
-            for (EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
+            for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
+                if (demandDetail.getEgDemandReason() != null
+                && demandDetail.getEgDemandReason().getEgDemandReasonMaster() != null
+                        && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().trim()
+                                .equalsIgnoreCase(demandMasterReasonDesc)) {
+                    // && (demandDetail.getAmount().compareTo(BigDecimal.ZERO) >
+                    // 0)) {
 
-                if ((demandDetail.getEgDemandReason() != null
-                        && demandDetail.getEgDemandReason().getEgDemandReasonMaster() != null && demandDetail
-                        .getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().trim()
-                        .equalsIgnoreCase(demandMasterReasonDesc))){
-                        //&& (demandDetail.getAmount().compareTo(BigDecimal.ZERO) > 0)) {
-                   
-                    if(AdvertisementTaxConstants.DEMANDREASON_PENALTY.equalsIgnoreCase(demandMasterReasonDesc))
-                    {
-                        demandDetail.setAmount( demandDetail.getAmount().add( recAccInfo.getCrAmount()));
-                    }
+                    if (AdvertisementTaxConstants.DEMANDREASON_PENALTY.equalsIgnoreCase(demandMasterReasonDesc))
+                        demandDetail.setAmount(demandDetail.getAmount().add(recAccInfo.getCrAmount()));
                     demandDetail.addCollected(recAccInfo.getCrAmount());
                     /*
                      * Save bill detail and demand deatail relation in the
@@ -165,20 +201,19 @@ public class AdvertisementTaxCollection extends TaxCollection {
                      */
                     persistCollectedReceipts(demandDetail, billReceiptInfo.getReceiptNum(), totalAmount,
                             billReceiptInfo.getReceiptDate(), recAccInfo.getCrAmount());
-                   
+
                     demand.setAmtCollected(demand.getAmtCollected().add(recAccInfo.getCrAmount()));
                     totalAmountCollected = totalAmountCollected.add(recAccInfo.getCrAmount());
                     demandDetail.setModifiedDate(new Date());
                     demandReasonPartOfDemand = true;
                 }
-
-            }
             if (!demandReasonPartOfDemand) {
                 // Add new entry as part of demand. Eg: penalty is collected as
                 // part of collection system.
-                EgDemandDetails demandDetail = advertisementDemandService.createDemandDetails(recAccInfo.getCrAmount(),
-                        advertisementDemandService.getDemandReasonByCodeAndInstallment(demandMasterReasonDesc,
-                                advertisementDemandService.getCurrentInstallment()),recAccInfo.getCrAmount());
+                final EgDemandDetails demandDetail = advertisementDemandService.createDemandDetails(recAccInfo
+                        .getCrAmount(), advertisementDemandService.getDemandReasonByCodeAndInstallment(
+                        demandMasterReasonDesc, advertisementDemandService.getCurrentInstallment()), recAccInfo
+                        .getCrAmount());
                 demand.addEgDemandDetails(demandDetail);
             }
             demand.setModifiedDate(new Date());
@@ -189,10 +224,9 @@ public class AdvertisementTaxCollection extends TaxCollection {
     private EgDemand getDemandByBillReferenceNumber(final Long billId) {
         EgDemand egDemand = null;
         if (billId != null) {
-            EgBill egBill = (EgBill) egBillDAO.findById(billId, false);
-            if (egBill != null) {
+            final EgBill egBill = egBillDAO.findById(billId, false);
+            if (egBill != null)
                 egDemand = egBill.getEgDemand();
-            }
         }
         return egDemand;
     }
