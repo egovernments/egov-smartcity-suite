@@ -2209,7 +2209,7 @@ public class PropertyService {
                     + "&applicationType=" + applictionType;
             if (null == applicationIndex) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
-                        property.getApplicationNo(), property.getCreatedDate(), applictionType, property
+                        property.getApplicationNo(), new Date(), applictionType, property
                                 .getBasicProperty().getFullOwnerName(), property.getState().getValue(), url, property
                                 .getBasicProperty().getAddress().toString());
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());

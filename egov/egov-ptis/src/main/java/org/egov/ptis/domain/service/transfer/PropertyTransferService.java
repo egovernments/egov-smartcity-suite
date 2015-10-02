@@ -38,6 +38,7 @@
  ******************************************************************************/
 package org.egov.ptis.domain.service.transfer;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
@@ -89,6 +90,7 @@ import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertySource;
 import org.egov.ptis.domain.entity.property.PtApplicationType;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.hibernate.FlushMode;
 import org.joda.time.LocalDate;
@@ -158,6 +160,9 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
 
     @Autowired
     private PropertyTaxBillable propertyTaxBillable;
+    
+    @Autowired
+    private PropertyService propertyService;
 
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
@@ -171,6 +176,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         basicProperty.getPropertyMutations().add(propertyMutation);
         basicProperty.setUnderWorkflow(true);
         processAndStoreDocument(propertyMutation.getDocuments());
+        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         basicPropertyService.persist(basicProperty);
     }
 
@@ -195,11 +201,13 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         checkAllMandatoryDocumentsAttached(propertyMutation);
         createUserIfNotExist(propertyMutation.getTransfereeInfos());
         basicProperty.setUnderWorkflow(true);
+        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         basicPropertyService.persist(basicProperty);
     }
 
     @Transactional
     public void viewPropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
+        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         basicPropertyService.persist(basicProperty);
     }
 
@@ -307,6 +315,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         approvePropertyTransfer(basicProperty, propertyMutation);
         propertyMutation.transition().end();
         basicProperty.setUnderWorkflow(false);
+        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         basicPropertyService.persist(basicProperty);
         return reportService.createReport(reportInput);
     }

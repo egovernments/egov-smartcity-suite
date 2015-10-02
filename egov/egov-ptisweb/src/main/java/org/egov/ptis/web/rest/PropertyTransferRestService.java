@@ -201,9 +201,6 @@ public class PropertyTransferRestService {
 
                 transitionWorkFlow(propertyMutation, basicProperty);
                 propertyTransferService.initiatePropertyTransfer(basicProperty, propertyMutation);
-                propertyService.updateIndexes(propertyMutation,
-                        PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
-
                 responseJson = convertPropertyMutationToJson(propertyMutation);
             }
         } else {

@@ -164,8 +164,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             NoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
         noticeService.saveNotice(noticeNo, noticeType, basicProperty, NoticePDF);
         endWorkFlow(basicProperty);
-        basicPropertyService.update(basicProperty);
         propService.updateIndexes(property, APPLICATION_TYPE_ALTER_ASSESSENT);
+        basicPropertyService.update(basicProperty);
         return NOTICE;
     }
 

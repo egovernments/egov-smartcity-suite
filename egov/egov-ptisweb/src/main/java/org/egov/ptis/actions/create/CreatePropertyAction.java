@@ -283,8 +283,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         // this should be appending to messgae
         transitionWorkFlow(property);
         basicPropertyService.applyAuditing(property.getState());
-        basicPropertyService.persist(basicProperty);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        basicPropertyService.persist(basicProperty);
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         setBasicProp(basicProperty);
         setAckMessage("Property Data Saved Successfully in the System and forwarded to : ");
@@ -433,8 +433,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicProp.setUnderWorkflow(true);
         basicPropertyService.applyAuditing(property.getState());
         basicProp.addProperty(property);
-        basicPropertyService.persist(basicProp);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        basicPropertyService.persist(basicProp);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("forward: Property forward started " + property);
         final long startTimeMillis = System.currentTimeMillis();
@@ -509,8 +509,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         approved = true;
         setWardId(basicProp.getPropertyID().getWard().getId());
         basicPropertyService.applyAuditing(property.getState());
-        basicPropertyService.update(basicProp);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        basicPropertyService.update(basicProp);
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         approverName = "";
         if (propService.isEmployee(property.getCreatedBy()))
@@ -535,8 +535,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             LOGGER.debug("reject: Property rejection started");
         basicPropertyService.applyAuditing(property.getState());
         basicProp.setUnderWorkflow(true);
-        basicPropertyService.persist(basicProp);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        basicPropertyService.persist(basicProp);
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (propService.isEmployee(property.getCreatedBy()))
             propertyInitiatedBy = property.getCreatedBy().getName();

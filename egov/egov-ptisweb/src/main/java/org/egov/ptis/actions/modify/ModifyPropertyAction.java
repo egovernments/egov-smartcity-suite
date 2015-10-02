@@ -561,10 +561,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         transitionWorkFlow(propertyModel);
         basicProp.setUnderWorkflow(Boolean.TRUE);
         basicPropertyService.applyAuditing(propertyModel.getState());
-        basicPropertyService.update(basicProp);
         propService.updateIndexes(propertyModel,
                 PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
                         : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
+        basicPropertyService.update(basicProp);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         prepareAckMsg();
         buildEmailandSms(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
@@ -597,10 +597,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 Long.valueOf(getModelId()));
         LOGGER.debug("forwardView: Workflow property: " + propertyModel);
         transitionWorkFlow(propertyModel);
-        basicPropertyService.update(basicProp);
         propService.updateIndexes(propertyModel,
                 PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
                         : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
+        basicPropertyService.update(basicProp);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         prepareAckMsg();
         buildEmailandSms(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
@@ -650,11 +650,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)
                 || PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn))
             updateAddress();
-
-        basicPropertyService.update(basicProp);
         propService.updateIndexes(propertyModel,
                 PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
                         : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
+        basicPropertyService.update(basicProp);
         setBasicProp(basicProp);
         setAckMessage(getText(PROPERTY_MODIFY_APPROVE_SUCCESS, new String[] { getModifyReasonString(),
                 propertyModel.getBasicProperty().getUpicNo() }));
@@ -693,10 +692,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         setBasicProp(basicProperty);
         LOGGER.debug("reject: BasicProperty: " + basicProperty);
         transitionWorkFlow(propertyModel);
-        propertyImplService.update(propertyModel);
         propService.updateIndexes(propertyModel,
                 PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
                         : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
+        propertyImplService.update(propertyModel);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         String username = "";
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForPositon(propertyModel

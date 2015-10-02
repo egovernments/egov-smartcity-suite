@@ -215,7 +215,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
-        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         setAckMessage("Transfer of ownership data saved successfully in the system and forwarded to : ");
         setAssessmentNoMessage(" with assessment number : ");
         return ACK;
@@ -283,7 +282,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         }
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
-        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         setAssessmentNoMessage(" with assessment number : ");
         return ACK;
     }
@@ -295,7 +293,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
-        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         if (propertyService.isEmployee(propertyMutation.getCreatedBy()))
             mutationInitiatedBy = propertyMutation.getCreatedBy().getName();
         else
@@ -327,7 +324,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     .getUsername();
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
-        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         setAckMessage("Transfer of ownership is created successfully in the system and forwarded to : ");
         setAssessmentNoMessage(" for notice generation for the property : ");
         return ACK;
