@@ -62,154 +62,156 @@ import org.egov.infstr.models.BaseModel;
  * @version 2.00
  * @since 2.00
  */
-@Unique(id = "id", tableName = "egpt_property_usage_master", fields = { "usageName" }, columnName = { "usg_name" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "egpt_property_usage_master", fields = { "usageName" }, columnName = { "usg_name" }, enableDfltMsg = true, message = "propertyusage.isunique")
 public class PropertyUsage extends BaseModel {
 
-    private String usageName;
-    private String usageCode;
-    private Integer orderId;
-    private Float usagePercentage;
-    private Date lastUpdatedTimeStamp;
-    private Date fromDate;
-    private Date toDate;
-    private Integer isEnabled;
-    private Boolean isResidential;
+	private String usageName;
+	private String usageCode;
+	private Integer orderId;
+	private Float usagePercentage;
+	private Date lastUpdatedTimeStamp;
+	private Date fromDate;
+	private Date toDate;
+	private Integer isEnabled;
+	private Boolean isResidential;
 
-    /**
-     * @return Returns if the given Object is equal to PropertyUsage
-     */
-    public boolean equals(Object that) {
+	/**
+	 * @return Returns if the given Object is equal to PropertyUsage
+	 */
+	public boolean equals(Object that) {
 
-        if (that == null)
-            return false;
+		if (that == null)
+			return false;
 
-        if (this == that)
-            return true;
+		if (this == that)
+			return true;
 
-        if (that.getClass() != this.getClass())
-            return false;
-        final PropertyUsage thatPropUsage = (PropertyUsage) that;
+		if (that.getClass() != this.getClass())
+			return false;
+		final PropertyUsage thatPropUsage = (PropertyUsage) that;
 
-        if (this.getId() != null && thatPropUsage.getId() != null) {
-            if (getId().equals(thatPropUsage.getId()))
-                return true;
-            else
-                return false;
-        } else if (this.getUsageName() != null && thatPropUsage.getUsageName() != null) {
-            if (getUsageName().equals(thatPropUsage.getUsageName()))
-                return true;
-            else
-                return false;
-        } else {
-            return false;
-        }
-    }
+		if (this.getId() != null && thatPropUsage.getId() != null) {
+			if (getId().equals(thatPropUsage.getId()))
+				return true;
+			else
+				return false;
+		} else if (this.getUsageName() != null
+				&& thatPropUsage.getUsageName() != null) {
+			if (getUsageName().equals(thatPropUsage.getUsageName()))
+				return true;
+			else
+				return false;
+		} else {
+			return false;
+		}
+	}
 
-    /**
-     * @return Returns the hashCode
-     */
-    public int hashCode() {
+	/**
+	 * @return Returns the hashCode
+	 */
+	public int hashCode() {
 
-        int hashCode = 0;
-        if (this.getId() != null)
-            hashCode += this.getId().hashCode();
+		int hashCode = 0;
+		if (this.getId() != null)
+			hashCode += this.getId().hashCode();
 
-        if (this.getUsageName() != null)
-            hashCode += this.getUsageName().hashCode();
-        return hashCode;
-    }
+		if (this.getUsageName() != null)
+			hashCode += this.getUsageName().hashCode();
+		return hashCode;
+	}
 
-    /**
-     * @return Returns the boolean after validating the current object
-     */
-    public boolean validatePropUsage() {
+	/**
+	 * @return Returns the boolean after validating the current object
+	 */
+	public boolean validatePropUsage() {
 
-        if (getUsageName() == null)
-            throw new ApplicationRuntimeException(
-                    "In PropertyUsage Validate :Attribute 'Usage Name' is not set, Please Check !!");
-        if (getUsagePercentage() == null)
-            throw new ApplicationRuntimeException(
-                    "In PropertyUsage Validate :Attribute 'Usage Percentage / Factor' is not set, Please Check !!");
-        return true;
-    }
+		if (getUsageName() == null)
+			throw new ApplicationRuntimeException(
+					"In PropertyUsage Validate :Attribute 'Usage Name' is not set, Please Check !!");
+		if (getUsagePercentage() == null)
+			throw new ApplicationRuntimeException(
+					"In PropertyUsage Validate :Attribute 'Usage Percentage / Factor' is not set, Please Check !!");
+		return true;
+	}
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(id).append("|").append(usageCode).append("|").append(usagePercentage);
-        return sb.toString();
-    }
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(id).append("|").append(usageCode).append("|")
+				.append(usagePercentage);
+		return sb.toString();
+	}
 
-    public String getUsageName() {
-        return usageName;
-    }
+	public String getUsageName() {
+		return usageName;
+	}
 
-    public void setUsageName(String usageName) {
-        this.usageName = usageName;
-    }
+	public void setUsageName(String usageName) {
+		this.usageName = usageName;
+	}
 
-    public String getUsageCode() {
-        return usageCode;
-    }
+	public String getUsageCode() {
+		return usageCode;
+	}
 
-    public void setUsageCode(String usageCode) {
-        this.usageCode = usageCode;
-    }
+	public void setUsageCode(String usageCode) {
+		this.usageCode = usageCode;
+	}
 
-    public Integer getOrderId() {
-        return orderId;
-    }
+	public Integer getOrderId() {
+		return orderId;
+	}
 
-    public void setOrderId(Integer orderId) {
-        this.orderId = orderId;
-    }
+	public void setOrderId(Integer orderId) {
+		this.orderId = orderId;
+	}
 
-    public Float getUsagePercentage() {
-        return usagePercentage;
-    }
+	public Float getUsagePercentage() {
+		return usagePercentage;
+	}
 
-    public void setUsagePercentage(Float usagePercentage) {
-        this.usagePercentage = usagePercentage;
-    }
+	public void setUsagePercentage(Float usagePercentage) {
+		this.usagePercentage = usagePercentage;
+	}
 
-    public Date getLastUpdatedTimeStamp() {
-        return lastUpdatedTimeStamp;
-    }
+	public Date getLastUpdatedTimeStamp() {
+		return lastUpdatedTimeStamp;
+	}
 
-    public void setLastUpdatedTimeStamp(Date lastUpdatedTimeStamp) {
-        this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
-    }
+	public void setLastUpdatedTimeStamp(Date lastUpdatedTimeStamp) {
+		this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
+	}
 
-    public Date getFromDate() {
-        return fromDate;
-    }
+	public Date getFromDate() {
+		return fromDate;
+	}
 
-    public void setFromDate(Date fromDate) {
-        this.fromDate = fromDate;
-    }
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
 
-    public Date getToDate() {
-        return toDate;
-    }
+	public Date getToDate() {
+		return toDate;
+	}
 
-    public void setToDate(Date toDate) {
-        this.toDate = toDate;
-    }
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
 
-    public Integer getIsEnabled() {
-        return isEnabled;
-    }
+	public Integer getIsEnabled() {
+		return isEnabled;
+	}
 
-    public void setIsEnabled(Integer isEnabled) {
-        this.isEnabled = isEnabled;
-    }
+	public void setIsEnabled(Integer isEnabled) {
+		this.isEnabled = isEnabled;
+	}
 
-    public Boolean getIsResidential() {
-        return isResidential;
-    }
+	public Boolean getIsResidential() {
+		return isResidential;
+	}
 
-    public void setIsResidential(Boolean isResidential) {
-        this.isResidential = isResidential;
-    }
-   
+	public void setIsResidential(Boolean isResidential) {
+		this.isResidential = isResidential;
+	}
+
 }
