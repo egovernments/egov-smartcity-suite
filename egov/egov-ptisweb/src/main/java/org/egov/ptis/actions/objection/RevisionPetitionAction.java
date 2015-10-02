@@ -361,6 +361,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("ObjectionAction | Create | start " + objection);
         // setupWorkflowDetails();
+        
+        if (objection != null && objection.getBasicProperty() != null && objection.getBasicProperty().isUnderWorkflow()) {
+            addActionMessage(getText("property.state.objected",
+                    new String[] { objection.getBasicProperty().getUpicNo() }));
+            return STRUTS_RESULT_MESSAGE;
+        }
+        
         if (objection.getRecievedOn() == null) {
             addActionMessage(getText("mandatory.fieldvalue.receivedOn"));
             return NEW;
