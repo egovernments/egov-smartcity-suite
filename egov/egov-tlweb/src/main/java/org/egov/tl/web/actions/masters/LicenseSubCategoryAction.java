@@ -15,7 +15,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.tl.domain.entity.LicenseCategory;
-import org.egov.tl.domain.entity.SubCategory;
+import org.egov.tl.domain.entity.LicenseSubCategory;
 import org.egov.tl.domain.service.masters.LicenseCategoryService;
 import org.egov.tl.domain.service.masters.LicenseSubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class LicenseSubCategoryAction extends BaseFormAction {
      *
      */
     private static final long serialVersionUID = 6242612156153747913L;
-    private SubCategory subCategory = new SubCategory();
+    private LicenseSubCategory subCategory = new LicenseSubCategory();
     private Long id;
     private Long categoryId;
     public static final String SEARCH = "search";
@@ -60,9 +60,9 @@ public class LicenseSubCategoryAction extends BaseFormAction {
         setLicenseCategoryMap(getFormattedCategoryMap(licenseCategoryService.findAllBy("from LicenseCategory order by id")));
         // In Modify and View Mode Load category dropdown.
         if (userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT) || userMode.equalsIgnoreCase(VIEW)))
-            setLicenseSubCategoryMap(getFormattedSubCategoryMap(licenseSubCategoryService.findAllBy("from org.egov.tl.domain.entity.SubCategory order by id")));
+            setLicenseSubCategoryMap(getFormattedSubCategoryMap(licenseSubCategoryService.findAllBy("from org.egov.tl.domain.entity.LicenseSubCategory order by id")));
         if (getId() != null){
-            subCategory = licenseSubCategoryService.find("from org.egov.tl.domain.entity.SubCategory where id=?", getId());
+            subCategory = licenseSubCategoryService.find("from org.egov.tl.domain.entity.LicenseSubCategory where id=?", getId());
             setCategoryId(subCategory.getCategory().getId());
         }
     }
@@ -83,9 +83,9 @@ public class LicenseSubCategoryAction extends BaseFormAction {
      * @param licenseSubCategoryList
      * @return
      */
-    public static Map<Long, String> getFormattedSubCategoryMap(final List<SubCategory> licenseSubCategoryList) {
+    public static Map<Long, String> getFormattedSubCategoryMap(final List<LicenseSubCategory> licenseSubCategoryList) {
         final Map<Long, String> subCategoryMap = new TreeMap<Long, String>();
-        for (final SubCategory licenseSubCategory : licenseSubCategoryList)
+        for (final LicenseSubCategory licenseSubCategory : licenseSubCategoryList)
             subCategoryMap.put(licenseSubCategory.getId(),
                     licenseSubCategory.getName().concat(" ~ ").concat(licenseSubCategory.getCode()));
         return subCategoryMap;
@@ -186,11 +186,11 @@ public class LicenseSubCategoryAction extends BaseFormAction {
         this.licenseSubCategoryMap = licenseSubCategoryMap;
     }
 
-    public SubCategory getSubCategory() {
+    public LicenseSubCategory getSubCategory() {
         return subCategory;
     }
 
-    public void setSubCategory(SubCategory subCategory) {
+    public void setSubCategory(LicenseSubCategory subCategory) {
         this.subCategory = subCategory;
     }
 

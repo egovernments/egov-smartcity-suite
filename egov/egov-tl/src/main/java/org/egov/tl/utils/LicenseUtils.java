@@ -89,7 +89,7 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseStatus;
 import org.egov.tl.domain.entity.LicenseStatusValues;
-import org.egov.tl.domain.entity.SubCategory;
+import org.egov.tl.domain.entity.LicenseSubCategory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -330,8 +330,8 @@ public class LicenseUtils {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public List<SubCategory> getAllTradeNames(final String simpleName) {
-        return persistenceService.findAllBy("from org.egov.tl.domain.entity.SubCategory where licenseType.name=?",
+    public List<LicenseSubCategory> getAllTradeNames(final String simpleName) {
+        return persistenceService.findAllBy("from org.egov.tl.domain.entity.LicenseSubCategory where licenseType.name=?",
                 simpleName);
     }
 
@@ -352,8 +352,8 @@ public class LicenseUtils {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public List<SubCategory> getAllTradeNamesByLicenseSubType(final String subType) {
-        return persistenceService.findAllBy("from org.egov.tl.domain.entity.SubCategory where licenseSubType.code=?",
+    public List<LicenseSubCategory> getAllTradeNamesByLicenseSubType(final String subType) {
+        return persistenceService.findAllBy("from org.egov.tl.domain.entity.LicenseSubCategory where licenseSubType.code=?",
                 subType);
     }
 

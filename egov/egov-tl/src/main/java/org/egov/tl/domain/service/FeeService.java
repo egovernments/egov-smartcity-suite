@@ -48,7 +48,7 @@ import org.egov.tl.domain.entity.FeeMatrix;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseAppType;
 import org.egov.tl.domain.entity.NatureOfBusiness;
-import org.egov.tl.domain.entity.SubCategory;
+import org.egov.tl.domain.entity.LicenseSubCategory;
 import org.egov.tl.utils.Constants;
 
 public class FeeService extends PersistenceService<FeeMatrix, Long> {
@@ -59,7 +59,7 @@ public class FeeService extends PersistenceService<FeeMatrix, Long> {
     public static final String HOM = "HOM";
 
     @SuppressWarnings("unchecked")
-    public List<FeeMatrix> getFeeList(final SubCategory tradeName, final LicenseAppType appType,
+    public List<FeeMatrix> getFeeList(final LicenseSubCategory tradeName, final LicenseAppType appType,
             final NatureOfBusiness natureOfBusiness) {
         LOGGER.debug("tradeName:::" + tradeName);
 
@@ -75,7 +75,7 @@ public class FeeService extends PersistenceService<FeeMatrix, Long> {
      * @return calculatedFee This api will also set the LicenseNumber prefix when new class is added needs to update the api to
      * set corresponding prefix(fee type) eg: TradeLicense has PFA or CNC HospitalLicense has HOM only put loggers
      */
-    public BigDecimal calculateFee(final License license, final SubCategory tradeName, final LicenseAppType appType,
+    public BigDecimal calculateFee(final License license, final LicenseSubCategory tradeName, final LicenseAppType appType,
             final NatureOfBusiness natureOfBusiness, final BigDecimal otherCharges, final BigDecimal deduction) {
         BigDecimal totalFee = BigDecimal.ZERO;
         boolean isPFA = false;
@@ -129,7 +129,7 @@ public class FeeService extends PersistenceService<FeeMatrix, Long> {
         return totalFee;
     }
 
-    public BigDecimal calculateFeeForExisting(final License license, final SubCategory tradeName, final LicenseAppType appType,
+    public BigDecimal calculateFeeForExisting(final License license, final LicenseSubCategory tradeName, final LicenseAppType appType,
             final NatureOfBusiness natureOfBusiness, final BigDecimal otherCharges, final BigDecimal deduction) {
         BigDecimal totalFee = BigDecimal.ZERO;
         boolean isPFA = false;

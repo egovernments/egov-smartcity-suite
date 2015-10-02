@@ -91,7 +91,7 @@ public abstract class License extends StateAware {
     protected BigDecimal rentPaid;
     protected LicenseStatus status;
     protected String tempLicenseNumber;
-    protected SubCategory tradeName;
+    protected LicenseSubCategory tradeName;
     protected List<LicenseObjection> objections;
     protected Set<LicenseStatusValues> licenseStatusValuesSet;
     protected LicenseTransfer licenseTransfer;
@@ -266,7 +266,7 @@ public abstract class License extends StateAware {
         return tinNumber;
     }
 
-    public SubCategory getTradeName() {
+    public LicenseSubCategory getTradeName() {
         return tradeName;
     }
 
@@ -449,7 +449,7 @@ public abstract class License extends StateAware {
         this.tinNumber = tinNumber;
     }
 
-    public void setTradeName(final SubCategory tradeName) {
+    public void setTradeName(final LicenseSubCategory tradeName) {
         this.tradeName = tradeName;
     }
 

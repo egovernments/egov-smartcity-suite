@@ -48,7 +48,7 @@ import org.hibernate.validator.constraints.Length;
  * The Class TradeSubCategory.
  */
 @Unique(fields = { "code" }, id = "id", tableName = "EGTL_MSTR_SUB_CATEGORY", columnName = { "code" }, message = "masters.code.isunique")
-public class SubCategory extends BaseModel {
+public class LicenseSubCategory extends BaseModel {
     private static final long serialVersionUID = 1L;
     private LicenseCategory category;
     @Required(message = "tradelic.master.tradesubcategorycode.null")
@@ -102,7 +102,7 @@ public class SubCategory extends BaseModel {
     @Override
     public String toString() {
         final StringBuilder str = new StringBuilder();
-        str.append("SubCategory={");
+        str.append("LicenseSubCategory={");
         str.append("  name=").append(name == null ? "null" : name.toString());
         str.append("  code=").append(code == null ? "null" : code.toString());
         str.append("  category=").append(category == null ? "null" : category.toString());

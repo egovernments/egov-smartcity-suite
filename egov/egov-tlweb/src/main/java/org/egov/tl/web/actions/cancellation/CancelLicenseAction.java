@@ -56,7 +56,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseStatusValues;
 import org.egov.tl.domain.entity.Licensee;
-import org.egov.tl.domain.entity.SubCategory;
+import org.egov.tl.domain.entity.LicenseSubCategory;
 import org.egov.tl.domain.entity.TradeLicense;
 import org.egov.tl.domain.entity.WorkflowBean;
 import org.egov.tl.domain.service.TradeService;
@@ -147,7 +147,7 @@ public class CancelLicenseAction extends BaseFormAction {
         this.addRelatedEntity("address", Address.class);
         this.addRelatedEntity("licensee", Licensee.class);
         this.addRelatedEntity("licensee.address", Address.class);
-        this.addRelatedEntity("tradeName", SubCategory.class);
+        this.addRelatedEntity("tradeName", LicenseSubCategory.class);
 
     }
 

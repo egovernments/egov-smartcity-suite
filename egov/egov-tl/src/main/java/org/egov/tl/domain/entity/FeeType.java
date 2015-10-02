@@ -39,12 +39,37 @@
  ******************************************************************************/
 package org.egov.tl.domain.entity;
 
-import org.egov.infstr.models.BaseModel;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-public class FeeType extends BaseModel {
-    private static final long serialVersionUID = 1L;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+@Entity
+@SequenceGenerator(name=FeeType.SEQ,sequenceName=FeeType.SEQ,allocationSize=1)
+@Table(name="egtl_mstr_fee_type")
+public class FeeType extends AbstractAuditable {  
+	public static final String SEQ="seq_egtl_mstr_fee_type";
+	public static enum FeeProcessType {
+        FLAT, PERCENTAGE, RANGE
+    }
+    private static final long serialVersionUID = 1L;	
+    @Id
+    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @NotNull
+    @Length(max=32)
     private String name;
+    @Length(max=12)
+    private String code;
+    
+    private FeeProcessType feeProcessType; 
 
+    
     public String getName() {
         return name;
     }
@@ -61,4 +86,32 @@ public class FeeType extends BaseModel {
         str.append("}");
         return str.toString();
     }
+
+	@Override
+	protected void setId(Long id) {
+		
+		this.id=id;
+	}
+
+	@Override
+	public Long getId() {
+		return this.id;
+		
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public FeeProcessType getFeeProcessType() {
+		return feeProcessType;
+	}
+
+	public void setFeeProcessType(FeeProcessType feeProcessType) {
+		this.feeProcessType = feeProcessType;
+	}
 }

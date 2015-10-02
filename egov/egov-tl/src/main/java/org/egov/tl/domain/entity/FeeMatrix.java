@@ -40,85 +40,168 @@
 package org.egov.tl.domain.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import org.egov.demand.model.EgDemandReasonMaster;
-import org.egov.infstr.models.BaseModel;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
-public class FeeMatrix extends BaseModel {
-    private static final long serialVersionUID = 1L;
-    private NatureOfBusiness businessNature;
-    private SubCategory subcategory;
-    private LicenseAppType applType;
-    private FeeType feeType;
-    private BigDecimal amount;
-    private EgDemandReasonMaster demandReasonMaster;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 
-    public EgDemandReasonMaster getDemandReasonMaster() {
-        return demandReasonMaster;
-    }
+@Entity
+@Table(name = "egtl_feematrix")
+@SequenceGenerator(name = FeeMatrix.SEQ, sequenceName = FeeMatrix.SEQ)
+public class FeeMatrix extends AbstractAuditable {
+	public static final String SEQ = "seq_egtl_feematrix";
+	private static final long serialVersionUID = 1L;
 
-    public void setDemandReasonMaster(final EgDemandReasonMaster demandReasonMaster) {
-        this.demandReasonMaster = demandReasonMaster;
-    }
+	@Id
+	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    public NatureOfBusiness getBusinessNature() {
-        return businessNature;
-    }
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name = "natureOfBusiness", nullable = false)
+	private NatureOfBusiness natureOfBusiness;
+	@ManyToOne
+	@JoinColumn(name = "licenseCategory", nullable = false)
+	private LicenseCategory licenseCategory;
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name = "subCategory", nullable = false)
+	// ajaxcall
+	private LicenseSubCategory subCategory;
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name = "licenseAppType", nullable = false)
+	private LicenseAppType licenseAppType;
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name = "feeType", nullable = false)
+	private FeeType feeType;
 
-    public void setBusinessNature(final NatureOfBusiness businessNature) {
-        this.businessNature = businessNature;
-    }
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name = "unitOfMeasurement", nullable = false)
+	private UnitOfMeasurement unitOfMeasurement;
+	
+	//update: update egtl_feematrix set uniqueno=natureOfBusiness||'-'||licenseAppType||'-'||licenseCategory||'-'||subCategory||'-'||feeType||'-'||unitOfMeasurement;
+	
+	private String uniqueNo;
+	
 
-    public SubCategory getSubcategory() {
-        return subcategory;
-    }
+	@Valid
+	@OrderBy("uomFrom")
+	@OneToMany(mappedBy = "feeMatrix", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<FeeMatrixDetail> feeMatrixDetail = new ArrayList<FeeMatrixDetail>(0);
 
-    public void setSubcategory(final SubCategory subcategory) {
-        this.subcategory = subcategory;
-    }
+	public FeeType getFeeType() {
+		return feeType;
+	}
 
-    public LicenseAppType getApplType() {
-        return applType;
-    }
+	public void setFeeType(final FeeType feeType) {
+		this.feeType = feeType;
+	}
 
-    public void setApplType(final LicenseAppType applType) {
-        this.applType = applType;
-    }
+	
 
-    public NatureOfBusiness getTradeNatureId() {
-        return businessNature;
-    }
+	public NatureOfBusiness getNatureOfBusiness() {
+		return natureOfBusiness;
+	}
 
-    public FeeType getFeeType() {
-        return feeType;
-    }
+	public void setNatureOfBusiness(NatureOfBusiness natureOfBusiness) {
+		this.natureOfBusiness = natureOfBusiness;
+	}
 
-    public void setFeeType(final FeeType feeType) {
-        this.feeType = feeType;
-    }
+	public LicenseCategory getLicenseCategory() {
+		return licenseCategory;
+	}
 
-    public void setTradeNatureId(final NatureOfBusiness tradeNatureId) {
-        businessNature = tradeNatureId;
-    }
+	public void setLicenseCategory(LicenseCategory licenseCategory) {
+		this.licenseCategory = licenseCategory;
+	}
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
+	public LicenseSubCategory getSubCategory() {
+		return subCategory;
+	}
 
-    public void setAmount(final BigDecimal amount) {
-        this.amount = amount;
-    }
+	public void setSubCategory(LicenseSubCategory subCategory) {
+		this.subCategory = subCategory;
+	}
 
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("FeeMatrix={");
-        str.append("businessNature=").append(businessNature == null ? "null" : businessNature.toString());
-        str.append("subcategory=").append(subcategory == null ? "null" : subcategory.toString());
-        str.append("applType=").append(applType == null ? "null" : applType.toString());
-        str.append("feeType=").append(feeType == null ? "null" : feeType.toString());
-        str.append("amount=").append(amount == null ? "null" : amount.toString());
-        str.append("}");
-        return str.toString();
-    }
+	public LicenseAppType getLicenseAppType() {
+		return licenseAppType;
+	}
+
+	public void setLicenseAppType(LicenseAppType licenseAppType) {
+		this.licenseAppType = licenseAppType;
+	}
+
+	public UnitOfMeasurement getUnitOfMeasurement() {
+		return unitOfMeasurement;
+	}
+
+	public void setUnitOfMeasurement(UnitOfMeasurement unitOfMeasurement) {
+		this.unitOfMeasurement = unitOfMeasurement;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public BigDecimal getAmount()
+	{
+		return null;
+	}
+	public List<FeeMatrixDetail> getFeeMatrixDetail() {
+		return feeMatrixDetail;
+	}
+
+	public void setFeeMatrixDetail(List<FeeMatrixDetail> feeMatrixDetail) {
+		this.feeMatrixDetail = feeMatrixDetail;
+	}
+
+	public String getUniqueNo() {
+		return uniqueNo;
+	}
+
+	public void setUniqueNo(String uniqueNo) {
+		this.uniqueNo = uniqueNo;
+	}
+	
+	public String genUniqueNo()
+	{
+		StringBuilder sb=new StringBuilder();
+		if(natureOfBusiness!=null)
+		 sb.append(natureOfBusiness.getId());
+		if(licenseAppType!=null)
+			sb.append("-"+licenseAppType.getId());
+		if(licenseCategory!=null)
+			sb.append("-"+licenseCategory.getId());
+		if(subCategory!=null)
+			sb.append("-"+subCategory.getId());
+		if(feeType!=null)
+			sb.append("-"+feeType.getId());
+		if(unitOfMeasurement!=null)
+			sb.append("-"+unitOfMeasurement.getId());
+		return sb.toString();
+		
+	}
+
+	 
 }

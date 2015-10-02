@@ -53,7 +53,7 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseStatusValues;
 import org.egov.tl.domain.entity.Licensee;
-import org.egov.tl.domain.entity.SubCategory;
+import org.egov.tl.domain.entity.LicenseSubCategory;
 import org.egov.tl.domain.entity.TradeLicense;
 import org.egov.tl.domain.service.BaseLicenseService;
 import org.egov.tl.domain.service.TradeService;
@@ -117,7 +117,7 @@ public class RevokeSuspensionAction extends BaseLicenseAction {
         this.addRelatedEntity("address", Address.class);
         this.addRelatedEntity("licensee", Licensee.class);
         this.addRelatedEntity("licensee.address", Address.class);
-        this.addRelatedEntity("tradeName", SubCategory.class);
+        this.addRelatedEntity("tradeName", LicenseSubCategory.class);
 
     }
 

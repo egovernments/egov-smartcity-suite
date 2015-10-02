@@ -60,7 +60,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.tl.domain.entity.SubCategory;
+import org.egov.tl.domain.entity.LicenseSubCategory;
 import org.egov.tl.domain.service.masters.LicenseSubCategoryService;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +80,7 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
     private int zoneId;
     private List<Boundary> divisionList = new LinkedList<Boundary>();
     private Long categoryId;
-    private List<SubCategory> subCategoryList = new LinkedList<SubCategory>();
+    private List<LicenseSubCategory> subCategoryList = new LinkedList<LicenseSubCategory>();
     @Autowired
     private BoundaryService boundaryService;
     private LicenseSubCategoryService licenseSubCategoryService;
@@ -194,11 +194,11 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
         this.categoryId = categoryId;
     }
 
-    public List<SubCategory> getSubCategoryList() {
+    public List<LicenseSubCategory> getSubCategoryList() {
         return subCategoryList;
     }
 
-    public void setSubCategoryList(final List<SubCategory> subCategoryList) {
+    public void setSubCategoryList(final List<LicenseSubCategory> subCategoryList) {
         this.subCategoryList = subCategoryList;
     }
 

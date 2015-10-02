@@ -42,14 +42,14 @@ package org.egov.tl.domain.service.masters;
 import java.util.List;
 
 import org.egov.infstr.services.PersistenceService;
-import org.egov.tl.domain.entity.SubCategory;
+import org.egov.tl.domain.entity.LicenseSubCategory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LicenseSubCategoryService extends PersistenceService<SubCategory, Integer> {
+public class LicenseSubCategoryService extends PersistenceService<LicenseSubCategory, Integer> {
 
     public LicenseSubCategoryService() {
-        setType(SubCategory.class);
+        setType(LicenseSubCategory.class);
     }
 
     /**
@@ -57,8 +57,8 @@ public class LicenseSubCategoryService extends PersistenceService<SubCategory, I
      * @param name
      * @return
      */
-    public List<SubCategory> findAllSubCategoryByCategory(final Long categoryId) {
-        return findAllBy("From org.egov.tl.domain.entity.SubCategory where category.id=? order by name", categoryId);
+    public List<LicenseSubCategory> findAllSubCategoryByCategory(final Long categoryId) {
+        return findAllBy("From org.egov.tl.domain.entity.LincenseSubCategory where category.id=? order by name", categoryId);
     }
 
 }

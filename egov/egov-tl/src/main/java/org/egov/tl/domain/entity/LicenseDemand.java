@@ -98,7 +98,7 @@ public class LicenseDemand extends EgDemand {
         else
             demandDetails = getEgDemandDetails();
         for (final FeeMatrix fm : feeMatrixList) {
-            final EgDemandReasonMaster reasonMaster = fm.getDemandReasonMaster();
+            final EgDemandReasonMaster reasonMaster =null;// fm.getDemandReasonMaster();
             final EgDemandReason reason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(reasonMaster, installment,
                     module);
             LOGGER.info("Reson for Reason Master" + ":master:" + reasonMaster.getReasonMaster() + "Reason:" + reason);
@@ -224,7 +224,7 @@ public class LicenseDemand extends EgDemand {
     private BigDecimal getDemandDetails(final Set<EgDemandDetails> demandDetails,
             final FeeMatrix fm, final EgDemandReason reason, BigDecimal totalAmount, final License license2) {
 
-        if (license2.getState() == null && fm.getDemandReasonMaster().getCode().equals(Constants.DEMAND_REASON_REGN_FEE))
+        /*if (license2.getState() == null && fm.getDemandReasonMaster().getCode().equals(Constants.DEMAND_REASON_REGN_FEE))
         {
             demandDetails.add(EgDemandDetails.fromReasonAndAmounts(fm.getAmount(), reason, BigDecimal.ZERO));
             totalAmount = totalAmount.add(fm.getAmount());
@@ -250,7 +250,7 @@ public class LicenseDemand extends EgDemand {
         {
             demandDetails.add(EgDemandDetails.fromReasonAndAmounts(fm.getAmount(), reason, BigDecimal.ZERO));
             totalAmount = totalAmount.add(fm.getAmount());
-        }
+        }*/
         return totalAmount;
     }
 
@@ -268,13 +268,13 @@ public class LicenseDemand extends EgDemand {
 
         final EgDemandDetails egDemandDetails = EgDemandDetails.fromReasonAndAmounts(fm.getAmount(), reason, BigDecimal.ZERO);
         // If FeeExempted then set Amount Rebate equal to Registration Fee Demand
-        if (license2.getFeeExemption() != null && license2.getFeeExemption().equals("YES")
+     /*   if (license2.getFeeExemption() != null && license2.getFeeExemption().equals("YES")
                 && fm.getDemandReasonMaster().getCode().equals(Constants.DEMAND_REASON_REGN_FEE))
         {
             final BigDecimal amtRebate = egDemandDetails.getAmount();
             egDemandDetails.setAmtRebate(amtRebate);
             setAmtRebate(amtRebate);
-        }
+        }*/
         totalAmount = egDemandDetails.getAmount();
         demandDetails.add(egDemandDetails);
         return totalAmount;
@@ -313,7 +313,7 @@ public class LicenseDemand extends EgDemand {
         for (final FeeMatrix fm : feeMatrixList)
             if (fm.getFeeType().getName().contains("Late"))
                 if (isExpired == true && noOfMonths - Constants.GRACEPERIOD >= 1) {
-                    final EgDemandReasonMaster reasonMaster = fm.getDemandReasonMaster();
+                    final EgDemandReasonMaster reasonMaster = null;//fm.getDemandReasonMaster();
                     final EgDemandReason reason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(reasonMaster,
                             installment, module);
                     totalAmount = generateLatePenalty(totalAmount, demandDetails, fm, reason, isExpired, noOfMonths);

@@ -42,6 +42,7 @@ package org.egov.tl.web.actions.domain;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Action;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Date;
@@ -61,6 +62,8 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
+import org.egov.tl.domain.entity.LicenseSubCategory;
+import org.egov.tl.domain.service.masters.LicenseSubCategoryService;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -68,6 +71,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
 @Result(name = "ward", location = "commonAjax-ward.jsp"),
+@Result(name = "subcategory", location = "commonAjax-subcategory.jsp"),
+
 @Result(name = "designation", location = "commonAjax-designation.jsp"),
 @Result(name = "users", location = "commonAjax-users.jsp"),
 @Result(name = "SUCCESS", type = "redirectAction", location = "CommonAjaxAction.action"),
@@ -88,6 +93,7 @@ public class CommonAjaxAction extends BaseFormAction {
     private int areaId;
     private int locationId;
     private int zoneId;
+    private Long categoryId;
     private List<Boundary> locationList = new LinkedList<Boundary>();
     private List<Boundary> areaList = new LinkedList<Boundary>();
     private List<Boundary> streetList = new LinkedList<Boundary>();
@@ -104,6 +110,8 @@ public class CommonAjaxAction extends BaseFormAction {
     private DesignationService designationService;
     @Autowired
     private EisCommonService eisCommonService;
+	private LicenseSubCategoryService licenseSubCategoryService;
+	private List<LicenseSubCategory> subCategoryList;
 
     public InputStream getReturnStream() {
         final ByteArrayInputStream is = new ByteArrayInputStream(returnStream.getBytes());
@@ -181,7 +189,7 @@ public class CommonAjaxAction extends BaseFormAction {
     }
 
     @SuppressWarnings("unchecked")
-@Action(value="/commonAjax-ajaxPopulateUsersByDesignation")
+@Action(value="/domain/commonAjax-ajaxPopulateUsersByDesignation")
     public String ajaxPopulateUsersByDesignation() {
         try {
             allActiveUsersByGivenDesg = eisCommonService.getAllActiveUsersByGivenDesig(Long.valueOf(designationId));
@@ -192,6 +200,13 @@ public class CommonAjaxAction extends BaseFormAction {
         }
         return "users";
     }
+    
+    @Action(value="/domain/commonAjax-ajaxPopulateSubCategory")  
+    public String ajaxPopulateSubCategory() {
+    subCategoryList = licenseSubCategoryService.findAllBy("select s from org.egov.tl.domain.entity.LicenseSubCategory s  where s.category.id ="+categoryId);
+    return "subcategory";       
+    }
+
 
     public List<User> getAllActiveUsersByGivenDesg() {
         return allActiveUsersByGivenDesg;
@@ -319,6 +334,31 @@ public class CommonAjaxAction extends BaseFormAction {
 
 	public void setEisCommonService(EisCommonService eisCommonService) {
 		this.eisCommonService = eisCommonService;
+	}
+
+	public LicenseSubCategoryService getLicenseSubCategoryService() {
+		return licenseSubCategoryService;
+	}
+
+	public void setLicenseSubCategoryService(
+			LicenseSubCategoryService licenseSubCategoryService) {
+		this.licenseSubCategoryService = licenseSubCategoryService;
+	}
+
+	public Long getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public List<LicenseSubCategory> getSubCategoryList() {
+		return subCategoryList;
+	}
+
+	public void setSubCategoryList(List<LicenseSubCategory> subCategoryList) {
+		this.subCategoryList = subCategoryList;
 	}
 
 }

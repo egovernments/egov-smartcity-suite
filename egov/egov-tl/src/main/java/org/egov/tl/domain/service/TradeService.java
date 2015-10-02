@@ -274,7 +274,7 @@ public class TradeService extends BaseLicenseService {
     public List getHotelCategoriesForTrade()
     {
         final List subCategory = persistenceService
-                .findAllBy("select id from org.egov.tl.domain.entity.SubCategory where upper(name) like '%HOTEL%' and licenseType.id= (select id from org.egov.tl.domain.entity.LicenseType where name='TradeLicense')");
+                .findAllBy("select id from org.egov.tl.domain.entity.LicenseSubCategory where upper(name) like '%HOTEL%' and licenseType.id= (select id from org.egov.tl.domain.entity.LicenseType where name='TradeLicense')");
         return subCategory;
     }
 

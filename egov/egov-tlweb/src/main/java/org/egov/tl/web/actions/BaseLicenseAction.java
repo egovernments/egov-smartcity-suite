@@ -42,7 +42,6 @@ package org.egov.tl.web.actions;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -75,8 +74,8 @@ import org.egov.pims.commons.Position;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseCategory;
 import org.egov.tl.domain.entity.LicenseDemand;
+import org.egov.tl.domain.entity.LicenseSubCategory;
 import org.egov.tl.domain.entity.NatureOfBusiness;
-import org.egov.tl.domain.entity.SubCategory;
 import org.egov.tl.domain.entity.UnitOfMeasurement;
 import org.egov.tl.domain.entity.WorkflowBean;
 import org.egov.tl.domain.service.BaseLicenseService;
@@ -144,10 +143,13 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
         this.addRelatedEntity("licensee.boundary", Boundary.class);
-        this.addRelatedEntity("tradeName", SubCategory.class);
         this.addRelatedEntity("buildingType", NatureOfBusiness.class);
         this.addRelatedEntity("category", LicenseCategory.class);
         this.addRelatedEntity("uom", UnitOfMeasurement.class);
+        this.addRelatedEntity("tradeName", LicenseSubCategory.class);
+        this.addRelatedEntity("address", PermanentAddress.class);
+        this.addRelatedEntity("licensee.address", PermanentAddress.class);
+
     }
 
     // sub class should get the object of the model and set to license()

@@ -41,7 +41,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
                                    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping auto-import="false">
-	<class name="org.egov.tl.domain.entity.SubCategory" table="EGTL_MSTR_SUB_CATEGORY">
+	<class name="org.egov.tl.domain.entity.LicenseSubCategory" table="EGTL_MSTR_SUB_CATEGORY">
 		<id column="ID" name="id" type="java.lang.Long">
 			<generator class="native">
 				<param name="sequence">SEQ_EGTL_MSTR_SUB_CATEGORY</param>
@@ -94,6 +94,6 @@
 		</many-to-one>
 	</class>
 	<query name="SUBCATEGORY_BY_NAME">
-		from org.egov.tl.domain.entity.SubCategory where name=?
+		from org.egov.tl.domain.entity.LicenseSubCategory where name=?
 	</query>
 </hibernate-mapping>
