@@ -44,18 +44,23 @@
 		<script type="text/javascript" src="./resources/javascript/jquery/jquery-1.7.2.min.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function(){
+				$("#loading").hide();
 				$("#createProeprtyBtn").click(function(){
 					createProeprty();
 				});
 			});
 			function createProeprty() {
+				$("#loading").show();
+				var url = $("#urlField").val();
+				var data = $("#createPropertyField").val();
 				$.ajax({
-					url : $("#urlField").val(),
+					url : url,
 					type : 'POST',
-					dataType : 'JSON',
-					data : $("#createPropertyField").val(),
+					contentType : 'application/json',
+					data : data,
 					success : function(data) {
-						console.log(JSON.stringify(data));
+						$("#loading").hide();
+						$("#createProeprtyResponse").val(JSON.stringify(data))
 					},
 					error : function(e) {
 						alert(e.message);
@@ -68,22 +73,31 @@
 		<div id="create_proeprty">
 			<table>
 				<tr>
-					<td>Create Property Request JSON</td>
-					<td><textarea rows="5" cols="50" id="createPrpertyField">
-					</textarea> /></td>
+					<td colspan="2" align="center"><b>Create Property Request JSON</b></td>
 				</tr>
 				<tr>
 					<td>URL</td>
-					<td><input type="text" id="urlField" name="urlField" value=""></td>
+					<td><input type="text" id="urlField" name="urlField" value="property/createProperty" style="width:100%;"></td>
 				</tr>				
 				<tr>
 					<td>Request JSON</td>
-					<td><textarea rows="5" cols="50" id="createPropertyField">
-					</textarea> /></td>
+					<td><textarea rows="5" cols="80" id="createPropertyField" placeholder="Copy create property request and paste here ..."></textarea></td>
 				</tr>
 				<tr>
 					<td></td>
 					<td><input id="createProeprtyBtn" type="button" value="Create"></td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center">
+						<div id="loading">Please wait.....</div>
+					</td>
+				</tr>
+				<tr><td colspan="2"><b>Response</b></td></tr>
+				<tr>
+					<td></td>
+					<td>
+						<textarea rows="5" cols="80" id="createProeprtyResponse" placeholder="Response area ....."></textarea>
+					</td>
 				</tr>
 			</table>
 		</div>
