@@ -131,6 +131,8 @@ Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYN
 Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'CollectTax-Form','/search/searchProperty-commonForm.action', 'applicationType=Collect_Tax',(select id from EG_MODULE where name = 'Existing property'),null,'Collect Tax','t','ptis',0,1,now(),1,now(),(select id from eg_module  where name = 'Property Tax'));
 Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'GenerateDemandBill-Form','/search/searchProperty-commonForm.action', 'applicationType=Generate_demand_bill',(select id from EG_MODULE where name = 'Existing property'),null,'Generate Demand Bill','t','ptis',0,1,now(),1,now(),(select id from eg_module  where name = 'Property Tax'));
 Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'Assessment-commonSearch','/search/searchProperty-commonSearch.action', null,(select id from EG_MODULE where name = 'Existing property'),null,null,'f','ptis',0,1,now(),1,now(),(select id from eg_module  where name = 'Property Tax'));
+Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'ajaxLoadBolockByWard','/common/ajaxCommon-blockByWard.action', null,(select id from EG_MODULE where name = 'New Property'),null,null,'f','ptis',0,1,now(),1,now(),(select id from eg_module  where name = 'Property Tax'));
+
 ------------------END---------------------
 -----------------START-------------------
 
@@ -497,6 +499,9 @@ insert into eg_roleaction (roleid, actionid) select (select id from eg_role wher
 insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'ULB Operator'), id from eg_action where name = 'GenerateDemandBill-Form';
 insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'CSC Operator'), id from eg_action where name = 'CollectTax-Form';
 insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'CSC Operator'), id from eg_action where name = 'Assessment-commonSearch';
+INSERT INTO eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Property Verifier'), (select id from eg_action  where name = 'ajaxLoadBoundaryBlock'));
+insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'ULB Operator'), id from eg_action where name = 'ajaxLoadBolockByWard';
+insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'Property Verifier'), id from eg_action where name = 'ajaxLoadBolockByWard';
 ------------------END---------------------
 
 -----------------START-------------------
