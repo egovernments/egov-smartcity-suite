@@ -217,26 +217,28 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 		return "street";
 	}
 
-	@Action(value = "/ajaxCommon-blockByLocality")
-	public void blockByLocality() throws IOException, NoSuchObjectException {
-		LOGGER.debug("Entered into blockByLocality, locality: " + locality);
-
-		Boundary blockBoundary = (Boundary) getPersistenceService().find(
-				"select CH.parent from CrossHierarchy CH where CH.child.id = ? ", getLocality());
-		Boundary wardBoundary = blockBoundary.getParent();
-		Boundary zoneBoundary = wardBoundary.getParent();
-
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("zoneName", zoneBoundary.getName());
-		jsonObject.put("wardName", wardBoundary.getName());
-		jsonObject.put("blockName", blockBoundary.getName());
-		jsonObject.put("zoneId", zoneBoundary.getId());
-		jsonObject.put("wardId", wardBoundary.getId());
-		jsonObject.put("blockId", blockBoundary.getId());
-
-		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-		IOUtils.write(jsonObject.toString(), response.getWriter());
-	}
+    @Action(value = "/ajaxCommon-blockByLocality")
+    public void blockByLocality() throws IOException, NoSuchObjectException {
+        LOGGER.debug("Entered into blockByLocality, locality: " + locality);
+        List<Boundary> blockBoundaries = (List<Boundary>) getPersistenceService().findAllBy(
+                "select CH.parent from CrossHierarchy CH where CH.child.id = ? ", getLocality());
+        List<JSONObject> jsonObjs = new ArrayList<JSONObject>();
+        List<Long> boundaries = new ArrayList<Long>();
+        for (Boundary blockBoundary : blockBoundaries) {
+            Boundary wardBoundary = blockBoundary.getParent();
+            JSONObject jsonObject = new JSONObject();
+            if (!boundaries.contains(wardBoundary.getId())) {
+                jsonObject.put("wardId", wardBoundary.getId());
+                jsonObject.put("wardName", wardBoundary.getName());
+            }
+            jsonObject.put("blockId", blockBoundary.getId());
+            jsonObject.put("blockName", blockBoundary.getName());
+            jsonObjs.add(jsonObject);
+            boundaries.add(wardBoundary.getId());
+        }
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        IOUtils.write(jsonObjs.toString(), response.getWriter());
+    }
 
 	@SuppressWarnings("unchecked")
 	@Action(value = "/ajaxCommon-populateDesignationsByDept")

@@ -82,6 +82,9 @@
 									</s:else>
 								</s:if>
 								<s:elseif test="%{documents[#status.index].files.isEmpty()}">
+									<s:if test="%{documents[#status.index].id == null || documents[#status.index].type == null}">
+										<s:hidden name="documents[%{#status.index}].type.id" value="%{id}"></s:hidden>
+									</s:if>
 									<s:hidden name="documents[%{#status.index}].id"/>
 									<s:if test="mandatory">
 										<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" required="true"/>

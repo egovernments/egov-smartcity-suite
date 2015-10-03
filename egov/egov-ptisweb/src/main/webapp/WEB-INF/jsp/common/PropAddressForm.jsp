@@ -41,36 +41,48 @@
 <script>
  jQuery(document).ready(function(){
 	 jQuery('#locality').change(function() {
-		console.log("came jursidiction"+jQuery('#locality').val());
-		jQuery.ajax({
-			url: "/ptis/common/ajaxCommon-blockByLocality.action",
-			type: "GET",
-			data: {
-				locality : jQuery('#locality').val()
-			},
-			cache: false,
-			dataType: "json",
-			success: function (response) {
-				jQuery('#zoneId').val(response.zoneId);
-				jQuery('#wardId').val(response.wardId);
-				jQuery('#blockId').val(response.blockId);
-				jQuery('#zoneName').val(response.zoneName);
-				jQuery('#wardName').val(response.wardName);
-				jQuery('#blockName').val(response.blockName);
-			}, 
-			error: function (response) {
-				console.log("failed");
-				jQuery('#zoneId').val('');
-				jQuery('#wardId').val('');
-				jQuery('#blockId').val('');
-				jQuery('#zoneName').val('');
-				jQuery('#wardName').val('');
-				jQuery('#blockName').val('');
-				alert("No boundary details mapped for locality")
-			}
-		});
-	});
+		 populateBoundaries();
+	 });
 });
+
+function populateBoundaries() {
+	console.log("came jursidiction"+jQuery('#locality').val());
+	jQuery.ajax({
+		url: "/ptis/common/ajaxCommon-blockByLocality.action",
+		type: "GET",
+		data: {
+			locality : jQuery('#locality').val()
+		},
+		cache: false,
+		dataType: "json",
+		success: function (response) {
+			jQuery('#wardId').html("");
+			jQuery('#blockId').html("");
+			jQuery.each(response, function (i, val) {
+				if (val.wardId) {
+					jQuery('#wardId').append("<option value='"+val.wardId+"'>"+val.wardName+"</option>");
+				}
+				jQuery('#blockId').append("<option value='"+val.blockId+"'>"+val.blockName+"</option>");
+			});
+			jQuery('#wardId').val('<s:property value="%{wardId}"/>');
+			jQuery('#blockId').val('<s:property value="%{blockId}"/>');
+		}, 
+		error: function (response) {
+			console.log("failed");
+			jQuery('#wardId').html("");
+			jQuery('#blockId').html("");
+			alert("No boundary details mapped for locality")
+		}
+	});
+
+}
+
+function populateBlock() {
+	jQuery('#blockId').html("");
+	populateblockId({
+		wardId : document.getElementById("wardId").value
+	});
+}
 </script>
 <div id="PropAddressDiv">
 	<tr>
@@ -89,18 +101,33 @@
 	<tr>
 		<td class="bluebox2">&nbsp;</td>
 	    <td class="bluebox"><s:text name="zone"></s:text> <span class="mandatory1">*</span> : </td>
-	    <td class="bluebox"><s:textfield name="zoneName" id="zoneName" value="%{zoneName}" maxlength="20" readOnly="true"/></td>
-	    <s:hidden id="zoneId" name="zoneId" value="%{zoneId}"></s:hidden>
-	    <td class="bluebox"><s:text name="revwardno"></s:text> <span class="mandatory1">*</span>: </td>
-	    <td class="bluebox"><s:textfield name="wardName" id="wardName" value="%{wardName}" maxlength="20" readOnly="true" /></td>
-	    <s:hidden id="wardId" name="wardId" value="%{wardId}"></s:hidden>
+	    <td class="bluebox">
+	    	<%-- <s:textfield name="zoneName" id="zoneName" value="%{zoneName}" maxlength="20" readOnly="true"/> --%>
+	    	<s:select list="dropdownData.zones" name="zoneId"
+				value="%{zoneId}" headerKey="-1" id="zoneId"
+				headerValue="%{getText('default.select')}" listKey="id"
+				listValue="name" />
+		</td>
+		<%-- <s:hidden id="zoneId" name="zoneId" value="%{zoneId}"></s:hidden> --%>
+		<td class="bluebox"><s:text name="revwardno"></s:text> <span class="mandatory1">*</span>: </td>
+	    <td class="bluebox">
+	    	<%-- <s:textfield name="wardName" id="wardName" value="%{wardName}" maxlength="20" readOnly="true" /> --%>
+	    	<s:select list="dropdownData.wards" name="wardId"
+				value="%{wardId}" id="wardId" listKey="id" listValue="name" onchange="populateBlock();"/>
+			<egov:ajaxdropdown id="blockId" fields="['Text','Value']"  dropdownId="blockId" url="common/ajaxCommon-areaByWard.action" />
+		</td>
+	    <%-- <s:hidden id="wardId" name="wardId" value="%{wardId}"></s:hidden> --%>
 	</tr>
 	
 	<tr>
 		<td class="bluebox2">&nbsp;</td>
 	    <td class="bluebox"><s:text name="blockno"></s:text> <span class="mandatory1">*</span> :  </td>
-	    <td class="bluebox"> <s:textfield name="blockName" id="blockName" value="%{blockName}"  maxlength="20" readOnly="true" /></td>
-	    <s:hidden id="blockId" name="blockId" value="%{blockId}"  ></s:hidden>
+	    <td class="bluebox"> 
+	    	<%-- <s:textfield name="blockName" id="blockName" value="%{blockName}"  maxlength="20" readOnly="true" /> --%>
+	    	<s:select list="dropdownData.blocks" name="blockId"
+				value="%{blockId}" id="blockId" listKey="id" listValue="name" />
+		</td>
+	    <%-- <s:hidden id="blockId" name="blockId" value="%{blockId}"  ></s:hidden> --%>
 	    <td class="bluebox"><s:text name="Street"></s:text> : </td>
 	    <td class="bluebox"><s:textfield id="street" name="street" maxlength="128" value="%{basicProperty.propertyID.Street.name}"/></td>
 	</tr>
@@ -109,7 +136,7 @@
 		<td class="bluebox2">&nbsp;</td>
 	    <td class="bluebox"><s:text name="elec.wardno"></s:text> : </td>
 	    <td class="bluebox"><s:select name="electionWardId" id="electionWardId" list="dropdownData.electionWardList"
-	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{electionWardId}"/></td>
+			listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{electionWardId}"/></td>
 	    <td class="bluebox"><s:text name="doorno"></s:text>:</td>
 	    <td class="bluebox"><s:textfield name="houseNumber" value="%{houseNumber}" maxlength="10" onblur="return checkHouseNoStartsWithNo(this); validatePlotNo(this,'Plot No/House No');"/></td> 
 	</tr>

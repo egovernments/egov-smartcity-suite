@@ -41,6 +41,7 @@ package org.egov.ptis.actions.create;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
@@ -71,6 +72,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -113,7 +115,6 @@ import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
-import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
@@ -612,12 +613,18 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
         final List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 LOCALITY, LOCATION_HIERARCHY_TYPE);
+        final List<Boundary> zones = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                ZONE, ADMIN_HIERARCHY_TYPE);
         final List<Boundary> electionWardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 ELECTIONWARD_BNDRY_TYPE, ELECTION_HIERARCHY_TYPE);
         final List<Boundary> enumerationBlockList = boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ELECTIONWARD_BNDRY_TYPE,
                         ELECTION_HIERARCHY_TYPE);
 
+        addDropdownData("zones", zones);
+        addDropdownData("wards", Collections.EMPTY_LIST);
+        addDropdownData("blocks", Collections.EMPTY_LIST);
+        addDropdownData("streets", Collections.EMPTY_LIST);
         setDeviationPercentageMap(DEVIATION_PERCENTAGE);
         setGuardianRelationMap(GUARDIAN_RELATION);
         addDropdownData("PropTypeMaster", propTypeList);
@@ -877,9 +884,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (locality == null || locality == -1)
             addActionError(getText("mandatory.localityId"));
 
+        if (null != propTypeId && !propTypeId.equals("-1")) {
+            propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
+                    "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
+        }
         if (wardId == null || wardId == -1)
             addActionError(getText("mandatory.ward"));
-        else if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+        else if (null != propTypeMstr && !propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             if (!StringUtils.isBlank(houseNumber))
                 validateHouseNumber(wardId, houseNumber, basicProp);
             else

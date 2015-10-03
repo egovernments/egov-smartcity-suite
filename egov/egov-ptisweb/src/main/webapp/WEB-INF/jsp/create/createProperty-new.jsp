@@ -148,6 +148,7 @@ function loadOnStartUp() {
 	   		  getAadharDetails(this);
 	   	}
 	 });
+     populateBoundaries();
      loadDesignationFromMatrix();
 }
 
