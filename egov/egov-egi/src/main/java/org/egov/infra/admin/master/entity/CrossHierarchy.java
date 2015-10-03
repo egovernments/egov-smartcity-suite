@@ -73,6 +73,16 @@ public class CrossHierarchy extends AbstractPersistable<Long> {
     @JoinColumn(name = "child")
     @Fetch(value = FetchMode.JOIN)
     private Boundary child;
+    
+    @ManyToOne
+    @JoinColumn(name = "parenttype")
+    @Fetch(value = FetchMode.JOIN)
+    private BoundaryType parentType;
+    
+    @ManyToOne
+    @JoinColumn(name = "childtype")
+    @Fetch(value = FetchMode.JOIN)
+    private BoundaryType childType;
 
     @Override
     protected void setId(final Long id) {
@@ -100,4 +110,20 @@ public class CrossHierarchy extends AbstractPersistable<Long> {
         this.child = child;
     }
 
+    public BoundaryType getParentType() {
+        return parentType;
+    }
+
+    public void setParentType(BoundaryType parentType) {
+        this.parentType = parentType;
+    }
+
+    public BoundaryType getChildType() {
+        return childType;
+    }
+
+    public void setChildType(BoundaryType childType) {
+        this.childType = childType;
+    }
+    
 }
