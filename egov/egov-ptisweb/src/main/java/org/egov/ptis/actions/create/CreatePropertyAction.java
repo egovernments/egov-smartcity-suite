@@ -171,6 +171,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private Long zoneId;
     private Long wardId;
     private Long blockId;
+    private Long streetId;
     private Long locality;
     private Long floorTypeId;
     private Long roofTypeId;
@@ -866,6 +867,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propertyId.setModifiedDate(new Date());
         propertyId.setArea(boundaryService.getBoundaryById(getBlockId()));
         propertyId.setLocality(boundaryService.getBoundaryById(getLocality()));
+        propertyId.setStreet(boundaryService.getBoundaryById(getStreetId()));
         propertyId.setEastBoundary(getEastBoundary());
         propertyId.setWestBoundary(getWestBoundary());
         propertyId.setNorthBoundary(getNorthBoundary());
@@ -1513,6 +1515,14 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     public void setTaxExemptionId(String taxExemptionId) {
         this.taxExemptionId = taxExemptionId;
+    }
+
+    public Long getStreetId() {
+        return streetId;
+    }
+
+    public void setStreetId(Long streetId) {
+        this.streetId = streetId;
     }
 
 }

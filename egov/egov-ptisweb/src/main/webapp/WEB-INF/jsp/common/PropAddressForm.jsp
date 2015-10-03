@@ -58,11 +58,15 @@ function populateBoundaries() {
 		success: function (response) {
 			jQuery('#wardId').html("");
 			jQuery('#blockId').html("");
-			jQuery.each(response, function (i, val) {
-				if (val.wardId) {
-					jQuery('#wardId').append("<option value='"+val.wardId+"'>"+val.wardName+"</option>");
+			jQuery('#streetId').html("");
+			jQuery.each(response.results.boundaries, function (j, boundary) {
+				if (boundary.wardId) {
+					jQuery('#wardId').append("<option value='"+boundary.wardId+"'>"+boundary.wardName+"</option>");
 				}
-				jQuery('#blockId').append("<option value='"+val.blockId+"'>"+val.blockName+"</option>");
+				jQuery('#blockId').append("<option value='"+boundary.blockId+"'>"+boundary.blockName+"</option>");
+			});
+			jQuery.each(response.results.streets, function (j, street) {
+				jQuery('#streetId').append("<option value='"+street.streetId+"'>"+street.streetName+"</option>");
 			});
 			<s:if test="%{wardId != null}">
 				jQuery('#wardId').val('<s:property value="%{wardId}"/>');
@@ -70,11 +74,15 @@ function populateBoundaries() {
 			<s:if test="%{blockId != null}">
 				jQuery('#blockId').val('<s:property value="%{blockId}"/>');
 			</s:if>
+			<s:if test="%{streetId != null}">
+				jQuery('#streetId').val('<s:property value="%{streetId}"/>');
+			</s:if>
 		}, 
 		error: function (response) {
 			console.log("failed");
 			jQuery('#wardId').html("");
 			jQuery('#blockId').html("");
+			jQuery('#streetId').html("");
 			alert("No boundary details mapped for locality")
 		}
 	});
@@ -82,9 +90,28 @@ function populateBoundaries() {
 }
 
 function populateBlock() {
-	jQuery('#blockId').html("");
-	populateblockId({
-		wardId : document.getElementById("wardId").value
+	jQuery.ajax({
+		url: "/ptis/common/ajaxCommon-blockByWard.action",
+		type: "GET",
+		data: {
+			wardId : jQuery('#wardId').val()
+		},
+		cache: false,
+		dataType: "json",
+		success: function (response) {
+			jQuery('#blockId').html("");
+			jQuery.each(response, function (j, block) {
+				jQuery('#blockId').append("<option value='"+block.blockId+"'>"+block.blockName+"</option>");
+			});
+			<s:if test="%{blockId != null}">
+				jQuery('#blockId').val('<s:property value="%{blockId}"/>');
+			</s:if>
+		}, 
+		error: function (response) {
+			console.log("failed");
+			jQuery('#blockId').html("");
+			alert("No block details mapped for waard")
+		}
 	});
 }
 </script>
@@ -115,7 +142,6 @@ function populateBlock() {
 	    <td class="bluebox">
 	    	<s:select list="dropdownData.wards" name="wardId"
 				value="%{wardId}" id="wardId" listKey="id" listValue="name" onchange="populateBlock();"/>
-			<egov:ajaxdropdown id="blockId" fields="['Text','Value']"  dropdownId="blockId" url="common/ajaxCommon-areaByWard.action" />
 		</td>
 	</tr>
 	
@@ -127,7 +153,10 @@ function populateBlock() {
 				value="%{blockId}" id="blockId" listKey="id" listValue="name" />
 		</td>
 	    <td class="bluebox"><s:text name="Street"></s:text> : </td>
-	    <td class="bluebox"><s:textfield id="street" name="street" maxlength="128" value="%{basicProperty.propertyID.Street.name}"/></td>
+	    <td class="bluebox">
+	    	<s:select list="dropdownData.wards" name="streetId"
+				value="%{streetId}" id="streetId" listKey="id" listValue="name" />
+		</td>
 	</tr>
 	
 	<tr>
