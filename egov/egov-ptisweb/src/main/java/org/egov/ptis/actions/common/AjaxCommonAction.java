@@ -222,7 +222,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         LOGGER.debug("Entered into blockByLocality, locality: " + locality);
         final List<Boundary> blocks = getPersistenceService().findAllBy(
                 "select CH.parent from CrossHierarchy CH where CH.child.id = ? ", getLocality());
-        boundaryService.getChildBoundariesByBoundaryId(getLocality());
+        List<Boundary> streets = boundaryService.getChildBoundariesByBoundaryId(getLocality());
         final List<JSONObject> wardJsonObjs = new ArrayList<JSONObject>();
         final List<Long> boundaries = new ArrayList<Long>();
         for (final Boundary block : blocks) {
@@ -238,7 +238,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
             boundaries.add(ward.getId());
         }
         final List<JSONObject> streetJsonObjs = new ArrayList<JSONObject>();
-        for (final Boundary street : blocks) {
+        for (final Boundary street : streets) {
             final JSONObject streetObj = new JSONObject();
             streetObj.put("streetId", street.getId());
             streetObj.put("streetName", street.getName());
