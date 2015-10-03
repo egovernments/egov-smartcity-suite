@@ -64,8 +64,12 @@ function populateBoundaries() {
 				}
 				jQuery('#blockId').append("<option value='"+val.blockId+"'>"+val.blockName+"</option>");
 			});
-			jQuery('#wardId').val('<s:property value="%{wardId}"/>');
-			jQuery('#blockId').val('<s:property value="%{blockId}"/>');
+			<s:if test="%{wardId != null}">
+				jQuery('#wardId').val('<s:property value="%{wardId}"/>');
+			</s:if>
+			<s:if test="%{blockId != null}">
+				jQuery('#blockId').val('<s:property value="%{blockId}"/>');
+			</s:if>
 		}, 
 		error: function (response) {
 			console.log("failed");
@@ -102,32 +106,26 @@ function populateBlock() {
 		<td class="bluebox2">&nbsp;</td>
 	    <td class="bluebox"><s:text name="zone"></s:text> <span class="mandatory1">*</span> : </td>
 	    <td class="bluebox">
-	    	<%-- <s:textfield name="zoneName" id="zoneName" value="%{zoneName}" maxlength="20" readOnly="true"/> --%>
 	    	<s:select list="dropdownData.zones" name="zoneId"
 				value="%{zoneId}" headerKey="-1" id="zoneId"
 				headerValue="%{getText('default.select')}" listKey="id"
 				listValue="name" />
 		</td>
-		<%-- <s:hidden id="zoneId" name="zoneId" value="%{zoneId}"></s:hidden> --%>
 		<td class="bluebox"><s:text name="revwardno"></s:text> <span class="mandatory1">*</span>: </td>
 	    <td class="bluebox">
-	    	<%-- <s:textfield name="wardName" id="wardName" value="%{wardName}" maxlength="20" readOnly="true" /> --%>
 	    	<s:select list="dropdownData.wards" name="wardId"
 				value="%{wardId}" id="wardId" listKey="id" listValue="name" onchange="populateBlock();"/>
 			<egov:ajaxdropdown id="blockId" fields="['Text','Value']"  dropdownId="blockId" url="common/ajaxCommon-areaByWard.action" />
 		</td>
-	    <%-- <s:hidden id="wardId" name="wardId" value="%{wardId}"></s:hidden> --%>
 	</tr>
 	
 	<tr>
 		<td class="bluebox2">&nbsp;</td>
 	    <td class="bluebox"><s:text name="blockno"></s:text> <span class="mandatory1">*</span> :  </td>
 	    <td class="bluebox"> 
-	    	<%-- <s:textfield name="blockName" id="blockName" value="%{blockName}"  maxlength="20" readOnly="true" /> --%>
 	    	<s:select list="dropdownData.blocks" name="blockId"
 				value="%{blockId}" id="blockId" listKey="id" listValue="name" />
 		</td>
-	    <%-- <s:hidden id="blockId" name="blockId" value="%{blockId}"  ></s:hidden> --%>
 	    <td class="bluebox"><s:text name="Street"></s:text> : </td>
 	    <td class="bluebox"><s:textfield id="street" name="street" maxlength="128" value="%{basicProperty.propertyID.Street.name}"/></td>
 	</tr>
