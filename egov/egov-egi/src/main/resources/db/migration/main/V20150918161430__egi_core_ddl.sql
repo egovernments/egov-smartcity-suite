@@ -422,8 +422,11 @@ CREATE TABLE eg_correspondence_address (
 CREATE TABLE eg_crosshierarchy (
     id bigint NOT NULL,
     parent bigint NOT NULL,
-    child bigint NOT NULL
+    child bigint NOT NULL,
+    parenttype bigint,
+    childtype bigint
 );
+
 CREATE SEQUENCE seq_eg_crosshierarchy
     START WITH 1
     INCREMENT BY 1
@@ -431,6 +434,8 @@ CREATE SEQUENCE seq_eg_crosshierarchy
     NO MAXVALUE
     CACHE 1;
 ALTER TABLE ONLY eg_crosshierarchy ADD CONSTRAINT eg_crosshierarchy_pkey PRIMARY KEY (id);
+alter table eg_crosshierarchy add constraint fk_crossheirarchy_parenttype foreign key (parenttype) references eg_boundary_type (id);
+alter table eg_crosshierarchy add constraint fk_crossheirarchy_childtype foreign key (childtype) references eg_boundary_type (id);
 -------------------END-------------------
 
 ------------------START------------------
