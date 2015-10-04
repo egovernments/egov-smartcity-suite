@@ -488,6 +488,6 @@ function readOnlyCheckBox() {
 			</logic:notEmpty>
 			</s:form>
 			</div>
-			
+			<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 			</body>
 </html>
