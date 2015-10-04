@@ -50,7 +50,7 @@ import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 
 @Results({ @Result(name = BankRemittanceReportAction.INDEX, location = "bankRemittanceReport-index.jsp"),
-        @Result(name = BankRemittanceReportAction.REPORT, location = "bankRemittance-report.jsp") })
+        @Result(name = BankRemittanceReportAction.REPORT, location = "bankRemittanceReport-report.jsp") })
 public class BankRemittanceReportAction extends ReportFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -67,7 +67,7 @@ public class BankRemittanceReportAction extends ReportFormAction {
     @Override
     public void prepare() {
         setReportFormat(FileFormat.PDF);
-        setDataSourceType(ReportDataSourceType.HQL);
+        setDataSourceType(ReportDataSourceType.SQL);
     }
 
     /**
