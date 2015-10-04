@@ -114,9 +114,9 @@ import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ReceiptAction.NEW, location = "receipt-new.jsp"),
-        @Result(name = ReceiptAction.EDIT, location = "receipt-edit.jsp"),
-        @Result(name = ReceiptAction.INDEX, location = "receipt-index.jsp"),
-        @Result(name = CollectionConstants.REPORT, location = "receipt-report.jsp") })
+    @Result(name = ReceiptAction.EDIT, location = "receipt-edit.jsp"),
+    @Result(name = ReceiptAction.INDEX, location = "receipt-index.jsp"),
+    @Result(name = CollectionConstants.REPORT, location = "receipt-report.jsp") })
 public class ReceiptAction extends BaseFormAction {
     private static final String ACCOUNT_NUMBER_LIST = "accountNumberList";
     private static final Logger LOGGER = Logger.getLogger(ReceiptAction.class);
@@ -389,27 +389,27 @@ public class ReceiptAction extends BaseFormAction {
             addDropdownData("bankBranchList", ajaxBankRemittanceAction.getBankBranchArrayList());
             addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
         } else // to load branch list and account list while returning after an
-            // error
-            if (getServiceName() != null && receiptMisc.getFund() != null) {
-            final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId());
-            ajaxBankRemittanceAction.setFundName(fund.getName());
-            ajaxBankRemittanceAction.bankBranchList();
-            addDropdownData("bankBranchList", ajaxBankRemittanceAction.getBankBranchArrayList());
+               // error
+        if (getServiceName() != null && receiptMisc.getFund() != null) {
+                final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId());
+                ajaxBankRemittanceAction.setFundName(fund.getName());
+                ajaxBankRemittanceAction.bankBranchList();
+                addDropdownData("bankBranchList", ajaxBankRemittanceAction.getBankBranchArrayList());
 
-            // account list should be populated only if bank branch had been
-            // chosen
-            if (bankBranchId != null && bankBranchId != 0) {
-                final Bankbranch branch = (Bankbranch) bankBranchDAO.findById(bankBranchId, false);
+                // account list should be populated only if bank branch had been
+                // chosen
+                if (bankBranchId != null && bankBranchId != 0) {
+                    final Bankbranch branch = (Bankbranch) bankBranchDAO.findById(bankBranchId, false);
 
-                ajaxBankRemittanceAction.setBranchId(branch.getId());
-                ajaxBankRemittanceAction.accountList();
-                addDropdownData(ACCOUNT_NUMBER_LIST, ajaxBankRemittanceAction.getBankAccountArrayList());
-            } else
-                    addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
-            } else {
-            addDropdownData("bankBranchList", Collections.emptyList());
-            addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
-            }
+                    ajaxBankRemittanceAction.setBranchId(branch.getId());
+                    ajaxBankRemittanceAction.accountList();
+                    addDropdownData(ACCOUNT_NUMBER_LIST, ajaxBankRemittanceAction.getBankAccountArrayList());
+                } else
+                addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
+        } else {
+                addDropdownData("bankBranchList", Collections.emptyList());
+                addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
+        }
     }
 
     /**
@@ -530,7 +530,7 @@ public class ReceiptAction extends BaseFormAction {
         if (validateRebateData(billRebateDetailslist, subLedgerlist)) {
             for (final ReceiptDetailInfo voucherDetails : billRebateDetailslist)
                 if (voucherDetails.getGlcodeDetail() != null
-                        && org.apache.commons.lang.StringUtils.isNotBlank(voucherDetails.getGlcodeDetail())) {
+                && org.apache.commons.lang.StringUtils.isNotBlank(voucherDetails.getGlcodeDetail())) {
                     final CChartOfAccounts account = chartOfAccountsDAO.getCChartOfAccountsByGlCode(voucherDetails
                             .getGlcodeDetail());
                     CFunction function = null;
@@ -570,7 +570,7 @@ public class ReceiptAction extends BaseFormAction {
             final ReceiptDetail receiptDetail) {
         for (final ReceiptDetailInfo subvoucherDetails : subLedgerlist)
             if (subvoucherDetails.getGlcode() != null && subvoucherDetails.getGlcode().getId() != 0
-                    && subvoucherDetails.getGlcode().getId().equals(receiptDetail.getAccounthead().getId())) {
+            && subvoucherDetails.getGlcode().getId().equals(receiptDetail.getAccounthead().getId())) {
 
                 final Accountdetailtype accdetailtype = (Accountdetailtype) getPersistenceService().findByNamedQuery(
                         CollectionConstants.QUERY_ACCOUNTDETAILTYPE_BY_ID, subvoucherDetails.getDetailType().getId());
@@ -588,25 +588,24 @@ public class ReceiptAction extends BaseFormAction {
 
     @Action(value = "/receipts/receipt-newform")
     public String newform() {
-        /*
-         * String manualReceiptInfoRequired = collectionsUtil.getAppConfigValue(
-         * CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-         * CollectionConstants.MANUALRECEIPTINFOREQUIRED); if
-         * (CollectionConstants.YES.equalsIgnoreCase(manualReceiptInfoRequired))
-         * { setManualReceiptNumberAndDateReq(Boolean.TRUE); }
-         */
-        final String[] receiptType = parameters.get("Receipt");
-        if (receiptType != null && receiptType[0].equalsIgnoreCase("Misc"))
-            createMisc();
-        // set collection modes allowed rule through script
-        setCollectionModesNotAllowed();
 
-        return NEW;
+        final String manualReceiptInfoRequired = collectionsUtil.getAppConfigValue(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.MANUALRECEIPTINFOREQUIRED);
+        if (CollectionConstants.YES.equalsIgnoreCase(manualReceiptInfoRequired))
+                    setManualReceiptNumberAndDateReq(Boolean.TRUE);
+
+        final String[] receiptType = parameters.get("Receipt");
+                if (receiptType != null && receiptType[0].equalsIgnoreCase("Misc"))
+                    createMisc();
+                // set collection modes allowed rule through script
+                setCollectionModesNotAllowed();
+
+                return NEW;
     }
 
     /**
      * This method is invoked when user creates a receipt.
-     * 
+     *
      * @return
      */
     @ValidationErrorPage(value = "new")
@@ -990,7 +989,7 @@ public class ReceiptAction extends BaseFormAction {
             if (instrumentProxyList.get(0).getInstrumentType().getType()
                     .equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
                     || instrumentProxyList.get(0).getInstrumentType().getType()
-                            .equals(CollectionConstants.INSTRUMENTTYPE_DD))
+                    .equals(CollectionConstants.INSTRUMENTTYPE_DD))
                 instrumentHeaderList = populateInstrumentHeaderForChequeDD(instrumentHeaderList, instrumentProxyList);
         instrumentHeaderList = receiptHeaderService.createInstrument(instrumentHeaderList);
         return instrumentHeaderList;
@@ -1000,7 +999,7 @@ public class ReceiptAction extends BaseFormAction {
      * This instrument creates instrument header instances for the receipt, when
      * the instrument type is Cheque or DD. The created
      * <code>InstrumentHeader</code> instance is persisted
-     * 
+     *
      * @param k
      *            an int value representing the index of the instrument type as
      *            chosen from the front end
@@ -1031,7 +1030,7 @@ public class ReceiptAction extends BaseFormAction {
      * This method sets the status of the receipt to be cancelled as CANCELLED
      * and persists it A new receipt header object is populated with the data
      * contained in the cancelled receipt. This instance is added to the model.
-     * 
+     *
      * @param receiptHeaderToBeCancelled
      */
     private void recreateNewReceiptOnCancellation() {
@@ -1062,7 +1061,7 @@ public class ReceiptAction extends BaseFormAction {
      * given receipt header object. Both the receipt header objects are added to
      * the same parent <code>ReceiptPayeeDetail</code> object which in turn is
      * added to the model.
-     * 
+     *
      * @param oldReceiptHeader
      *            the instance of <code>ReceiptHeader</code> whose data is to be
      *            copied
@@ -1088,13 +1087,13 @@ public class ReceiptAction extends BaseFormAction {
                 oldReceiptHeader.getReceiptMisc().getFund(), oldReceiptHeader.getReceiptMisc().getIdFunctionary(),
                 oldReceiptHeader.getReceiptMisc().getFundsource(), oldReceiptHeader.getReceiptMisc().getDepartment(),
                 receiptHeader, oldReceiptHeader.getReceiptMisc().getScheme(), oldReceiptHeader.getReceiptMisc()
-                        .getSubscheme(), null);
+                .getSubscheme(), null);
         receiptHeader.setReceiptMisc(receiptMisc);
         bankCOAList = chartOfAccountsDAO.getBankChartofAccountCodeList();
         for (final ReceiptDetail oldDetail : oldReceiptHeader.getReceiptDetails())
             // debit account heads for revenue accounts should not be considered
             if (oldDetail.getOrdernumber() != null
-                    && !FinancialsUtil.isRevenueAccountHead(oldDetail.getAccounthead(), bankCOAList)) {
+            && !FinancialsUtil.isRevenueAccountHead(oldDetail.getAccounthead(), bankCOAList)) {
                 final ReceiptDetail receiptDetail = new ReceiptDetail(oldDetail.getAccounthead(),
                         oldDetail.getFunction(), oldDetail.getCramount(), oldDetail.getDramount(),
                         oldDetail.getCramount(), oldDetail.getOrdernumber(), oldDetail.getDescription(),
@@ -1112,8 +1111,8 @@ public class ReceiptAction extends BaseFormAction {
 
                 if (oldDetail.getIsActualDemand())
                     totalAmountToBeCollected = totalAmountToBeCollected.add(oldDetail.getCramountToBePaid())
-                            .subtract(oldDetail.getDramount())
-                            .setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP);
+                    .subtract(oldDetail.getDramount())
+                    .setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP);
 
                 receiptHeader.addReceiptDetail(receiptDetail);
             }
@@ -1140,7 +1139,7 @@ public class ReceiptAction extends BaseFormAction {
      * Same method handles both view and print modes. If print receipts flag is
      * passed as true, the PDF receipt will be generated in such a way that it
      * will show the print dialog box whenever it is opened.
-     * 
+     *
      * @param printReceipts
      *            Flag indicating whether the receipts are to be printed
      * @return Result page ("view")
@@ -1192,7 +1191,7 @@ public class ReceiptAction extends BaseFormAction {
 
     /**
      * This method is invoked when receipt is cancelled
-     * 
+     *
      * @return
      */
     @Action(value = "/receipts/receipt-saveOnCancel")
@@ -1410,7 +1409,7 @@ public class ReceiptAction extends BaseFormAction {
      * This getter will be invoked by framework from UI. It returns the total
      * number of bill accounts that are present in the XML arriving from the
      * billing system
-     * 
+     *
      * @return
      */
     public Integer getTotalNoOfAccounts() {
@@ -1427,7 +1426,7 @@ public class ReceiptAction extends BaseFormAction {
     /**
      * This getter will be invoked by framework from UI. This value will be used
      * during bill apportioning.
-     * 
+     *
      * @return
      */
     public BigDecimal getMinimumAmount() {
@@ -1551,7 +1550,7 @@ public class ReceiptAction extends BaseFormAction {
     /**
      * This getter will be invoked by framework from UI. This value will be used
      * during misc receipts for account details
-     * 
+     *
      * @return
      */
     public List<ReceiptDetailInfo> getBillCreditDetailslist() {
@@ -1725,8 +1724,8 @@ public class ReceiptAction extends BaseFormAction {
                     }
                     final StringBuffer subledgerDetailRow = new StringBuffer();
                     subledgerDetailRow.append(rDetails.getGlcode().getId().toString())
-                            .append(rDetails.getDetailType().getId().toString())
-                            .append(rDetails.getDetailKeyId().toString());
+                    .append(rDetails.getDetailType().getId().toString())
+                    .append(rDetails.getDetailKeyId().toString());
                     if (null == subLedgerMap.get(subledgerDetailRow.toString()))
                         subLedgerMap.put(subledgerDetailRow.toString(), subledgerDetailRow.toString());
                     else {

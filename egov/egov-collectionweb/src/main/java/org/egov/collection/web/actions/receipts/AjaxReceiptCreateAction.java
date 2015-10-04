@@ -66,12 +66,10 @@ import org.egov.infstr.models.ServiceAccountDetails;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.models.ServiceSubledgerInfo;
 import org.hibernate.HibernateException;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 @ParentPackage("egov")
-@Transactional(readOnly=true)
 @Namespace("/receipts")
 @ResultPath("/WEB-INF/jsp/receipts/")
 @Results({

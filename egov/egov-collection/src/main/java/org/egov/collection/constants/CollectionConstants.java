@@ -107,6 +107,7 @@ public final class CollectionConstants {
     public static final String RECEIPT_STATUS_CODE_CANCELLED = "CANCELLED";
     public static final String RECEIPT_STATUS_CODE_FAILED = "FAILED";
     public static final String RECEIPT_STATUS_CODE_PENDING = "PENDING";
+    public static final String RECEIPT_STATUS_CODE_REMITTED = "REMITTED";
 
     // Status descriptions - ideally we should not be using these - to be
     // discussed
@@ -133,6 +134,7 @@ public final class CollectionConstants {
     public static final String APPCONFIG_VALUE_PAYEEFORMISCRECEIPTS = "PayeeForMiscReceipts";
     public static final String APPCONFIG_VALUE_USERECEIPTDATEFORCONTRA = "USERECEIPTDATEFORCONTRA";
     public static final String MANUALRECEIPTINFOREQUIRED = "MANUALRECEIPTINFOREQUIRED";
+    public static final String APPCONFIG_VALUE_CREATEVOUCHER_FOR_REMITTANCE = "CREATEVOUCHER_FOR_REMITTANCE";
 
     // named queries (collections)
     public static final String QUERY_RECEIPTS_FOR_VOUCHERS = "RECEIPTS_FOR_VOUCHERS";
@@ -143,6 +145,7 @@ public final class CollectionConstants {
     public static final String QUERY_RECEIPTS_BY_RECEIPTNUM = "RECEIPTS_BY_RECEIPTNUM";
     public static final String QUERY_RECEIPTS_BY_REFNUM_AND_SERVICECODE = "RECEIPTS_BY_REFNUM_AND_SERVICECODE";
     public static final String QUERY_RECEIPTS_BY_INSTRUMENTNO_AND_SERVICECODE = "RECEIPTS_BY_INSTRUMENTNO_AND_SERVICECODE";
+    public static final String QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE = "RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE";
     public static final String QUERY_RECEIPTS_BY_RECONSTATUS = "RECEIPTS_BY_RECONSTATUS";
     public static final String QUERY_RECEIPT_BY_CHALLANID = "RECEIPT_BY_CHALLANID";
     public static final String QUERY_VALIDRECEIPT_BY_CHALLANNO = "VALIDRECEIPT_BY_CHALLANNO";
@@ -300,6 +303,7 @@ public final class CollectionConstants {
     public static final String BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT = "SERVICETOTALCARDPAYMENTAMOUNT";
     public static final String BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT = "SERVICETOTALONLINEPAYMENTAMOUNT";
     public static final String BANKREMITTANCE_VOUCHERDATE = "VOUCHERDATE";
+    public static final String BANKREMITTANCE_RECEIPTDATE = "RECEIPTDATE";
     public static final String BANKREMITTANCE_SERVICENAME = "SERVICENAME";
     public static final String BANKREMITTANCE_DEPARTMENTCODE_ACCOUNTS = "A";
     public static final String BANKREMITTANCE_FUNDNAME = "FUNDNAME";

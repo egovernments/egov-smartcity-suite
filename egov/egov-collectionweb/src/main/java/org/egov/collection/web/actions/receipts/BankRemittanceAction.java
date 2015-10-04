@@ -41,6 +41,7 @@ package org.egov.collection.web.actions.receipts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -51,16 +52,16 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
-import org.egov.commons.CVoucherHeader;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.EmployeeService;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({ @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
-        @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp") })
+    @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
 @ParentPackage("egov")
 public class BankRemittanceAction extends BaseFormAction {
 
@@ -69,12 +70,13 @@ public class BankRemittanceAction extends BaseFormAction {
     private List<HashMap<String, Object>> paramList = null;
     private ReceiptHeaderService receiptHeaderService;
     private final ReceiptHeader receiptHeaderIntsance = new ReceiptHeader();
-    private List<CVoucherHeader> voucherHeaderValues = new ArrayList<CVoucherHeader>();
+    private List voucherHeaderValues = new ArrayList();
     private String[] serviceNameArray;
     private String[] totalCashAmountArray;
     private String[] totalChequeAmountArray;
     private String[] totalCardAmountArray;
     private String[] receiptDateArray;
+    private String[] receiptNumberArray;
     private String[] totalOnlineAmountArray;
     private String[] fundCodeArray;
     private String[] departmentCodeArray;
@@ -110,10 +112,19 @@ public class BankRemittanceAction extends BaseFormAction {
         final long startTimeMillis = System.currentTimeMillis();
         final User user = collectionsUtil.getLoggedInUser();
         final Employee employee = employeeService.getEmployeeById(user.getId());
-        final StringBuilder jurValuesId = new StringBuilder();
-        for (final Jurisdiction jur : employee.getJurisdictions())
-            jurValuesId.append(jur.getBoundary().getId());
+        StringBuilder jurValuesId = new StringBuilder();
+        for (Iterator<Jurisdiction> iter = employee.getJurisdictions().iterator(); iter.hasNext();) {
+            Jurisdiction element = (Jurisdiction) iter.next();
+            if (jurValuesId.length() > 0) {
+                jurValuesId.append(',');
+            }
+            jurValuesId.append(element.getBoundary().getId());
 
+            for (Boundary boundary : element.getBoundary().getChildren()) {
+                jurValuesId.append(',');
+                jurValuesId.append(boundary.getId());
+            }
+        }
         paramList = receiptHeaderService.findAllRemitanceDetails(jurValuesId.toString());
         addDropdownData("approverDepartmentList",
                 collectionsUtil.getDepartmentsAllowedForBankRemittanceApproval(collectionsUtil.getLoggedInUser()));
@@ -147,7 +158,7 @@ public class BankRemittanceAction extends BaseFormAction {
         voucherHeaderValues = receiptHeaderService.createBankRemittance(getServiceNameArray(),
                 getTotalCashAmountArray(), getTotalChequeAmountArray(), getTotalCardAmountArray(),
                 getTotalOnlineAmountArray(), getReceiptDateArray(), getFundCodeArray(), getDepartmentCodeArray(),
-                accountNumberMaster, positionUser);
+                accountNumberMaster, positionUser, getReceiptNumberArray());
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);
         return INDEX;
@@ -240,7 +251,7 @@ public class BankRemittanceAction extends BaseFormAction {
     /**
      * @return the voucherHeaderValues
      */
-    public List<CVoucherHeader> getVoucherHeaderValues() {
+    public List getVoucherHeaderValues() {
         return voucherHeaderValues;
     }
 
@@ -248,7 +259,7 @@ public class BankRemittanceAction extends BaseFormAction {
      * @param voucherHeaderValues
      *            the voucherHeaderValues to set
      */
-    public void setVoucherHeaderValues(final List<CVoucherHeader> voucherHeaderValues) {
+    public void setVoucherHeaderValues(final List voucherHeaderValues) {
         this.voucherHeaderValues = voucherHeaderValues;
     }
 
@@ -355,6 +366,14 @@ public class BankRemittanceAction extends BaseFormAction {
      */
     public void setDesignationId(final Integer designationId) {
         this.designationId = designationId;
+    }
+
+    public String[] getReceiptNumberArray() {
+        return receiptNumberArray;
+    }
+
+    public void setReceiptNumberArray(final String[] receiptNumberArray) {
+        this.receiptNumberArray = receiptNumberArray;
     }
 
 }

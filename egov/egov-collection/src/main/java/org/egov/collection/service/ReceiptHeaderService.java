@@ -91,12 +91,10 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Provides services related to receipt header
  */
-@Transactional(readOnly = true)
 public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long> {
 
     private static final Logger LOGGER = Logger.getLogger(ReceiptHeaderService.class);
@@ -199,7 +197,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * @param receiptBulkUpload
      * @return The created voucher
      */
-    @Transactional
+
     protected CVoucherHeader createVoucher(final ReceiptHeader receiptHeader, final Boolean receiptBulkUpload) {
         final HashMap<String, Object> headerdetails = new HashMap<String, Object>();
         final List<HashMap<String, Object>> accountCodeList = new ArrayList<HashMap<String, Object>>();
@@ -314,7 +312,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      *            Receipt header for which voucher is to be created
      * @return The created voucher header
      */
-    @Transactional
+
     public CVoucherHeader createVoucherForReceipt(final ReceiptHeader receiptHeader, final Boolean receiptBulkUpload)
             throws ApplicationRuntimeException {
         CVoucherHeader voucherheader = null;
@@ -362,7 +360,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * @param receiptHeaders
      *            receipt headers for which vouchers are to be created
      */
-    @Transactional
+
     public void createVouchers(final ReceiptHeader receiptHeader, final Boolean receiptBulkUpload)
             throws ApplicationRuntimeException {
         createVoucherForReceipt(receiptHeader, receiptBulkUpload);
@@ -432,29 +430,28 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      *
      * @return List of HashMap
      */
-    public List<HashMap<String, Object>> findAllRemitanceDetailsWithVoucher(final String boundaryIdList) {
+    public List<HashMap<String, Object>> findAllRemitanceDetails(final String boundaryIdList) {
         final List<HashMap<String, Object>> paramList = new ArrayList<HashMap<String, Object>>();
 
-        final String queryBuilder = "SELECT sum(ih.instrumentamount) as INSTRUMENTMAOUNT,vh.VOUCHERDATE AS VOUCHERDATE,"
+        final String queryBuilder = "SELECT sum(ih.instrumentamount) as INSTRUMENTMAOUNT,to_char(ch.RECEIPTDATE, 'DD-MM-YYYY') AS RECEIPTDATE,"
                 + "sd.NAME as SERVICENAME,it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.name AS DEPARTMENTNAME,"
-                + "fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE from EGCL_COLLECTIONHEADER ch,VOUCHERHEADER vh,"
-                + "EGCL_COLLECTIONVOUCHER cv,EGF_INSTRUMENTHEADER ih,EGCL_COLLECTIONINSTRUMENT ci,EGCL_SERVICEDETAILS sd,"
+                + "fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE from EGCL_COLLECTIONHEADER ch,"
+                + "EGF_INSTRUMENTHEADER ih,EGCL_COLLECTIONINSTRUMENT ci,EGCL_SERVICEDETAILS sd,"
                 + "EGF_INSTRUMENTTYPE it,EGCL_COLLECTIONMIS cm,FUND fnd,EG_DEPARTMENT dpt";
 
-        final String whereClauseBeforInstumentType = " where ch.id=cv.COLLECTIONHEADER AND ch.id=cm.collectionheader AND "
-                + "fnd.id=cm.fund AND dpt.id=cm.department and vh.id=cv.VOUCHERHEADER and ci.INSTRUMENTHEADER=ih.ID and "
+        final String whereClauseBeforInstumentType = " where ch.id=cm.collectionheader AND "
+                + "fnd.id=cm.fund AND dpt.id=cm.department and ci.INSTRUMENTHEADER=ih.ID and "
                 + "ch.SERVICEDETAILS=sd.ID and ch.ID=ci.COLLECTIONHEADER and ih.INSTRUMENTTYPE=it.ID and ";
 
         final String whereClause = " AND ih.ID_STATUS=(select id from egw_status where moduletype='"
                 + CollectionConstants.MODULE_NAME_INSTRUMENTHEADER + "' " + "and description='"
                 + CollectionConstants.INSTRUMENT_NEW_STATUS
-                + "') and ih.ISPAYCHEQUE='0' and vh.MODULEID=(select id from eg_modules " + "where name='"
-                + CollectionConstants.MODULE_NAME_COLLECTIONS + "') and ch.STATUS=(select id from egw_status where "
-                + "moduletype='" + CollectionConstants.MODULE_NAME_RECEIPTHEADER + "' and code='"
+                + "') and ih.ISPAYCHEQUE='0' and ch.STATUS=(select id from egw_status where " + "moduletype='"
+                + CollectionConstants.MODULE_NAME_RECEIPTHEADER + "' and code='"
                 + CollectionConstants.RECEIPT_STATUS_CODE_APPROVED + "') ";
 
-        final String groupByClause = " group by vh.VOUCHERDATE,sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code";
-        final String orderBy = " order by VOUCHERDATE";
+        final String groupByClause = " group by to_char(ch.RECEIPTDATE, 'DD-MM-YYYY'),sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code";
+        final String orderBy = " order by RECEIPTDATE";
 
         /**
          * Query to get the collection of the instrument types Cash,Cheque,DD &
@@ -491,7 +488,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             HashMap<String, Object> objHashMap = new HashMap<String, Object>();
 
             if (i == 0) {
-                objHashMap.put(CollectionConstants.BANKREMITTANCE_VOUCHERDATE, arrayObjectInitialIndex[1]);
+                objHashMap.put(CollectionConstants.BANKREMITTANCE_RECEIPTDATE, arrayObjectInitialIndex[1]);
                 objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICENAME, arrayObjectInitialIndex[2]);
                 objHashMap.put(CollectionConstants.BANKREMITTANCE_FUNDNAME, arrayObjectInitialIndex[4]);
                 objHashMap.put(CollectionConstants.BANKREMITTANCE_DEPARTMENTNAME, arrayObjectInitialIndex[5]);
@@ -530,7 +527,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             } else {
                 final int checknew = checkIfMapObjectExist(paramList, arrayObjectInitialIndex);
                 if (checknew == -1) {
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_VOUCHERDATE, arrayObjectInitialIndex[1]);
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_RECEIPTDATE, arrayObjectInitialIndex[1]);
                     objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICENAME, arrayObjectInitialIndex[2]);
                     objHashMap.put(CollectionConstants.BANKREMITTANCE_FUNDNAME, arrayObjectInitialIndex[4]);
                     objHashMap.put(CollectionConstants.BANKREMITTANCE_DEPARTMENTNAME, arrayObjectInitialIndex[5]);
@@ -591,180 +588,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                                 arrayObjectInitialIndex[0]);
                 }
             }
-            if (objHashMap.get(CollectionConstants.BANKREMITTANCE_VOUCHERDATE) != null
-                    && objHashMap.get(CollectionConstants.BANKREMITTANCE_SERVICENAME) != null)
-                paramList.add(objHashMap);
-        }
-        return paramList;
-    }
-
-    /**
-     * Method to find all the Cash,Cheque and DD type instruments with status as
-     * :new and
-     *
-     * @return List of HashMap
-     */
-    public List<HashMap<String, Object>> findAllRemitanceDetails(final String boundaryIdList) {
-        final List<HashMap<String, Object>> paramList = new ArrayList<HashMap<String, Object>>();
-
-        final String queryBuilder = "SELECT sum(ih.instrumentamount) as INSTRUMENTMAOUNT,ch.RECEIPTDATE AS RECEIPTDATE,"
-                + "sd.NAME as SERVICENAME,it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.name AS DEPARTMENTNAME,"
-                + "fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE from EGCL_COLLECTIONHEADER ch,"
-                + "EGF_INSTRUMENTHEADER ih,EGCL_COLLECTIONINSTRUMENT ci,EGCL_SERVICEDETAILS sd,"
-                + "EGF_INSTRUMENTTYPE it,EGCL_COLLECTIONMIS cm,FUND fnd,EG_DEPARTMENT dpt";
-
-        final String whereClauseBeforInstumentType = " where ch.id=cm.collectionheader AND "
-                + "fnd.id=cm.fund AND dpt.id=cm.department and ci.INSTRUMENTHEADER=ih.ID and "
-                + "ch.SERVICEDETAILS=sd.ID and ch.ID=ci.COLLECTIONHEADER and ih.INSTRUMENTTYPE=it.ID and ";
-
-        final String whereClause = " AND ih.ID_STATUS=(select id from egw_status where moduletype='"
-                + CollectionConstants.MODULE_NAME_INSTRUMENTHEADER + "' " + "and description='"
-                + CollectionConstants.INSTRUMENT_NEW_STATUS
-                + "') and ih.ISPAYCHEQUE='0' and ch.STATUS=(select id from egw_status where " + "moduletype='"
-                + CollectionConstants.MODULE_NAME_RECEIPTHEADER + "' and code='"
-                + CollectionConstants.RECEIPT_STATUS_CODE_APPROVED + "') ";
-
-        final String groupByClause = " group by ch.RECEIPTDATE,sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code";
-        final String orderBy = " order by RECEIPTDATE";
-
-        /**
-         * Query to get the collection of the instrument types Cash,Cheque,DD &
-         * Card for bank remittance
-         */
-        final StringBuilder queryStringForCashChequeDDCard = new StringBuilder(queryBuilder + ",egeis_jurisdiction ujl"
-                + whereClauseBeforInstumentType + "it.TYPE in ('" + CollectionConstants.INSTRUMENTTYPE_CASH + "','"
-                + CollectionConstants.INSTRUMENTTYPE_CHEQUE + "'," + "'" + CollectionConstants.INSTRUMENTTYPE_DD
-                + "','" + CollectionConstants.INSTRUMENTTYPE_CARD + "') " + whereClause
-                // + "AND ch.CREATEDBY=ujl.employee and ujl.boundary in (" +
-                // boundaryIdList + ")" + groupByClause);
-                + "AND ch.CREATEDBY=ujl.employee " + groupByClause);
-
-        /**
-         * If the department of login user is AccountCell .i.e., Department
-         * Code-'A',then this user will be able to remit online transaction as
-         * well. All the online receipts created by 'citizen' user will be
-         * remitted by Account Cell user.
-         */
-        final User citizenUser = collectionsUtil.getUserByUserName(CollectionConstants.CITIZEN_USER_NAME);
-
-        if (boundaryIdList != null && citizenUser != null) {
-            final String queryStringForOnline = " union " + queryBuilder + whereClauseBeforInstumentType + "it.TYPE='"
-                    + CollectionConstants.INSTRUMENTTYPE_ONLINE + "'" + whereClause + "AND ch.CREATEDBY="
-                    + citizenUser.getId() + groupByClause;
-
-            queryStringForCashChequeDDCard.append(queryStringForOnline);
-        }
-
-        final Query query = getSession().createSQLQuery(queryStringForCashChequeDDCard.toString() + orderBy);
-
-        final List<Object[]> queryResults = query.list();
-
-        for (int i = 0; i < queryResults.size(); i++) {
-            final Object[] arrayObjectInitialIndex = queryResults.get(i);
-            HashMap<String, Object> objHashMap = new HashMap<String, Object>();
-
-            if (i == 0) {
-                objHashMap.put(CollectionConstants.BANKREMITTANCE_VOUCHERDATE, arrayObjectInitialIndex[1]);
-                objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICENAME, arrayObjectInitialIndex[2]);
-                objHashMap.put(CollectionConstants.BANKREMITTANCE_FUNDNAME, arrayObjectInitialIndex[4]);
-                objHashMap.put(CollectionConstants.BANKREMITTANCE_DEPARTMENTNAME, arrayObjectInitialIndex[5]);
-                objHashMap.put(CollectionConstants.BANKREMITTANCE_FUNDCODE, arrayObjectInitialIndex[6]);
-                objHashMap.put(CollectionConstants.BANKREMITTANCE_DEPARTMENTCODE, arrayObjectInitialIndex[7]);
-
-                if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CASH)) {
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT,
-                            arrayObjectInitialIndex[0]);
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, "");
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, "");
-                }
-                if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
-                        || arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT, "");
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT,
-                            arrayObjectInitialIndex[0]);
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, "");
-                }
-                if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CARD)) {
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT, "");
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, "");
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT,
-                            arrayObjectInitialIndex[0]);
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, "");
-                }
-                if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_ONLINE)) {
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT, "");
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, "");
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT,
-                            arrayObjectInitialIndex[0]);
-                }
-            } else {
-                final int checknew = checkIfMapObjectExist(paramList, arrayObjectInitialIndex);
-                if (checknew == -1) {
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_VOUCHERDATE, arrayObjectInitialIndex[1]);
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICENAME, arrayObjectInitialIndex[2]);
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_FUNDNAME, arrayObjectInitialIndex[4]);
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_DEPARTMENTNAME, arrayObjectInitialIndex[5]);
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_FUNDCODE, arrayObjectInitialIndex[6]);
-                    objHashMap.put(CollectionConstants.BANKREMITTANCE_DEPARTMENTCODE, arrayObjectInitialIndex[7]);
-
-                    if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CASH)) {
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT,
-                                arrayObjectInitialIndex[0]);
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, "");
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, "");
-                    }
-                    if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
-                            || arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT, "");
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT,
-                                arrayObjectInitialIndex[0]);
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, "");
-                    }
-                    if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CARD)) {
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT, "");
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, "");
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT,
-                                arrayObjectInitialIndex[0]);
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, "");
-                    }
-                    if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_ONLINE)) {
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT, "");
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, "");
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT,
-                                arrayObjectInitialIndex[0]);
-                    }
-                } else {
-                    objHashMap = paramList.get(checknew);
-
-                    paramList.remove(checknew);
-
-                    if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CASH))
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT,
-                                arrayObjectInitialIndex[0]);
-                    if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
-                            || arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
-                        BigDecimal existingAmount = BigDecimal.ZERO;
-                        if (objHashMap.get(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT) != "")
-                            existingAmount = new BigDecimal(objHashMap.get(
-                                    CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT).toString());
-                        existingAmount = existingAmount.add(new BigDecimal(arrayObjectInitialIndex[0].toString()));
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, existingAmount);
-                    }
-                    if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CARD))
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT,
-                                arrayObjectInitialIndex[0]);
-                    if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_ONLINE))
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT,
-                                arrayObjectInitialIndex[0]);
-                }
-            }
-            if (objHashMap.get(CollectionConstants.BANKREMITTANCE_VOUCHERDATE) != null
+            if (objHashMap.get(CollectionConstants.BANKREMITTANCE_RECEIPTDATE) != null
                     && objHashMap.get(CollectionConstants.BANKREMITTANCE_SERVICENAME) != null)
                 paramList.add(objHashMap);
         }
@@ -788,7 +612,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
             if (arrayObjectInitialIndexTemp[1] != null && arrayObjectInitialIndexTemp[2] != null)
                 if (arrayObjectInitialIndexTemp[1].equals(objHashMapTemp
-                        .get(CollectionConstants.BANKREMITTANCE_VOUCHERDATE))
+                        .get(CollectionConstants.BANKREMITTANCE_RECEIPTDATE))
                         && arrayObjectInitialIndexTemp[2].equals(objHashMapTemp
                                 .get(CollectionConstants.BANKREMITTANCE_SERVICENAME))
                         && arrayObjectInitialIndexTemp[6].equals(objHashMapTemp
@@ -813,23 +637,24 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * @param totalChequeAmount
      * @return List of Contra Vouchers Created
      */
-    public List<CVoucherHeader> createBankRemittance(final String[] serviceNameArr, final String[] totalCashAmount,
+    public List createBankRemittance(final String[] serviceNameArr, final String[] totalCashAmount,
             final String[] totalChequeAmount, final String[] totalCardAmount, final String[] totalOnlineAmount,
             final String[] receiptDateArray, final String[] fundCodeArray, final String[] departmentCodeArray,
-            final Integer accountNumberId, final Integer positionUser) {
+            final Integer accountNumberId, final Integer positionUser, final String[] receiptNumberArray) {
         final List<CVoucherHeader> newContraVoucherList = new ArrayList<CVoucherHeader>();
+        final List<ReceiptHeader> bankRemittanceList = new ArrayList<ReceiptHeader>();
         final SimpleDateFormat dateFomatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         final Map<String, Object> instrumentDepositeMap = financialsUtil.prepareForUpdateInstrumentDepositSQL();
         final String instrumentGlCodeQueryString = "SELECT COA.GLCODE FROM CHARTOFACCOUNTS COA,EGF_INSTRUMENTACCOUNTCODES IAC,EGF_INSTRUMENTTYPE IT "
                 + "WHERE IT.ID=IAC.TYPEID AND IAC.GLCODEID=COA.ID AND IT.TYPE=";
         final String receiptInstrumentQueryString = "select DISTINCT (instruments) from org.egov.collection.entity.ReceiptHeader receipt "
                 + "join receipt.receiptInstrument as instruments where ";
-        final String serviceNameCondition = "receipt.service.serviceName=? ";
-        final String receiptDateCondition = "and to_char(receipt.createdDate,'yyyy-MM-dd')=? ";
+        final String serviceNameCondition = "receipt.service.name=? ";
+        final String receiptDateCondition = "and to_char(receipt.createdDate,'dd-MM-yyyy')=? ";
         final String instrumentStatusCondition = "and instruments.statusId.id=? ";
         final String instrumentTypeCondition = "and instruments.instrumentType.type = ? ";
         final String receiptFundCondition = "and receipt.receiptMisc.fund.code = ? ";
-        final String receiptDepartmentCondition = "and receipt.receiptMisc.department.deptCode = ? ";
+        final String receiptDepartmentCondition = "and receipt.receiptMisc.department.code = ? ";
 
         final String cashInHandQueryString = instrumentGlCodeQueryString + "'"
                 + CollectionConstants.INSTRUMENTTYPE_CASH + "'";
@@ -892,9 +717,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             if (serviceName != null && serviceName.length() > 0) {
                 final String serviceGLCodeQueryString = "select coa.glcode from BANKACCOUNT ba,CHARTOFACCOUNTS coa where "
                         + "ba.GLCODEID=coa.ID and ba.ID=" + accountNumberId;
+                persistenceService.findByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_NAME, serviceName);
+                Bankaccount depositedBankAccount = null;
                 final ServiceDetails serviceDetails = (ServiceDetails) persistenceService.findByNamedQuery(
                         CollectionConstants.QUERY_SERVICE_BY_NAME, serviceName);
-                Bankaccount depositedBankAccount = null;
                 final Query serviceGLCodeQuery = getSession().createSQLQuery(serviceGLCodeQueryString);
 
                 final String serviceGlCode = serviceGLCodeQuery.list().get(0).toString();
@@ -938,6 +764,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     headerdetails.put(VoucherConstant.FUNCTIONARYCODE, serviceDetails.getFunctionary() == null ? null
                             : serviceDetails.getFunctionary().getCode());
                     headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
+                    headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
 
                     final List<HashMap<String, Object>> accountCodeCashList = new ArrayList<HashMap<String, Object>>();
                     final HashMap<String, Object> accountcodedetailsCreditCashHashMap = new HashMap<String, Object>();
@@ -958,34 +785,29 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         accountCodeCashList.add(accountcodedetailsDebitHashMap);
                     }
 
-                    CVoucherHeader voucherHeaderCash = new CVoucherHeader();
-                    try {
-                        voucherHeaderCash = financialsUtil.createPreApprovalVoucher(headerdetails, accountCodeCashList,
-                                subledgerList);
-                    } catch (final Exception e) {
-                        LOGGER.error("Error in createBankRemittance createPreApprovalVoucher when cash amount>0");
-                    }
+                    final CVoucherHeader voucherHeaderCash = financialsUtil.createRemittanceVoucher(headerdetails,
+                            accountCodeCashList, subledgerList);
+
                     newContraVoucherList.add(voucherHeaderCash);
                     depositedBankAccount = (Bankaccount) persistenceService.find(
                             "from Bankaccount where chartofaccounts.glcode=?", serviceGlCode);
-                    for (final InstrumentHeader instrumentHeader : instrumentHeaderListCash)
-                        if (voucherHeaderCash.getId() != null && serviceGlCode != null) {
-                            final Map<String, Object> cashMap = constructInstrumentMap(instrumentDepositeMap,
-                                    depositedBankAccount, instrumentHeader, voucherHeaderCash, voucherDate);
-                            financialsUtil.updateCashDeposit(voucherHeaderCash.getId(), serviceGlCode,
-                                    instrumentHeader, cashMap);
-                            final ContraJournalVoucher contraJournalVoucher = (ContraJournalVoucher) persistenceService
-                                    .findByNamedQuery(CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID,
-                                            voucherHeaderCash.getId(), instrumentHeader.getId());
-                            contraJournalVoucher.transition(true).start()
-                                    .withSenderName(contraJournalVoucher.getCreatedBy().getName())
-                                    .withComments("Voucher Created")
-                                    .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
-                            contraJournalVoucher.transition(true).transition()
-                                    .withSenderName(contraJournalVoucher.getCreatedBy().getName())
-                                    .withComments(voucherWorkflowMsg)
-                                    .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
-                        }
+                    if (voucherHeaderCash != null && voucherHeaderCash.getId() != null)
+                        createVoucherForCashRemittance(instrumentDepositeMap, voucherWorkflowMsg, voucherDate,
+                                depositedBankAccount, serviceGlCode, instrumentHeaderListCash, voucherHeaderCash);
+                    else {
+                        final EgwStatus statusDeposited = egwStatusDAO.getStatusByModuleAndCode(
+                                CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
+                                CollectionConstants.INSTRUMENT_DEPOSITED_STATUS);
+                        financialsUtil.updateInstrumentHeader(instrumentHeaderListCash, statusDeposited,
+                                depositedBankAccount);
+                    }
+
+                    for (final InstrumentHeader instHead : instrumentHeaderListCash) {
+                        final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
+                                CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE,
+                                instHead.getId(), serviceDetails.getCode());
+                        bankRemittanceList.addAll(receiptHeaders);
+                    }
 
                 }
                 // If Cheque Amount is present
@@ -1015,7 +837,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
                     final List<InstrumentHeader> instrumentHeaderListCheque = persistenceService.findAllBy(
                             chequeQueryBuilder.toString(), arguments);
-
                     final HashMap<String, Object> headerdetails = new HashMap<String, Object>();
                     final List<HashMap<String, Object>> accountCodeChequeList = new ArrayList<HashMap<String, Object>>();
                     final HashMap<String, Object> accountcodedetailsCreditChequeHashMap = new HashMap<String, Object>();
@@ -1032,6 +853,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         headerdetails.put(VoucherConstant.VOUCHERTYPE,
                                 CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
                     }
+                    headerdetails.put(VoucherConstant.VOUCHERNAME,
+                            CollectionConstants.FINANCIAL_CONTRATVOUCHER_VOUCHERNAME);
+                    headerdetails.put(VoucherConstant.VOUCHERTYPE,
+                            CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
                     headerdetails.put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
                     headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
                     headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
@@ -1057,47 +882,30 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         accountcodedetailsDebitHashMap.put(VoucherConstant.DEBITAMOUNT, totalChequeAmount[i]);
                         accountCodeChequeList.add(accountcodedetailsDebitHashMap);
                     }
+                    final CVoucherHeader voucherHeaderCheque = financialsUtil.createRemittanceVoucher(headerdetails,
+                            accountCodeChequeList, subledgerList);
 
-                    CVoucherHeader voucherHeaderCheque = new CVoucherHeader();
-                    try {
-                        voucherHeaderCheque = financialsUtil.createPreApprovalVoucher(headerdetails,
-                                accountCodeChequeList, subledgerList);
-                    } catch (final Exception e) {
-                        LOGGER.error("Error in createBankRemittance createPreApprovalVoucher when cheque amount>0");
-                    }
                     newContraVoucherList.add(voucherHeaderCheque);
                     depositedBankAccount = (Bankaccount) persistenceService.find(
                             "from Bankaccount where chartofaccounts.glcode=?", serviceGlCode);
-                    for (final InstrumentHeader instrumentHeader : instrumentHeaderListCheque)
-                        if (voucherHeaderCheque.getId() != null && serviceGlCode != null) {
-                            final Map<String, Object> chequeMap = constructInstrumentMap(instrumentDepositeMap,
-                                    depositedBankAccount, instrumentHeader, voucherHeaderCheque, voucherDate);
-                            if (voucherTypeForChequeDDCard)
-                                financialsUtil.updateCheque_DD_Card_Deposit_Receipt(voucherHeaderCheque.getId(),
-                                        serviceGlCode, instrumentHeader, chequeMap);
-                            else {
+                    if (voucherHeaderCheque != null && voucherHeaderCheque.getId() != null)
+                        createVoucherForChequeCardRemittance(instrumentDepositeMap, voucherWorkflowMsg,
+                                voucherTypeForChequeDDCard, voucherDate, depositedBankAccount, serviceGlCode,
+                                instrumentHeaderListCheque, voucherHeaderCheque);
+                    else {
+                        final EgwStatus statusDeposited = egwStatusDAO.getStatusByModuleAndCode(
+                                CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
+                                CollectionConstants.INSTRUMENT_DEPOSITED_STATUS);
+                        financialsUtil.updateInstrumentHeader(instrumentHeaderListCheque, statusDeposited,
+                                depositedBankAccount);
+                    }
 
-                                financialsUtil.updateCheque_DD_Card_Deposit(voucherHeaderCheque.getId(), serviceGlCode,
-                                        instrumentHeader, chequeMap);
-                                final ContraJournalVoucher contraJournalVoucher = (ContraJournalVoucher) persistenceService
-                                        .findByNamedQuery(CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID,
-                                                voucherHeaderCheque.getId(), instrumentHeader.getId());
-                                contraJournalVoucher
-                                        .transition(true)
-                                        .start()
-                                        .withSenderName(contraJournalVoucher.getCreatedBy().getName())
-                                        .withComments(CollectionConstants.WF_STATE_NEW)
-                                        .withOwner(
-                                                collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
-                                contraJournalVoucher
-                                        .transition(true)
-                                        .transition()
-                                        .withSenderName(contraJournalVoucher.getCreatedBy().getName())
-                                        .withComments(voucherWorkflowMsg)
-                                        .withOwner(
-                                                collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
-                            }
-                        }
+                    for (final InstrumentHeader instHead : instrumentHeaderListCheque) {
+                        final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
+                                CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE,
+                                instHead.getId(), serviceDetails.getCode());
+                        bankRemittanceList.addAll(receiptHeaders);
+                    }
                 }
                 // If card amount is present
                 if (totalCardAmount[i].trim() != null && totalCardAmount[i].trim().length() > 0
@@ -1136,6 +944,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         headerdetails.put(VoucherConstant.VOUCHERTYPE,
                                 CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
                     }
+                    headerdetails.put(VoucherConstant.VOUCHERNAME,
+                            CollectionConstants.FINANCIAL_CONTRATVOUCHER_VOUCHERNAME);
+                    headerdetails.put(VoucherConstant.VOUCHERTYPE,
+                            CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
                     headerdetails.put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
                     headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
                     headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
@@ -1164,46 +976,35 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         accountcodedetailsDebitHashMap.put(VoucherConstant.DEBITAMOUNT, totalCardAmount[i]);
                         accountCodeOnlineList.add(accountcodedetailsDebitHashMap);
                     }
-
-                    CVoucherHeader voucherHeaderCard = new CVoucherHeader();
-                    try {
-                        voucherHeaderCard = financialsUtil.createPreApprovalVoucher(headerdetails,
+                    final String createVoucher = collectionsUtil.getAppConfigValue(
+                            CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                            CollectionConstants.APPCONFIG_VALUE_CREATEVOUCHER_FOR_REMITTANCE);
+                    if (CollectionConstants.YES.equalsIgnoreCase(createVoucher)) {
+                        final CVoucherHeader voucherHeaderCard = financialsUtil.createRemittanceVoucher(headerdetails,
                                 accountCodeOnlineList, subledgerList);
-                    } catch (final Exception e) {
-                        LOGGER.error("Error in createBankRemittance createPreApprovalVoucher when online amount>0");
-                    }
-                    newContraVoucherList.add(voucherHeaderCard);
-                    depositedBankAccount = (Bankaccount) persistenceService.find(
-                            "from Bankaccount where chartofaccounts.glcode=?", serviceGlCode);
-                    for (final InstrumentHeader instrumentHeader : instrumentHeaderListOnline)
-                        if (voucherHeaderCard.getId() != null && serviceGlCode != null) {
-                            final Map<String, Object> cardMap = constructInstrumentMap(instrumentDepositeMap,
-                                    depositedBankAccount, instrumentHeader, voucherHeaderCard, voucherDate);
-                            if (voucherTypeForChequeDDCard)
-                                financialsUtil.updateCheque_DD_Card_Deposit_Receipt(voucherHeaderCard.getId(),
-                                        serviceGlCode, instrumentHeader, cardMap);
-                            else {
-                                financialsUtil.updateCheque_DD_Card_Deposit(voucherHeaderCard.getId(), serviceGlCode,
-                                        instrumentHeader, cardMap);
-                                final ContraJournalVoucher contraJournalVoucher = (ContraJournalVoucher) persistenceService
-                                        .findByNamedQuery(CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID,
-                                                voucherHeaderCard.getId(), instrumentHeader.getId());
-                                contraJournalVoucher
-                                        .transition(true)
-                                        .start()
-                                        .withSenderName(contraJournalVoucher.getCreatedBy().getName())
-                                        .withComments(CollectionConstants.WF_STATE_NEW)
-                                        .withOwner(
-                                                collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
-                                contraJournalVoucher
-                                        .transition(true)
-                                        .transition()
-                                        .withSenderName(contraJournalVoucher.getCreatedBy().getName())
-                                        .withComments(voucherWorkflowMsg)
-                                        .withOwner(
-                                                collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
-                            }
+
+                        newContraVoucherList.add(voucherHeaderCard);
+                        depositedBankAccount = (Bankaccount) persistenceService.find(
+                                "from Bankaccount where chartofaccounts.glcode=?", serviceGlCode);
+                        if (voucherHeaderCard != null && voucherHeaderCard.getId() != null)
+                            createVoucherForChequeCardRemittance(instrumentDepositeMap, voucherWorkflowMsg,
+                                    voucherTypeForChequeDDCard, voucherDate, depositedBankAccount, serviceGlCode,
+                                    instrumentHeaderListOnline, voucherHeaderCard);
+                        else {
+                            final EgwStatus statusDeposited = egwStatusDAO.getStatusByModuleAndCode(
+                                    CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
+                                    CollectionConstants.INSTRUMENT_DEPOSITED_STATUS);
+                            financialsUtil.updateInstrumentHeader(instrumentHeaderListOnline, statusDeposited,
+                                    depositedBankAccount);
                         }
+
+                        for (final InstrumentHeader instHead : instrumentHeaderListOnline) {
+                            final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
+                                    CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE,
+                                    instHead.getId(), serviceDetails.getCode());
+                            bankRemittanceList.addAll(receiptHeaders);
+                        }
+                    }
                 }
                 // If online amount is present
                 if (totalOnlineAmount[i].trim() != null && totalOnlineAmount[i].trim().length() > 0
@@ -1242,6 +1043,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         headerdetails.put(VoucherConstant.VOUCHERTYPE,
                                 CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
                     }
+                    headerdetails.put(VoucherConstant.VOUCHERNAME,
+                            CollectionConstants.FINANCIAL_CONTRATVOUCHER_VOUCHERNAME);
+                    headerdetails.put(VoucherConstant.VOUCHERTYPE,
+                            CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
                     headerdetails.put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
                     headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
                     headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
@@ -1271,50 +1076,94 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         accountCodeOnlineList.add(accountcodedetailsDebitHashMap);
                     }
 
-                    CVoucherHeader voucherHeaderCard = new CVoucherHeader();
-                    try {
-                        voucherHeaderCard = financialsUtil.createPreApprovalVoucher(headerdetails,
-                                accountCodeOnlineList, subledgerList);
-                    } catch (final Exception e) {
-                        LOGGER.error("Error in createBankRemittance createPreApprovalVoucher when online amount>0");
-                    }
+                    final CVoucherHeader voucherHeaderCard = financialsUtil.createRemittanceVoucher(headerdetails,
+                            accountCodeOnlineList, subledgerList);
                     newContraVoucherList.add(voucherHeaderCard);
+
                     depositedBankAccount = (Bankaccount) persistenceService.find(
                             "from Bankaccount where chartofaccounts.glcode=?", serviceGlCode);
-                    for (final InstrumentHeader instrumentHeader : instrumentHeaderListOnline)
-                        if (voucherHeaderCard.getId() != null && serviceGlCode != null) {
-                            final Map<String, Object> cardMap = constructInstrumentMap(instrumentDepositeMap,
-                                    depositedBankAccount, instrumentHeader, voucherHeaderCard, voucherDate);
-                            if (voucherTypeForChequeDDCard)
-                                financialsUtil.updateCheque_DD_Card_Deposit_Receipt(voucherHeaderCard.getId(),
-                                        serviceGlCode, instrumentHeader, cardMap);
-                            else {
-                                financialsUtil.updateCheque_DD_Card_Deposit(voucherHeaderCard.getId(), serviceGlCode,
-                                        instrumentHeader, cardMap);
-                                final ContraJournalVoucher contraJournalVoucher = (ContraJournalVoucher) persistenceService
-                                        .findByNamedQuery(CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID,
-                                                voucherHeaderCard.getId(), instrumentHeader.getId());
-                                contraJournalVoucher
-                                        .transition(true)
-                                        .start()
-                                        .withSenderName(contraJournalVoucher.getCreatedBy().getName())
-                                        .withComments(CollectionConstants.WF_STATE_NEW)
-                                        .withOwner(
-                                                collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
-                                contraJournalVoucher
-                                        .transition(true)
-                                        .transition()
-                                        .withSenderName(contraJournalVoucher.getCreatedBy().getName())
-                                        .withComments(voucherWorkflowMsg)
-                                        .withOwner(
-                                                collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
-                            }
-                        }
+                    if (voucherHeaderCard != null && voucherHeaderCard.getId() != null)
+                        createVoucherForChequeCardRemittance(instrumentDepositeMap, voucherWorkflowMsg,
+                                voucherTypeForChequeDDCard, voucherDate, depositedBankAccount, serviceGlCode,
+                                instrumentHeaderListOnline, voucherHeaderCard);
+                    else {
+                        final EgwStatus statusDeposited = egwStatusDAO.getStatusByModuleAndCode(
+                                CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
+                                CollectionConstants.INSTRUMENT_DEPOSITED_STATUS);
+                        financialsUtil.updateInstrumentHeader(instrumentHeaderListOnline, statusDeposited,
+                                depositedBankAccount);
+                    }
+
+                    for (final InstrumentHeader instHead : instrumentHeaderListOnline) {
+                        final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
+                                CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE,
+                                instHead.getId(), serviceDetails.getCode());
+                        bankRemittanceList.addAll(receiptHeaders);
+                    }
 
                 }
             }
         }
-        return newContraVoucherList;
+        for (final ReceiptHeader receiptHeader : bankRemittanceList) {
+            final EgwStatus statusRemitted = egwStatusDAO.getStatusByModuleAndCode(
+                    CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_REMITTED);
+            receiptHeader.setStatus(statusRemitted);
+            getSession().flush();
+            persistenceService.update(receiptHeader);
+        }
+
+        return bankRemittanceList;
+    }
+
+    private void createVoucherForChequeCardRemittance(final Map<String, Object> instrumentDepositeMap,
+            final String voucherWorkflowMsg, final Boolean voucherTypeForChequeDDCard, final Date voucherDate,
+            final Bankaccount depositedBankAccount, final String serviceGlCode,
+            final List<InstrumentHeader> instrumentHeaderListCheque, final CVoucherHeader voucherHeaderCheque) {
+        for (final InstrumentHeader instrumentHeader : instrumentHeaderListCheque)
+            if (voucherHeaderCheque.getId() != null && serviceGlCode != null) {
+                final Map<String, Object> chequeMap = constructInstrumentMap(instrumentDepositeMap,
+                        depositedBankAccount, instrumentHeader, voucherHeaderCheque, voucherDate);
+                if (voucherTypeForChequeDDCard)
+                    financialsUtil.updateCheque_DD_Card_Deposit_Receipt(voucherHeaderCheque.getId(), serviceGlCode,
+                            instrumentHeader, chequeMap);
+                else {
+
+                    financialsUtil.updateCheque_DD_Card_Deposit(voucherHeaderCheque.getId(), serviceGlCode,
+                            instrumentHeader, chequeMap);
+                    final ContraJournalVoucher contraJournalVoucher = (ContraJournalVoucher) persistenceService
+                            .findByNamedQuery(CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID,
+                                    voucherHeaderCheque.getId(), instrumentHeader.getId());
+                    contraJournalVoucher.transition(true).start()
+                    .withSenderName(contraJournalVoucher.getCreatedBy().getName())
+                    .withComments(CollectionConstants.WF_STATE_NEW)
+                    .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                    contraJournalVoucher.transition(true).withSenderName(contraJournalVoucher.getCreatedBy().getName())
+                    .withComments(voucherWorkflowMsg)
+                    .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                }
+            }
+
+    }
+
+    private void createVoucherForCashRemittance(final Map<String, Object> instrumentDepositeMap,
+            final String voucherWorkflowMsg, final Date voucherDate, final Bankaccount depositedBankAccount,
+            final String serviceGlCode, final List<InstrumentHeader> instrumentHeaderListCash,
+            final CVoucherHeader voucherHeaderCash) {
+        for (final InstrumentHeader instrumentHeader : instrumentHeaderListCash)
+            if (voucherHeaderCash.getId() != null && serviceGlCode != null) {
+                final Map<String, Object> cashMap = constructInstrumentMap(instrumentDepositeMap, depositedBankAccount,
+                        instrumentHeader, voucherHeaderCash, voucherDate);
+                financialsUtil.updateCashDeposit(voucherHeaderCash.getId(), serviceGlCode, instrumentHeader, cashMap);
+                final ContraJournalVoucher contraJournalVoucher = (ContraJournalVoucher) persistenceService
+                        .findByNamedQuery(CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID,
+                                voucherHeaderCash.getId(), instrumentHeader.getId());
+                contraJournalVoucher.transition(true).start()
+                        .withSenderName(contraJournalVoucher.getCreatedBy().getName()).withComments("Voucher Created")
+                        .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                contraJournalVoucher.transition(true).transition()
+                        .withSenderName(contraJournalVoucher.getCreatedBy().getName()).withComments(voucherWorkflowMsg)
+                        .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+            }
     }
 
     /**
@@ -1420,7 +1269,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * number is not present, the challan number is generated and set into it.
      */
     @Override
-    @Transactional
     public ReceiptHeader persist(final ReceiptHeader receiptHeader) {
         // for (ReceiptHeader receiptHeader : entity.getReceiptHeaders()) {
         if (receiptHeader.getReceipttype() != CollectionConstants.RECEIPT_TYPE_CHALLAN
@@ -1445,7 +1293,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * If the receipt number for all of the receipts is generated, if not
      * already present.
      */
-    @Transactional
+
     public ReceiptHeader persistChallan(final ReceiptHeader entity) {
         for (final ReceiptHeader receiptHeader : entity.getReceiptHeaders()) {
             Integer.valueOf(collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
@@ -1482,7 +1330,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      *            persisted
      * @return the list of persisted <code>ReceiptPayeeDetails</code> instances
      */
-    @Transactional
+
     public List<ReceiptHeader> persist(final Set<ReceiptHeader> entity) {
         final List<ReceiptHeader> saved = new ArrayList<ReceiptHeader>();
         final Iterator iterator = entity.iterator();
@@ -1502,7 +1350,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      *            persisted
      * @return the list of persisted <code>ReceiptPayeeDetails</code> instances
      */
-    @Transactional
+
     public List<ReceiptHeader> persistPendingReceipts(final ReceiptHeader receiptHeader) {
         final List<ReceiptHeader> saved = new ArrayList<ReceiptHeader>();
         saved.add(super.persist(receiptHeader));
@@ -1551,7 +1399,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * This method is called for voucher reversal in case of intra-day receipt
      * cancellation.
      */
-    @Transactional
+
     public void createReversalVoucher(final ReceiptVoucher receiptVoucher, final String instrumentType) {
         final List<HashMap<String, Object>> reversalVoucherInfoList = new ArrayList();
         final HashMap<String, Object> reversalVoucherInfo = new HashMap();
@@ -1594,7 +1442,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * @param receiptPayeeDetails
      * @return void
      */
-    @Transactional
+
     public void updateInstrument(final List<CVoucherHeader> voucherHeaderList,
             final List<InstrumentHeader> instrumentHeaderList) {
         final List<Map<String, Object>> instrumentVoucherList = new ArrayList();
@@ -1611,7 +1459,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         }
     }
 
-    @Transactional
     public List<InstrumentHeader> createInstrument(final List<InstrumentHeader> instrumentHeaderList) {
         final List<Map<String, Object>> instrumentHeaderMapList = new ArrayList();
         if (instrumentHeaderList != null)
@@ -1706,7 +1553,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         }
     }
 
-    @Transactional
     public void perform(final ReceiptHeader receiptHeader, final String wfState, final String newStatusCode,
             final String nextAction, final Position ownerPosition, final String remarks) {
         receiptHeader.setStatus(collectionsUtil.getReceiptStatusForCode(newStatusCode));

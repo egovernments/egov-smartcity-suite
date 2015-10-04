@@ -57,19 +57,15 @@
 </tr>
 	<td align="center"><table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom">
 		<tr>
-			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.vouchernumber"/></th>
-			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.voucherdate"/></th>
-			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.vouchertype"/></th>
-			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.fund"/></th>
-			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.department"/></th>
+			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.receiptnumber"/></th>
+			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.receiptdate"/></th>
+			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.servicename"/></th>
 		</tr>
 		<s:iterator value="%{voucherHeaderValues}"> 
 		<tr>
-			<td class="blueborderfortd"><div align="center"><s:property value="%{voucherNumber}" /></div></td>
-			<td class="blueborderfortd"><div align="center"><s:date name="voucherDate" var="cdFormat" format="dd/MM/yyyy"/><s:property value="%{cdFormat}" /></div></td>
-			<td class="blueborderfortd"><div align="center"><s:property value="%{name}" /></div></td>
-			<td class="blueborderfortd"><div align="center"><s:property value="%{fundId.name}" /></div></td>
-			<td class="blueborderfortd"><div align="center"><s:property value="%{vouchermis.departmentid.deptName}" /></div></td>	
+			<td class="blueborderfortd"><div align="center"><s:property value="%{receiptnumber}" /></div></td>
+			<td class="blueborderfortd"><div align="center"><s:date name="receiptDate" var="cdFormat" format="dd/MM/yyyy"/><s:property value="%{cdFormat}" /></div></td>
+			<td class="blueborderfortd"><div align="center"><s:property value="%{service.name}" /></div></td>
 		</s:iterator>
 	</table></td>
 </table>

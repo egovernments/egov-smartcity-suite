@@ -100,11 +100,9 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.MoneyUtils;
 import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 
 
-@Transactional(readOnly = true)
 public class CollectionCommon {
 
     private static final Logger LOGGER = Logger.getLogger(CollectionCommon.class);
@@ -463,7 +461,7 @@ public class CollectionCommon {
         return ReportViewerUtil.addReportToSession(reportService.createReport(reportInput), session);
     }
 
-    @Transactional
+    
     public PaymentRequest createPaymentRequest(final ServiceDetails paymentServiceDetails,
             final ReceiptHeader receiptHeader) {
 
@@ -568,7 +566,7 @@ public class CollectionCommon {
      *            the <code>ReceiptHeader</code> which contains a reference to
      *            the receipt to be cancelled.
      */
-    @Transactional
+    
     public void cancelChallanReceiptOnCreation(final ReceiptHeader receiptHeader) {
         final ReceiptHeader receiptHeaderToBeCancelled = receiptHeaderService.findById(receiptHeader.getReceiptHeader()
                 .getId(), false);
@@ -588,7 +586,7 @@ public class CollectionCommon {
      *            the instance of <code>ReceiptHeader</code> whose data is to be
      *            copied
      */
-    @Transactional
+    
     public ReceiptHeader createPendingReceiptFromCancelledChallanReceipt(final ReceiptHeader oldReceiptHeader) {
 
         final ReceiptHeader newReceiptHeader = new ReceiptHeader(true, oldReceiptHeader.getIsModifiable(),
@@ -658,7 +656,7 @@ public class CollectionCommon {
      *            a boolean value indicating if the instrument should be
      *            cancelled
      */
-    @Transactional
+    
     public void cancelChallanReceipt(final ReceiptHeader receiptHeader, final boolean cancelInstrument) {
         String instrumentType = "";
         /**
