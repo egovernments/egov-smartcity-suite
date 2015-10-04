@@ -132,7 +132,8 @@ Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYN
 Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'GenerateDemandBill-Form','/search/searchProperty-commonForm.action', 'applicationType=Generate_demand_bill',(select id from EG_MODULE where name = 'Existing property'),null,'Generate Demand Bill','t','ptis',0,1,now(),1,now(),(select id from eg_module  where name = 'Property Tax'));
 Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'Assessment-commonSearch','/search/searchProperty-commonSearch.action', null,(select id from EG_MODULE where name = 'Existing property'),null,null,'f','ptis',0,1,now(),1,now(),(select id from eg_module  where name = 'Property Tax'));
 Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'ajaxLoadBolockByWard','/common/ajaxCommon-blockByWard.action', null,(select id from EG_MODULE where name = 'New Property'),null,null,'f','ptis',0,1,now(),1,now(),(select id from eg_module  where name = 'Property Tax'));
-
+Insert into eg_action (ID,NAME,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate, lastmodifiedby, lastmodifieddate, application) values (nextval('seq_eg_action'),'PTIS-Edit Data Entry Screen','/modify/modifyProperty-modifyDataEntry.action', null, (select ID from eg_module where NAME ='Existing property'), null, 'Edit Data Entry Screen', false, 'ptis', null, 1, current_timestamp,1,current_timestamp, (select ID from eg_module where NAME ='Property Tax'));
+Insert into eg_action (ID,NAME,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate, lastmodifiedby, lastmodifieddate, application) values (nextval('seq_eg_action'),'PTIS-Save Edit Data Entry Screen','/modify/modifyProperty-saveDataEntry.action', null, (select ID from eg_module where NAME ='Existing property'), null, 'Save Edit Data Entry Screen', false, 'ptis', null, 1, current_timestamp,1,current_timestamp, (select ID from eg_module where NAME ='Property Tax'));
 ------------------END---------------------
 -----------------START-------------------
 
@@ -502,6 +503,8 @@ insert into eg_roleaction (roleid, actionid) select (select id from eg_role wher
 INSERT INTO eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Property Verifier'), (select id from eg_action  where name = 'ajaxLoadBoundaryBlock'));
 insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'ULB Operator'), id from eg_action where name = 'ajaxLoadBolockByWard';
 insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'Property Verifier'), id from eg_action where name = 'ajaxLoadBolockByWard';
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where name = 'CSC Operator') ,(select id FROM eg_action  WHERE name = 'PTIS-Edit Data Entry Screen' and contextroot='ptis'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where name = 'CSC Operator') ,(select id FROM eg_action  WHERE name = 'PTIS-Save Edit Data Entry Screen' and contextroot='ptis'));
 ------------------END---------------------
 
 -----------------START-------------------
