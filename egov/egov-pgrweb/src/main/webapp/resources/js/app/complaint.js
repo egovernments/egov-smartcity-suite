@@ -132,7 +132,7 @@ jQuery(document).ready(function($)
 	
 	
 	$('input[type=radio][name=receivingMode]').change(function() {
-		if ($("input[name=receivingMode]:checked").val() == 'PAPER') {
+		if ($("input[name=receivingMode]:checked").val() == 'MANUAL') {
 			enableRC();
 		} else {
 			disableRC();

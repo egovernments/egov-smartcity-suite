@@ -65,10 +65,14 @@ public class ReceivingCenter extends AbstractPersistable<Long> {
 
     private boolean isCrnRequired;
 
+    private Long orderNo;
+
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     protected void setId(final Long id) {
         this.id = id;
     }
@@ -87,6 +91,14 @@ public class ReceivingCenter extends AbstractPersistable<Long> {
 
     public void setCrnRequired(final boolean isCrnRequired) {
         this.isCrnRequired = isCrnRequired;
+    }
+
+    public Long getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(final Long orderNo) {
+        this.orderNo = orderNo;
     }
 
 }

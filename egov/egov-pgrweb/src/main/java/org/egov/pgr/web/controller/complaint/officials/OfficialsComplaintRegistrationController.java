@@ -41,6 +41,8 @@ package org.egov.pgr.web.controller.complaint.officials;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -48,6 +50,7 @@ import javax.validation.ValidationException;
 
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ReceivingCenter;
+import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.service.ReceivingCenterService;
 import org.egov.pgr.web.controller.complaint.GenericComplaintController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +70,10 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
 
     public @ModelAttribute("receivingCenters") List<ReceivingCenter> receivingCenters() {
         return receivingCenterService.findAll();
+    }
+
+    public @ModelAttribute("receivingModes") List<ReceivingMode> receivingModes() {
+        return new ArrayList<ReceivingMode>(Arrays.asList(ReceivingMode.MANUAL, ReceivingMode.EMAIL, ReceivingMode.CALL));
     }
 
     @RequestMapping(value = "show-reg-form", method = GET)
