@@ -59,7 +59,6 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.utils.EGovConfig;
-import org.egov.collection.integration.pgi.DefaultPaymentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sun.jersey.api.client.Client;
@@ -108,12 +107,12 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         fields.put(CollectionConstants.AXIS_TICKET_NO, receiptHeader.getConsumerCode());
         final StringBuilder returnUrl = new StringBuilder();
         returnUrl.append(paymentServiceDetails.getCallBackurl()).append("?paymentServiceId=")
-        .append(paymentServiceDetails.getId());
+                .append(paymentServiceDetails.getId());
         fields.put(CollectionConstants.AXIS_RETURN_URL, returnUrl.toString());
         fields.put(
                 CollectionConstants.AXIS_AMOUNT,
                 receiptHeader.getTotalAmount()
-                        .setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP).toString());
+                .setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP).toString());
         // fields.put(CollectionConstants.AXIS_AMOUNT, "400");
         if (CollectionConstants.AXIS_SECURE_SECRET != null && CollectionConstants.AXIS_SECURE_SECRET.length() > 0) {
             final String secureHash = hashAllFields(fields);
@@ -243,7 +242,8 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
 
         if (CollectionConstants.AXIS_SECURE_SECRET != null
                 && CollectionConstants.AXIS_SECURE_SECRET.length() > 0
-                && (fields.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE) != null || fields.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE) != "No Value Returned")) {
+                && (fields.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE) != null || fields
+                        .get(CollectionConstants.AXIS_TXN_RESPONSE_CODE) != "No Value Returned")) {
 
             // create secure hash and append it to the hash map if it was
             // created
@@ -367,7 +367,8 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             final WebResource resource = client.resource(EGovConfig.getMessage(
                     CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_RECONCILE_URL));
             final Form formData = new Form();
-            //formData.add(CollectionConstants.AXIS_PAYMENT_CLIENT, paymentServiceDetails.getServiceUrl());
+            // formData.add(CollectionConstants.AXIS_PAYMENT_CLIENT,
+            // paymentServiceDetails.getServiceUrl());
             formData.add(CollectionConstants.AXIS_VERSION, EGovConfig.getMessage(
                     CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_VERSION));
             formData.add(CollectionConstants.AXIS_COMMAND, EGovConfig.getMessage(
@@ -382,28 +383,31 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             formData.add(CollectionConstants.AXIS_PASSWORD, EGovConfig.getMessage(
                     CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_PASSWORD));
             LOGGER.debug("formData: " + formData);
-            final String responseAxis = resource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(
-                    String.class, formData);
-            Map<String, String> responseAxisMap = new LinkedHashMap<String, String>();
-            String[] pairs = responseAxis.split("&");
-            for (String pair : pairs) {
-                int idx = pair.indexOf("=");
+            final String responseAxis = resource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(String.class,
+                    formData);
+            final Map<String, String> responseAxisMap = new LinkedHashMap<String, String>();
+            final String[] pairs = responseAxis.split("&");
+            for (final String pair : pairs) {
+                final int idx = pair.indexOf("=");
                 try {
-                    responseAxisMap.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
-                } catch (UnsupportedEncodingException e) {
-                   LOGGER.error("Error Decoding Axis Bank Response"+e.getMessage());
+                    responseAxisMap.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"),
+                            URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+                } catch (final UnsupportedEncodingException e) {
+                    LOGGER.error("Error Decoding Axis Bank Response" + e.getMessage());
                 }
             }
             axisResponse.setAdditionalInfo6(onlinePayment.getReceiptHeader().getConsumerCode().replace("-", "")
                     .replace("/", ""));
             LOGGER.debug("ResponseAXIS: " + responseAxis.toString());
-            if (null != responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE) && !"".equals(responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE))) {
+            if (null != responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE)
+                    && !"".equals(responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE))) {
                 axisResponse.setReceiptId(onlinePayment.getReceiptHeader().getId().toString());
                 axisResponse.setAuthStatus(responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE));
                 axisResponse.setErrorDescription(responseAxisMap.get(CollectionConstants.AXIS_RESP_MESSAGE));
             } else {
                 axisResponse.setAuthStatus(null != responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE)
-                        && responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE).equals("0") ? "0300" : responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE));
+                        && responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE).equals("0") ? "0300"
+                        : responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE));
                 axisResponse.setErrorDescription(responseAxisMap.get(CollectionConstants.AXIS_RESP_MESSAGE));
                 axisResponse.setReceiptId(responseAxisMap.get(CollectionConstants.AXIS_MERCHANT_TXN_REF));
                 if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(axisResponse.getAuthStatus())) {
@@ -415,8 +419,9 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
                         transactionDate = sdf.parse(responseAxisMap.get(CollectionConstants.AXIS_BATCH_NO));
                         axisResponse.setTxnDate(transactionDate);
                     } catch (final ParseException e) {
-                        LOGGER.error("Error occured in parsing the transaction date [" + responseAxisMap.get("vpc_BatchNo")
-                                + "]", e);
+                        LOGGER.error(
+                                "Error occured in parsing the transaction date [" + responseAxisMap.get("vpc_BatchNo")
+                                        + "]", e);
                         throw new ApplicationException(".transactiondate.parse.error", e);
                     }
                 }
