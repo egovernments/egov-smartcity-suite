@@ -463,6 +463,10 @@ public final class CollectionConstants {
     public static final String AXIS_OPERATOR_ID = "vpc_User";
     public static final String AXIS_PASSWORD = "vpc_Password";
     public static final String AXIS_SECURE_HASH = "vpc_SecureHash";
+    public static final String AXIS_TXN_RESPONSE_CODE = "vpc_TxnResponseCode";
+    public static final String AXIS_RESP_MESSAGE="vpc_Message";
+    public static final String AXIS_TXN_NO="vpc_TransactionNo";
+    public static final String AXIS_BATCH_NO="vpc_BatchNo";
 
     public static final String MESSAGEKEY_AXIS_PAYMENT_CLIENT = "axis.payment.client";
     public static final String MESSAGEKEY_AXIS_VERSION = "axis.version";
