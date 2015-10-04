@@ -867,7 +867,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propertyId.setModifiedDate(new Date());
         propertyId.setArea(boundaryService.getBoundaryById(getBlockId()));
         propertyId.setLocality(boundaryService.getBoundaryById(getLocality()));
-        propertyId.setStreet(boundaryService.getBoundaryById(getStreetId()));
+		if (getStreetId() != null && getStreetId() != -1)
+			propertyId.setStreet(boundaryService.getBoundaryById(getStreetId()));
         propertyId.setEastBoundary(getEastBoundary());
         propertyId.setWestBoundary(getWestBoundary());
         propertyId.setNorthBoundary(getNorthBoundary());
@@ -890,6 +891,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
                     "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
         }
+        if (zoneId == null || zoneId == -1)
+            addActionError(getText("mandatory.zone"));
         if (wardId == null || wardId == -1)
             addActionError(getText("mandatory.ward"));
         else if (null != propTypeMstr && !propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))

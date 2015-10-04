@@ -142,7 +142,7 @@
 		</div>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin">
-				Super Structure
+				<s:text name="superstructure"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
 		   <s:if test="propertyDetail.structure == true">
@@ -152,7 +152,7 @@
 			</s:else>
 			</div>
 			<div class="col-xs-3 add-margin">
-				Site Owner
+				<s:text name="siteowner"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
 				<s:property default="N/A" value="%{propertyDetail.siteOwner}" />
@@ -181,13 +181,13 @@
 		
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin">
-				BP Number
+				<s:text name="building.permNo"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
 				<s:property default="N/A" value="%{propertyDetail.buildingPermissionNo}" />
 			</div>
 			<div class="col-xs-3 add-margin">
-				BP Date
+				<s:text name="buildingpermdate"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
 				<s:date name="%{propertyDetail.buildingPermissionDate}" var="buildingPermNo" format="dd/MM/yyyy" />
@@ -196,13 +196,13 @@
 		</div>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin">
-				% of Deviation
+				<s:text name="deviationper"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
 				<s:property default="N/A" value="%{propertyDetail.deviationPercentage}"/> 
 			</div>
 			<div class="col-xs-3 add-margin">
-				Reason for Creation
+				<s:text name="rsnForCreatin"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
 				<s:property value="%{propertyDetail.propertyMutationMaster.mutationName}"/>
@@ -469,7 +469,7 @@
 				Education Tax
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				N/A
+				Rs. <s:text name="format.money"><s:param value="viewMap.eduCess" /></s:text>
 			</div>
 		</div>
 		<div class="row add-border">
@@ -483,7 +483,7 @@
 				Library Cess
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				N/A
+				Rs. <s:text name="format.money"><s:param value="viewMap.libraryCess" /></s:text>
 			</div>
 		</div>
 		<div class="row add-border">
@@ -497,7 +497,7 @@
 				Property Tax
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				N/A
+				Rs. <s:text name="format.money"><s:param value="viewMap.generalTax" /></s:text>
 			</div>
 		</div>
 		<div class="row add-border">
@@ -507,7 +507,7 @@
 				Total Property Tax
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				N/A
+				Rs. <s:text name="format.money"><s:param value="viewMap.totalTax" /></s:text>
 			</div>
 		</div>
 	</div>

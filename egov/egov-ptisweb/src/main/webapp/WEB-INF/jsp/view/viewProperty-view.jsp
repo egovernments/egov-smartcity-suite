@@ -85,7 +85,16 @@
 				theme="simple" >
 				<s:push value="model">
 			<div class="">
-				<%-- <div class="headingbg"><s:text name="PropertyDetail" /></div> --%>
+				<s:if test="%{errorMessage != null && errorMessage != ''}">
+				<s:property value="%{errorMessage}"/>
+				<div class="buttonbottom" align="center">
+					<input type="button" class="buttonsubmit" name="SearchProperty"
+						id="SearchProperty" value="Search Property" onclick="window.location='../search/searchProperty-searchForm.action';" />
+				    <input type="button" name="btnPrint" id="btnPrint" value="Print" class="buttonsubmit" onclick="window.print();" />
+					<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
+				</div>
+				</s:if>
+				<s:else>
 				<jsp:include page="viewProperty.jsp"/>
 				<br/>
 				<div class="buttonbottom" align="center">
@@ -142,8 +151,9 @@
 				<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
 				<s:hidden label="upicNo" id="upicNo" name="upicNo" value="%{basicProperty.upicNo}" />
 				<!-- common buttons ends here -->
-				</div>				
+				</div>
 			</div>
+			</s:else>
 			</s:push>
 		</s:form>
 	</body>

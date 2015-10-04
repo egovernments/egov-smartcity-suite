@@ -1500,6 +1500,59 @@ public class PropertyTaxUtil {
         return demandAndCollection;
     }
 
+    /*
+     * Return the map with required demand and collection details required for view page.
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, BigDecimal> prepareDemandDetForView(final Property property,
+            final Installment currentInstallment) {
+        LOGGER.debug("Entered into prepareDemandDetForView, property=" + property);
+
+        Map<String, BigDecimal> DCBDetails = new HashMap<String, BigDecimal>();
+        String demandReason = "";
+        Installment installment = null;
+        BigDecimal totalArrearDemand = BigDecimal.ZERO;
+        BigDecimal totalCurrentDemand = BigDecimal.ZERO;
+        BigDecimal totalArrearCollection = BigDecimal.ZERO;
+        BigDecimal totalCurrentCollection = BigDecimal.ZERO;
+
+        final List<String> demandReasonExcludeList = Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
+                PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE);
+
+        final String query = "select ptd from Ptdemand ptd " + "inner join fetch ptd.egDemandDetails dd "
+                + "inner join fetch dd.egDemandReason dr " + "inner join fetch dr.egDemandReasonMaster drm "
+                + "inner join fetch ptd.egptProperty p " + "inner join fetch p.basicProperty bp "
+                + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I') " + "and p = :property "
+                + "and ptd.egInstallmentMaster = :installment";
+
+        final Ptdemand ptDemand = (Ptdemand) HibernateUtil.getCurrentSession().createQuery(query)
+                .setEntity("property", property).setEntity("installment", currentInstallment).list().get(0);
+
+        for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
+
+            demandReason = dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode();
+
+            if (!demandReasonExcludeList.contains(demandReason)) {
+                installment = dmdDet.getEgDemandReason().getEgInstallmentMaster();
+                if (installment.equals(currentInstallment)) {
+                    totalCurrentDemand = totalCurrentDemand.add(dmdDet.getAmount());
+                    totalCurrentCollection = totalCurrentCollection.add(dmdDet.getAmtCollected());
+                    DCBDetails.put(dmdDet.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), dmdDet.getAmount());
+                } else {
+                    totalArrearDemand = totalArrearDemand.add(dmdDet.getAmount());
+                    totalArrearCollection = totalArrearCollection.add(dmdDet.getAmtCollected());
+                }
+            }
+        }
+        DCBDetails.put(CURR_DMD_STR, totalCurrentDemand);
+        DCBDetails.put(ARR_DMD_STR, totalArrearDemand);
+        DCBDetails.put(CURR_COLL_STR, totalCurrentCollection);
+        DCBDetails.put(ARR_COLL_STR, totalArrearCollection);
+        LOGGER.debug("prepareDemandDetForView - demands=" + DCBDetails);
+        LOGGER.debug("Exiting from prepareDemandDetForView");
+        return DCBDetails;
+    }
+
     @SuppressWarnings("unchecked")
     public Map<Date, Property> getPropertiesForPenlatyCalculation(final BasicProperty basicProperty) {
 

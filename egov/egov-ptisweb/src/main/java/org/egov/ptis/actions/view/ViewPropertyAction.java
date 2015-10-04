@@ -47,6 +47,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
@@ -100,6 +103,7 @@ public class ViewPropertyAction extends BaseFormAction {
 	private String applicationNo;
 	private String applicationType;
 	private String[] floorNoStr = new String[100];
+	private String errorMessage;
 
 	@Autowired
 	private BasicPropertyDAO basicPropertyDAO;
@@ -133,7 +137,11 @@ public class ViewPropertyAction extends BaseFormAction {
 			property = (PropertyImpl) getBasicProperty().getProperty();
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("viewForm : Property : " + property);
-
+			Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+			if(ptDemand==null){
+				setErrorMessage("No Tax details for current Demand period.");
+				return "view";
+			}
 			if (property.getPropertyDetail().getFloorDetails().size() > 0)
 				setFloorDetails(property);
 			checkIsDemandActive(property);
@@ -151,16 +159,30 @@ public class ViewPropertyAction extends BaseFormAction {
 						.getType());
 			}
 			if (!property.getIsExemptedFromTax()) {
-				final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
+				final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
+						propertyTaxUtil.getCurrentInstallment());
 				viewMap.put("currTax", demandCollMap.get(CURR_DMD_STR));
 				viewMap.put("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
 				viewMap.put("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
+
+				viewMap.put("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+				viewMap.put("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
+				viewMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
+				viewMap.put(
+						"totalTax",
+						demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
+								.add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
+								.add(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)));
 			} else {
 				viewMap.put("currTax", BigDecimal.ZERO);
 				viewMap.put("currTaxDue", BigDecimal.ZERO);
 				viewMap.put("totalArrDue", BigDecimal.ZERO);
+
+				viewMap.put("eduCess", BigDecimal.ZERO);
+				viewMap.put("libraryCess", BigDecimal.ZERO);
+				viewMap.put("generalTax", BigDecimal.ZERO);
+				viewMap.put("totalTax", BigDecimal.ZERO);
 			}
-			Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
 			if (ptDemand.getDmdCalculations() != null && ptDemand.getDmdCalculations().getAlv() != null)
 				viewMap.put("ARV", ptDemand.getDmdCalculations().getAlv());
 			else
@@ -329,6 +351,14 @@ public class ViewPropertyAction extends BaseFormAction {
 
 	public void setFloorNoStr(final String[] floorNoStr) {
 		this.floorNoStr = floorNoStr;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
 	}
 
 }
