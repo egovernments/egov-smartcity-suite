@@ -117,7 +117,7 @@
 							<a href="/pgr/complaint/citizen/anonymous/show-reg-form" target="_blank">
 								<div class="rounded-circle"><i class="fa fa-plus b"></i></div>&nbsp;
 								<div class="label-font">
-									<spring:message code="lbl.reg.comp"/><br>
+									<spring:message code="lbl.reg.comp"/><br> 
 									<span class="label-subfont"><spring:message code="lbl.reg.comp.desc"/></span>
 								</div>
 							</a>
@@ -129,7 +129,7 @@
 							&nbsp;
 							<div class="label-font" style="vertical-align: sub">
 								<spring:message code="lbl.check.comp.status"/>&nbsp;<br>
-								<input type="text" placeholder="Complaint number" id="compsearchtxt"
+								<input type="text" placeholder="Grievance number" id="compsearchtxt"
 									style="padding: 2px 5px; height: 30px; border: 1px solid #D0D2D7; font-size: 15px;">
 								<button class="btn-custom" id="compsearch"
 									style="padding: 4px 5px; vertical-align: bottom;"><spring:message code="btn.lbl.search"/></button>
