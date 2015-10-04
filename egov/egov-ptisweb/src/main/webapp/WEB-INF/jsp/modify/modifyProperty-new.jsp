@@ -97,7 +97,11 @@
 		toggleFloorDetails();
 		loadDesignationFromMatrix();
 	}
-
+	function submitDateEntry() { 
+		document.forms[0].action = 'modifyProperty-saveDataEntry.action';
+		document.forms[0].submit;
+	   return true;
+	}
 </script>
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 </head>
@@ -120,6 +124,9 @@
 					<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)}">
 						<s:text name='BifurProp.title' />
 					</s:elseif>
+					<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_EDIT_DATA_ENTRY.equals(modifyRsn)}">
+						<s:text name='editdataentry.title' />
+					</s:elseif>
 				</div>
 				<%@ include file="modifyPropertyForm.jsp"%>
 				<s:hidden name="modelId" id="modelId" value="%{modelId}" />
@@ -127,13 +134,14 @@
 				<s:hidden id="modifyRsn" name="modifyRsn" value="%{modifyRsn}" />
 				<s:hidden id="ownerName" name="ownerName" value="%{ownerName}" />
 				<s:hidden id="propAddress" name="propAddress" value="%{propAddress}" />
-                <s:if test="%{propertyByEmployee == true}">
-				<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
+				<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_EDIT_DATA_ENTRY.equals(modifyRsn)}">
 				<div class="buttonbottom" align="center">
-					<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>
+					<input type="submit" id="Save" class="btn btn-primary" value="Save" onclick="submitDateEntry();"/> 
+					<input type="button" name="button2" id="button2" value="Close" class="btn btn-primary" onclick="window.close();" /></td>
 				</div>
 				</s:if>
 				<s:else>
+				<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 				<div class="buttonbottom" align="center">
 					<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>
 				</div>

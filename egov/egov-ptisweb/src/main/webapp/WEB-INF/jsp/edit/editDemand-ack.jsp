@@ -51,7 +51,7 @@
 		<table border="0" width="100%" cellpadding="0" cellspacing="0">
 			<div class="formmainbox">
 			  <div class="formheading"></div>
-					<div class="headingbg"><s:text name="editDemand"/></div>
+					<div class="headingbg"><s:text name="editDemandAck"/></div>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td class="bluebox">
@@ -63,9 +63,6 @@
 				        	<span class="bold">
 				        		<s:text name="editDemandSuccessMessage"/>
 				        	</span>
-				        	
-				        		
-				        		
 				       </td>
 					</tr>
 					<tr>

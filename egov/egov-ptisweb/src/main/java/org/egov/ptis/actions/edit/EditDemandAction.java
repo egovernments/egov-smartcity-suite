@@ -254,9 +254,6 @@ public class EditDemandAction extends BaseFormAction {
                     if (null == dd.getActualAmount()) {
                         addActionError(getText("error.editDemand.actualAmount", instString));
                     }
-                    if (null == dd.getActualCollection()) {
-                        addActionError(getText("error.editDemand.collectionAmount", instString));
-                    }
                     if (null != dd.getActualAmount() && null != dd.getActualCollection()) {
                         if (dd.getActualAmount().intValue() < dd.getActualCollection().intValue()) {
                             addActionError(getText("error.collection.greaterThan.actualAmount"));

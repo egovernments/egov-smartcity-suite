@@ -74,6 +74,9 @@
 						<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)}">
 							<s:text name="BifurcatePropAckHeader"/>
 						</s:elseif>
+						<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_EDIT_DATA_ENTRY.equals(modifyRsn)}">
+							<s:text name='editdataentry.title' />
+						</s:elseif>
 					</div>
 
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
