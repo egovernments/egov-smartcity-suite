@@ -1,3 +1,4 @@
+
 <!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
@@ -135,16 +136,17 @@
 									style="padding: 4px 5px; vertical-align: bottom;"><spring:message code="btn.lbl.search"/></button>
 							</div>
 						</div>
-	
-						<div class="col-md-12 community-card">
-							<a href="tel:${sessionScope.corpCallCenterNo}">
-								<div class="rounded-circle"><i class="fa fa-phone b"></i></div>&nbsp;
-								<div class="label-font">
-									<spring:message code="lbl.reg.via.grev.cell"/><br>
-									<span class="label-subfont"><spring:message code="lbl.cal.desc.part1"/> ${sessionScope.corpCallCenterNo} <spring:message code="lbl.cal.desc.part2"/></span>
-								</div>
-							</a>
-						</div>
+						<c:if test="${not empty sessionScope.corpCallCenterNo}">
+							<div class="col-md-12 community-card">
+								<a href="tel:${sessionScope.corpCallCenterNo}">
+									<div class="rounded-circle"><i class="fa fa-phone b"></i></div>&nbsp;
+									<div class="label-font">
+										<spring:message code="lbl.reg.via.grev.cell"/><br>
+										<span class="label-subfont"><spring:message code="lbl.cal.desc.part1"/> ${sessionScope.corpCallCenterNo} <spring:message code="lbl.cal.desc.part2"/></span>
+									</div>
+								</a>
+							</div>
+						</c:if>
 					</div>
 					<div class="col-md-6 side-space">
 	
