@@ -50,8 +50,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 
 import java.math.BigDecimal;
@@ -90,275 +92,289 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Results({ @Result(name = "view", location = "viewProperty-view.jsp") })
 public class ViewPropertyAction extends BaseFormAction {
 
-	private static final long serialVersionUID = 4609817011534083012L;
-	private final Logger LOGGER = Logger.getLogger(getClass());
-	private String propertyId;
-	private BasicProperty basicProperty;
-	private PropertyImpl property;
-	private String ownerAddress;
-	private Map<String, Object> viewMap;
-	private PropertyTaxUtil propertyTaxUtil;
-	private String roleName;
-	private boolean isDemandActive;
-	private String applicationNo;
-	private String applicationType;
-	private String[] floorNoStr = new String[100];
-	private String errorMessage;
+    private static final long serialVersionUID = 4609817011534083012L;
+    private final Logger LOGGER = Logger.getLogger(getClass());
+    private String propertyId;
+    private BasicProperty basicProperty;
+    private PropertyImpl property;
+    private String ownerAddress;
+    private Map<String, Object> viewMap;
+    private PropertyTaxUtil propertyTaxUtil;
+    private String roleName;
+    private boolean isDemandActive;
+    private String applicationNo;
+    private String applicationType;
+    private String[] floorNoStr = new String[100];
+    private String errorMessage;
 
-	@Autowired
-	private BasicPropertyDAO basicPropertyDAO;
-	@Autowired
-	private PtDemandDao ptDemandDAO;
-	@Autowired
-	private UserService UserService;
-	@Autowired
-	private PersistenceService<Property, Long> propertyImplService;
-	@Autowired
-	private PersistenceService<RevisionPetition, Long> revisionPetitionPersistenceService;
+    @Autowired
+    private BasicPropertyDAO basicPropertyDAO;
+    @Autowired
+    private PtDemandDao ptDemandDAO;
+    @Autowired
+    private UserService UserService;
+    @Autowired
+    private PersistenceService<Property, Long> propertyImplService;
+    @Autowired
+    private PersistenceService<RevisionPetition, Long> revisionPetitionPersistenceService;
 
-	@Override
-	public StateAware getModel() {
-		return property;
-	}
+    @Override
+    public StateAware getModel() {
+        return property;
+    }
 
-	@Action(value = "/view/viewProperty-viewForm")
-	public String viewForm() {
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Entered into viewForm method, propertyId : " + propertyId);
-		try {
-			viewMap = new HashMap<String, Object>();
-			if (propertyId != null && !propertyId.isEmpty())
-				setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
-			else if (applicationNo != null && !applicationNo.isEmpty())
-				getBasicPropForAppNo(applicationNo, applicationType);
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("viewForm : BasicProperty : " + basicProperty);
+    @Action(value = "/view/viewProperty-viewForm")
+    public String viewForm() {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into viewForm method, propertyId : " + propertyId);
+        try {
+            viewMap = new HashMap<String, Object>();
+            if (propertyId != null && !propertyId.isEmpty())
+                setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
+            else if (applicationNo != null && !applicationNo.isEmpty())
+                getBasicPropForAppNo(applicationNo, applicationType);
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("viewForm : BasicProperty : " + basicProperty);
 
-			property = (PropertyImpl) getBasicProperty().getProperty();
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("viewForm : Property : " + property);
-			Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
-			if(ptDemand==null){
-				setErrorMessage("No Tax details for current Demand period.");
-				return "view";
-			}
-			if (property.getPropertyDetail().getFloorDetails().size() > 0)
-				setFloorDetails(property);
-			checkIsDemandActive(property);
-			if (getBasicProperty().getPropertyOwnerInfo() != null
-					&& !getBasicProperty().getPropertyOwnerInfo().isEmpty()) {
-				for (final PropertyOwnerInfo propOwner : getBasicProperty().getPropertyOwnerInfo()) {
-					final List<Address> addrSet = propOwner.getOwner().getAddress();
-					for (final Address address : addrSet) {
-						ownerAddress = address.toString();
-						break;
-					}
-				}
-				viewMap.put("ownerAddress", ownerAddress == null ? NOT_AVAILABLE : ownerAddress);
-				viewMap.put("ownershipType", basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster()
-						.getType());
-			}
-			if (!property.getIsExemptedFromTax()) {
-				final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
-						propertyTaxUtil.getCurrentInstallment());
-				viewMap.put("currTax", demandCollMap.get(CURR_DMD_STR));
-				viewMap.put("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
-				viewMap.put("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
+            property = (PropertyImpl) getBasicProperty().getProperty();
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("viewForm : Property : " + property);
+            Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+            if (ptDemand == null) {
+                setErrorMessage("No Tax details for current Demand period.");
+                return "view";
+            }
+            if (property.getPropertyDetail().getFloorDetails().size() > 0)
+                setFloorDetails(property);
+            checkIsDemandActive(property);
+            if (getBasicProperty().getPropertyOwnerInfo() != null
+                    && !getBasicProperty().getPropertyOwnerInfo().isEmpty()) {
+                for (final PropertyOwnerInfo propOwner : getBasicProperty().getPropertyOwnerInfo()) {
+                    final List<Address> addrSet = propOwner.getOwner().getAddress();
+                    for (final Address address : addrSet) {
+                        ownerAddress = address.toString();
+                        break;
+                    }
+                }
+                viewMap.put("ownerAddress", ownerAddress == null ? NOT_AVAILABLE : ownerAddress);
+                viewMap.put("ownershipType", basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster()
+                        .getType());
+            }
+            if (!property.getIsExemptedFromTax()) {
+                final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
+                        propertyTaxUtil.getCurrentInstallment());
+                viewMap.put("currTax", demandCollMap.get(CURR_DMD_STR));
+                viewMap.put("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
+                viewMap.put("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
 
-				viewMap.put("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-				viewMap.put("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
-				viewMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-				viewMap.put(
-						"totalTax",
-						demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
-								.add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-								.add(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)));
-			} else {
-				viewMap.put("currTax", BigDecimal.ZERO);
-				viewMap.put("currTaxDue", BigDecimal.ZERO);
-				viewMap.put("totalArrDue", BigDecimal.ZERO);
+                if (!property.getPropertyDetail().getPropertyTypeMaster().getCode()
+                        .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+                    viewMap.put("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+                    viewMap.put("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
+                    viewMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
+                    viewMap.put(
+                            "totalTax",
+                            demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
+                                    .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
+                                    .add(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)));
+                } else {
+                    viewMap.put("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+                    viewMap.put("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
+                    viewMap.put("vacantLandTax", demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
+                    viewMap.put(
+                            "totalTax",
+                            demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS).
+                            add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)).
+                            add(demandCollMap.get(DEMANDRSN_STR_VACANT_TAX)));
+                }
 
-				viewMap.put("eduCess", BigDecimal.ZERO);
-				viewMap.put("libraryCess", BigDecimal.ZERO);
-				viewMap.put("generalTax", BigDecimal.ZERO);
-				viewMap.put("totalTax", BigDecimal.ZERO);
-			}
-			if (ptDemand.getDmdCalculations() != null && ptDemand.getDmdCalculations().getAlv() != null)
-				viewMap.put("ARV", ptDemand.getDmdCalculations().getAlv());
-			else
-				viewMap.put("ARV", BigDecimal.ZERO);
-			final Long userId = (Long) session().get(SESSIONLOGINID);
-			if (userId != null)
-				setRoleName(getRolesForUserId(userId));
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("viewForm : viewMap : " + viewMap);
-				LOGGER.debug("Exit from method viewForm");
-			}
-			return "view";
-		} catch (final Exception e) {
-			LOGGER.error("Exception in View Property: ", e);
-			throw new ApplicationRuntimeException("Exception in View Property : " + e);
-		}
-	}
+            } else {
+                viewMap.put("currTax", BigDecimal.ZERO);
+                viewMap.put("currTaxDue", BigDecimal.ZERO);
+                viewMap.put("totalArrDue", BigDecimal.ZERO);
 
-	private void checkIsDemandActive(final Property property) {
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Entered into checkIsDemandActive");
-		if (property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE))
-			isDemandActive = false;
-		else
-			isDemandActive = true;
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("checkIsDemandActive - Is demand active? : " + isDemandActive);
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Exiting from checkIsDemandActive");
-	}
+                viewMap.put("eduCess", BigDecimal.ZERO);
+                viewMap.put("libraryCess", BigDecimal.ZERO);
+                viewMap.put("generalTax", BigDecimal.ZERO);
+                viewMap.put("totalTax", BigDecimal.ZERO);
+                viewMap.put("vacantLandTax", BigDecimal.ZERO);
+            }
+            if (ptDemand.getDmdCalculations() != null && ptDemand.getDmdCalculations().getAlv() != null)
+                viewMap.put("ARV", ptDemand.getDmdCalculations().getAlv());
+            else
+                viewMap.put("ARV", BigDecimal.ZERO);
+            final Long userId = (Long) session().get(SESSIONLOGINID);
+            if (userId != null)
+                setRoleName(getRolesForUserId(userId));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("viewForm : viewMap : " + viewMap);
+                LOGGER.debug("Exit from method viewForm");
+            }
+            return "view";
+        } catch (final Exception e) {
+            LOGGER.error("Exception in View Property: ", e);
+            throw new ApplicationRuntimeException("Exception in View Property : " + e);
+        }
+    }
 
-	private String getRolesForUserId(final Long userId) {
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Entered into method getRolesForUserId");
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("User id : " + userId);
-		String roleName;
-		final List<String> roleNameList = new ArrayList<String>();
-		final User user = UserService.getUserById(userId);
-		for (final Role role : user.getRoles()) {
-			roleName = role.getName() != null ? role.getName() : "";
-			roleNameList.add(roleName);
-		}
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Exit from method getRolesForUserId with return value : "
-					+ roleNameList.toString().toUpperCase());
-		return roleNameList.toString().toUpperCase();
-	}
+    private void checkIsDemandActive(final Property property) {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into checkIsDemandActive");
+        if (property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE))
+            isDemandActive = false;
+        else
+            isDemandActive = true;
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("checkIsDemandActive - Is demand active? : " + isDemandActive);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exiting from checkIsDemandActive");
+    }
 
-	private void getBasicPropForAppNo(final String appNo, final String appType) {
-		if (appType != null && !appType.isEmpty())
-			if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
-					|| appType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
-					|| appType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)) {
-				final Property property = propertyImplService.find("from PropertyImpl where applicationNo=?", appNo);
-				setBasicProperty(property.getBasicProperty());
-			} else if (appType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
-				final RevisionPetition rp = revisionPetitionPersistenceService.find(
-						"from RevisionPetition where objectionNumber=?", appNo);
-				setBasicProperty(rp.getBasicProperty());
-			}
-	}
+    private String getRolesForUserId(final Long userId) {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into method getRolesForUserId");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("User id : " + userId);
+        String roleName;
+        final List<String> roleNameList = new ArrayList<String>();
+        final User user = UserService.getUserById(userId);
+        for (final Role role : user.getRoles()) {
+            roleName = role.getName() != null ? role.getName() : "";
+            roleNameList.add(roleName);
+        }
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from method getRolesForUserId with return value : "
+                    + roleNameList.toString().toUpperCase());
+        return roleNameList.toString().toUpperCase();
+    }
 
-	public void setFloorDetails(final Property property) {
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Entered into setFloorDetails, Property: " + property);
+    private void getBasicPropForAppNo(final String appNo, final String appType) {
+        if (appType != null && !appType.isEmpty())
+            if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
+                    || appType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
+                    || appType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)) {
+                final Property property = propertyImplService.find("from PropertyImpl where applicationNo=?", appNo);
+                setBasicProperty(property.getBasicProperty());
+            } else if (appType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
+                final RevisionPetition rp = revisionPetitionPersistenceService.find(
+                        "from RevisionPetition where objectionNumber=?", appNo);
+                setBasicProperty(rp.getBasicProperty());
+            }
+    }
 
-		final List<Floor> floors = property.getPropertyDetail().getFloorDetails();
-		property.getPropertyDetail().setFloorDetailsProxy(floors);
-		int i = 0;
-		for (final Floor flr : floors) {
-			floorNoStr[i] = FLOOR_MAP.get(flr.getFloorNo());
-			i++;
-		}
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Exiting from setFloorDetails: ");
-	}
+    public void setFloorDetails(final Property property) {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into setFloorDetails, Property: " + property);
 
-	public String getFloorNoStr(final Integer floorNo) {
-		return FLOOR_MAP.get(floorNo);
-	}
+        final List<Floor> floors = property.getPropertyDetail().getFloorDetails();
+        property.getPropertyDetail().setFloorDetailsProxy(floors);
+        int i = 0;
+        for (final Floor flr : floors) {
+            floorNoStr[i] = FLOOR_MAP.get(flr.getFloorNo());
+            i++;
+        }
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exiting from setFloorDetails: ");
+    }
 
-	public List<Floor> getFloorDetails() {
-		return new ArrayList<Floor>(property.getPropertyDetail().getFloorDetails());
-	}
+    public String getFloorNoStr(final Integer floorNo) {
+        return FLOOR_MAP.get(floorNo);
+    }
 
-	public String getPropertyId() {
-		return propertyId;
-	}
+    public List<Floor> getFloorDetails() {
+        return new ArrayList<Floor>(property.getPropertyDetail().getFloorDetails());
+    }
 
-	public void setPropertyId(final String propertyId) {
-		this.propertyId = propertyId;
-	}
+    public String getPropertyId() {
+        return propertyId;
+    }
 
-	public BasicProperty getBasicProperty() {
-		return basicProperty;
-	}
+    public void setPropertyId(final String propertyId) {
+        this.propertyId = propertyId;
+    }
 
-	public void setBasicProperty(final BasicProperty basicProperty) {
-		this.basicProperty = basicProperty;
-	}
+    public BasicProperty getBasicProperty() {
+        return basicProperty;
+    }
 
-	public PropertyTaxUtil getPropertyTaxUtil() {
-		return propertyTaxUtil;
-	}
+    public void setBasicProperty(final BasicProperty basicProperty) {
+        this.basicProperty = basicProperty;
+    }
 
-	public void setPropertyTaxUtil(final PropertyTaxUtil propertyTaxUtil) {
-		this.propertyTaxUtil = propertyTaxUtil;
-	}
+    public PropertyTaxUtil getPropertyTaxUtil() {
+        return propertyTaxUtil;
+    }
 
-	public Map<String, Object> getViewMap() {
-		return viewMap;
-	}
+    public void setPropertyTaxUtil(final PropertyTaxUtil propertyTaxUtil) {
+        this.propertyTaxUtil = propertyTaxUtil;
+    }
 
-	public String getRoleName() {
-		return roleName;
-	}
+    public Map<String, Object> getViewMap() {
+        return viewMap;
+    }
 
-	public void setRoleName(final String roleName) {
-		this.roleName = roleName;
-	}
+    public String getRoleName() {
+        return roleName;
+    }
 
-	public boolean getIsDemandActive() {
-		return isDemandActive;
-	}
+    public void setRoleName(final String roleName) {
+        this.roleName = roleName;
+    }
 
-	public void setIsDemandActive(final boolean isDemandActive) {
-		this.isDemandActive = isDemandActive;
-	}
+    public boolean getIsDemandActive() {
+        return isDemandActive;
+    }
 
-	public Property getProperty() {
-		return property;
-	}
+    public void setIsDemandActive(final boolean isDemandActive) {
+        this.isDemandActive = isDemandActive;
+    }
 
-	public void setBasicPropertyDAO(final BasicPropertyDAO basicPropertyDAO) {
-		this.basicPropertyDAO = basicPropertyDAO;
-	}
+    public Property getProperty() {
+        return property;
+    }
 
-	public void setPtDemandDAO(final PtDemandDao ptDemandDAO) {
-		this.ptDemandDAO = ptDemandDAO;
-	}
+    public void setBasicPropertyDAO(final BasicPropertyDAO basicPropertyDAO) {
+        this.basicPropertyDAO = basicPropertyDAO;
+    }
 
-	public void setUserService(final UserService userService) {
-		UserService = userService;
-	}
+    public void setPtDemandDAO(final PtDemandDao ptDemandDAO) {
+        this.ptDemandDAO = ptDemandDAO;
+    }
 
-	public String getApplicationNo() {
-		return applicationNo;
-	}
+    public void setUserService(final UserService userService) {
+        UserService = userService;
+    }
 
-	public void setApplicationNo(final String applicationNo) {
-		this.applicationNo = applicationNo;
-	}
+    public String getApplicationNo() {
+        return applicationNo;
+    }
 
-	public String getApplicationType() {
-		return applicationType;
-	}
+    public void setApplicationNo(final String applicationNo) {
+        this.applicationNo = applicationNo;
+    }
 
-	public void setApplicationType(final String applicationType) {
-		this.applicationType = applicationType;
-	}
+    public String getApplicationType() {
+        return applicationType;
+    }
 
-	public String[] getFloorNoStr() {
-		return floorNoStr;
-	}
+    public void setApplicationType(final String applicationType) {
+        this.applicationType = applicationType;
+    }
 
-	public void setFloorNoStr(final String[] floorNoStr) {
-		this.floorNoStr = floorNoStr;
-	}
+    public String[] getFloorNoStr() {
+        return floorNoStr;
+    }
 
-	public String getErrorMessage() {
-		return errorMessage;
-	}
+    public void setFloorNoStr(final String[] floorNoStr) {
+        this.floorNoStr = floorNoStr;
+    }
 
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
 }

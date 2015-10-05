@@ -359,12 +359,10 @@
 							test="%{basicProperty.property.propertyDetail.cable}">Yes</s:if>
 						<s:else>No</s:else></td>
 				</tr>
-			</table>
+			</table><br/><br/>
 		</td>
 	</tr>
 </table>
-
-<br><br>
 
 <div class="panel panel-primary construction" data-collapsed="0" style="text-align:left">
 	<div class="panel-heading">
@@ -486,6 +484,7 @@
 				Rs. <s:text name="format.money"><s:param value="viewMap.libraryCess" /></s:text>
 			</div>
 		</div>
+		
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin">
 				<s:text name="ArrearsDue" />
@@ -496,9 +495,16 @@
 			<div class="col-xs-3 add-margin">
 				Property Tax
 			</div>
+			<s:if test="%{!@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND.equals(propertyDetail.propertyTypeMaster.code)}">
 			<div class="col-xs-3 add-margin view-content">
 				Rs. <s:text name="format.money"><s:param value="viewMap.generalTax" /></s:text>
 			</div>
+			</s:if>
+			<s:else>
+			<div class="col-xs-3 add-margin view-content">
+				Rs. <s:text name="format.money"><s:param value="viewMap.vacantLandTax" /></s:text>
+			</div>
+			</s:else>
 		</div>
 		<div class="row add-border">
 			<div class="col-xs-6 add-margin">

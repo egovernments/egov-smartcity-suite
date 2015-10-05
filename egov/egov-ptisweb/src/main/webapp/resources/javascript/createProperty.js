@@ -1138,7 +1138,7 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 		if (propType == "Vacant Land") {
 			jQuery('tr.floordetails').hide();
 			jQuery('tr.vacantlanddetaills').show();
-			jQuery('tr.construction').hide();
+			jQuery('tr.construction, .construction').hide();
 			jQuery('tr.amenities').hide();
 			jQuery('#appurtenantRow').hide();
 			jQuery('tr.extentSite').hide();
@@ -1151,7 +1151,7 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 		} else {
 			jQuery('tr.floordetails').show();
 			jQuery('tr.vacantlanddetaills').hide();
-			jQuery('tr.construction').show();
+			jQuery('tr.construction, .construction').show();
 			jQuery('tr.amenities').show();
 			jQuery('#appurtenantRow').hide();
 			jQuery('tr.extentSite').show();
