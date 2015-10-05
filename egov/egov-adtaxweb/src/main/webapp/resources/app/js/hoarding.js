@@ -58,7 +58,7 @@ $(document).ready(function(){
 		} else {
 			$.ajax({
 				type: "GET",
-				url: "subcategories",
+				url: "/adtax/hoarding/subcategories",
 				cache: true,
 				dataType: "json",
 				data:{'categoryId' : this.value}
@@ -81,7 +81,7 @@ $(document).ready(function(){
 		} else {
 			$.ajax({
 				type: "GET",
-				url: "child-boundaries",
+				url: "/adtax/hoarding/child-boundaries",
 				cache: true,
 				dataType: "json",
 				data:{'parentBoundaryId' : this.value}
@@ -104,7 +104,7 @@ $(document).ready(function(){
 		} else {
 			$.ajax({
 				type: "GET",
-				url: "child-boundaries",
+				url: "/adtax/hoarding/child-boundaries",
 				cache: true,
 				dataType: "json",
 				data:{'parentBoundaryId' : this.value}
@@ -162,7 +162,7 @@ $(document).ready(function(){
 		//	alert('All fields are entered');	
 			$.ajax({
 				type: "GET",
-				url: "calculateTaxAmount",
+				url: "/adtax/hoarding/calculateTaxAmount",
 				cache: true,
 				dataType: "json",
 				data:{

@@ -48,25 +48,10 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.egov.adtax.entity.Hoarding;
-import org.egov.adtax.entity.HoardingCategory;
 import org.egov.adtax.entity.HoardingDocument;
-import org.egov.adtax.entity.HoardingDocumentType;
-import org.egov.adtax.entity.RatesClass;
-import org.egov.adtax.entity.RevenueInspector;
 import org.egov.adtax.entity.SubCategory;
-import org.egov.adtax.entity.UnitOfMeasure;
-import org.egov.adtax.service.AdvertisementRateService;
-import org.egov.adtax.service.HoardingCategoryService;
-import org.egov.adtax.service.HoardingDocumentTypeService;
-import org.egov.adtax.service.HoardingService;
-import org.egov.adtax.service.RatesClassService;
-import org.egov.adtax.service.RevenueInspectorService;
-import org.egov.adtax.service.SubCategoryService;
-import org.egov.adtax.service.UnitOfMeasureService;
+import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.utils.FileStoreUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -77,66 +62,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/hoarding")
-public class CreateHoardingController {
-
-    private @Autowired HoardingService hoardingService;
-
-    private @Autowired HoardingCategoryService hoardingCategoryService;
-
-    private @Autowired UnitOfMeasureService unitOfMeasureService;
-
-    private @Autowired SubCategoryService subCategoryService;
-
-    private @Autowired RevenueInspectorService revenueInspectorService;
-
-    private @Autowired RatesClassService ratesClassService;
-
-    private @Autowired HoardingDocumentTypeService hoardingDocumentTypeService;
-
-    private @Autowired FileStoreUtils fileStoreUtils;
-
-    private @Autowired BoundaryService boundaryService;
-
-    private @Autowired AdvertisementRateService advertisementRateService;
+public class CreateHoardingController extends HoardingControllerSupport {
 
     @ModelAttribute
     public Hoarding hoarding() {
         return new Hoarding();
-    }
-
-    @ModelAttribute("hoardingCategories")
-    public List<HoardingCategory> hoardingCategories() {
-        return hoardingCategoryService.getAllActiveHoardingCategory();
-    }
-
-    @ModelAttribute("uom")
-    public List<UnitOfMeasure> uom() {
-        return unitOfMeasureService.getAllActiveUnitOfMeasure();
-    }
-
-    @ModelAttribute("revenueInspectors")
-    public List<RevenueInspector> revenueInspectors() {
-        return revenueInspectorService.findAllActiveRevenueInspectors();
-    }
-
-    @ModelAttribute("rateClasses")
-    public List<RatesClass> rateClasses() {
-        return ratesClassService.getAllActiveRatesClass();
-    }
-
-    @ModelAttribute("hoardingDocumentTypes")
-    public List<HoardingDocumentType> hoardingDocumentTypes() {
-        return hoardingDocumentTypeService.getAllDocumentTypes();
-    }
-
-    @ModelAttribute("revenueZones")
-    public List<Boundary> revenueZones() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", "ELECTION");
-    }
-
-    @ModelAttribute("zones")
-    public List<Boundary> zones() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", "ADMINISTRATION");
     }
 
     @RequestMapping(value = "child-boundaries", method = GET, produces = APPLICATION_JSON_VALUE)

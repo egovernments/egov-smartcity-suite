@@ -41,6 +41,7 @@ package org.egov.adtax.web.controller.hoarding;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.IOException;
 import java.util.List;
@@ -57,8 +58,11 @@ import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.web.controller.GenericController;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -86,6 +90,11 @@ public class SearchHoardingController extends GenericController {
         return new Hoarding();
     }
 
+    @ModelAttribute("hoardingSearch")
+    public HoardingSearch hoardingSearch() {
+        return new HoardingSearch();
+    }
+    
     @RequestMapping(value = "/subcategories-by-category", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<SubCategory> hoardingSubcategories(@RequestParam final Long categoryId) {
         return subCategoryService.getAllActiveSubCategoryByCategoryId(categoryId);
@@ -110,15 +119,21 @@ public class SearchHoardingController extends GenericController {
         return new StringBuilder("{ \"data\":").append(searchResult).append("}").toString();
     }
 
-    /*private String toJSON(final Object object, final String searchType) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        Gson gson = null;
-        if ("hoarding".equalsIgnoreCase(searchType))
-            gson = gsonBuilder.registerTypeAdapter(Hoarding.class, new HoardingAdaptor()).create();
-        else
-            gson = gsonBuilder.registerTypeAdapter(AgencyWiseResult.class, new AgencyAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
+    @RequestMapping(value = "search-for-update", method = GET)
+    public String searchHoardingForm() {
+        return "hoarding-search-for-update";
     }
-     */
+
+    @RequestMapping(value = "search-for-update", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchHoarding(@ModelAttribute final HoardingSearch hoardingSearch) {
+        return "{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+                .toJson(hoardingService.getHoardingSearchResult(hoardingSearch)) + "}";
+    }
+
+    @RequestMapping(value = "view/{hoardingNumber}")
+    public String viewHoarding(@PathVariable final String hoardingNumber, final Model model) {
+        model.addAttribute("hoarding", hoardingService.getHoardingByHoardingNumber(hoardingNumber));
+        return "hoarding-view";
+    }
+
 }

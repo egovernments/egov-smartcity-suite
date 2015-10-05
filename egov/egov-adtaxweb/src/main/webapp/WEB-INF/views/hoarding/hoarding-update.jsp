@@ -46,7 +46,7 @@
 		<c:if test="${not empty message}">
 			<div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
 		</c:if>
-		<form:form id="hoardingform" method="post" class="form-horizontal form-groups-bordered" 
+		<form:form id="hoardingform" action="" method="post" class="form-horizontal form-groups-bordered" 
 		modelAttribute="hoarding" commandName="hoarding" enctype="multipart/form-data">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
@@ -66,7 +66,7 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="applicationNumber" id="applicationNumber" required="required"/>
+									<form:input type="text" cssClass="form-control" path="applicationNumber" id="applicationNumber" required="required" readonly="true"/>
                                		<form:errors path="applicationNumber" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
@@ -74,7 +74,7 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control datepicker" path="applicationDate" id="applicationDate" required="required"/>
+									<form:input type="text" cssClass="form-control datepicker" path="applicationDate" id="applicationDate" required="required" readonly="true"/>
                                		<form:errors path="applicationDate" cssClass="error-msg" />
 								</div>
 							</div>
@@ -84,7 +84,7 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="permissionNumber" id="permissionNumber" required="required"/>
+									<form:input type="text" cssClass="form-control" path="permissionNumber" id="permissionNumber" required="required" readonly="true"/>
                                		<form:errors path="permissionNumber" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
@@ -92,7 +92,7 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="hoardingNumber" id="hoardingNumber" required="required"/>
+									<form:input type="text" cssClass="form-control" path="hoardingNumber" id="hoardingNumber" required="required" readonly="true"/>
                                		<form:errors path="hoardingNumber" cssClass="error-msg" />
 								</div>
 							</div>

@@ -38,77 +38,47 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import javax.validation.Valid;
 
 import org.egov.adtax.entity.Hoarding;
-import org.egov.adtax.search.contract.HoardingSearch;
-import org.egov.adtax.service.HoardingService;
-import org.egov.adtax.web.controller.GenericController;
-import org.egov.infra.config.properties.ApplicationProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.egov.adtax.exception.HoardingValidationError;
+import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/hoarding")
-public class UpdateHoardingController extends GenericController {
-
-    @Autowired
-    private HoardingService hoardingService;
-
-    @Autowired
-    private ApplicationProperties applicationProperties;
-
-    @ModelAttribute("hoardingSearch")
-    public HoardingSearch hoardingSearch() {
-        return new HoardingSearch();
-    }
+public class UpdateHoardingController extends HoardingControllerSupport {
 
     @ModelAttribute("hoarding")
-    public Hoarding hoarding() {
-        return new Hoarding();
-    }
-
-    @RequestMapping(value = "search-for-update", method = GET)
-    public String searchHoardingForm() {
-        return "hoarding-search-for-update";
-    }
-
-    @RequestMapping(value = "search-for-update", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchHoarding(@ModelAttribute final HoardingSearch hoardingSearch) {
-        return "{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
-                .toJson(hoardingService.getHoardingSearchResult(hoardingSearch)) + "}";
-    }
-
-    @RequestMapping(value = "view/{hoardingNumber}")
-    public String viewHoarding(@PathVariable final String hoardingNumber, final Model model) {
-        model.addAttribute("hoarding", hoardingService.getHoardingByHoardingNumber(hoardingNumber));
-        return "hoarding-view";
+    public Hoarding hoarding(@PathVariable final String hoardingNumber) {
+        return hoardingService.findByHoardingNumber(hoardingNumber);
     }
 
     @RequestMapping(value = "update/{hoardingNumber}")
     public String updateHoarding(@PathVariable final String hoardingNumber, final Model model) {
-        model.addAttribute("hoarding", hoardingService.getHoardingByHoardingNumber(hoardingNumber));
+        final Hoarding hoarding = hoardingService.getHoardingByHoardingNumber(hoardingNumber);
+        model.addAttribute("dcPending", advertisementDemandService.anyDemandPendingForCollection(hoarding));
+        model.addAttribute("hoarding", hoarding);
         return "hoarding-update";
     }
 
     @RequestMapping(value = "update/{hoardingNumber}", method = POST)
-    public String updateHoarding(@PathVariable final String hoardingNumber, @Valid @ModelAttribute final Hoarding hoarding,
-            final BindingResult resultBinder) {
+    public String updateHoarding(@Valid @ModelAttribute final Hoarding hoarding, final BindingResult resultBinder) {
         if (resultBinder.hasErrors())
             return "hoarding-update";
-        hoardingService.updateHoarding(hoarding);
-        return "redirect:/hoarding/view/";
+        try {
+            hoardingService.updateHoarding(hoarding);
+            return "redirect:/hoarding/update/" + hoarding.getHoardingNumber();
+        } catch (final HoardingValidationError e) {
+            resultBinder.rejectValue(e.fieldName(), e.errorCode());
+            return "hoarding-update";
+        }
     }
 }

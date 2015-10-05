@@ -216,5 +216,15 @@ public class AdvertisementDemandService {
         return penaltyAmt;
 
     }
+    
+    public boolean anyDemandPendingForCollection(final Hoarding hoarding) {
+        // TODO add logic to fetch status of demand and return true or false
+        return true | false;
+    }
+
+    public boolean collectionDoneForThisYear(final Hoarding hoarding) {
+        // TODO add logic to check collection done for this year
+        return true | false;
+    }
 
 }
