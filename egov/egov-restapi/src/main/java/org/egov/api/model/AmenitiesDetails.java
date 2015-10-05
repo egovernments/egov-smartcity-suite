@@ -48,8 +48,8 @@ public class AmenitiesDetails implements Serializable {
 	private Boolean hasToilet;
 	private Boolean hasWaterTap;
 	private Boolean hasElectricity;
-	private String hasAttachedBathroom;
-	private String hasWaterHarvesting;
+	private Boolean hasAttachedBathroom;
+	private Boolean hasWaterHarvesting;
 	private Boolean hasCableConnection;
 
 	public Boolean hasLift() {
@@ -84,19 +84,19 @@ public class AmenitiesDetails implements Serializable {
 		this.hasElectricity = hasElectricity;
 	}
 
-	public String hasAttachedBathroom() {
+	public Boolean hasAttachedBathroom() {
 		return hasAttachedBathroom;
 	}
 
-	public void setAttachedBathroom(String hasAttachedBathroom) {
+	public void setAttachedBathroom(Boolean hasAttachedBathroom) {
 		this.hasAttachedBathroom = hasAttachedBathroom;
 	}
 
-	public String hasWaterHarvesting() {
+	public Boolean hasWaterHarvesting() {
 		return hasWaterHarvesting;
 	}
 
-	public void setWaterHarvesting(String hasWaterHarvesting) {
+	public void setWaterHarvesting(Boolean hasWaterHarvesting) {
 		this.hasWaterHarvesting = hasWaterHarvesting;
 	}
 

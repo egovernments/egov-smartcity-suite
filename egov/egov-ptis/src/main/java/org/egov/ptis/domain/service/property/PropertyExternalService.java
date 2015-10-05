@@ -990,31 +990,32 @@ public class PropertyExternalService {
         return mstrCodeNamePairDetailsList;
     }
 
-    public NewPropertyDetails createNewProperty(final String propertyTypeMasterCode, final String propertyCategoryCode,
-            final String apartmentCmplxCode, final List<OwnerDetails> ownerDetailsList, final String mutationReasonCode,
-            final String extentOfSite, final String isExtentAppurtenantLand, final String occupancyCertificationNo,
-            final Boolean isSuperStructure, final Boolean isBuildingPlanDetails, final String regdDocNo,
-            final String regdDocDate,
-            final String localityCode, final String street, final String electionWardCode, final String doorNo,
-            final String enumerationBlockCode,
-            final String pinCode, final Boolean isCorrAddrDiff, final String corrAddr1, final String corrAddr2,
-            final String corrPinCode,
-            final Boolean hasLift, final Boolean hasToilet, final Boolean hasWaterTap, final Boolean hasElectricity,
-            final String hasAttachedBathroom,
-            final String hasWaterHarvesting, final String floorTypeCode, final String roofTypeCode, final String wallTypeCode,
-            final String woodTypeCode, final List<FloorDetails> floorDetailsList, final String surveyNumber,
-            final String pattaNumber,
-            final Double vacantLandArea, final Double marketValue, final Double currentCapitalValue, final String completionDate,
-            final String northBoundary, final String southBoundary, final String eastBoundary, final String westBoundary,
-            final List<Document> documents)
+	public NewPropertyDetails createNewProperty(final String propertyTypeMasterCode, final String propertyCategoryCode,
+			final String apartmentCmplxCode, final List<OwnerDetails> ownerDetailsList, final String mutationReasonCode,
+			final String extentOfSite, final Boolean isExtentAppurtenantLand, final String occupancyCertificationNo,
+			final Boolean isSuperStructure, final String siteOwnerName, final Boolean isBuildingPlanDetails, 
+			final String buildingPermissionNo, final String buildingPermissionDate,
+			final String percentageDeviation, final String regdDocNo, final String regdDocDate, 
+			final String localityCode, final String street,
+			final String electionWardCode, final String doorNo, final String enumerationBlockCode, final String pinCode,
+			final Boolean isCorrAddrDiff, final String corrAddr1, final String corrAddr2, final String corrPinCode,
+			final Boolean hasLift, final Boolean hasToilet, final Boolean hasWaterTap, final Boolean hasElectricity,
+			final Boolean hasAttachedBathroom, final Boolean hasWaterHarvesting, final Boolean hasCable, final String floorTypeCode,
+			final String roofTypeCode, final String wallTypeCode, final String woodTypeCode,
+			final List<FloorDetails> floorDetailsList, final String surveyNumber, final String pattaNumber,
+			final Double vacantLandArea, final Double marketValue, final Double currentCapitalValue,
+			final String completionDate, final String northBoundary, final String southBoundary,
+			final String eastBoundary, final String westBoundary, final List<Document> documents)
             throws ParseException {
 
         NewPropertyDetails newPropertyDetails = null;
-        BasicProperty basicProperty = createBasicProperty(propertyTypeMasterCode, propertyCategoryCode, mutationReasonCode,
-                ownerDetailsList,
-                extentOfSite, regdDocNo, regdDocDate, localityCode, street, doorNo, electionWardCode, pinCode,
-                isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, floorTypeCode, roofTypeCode, wallTypeCode,
-                woodTypeCode, floorDetailsList, completionDate, northBoundary, southBoundary, eastBoundary,
+        BasicProperty basicProperty = createBasicProperty(propertyTypeMasterCode, propertyCategoryCode, apartmentCmplxCode, 
+        		mutationReasonCode, ownerDetailsList, extentOfSite, isExtentAppurtenantLand, occupancyCertificationNo, 
+        		isSuperStructure, siteOwnerName, isBuildingPlanDetails, buildingPermissionNo, buildingPermissionDate,
+    			percentageDeviation, regdDocNo, regdDocDate, localityCode, street, doorNo, electionWardCode, pinCode, 
+    			isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, hasLift, hasToilet, hasWaterTap, hasElectricity, 
+    			hasAttachedBathroom, hasWaterHarvesting, hasCable, floorTypeCode, roofTypeCode, wallTypeCode, 
+    			woodTypeCode, floorDetailsList, completionDate, northBoundary, southBoundary, eastBoundary,
                 westBoundary, documents);
         basicProperty.setIsTaxXMLMigrated(PropertyTaxConstants.STATUS_YES_XML_MIGRATION);
         processAndStoreDocumentsWithReason(basicProperty, PropertyTaxConstants.DOCS_CREATE_PROPERTY);
@@ -1034,20 +1035,20 @@ public class PropertyExternalService {
         return newPropertyDetails;
     }
 
-    private BasicProperty createBasicProperty(final String propertyTypeMasterCode, final String propertyCategoryCode,
-            final String mutationReasonCode,
-            final List<OwnerDetails> ownerDetailsList, final String extentOfSite, final String regdDocNo,
-            final String regdDocDate,
-            final String localityCode, final String street, final String doorNo, final String electionWardCode,
-            final String pinCode,
-            final Boolean isCorrAddrDiff, final String corrAddr1, final String corrAddr2, final String corrPinCode,
-            final String floorTypeCode,
-            final String roofTypeCode, final String wallTypeCode, final String woodTypeCode,
-            final List<FloorDetails> floorDetailsList,
-            final String completionDate, final String northBoundary, final String southBoundary, final String eastBoundary,
-            final String westBoundary,
-            final List<Document> documents)
-            throws ParseException {
+	private BasicProperty createBasicProperty(final String propertyTypeMasterCode, final String propertyCategoryCode,
+			final String apartmentCmplxCode, final String mutationReasonCode, final List<OwnerDetails> ownerDetailsList,
+			final String extentOfSite, final Boolean isExtentAppurtenantLand, final String occupancyCertificationNo,
+			final Boolean isSuperStructure, final String siteOwnerName, final Boolean isBuildingPlanDetails, 
+			final String buildingPermissionNo, final String buildingPermissionDate, final String percentageDeviation, 
+			final String regdDocNo, final String regdDocDate, final String localityCode, final String street,
+			final String doorNo, final String electionWardCode, final String pinCode, final Boolean isCorrAddrDiff,
+			final String corrAddr1, final String corrAddr2, final String corrPinCode,
+			final Boolean lift, final Boolean toilet, final Boolean waterTap, final Boolean electricity,
+			final Boolean attachedBathroom, final Boolean waterHarvesting, final Boolean cable,
+			final String floorTypeCode, final String roofTypeCode, final String wallTypeCode, final String woodTypeCode,
+			final List<FloorDetails> floorDetailsList, final String completionDate, final String northBoundary,
+			final String southBoundary, final String eastBoundary, final String westBoundary,
+			final List<Document> documents) throws ParseException {
         final BasicProperty basicProperty = new BasicPropertyImpl();
         basicProperty.setRegdDocNo(regdDocNo);
         basicProperty.setRegdDocDate(convertStringToDate(regdDocDate));
@@ -1058,7 +1059,7 @@ public class PropertyExternalService {
         final PropertyAddress propAddress = createPropAddress(localityCode, street, doorNo, addressString, pinCode,
                 isCorrAddrDiff, doorNo, corrAddr1, corrAddr2, corrPinCode);
         basicProperty.setAddress(propAddress);
-
+        
         // Creating PropertyID object based on basic property, localityCode and
         // boundary map direction
         final PropertyID propertyID = createPropertID(basicProperty, localityCode, electionWardCode, northBoundary,
@@ -1100,6 +1101,33 @@ public class PropertyExternalService {
         final TaxExeptionReason taxExemptedReason = getTaxExemptionReasonByCode(floorDetailsList.get(0)
                 .getExemptionCategoryCode());
         propertyImpl.setTaxExemptedReason(taxExemptedReason);
+        Apartment apartment = getApartmentByCode(apartmentCmplxCode);
+        propertyImpl.getPropertyDetail().setApartment(apartment);
+        propertyImpl.getPropertyDetail().setOccupancyCertificationNo(occupancyCertificationNo);
+        
+        propertyImpl.getPropertyDetail().setStructure(isSuperStructure);
+        if(isSuperStructure) {
+        	propertyImpl.getPropertyDetail().setSiteOwner(siteOwnerName);
+        }
+        
+        propertyImpl.getPropertyDetail().setBuildingPlanDetailsChecked(isBuildingPlanDetails);
+        if(isBuildingPlanDetails) {
+            propertyImpl.getPropertyDetail().setBuildingPermissionNo(buildingPermissionNo);
+            propertyImpl.getPropertyDetail().setBuildingPermissionDate(convertStringToDate(buildingPermissionDate));
+            propertyImpl.getPropertyDetail().setDeviationPercentage(percentageDeviation);
+        }
+        
+        propertyImpl.getPropertyDetail().setLift(lift);
+        propertyImpl.getPropertyDetail().setToilets(toilet);
+        propertyImpl.getPropertyDetail().setWaterTap(waterTap);
+        propertyImpl.getPropertyDetail().setElectricity(electricity);
+        propertyImpl.getPropertyDetail().setAttachedBathRoom(attachedBathroom);
+        propertyImpl.getPropertyDetail().setWaterHarvesting(waterHarvesting);
+        propertyImpl.getPropertyDetail().setCable(cable);
+        
+        propertyImpl.getPropertyDetail().setCorrAddressDiff(isCorrAddrDiff);
+        propertyImpl.getPropertyDetail().setAppurtenantLandChecked(isExtentAppurtenantLand);
+        
         property = propService.createProperty(propertyImpl, extentOfSite, mutationReasonCode,
                 propertyTypeMaster.getId().toString(), propertyUsage.getId().toString(),
                 propertyOccupation.getId().toString(), PropertyTaxConstants.STATUS_ISACTIVE, regdDocNo, nonResPlotArea,
@@ -1145,9 +1173,9 @@ public class PropertyExternalService {
         if (pinCode != null && !pinCode.isEmpty())
             propAddr.setPinCode(pinCode);
         Address ownerAddress = null;
-        if (isCorrespondenceAddrDiff)
-            ownerAddress = createCorrespondenceAddress(doorNo, corrAddr1, corrAddr2, corrPinCode);
-        else {
+        if (isCorrespondenceAddrDiff) {
+        	ownerAddress = createCorrespondenceAddress(doorNo, corrAddr1, corrAddr2, corrPinCode);
+        } else {
             ownerAddress = new CorrespondenceAddress();
             ownerAddress.setAreaLocalitySector(propAddr.getAreaLocalitySector());
             ownerAddress.setHouseNoBldgApt(propAddr.getHouseNoBldgApt());
@@ -1622,5 +1650,12 @@ public class PropertyExternalService {
             mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
         }
         return mstrCodeNamePairDetailsList;
+    }
+    
+    private Apartment getApartmentByCode(String apartmentCode) {
+    	Query qry = entityManager.createQuery("from Apartment ap where ap.code = :code");
+    	qry.setParameter("code", apartmentCode);
+    	Apartment apartment = (Apartment)qry.getSingleResult();
+    	return apartment;
     }
 }

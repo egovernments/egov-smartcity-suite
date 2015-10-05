@@ -48,7 +48,7 @@ public class AssessmentsDetails implements Serializable {
 	private String mutationReasonCode;
 	private String parentPropertyAssessmentNo;
 	private String extentOfSite;
-	private String isExtentAppurtenantLand;
+	private Boolean isExtentAppurtenantLand;
 	private String occupancyCertificationNo;
 	private Boolean isSuperStructure;
 	private String siteOwnerName;
@@ -74,10 +74,10 @@ public class AssessmentsDetails implements Serializable {
 	public void setExtentOfSite(String extentOfSite) {
 		this.extentOfSite = extentOfSite;
 	}
-	public String getIsExtentAppurtenantLand() {
+	public Boolean getIsExtentAppurtenantLand() {
 		return isExtentAppurtenantLand;
 	}
-	public void setIsExtentAppurtenantLand(String isExtentAppurtenantLand) {
+	public void setIsExtentAppurtenantLand(Boolean isExtentAppurtenantLand) {
 		this.isExtentAppurtenantLand = isExtentAppurtenantLand;
 	}
 	public String getOccupancyCertificationNo() {

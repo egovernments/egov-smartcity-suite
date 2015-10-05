@@ -43,7 +43,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
@@ -57,7 +56,6 @@ import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.type.TypeReference;
 import org.egov.api.model.AmenitiesDetails;
 import org.egov.api.model.AssessmentsDetails;
 import org.egov.api.model.BuildingPlanDetails;
@@ -68,7 +66,6 @@ import org.egov.api.model.PayPropertyTaxDetails;
 import org.egov.api.model.PropertyAddressDetails;
 import org.egov.api.model.SurroundingBoundaryDetails;
 import org.egov.api.model.VacantLandDetails;
-import org.egov.api.util.ValidationUtil;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.Document;
@@ -88,9 +85,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 
 
@@ -555,132 +550,19 @@ public class AssessmentService {
         return getJSONResponse(mstrCodeNamePairDetailsList);
     }
 
-    /**
-     * This method is used to create property.
-     * 
-     * @param propertyTypeMasterCode - category of ownership code
-     * @param propertyCategoryCode - property type code
-     * @param apartmentCmplxCode - apartment/complex code
-     * @param ownerDetails - a list of owner details
-     * @param mutationReasonCode - reason for creation or mutation code
-     * @param extentOfSite - extent of site
-     * @param isExtentAppurtenantLand - extent appurtenant land
-     * @param occupancyCertificationNo - occupancy certification number
-     * @param isSuperStructure - super structure
-     * @param isBuildingPlanDetails - building plan details
-     * @param regdDocNo - registration document number
-     * @param regdDocDate - registration document date
-     * @param localityCode - locality code
-     * @param street - street name
-     * @param electionWardCode - election ward code
-     * @param doorNo - door number
-     * @param enumerationBlockCode - enumeration block code
-     * @param pinCode - pin code
-     * @param isCorrAddrDiff - is correspondence address different
-     * @param corrAddr1 - correspondence address 1
-     * @param corrAddr2 - correspondence address 2
-     * @param corrPinCode - correspondence address pin code
-     * @param hasLift - has lift
-     * @param hasToilet - has toilet
-     * @param hasWaterTap - has water tap
-     * @param hasElectricity - has electricity
-     * @param hasAttachedBathroom - has attached bathroom
-     * @param hasWaterHarvesting - has water harvesting
-     * @param floorTypeCode - floor type code
-     * @param roofTypeCode - roof type code
-     * @param wallTypeCode - wall type code
-     * @param woodTypeCode - wood type code
-     * @param floorDetails - a list of floor details
-     * @param surveyNumber - survey number
-     * @param pattaNumber - patta number
-     * @param vacantLandArea - vacant land area value
-     * @param marketValue - market value
-     * @param currentCapitalValue - current capital value
-     * @param completionDate - date of completion
-     * @param northBoundary - north boundary
-     * @param southBoundary - south boundary
-     * @param eastBoundary - east boundary
-     * @param westBoundary - west boundary
-     * @param photoAsmntStream- photo of assessment input stream object
-     * @param photoAsmntDisp- photo of assessment content disposition object
-     * @param bldgPermCopyStream- building permission copy input stream object
-     * @param bldgPermCopyDisp- building permission copy content disposition object
-     * @param atstdCopyPropDocStream- attested copy of property document input stream object
-     * @param atstdCopyPropDocDisp- attested copy of property document content disposition
-     * @param nonJudcStampStream - non judicial stamp input stream object
-     * @param nonJudcStampDisp - non judicial stamp content disposition object
-     * @param afdvtBondStream - affidavit bond paper input stream object
-     * @param afdvtBondDisp - affidavit bond paper content disposition object
-     * @param deathCertCopyStream - death certificate copy input stream object
-     * @param deathCertCopyDisp - death certificate copy content disposition object
-     * 
-     * @return - server response in JSON format
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
-     * @throws IOException
-     * @throws ParseException
-     */
-    @RequestMapping(value = "/property/createPropertyOld", method = RequestMethod.POST, consumes=MediaType.MULTIPART_FORM_DATA, produces = MediaType.APPLICATION_JSON)
-    public String createProperty(@RequestParam("propertyTypeMasterCode") String propertyTypeMasterCode,
-            @RequestParam("propertyCategoryCode") String propertyCategoryCode,
-            @RequestParam("apartmentCmplxCode") String apartmentCmplxCode,
-            @RequestParam(value="exemptionCategoryCode", defaultValue="") String exemptionCategoryCode,
-            @RequestParam("ownerDetails") String ownerDetails,
-            @RequestParam("mutationReasonCode") String mutationReasonCode,
-            @RequestParam("extentOfSite") String extentOfSite,
-            @RequestParam("isExtentAppurtenantLand") String isExtentAppurtenantLand,
-            @RequestParam("occupancyCertificationNo") String occupancyCertificationNo,
-            @RequestParam("isSuperStructure") Boolean isSuperStructure,
-            @RequestParam("isBuildingPlanDetails") Boolean isBuildingPlanDetails,
-            @RequestParam("regdDocNo") String regdDocNo, @RequestParam("regdDocDate") String regdDocDate,
-            @RequestParam("localityCode") String localityCode, @RequestParam("street") String street,
-            @RequestParam("electionWardCode") String electionWardCode, @RequestParam("doorNo") String doorNo,
-            @RequestParam("enumerationBlockCode") String enumerationBlockCode,
-            @RequestParam("pinCode") String pinCode, @RequestParam("isCorrAddrDiff") Boolean isCorrAddrDiff,
-            @RequestParam("corrAddr1") String corrAddr1, @RequestParam("corrAddr2") String corrAddr2,
-            @RequestParam("corrPinCode") String corrPinCode, @RequestParam("hasLift") Boolean hasLift,
-            @RequestParam("hasToilet") Boolean hasToilet, @RequestParam("hasWaterTap") Boolean hasWaterTap,
-            @RequestParam("hasElectricity") Boolean hasElectricity,
-            @RequestParam("hasAttachedBathroom") String hasAttachedBathroom,
-            @RequestParam("hasWaterHarvesting") String hasWaterHarvesting,
-            @RequestParam("floorTypeCode") String floorTypeCode, @RequestParam("roofTypeCode") String roofTypeCode,
-            @RequestParam("wallTypeCode") String wallTypeCode, @RequestParam("woodTypeCode") String woodTypeCode,
-            @RequestParam("floorDetails") String floorDetails, @RequestParam("surveyNumber") String surveyNumber,
-            @RequestParam("pattaNumber") String pattaNumber, @RequestParam("vacantLandArea") Double vacantLandArea,
-            @RequestParam("marketValue") Double marketValue,
-            @RequestParam("currentCapitalValue") Double currentCapitalValue,
-            @RequestParam("completionDate") String completionDate,
-            @RequestParam("northBoundary") String northBoundary, @RequestParam("southBoundary") String southBoundary,
-            @RequestParam("eastBoundary") String eastBoundary, @RequestParam("westBoundary") String westBoundary,
-            @RequestParam(value = "photoAsmnt", required=false) MultipartFile photoAsmntDisp,
-            @RequestParam(value = "bldgPermCopy", required=false) MultipartFile bldgPermCopyDisp,
-            @RequestParam(value = "atstdCopyPropDoc", required=false) MultipartFile atstdCopyPropDocDisp,
-            @RequestParam(value = "nonJudcStamp", required=false) MultipartFile nonJudcStampDisp,
-            @RequestParam(value = "afdvtBond", required=false) MultipartFile afdvtBondDisp,
-            @RequestParam(value = "deathCertCopy", required=false) MultipartFile deathCertCopyDisp)
-            throws JsonGenerationException, JsonMappingException, IOException, ParseException {
-        EgovThreadLocals.setUserId(Long.valueOf("40"));
-        List<FloorDetails> floorDetailsList = new ObjectMapper().readValue(floorDetails.toString(),
-                new TypeReference<Collection<FloorDetails>>() {
-                });
-        List<OwnerDetails> ownerDetailsList = new ObjectMapper().readValue(ownerDetails.toString(),
-                new TypeReference<Collection<OwnerDetails>>() {
-                });
-        List<Document> documents = propertyExternalService.getDocuments(photoAsmntDisp,
-                bldgPermCopyDisp, atstdCopyPropDocDisp, nonJudcStampDisp, afdvtBondDisp, deathCertCopyDisp);
-        NewPropertyDetails newPropertyDetails = propertyExternalService.createNewProperty(propertyTypeMasterCode,
-                propertyCategoryCode, apartmentCmplxCode, ownerDetailsList, mutationReasonCode, extentOfSite,
-                isExtentAppurtenantLand, occupancyCertificationNo, isSuperStructure, isBuildingPlanDetails, regdDocNo,
-                regdDocDate, localityCode, street, electionWardCode, doorNo, enumerationBlockCode, pinCode,
-                isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, hasLift, hasToilet, hasWaterTap, hasElectricity,
-                hasAttachedBathroom, hasWaterHarvesting, floorTypeCode, roofTypeCode, wallTypeCode, woodTypeCode,
-                floorDetailsList, surveyNumber, pattaNumber, vacantLandArea, marketValue, currentCapitalValue,
-                completionDate, northBoundary, southBoundary, eastBoundary, westBoundary, documents);
-        return getJSONResponse(newPropertyDetails);
-    }
-    
+	/**
+	 * This method is used to create property.
+	 * 
+	 * @param createPropertyDetails
+	 *            - Property details request
+	 * @return
+	 * @throws JsonGenerationException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 * @throws ParseException
+	 */
 	@RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes=MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-	public String createPropertyNew(@RequestBody String createPropertyDetails)
+	public String createProperty(@RequestBody String createPropertyDetails)
 					throws JsonGenerationException, JsonMappingException, IOException, ParseException {
 		EgovThreadLocals.setUserId(Long.valueOf("40"));
 		ObjectMapper mapper = new ObjectMapper();
@@ -697,12 +579,17 @@ public class AssessmentService {
 		String mutationReasonCode = assessmentsDetails.getMutationReasonCode();
 		String parentPropertyAssessmentNo = assessmentsDetails.getParentPropertyAssessmentNo();
 		String extentOfSite = assessmentsDetails.getExtentOfSite();
-		String isExtentAppurtenantLand = assessmentsDetails.getIsExtentAppurtenantLand();
+		Boolean isExtentAppurtenantLand = assessmentsDetails.getIsExtentAppurtenantLand();
 		String occupancyCertificationNo = assessmentsDetails.getOccupancyCertificationNo();
 		Boolean isSuperStructure = assessmentsDetails.getIsSuperStructure();
 		String siteOwnerName = assessmentsDetails.getSiteOwnerName();
 		Boolean isBuildingPlanDetails = assessmentsDetails.getIsBuildingPlanDetails();
+		
 		BuildingPlanDetails buildingPlanDetails = assessmentsDetails.getBuildingPlanDetails();
+		String buildingPermissionNo = buildingPlanDetails.getBuildingPermissionNo();
+		String buildingPermissionDate = buildingPlanDetails.getBuildingPermissionDate();
+		String percentageDeviation = buildingPlanDetails.getPercentageDeviation();
+		
 		String regdDocNo = assessmentsDetails.getRegdDocNo();
 		String regdDocDate = assessmentsDetails.getRegdDocDate();
 		
@@ -724,9 +611,9 @@ public class AssessmentService {
 		Boolean hasToilet = amenitiesDetails.hasToilet();
 		Boolean hasWaterTap = amenitiesDetails.hasWaterTap();
 		Boolean hasElectricity = amenitiesDetails.hasElectricity();
-		String hasAttachedBathroom = amenitiesDetails.hasAttachedBathroom();
-		String hasWaterHarvesting = amenitiesDetails.hasWaterHarvesting();
-		Boolean hasCableConnection = amenitiesDetails.hasCableConnection();
+		Boolean hasAttachedBathroom = amenitiesDetails.hasAttachedBathroom();
+		Boolean hasWaterHarvesting = amenitiesDetails.hasWaterHarvesting();
+		Boolean hasCable = amenitiesDetails.hasCableConnection();
 		
 		ConstructionTypeDetails constructionTypeDetails = createPropDetails.getConstructionTypeDetails();
 		String floorTypeCode = constructionTypeDetails.getFloorTypeCode();
@@ -745,7 +632,6 @@ public class AssessmentService {
 		Double currentCapitalValue = vacantLandDetails.getCurrentCapitalValue();
 		String effectiveDate = vacantLandDetails.getEffectiveDate();
 		
-		
 		SurroundingBoundaryDetails surroundingBoundaryDetails = createPropDetails.getSurroundingBoundaryDetails();
 		String northBoundary = surroundingBoundaryDetails.getNorthBoundary();
 		String southBoundary = surroundingBoundaryDetails.getSouthBoundary();
@@ -756,10 +642,11 @@ public class AssessmentService {
 		
 		NewPropertyDetails newPropertyDetails = propertyExternalService.createNewProperty(propertyTypeMasterCode,
 				propertyCategoryCode, apartmentCmplxCode, ownerDetailsList, mutationReasonCode, extentOfSite,
-				isExtentAppurtenantLand, occupancyCertificationNo, isSuperStructure, isBuildingPlanDetails, regdDocNo,
+				isExtentAppurtenantLand, occupancyCertificationNo, isSuperStructure, siteOwnerName, isBuildingPlanDetails, 
+				buildingPermissionNo, buildingPermissionDate, percentageDeviation, regdDocNo,
 				regdDocDate, localityCode, street, electionWardCode, doorNo, enumerationBlockCode, pinCode,
 				isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, hasLift, hasToilet, hasWaterTap, hasElectricity,
-				hasAttachedBathroom, hasWaterHarvesting, floorTypeCode, roofTypeCode, wallTypeCode, woodTypeCode,
+				hasAttachedBathroom, hasWaterHarvesting, hasCable, floorTypeCode, roofTypeCode, wallTypeCode, woodTypeCode,
 				floorDetailsList, surveyNumber, pattaNumber, vacantLandArea, marketValue, currentCapitalValue,
 				completionDate, northBoundary, southBoundary, eastBoundary, westBoundary, documents);
         return getJSONResponse(newPropertyDetails);

@@ -43,13 +43,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -57,6 +51,8 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.egov.api.model.CreateRevisionPetitionDetails;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -65,6 +61,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -127,13 +124,21 @@ public class RevisionPetitionRestService {
      * @throws JsonMappingException
      * @throws IOException
      */
-	@RequestMapping(value = "/property/createRevisionPetition", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
-	public String createRevisionPetitionFromRest(@FormParam("assessmentNo") String assessmentNo,
-			@FormParam("details") String details, @FormParam("receivedOn") String receivedOn,
-			@FormParam("receivedBy") String receivedBy)
-					throws JsonGenerationException, JsonMappingException, IOException {
+	@RequestMapping(value = "/property/createRevisionPetition", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	public String createRevisionPetitionFromRest(@RequestBody String createRevionPetitionDetails)
+			throws JsonGenerationException, JsonMappingException, IOException {
 		String responseJson = new String();
 		EgovThreadLocals.setUserId(Long.valueOf(LOGIN_USERID));
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
+		mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);
+		CreateRevisionPetitionDetails revionPetitionDetails = mapper.readValue(createRevionPetitionDetails,
+				CreateRevisionPetitionDetails.class);
+		String assessmentNo = revionPetitionDetails.getAssessmentNo();
+		String details = revionPetitionDetails.getDetails();
+		String receivedOn = revionPetitionDetails.getReceivedOn();
+		String receivedBy = revionPetitionDetails.getReceivedBy();
+
 		ErrorDetails errorDetails = validateRevisionPetitionForm(assessmentNo, details, receivedOn, receivedBy);
 		if (null != errorDetails) {
 			responseJson = getJSONResponse(errorDetails);

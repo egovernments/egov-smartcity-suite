@@ -37,46 +37,55 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.api.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 @SuppressWarnings("serial")
-public class BuildingPlanDetails implements Serializable {
+public class CreateRevisionPetitionDetails implements Serializable {
 
-	private String buildingPermissionNo;
-	private String buildingPermissionDate;
-	private String percentageDeviation;
+	private String assessmentNo;
+	private String details;
+	private String receivedOn;
+	private String receivedBy;
 
-	public String getBuildingPermissionNo() {
-		return buildingPermissionNo;
+	public String getAssessmentNo() {
+		return assessmentNo;
 	}
 
-	public void setBuildingPermissionNo(String buildingPermissionNo) {
-		this.buildingPermissionNo = buildingPermissionNo;
+	public void setAssessmentNo(String assessmentNo) {
+		this.assessmentNo = assessmentNo;
 	}
 
-	public String getBuildingPermissionDate() {
-		return buildingPermissionDate;
+	public String getDetails() {
+		return details;
 	}
 
-	public void setBuildingPermissionDate(String buildingPermissionDate) {
-		this.buildingPermissionDate = buildingPermissionDate;
+	public void setDetails(String details) {
+		this.details = details;
 	}
 
-	public String getPercentageDeviation() {
-		return percentageDeviation;
+	public String getReceivedOn() {
+		return receivedOn;
 	}
 
-	public void setPercentageDeviation(String percentageDeviation) {
-		this.percentageDeviation = percentageDeviation;
+	public void setReceivedOn(String receivedOn) {
+		this.receivedOn = receivedOn;
+	}
+
+	public String getReceivedBy() {
+		return receivedBy;
+	}
+
+	public void setReceivedBy(String receivedBy) {
+		this.receivedBy = receivedBy;
 	}
 
 	@Override
 	public String toString() {
-		return "BuildingPlanDetailsRequest [buildingPermissionNo=" + buildingPermissionNo + ", buildingPermissionDate="
-				+ buildingPermissionDate + ", percentageDeviation=" + percentageDeviation + "]";
+		return "CreateRevisionPetitionDetails [assessmentNo=" + assessmentNo + ", details=" + details + ", receivedOn="
+				+ receivedOn + ", receivedBy=" + receivedBy + "]";
 	}
 
 }
