@@ -360,9 +360,9 @@ public class VoucherHelper {
 
 	public  List<Department> getAllAssgnDeptforUser(){
 		// load the  primary and secondary assignment departments of the logged in user 
-		PersonalInformation employee = eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
+		//PersonalInformation employee = eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
 		HashMap<String,String> paramMap = new HashMap<String, String>();
-		paramMap.put("code", employee.getCode());
+		//paramMap.put("code", employee.getCode());
 		List<EmployeeView> listEmployeeView =new ArrayList<EmployeeView>();//Phoenix eisUtilService.getEmployeeInfoList(paramMap);
 		List<Department> departmentList = new ArrayList<Department> ();
 		for (EmployeeView employeeView : listEmployeeView) {
