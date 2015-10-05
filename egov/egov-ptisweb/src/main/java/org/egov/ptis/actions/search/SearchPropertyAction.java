@@ -449,7 +449,7 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("ownerName", basicProperty.getFullOwnerName());
                 searchResultMap.put("address", basicProperty.getAddress().toString());
                 searchResultMap.put("source", basicProperty.getSource().toString());
-
+                searchResultMap.put("isDemandActive", String.valueOf(isDemandActive));
                 if (!property.getIsExemptedFromTax()) {
                     searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
                     searchResultMap.put("arrDemandDue",
@@ -523,6 +523,10 @@ public class SearchPropertyAction extends BaseFormAction {
             LOGGER.debug("Entered into getSearchResults method");
             LOGGER.debug("Assessment Number : " + pmv.getPropertyId());
         }
+        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(pmv.getPropertyId());
+        if(basicProperty!=null){
+        	checkIsDemandActive(basicProperty.getProperty());
+        }
         if (pmv.getPropertyId() != null || org.apache.commons.lang.StringUtils.isNotEmpty(pmv.getPropertyId()))
             if (pmv != null) {
                 final Map<String, String> searchResultMap = new HashMap<String, String>();
@@ -531,6 +535,7 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("parcelId", pmv.getGisRefNo());
                 searchResultMap.put("address", pmv.getPropertyAddress());
                 searchResultMap.put("source", pmv.getSource().toString());
+                searchResultMap.put("isDemandActive", String.valueOf(isDemandActive));
                 if (pmv.getIsExempted()) {
                     searchResultMap.put("currDemand", "0");
                     searchResultMap.put("arrDemandDue", "0");

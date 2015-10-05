@@ -142,7 +142,7 @@
 													<s:text name="addeditDemand"></s:text> 
 												</option>
 											</c:if>
-											<s:if test="%{isDemandActive}">
+											<s:if test="%{#attr.currentRowObject.isDemandActive}">
 												<option value="ADD_OR_ALTER">
 													<s:text name="viewprop.option.alter"></s:text>
 												</option>
