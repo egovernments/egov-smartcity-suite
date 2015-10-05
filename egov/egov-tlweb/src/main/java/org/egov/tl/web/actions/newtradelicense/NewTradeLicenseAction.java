@@ -66,6 +66,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.tl.domain.entity.License;
+import org.egov.tl.domain.entity.LicenseAppType;
 import org.egov.tl.domain.entity.LicenseDocumentType;
 import org.egov.tl.domain.entity.LicenseStatus;
 import org.egov.tl.domain.entity.Licensee;
@@ -177,7 +178,11 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Create Trade License Application Name of Establishment :"
                 + tradeLicense.getNameOfEstablishment());
-        return super.create();
+        LicenseAppType newAppType = (LicenseAppType)persistenceService.find("from  LicenseAppType where name='New' ");
+        tradeLicense.setLicenseAppType(newAppType);
+        tradeLicense.setAddress("Nani Address");
+        tradeLicense.getLicensee().setAddress("Nani Address");
+        return super.create(tradeLicense);
     }
 
     @Override

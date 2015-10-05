@@ -50,6 +50,7 @@ import org.egov.tl.domain.entity.LicenseAppType;
 import org.egov.tl.domain.entity.NatureOfBusiness;
 import org.egov.tl.domain.entity.LicenseSubCategory;
 import org.egov.tl.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class FeeService extends PersistenceService<FeeMatrix, Long> {
     public static final String FEE_BY_NAME_TYPE_NATURE = "FEE_BY_NAME_TYPE_NATURE";
@@ -57,12 +58,13 @@ public class FeeService extends PersistenceService<FeeMatrix, Long> {
     public static final String PFA = "PFA";
     public static final Logger LOGGER = Logger.getLogger(FeeService.class);
     public static final String HOM = "HOM";
+    @Autowired
+    private FeeMatrixService feeMatrixService;
 
     @SuppressWarnings("unchecked")
     public List<FeeMatrix> getFeeList(final LicenseSubCategory tradeName, final LicenseAppType appType,
             final NatureOfBusiness natureOfBusiness) {
         LOGGER.debug("tradeName:::" + tradeName);
-
         return findAllByNamedQuery(FEE_BY_NAME_TYPE_NATURE, tradeName.getId(), appType.getId());
     }
 
@@ -75,11 +77,10 @@ public class FeeService extends PersistenceService<FeeMatrix, Long> {
      * @return calculatedFee This api will also set the LicenseNumber prefix when new class is added needs to update the api to
      * set corresponding prefix(fee type) eg: TradeLicense has PFA or CNC HospitalLicense has HOM only put loggers
      */
-    public BigDecimal calculateFee(final License license, final LicenseSubCategory tradeName, final LicenseAppType appType,
-            final NatureOfBusiness natureOfBusiness, final BigDecimal otherCharges, final BigDecimal deduction) {
+    public BigDecimal calculateFee(final License license) {
         BigDecimal totalFee = BigDecimal.ZERO;
-        boolean isPFA = false;
-        final List<FeeMatrix> feeList = getFeeList(tradeName, appType, natureOfBusiness);
+      /*  boolean isPFA = false;
+        final List<FeeMatrix> feeList = feeMatrixService.getFeeLifest(license);
         totalFee = totalFee.add(otherCharges != null ? otherCharges : BigDecimal.ZERO);
         totalFee = totalFee.subtract(deduction != null ? deduction : BigDecimal.ZERO);
         if (license.getClass().getSimpleName().equalsIgnoreCase(Constants.TRADELICENSE)) {
@@ -88,44 +89,7 @@ public class FeeService extends PersistenceService<FeeMatrix, Long> {
                     isPFA = true;
                 totalFee = totalFee.add(fee.getAmount());
             }
-            if (isPFA)
-                license.setFeeTypeStr(PFA);
-            else
-                license.setFeeTypeStr(CNC);
-        } else if (license.getClass().getSimpleName().equalsIgnoreCase(Constants.HOSPITALLICENSE)) {
-            for (final FeeMatrix fee : feeList)
-                totalFee = totalFee.add(fee.getAmount());
-            license.setFeeTypeStr(HOM);
-        } else if (license.getClass().getSimpleName().equalsIgnoreCase(Constants.HAWKERLICENSE)) {
-            for (final FeeMatrix fee : feeList) {
-                if (fee.getFeeType().getName().equalsIgnoreCase(PFA))
-                    isPFA = true;
-                totalFee = totalFee.add(fee.getAmount());
-            }
-            if (isPFA)
-                license.setFeeTypeStr(PFA);
-            else
-                license.setFeeTypeStr(CNC);
-        } else if (license.getClass().getSimpleName().equalsIgnoreCase(Constants.WATERWORKSLICENSE)) {
-            for (final FeeMatrix fee : feeList) {
-                if (fee.getFeeType().getName().equalsIgnoreCase(PFA))
-                    isPFA = true;
-                totalFee = totalFee.add(fee.getAmount());
-            }
-            if (isPFA)
-                license.setFeeTypeStr(PFA);
-            else
-                license.setFeeTypeStr(CNC);
-        } else if (license.getClass().getSimpleName().equalsIgnoreCase(Constants.PWDCONTRACTORLICENSE)) {
-            for (final FeeMatrix fee : feeList)
-                totalFee = totalFee.add(fee.getAmount());
-            license.setFeeTypeStr(CNC);
-        } else if (license.getClass().getSimpleName().equalsIgnoreCase(Constants.VETERINARYLICENSE)) {
-            for (final FeeMatrix fee : feeList)
-                totalFee = totalFee.add(fee.getAmount());
-            license.setFeeTypeStr(CNC);
-        } else
-            LOGGER.warn("Fee Type prefix is not set");
+                        LOGGER.warn("Fee Type prefix is not set");*/
         return totalFee;
     }
 
@@ -135,53 +99,13 @@ public class FeeService extends PersistenceService<FeeMatrix, Long> {
         boolean isPFA = false;
 
         final List<FeeMatrix> feeList = getFeeList(tradeName, appType, natureOfBusiness);
-        totalFee = totalFee.add(otherCharges != null ? otherCharges : BigDecimal.ZERO);
-        totalFee = totalFee.subtract(deduction != null ? deduction : BigDecimal.ZERO);
         if (license.getClass().getSimpleName().equalsIgnoreCase(Constants.TRADELICENSE)) {
             for (final FeeMatrix fee : feeList) {
                 if (fee.getFeeType().getName().equalsIgnoreCase(PFA))
                     isPFA = true;
                 totalFee = totalFee.add(fee.getAmount());
             }
-            if (isPFA)
-                license.setFeeTypeStr(PFA);
-            else
-                license.setFeeTypeStr(CNC);
-        } else if (license.getClass().getSimpleName().equalsIgnoreCase(Constants.HOSPITALLICENSE)) {
-            for (final FeeMatrix fee : feeList)
-                totalFee = totalFee.add(fee.getAmount());
-            license.setFeeTypeStr(HOM);
-        } else if (license.getClass().getSimpleName().equalsIgnoreCase(Constants.HAWKERLICENSE)) {
-            for (final FeeMatrix fee : feeList) {
-                if (fee.getFeeType().getName().equalsIgnoreCase(PFA))
-                    isPFA = true;
-                totalFee = totalFee.add(fee.getAmount());
-            }
-            if (isPFA)
-                license.setFeeTypeStr(PFA);
-            else
-                license.setFeeTypeStr(CNC);
-        } else if (license.getClass().getSimpleName().equalsIgnoreCase(Constants.WATERWORKSLICENSE)) {
-            for (final FeeMatrix fee : feeList) {
-                if (fee.getFeeType().getName().equalsIgnoreCase(PFA))
-                    isPFA = true;
-                totalFee = totalFee.add(fee.getAmount());
-            }
-            if (isPFA)
-                license.setFeeTypeStr(PFA);
-            else
-                license.setFeeTypeStr(CNC);
-        } else if (license.getClass().getSimpleName().equalsIgnoreCase(Constants.PWDCONTRACTORLICENSE)) {
-            for (final FeeMatrix fee : feeList)
-                totalFee = totalFee.add(fee.getAmount());
-            license.setFeeTypeStr(CNC);
-        } else if (license.getClass().getSimpleName().equalsIgnoreCase(Constants.VETERINARYLICENSE)) {
-            for (final FeeMatrix fee : feeList)
-                totalFee = totalFee.add(fee.getAmount());
-
-            license.setFeeTypeStr(CNC);
-        } else
-            LOGGER.warn("Fee Type prefix is not set");
+        }
         return totalFee;
     }
 

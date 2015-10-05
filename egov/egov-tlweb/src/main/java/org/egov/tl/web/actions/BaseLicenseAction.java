@@ -76,6 +76,7 @@ import org.egov.tl.domain.entity.LicenseCategory;
 import org.egov.tl.domain.entity.LicenseDemand;
 import org.egov.tl.domain.entity.LicenseSubCategory;
 import org.egov.tl.domain.entity.NatureOfBusiness;
+import org.egov.tl.domain.entity.TradeLicense;
 import org.egov.tl.domain.entity.UnitOfMeasurement;
 import org.egov.tl.domain.entity.WorkflowBean;
 import org.egov.tl.domain.service.BaseLicenseService;
@@ -166,14 +167,19 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         processWorkflow("Renew");
         return "message";
     }
+    public String create() {
+    
+    	return "";
+    }
+    
 
     @SuppressWarnings("unchecked")
     @ValidationErrorPage(Constants.NEW)
-    public String create() {
+    public String create(TradeLicense license) {
         try {
             this.setCheckList();
             service().processAndStoreDocument(license().getDocuments());
-            service().create(license());
+            service().create(license);
             populateWorkflowBean();
             service().transitionWorkFlow(license(), workflowBean);
             persistenceService.applyAuditing(license().getState());
@@ -196,7 +202,8 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     public String createDraftItems() {
         try {
             this.setCheckList();
-            service().create(license());
+          //  service().create(license());  //mani when made changes from license to tradelicesne
+            
            // initiateWorkFlowForLicense();
             persistenceService.getSession().flush();
         } catch (final RuntimeException e) {

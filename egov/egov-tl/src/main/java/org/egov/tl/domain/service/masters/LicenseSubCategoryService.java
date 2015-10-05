@@ -58,7 +58,7 @@ public class LicenseSubCategoryService extends PersistenceService<LicenseSubCate
      * @return
      */
     public List<LicenseSubCategory> findAllSubCategoryByCategory(final Long categoryId) {
-        return findAllBy("From org.egov.tl.domain.entity.LincenseSubCategory where category.id=? order by name", categoryId);
+        return findAllBy("From org.egov.tl.domain.entity.LicenseSubCategory where category.id=?", categoryId);
     }
 
 }

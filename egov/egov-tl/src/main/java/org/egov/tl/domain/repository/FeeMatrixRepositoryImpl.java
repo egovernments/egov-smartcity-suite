@@ -5,8 +5,10 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaQuery;
 
 import org.egov.tl.domain.entity.FeeMatrix;
+import org.egov.tl.domain.entity.License;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
@@ -33,6 +35,5 @@ public class FeeMatrixRepositoryImpl implements FeeMatrixRepositoryCustom {
 		
 	}
 	
-
 
 }

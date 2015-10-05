@@ -70,6 +70,7 @@ public abstract class License extends StateAware {
     protected Date applicationDate;
     protected String applicationNumber;
     protected Boundary boundary;
+    //this should be NatureOfBusiness only which means it is Permanent or temporary.
     protected NatureOfBusiness buildingType;
     protected Date dateOfCreation;
     protected Date dateOfExpiry;
@@ -100,6 +101,9 @@ public abstract class License extends StateAware {
     protected Set<LicenseDemand> demandSet;
     protected BigDecimal swmFee;
     private String docImageNumber;
+    //this field is not received from application 
+    // this is identified by the screen like is it "New" Apllication or Renewal of Application
+    private LicenseAppType licenseAppType;
 
     // PWD
     protected String servicetaxNumber;
@@ -841,4 +845,12 @@ public abstract class License extends StateAware {
     public void setWorkersCapacity(BigDecimal workersCapacity) {
         this.workersCapacity = workersCapacity;
     }
+
+	public LicenseAppType getLicenseAppType() {
+		return licenseAppType;
+	}
+
+	public void setLicenseAppType(LicenseAppType licenseAppType) {
+		this.licenseAppType = licenseAppType;
+	}
 }

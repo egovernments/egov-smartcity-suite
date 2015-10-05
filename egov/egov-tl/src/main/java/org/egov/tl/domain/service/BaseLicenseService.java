@@ -50,11 +50,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
+import org.egov.demand.dao.DemandGenericHibDao;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgReasonCategory;
 import org.egov.eis.entity.Assignment;
@@ -70,12 +76,11 @@ import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.Sequence;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.tl.domain.entity.FeeMatrix;
+import org.egov.tl.domain.entity.FeeMatrixDetail;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseAppType;
 import org.egov.tl.domain.entity.LicenseDemand;
@@ -83,6 +88,7 @@ import org.egov.tl.domain.entity.LicenseDocument;
 import org.egov.tl.domain.entity.LicenseDocumentType;
 import org.egov.tl.domain.entity.LicenseStatus;
 import org.egov.tl.domain.entity.NatureOfBusiness;
+import org.egov.tl.domain.entity.TradeLicense;
 import org.egov.tl.domain.entity.WorkflowBean;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseChecklistHelper;
@@ -93,6 +99,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author mani
  */
 public abstract class BaseLicenseService {
+	
+	private final static Logger LOGGER=Logger.getLogger(BaseLicenseService.class);
     protected FeeService feeService;
     @Autowired
     protected PersistenceService persistenceService;
@@ -110,6 +118,8 @@ public abstract class BaseLicenseService {
     @Autowired
     private FileStoreService fileStoreService;
     @Autowired
+    private FeeMatrixService feeMatrixService;
+    @Autowired
     private PersistenceService<LicenseDocumentType, Long> licenseDocumentTypeService;
 
     protected abstract LicenseAppType getLicenseApplicationTypeForRenew();
@@ -125,6 +135,9 @@ public abstract class BaseLicenseService {
     
     @Autowired
     private SecurityUtils securityUtils;
+	private boolean demandSet;
+	@Autowired
+	private DemandGenericHibDao demandGenericDao;
 
     public PersistenceService getPersistenceService() {
         return persistenceService;
@@ -142,37 +155,80 @@ public abstract class BaseLicenseService {
         this.sequenceGenerator = sequenceGenerator;
     }
 
-    @SuppressWarnings("unchecked")
+    /*@SuppressWarnings("unchecked")
     public void create(License license) {
-        final LicenseAppType appType = getLicenseApplicationType();
-        final NatureOfBusiness nature = getNatureOfBusiness();
-        //commented need to be completed after fee matrix
-        final List<FeeMatrix> feeList = new ArrayList<FeeMatrix>();//feeService.getFeeList(license.getTradeName(), appType, nature); 
-        final BigDecimal totalAmount = BigDecimal.ZERO;
-        // calculateFee code sets the fee type like cnc or pfa etc etc only required on create
-        // this.feeService.calculateFee(license, license.getTradeName(), this.getLicenseApplicationType(),
-        // this.getNatureOfBusiness(), license.getOtherCharges(), license.getDeduction());
-        // Setting Fee Type String
-        feeService.setFeeType(feeList, license);
-        final Installment installment = installmentDao
-                .getInsatllmentByModuleForGivenDate(getModuleName(), license.getApplicationDate());
-        final EgReasonCategory reasonCategory = (EgReasonCategory) persistenceService
-                .find("from org.egov.demand.model.EgReasonCategory where name='Fee'");
-        final Set<EgDemandReasonMaster> egDemandReasonMasters = reasonCategory.getEgDemandReasonMasters();
-        String feeType = "";
-        feeType = license.getClass().getSimpleName().toUpperCase();
-        final String runningApplicationNumber = applicationNumberGenerator.generate();
-        license = license.create(feeList, appType, nature, installment, egDemandReasonMasters, totalAmount,
-                runningApplicationNumber, license.getFeeTypeStr(), getModuleName());
+         BigDecimal totalAmount = BigDecimal.ZERO;
+         List<FeeMatrixDetail> feeList = feeMatrixService.findFeeList(license);
+        totalAmount = raiseNewDemand(feeList,license);
         license.getLicensee().setLicense(license);
-        final LicenseStatus status = (LicenseStatus) persistenceService.find(
-                "from org.egov.tl.domain.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
+        final LicenseStatus status = (LicenseStatus) persistenceService.find("from org.egov.tl.domain.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
         license.updateStatus(status);
-        license = additionalOperations(license, egDemandReasonMasters, installment);
+        final String runningApplicationNumber = applicationNumberGenerator.generate();
+        license.setApplicationNumber(runningApplicationNumber);
+        setAuditEntries(license);
+    }*/
+    
+    @SuppressWarnings("unchecked")
+    public void create(TradeLicense license) {
+         BigDecimal totalAmount = BigDecimal.ZERO;
+         List<FeeMatrixDetail> feeList = feeMatrixService.findFeeList(license);
+        totalAmount = raiseNewDemand(feeList,license);
+        license.getLicensee().setLicense(license);
+        final LicenseStatus status = (LicenseStatus) persistenceService.find("from org.egov.tl.domain.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
+        license.updateStatus(status);
+        final String runningApplicationNumber = applicationNumberGenerator.generate();
+        license.setApplicationNumber(runningApplicationNumber);
         setAuditEntries(license);
     }
 
-    private void setAuditEntries(License license) {
+    private BigDecimal raiseNewDemand(List<FeeMatrixDetail> feeList,TradeLicense license) {
+    		LicenseDemand ld=new LicenseDemand();
+    		Module moduleName = getModuleName();
+    		BigDecimal totalAmount=BigDecimal.ZERO;
+	    	final Installment installment = installmentDao
+	                .getInsatllmentByModuleForGivenDate(moduleName, license.getApplicationDate());
+	        final EgReasonCategory reasonCategory = (EgReasonCategory) persistenceService
+	                .find("from org.egov.demand.model.EgReasonCategory where name='Fee'");
+	        final Set<EgDemandReasonMaster> egDemandReasonMasters = reasonCategory.getEgDemandReasonMasters();
+	        
+	        ld.setIsHistory("N");
+	        ld. setEgInstallmentMaster(installment);
+	        ld. setCreateDate(new Date());
+	        ld.setLicense(license);
+	        ld.setIsLateRenewal('0');
+	        LOGGER.debug("calculating FEE          ...............................................");
+	        Set<EgDemandDetails> demandDetails = null;
+	        if (ld.getEgDemandDetails().isEmpty() || ld.getEgDemandDetails() == null)
+	            demandDetails = new LinkedHashSet<EgDemandDetails>();
+	        else
+	            demandDetails = ld.getEgDemandDetails();
+	        for (final FeeMatrixDetail fm : feeList) {
+	            final EgDemandReasonMaster reasonMaster =demandGenericDao.getDemandReasonMasterByCode(fm.getFeeMatrix().getFeeType().getName(), moduleName);
+	            final EgDemandReason reason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(reasonMaster, installment,moduleName);
+	            LOGGER.info("Reson for Reason Master" + ":master:" + reasonMaster.getReasonMaster() + "Reason:" + reason);
+	            if (fm.getFeeMatrix().getFeeType().getName().contains("Late"))
+	                continue;
+	           
+	                if (LOGGER.isDebugEnabled())
+	                    LOGGER.debug(reason + "::" + fm.getAmount());
+	                demandDetails.add(EgDemandDetails.fromReasonAndAmounts(fm.getAmount(), reason, BigDecimal.ZERO));
+	                totalAmount = totalAmount.add(fm.getAmount());
+	            
+	        }
+
+	        ld.setEgDemandDetails(demandDetails);
+	        ld.setBaseDemand(totalAmount);
+	        HashSet<LicenseDemand>    demandSet = new HashSet<LicenseDemand>();
+	        demandSet.add(ld);
+	        license.setDemandSet(demandSet);
+	        return totalAmount;
+	    }
+	   
+	  
+		
+	
+
+	private void setAuditEntries(License license) {
     	if(license.getId()==null)
     	{
     	license.setCreatedBy(securityUtils.getCurrentUser());

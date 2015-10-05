@@ -38,7 +38,9 @@
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.tl.domain.entity;
-
+/**
+ * 
+ */
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -54,8 +56,13 @@ import org.hibernate.validator.constraints.Length;
 @Table(name="egtl_mstr_fee_type")
 public class FeeType extends AbstractAuditable {  
 	public static final String SEQ="seq_egtl_mstr_fee_type";
+	/**
+	 * 
+	 * Will be RANGE, FLAT, PERCENTAGE actually but as of now 
+	 * code is not written and no usecases fixing to RANGE only
+	 */
 	public static enum FeeProcessType {
-        FLAT, PERCENTAGE, RANGE
+		RANGE
     }
     private static final long serialVersionUID = 1L;	
     @Id
