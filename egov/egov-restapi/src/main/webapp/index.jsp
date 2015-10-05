@@ -51,11 +51,17 @@
 			});
 			function createProeprty() {
 				$("#loading").show();
+				$("#createProeprtyResponse").val('');
 				var url = $("#urlField").val();
 				var data = $("#createPropertyField").val();
+				var type = $('input[name=typeRadio]:checked').val(); 
+				var selType = "";
+				if(type !== 'undefined') {
+					selType = type;
+				}
 				$.ajax({
 					url : url,
-					type : 'POST',
+					type : selType,
 					contentType : 'application/json',
 					data : data,
 					success : function(data) {
@@ -71,35 +77,43 @@
 	</head>
 	<body>
 		<div id="create_proeprty">
-			<table>
-				<tr>
-					<td colspan="2" align="center"><b>Create Property Request JSON</b></td>
-				</tr>
-				<tr>
-					<td>URL</td>
-					<td><input type="text" id="urlField" name="urlField" value="property/createProperty" style="width:100%;"></td>
-				</tr>				
-				<tr>
-					<td>Request JSON</td>
-					<td><textarea rows="5" cols="80" id="createPropertyField" placeholder="Copy create property request and paste here ..."></textarea></td>
-				</tr>
-				<tr>
-					<td></td>
-					<td><input id="createProeprtyBtn" type="button" value="Create"></td>
-				</tr>
-				<tr>
-					<td colspan="2" align="center">
-						<div id="loading">Please wait.....</div>
-					</td>
-				</tr>
-				<tr><td colspan="2"><b>Response</b></td></tr>
-				<tr>
-					<td></td>
-					<td>
-						<textarea rows="5" cols="80" id="createProeprtyResponse" placeholder="Response area ....."></textarea>
-					</td>
-				</tr>
-			</table>
+			<form id="restForm">
+				<table>
+					<tr>
+						<td colspan="2" align="center"><b>Service Test</b></td>
+					</tr>
+					<tr>
+						<td>URL</td>
+						<td><input type="text" id="urlField" name="urlField" value="" style="width:100%;" placeholder="property/createProperty"></td>
+					</tr>
+					<tr>
+						<td>Type</td>
+						<td><input type="radio" id="typePost" name="typeRadio" value="POST" checked="checked">POST<br/>
+							<input type="radio" id="typeGet" name="typeRadio" value="GET">GET (For masters)
+						</td>
+					</tr>			
+					<tr>
+						<td>Request JSON</td>
+						<td><textarea rows="5" cols="80" id="createPropertyField" placeholder="Request json ..."></textarea></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><input id="createProeprtyBtn" type="button" value="Send"></td>
+					</tr>
+					<tr>
+						<td colspan="2" align="center">
+							<div id="loading">Please wait.....</div>
+						</td>
+					</tr>
+					<tr><td colspan="2">Response</td></tr>
+					<tr>
+						<td></td>
+						<td>
+							<textarea rows="5" cols="80" id="createProeprtyResponse" placeholder="Response json ..."></textarea>
+						</td>
+					</tr>
+				</table>
+			</form>
 		</div>
 	</body>
 </html>
