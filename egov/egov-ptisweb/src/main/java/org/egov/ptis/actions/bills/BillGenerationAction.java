@@ -46,6 +46,7 @@
 package org.egov.ptis.actions.bills;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
@@ -204,7 +205,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
                 // Reading from filestore by passing filestoremapper object
                 if (ptNotice != null && ptNotice.getFileStore() != null) {
                     final FileStoreMapper fsm = ptNotice.getFileStore();
-                    final File file = fileStoreService.fetch(fsm, PTMODULENAME);
+                    final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
                     final byte[] bFile = FileUtils.readFileToByteArray(file);
                     reportOutput.setReportOutputData(bFile);
                     reportOutput.setReportFormat(FileFormat.PDF);

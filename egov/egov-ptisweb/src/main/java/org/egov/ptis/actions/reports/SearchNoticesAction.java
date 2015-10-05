@@ -41,8 +41,8 @@ package org.egov.ptis.actions.reports;
 
 import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 import java.io.ByteArrayInputStream;
@@ -217,7 +217,7 @@ public class SearchNoticesAction extends SearchFormAction {
             try {
                 if (ptNotice != null && ptNotice.getFileStore() != null) {
                     final FileStoreMapper fsm = ptNotice.getFileStore();
-                    final File file = fileStoreService.fetch(fsm, PTMODULENAME);
+                    final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
                     final byte[] bFile = FileUtils.readFileToByteArray(file);
                     pdfs.add(new ByteArrayInputStream(bFile));
                 }
@@ -280,7 +280,7 @@ public class SearchNoticesAction extends SearchFormAction {
                 try {
                     if (ptNotice != null && ptNotice.getFileStore() != null) {
                         final FileStoreMapper fsm = ptNotice.getFileStore();
-                        final File file = fileStoreService.fetch(fsm, PTMODULENAME);
+                        final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
                         final byte[] bFile = FileUtils.readFileToByteArray(file);
                         zipOutputStream = addFilesToZip(new ByteArrayInputStream(bFile), file.getName(),
                                 zipOutputStream);
@@ -324,7 +324,7 @@ public class SearchNoticesAction extends SearchFormAction {
 
         if (ptNotice != null && ptNotice.getFileStore() != null) {
             final FileStoreMapper fsm = ptNotice.getFileStore();
-            final File file = fileStoreService.fetch(fsm, PTMODULENAME);
+            final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
             final byte[] bFile = FileUtils.readFileToByteArray(file);
             final InputStream myInputStream = new ByteArrayInputStream(bFile);
             fileStream = myInputStream;

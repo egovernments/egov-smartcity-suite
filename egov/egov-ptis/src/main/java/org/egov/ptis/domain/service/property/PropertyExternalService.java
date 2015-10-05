@@ -42,6 +42,7 @@ package org.egov.ptis.domain.service.property;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 
@@ -1306,7 +1307,7 @@ public class PropertyExternalService {
             int fileCount = 0;
             for (final File file : uploads) {
                 final FileStoreMapper fileStore = fileStoreService.store(file, uploadFileNames.get(fileCount),
-                        uploadContentTypes.get(fileCount++), "PTIS");
+                        uploadContentTypes.get(fileCount++), FILESTORE_MODULE_NAME);
                 final PropertyDocs propertyDoc = new PropertyDocs();
                 propertyDoc.setSupportDoc(fileStore);
                 propertyDoc.setBasicProperty(basicProperty);

@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.domain.service.notice;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 import java.io.InputStream;
@@ -86,7 +87,7 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         ptNotice.setUserId(EgovThreadLocals.getUserId());
         ptNotice.setBasicProperty(basicProperty);
         final String fileName = ptNotice.getNoticeNo() + ".pdf";
-        final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf", PTMODULENAME);
+        final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf", FILESTORE_MODULE_NAME);
         ptNotice.setFileStore(fileStore);
         basicProperty.addNotice(ptNotice);
         basicPropertyService.update(basicProperty);

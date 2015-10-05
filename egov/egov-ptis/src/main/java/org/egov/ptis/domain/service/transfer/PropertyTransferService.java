@@ -39,6 +39,7 @@
 package org.egov.ptis.domain.service.transfer;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
@@ -376,7 +377,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
                 for (final File file : document.getUploads()) {
                     final FileStoreMapper fileStore = fileStoreService.store(file,
                             document.getUploadsFileName().get(fileCount),
-                            document.getUploadsContentType().get(fileCount++), "PTIS");
+                            document.getUploadsContentType().get(fileCount++), FILESTORE_MODULE_NAME);
                     document.getFiles().add(fileStore);
                 }
             }

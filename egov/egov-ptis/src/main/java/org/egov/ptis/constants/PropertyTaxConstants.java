@@ -1156,4 +1156,5 @@ public interface PropertyTaxConstants {
     public static final String CATEGORY_MIXED = "MIXED";
  
     public static final String PROP_MUTATION_RSN = "TRANSFER";
+    public static final String FILESTORE_MODULE_NAME = "PTIS";
 }

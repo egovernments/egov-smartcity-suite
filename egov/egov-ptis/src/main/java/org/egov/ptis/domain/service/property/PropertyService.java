@@ -60,6 +60,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERA
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_UNIT_FLOORNUMBER;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_ROLEFORNONEMPLOYEE;
@@ -2179,7 +2180,7 @@ public class PropertyService {
                 for (final File file : document.getUploads()) {
                     final FileStoreMapper fileStore = fileStoreService.store(file,
                             document.getUploadsFileName().get(fileCount),
-                            document.getUploadsContentType().get(fileCount++), "PTIS");
+                            document.getUploadsContentType().get(fileCount++), FILESTORE_MODULE_NAME);
                     document.getFiles().add(fileStore);
                 }
             }

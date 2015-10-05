@@ -44,12 +44,12 @@ package org.egov.ptis.actions.objection;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.HEARING_TIMINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
@@ -501,7 +501,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     objection.getObjectionNumber(), PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE);
 
             final FileStoreMapper fsm = ptNotice.getFileStore();
-            final File file = fileStoreService.fetch(fsm, PTMODULENAME);
+            final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
             byte[] bFile;
             try {
                 bFile = FileUtils.readFileToByteArray(file);
@@ -802,7 +802,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT);
             if (ptNotice != null) {
                 final FileStoreMapper fsm = ptNotice.getFileStore();
-                final File file = fileStoreService.fetch(fsm, PTMODULENAME);
+                final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
                 byte[] bFile;
                 try {
                     bFile = FileUtils.readFileToByteArray(file);
@@ -875,7 +875,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT);
             if (ptNotice != null) {
                 final FileStoreMapper fsm = ptNotice.getFileStore();
-                final File file = fileStoreService.fetch(fsm, PTMODULENAME);
+                final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
                 byte[] bFile;
                 try {
                     bFile = FileUtils.readFileToByteArray(file);
@@ -930,7 +930,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE);
             if (ptNotice != null) {
                 final FileStoreMapper fsm = ptNotice.getFileStore();
-                final File file = fileStoreService.fetch(fsm, PTMODULENAME);
+                final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
                 byte[] bFile;
                 try {
                     bFile = FileUtils.readFileToByteArray(file);
