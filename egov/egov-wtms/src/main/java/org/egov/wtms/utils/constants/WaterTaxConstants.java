@@ -42,7 +42,7 @@ package org.egov.wtms.utils.constants;
 import java.util.LinkedHashMap;
 
 public class WaterTaxConstants {
-
+    public static final String FILESTORE_MODULECODE = "WTMS";
     public static final String MODULE_NAME = "Water Tax Management";
     public static final String PROPERTY_MODULE_NAME = "Property Tax";
     public static final String MODULETYPE = "WATERTAXAPPLICATION";

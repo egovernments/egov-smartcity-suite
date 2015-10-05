@@ -143,7 +143,7 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
                     .map(file -> {
                         try {
                             return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                                    file.getContentType(), WaterTaxConstants.MODULE_NAME);
+                                    file.getContentType(), WaterTaxConstants.FILESTORE_MODULECODE);
                         } catch (final Exception e) {
                             throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
                         }
