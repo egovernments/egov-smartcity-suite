@@ -408,8 +408,6 @@ public class WaterConnectionSmsAndEmailService {
                    
                 }
                 else if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE)){
-                    smsMsg = waterTaxUtils.smsAndEmailBodyByCodeAndArgsForRejection("msg.changeofuserejection.sms",
-                            approvalComent, applicantName);
                     final StringBuffer smsBody = new StringBuffer().append("Dear ").append(applicantName)
                             .append(",Your change of use  connection application is being rejected and ").append("the reason for rejection ")
                             .append(approvalComent).append(" Please get in touch with ULB official to raise a new application with proper information to get a water connection.")
