@@ -55,13 +55,13 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintType"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
-							<input id="complaintTypeName" class="form-control typeahead is_valid_alphabet" placeholder="Enter your complaint"
+							<input id="complaintTypeName" class="form-control typeahead is_valid_alphabet" placeholder='<spring:message code="lbl.placholder.grievance"/>'
 								autocomplete="off" required="required" value="${complaint.complaintType.name}"/>
 							<form:hidden path="complaintType" id="complaintTypeId" value="" />
 							<form:errors path="complaintType" cssClass="add-margin error-msg" />
 							<c:forEach items="${complaintTypes}" var="complaintType">
-								<a onclick="setComplaintTypeId(<c:out value="${complaintType.id}"/>)" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
-										value="${complaintType.name }" /> </a>
+								<a onclick="setComplaintTypeId(<c:out value='${complaintType.id}'/>)" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">
+									<c:out value="${complaintType.name }" /> </a>
 							</c:forEach>
 						</div>
 					</div>
@@ -105,7 +105,7 @@
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintLoc"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
 							<div class="input-group" id="location-tour">
-								<input id="location" type="text" value="${complaint.location.name}" class="form-control low-width" placeholder="Enter your complaint location or select it from map icon" autocomplete="off" required="required"/>
+								<input id="location" type="text" value="${complaint.location.name}" class="form-control low-width" placeholder='<spring:message code="lbl.placeholder.grievance.loc"/>' autocomplete="off" required="required"/>
 								<span class="input-group-addon map-class btn-secondary" data-toggle="tooltip" title="Locate on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe specific"></i></span>
 								<form:hidden path="location" id="locationid"/>
 								<form:hidden path="lat" id="lat"/>

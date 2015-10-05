@@ -61,7 +61,7 @@
 				<div class="col-md-3 col-xs-6 add-margin">
 
 					<form:select path="status" data-first-option="true" id="status"
-						cssClass="form-control" cssErrorClass="form-control error"  itemLabel="---select-----">
+						cssClass="form-control" cssErrorClass="form-control error">
 						<form:option  value="${complaint.status.id}">
 							<spring:message code="lbl.select" />
 						</form:option>
@@ -103,7 +103,7 @@
 			<button type="reset" class="btn btn-default">
 				<spring:message code="lbl.reset" />
 			</button>
-			<button type="button" class="btn btn-default" onclick="window.close();">Close</button>  
+			<button type="button" class="btn btn-default" onclick="window.close();"><spring:message code="lbl.close" /></button>  
 		</div>
 	</div>
 	</form:form>
@@ -113,7 +113,7 @@
 <c:if test="${complaint.status.name == 'WITHDRAWN'}">
 	<div class="form-group">
 		<div class="text-center">
-		<button type="button" class="btn btn-default" onclick="window.close();">Close</button>  
+		<button type="button" class="btn btn-default" onclick="window.close();"><spring:message code="lbl.close" /></button>  
 		</div>
 	</div>
 		

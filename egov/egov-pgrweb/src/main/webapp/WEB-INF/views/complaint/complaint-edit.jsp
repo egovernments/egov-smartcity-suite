@@ -106,7 +106,7 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-md-3 col-xs-12">Forward Complaint To</label>
+				<label class="col-md-3 col-xs-12"><spring:message code="lbl.fwd.grievance"/></label>
 				<div class="col-md-3 col-xs-12 add-margin">
 					<form:select path="" data-first-option="false"
 						id="approvalDepartment" cssClass="form-control"

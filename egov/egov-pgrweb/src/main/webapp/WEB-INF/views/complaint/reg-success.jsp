@@ -73,7 +73,7 @@
 						
 					</div>
 				</div>
-				<div class="row">
+				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.phoneNumber" />
 					</div>
@@ -87,6 +87,16 @@
 						${complaint.complainant.email}
 					</div>
 				</div>
+				<c:if test="${not empty complaint.complainant.address}">
+					<div class="row add-border">
+						<div class="col-md-3 col-xs-6 add-margin">
+							<spring:message code="lbl.address" />
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
+							${complaint.complainant.address}
+						</div>
+					</div>
+				</c:if>
 			</div>
 		</div>
 	</div>

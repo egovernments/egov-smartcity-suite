@@ -72,6 +72,17 @@
 						</c:choose>
 					</div>
 				</div>
+				<c:if test="${not empty complaint.complainant.address}">
+					<div class="row add-border">
+						<div class="col-md-3 col-xs-6 add-margin">
+							<spring:message code="lbl.address" />
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin view-content"
+							id="ct-ctnumber">
+							<c:out value="${complaint.complainant.address}"></c:out>
+						</div>
+					</div>
+				</c:if>
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.ctn" />
@@ -113,7 +124,7 @@
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.photovideo" />
 					</div>
-					<div class="col-md-9 col-xs-12 add-margin down-file "
+					<div class="col-md-9 col-xs-12 add-margin down-file view-content"
 						id="links">
 						<c:choose>
 							<c:when test="${!complaint.getSupportDocs().isEmpty()}">
@@ -136,7 +147,7 @@
 								</c:forEach>
 							</c:when>
 							<c:otherwise>
-								<div class="col-md-3 col-xs-6 add-margin view-content"><spring:message code="msg.no.attach.found"/></div>
+									<spring:message code="msg.no.attach.found"/>
 							</c:otherwise>
 						</c:choose>
 					</div>

@@ -91,10 +91,16 @@ public class Complainant extends AbstractPersistable<Long> {
     @JoinColumn(name = "userDetail", nullable = true)
     private User userDetail;
 
+    @Length(max = 256)
+    @SafeHtml
+    private String address;
+
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     protected void setId(final Long id) {
         this.id = id;
     }
@@ -129,6 +135,14 @@ public class Complainant extends AbstractPersistable<Long> {
 
     public void setUserDetail(final User userDetail) {
         this.userDetail = userDetail;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(final String address) {
+        this.address = address;
     }
 
 }

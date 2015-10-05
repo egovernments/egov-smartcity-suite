@@ -163,13 +163,13 @@ jQuery(document).ready(function($)
 			  steps: [
 			  {
 			    element: "#complaintTypeName",
-			    title: "Complaint Type",
-			    content: "Enter your complaint type and select it from the below suggestion"
+			    title: "Grievance Type",
+			    content: "Enter your grievance type and select it from the below suggestion"
 			  },
 			  {
 			    element: "#location-tour",
-			    title: "Complaint Location",
-			    content: "Enter your complaint location or select it from the map icon"
+			    title: "Grievance Location",
+			    content: "Enter your grievance location or select it from the map icon"
 			  }
 			],
 			  storage: false,

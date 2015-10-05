@@ -169,7 +169,7 @@ public class ComplaintService {
         }
         final Position assignee = complaintRouterService.getAssignee(complaint);
         complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getName())
-                .withComments("Complaint registered with Complaint Number : " + complaint.getCrn())
+                .withComments("Grievance registered with Complaint Number : " + complaint.getCrn())
                 .withStateValue(complaint.getStatus().getName()).withOwner(assignee).withDateInfo(new Date());
 
         complaint.setAssignee(assignee);
@@ -209,7 +209,7 @@ public class ComplaintService {
                 || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())) {
             complaint.setDepartment(
                     assignmentService.getPrimaryAssignmentForPositon(complaint.getAssignee().getId()).getDepartment());
-            LOG.debug("Terminating Complaint Workflow");
+            LOG.debug("Terminating Grievance Workflow");
             if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
                 complaint.transition(true).end().withComments(approvalComent)
                         .withStateValue(complaint.getStatus().getName()).withSenderName(userName)
@@ -369,18 +369,18 @@ public class ComplaintService {
                 .format(complaint.getCreatedDate());
 
         final StringBuffer emailBody = new StringBuffer().append("Dear ").append(complaint.getComplainant().getName())
-                .append(",\n \n \tThank you for registering a complaint (").append(complaint.getCrn())
-                .append("). Your complaint is registered successfully.\n \tPlease use this number for all future references.")
-                .append("\n \n Complaint Details - \n \n Complaint type - ")
+                .append(",\n \n \tThank you for registering a grievance (").append(complaint.getCrn())
+                .append("). Your grievance is registered successfully.\n \tPlease use this number for all future references.")
+                .append("\n \n Grievance Details - \n \n Complaint type - ")
                 .append(complaint.getComplaintType().getName());
         if (complaint.getLocation() != null)
             emailBody.append(" \n Location details - ").append(complaint.getLocation().getName());
-        emailBody.append("\n Complaint description - ").append(complaint.getDetails()).append("\n Complaint status -")
-                .append(complaint.getStatus().getName()).append("\n Complaint Registration Date - ")
+        emailBody.append("\n Grievance description - ").append(complaint.getDetails()).append("\n Grievance status -")
+                .append(complaint.getStatus().getName()).append("\n Grievance Registration Date - ")
                 .append(formattedCreatedDate);
-        final StringBuffer emailSubject = new StringBuffer().append("Registered Complaint -").append(complaint.getCrn())
+        final StringBuffer emailSubject = new StringBuffer().append("Registered Grievance -").append(complaint.getCrn())
                 .append(" successfuly");
-        final StringBuffer smsBody = new StringBuffer().append("Your complaint for ")
+        final StringBuffer smsBody = new StringBuffer().append("Your grievance for ")
                 .append(complaint.getComplaintType().getName())
                 .append(" has been registered successfully with tracking number (").append(complaint.getCrn())
                 .append("). Please use this number for all future references.");
@@ -390,7 +390,7 @@ public class ComplaintService {
         if (null != owner && null != owner.getDeptDesig()) {
             final User user = eisCommonService.getUserForPosition(owner.getId(), new Date());
             if (null != user) {
-                final StringBuffer smsBodyOfficial = new StringBuffer().append("New Complaint for ")
+                final StringBuffer smsBodyOfficial = new StringBuffer().append("New Grievance for ")
                         .append(complaint.getComplaintType().getName())
                         .append(" is registered by ").append(complaint.getComplainant().getName() == null ? "Anonymous User"
                                 : complaint.getComplainant().getName())
@@ -429,7 +429,7 @@ public class ComplaintService {
         final String formattedCreatedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm")
                 .format(complaint.getCreatedDate());
         final StringBuffer emailBody = new StringBuffer()
-                .append(" %0D%0A Complaint Details -  %0D%0A %0D%0A CRN - ").append(complaint.getCrn())
+                .append(" %0D%0A Grievance Details -  %0D%0A %0D%0A CRN - ").append(complaint.getCrn())
                 .append(" %0D%0A Grievance Type -")
                 .append(complaint.getComplaintType().getName());
         if (complaint.getDepartment() != null)

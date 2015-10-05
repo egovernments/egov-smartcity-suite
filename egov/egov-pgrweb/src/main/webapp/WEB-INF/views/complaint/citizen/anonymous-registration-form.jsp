@@ -75,6 +75,13 @@
 							<form:errors path="complainant.email" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label"><spring:message code="lbl.address"/></label>
+						<div class="col-sm-6">
+							<form:textarea path="complainant.address" id="doc" minlength="10" placeholder="" maxlength="256" cssClass="form-control autogrow" required="required"/>
+							<form:errors path="complainant.address" cssClass="add-margin error-msg"/>
+						</div>
+					</div>
 				</div>
 				<div class="panel-heading custom_form_panel_heading">
 					<div class="panel-title">
