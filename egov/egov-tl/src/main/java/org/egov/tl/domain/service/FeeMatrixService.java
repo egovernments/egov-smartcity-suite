@@ -71,7 +71,18 @@ public class FeeMatrixService  {
 	public FeeMatrix search(FeeMatrix feeMatrix) {
 		return feeMatrixRepository.findByExample(feeMatrix);	
 	}
-
+/**
+ * 
+ * @param license
+ * @return
+ * Will return the list of fees for the selected combination
+ * 1.It will fetch all fee types  from the system
+ * 2. Apply the rule and parameters for that 
+ * 3. return it by adding to the feeMatrixDetailList
+ * 4. Uses switch . So After adding feetype in the system 
+ * it should be coded here to say how what parameter to be applied for the fetch  
+ * 
+ */
 	public List<FeeMatrixDetail> findFeeList(TradeLicense license) {
 	
 		List<FeeType> allFees = feeTypeService.findAll();
@@ -99,10 +110,13 @@ public class FeeMatrixService  {
 	    			feeMatrix = feeMatrixRepository.findByUniqueNo(uniqueNo+"-"+fee.getId()+"-"+uomId);
 	    			if(feeMatrix==null)
 	    			{
-	    				throw new ApplicationRuntimeException("License Fee Structure  is not defined for the given combination");
+	    				throw new ApplicationRuntimeException("License Fee Structure  is not defined for the selected combination");
 	    			}
 	    			feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,license.getTradeArea_weight(),license.getApplicationDate());
-	    			totalFee=	totalFee.add(feeMatrixDetail.getAmount());
+	    			if(feeMatrixDetail==null)
+	    			{
+	    				throw new ApplicationRuntimeException("License Fee Structure range is not defined for the selected combination");
+	    			}
 	    			feeMatrixDetailList.add(feeMatrixDetail);
 	    			break switchLoop;
 	    			
@@ -110,24 +124,42 @@ public class FeeMatrixService  {
 	    		/**
 	    		 * Assuming the below fee types will have single UOM through out So exclude UOM and find
 	    		 */
-	    		/*case "MF":
-	    			feeMatrix = feeMatrixRepository.findByUniqueNoLike(uniqueNo+"-"+fee.getId()+"%");
-	    			feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,license.getTotalHP(),license.getApplicationDate());
-	    			totalFee=	totalFee.add(feeMatrixDetail.getAmount());
-	    			feeMatrixDetailList.add(feeMatrixDetail);
-	    			break switchLoop;*/
+	    		case "MF":
+	    			if(license.getTotalHP()!=null && license.getTotalHP().compareTo(BigDecimal.ZERO)==1 )
+	    			{
+	    				feeMatrix = feeMatrixRepository.findByUniqueNoLike(uniqueNo+"-"+fee.getId()+"%");
+	    				if(feeMatrix==null)
+	    				{
+	    					throw new ApplicationRuntimeException("Motor Fee Structure  is not defined for the selected combination");
+	    				}
+	    				feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,license.getTotalHP(),license.getApplicationDate());
+	    				if(feeMatrixDetail==null)
+	    				{
+	    					throw new ApplicationRuntimeException("Motor Fee Structure range is not defined for the entered capacity");
+	    				}
+	    				feeMatrixDetailList.add(feeMatrixDetail);
+	    			}
+	    			break switchLoop;
 
 	    			//Find Worforce fee    
-	    		/*case "WF" :
+	    		case "WF" :
+	    			if(license.getWorkersCapacity()!=null && license.getWorkersCapacity().compareTo(BigDecimal.ZERO)==1 )
+	    			{
 	    			feeMatrix = feeMatrixRepository.findByUniqueNoLike(uniqueNo+"-"+fee.getId()+"%");
 	    			if(feeMatrix==null)
 	    			{
-	    				throw new ApplicationRuntimeException("License Fee Structure  is not defined for the given combination");
+	    				throw new ApplicationRuntimeException("Workforce Fee Structure  is not defined for the selected combination");
 	    			}
-	    			feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,license.getTradeArea_weight(),license.getApplicationDate());
+	    			feeMatrixDetail=feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,license.getTradeArea_weight(),license.getApplicationDate());
+	    			if(feeMatrixDetail==null)
+	    			{
+	    				throw new ApplicationRuntimeException("Workforce Fee Structure range is not defined for the entered capacity");
+	    			}
+	    			
 	    			totalFee=	totalFee.add(feeMatrixDetail.getAmount());
 	    			feeMatrixDetailList.add(feeMatrixDetail);
-	    			break switchLoop;*/
+	    			}
+	    			break switchLoop;
 	    		}
 				
 				

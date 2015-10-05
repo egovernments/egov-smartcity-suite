@@ -7,6 +7,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.domain.entity.FeeMatrix;
 import org.egov.tl.domain.entity.FeeMatrixDetail;
@@ -40,12 +42,29 @@ public class FeeMatrixController {
 	
 	@Autowired
 	private FeeTypeService feeTypeService;
+	
+	@Autowired
+	private AppConfigValueService appConfigValueService;
 
 	private void prepareForNewForm(Model model) {
-		model.addAttribute("feeMatrix",new FeeMatrix());
+	
 		model.addAttribute("licenseCategorys",(List<LicenseCategory>)persistenceService.findAllBy("select  c from LicenseCategory c order by name asc"));
 		model.addAttribute("natureOfBusinesss",(List<NatureOfBusiness>)persistenceService.findAllBy("select n from org.egov.tl.domain.entity.NatureOfBusiness n order by name asc"));
 		
+		List<AppConfigValues> permTempAppconfigList = appConfigValueService.getConfigValuesByModuleAndKey("Trade License", "Is Fee For Permanent and Temporary Same");
+		if(permTempAppconfigList.get(0).getValue().equals("Y"))
+		{
+			model.addAttribute("hideTemporary",true);
+			
+		}
+		
+		List<AppConfigValues> newRenewAppconfigList = appConfigValueService.getConfigValuesByModuleAndKey("Trade License", "Is Fee For New and Renew Same");
+		if(newRenewAppconfigList.get(0).getValue().equals("Y"))
+		{
+			model.addAttribute("hideRenew",true);
+			
+		}
+		model.addAttribute("feeMatrix",new FeeMatrix());
 		model.addAttribute("subCategorys",Collections.EMPTY_LIST);
 		model.addAttribute("licenseAppTypes",(List<LicenseAppType>)persistenceService.findAllBy("select a from LicenseAppType a order by name asc"));
 		model.addAttribute("feeTypes",feeTypeService.findAll());
@@ -60,7 +79,6 @@ public class FeeMatrixController {
 
 	@RequestMapping(value = "create", method = RequestMethod.POST)
 	public String create(@Valid @ModelAttribute final FeeMatrix feeMatrix,final BindingResult errors,final Model model,HttpServletRequest request){
-
 		System.out.println(request.getParameterMap());
 		if (errors.hasErrors())
 			return FEEMATRIX_RESULT;

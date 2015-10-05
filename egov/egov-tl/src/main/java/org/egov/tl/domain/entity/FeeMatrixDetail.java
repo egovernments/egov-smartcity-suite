@@ -40,9 +40,7 @@ public class FeeMatrixDetail extends AbstractPersistable<Long> {
     private Double percentage;
     @Temporal(value = TemporalType.DATE)
     private Date fromDate;
-    @Temporal(value = TemporalType.DATE)
-    private Date toDate;
-
+  
     private BigDecimal amount;
 	public Long getId() {
 		return id;
@@ -75,12 +73,7 @@ public class FeeMatrixDetail extends AbstractPersistable<Long> {
 	public void setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
 	}
-	public Date getToDate() {
-		return toDate;
-	}
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
+	
 	public BigDecimal getAmount() {
 		return amount;
 	}

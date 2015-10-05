@@ -87,6 +87,19 @@
                    <button type="button" class="btn btn-primary" id="search">Submit</button>
                   <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"> Close</button>
             </div>
+            <c:if test="${hideTemporary}">
+            <script>
+            $("#natureOfBusiness option:contains('Permanent')").attr('selected', 'selected');
+            $('#natureOfBusiness').attr("disabled", true); 
+            </script>
+            </c:if>
+            
+            <c:if test="${hideRenew}">
+            <script>
+            $("#licenseAppType option:contains('New')").attr('selected', 'selected');
+            $('#licenseAppType').attr("disabled", true); 
+            </script>
+            </c:if>
             <div id="resultdiv">
             </div>
           </form:form>

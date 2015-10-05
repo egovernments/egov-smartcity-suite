@@ -34,8 +34,8 @@ public class FeeMatrixDetailRepositoryImpl implements FeeMatrixDetailRepositoryC
 public	FeeMatrixDetail findFeeDetailList(FeeMatrix feeMatrix, Integer uom, Date appdate)
 	{
 		FeeMatrixDetail fmd=null;
-	String qlString="select fd from  FeeMatrixDetail fd  where fd.feeMatrix=:feeMatrix and :uom >=uomFrom and :uom <=uomTo and ((:appdate >=fromDate  "
-		+ " and :appdate <= toDate) or (:appdate>=fromDate and toDate is null))";
+	String qlString="select fd from  FeeMatrixDetail fd  where fd.feeMatrix=:feeMatrix and :uom >=uomFrom and :uom <=uomTo and :appdate >=fromDate  "
+		+ " order by fromDate desc";
 	List l=	entityManager.createQuery(qlString).setParameter("feeMatrix", feeMatrix)
 		.setParameter("uom", uom).setParameter("appdate", appdate).getResultList();
 	if(!l.isEmpty())

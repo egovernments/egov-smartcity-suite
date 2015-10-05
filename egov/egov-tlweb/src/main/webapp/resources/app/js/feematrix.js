@@ -79,9 +79,13 @@ $('body').on('click', '#add-row', function() {
 });
 
 $('body').on('click', '#save', function() {
-    // do something
+ 
+var natureOfBusinessDisabled=$('#natureOfBusiness').is(':disabled');
+var licenseAppTypeDisabled=$('#licenseAppType').is(':disabled');
+	$('#natureOfBusiness').removeAttr("disabled");
+	$('#licenseAppType').removeAttr("disabled");
 	var fd=$('#feematrix-new').serialize();
-	 alert( "save event called." );
+	
 	  $.ajax({
 			url: "/tl/feematrix/create",
 			type: "POST",
@@ -91,9 +95,20 @@ $('body').on('click', '#save', function() {
 				console.log("success"+response );
 				 $('#resultdiv').html(response);
 				 datepicker();
+				 if(natureOfBusinessDisabled)
+					 $('#natureOfBusiness').attr("disabled", true); 
+				 if(licenseAppTypeDisabled)
+					 $('#licenseAppType').attr("disabled", true); 
+					
 			}, 
 			error: function (response) {
 				console.log("failed");
+				if(natureOfBusinessDisabled)
+					$('#natureOfBusiness').attr("disabled", true); 
+				if(licenseAppTypeDisabled)
+					$('#licenseAppType').attr("disabled", true); 
+
+				
 			}
 		});
 });
@@ -101,6 +116,7 @@ $('body').on('click', '#save', function() {
 //datepicker();
 
 function datepicker(){
+	
 	$(".datepicker").datepicker({
 		format: "dd/mm/yyyy",
 		autoclose: true 
