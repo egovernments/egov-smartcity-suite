@@ -119,22 +119,26 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
 
     public List<T> fetchInboxItems(final Long userId, final List<Long> owners) {
         final List<T> assignedWFItems = new ArrayList<T>();
-        final List<String> wfTypes = this.getAssignedWorkflowTypes(owners);
-        for (final String wfType : wfTypes) {
-            final Optional<InboxRenderService<T>> wfTypeService = this.getWorkflowTypeService(wfType);
-            if (wfTypeService.isPresent())
-                assignedWFItems.addAll(wfTypeService.get().getAssignedWorkflowItems(userId, owners));
+        if(!owners.isEmpty()){
+        	final List<String> wfTypes = this.getAssignedWorkflowTypes(owners);
+            for (final String wfType : wfTypes) {
+                final Optional<InboxRenderService<T>> wfTypeService = this.getWorkflowTypeService(wfType);
+                if (wfTypeService.isPresent())
+                    assignedWFItems.addAll(wfTypeService.get().getAssignedWorkflowItems(userId, owners));
+            }
         }
         return assignedWFItems;
     }
 
     public List<T> fetchInboxDraftItems(final Long userId, final List<Long> owners) {
         final List<T> draftWfItems = new ArrayList<T>();
-        final List<String> wfTypes = this.getAssignedWorkflowTypes(owners);
-        for (final String wfType : wfTypes) {
-            final Optional<InboxRenderService<T>> wfTypeService = getWorkflowTypeService(wfType);
-            if (wfTypeService.isPresent())
-                draftWfItems.addAll(wfTypeService.get().getDraftWorkflowItems(userId, owners));
+        if(!owners.isEmpty()){
+        	final List<String> wfTypes = this.getAssignedWorkflowTypes(owners);
+            for (final String wfType : wfTypes) {
+                final Optional<InboxRenderService<T>> wfTypeService = getWorkflowTypeService(wfType);
+                if (wfTypeService.isPresent())
+                    draftWfItems.addAll(wfTypeService.get().getDraftWorkflowItems(userId, owners));
+            }
         }
         return draftWfItems;
     }
