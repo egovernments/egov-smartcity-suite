@@ -319,11 +319,14 @@ public class CollectionsUtil {
 
             final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
             validationErrors.add(new ValidationError("Department", "billreceipt.counter.deptcode.null"));
-        } else if (dept.getCode().equals("R"))
-            collectionsModeNotAllowed.add("card");
+        } else if (dept.getCode().equals("R")) {
+            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
+            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
+        }
         else {
-            collectionsModeNotAllowed.add("cash");
-            collectionsModeNotAllowed.add("card");
+            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CASH);
+            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
+            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
         }
         return collectionsModeNotAllowed;
     }
