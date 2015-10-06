@@ -39,6 +39,8 @@
  */
 package org.egov.collection.constants;
 
+import java.util.TreeMap;
+
 import org.egov.services.instrument.InstrumentService;
 import org.egov.utils.FinancialConstants;
 
@@ -62,6 +64,9 @@ public final class CollectionConstants {
     public static final String DROPDOWN_DATA_RECEIPT_CREATOR_LIST = "receiptCreatorList";
     public static final String DROPDOWN_DATA_RECEIPTZONE_LIST = "activeZoneList";
     public static final String DROPDOWN_DATA_ONLINETRANSACTIONSTATUS_LIST = "onlineTransactionStatusList";
+    public static final String DROPDOWN_DATA_BANKBRANCH_LIST = "bankBranchList";
+    public static final String DROPDOWN_DATA_ACCOUNT_NO_LIST = "accountNumberList";
+    public static final String DROPDOWN_DATA_INST_MODE_LIST = "instrumentModeList";
 
     // Instrument Types
     public static final String INSTRUMENTTYPE_CASH = FinancialConstants.INSTRUMENT_TYPE_CASH;
@@ -329,7 +334,7 @@ public final class CollectionConstants {
     public static final String SERVICECODE_PGI_BILLDESK = "BDPGI";
     public static final String SERVICECODE_PROPERTYTAX = "PT";
     public static final String SERVICECODE_PROFESSIONALTAX = "PRFT";
-    public static final String SERVICECODE_AXIS="AXIS";
+    public static final String SERVICECODE_AXIS = "AXIS";
 
     // Online Payment Statuses
     public static final String ONLINEPAYMENT_STATUS_CODE_PENDING = "ONLINE_STATUS_PENDING";
@@ -464,27 +469,34 @@ public final class CollectionConstants {
     public static final String AXIS_PASSWORD = "vpc_Password";
     public static final String AXIS_SECURE_HASH = "vpc_SecureHash";
     public static final String AXIS_TXN_RESPONSE_CODE = "vpc_TxnResponseCode";
-    public static final String AXIS_RESP_MESSAGE="vpc_Message";
-    public static final String AXIS_TXN_NO="vpc_TransactionNo";
-    public static final String AXIS_BATCH_NO="vpc_BatchNo";
+    public static final String AXIS_RESP_MESSAGE = "vpc_Message";
+    public static final String AXIS_TXN_NO = "vpc_TransactionNo";
+    public static final String AXIS_BATCH_NO = "vpc_BatchNo";
 
     public static final String MESSAGEKEY_AXIS_PAYMENT_CLIENT = "axis.payment.client";
     public static final String MESSAGEKEY_AXIS_VERSION = "axis.version";
     public static final String MESSAGEKEY_AXIS_COMMAND = "axis.command";
-    public static final String MESSAGEKEY_AXIS_COMMAND_QUERY ="axis.command.query";
+    public static final String MESSAGEKEY_AXIS_COMMAND_QUERY = "axis.command.query";
     public static final String MESSAGEKEY_AXIS_ACCESS_CODE = "axis.access.code";
     public static final String MESSAGEKEY_AXIS_MERCHANT = "axis.merchant";
     public static final String MESSAGEKEY_AXIS_LOCALE = "axis.locale";
     public static final String MESSAGEKEY_AXIS_TICKET_NO = "axis.ticket.no";
     public static final String MESSAGEKEY_AXIS_OPERATOR_ID = "axis.operator.id";
     public static final String MESSAGEKEY_AXIS_PASSWORD = "axis.password";
-    public static final String MESSAGEKEY_AXIS_RECONCILE_URL   = "axis.reconcile.url";
+    public static final String MESSAGEKEY_AXIS_RECONCILE_URL = "axis.reconcile.url";
     public static final String AXIS_SECURE_SECRET = "60D7AA77F54504B6057CCB7B3AEE86D4";
 
     // This is an array for creating hex chars
     public static final char[] AXIS_HEX_TABLE = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
-        'B', 'C', 'D', 'E', 'F' };
-    
-    public static final String  AXIS_ABORTED_STATUS_CODE    = "3";
+            'B', 'C', 'D', 'E', 'F' };
+
+    public static final String AXIS_ABORTED_STATUS_CODE = "3";
+
+    public static final TreeMap<String, String> INSTRUMENT_MODES_MAP = new TreeMap<String, String>() {
+        {
+            put("cheque", "Cheque");
+            put("dd", "DD");
+        }
+    };
 
 }

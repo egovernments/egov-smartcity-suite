@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-10-04T18:29:37 -->
+<!-- 2015-10-05T12:54:57 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bank_remittance" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="22d06118-8d4e-4e71-8645-fd13b3ff63bf">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Postgresql"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -51,7 +51,7 @@ WHERE
     AND es.id=ih.id_status
     AND it.type in ('cheque', 'dd')
     AND ih.isPayCheque = '0'
-    AND es.description = 'Deposited'
+    AND es.description = 'New'
     $P!{Q_DEPT_ID}]]>
 	</queryString>
 	<field name="instrumentNumber" class="java.lang.String">

@@ -88,5 +88,19 @@ public class BankaccountHibernateDAO extends GenericHibernateDAO {
 		}
 		return bankAccount;
 	}
+	
+	/**
+         * This method will return List of BankAccounts object based on matching bankBranchId
+         * @return
+         */
+        public List<Bankaccount> getBankAccountByBankBranch(final Integer bankBranchId) {
+                final Query qry = getCurrentSession().createQuery("from Bankaccount bankacc where bankacc.bankbranch.id=:bankBranchId ");
+                qry.setInteger("bankBranchId", bankBranchId);
+                List<Bankaccount> bankAccount = null;
+                if (qry.list().size() != 0) {
+                        bankAccount =  qry.list();
+                }
+                return bankAccount;
+        }
 
 }
