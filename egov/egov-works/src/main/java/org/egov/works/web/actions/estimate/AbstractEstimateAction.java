@@ -253,7 +253,6 @@ public class AbstractEstimateAction extends BaseFormAction {
             reportParams.put("estimateNo", estimate.getEstimateNumber());
             reportParams.put("activitySize", estimate.getSORActivities() == null ? 0 : estimate.getSORActivities()
                     .size());
-            reportParams.put("corpName", getText("reports.title.corporation_name"));
             reportParams.put("NonSOR_Activities", estimate.getNonSORActivities());
             reportParams.put("grandTotalAmt", getGrandTotalForEstimate(estimate));
         }

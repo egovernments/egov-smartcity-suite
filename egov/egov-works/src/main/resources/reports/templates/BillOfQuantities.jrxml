@@ -49,7 +49,6 @@
 	<parameter name="NonSOR_Activities" class="java.util.List"/>
 	<parameter name="estimateNo" class="java.lang.String"/>
 	<parameter name="activitySize" class="java.lang.Integer"/>
-	<parameter name="corpName" class="java.lang.String"/>
 	<parameter name="grandTotalAmt" class="java.lang.Double"/>
 	<queryString>
 		<![CDATA[]]>
@@ -240,7 +239,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="16" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{corpName}]]></textFieldExpression>
+                <textFieldExpression class="java.lang.String"><![CDATA[ReportUtil.getCityName()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="29" width="802" height="29"/>
