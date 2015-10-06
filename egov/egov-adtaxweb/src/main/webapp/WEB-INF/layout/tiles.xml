@@ -137,5 +137,9 @@
         <put-attribute name="page-title" value="title.collect.Advtax.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/collection/collectAdvtax-error.jsp"/>
     </definition>
-    
+  <definition name="hoarding-createLegacy" extends="base_layout">
+    	<put-attribute name="page-title" value="title.hoarding" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-createLegacy.jsp"/>
+    </definition>
+       
 </tiles-definitions>

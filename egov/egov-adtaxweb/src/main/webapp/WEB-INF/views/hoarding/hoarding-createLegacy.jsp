@@ -48,7 +48,7 @@
 		</c:if>
 		<form:form id="hoardingform" method="post" class="form-horizontal form-groups-bordered" 
 		modelAttribute="hoarding" commandName="hoarding" enctype="multipart/form-data">
-	<div class="panel panel-primary" data-collapsed="0">
+		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<ul class="nav nav-tabs" id="settingstab">
 					<li class="active"><a data-toggle="tab"
@@ -59,12 +59,24 @@
 			</div>
 			<div class="panel-body custom-form">
 				<div class="tab-content">
-					<div class="tab-pane fade active in" id="hoardingdetails">	
-		<jsp:include page="createHoarding.jsp"></jsp:include>
+					<div class="tab-pane fade active in" id="hoardingdetails">
+		
+				<jsp:include page="createHoarding.jsp"></jsp:include>
+				
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.pendingtax"/>
+									<span class="mandatory"></span>
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:input type="text" cssClass="form-control" path="pendingTax" id="pendingTax" required="required"/>
+                               		<form:errors path="pendingTax" cssClass="error-msg" />
+								</div>
+							</div>
 			</div>
 			</div>
 
-		</div>
+		</div>					
 		<div class="text-center">
 			<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
 			<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>

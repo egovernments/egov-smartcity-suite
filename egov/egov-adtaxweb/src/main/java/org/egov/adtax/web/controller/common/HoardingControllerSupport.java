@@ -38,6 +38,7 @@
  */
 package org.egov.adtax.web.controller.common;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.egov.adtax.entity.HoardingCategory;
@@ -62,7 +63,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 public class HoardingControllerSupport {
-
+     protected SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     protected @Autowired HoardingService hoardingService;
     protected @Autowired SubCategoryService subCategoryService;
     protected @Autowired FileStoreUtils fileStoreUtils;

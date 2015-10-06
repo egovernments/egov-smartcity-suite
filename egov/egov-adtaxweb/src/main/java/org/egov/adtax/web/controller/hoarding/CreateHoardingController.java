@@ -43,6 +43,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -51,6 +54,7 @@ import org.egov.adtax.entity.Hoarding;
 import org.egov.adtax.entity.HoardingDocument;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
+import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -63,12 +67,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/hoarding")
 public class CreateHoardingController extends HoardingControllerSupport {
+   
 
-    @ModelAttribute
-    public Hoarding hoarding() {
-        return new Hoarding();
-    }
-
+    /*
+     * @ModelAttribute public Hoarding hoarding() { return new Hoarding(); }
+     */
     @RequestMapping(value = "child-boundaries", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> childBoundaries(@RequestParam final Long parentBoundaryId) {
         return boundaryService.getActiveChildBoundariesByBoundaryId(parentBoundaryId);
@@ -76,15 +79,16 @@ public class CreateHoardingController extends HoardingControllerSupport {
 
     @RequestMapping(value = "calculateTaxAmount", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody Double getTaxAmount(@RequestParam final Long unitOfMeasureId,
-            @RequestParam final Double measurement,
-            @RequestParam final Long subCategoryId,
+            @RequestParam final Double measurement, @RequestParam final Long subCategoryId,
             @RequestParam final Long rateClassId) {
         Double rate = Double.valueOf(0);
-        rate = advertisementRateService.getAmountBySubcategoryUomClassAndMeasurement(subCategoryId, unitOfMeasureId, rateClassId, measurement);
+        rate = advertisementRateService.getAmountBySubcategoryUomClassAndMeasurement(subCategoryId, unitOfMeasureId,
+                rateClassId, measurement);
         if (rate == null)
             return Double.valueOf(0);
         // TODO MULTIPLY WITH MEASUREMENT TO GET TOTAL AMOUNT.
-        return BigDecimal.valueOf(rate).multiply(BigDecimal.valueOf(measurement)).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        return BigDecimal.valueOf(rate).multiply(BigDecimal.valueOf(measurement)).setScale(2, BigDecimal.ROUND_HALF_UP)
+                .doubleValue();
     }
 
     @RequestMapping(value = "subcategories", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -93,8 +97,14 @@ public class CreateHoardingController extends HoardingControllerSupport {
     }
 
     @RequestMapping(value = "create", method = GET)
-    public String createHoardingForm() {
+    public String createHoardingForm(@ModelAttribute final Hoarding hoarding) {
         return "hoarding-create";
+    }
+
+    @RequestMapping(value = "createLegacy", method = GET)
+    public String createLegacyHoardingForm(@ModelAttribute final Hoarding hoarding) {
+        hoarding.setLegacy(Boolean.TRUE);
+        return "hoarding-createLegacy";
     }
 
     @RequestMapping(value = "create", method = POST)
@@ -104,9 +114,31 @@ public class CreateHoardingController extends HoardingControllerSupport {
         if (resultBinder.hasErrors())
             return "hoarding-create";
         storeHoardingDocuments(hoarding);
+        hoarding.setPenaltyCalculationDate(new Date());
         hoardingService.createHoarding(hoarding);
         redirAttrib.addFlashAttribute("message", "hoarding.create.success");
         return "redirect:/hoarding/create";
+    }
+
+    @RequestMapping(value = "createLegacy", method = POST)
+    public String createLegacyHoarding(@Valid @ModelAttribute final Hoarding hoarding,
+            final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
+        validateHoardingDocs(hoarding, resultBinder);
+        if (resultBinder.hasErrors())
+            return "hoarding-createLegacy";
+        storeHoardingDocuments(hoarding);
+
+        final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
+        if (installmentObj != null && installmentObj.getFromDate() != null)
+            try {
+                hoarding.setPenaltyCalculationDate(formatter.parse(formatter.format(installmentObj.getFromDate())));
+            } catch (final ParseException e) {
+                e.printStackTrace();// TODO: CHECK THIS CASE AGAIN.
+            }
+
+        hoardingService.createHoarding(hoarding);
+        redirAttrib.addFlashAttribute("message", "hoarding.create.success");
+        return "redirect:/hoarding/createLegacy";
     }
 
     private void storeHoardingDocuments(final Hoarding hoarding) {

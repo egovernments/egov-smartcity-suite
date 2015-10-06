@@ -51,6 +51,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/hoarding")
@@ -64,18 +65,20 @@ public class UpdateHoardingController extends HoardingControllerSupport {
     @RequestMapping(value = "update/{hoardingNumber}")
     public String updateHoarding(@PathVariable final String hoardingNumber, final Model model) {
         final Hoarding hoarding = hoardingService.getHoardingByHoardingNumber(hoardingNumber);
+        
         model.addAttribute("dcPending", advertisementDemandService.anyDemandPendingForCollection(hoarding));
         model.addAttribute("hoarding", hoarding);
         return "hoarding-update";
     }
 
     @RequestMapping(value = "update/{hoardingNumber}", method = POST)
-    public String updateHoarding(@Valid @ModelAttribute final Hoarding hoarding, final BindingResult resultBinder) {
+    public String updateHoarding(@Valid @ModelAttribute final Hoarding hoarding, final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
         if (resultBinder.hasErrors())
             return "hoarding-update";
         try {
             hoardingService.updateHoarding(hoarding);
-            return "redirect:/hoarding/update/" + hoarding.getHoardingNumber();
+            redirAttrib.addFlashAttribute("message", "hoarding.update.success");
+            return "redirect:/hoarding/view/" + hoarding.getHoardingNumber();
         } catch (final HoardingValidationError e) {
             resultBinder.rejectValue(e.fieldName(), e.errorCode());
             return "hoarding-update";

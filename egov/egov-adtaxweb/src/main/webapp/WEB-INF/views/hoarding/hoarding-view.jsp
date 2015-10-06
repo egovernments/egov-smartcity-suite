@@ -43,6 +43,9 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <div class="row">
 	<div class="col-md-12">
+		<c:if test="${not empty message}">
+			<div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
+		</c:if>
 		<form:form id="hoardingformview" action="" class="form-horizontal form-groups-bordered" modelAttribute="hoarding" 
 		commandName="hoarding" >
 		<div class="panel panel-primary" data-collapsed="0">
@@ -304,6 +307,17 @@
 								</label>
 								<div class="col-sm-3 add-margin view-content">
 									<c:out value="${hoarding.encroachmentFee}" default="N/A"/>
+								</div>
+								
+								
+							</div>
+							
+							<div class="form-group">
+						<label class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.pendingtax"/>
+								</label>
+								<div class="col-sm-3 add-margin view-content">
+									<c:out value="${hoarding.pendingTax}" default="N/A"/>
 								</div>
 							</div>
 					</div>

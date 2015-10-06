@@ -52,6 +52,7 @@ import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -76,23 +77,27 @@ public class HoardingService {
 
     @Transactional
     public Hoarding updateHoarding(final Hoarding hoarding) throws HoardingValidationError {
-        final Hoarding actualHoarding = hoardingRepository.findByHoardingNumber(hoarding.getHoardingNumber());
+        final Hoarding actualHoarding = getHoardingByHoardingNumber(hoarding.getHoardingNumber());
         final boolean anyDemandPendingForCollection = advertisementDemandService.anyDemandPendingForCollection(actualHoarding);
+        
         if (!actualHoarding.getAgency().equals(hoarding.getAgency()) && anyDemandPendingForCollection)
             new HoardingValidationError("agency", "ADTAX.001");
+       //IF DEMAND COLLECTED FOR THE CURRENT YEAR, THEN NO NEED TO UPDATE DEMAND. JUST UPDATE HOARDING.
         if (advertisementDemandService.collectionDoneForThisYear(actualHoarding) && !actualHoarding.getTaxAmount().equals(hoarding.getTaxAmount()))
             new HoardingValidationError("taxAmount", "ADTAX.002");
         if (!actualHoarding.getStatus().equals(hoarding.getStatus()) && hoarding.getStatus().equals(HoardingStatus.CANCELLED)
                 && anyDemandPendingForCollection)
             new HoardingValidationError("status", "ADTAX.003");
-
+       
+        advertisementDemandService.updateDemand(hoarding);
+       
         return hoardingRepository.saveAndFlush(hoarding);
     }
 
     public List<Object[]> searchBySearchType(final Hoarding hoarding, final String searchType) {
         return hoardingRepository.fetchHoardingsBySearchType(hoarding, searchType);
     }
-
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     public Hoarding getHoardingByHoardingNumber(final String hoardingNumber) {
         return hoardingRepository.findByHoardingNumber(hoardingNumber);
     }

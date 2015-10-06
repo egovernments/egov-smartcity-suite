@@ -90,10 +90,10 @@ public class SearchHoardingController extends GenericController {
         return new Hoarding();
     }
 
-    @ModelAttribute("hoardingSearch")
+   /* @ModelAttribute("hoardingSearch")
     public HoardingSearch hoardingSearch() {
         return new HoardingSearch();
-    }
+    }*/
     
     @RequestMapping(value = "/subcategories-by-category", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<SubCategory> hoardingSubcategories(@RequestParam final Long categoryId) {
@@ -117,10 +117,10 @@ public class SearchHoardingController extends GenericController {
     public String commonSearchResult(final Hoarding hoarding, final String searchType) {
         final List<HoardingSearch> searchResult = hoardingService.getHoardingSearchResult(hoarding, searchType);
         return new StringBuilder("{ \"data\":").append(searchResult).append("}").toString();
-    }
+    } 
 
     @RequestMapping(value = "search-for-update", method = GET)
-    public String searchHoardingForm() {
+    public String searchHoardingForm(@ModelAttribute final HoardingSearch hoardingSearch) {
         return "hoarding-search-for-update";
     }
 

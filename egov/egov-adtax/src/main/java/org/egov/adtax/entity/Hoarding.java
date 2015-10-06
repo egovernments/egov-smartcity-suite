@@ -38,6 +38,7 @@
  */
 package org.egov.adtax.entity;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -168,9 +169,12 @@ public class Hoarding extends AbstractAuditable {
     private Double width;
     private Double breadth;
     private Double totalHeight;
-    private Double taxAmount;
-    private Double encroachmentFee;
-
+    private BigDecimal taxAmount;
+    private BigDecimal encroachmentFee;
+    private Boolean legacy = false;
+    private BigDecimal pendingTax;
+    private Date penaltyCalculationDate;
+    
     @NotNull
     @ManyToOne
     @JoinColumn(name = "class", nullable = false)
@@ -387,19 +391,19 @@ public class Hoarding extends AbstractAuditable {
         this.totalHeight = totalHeight;
     }
 
-    public Double getTaxAmount() {
+    public BigDecimal getTaxAmount() {
         return taxAmount;
     }
 
-    public void setTaxAmount(final Double taxAmount) {
+    public void setTaxAmount(final BigDecimal taxAmount) {
         this.taxAmount = taxAmount;
     }
 
-    public Double getEncroachmentFee() {
+    public BigDecimal getEncroachmentFee() {
         return encroachmentFee;
     }
 
-    public void setEncroachmentFee(final Double encroachmentFee) {
+    public void setEncroachmentFee(final BigDecimal encroachmentFee) {
         this.encroachmentFee = encroachmentFee;
     }
 
@@ -481,6 +485,30 @@ public class Hoarding extends AbstractAuditable {
 
     public void setDocuments(final List<HoardingDocument> documents) {
         this.documents = documents;
+    }
+
+    public Boolean getLegacy() {
+        return legacy;
+    }
+
+    public void setLegacy(Boolean legacy) {
+        this.legacy = legacy;
+    }
+
+    public BigDecimal getPendingTax() {
+        return pendingTax;
+    }
+
+    public void setPendingTax(BigDecimal pendingTax) {
+        this.pendingTax = pendingTax;
+    }
+
+    public Date getPenaltyCalculationDate() {
+        return penaltyCalculationDate;
+    }
+
+    public void setPenaltyCalculationDate(Date penaltyCalculationDate) {
+        this.penaltyCalculationDate = penaltyCalculationDate;
     }
 
 }
