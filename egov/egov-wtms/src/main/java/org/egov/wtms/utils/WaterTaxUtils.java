@@ -349,12 +349,13 @@ public class WaterTaxUtils {
         Double finalDueAmount = (double) 0;
         final List<WaterConnectionDetails> waterConnectionDetails = waterConnectionDetailsService
                 .getAllConnectionDetailsByParentConnection(parentId);
-        for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails)
-
+        for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails){
+            if (waterconnectiondetails.getDemand()!= null)
             finalDueAmount = finalDueAmount
             + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
                     .getDemand().getAmtCollected().doubleValue());
-
+        }
+        System.out.println("fianl due amount->"+finalDueAmount);
         return finalDueAmount;
     }
 }
