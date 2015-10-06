@@ -91,6 +91,25 @@
 			</div>
 		</td>
 	</tr>
+	
+	
+	<!-- property address section -->
+	
+	<tr>
+		<td>
+			<div id="PropAddrDiv">
+				<%@ include file="../common/PropAddressView.jsp"%>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="5">
+			<div id="CorrAddrDiv">
+				<%@ include file="../common/CorrAddressView.jsp"%>
+			</div>
+		</td>
+	</tr>
+	
     <tr>
 		<td colspan="5">
 			<div class="headingsmallbg">
@@ -193,22 +212,6 @@
 		<td class="greybox">
 		<s:date name="%{basicProperty.regdDocDate}" var="regdDocDate" format="dd/MM/yyyy" />
 			<span class="bold"><s:property value="%{#regdDocDate}" default="N/A"/></span>
-		</td>
-	</tr>
-	<!-- property address section -->
-	
-	<tr>
-		<td>
-			<div id="PropAddrDiv">
-				<%@ include file="../common/PropAddressView.jsp"%>
-			</div>
-		</td>
-	</tr>
-	<tr>
-		<td colspan="5">
-			<div id="CorrAddrDiv">
-				<%@ include file="../common/CorrAddressView.jsp"%>
-			</div>
 		</td>
 	</tr>
 	

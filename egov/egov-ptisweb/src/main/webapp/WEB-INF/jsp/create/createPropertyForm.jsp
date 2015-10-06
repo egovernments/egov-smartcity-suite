@@ -100,6 +100,28 @@
 			</div>
 		</td>
 	</tr>
+	
+
+<!-- property address section -->
+
+	<tr>
+		<td>
+			<div id="PropAddrDiv">
+				<%@ include file="../common/PropAddressForm.jsp"%>
+			</div>
+		</td>
+	</tr>
+
+	<tr>
+		<td colspan="5">
+			<div id="CorrAddrDiv">
+				<%@ include file="../common/CorrAddressForm.jsp"%>
+			</div>
+		</td>
+	</tr>
+
+	<!-- assessment details section -->
+	
 	<tr>
 		<td colspan="5">
 			<div class="headingsmallbg">
@@ -204,23 +226,6 @@
 	</tr>
 
 
-	<!-- property address section -->
-
-	<tr>
-		<td>
-			<div id="PropAddrDiv">
-				<%@ include file="../common/PropAddressForm.jsp"%>
-			</div>
-		</td>
-	</tr>
-
-	<tr>
-		<td colspan="5">
-			<div id="CorrAddrDiv">
-				<%@ include file="../common/CorrAddressForm.jsp"%>
-			</div>
-		</td>
-	</tr>
 
 
 	<!-- Amenities section -->
