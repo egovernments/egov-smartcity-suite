@@ -39,9 +39,11 @@
  ******************************************************************************/
 package org.egov.collection.web.actions.receipts;
 
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,33 +54,52 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.service.ReceiptHeaderService;
+import org.egov.collection.web.actions.bean.DishonoredChequeBean;
+import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.BankBranchHibernateDAO;
 import org.egov.commons.dao.BankaccountHibernateDAO;
-import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.infra.web.struts.actions.SearchFormAction;
+import org.egov.infra.web.utils.EgovPaginatedList;
+import org.egov.infstr.search.SearchQuery;
+import org.egov.infstr.search.SearchQuerySQL;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.model.instrument.InstrumentHeader;
+import org.egov.model.instrument.InstrumentType;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.exilant.eGov.src.domain.BankBranch;
-
-@Results({ @Result(name = BankRemittanceAction.NEW, location = "dishonoredCheque-new.jsp"),
-  @Result(name = BankRemittanceAction.INDEX, location = "dishonoredCheque-index.jsp"),
-  @Result(name = "accountList", location = "dishonoredCheque-accountList.jsp")})
+@Results({ @Result(name = DishonoredChequeAction.SEARCH, location = "dishonoredCheque-search.jsp"),
+        @Result(name = DishonoredChequeAction.SUCCESS, location = "dishonoredCheque-success.jsp"),
+        @Result(name = "accountList", location = "dishonoredCheque-accountList.jsp") })
 @ParentPackage("egov")
-public class DishonoredChequeAction extends BaseFormAction {
+public class DishonoredChequeAction extends SearchFormAction {
 
     private static final long serialVersionUID = 2871716607884152080L;
     private static final Logger LOGGER = Logger.getLogger(DishonoredChequeAction.class);
 
+    protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    public static final String SEARCH = "search";
     private List bankBranchList;
     @Autowired
     private BankBranchHibernateDAO bankBranchHibernateDAO;
     @Autowired
     private BankaccountHibernateDAO bankaccountHibernateDAO;
-    private String bankBranch;
+    private String bankBranchId;
     private List accountNumberList;
     private Map instrumentModesMap;
     private String chequeNumber;
     private Date chequeDate;
-    
+    public PersistenceService<InstrumentHeader, Long> instrumentHeaderService;
+    private String instHeaderIds;
+    private String instrumentMode;
+    private Long accountNumber;
+    private EgovPaginatedList paginatedList;
+    protected List<DishonoredChequeBean> dishonoredChequeDisplayList = new ArrayList<DishonoredChequeBean>();
+    private ReceiptHeaderService receiptHeaderService;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusDAO;
 
     @Override
     public Object getModel() {
@@ -91,30 +112,125 @@ public class DishonoredChequeAction extends BaseFormAction {
         super.prepare();
         addDropdownData(CollectionConstants.DROPDOWN_DATA_BANKBRANCH_LIST, bankBranchHibernateDAO.getAllBankBranchs());
         addDropdownData(CollectionConstants.DROPDOWN_DATA_ACCOUNT_NO_LIST, new ArrayList());
-        this.instrumentModesMap = CollectionConstants.INSTRUMENT_MODES_MAP;
+        instrumentModesMap = CollectionConstants.INSTRUMENT_MODES_MAP;
     }
-    
+
     @Action(value = "/receipts/dishonoredCheque-getAccountNumbers")
     public String getAccountNumbers() {
         try {
-             accountNumberList = bankaccountHibernateDAO.getBankAccountByBankBranch(Integer.valueOf(bankBranch));
+            Long branchId = null;
+            if (!bankBranchId.equals("-1") && bankBranchId != null && bankBranchId != "") {
+                final String id[] = bankBranchId.split("-");
+                branchId = Long.parseLong(id[1]);
+            }
+            accountNumberList = bankaccountHibernateDAO.getBankAccountByBankBranch(branchId.intValue());
         } catch (final Exception ex) {
             LOGGER.error("Exception Encountered!!!" + ex.getMessage(), ex);
         }
         return "accountList";
     }
-    
-    @Action(value = "/receipts/dishonoredCheque-getDetails")
-    public String getDetails() {
-        
-        return NEW;
-        
-    }
-    
+
+    @Override
     @SkipValidation
-    @Action(value = "/receipts/dishonoredCheque-newForm")
-    public String newForm() {
-            return NEW;
+    @Action(value = "/receipts/dishonoredCheque-search")
+    public String search() {
+        return SEARCH;
+    }
+
+    @Action(value = "/receipts/dishonoredCheque-list")
+    public String list() throws Exception {
+        setPageSize(30);
+        super.search();
+        prepareResults();
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("DishonoredChequeAction | list | End");
+        return SEARCH;
+    }
+
+    @Override
+    public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
+
+        Long bankId = null;
+        if (!bankBranchId.equals("-1") && bankBranchId != null && bankBranchId != "") {
+            final String id[] = bankBranchId.split("-");
+            bankId = Long.parseLong(id[0]);
+        }
+        final InstrumentType instType = (InstrumentType) getPersistenceService().find(
+                "from InstrumentType where type=?", instrumentMode);
+        final String searchQuery = receiptHeaderService.getReceiptHeaderforDishonor(instType.getId(), accountNumber,
+                bankId, chequeNumber, chequeDate.toString());
+        final String srchQry = "select rpt.id as receiptheaderid,ih.id as instrumentheaderid,rpt.receiptnumber as receiptnumber,rpt.receiptdate as receiptdate,ih.instrumentnumber as instrumentnumber,"
+                + "ih.instrumentdate as instrumentdate,ih.instrumentamount as instrumentamount,b.name as bankname,ba.accountnumber as accountnumber,ih.payto as payto,status.description as description "
+                + searchQuery + " ORDER BY rpt.receiptnumber, rpt.receiptdate ";
+        final String countQry = "select count(distinct rpt) " + searchQuery + "";
+        return new SearchQuerySQL(srchQry, countQry, null);
+
+    }
+
+    @Action(value = "/receipts/dishonoredCheque-dishonorCheque")
+    public String dishonorCheque() throws Exception {
+        final String installmentIdsStr[] = instHeaderIds.split(",");
+        for (final String installmentIdStr : installmentIdsStr) {
+            final InstrumentHeader iHeader = (InstrumentHeader) getPersistenceService().find(
+                    "from InstrumentHeader where id=?", Long.valueOf(installmentIdStr));
+            final EgwStatus statusDishonored = egwStatusDAO.getStatusByModuleAndCode(
+                    CollectionConstants.MODULE_NAME_INSTRUMENTHEADER, CollectionConstants.INSTRUMENT_DISHONORED_STATUS);
+            iHeader.setStatusId(statusDishonored);
+            final ReceiptHeader receiptHeader = (ReceiptHeader) getPersistenceService().find(
+                    "select DISTINCT (receipt) from org.egov.collection.entity.ReceiptHeader receipt "
+                + "join receipt.receiptInstrument as instruments where instruments.id=?", Long.valueOf(installmentIdStr));
+            final EgwStatus statusBounced = egwStatusDAO.getStatusByModuleAndCode(
+                    CollectionConstants.MODULE_NAME_RECEIPTHEADER,
+                    CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED);
+            receiptHeader.setStatus(statusBounced);
+            instrumentHeaderService.update(iHeader);
+            receiptHeaderService.update(receiptHeader);
+        }
+        return SUCCESS;
+    }
+
+    private void prepareResults() {
+
+        LOGGER.debug("Entering into prepareResults");
+        paginatedList = (EgovPaginatedList) searchResult;
+        final List<Object[]> list = paginatedList.getList();
+
+        for (final Object[] object : list) {
+            final DishonoredChequeBean chequeBean = new DishonoredChequeBean();
+            chequeBean.setReceiptHeaderid(getLongValue(object[0]));
+            chequeBean.setInstrumentHeaderid(getLongValue(object[1]));
+            chequeBean.setReceiptNumber(getStringValue(object[2]));
+            chequeBean.setReceiptDate(getDateValue(object[3]));
+            chequeBean.setInstrumentNumber(getStringValue(object[4]));
+            chequeBean.setInstrumentDate(getDateValue(object[5]));
+            chequeBean.setInstrumentAmount(getBigDecimalValue(object[6]));
+            chequeBean.setBankName(getStringValue(object[7]));
+            chequeBean.setAccountNumber(getStringValue(object[8]));
+            chequeBean.setPayTo(getStringValue(object[9]));
+            chequeBean.setDescription(getStringValue(object[10]));
+
+            dishonoredChequeDisplayList.add(chequeBean);
+        }
+        paginatedList.setList(dishonoredChequeDisplayList);
+        LOGGER.debug("Exiting from prepareResults");
+    }
+
+    protected String getStringValue(final Object object) {
+        return object != null ? object.toString() : "";
+    }
+
+    protected String getDateValue(final Object object) {
+
+        return object != null ? formatter.format((Date) object) : "";
+    }
+
+    protected Long getLongValue(final Object object) {
+
+        return object != null ? Long.valueOf(object.toString()) : null;
+    }
+
+    private BigDecimal getBigDecimalValue(final Object object) {
+        return object != null ? new BigDecimal(object.toString()).setScale(2) : BigDecimal.ZERO.setScale(2);
     }
 
     public List getBankBranchList() {
@@ -129,23 +245,23 @@ public class DishonoredChequeAction extends BaseFormAction {
         return instrumentModesMap;
     }
 
-    public void setInstrumentModesMap(Map instrumentModesList) {
-        this.instrumentModesMap = instrumentModesList;
+    public void setInstrumentModesMap(final Map instrumentModesList) {
+        instrumentModesMap = instrumentModesList;
     }
 
-    public String getBankBranch() {
-        return bankBranch;
+    public String getBankBranchId() {
+        return bankBranchId;
     }
 
-    public void setBankBranch(String bankBranch) {
-        this.bankBranch = bankBranch;
+    public void setBankBranchId(final String bankBranchId) {
+        this.bankBranchId = bankBranchId;
     }
 
     public List getAccountNumberList() {
         return accountNumberList;
     }
 
-    public void setAccountNumberList(List accountNumberList) {
+    public void setAccountNumberList(final List accountNumberList) {
         this.accountNumberList = accountNumberList;
     }
 
@@ -153,7 +269,7 @@ public class DishonoredChequeAction extends BaseFormAction {
         return chequeNumber;
     }
 
-    public void setChequeNumber(String chequeNumber) {
+    public void setChequeNumber(final String chequeNumber) {
         this.chequeNumber = chequeNumber;
     }
 
@@ -161,8 +277,40 @@ public class DishonoredChequeAction extends BaseFormAction {
         return chequeDate;
     }
 
-    public void setChequeDate(Date chequeDate) {
+    public void setChequeDate(final Date chequeDate) {
         this.chequeDate = chequeDate;
+    }
+
+    public ReceiptHeaderService getReceiptHeaderService() {
+        return receiptHeaderService;
+    }
+
+    public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
+        this.receiptHeaderService = receiptHeaderService;
+    }
+
+    public String getInstrumentMode() {
+        return instrumentMode;
+    }
+
+    public void setInstrumentMode(final String instrumentMode) {
+        this.instrumentMode = instrumentMode;
+    }
+
+    public PersistenceService<InstrumentHeader, Long> getInstrumentHeaderService() {
+        return instrumentHeaderService;
+    }
+
+    public void setInstrumentHeaderService(final PersistenceService<InstrumentHeader, Long> instrumentHeaderService) {
+        this.instrumentHeaderService = instrumentHeaderService;
+    }
+
+    public String getInstHeaderIds() {
+        return instHeaderIds;
+    }
+
+    public void setInstHeaderIds(String instHeaderIds) {
+        this.instHeaderIds = instHeaderIds;
     }
 
 }
