@@ -49,7 +49,7 @@
 
     
     <!-- Imports user-defined @Controller beans that process client requests -->
-    <context:component-scan base-package="org.egov.api"/>
+    <context:component-scan base-package="org.egov.restapi"/>
 	<mvc:annotation-driven />
 	<mvc:default-servlet-handler />
 </beans>

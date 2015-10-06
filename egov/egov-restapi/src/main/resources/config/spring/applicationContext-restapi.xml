@@ -48,7 +48,7 @@
     <import resource="classpath*:config/spring/applicationContext-search-all.xml" />
     <import resource="classpath*:config/spring/applicationContext-pgr.xml"/>
 	
-	<context:component-scan base-package="org.egov.api">
+	<context:component-scan base-package="org.egov.restapi">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 	
@@ -57,6 +57,6 @@
 		<property name="maxInMemorySize" value="1048576"/>
 	</bean>
     
-	<bean name="apiFilter" class="org.egov.api.filter.ApiFilter" />
+	<bean name="apiFilter" class="org.egov.restapi.filter.ApiFilter" />
 	<bean id="propertyExternalService" class="org.egov.ptis.domain.service.property.PropertyExternalService" scope="prototype"/>
 </beans>
