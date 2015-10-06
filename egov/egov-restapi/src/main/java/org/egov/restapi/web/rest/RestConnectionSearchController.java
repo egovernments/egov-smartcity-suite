@@ -66,7 +66,7 @@ public class RestConnectionSearchController {
     @RequestMapping(value = "/watercharges/searchconnection", method = RequestMethod.POST)
     @ResponseBody
     public String searchConnection(@RequestBody final RestConnectionSearchRequest searchRequest) {
-        final SearchResult searchResult = searchService.search(asList(Index.WATERTAX.toString()),
+        final SearchResult searchResult = searchService.search(asList(Index.WATERCHARGES.toString()),
                 asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(),
                 searchRequest.searchFilters(), Sort.NULL, Page.NULL);
         return convertSearchResultToJson(searchResult);

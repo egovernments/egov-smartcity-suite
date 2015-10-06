@@ -54,7 +54,7 @@ public class ConsumerIndexService {
     @Autowired
     private CityService cityService;
     
-    @Indexing(name = Index.WATERTAX, type = IndexType.CONNECTIONSEARCH)
+    @Indexing(name = Index.WATERCHARGES, type = IndexType.CONNECTIONSEARCH)
     public ConsumerSearch createConsumerIndex(final WaterConnectionDetails waterConnectionDetails,
             final AssessmentDetails assessmentDetails) {
 

@@ -209,7 +209,7 @@ public class WaterTaxSearchController {
         searchRequest.setUlbName(cityWebsite.getName());
 
         Sort sort = Sort.by().field("common.createdDate", SortOrder.DESC);
-        final SearchResult searchResult = searchService.search(asList(Index.WATERTAX.toString()),
+        final SearchResult searchResult = searchService.search(asList(Index.WATERCHARGES.toString()),
                 asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(),
                 searchRequest.searchFilters(), sort, Page.NULL);
         return searchResult.getDocuments();
