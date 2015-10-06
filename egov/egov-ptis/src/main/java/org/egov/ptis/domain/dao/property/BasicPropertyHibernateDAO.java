@@ -324,8 +324,10 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 		if(null != list && !list.isEmpty()) {
 			for(Object record : list) {
 				Object[] data = (Object[]) record;
-				basicProperty = getBasicPropertyByPropertyID((String)data[1]);
-				basicProeprtyList.add(basicProperty);
+				if(null != data[1]) {
+					basicProperty = getBasicPropertyByPropertyID((String)data[1]);
+					basicProeprtyList.add(basicProperty);
+				}
 			}
 		}
 		return basicProeprtyList;

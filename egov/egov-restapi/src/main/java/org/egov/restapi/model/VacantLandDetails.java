@@ -46,7 +46,7 @@ public class VacantLandDetails implements Serializable {
 
 	private String surveyNumber;
 	private String pattaNumber;
-	private Double vacantLandArea;
+	private Float vacantLandArea;
 	private Double marketValue;
 	private Double currentCapitalValue;
 	private String effectiveDate;
@@ -67,11 +67,11 @@ public class VacantLandDetails implements Serializable {
 		this.pattaNumber = pattaNumber;
 	}
 
-	public Double getVacantLandArea() {
+	public Float getVacantLandArea() {
 		return vacantLandArea;
 	}
 
-	public void setVacantLandArea(Double vacantLandArea) {
+	public void setVacantLandArea(Float vacantLandArea) {
 		this.vacantLandArea = vacantLandArea;
 	}
 

@@ -1003,7 +1003,7 @@ public class PropertyExternalService {
 			final Boolean hasAttachedBathroom, final Boolean hasWaterHarvesting, final Boolean hasCable, final String floorTypeCode,
 			final String roofTypeCode, final String wallTypeCode, final String woodTypeCode,
 			final List<FloorDetails> floorDetailsList, final String surveyNumber, final String pattaNumber,
-			final Double vacantLandArea, final Double marketValue, final Double currentCapitalValue,
+			final Float vacantLandArea, final Double marketValue, final Double currentCapitalValue, final String effectiveDate,
 			final String completionDate, final String northBoundary, final String southBoundary,
 			final String eastBoundary, final String westBoundary, final List<Document> documents)
             throws ParseException {
@@ -1015,7 +1015,8 @@ public class PropertyExternalService {
     			percentageDeviation, regdDocNo, regdDocDate, localityCode, street, doorNo, electionWardCode, pinCode, 
     			isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, hasLift, hasToilet, hasWaterTap, hasElectricity, 
     			hasAttachedBathroom, hasWaterHarvesting, hasCable, floorTypeCode, roofTypeCode, wallTypeCode, 
-    			woodTypeCode, floorDetailsList, completionDate, northBoundary, southBoundary, eastBoundary,
+    			woodTypeCode, floorDetailsList, surveyNumber, pattaNumber, vacantLandArea, marketValue, 
+    			currentCapitalValue, effectiveDate, completionDate, northBoundary, southBoundary, eastBoundary,
                 westBoundary, documents);
         basicProperty.setIsTaxXMLMigrated(PropertyTaxConstants.STATUS_YES_XML_MIGRATION);
         processAndStoreDocumentsWithReason(basicProperty, PropertyTaxConstants.DOCS_CREATE_PROPERTY);
@@ -1046,8 +1047,10 @@ public class PropertyExternalService {
 			final Boolean lift, final Boolean toilet, final Boolean waterTap, final Boolean electricity,
 			final Boolean attachedBathroom, final Boolean waterHarvesting, final Boolean cable,
 			final String floorTypeCode, final String roofTypeCode, final String wallTypeCode, final String woodTypeCode,
-			final List<FloorDetails> floorDetailsList, final String completionDate, final String northBoundary,
-			final String southBoundary, final String eastBoundary, final String westBoundary,
+			final List<FloorDetails> floorDetailsList, final String surveyNumber, final String pattaNumber,
+			final Float vacantLandArea, final Double marketValue, final Double currentCapitalValue, final String effectiveDate,
+			final String completionDate, final String northBoundary, final String southBoundary, 
+			final String eastBoundary, final String westBoundary,
 			final List<Document> documents) throws ParseException {
         final BasicProperty basicProperty = new BasicPropertyImpl();
         basicProperty.setRegdDocNo(regdDocNo);
@@ -1127,6 +1130,16 @@ public class PropertyExternalService {
         
         propertyImpl.getPropertyDetail().setCorrAddressDiff(isCorrAddrDiff);
         propertyImpl.getPropertyDetail().setAppurtenantLandChecked(isExtentAppurtenantLand);
+        if(isExtentAppurtenantLand) {
+        	propertyImpl.getPropertyDetail().setCurrentCapitalValue(currentCapitalValue);
+        	propertyImpl.getPropertyDetail().setSurveyNumber(surveyNumber);
+        	propertyImpl.getPropertyDetail().setPattaNumber(pattaNumber);
+        	Area area = new Area();
+        	area.setArea(vacantLandArea);
+        	propertyImpl.getPropertyDetail().setCommVacantLand(area);
+        	propertyImpl.getPropertyDetail().setMarketValue(marketValue);
+        	propertyImpl.getPropertyDetail().setEffectiveDate(convertStringToDate(effectiveDate));
+        }
         
         property = propService.createProperty(propertyImpl, extentOfSite, mutationReasonCode,
                 propertyTypeMaster.getId().toString(), propertyUsage.getId().toString(),
