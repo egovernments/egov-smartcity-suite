@@ -80,7 +80,11 @@ public class AdvertisementDemandService {
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-
+/**
+ * 
+ * @param hoarding
+ * @return
+ */
     public EgDemand createDemand(final Hoarding hoarding) {
 
         EgDemand demand = null;
@@ -114,7 +118,12 @@ public class AdvertisementDemandService {
 
         return demand;
     }
-
+/**
+ * 
+ * @param demandReason
+ * @param installment
+ * @return
+ */
     public EgDemandReason getDemandReasonByCodeAndInstallment(final String demandReason, final Installment installment) {
         final Query demandQuery = getCurrentSession().getNamedQuery("DEMANDREASONBY_CODE_AND_INSTALLMENTID");
         demandQuery.setParameter(0, demandReason);
@@ -122,7 +131,13 @@ public class AdvertisementDemandService {
         final EgDemandReason demandReasonObj = (EgDemandReason) demandQuery.uniqueResult();
         return demandReasonObj;
     }
-
+/**
+ * 
+ * @param demandDetailSet
+ * @param installment
+ * @param totalDemandAmount
+ * @return
+ */
     private EgDemand createDemand(final Set<EgDemandDetails> demandDetailSet, final Installment installment,
             final BigDecimal totalDemandAmount) {
         final EgDemand egDemand = new EgDemand();
@@ -134,8 +149,13 @@ public class AdvertisementDemandService {
         egDemand.setModifiedDate(new Date());
         return egDemand;
     }
-
-    public EgDemand updateDemand(final Hoarding hoarding) {
+/**
+ * 
+ * @param hoarding
+ * @param demand
+ * @return
+ */
+    public EgDemand updateDemand(final Hoarding hoarding,EgDemand demand) {
         final Installment installment = getCurrentInstallment();
         BigDecimal totalDemandAmount = BigDecimal.ZERO;
         BigDecimal taxAmount = BigDecimal.ZERO;
@@ -143,7 +163,7 @@ public class AdvertisementDemandService {
         // Boolean calculateTax=true;
         Boolean enchroachmentFeeAlreadyExistInDemand = false;
 
-        EgDemand demand = hoarding.getDemandId();
+        //EgDemand demand = hoarding.getDemandId();
         if (demand == null) {
             demand = createDemand(hoarding);
         } else {
@@ -202,19 +222,32 @@ public class AdvertisementDemandService {
         return demand;
 
     }
-
+/**
+ * 
+ * @return
+ */
     public Installment getCurrentInstallment() {
         return installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(AdvertisementTaxConstants.MODULE_NAME), new Date(),
                 AdvertisementTaxConstants.YEARLY);
 
     }
-
+/**
+ * 
+ * @param dmdAmount
+ * @param egDemandReason
+ * @param amtCollected
+ * @return
+ */
     public EgDemandDetails createDemandDetails(final BigDecimal dmdAmount, final EgDemandReason egDemandReason,
             final BigDecimal amtCollected) {
         return EgDemandDetails.fromReasonAndAmounts(dmdAmount, egDemandReason, amtCollected);
     }
-
+/**
+ * 
+ * @param hoarding
+ * @return
+ */
     public Boolean checkAnyTaxIsPendingToCollect(final Hoarding hoarding) {
         Boolean pendingTaxCollection = false;
 
@@ -231,48 +264,62 @@ public class AdvertisementDemandService {
     }
     /**
      * @param demand
-     * @return
+     * @param penaltyCalculationDate 
+     * @return Penalty Amount and PendingAmount
      */
-    public Map<String, BigDecimal> checkPedingAmountByDemand(final EgDemand demand) {
-      
+    public Map<String, BigDecimal> checkPedingAmountByDemand(final EgDemand demand, Date penaltyCalculationDate) {
+
         final Map<String, BigDecimal> demandFeeType = new LinkedHashMap<String, BigDecimal>();
-       
+
         BigDecimal penaltyAmt = BigDecimal.ZERO;
         BigDecimal pendingAmount = BigDecimal.ZERO;
-         if (demand != null)
-            for (final EgDemandDetails demandDtl : demand.getEgDemandDetails())
+        if (demand != null) {
+            for (final EgDemandDetails demandDtl : demand.getEgDemandDetails()) {
                 // Mean if installment is different than current, then calculate
                 // penalty
                 if (demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0
-                //        && currentInstallment.getId() != demandDtl.getEgDemandReason().getEgInstallmentMaster().getId())
-                ){
+                // && currentInstallment.getId() !=
+                // demandDtl.getEgDemandReason().getEgInstallmentMaster().getId())
+                ) {
                     final BigDecimal amount = demandDtl.getAmount().subtract(demandDtl.getAmtCollected());
-                   
-                    pendingAmount=pendingAmount.add(amount);
+
+                    pendingAmount = pendingAmount.add(amount);
                     // PENALTY is not the part of existing demand
-                    penaltyAmt = calculatePenalty(penaltyAmt,demandDtl, amount);
-                  
+                    penaltyAmt = calculatePenalty(penaltyAmt, demandDtl, amount, penaltyCalculationDate);
+
                 }
-         demandFeeType.put( AdvertisementTaxConstants.PENALTYAMOUNT,penaltyAmt);
-         demandFeeType.put(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT,pendingAmount);
-     
-      return demandFeeType;
+            }
+        }
+        demandFeeType.put(AdvertisementTaxConstants.PENALTYAMOUNT, penaltyAmt);
+        demandFeeType.put(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT, pendingAmount);
+
+        return demandFeeType;
 
     }
 
-    private BigDecimal calculatePenalty(BigDecimal penaltyAmt,final EgDemandDetails demandDtl, final BigDecimal amount) {
-         final int noofmonths = (DateUtils.noOfMonths(demandDtl.getEgDemandReason().getEgInstallmentMaster()
-                .getFromDate(), new Date()))+1;
+    private BigDecimal calculatePenalty(BigDecimal penaltyAmt,final EgDemandDetails demandDtl, final BigDecimal amount, Date penaltyCalculationDate) {
+          int noofmonths = 0;
+         
+         if(penaltyCalculationDate!=null)
+             noofmonths= (DateUtils.noOfMonths(penaltyCalculationDate, new Date()))+1;
+         else
+             noofmonths= (DateUtils.noOfMonths(demandDtl.getEgDemandReason().getEgInstallmentMaster()
+                     .getFromDate(), new Date()))+1;
+             
         if (noofmonths > 0)
             penaltyAmt = penaltyAmt.add(amount.multiply(BigDecimal.valueOf(noofmonths)).divide(
                     BigDecimal.valueOf(100).setScale(0, BigDecimal.ROUND_HALF_UP)).setScale(0, BigDecimal.ROUND_HALF_UP));
         return penaltyAmt;
     }
-    
-    public BigDecimal checkPenaltyAmountByDemand(final EgDemand demand) {
+    /**
+     * 
+     * @param demand
+     * @return
+     */
+    public BigDecimal checkPenaltyAmountByDemand(final EgDemand demand,Date penaltyCalculationDate) {
         BigDecimal penaltyAmt = BigDecimal.ZERO;
        // final Installment currentInstallment = getCurrentInstallment();
-        if (demand != null)
+        if (demand != null){
             for (final EgDemandDetails demandDtl : demand.getEgDemandDetails())
                 // Mean if installment is different than current, then calculate
                 // penalty
@@ -280,20 +327,42 @@ public class AdvertisementDemandService {
                 //        && currentInstallment.getId() != demandDtl.getEgDemandReason().getEgInstallmentMaster().getId())
                 ){
                     final BigDecimal amount = demandDtl.getAmount().subtract(demandDtl.getAmtCollected());
-                    penaltyAmt = calculatePenalty(penaltyAmt, demandDtl, amount);
+                    penaltyAmt = calculatePenalty(penaltyAmt, demandDtl, amount,penaltyCalculationDate);
                 }
-
+        }
         return penaltyAmt;
 
     }
-    
+    /**
+     * 
+     * @param hoarding
+     * @return
+     */
     public boolean anyDemandPendingForCollection(final Hoarding hoarding) {
         return checkAnyTaxIsPendingToCollect(hoarding);
     }
 
+    /*
+     * Check any amount collected in the current financial year or not.
+     */
     public boolean collectionDoneForThisYear(final Hoarding hoarding) {
-        // TODO add logic to check collection done for this year
-        return true | false;
+        Boolean amountCollectedInCurrentYear = false;
+        if (hoarding != null && hoarding.getDemandId() != null) {
+            final Installment currentInstallment = getCurrentInstallment();
+
+            if (currentInstallment != null) {
+                for (final EgDemandDetails demandDtl : hoarding.getDemandId().getEgDemandDetails())
+                {
+                    if (demandDtl.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
+                            && currentInstallment.getId() == demandDtl.getEgDemandReason().getEgInstallmentMaster()
+                                    .getId()) {
+                        amountCollectedInCurrentYear = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return amountCollectedInCurrentYear;
     }
 
 }

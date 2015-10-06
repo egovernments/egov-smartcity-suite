@@ -171,8 +171,8 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
     }
 
     @Override
-    public Date getLastDate() {
-        return getBillLastDueDate();
+    public Date getLastDate() { 
+        return hoarding.getPenaltyCalculationDate()!=null ?hoarding.getPenaltyCalculationDate(): null;
     }
 
     @Override

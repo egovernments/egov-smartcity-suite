@@ -117,7 +117,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
                     }
             }
         if (appConfigValue != null && "YES".equalsIgnoreCase(appConfigValue.getValue())) {
-            final BigDecimal penaltyAmount = advertisementDemandService.checkPenaltyAmountByDemand(dmd);
+            final BigDecimal penaltyAmount = advertisementDemandService.checkPenaltyAmountByDemand(dmd,billObj.getLastDate());
             if (penaltyAmount.compareTo(BigDecimal.ZERO) > 0)
                 // Update penalty to existing demand
                 if (penaltyExistingDemandDetail == null) {
