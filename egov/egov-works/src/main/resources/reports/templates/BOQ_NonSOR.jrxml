@@ -48,7 +48,7 @@
 	<field name="schedule" class="org.egov.works.models.masters.ScheduleOfRate"/>
 	<field name="nonSor" class="org.egov.works.models.estimate.NonSor"/>
 	<field name="quantity" class="java.lang.Double"/>
-	<field name="uom" class="org.egov.infstr.commonMasters.EgUom"/>
+	<field name="uom" class="org.egov.common.entity.UOM"/>
 	<field name="rate" class="org.egov.infstr.models.Money"/>
 	<field name="amount" class="org.egov.infstr.models.Money"/>
 	<variable name="description" class="java.lang.String">

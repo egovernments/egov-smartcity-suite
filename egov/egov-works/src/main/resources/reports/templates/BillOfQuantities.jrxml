@@ -44,7 +44,7 @@
 	<parameter name="deptName" class="java.lang.String"/>
 	<parameter name="workName" class="java.lang.String"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["/home/malathi/Works-Proj/NMC-WORKS/modules/works/worksweb/src/reports/templates/"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<parameter name="NonSOR_Activities" class="java.util.List"/>
 	<parameter name="estimateNo" class="java.lang.String"/>
@@ -57,7 +57,7 @@
 	<field name="nonSor" class="org.egov.works.models.estimate.NonSor">
 		<fieldDescription><![CDATA[nonSor]]></fieldDescription>
 	</field>
-	<field name="uom" class="org.egov.infstr.commonMasters.EgUom">
+	<field name="uom" class="org.egov.common.entity.UOM">
 		<fieldDescription><![CDATA[uom]]></fieldDescription>
 	</field>
 	<field name="rate" class="org.egov.infstr.models.Money">
