@@ -1764,6 +1764,28 @@ BEGIN
 END; 
 $$ LANGUAGE plpgsql;
 
+create or replace function mobilenumber(v_basicpropid IN BIGINT)  
+RETURNS VARCHAR  as  $$
+declare
+	v_mobileno VARCHAR(12);  
+	owners eg_user%ROWTYPE;
+BEGIN  
+	for owners in (select u.* from egpt_property_owner_info po, eg_user u where po.owner=u.id and po.basicproperty = v_basicpropid)
+	loop 
+		begin
+			IF owners.mobilenumber <> null or owners.mobilenumber <> '' THEN
+				v_mobileno := owners.mobilenumber;
+				EXIT;
+			END IF;
+		EXCEPTION
+			WHEN NO_DATA_FOUND THEN
+			NULL;   
+		END;
+	END LOOP;
+	return v_mobileno;   
+END; 
+$$ LANGUAGE plpgsql;
+
 ------------ view egpt_mv_current_property ------------------ 
 CREATE OR REPLACE VIEW egpt_mv_current_property AS
 SELECT bp.id as id_basic_property,
@@ -1896,6 +1918,7 @@ SELECT bp.id  							AS basicpropertyid,
     bp.propertyid                		AS upicno, 
     ownername (bp.id) 					AS ownersname,
     addr.housenobldgapt 				AS houseno,
+    mobilenumber(bp.id)					AS mobileno,
     addr.address                        AS address,
     propdet.id_propertytypemaster       AS proptymaster,
     propdet.id_usg_mstr                 AS prop_usage_master,
