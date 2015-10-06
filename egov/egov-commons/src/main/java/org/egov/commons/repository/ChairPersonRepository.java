@@ -53,4 +53,7 @@ public interface ChairPersonRepository extends JpaRepository<ChairPerson, Long> 
     @Query("select cp from ChairPerson cp where cp.active=true ")
     ChairPerson findActiveChairPerson();
 
+    @Query("select cp from ChairPerson cp where cp.active=true and cp.fromDate = CURRENT_DATE() ")
+    ChairPerson findActiveChairPersonByCurrentDate();
+
 }

@@ -38,21 +38,11 @@ public class CreateChairPersonMasterController extends GenericConnectionControll
     }
 
     @RequestMapping(value = "/ajax-chairPersonName", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void getChairPersonName(@RequestParam final String name) {
-
-        final ChairPerson chairPersonDetails = chairPersonService.getActiveChairPerson();
-        chairPersonDetails.setActive(false);
-        final Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
-        chairPersonDetails.setToDate(cal.getTime());
-        final ChairPerson chairPerson = new ChairPerson();
-        chairPerson.setName(name);
-        chairPerson.setFromDate(new Date());
-        chairPerson.setToDate(null);
-        chairPerson.setActive(true);
-        chairPersonService.updateChairPerson(chairPersonDetails);
-        chairPersonService.createChairPerson(chairPerson);
-
+    public @ResponseBody boolean getChairPersonName(@RequestParam final String name) {
+        if (chairPersonService.getActiveChairPersonByCurrentDate() == null)
+            return true;
+        else
+            return false;
     }
 
     @RequestMapping(value = "/ajax-chairpersontable", method = RequestMethod.GET)
@@ -80,6 +70,30 @@ public class CreateChairPersonMasterController extends GenericConnectionControll
         response.setContentType(CONTENTTYPE_JSON);
         IOUtils.write(chairPersonJSONData, response.getWriter());
 
+    }
+
+    @RequestMapping(value = "/ajax-addChairPersonName", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody void addChairPersonName(@RequestParam final String name) {
+        if (chairPersonService.getActiveChairPersonByCurrentDate() != null) {
+            ChairPerson chairPerson = new ChairPerson();
+            chairPerson = chairPersonService.getActiveChairPersonByCurrentDate();
+            chairPerson.setName(name);
+            chairPersonService.updateChairPerson(chairPerson);
+
+        } else {
+            final ChairPerson chairPersonDetails = chairPersonService.getActiveChairPerson();
+            chairPersonDetails.setActive(false);
+            final Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -1);
+            chairPersonDetails.setToDate(cal.getTime());
+            final ChairPerson chairPerson = new ChairPerson();
+            chairPerson.setName(name);
+            chairPerson.setFromDate(new Date());
+            chairPerson.setToDate(null);
+            chairPerson.setActive(true);
+            chairPersonService.updateChairPerson(chairPersonDetails);
+            chairPersonService.createChairPerson(chairPerson);
+        }
     }
 
     public String toJSON(final Object object) {

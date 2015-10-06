@@ -54,16 +54,48 @@ $(document).ready(function(){
 	            url: '/wtms/application/ajax-chairPersonName',
 	            type: "GET",
 	            data: {
-	                name: name
+	            	name: name
 	            },
-	            dataType : 'json'
+	            dataType : 'json',
+	            success: function (response) {
+	    			console.log("success"+response);
+	    			if(response==true){
+		    				addChairPerson();
+		    			}
+	    			else{
+	    				overwritechairperson();
+	    			}
+	    		},error: function (response) {
+	    			console.log("failed");
+	    		}
 	        });
 	       }
-	        alert("Chair person name updated in drop down successfully");
+	       alert("Chair person name updated in drop down successfully");
 	        loadingTable();
 		});
 	
+	function overwritechairperson()
+	{
+		 if(confirm("On entered date chairperson name is already present, do you want to overwrite it?"))
+		 {
+			 addChairPerson();
+		 }
+		 else{
+			 console.log("not added");
+			 
+		 }
+	}
 	
-	
-	   
+	function addChairPerson()
+	{
+		 $.ajax({
+	            url: '/wtms/application/ajax-addChairPersonName',
+	            type: "GET",
+	            data: {
+	            	name: $('#name').val()
+	            },
+	            dataType : 'json',
+	            
+	        });
+		}
 });

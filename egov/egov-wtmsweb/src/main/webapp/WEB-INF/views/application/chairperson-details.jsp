@@ -47,7 +47,7 @@
 					<div class="form-group">
 						<label for="field-1" class="col-sm-4 control-label"><spring:message code="lbl.chairpersonname" /></label>
 						<div class="col-sm-4 add-margin">
-							<input type="textbox" class="form-control" title="space is not allowed as the first letter" pattern="^[^-\s][a-zA-Z0-9_\s-]+$" id ="name">
+							<input type="textbox" class="form-control" title="space is not allowed as the first letter" pattern="^[^-\s][a-zA-Z0-9_\s-]+$" maxlength="32" id ="name">
 						</div>
 					</div>
 					<div class="form-group text-center" >
@@ -57,7 +57,7 @@
 	         </form>
 	              <div class="row">
 					<div class="col-sm-12">
-						<h4>List Of ChairPersons:</h4>
+						<h4>Available Names in the drop down:</h4>
 					</div>
 				 </div>
 					<table  class="table table-bordered datatable" id="chairperson-table">
