@@ -208,5 +208,10 @@
     	<put-attribute name="page-title" value="lbl.dashboard.title" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/dashboard/{1}.jsp"/>
     </definition>
-     
+    
+    <definition name="grievance-list" extends="base_layout"> 
+    	<put-attribute name="page-title" value="lbl.pending.grievance.heading" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/grievance-list.jsp"/>
+    </definition>
+    
 </tiles-definitions>

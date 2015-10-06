@@ -446,4 +446,14 @@ public class ComplaintService {
                 .append(formattedCreatedDate);
         return emailBody.toString();
     }
+
+    public List<Complaint> getPendingGrievances() {
+        final User user = securityUtils.getCurrentUser();
+        final String[] pendingStatus = { "REGISTERED", "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED" };
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint")
+                .createAlias("complaint.state", "state").createAlias("complaint.status", "status");
+        criteria.add(Restrictions.in("status.name", pendingStatus));
+        criteria.add(Restrictions.eq("complaint.assignee", positionMasterService.getCurrentPositionForUser(user.getId())));
+        return criteria.list();
+    }
 }
