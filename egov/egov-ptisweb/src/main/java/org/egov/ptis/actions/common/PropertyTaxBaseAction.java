@@ -304,9 +304,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 addActionError(getText("mandatory.buildingPlanNo"));
             if (null == propertyDetail.getBuildingPermissionDate())
                 addActionError(getText("mandatory.buildingPlanDate"));
-            else if (null != regDocDate
-                    && DateUtils.compareDates(propertyDetail.getBuildingPermissionDate(), regDocDate))
-                addActionError(getText("regDate.greaterThan.buildingPermDate"));
         }
         if (propertyDetail.isStructure())
             if (isBlank(propertyDetail.getSiteOwner()))
@@ -315,6 +312,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             addActionError(getText("mandatory.extentAppartnant"));
         else if (null == propertyDetail.isAppurtenantLandChecked() && isBlank(areaOfPlot))
             addActionError(getText("mandatory.extentsite"));
+        else if(Double.valueOf(areaOfPlot)==0)
+        	addActionError(getText("mandatory.extentsite.greaterthanzero"));
         if (floorTypeId == null || floorTypeId == -1)
             addActionError(getText("mandatory.floorType"));
         if (roofTypeId == null || roofTypeId == -1)
