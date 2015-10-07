@@ -313,6 +313,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/approve")
     public String approve() {
         transitionWorkFlow(propertyMutation);
+        transferOwnerService.approvePropertyTransfer(basicproperty, propertyMutation);
         transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
         approverName = "";
         if (propertyService.isEmployee(propertyMutation.getCreatedBy()))
@@ -582,13 +583,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 argsForTransferor.add(propertyMutation.getFullTranferorName());
                 argsForTransferor.add(propertyMutation.getFullTranfereeName());
                 argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
-                argsForTransferor.add(propertyMutation.getFullTranferorName());
+                argsForTransferor.add(transferOwnerService.getUserDesigantion().getName());
                 argsForTransferor.add(transferOwnerService.getCityName());
                 smsMsgForTransferor = getText("msg.approvetransferproperty.sms", argsForTransferor);
+                
                 argsForTransferee.add(propertyMutation.getFullTranferorName());
                 argsForTransferee.add(propertyMutation.getFullTranfereeName());
                 argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
-                argsForTransferee.add(propertyMutation.getFullTranferorName());
+                argsForTransferee.add(transferOwnerService.getUserDesigantion().getName());
                 argsForTransferee.add(transferOwnerService.getCityName());
                 smsMsgForTransferee = getText("msg.approvetransferproperty.sms", argsForTransferee);
             }
@@ -642,11 +644,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 argsForTransferor.add(propertyMutation.getFullTranferorName());
                 argsForTransferor.add(propertyMutation.getFullTranfereeName());
                 argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
+                argsForTransferor.add(transferOwnerService.getUserDesigantion().getName());
                 argsForTransferor.add(transferOwnerService.getCityName());
+                
                 argsForTransferee.add(propertyMutation.getFullTranfereeName());
                 argsForTransferee.add(propertyMutation.getFullTranferorName());
                 argsForTransferee.add(propertyMutation.getFullTranfereeName());
                 argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
+                argsForTransferee.add(transferOwnerService.getUserDesigantion().getName());
                 argsForTransferee.add(transferOwnerService.getCityName());
                 emailBodyTransferor = getText("body.approvetransferproperty", argsForTransferor);
                 emailBodyTransferee = getText("body.approvetransferproperty", argsForTransferee);

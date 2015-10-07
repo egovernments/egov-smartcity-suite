@@ -192,7 +192,6 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
                     propertyOwner, order++);
             basicProperty.getPropertyOwnerInfo().add(propertyOwnerInfo);
         }
-        basicProperty.setUnderWorkflow(false);
         basicPropertyService.persist(basicProperty);
     }
 
@@ -313,7 +312,6 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         noticeBean.setCurrentInstallment(PropertyTaxUtil.getCurrentInstallment().getDescription());
         final ReportRequest reportInput = new ReportRequest("transferProperty_notice", noticeBean, reportParams);
         reportInput.setReportFormat(FileFormat.PDF);
-        approvePropertyTransfer(basicProperty, propertyMutation);
         propertyMutation.transition().end();
         basicProperty.setUnderWorkflow(false);
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
