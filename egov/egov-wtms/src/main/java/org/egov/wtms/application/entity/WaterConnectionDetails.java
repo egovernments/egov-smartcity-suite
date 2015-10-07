@@ -229,6 +229,9 @@ public class WaterConnectionDetails extends StateAware {
 
     @Length(max = 1024)
     private String closeconnectionreason;
+    
+    @Length(max = 1024)
+    private String reConnectionReason;
 
     public List<MeterReadingConnectionDetails> getMeterConnection() {
         return meterConnection;
@@ -556,5 +559,14 @@ public class WaterConnectionDetails extends StateAware {
     public void setCloseconnectionreason(final String closeconnectionreason) {
         this.closeconnectionreason = closeconnectionreason;
     }
+
+    public String getReConnectionReason() {
+        return reConnectionReason;
+    }
+
+    public void setReConnectionReason(String reConnectionReason) {
+        this.reConnectionReason = reConnectionReason;
+    }
+    
 
 }

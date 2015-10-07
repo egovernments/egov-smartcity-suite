@@ -102,6 +102,11 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 		<c:if test="${(waterConnectionDetails.status.code =='CLOSERINITIATED'  ||  waterConnectionDetails.status.code =='CLOSERAPPROVED'  || waterConnectionDetails.status.code =='CLOSERINPROGRESS'||waterConnectionDetails.status.code =='CLOSERSANCTIONED') }">
 			<jsp:include page="closerForm-details.jsp"></jsp:include>
 			</c:if>
+			
+		<c:if test="${(waterConnectionDetails.status.code =='RECONNECTIONINPROGRESS'  ||  waterConnectionDetails.status.code =='RECONNECTIONAPPROVED'  || waterConnectionDetails.status.code =='RECONNECTIONSANCTIONED'||waterConnectionDetails.status.code =='RECONNECTIONINITIATED') }">			
+	<jsp:include page="reconnection-details.jsp"></jsp:include> 
+	
+	</c:if>
 </div>	
 	 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 	 	<jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>

@@ -92,6 +92,11 @@
         <put-attribute name="body" value="/WEB-INF/views/application/connection-closeForm.jsp"/> 
     </definition>
     
+		<definition name="reconnection-newForm" extends="base_layout">
+        <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/reconnection-newForm.jsp"/> 
+    </definition>
+    
 	<definition name="newconnection-meterEntry" extends="base_layout">
         <put-attribute name="page-title" value="title.viewMeterapplication" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newconnection-meterEntry.jsp"/> 

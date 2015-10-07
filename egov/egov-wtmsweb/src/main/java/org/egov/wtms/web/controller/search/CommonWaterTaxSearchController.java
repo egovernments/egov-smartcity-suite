@@ -125,6 +125,24 @@ public class CommonWaterTaxSearchController {
                 resultBinder.rejectValue("consumerCode", "invalid.consumernuber");
                 return COMMON_FORM_SEARCH;
             }
+        
+        if (applicationType != null
+                && applicationType.equals(WaterTaxConstants.RECONNECTIONCONNECTION))
+            if (!waterConnectionDetails.getLegacy()
+                    && (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
+                            || waterConnectionDetails.getApplicationType().getCode()
+                            .equals(WaterTaxConstants.ADDNLCONNECTION) || waterConnectionDetails
+                            .getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE))
+                            && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.CLOSED)
+                            && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED)
+                            && waterConnectionDetails.getCloseConnectionType().equals('T'))
+                return "redirect:/application/reconnection/" + waterConnectionDetails.getConnection().getConsumerCode();
+            else {
+                model.addAttribute("mode", "errorMode");
+                resultBinder.rejectValue("consumerCode", "invalid.consumernuber");
+                return COMMON_FORM_SEARCH;
+            }
+        
         if (applicationType != null
                 && applicationType.equals(WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_METERED))
             if (!waterConnectionDetails.getLegacy()

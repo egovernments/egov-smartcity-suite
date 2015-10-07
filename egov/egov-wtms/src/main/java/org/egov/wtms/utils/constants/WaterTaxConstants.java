@@ -24,16 +24,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -62,6 +62,7 @@ public class WaterTaxConstants {
     public static final String CONNECTION_FEE = "Connection fee";
     public static final String ADDNLCONNECTION = "ADDNLCONNECTION";
     public static final String CLOSINGCONNECTION = "CLOSINGCONNECTION";
+    public static final String RECONNECTIONCONNECTION = "RECONNECTION";
     public static final String CHANGEOFUSE = "CHANGEOFUSE";
     public static final String SMSEMAILTYPEADDITONALCONNCREATE = "additionalconncreate";
     public static final String SMSEMAILTYPEADDITONALCONNAPPROVE = "additionalconnapprove";
@@ -143,6 +144,12 @@ public class WaterTaxConstants {
     public static final String APPLICATION_STATUS_CLOSERAPRROVED = "CLOSERAPPROVED";
     public static final String APPLICATION_STATUS_CLOSERSANCTIONED = "CLOSERSANCTIONED";
     public static final String  WORKFLOW_CLOSUREADDITIONALRULE = "CLOSECONNECTION";
+    public static final String  WORKFLOW_RECOONCTIONINITIATED = "RECONNECTIONINITIATED";
+    public static final String  APPLICATION_STATUS__RECOONCTIONINPROGRESS = "RECONNECTIONINPROGRESS";
+    public static final String  APPLICATION_STATUS__RECOONCTIONAPPROVED = "RECONNECTIONAPPROVED";
+    public static final String  APPLICATION_STATUS__RECOONCTIONSANCTIONED = "RECONNECTIONSANCTIONED";
+    
+    
     
     public static final String  SEARCH_MENUTREE_APPLICATIONTYPE_CLOSURE= "CLOSURECONNECTION";
     public static final String  SEARCH_MENUTREE_APPLICATIONTYPE_METERED = "METERENTRY";
@@ -190,6 +197,7 @@ public class WaterTaxConstants {
     public static final String NONMETEREDDEMANDREASON = "Water tax charges";
     public static final String MASTERSTATUSACTIVE = "ACTIVE";
     public static final String MASTERSTATUSINACTIVE = "IN ACTIVE";
+    
     // HashMap map b/n Demand reason string and code
     public static final LinkedHashMap<String, String> NON_METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
         {
