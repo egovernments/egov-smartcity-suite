@@ -31,12 +31,9 @@
 package org.egov.wtms.application.service;
 
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.ptis.domain.model.AssessmentDetails;
-import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
-import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
@@ -75,8 +72,6 @@ public class ReConnectionService {
 
     public static final String CHANGEOFUSEALLOWEDIFWTDUE = "CHANGEOFUSEALLOWEDIFWTDUE";
 
-   
-
     /**
      * @param changeOfUse
      * @param approvalPosition
@@ -91,14 +86,15 @@ public class ReConnectionService {
     public WaterConnectionDetails updateReConnection(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) {
-        
-        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails,workFlowAction,"");
-       final WaterConnectionDetails savedwaterConnectionDetails = waterConnectionDetailsRepository.save(waterConnectionDetails);
-       
+
+        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "");
+        final WaterConnectionDetails savedwaterConnectionDetails = waterConnectionDetailsRepository
+                .save(waterConnectionDetails);
+
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();
-        applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails, approvalPosition,
-                approvalComent, additionalRule, workFlowAction);
+        applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails,
+                approvalPosition, approvalComent, additionalRule, workFlowAction);
         waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails);
         return savedwaterConnectionDetails;
     }

@@ -1,11 +1,7 @@
 package org.egov.wtms.web.controller.application;
 
-
-
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -34,79 +30,80 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
 @Controller
 @RequestMapping(value = "/application")
 public class ReconnectionControler extends GenericConnectionController {
-    
+
     @Autowired
     private ApplicationTypeService applicationTypeService;
     @Autowired
     private ConnectionDemandService connectionDemandService;
     @Autowired
-    private  DepartmentService departmentService;
-
+    private DepartmentService departmentService;
 
     @Autowired
-    private  WaterConnectionDetailsService waterConnectionDetailsService;
-    
-    
+    private WaterConnectionDetailsService waterConnectionDetailsService;
+
     @Autowired
     private WaterConnectionDetailsRepository waterConnectionDetailsRepository;
     @Autowired
     private WaterTaxUtils waterTaxUtils;
-    
+
     @Autowired
     private ReConnectionService reConnectionService;
-    
-    
+
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationCode) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByConsumerCodeAndConnectionStatus(applicationCode,ConnectionStatus.CLOSED);
+                .findByConsumerCodeAndConnectionStatus(applicationCode, ConnectionStatus.CLOSED);
         return waterConnectionDetails;
     }
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails waterConnectionDetails) {
-        waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.RECONNECTIONCONNECTION));
+        waterConnectionDetails.setApplicationType(applicationTypeService
+                .findByCode(WaterTaxConstants.RECONNECTIONCONNECTION));
         return waterConnectionDetailsService.getAllActiveDocumentNames(waterConnectionDetails.getApplicationType());
     }
-    
-    
+
     @RequestMapping(value = "/reconnection/{applicationCode}", method = RequestMethod.GET)
-    public String newForm(final Model model, @PathVariable final String applicationCode, final HttpServletRequest request) {
+    public String newForm(final Model model, @PathVariable final String applicationCode,
+            final HttpServletRequest request) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByConsumerCodeAndConnectionStatus(applicationCode,ConnectionStatus.CLOSED);
+                .findByConsumerCodeAndConnectionStatus(applicationCode, ConnectionStatus.CLOSED);
         return loadViewData(model, request, waterConnectionDetails);
-        
+
     }
-    
+
     private String loadViewData(final Model model, final HttpServletRequest request,
             final WaterConnectionDetails waterConnectionDetails) {
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
         model.addAttribute("additionalRule", WaterTaxConstants.RECONNECTIONCONNECTION);
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
-        
+
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
         model.addAttribute(
                 "connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(
                         waterConnectionDetails.getConnectionType().name()));
-        waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.RECONNECTIONCONNECTION));
+        waterConnectionDetails.setApplicationType(applicationTypeService
+                .findByCode(WaterTaxConstants.RECONNECTIONCONNECTION));
         model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("typeOfConnection", WaterTaxConstants.RECONNECTIONCONNECTION);
-        /*model.addAttribute("validationMessage",
-                closerConnectionService.validateChangeOfUseConnection(waterConnectionDetails));*/
+        /*
+         * model.addAttribute("validationMessage",
+         * closerConnectionService.validateChangeOfUseConnection
+         * (waterConnectionDetails));
+         */
         return "reconnection-newForm";
     }
-    
+
     @RequestMapping(value = "/reconnection/{applicationCode}", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
@@ -127,7 +124,7 @@ public class ReconnectionControler extends GenericConnectionController {
             approvalComent = request.getParameter("approvalComent");
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         int i = 0;
-        if (!waterConnectionDetails.getApplicationDocs().isEmpty()){
+        if (!waterConnectionDetails.getApplicationDocs().isEmpty())
             for (final ApplicationDocuments applicationDocument : waterConnectionDetails.getApplicationDocs()) {
                 if (applicationDocument.getDocumentNumber() == null && applicationDocument.getDocumentDate() != null) {
                     final String fieldError = "applicationDocs[" + i + "].documentNumber";
@@ -140,15 +137,15 @@ public class ReconnectionControler extends GenericConnectionController {
                     applicationDocs.add(applicationDocument);
                 i++;
             }
-        }
         waterConnectionDetails.setApplicationDocs(applicationDocs);
         processAndStoreApplicationDocuments(waterConnectionDetails);
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-        //waterConnectionDetails.setCloseConnectionType(request.getParameter("closeConnectionType").charAt(0));
+        // waterConnectionDetails.setCloseConnectionType(request.getParameter("closeConnectionType").charAt(0));
         final String addrule = request.getParameter("additionalRule");
-        //waterConnectionDetails.setConnectionStatus(ConnectionStatus.CLOSED);
-        final WaterConnectionDetails savedWaterConnectionDetails = reConnectionService.updateReConnection(waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction);
+        // waterConnectionDetails.setConnectionStatus(ConnectionStatus.CLOSED);
+        final WaterConnectionDetails savedWaterConnectionDetails = reConnectionService.updateReConnection(
+                waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction);
         model.addAttribute("waterConnectionDetails", savedWaterConnectionDetails);
         final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                 + waterTaxUtils.getApproverUserName(approvalPosition);
