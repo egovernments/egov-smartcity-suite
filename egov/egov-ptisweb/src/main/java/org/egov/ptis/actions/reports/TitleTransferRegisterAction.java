@@ -225,7 +225,12 @@ public class TitleTransferRegisterAction extends BaseFormAction {
         final TitleTransferReportResult ttrObj = new TitleTransferReportResult();
         String ownerName = "";
         ttrObj.setAssessmentNo(propertyMutation.getBasicProperty().getUpicNo());
-        ttrObj.setOwnerName(propertyMutation.getBasicProperty().getFullOwnerName());
+        if (propertyMutation.getTransfereeInfos() != null && propertyMutation.getTransfereeInfos().size() > 0) {
+            String newOwnerName = "";
+            for (final User usr : propertyMutation.getTransfereeInfos())
+            	newOwnerName = newOwnerName + usr.getName() + ",";
+            ttrObj.setOwnerName(newOwnerName.substring(0, newOwnerName.length() - 1));
+        }
         ttrObj.setDoorNo(propertyMutation.getBasicProperty().getAddress().getHouseNoBldgApt());
         ttrObj.setLocation(propertyMutation.getBasicProperty().getPropertyID().getLocality().getName());
         ttrObj.setPropertyTax(propertyTaxUtil.getPropertyTaxDetails(propertyMutation.getBasicProperty().getId(), finyear).toString());

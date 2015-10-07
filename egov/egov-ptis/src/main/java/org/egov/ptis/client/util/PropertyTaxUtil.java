@@ -2195,9 +2195,9 @@ public class PropertyTaxUtil {
             boundaryCond = boundaryCond + " and pi.area.id= " + areaId;
         if (boundaryCond != "")
             boundaryWhrCond = ",PropertyID pi where pm.basicProperty.id=pi.basicProperty.id "
-                    + " and pm.state.value='" + PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED + "' ";
+                    + " and pm.state.value in ('" + PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED + "','" + PropertyTaxConstants.WF_STATE_CLOSED + "') ";
         else
-            boundaryWhrCond = " where pm.state.value='" + PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED + "' ";
+            boundaryWhrCond = " where pm.state.value in ('" + PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED + "','" + PropertyTaxConstants.WF_STATE_CLOSED + "') ";
         // Query that retrieves all the properties that has Transfer of owners details.
         query.append("select pm from PropertyMutation pm").append(boundaryWhrCond).append(boundaryCond);
         if (fromDate != null && !fromDate.isEmpty())
