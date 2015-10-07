@@ -140,6 +140,7 @@ public class SearchPropertyAction extends BaseFormAction {
     private Long propertyTypeMasterId;
     private String markedForDeactive = "N";
     private Map<Long, String> ZoneBndryMap;
+    private Map<Long, String> WardndryMap;
     private boolean isDemandActive;
     private String fromDemand;
     private String toDemand;
@@ -365,10 +366,13 @@ public class SearchPropertyAction extends BaseFormAction {
     public void prepare() {
         final List<Boundary> zoneList = boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", ADMIN_HIERARCHY_TYPE);
+        final List<Boundary> wardList = boundaryService
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", ADMIN_HIERARCHY_TYPE);
         final List<Boundary> locationList = boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Locality", LOCATION_HIERARCHY_TYPE);
 
         setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
+        setWardndryMap(CommonServices.getFormattedBndryMap(wardList));
         prepareWardDropDownData(zoneId != null, wardId != null);
         addDropdownData("Location", locationList);
         addDropdownData("PropTypeMaster",
@@ -691,7 +695,15 @@ public class SearchPropertyAction extends BaseFormAction {
         ZoneBndryMap = zoneBndryMap;
     }
 
-    public boolean getIsDemandActive() {
+    public Map<Long, String> getWardndryMap() {
+		return WardndryMap;
+	}
+
+	public void setWardndryMap(Map<Long, String> wardndryMap) {
+		WardndryMap = wardndryMap;
+	}
+
+	public boolean getIsDemandActive() {
         return isDemandActive;
     }
 
