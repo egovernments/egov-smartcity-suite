@@ -164,9 +164,27 @@ INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role whe
 INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'HoardingView'));
 INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'generateBillForCollection'));
 INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'CreateLegacyHoarding'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'calculateTaxAmount'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'searchHoardingResult'));
 
 INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) = 'SUPER USER'),(select id FROM eg_action  WHERE NAME = 'CreateReceipt' and CONTEXTROOT='collection'));
 
 ------------------END---------------------
+-----------------START--------------------
+update EG_DEMAND_REASON set GLCODEID =(select ID from CHARTOFACCOUNTS where GLCODE = '1101101')  where id_demand_reason_master in ( select id from eg_demand_reason_master 
+where reasonmaster='Advertisement Tax' and module=(select id from eg_module where name='Advertisement Tax'));
+
+update EG_DEMAND_REASON set GLCODEID =(select ID from CHARTOFACCOUNTS where GLCODE = '1101101') where id_demand_reason_master in ( select id from eg_demand_reason_master 
+where reasonmaster='Enchroachment Fee' and module=(select id from eg_module where name='Advertisement Tax'));
+
+INSERT INTO egcl_servicecategory(id, name, code, isactive, version, createdby, createddate, lastmodifiedby, lastmodifieddate)
+VALUES(nextval('seq_egcl_servicecategory'), 'Advertisement Tax', 'ADTAX', true, 0, 1, current_timestamp, 1, current_timestamp);
+
+Insert into egcl_servicedetails (ID,NAME,SERVICEURL,ISENABLED,CALLBACKURL,SERVICETYPE,CODE,FUND,FUNDSOURCE,FUNCTIONARY,
+VOUCHERCREATION,SCHEME,SUBSCHEME,SERVICECATEGORY,ISVOUCHERAPPROVED,VOUCHERCUTOFFDATE,CREATED_BY,created_date,
+modified_by,modified_date) values 
+(nextval('seq_egcl_servicedetails'),'Advertisement Tax','/../adtax/hoarding/generatebill',true,'/receipts/receipt-create.action',
+'B','ADTAX',1,null,null,true,null,null,(select id from egcl_servicecategory where code='ADTAX'),true,to_date('11-07-15','DD-MM-RR'),1,current_timestamp,1,current_timestamp);
 
 
+------------------END---------------------

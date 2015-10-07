@@ -323,7 +323,7 @@ ALTER TABLE ONLY egadtax_rates
 ALTER TABLE ONLY egadtax_unitofmeasure
     ADD CONSTRAINT fk_adtax_unitofmeasure_createdby FOREIGN KEY (createdby) REFERENCES eg_user(id);
 
-
+create sequence SEQ_advertisementbill_NUMBER;
 -------------------END-------------------
 
 
