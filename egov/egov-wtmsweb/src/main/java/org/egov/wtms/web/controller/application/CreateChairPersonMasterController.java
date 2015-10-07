@@ -14,7 +14,6 @@ import org.apache.commons.io.IOUtils;
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.service.ChairPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,7 +36,7 @@ public class CreateChairPersonMasterController extends GenericConnectionControll
         return "chairperson-details";
     }
 
-    @RequestMapping(value = "/ajax-chairPersonName", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/ajax-activeChairPersonExistsAsOnCurrentDate", method = RequestMethod.GET)
     public @ResponseBody boolean getChairPersonName(@RequestParam final String name) {
         if (chairPersonService.getActiveChairPersonByCurrentDate() == null)
             return true;
@@ -48,15 +47,11 @@ public class CreateChairPersonMasterController extends GenericConnectionControll
     @RequestMapping(value = "/ajax-chairpersontable", method = RequestMethod.GET)
     public @ResponseBody void springPaginationDataTables(final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
-
-        if (request.getParameter("start") != null) {
-
-        }
         final int pageStart = Integer.valueOf(request.getParameter("start"));
         int pageSize = Integer.valueOf(request.getParameter("length"));
         final int pageNumber = pageStart / pageSize + 1;
         final List<ChairPerson> totalRecords = chairPersonService.findAll();
-        System.out.println("Total records" + totalRecords);
+
         if (pageSize == -1)
             pageSize = totalRecords.size();
         final List<ChairPerson> chairPersonsList = chairPersonService.getListOfChairPersons(pageNumber, pageSize)
@@ -69,10 +64,9 @@ public class CreateChairPersonMasterController extends GenericConnectionControll
         chairPersonJSONData.append(",\"data\":").append(toJSON(chairPersonsList)).append("}");
         response.setContentType(CONTENTTYPE_JSON);
         IOUtils.write(chairPersonJSONData, response.getWriter());
-
     }
 
-    @RequestMapping(value = "/ajax-addChairPersonName", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/ajax-addChairPersonName", method = RequestMethod.GET)
     public @ResponseBody void addChairPersonName(@RequestParam final String name) {
         if (chairPersonService.getActiveChairPersonByCurrentDate() != null) {
             ChairPerson chairPerson = new ChairPerson();

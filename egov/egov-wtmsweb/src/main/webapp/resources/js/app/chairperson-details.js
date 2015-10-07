@@ -60,9 +60,11 @@ $(document).ready(function(){
 	            success: function (response) {
 	    			console.log("success"+response);
 	    			if(response==true){
+	    				//alert('true');
 		    				addChairPerson();
 		    			}
 	    			else{
+	    				//alert('false');
 	    				overwritechairperson();
 	    			}
 	    		},error: function (response) {
@@ -70,32 +72,33 @@ $(document).ready(function(){
 	    		}
 	        });
 	       }
-	       alert("Chair person name updated in drop down successfully");
-	        loadingTable();
+	      
 		});
 	
-	function overwritechairperson()
-	{
-		 if(confirm("On entered date chairperson name is already present, do you want to overwrite it?"))
-		 {
-			 addChairPerson();
-		 }
-		 else{
-			 console.log("not added");
-			 
-		 }
-	}
-	
-	function addChairPerson()
-	{
-		 $.ajax({
-	            url: '/wtms/application/ajax-addChairPersonName',
-	            type: "GET",
-	            data: {
-	            	name: $('#name').val()
-	            },
-	            dataType : 'json',
-	            
-	        });
-		}
 });
+
+function overwritechairperson()
+{
+	 if(confirm("On entered date chairperson name is already present, do you want to overwrite it?"))
+	 {
+		 addChairPerson();
+	 }
+	 else{
+		 console.log("not added");
+		 
+	 }
+}
+
+function addChairPerson()
+{
+	 $.ajax({
+            url: '/wtms/application/ajax-addChairPersonName',
+            type: "GET",
+            data: {
+            	name: $('#name').val()
+            },
+            dataType : 'json'
+        });
+	 alert("Chair person name updated in drop down successfully");
+     loadingTable();
+	}

@@ -188,6 +188,8 @@ public class WaterTaxConstants {
     public static final String RESIDENTIAL = "RESIDENTIAL";
     public static final String WFLOW_ACTION_STEP_THIRDPARTY_CREATED="Created";
     public static final String NONMETEREDDEMANDREASON = "Water tax charges";
+    public static final String MASTERSTATUSACTIVE = "ACTIVE";
+    public static final String MASTERSTATUSINACTIVE = "IN ACTIVE";
     // HashMap map b/n Demand reason string and code
     public static final LinkedHashMap<String, String> NON_METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
         {

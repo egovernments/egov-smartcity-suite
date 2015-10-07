@@ -49,17 +49,20 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 
 public class ChairPersonAdaptor implements JsonSerializer<ChairPerson> {
+    
+    SimpleDateFormat dateformat =  new SimpleDateFormat("MM-dd-yyyy");
 
     @Override
     public JsonElement serialize(final ChairPerson chairPerson, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("chairPerson", chairPerson.getName());
-        jsonObject.addProperty("fromDate", new SimpleDateFormat("MM-dd-yyyy").format(chairPerson.getFromDate()));
-        jsonObject.addProperty("toDate", chairPerson.getToDate() != null ? new SimpleDateFormat("MM-dd-yyyy").format(chairPerson.getFromDate())
+        jsonObject.addProperty("fromDate", dateformat.format(chairPerson.getFromDate()));
+        jsonObject.addProperty("toDate", chairPerson.getToDate() != null ? dateformat.format(chairPerson.getFromDate())
                 : "Till Date");
-        jsonObject.addProperty("status", chairPerson.isActive() ? "ACTIVE" : "IN ACTIVE");
+        jsonObject.addProperty("status", chairPerson.isActive() ? WaterTaxConstants.MASTERSTATUSACTIVE : WaterTaxConstants.MASTERSTATUSINACTIVE);
         return jsonObject;
     }
 }
