@@ -140,7 +140,7 @@
 		<button type="submit" class="btn btn-default print" id="printBtn" onclick="printDiv('main')"><spring:message code="lbl.print" /></button>
 		<c:choose>
 			<c:when test="${waterConnectionDetails.connectionStatus == 'ACTIVE' }">
-				<a href="javascript:void(0)" class="btn btn-default inboxload" ><spring:message code="lbl.close" /></a>
+				<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
 			</c:when>
 			<c:otherwise>
 				<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
