@@ -21,6 +21,13 @@ INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, VERSION, MODULE ) VALUES (
 INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES (nextval('SEQ_EG_APPCONFIG_VALUES'),(SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='COLLECTIONROLEFORNONEMPLOYEE'),current_date, 'CSC Operator',0);
 INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, VERSION, MODULE ) VALUES (nextval('SEQ_EG_APPCONFIG'), 'COLLECTIONDESIGNATIONFORCSCOPERATORASCLERK','Designation for Collection workflow',0, (select id from eg_module where name='Collection')); 
 INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES (nextval('SEQ_EG_APPCONFIG_VALUES'),(SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='COLLECTIONDESIGNATIONFORCSCOPERATORASCLERK'),current_date, 'Revenue Clerk',0);
+INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, MODULE ) VALUES ( nextval('SEQ_EG_APPCONFIG'), 'CREATEVOUCHER_FOR_REMITTANCE','Create Voucher for Remittance',(select id from eg_module where name='Collection'));
+INSERT into eg_appconfig_values (ID,KEY_ID,EFFECTIVE_FROM,VALUE) values (nextval('seq_eg_appconfig_values'),(select id from eg_appconfig where KEY_NAME ='CREATEVOUCHER_FOR_REMITTANCE'),current_date,'N');
+INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, MODULE ) VALUES ( nextval('SEQ_EG_APPCONFIG'), 'REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD','Remittance Voucher Type for Cheque,DD and Card',(select id from eg_module where name='Collection'));
+INSERT into eg_appconfig_values (ID,KEY_ID,EFFECTIVE_FROM,VALUE) values (nextval('seq_eg_appconfig_values'),(select id from eg_appconfig where KEY_NAME ='REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD'),current_date,'Contra');
+INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, MODULE ) VALUES ( nextval('SEQ_EG_APPCONFIG'), 'USERECEIPTDATEFORCONTRA','Use Receipt Voucher Date for Contra Voucher',(select id from eg_module where name='Collection'));
+INSERT into eg_appconfig_values (ID,KEY_ID,EFFECTIVE_FROM,VALUE) values (nextval('seq_eg_appconfig_values'),(select id from eg_appconfig where KEY_NAME ='USERECEIPTDATEFORCONTRA'),current_date,'N');
+
 -------------------END---------------------
 -------------------START------------------
 INSERT into eg_userrole values((select id from eg_role  where name  = 'Remitter'),(select id from eg_user where username ='sumit'));

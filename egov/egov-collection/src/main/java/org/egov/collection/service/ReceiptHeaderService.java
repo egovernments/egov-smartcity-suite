@@ -432,7 +432,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      */
     public List<HashMap<String, Object>> findAllRemitanceDetails(final String boundaryIdList) {
         final List<HashMap<String, Object>> paramList = new ArrayList<HashMap<String, Object>>();
-
+        // TODO: Fix the sum(ih.instrumentamount) the amount is wrong because of
+        // the ujl.boundary in (" + boundaryIdList + ")"
         final String queryBuilder = "SELECT sum(ih.instrumentamount) as INSTRUMENTMAOUNT,to_char(ch.RECEIPTDATE, 'DD-MM-YYYY') AS RECEIPTDATE,"
                 + "sd.NAME as SERVICENAME,it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.name AS DEPARTMENTNAME,"
                 + "fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE from EGCL_COLLECTIONHEADER ch,"
@@ -1599,12 +1600,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 + CollectionConstants.MODULE_NAME_INSTRUMENTHEADER
                 + "'"
                 + "AND status.description = '"
-                + CollectionConstants.INSTRUMENT_DEPOSITED_STATUS
-                + "') OR (ih.ispaycheque = '1' AND status.moduletype = '"
-                + CollectionConstants.MODULE_NAME_INSTRUMENTHEADER
-                + "' AND status.description = '"
-                + CollectionConstants.INSTRUMENT_NEW_STATUS + "'))");
-    
+                + CollectionConstants.INSTRUMENT_DEPOSITED_STATUS + "'))");
+
         if (bankAccId != null && bankAccId != 0)
             sb.append(" AND ih.bankaccountid=" + bankAccId + "");
         if ((bankAccId == null || bankAccId == 0) && bankId != null && bankId != 0)
