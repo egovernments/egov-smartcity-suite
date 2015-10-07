@@ -59,7 +59,7 @@ INSERT INTO eg_module(
 
 INSERT INTO eg_module(
             id, name, enabled, contextroot, parentmodule, displayname, ordernumber)
-    VALUES (nextval('SEQ_EG_MODULE'), 'AdvertisementTaxMasters', false, null, (select id from eg_module where name='Advertisement Tax'), 'Masters', 1);
+    VALUES (nextval('SEQ_EG_MODULE'), 'AdvertisementTaxMasters', true, null, (select id from eg_module where name='Advertisement Tax'), 'Masters', 1);
 
 INSERT INTO eg_module(id, name, enabled, contextroot, parentmodule, displayname, ordernumber)
     VALUES (nextval('SEQ_EG_MODULE'), 'AdvertisementTaxTransactions', true, null, (select id from eg_module where name='Advertisement Tax'), 'Transactions', 2);
