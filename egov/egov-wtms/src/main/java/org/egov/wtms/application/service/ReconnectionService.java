@@ -30,45 +30,22 @@
  */
 package org.egov.wtms.application.service;
 
-import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
-import org.egov.wtms.masters.service.ApplicationProcessTimeService;
-import org.egov.wtms.utils.PropertyExtnUtils;
-import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class ReConnectionService {
+public class ReconnectionService {
 
     @Autowired
     private WaterConnectionDetailsRepository waterConnectionDetailsRepository;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
-
-    @Autowired
-    private PropertyExtnUtils propertyExtnUtils;
-
-    @Autowired
-    private WaterTaxUtils waterTaxUtils;
-
-    @Autowired
-    private ApplicationNumberGenerator applicationNumberGenerator;
-
-    @Autowired
-    private ApplicationProcessTimeService applicationProcessTimeService;
-
-    @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
-
-    @Autowired
-    private WaterConnectionSmsAndEmailService waterConnectionSmsAndEmailService;
 
     public static final String CHANGEOFUSEALLOWEDIFWTDUE = "CHANGEOFUSEALLOWEDIFWTDUE";
 
@@ -78,9 +55,8 @@ public class ReConnectionService {
      * @param approvalComent
      * @param additionalRule
      * @param workFlowAction
-     * @return Update Old Connection Object And Creates New
-     *         WaterConnectionDetails with INPROGRESS of ApplicationType as
-     *         "CHNAGEOFUSE"
+     * @return Update Old Connection Object And Creates New WaterConnectionDetails with INPROGRESS of ApplicationType as
+     * "CHNAGEOFUSE"
      */
     @Transactional
     public WaterConnectionDetails updateReConnection(final WaterConnectionDetails waterConnectionDetails,
