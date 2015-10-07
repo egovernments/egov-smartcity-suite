@@ -10,8 +10,6 @@ values(nextval('seq_egtl_mstr_unitofmeasure'),'KiloGram','KiloGram',true,1,1,now
 insert into egtl_mstr_unitofmeasure (id,code,name,active,createdby,lastmodifiedby,createddate,lastmodifieddate,version)
 values(nextval('seq_egtl_mstr_unitofmeasure'),'Ton','Ton',true,1,1,now(),now(),0);
 
-insert into egtl_mstr_unitofmeasure (id,code,name,active,createdby,lastmodifiedby,createddate,lastmodifieddate,version)
-values(nextval('seq_egtl_mstr_unitofmeasure'),'Ton','Ton',true,1,1,now(),now(),0);
 
 insert into egtl_mstr_unitofmeasure (id,code,name,active,createdby,lastmodifiedby,createddate,lastmodifieddate,version)
 values(nextval('seq_egtl_mstr_unitofmeasure'),'Meter','Meter',true,1,1,now(),now(),0);
