@@ -134,6 +134,7 @@ public class NewConnectionController extends GenericConnectionController {
                 WaterTaxConstants.CONN_NAME_ADDNLCONNECTION);
         model.addAttribute("radioButtonMap", connectionTypeMap);
         model.addAttribute("mode", "dataEntry");
+        model.addAttribute("typeOfConnection", WaterTaxConstants.NEWCONNECTION);
         return "newconnection-dataEntryForm";
     }
 
