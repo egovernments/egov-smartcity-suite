@@ -1,6 +1,7 @@
 package org.egov.tl.web.controller;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.domain.entity.FeeMatrix;
 import org.egov.tl.domain.entity.FeeMatrixDetail;
+import org.egov.tl.domain.entity.FeeType;
 import org.egov.tl.domain.entity.LicenseAppType;
 import org.egov.tl.domain.entity.LicenseCategory;
 import org.egov.tl.domain.entity.NatureOfBusiness;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller 
@@ -39,41 +42,68 @@ public class FeeMatrixController {
 	private  FeeMatrixService feeMatrixService;
 	@Autowired
 	public PersistenceService persistenceService;
-	
+
 	@Autowired
 	private FeeTypeService feeTypeService;
-	
+
 	@Autowired
 	private AppConfigValueService appConfigValueService;
 
-	private void prepareForNewForm(Model model) {
-	
+	private void prepareForNewForm(Model model,String fee) {
+
+		List<UnitOfMeasurement> uomList=new ArrayList<UnitOfMeasurement>();
+		List<FeeType> feeTypeList=new ArrayList<FeeType>();
 		model.addAttribute("licenseCategorys",(List<LicenseCategory>)persistenceService.findAllBy("select  c from LicenseCategory c order by name asc"));
 		model.addAttribute("natureOfBusinesss",(List<NatureOfBusiness>)persistenceService.findAllBy("select n from org.egov.tl.domain.entity.NatureOfBusiness n order by name asc"));
-		
+
 		List<AppConfigValues> permTempAppconfigList = appConfigValueService.getConfigValuesByModuleAndKey("Trade License", "Is Fee For Permanent and Temporary Same");
 		if(permTempAppconfigList.get(0).getValue().equals("Y"))
 		{
 			model.addAttribute("hideTemporary",true);
-			
+
 		}
-		
+
 		List<AppConfigValues> newRenewAppconfigList = appConfigValueService.getConfigValuesByModuleAndKey("Trade License", "Is Fee For New and Renew Same");
 		if(newRenewAppconfigList.get(0).getValue().equals("Y"))
 		{
 			model.addAttribute("hideRenew",true);
-			
+
 		}
 		model.addAttribute("feeMatrix",new FeeMatrix());
 		model.addAttribute("subCategorys",Collections.EMPTY_LIST);
 		model.addAttribute("licenseAppTypes",(List<LicenseAppType>)persistenceService.findAllBy("select a from LicenseAppType a order by name asc"));
-		model.addAttribute("feeTypes",feeTypeService.findAll());
-		model.addAttribute("unitOfMeasurements",(List<UnitOfMeasurement>)persistenceService.findAllBy("select u from UnitOfMeasurement  u order by name asc"));
+		if(fee!=null)
+		{
+			feeTypeList.add(feeTypeService.findByName(fee));
+			model.addAttribute("feeTypes",feeTypeList);
+			switch(fee)
+			{
+			case "License Fee":
+				uomList.addAll((List<UnitOfMeasurement>)persistenceService.findAllBy("select u from UnitOfMeasurement  u order by name asc"));
+				model.addAttribute("unitOfMeasurements",uomList);
+				break;
+			case "Motor Fee":
+				uomList.add((UnitOfMeasurement)persistenceService.find("select u from UnitOfMeasurement u   where u.name='HP'"));
+				model.addAttribute("unitOfMeasurements",uomList);
+				break;
+			case "Workforce Fee":	
+				uomList.add((UnitOfMeasurement)persistenceService.find("select u from UnitOfMeasurement u   where u.name='Person'"));
+				model.addAttribute("unitOfMeasurements",uomList);
+				break;
+			}
+		}
+		else
+		{
+
+			model.addAttribute("feeTypes",feeTypeService.findAll());
+			model.addAttribute("unitOfMeasurements",(List<UnitOfMeasurement>)persistenceService.findAllBy("select u from UnitOfMeasurement  u order by name asc"));
+		}
+
 	}
 
 	@RequestMapping(value = "create", method = RequestMethod.GET)
-	public String newForm(final Model model){
-		prepareForNewForm(model);
+	public String newForm(final Model model,@RequestParam(required=false) String fee  ){
+		prepareForNewForm(model,fee);
 		return FEEMATRIX_NEW;
 	}
 
@@ -86,7 +116,7 @@ public class FeeMatrixController {
 		model.addAttribute("feeMatrix", feeMatrix);
 		return FEEMATRIX_RESULT;
 	}
-	
+
 	@RequestMapping(value = "search", method = RequestMethod.GET)  
 	public String search(@ModelAttribute final FeeMatrix feeMatrix,final BindingResult errors,final Model model){
 		if (errors.hasErrors())
@@ -95,7 +125,7 @@ public class FeeMatrixController {
 		if(searchfeeMatrix==null)
 		{
 			searchfeeMatrix=new FeeMatrix();
-			
+
 		}		
 		for(FeeMatrixDetail fd:searchfeeMatrix.getFeeMatrixDetail())
 		{

@@ -165,6 +165,12 @@ function datepicker(){
 	try { $(":input").inputmask(); }catch(e){}
 }
 
+function validateDetail(){
+	
+	
+
+}
+
 
 
 

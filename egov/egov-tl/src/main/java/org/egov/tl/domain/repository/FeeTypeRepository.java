@@ -1,9 +1,10 @@
 package org.egov.tl.domain.repository;
 
 
+import java.util.List;
+
 import org.egov.tl.domain.entity.FeeType;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 
@@ -14,4 +15,5 @@ public FeeType findByName(String name);
 
 public FeeType findByCode(String code);
 
+//public List<FeeType> findAllActive();
 }
