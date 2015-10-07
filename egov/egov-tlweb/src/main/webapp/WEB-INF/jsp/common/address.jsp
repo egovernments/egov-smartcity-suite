@@ -45,9 +45,10 @@ jQuery(document).ready(function(){
 		console.log("came jursidiction"+jQuery('#boundary').val());
 		getZoneWard();
 	});
-	<s:if test="%{hasErrors()}">
-	 if(jQuery('#boundary').val()!='-1')
-		 getZoneWard();
+	<s:if test="%{hasErrors() || mode=='view'}">
+	 if(jQuery('#boundary').val()!='-1'){
+		getZoneWard();
+	 }
 	</s:if> 
 });
 
@@ -82,7 +83,7 @@ function getZoneWard(){
     <div class="col-sm-3 add-margin">
         <div class="input-group">
          	<s:textfield name="propertyNo" id="propertyNo" value="%{propertyNo}" maxlength="15" onKeyPress="return numbersonly(this, event)" onBlur="checkLength(this,15);" onChange="resetOnPropertyNumChange();" class="form-control"/>
-            <span class="input-group-addon" onclick="callPropertyTaxRest();"> <i class="fa fa-search specific"></i></span>
+            <span id="searchImg" class="input-group-addon" onclick="callPropertyTaxRest();"> <i class="fa fa-search specific"></i></span>
         </div>
     </div>
   
@@ -111,6 +112,6 @@ function getZoneWard(){
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='license.address.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-         <s:textarea name="address" id="address" value="%{address}" maxlength="256" onBlur="checkLength(this,256)" class="form-control" required="required" />
+         <s:textarea name="address" id="address" maxlength="250" onBlur="checkLength(this,250)" class="form-control" required="required" />
     </div>
 </div>

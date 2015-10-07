@@ -185,3 +185,16 @@ function getRow(obj)
  }
  return null;
 }
+
+
+
+function toggleFields(flag,excludedFields)
+{
+	for(var i=0;i<document.forms[0].length;i++) {
+		document.forms[0].elements[i].disabled =flag;
+	}
+	for(var j=0;j<excludedFields.length;j++) {
+		if(dom.get(excludedFields[j])!=null)
+			dom.get(excludedFields[j]).disabled =false;
+   }
+}

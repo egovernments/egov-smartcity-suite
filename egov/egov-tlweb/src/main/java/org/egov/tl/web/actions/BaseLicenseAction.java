@@ -62,7 +62,6 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.persistence.entity.PermanentAddress;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -107,7 +106,7 @@ import org.springframework.beans.factory.annotation.Autowired;
                 "namespace", "/transfer", "method", "beforeEdit" }),
         @Result(name = "transfertl_approve", type = "redirectAction", location = "transferTradeLicense", params = {
                 "namespace", "/transfer", "method", "showForApproval" }),
-        @Result(name = "approve", location="viewTradeLicense-approve.jsp")
+        @Result(name = "approve", location="newTradeLicense-new.jsp")
 })
 public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     private static final long serialVersionUID = 1L;
@@ -148,9 +147,6 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         this.addRelatedEntity("category", LicenseCategory.class);
         this.addRelatedEntity("uom", UnitOfMeasurement.class);
         this.addRelatedEntity("tradeName", LicenseSubCategory.class);
-        this.addRelatedEntity("address", PermanentAddress.class);
-        this.addRelatedEntity("licensee.address", PermanentAddress.class);
-
     }
 
     // sub class should get the object of the model and set to license()

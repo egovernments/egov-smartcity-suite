@@ -24,16 +24,16 @@
  *      In addition to the terms of the GPL license to be adhered to in using this
  *      program, the following additional terms are to be complied with:
  *
- *  	1) All versions of this program, verbatim or modified must carry this
- *  	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- *  	2) Any misrepresentation of the origin of the material is prohibited. It
- *  	   is required that all modified versions of this material be marked in
- *  	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *  	3) This license does not grant any rights to any user of the program
- *  	   with regards to rights under trademark law for use of the trade names
- *  	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
@@ -108,7 +108,8 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @Autowired
     private UnitOfMeasurementService unitOfMeasurementService;
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", new Locale("en", "IN"));
-
+    private String mode;
+     
     public NewTradeLicenseAction() {
         super();
         tradeLicense.setLicensee(new Licensee());
@@ -153,15 +154,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     public String create() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Trade license Creation Parameters:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
-        /*if (tradeLicense.getLicenseZoneId() != null && tradeLicense.getBoundary() == null) {
-            final Boundary boundary = boundaryService.getBoundaryById(tradeLicense.getLicenseZoneId());
-            tradeLicense.setBoundary(boundary);
-        }*/
-
-        /*if (tradeLicense.getLicenseeZoneId() != null && tradeLicense.getLicensee().getBoundary() == null) {
-            final Boundary boundary = boundaryService.getBoundaryById(tradeLicense.getLicenseeZoneId());
-            tradeLicense.getLicensee().setBoundary(boundary);
-        }*/
         if (tradeLicense.getInstalledMotorList() != null) {
             final Iterator<MotorDetails> motorDetails = tradeLicense.getInstalledMotorList().iterator();
             while (motorDetails.hasNext()) {
@@ -180,14 +172,14 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
                 + tradeLicense.getNameOfEstablishment());
         LicenseAppType newAppType = (LicenseAppType)persistenceService.find("from  LicenseAppType where name='New' ");
         tradeLicense.setLicenseAppType(newAppType);
-        tradeLicense.setAddress("Nani Address");
-        tradeLicense.getLicensee().setAddress("Nani Address");
-        return super.create(tradeLicense);
+        return super.create(tradeLicense); 
     }
 
     @Override
     public void prepareNewForm() {
         super.prepareNewForm();
+        if(license()!=null && license().getId()!=null)
+            tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", license().getId());
         setDocumentTypes(service().getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
         tradeLicense.setHotelGradeList(tradeLicense.populateHotelGradeList());
         tradeLicense.setHotelSubCatList(ts.getHotelCategoriesForTrade());
@@ -252,6 +244,16 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         .debug("Exiting from the beforeRenew method:<<<<<<<<<<>>>>>>>>>>>>>:");
         return super.beforeRenew();
     }
+    
+    /*
+     * Invoked from Workflow users Inbox 
+     */
+    @Override
+    @Action(value = "/newtradelicense/newTradeLicense-showForApproval")
+    public String showForApproval() {
+        mode=VIEW;
+        return super.showForApproval();
+    }
 
     @Override
     public License getModel() {
@@ -302,5 +304,13 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
 
     public void setOwnerShipTypeMap(final Map<String, String> ownerShipTypeMap) {
         this.ownerShipTypeMap = ownerShipTypeMap;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 }

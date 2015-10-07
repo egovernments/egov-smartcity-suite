@@ -77,9 +77,7 @@
 			<column name="ID_UOM" precision="22" scale="0" />
 		</many-to-one>
 		<property name="workersCapacity" column="WORKERS_CAPACITY" type="java.math.BigDecimal" />
-		<property  name="address" type="java.lang.String">
-			<column length="250" name="address" not-null="true" />
-		</property>
+		<property  name="address" column="address" type="java.lang.String"  length="250" not-null="true" />
 		<bag name="objections" inverse="true" table="EGTL_OBJECTION" fetch="select">
 			<key>
 				<column name="ID_LICENSE"></column>

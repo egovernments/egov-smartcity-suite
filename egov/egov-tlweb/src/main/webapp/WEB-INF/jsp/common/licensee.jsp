@@ -67,6 +67,6 @@
 	    </div>
 	    <label class="col-sm-2 control-label text-right"><s:text name='licensee.applicantAddress' /><span class="mandatory"></span></label>
 	    <div class="col-sm-3 add-margin">
-	        <s:textarea name="licensee.address"  id="licenseeAddress" maxlength="256" cssClass="form-control" required="required"/>
+	        <s:textarea name="licensee.address"  id="licenseeAddress" maxlength="250" cssClass="form-control" required="required"/>
 	    </div>
 	</div>

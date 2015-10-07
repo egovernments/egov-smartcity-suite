@@ -114,10 +114,20 @@
   			}
   			
 			function onBodyLoad(){
-  				if (document.getElementById("motorInstalled").checked==true) {
+  				if (document.getElementById("motorInstalled").checked==true) { 
 					document.getElementById("hpheader").style.display='';
 				} else {
 					document.getElementById("hpheader").style.display='none';
+				}
+				if(dom.get("mode").value=='view'){
+					  toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments',
+					                     'Forward','Reject','button2','Approve']);
+	                  //remove onclick event for propertyno search button
+					  jQuery("#searchImg").removeAttr("onclick");
+					  // remove onclick event for add and delete button having class = add-padding
+					  jQuery('.add-padding').attr('onclick','').unbind('click');
+					  // renaming approver remarks label
+					  jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />')
 				}
 			}
 
@@ -386,6 +396,7 @@
 							<s:hidden name="actionName" value="create" />
 							<s:hidden id="detailChanged" name="detailChanged" />
 							<s:hidden id="applicationDate" name="applicationDate" />
+							<s:hidden id="mode" name="mode" value="%{mode}" />
                         <div class="panel panel-primary" data-collapsed="0">
                             <div class="panel-heading">
                             

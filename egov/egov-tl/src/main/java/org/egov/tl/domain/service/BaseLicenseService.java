@@ -211,8 +211,10 @@ public abstract class BaseLicenseService {
 	           
 	                if (LOGGER.isDebugEnabled())
 	                    LOGGER.debug(reason + "::" + fm.getAmount());
-	                demandDetails.add(EgDemandDetails.fromReasonAndAmounts(fm.getAmount(), reason, BigDecimal.ZERO));
-	                totalAmount = totalAmount.add(fm.getAmount());
+	                if (reason!=null) {
+        	                demandDetails.add(EgDemandDetails.fromReasonAndAmounts(fm.getAmount(), reason, BigDecimal.ZERO));
+        	                totalAmount = totalAmount.add(fm.getAmount());
+	                }
 	            
 	        }
 
