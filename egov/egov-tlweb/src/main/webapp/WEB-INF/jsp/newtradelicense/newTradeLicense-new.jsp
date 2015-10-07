@@ -107,12 +107,13 @@
     			if(validateForm_newTradeLicense()==false) { 
     				return false;
     			} else { 
-    				clearMessage('newLicense_error')
+    				clearMessage('newLicense_error');
+    				toggleFields(false,"");
         			document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-create.action';
     		    	document.newTradeLicense.submit();
     			 } 
   			}
-  			
+
 			function onBodyLoad(){
   				if (document.getElementById("motorInstalled").checked==true) { 
 					document.getElementById("hpheader").style.display='';
