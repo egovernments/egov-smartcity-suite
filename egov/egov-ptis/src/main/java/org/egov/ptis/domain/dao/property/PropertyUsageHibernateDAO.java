@@ -57,114 +57,103 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class PropertyUsageHibernateDAO implements PropertyUsageDAO {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	private Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    private Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	/**
-	 * To get Property Usage by Usage Code
-	 * 
-	 * @param usageCode
-	 * @param fromDate
-	 * @return PropertyUsage
-	 * */
-	@Override
-	public PropertyUsage getPropertyUsage(String usageCode) {
-		Query qry = getCurrentSession().createQuery(
-				"from PropertyUsage PU where PU.usageCode = :usageCode AND PU.usageCode IS NOT NULL AND ("
-						+ "(PU.toDate IS NULL AND PU.fromDate <= :currDate) " + "OR "
-						+ "(PU.fromDate <= :currDate AND PU.toDate >= :currDate)) ");
-		qry.setString("usageCode", usageCode);
-		qry.setDate("currDate", new Date());
-		return (PropertyUsage) qry.uniqueResult();
-	}
+    /**
+     * To get Property Usage by Usage Code
+     * 
+     * @param usageCode
+     * @param fromDate
+     * @return PropertyUsage
+     * */
+    @Override
+    public PropertyUsage getPropertyUsage(String usageCode) {
+        Query qry = getCurrentSession().createQuery(
+                "from PropertyUsage PU where PU.usageCode = :usageCode AND PU.usageCode IS NOT NULL AND ("
+                        + "(PU.toDate IS NULL AND PU.fromDate <= :currDate) " + "OR "
+                        + "(PU.fromDate <= :currDate AND PU.toDate >= :currDate)) ");
+        qry.setString("usageCode", usageCode);
+        qry.setDate("currDate", new Date());
+        return (PropertyUsage) qry.uniqueResult();
+    }
 
-	/**
-	 * To get Property Usage by Usage Code and From Date given
-	 * 
-	 * @param usageCode
-	 * @param fromDate
-	 * @return PropertyUsage
-	 * */
-	@Override
-	public PropertyUsage getPropertyUsage(String usageCode, Date fromDate) {
-		Query qry = getCurrentSession().createQuery(
-				"from PropertyUsage PU where PU.usageCode = :usageCode AND PU.usageCode IS NOT NULL AND ("
-						+ "(PU.toDate IS NULL AND PU.fromDate <= :fromDate) " + "OR "
-						+ "(PU.fromDate <= :fromDate AND PU.toDate >= :fromDate)) ");
-		qry.setString("usageCode", usageCode);
-		qry.setDate("fromDate", fromDate);
-		return (PropertyUsage) qry.uniqueResult();
-	}
+    /**
+     * To get Property Usage by Usage Code and From Date given
+     * 
+     * @param usageCode
+     * @param fromDate
+     * @return PropertyUsage
+     * */
+    @Override
+    public PropertyUsage getPropertyUsage(String usageCode, Date fromDate) {
+        Query qry = getCurrentSession().createQuery(
+                "from PropertyUsage PU where PU.usageCode = :usageCode AND PU.usageCode IS NOT NULL AND ("
+                        + "(PU.toDate IS NULL AND PU.fromDate <= :fromDate) " + "OR "
+                        + "(PU.fromDate <= :fromDate AND PU.toDate >= :fromDate)) ");
+        qry.setString("usageCode", usageCode);
+        qry.setDate("fromDate", fromDate);
+        return (PropertyUsage) qry.uniqueResult();
+    }
 
-	/**
-	 * To get All active Property Usages
-	 * 
-	 * @return List of PropertyUsages
-	 * */
-	@Override
-	public List<PropertyUsage> getAllActivePropertyUsage() {
-		Query qry = getCurrentSession().createQuery(
-				"from PropertyUsage PU where PU.isEnabled = " + 1 + " AND ("
-						+ "(PU.toDate IS NULL AND PU.fromDate <= :currDate) " + "OR "
-						+ "(PU.fromDate <= :currDate AND PU.toDate >= :currDate))");
-		qry.setDate("currDate", new Date());
-		return qry.list();
-	}
+    /**
+     * To get All active Property Usages
+     * 
+     * @return List of PropertyUsages
+     * */
+    @Override
+    public List<PropertyUsage> getAllActivePropertyUsage() {
+        Query qry = getCurrentSession().createQuery(
+                "from PropertyUsage PU where PU.isEnabled = " + 1);
+        return qry.list();
+    }
 
-	/**
-	 * To get All Property Usages
-	 * 
-	 * @return List of PropertyUsages
-	 * */
-	@Override
-	public List<PropertyUsage> getAllPropertyUsage() {
-		Query qry = getCurrentSession().createQuery(
-				"from PropertyUsage PU where ("
-						+ "(PU.toDate IS NULL AND PU.fromDate <= :currDate) " + "OR "
-						+ "(PU.fromDate <= :currDate AND PU.toDate >= :currDate))");
-		qry.setDate("currDate", new Date());
-		return qry.list();
-	}
+    /**
+     * To get All Property Usages
+     * 
+     * @return List of PropertyUsages
+     * */
+    @Override
+    public List<PropertyUsage> getAllPropertyUsage() {
+        Query qry = getCurrentSession().createQuery(
+                "from PropertyUsage PU where ("
+                        + "(PU.toDate IS NULL AND PU.fromDate <= :currDate) " + "OR "
+                        + "(PU.fromDate <= :currDate AND PU.toDate >= :currDate))");
+        qry.setDate("currDate", new Date());
+        return qry.list();
+    }
 
-	@Override
-	public List getPropUsageAscOrder() {
-		Criteria criteria = getCurrentSession().createCriteria(PropertyUsage.class).addOrder(
-				Order.asc("id"));
-		return criteria.list();
-	}
+    @Override
+    public List getPropUsageAscOrder() {
+        Criteria criteria = getCurrentSession().createCriteria(PropertyUsage.class).addOrder(
+                Order.asc("id"));
+        return criteria.list();
+    }
 
-	@Override
-	public PropertyUsage findById(Long id, boolean lock) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public PropertyUsage findById(Long id, boolean lock) {
+        return (PropertyUsage) getCurrentSession().createQuery("from PropertyUsage where id = ?").setParameter(0, id)
+                .uniqueResult();
+    }
 
-	@Override
-	public PropertyUsage create(PropertyUsage propertyUsage) {
-		getCurrentSession().save(propertyUsage);
-		getCurrentSession().flush();
-		return propertyUsage;
-	}
+    @Override
+    public PropertyUsage create(PropertyUsage propertyUsage) {
+        getCurrentSession().save(propertyUsage);
+        getCurrentSession().flush();
+        return propertyUsage;
+    }
 
-	@Override
-	public void delete(PropertyUsage propertyUsage) {
-		// TODO Auto-generated method stub
+    @Override
+    public void delete(PropertyUsage propertyUsage) {
+        getCurrentSession().delete(propertyUsage);
+    }
 
-	}
-
-	@Override
-	public PropertyUsage update(PropertyUsage propertyUsage) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<PropertyUsage> findAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public List<PropertyUsage> findAll() {
+        return getCurrentSession().createQuery("From PropertyUsage order by usageName").list();
+    }
 }

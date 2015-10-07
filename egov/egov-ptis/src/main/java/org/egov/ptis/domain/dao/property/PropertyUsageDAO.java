@@ -64,6 +64,4 @@ public interface PropertyUsageDAO {
 
 	public void delete(PropertyUsage propertyUsage);
 
-	public PropertyUsage update(PropertyUsage propertyUsage);
-
 }

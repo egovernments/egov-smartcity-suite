@@ -39,6 +39,8 @@
  */
 package org.egov.ptis.master.service;
 
+import java.util.List;
+
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
@@ -53,25 +55,33 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class PropertyUsageService {
-	
-	private final PropertyUsageDAO propertyUsageHibernateDAO;
+
+    private final PropertyUsageDAO propertyUsageHibernateDAO;
 
     @Autowired
     public PropertyUsageService(final PropertyUsageDAO propertyUsageHibernateDAO) {
         this.propertyUsageHibernateDAO = propertyUsageHibernateDAO;
     }
-    
+
     public PropertyUsage create(PropertyUsage propertyUsage) {
-    	
-    	if (propertyUsage.getIsResidential()) {
-    		propertyUsage.setUsageCode(PropertyTaxConstants.PROPTYPE_RESD);
-    	} else {
-    		propertyUsage.setUsageCode(PropertyTaxConstants.PROPTYPE_NON_RESD);
-    	}
-    	
+
+        if (propertyUsage.getIsResidential()) {
+            propertyUsage.setUsageCode(PropertyTaxConstants.PROPTYPE_RESD);
+        } else {
+            propertyUsage.setUsageCode(PropertyTaxConstants.PROPTYPE_NON_RESD);
+        }
+
         propertyUsage.setIsEnabled(1);
         propertyUsageHibernateDAO.create(propertyUsage);
-        
+
         return propertyUsage;
+    }
+
+    public List<PropertyUsage> getAllActivePropertyUsages() {
+        return propertyUsageHibernateDAO.getAllActivePropertyUsage();
+    }
+    
+    public PropertyUsage findById(Long id) {
+        return propertyUsageHibernateDAO.findById(id, false);
     }
 }
