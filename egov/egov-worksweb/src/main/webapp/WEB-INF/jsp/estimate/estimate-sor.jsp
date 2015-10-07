@@ -218,7 +218,7 @@ var searchSelectionHandler = function(sType, arguments) {
                    }
                 }
                 sorDataTable.addRow({schedule:res.results[0].Id,Code:res.results[0].Code,SlNo:sorDataTable.getRecordSet().getLength()+1,Description:res.results[0].Description,UOM:res.results[0].UOM,sorrate:res.results[0].UnitRate,rate:res.results[0].UnitRate,Delete:'X',FullDescription:res.results[0].FullDescription});
-                getFactor(res.results[0].UOM,sorDataTable.getRecord(sorDataTable.getRecordSet().getLength()-1));
+                getUOMFactor(res.results[0].UOM,sorDataTable.getRecord(sorDataTable.getRecordSet().getLength()-1));
                 if('<s:property value="%{errorCode}" />'=='estimate.workvalue.null')
             	{
             		dom.get('errorstyle').style.display='none';
@@ -231,7 +231,7 @@ var searchSelectionHandler = function(sType, arguments) {
 	        };
 
 
-	        makeJSONCall(["Id","Description","Code","UOM","UnitRate","FullDescription"],'${pageContext.request.contextPath}/masters/scheduleOfRateSearch!findSORAjax.action',{estimateDate:document.getElementById("estimateDate").value,sorID:oData[1]},mySuccessHandler,myFailureHandler) ;
+	        makeJSONCall(["Id","Description","Code","UOM","UnitRate","FullDescription"],'${pageContext.request.contextPath}/masters/scheduleOfRateSearch-findSORAjax.action',{estimateDate:document.getElementById("estimateDate").value,sorID:oData[1]},mySuccessHandler,myFailureHandler) ;
 
 		}
 
@@ -306,8 +306,8 @@ function resetSorTable(){
 	dom.get("grandTotal").innerHTML="0.00";
 }
 
-function getFactor(sorUomId,record) {
-	var url2 = '${pageContext.request.contextPath}/estimate/ajaxEstimate!getFactor.action';
+function getUOMFactor(sorUomId,record) {
+	var url2 = '${pageContext.request.contextPath}/estimate/ajaxEstimate-getUOMFactor.action';
 	var params = 'uomVal='+sorUomId+'&rate='+dom.get("sorrate"+record.getId()).value;
 	var estimaterateVal = "estimaterate"+record.getId();
 	
@@ -352,7 +352,7 @@ function showProcessImage(event) {
 <div class="errorstyle" id="sor_error" style="display:none;"></div>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-                <td colspan="3" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div><div class="headplacer">SOR</div></td>
+         <td colspan="3" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div><div class="headplacer">SOR</div></td>
     </tr>
 </table>
 <table id="baseSORTable" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -361,41 +361,32 @@ function showProcessImage(event) {
         <td class="whitebox2wk" colspan="2"><s:select onchange="clearCategoryMessage();" headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="selectwk" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code+' : '+description"/>
         </td>
 	</tr>
-              <tr>
-                <td width="30%" class="whiteboxwk"><span class="bold">Add SOR:</span></td>
-                <td width="50%" class="whitebox2wk">
-    <div class="yui-skin-sam">
-    <div id="sorSearch_autocomplete">
-    <div><input id="search" type="text" name="item" class="selectwk" onkeypress="if(event.keyCode==13) return false;return showProcessImage(event);"></div>
-    <span id="searchResults"></span>
-    </div>
-    </div>
-    
-<egov:autocomplete name="sorSearch" width="70" field="search" url="../masters/scheduleOfRateSearch!searchAjax.action" results="searchResults" handler="searchSelectionHandler" paramsFunction="sorSearchParameters" afterHandler="afterSORResults" />          
-
-                  <label>
-
-                  </label><td width="20%" class="whitebox2wk"><div id="loadImage" style="display:none"><img src="/egi/resources/erp2/images/loading.gif" />Loading SOR's. Please wait..</div></td>
-            </table></td>
-          </tr>
-          <!--<tr>
-            <td>&nbsp;</td>
-          </tr>-->
-          <tr>
-            <td>
-<table id="sorHeaderTable" width="100%" border="0" cellspacing="0" cellpadding="0">
-              
-              <tr>
-                <td >
-                <div class="yui-skin-sam">
-                    <div id="sorTable"></div>
-                    <div id="sorTotals"></div>                                
-                </div>
-                </td></tr>
-                <tr>
-                	<td colspan="11" class="shadowwk"></td>
-                </tr>
-			<tr><td>&nbsp;</td></tr>
+    <tr>
+      <td width="30%" class="whiteboxwk"><span class="bold">Add SOR:</span></td>
+      <td width="50%" class="whitebox2wk">
+	    <div class="yui-skin-sam">
+		    <div id="sorSearch_autocomplete">
+		    	<div><input id="search" type="text" name="item" class="selectwk" onkeypress="if(event.keyCode==13) return false;return showProcessImage(event);"></div>
+		    	<span id="searchResults"></span>
+		    </div>
+	    </div>    
+		<egov:autocomplete name="sorSearch" width="70" field="search" url="../masters/scheduleOfRateSearch-searchAjax.action" results="searchResults" handler="searchSelectionHandler" paramsFunction="sorSearchParameters" afterHandler="afterSORResults" />          
+		<td width="20%" class="whitebox2wk"><div id="loadImage" style="display:none"><img src="/egi/resources/erp2/images/loading.gif" />Loading SOR's. Please wait..</div></td>
+      </tr>
+</table>
+<table id="sorHeaderTable" width="100%" border="0" cellspacing="0" cellpadding="0">              
+  <tr>
+    <td>
+     <div class="yui-skin-sam">
+         <div id="sorTable"></div>
+         <div id="sorTotals"></div>                                
+     </div>
+    </td>
+  </tr>
+  <tr>
+  	<td colspan="11" class="shadowwk"></td>
+  </tr>
+  <tr><td>&nbsp;</td></tr>
 </table> 
 <script>
 makeSORDataTable();
@@ -432,9 +423,3 @@ makeSORDataTable();
 </s:iterator>
     
 </script>  
-
-
-             
-            </td>
-          </tr>
-            </table>

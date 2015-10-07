@@ -39,51 +39,52 @@
  */
 package org.egov.works.web.actions.masters;
 
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 
 @ParentPackage("egov")
-@Result(name = ScheduleOfRateSearchAction.SEARCH_RESULTS, location = "scheduleOfRateSearch-searchResults")
+@Results({ @Result(name = ScheduleOfRateSearchAction.SEARCH_RESULTS, location = "scheduleOfRateSearch-searchResults.jsp"),
+        @Result(name = ScheduleOfRateSearchAction.SOR, location = "scheduleOfRateSearch-SOR.jsp") })
 public class ScheduleOfRateSearchAction extends BaseFormAction {
 
     private static final long serialVersionUID = -3299140283276738474L;
     private PersistenceService<ScheduleOfRate, Long> scheduleOfRateService;
-    // private static final String PUNCTUATIONS_AND_SPECIALCHARS = "[^\\w\\d\\.]";
     public static final String SEARCH_RESULTS = "searchResults";
+    public static final String SOR = "SOR";
     private ScheduleOfRate sor = new ScheduleOfRate();
     private SORRate currentRate;
-    private String sorID;
+    private Long sorID;
     private Date estimateDate;
     private String query;
-    private String scheduleCategoryId;
-    private String estimateId;
-
-    public void setScheduleCategoryId(final String scheduleCategoryId) {
-        this.scheduleCategoryId = scheduleCategoryId;
-    }
+    private Long scheduleCategoryId;
+    private Long estimateId;
+    private List<ScheduleOfRate> scheduleOfRateList;
 
     public void setQuery(final String query) {
         this.query = query;
     }
 
-    @Action(value = "/masters/scheduleOfRateSearch-search")
+    @Action(value = "/masters/scheduleOfRateSearch-searchAjax")
     public String searchAjax() {
+        scheduleOfRateList = getSORList();
         return SEARCH_RESULTS;
     }
 
+    @Action(value = "/masters/scheduleOfRateSearch-findSORAjax")
     public String findSORAjax() {
-        sor = scheduleOfRateService.findById(Long.parseLong(sorID), false);
+        sor = scheduleOfRateService.findById(sorID, false);
         if (estimateDate != null)
             currentRate = sor.getRateOn(estimateDate);
-        return "SOR";
+        return SOR;
     }
 
     @Override
@@ -96,21 +97,20 @@ public class ScheduleOfRateSearchAction extends BaseFormAction {
         this.scheduleOfRateService = scheduleOfRateService;
     }
 
-    public Collection<ScheduleOfRate> getScheduleOfRateList() {
+    public List<ScheduleOfRate> getSORList() {
         if (estimateId != null && estimateDate != null)
             return scheduleOfRateService.findAllByNamedQuery("SCHEDULEOFRATES_SEARCH_REVISIONESTIMATE", query, query,
-                    Long.valueOf(scheduleCategoryId), estimateDate, estimateDate, Long.valueOf(estimateId),
-                    Long.valueOf(estimateId));
+                    scheduleCategoryId, estimateDate, estimateDate, estimateId, estimateId);
         else if (estimateDate != null)
             return scheduleOfRateService.findAllByNamedQuery("SCHEDULEOFRATES_SEARCH", query, query,
-                    Long.valueOf(scheduleCategoryId), estimateDate, estimateDate);
+                    scheduleCategoryId, estimateDate, estimateDate);
         else
             return scheduleOfRateService.findAllByNamedQuery("SCHEDULEOFRATES_SEARCH_ESTIMATETEMPLATE", query, query,
-                    Long.valueOf(scheduleCategoryId));
+                    scheduleCategoryId);
 
     }
 
-    public void setSorID(final String sorID) {
+    public void setSorID(final Long sorID) {
         this.sorID = sorID;
     }
 
@@ -130,12 +130,20 @@ public class ScheduleOfRateSearchAction extends BaseFormAction {
         return currentRate;
     }
 
-    public String getEstimateId() {
+    public Long getEstimateId() {
         return estimateId;
     }
 
-    public void setEstimateId(final String estimateId) {
+    public void setEstimateId(final Long estimateId) {
         this.estimateId = estimateId;
+    }
+
+    public void setScheduleCategoryId(final Long scheduleCategoryId) {
+        this.scheduleCategoryId = scheduleCategoryId;
+    }
+
+    public List<ScheduleOfRate> getScheduleOfRateList() {
+        return scheduleOfRateList;
     }
 
 }

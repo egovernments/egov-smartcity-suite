@@ -241,7 +241,8 @@ public class AjaxEstimateAction extends BaseFormAction {
         return OVERHEADS;
     }
 
-    public String getFactor() {
+    @Action(value = "/estimate/ajaxEstimate-getUOMFactor")
+    public String getUOMFactor() {
         Integer result = 1;
 
         final Map<String, Integer> exceptionaSorMap = worksService.getExceptionSOR();
@@ -256,7 +257,7 @@ public class AjaxEstimateAction extends BaseFormAction {
         try {
             getServletResponse().getWriter().write(outStr);
         } catch (final IOException ioex) {
-            logger.info("Error while writing to response --from getByResponseAware()");
+            logger.error("Error while writing to response --from getByResponseAware()");
         }
         return null;
     }
