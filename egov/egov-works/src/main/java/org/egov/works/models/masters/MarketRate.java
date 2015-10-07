@@ -102,7 +102,7 @@ public class MarketRate extends BaseModel {
         if (validity == null || validity != null && validity.getStartDate() == null)
             validationErrors.add(new ValidationError("validity", "sor.marketrate.startDate__empty"));
         else if (validity == null
-                || validity != null && !compareDates(validity.getStartDate().toDate(), validity.getEndDate().toDate()))
+                || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
             validationErrors.add(new ValidationError("validity", "sor.rate.invalid_date_range"));
 
         return validationErrors.isEmpty() ? null : validationErrors;

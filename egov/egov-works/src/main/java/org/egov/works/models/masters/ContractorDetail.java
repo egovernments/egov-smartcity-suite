@@ -134,7 +134,7 @@ public class ContractorDetail extends BaseModel {
         if (validity == null || validity != null && validity.getStartDate() == null)
             validationErrors.add(new ValidationError("validity", "contractorDetails.startDate_empty"));
         else if (validity == null
-                || validity != null && !compareDates(validity.getStartDate().toDate(), validity.getEndDate().toDate()))
+                || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
             validationErrors.add(new ValidationError("validity", "contractorDetails.invalid_date_range"));
         if (validationErrors.isEmpty())
             return null;

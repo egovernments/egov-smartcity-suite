@@ -254,18 +254,18 @@ public class ScheduleOfRate extends BaseModel {
         int k = 1;
 
         for (int i = 1; i < sorRates.size(); i++) {
-            checkStartDate = sorRates.get(i).getValidity().getStartDate().toDate();
-            checkEndDate = sorRates.get(i).getValidity().getEndDate().toDate();
+            checkStartDate = sorRates.get(i).getValidity().getStartDate();
+            checkEndDate = sorRates.get(i).getValidity().getEndDate();
             checkPeriod1 = new Period(checkStartDate, checkEndDate);
 
             for (int j = 0; j < validDates.size(); j++) {
-                existingStartDate = validDates.get(j).getStartDate().toDate();
+                existingStartDate = validDates.get(j).getStartDate();
                 existingPeriod = validDates.get(j);
 
                 if (validDates.get(j).getEndDate() == null)
                     existingEndDate = null;
                 else
-                    existingEndDate = validDates.get(j).getEndDate().toDate();
+                    existingEndDate = validDates.get(j).getEndDate();
 
                 // check if the period to be checked is within any of the
                 // existing periods.
@@ -368,17 +368,17 @@ public class ScheduleOfRate extends BaseModel {
         int k = 1;
 
         for (int i = 1; i < marketRates.size(); i++) {
-            checkStartDate = marketRates.get(i).getValidity().getStartDate().toDate();
-            checkEndDate = marketRates.get(i).getValidity().getEndDate().toDate();
+            checkStartDate = marketRates.get(i).getValidity().getStartDate();
+            checkEndDate = marketRates.get(i).getValidity().getEndDate();
             checkPeriod1 = new Period(checkStartDate, checkEndDate);
 
             for (int j = 0; j < validDates.size(); j++) {
-                existingStartDate = validDates.get(j).getStartDate().toDate();
+                existingStartDate = validDates.get(j).getStartDate();
                 existingPeriod = validDates.get(j);
                 if (validDates.get(j).getEndDate() == null)
                     existingEndDate = null;
                 else
-                    existingEndDate = validDates.get(j).getEndDate().toDate();
+                    existingEndDate = validDates.get(j).getEndDate();
 
                 // check if the period to be checked is within any of the
                 // existing periods.

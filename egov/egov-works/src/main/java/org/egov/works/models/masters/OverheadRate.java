@@ -144,7 +144,7 @@ public class OverheadRate extends BaseModel {
                     "estimate.overhead.only_one_of_percentage_or_lumpsum_needed"));
 
         if (validity == null
-                || validity != null && !compareDates(validity.getStartDate().toDate(), validity.getEndDate().toDate()))
+                || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
             validationErrors.add(new ValidationError("validity", "estimate.overhead.invalid_date_range"));
 
         if (!validationErrors.isEmpty())

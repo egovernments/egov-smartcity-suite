@@ -74,8 +74,8 @@ import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.utils.WorksConstants;
 
 @Results({
-	@Result(name = ScheduleOfRateAction.NEW, location = "scheduleOfRate-new.jsp"),
-	@Result(name = ScheduleOfRateAction.SEARCH, location = "scheduleOfRate-search.jsp")
+        @Result(name = ScheduleOfRateAction.NEW, location = "scheduleOfRate-new.jsp"),
+        @Result(name = ScheduleOfRateAction.SEARCH, location = "scheduleOfRate-search.jsp")
 })
 @ParentPackage("egov")
 public class ScheduleOfRateAction extends SearchFormAction {
@@ -111,6 +111,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
     private String woDateFlag = "no";
     private List<SORRate> editableRateList = new ArrayList<SORRate>();
     public static final String SEARCH = "search";
+
     public ScheduleOfRateAction() {
         addRelatedEntity("scheduleCategory", ScheduleCategory.class);
         addRelatedEntity("uom", UOM.class);
@@ -391,10 +392,10 @@ public class ScheduleOfRateAction extends SearchFormAction {
                 estimateDate = abstractEstimate.getEstimateDate();
                 if (rate != null) {
                     final Period validity = rate.getValidity();
-                    final Date startDate = validity.getStartDate().toDate();
+                    final Date startDate = validity.getStartDate();
                     Date endDate = null;
                     if (validity.getEndDate() != null)
-                        endDate = validity.getEndDate().toDate();
+                        endDate = validity.getEndDate();
                     boolean flag = false;
                     if (startDate != null && rate.getId() != null)
                         flag = checkGivenDateWithinRange(estimateDate, startDate, endDate);
@@ -412,7 +413,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
                     }
                 }
             }
-        }       // end of for abstractestimate
+        }        // end of for abstractestimate
     }
 
     public void iterateWOList(final List woeList, final SORRate rate, final boolean validationMessageFlag) {
@@ -428,10 +429,10 @@ public class ScheduleOfRateAction extends SearchFormAction {
                 woDate = parentWO.getWorkOrderDate();
                 if (rate != null) {
                     final Period validity = rate.getValidity();
-                    final Date startDate = validity.getStartDate().toDate();
+                    final Date startDate = validity.getStartDate();
                     Date endDate = null;
                     if (validity.getEndDate() != null)
-                        endDate = validity.getEndDate().toDate();
+                        endDate = validity.getEndDate();
                     boolean flag = false;
                     if (startDate != null && rate.getId() != null)
                         flag = checkGivenDateWithinRangeWO(woDate, startDate, endDate);
@@ -450,7 +451,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
                         deleteFlagMap2.put(rate.getId(), "no");
                 }
             }
-        }     // end of for wo
+        }      // end of for wo
     }
 
     public void validateWODate(final boolean flag, final List woList) {

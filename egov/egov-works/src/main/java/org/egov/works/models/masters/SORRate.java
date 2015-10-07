@@ -50,9 +50,7 @@ import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.models.Money;
 
 public class SORRate extends BaseModel {
-    /**
-     *
-     */
+    
     private static final long serialVersionUID = 4057715980589711248L;
 
     private ScheduleOfRate scheduleOfRate;
@@ -102,7 +100,7 @@ public class SORRate extends BaseModel {
         if (validity == null || validity != null && validity.getStartDate() == null)
             validationErrors.add(new ValidationError("validity", "sor.rate.startDate__empty"));
         else if (validity == null
-                || validity != null && !compareDates(validity.getStartDate().toDate(), validity.getEndDate().toDate()))
+                || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
             validationErrors.add(new ValidationError("validity", "sor.rate.invalid_date_range"));
 
         if (validationErrors.isEmpty())

@@ -168,11 +168,11 @@ public class Overhead extends BaseModel {
         boolean flag1 = true;
         int k = 1;
         for (int i = 1; i < overheadRates.size(); i++) {
-            checkStartDate = overheadRates.get(i).getValidity().getStartDate().toDate();
-            checkEndDate = overheadRates.get(i).getValidity().getEndDate().toDate();
+            checkStartDate = overheadRates.get(i).getValidity().getStartDate();
+            checkEndDate = overheadRates.get(i).getValidity().getEndDate();
             checkPeriod1 = new Period(checkStartDate, checkEndDate);
             for (int j = 0; j < validDates.size(); j++) {
-                existingStartDate = validDates.get(j).getStartDate().toDate();
+                existingStartDate = validDates.get(j).getStartDate();
                 existingPeriod = validDates.get(0);
 
                 // check if the period to be checked is within any of the
