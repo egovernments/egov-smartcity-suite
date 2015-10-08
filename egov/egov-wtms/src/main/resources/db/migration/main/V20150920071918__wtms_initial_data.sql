@@ -177,35 +177,45 @@ INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role whe
 INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) = 'CSC OPERATOR'),(select id FROM eg_action WHERE NAME = 'createReConnection' and CONTEXTROOT='wtms'));
 
 ------------------END---------------------
+
 -----------------START--------------------
-Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG_VALUES'),'SENDSMSFORWATERTAX','SMS Notification for Water Tax module is enabled or not',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
+Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG'),'SENDSMSFORWATERTAX','SMS Notification for Water Tax module is enabled or not',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
 INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES ( 
 nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='SENDSMSFORWATERTAX'), current_date, 'YES',0);
-Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG_VALUES'),'SENDEMAILFORWATERTAX','Email Notification for Water Tax module is enabled or not',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
+
+Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG'),'SENDEMAILFORWATERTAX','Email Notification for Water Tax module is enabled or not',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
 INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES ( 
 nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='SENDEMAILFORWATERTAX'), current_date, 'YES',0);
-Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG_VALUES'),'MULTIPLENEWCONNECTIONFORPID','To restrict whether multiple new water tap connection allowed for single Property ID',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
+
+Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG'),'MULTIPLENEWCONNECTIONFORPID','To restrict whether multiple new water tap connection allowed for single Property ID',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
 INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES ( 
 nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='MULTIPLENEWCONNECTIONFORPID'), current_date, 'NO',0);
-Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG_VALUES'),'NEWCONNECTIONALLOWEDIFPTDUE','To check whether New water tap connection application allowed if PT Tax due present',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
+
+Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG'),'NEWCONNECTIONALLOWEDIFPTDUE','To check whether New water tap connection application allowed if PT Tax due present',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
 INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES ( 
 nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='NEWCONNECTIONALLOWEDIFPTDUE'), current_date, 'NO',0);
-Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG_VALUES'),'DOCUMENTREQUIREDFORBPL','The document which is mandatory to get water tap connection for BPL category',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
+
+Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG'),'DOCUMENTREQUIREDFORBPL','The document which is mandatory to get water tap connection for BPL category',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
 INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES ( 
 nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='DOCUMENTREQUIREDFORBPL'), current_date, 'Ration Card',0);
-Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG_VALUES'),'CLERKDESIGNATIONFORCSCOPERATOR','Department for Workflow',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
+
+Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG'),'CLERKDESIGNATIONFORCSCOPERATOR','Department for Workflow',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
 INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES ( 
 nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='CLERKDESIGNATIONFORCSCOPERATOR'), current_date, 'Revenue Clerk',0);
-Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG_VALUES'),'DEPARTMENTFORWORKFLOW','Department for Workflow',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
+
+Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG'),'DEPARTMENTFORWORKFLOW','Department for Workflow',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
 INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES ( 
 nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='DEPARTMENTFORWORKFLOW'), current_date, 'Revenue',0);
-Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG_VALUES'),'ROLEFORNONEMPLOYEEINWATERTAX','roles to create waterTax application ',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
+
+Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG'),'ROLEFORNONEMPLOYEEINWATERTAX','roles to create waterTax application ',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
 INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES ( 
 nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='SENDEMAILFORWATERTAX'), current_date, 'CSC Operator',0);
-Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG_VALUES'),'ADDCONNECTIONALLOWEDIFWTDUE','To restrict whether multiple additional water tap connection allowed for single Property ID',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
+
+Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG'),'ADDCONNECTIONALLOWEDIFWTDUE','To restrict whether multiple additional water tap connection allowed for single Property ID',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
 INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES ( 
 nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='ADDCONNECTIONALLOWEDIFWTDUE'), current_date, 'NO',0);
-Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (310,'RolesForSearchWAterTaxConnection','Roles To Show Action dropdown In search connection',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
+
+Insert into eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG'),'RolesForSearchWAterTaxConnection','Roles To Show Action dropdown In search connection',0,null,null,null,null,(select id from eg_module where name='Water Tax Management'));
 INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES ( 
 nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='RolesForSearchWAterTaxConnection'), current_date, 'Operator',0);
 INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES ( 
@@ -220,6 +230,7 @@ INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) V
 nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='ROLEFORNONEMPLOYEEINWATERTAX'),current_date, 'Water Tax Management',0);
 
 ------------------END---------------------
+
 -----------------START-------------------
 
 SELECT pg_catalog.setval('eg_wf_matrix_seq', 79, false);
