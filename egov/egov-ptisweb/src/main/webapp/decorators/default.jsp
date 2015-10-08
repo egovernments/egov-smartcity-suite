@@ -49,7 +49,7 @@
       	<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/yui2.8/reset-fonts/reset-fonts.css' context='/egi'/>" />
 		<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/yui2.8/fonts/fonts-min.css' context='/egi'/>" />
 
-		<link href="<c:url value='/resources/css/propertytax.css'/>" rel="stylesheet" type="text/css" />
+		<link href="<c:url value='/resources/css/propertytax.css?${app_release_no}'/>" rel="stylesheet" type="text/css" />
 		<link href="<c:url value='/css/commonegovNew.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		
 		<link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
@@ -70,17 +70,17 @@
 		<script type="text/javascript" src="/egi/commonyui/yui2.8/datatable/datatable-min.js"></script>
 		<!-- <script type="text/javascript" src="/egi/commonyui/build/autocomplete/autocomplete-debug.js"></script> -->
 		
-		<script type="text/javascript" src="<c:url value='/resources/javascript/propertyTax.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/propertyTax.js?${app_release_no}'/>"></script>
 	    <%--  <script type="text/javascript" src="<c:url value='/javascript/calender.js'/>"></script> --%>
-	    <script type="text/javascript" src="<c:url value='/resources/javascript/helper.js'/>"></script>
-	    <script type="text/javascript" src="<c:url value='/resources/javascript/WorkFlow.js'/>"></script>
+	    <script type="text/javascript" src="<c:url value='/resources/javascript/helper.js?${app_release_no}'/>"></script>
+	    <script type="text/javascript" src="<c:url value='/resources/javascript/WorkFlow.js?${app_release_no}'/>"></script>
 	    <script type="text/javascript" src="<c:url value='/commonjs/calender.js' context='/egi'/>" ></script>
 		<%-- <script type="text/javascript" src="<c:url value='/dhtml.js'/>"></script> --%>
-		<script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/javascript/SASvalidation.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/javascript/dateValidation.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/javascript/createProperty.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/javascript/json2.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/validations.js?${app_release_no}'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/SASvalidation.js?${app_release_no}'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/dateValidation.js?${app_release_no}'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/createProperty.js?${app_release_no}'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/json2.js?${app_release_no}'/>"></script>
 		<%-- <script type="text/javascript" src="<c:url value='/resources/javascript/modifyProperty.js'/>"></script> --%>
 		<%-- <SCRIPT type="text/javascript" src="<c:url value='/script/jsCommonMethods.js' />"></SCRIPT> --%>
 		
@@ -92,7 +92,7 @@
 		
 		<!-- link rel="stylesheet" type="text/css" href="<c:url value='/resources/css/jquery/jquery-ui-1.8.4.custom.css'/>" />
 	    <script type="text/javascript" src="<c:url value='/resources/javascript/jquery/jquery-ui-1.8.22.custom.min.js'/>"></script-->
-	    <script type="text/javascript" src="<c:url value='/resources/javascript/jquery/ajax-script.js'/>"></script>
+	    <script type="text/javascript" src="<c:url value='/resources/javascript/jquery/ajax-script.js?${app_release_no}'/>"></script>
 	    <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
     	<decorator:head/>
     </head>
