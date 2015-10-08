@@ -70,12 +70,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/application")
-public class CloserAcknowledgmentController {
+public class ReconnectionAckController {
 
     @Autowired
     private ReportService reportService;
 
-    public static final String ESTIMATION_NOTICE = "CloserConnectionAcknowldgemt";
+    public static final String ESTIMATION_NOTICE = "ReconnacknowlgementNotice";
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
     private final Map<String, Object> reportParams = new HashMap<String, Object>();
@@ -85,7 +85,7 @@ public class CloserAcknowledgmentController {
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
-    @RequestMapping(value = "/acknowlgementNotice", method = RequestMethod.GET)
+    @RequestMapping(value = "/ReconnacknowlgementNotice", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request,
             final HttpSession session) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
@@ -107,9 +107,8 @@ public class CloserAcknowledgmentController {
                 break;
             }
 
-                reportParams.put("applicationType",
-                        WordUtils.capitalize(WaterTaxConstants.CLOSINGCONNECTION));
-          
+            reportParams.put("applicationType",
+                    WordUtils.capitalize(WaterTaxConstants.RECONNECTIONCONNECTION));
             reportParams.put("cityName", session.getAttribute("cityname"));
             reportParams.put("district", session.getAttribute("districtName"));
            reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
@@ -126,7 +125,7 @@ public class CloserAcknowledgmentController {
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/acknowlgementNotice/view/{applicationNumber}", method = RequestMethod.GET)
+    @RequestMapping(value = "/ReconnacknowlgementNotice/view/{applicationNumber}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> viewEstimationNotice(@PathVariable final String applicationNumber,
             final HttpSession session) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService

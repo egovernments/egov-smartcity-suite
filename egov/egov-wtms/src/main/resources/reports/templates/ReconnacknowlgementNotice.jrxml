@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReconnacknowlgementNotice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e9770880-71cf-4aae-a82f-c57adc04545e">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="district" class="java.lang.String"/>
+	<parameter name="applicationDate" class="java.lang.String"/>
+	<parameter name="applicantName" class="java.lang.String"/>
+	<parameter name="address" class="java.lang.String"/>
+	<parameter name="houseNo" class="java.lang.String"/>
+	<parameter name="applicationType" class="java.lang.String"/>
+	<parameter name="consumerCode" class="java.lang.String"/>
+	<background>
+		<band height="802" splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="275" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="344" y="94" width="209" height="23" uuid="c6442c19-2eb8-4fcd-8b44-003862dbc137"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+					<font size="12" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Date: </style>"+$P{applicationDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="247" y="94" width="97" height="23" uuid="6953e171-ae9d-4794-ada2-7194a1a8fcec"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Approval Date:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="94" width="99" height="23" uuid="ab93683d-4145-4458-9570-4e8f90363039"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[H.S.C Number:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="112" y="94" width="122" height="23" uuid="b5cff8da-704e-454e-a48e-538c9d1a9971"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{consumerCode}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="27" y="144" width="489" height="57" uuid="c2af79c8-a400-49be-a3b0-5c966cd860f3"/>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font size="10" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["This is to acknowledge that an application for _ "+$P{applicationType}+" has been Approved by commissioner for Water tap connection with H.S.C No."+$P{consumerCode}+" with address "+$P{address}+" Disconnection is effective from" +$P{applicationDate}+"."]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="322" y="241" width="194" height="28" uuid="a2051f4a-cbc7-4c49-b109-a794268f1752"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="322" y="226" width="194" height="15" uuid="2a3e4bf2-8a7e-435f-a2df-223a3b549813"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{applicantName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="322" y="200" width="194" height="25" uuid="5a9790dd-6c32-4dc0-a2c3-ecc0b6657599"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Signature]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="3" y="35" width="550" height="20" uuid="881900b1-022a-4282-b344-3ea42170aaee"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="55" width="550" height="23" isPrintInFirstWholeBand="true" uuid="d9fd8637-7f0e-4637-bfb6-a5ca70818a0c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[    Water tap Dis-Connection Acknowledgement  ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="0" width="550" height="35" isPrintInFirstWholeBand="true" uuid="50a1a43f-9e4b-4e95-9969-382e0d391818"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Water tap disconnection Acknowledgement:]]></text>
+			</staticText>
+		</band>
+	</title>
+</jasperReport>

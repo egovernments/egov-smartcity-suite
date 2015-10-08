@@ -311,6 +311,12 @@ public class UpdateConnectionController extends GenericConnectionController {
                 return "redirect:/application/acknowlgementNotice?pathVar="
 
                 + waterConnectionDetails.getApplicationNumber();
+            
+            if (workFlowAction != null && !workFlowAction.isEmpty()
+                    && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_RECONNECTIONACKNOWLDGEENT_BUTTON))
+                return "redirect:/application/ReconnacknowlgementNotice?pathVar="
+
+                + waterConnectionDetails.getApplicationNumber();
             final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                     + waterTaxUtils.getApproverUserName(approvalPosition);
             return "redirect:/application/application-success?pathVars=" + pathVars;
