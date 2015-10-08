@@ -91,8 +91,11 @@ jQuery(document).ready(function($) {
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="9">Closure of Connection</option></select>');
 			        				   }
 			        				   
-			        				   else if (ulbUserRole!=null && ulbUserRole!=""  && full.resource.searchable.closureType !=null) {
+			        				   else if (ulbUserRole!=null && ulbUserRole!=""  && full.resource.searchable.closureType =='P') {
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
+			        				   }
+			        				   else if (ulbUserRole!=null && ulbUserRole!=""  && full.resource.searchable.closureType =='T') {
+			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="10">Reconnection</option></select>');
 			        				   }
 			        				   else if(cscUserRole!=null && cscUserRole!=""){
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="6">Collect Tax</option></select>');
@@ -100,7 +103,7 @@ jQuery(document).ready(function($) {
 			        				   }
 			        			   } else if (((cscUserRole!=null && cscUserRole!="" )||( ulbUserRole!=null &&  ulbUserRole!="") )
 			        					   && full.resource.clauses.status == 'DISCONNECTED') {
-			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">Reconnection</option></select>');
+			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="10">Reconnection</option></select>');
 			        			   }
 			        			   else if(superUserRole!=null && full.resource.clauses.status == 'DISCONNECTED') {
 			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
@@ -125,16 +128,18 @@ jQuery(document).ready(function($) {
 			        				   else if (ulbUserRole!=null && ulbUserRole!="" && full.resource.clauses.connectiontype !='METERED' && full.resource.searchable.closureType ==null) {
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="9">Closure of Connection</option></select>');
 			        				   }
-			        				   
-			        				   else if (ulbUserRole!=null && ulbUserRole!="" && full.resource.clauses.connectiontype !='METERED' && full.resource.searchable.closureType==null) {
-			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="9">Closure of Connection</option></select>');
+			        				  else if (ulbUserRole!=null && ulbUserRole!=""  && full.resource.searchable.closureType =='T') {
+			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="10">Reconnection</option></select>');
+			        				   }
+			        				  else if (ulbUserRole!=null && ulbUserRole!=""  && full.resource.searchable.closureType =='P') {
+			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
 			        				   }
 			        				   else if(superUserRole!=null && superUserRole!="" ){
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
 			        				   }
 
 			        			   } else if ((cscUserRole!=null && cscUserRole!="" )&& full.resource.clauses.status == 'DISCONNECTED') {
-			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">Reconnection</option></select>');
+			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="10">Reconnection</option></select>');
 			        			   }
 			        			   else if (ulbUserRole!=null &&  ulbUserRole!="" && full.resource.clauses.status == 'CLOSED' && full.resource.searchable.closureType=='T'  ) {
 		        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="10">ReConnection</option></select>');
@@ -148,12 +153,19 @@ jQuery(document).ready(function($) {
 			        			   if (cscUserRole!=null && cscUserRole!="" && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.waterTaxDue > 0) {
 			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Tax</option></select>');
 			        			   }
-			        			   else if (ulbUserRole!=null && ulbUserRole!="" && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype =='METERED') {
+			        			   else if (ulbUserRole!=null && ulbUserRole!="" && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype =='METERED' && full.resource.searchable.closureType==null) {
 			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="8">Enter Meter Reading</option><option value="9">Closure of Connection</option></select>');
 			        			   }
-			        			   else if (ulbUserRole!=null && ulbUserRole!="" &&  full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype !='METERED') {
+			        			   else if (ulbUserRole!=null && ulbUserRole!="" &&  full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype !='METERED'  && full.resource.searchable.closureType==null) {
 			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="9">Closure of Connection</option></select>');
 			        			   }
+			        			   else if (ulbUserRole!=null && ulbUserRole!=""  && full.resource.searchable.closureType =='T') {
+		        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="10">Reconnection</option></select>');
+		        				   }
+			        			   
+			        			   else if (ulbUserRole!=null && ulbUserRole!=""  && full.resource.searchable.closureType =='P') {
+		        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
+		        				   }
 			        			   else if(superUserRole!=null && superUserRole!=""){
 			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
 			        			   }
@@ -225,6 +237,13 @@ jQuery(document).ready(function($) {
 											$('#waterSearchRequestForm').attr('action', url);
 											window.location = url;
 										} 
+										else if (this.value == 10) {
+											var url = '/wtms/application/reconnection/'+ consumerNumber;
+											$('#waterSearchRequestForm').attr('method', 'get');
+											$('#waterSearchRequestForm').attr('action', url);
+											window.location = url;
+										} 
+										
 
 									});
 
