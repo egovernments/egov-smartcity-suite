@@ -40,6 +40,7 @@
 package org.egov.tl.web.actions.cancellation;
 
 import org.apache.struts2.convention.annotation.Action;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,6 +49,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.entity.Address;
@@ -62,14 +64,14 @@ import org.egov.tl.domain.entity.WorkflowBean;
 import org.egov.tl.domain.service.TradeService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
-
+import org.egov.tl.web.actions.newtradelicense.NewTradeLicenseAction;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-@Result(
-        name = "success", type = "redirectAction", location = "CancelLicense.action")
 @ParentPackage("egov")
+@Results({ @Result(name = CancelLicenseAction.NEW, location = "cancelLicense-new.jsp"),
+    @Result(name = CancelLicenseAction.SUCCESS, type = "redirectAction", location = "CancelLicense.action")})
 public class CancelLicenseAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(CancelLicenseAction.class);
 
@@ -136,7 +138,7 @@ public class CancelLicenseAction extends BaseFormAction {
     }
 
     @SkipValidation
-@Action(value="/cancellation/cancelLicense-newForm")
+    @Action(value="/cancellation/cancelLicense-newForm")
     public String newForm() {
         license = ts.getTps().findById(licenseId.longValue(), false);
         return Constants.NEW;

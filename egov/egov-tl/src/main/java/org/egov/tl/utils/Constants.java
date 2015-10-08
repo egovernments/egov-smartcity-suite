@@ -352,6 +352,7 @@ public class Constants {
     public static final String STATUS_ACTIVE = "ACT";
     public static final String STATUS_ACKNOLEDGED = "ACK";
     public static final String STATUS_EXPIRED = "EXP";
+    public static final String STATUS_UNDERWORKFLOW = "UWF";
 
     public static final Integer REASON_OBJECTION_NO_1 = 1;
     public static final String REASON_OBJECTION_VALUE_1 = "Citizen Complaint";

@@ -743,4 +743,13 @@ public abstract class BaseLicenseService {
     public List<NatureOfBusiness> getAllNatureOfBusinesses() {
         return (List<NatureOfBusiness>) persistenceService.findAllBy("from NatureOfBusiness order by name");
     }
+    
+    
+    /**
+     * @param licenseNumber
+     * @return
+     */
+    public TradeLicense getTradeLicenseByLicenseNum(String licenseNumber) {
+        return (TradeLicense) persistenceService.find("from TradeLicense where licenseNumber=?",licenseNumber);
+    }
 }
