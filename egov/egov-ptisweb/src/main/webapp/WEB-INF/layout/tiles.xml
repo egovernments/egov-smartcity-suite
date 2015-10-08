@@ -78,8 +78,14 @@
         <put-attribute name="page-title" value="lbl.property.demolition" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/demolition/demolition-form.jsp"/>
     </definition>
+    
     <definition name="natureOfUsageReport-form" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.natureOfUsage.report.title" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/natureOfUsageReport-form.jsp"/>
+    </definition>
+    
+    <definition name="baseRegister-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.baseRegister.report" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/baseRegister-form.jsp"/>
     </definition>
 </tiles-definitions>
