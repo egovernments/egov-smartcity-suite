@@ -76,9 +76,9 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.address"/></label>
+						<label class="col-sm-3 control-label"><spring:message code="lbl.address"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
-							<form:textarea path="complainant.address" id="doc" minlength="10" placeholder="" maxlength="256" cssClass="form-control autogrow" required="required"/>
+							<form:textarea path="complainant.address" id="address" minlength="10" placeholder="" maxlength="256" cssClass="form-control autogrow" required="required"/>
 							<form:errors path="complainant.address" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
@@ -113,7 +113,7 @@
 					</div>
 					
 					<div class="form-group">
-						<div class="col-sm-3 col-xs-12 change-text-align">
+						<div class="col-sm-3 col-xs-12 change-text-align" id="upload-section">
 							<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.uploadPhotoVid"/></a>
 							<input type="file" id="file1" name="files" data-id="1" class="filechange inline btn" style="display:none;"/>
 							<input type="file" id="file2" name="files" data-id="2" class="filechange inline btn" style="display:none;"/>
@@ -161,7 +161,7 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-12 col-md-12 text-center">
+					<div class="col-sm-offset-3 col-md-6 text-center" id="captcha-section">
 						<div class="g-recaptcha" data-sitekey="6LfidggTAAAAADwfl4uOq1CSLhCkH8OE7QFinbVs"></div>
 						<form:errors cssClass="add-margin error-msg"/>
 					</div>
@@ -170,7 +170,7 @@
 			
 			<div class="row">
 				<div class="text-center">
-					<button type="submit" class="btn btn-primary"><spring:message code="title.complaint.reg"/></button>
+					<button type="submit" class="btn btn-primary" id="create-griev"><spring:message code="title.complaint.reg"/></button>
 					<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 				</div>
 			</div>

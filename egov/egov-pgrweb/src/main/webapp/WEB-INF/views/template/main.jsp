@@ -103,5 +103,12 @@
 					</div>
 			</div>
 		</div>
+		<div class="modal fade demo-class" data-backdrop="static" style="opacity:0.01">
+			<div class="modal-dialog">
+					<div class="modal-body">
+						
+					</div>
+			</div>
+		</div>
     </body>
 </html>

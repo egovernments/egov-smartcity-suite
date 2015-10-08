@@ -107,6 +107,7 @@ jQuery(document).ready(function($)
 		source: complaintlocation.ttAdapter()
 	}).on('typeahead:selected', function(event, data){            
 		$("#locationid").val(data.value);    
+		$('#lat, #lng').val(0.0);
     });
 	
 	$(":input").inputmask();
@@ -117,21 +118,9 @@ jQuery(document).ready(function($)
 		$("#complaintTypeName").trigger('blur');
 	});
 	
-	/*complaint through*/
-	$('input:radio[name="receivingMode"]').click(function(e) {
+	$('input[type=radio][name=receivingMode]').change(function() {
 		$('#receivingCenter').prop('selectedIndex',0);
 		disableCRN(); 
-		if($('#receivingMode5').is(':checked'))
-		{
-			enableRC();
-		}else
-		{
-			disableRC();
-		}
-	});
-	
-	
-	$('input[type=radio][name=receivingMode]').change(function() {
 		if ($("input[name=receivingMode]:checked").val() == 'MANUAL') {
 			enableRC();
 		} else {
@@ -140,49 +129,89 @@ jQuery(document).ready(function($)
 	});
 	
 	$('.tour-section').click(function(){
-
-    	//define text
-	    var text = 'Dog';
-	    
-	    //text is split up to letters
-	    $.each(text.split(''), function(i, letter){
-	        setTimeout(function(){
-	            //we add the letter to the container
-	            $('#complaintTypeName').val($('#complaintTypeName').val() + letter);
-	            $("#complaintTypeName").trigger("input");
-	            $("span.twitter-typeahead .tt-suggestion > p").mouseenter();
-	            if(i == 2)
-	            { 
-	            	$('#complaintTypeName').typeahead('val','Dog menace'); 
-	            	$('#complaintTypeName').blur(); 
-            	}
-	        }, 1000*(i+1));
-	    });
-	    
+		$('.demo-class').modal('show', {backdrop: 'static'});
 		var tour = new Tour({
 			  steps: [
+	          {
+			    element: "#f-name",
+			    title: "Name",
+			    content: "Enter your full name!"
+			  },
+			  {
+			    element: "#mob-no",
+			    title: "Mobile Number",
+			    content: "Enter your valid 10 digit mobile number!"
+			  },
+			  {
+			    element: "#email",
+			    title: "Email ID",
+			    content: "Enter your valid email id!"
+			  },
+			  {
+			    element: "#address",
+			    title: "Address",
+			    content: "Enter your present residential address!"
+			  },
 			  {
 			    element: "#complaintTypeName",
 			    title: "Grievance Type",
-			    content: "Enter your grievance type and select it from the below suggestion"
+			    content: "Enter your grievance type and select it from the suggestion or choose it from below frequently filed grievance type!"
+			  },
+			  {
+			    element: "#doc",
+			    title: "Grievance Details",
+			    content: "Describe your grievance details briefly!"
+			  },
+			  {
+			    element: "#upload-section",
+			    title: "Upload Photograph / Video",
+			    content: "Upload grievance relevated photo / video (Max : 3 files)!"
 			  },
 			  {
 			    element: "#location-tour",
 			    title: "Grievance Location",
-			    content: "Enter your grievance location or select it from the map icon"
-			  }
-			],
-			  storage: false,
-			  duration: 6000,
-			  onStart: function (tour) {
-				  
+			    content: "Enter your grievance location or select it from the map icon!"
 			  },
-			  onNext: function (tour) {
-				  $('#complaintTypeName').typeahead('val','');
+			  {
+			    element: "#landmarkDetails",
+			    title: "Landmark",
+			    content: "Enter your landmark (if any)!"
+			  },
+			  {
+			    element: "#captcha-section iframe",
+			    title: "Captcha",
+			    content: "Click on the checkbox to validate captcha!"
+			  },
+			  {
+			    element: "#create-griev",
+			    title: "Create Grievance",
+			    content: "Finally, Click here to submit your grievance!"
+			  }],
+			  storage: false,
+			  duration: 5000,
+			  onShown: function (tour) {
+				  console.log(tour.getCurrentStep());
+				  var step = tour.getCurrentStep();
+				  if(step == 0){
+					  typingfeel('James Jackson', '#f-name');
+				  }else if(step == 1){
+					  typingfeel('9988776655', '#mob-no');
+				  }else if(step == 2){
+					  typingfeel('james.jackson@gmail.com', '#email');
+				  }else if(step == 3){
+					  typingfeel('Colorado U.S', '#address');
+				  }else if(step == 4){ 
+				    typingfeelintypeahead('Dog','#complaintTypeName','Dog menace');
+				  }else if(step == 5){
+					  typingfeel('Dog menace in madiwala', '#doc');
+				  }else if(step == 7){ 
+				    typingfeelintypeahead('Rev','#location','Revenue, Zone-4, Srikakulam  Municipality');
+				  }else if(step == 8){
+					  typingfeel('Spencer Plaza', '#landmarkDetails');
+				  }
 			  },
 			  onEnd: function (tour) {
-				  $('#complaintTypeName').typeahead('val','');
-				  $('#complaintTypeId').val('');
+				  location.reload();
 			  },
 			  template : "<div class='popover tour'> <div class='arrow'></div> <h3 class='popover-title'></h3> <div class='popover-content'></div> </nav> </div>"
 		});
@@ -190,9 +219,6 @@ jQuery(document).ready(function($)
 		tour.init();
 		// Start the tour
 		tour.start();
-
-	    text = '';
-	    $('#complaintTypeName').typeahead('val','');
 	    
 	});
 
@@ -217,6 +243,33 @@ $("#receivingCenter").change(function(){
 		});
 	}
 });	
+
+function typingfeel(text, input){
+	$.each(text.split(''), function(i, letter){
+        setTimeout(function(){
+            //we add the letter to the container
+            $(input).val($(input).val() + letter);
+        }, 200*(i+1));
+    });
+}
+
+function typingfeelintypeahead(text, input, typeaheadtext){
+	//text is split up to letters
+    $.each(text.split(''), function(i, letter){
+        setTimeout(function(){
+            //we add the letter to the container
+            $(input).val($(input).val() + letter);
+            $(input).trigger("input");
+            $("span.twitter-typeahead .tt-suggestion > p").mouseenter();
+            if(i == 2)
+            { 
+            	$(input).typeahead('val',typeaheadtext); 
+            	$(input).blur(); 
+        	}
+        }, 1000*(i+1));
+    });
+}
+
 function setComplaintTypeId(obj) {
 	$("#complaintTypeId").val(obj)
 }

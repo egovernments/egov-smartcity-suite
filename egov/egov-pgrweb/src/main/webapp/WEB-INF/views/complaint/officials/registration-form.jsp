@@ -230,9 +230,4 @@
 	if(locationid !== ''){
 		$("#locationid").val(locationid);
 	}
-	
-	if ($("input[name=receivingMode]:checked").val() == 'PAPER') {
-		enableRC();
-		$("#receivingCenter").trigger('change');
-	}
 </script>
