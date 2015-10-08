@@ -90,3 +90,7 @@ INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodified
 INSERT INTO eg_user (id, title, salutation, dob, locale, username, password, pwdexpirydate, mobilenumber, altcontactnumber, emailid, createddate, lastmodifieddate, createdby, lastmodifiedby, active, name, gender, pan, aadhaarnumber, type, version, guardian, guardianrelation) VALUES (68, NULL, NULL, NULL, 'en_IN', 'egovernments', '$2a$10$uheIOutTnD33x7CDqac1zOL8DMiuz7mWplToPgcf7oxAI9OzRKxmK', '2020-12-31 00:00:00', NULL, NULL, NULL, '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, true, 'Admin', NULL, NULL, NULL, 'EMPLOYEE', 0, NULL, NULL);
 INSERT INTO eg_user (id, title, salutation, dob, locale, username, password, pwdexpirydate, mobilenumber, altcontactnumber, emailid, createddate, lastmodifieddate, createdby, lastmodifiedby, active, name, gender, pan, aadhaarnumber, type, version, guardian, guardianrelation) VALUES (1, NULL, 'MR.', NULL, 'en_IN', 'anonymous', 'XYZ', '2099-01-01 00:00:00', NULL, NULL, NULL, '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, true, 'Anonymous', NULL, NULL, NULL, 'EMPLOYEE', 0, NULL, NULL);
 ------------------END---------------------
+
+-----------------START--------------------
+INSERT into eg_userrole values((select id from eg_role  where name  = 'Super User'),(select id from eg_user where username ='egovernments'));
+------------------END---------------------

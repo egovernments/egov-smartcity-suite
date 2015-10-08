@@ -379,3 +379,11 @@ SELECT pg_catalog.setval('seq_egpgr_complainant', 1, false);
 SELECT pg_catalog.setval('seq_egpgr_complaint', 1, false);
 
 ------------------END---------------------
+
+-----------------START--------------------
+
+INSERT INTO eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module) values (nextval('SEQ_EG_APPCONFIG'),'SENDEMAILFORESCALATION','Send email for for escalation',0,1,1,current_date,current_date,(select id from eg_module where name='PGR'));
+INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES ( 
+nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='SENDEMAILFORESCALATION'), current_date, 'YES',0);
+
+------------------END---------------------
