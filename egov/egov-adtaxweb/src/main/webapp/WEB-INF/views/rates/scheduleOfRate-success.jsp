@@ -56,17 +56,17 @@
 				</div>
 			</div>
 			<div class="panel-body custom-form">
-				<div class="form-group">
-					<label for="field-1" class="col-sm-3 control-label"> <spring:message
-							code="lbl.category.name" /></label>
-					<div class="col-sm-3 add-margin">
+				<div class="row add-border">
+					<div class="col-md-3 col-xs-6 add-margin"> <spring:message
+							code="lbl.category.name" /></div>
+					<div class="col-md-3 col-xs-6 add-margin">
 						<input type=hidden id="mode" value="${mode}">
 						<c:out value="${rate.category.name}"></c:out>
 					</div>
 
-					<label for="field-1" class="col-sm-2 control-label"><spring:message
-							code="lbl.subcategory.name" /></label>
-					<div class="col-sm-3 add-margin">
+					<div class="col-md-3 col-xs-6 add-margin"><spring:message
+							code="lbl.subcategory.name" /></div>
+					<div class="col-md-3 col-xs-6 add-margin">
 						<c:out value="${rate.subCategory.description}"></c:out>
 
 					</div>

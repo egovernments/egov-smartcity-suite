@@ -50,9 +50,9 @@
 				</div> 
 				<div class="panel-body custom-form">
 					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.agency.name">
+						<label class="col-sm-4 control-label"><spring:message code="lbl.agency.name">
 						</spring:message><span class="mandatory"></span></label>
-						<div class="col-sm-6 add-margin">
+						<div class="col-sm-4 add-margin">
                             <form:select path="code" id="agencies" cssClass="form-control" cssErrorClass="form-control error" required="required">
                                 <form:option value=""> <spring:message code="lbl.select"/> </form:option>
                                 <form:options items="${agencies}" itemValue="code" itemLabel="name"/>

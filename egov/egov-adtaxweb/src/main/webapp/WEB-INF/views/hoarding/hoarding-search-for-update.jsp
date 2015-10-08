@@ -49,6 +49,7 @@
 	            <div class="panel-heading">
 	                <div class="panel-title"></div>
 	            </div>
+	            <div class="panel-body">
 	               <div class="form-group">
                         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.agency.name"/></label>
                         <div class="col-sm-3 add-margin">
@@ -138,9 +139,10 @@
 							<form:errors path="revenueInspector" cssClass="error-msg"/>
                         </div>
                     </div>
+                    </div>
 	            </div>
 	        </div>
-	        <div class="row">
+	        <div class="col-md-12">
        			<div class="text-center">
        				<button type="button" class="btn btn-primary" id="search-update"><spring:message code="lbl.submit"/></button>
            			<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
@@ -148,7 +150,9 @@
        			</div>
         	</div>
     	 </form:form>
-         <table class="table table-bordered datatable dt-responsive" id="search-update-result-table"></table>
+    	 <div class="col-md-12"><br>
+    	 	<table class="table table-bordered datatable dt-responsive" id="search-update-result-table"></table>
+    	 </div>
 	</div>
 
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
