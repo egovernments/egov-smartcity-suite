@@ -81,9 +81,9 @@
 					<div class="panel-body custom-form">
 						<s:hidden name="userMode" id="userMode"/>
 						<div class="form-group">
-							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+							<label for="field-1" class="col-sm-4 control-label text-right"><s:text
 									name="licenseSubCategory.subCategory.lbl" /><span class="mandatory"></span></label>
-							<div class="col-sm-3 add-margin">
+							<div class="col-sm-4 add-margin">
 								<s:select headerKey="-1"
 										headerValue="%{getText('default.select')}" name="subCategoryId"
 										id="subCategoryId" listKey="key" listValue="value"
