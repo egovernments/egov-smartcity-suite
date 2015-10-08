@@ -75,9 +75,11 @@
 					<tr>
 						<%@  include file="createPropertyForm.jsp"%>
 					</tr>
-					<tr>
-						<%@ include file="../common/DocumentUploadForm.jsp"%>
-					</tr>
+					<s:if test="%{!documentTypes.isEmpty()}">
+						<tr>
+							<%@ include file="../common/DocumentUploadForm.jsp"%>
+						</tr>
+					</s:if>
 					<s:if test="%{propertyByEmployee == true}">
 						<tr>
 							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>

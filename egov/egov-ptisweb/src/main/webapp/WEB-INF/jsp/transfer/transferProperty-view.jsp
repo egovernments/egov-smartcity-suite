@@ -256,9 +256,11 @@
 										value="%{mutationFee}" default="N/A" /></span></td>
 						</tr>
 					</s:if>
-					<tr>
-						<%@ include file="../common/DocumentUploadView.jsp"%>
-					</tr>
+					<s:if test="%{!documentTypes.isEmpty()}">
+						<tr>
+							<%@ include file="../common/DocumentUploadView.jsp"%>
+						</tr>
+					</s:if>
 				</table>
 				<s:if
 					test="%{!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT) && 

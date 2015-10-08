@@ -330,12 +330,13 @@
 			</div>
 		</td>
 	</tr>
-
-	<tr>
-		<td colspan="5">
-			<%@ include file="../common/DocumentUploadView.jsp"%>
-		</td>
-	</tr>
+	<s:if test="%{!documentTypes.isEmpty()}">
+		<tr>
+			<td colspan="5">
+				<%@ include file="../common/DocumentUploadView.jsp"%>
+			</td>
+		</tr>
+	</s:if>
 	<s:if test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_OPEN_PLOT) || ((propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_STATE_GOVT) 
 		|| propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_CENTRAL_GOVT)) && propertyDetail.floorDetails.isEmpty())}">
 		<tr>

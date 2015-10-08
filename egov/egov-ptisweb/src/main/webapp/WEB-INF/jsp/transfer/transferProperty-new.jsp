@@ -213,7 +213,9 @@
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								onblur="validateDateFormat(this);" cssClass="datepicker" /></td>
 					</tr>
-					<%@ include file="../common/DocumentUploadForm.jsp"%>
+					<s:if test="%{!documentTypes.isEmpty()}">
+						<%@ include file="../common/DocumentUploadForm.jsp"%>
+					</s:if>
 				</table>
 				<s:if test="%{propertyByEmployee == true}">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">

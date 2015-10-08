@@ -294,10 +294,10 @@
 			</div>
 		</td>
 	</tr>
-	
-	<tr>
-		<%@ include file="../common/DocumentUploadView.jsp"%>
-	</tr>
-	
+	<s:if test="%{!documentTypes.isEmpty()}">
+		<tr>
+			<%@ include file="../common/DocumentUploadView.jsp"%>
+		</tr>
+	</s:if>
 
 </table>

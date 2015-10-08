@@ -233,7 +233,9 @@
 						</tr>
 					</s:if>
 				</table>
-				<%@ include file="../common/DocumentUploadForm.jsp"%>
+				<s:if test="%{!documentTypes.isEmpty()}">
+					<%@ include file="../common/DocumentUploadForm.jsp"%>
+				</s:if>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
