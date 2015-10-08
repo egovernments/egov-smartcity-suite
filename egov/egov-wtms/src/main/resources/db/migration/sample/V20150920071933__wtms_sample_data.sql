@@ -307,6 +307,8 @@ Insert into egwtr_document_names (id,applicationtype,documentname,description,re
 Insert into egwtr_document_names (id,applicationtype,documentname,description,required,active,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (22,2,'Other1','Other1','false','true',to_timestamp('2015-08-19 10:45:51.113848','null'),null,1,null,0);
 Insert into egwtr_document_names (id,applicationtype,documentname,description,required,active,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (23,2,'Other2','Other2','false','true',to_timestamp('2015-08-19 10:45:51.113848','null'),null,1,null,0);
 Insert into egwtr_document_names (id,applicationtype,documentname,description,required,active,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (24,3,'Other','Other','false','true',to_timestamp('2015-08-22 15:02:30.947489','null'),null,1,null,0);
+INSERT INTO egwtr_document_names(id, applicationtype, documentname, description, required, active, createddate, createdby) VALUES (25, (select id from egwtr_application_type where code = 'CLOSINGCONNECTION'), 'Other',  'Other', false, true, now(), 1);
+INSERT INTO egwtr_document_names(id, applicationtype, documentname, description, required, active, createddate, createdby) VALUES (26, (select id from egwtr_application_type where code = 'RECONNECTION'), 'Other',  'Other', false, true, now(), 1);  
 ------------------END---------------------
 -----------------START--------------------
 Insert into egwtr_demandnotice_penalty_period (id,issueofdemandnotice,penaltyperiod,min_con_holding_months,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (1,'HALFYEARLY',15,6,to_timestamp('2015-08-15 11:02:41.820635','null'),null,1,null,0);
