@@ -177,7 +177,9 @@
 		 <s:checkbox name="propertyDetail.structure" id="propertyDetail.structure"
 			value="%{propertyDetail.structure}" onclick="enableOrDisableSiteOwnerDetails(this);" />
 		</td>
-		<td class="greybox siteowner"><s:text name="siteowner"></s:text>:</td>
+		<td class="greybox siteowner"><s:text name="siteowner"></s:text>
+			<span class="mandatory1">*</span>:
+		</td>
 		<td class="greybox siteowner"><s:textfield maxlength="32" value="%{propertyDetail.siteOwner}"
 				name="propertyDetail.siteOwner" id="siteOwner"></s:textfield></td>
 	</tr>
@@ -193,11 +195,11 @@
 	
 	<tr class="bpddetails">
 		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="building.permNo"></s:text> :</td>
+		<td class="greybox"><s:text name="building.permNo"></s:text><span class="mandatory1">*</span> :</td>
 		<td class="greybox"><s:textfield name="propertyDetail.buildingPermissionNo" id="buildingPermissionNo" size="12" maxlength="12"
 				onchange="trim(this,this.value);" onblur="checkZero(this);" value="%{propertyDetail.buildingPermissionNo}"></s:textfield>
 		</td>
-		<td class="greybox"><s:text name="buildingpermdate"></s:text> :</td>
+		<td class="greybox"><s:text name="buildingpermdate"></s:text><span class="mandatory1">*</span> :</td>
 		<td class="greybox"><s:date name="propertyDetail.buildingPermissionDate" var="buildingPermDate" format="dd/MM/yyyy" /> 
 		<s:textfield name="propertyDetail.buildingPermissionDate" cssClass="datepicker" value="%{#buildingPermDate}" autocomplete="off"
 				id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>

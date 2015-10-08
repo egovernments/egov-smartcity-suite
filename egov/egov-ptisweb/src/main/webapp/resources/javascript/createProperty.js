@@ -100,6 +100,7 @@ function enableFieldsForPropType() {
 			jQuery('tr.bpddetails').hide();
 			jQuery("#apartment").prop('selectedIndex', 0);
 			jQuery('td.apartmentRow').hide();
+			jQuery('#houseNoSpan').hide();
 		} else {
 			jQuery('tr.floordetails').show();
 			jQuery("#vacantLandTable tr, #boundaryData tr").find('input').each(function() {
@@ -116,6 +117,7 @@ function enableFieldsForPropType() {
 			jQuery('tr.superStructureRow').show();
 			jQuery('tr.bpddetailsheader').show();
 			jQuery('td.apartmentRow').show();
+			jQuery('#houseNoSpan').show();
 		}
 	}
 }
