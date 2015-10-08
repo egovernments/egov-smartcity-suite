@@ -83,12 +83,6 @@ public class City extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_CITY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "boundary", updatable = false)
-    @NotAudited
-    @Fetch(FetchMode.JOIN) 
-    private Boundary boundary;
-
     @SafeHtml
     @NotBlank
     private String name;
@@ -130,7 +124,7 @@ public class City extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "preferences")
     @NotAudited
-    @Fetch(FetchMode.JOIN) 
+    @Fetch(FetchMode.JOIN)
     private CityPreferences preferences;
 
     @Override
@@ -141,14 +135,6 @@ public class City extends AbstractAuditable {
     @Override
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public Boundary getBoundary() {
-        return boundary;
-    }
-
-    public void setBoundary(final Boundary boundary) {
-        this.boundary = boundary;
     }
 
     public String getName() {
@@ -249,7 +235,6 @@ public class City extends AbstractAuditable {
 
     public Map<String, Object> toMap() {
         final Map<String, Object> cityPrefs = new HashMap<>();
-        cityPrefs.put("cityBoundaryId", boundary.getId().toString());
         cityPrefs.put("cityurl", domainURL);
         if (preferences == null) {
             cityPrefs.put("citylogo", "/resources/global/images/logo@2x.png");

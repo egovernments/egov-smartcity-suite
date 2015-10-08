@@ -1,3 +1,6 @@
+-----------------START--------------------
+INSERT INTO eg_city (domainurl, name, localname, id, active, version, createdby, lastmodifiedby, createddate, lastmodifieddate, code, recaptchapk, districtcode, districtname, longitude, latitude, preferences, recaptchapub) VALUES ('localhost', 'Ranchi Municipal Corporation', 'Ranchi', nextval('seq_eg_city'), true, 0, 1, 1, '2010-01-01 00:00:00', '2015-01-01 00:00:00', '0001', '6LfidggTAAAAANDSoCgfkNdvYm3Ugnl9HC8_68o0', NULL, NULL, NULL, NULL, NULL, '6LfidggTAAAAADwfl4uOq1CSLhCkH8OE7QFinbVs');
+------------------END---------------------
 
 INSERT INTO eg_department (id, name, createddate, code, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (1, 'Accounts', '2010-01-01 00:00:00', 'A', 1, 1, '2015-01-01 00:00:00', 0);
 INSERT INTO eg_department (id, name, createddate, code, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (2, 'Buildings', '2010-01-01 00:00:00', 'B', 1, 1, '2015-01-01 00:00:00', 0);

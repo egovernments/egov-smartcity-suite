@@ -74,10 +74,6 @@ CREATE SEQUENCE SEQ_EG_ACTION
 ------------------END---------------------
 
 -----------------START--------------------
-INSERT INTO eg_city (domainurl, boundary, name, localname, id, active, version, createdby, lastmodifiedby, createddate, lastmodifieddate, code, recaptchapk, districtcode, districtname, longitude, latitude, preferences, recaptchapub) VALUES ('localhost', null, 'Ranchi Municipal Corporation', 'Ranchi', 2, true, 0, 1, 1, '2010-01-01 00:00:00', '2015-01-01 00:00:00', '0001', '6LfidggTAAAAANDSoCgfkNdvYm3Ugnl9HC8_68o0', NULL, NULL, NULL, NULL, NULL, '6LfidggTAAAAADwfl4uOq1CSLhCkH8OE7QFinbVs');
-------------------END---------------------
-
------------------START--------------------
 INSERT INTO eg_messagetemplate (id, templatename, template, locale, version) VALUES (1, 'user.pwd.recovery', 'Click the link below to reset your password {2} {0}{1} {2} If clicking the link above doesn''''t work, please copy and paste the URL in a new browser window instead.{2}If you''''ve received this in error, it''''s likely that another user entered your email address or mobile number by mistake while trying to reset a password. If you didn''''t initiate the request, you don''''t need to take any further action and can safely disregard this email.', 'en_IN', NULL);
 INSERT INTO eg_messagetemplate (id, templatename, template, locale, version) VALUES (2, 'user.pwd.reset', 'Hi {0}, {2} Your password has been reset, your new password is {2} {1} {2} Please change this password as soon as you login for more security.', 'en_IN', NULL);
 ------------------END---------------------
