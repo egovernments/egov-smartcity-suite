@@ -1698,10 +1698,10 @@ INSERT INTO functionary (id, code, name, createtimestamp, updatetimestamp, isact
 ------------------END---------------------
 
 -----------------START-------------------
-INSERT INTO fund (id, code, name, llevel, parentid, isactive, lastmodified, created, modifiedby, isnotleaf, identifier, purpose_id, payglcodeid, recvglcodeid, createdby, openingdebitbalance, openingcreditbalance, transactiondebitamount, transactioncreditamount) VALUES (nextval('seq_fund'), '01', 'Municipal Fund', 0, NULL, 1, '0001-04-13 00:00:00 BC', '0001-04-13 00:00:00 BC', 1, 0, '1', 12, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO fund (id, code, name, llevel, parentid, isactive, lastmodified, created, modifiedby, isnotleaf, identifier, purpose_id, payglcodeid, recvglcodeid, createdby, openingdebitbalance, openingcreditbalance, transactiondebitamount, transactioncreditamount) VALUES (nextval('seq_fund'), '02', 'Capital Fund', 0, NULL, 1, '0001-04-13 00:00:00 BC', '0001-04-13 00:00:00 BC', 1, 0, '2', 12, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO fund (id, code, name, llevel, parentid, isactive, lastmodified, created, modifiedby, isnotleaf, identifier, purpose_id, payglcodeid, recvglcodeid, createdby, openingdebitbalance, openingcreditbalance, transactiondebitamount, transactioncreditamount) VALUES (nextval('seq_fund'), '03', 'Elementary Education Fund', 0, NULL, 1, '0001-04-13 00:00:00 BC', '0001-04-13 00:00:00 BC', 1, 0, '3', 12, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO fund (id, code, name, llevel, parentid, isactive, lastmodified, created, modifiedby, isnotleaf, identifier, purpose_id, payglcodeid, recvglcodeid, createdby, openingdebitbalance, openingcreditbalance, transactiondebitamount, transactioncreditamount) VALUES (nextval('seq_fund'), '04', 'Earmarked Funds', 0, NULL, 1, '0001-04-13 00:00:00 BC', '0001-04-13 00:00:00 BC', 1, 0, '4', 12, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO fund (id, code, name, llevel, parentid, isactive, lastmodified, created, modifiedby, isnotleaf, identifier, purpose_id, createdby, transactioncreditamount) VALUES (nextval('seq_fund'), '01', 'Municipal Fund', 0, NULL, 1, '0001-04-13 00:00:00 BC', '0001-04-13 00:00:00 BC', 1, 0, '1', 12, 1,NULL);
+INSERT INTO fund (id, code, name, llevel, parentid, isactive, lastmodified, created, modifiedby, isnotleaf, identifier, purpose_id, createdby, transactioncreditamount) VALUES (nextval('seq_fund'), '02', 'Capital Fund', 0, NULL, 1, '0001-04-13 00:00:00 BC', '0001-04-13 00:00:00 BC', 1, 0, '2', 12, 1, NULL);
+INSERT INTO fund (id, code, name, llevel, parentid, isactive, lastmodified, created, modifiedby, isnotleaf, identifier, purpose_id, createdby, transactioncreditamount) VALUES (nextval('seq_fund'), '03', 'Elementary Education Fund', 0, NULL, 1, '0001-04-13 00:00:00 BC', '0001-04-13 00:00:00 BC', 1, 0, '3', 12, 1, NULL);
+INSERT INTO fund (id, code, name, llevel, parentid, isactive, lastmodified, created, modifiedby, isnotleaf, identifier, purpose_id, createdby, transactioncreditamount) VALUES (nextval('seq_fund'), '04', 'Earmarked Funds', 0, NULL, 1, '0001-04-13 00:00:00 BC', '0001-04-13 00:00:00 BC', 1, 0, '4', 12, 1, NULL);
 ---------------END-------------------------
 --------------------START----------------------------------
 insert into bankbranch(id,branchcode,branchname,branchaddress1,bankid,isactive,created,lastmodified,modifiedby)
@@ -1717,3 +1717,12 @@ insert into bankaccount(id,branchid,accountnumber,accounttype,narration,isactive
 values(nextval('seq_bankaccount'),(select id from bankbranch where branchcode='001'),'000000000001','OTHER SCHEDULED BANKS',null,1,
 (select id from chartofaccounts where glcode='4504204'),(select id from fund where code='01'),'RECEIPTS_PAYMENTS',1,1,current_date,current_date,0,0);
 --------------------------END--------------------------------
+---------------START-------------------
+Insert into FUNDSOURCE (ID,CODE,NAME,TYPE,PARENTID,ISACTIVE,CREATED,LLEVEL,ISNOTLEAF,CREATEDBY,LASTMODIFIEDDATE,LASTMODIFIEDBY) values (1,'01','Own Sources',null,null,true,now(),0,0,null,now(),1);
+Insert into FUNDSOURCE (ID,CODE,NAME,TYPE,PARENTID,ISACTIVE,CREATED,LLEVEL,ISNOTLEAF,CREATEDBY,LASTMODIFIEDDATE,LASTMODIFIEDBY) values (10,'02','Loans',null,null,true,now(),0,0,null,now(),1);
+Insert into FUNDSOURCE (ID,CODE,NAME,TYPE,PARENTID,ISACTIVE,CREATED,LLEVEL,ISNOTLEAF,CREATEDBY,LASTMODIFIEDDATE,LASTMODIFIEDBY) values (11,'03','Grants',null,null,true,now(),0,0,null,now(),1);
+Insert into FUNDSOURCE (ID,CODE,NAME,TYPE,PARENTID,ISACTIVE,CREATED,LLEVEL,ISNOTLEAF,CREATEDBY,LASTMODIFIEDDATE,LASTMODIFIEDBY) values (14,'04','MLACDS',null,null,true,now(),0,0,null,now(),1);
+Insert into FUNDSOURCE (ID,CODE,NAME,TYPE,PARENTID,ISACTIVE,CREATED,LLEVEL,ISNOTLEAF,CREATEDBY,LASTMODIFIEDDATE,LASTMODIFIEDBY) values (15,'05','MPLADS',null,null,true,now(),0,0,null,now(),1);
+Insert into FUNDSOURCE (ID,CODE,NAME,TYPE,PARENTID,ISACTIVE,CREATED,LLEVEL,ISNOTLEAF,CREATEDBY,LASTMODIFIEDDATE,LASTMODIFIEDBY) values (17,'06','JNNURM',null,null,true,now(),0,0,null,now(),1);
+Insert into FUNDSOURCE (ID,CODE,NAME,TYPE,PARENTID,ISACTIVE,CREATED,LLEVEL,ISNOTLEAF,CREATEDBY,LASTMODIFIEDDATE,LASTMODIFIEDBY) values (21,'07','Deposit Works',null,null,true,now(),0,0,null,now(),1);
+---------------------------END---------------------------

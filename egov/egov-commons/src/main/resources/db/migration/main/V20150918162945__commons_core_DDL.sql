@@ -207,7 +207,7 @@ CREATE TABLE bankaccount (
     id bigint NOT NULL,
     branchid bigint NOT NULL,
     accountnumber character varying(20) NOT NULL,
-    accounttype character varying(150) NOT NULL,
+    accounttype character varying(150) NULL,
     narration character varying(250),
     isactive smallint NOT NULL,
     glcodeid bigint,
@@ -704,12 +704,7 @@ CREATE TABLE fund (
     isnotleaf smallint,
     identifier character(1),
     purpose_id smallint,
-    payglcodeid bigint,
-    recvglcodeid bigint,
     createdby bigint,
-    openingdebitbalance double precision,
-    openingcreditbalance double precision,
-    transactiondebitamount double precision,
     transactioncreditamount double precision
 );
 
