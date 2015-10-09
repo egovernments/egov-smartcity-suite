@@ -41,125 +41,127 @@
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
-<div class="panel-heading custom_form_panel_heading">
+<div class="panel-heading  custom_form_panel_heading">
     <div class="panel-title">Trade Details</div>
 </div>
+<div class="panel-body">
+	
+	<div class="row add-border">
+		<div class="col-xs-3 add-margin"><s:text name='licensee.aadhaarNo' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{licensee.uid}" /></div>
+		<div class="col-xs-3 add-margin"><s:text name='licensee.mobilephone' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{licensee.mobilePhoneNumber}" /></div>
+	</div>
+	
+	<div class="row add-border">
+		<div class="col-xs-3 add-margin"><s:text name='licensee.applicantname' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{licensee.applicantName}" /></div>
+		<div class="col-xs-3 add-margin"><s:text name='licensee.fatherorspousename' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{licensee.fatherOrSpouseName}" /></div>
+	</div>
+	
+	<div class="row">
+		<div class="col-xs-3 add-margin"><s:text name='licensee.emailId' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{licensee.emailId}" /></div>
+		<div class="col-xs-3 add-margin"><s:text name='licensee.applicantAddress' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{licensee.address}" /></div>
+	</div>
 
-<div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='licensee.aadhaarNo' /></label>
-    <div class="col-sm-3 add-margin">
-    	<s:property value="%{licensee.uid}" />
-    </div>
-    <label class="col-sm-2 control-label text-right"><s:text name='licensee.mobileNo' /></label>
-    <div class="col-sm-3 add-margin">
-    	<s:property value="%{licensee.mobilePhoneNumber}" />
-    </div>
 </div>
 
-<div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='licensee.applicantName' /></label>
-    <div class="col-sm-3 add-margin">
-   	 <s:property value="%{licensee.applicantName}" />
-    </div>
-    <label class="col-sm-2 control-label text-right"><s:text name='licensee.father/spouse' /></label>
-    <div class="col-sm-3 add-margin">
-    <s:property value="%{licensee.fatherOrSpouseName}" />
-    </div>
-</div>
-<div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='licensee.emailId' /></label>
-    <div class="col-sm-3 add-margin">
-     <s:property value="%{licensee.emailId}" />
-    </div>
-    <label class="col-sm-2 control-label text-right"><s:text name='licensee.applicantAddress' /></label>
-    <div class="col-sm-3 add-margin">
-     <s:property value="%{licensee.address}" />
-    </div>
-</div>
-
-
-<div class="panel-heading custom_form_panel_heading">
+<div class="panel-heading  custom_form_panel_heading">
     <div class="panel-title"><s:text name='license.location.lbl' /></div>
 </div>
-<div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.propertyNo.lbl' /></label>
-    <div class="col-sm-3 add-margin">
-          <s:property value="%{propertyNo}" />
-    </div>
-  
-    <label class="col-sm-2 control-label text-right"><s:text name='license.locality.lbl' /></label>
-    <div class="col-sm-3 add-margin">
-    	<s:property value="%{boundary.name}" />
-    </div>
+<div class="panel-body">
+
+	<div class="row add-border">
+		<div class="col-xs-3 add-margin"><s:text name='license.propertyNo.lbl' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{propertyNo}" /></div>
+		<div class="col-xs-3 add-margin"><s:text name='license.locality.lbl' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{boundary.name}" /></div>
+	</div>
+	
+	<div class="row add-border">
+		<div class="col-xs-3 add-margin"><s:text name='license.zone' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{zoneName}" /></div>
+		<div class="col-xs-3 add-margin"><s:text name='license.division' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{wardName}" /></div>
+	</div>
+	
+	<div class="row">
+		<div class="col-xs-3 add-margin"><s:text name='license.ownerShipType.lbl' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{ownershipType}" /></div>
+		<div class="col-xs-3 add-margin"><s:text name='license.address.lbl' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{address}" /></div>
+	</div>
+	
 </div>
 
-<div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.zone.lbl' /></label>
-    <div class="col-sm-3 add-margin">
-     	<s:property value="%{zoneName}" />
-    </div>
-    
-    <label class="col-sm-2 control-label text-right"><s:text name='license.ward.lbl' /></label>
-    <div class="col-sm-3 add-margin">
-    	<s:property value="%{wardName}" />
-    </div>
-</div>
-
-<div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.ownerShipType.lbl' /></label>
-    <div class="col-sm-3 add-margin">
-    	<s:property value="%{ownershipType}" />
-    </div>
-    
-    <label class="col-sm-2 control-label text-right"><s:text name='license.address.lbl' /></label>
-    <div class="col-sm-3 add-margin">
-      <s:property value="%{address}" />
-    </div>
-</div>
-
-
-<div class="panel-heading custom_form_panel_heading">
+<div class="panel-heading  custom_form_panel_heading">
     <div class="panel-title"><s:text name='license.details.lbl' /></div>
 </div>
+<div class="panel-body">
 
-<div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.nameOfEst.lbl' /></label>
-    <div class="col-sm-3 add-margin">
-     	<s:property value="%{nameOfEstablishment}" />
-    </div>
-  
-    <label class="col-sm-2 control-label text-right"><s:text name='license.tradeType.lbl' /></label>
-    <div class="col-sm-3 add-margin">
-    	<s:property value="%{buildingType.name}" />
-    </div>
+	<div class="row add-border">
+		<div class="col-xs-3 add-margin"><s:text name='license.establishmentname' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{nameOfEstablishment}" /></div>
+		<div class="col-xs-3 add-margin"><s:text name='license.tradeType.lbl' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{buildingType.name}" /></div>
+	</div>
+	
+	<div class="row add-border">
+		<div class="col-xs-3 add-margin"><s:text name='license.category.lbl' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{category.name}" /></div>
+		<div class="col-xs-3 add-margin"><s:text name='license.subCategory.lbl' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{tradeName.name}" /></div>
+	</div>
+	
+	<div class="row">
+		<div class="col-xs-3 add-margin"><s:text name='license.remarks' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{remarks}" /></div>
+	</div>
+	
 </div>
 
-<div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.category.lbl' /></label>
-    <div class="col-sm-3 add-margin">
-    	<s:property value="%{category.name}" />
-    </div>
-    
-    <label class="col-sm-2 control-label text-right"><s:text name='license.subCategory.lbl' /></label>
-    <div class="col-sm-3 add-margin">
-    	<s:property value="%{tradeName.name}" />
-    </div>
+<div class="panel-heading  custom_form_panel_heading">
+    <div class="panel-title"><s:text name='license.title.feedetail' /></div>
 </div>
+<div class="panel-body">
 
-<div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.premises.lbl' /></label>
-    <div class="col-sm-3 add-margin">
-    	<s:property value="%{tradeArea_weight}" />
-    </div>
-    <label class="col-sm-2 control-label text-right"><s:text name='license.uom.lbl' /></label>
-    <div class="col-sm-3 add-margin">
-    	<s:property value="%{uom.name}" />
-    </div>
-</div>
-
-<div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.remarks.lbl' /></label>
-    <div class="col-sm-3 add-margin">
-   		 <s:property value="%{remarks}" />
-    </div>
+	<div class="row add-border">
+		<div class="col-xs-3 add-margin"><s:text name='license.motor.installed' /></div>
+		<div class="col-xs-3 add-margin view-content">
+			<s:checkbox theme="simple" key="motorInstalled" tabindex="17"  label="motorInstalled" id="motorInstalled" disabled="true" />
+		</div>
+		<s:if test="%{!installedMotorList.isEmpty()}">
+		 <table class="table table-bordered" style="width:80%;margin:10px auto" id="tb2Create">
+			<th id="hpheader" colspan="3" class="bluebgheadtd" align="center">
+				<b><s:text name="license.horsepower" /></b>
+			</th>
+			<tr>
+				<th id="hpheader"  class="bluebgheadtd" align="center">
+					<b><s:text name="license.noofmachines" /></b>
+				</th>
+				<th id="hpheader"  class="bluebgheadtd" align="center">
+					<b><s:text name="license.horsepower" /></b>
+				</th>
+			</tr>
+			<s:iterator var="p" value="installedMotorList">
+			<tr>
+				<td><s:property value="#p.hp"/></td>
+				<td><s:property value="#p.noOfMachines"/></td>
+			</tr>
+			</s:iterator>
+		</table>
+		
+		<div class="col-xs-3 add-margin"><s:text name='license.total.horsepower' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{totalHP}" /></div> 
+		</s:if>
+	</div>
+	
+	<div class="row add-border">
+		<div class="col-xs-3 add-margin"><s:text name='license.total.workersCapacity' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{workersCapacity}" /></div>
+	</div>
+	
 </div>

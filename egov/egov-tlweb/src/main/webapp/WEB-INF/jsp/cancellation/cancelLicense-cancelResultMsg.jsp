@@ -37,8 +37,9 @@
 #  
 #    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------->
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%@ include file="/includes/taglibs.jsp"%>
 
 <html>
@@ -74,7 +75,8 @@
 	        <div class="col-md-12">
 				<s:form action="cancelLicense" theme="simple" name="cancelLicenseForm">
 				<s:push value="model">
-	
+				<s:hidden id="zoneName" name="zoneName" value="%{zoneName}" />
+				<s:hidden id="wardName" name="wardName" value="%{wardName}" />
 	 			<div class="panel panel-primary" data-collapsed="0">
                     <div class="panel-heading">
 						<div class="panel-title" style="text-align:center">
@@ -89,35 +91,25 @@
 						    <div class="panel-title"><s:text name='license.title.cancellationdetails' /></div>
 						</div>
 						
-						<div class="form-group">
-							<label for="field-1" class="col-sm-3 control-label text-right"><s:text
-									name="license.LicenseCancelInfo.reasonForCancellation" /></label>
-							<div class="col-sm-3 add-margin">
-							      <s:property value="%{reasonMap.get(reasonForCancellation)}" />
+						<div class="panel-body">
+							<div class="row add-border">
+								<div class="col-xs-3 add-margin"><s:text name='license.LicenseCancelInfo.reasonForCancellation' /></div>
+								<div class="col-xs-3 add-margin view-content"><s:property value="%{reasonMap.get(reasonForCancellation)}" /></div>
+								<div class="col-xs-3 add-margin"><s:text name='license.license.refernceno' /></div>
+								<div class="col-xs-3 add-margin view-content"><s:property value="%{refernceno}" /></div>
 							</div>
 							
-							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
-									name="license.license.refernceno" /></label>
-							<div class="col-sm-3 add-margin">
-								<s:property value="%{refernceno}" />
+							<div class="row add-border">
+								<div class="col-xs-3 add-margin"><s:text name='license.license.referencedate' /></div>
+								<div class="col-xs-3 add-margin view-content">
+									<s:date name="commdateApp" var="endDateFormat" format="dd/MM/yyyy"/> 
+									<s:property value="%{endDateFormat}" />
+								</div>
+								<div class="col-xs-3 add-margin"><s:text name='license.license.Remarks' /></div>
+								<div class="col-xs-3 add-margin view-content"><s:property value="%{cancelInforemarks}" /></div>
 							</div>
-						</div>
-							
-						<div class="form-group">
-							<label for="field-1" class="col-sm-3 control-label text-right"><s:text
-									name="license.license.referencedate" /></label>
-							  <div class="col-sm-3 add-margin">
-							      <s:property value="%{refdate}" />
-							   </div>
-							
-							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
-									name="license.license.Remarks" /></label>
-							<div class="col-sm-3 add-margin">
-								<s:property value="%{cancelInforemarks}" />
-							</div>
-						</div>   
-                        		
-                  	</div>      		
+						</div>			
+                  	</div>  		
 				</div>
 				</s:push>
 				

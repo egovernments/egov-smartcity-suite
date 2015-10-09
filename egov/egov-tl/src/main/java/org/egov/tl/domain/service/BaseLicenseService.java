@@ -65,6 +65,7 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgReasonCategory;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -751,5 +752,16 @@ public abstract class BaseLicenseService {
      */
     public TradeLicense getTradeLicenseByLicenseNum(String licenseNumber) {
         return (TradeLicense) persistenceService.find("from TradeLicense where licenseNumber=?",licenseNumber);
+    }
+    
+    
+    /**
+     * @return boundary for a locality
+     */
+    public Boundary blockByLocality(final Long localityId)  {
+        final Boundary blockBoundary = (Boundary) persistenceService.find(
+                "select CH.parent from CrossHierarchy CH where CH.child.id = ? ", localityId);
+        return blockBoundary;
+       
     }
 }

@@ -63,6 +63,7 @@ import org.egov.tl.domain.entity.NatureOfBusiness;
 import org.egov.tl.domain.entity.TradeLicense;
 import org.egov.tl.domain.entity.UnitOfMeasurement;
 import org.egov.tl.domain.entity.WorkflowBean;
+import org.egov.tl.domain.service.BaseLicenseService;
 import org.egov.tl.domain.service.TradeService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
@@ -73,8 +74,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Results({ @Result(name = CancelLicenseAction.NEW, location = "cancelLicense-new.jsp"),
-        @Result(name = Constants.CANCEL_Result_MSG_PAGE, location = "cancelLicense-cancelResultMsg.jsp"),
-        @Result(name = CancelLicenseAction.SUCCESS, type = "redirectAction", location = "CancelLicense.action") })
+    @Result(name = Constants.CANCEL_Result_MSG_PAGE, location = "cancelLicense-cancelResultMsg.jsp"),
+    @Result(name = CancelLicenseAction.SUCCESS, type = "redirectAction", location = "CancelLicense.action") })
 public class CancelLicenseAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(CancelLicenseAction.class);
 
@@ -84,9 +85,13 @@ public class CancelLicenseAction extends BaseFormAction {
     private Date commdateApp;
     private String cancelInforemarks;
     private Map reasonMap;
+    private String zoneName;
+    private String wardName;
     @Autowired
     private SecurityUtils securityUtils;
     protected WorkflowBean workflowBean = new WorkflowBean();
+    @Autowired
+    private BaseLicenseService baseLicenseService;
 
     public void setLicenseUtils(final LicenseUtils licenseUtils) {
         this.licenseUtils = licenseUtils;
@@ -169,6 +174,16 @@ public class CancelLicenseAction extends BaseFormAction {
         addDropdownData(Constants.DROPDOWN_ZONE_LIST, licenseUtils.getAllZone());
         addDropdownData(Constants.DROPDOWN_TRADENAME_LIST, licenseUtils.getAllTradeNames("TradeLicense"));
         license = ts.getTps().findById(licenseId.longValue(), false);
+        // To load zone and ward for a locality
+        if (license != null) {
+            final Boundary localityBndry = baseLicenseService.blockByLocality(license.getBoundary().getId());
+            if (localityBndry != null) {
+                final Boundary wardBoundary = localityBndry.getParent();
+                final Boundary zoneBoundary = wardBoundary.getParent();
+                wardName = wardBoundary.getName();
+                zoneName = zoneBoundary.getName();
+            }
+        }
     }
 
     /**
@@ -329,6 +344,22 @@ public class CancelLicenseAction extends BaseFormAction {
                 append(getReasonForCancellation()).append(", Reference number : ").append(getRefernceno()).
                 append(", Reference date : ").append(getCommdateApp()).append(" ]").toString();
 
+    }
+
+    public String getZoneName() {
+        return zoneName;
+    }
+
+    public void setZoneName(final String zoneName) {
+        this.zoneName = zoneName;
+    }
+
+    public String getWardName() {
+        return wardName;
+    }
+
+    public void setWardName(final String wardName) {
+        this.wardName = wardName;
     }
 
 }
