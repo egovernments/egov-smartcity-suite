@@ -96,7 +96,7 @@ INSERT into eg_userrole values((select id from eg_role  where name  = 'Super Use
 ------------------END---------------------
 
 Insert into EG_ROLEACTION (roleid, actionid) values (15,37);
-Insert into EG_ROLEACTION (roleid, actionid) values (4,37);
+Insert into EG_ROLEACTION (roleid, actionid) values (4,1049),(4,33),(4,46),(4,54),(4,55),(4,34),(4,35),(4,39),(4,30),(4,32),(4,31),(4,44),(4,69),(4,1015),(4,1036),(4,1014),(4,1016),(4,1035),(4,41),(4,42),(4,43),(4,62),(4,63),(4,64),(4,65),(4,40),(4,47),(4,50),(4,25),(4,26),(4,27),(4,70),(4,71),(4,72),(4,73),(4,1041),(4,1044),(4,66),(4,67),(4,68),(4,59),(4,58),(4,1181),(4,1182),(4,1192),(4,1224),(4,37),(4,56);
 ---Add super user role to all actions
 
 INSERT INTO eg_hierarchy_type (id, name, code, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (1, 'ADMINISTRATION', 'ADMIN', '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, 0, NULL);

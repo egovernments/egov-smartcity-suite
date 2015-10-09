@@ -386,7 +386,6 @@ CREATE SEQUENCE seq_eg_city
     NO MAXVALUE
     CACHE 1;
 ALTER TABLE ONLY eg_city ADD CONSTRAINT eg_city_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY eg_city ADD CONSTRAINT fk_bdr_cw FOREIGN KEY (boundary) REFERENCES eg_boundary(id);
 ALTER TABLE ONLY eg_city ADD CONSTRAINT fk_preference FOREIGN KEY (preferences) REFERENCES eg_citypreferences(id) MATCH FULL;
 -------------------END-------------------
 

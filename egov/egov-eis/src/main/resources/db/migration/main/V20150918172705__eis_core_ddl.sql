@@ -454,4 +454,10 @@ update eg_action set queryparams=null where queryparams='';
 insert into eg_action values(nextval('seq_eg_action'),'Position count in Search Position','/position/position-getTotalPositionCount',null,(select id from eg_module where name='Position'),null,'search position',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
 insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Position count in Search Position'));
 
+INSERT INTO EG_ACTION (ID,NAME,createddate,URL,QUERYPARAMS,parentmodule,ORDERNUMBER,DISPLAYNAME, ENABLED, CONTEXTROOT, APPLICATION) VALUES (nextval('SEQ_EG_ACTION'), 'AjaxDesignationDropdown',current_date , '/workflow/ajaxWorkFlow-getDesignationsByObjectType.action', NULL, (select ID from eg_module where name like 'EIS-COMMON'), 6, 'AjaxDesignationDropdown', false, 'eis',(SELECT id FROM eg_module WHERE name='EIS' AND parentmodule IS NULL));
+INSERT INTO EG_ACTION (ID,NAME,createddate,URL,QUERYPARAMS,parentmodule,ORDERNUMBER,DISPLAYNAME, ENABLED, CONTEXTROOT, APPLICATION) VALUES (nextval('SEQ_EG_ACTION'), 'AjaxApproverDropdown',current_date ,'/workflow/ajaxWorkFlow-getPositionByPassingDesigId.action', NULL,  (select ID from eg_module where name like 'EIS-COMMON'), 6, 'AjaxApproverDropdown', false, 'eis',(SELECT id FROM eg_module WHERE name='EIS' AND parentmodule IS NULL));
+
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='AjaxDesignationDropdown'));
+insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='AjaxApproverDropdown'));
+
 ----------------------------

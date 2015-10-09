@@ -142,8 +142,8 @@ INSERT INTO egeis_employee (id, code, dateofappointment, dateofretirement, emplo
 INSERT INTO eg_userrole (roleid, userid) VALUES (4, 18);
 
 INSERT INTO eg_userrole (roleid, userid) VALUES (7, 1);
-INSERT INTO eg_userrole (roleid, userid) VALUES (7, 67);
-INSERT INTO eg_userrole (roleid, userid) VALUES (4, 68);
+INSERT INTO eg_userrole (roleid, userid) VALUES (7, 18);
+INSERT INTO eg_userrole (roleid, userid) VALUES (4, 1);
 
 INSERT INTO eg_userrole (roleid, userid) VALUES (5, 40);
 INSERT INTO eg_userrole (roleid, userid) VALUES (5, 47);
@@ -166,7 +166,7 @@ INSERT INTO eg_userrole (roleid, userid) VALUES (15, 35);
 INSERT INTO eg_userrole (roleid, userid) VALUES (15, 38);
 INSERT INTO eg_userrole (roleid, userid) VALUES (15, 40);
 INSERT INTO eg_userrole (roleid, userid) VALUES (15, 47);
-INSERT INTO eg_userrole (roleid, userid) VALUES (15, 68);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 1);
  
  
 
@@ -272,7 +272,7 @@ SELECT pg_catalog.setval('seq_egeis_assignment', 18, true);
 -----------END---------------
 
 ---------START----------
-INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (2, 2, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 2);
+INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (2, 18, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 2);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (3, 3, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 2);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (4, 4, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 2);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (5, 5, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 2);
@@ -288,7 +288,6 @@ INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmod
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (15, 15, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 2);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (16, 16, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 2);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (17, 17, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 2);
-INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (18, 18, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 2);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (19, 19, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 2);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (20, 20, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 2);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (21, 21, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 2);
@@ -337,8 +336,7 @@ INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmod
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (64, 65, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 2);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (65, 54, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 2);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (66, 68, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 2);
-INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (67, 1, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 2);
-INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (68, 2, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 3);
+INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (68, 18, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 3);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (69, 3, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 3);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (70, 4, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 3);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (71, 5, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 3);
@@ -354,7 +352,6 @@ INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmod
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (81, 15, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 3);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (82, 16, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 3);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (83, 17, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 3);
-INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (84, 18, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 3);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (85, 19, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 3);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (86, 20, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 3);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (87, 21, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 3);
@@ -403,8 +400,7 @@ INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmod
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (130, 65, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 3);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (131, 54, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 3);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (132, 68, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 3);
-INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (133, 1, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 3);
-INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (134, 2, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 4);
+INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (134, 18, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 4);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (135, 3, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 4);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (136, 4, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 4);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (137, 5, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 4);
@@ -420,7 +416,6 @@ INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmod
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (147, 15, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 4);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (148, 16, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 4);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (149, 17, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 4);
-INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (150, 18, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 4);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (151, 19, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 4);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (152, 20, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 4);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (153, 21, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 4);
@@ -469,8 +464,7 @@ INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmod
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (196, 65, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 4);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (197, 54, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 4);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (198, 68, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 4);
-INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (199, 1, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 4);
-INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (200, 2, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 5);
+INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (200, 18, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 5);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (201, 3, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 5);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (202, 4, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 5);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (203, 5, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 5);
@@ -486,7 +480,6 @@ INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmod
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (213, 15, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 5);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (214, 16, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 5);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (215, 17, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 5);
-INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (216, 18, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 5);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (217, 19, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 5);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (218, 20, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 5);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (219, 21, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 5);
@@ -535,7 +528,6 @@ INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmod
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (262, 65, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 5);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (263, 54, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 5);
 INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (264, 68, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 5);
-INSERT INTO egeis_jurisdiction (id, employee, boundarytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, boundary) VALUES (265, 1, 3, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 1, NULL, 5);
 
 ---------------------END-----------------------------
 
