@@ -88,4 +88,9 @@
     	<put-attribute name="page-title" value="lbl.baseRegister.report" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/baseRegister-form.jsp"/>
     </definition>
+    
+    <definition name="taxExemption-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.taxexemption.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/exemption/taxExemption-form.jsp"/>
+    </definition>
 </tiles-definitions>

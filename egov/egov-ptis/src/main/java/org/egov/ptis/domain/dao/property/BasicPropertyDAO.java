@@ -47,50 +47,52 @@ import org.egov.ptis.domain.entity.property.PropertyID;
 
 public interface BasicPropertyDAO {
 
-	public BasicProperty getBasicPropertyByRegNum(String RegNum);
+    public BasicProperty getBasicPropertyByRegNum(String RegNum);
 
-	public BasicProperty getBasicPropertyByPropertyID(PropertyID propertyID);
+    public BasicProperty getBasicPropertyByPropertyID(PropertyID propertyID);
 
-	public BasicProperty getBasicPropertyByPropertyID(String propertyId);
+    public BasicProperty getBasicPropertyByPropertyID(String propertyId);
 
-	public BasicProperty getInActiveBasicPropertyByPropertyID(String propertyID);
+    public BasicProperty getInActiveBasicPropertyByPropertyID(String propertyID);
 
-	public BasicProperty getBasicPropertyByID_PropertyID(String ID_PropertyID);
+    public BasicProperty getBasicPropertyByID_PropertyID(String ID_PropertyID);
 
-	public BasicProperty getBasicPropertyByRegNumNew(String RegNum);
+    public BasicProperty getBasicPropertyByRegNumNew(String RegNum);
 
-	public Integer getRegNum();
+    public Integer getRegNum();
 
-	public Integer getVoucherNum();
+    public Integer getVoucherNum();
 
-	public List getBasicPropertyByOldMunipalNo(String oldMuncipalNo);
+    public List getBasicPropertyByOldMunipalNo(String oldMuncipalNo);
 
-	public BasicProperty getAllBasicPropertyByPropertyID(String propertyId);
+    public BasicProperty getAllBasicPropertyByPropertyID(String propertyId);
 
-	public List<BasicPropertyImpl> getChildBasicPropsForParent(BasicProperty basicProperty);
+    public List<BasicPropertyImpl> getChildBasicPropsForParent(BasicProperty basicProperty);
 
-	public BasicProperty getBasicPropertyByIndexNumAndParcelID(String indexNum, String parcelID);
+    public BasicProperty getBasicPropertyByIndexNumAndParcelID(String indexNum, String parcelID);
 
-	public BasicProperty findById(Integer id, boolean lock);
+    public BasicProperty findById(Integer id, boolean lock);
 
-	public List<BasicProperty> findAll();
+    public List<BasicProperty> findAll();
 
-	public BasicProperty create(BasicProperty basicProperty);
+    public BasicProperty create(BasicProperty basicProperty);
 
-	public void delete(BasicProperty basicProperty);
+    public void delete(BasicProperty basicProperty);
 
-	public BasicProperty update(BasicProperty basicProperty);
+    public BasicProperty update(BasicProperty basicProperty);
 
-	public List<BasicProperty> getBasicPropertiesForTaxDetails(String circleName, String zoneName, 
-			String wardName, String blockName, String ownerName, String doorNo, String aadhaarNumber, String mobileNumber);
-	
-	public List<Long> getBoundaryIds(String boundaryName);
-	
-	public Boolean isBoundaryExist(String boundaryName);
-	
-	public Boolean isOwnerNameExist(String ownerName);
-	
-	public Boolean isDoorNoExist(String doorNo);
-	
-	public Boolean isAssessmentNoExist(String assessmentNo);
+    public List<BasicProperty> getBasicPropertiesForTaxDetails(String circleName, String zoneName,
+            String wardName, String blockName, String ownerName, String doorNo, String aadhaarNumber, String mobileNumber);
+
+    public List<Long> getBoundaryIds(String boundaryName);
+
+    public Boolean isBoundaryExist(String boundaryName);
+
+    public Boolean isOwnerNameExist(String ownerName);
+
+    public Boolean isDoorNoExist(String doorNo);
+
+    public Boolean isAssessmentNoExist(String assessmentNo);
+
+    public BasicProperty getParentBasicPropertyByBasicPropertyId(Long basicPropertyId);
 }
