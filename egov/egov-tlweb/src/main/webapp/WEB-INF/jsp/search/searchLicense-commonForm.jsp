@@ -70,7 +70,7 @@
 			    	<s:actionmessage theme="simple"/>
 			    </div>
 			</s:if>
-			<div id="search_error" class="errorstyle" style="display:none;" align="left"></div> 
+			<div id="search_error" class="error-msg" style="display:none;"></div> 
 			<s:form action="searchLicense" name="searchLicenseForm" theme="simple" id="searchLicenseForm">
 				<s:hidden name="mode" id="mode" value="%{mode}"/>
 						

@@ -39,39 +39,42 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.cancellation;
 
-import org.apache.struts2.convention.annotation.Action;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.tl.domain.entity.License;
+import org.egov.tl.domain.entity.LicenseCategory;
 import org.egov.tl.domain.entity.LicenseStatusValues;
-import org.egov.tl.domain.entity.Licensee;
 import org.egov.tl.domain.entity.LicenseSubCategory;
+import org.egov.tl.domain.entity.Licensee;
+import org.egov.tl.domain.entity.NatureOfBusiness;
 import org.egov.tl.domain.entity.TradeLicense;
+import org.egov.tl.domain.entity.UnitOfMeasurement;
 import org.egov.tl.domain.entity.WorkflowBean;
 import org.egov.tl.domain.service.TradeService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
-import org.egov.tl.web.actions.newtradelicense.NewTradeLicenseAction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Results({ @Result(name = CancelLicenseAction.NEW, location = "cancelLicense-new.jsp"),
-    @Result(name = CancelLicenseAction.SUCCESS, type = "redirectAction", location = "CancelLicense.action")})
+        @Result(name = Constants.CANCEL_Result_MSG_PAGE, location = "cancelLicense-cancelResultMsg.jsp"),
+        @Result(name = CancelLicenseAction.SUCCESS, type = "redirectAction", location = "CancelLicense.action") })
 public class CancelLicenseAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(CancelLicenseAction.class);
 
@@ -81,7 +84,8 @@ public class CancelLicenseAction extends BaseFormAction {
     private Date commdateApp;
     private String cancelInforemarks;
     private Map reasonMap;
-    // private AuditEventService auditEventService;
+    @Autowired
+    private SecurityUtils securityUtils;
     protected WorkflowBean workflowBean = new WorkflowBean();
 
     public void setLicenseUtils(final LicenseUtils licenseUtils) {
@@ -121,8 +125,6 @@ public class CancelLicenseAction extends BaseFormAction {
     private Integer licenseId;
     private License license = new TradeLicense();
 
-    // searchForm
-
     /**
      * @return the license
      */
@@ -138,7 +140,7 @@ public class CancelLicenseAction extends BaseFormAction {
     }
 
     @SkipValidation
-    @Action(value="/cancellation/cancelLicense-newForm")
+    @Action(value = "/cancellation/cancelLicense-newForm")
     public String newForm() {
         license = ts.getTps().findById(licenseId.longValue(), false);
         return Constants.NEW;
@@ -146,16 +148,17 @@ public class CancelLicenseAction extends BaseFormAction {
 
     public CancelLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
-        this.addRelatedEntity("address", Address.class);
         this.addRelatedEntity("licensee", Licensee.class);
-        this.addRelatedEntity("licensee.address", Address.class);
         this.addRelatedEntity("tradeName", LicenseSubCategory.class);
+        this.addRelatedEntity("licensee.boundary", Boundary.class);
+        this.addRelatedEntity("buildingType", NatureOfBusiness.class);
+        this.addRelatedEntity("category", LicenseCategory.class);
+        this.addRelatedEntity("uom", UnitOfMeasurement.class);
 
     }
 
     @Override
     public void prepare() {
-        LOGGER.debug("Entering in the prepare method:<<<<<<<<<<>>>>>>>>>>>>>:");
         super.prepare();
         final List<Boundary> areaList = new ArrayList<Boundary>();
         addDropdownData(Constants.DROPDOWN_AREA_LIST_LICENSE, areaList);
@@ -166,16 +169,20 @@ public class CancelLicenseAction extends BaseFormAction {
         addDropdownData(Constants.DROPDOWN_ZONE_LIST, licenseUtils.getAllZone());
         addDropdownData(Constants.DROPDOWN_TRADENAME_LIST, licenseUtils.getAllTradeNames("TradeLicense"));
         license = ts.getTps().findById(licenseId.longValue(), false);
-        // find(query,licenseId);
-        LOGGER.debug("Exiting from the prepare method:<<<<<<<<<<>>>>>>>>>>>>>:");
     }
 
+    /**
+     * @description cancels the license by setting status to CANCELLED and Inactive. Makes an entry in EGTL_STATUS_VALUES table
+     * @return to cancellation view page
+     */
     @ValidationErrorPage(Constants.NEW)
     @Validations(requiredFields = {
             @RequiredFieldValidator(fieldName = "reasonForCancellation", message = "", key = Constants.REQUIRED),
             @RequiredFieldValidator(fieldName = "refernceno", message = "", key = Constants.REQUIRED) })
+    @Action(value = "/cancellation/cancelLicense-confirmCancellation")
     public String confirmCancellation() {
-        LOGGER.debug("Cancel Trade License Elements are:<<<<<<<<<<>>>>>>>>>>>>>:" + toString());
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Cancel Trade License Elements are:<<<<<<<<<<>>>>>>>>>>>>>:" + toString());
         license.setActive(false);
         license.setStatus(licenseUtils.getLicenseStatusbyCode("CAN"));
         final LicenseStatusValues licenseStatusValues = licenseUtils.getCurrentStatus(license);
@@ -188,13 +195,17 @@ public class CancelLicenseAction extends BaseFormAction {
 
         newLicenseStatusValues.setReferenceNo(refernceno);
         newLicenseStatusValues.setReferenceDate(commdateApp);
+        newLicenseStatusValues.setCreatedDate(new Date());
+        newLicenseStatusValues.setModifiedDate(new Date());
+        newLicenseStatusValues.setCreatedBy(securityUtils.getCurrentUser());
         newLicenseStatusValues.setRemarks(cancelInforemarks);
         newLicenseStatusValues.setActive(true);
         newLicenseStatusValues.setPreviousStatusVal(licenseStatusValues);
+
         license.addLicenseStatusValuesSet(newLicenseStatusValues);
         ts.getTps().update((TradeLicense) license);
-        LOGGER.debug("Cancel Trade License Name of Establishment:<<<<<<<<<<>>>>>>>>>>>>>:" + license.getNameOfEstablishment());
-        /* doAuditing("Cancel License",this.getCancellationDetails()); */
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Cancel Trade License Name of Establishment:<<<<<<<<<<>>>>>>>>>>>>>:" + license.getNameOfEstablishment());
         return Constants.CANCEL_Result_MSG_PAGE;
     }
 

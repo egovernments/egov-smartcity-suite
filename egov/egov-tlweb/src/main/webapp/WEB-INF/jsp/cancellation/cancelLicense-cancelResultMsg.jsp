@@ -36,7 +36,7 @@
 #  	   or trademarks of eGovernments Foundation.
 #  
 #    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------->>
+#------------------------------------------------------------------------------->
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 
 <%@ include file="/includes/taglibs.jsp"%>
@@ -69,102 +69,69 @@
 		}
 	</script>
 	<body onload="refreshInbox();">
-		<div id="content">
-			<table align="center" width="100%">
-				<tbody>
-					<tr>
-						<td>
-							<div align="center">
-								<center>
-									<div class="formmainbox">
-										<div class="headingbg">
-											<s:text name="page.title.cancellicense" />
-										</div>
-										<s:form action="cancelLicense" theme="simple" name="cancelLicenseForm">
-											<s:push value="model">
-												<c:set var="trclass" value="greybox" />
-												<table width="100%">
-													<%@ include file='../common/view.jsp'%>
-													<c:choose>
-														<c:when test="${trclass=='greybox'}">
-															<c:set var="trclass" value="bluebox" />
-														</c:when>
-														<c:when test="${trclass=='bluebox'}">
-															<c:set var="trclass" value="greybox" />
-														</c:when>
-													</c:choose>
-													<tr>
-														<td colspan="5" class="headingwk">
-															<div class="arrowiconwk">
-																<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20"/>
-															</div>
-															<div class="headplacer">
-																<s:text name='license.title.cancellationdetails' />
-															</div>
-														</td>
-													</tr>
-													<tr>
-														<td class="<c:out value="${trclass}"/>" width="5%">
-															&nbsp;
-														</td>
-														<td class="<c:out value="${trclass}"/>">
-															<b><s:text name="license.LicenseCancelInfo.reasonForCancellation" />
-															</b>
-														</td>
-														<td class="<c:out value="${trclass}"/>">
-															<s:property value="%{reasonMap.get(reasonForCancellation)}" />
-														</td>
-														<td class="<c:out value="${trclass}"/>">
-															<b><s:text name="license.license.refernceno" />
-															</b>
-														</td>
-														<td class="<c:out value="${trclass}"/>">
-															<s:text name="%{refernceno}" />
-														</td>														
-													</tr>
-													<tr>
-														<td class="<c:out value="${trclass}"/>" width="5%">
-															&nbsp;
-														</td>
-														<s:date name='commdateApp' id="refdate" format='dd/MM/yyyy' />
-														<td class="<c:out value="${trclass}"/>">
-															<b><s:text name="license.license.referencedate" />
-															</b>
-														</td>
-														<td class="<c:out value="${trclass}"/>">
-															<s:property value="refdate" />
-
-														</td>
-														<td class="<c:out value="${trclass}"/>">
-															<b><s:text name="license.license.Remarks" />
-															</b>
-														</td>
-														<td class="<c:out value="${trclass}"/>">
-															<s:property value="cancelInforemarks" />
-														</td>														
-													</tr>
-												</table>
-											</s:push>
-										</s:form>
-									</div>
-								</center>
+	<div id="newLicense_error" class="errorstyle" style="display:none;"></div> 
+	    <div class="row">
+	        <div class="col-md-12">
+				<s:form action="cancelLicense" theme="simple" name="cancelLicenseForm">
+				<s:push value="model">
+	
+	 			<div class="panel panel-primary" data-collapsed="0">
+                    <div class="panel-heading">
+						<div class="panel-title" style="text-align:center">
+						<s:text name='page.title.cancellicense' /> 
+						</div>
+                    </div>
+                        
+                    <div class="panel-body custom-form">
+                        <%@ include file='../common/view.jsp'%>
+                        
+                        <div class="panel-heading custom_form_panel_heading">
+						    <div class="panel-title"><s:text name='license.title.cancellationdetails' /></div>
+						</div>
+						
+						<div class="form-group">
+							<label for="field-1" class="col-sm-3 control-label text-right"><s:text
+									name="license.LicenseCancelInfo.reasonForCancellation" /></label>
+							<div class="col-sm-3 add-margin">
+							      <s:property value="%{reasonMap.get(reasonForCancellation)}" />
 							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-		<div align="center" class="buttonbottom" id="buttondiv">
-			<table>
-				<tr>
-					<td>
-						<input name="button1" type="button" class="button" id="button" onClick="printthis()" value="Print" />
-					</td>
-					<td>
-						<input name="button2" type="button" class="button" id="button" onclick="closethis()" value="Close" />
-					</td>
-				</tr>
-			</table>
+							
+							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+									name="license.license.refernceno" /></label>
+							<div class="col-sm-3 add-margin">
+								<s:property value="%{refernceno}" />
+							</div>
+						</div>
+							
+						<div class="form-group">
+							<label for="field-1" class="col-sm-3 control-label text-right"><s:text
+									name="license.license.referencedate" /></label>
+							  <div class="col-sm-3 add-margin">
+							      <s:property value="%{refdate}" />
+							   </div>
+							
+							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+									name="license.license.Remarks" /></label>
+							<div class="col-sm-3 add-margin">
+								<s:property value="%{cancelInforemarks}" />
+							</div>
+						</div>   
+                        		
+                  	</div>      		
+				</div>
+				</s:push>
+				
+				<div class="row">
+					<div class="text-center">
+						<button type="button" id="print" class="btn btn-primary" onclick="printthis();">
+						Print</button>
+						<button type="button" id="btnclose" class="btn btn-default" onclick="closethis();">
+						Close</button>
+					</div>
+				</div>
+				
+				</s:form>
+			</div>
 		</div>
 	</body>
 </html>

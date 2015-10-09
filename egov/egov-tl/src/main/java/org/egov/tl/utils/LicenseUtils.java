@@ -368,9 +368,8 @@ public class LicenseUtils {
     }
 
     public LicenseStatusValues getCurrentStatus(final License license) {
-        // Set licenseStatusValSet=license.getLicenseStatusValuesSet();
         return (LicenseStatusValues) persistenceService.find(
-                "from org.egov.tl.domain.entity.LicenseStatusValues  where license=? and active=true", license);
+                "from org.egov.tl.domain.entity.LicenseStatusValues  where license.id=? and active=true", license.getId());
     }
 
     public Map<Integer, String> getCancellationReasonMap() {

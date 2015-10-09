@@ -374,7 +374,7 @@
  		
  			</head>
 	<body onload="onBodyLoad()">
-		<div id="newLicense_error" class="errorstyle" style="display:none;"></div> 
+		<div id="newLicense_error" class="error-msg" style="display:none;"></div> 
                 <div class="row">
                     <div class="col-md-12">
                      <div class="text-right error-msg" style="font-size:14px;"><s:text name="dateofapplication.lbl" /> : <s:date name="applicationDate"  format="dd/MM/yyyy"/></div>
