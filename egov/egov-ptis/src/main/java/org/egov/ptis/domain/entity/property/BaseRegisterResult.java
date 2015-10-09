@@ -1,6 +1,47 @@
+/*******************************************************************************
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
+ *
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
+ *
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
+ ******************************************************************************/
+
 package org.egov.ptis.domain.entity.property;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 
 public class BaseRegisterResult {
@@ -9,12 +50,12 @@ public class BaseRegisterResult {
     private String ownerName;
     private String doorNO;
     private String natureOfUsage;
-    private BigDecimal generalTax;
+    private BigDecimal propertyTax;
     private BigDecimal libraryCessTax;
     private BigDecimal eduCessTax;
     private BigDecimal penaltyFines;
     private BigDecimal currTotal;
-    private BigDecimal arrearGenaralTax;
+    private BigDecimal arrearPropertyTax;
     private BigDecimal arrearLibraryTax;
     private BigDecimal arrearEduCess;
     private BigDecimal arrearPenaltyFines;
@@ -22,7 +63,11 @@ public class BaseRegisterResult {
     private Boolean isExempted;
     private Boolean courtCase;
     private String arrearPeriod;
-
+    private List<String> propertyUsage;
+    private List<String> classificationOfBuilding;
+    private List<BigDecimal> area;
+    private String propertyType;
+ 
     public String getAssessmentNo() {
         return assessmentNo;
     }
@@ -45,14 +90,6 @@ public class BaseRegisterResult {
 
     public void setDoorNO(String doorNO) {
         this.doorNO = doorNO;
-    }
-
-    public BigDecimal getGeneralTax() {
-        return generalTax;
-    }
-
-    public void setGeneralTax(BigDecimal generalTax) {
-        this.generalTax = generalTax;
     }
 
     public BigDecimal getLibraryCessTax() {
@@ -95,13 +132,7 @@ public class BaseRegisterResult {
         this.currTotal = currTotal;
     }
 
-    public BigDecimal getArrearGenaralTax() {
-        return arrearGenaralTax;
-    }
-
-    public void setArrearGenaralTax(BigDecimal arrearGenaralTax) {
-        this.arrearGenaralTax = arrearGenaralTax;
-    }
+   
 
     public BigDecimal getArrearLibraryTax() {
         return arrearLibraryTax;
@@ -157,6 +188,54 @@ public class BaseRegisterResult {
 
     public void setArrearPeriod(String arrearPeriod) {
         this.arrearPeriod = arrearPeriod;
+    }
+
+    public List<String> getPropertyUsage() {
+        return propertyUsage;
+    }
+
+    public void setPropertyUsage(List<String> propertyUsage) {
+        this.propertyUsage = propertyUsage;
+    }
+
+    public List<String> getClassificationOfBuilding() {
+        return classificationOfBuilding;
+    }
+
+    public void setClassificationOfBuilding(List<String> classificationOfBuilding) {
+        this.classificationOfBuilding = classificationOfBuilding;
+    }
+
+    public List<BigDecimal> getArea() {
+        return area;
+    }
+
+    public void setArea(List<BigDecimal> area) {
+        this.area = area;
+    }
+
+    public BigDecimal getPropertyTax() {
+        return propertyTax;
+    }
+
+    public void setPropertyTax(BigDecimal propertyTax) {
+        this.propertyTax = propertyTax;
+    }
+
+    public BigDecimal getArrearPropertyTax() {
+        return arrearPropertyTax;
+    }
+
+    public void setArrearPropertyTax(BigDecimal arrearPropertyTax) {
+        this.arrearPropertyTax = arrearPropertyTax;
+    }
+
+    public String getPropertyType() {
+        return propertyType;
+    }
+
+    public void setPropertyType(String propertyType) {
+        this.propertyType = propertyType;
     }
     
 }

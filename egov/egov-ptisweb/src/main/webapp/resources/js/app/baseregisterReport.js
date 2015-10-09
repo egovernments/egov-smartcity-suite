@@ -38,11 +38,13 @@
 	#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 
-jQuery(document).ready(function(){
+jQuery(document).ready(function() {
+	$('#baseRegister-header').hide();
 $('#baseRegisterReportSearch').click(function(e){
 		var ward = $("#ward").val();
 		var block = $("#block").val();
 		oTable= $('#baseRegisterReport-table');
+		$('#baseRegister-header').show();
 		oTable.dataTable({
 			"sPaginationType": "bootstrap",
 			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
@@ -60,7 +62,6 @@ $('#baseRegisterReportSearch').click(function(e){
 						  { "data" : "assessmentNo" , "title": "Assessment Number"},  
 						  { "data" : "ownerName", "title": "Owner Name"},
 						  { "data" : "doorNo", "title": "Door No"},
-						  { "data" : "natureOfUsage", "title": "Nature of Usage"},
 						  { "data" : "exemption", "title": "Exemption/Write off/Vacancy remission"},
 						  { "data" : "courtCase", "title": "Court case"},
 						  { "data" : "arrearPeriod", "title": "Arrear Period"},
@@ -74,10 +75,12 @@ $('#baseRegisterReportSearch').click(function(e){
 						  { "data" : "eduCessTax", "title": "Current Educational tax"},
 						  { "data" : "currTotal", "title": "Current Total"},
 						  { "data" : "penaltyFinesTax", "title": "Penalty on current tax"},
+						  { "data" : "propertyUsage", "title": "Nature of Usage"}, 
+						  { "data" : "classification", "title": "Classification of Building"}, 
+						  { "data" : "area", "title": "Plinth Area"}, 
 						  ],
 						  "aaSorting": [[2, 'desc']] 
 				});
-		
 		e.stopPropagation();
 	});
 

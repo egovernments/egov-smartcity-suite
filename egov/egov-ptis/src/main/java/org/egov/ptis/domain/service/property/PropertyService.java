@@ -155,6 +155,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Floor;
+import org.egov.ptis.domain.entity.property.FloorDetailsView;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.Property;
@@ -2649,71 +2650,6 @@ public class PropertyService {
 
         final List<PropertyMaterlizeView> propertyList = query.list();
         return propertyList;
-    }
-
-    public List<BaseRegisterResult> getPropertyByWardAndBlock(final String ward, final String block) {
-        final StringBuilder queryStr = new StringBuilder();
-        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ");
-        if (StringUtils.isNotBlank(ward))
-            queryStr.append(" where pmv.ward.id=:ward ");
-        if (StringUtils.isNotBlank(block))
-            queryStr.append(" and pmv.block.id=:block ");
-        final Query query = propPerServ.getSession().createQuery(queryStr.toString());
-        if (StringUtils.isNotBlank(ward))
-            query.setLong("ward", Long.valueOf(ward));
-        if (StringUtils.isNotBlank(block))
-            query.setLong("block", Long.valueOf(block));
-        List<PropertyMaterlizeView> properties = query.list();
-        List<BaseRegisterResult> baseRegisterResultList = new ArrayList<BaseRegisterResult>();
-
-        for (PropertyMaterlizeView propertyMaterlizeView : properties) {
-            List<InstDmdCollMaterializeView> instDemandCollList = getPropPerServ()
-                    .findAllBy("select distinct idc from InstDmdCollMaterializeView idc where idc.propMatView.basicPropertyID = ? order by idc.installment asc",
-                            propertyMaterlizeView.getBasicPropertyID());
-            BaseRegisterResult baseRegisterResultObj = new BaseRegisterResult();
-            baseRegisterResultObj.setAssessmentNo(propertyMaterlizeView.getPropertyId());
-            baseRegisterResultObj.setDoorNO(propertyMaterlizeView.getHouseNo());
-            baseRegisterResultObj.setOwnerName(propertyMaterlizeView.getOwnerName());
-            baseRegisterResultObj.setIsExempted(propertyMaterlizeView.getIsExempted());
-            baseRegisterResultObj.setCourtCase(Boolean.FALSE);
-            PropertyUsage propUsage = null;
-            if(null != propertyMaterlizeView.getPropUsageMstrID()) {
-              propUsage = (PropertyUsage) getPropPerServ().find("from PropertyUsage where id = ?",propertyMaterlizeView.getPropUsageMstrID());
-            baseRegisterResultObj.setNatureOfUsage(propUsage.getUsageName());
-           } else {
-               baseRegisterResultObj.setNatureOfUsage("N/A");
-           }
-            
-            BigDecimal totalArrearPropertyTax = BigDecimal.ZERO;
-            BigDecimal totalArrearEduCess = BigDecimal.ZERO;
-            BigDecimal totalArreaLibCess = BigDecimal.ZERO;
-            BigDecimal arrearPenaltyFine = BigDecimal.ZERO;
-            for (InstDmdCollMaterializeView instDemdCollDeatils : instDemandCollList) {
-                if (instDemdCollDeatils.getInstallment().getId() == propertyTaxUtil.getCurrentInstallment().getId()) {
-                    baseRegisterResultObj.setGeneralTax(instDemdCollDeatils.getGeneralTax());
-                    baseRegisterResultObj.setEduCessTax(instDemdCollDeatils.getEduCessTax());
-                    baseRegisterResultObj.setLibraryCessTax(instDemdCollDeatils.getLibCessTax());
-                    baseRegisterResultObj.setArrearPenaltyFines(instDemdCollDeatils.getPenaltyFinesTax());
-                    baseRegisterResultObj.setCurrTotal(instDemdCollDeatils.getGeneralTax()
-                            .add(instDemdCollDeatils.getEduCessTax()).add(instDemdCollDeatils.getLibCessTax()));
-                } else {
-                    totalArrearPropertyTax = totalArrearPropertyTax.add(instDemdCollDeatils.getGeneralTax());
-                    totalArrearEduCess =  totalArrearEduCess.add(instDemdCollDeatils.getEduCessTax());
-                    totalArreaLibCess =  totalArreaLibCess.add(instDemdCollDeatils.getLibCessTax());
-                    arrearPenaltyFine = arrearPenaltyFine.add(instDemdCollDeatils.getPenaltyFinesTax());
-                }
-            }
-            String arrearPerFrom = dateFormatter.format(instDemandCollList.get(0).getInstallment().getFromDate());
-            String arrearPerTo = dateFormatter.format(instDemandCollList.get(instDemandCollList.size()-2).getInstallment().getToDate());
-            baseRegisterResultObj.setArrearPeriod(arrearPerFrom+"-"+arrearPerTo);
-            baseRegisterResultObj.setArrearTotal(totalArrearPropertyTax.add(totalArrearEduCess).add(totalArreaLibCess));
-            baseRegisterResultObj.setArrearGenaralTax(totalArrearPropertyTax);
-            baseRegisterResultObj.setArrearLibraryTax(totalArreaLibCess);
-            baseRegisterResultObj.setArrearEduCess(totalArrearEduCess);
-            baseRegisterResultObj.setArrearPenaltyFines(arrearPenaltyFine);
-            baseRegisterResultList.add(baseRegisterResultObj);
-        }
-        return baseRegisterResultList;
     }
 
     public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {

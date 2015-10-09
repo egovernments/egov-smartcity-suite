@@ -77,6 +77,7 @@ public class PropertyMaterlizeView implements Serializable {
     private BigDecimal alv;
     private Boolean isExempted;
     private Character source;
+    private Set<FloorDetailsView> floorDetails;
 
     public Integer getBasicPropertyID() {
         return basicPropertyID;
@@ -296,6 +297,14 @@ public class PropertyMaterlizeView implements Serializable {
 
     public void setSource(Character source) {
         this.source = source;
+    }
+
+    public Set<FloorDetailsView> getFloorDetails() {
+        return floorDetails;
+    }
+
+    public void setFloorDetails(Set<FloorDetailsView> floorDetails) {
+        this.floorDetails = floorDetails;
     }
     
 }

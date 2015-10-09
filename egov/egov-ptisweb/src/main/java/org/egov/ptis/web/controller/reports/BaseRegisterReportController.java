@@ -40,6 +40,7 @@
 package org.egov.ptis.web.controller.reports;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,10 +49,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.ptis.bean.PropertyInfo;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BaseRegisterResult;
-import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.report.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -73,7 +73,7 @@ public class BaseRegisterReportController {
     private BoundaryService boundaryService;
 
     @Autowired
-    private PropertyService PropertyService;
+    private ReportService reportService;
 
     @ModelAttribute
     public void getPropertyModel(final Model model) {
@@ -89,6 +89,7 @@ public class BaseRegisterReportController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String searchForm(final Model model) {
+        model.addAttribute("currDate", new Date());
         return "baseRegister-form";
     }
 
@@ -97,7 +98,7 @@ public class BaseRegisterReportController {
             @RequestParam final String block, final HttpServletRequest request, final HttpServletResponse response)
             throws IOException {
 
-        final List<BaseRegisterResult> propertyList = PropertyService.getPropertyByWardAndBlock(ward, block);
+        final List<BaseRegisterResult> propertyList = reportService.getPropertyByWardAndBlock(ward, block);
         final String result = new StringBuilder("{ \"data\":").append(toJSON(propertyList)).append("}").toString();
         IOUtils.write(result, response.getWriter());
     }

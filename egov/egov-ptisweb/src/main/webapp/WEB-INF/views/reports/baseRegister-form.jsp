@@ -42,6 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <div class="row" id="page-content">
 	<div class="col-md-12">
@@ -94,6 +95,10 @@
 	          		</div>
         		</div>
 		</form:form>
+		<div id="baseRegister-header" class="col-md-12 table-header text-left">
+		<fmt:formatDate value="${currDate}" var="currDate" pattern="dd-MM-yyyy"/>
+				<spring:message code="lbl.baseRegister.report.details" />:<c:out value="${currDate}"></c:out>
+			</div>
 		<table class="table table-bordered datatable dt-responsive table-hover" id="baseRegisterReport-table">
 		</table>
 	</div>

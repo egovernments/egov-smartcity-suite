@@ -79,5 +79,14 @@
             </key>
             <one-to-many class="org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView" />
         </set>
+        
+		<set name="floorDetails" table="EGPT_MV_CURRENT_FLOOR_DETAIL">
+            <key>
+                <column name="BASICPROPERTYID"  not-null="true" />
+            </key>
+            <one-to-many class="org.egov.ptis.domain.entity.property.FloorDetailsView" />
+        </set>
+        
+		
 	</class>
 </hibernate-mapping>

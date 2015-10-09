@@ -96,4 +96,8 @@
 	
 	<bean id="sMSEmailService" class="org.egov.ptis.domain.service.property.SMSEmailService" scope="prototype" >
 	</bean>
+	
+	<bean id="propertyService" class="org.egov.ptis.domain.service.report.ReportService" scope="prototype" >
+	    <property name="propPerServ" ref="persistenceService"/>
+	</bean>
 </beans>
