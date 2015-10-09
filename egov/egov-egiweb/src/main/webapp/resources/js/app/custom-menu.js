@@ -96,7 +96,7 @@ $(document).ready(function () {
 		},
 		onGroupItemClick: function () {
 			menuheight = ($( window ).height() - 63);
-			ulheight =(menuheight -93);
+			ulheight =(menuheight - 115);
 			$('#menu').height(''+menuheight+'px');
 			$('#menu_multilevelpushmenu').height(''+menuheight+'px');
 			$('#menu, #menu_multilevelpushmenu').css('min-height', ''+menuheight+'px');
