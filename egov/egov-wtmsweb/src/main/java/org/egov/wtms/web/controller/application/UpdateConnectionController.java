@@ -53,6 +53,7 @@ import javax.validation.ValidationException;
 
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.service.ChairPersonService;
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -66,7 +67,6 @@ import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.egov.wtms.web.contract.WorkflowContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

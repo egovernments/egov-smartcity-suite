@@ -1,4 +1,4 @@
-package org.egov.wtms.web.contract;
+package org.egov.eis.web.contract;
 
 import java.math.BigDecimal;
 

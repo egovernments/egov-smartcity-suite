@@ -41,7 +41,7 @@ $(document).ready(function()
 {	
 	$('#approvalDepartment').change(function(){
 		$.ajax({
-			url: "/wtms/ajaxWorkFlow-getDesignationsByObjectType",     
+			url: "/eis/ajaxWorkFlow-getDesignationsByObjectType",     
 			type: "GET",
 			data: {
 				approvalDepartment : $('#approvalDepartment').val(),
@@ -72,7 +72,7 @@ $(document).ready(function()
 	
 	$('#approvalDesignation').change(function(){
 		$.ajax({
-			url: "/wtms/ajaxWorkFlow-positionsByDepartmentAndDesignation",     
+			url: "/eis/ajaxWorkFlow-positionsByDepartmentAndDesignation",     
 			type: "GET",
 			data: {
 				approvalDesignation : $('#approvalDesignation').val(),

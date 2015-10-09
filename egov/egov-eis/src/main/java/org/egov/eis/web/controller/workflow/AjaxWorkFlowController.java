@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.web.controller.workflow;
+package org.egov.eis.web.controller.workflow;
 
 import java.util.ArrayList;
 import java.util.Collection;

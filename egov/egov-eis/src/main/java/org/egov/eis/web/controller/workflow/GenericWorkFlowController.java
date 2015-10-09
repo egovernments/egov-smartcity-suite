@@ -37,19 +37,19 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.web.controller.workflow;
+package org.egov.eis.web.controller.workflow;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.workflow.CustomizedWorkFlowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
-import org.egov.wtms.web.contract.WorkflowContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

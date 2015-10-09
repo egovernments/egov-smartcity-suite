@@ -45,6 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.ApplicationDocuments;
@@ -59,7 +60,6 @@ import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.egov.wtms.web.contract.WorkflowContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
