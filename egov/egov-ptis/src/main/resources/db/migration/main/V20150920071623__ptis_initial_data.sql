@@ -548,23 +548,10 @@ Insert into egpt_mutation_master (ID,MUTATION_NAME,MUTATION_DESC,TYPE,CODE,ORDER
 insert into egpt_mutation_master(id, mutation_name, mutation_desc, type, code, order_id) values (nextval('seq_egpt_mutation_master'), 'ADDITION OR ALTERATION', 'Addition or Alteration', 'MODIFY', 'ADD_OR_ALTER', (SELECT MAX(ORDER_ID) + 1 FROM EGPT_MUTATION_MASTER WHERE TYPE = 'MODIFY'));
 insert into egpt_mutation_master(id, mutation_name, mutation_desc, type, code, order_id) values (nextval('seq_egpt_mutation_master'), 'PART DEMOLITION', 'Part Demolition', 'MODIFY', 'PART DEMOLITION', (SELECT MAX(ORDER_ID) + 1 FROM EGPT_MUTATION_MASTER WHERE TYPE = 'MODIFY'));
 Insert into egpt_mutation_master (ID,MUTATION_NAME,MUTATION_DESC,TYPE,CODE,ORDER_ID) values (nextval('SEQ_EGPT_MUTATION_MASTER'),'DATA ENTRY','DataEntry','MODIFY','DATA_ENTRY',6);
-INSERT INTO egpt_mutation_master values (nextval('SEQ_EGPT_MUTATION_MASTER'), 'Sale Deed', 'Sale Deed','TRANSFER','SALE',1);
-INSERT INTO egpt_mutation_master values (nextval('SEQ_EGPT_MUTATION_MASTER'), 'Gift Deed', 'Gift Deed','TRANSFER','GIFT',2);
-INSERT INTO egpt_mutation_master values (nextval('SEQ_EGPT_MUTATION_MASTER'), 'Will Deed', 'Will Deed','TRANSFER','WILL',3);
-INSERT INTO egpt_mutation_master values (nextval('SEQ_EGPT_MUTATION_MASTER'), 'Court Deed', 'Court Deed','TRANSFER','COURT',4);
-INSERT INTO egpt_mutation_master values (nextval('SEQ_EGPT_MUTATION_MASTER'), 'Settlement Deed', 'Settlement Deed','TRANSFER','SETTLEMENT',5);
-INSERT INTO egpt_mutation_master values (nextval('SEQ_EGPT_MUTATION_MASTER'), 'Hakku vidudhala', 'Hakku Vidudhala','TRANSFER','HAKKUVIDLA',6);
-INSERT INTO egpt_mutation_master values (nextval('SEQ_EGPT_MUTATION_MASTER'), 'Dasthavidhulu', 'Dasthavidhulu','TRANSFER','DASTHAVIDLA',7);
-INSERT INTO egpt_mutation_master values (nextval('SEQ_EGPT_MUTATION_MASTER'), 'Legal Heir', 'Legal Heir','TRANSFER','LEGALHEIR',8);
-INSERT INTO egpt_mutation_master  values (nextval('seq_egpt_mutation_master'), 'Blood Relation','Blood Relatio Transfer', 'TRANSFER','BLOODREL',9);
 ------------------END---------------------
 
 -----------------START-------------------
 INSERT INTO EG_SCRIPT VALUES(nextval('SEQ_EG_SCRIPT'),'PTIS-MUTATION-FEE-CALCULATOR','nashorn',1,now(),1,now(),'result = (0.1/100)*marketValue;',now(),'01-Jan-2100',0);
-------------------END---------------------
-
------------------START-------------------
-DELETE FROM eg_userrole  where roleid in(SELECT id FROM eg_role WHERE name='CSC Operator') and userid in(SELECT id FROM eg_user WHERE name='satyam');
 ------------------END---------------------
 
 -----------------START-------------------
