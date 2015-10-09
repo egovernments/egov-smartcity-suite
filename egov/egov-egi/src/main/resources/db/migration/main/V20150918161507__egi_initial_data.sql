@@ -103,4 +103,4 @@ INSERT INTO eg_hierarchy_type (id, name, code, createddate, lastmodifieddate, cr
 INSERT INTO eg_hierarchy_type (id, name, code, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (2, 'LOCATION', 'LOCATION', '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, 0, NULL);
 
 INSERT INTO eg_boundary_type (id, hierarchy, parent, name, hierarchytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (1, 1, NULL, 'City', 1, '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, 0, NULL);
-INSERT INTO eg_boundary_type (id, hierarchy, parent, name, hierarchytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (6, 1, NULL, 'City', 2, '2015-08-28 10:44:03.831086', '2015-08-28 10:44:03.831086', 1, 1, 0, NULL);
+INSERT INTO eg_boundary_type (id, hierarchy, parent, name, hierarchytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (6, 2, NULL, 'City', 2, '2015-08-28 10:44:03.831086', '2015-08-28 10:44:03.831086', 1, 1, 0, NULL);
