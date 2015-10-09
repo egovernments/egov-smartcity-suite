@@ -101,7 +101,7 @@ public class ApplicationDocuments extends AbstractAuditable {
     @Length(max = 255)
     private String description;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "egwtr_documents", joinColumns = @JoinColumn(name = "applicationdocumentsid") , inverseJoinColumns = @JoinColumn(name = "filestoreid") )
     private Set<FileStoreMapper> supportDocs = Collections.emptySet();
 

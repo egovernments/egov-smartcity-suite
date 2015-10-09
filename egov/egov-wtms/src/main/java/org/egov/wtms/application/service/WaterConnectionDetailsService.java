@@ -614,15 +614,15 @@ public class WaterConnectionDetailsService {
             if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)) {
                 if (waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INPROGRESS)
                         && !waterConnectionDetails.getApplicationType().getCode()
-                                .equalsIgnoreCase(WaterTaxConstants.CHANGEOFUSE))
+                        .equalsIgnoreCase(WaterTaxConstants.CHANGEOFUSE)){
                     waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
-                if (LOG.isDebugEnabled())
-                    LOG.debug(" updating Consumer Index Started... ");
-                if(!waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INPROGRESS))
-                consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails);
-                if (LOG.isDebugEnabled())
-                    LOG.debug(" updating Consumer Index completed... ");
-
+                    if (LOG.isDebugEnabled())
+                        LOG.debug(" updating Consumer Index Started... ");
+                    if(!waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INACTIVE) || !waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INPROGRESS))
+                            consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails);
+                        if (LOG.isDebugEnabled())
+                            LOG.debug(" updating Consumer Index completed... ");
+                }
             }
             // To Update After ClosureConnection is rejected
             if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)
@@ -634,7 +634,7 @@ public class WaterConnectionDetailsService {
                 if (waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.CLOSED))
                     consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails);
             
-            if (waterConnectionDetails.getCloseConnectionType().equals('T') && waterConnectionDetails.getStatus().getCode()
+            if (waterConnectionDetails.getCloseConnectionType() !=null && waterConnectionDetails.getCloseConnectionType().equals('T') && waterConnectionDetails.getStatus().getCode()
                     .equals(WaterTaxConstants.APPLICATION_STATUS__RECOONCTIONAPPROVED) || waterConnectionDetails.getStatus().getCode()
                     .equals(WaterTaxConstants.APPLICATION_STATUS__RECOONCTIONSANCTIONED))
                     waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);

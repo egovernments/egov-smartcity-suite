@@ -131,7 +131,7 @@ public class CloserConnectionService {
             final String workFlowAction) {
         
         waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails,workFlowAction,"");
-       final WaterConnectionDetails savedwaterConnectionDetails = waterConnectionDetailsRepository.save(waterConnectionDetails);
+       final WaterConnectionDetails savedwaterConnectionDetails = waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
        
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();

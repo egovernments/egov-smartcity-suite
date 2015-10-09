@@ -39,23 +39,23 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.service.CloserConnectionService;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
@@ -71,6 +71,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -107,20 +109,21 @@ public class CloserConnectionController extends GenericConnectionController {
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationCode) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByConsumerCodeAndConnectionStatus(applicationCode,ConnectionStatus.ACTIVE);
+                .findByConsumerCodeAndConnectionStatus(applicationCode, ConnectionStatus.ACTIVE);
         return waterConnectionDetails;
     }
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails waterConnectionDetails) {
-        waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.CLOSINGCONNECTION));
+        waterConnectionDetails.setApplicationType(applicationTypeService
+                .findByCode(WaterTaxConstants.CLOSINGCONNECTION));
         return waterConnectionDetailsService.getAllActiveDocumentNames(waterConnectionDetails.getApplicationType());
     }
-    
+
     @RequestMapping(value = "/close/{applicationCode}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String applicationCode, final HttpServletRequest request) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByConsumerCodeAndConnectionStatus(applicationCode,ConnectionStatus.ACTIVE);
+                .findByConsumerCodeAndConnectionStatus(applicationCode, ConnectionStatus.ACTIVE);
         return loadViewData(model, request, waterConnectionDetails);
     }
 
@@ -151,7 +154,7 @@ public class CloserConnectionController extends GenericConnectionController {
     @RequestMapping(value = "/close/{applicationCode}", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model) {
+            final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
 
         String workFlowAction = "";
 
@@ -166,24 +169,15 @@ public class CloserConnectionController extends GenericConnectionController {
 
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
-        final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
-        int i = 0;
-        if (!waterConnectionDetails.getApplicationDocs().isEmpty()){
-            for (final ApplicationDocuments applicationDocument : waterConnectionDetails.getApplicationDocs()) {
-                if (applicationDocument.getDocumentNumber() == null && applicationDocument.getDocumentDate() != null) {
-                    final String fieldError = "applicationDocs[" + i + "].documentNumber";
-                    resultBinder.rejectValue(fieldError, "documentNumber.required");
-                }
-                if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() == null) {
-                    final String fieldError = "applicationDocs[" + i + "].documentDate";
-                    resultBinder.rejectValue(fieldError, "documentDate.required");
-                } else if (validApplicationDocument(applicationDocument))
-                    applicationDocs.add(applicationDocument);
-                i++;
-            }
-        }
-        waterConnectionDetails.setApplicationDocs(applicationDocs);
+        
+        final Set<FileStoreMapper> fileStoreSet = addToFileStore(files);
+        Iterator<FileStoreMapper> fsIterator = null;
+        if (fileStoreSet != null && !fileStoreSet.isEmpty())
+            fsIterator = fileStoreSet.iterator();
+        if (fsIterator != null && fsIterator.hasNext())
+            waterConnectionDetails.setFileStore(fsIterator.next());
         processAndStoreApplicationDocuments(waterConnectionDetails);
+       
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
         waterConnectionDetails.setCloseConnectionType(request.getParameter("closeConnectionType").charAt(0));
