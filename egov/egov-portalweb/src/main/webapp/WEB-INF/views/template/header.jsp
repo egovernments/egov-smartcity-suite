@@ -82,7 +82,8 @@
 										<i class="fa fa-user"></i>
 									</a>
 									<ul class="right-arrow dropdown-menu" role="menu">
-										<li><a href="javascript:void(0);" onclick="jQuery('.change-password').modal('show', {backdrop: 'static'});"><i class="fa fa-cog"></i> Change Password</a></li>
+										<li><a href="javascript:void(0);"><i class="fa fa-user"></i> Edit Profile</a></li>
+										<li><a href="javascript:void(0);" onclick="jQuery('.change-password').modal('show', {backdrop: 'static'});"><i class="fa fa-key"></i> Change Password</a></li>
 										<li><a href="/egi/logout"><i class="fa fa-sign-out"></i> Sign out</a></li>
 									</ul>
 								</li>
