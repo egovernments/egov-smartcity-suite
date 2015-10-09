@@ -98,7 +98,13 @@ public class ChangeOfUseService {
                 validationMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
                         assessmentDetails.getPropertyDetails().getTaxDue().toString(),
                         parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "changeOfUsage" }, null);
-        } else if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE)) {
+        } 
+        else if (null != inWorkflow)
+            validationMessage = messageSource.getMessage(
+                    "err.validate.changeofUse.application.inprocess",
+                    new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
+                            inWorkflow.getApplicationNumber() }, null);
+        else if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE)) {
             if (parentWaterConnectionDetail.getDemand().getBaseDemand().doubleValue()
                     - parentWaterConnectionDetail.getDemand().getAmtCollected().doubleValue() > 0)
                 validationMessage = messageSource
@@ -107,11 +113,7 @@ public class ChangeOfUseService {
                 if (waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0)
                     validationMessage = messageSource.getMessage("err.validate.additional.connection.wtdue.forchangeofuse",
                             null, null);
-        } else if (null != inWorkflow)
-            validationMessage = messageSource.getMessage(
-                    "err.validate.changeofUse.application.inprocess",
-                    new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
-                            inWorkflow.getApplicationNumber() }, null);
+        } 
         return validationMessage;
     }
 
