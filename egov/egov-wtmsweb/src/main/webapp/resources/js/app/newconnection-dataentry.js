@@ -58,38 +58,36 @@ function validRange(start, end) {
 		}
 		
 		$(".btn-primary").click(function(event){
+			
 			var previous = $('#previousReading').val();
 			var current = $('#currentcurrentReading').val();
+			
 			if($('#previousReading').val() != '' && $('#currentcurrentReading').val() != ''){
 				if (previous > current){
 					alert("Previous reading should not be greater than the current reading");
+					return false;
 				}
-				
-			
 			}
 		/*	$('#searchResultDiv').show();*/
 
 			if($('#executionDate').val() != '' && $('#existreadingDate').val() != ''){
-					var start = $('#executionDate').val();
-					var end = $('#existreadingDate').val();
-					var stsplit = start.split("/");
-						var ensplit = end.split("/");
-						
-						start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
-						end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
-						
-						if(!validRange(start,end))
-						{
-						return false;
-						}
+				var start = $('#executionDate').val();
+				var end = $('#existreadingDate').val();
+				var stsplit = start.split("/");
+					var ensplit = end.split("/");
 					
-					else {
-						document.forms[0].submit;
-						return true;
+					start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
+					end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
+					
+					if(!validRange(start,end))
+					{
+					return false;
 					}
-				}else{
-			 }
-				event.preventDefault();
+			}
+			
+			document.forms[0].submit;
+			return true;
+			event.preventDefault();
 			
 		});
 });	
