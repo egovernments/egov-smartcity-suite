@@ -249,6 +249,10 @@ public class WaterConnectionDetailsService {
         return documentNamesService.getAllActiveDocumentNamesByApplicationType(applicationType);
     }
 
+    public WaterConnectionDetails findByApplicationNumberOrConsumerCodeAndStatus(final String number, final ConnectionStatus connectionStatus) {
+        return waterConnectionDetailsRepository.findByApplicationNumberOrConnection_ConsumerCodeAndConnectionStatus(number, number,connectionStatus);
+    }
+    
     public WaterConnectionDetails findByApplicationNumberOrConsumerCode(final String number) {
         return waterConnectionDetailsRepository.findByApplicationNumberOrConnection_ConsumerCode(number, number);
     }

@@ -80,8 +80,9 @@ public class CommonWaterTaxSearchController {
     public String searchConnectionSubmit(@ModelAttribute final ConnectionSearchRequest searchRequest,
             final BindingResult resultBinder, final Model model, @RequestParam String applicationType,
             final HttpServletRequest request) {
+        
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCode(searchRequest.getConsumerCode());
+                .findByApplicationNumberOrConsumerCodeAndStatus(searchRequest.getConsumerCode(),ConnectionStatus.ACTIVE);
         applicationType = request.getParameter("applicationType");
         if (waterConnectionDetails == null) {
             resultBinder.rejectValue("consumerCode", "invalid.consumernuber");
