@@ -1,3 +1,4 @@
+
 ------------------START------------------
 CREATE TABLE egp_citizen (
     id bigint NOT NULL,

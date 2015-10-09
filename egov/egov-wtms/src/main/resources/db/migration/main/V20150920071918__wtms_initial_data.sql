@@ -352,7 +352,16 @@ Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID
  values (nextval('SEQ_EGW_STATUS'),'WATERTAXAPPLICATION','ReConnectionSanctioned',now(),
  'RECONNECTIONSANCTIONED',1);
 
-
 ------------------END---------------------
 
+-----------------START--------------------
+Insert into egwtr_application_type (id,code,name,description,active,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (1,'NEWCONNECTION','New connection',null,'true',to_timestamp('2015-08-15 11:02:41.820635','null'),null,1,null,0);
+Insert into egwtr_application_type (id,code,name,description,active,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (2,'ADDNLCONNECTION','Additional connection',null,'true',to_timestamp('2015-08-15 11:02:41.820635','null'),null,1,null,0);
+Insert into egwtr_application_type (id,code,name,description,active,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (3,'CHANGEOFUSE','Change of use',null,'true',to_timestamp('2015-08-15 11:02:41.820635','null'),null,1,null,0);
+Insert into egwtr_application_type (id,code,name,description,active,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (4,'CLOSINGCONNECTION','Closing connection',null,'true',to_timestamp('2015-08-15 11:02:41.820635','null'),null,1,null,0);
+Insert into egwtr_application_type (id,code,name,description,active,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (5,'RECONNECTION','Reconnection',null,'true',to_timestamp('2015-08-15 11:02:41.820635','null'),null,1,null,0);
+Insert into egwtr_application_type (id,code,name,description,active,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (6,'HOLDINGCONNECTION','Holding connection',null,'true',to_timestamp('2015-08-15 11:02:41.820635','null'),null,1,null,0);
+Insert into egwtr_application_type (id,code,name,description,active,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (7,'TITLETRANSFER','Title transfer',null,'true',to_timestamp('2015-08-15 11:02:41.820635','null'),null,1,null,0);
+Insert into egwtr_application_type (id,code,name,description,active,createddate,lastmodifieddate,createdby,lastmodifiedby,version) values (8,'REGLZNCONNECTION','Regularization connection',null,'true',to_timestamp('2015-08-15 11:02:41.820635','null'),null,1,null,0);
+------------------END---------------------
 

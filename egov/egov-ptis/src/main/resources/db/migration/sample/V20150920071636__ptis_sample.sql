@@ -1,4 +1,8 @@
 
+-----------------START--------------------
+INSERT INTO eg_address (housenobldgapt, subdistrict, postoffice, landmark, country, userid, type, streetroadline, citytownvillage, arealocalitysector, district, state, pincode, id, version) VALUES ('001', NULL, NULL, 'Bank Road', NULL, 1, 'PROPERTYADDRESS', NULL, NULL, NULL, NULL, NULL, '532001',nextval('seq_eg_address'), 0);
+------------------END---------------------
+
 -----------------START-------------------
 INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (59, 1, '2004-04-01 00:00:00', '2004-04-01 00:00:00', '2004-09-30 23:59:59', 359, current_timestamp, '2004-2005-1', NULL);
 INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (60, 1, '2004-10-01 00:00:00', '2004-10-01 00:00:00', '2005-03-31 23:59:59', 359, current_timestamp, '2004-2005-2', NULL);

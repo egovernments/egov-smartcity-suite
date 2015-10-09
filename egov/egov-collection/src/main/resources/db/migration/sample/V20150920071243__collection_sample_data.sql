@@ -1,3 +1,8 @@
+----------------------START--------------------
+update chartofaccounts set purposeid =(select id from EGF_ACCOUNTCODE_PURPOSE where name='Cash In Hand') where glcode='4501001' and purposeid is null;
+update chartofaccounts set purposeid =(select id from EGF_ACCOUNTCODE_PURPOSE where name='Cheque In Hand') where glcode='4501051' and purposeid is null;
+update chartofaccounts set purposeid =(select id from EGF_ACCOUNTCODE_PURPOSE where name='Cash In Transit') where glcode='4501002' and purposeid is null;
+-------------------END-------------------
 -----------------START--------------------
 Insert into egcl_servicecategory (id,name,code,isactive,version,createdby,createddate,lastmodifiedby,lastmodifieddate) values (nextval('SEQ_EG_MODULE'),'Water Tax','WT',true,0,1,to_timestamp('2015-08-15 11:04:22.628834','null'),1,to_timestamp('2015-08-15 11:04:22.628834','null'));
 Insert into egcl_servicecategory (id,name,code,isactive,version,createdby,createddate,lastmodifiedby,lastmodifieddate) values (nextval('SEQ_EG_MODULE'),'Property Tax','PT',true,0,1,to_timestamp('2015-08-15 11:04:22.317279','null'),1,to_timestamp('2015-08-15 11:04:22.317279','null'));
@@ -9,26 +14,7 @@ Insert into egcl_servicedetails (id,name,serviceurl,isenabled,callbackurl,servic
 Insert into egcl_servicedetails (id,name,serviceurl,isenabled,callbackurl,servicetype,code,fund,fundsource,functionary,vouchercreation,scheme,subscheme,servicecategory,isvoucherapproved,vouchercutoffdate,created_by,created_date,modified_by,modified_date,ordernumber) values (nextval('seq_egcl_servicedetails'),'PT Mutation Fee','/../ptis/view/viewDCBProperty!displayPropInfo.action?propertyId=',true,'/receipts/receipt-create.action','B','PTMF',1,null,null,false,null,null,(select id from egcl_servicecategory where code='PT'),false,to_timestamp('2015-08-15 11:04:23.51136','null'),1,to_timestamp('2015-08-15 11:04:23.51136','null'),1,to_timestamp('2015-08-15 11:04:23.51136','null'),null);
 Insert into egcl_servicedetails (id,name,serviceurl,isenabled,callbackurl,servicetype,code,fund,fundsource,functionary,vouchercreation,scheme,subscheme,servicecategory,isvoucherapproved,vouchercutoffdate,created_by,created_date,modified_by,modified_date,ordernumber) values (nextval('seq_egcl_servicedetails'),'Axis Payment Gateway','https://migs.mastercard.com.au/vpcpay',true,'https://dev4.governation.com/collection/citizen/onlineReceipt-acceptMessageFromPaymentGateway.action','P','AXIS',1,null,null,true,null,null,(select id from egcl_servicecategory where code='AXIS'),true,to_timestamp('0001-07-11 00:00:00.0','null'),1,to_timestamp('2015-09-15 10:44:20.062408','null'),1,to_timestamp('2015-09-15 10:44:20.062408','null'),null);
 -------------------END-------------------
-------------------START------------------
-------------------START------------------
-INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, VERSION, MODULE ) VALUES (nextval('SEQ_EG_APPCONFIG'), 'COLLECTIONDEPARTMENTFORWORKFLOW', 'Department for Workflow',0, (select id from eg_module where name='Collection')); 
-INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, MODULE ) VALUES ( nextval('SEQ_EG_APPCONFIG'), 'MANUALRECEIPTINFOREQUIRED','Manual receipt information required',(select id from eg_module where name='Collection'));
-Insert into eg_appconfig_values (ID,KEY_ID,EFFECTIVE_FROM,VALUE) values (nextval('seq_eg_appconfig_values'),(select id from eg_appconfig where KEY_NAME ='MANUALRECEIPTINFOREQUIRED'),to_date('23-09-09','DD-MM-RR'),'Y');
-INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, MODULE ) VALUES ( nextval('SEQ_EG_APPCONFIG'), 'BILLINGSERVICEPAYMENTGATEWAY','Get_Billing_Service_Payment_Gateway',(select id from eg_module where name='Collection'));
-INSERT into eg_appconfig_values (ID,KEY_ID,EFFECTIVE_FROM,VALUE,VERSION) values (nextval('seq_eg_appconfig_values'),(select id from eg_appconfig where KEY_NAME ='BILLINGSERVICEPAYMENTGATEWAY'),to_date('23-09-09','DD-MM-RR'),'PT|AXIS',0);
-INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES (nextval('SEQ_EG_APPCONFIG_VALUES'),(SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='COLLECTIONDEPARTMENTFORWORKFLOW' AND MODULE =(select id from eg_module where name='Collection')),current_date, 'Revenue',0);
-INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, VERSION, MODULE ) VALUES (nextval('SEQ_EG_APPCONFIG'), 'COLLECTIONROLEFORNONEMPLOYEE','roles for Collection workflow',0, (select id from eg_module where name='Collection')); 
-INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES (nextval('SEQ_EG_APPCONFIG_VALUES'),(SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='COLLECTIONROLEFORNONEMPLOYEE'),current_date, 'CSC Operator',0);
-INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, VERSION, MODULE ) VALUES (nextval('SEQ_EG_APPCONFIG'), 'COLLECTIONDESIGNATIONFORCSCOPERATORASCLERK','Designation for Collection workflow',0, (select id from eg_module where name='Collection')); 
-INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES (nextval('SEQ_EG_APPCONFIG_VALUES'),(SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='COLLECTIONDESIGNATIONFORCSCOPERATORASCLERK'),current_date, 'Revenue Clerk',0);
-INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, MODULE ) VALUES ( nextval('SEQ_EG_APPCONFIG'), 'CREATEVOUCHER_FOR_REMITTANCE','Create Voucher for Remittance',(select id from eg_module where name='Collection'));
-INSERT into eg_appconfig_values (ID,KEY_ID,EFFECTIVE_FROM,VALUE) values (nextval('seq_eg_appconfig_values'),(select id from eg_appconfig where KEY_NAME ='CREATEVOUCHER_FOR_REMITTANCE'),current_date,'N');
-INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, MODULE ) VALUES ( nextval('SEQ_EG_APPCONFIG'), 'REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD','Remittance Voucher Type for Cheque,DD and Card',(select id from eg_module where name='Collection'));
-INSERT into eg_appconfig_values (ID,KEY_ID,EFFECTIVE_FROM,VALUE) values (nextval('seq_eg_appconfig_values'),(select id from eg_appconfig where KEY_NAME ='REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD'),current_date,'Contra');
-INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, MODULE ) VALUES ( nextval('SEQ_EG_APPCONFIG'), 'USERECEIPTDATEFORCONTRA','Use Receipt Voucher Date for Contra Voucher',(select id from eg_module where name='Collection'));
-INSERT into eg_appconfig_values (ID,KEY_ID,EFFECTIVE_FROM,VALUE) values (nextval('seq_eg_appconfig_values'),(select id from eg_appconfig where KEY_NAME ='USERECEIPTDATEFORCONTRA'),current_date,'N');
 
--------------------END---------------------
 -------------------START------------------
 INSERT into eg_userrole values((select id from eg_role  where name  = 'Remitter'),(select id from eg_user where username ='sumit'));
 -------------------END--------------------

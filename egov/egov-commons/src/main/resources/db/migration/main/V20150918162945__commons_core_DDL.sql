@@ -255,26 +255,6 @@ ALTER TABLE ONLY bankreconciliation ADD CONSTRAINT fk_bacc_brs FOREIGN KEY (bank
 
 -------------------END-------------------
 
-------------------START------------------
-CREATE TABLE calendaryear (
-    id bigint NOT NULL,
-    calendaryear character varying(50),
-    startingdate timestamp without time zone,
-    endingdate timestamp without time zone,
-    isactive smallint,
-    created timestamp without time zone,
-    lastmodified timestamp without time zone,
-    modifiedby smallint
-);
-CREATE SEQUENCE seq_calendaryear
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY calendaryear ADD CONSTRAINT calendaryear_calendaryear_key UNIQUE (calendaryear);
-ALTER TABLE ONLY calendaryear ADD CONSTRAINT calendaryear_pkey PRIMARY KEY (id);
--------------------END-------------------
 ----------------START---------
 CREATE TABLE schedulemapping (
     id bigint NOT NULL,
@@ -392,9 +372,6 @@ ALTER TABLE ONLY chartofaccountdetail ADD CONSTRAINT fk_dt_coa FOREIGN KEY (deta
 
 -------------------END-------------------
 
-
-
-----TODO designation object is there in egi as of now
 ------------------START------------------
 CREATE TABLE eg_designation (
     id bigint NOT NULL,
@@ -407,6 +384,7 @@ CREATE TABLE eg_designation (
     createdby bigint,
     lastmodifiedby bigint
 );
+
 CREATE SEQUENCE seq_eg_designation
     START WITH 1
     INCREMENT BY 1
@@ -418,9 +396,6 @@ ALTER TABLE ONLY eg_designation ADD CONSTRAINT eg_designation_pkey PRIMARY KEY (
 
 -------------------END-------------------
 
-
-
----Removed eg_employee as this is not been used anymore
 ------------------START------------------
 CREATE TABLE eg_modules (
     id bigint NOT NULL,
@@ -1051,10 +1026,8 @@ CREATE SEQUENCE seq_egw_status
 ALTER TABLE ONLY egw_status
     ADD CONSTRAINT egw_status_pkey PRIMARY KEY (id);    
 ----------------END-------------
----------------------------------NOT STRUCTURED---------------------------------
 
-
-
+----------------START------------
 CREATE TABLE eg_appl_domain (
     id bigint NOT NULL,
     name character varying(128) NOT NULL,
@@ -1081,58 +1054,6 @@ CREATE SEQUENCE seq_eg_chairperson
     NO MAXVALUE
     CACHE 1;
 ALTER TABLE ONLY eg_chairperson ADD CONSTRAINT pk_chairperson PRIMARY KEY (id);
-
-CREATE TABLE eg_digital_signed_docs (
-    id bigint NOT NULL,
-    id_module bigint,
-    objecttype character varying(64) NOT NULL,
-    objectid bigint NOT NULL,
-    objectno character varying(100),
-    document bytea NOT NULL,
-    createdby bigint NOT NULL,
-    createddate timestamp without time zone NOT NULL
-);
-CREATE SEQUENCE seq_eg_digital_signed_docs
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE ONLY eg_digital_signed_docs ADD CONSTRAINT eg_digital_signed_docs_pkey PRIMARY KEY (id);
-CREATE INDEX digitalsign_objectid_idx ON eg_digital_signed_docs USING btree (objectid);
-
----removed eg_entity----
-----removed eg_tasks----------
-
-CREATE TABLE eg_userdetails (
-    id_userdet bigint NOT NULL,
-    id_user bigint NOT NULL,
-    id_bankbranch bigint,
-    extrafield1 character varying(32),
-    extrafield2 character varying(32),
-    extrafield3 character varying(32),
-    dob timestamp without time zone,
-    locale character varying(16),
-    id_emp character varying(16)
-);
-ALTER TABLE ONLY eg_userdetails ADD CONSTRAINT eg_userdetails_id_emp_key UNIQUE (id_emp);
-ALTER TABLE ONLY eg_userdetails ADD CONSTRAINT eg_userdetails_id_user_key UNIQUE (id_user);
-ALTER TABLE ONLY eg_userdetails ADD CONSTRAINT eg_userdetails_pkey PRIMARY KEY (id_userdet);
-
-CREATE TABLE eg_view (
-    complaintnumber character varying(32),
-    userid bigint,
-    dateofview timestamp without time zone
-);
-ALTER TABLE ONLY eg_view ADD CONSTRAINT eg_view_complaintnumber_key UNIQUE (complaintnumber);
-
-
-CREATE SEQUENCE seq_service_history
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
 
 ---TODO remove receiptheader year wise sequences-
 CREATE SEQUENCE sq_receiptheader_2010_11
@@ -1249,12 +1170,6 @@ CREATE SEQUENCE sq_receiptheader_2025_26
     NO MAXVALUE
     CACHE 1;
 
-ALTER TABLE ONLY eg_digital_signed_docs ADD CONSTRAINT fk_digitalsign FOREIGN KEY (createdby) REFERENCES eg_user(id); 
-
 ALTER TABLE ONLY eg_object_history ADD CONSTRAINT fk_modified_by FOREIGN KEY (modifed_by) REFERENCES eg_user(id); 
 ALTER TABLE ONLY eg_object_history ADD CONSTRAINT fk_object_type_id FOREIGN KEY (object_type_id) REFERENCES eg_object_type(id); 
 
-ALTER TABLE ONLY eg_view ADD CONSTRAINT fk_user_view FOREIGN KEY (userid) REFERENCES eg_user(id); 
-
-
----------------------------------NOT STRUCTURED ENDS---------------------------------

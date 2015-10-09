@@ -41,16 +41,8 @@ CREATE SEQUENCE seq_eg_department
     CACHE 1;
     
 
-INSERT INTO eg_user (id, title, salutation, dob, locale, username, password, pwdexpirydate, mobilenumber, altcontactnumber, emailid, createddate, lastmodifieddate, createdby, lastmodifiedby, active, name, gender, pan, aadhaarnumber, type, version, guardian, guardianrelation) VALUES (67, NULL, NULL, NULL, 'en_IN', '9999999999', '$2a$10$uheIOutTnD33x7CDqac1zOL8DMiuz7mWplToPgcf7oxAI9OzRKxmK', '2020-12-31 00:00:00', NULL, NULL, NULL, '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, true, '999999999', NULL, NULL, NULL, 'CITIZEN', 0, NULL, NULL);
-
-INSERT INTO eg_user (id, title, salutation, dob, locale, username, password, pwdexpirydate, mobilenumber, altcontactnumber, emailid, createddate, lastmodifieddate, createdby, lastmodifiedby, active, name, gender, pan, aadhaarnumber, type, version, guardian, guardianrelation) VALUES (69, NULL, 'Mr.', NULL, NULL, '8888888888', '$2a$10$uheIOutTnD33x7CDqac1zOL8DMiuz7mWplToPgcf7oxAI9OzRKxmK', '2099-12-31 00:00:00', '8888888888', NULL, 'sudarshan@test.com', '2015-08-28 10:45:17.00206', '2015-08-28 10:45:17.00206', 1, 1, true, 'sudarshan', 1, NULL, '123123123', 'CITIZEN', 0, NULL, NULL);
-
-
-
-
 -----------------START--------------------
-INSERT INTO eg_hierarchy_type (id, name, code, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (1, 'ADMINISTRATION', 'ADMIN', '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, 0, NULL);
-INSERT INTO eg_hierarchy_type (id, name, code, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (2, 'LOCATION', 'LOCATION', '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, 0, NULL);
+
 INSERT INTO eg_hierarchy_type (id, name, code, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (3, 'ELECTION', 'ELECTION', '2015-08-28 10:44:03.831086', '2015-08-28 10:44:03.831086', 1, 1, 0, NULL);
 
 DROP SEQUENCE seq_eg_hierarchy_type;
@@ -65,16 +57,16 @@ CREATE SEQUENCE seq_eg_hierarchy_type
 
 
 -----------------START--------------------
-INSERT INTO eg_boundary_type (id, hierarchy, parent, name, hierarchytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (1, 1, NULL, 'City', 1, '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, 0, NULL);
+
 INSERT INTO eg_boundary_type (id, hierarchy, parent, name, hierarchytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (2, 2, 1, 'Circle', 1, '2015-08-28 10:44:03.831086', '2015-08-28 10:44:03.831086', 1, 1, 0, NULL);
 INSERT INTO eg_boundary_type (id, hierarchy, parent, name, hierarchytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (3, 3, 2, 'Zone', 1, '2015-08-28 10:44:03.831086', '2015-08-28 10:44:03.831086', 1, 1, 0, NULL);
 INSERT INTO eg_boundary_type (id, hierarchy, parent, name, hierarchytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (4, 4, 3, 'Ward', 1, '2015-08-28 10:44:03.831086', '2015-08-28 10:44:03.831086', 1, 1, 0, NULL);
 INSERT INTO eg_boundary_type (id, hierarchy, parent, name, hierarchytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (5, 5, 4, 'Block', 1, '2015-08-28 10:44:03.831086', '2015-08-28 10:44:03.831086', 1, 1, 0, NULL);
-INSERT INTO eg_boundary_type (id, hierarchy, parent, name, hierarchytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (6, 1, NULL, 'City', 2, '2015-08-28 10:44:03.831086', '2015-08-28 10:44:03.831086', 1, 1, 0, NULL);
 INSERT INTO eg_boundary_type (id, hierarchy, parent, name, hierarchytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (7, 2, 6, 'Locality', 2, '2015-08-28 10:44:03.831086', '2015-08-28 10:44:03.831086', 1, 1, 0, NULL);
 INSERT INTO eg_boundary_type (id, hierarchy, parent, name, hierarchytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (8, 3, 7, 'Street', 2, '2015-08-28 10:44:03.831086', '2015-08-28 10:44:03.831086', 1, 1, 0, NULL);
 INSERT INTO eg_boundary_type (id, hierarchy, parent, name, hierarchytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (9, 1, NULL, 'City', 3, '2015-08-28 10:44:03.831086', '2015-08-28 10:44:03.831086', 1, 1, 0, NULL);
 INSERT INTO eg_boundary_type (id, hierarchy, parent, name, hierarchytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (10, 2, 9, 'Election Ward', 3, '2015-08-28 10:44:03.831086', '2015-08-28 10:44:03.831086', 1, 1, 0, NULL);
+
 DROP SEQUENCE seq_eg_boundary_type;
 
 CREATE SEQUENCE seq_eg_boundary_type
@@ -412,7 +404,3 @@ CREATE SEQUENCE seq_eg_crossheirarchy
     CACHE 1;
 ------------------END---------------------
 
------------------START--------------------
-UPDATE EG_CITY SET boundary=1 WHERE ID=2;
-    
-------------------END---------------------

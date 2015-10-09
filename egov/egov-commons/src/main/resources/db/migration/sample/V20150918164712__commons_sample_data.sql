@@ -1,3 +1,31 @@
+-----------------START-------------------
+INSERT INTO eg_uomcategory (id, category, narration, lastmodified, createddate, createdby, lastmodifiedby) VALUES (1, 'AREA', 'area', '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+INSERT INTO eg_uomcategory (id, category, narration, lastmodified, createddate, createdby, lastmodifiedby) VALUES (2, 'Length', 'Length', '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+INSERT INTO eg_uomcategory (id, category, narration, lastmodified, createddate, createdby, lastmodifiedby) VALUES (3, 'Quantity', 'Quantity', '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+INSERT INTO eg_uomcategory (id, category, narration, lastmodified, createddate, createdby, lastmodifiedby) VALUES (4, 'Numbers', 'Numbers', '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+INSERT INTO eg_uomcategory (id, category, narration, lastmodified, createddate, createdby, lastmodifiedby) VALUES (5, 'Volume', 'Volume', '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+INSERT INTO eg_uomcategory (id, category, narration, lastmodified, createddate, createdby, lastmodifiedby) VALUES (6, 'Weight', 'Weight', '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+------------------END---------------------
+-----------------START-------------------
+INSERT INTO eg_uom (id, uomcategoryid, uom, narration, conv_factor, baseuom, lastmodified, createddate, createdby, lastmodifiedby) VALUES (1, 2, 'MTR', 'MTR', 1, 1, '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+INSERT INTO eg_uom (id, uomcategoryid, uom, narration, conv_factor, baseuom, lastmodified, createddate, createdby, lastmodifiedby) VALUES (2, 2, 'CENTIMETER', 'centimeter', 100, 0, '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, NULL);
+INSERT INTO eg_uom (id, uomcategoryid, uom, narration, conv_factor, baseuom, lastmodified, createddate, createdby, lastmodifiedby) VALUES (3, 2, '30 MTR', '30 METER', 30, 0, '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+INSERT INTO eg_uom (id, uomcategoryid, uom, narration, conv_factor, baseuom, lastmodified, createddate, createdby, lastmodifiedby) VALUES (4, 6, 'SQM', 'square meter', 1, 0, '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+INSERT INTO eg_uom (id, uomcategoryid, uom, narration, conv_factor, baseuom, lastmodified, createddate, createdby, lastmodifiedby) VALUES (5, 6, '10 SQM', '10 SQM', 10, 0, '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+INSERT INTO eg_uom (id, uomcategoryid, uom, narration, conv_factor, baseuom, lastmodified, createddate, createdby, lastmodifiedby) VALUES (6, 5, 'CUM', 'cubic meter', 1, 0, '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+INSERT INTO eg_uom (id, uomcategoryid, uom, narration, conv_factor, baseuom, lastmodified, createddate, createdby, lastmodifiedby) VALUES (7, 3, 'GRM', 'GRM', 1, 1, '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+INSERT INTO eg_uom (id, uomcategoryid, uom, narration, conv_factor, baseuom, lastmodified, createddate, createdby, lastmodifiedby) VALUES (8, 3, 'KGS', 'KGS', 1000, 0, '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+INSERT INTO eg_uom (id, uomcategoryid, uom, narration, conv_factor, baseuom, lastmodified, createddate, createdby, lastmodifiedby) VALUES (9, 3, 'TON', 'TON', 1000000, 0, '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+INSERT INTO eg_uom (id, uomcategoryid, uom, narration, conv_factor, baseuom, lastmodified, createddate, createdby, lastmodifiedby) VALUES (10, 3, 'BAG', 'BAG', 12, 0, '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+INSERT INTO eg_uom (id, uomcategoryid, uom, narration, conv_factor, baseuom, lastmodified, createddate, createdby, lastmodifiedby) VALUES (11, 3, 'BOX', 'BOX1', 12, 0, '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+INSERT INTO eg_uom (id, uomcategoryid, uom, narration, conv_factor, baseuom, lastmodified, createddate, createdby, lastmodifiedby) VALUES (12, 3, 'DOZ', 'DOZ', 12, 0, '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+INSERT INTO eg_uom (id, uomcategoryid, uom, narration, conv_factor, baseuom, lastmodified, createddate, createdby, lastmodifiedby) VALUES (13, 4, 'Each', 'each', 1, 0, '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+INSERT INTO eg_uom (id, uomcategoryid, uom, narration, conv_factor, baseuom, lastmodified, createddate, createdby, lastmodifiedby) VALUES (14, 4, 'No', 'number', 1, 1, '2015-08-28 10:39:50.396309', '2015-08-28 10:39:50.396309', 1, 1);
+------------------END---------------------
+
+-----------------START-------------------
+INSERT INTO eg_chairperson (id, name, fromdate, todate, active, createdby, createddate, lastmodifieddate, lastmodifiedby, version) VALUES (1, 'Mr. XXX Chiar Person', '2015-08-28', '2016-08-27', true, 1, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, 0);
+------------------END---------------------
 
 -----------------START--------------------
 INSERT INTO bank (id, code, name, narration, isactive, lastmodified, created, modifiedby, type) VALUES (1, '1', 'Allahabad UP Gramin Bank', NULL, 1, '2015-08-28 00:00:00', '2015-08-28 00:00:00', 1, NULL);

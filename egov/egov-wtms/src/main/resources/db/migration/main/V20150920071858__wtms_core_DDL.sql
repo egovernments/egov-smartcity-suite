@@ -792,6 +792,6 @@ UNION (
                          FROM eg_module
                          WHERE eg_module.name::text IN('Property Tax'::text))))
             AND cd.connectiontype='NON_METERED'));
-  -------------------END-------------------
+-------------------END-------------------
   
 

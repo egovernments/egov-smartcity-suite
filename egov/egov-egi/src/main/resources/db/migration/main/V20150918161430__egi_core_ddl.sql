@@ -994,20 +994,6 @@ ALTER TABLE ONLY revinfo ALTER COLUMN id SET DEFAULT nextval('revinfo_rev_seq'::
 ALTER TABLE ONLY revinfo ADD CONSTRAINT revinfo_pkey PRIMARY KEY (id);
 -------------------END-------------------
 
-
-------------------START------------------
-
-CREATE TABLE eg_citizen (
-    id bigint NOT NULL,
-    activationcode character varying(5),
-    version numeric DEFAULT 0
-);
-
-ALTER TABLE ONLY eg_citizen    ADD CONSTRAINT eg_citizen_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY eg_citizen    ADD CONSTRAINT fk_citizen_user FOREIGN KEY (id) REFERENCES eg_user(id) MATCH FULL;
-
--------------------END-------------------
-
 ------------------START------------------
 CREATE VIEW view_eg_menulink AS
  SELECT m.id AS module_id,

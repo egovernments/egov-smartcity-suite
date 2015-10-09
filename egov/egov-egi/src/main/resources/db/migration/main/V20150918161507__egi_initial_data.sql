@@ -79,14 +79,28 @@ INSERT INTO eg_messagetemplate (id, templatename, template, locale, version) VAL
 ------------------END---------------------
 
 -----------------START--------------------
+INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (5, 'CSC Operator', 'Collection Operator mans the Citizen Service Centers.', '2010-01-01 00:00:00', 1, 1, '2015-01-01 00:00:00', 0);
+INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (7, 'Citizen', 'Citizen who can raise complaint', '2010-01-01 00:00:00', 1, 1, '2015-01-01 00:00:00', 0);
+INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (15, 'Employee', 'Default role for all employees', '2015-08-28 00:00:00', 1, 1, '2015-08-28 00:00:00', 0);
+INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (16, 'ULB Operator', 'ULB Operator', '2015-08-28 10:45:17.567676', 1, 1, '2015-08-28 10:45:17.567676', 0);
 INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (4, 'Super User', 'System Administrator. Can change all master data and has access to all the system screens.', '2010-01-01 00:00:00', 1, 1, '2015-01-01 00:00:00', 0);
 ------------------END---------------------
 
 -----------------START--------------------
-INSERT INTO eg_user (id, title, salutation, dob, locale, username, password, pwdexpirydate, mobilenumber, altcontactnumber, emailid, createddate, lastmodifieddate, createdby, lastmodifiedby, active, name, gender, pan, aadhaarnumber, type, version, guardian, guardianrelation) VALUES (68, NULL, NULL, NULL, 'en_IN', 'egovernments', '$2a$10$uheIOutTnD33x7CDqac1zOL8DMiuz7mWplToPgcf7oxAI9OzRKxmK', '2020-12-31 00:00:00', NULL, NULL, NULL, '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, true, 'Admin', NULL, NULL, NULL, 'EMPLOYEE', 0, NULL, NULL);
-INSERT INTO eg_user (id, title, salutation, dob, locale, username, password, pwdexpirydate, mobilenumber, altcontactnumber, emailid, createddate, lastmodifieddate, createdby, lastmodifiedby, active, name, gender, pan, aadhaarnumber, type, version, guardian, guardianrelation) VALUES (1, NULL, 'MR.', NULL, 'en_IN', 'anonymous', 'XYZ', '2099-01-01 00:00:00', NULL, NULL, NULL, '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, true, 'Anonymous', NULL, NULL, NULL, 'EMPLOYEE', 0, NULL, NULL);
+INSERT INTO eg_user (id, title, salutation, dob, locale, username, password, pwdexpirydate, mobilenumber, altcontactnumber, emailid, createddate, lastmodifieddate, createdby, lastmodifiedby, active, name, gender, pan, aadhaarnumber, type, version, guardian, guardianrelation) VALUES (1, NULL, NULL, NULL, 'en_IN', 'egovernments', '$2a$10$uheIOutTnD33x7CDqac1zOL8DMiuz7mWplToPgcf7oxAI9OzRKxmK', '2020-12-31 00:00:00', NULL, NULL, NULL, '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, true, 'Admin', NULL, NULL, NULL, 'EMPLOYEE', 0, NULL, NULL);
+INSERT INTO eg_user (id, title, salutation, dob, locale, username, password, pwdexpirydate, mobilenumber, altcontactnumber, emailid, createddate, lastmodifieddate, createdby, lastmodifiedby, active, name, gender, pan, aadhaarnumber, type, version, guardian, guardianrelation) VALUES (2, NULL, 'MR.', NULL, 'en_IN', 'anonymous', 'XYZ', '2099-01-01 00:00:00', NULL, NULL, NULL, '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, true, 'Anonymous', NULL, NULL, NULL, 'EMPLOYEE', 0, NULL, NULL);
 ------------------END---------------------
 
 -----------------START--------------------
 INSERT into eg_userrole values((select id from eg_role  where name  = 'Super User'),(select id from eg_user where username ='egovernments'));
 ------------------END---------------------
+
+Insert into EG_ROLEACTION (roleid, actionid) values (15,37);
+Insert into EG_ROLEACTION (roleid, actionid) values (4,37);
+---Add super user role to all actions
+
+INSERT INTO eg_hierarchy_type (id, name, code, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (1, 'ADMINISTRATION', 'ADMIN', '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, 0, NULL);
+INSERT INTO eg_hierarchy_type (id, name, code, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (2, 'LOCATION', 'LOCATION', '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, 0, NULL);
+
+INSERT INTO eg_boundary_type (id, hierarchy, parent, name, hierarchytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (1, 1, NULL, 'City', 1, '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, 0, NULL);
+INSERT INTO eg_boundary_type (id, hierarchy, parent, name, hierarchytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (6, 1, NULL, 'City', 2, '2015-08-28 10:44:03.831086', '2015-08-28 10:44:03.831086', 1, 1, 0, NULL);
