@@ -99,7 +99,7 @@ public class GenericMasterAjaxController {
         for (final Boundary boundary : boundaries) {
             jsonObject = new JSONObject();
             jsonObject.put("Text", boundary.getLocalName());
-            jsonObject.put("Value", boundary.getLocalName());
+            jsonObject.put("Value", boundary.getId());
             jsonArray.add(jsonObject);
         }
 

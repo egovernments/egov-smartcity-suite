@@ -58,6 +58,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeSearchDTO;
 import org.egov.eis.entity.HeadOfDepartments;
+import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.AssignmentRepository;
 import org.egov.eis.repository.EmployeeRepository;
@@ -159,6 +160,13 @@ public class EmployeeService  implements EntityTypeService {
             for (final HeadOfDepartments hod : assign.getDeptSet())
                 hod.setAssignment(assign);
         }
+        employee.setJurisdictions(employee.getJurisdictions().parallelStream()
+                .filter(Jurisdictions -> Jurisdictions.getBoundaryType() != null && Jurisdictions.getBoundary()!= null ).collect(Collectors.toList()));
+        for (final Jurisdiction jurisdiction : employee.getJurisdictions()) {
+            jurisdiction.setEmployee(employee);
+            jurisdiction.setBoundaryType(jurisdiction.getBoundaryType());
+            jurisdiction.setBoundary(jurisdiction.getBoundary());
+        }
         employee.getRoles().add(roleService.getRoleByName(EisConstants.ROLE_EMPLOYEE));
         employeeRepository.save(employee);
     }
@@ -174,6 +182,13 @@ public class EmployeeService  implements EntityTypeService {
             assign.setDepartment(assign.getDepartment());
             for (final HeadOfDepartments hod : assign.getDeptSet())
                 hod.setAssignment(assign);
+        }
+        employee.setJurisdictions(employee.getJurisdictions().parallelStream()
+                .filter(Jurisdictions -> Jurisdictions.getBoundaryType() != null && Jurisdictions.getBoundary()!= null ).collect(Collectors.toList()));
+        for (final Jurisdiction jurisdiction : employee.getJurisdictions()) {
+            jurisdiction.setEmployee(employee);
+            jurisdiction.setBoundaryType(jurisdiction.getBoundaryType());
+            jurisdiction.setBoundary(jurisdiction.getBoundary());
         }
         employeeRepository.saveAndFlush(employee);
     }

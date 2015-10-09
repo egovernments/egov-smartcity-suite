@@ -274,6 +274,38 @@
 											</tbody>
 										</table>
 									</div>
+									<div class="row form-group">
+										<div class="col-md-6 col-xs-6 table-header">Jurisdiction Details</div>
+										<table id="assignmentTable" class="table table-bordered">
+										<thead>
+											<th class="col-sm-2 table-div-column">Boundary Type</th>
+											<th class="col-sm-2 table-div-column">Boundary</th>
+										</thead>
+											<tbody>
+											<c:forEach var="jurisdiction" items="${employee.jurisdictions}" varStatus="status">
+												<tr>
+													<td>
+														<form:input type="hidden"
+															id="jurisdictions[${status.index}].boundaryType"
+															path="jurisdictions[${status.index}].boundaryType"
+															/>
+															<input type="text" id="table_boundaryType${status.index}" class="form-control" 
+															readonly="readonly" style="text-align:center" value="${jurisdiction.boundaryType.name}"/>
+															
+													</td>
+													<td>
+														<form:input type="hidden"
+															id="jurisdictions[${status.index}].boundary"
+															path="jurisdictions[${status.index}].boundary"
+															/>
+															<input type="text" id="table_boundary${status.index}" class="form-control" 
+															readonly="readonly" style="text-align:center" value="${jurisdiction.boundary.name}"/>
+													</td>
+												</tr>
+											</c:forEach>
+											</tbody>
+										</table>
+									</div>
 									
 									<div class="row text-center">
 										<div class="row">

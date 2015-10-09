@@ -47,6 +47,7 @@ import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeTypeRepository;
 import org.egov.eis.service.EmployeeService;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -70,7 +71,10 @@ public class ViewAndUpdateEmployeController {
 
     @Autowired
     private EmployeeService employeeService;
-
+    
+    @Autowired
+    private BoundaryTypeService boundaryTypeService;
+    
     @ModelAttribute
     public Employee employeeModel(@PathVariable final String code) {
         return employeeService.getEmployeeByCode(code);
@@ -111,6 +115,7 @@ public class ViewAndUpdateEmployeController {
         model.addAttribute("functionaryList", employeeService.getAllFunctionaries());
         model.addAttribute("functionList", employeeService.getAllFunctions());
         model.addAttribute("gradeList", employeeService.getAllGrades());
+        model.addAttribute("boundaryType", boundaryTypeService.getBoundaryTypeByHierarchyTypeName("ADMINISTRATION"));
     }
 
 }

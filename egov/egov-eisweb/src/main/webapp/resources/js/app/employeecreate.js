@@ -339,6 +339,107 @@ $(document).ready(function(){
 			return false;
 		}
 	});
-	
-	
+	function validateJurisdiction() {
+		$('.boundaryTypeerror').hide();
+		$('.boundaryerror').hide();
+		$('.duplicatejurisdictionerror').hide();
+		if(($("#jurisdictionTable tr").length-1)>=1){
+			for(var i=0;i<$("#jurisdictionTable tr").length-1;i++) {
+				if(($('#table_boundaryType'+i).val()).localeCompare($("#boundaryTypeId").find('option:selected').text())==0){
+					if(($('#table_boundary'+i).val()).localeCompare($("#boundarySelect").find('option:selected').text())==0){
+						$('.duplicatejurisdictionerror').html('Already this jurisdiction combination exist').show();
+						return false;
+					}
+				}
+			}
+		}
+		$('.boundaryTypeerror').hide();
+		$('.boundaryerror').hide();
+		var boundaryTypeId = $("#boundaryTypeId").val();
+		var boundaryId =$("#boundarySelect").val();
+		var validate = true;
+		if(null==boundaryTypeId || ''==boundaryTypeId){
+			$('.boundaryTypeerror').html('Boundary Type is required').show();
+			validate = false;
+		}
+		if(null==boundaryId || ''==boundaryId) {
+			$('.boundaryerror').html('Boundary is required').show();
+			validate = false;
+		}
+		return validate;
+	}
+	var jurdctnrowCount=0;
+	var jurdctnedit=false;
+	var jurdctndeleteRow="";
+	var jurdctneditedRowIndex="";
+	$("#btn-addJurdctn").click(function() {
+		if(validateJurisdiction()) {
+			if(!jurdctnedit){
+				jurdctnrowCount = $("#jurisdictionTable tr").length-1;
+				jurdctnaddRow(jurdctnrowCount);
+				jurdctnrowCount++;
+			}
+			else{
+				jurdctndeleteRow.remove();
+				jurdctnaddRow(jurdctneditedRowIndex);		
+				jurdctnedit=false;
+			}
+			resetJurisdictionValues();
+		}
+	});
+	function resetJurisdictionValues() {
+		if(!jurdctnedit) {
+			$("#boundaryTypeId").val("");
+			$("#boundarySelect").val("");
+		}	
+	}
+	function jurdctnaddRow(index) {
+		var del="";
+			del='<span class="parallel-actions"><i id="jurdctndelete_row" class="fa fa-remove"></i></span>';
+		var text = 
+					'<tr>'+
+						'<td>'+
+							'<input type="hidden" id="jurisdictions['+index+'].boundaryType" name="jurisdictions['+index+'].boundaryType" '+
+							'value="'+$("#boundaryTypeId").val()+'"/>'+
+							'<input type="text" id="table_boundaryType'+index+'" class="form-control" readonly="readonly" style="text-align:center"/>'+
+						'</td>'+	
+						'<td>'+
+							'<input type="hidden" id="jurisdictions['+index+'].boundary" name="jurisdictions['+index+'].boundary" '+
+							'value="'+$("#boundarySelect").val()+'"/>'+
+							'<input type="text" id="table_boundary'+index+'" class="form-control" readonly="readonly" style="text-align:center"/>'+
+						'</td>'+	
+						'<td>'+	
+							'<span class="parallel-actions"><i id="jurdctnedit_row" class="fa fa-edit" value="'+index+'"></i></span>'+del+
+						'</td>'+	
+					'</tr>';	
+		$("#jurisdictionTable").append(text);
+		$("#table_boundaryType"+index+"").val($("#boundaryTypeId").find('option:selected').text());
+		$("#table_boundary"+index+"").val($("#boundarySelect").find('option:selected').text());
+	}
+
+	$(document).on('click',"#jurdctndelete_row",function (){
+		$(this).closest('tr').remove();
+	});
+
+	$(document).on('click',"#jurdctnedit_row",function (){
+		jurdctnedit = true;
+		jurdctndeleteRow = $(this).closest('tr');
+		jurdctneditedRowIndex =$(this).attr("value");
+		var boundaryType = document.getElementById("jurisdictions["+jurdctneditedRowIndex+"].boundaryType").value;
+		var boundary = document.getElementById("jurisdictions["+jurdctneditedRowIndex+"].boundary").value;
+		var boundaryTypeName = document.getElementById("table_boundaryType"+jurdctneditedRowIndex).value;
+		var boundaryName = document.getElementById("table_boundary"+jurdctneditedRowIndex).value;
+		populateboundarySelect({
+			boundaryTypeId : boundaryType
+		});
+		$("#boundaryTypeId").val(boundaryType);
+		$("#boundarySelect").val(boundary);
+	});
+
 });
+
+function populateBoundary(dropdown) {
+	populateboundarySelect({
+		boundaryTypeId : dropdown.value
+	});
+}

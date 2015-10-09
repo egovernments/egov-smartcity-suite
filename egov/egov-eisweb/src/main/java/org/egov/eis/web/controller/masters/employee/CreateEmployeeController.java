@@ -47,6 +47,7 @@ import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeTypeRepository;
 import org.egov.eis.service.EmployeeService;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -63,12 +64,15 @@ public class CreateEmployeeController {
 
     @Autowired
     private DepartmentService departmentService;
-
+    
     @Autowired
     private EmployeeTypeRepository employeeTypeRepository;
 
     @Autowired
     private EmployeeService employeeService;
+    
+    @Autowired
+    private BoundaryTypeService boundaryTypeService;
 
     @RequestMapping(value = "create", method = RequestMethod.GET)
     public String createForm(final Model model) {
@@ -100,5 +104,6 @@ public class CreateEmployeeController {
         model.addAttribute("functionaryList", employeeService.getAllFunctionaries());
         model.addAttribute("functionList", employeeService.getAllFunctions());
         model.addAttribute("gradeList", employeeService.getAllGrades());
+        model.addAttribute("boundaryType", boundaryTypeService.getBoundaryTypeByHierarchyTypeName("ADMINISTRATION"));
     }
 }

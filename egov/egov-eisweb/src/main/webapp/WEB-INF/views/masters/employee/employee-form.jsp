@@ -534,6 +534,91 @@
 											</tbody>
 										</table>
 									</div>
+							<div class="panel-heading custom_form_panel_heading">
+								<div class="panel-title">Jurisdiction Details</div>
+
+							</div>
+							<div class="form-group">
+								<label for="field-1" class="col-sm-3 control-label">Boundary
+									Type</label>
+
+								<div class="col-sm-2 add-margin">
+									<select class="form-control" id="boundaryTypeId"
+										onchange="populateBoundary(this);">
+										<option value="">
+											<spring:message code="lbl.select" />
+										</option>
+										<c:forEach items="${boundaryType}" var="bndryType">
+											<option value="${bndryType.id}">${bndryType.name}</option>
+										</c:forEach>
+									</select> <input type="hidden" id="boundaryTypeId" value="" />
+									<div
+										class="error-msg boundaryTypeerror all-errors display-hide"></div>
+								</div>
+								<div class="col-sm-1">
+								<label for="field-1" class="control-label">Boundary</label>
+								</div>
+								<div class="col-sm-3 add-margin">
+									<egov:ajaxdropdown id="boundaryAjax" fields="['Text','Value']"
+										dropdownId="boundarySelect"
+										url="../egi/boundaries-by-boundaryType" />
+									<select class="form-control" id="boundarySelect">
+										<option value="">
+											<spring:message code="lbl.select" />
+										</option>
+									</select> <input type="hidden" id="boundaryId" value="" />
+									<div class="error-msg boundaryerror all-errors display-hide"></div>
+								</div>
+							</div>
+							<div class="error-msg duplicatejurisdictionerror all-errors display-hide"></div>
+							<div class="form-group">
+								<div class="text-center">
+									<button type="button" id="btn-addJurdctn" class="btn btn-primary">Add
+										/ Modify</button>
+							</div>
+							</div>
+							<div class="row form-group">
+								<table id="jurisdictionTable" class="table table-bordered">
+									<thead>
+										<div
+											class="col-sm-12 table-div-border view-content header-color hidden-xs">
+											<th class="col-sm-2 table-div-column">Boundary Type</th>
+											<th class="col-sm-2 table-div-column">Boundary</th>
+											<th class="col-sm-2 table-div-column">Actions</th>
+										</div>
+									</thead>
+									<tbody>
+										<div
+											class="error-msg jurisdictionserror all-errors display-hide"
+											align="center"></div>
+										<c:forEach var="jurdctn" items="${employee.jurisdictions}"
+											varStatus="status">
+											<tr>
+												<td><input type="hidden"
+													id="jurisdictions[${status.index}].boundaryType"
+													name="jurisdictions[${status.index}].boundaryType"
+													value="${jurdctn.boundaryType.id}" /> <input type="text"
+													id="table_boundaryType${status.index}" class="form-control"
+													readonly="readonly" style="text-align: center"
+													value="${jurdctn.boundaryType.name}" /></td>
+												<td><input type="hidden"
+													id="jurisdictions[${status.index}].boundary"
+													name="jurisdictions[${status.index}].boundary"
+													value="${jurdctn.boundary.id}" /> <input type="text"
+													id="table_boundary${status.index}" class="form-control"
+													readonly="readonly" style="text-align: center"
+													value="${jurdctn.boundary.name}" /></td>
+													<td><span class="parallel-actions"><i
+														id="jurdctnedit_row" class="fa fa-edit" value="${status.index}"></i></span>
+														<span class="parallel-actions"><i
+														id="jurdctndelete_row" class="fa fa-remove" value="${status.index}"></i></span>
+												</td>
+												
+											</tr>
+										</c:forEach>
+									</tbody>
+								</table>
+							</div>
 								</div>
 							</div>
 						</div>
