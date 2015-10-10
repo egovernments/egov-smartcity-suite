@@ -61,7 +61,7 @@ INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, di
 INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (1224, 'AadhaarInfo', '/aadhaar', NULL, 237, 0, 'AadhaarInfo', false, 'egi', 0, 1, '2015-08-28 10:45:34.775828', 1, '2015-08-28 10:45:34.775828', 1);
 INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (37, 'Official Home Page', '/home', NULL, 237, 0, 'User Login', false, 'egi', 0, 1, '2015-08-28 10:43:35.552035', 1, '2015-08-28 10:43:35.552035', 1);
 INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (56, 'File Download', '/downloadfile', NULL, 237, 0, 'File Download', false, 'egi', 0, 1, '2015-08-28 10:43:35.552035', 1, '2015-08-28 10:43:35.552035', 1);
-
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate,application) VALUES (nextval('seq_eg_action'), 'AjaxLoadBoundarys', '/boundaries-by-boundaryType', null, (select id from eg_module where name='Boundary Module'), null, 'AjaxLoadBoundarys', false, 'egi', 0, 1, now(), 1, now(),(Select id from eg_module where name='Administration' and parentmodule is null));
 
 DROP SEQUENCE SEQ_EG_ACTION;
 
@@ -95,12 +95,16 @@ INSERT INTO eg_user (id, title, salutation, dob, locale, username, password, pwd
 INSERT into eg_userrole values((select id from eg_role  where name  = 'Super User'),(select id from eg_user where username ='egovernments'));
 ------------------END---------------------
 
+-----------------START--------------------
 Insert into EG_ROLEACTION (roleid, actionid) values (15,37);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,1049),(4,33),(4,46),(4,54),(4,55),(4,34),(4,35),(4,39),(4,30),(4,32),(4,31),(4,44),(4,69),(4,1015),(4,1036),(4,1014),(4,1016),(4,1035),(4,41),(4,42),(4,43),(4,62),(4,63),(4,64),(4,65),(4,40),(4,47),(4,50),(4,25),(4,26),(4,27),(4,70),(4,71),(4,72),(4,73),(4,1041),(4,1044),(4,66),(4,67),(4,68),(4,59),(4,58),(4,1181),(4,1182),(4,1192),(4,1224),(4,37),(4,56);
----Add super user role to all actions
+INSERT INTO EG_ROLEACTION (roleid,actionid) values (4, (select id from eg_action where name='AjaxLoadBoundarys'));
+------------------END---------------------
 
+-----------------START--------------------
 INSERT INTO eg_hierarchy_type (id, name, code, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (1, 'ADMINISTRATION', 'ADMIN', '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, 0, NULL);
 INSERT INTO eg_hierarchy_type (id, name, code, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (2, 'LOCATION', 'LOCATION', '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, 0, NULL);
 
 INSERT INTO eg_boundary_type (id, hierarchy, parent, name, hierarchytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (1, 1, NULL, 'City', 1, '2010-01-01 00:00:00', '2015-01-01 00:00:00', 1, 1, 0, NULL);
 INSERT INTO eg_boundary_type (id, hierarchy, parent, name, hierarchytype, createddate, lastmodifieddate, createdby, lastmodifiedby, version, localname) VALUES (6, 2, NULL, 'City', 2, '2015-08-28 10:44:03.831086', '2015-08-28 10:44:03.831086', 1, 1, 0, NULL);
+------------------END---------------------

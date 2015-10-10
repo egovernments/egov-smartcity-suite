@@ -422,7 +422,8 @@ CREATE TABLE eg_crosshierarchy (
     parent bigint NOT NULL,
     child bigint NOT NULL,
     parenttype bigint,
-    childtype bigint
+    childtype bigint,
+    version bigint default 0
 );
 
 CREATE SEQUENCE seq_eg_crosshierarchy

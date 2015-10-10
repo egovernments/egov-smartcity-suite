@@ -3,7 +3,8 @@ CREATE TABLE egpgr_receiving_center (
     id bigint NOT NULL,
     name character varying(100),
     iscrnrequired boolean DEFAULT false,
-    version bigint
+    orderno bigint default 0,
+    version bigint default 0
 );
 CREATE SEQUENCE seq_egpgr_receiving_center
     START WITH 1
@@ -110,6 +111,7 @@ CREATE TABLE egpgr_complainant (
     mobile character varying(20),
     name character varying(150),
     userdetail bigint,
+    address character varying(256),
     version bigint
 );
 

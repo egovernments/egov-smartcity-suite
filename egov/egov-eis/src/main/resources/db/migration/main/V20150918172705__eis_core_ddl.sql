@@ -378,7 +378,7 @@ CREATE VIEW view_egeis_employee AS
      JOIN egeis_assignment ea ON (((ea.employee)::numeric = ee.id)));
 -----------------END---------------  
 
-INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (384, 'EIS', true, 'eis', NULL, 'EIS', 2);
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (384, 'EIS', true, 'eis', NULL, 'Employee Management', 2);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (385, 'EIS Masters', true, 'eis', 384, 'Masters', 1);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (386, 'Employee', true, 'eis', 385, 'Employee', 1);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (387, 'Designation', true, 'eis', 385, 'Designation', 2);

@@ -1,5 +1,5 @@
 -----------------START--------------------
-INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (36, 'PGR', true, 'pgr', NULL, 'PGR', 3);
+INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (36, 'PGR', true, 'pgr', NULL, 'Grievance Redressal', 3);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (300, 'Pgr Masters', true, NULL, 36, 'Masters', 2);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (301, 'PGRComplaints', true, NULL, 36, 'Complaint', 2);
 INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (404, 'PGR-COMMON', false, 'pgr', 36, 'PGR-COMMON', NULL);
@@ -90,6 +90,8 @@ Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, di
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1208,'AjaxCallInReportForcomplaintType','/complaint/pgrreport/complaintTypes',null,410,null,'AjaxCallInReportForcomplaintType','false','pgr',0,1,'2015-07-27 13:06:23.714353',1,'2015-07-27 13:06:23.714353',36);
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1210,'Complaint Type Wise Report search result','/report/complaintTypeReport/resultList-update',null,410,null,'Complaint Type Wise Report search result','false','pgr',0,1,'2015-07-27 13:06:23.714353',1,'2015-07-27 13:06:23.714353',36);
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (1239,'complaint downloadfile','/complaint/downloadfile',null,301,null,'Complaint downloadfile','false','pgr',0,1,'2015-08-07 21:11:19.734845',1,'2015-08-07 21:11:19.734845',36);
+INSERT INTO eg_action(id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate,application) VALUES (nextval('seq_eg_action'), 'PendingGrievance', '/pending/grievance-list', null, (select id from eg_module where name='PGRComplaints'), 4, 'My pending grievance', true, 'pgr', 0, 1, now(), 1, now(),(select id from eg_module where name='PGR' and parentmodule is null));
+INSERT INTO eg_action(id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate,application) VALUES (nextval('seq_eg_action'), 'AjaxPendingGrievanceResult', '/pending/ajax-grievancelist', null, (select id from eg_module where name='PGRComplaints'), 4, 'AjaxPendingGrievanceResult', false, 'pgr', 0, 1, now(), 1, now(),(select id from eg_module where name='PGR' and parentmodule is null));
 
 ------------------END---------------------
 
@@ -241,11 +243,26 @@ INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 7,1239);
 INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 1,1239);
 INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 2,1239);
 INSERT INTO eg_roleaction (roleid, actionid) VALUES ( 3,1239);
-
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values (4 ,(select id FROM eg_action  WHERE name = 'PendingGrievance'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values (4 ,(select id FROM eg_action  WHERE name = 'AjaxPendingGrievanceResult'));
 ------------------END---------------------
 
 -----------------START--------------------
+update eg_module set displayname ='Grievance' where name='PGRComplaints';
+update eg_module set displayname ='Grievance Type Wise Report' where name='Complaint Type Wise Report';
+update eg_module set displayname ='Grievance Type' where name='Complaint Type';
 
+update eg_action set displayname  ='Search Grievance' where name='SearchComplaintFormOfficial';
+update eg_action set displayname  ='Register Grievance' where name='ComplaintRegisteration';
+update eg_action set displayname  ='Officials Register Grievance' where name='ComplaintRegisterationOfficials';
+update eg_action set displayname  ='Create Grievance Type' where name='Add Complaint Type';
+update eg_action set displayname  ='Update Grievance Type' where name='UpdateComplaintType';
+update eg_action set displayname  ='View Grievance Type' where name='ViewComplaintType';
+update eg_action set displayname  ='Search By Grievance Type' where name='Complaint Type Wise Report';
+
+-----------------END--------------------
+
+-----------------START--------------------
 
 INSERT INTO egpgr_complaintstatus (id, name, version) VALUES (1, 'REGISTERED', 0);
 INSERT INTO egpgr_complaintstatus (id, name, version) VALUES (2, 'FORWARDED', 0);
@@ -360,14 +377,15 @@ SELECT pg_catalog.setval('seq_egpgr_complaintstatus_mapping', 91, true);
 ------------------END---------------------
 
 -----------------START--------------------
-INSERT INTO egpgr_receiving_center (id, name, iscrnrequired, version) VALUES (1, 'Complaint Cell', true, 0);
-INSERT INTO egpgr_receiving_center (id, name, iscrnrequired, version) VALUES (2, 'Mayor', true, 0);
-INSERT INTO egpgr_receiving_center (id, name, iscrnrequired, version) VALUES (3, 'Zonal Office', true, 0);
-INSERT INTO egpgr_receiving_center (id, name, iscrnrequired, version) VALUES (4, 'Commissioner Office', true, 0);
-INSERT INTO egpgr_receiving_center (id, name, iscrnrequired, version) VALUES (5, 'CM Office', true, 0);
-INSERT INTO egpgr_receiving_center (id, name, iscrnrequired, version) VALUES (6,'Field visits',true,0);
-INSERT INTO egpgr_receiving_center (id, name, iscrnrequired, version) VALUES (7,'Adverse Items(Paper/news)',true,0);
-INSERT INTO egpgr_receiving_center (id, name, iscrnrequired, version) VALUES (8,'Public Representatives',true,0);
+INSERT INTO egpgr_receiving_center (id, name, iscrnrequired, orderno, version) VALUES (1, 'Complaint Cell', true, 6, 0);
+INSERT INTO egpgr_receiving_center (id, name, iscrnrequired, orderno, version) VALUES (2, 'Mayor/Chairperson Office', true, 2,0);
+INSERT INTO egpgr_receiving_center (id, name, iscrnrequired, orderno, version) VALUES (3, 'Zonal Office', true, 5,0);
+INSERT INTO egpgr_receiving_center (id, name, iscrnrequired, orderno, version) VALUES (4, 'Commissioner Office', true, 4,0);
+INSERT INTO egpgr_receiving_center (id, name, iscrnrequired, orderno, version) VALUES (5, 'CM Office', true, 1,0);
+INSERT INTO egpgr_receiving_center (id, name, iscrnrequired, orderno, version) VALUES (6,'Field visits',true,7,0);
+INSERT INTO egpgr_receiving_center (id, name, iscrnrequired, orderno, version) VALUES (7,'Adverse Items(Paper/news)',true,8,0);
+INSERT INTO egpgr_receiving_center (id, name, iscrnrequired, orderno, version) VALUES (8,'Public Representatives',true,3,0);
+
 
 SELECT pg_catalog.setval('seq_egpgr_receiving_center', 5, true);
 ------------------END---------------------
