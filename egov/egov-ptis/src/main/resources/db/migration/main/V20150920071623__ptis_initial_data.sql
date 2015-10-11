@@ -512,8 +512,7 @@ insert into eg_roleaction (actionid, roleid) select (select id from eg_action wh
 insert into eg_roleaction (actionid, roleid) select (select id from eg_action where name = 'NatureOfUsageReport-result'), id from eg_role where name in ('Super User','ULB Operator','Property Administrator','Property Approver','Property Verifier');
 
 --Mapping all the actions to Super user role
-INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where name = 'Super User') ,(select id FROM eg_action  WHERE contextroot='ptis' and application=(select id from eg_module where name='Property Tax')));
-------------------END---------------------
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) select (select id from eg_role where name = 'Super User'), id FROM eg_action  WHERE contextroot='ptis' and application=(select id from eg_module where name='Property Tax');------------------END---------------------
 
 -----------------START-------------------
 Insert into EGPT_SRC_OF_INFO (ID,SOURCE_NAME,LASTUPDATEDTIMESTAMP,SOURCE_NAME_LOCAL,SRC_SHT_NAME) values (nextval('SEQ_EGPT_SRC_OF_INFO'),'Municipal Records',CURRENT_TIMESTAMP,null,'MNCPL-RECORDS');
