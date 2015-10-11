@@ -114,6 +114,7 @@ CREATE TABLE egpt_property_usage_master
   ISRESIDENTIAL boolean NOT NULL,
   CONSTRAINT pk_egpt_property_usage_master PRIMARY KEY (id)
 );
+
 COMMENT ON TABLE egpt_property_usage_master IS 'Master table for property usages';
 COMMENT ON COLUMN egpt_property_usage_master.id IS 'Primary Key';
 COMMENT ON COLUMN egpt_property_usage_master.usg_name IS 'name of prpperty usage';
@@ -517,7 +518,7 @@ CREATE TABLE egpt_basic_property
   regd_doc_no character varying(25) NOT NULL,
   regd_doc_date timestamp without time zone NOT NULL,
   underworkflow boolean DEFAULT false,
-  assessmentdate date
+  assessmentdate date NOT NULL
 );
 
 ALTER TABLE ONLY egpt_basic_property ADD CONSTRAINT pk_egpt_basic_property PRIMARY KEY (id);

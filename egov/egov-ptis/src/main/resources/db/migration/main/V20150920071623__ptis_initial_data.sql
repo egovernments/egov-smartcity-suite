@@ -132,9 +132,16 @@ Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYN
 Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'ajaxLoadBolockByWard','/common/ajaxCommon-blockByWard.action', null,(select id from EG_MODULE where name = 'New Property'),null,null,'f','ptis',0,1,now(),1,now(),(select id from eg_module  where name = 'Property Tax'));
 Insert into eg_action (ID,NAME,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate, lastmodifiedby, lastmodifieddate, application) values (nextval('seq_eg_action'),'PTIS-Edit Data Entry Screen','/modify/modifyProperty-modifyDataEntry.action', null, (select ID from eg_module where NAME ='Existing property'), null, 'Edit Data Entry Screen', false, 'ptis', null, 1, current_timestamp,1,current_timestamp, (select ID from eg_module where NAME ='Property Tax'));
 Insert into eg_action (ID,NAME,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate, lastmodifiedby, lastmodifieddate, application) values (nextval('seq_eg_action'),'PTIS-Save Edit Data Entry Screen','/modify/modifyProperty-saveDataEntry.action', null, (select ID from eg_module where NAME ='Existing property'), null, 'Save Edit Data Entry Screen', false, 'ptis', null, 1, current_timestamp,1,current_timestamp, (select ID from eg_module where NAME ='Property Tax'));
+Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'checkExistingCategory','/common/ajaxCommon-checkIfCategoryExists.action',null,(select id from EG_MODULE where name = 'PTIS-Administration'),0,'checkExistingCategory',false,'tl',0,1,now(),1,now(),(select id from eg_module where name='Property Tax' and parentmodule is null));
+INSERT INTO EG_ACTION (ID, NAME, URL, QUERYPARAMS, PARENTMODULE, ORDERNUMBER, DISPLAYNAME, ENABLED, CONTEXTROOT, VERSION, CREATEDBY, CREATEDDATE, LASTMODIFIEDBY, LASTMODIFIEDDATE, APPLICATION) VALUES (nextval('SEQ_EG_ACTION'), 'Usage Master', '/usage/create', NULL, (SELECT ID FROM EG_MODULE WHERE NAME = 'PTIS-Administration'), 3, 'Usage Master', true, 'ptis', 0, 1, now(), 1, now(), (SELECT id FROM eg_module WHERE name='Property Tax' AND parentmodule IS NULL));
+INSERT INTO EG_ACTION (ID, NAME, URL, QUERYPARAMS, PARENTMODULE, ORDERNUMBER,DISPLAYNAME, ENABLED, CONTEXTROOT, VERSION, CREATEDBY, CREATEDDATE, LASTMODIFIEDBY, LASTMODIFIEDDATE, APPLICATION) VALUES (nextval('SEQ_EG_ACTION'), 'Usage Master List', '/usage/list', NULL, (SELECT ID FROM EG_MODULE WHERE NAME = 'PTIS-Administration'), 3, 'Usage Master List', false, 'ptis', 0, 1, now(), 1, now(), (SELECT id FROM eg_module WHERE name='Property Tax' AND parentmodule IS NULL));
+Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'Base Register Report','/report/baseRegister', null,(select id from EG_MODULE where name = 'PTIS-Reports'),null, 'Base Register','t','ptis',0,1,now(),1,now(),(select id from eg_module  where name = 'Property Tax'));
+Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'Base Register Report result','/report/baseRegister/result', null,(select id from EG_MODULE where name = 'PTIS-Reports'),null,'Base Register Report result',false,'ptis',0,1,now(),1,now(),(select id from eg_module  where name = 'Property Tax'));
+Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'NatureOfUsageReport-form','/reports/natureOfUsageReport-form', null,(select id from EG_MODULE where name = 'PTIS-Reports'),1,'Nature of usage report','t','ptis',0,1,now(),1,now(),(select id from eg_module  where name = 'Property Tax'));
+Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'NatureOfUsageReport-result','/reports/natureOfUsageReportList', null,(select id from EG_MODULE where name = 'PTIS-Reports'),null,null,'f','ptis',0,1,now(),1,now(),(select id from eg_module  where name = 'Property Tax'));
 ------------------END---------------------
------------------START-------------------
 
+-----------------START-------------------
 INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (14, 'Property Administrator', 'Administrator for Property Tax', '2015-08-28 10:43:58.851212', 1, 1, '2015-08-28 10:43:58.851212', 0);
 INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (11, 'Property Verifier', 'Muncipal Commissioner, final approval authority', '2015-08-28 10:43:45.850138', 1, 1, '2015-08-28 10:43:45.850138', NULL);
 INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (12, 'Property Approver', 'Muncipal Commissioner, final approval authority', '2015-08-28 10:43:45.850138', 1, 1, '2015-08-28 10:43:45.850138', NULL);
@@ -404,6 +411,7 @@ Insert into EG_ROLEACTION (roleid, actionid) values (4,1260);
 Insert into EG_ROLEACTION (roleid, actionid) values (5,1260);
 Insert into EG_ROLEACTION (roleid, actionid) values (4,1261);
 Insert into EG_ROLEACTION (roleid, actionid) values (16,1261);
+Insert into EG_ROLEACTION (roleid, actionid) values (11,1261);
 Insert into EG_ROLEACTION (roleid, actionid) values (5,1261);
 Insert into EG_ROLEACTION (roleid, actionid) values (12,1264);
 Insert into EG_ROLEACTION (roleid, actionid) values (11,1264);
@@ -430,6 +438,9 @@ Insert into EG_ROLEACTION (roleid, actionid) values (15,56);
 Insert into EG_ROLEACTION (roleid, actionid) values (16,56);
 Insert into EG_ROLEACTION (roleid, actionid) values (11,56);
 Insert into EG_ROLEACTION (roleid, actionid) values (12,56);
+Insert into EG_ROLEACTION (roleid, actionid) values (5,41);
+Insert into EG_ROLEACTION (roleid, actionid) values (5,42);
+Insert into EG_ROLEACTION (roleid, actionid) values (5,43);
 insert into eg_roleaction(Select id,(select id from eg_action where name='AjaxDesignationDropdown') from eg_role where name='ULB Operator');
 insert into eg_roleaction(Select id,(select id from eg_action where name='AjaxApproverDropdown') from eg_role where name='ULB Operator');
 insert into eg_roleaction(Select id,(select id from eg_action where name='AjaxDesignationDropdown') from eg_role where name='Property Approver');
@@ -492,6 +503,13 @@ insert into eg_roleaction (roleid, actionid) select (select id from eg_role wher
 insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'Property Verifier'), id from eg_action where name = 'ajaxLoadBolockByWard';
 INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where name = 'CSC Operator') ,(select id FROM eg_action  WHERE name = 'PTIS-Edit Data Entry Screen' and contextroot='ptis'));
 INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where name = 'CSC Operator') ,(select id FROM eg_action  WHERE name = 'PTIS-Save Edit Data Entry Screen' and contextroot='ptis'));
+INSERT INTO eg_roleaction (actionid,roleid) VALUES ((SELECT id FROM eg_action WHERE name='checkExistingCategory' and contextroot='ptis'),(SELECT id FROM eg_role WHERE name ='Property Administrator'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) VALUES ((SELECT id FROM eg_role WHERE name LIKE 'Property Administrator'), (SELECT id FROM eg_action WHERE NAME = 'Usage Master' AND CONTEXTROOT = 'ptis'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) VALUES ((SELECT id FROM eg_role WHERE name LIKE 'Property Administrator'),(SELECT id FROM eg_action WHERE NAME = 'Usage Master List' AND CONTEXTROOT = 'ptis'));
+insert into eg_roleaction (actionid, roleid) select (select id from eg_action where name = 'Base Register Report'), id from eg_role where name in ('Super User','ULB Operator','Property Administrator','Property Approver','Property Verifier');
+insert into eg_roleaction (actionid, roleid) select (select id from eg_action where name = 'Base Register Report result'), id from eg_role where name in ('Super User','ULB Operator','Property Administrator','Property Approver','Property Verifier');
+insert into eg_roleaction (actionid, roleid) select (select id from eg_action where name = 'NatureOfUsageReport-form'), id from eg_role where name in ('Super User','ULB Operator','Property Administrator','Property Approver','Property Verifier');
+insert into eg_roleaction (actionid, roleid) select (select id from eg_action where name = 'NatureOfUsageReport-result'), id from eg_role where name in ('Super User','ULB Operator','Property Administrator','Property Approver','Property Verifier');
 
 --Mapping all the actions to Super user role
 INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where name = 'Super User') ,(select id FROM eg_action  WHERE contextroot='ptis' and application=(select id from eg_module where name='Property Tax')));
