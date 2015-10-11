@@ -983,9 +983,7 @@ public class CommonsServiceImpl implements CommonsService {
             Long boundaryId = 0L;
             if (latitude != null && longitude != null) {
                 final Map<String, URL> map = new HashMap<String, URL>();
-                // FIXME TODO This is hard coded now should be replaced with dynamic shape file.
-                map.put("url", Thread.currentThread().getContextClassLoader()
-                        .getResource("shapefiles/tirupathi_wards.shp"));
+                map.put("url", Thread.currentThread().getContextClassLoader().getResource("shapefiles/"+EgovThreadLocals.getTenantID()+"/wards.shp"));
                 final DataStore dataStore = DataStoreFinder.getDataStore(map);
                 final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = dataStore.getFeatureSource(
                         dataStore.getTypeNames()[0])
