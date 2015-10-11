@@ -492,6 +492,9 @@ insert into eg_roleaction (roleid, actionid) select (select id from eg_role wher
 insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'Property Verifier'), id from eg_action where name = 'ajaxLoadBolockByWard';
 INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where name = 'CSC Operator') ,(select id FROM eg_action  WHERE name = 'PTIS-Edit Data Entry Screen' and contextroot='ptis'));
 INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where name = 'CSC Operator') ,(select id FROM eg_action  WHERE name = 'PTIS-Save Edit Data Entry Screen' and contextroot='ptis'));
+
+--Mapping all the actions to Super user role
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where name = 'Super User') ,(select id FROM eg_action  WHERE contextroot='ptis' and application=(select id from eg_module where name='Property Tax')));
 ------------------END---------------------
 
 -----------------START-------------------
@@ -518,8 +521,8 @@ Insert into egpt_status (ID,STATUS_NAME,created_date,IS_ACTIVE,CODE) values (nex
 Insert into egpt_status (ID,STATUS_NAME,created_date,IS_ACTIVE,CODE) values (nextval('SEQ_EGPT_STATUS'),'Marked For Deactivation',CURRENT_TIMESTAMP,'Y','MARK_DEACTIVE');
 Insert into egpt_status (ID,STATUS_NAME,created_date,IS_ACTIVE,CODE) values (nextval('SEQ_EGPT_STATUS'),'Bifurcation',CURRENT_TIMESTAMP,'Y','BIFURCATE');
 Insert into egpt_status (ID,STATUS_NAME,created_date,IS_ACTIVE,CODE) values (nextval('SEQ_EGPT_STATUS'),'Amalgamation',CURRENT_TIMESTAMP,'Y','AMALG');
-INSERT INTO egpt_status  (id,status_name,created_date,is_active,code) values (nextval('SEQ_EGPT_STATUS'),'WORKFLOW',CURRENT_TIMESTAMP,'Y','WORKFLOW');
-INSERT INTO egpt_status  (id,status_name,created_date,is_active,code) values (nextval('SEQ_EGPT_STATUS'),'APPROVED',CURRENT_TIMESTAMP,'Y','APPROVED');
+INSERT INTO egpt_status (id,status_name,created_date,is_active,code) values (nextval('SEQ_EGPT_STATUS'),'WORKFLOW',CURRENT_TIMESTAMP,'Y','WORKFLOW');
+INSERT INTO egpt_status (id,status_name,created_date,is_active,code) values (nextval('SEQ_EGPT_STATUS'),'APPROVED',CURRENT_TIMESTAMP,'Y','APPROVED');
 ------------------END---------------------
 
 -----------------START-------------------
@@ -532,17 +535,31 @@ Insert into egpt_mutation_master (ID,MUTATION_NAME,MUTATION_DESC,TYPE,CODE,ORDER
 Insert into egpt_mutation_master (ID,MUTATION_NAME,MUTATION_DESC,TYPE,CODE,ORDER_ID) values (nextval('SEQ_EGPT_MUTATION_MASTER'),'BIFURCATION','Bifurcation','MODIFY','BIFURCATE',2);
 Insert into egpt_mutation_master (ID,MUTATION_NAME,MUTATION_DESC,TYPE,CODE,ORDER_ID) values (nextval('SEQ_EGPT_MUTATION_MASTER'),'COURT RULING','Court Ruling','MODIFY','COURT_RULE',4);
 Insert into egpt_mutation_master (ID,MUTATION_NAME,MUTATION_DESC,TYPE,CODE,ORDER_ID) values (nextval('SEQ_EGPT_MUTATION_MASTER'),'OBJECTION','Objection','MODIFY','OBJ',5);
-insert into egpt_mutation_master(id, mutation_name, mutation_desc, type, code, order_id) values (nextval('seq_egpt_mutation_master'), 'ADDITION OR ALTERATION', 'Addition or Alteration', 'MODIFY', 'ADD_OR_ALTER', (SELECT MAX(ORDER_ID) + 1 FROM EGPT_MUTATION_MASTER WHERE TYPE = 'MODIFY'));
-insert into egpt_mutation_master(id, mutation_name, mutation_desc, type, code, order_id) values (nextval('seq_egpt_mutation_master'), 'PART DEMOLITION', 'Part Demolition', 'MODIFY', 'PART DEMOLITION', (SELECT MAX(ORDER_ID) + 1 FROM EGPT_MUTATION_MASTER WHERE TYPE = 'MODIFY'));
+insert into egpt_mutation_master (id, mutation_name, mutation_desc, type, code, order_id) values (nextval('seq_egpt_mutation_master'), 'ADDITION OR ALTERATION', 'Addition or Alteration', 'MODIFY', 'ADD_OR_ALTER', (SELECT MAX(ORDER_ID) + 1 FROM EGPT_MUTATION_MASTER WHERE TYPE = 'MODIFY'));
+insert into egpt_mutation_master (id, mutation_name, mutation_desc, type, code, order_id) values (nextval('seq_egpt_mutation_master'), 'PART DEMOLITION', 'Part Demolition', 'MODIFY', 'PART DEMOLITION', (SELECT MAX(ORDER_ID) + 1 FROM EGPT_MUTATION_MASTER WHERE TYPE = 'MODIFY'));
 Insert into egpt_mutation_master (ID,MUTATION_NAME,MUTATION_DESC,TYPE,CODE,ORDER_ID) values (nextval('SEQ_EGPT_MUTATION_MASTER'),'DATA ENTRY','DataEntry','MODIFY','DATA_ENTRY',6);
 ------------------END---------------------
 
 -----------------START-------------------
-INSERT INTO EG_SCRIPT VALUES(nextval('SEQ_EG_SCRIPT'),'PTIS-MUTATION-FEE-CALCULATOR','nashorn',1,now(),1,now(),'result = (0.1/100)*marketValue;',now(),'01-Jan-2100',0);
+INSERT INTO eg_wf_types (id,module,type,link,createdby,createddate,lastmodifiedby,lastmodifieddate,renderyn,groupyn,typefqn,displayname) VALUES (nextval('seq_eg_wf_types'),(SELECT id FROM eg_module WHERE name='Property Tax'),'PropertyImpl',':ID',1,now(),1,now(), 'Y', 'N','org.egov.ptis.domain.entity.property.PropertyImpl', 'Property');
+INSERT INTO eg_wf_types (id,module,type,link,createdby,createddate,lastmodifiedby,lastmodifieddate,renderyn,groupyn,typefqn,displayname) VALUES (nextval('seq_eg_wf_types'),(SELECT id FROM eg_module WHERE name='Property Tax'),'PropertyMutation','/ptis/property/transfer/view.action?mutationId=:ID',1,now(),1,now(),'Y','N','org.egov.ptis.domain.entity.property.PropertyMutation','Property Owner Transfer',0);
+INSERT INTO eg_wf_types (id,module,type,link,createdby,createddate,lastmodifiedby,lastmodifieddate,renderyn,groupyn,typefqn,displayname) VALUES (nextval('seq_eg_wf_types'),(SELECT id FROM eg_module WHERE name='Property Tax'),'RevisionPetition','/ptis/revPetition/revPetition-view.action?objectionId=:ID',1,now(),1,now(), 'Y', 'N','org.egov.ptis.domain.entity.objection.RevisionPetition', 'Revision Petition');
 ------------------END---------------------
 
 -----------------START-------------------
-INSERT INTO eg_wf_types (id,module,type,link,createdby,createddate,lastmodifiedby,lastmodifieddate,renderyn,groupyn,typefqn,displayname) VALUES (nextval('seq_eg_wf_types'),(SELECT id FROM eg_module WHERE name='Property Tax'),'PropertyImpl',':ID',1,now(),1,now(), 'Y', 'N','org.egov.ptis.domain.entity.property.PropertyImpl', 'Property' );
-insert into eg_wf_types values(nextval('seq_eg_wf_types'),(SELECT id FROM eg_module WHERE name='Property Tax'),'PropertyMutation','/ptis/property/transfer/view.action?mutationId=:ID',1,now(),1,now(),'Y','N','org.egov.ptis.domain.entity.property.PropertyMutation','Property Owner Transfer',0);
-INSERT INTO eg_wf_types (id,module,type,link,createdby,createddate,lastmodifiedby,lastmodifieddate,renderyn,groupyn,typefqn,displayname) VALUES (nextval('seq_eg_wf_types'),(SELECT id FROM eg_module WHERE name='Property Tax'),'RevisionPetition','/ptis/revPetition/revPetition-view.action?objectionId=:ID',1,now(),1,now(), 'Y', 'N','org.egov.ptis.domain.entity.objection.RevisionPetition', 'Revision Petition' );
+INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, VERSION, MODULE ) VALUES (nextval('SEQ_EG_APPCONFIG'), 'IS_CORPORATION', 'To know the ULB is Corporation or not',0, (select id from eg_module where name='Property Tax')); 
+INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES (nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='IS_CORPORATION'), current_date, '0',0);
+------------------END---------------------
+
+-----------------START-------------------
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','CREATED',now(),'CREATED',1);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','HEARING DATE FIXED',now(),'HEARING DATE FIXED',2);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','HEARING COMPLETED',now(),'HEARING COMPLETED',3);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','INSPECTION COMPLETED',now(),'INSPECTION COMPLETED',4);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','OBJECTION ACCEPTED',now(),'OBJECTION ACCEPTED',5);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','OBJECTION REJECTED',now(),'OBJECTION REJECTED',6);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','GENERATE HEARING NOTICE',now(),'GENERATE HEARING NOTICE',7);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','GENERATE ENDORSEMENT NOTICE',now(),'GENERATE ENDORSEMENT NOTICE',8);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','INSPECTION VERIFY',now(),'INSPECTION VERIFY',7);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'PTObejction','Rejected',now(),'Rejected',1);
 ------------------END---------------------
