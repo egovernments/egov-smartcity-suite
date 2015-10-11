@@ -179,7 +179,7 @@ public class EditDemandAction extends BaseFormAction {
 
     @Override
     public Object getModel() {
-        return null;
+        return demandDetailBeanList;
     }
 
     @Override

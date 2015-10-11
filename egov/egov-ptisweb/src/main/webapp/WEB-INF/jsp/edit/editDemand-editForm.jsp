@@ -51,12 +51,12 @@
 		jQuery.noConflict();
 		jQuery("#loadingMask").remove();
 	    var newInstallmentCount = 0;
-	    var mapSize = document.getElementById("mapSize");
+	    var mapSize = '<s:property value="%{demandDetailBeanList.size()}"/>';
 	    var instDetailsRowIndex = 2;
-	    var newDemandRsnsCount = 4;	    
+	    var newDemandRsnsCount = mapSize;	    
 	    var lastIndex;
 	    var lastIndexOnError;
-	    var noOfDemandRsns = 4;
+	    var noOfDemandRsns = mapSize;
 	    var isFirstInstVisible = true;
 		
 	    function addNewInstallment() {

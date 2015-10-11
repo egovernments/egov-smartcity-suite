@@ -51,12 +51,11 @@
 					value="%{demandDetailBeanList[#demandInfoStatus.index].installment.id}"
 					name="demandDetailBeanList[%{#demandInfoStatus.index}].installment.id" />
 			<s:hidden name="demandDetailBeanList[%{#demandInfoStatus.index}].isNew" value="%{demandDetailBeanList[#demandInfoStatus.index].isNew}"/>
-			<s:if test="{demandDetailBeanList[#demandInfoStatus.index].installment == demandDetailBeanList[#demandInfoStatus.index - 1].installment}">
+			<s:if test="%{demandDetailBeanList[#demandInfoStatus.index].installment.id == demandDetailBeanList[#demandInfoStatus.index - 1].installment.id}">
 					&nbsp;
-				</s:if>
+			</s:if>
 			<s:else>
-				<s:property
-					value="%{demandDetailBeanList[#demandInfoStatus.index].installment}" /> 
+				<s:property	value="%{demandDetailBeanList[#demandInfoStatus.index].installment}" /> 
 			</s:else>												
 
 		</div>
