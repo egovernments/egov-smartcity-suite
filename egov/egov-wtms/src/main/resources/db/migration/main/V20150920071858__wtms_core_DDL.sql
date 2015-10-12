@@ -449,6 +449,8 @@ CREATE TABLE egwtr_connectiondetails
   closeConnectionReason character varying(1024),
   closeConnectionType character(1),
   reConnectionReason character varying(1024),
+  closeApprovalDate date,
+  reconnectionApprovalDate date,
   ishistory boolean,
   createdby bigint NOT NULL,
   createddate timestamp without time zone NOT NULL,
