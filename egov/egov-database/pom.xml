@@ -12,6 +12,10 @@
 	<artifactId>egov-database</artifactId>
 
 	<build>
+		<filters>
+				<filter>../egov-egi/src/main/resources/config/persistence-config.properties</filter>
+				<filter>../egov-egi/src/main/resources/config/egov-erp-${user.name}.properties</filter>
+		</filters>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -89,7 +93,6 @@
 						</goals>
 						<configuration>
 							<configFile>src/main/resources/flyway.properties</configFile>
-							<validateOnMigrate>false</validateOnMigrate>
 						</configuration>
 					</execution>
 				</executions>
