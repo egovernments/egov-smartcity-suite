@@ -1,68 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.egov</groupId>
-    <artifactId>egov-erp</artifactId>
-    <version>1.0-SNAPSHOT</version>
+	<groupId>org.egov</groupId>
+	<artifactId>egov-erp</artifactId>
+	<version>1.0-SNAPSHOT</version>
 
-    <packaging>pom</packaging>
+	<packaging>pom</packaging>
 
-    <name>e-governments erp</name>
+	<name>e-governments erp</name>
 
-   <modules>
-        <module>egov-config</module>
-     	<module>egov-database</module>
-        <module>egov-egi</module>
+	<modules>
+		<module>egov-config</module>
+		<module>egov-database</module>
+		<module>egov-egi</module>
 		<module>egov-commons</module>
-        <module>egov-eis</module>
-        <module>egov-egf</module>
-        <module>egov-assets</module>
-        <!-- <module>egov-works</module> -->
-        <module>egov-portal</module>
-        <module>egov-pgr</module>
-		<module>egov-collection</module>   
-        <module>egov-demand</module>
-        <module>egov-ptis</module>
-<!--    <module>egov-adtax</module> -->
-       	<module>egov-wtms</module> 
-<!--  	<module>egov-tl</module> -->
-    	<module>egov-eisweb</module>
-        <module>egov-egiweb</module>
-       	<module>egov-egfweb</module>
-<!--  	<module>egov-assetsweb</module> -->
-<!--	<module>egov-worksweb</module> -->
-        <module>egov-pgrweb</module>
+		<module>egov-eis</module>
+		<module>egov-egf</module>
+		<module>egov-assets</module>
+		<!-- <module>egov-works</module> -->
+		<module>egov-portal</module>
+		<module>egov-pgr</module>
+		<module>egov-collection</module>
+		<module>egov-demand</module>
+		<module>egov-ptis</module>
+		<module>egov-adtax</module>
+		<module>egov-wtms</module>
+		<!-- <module>egov-tl</module> -->
+		<module>egov-eisweb</module>
+		<module>egov-egiweb</module>
+		<module>egov-egfweb</module>
+		<!-- <module>egov-assetsweb</module> -->
+		<!-- <module>egov-worksweb</module> -->
+		<module>egov-pgrweb</module>
 		<module>egov-api</module>
-        <module>egov-portalweb</module>
-      	<module>egov-collectionweb</module>
-        <module>egov-ptisweb</module>
-<!--    <module>egov-adtaxweb</module>  -->       
-        <module>egov-wtmsweb</module>
-        <module>egov-dashboardweb</module>
-<!--    <module>egov-tlweb</module> -->
-        <module>egov-ear</module>
-        <module>egov-restapi</module>
-    </modules>
+		<module>egov-portalweb</module>
+		<module>egov-collectionweb</module>
+		<module>egov-ptisweb</module>
+		<module>egov-adtaxweb</module>
+		<module>egov-wtmsweb</module>
+		<module>egov-dashboardweb</module>
+		<!-- <module>egov-tlweb</module> -->
+		<module>egov-ear</module>
+		<module>egov-restapi</module>
+	</modules>
 
-    <properties>
-        <hibernate-version>4.3.7.Final</hibernate-version>
-        <struts2-version>2.3.24</struts2-version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <build.number>Local</build.number>
-    </properties>
+	<properties>
+		<hibernate-version>4.3.7.Final</hibernate-version>
+		<struts2-version>2.3.24</struts2-version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<build.number>Local</build.number>
+	</properties>
 
-    <repositories>
-        <repository>
-            <id>repo.egovernments.org-snapshots</id>
-            <url>http://repo.egovernments.org/nexus/content/repositories/snapshots/</url>
-            <snapshots>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
-    </repositories>
+	<repositories>
+		<repository>
+			<id>repo.egovernments.org-snapshots</id>
+			<url>http://repo.egovernments.org/nexus/content/repositories/snapshots/</url>
+			<snapshots>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
 	<distributionManagement>
 		<snapshotRepository>
 			<id>repo.egovernments.org</id>
@@ -70,277 +69,270 @@
 			<url>http://repo.egovernments.org/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.egov.search</groupId>
-                <artifactId>egov-search</artifactId>
-                <version>1.0-SNAPSHOT</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.jayway.jsonpath</groupId>
-                        <artifactId>json-path</artifactId>
-                    </exclusion>
-                    <exclusion>
-                    	<groupId>org.ow2.asm</groupId>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.egov.search</groupId>
+				<artifactId>egov-search</artifactId>
+				<version>1.0-SNAPSHOT</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.jayway.jsonpath</groupId>
+						<artifactId>json-path</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.ow2.asm</groupId>
 						<artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-
-            <!-- HIBERNATE DEPENDENCIES START -->
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-core</artifactId>
-                <version>${hibernate-version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>${hibernate-version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-envers</artifactId>
-                <version>${hibernate-version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-infinispan</artifactId>
-                <version>${hibernate-version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-search-engine</artifactId>
-                <version>5.0.0.Final</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-search-orm</artifactId>
-                <version>5.0.0.Final</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.lucene</groupId>
-                <artifactId>lucene-queryparser</artifactId>
-                <version>4.10.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-validator</artifactId>
-                <version>5.1.3.Final</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.validation</groupId>
-                <artifactId>validation-api</artifactId>
-                <version>1.1.0.Final</version>
-                <scope>provided</scope>
-            </dependency>
-           <!-- <dependency>
-				<groupId>org.jadira.usertype</groupId>
-				<artifactId>usertype.core</artifactId>
-				<version>4.0.0.GA</version>
+					</exclusion>
+				</exclusions>
 			</dependency>
-           <dependency>
-				<groupId>org.jadira.usertype</groupId>
-				<artifactId>usertype.spi</artifactId>
-				<version>4.0.0.GA</version>
-			</dependency> -->
-            <!-- HIBERNATE DEPENDENCIES END -->
 
-            <!-- SERVLET SPEC JBOSS DEPENDENCIES START -->
-            <dependency>
-                <groupId>org.jboss.spec.javax.servlet</groupId>
-                <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-                <version>1.0.0.Final</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.spec.javax.servlet.jstl</groupId>
-                <artifactId>jboss-jstl-api_1.2_spec</artifactId>
-                <version>1.1.2.Final</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.spec.javax.servlet.jsp</groupId>
-                <artifactId>jboss-jsp-api_2.3_spec</artifactId>
-                <version>1.0.1.Final</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.spec.javax.jms</groupId>
-                <artifactId>jboss-jms-api_2.0_spec</artifactId>
-                <version>1.0.0.Final</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish</groupId>
-                <artifactId>javax.el</artifactId>
-                <version>3.0.1-b05</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.mail</groupId>
-                <artifactId>javax.mail-api</artifactId>
-                <version>1.5.1</version>
-                <scope>provided</scope>
-            </dependency>
-            <!-- SERVLET SPEC JBOSS DEPENDENCIES END -->
 
-            <!-- STRUTS2 DEPENDENCIES START -->
-            <dependency>
-                <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-core</artifactId>
-                <version>${struts2-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>javassist</groupId>
-                        <artifactId>javassist</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>asm</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions> 
-            </dependency>
-            
-            <dependency>
-                <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-json-plugin</artifactId>
-                <version>${struts2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-spring-plugin</artifactId>
-                <version>${struts2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-rest-plugin</artifactId>
-                <version>${struts2-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.codehaus.jackson</groupId>
-                        <artifactId>jackson-core-asl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.codehaus.jackson</groupId>
-                        <artifactId>jackson-mapper-asl</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-convention-plugin</artifactId>
-                <version>${struts2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-jasperreports-plugin</artifactId>
-                <version>${struts2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.jgeppert.struts2.jquery</groupId>
-                <artifactId>struts2-jquery-plugin</artifactId>
-                <version>3.7.1</version>
-            </dependency>
-            <dependency>
+			<!-- HIBERNATE DEPENDENCIES START -->
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-core</artifactId>
+				<version>${hibernate-version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-entitymanager</artifactId>
+				<version>${hibernate-version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-envers</artifactId>
+				<version>${hibernate-version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-infinispan</artifactId>
+				<version>${hibernate-version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-search-engine</artifactId>
+				<version>5.0.0.Final</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-search-orm</artifactId>
+				<version>5.0.0.Final</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.lucene</groupId>
+				<artifactId>lucene-queryparser</artifactId>
+				<version>4.10.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-validator</artifactId>
+				<version>5.1.3.Final</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>1.1.0.Final</version>
+				<scope>provided</scope>
+			</dependency>
+			<!-- <dependency> <groupId>org.jadira.usertype</groupId> <artifactId>usertype.core</artifactId> 
+				<version>4.0.0.GA</version> </dependency> <dependency> <groupId>org.jadira.usertype</groupId> 
+				<artifactId>usertype.spi</artifactId> <version>4.0.0.GA</version> </dependency> -->
+			<!-- HIBERNATE DEPENDENCIES END -->
+
+			<!-- SERVLET SPEC JBOSS DEPENDENCIES START -->
+			<dependency>
+				<groupId>org.jboss.spec.javax.servlet</groupId>
+				<artifactId>jboss-servlet-api_3.1_spec</artifactId>
+				<version>1.0.0.Final</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.spec.javax.servlet.jstl</groupId>
+				<artifactId>jboss-jstl-api_1.2_spec</artifactId>
+				<version>1.1.2.Final</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.spec.javax.servlet.jsp</groupId>
+				<artifactId>jboss-jsp-api_2.3_spec</artifactId>
+				<version>1.0.1.Final</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.spec.javax.jms</groupId>
+				<artifactId>jboss-jms-api_2.0_spec</artifactId>
+				<version>1.0.0.Final</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.glassfish</groupId>
+				<artifactId>javax.el</artifactId>
+				<version>3.0.1-b05</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.mail</groupId>
+				<artifactId>javax.mail-api</artifactId>
+				<version>1.5.1</version>
+				<scope>provided</scope>
+			</dependency>
+			<!-- SERVLET SPEC JBOSS DEPENDENCIES END -->
+
+			<!-- STRUTS2 DEPENDENCIES START -->
+			<dependency>
+				<groupId>org.apache.struts</groupId>
+				<artifactId>struts2-core</artifactId>
+				<version>${struts2-version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javassist</groupId>
+						<artifactId>javassist</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>asm</groupId>
+						<artifactId>*</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.struts</groupId>
+				<artifactId>struts2-json-plugin</artifactId>
+				<version>${struts2-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.struts</groupId>
+				<artifactId>struts2-spring-plugin</artifactId>
+				<version>${struts2-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.struts</groupId>
+				<artifactId>struts2-rest-plugin</artifactId>
+				<version>${struts2-version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.codehaus.jackson</groupId>
+						<artifactId>jackson-core-asl</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.codehaus.jackson</groupId>
+						<artifactId>jackson-mapper-asl</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.struts</groupId>
+				<artifactId>struts2-convention-plugin</artifactId>
+				<version>${struts2-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.struts</groupId>
+				<artifactId>struts2-jasperreports-plugin</artifactId>
+				<version>${struts2-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.jgeppert.struts2.jquery</groupId>
+				<artifactId>struts2-jquery-plugin</artifactId>
+				<version>3.7.1</version>
+			</dependency>
+			<dependency>
 				<groupId>org.apache.struts</groupId>
 				<artifactId>struts2-dojo-plugin</artifactId>
 				<version>${struts2-version}</version>
 			</dependency>
-            
-            <dependency>
-                <groupId>com.thoughtworks.xstream</groupId>
-                <artifactId>xstream</artifactId>
-                <version>1.4.2</version>
-            </dependency>
-            <dependency>
-                <groupId>xpp3</groupId>
-                <artifactId>xpp3_min</artifactId>
-                <version>1.1.4c</version>
-            </dependency>
-            <!-- STRUTS2 DEPENDENCIES END -->
 
-            <!-- STRUTS1 DEPENDENCIES START -->
-            <dependency>
-                <groupId>struts</groupId>
-                <artifactId>struts</artifactId>
-                <version>1.2.9</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>antlr</groupId>
-                        <artifactId>antlr</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>oro</groupId>
-                        <artifactId>oro</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>xalan</groupId>
-                        <artifactId>xalan</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-beanutils</groupId>
-                        <artifactId>commons-beanutils</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-digester</groupId>
-                        <artifactId>commons-digester</artifactId>
-                    </exclusion>
-                      <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>struts</groupId>
-                <artifactId>struts-el</artifactId>
-                <version>1.2.9</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>javax.servlet</groupId>
-                        <artifactId>jstl</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-struts</artifactId>
-                <version>3.2.3.RELEASE</version>
-            </dependency>
-            <!-- STRUTS1 DEPENDENCIES END -->
+			<dependency>
+				<groupId>com.thoughtworks.xstream</groupId>
+				<artifactId>xstream</artifactId>
+				<version>1.4.2</version>
+			</dependency>
+			<dependency>
+				<groupId>xpp3</groupId>
+				<artifactId>xpp3_min</artifactId>
+				<version>1.1.4c</version>
+			</dependency>
+			<!-- STRUTS2 DEPENDENCIES END -->
 
-            <!-- JSON START -->
-            <dependency>
-                <groupId>com.googlecode.json-simple</groupId>
-                <artifactId>json-simple</artifactId>
-                <version>1.1.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>2.2.3</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>2.2.3</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-joda</artifactId>
-                <version>2.3.1</version>
-            </dependency>
-            <dependency>
+			<!-- STRUTS1 DEPENDENCIES START -->
+			<dependency>
+				<groupId>struts</groupId>
+				<artifactId>struts</artifactId>
+				<version>1.2.9</version>
+				<exclusions>
+					<exclusion>
+						<groupId>antlr</groupId>
+						<artifactId>antlr</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>oro</groupId>
+						<artifactId>oro</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>xalan</groupId>
+						<artifactId>xalan</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>commons-beanutils</groupId>
+						<artifactId>commons-beanutils</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>commons-digester</groupId>
+						<artifactId>commons-digester</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>struts</groupId>
+				<artifactId>struts-el</artifactId>
+				<version>1.2.9</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.servlet</groupId>
+						<artifactId>jstl</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-struts</artifactId>
+				<version>3.2.3.RELEASE</version>
+			</dependency>
+			<!-- STRUTS1 DEPENDENCIES END -->
+
+			<!-- JSON START -->
+			<dependency>
+				<groupId>com.googlecode.json-simple</groupId>
+				<artifactId>json-simple</artifactId>
+				<version>1.1.1</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>2.2.3</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>2.2.3</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.datatype</groupId>
+				<artifactId>jackson-datatype-joda</artifactId>
+				<version>2.3.1</version>
+			</dependency>
+			<dependency>
 				<groupId>com.fasterxml.jackson.datatype</groupId>
 				<artifactId>jackson-datatype-hibernate4</artifactId>
 				<version>2.5.1</version>
@@ -350,236 +342,236 @@
 				<artifactId>gson</artifactId>
 				<version>2.2.4</version>
 			</dependency>
-            <!-- JSON END -->
+			<!-- JSON END -->
 
-            <!-- JACKRABBIT START -->
-            <dependency>
-                <groupId>javax.jcr</groupId>
-                <artifactId>jcr</artifactId>
-                <version>2.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.jackrabbit</groupId>
-                <artifactId>jackrabbit-core</artifactId>
-                <version>2.6.2</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-collections</groupId>
-                        <artifactId>commons-collections</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-dbcp</groupId>
-                        <artifactId>commons-dbcp</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.lucene</groupId>
-                        <artifactId>lucene-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.tika</groupId>
-                        <artifactId>tika-core</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache</groupId>
-                <artifactId>jackrabbit-ocm</artifactId>
-                <version>2.0.0</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>cglib</groupId>
-                        <artifactId>cglib</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-digester</groupId>
-                        <artifactId>commons-digester</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.jackrabbit</groupId>
-                <artifactId>jackrabbit-jca</artifactId>
-                <version>2.6.2</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>dom4j</groupId>
-                        <artifactId>dom4j</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.tika</groupId>
-                        <artifactId>tika-parsers</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <!-- JACKRABBIT END -->
+			<!-- JACKRABBIT START -->
+			<dependency>
+				<groupId>javax.jcr</groupId>
+				<artifactId>jcr</artifactId>
+				<version>2.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.jackrabbit</groupId>
+				<artifactId>jackrabbit-core</artifactId>
+				<version>2.6.2</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-collections</groupId>
+						<artifactId>commons-collections</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>commons-dbcp</groupId>
+						<artifactId>commons-dbcp</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.lucene</groupId>
+						<artifactId>lucene-core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.tika</groupId>
+						<artifactId>tika-core</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache</groupId>
+				<artifactId>jackrabbit-ocm</artifactId>
+				<version>2.0.0</version>
+				<exclusions>
+					<exclusion>
+						<groupId>cglib</groupId>
+						<artifactId>cglib</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>commons-digester</groupId>
+						<artifactId>commons-digester</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.jackrabbit</groupId>
+				<artifactId>jackrabbit-jca</artifactId>
+				<version>2.6.2</version>
+				<exclusions>
+					<exclusion>
+						<groupId>dom4j</groupId>
+						<artifactId>dom4j</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.tika</groupId>
+						<artifactId>tika-parsers</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<!-- JACKRABBIT END -->
 
-            <!-- SPRING START -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-framework-bom</artifactId>
-                <version>4.2.0.RELEASE</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springmodules</groupId>
-                <artifactId>spring-modules-cache</artifactId>
-                <version>0.8a</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springmodules</groupId>
-                <artifactId>spring-modules-jcr</artifactId>
-                <version>0.8a</version>
-            </dependency>
+			<!-- SPRING START -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-framework-bom</artifactId>
+				<version>4.2.0.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springmodules</groupId>
+				<artifactId>spring-modules-cache</artifactId>
+				<version>0.8a</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springmodules</groupId>
+				<artifactId>spring-modules-jcr</artifactId>
+				<version>0.8a</version>
+			</dependency>
 
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-jpa</artifactId>
-                <version>1.8.2.RELEASE</version>
-            </dependency>
-            
-            <dependency>
+			<dependency>
+				<groupId>org.springframework.data</groupId>
+				<artifactId>spring-data-jpa</artifactId>
+				<version>1.8.2.RELEASE</version>
+			</dependency>
+
+			<dependency>
 				<groupId>org.springframework.data</groupId>
 				<artifactId>spring-data-envers</artifactId>
 				<version>0.2.0.RELEASE</version>
 			</dependency>
-            <!-- SPRING END -->
-			
+			<!-- SPRING END -->
+
 			<!-- SECURITY START -->
 			<dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-core</artifactId>
-                <version>4.0.2.RELEASE</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-acl</artifactId>
-                <version>4.0.2.RELEASE</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-web</artifactId>
-                <version>4.0.2.RELEASE</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-config</artifactId>
-                <version>4.0.2.RELEASE</version>
-            </dependency>
-            <dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-core</artifactId>
+				<version>4.0.2.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-acl</artifactId>
+				<version>4.0.2.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-web</artifactId>
+				<version>4.0.2.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-config</artifactId>
+				<version>4.0.2.RELEASE</version>
+			</dependency>
+			<dependency>
 				<groupId>org.springframework.security.oauth</groupId>
 				<artifactId>spring-security-oauth2</artifactId>
 				<version>2.0.7.RELEASE</version>
 			</dependency>
-            <dependency>
-                <groupId>org.owasp.antisamy</groupId>
-                <artifactId>antisamy</artifactId>
-                <version>1.4.3</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xerces</groupId>
-                        <artifactId>xercesImpl</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>xerces</groupId>
-                <artifactId>xercesImpl</artifactId>
-                <version>2.8.1</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-		      	<groupId>org.jasypt</groupId>
-		      	<artifactId>jasypt</artifactId>
-		      	<version>1.9.2</version>
-		      	<scope>compile</scope>
-		    </dependency>
-            <!-- SECURITY END -->
-			
-            <!-- QUARTZ START -->
-            <dependency>
-                <groupId>org.quartz-scheduler</groupId>
-                <artifactId>quartz</artifactId>
-                <version>2.2.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.quartz-scheduler</groupId>
-                <artifactId>quartz-jobs</artifactId>
-                <version>2.2.1</version>
-            </dependency>
-            <!-- QUARTZ END -->
+			<dependency>
+				<groupId>org.owasp.antisamy</groupId>
+				<artifactId>antisamy</artifactId>
+				<version>1.4.3</version>
+				<exclusions>
+					<exclusion>
+						<groupId>xerces</groupId>
+						<artifactId>xercesImpl</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>xerces</groupId>
+				<artifactId>xercesImpl</artifactId>
+				<version>2.8.1</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jasypt</groupId>
+				<artifactId>jasypt</artifactId>
+				<version>1.9.2</version>
+				<scope>compile</scope>
+			</dependency>
+			<!-- SECURITY END -->
 
-            <!-- DISPLAYTAG START -->
-            <dependency>
-                <groupId>displaytag</groupId>
-                <artifactId>displaytag</artifactId>
-                <version>1.2</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-log4j12</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>jcl104-over-slf4j</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>displaytag</groupId>
-                <artifactId>displaytag-export-poi</artifactId>
-                <version>1.2</version>
-            </dependency>
-            <!-- DISPLAYTAG END -->
+			<!-- QUARTZ START -->
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz</artifactId>
+				<version>2.2.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz-jobs</artifactId>
+				<version>2.2.1</version>
+			</dependency>
+			<!-- QUARTZ END -->
 
-            <!-- VIEWS RELATED END -->
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-core</artifactId>
-                <version>3.0.5</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-beanutils</groupId>
-                        <artifactId>commons-beanutils</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
+			<!-- DISPLAYTAG START -->
+			<dependency>
+				<groupId>displaytag</groupId>
+				<artifactId>displaytag</artifactId>
+				<version>1.2</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-log4j12</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>jcl104-over-slf4j</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>displaytag</groupId>
+				<artifactId>displaytag-export-poi</artifactId>
+				<version>1.2</version>
+			</dependency>
+			<!-- DISPLAYTAG END -->
 
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-jsp</artifactId>
-                <version>3.0.5</version>
-            </dependency>
+			<!-- VIEWS RELATED END -->
+			<dependency>
+				<groupId>org.apache.tiles</groupId>
+				<artifactId>tiles-core</artifactId>
+				<version>3.0.5</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-beanutils</groupId>
+						<artifactId>commons-beanutils</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
 
-            <dependency>
-                <groupId>commons-beanutils</groupId>
-                <artifactId>commons-beanutils</artifactId>
-                <version>1.8.0</version>
-            </dependency>
-            <!-- VIEWS RELATED END -->
+			<dependency>
+				<groupId>org.apache.tiles</groupId>
+				<artifactId>tiles-jsp</artifactId>
+				<version>3.0.5</version>
+			</dependency>
 
-            <!-- REPORTS START -->
-            <dependency>
-                <groupId>net.sf.jasperreports</groupId>
-                <artifactId>jasperreports-fonts</artifactId>
-                <version>6.1.0</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.jasperreports</groupId>
-                <artifactId>jasperreports-functions</artifactId>
-                <version>6.1.0</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.jasperreports</groupId>
-                <artifactId>jasperreports-javaflow</artifactId>
-                <version>6.1.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jfree</groupId>
-                <artifactId>jfreechart</artifactId>
-                <version>1.0.19</version>
-            </dependency>
-            <dependency>
+			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>1.8.0</version>
+			</dependency>
+			<!-- VIEWS RELATED END -->
+
+			<!-- REPORTS START -->
+			<dependency>
+				<groupId>net.sf.jasperreports</groupId>
+				<artifactId>jasperreports-fonts</artifactId>
+				<version>6.1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jasperreports</groupId>
+				<artifactId>jasperreports-functions</artifactId>
+				<version>6.1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jasperreports</groupId>
+				<artifactId>jasperreports-javaflow</artifactId>
+				<version>6.1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jfree</groupId>
+				<artifactId>jfreechart</artifactId>
+				<version>1.0.19</version>
+			</dependency>
+			<dependency>
 				<groupId>org.codehaus.groovy</groupId>
 				<artifactId>groovy-all</artifactId>
 				<version>2.1.7</version>
@@ -590,112 +582,112 @@
 				<version>2.1.7</version>
 			</dependency>
 			<dependency>
-			    <groupId>commons-javaflow</groupId>
-			    <artifactId>commons-javaflow</artifactId>
-			    <version>20060411</version>
+				<groupId>commons-javaflow</groupId>
+				<artifactId>commons-javaflow</artifactId>
+				<version>20060411</version>
 			</dependency>
 			<dependency>
-			    <groupId>net.sourceforge.jexcelapi</groupId>
-			    <artifactId>jxl</artifactId>
-			    <version>2.6.10</version>
+				<groupId>net.sourceforge.jexcelapi</groupId>
+				<artifactId>jxl</artifactId>
+				<version>2.6.10</version>
 			</dependency>
-            <!-- REPORTS END -->
+			<!-- REPORTS END -->
 
-            <!-- COMMONS START -->
-            <dependency>
-                <groupId>commons-configuration</groupId>
-                <artifactId>commons-configuration</artifactId>
-                <version>1.10</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>2.5</version>
-            </dependency>        
-                <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-email</artifactId>
-                <version>1.4</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>javax.activation</groupId>
-                        <artifactId>activation</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>commons-collections</groupId>
-                <artifactId>commons-collections</artifactId>
-                <version>3.2.1</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>1.10</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-dbcp</groupId>
-                <artifactId>commons-dbcp</artifactId>
-                <version>1.4</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>2.4</version>
-            </dependency>
-            <!-- COMMONS END -->
+			<!-- COMMONS START -->
+			<dependency>
+				<groupId>commons-configuration</groupId>
+				<artifactId>commons-configuration</artifactId>
+				<version>1.10</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>2.5</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-email</artifactId>
+				<version>1.4</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.activation</groupId>
+						<artifactId>activation</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>commons-collections</groupId>
+				<artifactId>commons-collections</artifactId>
+				<version>3.2.1</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>1.10</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-dbcp</groupId>
+				<artifactId>commons-dbcp</artifactId>
+				<version>1.4</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.4</version>
+			</dependency>
+			<!-- COMMONS END -->
 
-            <!-- MISC START -->
-            <dependency>
+			<!-- MISC START -->
+			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
 				<version>4.5</version>
 			</dependency>
-            <dependency>
-                <groupId>opensymphony</groupId>
-                <artifactId>sitemesh</artifactId>
-                <version>2.4.2</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache-web</artifactId>
-                <version>2.0.4</version>
-            </dependency>
-            <dependency>
-                <groupId>cglib</groupId>
-                <artifactId>cglib</artifactId>
-                <version>3.1</version>
-                <exclusions>
-	            	<exclusion>
-	            		<groupId>org.ow2.asm</groupId>
-	            		<artifactId>asm</artifactId>
-	            	</exclusion>
-	            </exclusions>
-            </dependency>
-            <dependency>
+			<dependency>
+				<groupId>opensymphony</groupId>
+				<artifactId>sitemesh</artifactId>
+				<version>2.4.2</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.ehcache</groupId>
+				<artifactId>ehcache-web</artifactId>
+				<version>2.0.4</version>
+			</dependency>
+			<dependency>
+				<groupId>cglib</groupId>
+				<artifactId>cglib</artifactId>
+				<version>3.1</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.ow2.asm</groupId>
+						<artifactId>asm</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
 				<groupId>asm</groupId>
 				<artifactId>asm-all</artifactId>
 				<version>3.3.1</version>
 			</dependency>
-            <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>2.7</version>
-            </dependency>
-            <dependency>
+			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>2.7</version>
+			</dependency>
+			<dependency>
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time-jsptags</artifactId>
 				<version>1.1.1</version>
 			</dependency>
-            <dependency>
-                <groupId>org.jsoup</groupId>
-                <artifactId>jsoup</artifactId>
-                <version>1.7.3</version>
-            </dependency>
-            <!-- MISC END -->
-            
-            
-		    <!-- IMAGE PROCESSING API START -->
+			<dependency>
+				<groupId>org.jsoup</groupId>
+				<artifactId>jsoup</artifactId>
+				<version>1.7.3</version>
+			</dependency>
+			<!-- MISC END -->
+
+
+			<!-- IMAGE PROCESSING API START -->
 			<dependency>
 				<groupId>net.coobird</groupId>
 				<artifactId>thumbnailator</artifactId>
@@ -703,258 +695,258 @@
 			</dependency>
 			<!-- IMAGE PROCESSING API END -->
 
-            <!-- TESTING START -->
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.11</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>1.10.19</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.kubek2k</groupId>
-                <artifactId>springockito</artifactId>
-                <version>1.0.8</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.kubek2k</groupId>
-                <artifactId>springockito-annotations</artifactId>
-                <version>1.0.8</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.easymock</groupId>
-                <artifactId>easymock</artifactId>
-                <version>3.3.1</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.easymock</groupId>
-                <artifactId>easymockclassextension</artifactId>
-                <version>3.2</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>strutstestcase</groupId>
-                <artifactId>strutstestcase</artifactId>
-                <version>2.1.4-1.2-2.4</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.dbunit</groupId>
-                <artifactId>dbunit</artifactId>
-                <version>2.2.3</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-nop</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>log4j</groupId>
-                        <artifactId>log4j</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-all</artifactId>
-                <version>1.3</version>
-                <scope>test</scope>
-            </dependency>
-            <!-- TESTING END -->
+			<!-- TESTING START -->
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.11</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-all</artifactId>
+				<version>1.10.19</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.kubek2k</groupId>
+				<artifactId>springockito</artifactId>
+				<version>1.0.8</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.kubek2k</groupId>
+				<artifactId>springockito-annotations</artifactId>
+				<version>1.0.8</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.easymock</groupId>
+				<artifactId>easymock</artifactId>
+				<version>3.3.1</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.easymock</groupId>
+				<artifactId>easymockclassextension</artifactId>
+				<version>3.2</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>strutstestcase</groupId>
+				<artifactId>strutstestcase</artifactId>
+				<version>2.1.4-1.2-2.4</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.dbunit</groupId>
+				<artifactId>dbunit</artifactId>
+				<version>2.2.3</version>
+				<scope>test</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-nop</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.hamcrest</groupId>
+				<artifactId>hamcrest-all</artifactId>
+				<version>1.3</version>
+				<scope>test</scope>
+			</dependency>
+			<!-- TESTING END -->
 
-            <!-- LOGGING START -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.7.7</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>1.7.7</version>
-            </dependency>
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>1.2.17</version>
-            </dependency>
-            <!-- LOGGING END -->
+			<!-- LOGGING START -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.7</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>1.7.7</version>
+			</dependency>
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>1.2.17</version>
+			</dependency>
+			<!-- LOGGING END -->
 
-            <!-- DATABASE START -->
-            <dependency>
-                <groupId>org.postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>9.3-1102-jdbc41</version>
-                <scope>provided</scope>
-            </dependency>
-            <!-- DATABASE END -->
-<!-- GIS START -->
+			<!-- DATABASE START -->
+			<dependency>
+				<groupId>org.postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>9.3-1102-jdbc41</version>
+				<scope>provided</scope>
+			</dependency>
+			<!-- DATABASE END -->
+			<!-- GIS START -->
 
+			<dependency>
+				<groupId>org.opengis</groupId>
+				<artifactId>geoapi</artifactId>
+				<version>2.2-M1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>gt-main</artifactId>
+				<version>2.5.4</version>
+			</dependency>
+			<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>gt-api</artifactId>
+				<version>2.5.4</version>
+			</dependency>
+			<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>gt-metadata</artifactId>
+				<version>2.5.4</version>
+			</dependency>
+			<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>gt-referencing</artifactId>
+				<version>2.5.4</version>
+			</dependency>
+			<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>gt-shapefile</artifactId>
+				<version>2.5.4</version>
+			</dependency>
+			<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>gt-shapefile-renderer</artifactId>
+				<version>2.5.4</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.media</groupId>
+				<artifactId>jai_core</artifactId>
+				<version>1.1.3-alpha</version>
+				<classifier>alpha</classifier>
+			</dependency>
+			<dependency>
+				<groupId>net.java.dev.jsr-275</groupId>
+				<artifactId>jsr-275</artifactId>
+				<version>1.0-beta-2</version>
+			</dependency>
+			<dependency>
+				<groupId>com.vividsolutions</groupId>
+				<artifactId>jts</artifactId>
+				<version>1.6</version>
+			</dependency>
+			<dependency>
+				<groupId>units</groupId>
+				<artifactId>units</artifactId>
+				<version>0.01</version>
+			</dependency>
+			<dependency>
+				<groupId>java3d</groupId>
+				<artifactId>vecmath</artifactId>
+				<version>1.3.1</version>
+			</dependency>
+
+
+
+			<!-- GIS END -->
+
+		</dependencies>
+
+
+	</dependencyManagement>
+
+	<dependencies>
+
+		<!-- COMMONS START -->
 		<dependency>
-			<groupId>org.opengis</groupId>
- 			<artifactId>geoapi</artifactId>
-			<version>2.2-M1</version>
-		</dependency>		
-       	        <dependency>
- 			<groupId>org.geotools</groupId>
-  			<artifactId>gt-main</artifactId>
-			<version>2.5.4</version>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-  			<artifactId>gt-api</artifactId>
-			<version>2.5.4</version>
- 		</dependency>
- 		<dependency>
-		        <groupId>org.geotools</groupId>
-		        <artifactId>gt-metadata</artifactId>
-		        <version>2.5.4</version>
-		</dependency>
-		 <dependency>
-		         <groupId>org.geotools</groupId>
-		          <artifactId>gt-referencing</artifactId>
-		         <version>2.5.4</version>
-		 </dependency>
-		 <dependency>
-		        <groupId>org.geotools</groupId>
-		          <artifactId>gt-shapefile</artifactId>
-		        <version>2.5.4</version>
-		 </dependency>
-		 <dependency>
-		         <groupId>org.geotools</groupId>
-		         <artifactId>gt-shapefile-renderer</artifactId>
-		         <version>2.5.4</version>
-		 </dependency>
-		 <dependency>
-		        <groupId>javax.media</groupId>
-                        <artifactId>jai_core</artifactId>
-                        <version>1.1.3-alpha</version>
-                        <classifier>alpha</classifier>
-		</dependency>
-		<dependency>
-		        <groupId>net.java.dev.jsr-275</groupId>
-		        <artifactId>jsr-275</artifactId>
-		        <version>1.0-beta-2</version>
-		</dependency>
-		<dependency>
-		        <groupId>com.vividsolutions</groupId>
-		        <artifactId>jts</artifactId>
-		        <version>1.6</version>
-		</dependency>
-		<dependency>
-		        <groupId>units</groupId>
-		        <artifactId>units</artifactId>
-		        <version>0.01</version>
-		</dependency>
-		<dependency>
-		        <groupId>java3d</groupId>
-		        <artifactId>vecmath</artifactId>
-		        <version>1.3.1</version>
-		</dependency>
- 		
-		
- 
-       <!-- GIS END -->  
-        
-        </dependencies>
+		<!-- COMMONS END -->
 
-  
-    </dependencyManagement>
-
-    <dependencies>
-
-        <!-- COMMONS  START -->
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-            <exclusions>
-            	<exclusion>
-            		<artifactId>commons-logging</artifactId>
-            		<groupId>commons-logging</groupId>
-            	</exclusion>
-            </exclusions>
-        </dependency>
-        <!-- COMMONS  END -->
-
-        <!-- SPRING DEPENDENCIES START -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <exclusions>
-            	<exclusion>
-            		<artifactId>commons-logging</artifactId>
-            		<groupId>commons-logging</groupId>
-            	</exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jms</artifactId>
-        </dependency>
-        <dependency>
+		<!-- SPRING DEPENDENCIES START -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jms</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.security.oauth</groupId>
 			<artifactId>spring-security-oauth2</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-		  	<groupId>org.springframework.session</groupId>
-      		<artifactId>spring-session-data-redis</artifactId>
-		  	<version>1.0.0.RELEASE</version>
-      		<type>pom</type>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
 		</dependency>
-        <!-- SPRING DEPENDENCIES END -->
-		
-		<!-- EMBEDDED REDIS SERVER START-->
+		<dependency>
+			<groupId>org.springframework.session</groupId>
+			<artifactId>spring-session-data-redis</artifactId>
+			<version>1.0.0.RELEASE</version>
+			<type>pom</type>
+		</dependency>
+		<!-- SPRING DEPENDENCIES END -->
+
+		<!-- EMBEDDED REDIS SERVER START -->
 		<dependency>
 			<groupId>com.orange.redis-embedded</groupId>
 			<artifactId>embedded-redis</artifactId>
 			<version>0.6</version>
 		</dependency>
-		<!-- EMBEDDED REDIS SERVER END-->
-			
+		<!-- EMBEDDED REDIS SERVER END -->
+
 		<!-- MISC STARTS -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -968,13 +960,13 @@
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
-        <dependency>
-				<groupId>joda-time</groupId>
-				<artifactId>joda-time-jsptags</artifactId>
+			<artifactId>joda-time</artifactId>
 		</dependency>
-        <dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time-jsptags</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 		</dependency>
@@ -982,105 +974,100 @@
 			<groupId>asm</groupId>
 			<artifactId>asm-all</artifactId>
 		</dependency>
-	 	<!-- <dependency>
-			<groupId>org.jadira.usertype</groupId>
-			<artifactId>usertype.core</artifactId>
-		</dependency>
-        <dependency>
-			<groupId>org.jadira.usertype</groupId>
-			<artifactId>usertype.spi</artifactId>
-		</dependency> -->
+		<!-- <dependency> <groupId>org.jadira.usertype</groupId> <artifactId>usertype.core</artifactId> 
+			</dependency> <dependency> <groupId>org.jadira.usertype</groupId> <artifactId>usertype.spi</artifactId> 
+			</dependency> -->
 		<dependency>
-	      	<groupId>org.jasypt</groupId>
-	      	<artifactId>jasypt</artifactId>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.coobird</groupId>
 			<artifactId>thumbnailator</artifactId>
 		</dependency>
 		<!-- MISC ENDS -->
-		
-        <!-- TESTING START -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kubek2k</groupId>
-            <artifactId>springockito</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kubek2k</groupId>
-            <artifactId>springockito-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymockclassextension</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>strutstestcase</groupId>
-            <artifactId>strutstestcase</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.dbunit</groupId>
-            <artifactId>dbunit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-        </dependency>
 
-        <!-- TESTING END -->
+		<!-- TESTING START -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.kubek2k</groupId>
+			<artifactId>springockito</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.kubek2k</groupId>
+			<artifactId>springockito-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymockclassextension</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>strutstestcase</groupId>
+			<artifactId>strutstestcase</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.dbunit</groupId>
+			<artifactId>dbunit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-all</artifactId>
+		</dependency>
 
-        <!-- LOGGING END -->
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-        <!-- LOGGING END -->
+		<!-- TESTING END -->
 
-        <!-- DATABASE START -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-        </dependency>
-        <!-- DATABASE END -->
-        
-    </dependencies>
+		<!-- LOGGING END -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+		<!-- LOGGING END -->
 
-    <build>
-    	<pluginManagement>
-    		<plugins>
-    			<plugin>
-          			<groupId>org.codehaus.mojo</groupId>
-          			<artifactId>sonar-maven-plugin</artifactId>
-          			<version>2.5</version>
-        		</plugin>
-	        	<plugin>
-				    <groupId>org.flywaydb</groupId>
-				    <artifactId>flyway-maven-plugin</artifactId>
-				    <version>3.2.1</version>
-				    <dependencies>
-	                    <dependency>
-	                        <groupId>org.postgresql</groupId>
-	                        <artifactId>postgresql</artifactId>
-	                        <version>9.3-1102-jdbc41</version>
-	                    </dependency>
-	                </dependencies>
-				    <executions>
+		<!-- DATABASE START -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+		</dependency>
+		<!-- DATABASE END -->
+
+	</dependencies>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>2.5</version>
+				</plugin>
+				<plugin>
+					<groupId>org.flywaydb</groupId>
+					<artifactId>flyway-maven-plugin</artifactId>
+					<version>3.2.1</version>
+					<dependencies>
+						<dependency>
+							<groupId>org.postgresql</groupId>
+							<artifactId>postgresql</artifactId>
+							<version>9.3-1102-jdbc41</version>
+						</dependency>
+					</dependencies>
+					<executions>
 						<execution>
 							<phase>process-resources</phase>
 							<goals>
@@ -1091,139 +1078,140 @@
 							</configuration>
 						</execution>
 					</executions>
-			    </plugin>
-    			<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-    			<plugin>
-    				<groupId>org.eclipse.m2e</groupId>
-    				<artifactId>lifecycle-mapping</artifactId>
-    				<version>1.0.0</version>
-    				<configuration>
-    					<lifecycleMappingMetadata>
-    						<pluginExecutions>
-    							<pluginExecution>
-    								<pluginExecutionFilter>
-    									<groupId>org.jacoco</groupId>
-    									<artifactId>
-    										jacoco-maven-plugin
-    									</artifactId>
-    									<versionRange>
-    										[0.7.2.201409121644,)
-    									</versionRange>
-    									<goals>
-    										<goal>prepare-agent</goal>
-    									</goals>
-    								</pluginExecutionFilter>
-    								<action>
-    									<ignore></ignore>
-    								</action>
-    							</pluginExecution>
-    						</pluginExecutions>
-    					</lifecycleMappingMetadata>
-    				</configuration>
-    			</plugin>
-    		</plugins>
-    	</pluginManagement>
-    	<plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.9</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.2</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
+				</plugin>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.jacoco</groupId>
+										<artifactId>
+											jacoco-maven-plugin
+										</artifactId>
+										<versionRange>
+											[0.7.2.201409121644,)
+										</versionRange>
+										<goals>
+											<goal>prepare-agent</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
 			<plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-jar-plugin</artifactId>
-		        <version>2.6</version>
-		        <configuration>
-		          <archive>
-		            <index>true</index>
-		            <manifest>
-		            	<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-		            </manifest>
-		            <manifestEntries>
-		              	<Specification-Title>${project.name}</Specification-Title>
-                        <Specification-Version>${project.version}</Specification-Version>
-                        <Implementation-Version>${build.number}</Implementation-Version>
-		            </manifestEntries>
-		          </archive>
-		        </configuration>
-		    </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
-                    <manifest>
-                    	<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                    	<addClasspath>true</addClasspath>
-	                </manifest>
-	                <archive>
-	                    <manifestEntries>
-	                        <Specification-Title>${project.name}</Specification-Title>
-	                        <Specification-Version>${project.version}</Specification-Version>
-	                        <Implementation-Version>${build.number}</Implementation-Version>
-	                    </manifestEntries>
-	                </archive>
-                </configuration>
-            </plugin>
-			
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.9</version>
+			</plugin>
 			<plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <version>1.0.2.Final</version>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.2</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<archive>
+						<index>true</index>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<Specification-Title>${project.name}</Specification-Title>
+							<Specification-Version>${project.version}</Specification-Version>
+							<Implementation-Version>${build.number}</Implementation-Version>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+					<manifest>
+						<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						<addClasspath>true</addClasspath>
+					</manifest>
+					<archive>
+						<manifestEntries>
+							<Specification-Title>${project.name}</Specification-Title>
+							<Specification-Version>${project.version}</Specification-Version>
+							<Implementation-Version>${build.number}</Implementation-Version>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
 
 			<plugin>
-       			<groupId>org.codehaus.mojo</groupId>
-        		<artifactId>sonar-maven-plugin</artifactId>
-        	</plugin>
+				<groupId>org.wildfly.plugins</groupId>
+				<artifactId>wildfly-maven-plugin</artifactId>
+				<version>1.0.2.Final</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
 
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.2.201409121644</version>
-                <executions>
-                    <execution>
-                        <id>default-prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>default-report</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+			</plugin>
 
-    <profiles>
-        <profile>
-            <id>db</id>
-        </profile>
-        <profile>
-            <id>jenkins</id>
-            <properties>
-                <db.username>postgres</db.username>
-                <db.password>kingsql</db.password>
-                <db.url>jdbc:postgresql://localhost:5432/jenkinbuilddb</db.url>
-            </properties>
-        </profile>
-    </profiles>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.2.201409121644</version>
+				<executions>
+					<execution>
+						<id>default-prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>default-report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>db</id>
+		</profile>
+		<profile>
+			<id>jenkins</id>
+			<properties>
+				<db.username>postgres</db.username>
+				<db.password>kingsql</db.password>
+				<db.url>jdbc:postgresql://localhost:5432/jenkinbuilddb</db.url>
+			</properties>
+		</profile>
+	</profiles>
 </project>
