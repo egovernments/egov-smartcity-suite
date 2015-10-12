@@ -3,28 +3,32 @@ var currenttabidx=0;
 var lasttabidx=$('a[data-tabidx]').length-1;
 
 document.body.addEventListener('keydown', function (e) {
-    if((e.which === 37 || e.which === 39))
-    {
-      if(currenttabidx === lasttabidx)
-      {
-    	  if(e.which === 39)
-    	  $('a[data-tabidx="0"]').tab('show');
-    	  else if(e.which === 37)
-    	  $('a[data-tabidx="'+ (currenttabidx-1) +'"]').tab('show');
-      }
-      else
-      {
-    	  if(e.which === 37)
-    	  {
-    		 
-    		  currenttabidx = (currenttabidx === 0 ? lasttabidx : (currenttabidx-1));    		  
-    		  $('a[data-tabidx="'+ currenttabidx +'"]').tab('show');
-    	  }
-    	  else{
-    	    $('a[data-tabidx="'+ (currenttabidx+1) +'"]').tab('show');
-    	  }
-      }
-    }
+	if(document.activeElement.tagName == 'INPUT' || document.activeElement.tagName == 'TEXTAREA' || document.activeElement.tagName == 'SELECT'){
+		
+	}else if(document.activeElement.tagName == 'BODY' || document.activeElement.tagName == 'A'){
+		if((e.which === 37 || e.which === 39))
+	    {
+	      if(currenttabidx === lasttabidx)
+	      {
+	    	  if(e.which === 39)
+	    	  $('a[data-tabidx="0"]').tab('show');
+	    	  else if(e.which === 37)
+	    	  $('a[data-tabidx="'+ (currenttabidx-1) +'"]').tab('show');
+	      }
+	      else
+	      {
+	    	  if(e.which === 37)
+	    	  {
+	    		 
+	    		  currenttabidx = (currenttabidx === 0 ? lasttabidx : (currenttabidx-1));    		  
+	    		  $('a[data-tabidx="'+ currenttabidx +'"]').tab('show');
+	    	  }
+	    	  else{
+	    	    $('a[data-tabidx="'+ (currenttabidx+1) +'"]').tab('show');
+	    	  }
+	      }
+	    }
+	}
 });
 
 $(document).ready(function(){
@@ -60,20 +64,17 @@ $(document).ready(function(){
 				}
 			
 	});
-
-    //help button popup view timeout event handling in button click event
-	$('.btnpopover').click(function(e) {
-		var clickedbtn = $(this);
-		$('[data-toggle="popover"]').popover('hide');
-		$(this).popover({ html : true });
-		setTimeout(function(s) {
-			return function() {
-				if ($(s).next('div.popover:visible').length)
-					$(s).popover('hide');
-			}
-		}(clickedbtn), 10000);
+	
+	$('input,textarea').focus(function() {
+		var clickedbtn = $(this).siblings('span').find('button');
+		$('[data-toggle="popover"]').popover('destroy');
+		clickedbtn.popover('show');
 	});
-
+	
+	$('input,textarea').blur( function() {
+		$('[data-toggle="popover"]').popover('destroy');
+	});
+	
 	//popup initialize
 	$('[data-toggle="popover"]').popover({ html : true });
 
