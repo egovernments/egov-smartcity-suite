@@ -99,6 +99,9 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
 
     WaterConnectionDetails findByConnection_PropertyIdentifierAndConnectionStatusAndConnection_ParentConnectionIsNull(
             String propertyIdentifier, ConnectionStatus connectionStatus);
+    
+    WaterConnectionDetails findByConnection_ConsumerCodeAndConnectionStatusAndAndConnection_ParentConnectionIsNotNull(
+            String consumercode, ConnectionStatus connectionStatus);
 
     WaterConnectionDetails findByDemand(EgDemand demand);
 

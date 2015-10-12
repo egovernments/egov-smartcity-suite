@@ -99,10 +99,11 @@ public class ChangeOfUseController extends GenericConnectionController {
         final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
         if (null != connectionUnderChange.getConnection().getParentConnection())
+            parentConnectionDetails = waterConnectionDetailsService.getParentConnectionDetailsForParentConnectionNotNull(consumerCode, ConnectionStatus.ACTIVE);
+           
+        else
             parentConnectionDetails = waterConnectionDetailsService.getParentConnectionDetails(connectionUnderChange
                     .getConnection().getPropertyIdentifier(), ConnectionStatus.ACTIVE);
-        else
-            parentConnectionDetails = connectionUnderChange;
         if (parentConnectionDetails == null) {
             // TODO - error handling
         } else
@@ -220,7 +221,7 @@ public class ChangeOfUseController extends GenericConnectionController {
         model.addAttribute("mode", "changeOfUse");
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("validationMessage",
-                changeOfUseService.validateChangeOfUseConnection(parentConnectionDetails));
+                changeOfUseService.validateChangeOfUseConnection(connectionUnderChange));
         model.addAttribute("typeOfConnection", WaterTaxConstants.CHANGEOFUSE);
     }
 

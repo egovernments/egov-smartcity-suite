@@ -697,6 +697,12 @@ public class WaterConnectionDetailsService {
                 .findByConnection_PropertyIdentifierAndConnectionStatusAndConnection_ParentConnectionIsNull(
                         propertyIdentifier, connectionStatus);
     }
+    
+    public WaterConnectionDetails getParentConnectionDetailsForParentConnectionNotNull(final String consumercode,
+            final ConnectionStatus connectionStatus ) {
+        return waterConnectionDetailsRepository
+                .findByConnection_ConsumerCodeAndConnectionStatusAndAndConnection_ParentConnectionIsNotNull(consumercode, connectionStatus);
+    }
 
     public WaterConnectionDetails getWaterConnectionDetailsByDemand(final EgDemand demand) {
         return waterConnectionDetailsRepository.findByDemand(demand);
