@@ -1,1 +1,0 @@
-update egpgr_complainttype set code=id||'code' where code is null;

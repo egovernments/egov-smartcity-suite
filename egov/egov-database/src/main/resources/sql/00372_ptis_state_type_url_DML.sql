@@ -1,1 +1,0 @@
-update eg_wf_types set link ='/ptis/property/transfer/view.action?mutationId=:ID' where type='PropertyMutation';

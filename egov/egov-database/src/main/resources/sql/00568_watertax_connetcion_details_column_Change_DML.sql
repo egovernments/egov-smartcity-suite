@@ -1,1 +1,0 @@
-ALTER TABLE egwtr_connectiondetails ALTER COLUMN sumpcapacity DROP NOT NULL;

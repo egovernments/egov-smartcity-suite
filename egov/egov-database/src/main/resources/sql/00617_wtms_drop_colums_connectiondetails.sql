@@ -1,1 +1,0 @@
-ALTER TABLE egwtr_connectiondetails DROP COLUMN plotsize, DROP COLUMN plintharea;

@@ -11,19 +11,7 @@
 
 	<artifactId>egov-database</artifactId>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.liquibase</groupId>
-			<artifactId>liquibase-core</artifactId>
-			<version>3.3.2</version>
-		</dependency>
-	</dependencies>
-
-
 	<build>
-		<filters>
-			<filter>../egov-egi/src/main/resources/config/persistence-config.properties</filter>
-		</filters>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -32,86 +20,80 @@
 		</resources>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.5.3</version>
-
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>liquibase.integration.commandline.Main</mainClass>
-						</manifest>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
+				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>make-assembly</id>
-						<!-- this is used for inheritance merges -->
-						<phase>package</phase>
-						<!-- append to the packaging phase. -->
+						<id>copy-migrations</id>
+						<phase>generate-resources</phase>
 						<goals>
-							<goal>single</goal>
-							<!-- goals == mojos -->
+							<goal>copy-resources</goal>
 						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/classes/db/migration</outputDirectory>
+							<overwrite>true</overwrite>
+							<resources>
+								<resource>
+									<directory>../egov-egi/src/main/resources/db/migration</directory>
+								</resource>
+								<resource>
+									<directory>../egov-commons/src/main/resources/db/migration</directory>
+								</resource>
+								<resource>
+									<directory>../egov-eis/src/main/resources/db/migration</directory>
+								</resource>
+								<resource>
+									<directory>../egov-egf/src/main/resources/db/migration</directory>
+								</resource>
+								<resource>
+									<directory>../egov-collection/src/main/resources/db/migration</directory>
+								</resource>
+								<resource>
+									<directory>../egov-pgr/src/main/resources/db/migration</directory>
+								</resource>
+								<resource>
+									<directory>../egov-wtms/src/main/resources/db/migration</directory>
+								</resource>
+								<resource>
+									<directory>../egov-demand/src/main/resources/db/migration</directory>
+								</resource>
+								<resource>
+									<directory>../egov-portal/src/main/resources/db/migration</directory>
+								</resource>
+								<resource>
+									<directory>../egov-ptis/src/main/resources/db/migration</directory>
+								</resource>
+								<resource>
+									<directory>../egov-adtax/src/main/resources/db/migration</directory>
+								</resource>
+							</resources>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>3.2.1</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.postgresql</groupId>
+						<artifactId>postgresql</artifactId>
+						<version>9.3-1102-jdbc41</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>migrate</goal>
+						</goals>
+						<configuration>
+							<configFile>src/main/resources/flyway.properties</configFile>
+							<validateOnMigrate>false</validateOnMigrate>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>dev</id>
-			<activation>
-				<file>
-					<exists>../egov-egi/src/main/resources/config/egov-erp-${user.name}.properties</exists>
-				</file>
-			</activation>
-			<build>
-				<filters>
-					<filter>../egov-egi/src/main/resources/config/persistence-config.properties</filter>
-					<filter>../egov-egi/src/main/resources/config/egov-erp-${user.name}.properties</filter>
-				</filters>
-			</build>
-		</profile>
-		<profile>
-			<id>db</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.liquibase</groupId>
-						<artifactId>liquibase-maven-plugin</artifactId>
-						<version>3.3.2</version>
-						<dependencies>
-							<dependency>
-								<groupId>org.postgresql</groupId>
-								<artifactId>postgresql</artifactId>
-								<version>9.3-1102-jdbc41</version>
-							</dependency>
-						</dependencies>
-						<executions>
-							<execution>
-								<phase>process-resources</phase>
-								<configuration>
-									<promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-									<propertyFileWillOverride>true</propertyFileWillOverride>
-									<changeLogFile>${project.build.outputDirectory}/changelog.xml</changeLogFile>
-									<propertyFile>${project.build.outputDirectory}/liquibase.properties</propertyFile>
-								</configuration>
-								<goals>
-									<goal>update</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-
-			</build>
-		</profile>
-	</profiles>
-
 </project>

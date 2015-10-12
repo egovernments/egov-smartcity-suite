@@ -1,1 +1,0 @@
-﻿update  eg_action set url= replace(url,'/controller','') where url like '/controller/%';

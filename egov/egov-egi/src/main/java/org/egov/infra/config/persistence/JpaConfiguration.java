@@ -92,7 +92,7 @@ public class JpaConfiguration {
     }
 
     @Bean
-    @DependsOn("dataSource")
+    @DependsOn("flyway")
     public EntityManagerFactory entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setJtaDataSource(dataSource);

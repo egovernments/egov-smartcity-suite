@@ -1,1 +1,0 @@
-update eg_action set url = '/userrole/search' where url='/userrole/viewsearch';

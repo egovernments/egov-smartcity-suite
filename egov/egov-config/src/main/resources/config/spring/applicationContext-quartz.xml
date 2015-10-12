@@ -42,18 +42,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"> 
 	 
-	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-      <property name="location" value="classpath:quartz-custom.properties"/>
-	</bean>	
-    
-    <bean id="cities" class="java.util.Arrays" factory-method="asList">
-        <constructor-arg index="0">
-            <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToStringArray">
-                <constructor-arg type="java.lang.String" value="${tenant.host.names}"/>
-            </bean>
-        </constructor-arg>
-	</bean>
-		    
    	<bean id="jobFactory" class="org.egov.infra.scheduler.quartz.QuartzJobAwareBeanFactory" scope="prototype"/>
 
 	<bean id="taskExecutor" class="org.springframework.scheduling.quartz.SimpleThreadPoolTaskExecutor" destroy-method="destroy" scope="prototype">
@@ -75,12 +63,6 @@
         <property name="taskExecutor" ref="taskExecutor" />
         <property name="waitForJobsToCompleteOnShutdown" value="true"/>
         <property name="startupDelay" value="120"/>
-        <property name="schedulerContextAsMap">
-        	<map>
-				<entry key="userService" value-ref="userService"/>
-				<entry key="cities" value-ref="cities"/>
-			</map>
-        </property>
         <property name="quartzProperties">
         	<props>
         		<!-- Scheduler Properties -->

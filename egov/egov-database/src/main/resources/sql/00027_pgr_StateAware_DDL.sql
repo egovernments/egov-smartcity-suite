@@ -1,1 +1,0 @@
-alter table pgr_complaint add column state_id bigint;

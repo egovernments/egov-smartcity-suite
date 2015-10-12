@@ -1,1 +1,0 @@
-ALTER TABLE eg_citizeninbox ALTER COLUMN message_type TYPE varchar(20);

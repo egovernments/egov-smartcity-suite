@@ -1,2 +1,0 @@
-insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name='ULB Operator'),(select id from eg_action where name='ListReceiptWorkFlowAction' and contextroot='collection'));
---delete from eg_roleaction where roleid=(select id from eg_role where name='ULB Operator') and actionid=(select id from eg_action where name='ListReceiptWorkFlowAction' and contextroot='collection');

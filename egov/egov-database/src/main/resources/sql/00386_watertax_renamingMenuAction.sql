@@ -1,1 +1,0 @@
-update eg_action set displayname='Search Connection' where  displayname='Search WaterTax Application' ;

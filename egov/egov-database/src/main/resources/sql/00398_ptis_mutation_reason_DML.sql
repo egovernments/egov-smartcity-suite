@@ -1,2 +1,0 @@
-INSERT INTO egpt_mutation_master  values (nextval('seq_egpt_mutation_master'), 'Blood Relation','Blood Relatio Transfer', 'TRANSFER','BLOODREL',9);
-UPDATE EG_SCRIPT SET script='result = (0.1/100)*marketValue;' WHERE "name"='PTIS-MUTATION-FEE-CALCULATOR';

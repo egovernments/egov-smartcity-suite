@@ -1,2 +1,0 @@
-﻿update eg_action set "name"='File Download', displayname='File Download' where "name"='viewComplaintImages';
-insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where "name"='CSC Operator'), (select id from eg_action where "name"='File Download'));

@@ -76,9 +76,13 @@
 			<version>${project.parent.version}</version>
 			<type>war</type>
 		</dependency>
-		<!-- <dependency> <groupId>org.egov</groupId> <artifactId>egov-adtaxweb</artifactId> 
-			<version>${project.parent.version}</version> <type>war</type> </dependency> 
-			<dependency> <groupId>org.egov</groupId> <artifactId>egov-tlweb</artifactId> 
+		<dependency> 
+			<groupId>org.egov</groupId> 
+			<artifactId>egov-adtaxweb</artifactId> 
+			<version>${project.parent.version}</version> 
+			<type>war</type> 
+		</dependency> 
+		<!-- <dependency> <groupId>org.egov</groupId> <artifactId>egov-tlweb</artifactId> 
 			<version>${project.parent.version}</version> <type>war</type> </dependency> -->
 		<dependency>
 			<groupId>org.egov</groupId>
@@ -152,8 +156,12 @@
 			<artifactId>egov-pgr</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<!--<dependency> <groupId>org.egov</groupId> <artifactId>egov-adtax</artifactId> 
-			<version>${project.parent.version}</version> </dependency> <dependency> <groupId>org.egov</groupId> 
+		<dependency> 
+			<groupId>org.egov</groupId> 
+			<artifactId>egov-adtax</artifactId> 
+			<version>${project.parent.version}</version> 
+		</dependency> 
+		<!--<dependency> <groupId>org.egov</groupId> 
 			<artifactId>egov-tl</artifactId> <version>${project.parent.version}</version> 
 			</dependency> -->
 		<dependency>
@@ -267,8 +275,12 @@
 							<artifactId>egov-portalweb</artifactId>
 							<contextRoot>/portal</contextRoot>
 						</webModule>
-						<!-- <webModule> <groupId>org.egov</groupId> <artifactId>egov-adtaxweb</artifactId> 
-							<contextRoot>/adtax</contextRoot> </webModule> <webModule> <groupId>org.egov</groupId> 
+						<webModule> 
+							<groupId>org.egov</groupId> 
+							<artifactId>egov-adtaxweb</artifactId> 
+							<contextRoot>/adtax</contextRoot> 
+						</webModule> 
+						<!-- <webModule> <groupId>org.egov</groupId> 
 							<artifactId>egov-tlweb</artifactId> <contextRoot>/tl</contextRoot> </webModule> -->
 						<webModule>
 							<groupId>org.egov</groupId>

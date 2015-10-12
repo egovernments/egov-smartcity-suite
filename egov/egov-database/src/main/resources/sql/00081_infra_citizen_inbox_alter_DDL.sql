@@ -1,1 +1,0 @@
-ALTER TABLE eg_citizeninbox ALTER COLUMN MSG_DATE TYPE timestamp without time zone;

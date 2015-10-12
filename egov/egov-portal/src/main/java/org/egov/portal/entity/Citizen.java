@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -55,13 +54,13 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.UserType;
 
 @Entity
-@Table(name = "eg_citizen")
+@Table(name = "egp_citizen")
 public class Citizen extends User {
 
     private static final long serialVersionUID = -521416613072970524L;
 
     private String activationCode;
-    
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "eg_userdevice", joinColumns = @JoinColumn(name = "userid") , inverseJoinColumns = @JoinColumn(name = "deviceid") )
     private Set<Device> devices = new HashSet<>();
@@ -77,13 +76,13 @@ public class Citizen extends User {
     public void setActivationCode(final String activationCode) {
         this.activationCode = activationCode;
     }
+
     public Set<Device> getDevices() {
-		return devices;
-	}
+        return devices;
+    }
 
-	public void setDevices(Set<Device> devices) {
-		this.devices = devices;
-	}
-
+    public void setDevices(final Set<Device> devices) {
+        this.devices = devices;
+    }
 
 }
