@@ -45,7 +45,7 @@ function validRange(start, end) {
 	        // Check the date range, 86400000 is the number of milliseconds in one day
 	        var difference = (endDate - startDate) / (86400000 * 7);
 	        if (difference < 0) {
-				alert("Last Reading date should not be less than the connection date.");
+	        	bootbox.alert("Last Reading date should not be less than the connection date.");
 				$('#end_date').val('');
 				return false;
 				} else {
@@ -59,12 +59,11 @@ function validRange(start, end) {
 		
 		$(".btn-primary").click(function(event){
 			
-			var previous = $('#previousReading').val();
-			var current = $('#currentcurrentReading').val();
-			
-			if($('#previousReading').val() != '' && $('#currentcurrentReading').val() != ''){
+			var previous = parseInt($('#previousReading').val());
+			var current = parseInt($('#currentcurrentReading').val());
+			if( (previous.length > 0) && (current.length  > 0) ){
 				if (previous > current){
-					alert("Previous reading should not be greater than the current reading");
+					bootbox.alert("Previous reading should not be greater than the current reading");
 					return false;
 				}
 			}
@@ -82,6 +81,11 @@ function validRange(start, end) {
 					if(!validRange(start,end))
 					{
 					return false;
+					}else{
+						if (previous > current){
+							bootbox.alert("Previous reading should not be greater than the current reading");
+							return false;
+						}
 					}
 			}
 			
