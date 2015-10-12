@@ -29,7 +29,9 @@ Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYN
 Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'Transfer Trade License Show for Approval','/transfer/transferTradeLicense-showForApproval.action',null,(select id from EG_MODULE where name = 'Trade License'),1,'Transfer Show for Approval','f','tl',0,1,now(),1,now(),(select id from eg_module  where name = 'Trade License'));
 Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'New Trade License Before Edit','/newtradelicense/editTradeLicense-beforeEdit.action',null,(select id from EG_MODULE where name = 'Trade License'),1,'New Trade License Edit','f','tl',0,1,now(),1,now(),(select id from eg_module  where name = 'Trade License'));
 Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'Edit Trade License Action','/newtradelicense/editTradeLicense.action',null,(select id from EG_MODULE where name = 'Trade License'),1,'Edit Trade License','f','tl',0,1,now(),1,now(),(select id from eg_module  where name = 'Trade License'));
+/*
 Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'View Trade License Show for Approval','/viewtradelicense/viewTradeLicense-showForApproval.action',null,(select id from EG_MODULE where name = 'Trade License'),1,'Show for Approval','f','tl',0,1,now(),1,now(),(select id from eg_module  where name = 'Trade License'));
+*/
 Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'View Trade License Action','/viewtradelicense/viewTradeLicense.action',null,(select id from EG_MODULE where name = 'Trade License'),1,'View Trade License','f','tl',0,1,now(),1,now(),(select id from eg_module  where name = 'Trade License'));
 Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'View Trade License Generate Rejection Certificate','/viewtradelicense/viewTradeLicense-generateRejCertificate.action',null,(select id from EG_MODULE where name = 'Trade License'),1,'Generate Rejection Certificate','f','tl',0,1,now(),1,now(),(select id from eg_module  where name = 'Trade License'));
 Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'Trade License Objection New Form','/objection/objection-newForm.action',null,(select id from EG_MODULE where name = 'Trade License'),1,'Trade License Objection','f','tl',0,1,now(),1,now(),(select id from eg_module  where name = 'Trade License'));
@@ -166,8 +168,8 @@ insert into eg_roleaction (roleid, actionid) select (select id from eg_role wher
 ------------Role Action Mappings for TLCreator and  TLApprover 
 INSERT INTO eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'TLCreator'),(select id from eg_action where name = 'ajax-populateDivisions'));
 INSERT INTO eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'TLCreator'),(select id from eg_action where name = 'newTradeLicense-create'));
-INSERT INTO eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'TLApprover'),(select id from eg_action where name = 'View Trade License Show for Approval'));
-INSERT INTO eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'TLCreator'),(select id from eg_action where name = 'View Trade License Show for Approval'));
+/* INSERT INTO eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'TLApprover'),(select id from eg_action where name = 'View Trade License Show for Approval'));
+INSERT INTO eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'TLCreator'),(select id from eg_action where name = 'View Trade License Show for Approval')); */
 INSERT INTO eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'TLCreator'),(select id from eg_action where name = 'New Trade License Before Edit'));
 INSERT INTO eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'TLCreator'),(select id from eg_action where name = 'editTradeLicense-edit'));
 INSERT INTO eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'TLApprover'),(select id from eg_action where name = 'NewTradeLicense-approve'));
@@ -197,3 +199,59 @@ INSERT INTO eg_roleaction (actionid, roleid) values ((select id from eg_action w
 INSERT INTO eg_roleaction (actionid, roleid) values ((select id from eg_action where name = 'objection-create'), (select id from eg_role where name = 'TLCreator'));
 insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'TLCreator'), id from eg_action where name='tradeLicenseSubCategoryAjax' and contextroot = 'tl';
 insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'TLCreator'), id from eg_action where name='tradeLicenseLocalityAjax' and contextroot = 'tl';
+
+
+--action and roleaction mapping for feematrix
+Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application)
+values(nextval('SEQ_EG_ACTION'),'Create-License FeeMatrix','/feematrix/create?fee=License Fee',
+(select id from eg_module where name='Trade License Masters'),1,'Create-License FeeMatrix',true,'tl',
+(select id from eg_module where name='Trade License' and parentmodule is null));
+
+Insert into eg_roleaction values((select id from eg_role where name='Super User'),
+(select id from eg_action where name='Create-License FeeMatrix'));
+
+Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application)
+values(nextval('SEQ_EG_ACTION'),'Create-Motor FeeMatrix','/feematrix/create?fee=Motor Fee',
+(select id from eg_module where name='Trade License Masters'),1,'Create-Motor FeeMatrix',true,'tl',
+(select id from eg_module where name='Trade License' and parentmodule is null));
+
+Insert into eg_roleaction values((select id from eg_role where name='Super User'),
+(select id from eg_action where name='Create-Motor FeeMatrix'));
+
+Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application)
+values(nextval('SEQ_EG_ACTION'),'Create-Workforce FeeMatrix','/feematrix/create?fee=Motor Fee',
+(select id from eg_module where name='Trade License Masters'),1,'Create-Workforce FeeMatrix',true,'tl',
+(select id from eg_module where name='Trade License' and parentmodule is null));
+
+Insert into eg_roleaction values((select id from eg_role where name='Super User'),
+(select id from eg_action where name='Create-Workforce FeeMatrix'));
+
+
+-- Adding roleaction for TLApprover
+insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'TLApprover'), id from eg_action where name='tradeLicenseLocalityAjax' and contextroot = 'tl';
+insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'TLApprover'), id from eg_action where name = 'newTradeLicense-create';
+
+-- Adding egaction and roleaction for view Trade License
+Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'View Trade License for Approval','/newtradelicense/newTradeLicense-showForApproval.action',null,(select id from EG_MODULE where name = 'Trade License'),1,'View Trade License for Approval','f','tl',0,1,now(),1,now(),(select id from eg_module  where name = 'Trade License'));
+
+insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'TLCreator'), id from eg_action where name='View Trade License for Approval' and contextroot = 'tl';
+insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'TLApprover'), id from eg_action where name='View Trade License for Approval' and contextroot = 'tl';
+insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'Super User'), id from eg_action where name='View Trade License for Approval' and contextroot = 'tl';
+
+
+
+--Action and Roleaction Mappings for Cancel License
+Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'Cancel License','/search/searchLicense-commonForm.action','mode=Cancel License',(select id from EG_MODULE where name = 'Trade License Transactions'),3,'Cancel License','t','tl',0,1,now(),1,now(),(select id from eg_module  where name = 'Trade License'));
+
+Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'Cancel License Search','/search/searchLicense-commonSearch.action',null,(select id from EG_MODULE where name = 'Trade License Transactions'),4,'Cancel License Search','f','tl',0,1,now(),1,now(),(select id from eg_module  where name = 'Trade License'));
+
+insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'TLApprover'), id from eg_action where name='Cancel License' and contextroot = 'tl';
+
+insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'TLApprover'), id from eg_action where name='Cancel License Search' and contextroot = 'tl';
+
+insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'TLApprover'), id from eg_action where name='Cancel Trade License New Form' and contextroot = 'tl';
+
+
+Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'Cancel License Submit','/cancellation/cancelLicense-confirmCancellation.action',null,(select id from EG_MODULE where name = 'Trade License Transactions'),5,'Cancel License Submit','f','tl',0,1,now(),1,now(),(select id from eg_module  where name = 'Trade License'));
+
+insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'TLApprover'), id from eg_action where name='Cancel License Submit' and contextroot = 'tl';

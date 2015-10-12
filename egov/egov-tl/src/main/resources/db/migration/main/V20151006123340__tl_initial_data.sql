@@ -70,7 +70,7 @@ designation in (SELECT id from eg_designation WHERE name='Assistant health offic
 
 ------ Workflow type
 INSERT INTO eg_wf_types (id, module, type, link, createdby, createddate, lastmodifiedby, lastmodifieddate, renderyn, groupyn, typefqn, displayname, version)
-values (nextval('seq_eg_wf_types'), (select id from eg_module where name = 'Trade License'), 'TradeLicense', '/tl/viewtradelicense/viewTradeLicense-showForApproval.action?model.id=:ID',
+values (nextval('seq_eg_wf_types'), (select id from eg_module where name = 'Trade License'), 'TradeLicense', '/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id=:ID',
 1, now(), 1, now(), 'Y', 'N', 'org.egov.tl.domain.entity.TradeLicense', 'Trade License', 0);
 
 
@@ -85,3 +85,28 @@ Insert into EG_DEMAND_REASON (ID,ID_DEMAND_REASON_MASTER,ID_INSTALLMENT,PERCENTA
 
 --reason details
 Insert into eg_demand_reason_details (ID,ID_DEMAND_REASON,PERCENTAGE,FROM_DATE,TO_DATE,LOW_LIMIT,HIGH_LIMIT,CREATE_DATE,MODIFIED_DATE,FLAT_AMOUNT,IS_FLATAMNT_MAX) values (nextval('seq_eg_demand_reason_details'),(select id from eg_demand_reason where id_demand_reason_master = (select id from EG_DEMAND_REASON_MASTER where REASONMASTER = 'License Fee') and id_installment = (select id from EG_INSTALLMENT_MASTER where ID_MODULE = (select id from EG_MODULE where name = 'Trade License') and start_date = to_date('01/04/2015 00:00:00','dd/MM/yyyy HH24:MI:SS'))),0.5,to_date('01/04/2004 00:00:00','dd/MM/yyyy HH24:MI:SS'),to_date('01/04/2015 23:59:59','dd/MM/yyyy HH24:MI:SS'),1,9999999999,current_timestamp, current_timestamp,0,0);
+
+
+---App Config for fee
+INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, MODULE ) VALUES ( nextval('SEQ_EG_APPCONFIG'), 'Is Fee For Permanent and Temporary Same','Is Fee For Permanent and Temporary Same',(select id from eg_module where name='Trade License'));
+
+
+INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, MODULE ) VALUES ( nextval('SEQ_EG_APPCONFIG'), 'Is Fee For New and Renew Same','Is Fee For New and Renew Same',(select id from eg_module where name='Trade License'));
+
+
+--UOM master data
+insert into egtl_mstr_unitofmeasure (id,code,name,active,createdby,lastmodifiedby,createddate,lastmodifieddate,version)
+values(nextval('seq_egtl_mstr_unitofmeasure'),'HP','HP',false,1,1,now(),now(),0);
+
+insert into egtl_mstr_unitofmeasure (id,code,name,active,createdby,lastmodifiedby,createddate,lastmodifieddate,version)
+values(nextval('seq_egtl_mstr_unitofmeasure'),'Person','Person',false,1,1,now(),now(),0);
+
+insert into egtl_mstr_unitofmeasure (id,code,name,active,createdby,lastmodifiedby,createddate,lastmodifieddate,version)
+values(nextval('seq_egtl_mstr_unitofmeasure'),'KiloGram','KiloGram',true,1,1,now(),now(),0);
+
+insert into egtl_mstr_unitofmeasure (id,code,name,active,createdby,lastmodifiedby,createddate,lastmodifieddate,version)
+values(nextval('seq_egtl_mstr_unitofmeasure'),'Ton','Ton',true,1,1,now(),now(),0);
+
+
+insert into egtl_mstr_unitofmeasure (id,code,name,active,createdby,lastmodifiedby,createddate,lastmodifieddate,version)
+values(nextval('seq_egtl_mstr_unitofmeasure'),'Meter','Meter',true,1,1,now(),now(),0);
