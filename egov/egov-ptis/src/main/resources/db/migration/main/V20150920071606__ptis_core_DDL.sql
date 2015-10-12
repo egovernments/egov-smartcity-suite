@@ -95,7 +95,7 @@ COMMENT ON COLUMN egpt_document_type.transactiontype IS 'FK to egpt_application_
 -------------------END-------------------
 
 ------------------START------------------
-create sequence SEQ_PROPERTY_USAGE_MASTER;
+create sequence seq_egpt_property_usage_master;
 CREATE TABLE egpt_property_usage_master
 (
   id bigint NOT NULL, -- Primary Key
