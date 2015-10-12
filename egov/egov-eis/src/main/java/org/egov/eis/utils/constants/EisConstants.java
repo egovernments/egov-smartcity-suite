@@ -39,9 +39,10 @@
  */
 package org.egov.eis.utils.constants;
 
-public interface EisConstants {
+public class EisConstants {
 
 	public static final String ROLE_EMPLOYEE = "Employee";
 	public static final String ANONYMOUS_EMPLOYEE = "anonymous";
+	public static final String DEFAULT_EMPLOYEE_PWD = "804Mqu@123";
 	
 }

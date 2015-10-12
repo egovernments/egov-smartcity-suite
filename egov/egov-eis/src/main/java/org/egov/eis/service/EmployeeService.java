@@ -149,7 +149,7 @@ public class EmployeeService  implements EntityTypeService {
     public void create(final Employee employee) {
         employee.setPwdExpiryDate(new DateTime().plusDays(applicationProperties.userPasswordExpiryInDays()).toDate());
 
-        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+        employee.setPassword(passwordEncoder.encode(EisConstants.DEFAULT_EMPLOYEE_PWD));
         // Following is added to prevent null values and empty assignment
         // objects getting persisted
         employee.setAssignments(employee.getAssignments().parallelStream()

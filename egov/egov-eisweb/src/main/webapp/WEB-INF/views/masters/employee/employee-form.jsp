@@ -90,9 +90,13 @@
 							</div>
 							
 							<div class="panel-body custom-form">
-								<form:hidden path="password" value="804Mqu@123"/>
-								<form:hidden path="locale" value="en IN"/>
-								<form:hidden path="pwdExpiryDate" id="pwdExpiryDate" value="01/01/2015"/>
+							<c:if test="${mode == 'create'}">
+                    			<form:hidden path="password" value="804Mqu@123"/>
+                            </c:if>
+				 			<c:if test="${mode == 'update'}">
+                    			<form:hidden path="password" value="${employee.password}"/>
+                            </c:if>
+								<form:hidden path="locale" value="en_IN"/>
 								<input type="hidden" value="${mode}" id="mode"/>
 									<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/><span class="mandatory"></span></label>
