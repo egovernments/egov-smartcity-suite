@@ -1,0 +1,10 @@
+INSERT INTO EG_ACTION(ID, NAME, URL, QUERYPARAMS, PARENTMODULE, ORDERNUMBER,DISPLAYNAME, ENABLED, CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE, application) Values (nextval('SEQ_EG_ACTION'), 'View Headwise DCB','/view/viewDCBProperty-displayHeadwiseDcb.action', NULL, (SELECT ID FROM EG_MODULE WHERE NAME = 'Existing property'),NULL, 'View Headwise DCB',false,'ptis',0,1,now(),1,now(),(select id from eg_module where "name" ='Property Tax'));
+
+INSERT INTO EG_ACTION(ID, NAME, URL, QUERYPARAMS, PARENTMODULE, ORDERNUMBER,DISPLAYNAME, ENABLED, CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE, application) Values (nextval('SEQ_EG_ACTION'), 'View MigData on DCB','/view/viewDCBProperty-showMigData.action', NULL, (SELECT ID FROM EG_MODULE WHERE NAME = 'Existing property'),NULL, 'View MigData on DCB',false,'ptis',0,1,now(),1,now(),(select id from eg_module where "name" ='Property Tax'));
+
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) select id, (select id FROM eg_action WHERE NAME = 'View Headwise DCB' and CONTEXTROOT='ptis') from eg_role where name in ('CSC Operator','Property Approver','Property Verifier','Property Administrator','ULB Operator');
+
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) select id, (select id FROM eg_action WHERE NAME = 'View MigData on DCB' and CONTEXTROOT='ptis') from eg_role where name in ('CSC Operator','Property Approver','Property Verifier','Property Administrator','ULB Operator');
+
+--delete from eg_roleaction where roleid in (select id from eg_role where name in ('CSC Operator','Property Approver','Property Verifier','Property Administrator','ULB Operator')) and actionid in (select id FROM eg_action WHERE NAME in ('View MigData on DCB', 'View Headwise DCB') and CONTEXTROOT='ptis');
+--delete FROM eg_action WHERE NAME in ('View MigData on DCB', 'View Headwise DCB') and CONTEXTROOT='ptis';

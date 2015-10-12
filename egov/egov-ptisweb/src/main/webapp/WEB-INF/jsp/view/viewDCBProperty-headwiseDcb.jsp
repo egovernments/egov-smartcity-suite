@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!---------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,18 +36,17 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp"%>
 
 <html>
 	<head>
-		<title><s:text name="viewDCB"></s:text></title>
+		<title><s:text name="viewHeadwiseDCB"></s:text></title>
 	</head>
 	<body>
 		<div class="formmainbox">
-			<div class="formheading"></div>
 			<div class="headingbg">
-				<s:text name="viewDCB" />
+				<s:text name="viewHeadwiseDCB" />
 			</div>
 			<s:form action="#" theme="simple">
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -245,79 +244,6 @@
 										</div>
 									</td>
 								</tr>
-								<tr>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="right">
-											<b><s:text name="advanceRebate" />:</b>
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="right">
-											<span class="bold"> 
-												<s:text name="format.money">
-													<s:param value="advrebate" />
-												</s:text>
-											</span>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="right">
-											<b><s:text name="advancePayment" />:</b>
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="right">
-											<span class="bold"> 
-												<s:text name="format.money">
-													<s:param value="advance" />
-												</s:text>
-											</span>
-										</div>
-									</td>
-								</tr>
-
 		<s:if test="%{!getActiveRcpts().isEmpty()}" >
 		<tr>
       		<td colspan="9"><div class="headingsmallbg"><s:text name="PaymentDetails"/></div></td>

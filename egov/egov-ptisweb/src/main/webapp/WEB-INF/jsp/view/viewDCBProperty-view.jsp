@@ -60,14 +60,14 @@
 			}
 			
 			function openNewWindow() {
-				window.open('../view/viewDCBProperty!getPropertyArrears.action?' + 
-							'propertyId=<s:property value="%{basicProperty.upicNo}" />&decorate=false', 
+				window.open('../view/viewDCBProperty-showMigData.action?' + 
+							'propertyId=<s:property value="%{basicProperty.upicNo}"/>', 
 							'_blank', 'width=650, height=500', false);
 			}
 
 			function openHeadwiseDCBWindow() {
-				window.open('../view/viewDCBProperty!displayHeadwiseDcb.action?' + 
-							'propertyId=<s:property value="%{basicProperty.upicNo}" />', 
+				window.open('../view/viewDCBProperty-displayHeadwiseDcb.action?' + 
+							'propertyId=<s:property value="%{basicProperty.upicNo}"/>', 
 							'_blank', 'width=650, height=500, scrollbars=yes', false);
 			}
 					
@@ -232,11 +232,12 @@
 								<tr>
 
 									<td class="blueborderfortd">
-										<div align="center">
-										</div>
 										<div align="center">											
-											<s:if test="%{basicProperty.isMigrated == 'Y'}">
-												<a href="" onclick="openNewWindow();"> Show Arrears </a>
+											<a href="javascript:openHeadwiseDCBWindow();"><s:text name="viewHeadwiseDCB"/></a>
+										</div><br/>
+										<div align="center">											
+											<s:if test="%{basicProperty.source == 'M'}">
+												<a href="" onclick="openNewWindow();">Show Receipts</a>
 											</s:if>	
 											<s:else>
 												&nbsp;
@@ -379,6 +380,91 @@
 										</s:iterator>
 									</tr>
 								</s:iterator>
+						<tr>
+							<td class="blueborderfortd">
+								<div align="right">
+									<b>Total:</b>
+								</div>
+							</td>
+							<td class="blueborderfortd">
+								<div align="right">
+							 		<span class="bold">
+							 		<s:text name="format.money">
+										<s:param value="dcbReport.getTotalDmdTax()" />
+									</s:text>
+                                    </span> 
+								</div>
+							</td>
+							<td class="blueborderfortd">
+								<div align="right">
+							 		<span class="bold">
+							 		<s:text name="format.money">
+										<s:param value="dcbReport.getTotalDmdPnlty()" />
+									</s:text>
+                                    </span> 
+								</div>
+							</td>
+							<td class="blueborderfortd">
+								<div align="right">
+							 		<span class="bold">
+							 		<s:text name="format.money">
+										<s:param value="dcbReport.getTotalLpayPnlty()" />
+									</s:text>
+                                    </span> 
+								</div>
+							</td>
+							<td class="blueborderfortd">
+								<div align="right">
+							 		<span class="bold">
+							 		<s:text name="format.money">
+										<s:param value="dcbReport.getTotalColTax()" />
+									</s:text>
+                                    </span> 
+								</div>
+							</td>
+							<td class="blueborderfortd">
+								<div align="right">
+							 		<span class="bold">
+							 		<s:text name="format.money">
+										<s:param value="dcbReport.getTotalColPnlty()" />
+									</s:text>
+                                    </span> 
+								</div>
+							</td>
+							<td class="blueborderfortd">
+								<div align="right">
+							 		<span class="bold">
+							 		<s:text name="format.money">
+										<s:param value="dcbReport.getTotalColLpayPnlty()" />
+									</s:text>
+                                    </span> 
+								</div>
+							</td>
+							<td class="blueborderfortd">
+								<div align="right">
+								 	<span class="bold">
+							 		<s:text name="format.money">
+										<s:param value="dcbReport.getTotalRebate()" />
+									</s:text>
+                                    </span> 
+								</div>
+							</td>
+							<td class="blueborderfortd">
+								<div align="right">
+								 	&nbsp;
+								</div>
+							</td>
+							<td class="blueborderfortd">
+								<div align="right">
+								 	&nbsp;
+								</div>
+							</td>
+							<td class="blueborderfortd">
+								<div align="right">
+								 	&nbsp;
+								</div>
+							</td>
+						</tr>
 								<tr>
 									<td class="blueborderfortd">
 										<div align="center">
@@ -437,141 +523,7 @@
 									</s:iterator>
 								</tr>
 
-								<c:if test="${advance != null && advance != 0}">
-									<tr>
-
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-										<td class="blueborderfortd" width="10%">
-											<div align="right">
-												<b><s:text name="advancePayment" />:</b>
-											</div>
-										</td>
-
-										<td class="blueborderfortd">
-											<div align="right">
-												<c:choose>
-													<c:when test="${advrebate == null || advrebate == 0}">
-														<b><fmt:formatNumber value="${advance}" pattern="#,##0.00"/> </b>
-													</c:when>
-													<c:otherwise>
-														<b><fmt:formatNumber value="${advance - advrebate}" pattern="#,##0.00"/> </b>
-													</c:otherwise>
-												</c:choose>
-											</div>
-										</td>
-
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											&nbsp;
-										</td>
-										<td class="blueborderfortd">
-											&nbsp;
-										</td>
-									</tr>
-								</c:if>
-
-								<c:if test="${advrebate != null && advrebate != 0}">
-									<tr>
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="right">
-												<b><s:text name="advanceRebate" />:</b>
-											</div>
-										</td>
-
-										<td class="blueborderfortd">
-											<div align="right">
-												<b><fmt:formatNumber value="${advrebate}" pattern="#,##0.00"/></b>
-											</div>
-										</td>
-
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											&nbsp;
-										</td>
-									</tr>
-								</c:if>
-
 								<tr>
-
 									<td class="blueborderfortd">
 										<div align="center">
 											&nbsp;

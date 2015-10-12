@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!---------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,26 +36,17 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp"%>
 
 <html>
-
-<head>
-<title><s:text name="propertyArrears"></s:text></title>
-<link href="<c:url value='/css/propertytax.css'/>" rel="stylesheet"
-	type="text/css" />
-<link href="<c:url value='/css/commonegov.css'/>" rel="stylesheet"
-	type="text/css" />
-<script type="text/javascript"
-	src="<c:url value='/javascript/validations.js'/>"></script>
-</head>
-
+	<head>
+		<title><s:text name="propMigdata"></s:text></title>
+	</head>
 <body>
 	<div class="formmainbox">
-		<div class="formheading"></div>
 		<div class="headingbg">
-			<s:text name="propertyArrears" />
+			<s:text name="propMigdata"/>
 		</div>
 		<s:form theme="simple">
 			<br />
@@ -72,38 +63,6 @@
 					</td>
 				</tr>
 			</table>
-			<s:if test="%{propertyArrearsList.isEmpty()}">
-				<span class="bold"  style="font-size: 14px"> <br> <s:text name="noPropArr"/></span>
-			</s:if>
-			<s:else>
-				<table width="300px" border="0" align="center" cellpadding="0"
-					cellspacing="0" class="tablebottom">
-
-					<tr>
-						<th class="bluebgheadtd" width="50%">
-							<s:text name="Installment" />
-						</th>
-						<th class="bluebgheadtd" width="50%" align="center" colspan="3">
-							<s:text name="Tax" />
-						</th>
-					</tr>
-					<s:iterator value="propertyArrearsList" var="arrears">
-						<tr>
-							<td class="blueborderfortd">
-								<div align="center">
-									<s:property value="year" />
-								</div>
-							</td>
-							<td class="blueborderfortd">
-								<div align="right">
-									<s:property value="taxAmount" />
-								</div>
-							</td>
-						</tr>
-					</s:iterator>
-				</table>
-			</s:else>
-			
 			<s:if test="%{propReceiptList.isEmpty()}">
 				<span class="bold"  style="font-size: 14px"> <br><s:text name="noPropReceipt"/></span>
 			</s:if>
