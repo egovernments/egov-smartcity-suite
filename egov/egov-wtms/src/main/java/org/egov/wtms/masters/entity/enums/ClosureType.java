@@ -36,8 +36,6 @@ import org.egov.wtms.utils.constants.WaterTaxConstants;
 public enum ClosureType {
     Permanent(WaterTaxConstants.PERMENENTCLOSECODE),
     Temporary (WaterTaxConstants.TEMPERARYCLOSECODE);
-    //T : Temporary Closure
-    //P : Permanent Closure
     
     private String name;
 

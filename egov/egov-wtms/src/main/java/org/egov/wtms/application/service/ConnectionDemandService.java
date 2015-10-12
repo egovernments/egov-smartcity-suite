@@ -587,16 +587,28 @@ public class ConnectionDemandService {
     }
 
     public WaterConnectionDetails updateDemandForNonmeteredConnection(
-            final WaterConnectionDetails waterConnectionDetails) throws ValidationException {
-        final Installment installment = getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null,
+            final WaterConnectionDetails waterConnectionDetails,Installment installment,Boolean reconnInSameInstallment) throws ValidationException {
+        Date InstallemntStartDate=null;
+        if(installment==null){
+         installment = getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null,
                 new Date());
+         InstallemntStartDate=new Date();
+        }
+        else
+        {
+         if(reconnInSameInstallment)
+             InstallemntStartDate  =installment.getFromDate();
+         else{
+             InstallemntStartDate=waterConnectionDetails.getReconnectionApprovalDate();
+         }
+        }
         double totalWaterRate = 0;
         final WaterRatesHeader waterRatesHeader = waterRatesHeaderService
                 .findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(waterConnectionDetails.getConnectionType(),
                         waterConnectionDetails.getUsageType(), waterConnectionDetails.getWaterSource(),
                         waterConnectionDetails.getPipeSize());
         final WaterRatesDetails waterRatesDetails = waterRatesDetailsService.findByWaterRatesHeader(waterRatesHeader);
-        final int noofmonths = DateUtils.noOfMonths(new Date(), installment.getToDate());
+        final int noofmonths = DateUtils.noOfMonths(InstallemntStartDate, installment.getToDate());
         if (null != waterRatesDetails) {
             if (noofmonths > 0)
                 totalWaterRate = waterRatesDetails.getMonthlyRate() * (noofmonths + 1);

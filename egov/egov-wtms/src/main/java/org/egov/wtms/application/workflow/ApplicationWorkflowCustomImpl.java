@@ -204,14 +204,26 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 if((additionalRule.equals(WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE) || additionalRule.equals(WaterTaxConstants.RECONNECTIONCONNECTION) )&& waterConnectionDetails.getCurrentState().getValue().equals("Closed")){
                     wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
                             null, additionalRule, null, null);
+                    if(wfmatrix !=null && !wfmatrix.getNextAction().equalsIgnoreCase("END"))
+                    waterConnectionDetails.transition(true).withSenderName(user.getName()).withComments(approvalComent)
+                    .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                    .withNextAction(wfmatrix.getNextAction());
+                }
+                else {
+                    wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
+                        null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null);
+                if ((additionalRule.equals(WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE) || additionalRule.equals(WaterTaxConstants.RECONNECTIONCONNECTION) ) 
+                        && wfmatrix !=null && wfmatrix.getNextAction().equalsIgnoreCase("END")){
+                    waterConnectionDetails.transition(true).end().withSenderName(user.getName())
+                    .withComments(approvalComent).withDateInfo(currentDate.toDate());
                 }
                 else{
-                wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
-                        null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null);
-                }
                 waterConnectionDetails.transition(true).withSenderName(user.getName()).withComments(approvalComent)
                 .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                 .withNextAction(wfmatrix.getNextAction());
+                }
+                }
+                
             }
 
         }

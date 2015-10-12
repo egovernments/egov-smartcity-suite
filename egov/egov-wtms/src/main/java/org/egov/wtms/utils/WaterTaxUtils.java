@@ -282,6 +282,7 @@ public class WaterTaxUtils {
         Long approverPosition = 0l;
         if (stateHistoryList != null && !stateHistoryList.isEmpty()) {
             for (final StateHistory stateHistory : stateHistoryList) {
+                if(stateHistory.getOwnerPosition() !=null){
                 final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(stateHistory
                         .getOwnerPosition().getId(), new Date());
                 for (final Assignment assgn : assignmentList)
@@ -289,6 +290,7 @@ public class WaterTaxUtils {
                         approverPosition = stateHistory.getOwnerPosition().getId();
                         break;
                     }
+            }
             }
             if (approverPosition == 0) {
                 final State stateObj = waterConnectionDetails.getState();

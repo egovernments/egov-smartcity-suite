@@ -80,7 +80,17 @@
                                         </div>
 									</div>
 									<div class="panel panel-primary" data-collapsed="0">
-					<jsp:include page="documentdetails.jsp"></jsp:include>	
+					<div class="form-group">
+					<div class="row">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.attachdocument"/></label>
+						<div class="col-sm-3 add-margin">
+							<input type="file" id="fileStoreId" name="files" class="file-ellipsis upload-file">
+							<div class="add-margin error-msg" ><font size="2">
+								<spring:message code="lbl.mesg.document"/>	
+								</font></div>
+						</div>
+					</div>
+			   </div>
 			</div>
                                     
 </div>

@@ -80,9 +80,16 @@ public class CommonWaterTaxSearchController {
     public String searchConnectionSubmit(@ModelAttribute final ConnectionSearchRequest searchRequest,
             final BindingResult resultBinder, final Model model, @RequestParam String applicationType,
             final HttpServletRequest request) {
-        
-        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCodeAndStatus(searchRequest.getConsumerCode(),ConnectionStatus.ACTIVE);
+         WaterConnectionDetails waterConnectionDetails=null;
+        if (applicationType != null && applicationType.equals(WaterTaxConstants.RECONNECTIONCONNECTION)){
+          waterConnectionDetails = waterConnectionDetailsService
+                .findByApplicationNumberOrConsumerCodeAndStatus(searchRequest.getConsumerCode(),ConnectionStatus.CLOSED);
+        }
+        else
+        {
+            waterConnectionDetails = waterConnectionDetailsService
+                    .findByApplicationNumberOrConsumerCodeAndStatus(searchRequest.getConsumerCode(),ConnectionStatus.ACTIVE);
+        }
         applicationType = request.getParameter("applicationType");
         if (waterConnectionDetails == null) {
             resultBinder.rejectValue("consumerCode", "invalid.consumernuber");
@@ -130,13 +137,10 @@ public class CommonWaterTaxSearchController {
         if (applicationType != null
                 && applicationType.equals(WaterTaxConstants.RECONNECTIONCONNECTION))
             if (!waterConnectionDetails.getLegacy()
-                    && (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
-                            || waterConnectionDetails.getApplicationType().getCode()
-                            .equals(WaterTaxConstants.ADDNLCONNECTION) || waterConnectionDetails
-                            .getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE))
+                    && (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CLOSINGCONNECTION))
                             && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.CLOSED)
                             && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED)
-                            && waterConnectionDetails.getCloseConnectionType().equals('T'))
+                            && waterConnectionDetails.getCloseConnectionType().equals("T"))
                 return "redirect:/application/reconnection/" + waterConnectionDetails.getConnection().getConsumerCode();
             else {
                 model.addAttribute("mode", "errorMode");
