@@ -1122,6 +1122,8 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP = "Transfer_of_Ownership";
     public static final String APPLICATION_TYPE_COLLECT_TAX = "Collect_Tax";
     public static final String APPLICATION_TYPE_DEMAND_BILL = "Generate_demand_bill";
+    public static final String APPLICATION_TYPE_TAX_EXEMTION = "Tax Exemption";
+    
    
 
     // AppConfig values
