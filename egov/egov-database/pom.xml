@@ -10,7 +10,6 @@
 	<name>e-governments database</name>
 
 	<artifactId>egov-database</artifactId>
-
 	<build>
 		<resources>
 			<resource>
@@ -88,6 +87,10 @@
 							<goal>migrate</goal>
 						</goals>
 						<configuration>
+							<driver>${db.driver}</driver>
+							<url>${db.url}</url>
+							<user>${db.user}</user>
+							<password>${db.password}</password>
 							<configFile>src/main/resources/flyway.properties</configFile>
 						</configuration>
 					</execution>
