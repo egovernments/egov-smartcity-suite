@@ -14,6 +14,7 @@
 	<parameter name="estimationCharges" class="java.lang.String"/>
 	<parameter name="donationCharges" class="java.lang.String"/>
 	<parameter name="consumerCode" class="java.lang.String"/>
+	<parameter name="closeApprovalDate" class="java.lang.String"/>
 	<field name="quantity" class="java.lang.Double"/>
 	<field name="unitRate" class="java.lang.Double"/>
 	<field name="itemDescription" class="java.lang.String"/>
@@ -66,7 +67,7 @@
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["This is to acknowledge that an application for _ "+$P{applicationType}+" has been Approved by commissioner for Water tap connection with H.S.C No."+$P{consumerCode}+" with address "+$P{address}+" Disconnection is effective from" +$P{applicationDate}+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["This is to acknowledge that an application for _ "+$P{applicationType}+" has been Approved by commissioner for Water tap connection with H.S.C No."+$P{consumerCode}+" with address "+$P{address}+" Disconnection is effective from "+$P{closeApprovalDate}+"."]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="245" y="96" width="97" height="23" uuid="d2e902dd-0bd2-4062-a199-9f96d6741c49"/>

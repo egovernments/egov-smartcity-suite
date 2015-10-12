@@ -193,6 +193,12 @@ public class WaterConnectionDetails extends StateAware {
 
     @Temporal(value = TemporalType.DATE)
     private Date executionDate;
+    
+    @Temporal(value = TemporalType.DATE)
+    private Date closeApprovalDate;
+    
+    @Temporal(value = TemporalType.DATE)
+    private Date reconnectionApprovalDate;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "filestoreid")
@@ -225,7 +231,7 @@ public class WaterConnectionDetails extends StateAware {
     @Transient
     private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>(0);
 
-    private Character closeConnectionType;
+    private String closeConnectionType;
 
     @Length(max = 1024)
     private String closeconnectionreason;
@@ -544,11 +550,13 @@ public class WaterConnectionDetails extends StateAware {
         this.nonmeteredBillDetails = nonmeteredBillDetails;
     }
 
-    public Character getCloseConnectionType() {
+   
+
+    public String getCloseConnectionType() {
         return closeConnectionType;
     }
 
-    public void setCloseConnectionType(final Character closeConnectionType) {
+    public void setCloseConnectionType(String closeConnectionType) {
         this.closeConnectionType = closeConnectionType;
     }
 
@@ -566,6 +574,22 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setReConnectionReason(String reConnectionReason) {
         this.reConnectionReason = reConnectionReason;
+    }
+
+    public Date getCloseApprovalDate() {
+        return closeApprovalDate;
+    }
+
+    public void setCloseApprovalDate(Date closeApprovalDate) {
+        this.closeApprovalDate = closeApprovalDate;
+    }
+
+    public Date getReconnectionApprovalDate() {
+        return reconnectionApprovalDate;
+    }
+
+    public void setReconnectionApprovalDate(Date reconnectionApprovalDate) {
+        this.reconnectionApprovalDate = reconnectionApprovalDate;
     }
     
 

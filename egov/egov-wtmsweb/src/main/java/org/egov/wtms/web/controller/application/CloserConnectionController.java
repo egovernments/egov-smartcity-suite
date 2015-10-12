@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -58,7 +59,9 @@ import org.egov.wtms.application.service.CloserConnectionService;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.DocumentNames;
+import org.egov.wtms.masters.entity.enums.ClosureType;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants; 
@@ -133,10 +136,8 @@ public class CloserConnectionController extends GenericConnectionController {
         model.addAttribute("additionalRule", WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE);
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
-        final Map<String, String> connectionTypeMap = new LinkedHashMap<String, String>();
-        connectionTypeMap.put(WaterTaxConstants.PERMENENTCLOSECODE.toString(), WaterTaxConstants.PERMENENTCLOSE);
-        connectionTypeMap.put(WaterTaxConstants.TEMPERARYCLOSECODE.toString(), WaterTaxConstants.TEMPERARYCLOSE);
-        model.addAttribute("radioButtonMap", connectionTypeMap);
+        
+        model.addAttribute("radioButtonMap",  Arrays.asList(ClosureType.values()));
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
         model.addAttribute(
@@ -180,7 +181,12 @@ public class CloserConnectionController extends GenericConnectionController {
        
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-        waterConnectionDetails.setCloseConnectionType(request.getParameter("closeConnectionType").charAt(0));
+        if(request.getParameter("closeConnectionType").equals(WaterTaxConstants.PERMENENTCLOSE)){
+        waterConnectionDetails.setCloseConnectionType(ClosureType.Permanent.getName());
+       }
+        else{
+            waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.getName());
+        }
         final String addrule = request.getParameter("additionalRule");
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.CLOSED);
         final WaterConnectionDetails savedWaterConnectionDetails = closerConnectionService.updatecloserConnection(

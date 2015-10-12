@@ -40,6 +40,7 @@
 package org.egov.wtms.web.controller.application;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -62,6 +63,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
+import org.egov.wtms.masters.entity.enums.ClosureType;
 import org.egov.wtms.masters.service.RoadCategoryService;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
@@ -136,10 +138,13 @@ public class UpdateConnectionController extends GenericConnectionController {
         if (waterConnectionDetails.getCloseConnectionType() != null && waterConnectionDetails.getReConnectionReason()==null) {
             model.addAttribute("additionalRule", "CLOSECONNECTION");
             model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
-            final Map<String, String> connectionTypeMap = new LinkedHashMap<String, String>();
-            connectionTypeMap.put(WaterTaxConstants.PERMENENTCLOSECODE.toString(), WaterTaxConstants.PERMENENTCLOSE);
-            connectionTypeMap.put(WaterTaxConstants.TEMPERARYCLOSECODE.toString(), WaterTaxConstants.TEMPERARYCLOSE);
-            model.addAttribute("radioButtonMap", connectionTypeMap);
+           if(waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.PERMENENTCLOSECODE)){
+                waterConnectionDetails.setCloseConnectionType(ClosureType.Permanent.toString());
+            }
+            else{
+                waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.toString()); 
+            }
+           model.addAttribute("radioButtonMap",  Arrays.asList(ClosureType.values()));
         }else if(waterConnectionDetails.getCloseConnectionType() != null && waterConnectionDetails.getReConnectionReason()!=null)
         {
             model.addAttribute("additionalRule", WaterTaxConstants.RECONNECTIONCONNECTION);
@@ -293,6 +298,14 @@ public class UpdateConnectionController extends GenericConnectionController {
                 waterConnectionDetails.setWorkOrderNumber(waterTaxNumberGenerator.generateWorkOrderNumber());
             }
             try {
+                if(waterConnectionDetails.getCloseConnectionType() !=null ){
+                 if(waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.PERMENENTCLOSE)){
+                    waterConnectionDetails.setCloseConnectionType(ClosureType.Permanent.getName());
+                   }
+                    else{
+                        waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.getName());
+                    }
+                }
                 waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
                         approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction, mode);
             } catch (final ValidationException e) {

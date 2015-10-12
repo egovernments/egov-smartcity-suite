@@ -337,9 +337,11 @@ public class WaterConnectionDetailsService {
             final Long approvalPosition, final String approvalComent, String additionalRule,
             final String workFlowAction, final String mode) throws ValidationException {
         if (waterConnectionDetails.getCloseConnectionType() != null
-                && workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION))
+                && workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION)){
             waterConnectionDetails.setApplicationType(applicationTypeService
                     .findByCode(WaterTaxConstants.CLOSINGCONNECTION));
+            waterConnectionDetails.setCloseApprovalDate(new Date());
+        }
         if (WaterTaxConstants.APPLICATION_STATUS__RECOONCTIONAPPROVED.equals(waterConnectionDetails.getStatus()
                 .getCode())
                 && waterConnectionDetails.getCloseConnectionType().equals('T')
@@ -348,6 +350,7 @@ public class WaterConnectionDetailsService {
             waterConnectionDetails.setApplicationType(applicationTypeService
                     .findByCode(WaterTaxConstants.RECONNECTIONCONNECTION));
             waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
+            waterConnectionDetails.setReconnectionApprovalDate(new Date());
         }
         applicationStatusChange(waterConnectionDetails, workFlowAction, mode);
 

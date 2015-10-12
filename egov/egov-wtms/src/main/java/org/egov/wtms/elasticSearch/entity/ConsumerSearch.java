@@ -90,7 +90,7 @@ public class ConsumerSearch implements Indexable {
     private String connectionType;
 
     @Searchable(name = "closureType", group = Searchable.Group.SEARCHABLE)
-    private Character closureType;
+    private String closureType;
 
     @Searchable(name = "waterTaxDue", group = Searchable.Group.CLAUSES)
     private BigDecimal waterTaxDue;
@@ -216,14 +216,16 @@ public class ConsumerSearch implements Indexable {
         this.waterTaxDue = waterTaxDue;
     }
 
-    public Character getClosureType() {
+   
+    
+    public String getClosureType() {
         return closureType;
     }
 
-    public void setClosureType(final Character closureType) {
+    public void setClosureType(String closureType) {
         this.closureType = closureType;
     }
-    
+
     public String getUlbName() {
         return ulbName;
     }

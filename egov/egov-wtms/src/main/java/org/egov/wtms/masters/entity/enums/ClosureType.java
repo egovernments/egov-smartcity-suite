@@ -31,11 +31,24 @@
 package org.egov.wtms.masters.entity.enums;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 
 public enum ClosureType {
-    T, P;
+    Permanent(WaterTaxConstants.PERMENENTCLOSECODE),
+    Temporary (WaterTaxConstants.TEMPERARYCLOSECODE);
     //T : Temporary Closure
     //P : Permanent Closure
+    
+    private String name;
+
+    private ClosureType(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+    
     @Override
     public String toString() {
         return StringUtils.capitalize(name());

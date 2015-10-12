@@ -40,6 +40,7 @@
 package org.egov.wtms.web.controller.application;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -112,6 +113,7 @@ public class ReconnectionAckController {
             reportParams.put("cityName", session.getAttribute("cityname"));
             reportParams.put("district", session.getAttribute("districtName"));
            reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
+           reportParams.put("reconnApprovalDate", formatter.format(waterConnectionDetails.getReconnectionApprovalDate()!=null ?waterConnectionDetails.getReconnectionApprovalDate():new Date()));
             reportParams.put("applicantName", ownerName);
             reportParams.put("consumerCode", waterConnectionDetails.getConnection().getConsumerCode());
             reportParams.put("address", assessmentDetails.getPropertyAddress());

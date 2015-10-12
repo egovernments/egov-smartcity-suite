@@ -11,6 +11,7 @@
 	<parameter name="houseNo" class="java.lang.String"/>
 	<parameter name="applicationType" class="java.lang.String"/>
 	<parameter name="consumerCode" class="java.lang.String"/>
+	<parameter name="reconnApprovalDate" class="java.lang.String"/>
 	<background>
 		<band height="802" splitType="Stretch"/>
 	</background>
@@ -49,7 +50,7 @@
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["This is to acknowledge that an application for _ "+$P{applicationType}+" has been Approved by commissioner for Water tap connection with H.S.C No."+$P{consumerCode}+" with address "+$P{address}+" Disconnection is effective from" +$P{applicationDate}+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["This is to acknowledge that an application for _ "+$P{applicationType}+" has been Approved by commissioner for Water tap connection with H.S.C No."+$P{consumerCode}+" with address "+$P{address}+" Disconnection is effective from "+$P{reconnApprovalDate}+"."]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="322" y="241" width="194" height="28" uuid="a2051f4a-cbc7-4c49-b109-a794268f1752"/>

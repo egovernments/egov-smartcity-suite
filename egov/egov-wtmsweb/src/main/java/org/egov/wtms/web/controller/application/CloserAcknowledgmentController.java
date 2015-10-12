@@ -40,6 +40,7 @@
 package org.egov.wtms.web.controller.application;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -117,6 +118,7 @@ public class CloserAcknowledgmentController {
             reportParams.put("consumerCode", waterConnectionDetails.getConnection().getConsumerCode());
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("houseNo", doorNo[0]);
+            reportParams.put("closeApprovalDate", formatter.format(waterConnectionDetails.getCloseApprovalDate()!=null ?waterConnectionDetails.getCloseApprovalDate():new Date()));
             reportInput = new ReportRequest(ESTIMATION_NOTICE, waterConnectionDetails.getEstimationDetails(), reportParams);
         }
         final HttpHeaders headers = new HttpHeaders();
