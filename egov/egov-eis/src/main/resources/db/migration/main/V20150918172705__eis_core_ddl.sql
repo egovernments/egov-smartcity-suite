@@ -405,6 +405,8 @@ insert into eg_action values(nextval('seq_eg_action'),'Create Position','/positi
 insert into eg_action values(nextval('seq_eg_action'),'Update Designation','/designation/update',null,(select id from eg_module where name='Designation'),null,'Update',true,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
 insert into eg_action values(nextval('seq_eg_action'),'load designation','/designation/ajax/result',null,(select id from eg_module where name='Designation'),null,'load designation',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
 insert into eg_action values(nextval('seq_eg_action'),'Ajax Call in Search Position','/position/resultList-update',null,(select id from eg_module where name='Position'),null,'Create',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
+Insert into EG_ACTION (id,name,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate,lastmodifiedby,lastmodifieddate,application) values (nextval('SEQ_EG_ACTION'),'AjaxDesignationsByDepartment','/ajaxWorkFlow-getDesignationsByObjectType',null,(select id from eg_module where name='EIS-COMMON'),1,'Approver Designations by Department','false','eis',0,1,to_timestamp('2015-08-15 11:04:03.817729','null'),1,to_timestamp('2015-08-15 11:04:03.817729','null'),384);
+Insert into EG_ACTION (id,name,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate,lastmodifiedby,lastmodifieddate,application) values (nextval('SEQ_EG_ACTION'),'AjaxApproverByDesignationAndDepartment','/ajaxWorkFlow-positionsByDepartmentAndDesignation',null,(select id from eg_module where name='EIS-COMMON'),1,'Approver By Designation and Department','false','eis',0,1,to_timestamp('2015-08-15 11:04:03.817729','null'),1,to_timestamp('2015-08-15 11:04:03.817729','null'),384);
 
 insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='EmpMaster'));
 insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Create Designation'));
@@ -416,6 +418,8 @@ insert into eg_roleaction values((select id from eg_role where name='Super User'
 insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Update Designation'));
 insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='load designation'));
 insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Ajax Call in Search Position'));
+Insert into eg_roleaction (roleid,actionid) values ((select id from eg_role where name='Super User'),(select id from eg_action where name='AjaxDesignationsByDepartment'));
+Insert into eg_roleaction (roleid,actionid) values ((select id from eg_role where name='Super User'),(select id from eg_action where name='AjaxApproverByDesignationAndDepartment'));
 
 insert into eg_action values(nextval('seq_eg_action'),'Update Position','/position/position-update',null,388,null,'Create',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
 insert into eg_action values(nextval('seq_eg_action'),'getAllDesigAjax','/common/employeeSearch-getAllDesignations.action',null,398,null,'getAllDesigAjax',false,'eis',0,1,'2015-08-17 15:37:03.129586',1,'2015-08-17 15:37:03.129586',384);
