@@ -178,7 +178,7 @@ jQuery(document).ready(function($) {
 			        			   if (cscUserRole!=null && cscUserRole!="" && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.waterTaxDue > 0) {
 			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Tax</option></select>');
 			        			   }
-			        			   else if (ulbUserRole!=null && ulbUserRole!="" && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype =='METERED' && full.resource.searchable.closureType==null) {
+			        			   else if (ulbUserRole!=null && ulbUserRole!="" && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype =='METERED' ) {
 			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="8">Enter Meter Reading</option></select>');
 			        			   }
 			        			   else if (ulbUserRole!=null && ulbUserRole!=""  && full.resource.clauses.status == 'ACTIVE' && full.resource.searchable.closureType =='T') {
@@ -194,7 +194,7 @@ jQuery(document).ready(function($) {
 			        		   if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
 			        				   full.resource.clauses.applicationcode == 'CLOSINGCONNECTION') {
 			        			   if (cscUserRole!=null && cscUserRole!="" && full.resource.clauses.status == 'CLOSED' ) {
-			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Tax</option></select>');
+			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option>option value="0">View water tap connection</option></select>');
 			        			   }
 			        			   else if (ulbUserRole!=null && ulbUserRole!="" && full.resource.clauses.status == 'CLOSED' && full.resource.searchable.closureType =='P' ) {
 			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
