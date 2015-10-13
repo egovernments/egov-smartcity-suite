@@ -51,7 +51,6 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.ContractorGrade;
 import org.egov.infra.validation.regex.Constants;
-import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
@@ -60,10 +59,9 @@ import org.egov.works.utils.WorksConstants;
 
 @Results({
 	@Result(name = ContractorGradeAction.NEW, location = "contractorGrade-new.jsp"),
-	@Result(name = ContractorGradeAction.SEARCH, location = "contractorGrade-searchPage.jsp"),
-	@Result(name = ContractorGradeAction.INDEX, location = "contractorGrade-index.jsp"),
 	@Result(name = ContractorGradeAction.EDIT, location = "contractorGrade-edit.jsp"),
-	@Result(name = "searchPage", location = "contractorGrade-index.jsp"),
+	@Result(name = ContractorGradeAction.SEARCH, location = "contractorGrade-searchPage.jsp"),
+	@Result(name = ContractorGradeAction.INDEX, location = "contractorGrade-index.jsp")
 })
 @ParentPackage("egov")
 public class ContractorGradeAction extends SearchFormAction {
@@ -72,7 +70,7 @@ public class ContractorGradeAction extends SearchFormAction {
     private ContractorGrade contractorGrade = new ContractorGrade();
     private PersistenceService<ContractorGrade, Long> contractorGradeService;
     private List<ContractorGrade> contractorGradeList = null;
-    public static final String SEARCH = "search";
+    public static final String SEARCH = "searchPage";
     public static final String INDEX = "index";
     public static final String EDIT = "edit";
     private Long id;
@@ -87,8 +85,7 @@ public class ContractorGradeAction extends SearchFormAction {
     @Action(value = "/masters/contractorGrade-save")
     public String save() {
         contractorGrade = contractorGradeService.persist(contractorGrade);
-        final String messageKey = "contractor.grade.save.success";
-        addActionMessage(getText(messageKey, "The Contractor Grade was saved successfully"));
+        addActionMessage(getText(WorksConstants.CONTRACTOR_GRADE_SAVE_SUCCESS_CODE, WorksConstants.CONTRACTOR_GRADE_SAVE_SUCCESS_MSG));
         contractorGradeList = new ArrayList<ContractorGrade>();
         contractorGradeList.add(contractorGrade);
         return INDEX;
@@ -99,11 +96,7 @@ public class ContractorGradeAction extends SearchFormAction {
         return NEW;
     }
     
-    @Override
-    public String search() {
-        return SEARCH;
-    }
-
+    @Action(value = "/masters/contractorGrade-viewContractorGrade")
     public String viewContractorGrade() {
         return "searchPage";
     }
@@ -170,28 +163,26 @@ public class ContractorGradeAction extends SearchFormAction {
         if (grade != null && !grade.equals("")) {
             hasNoErrors = Pattern.matches(Constants.ALPHANUMERIC_WITHSPACE, grade);
             if (hasNoErrors == false) {
-                final String messageKey = "contractorGrade.grade.alphaNumeric";
-                addActionError(getText(messageKey, "Special Characters are not allowed in Contractor Grade"));
+                addActionError(getText(WorksConstants.CONTRACTOR_GRADE_ALPHANUMERIC_ERR_CODE, WorksConstants.CONTRACTOR_GRADE_ALPHANUMERIC_ERR_MSG));
             }
         }
         if (minAmount != -1 && maxAmount != -1)
             if (minAmount >= maxAmount) {
-                final String messageKey = "contractor.grade.maxamount.invalid";
-                addActionError(getText(messageKey, "Maximum amount must be greater than minimum amount"));
-                return "searchPage";
+                addActionError(getText(WorksConstants.CONTRACTOR_GRADE_MAX_AMOUNT_INVALID_ERR_CODE, WorksConstants.CONTRACTOR_GRADE_MAX_AMOUNT_INVALID_ERR_MSG));
+                return SEARCH;
 
             }
         if (hasNoErrors == false)
-            return "searchPage";
+            return SEARCH;
         setPageSize(WorksConstants.PAGE_SIZE);
         search();
-
+        
         if (searchResult != null && searchResult.getFullListSize() == 0)
-            setDisplData("noData");
+            setDisplData(WorksConstants.CONTRACTOR_GRADE_NO_DATA);
         else
             setDisplData(WorksConstants.YES);
 
-        return SEARCH;
+        return "searchPage";
     }
 
     public String getDisplData() {
@@ -280,14 +271,14 @@ public class ContractorGradeAction extends SearchFormAction {
 
         if (getMinAmount() != -1) {
             contractorGradeSql.append(" and cg.minAmount = ?");
-            paramList.add(getMinAmount());
+            paramList.add(BigDecimal.valueOf(getMinAmount()));
         }
 
         if (getMaxAmount() != -1) {
             contractorGradeSql.append(" and cg.maxAmount = ?");
-            paramList.add(getMaxAmount());
+            paramList.add(BigDecimal.valueOf(getMaxAmount()));
         }
-        contractorGradeSql.append(" order by cg.id");
+        contractorGradeSql.append(" group by cg.id");
         contractorGradeStr = contractorGradeSql.toString();
         final String countQuery = "select count(*) " + contractorGradeStr;
         return new SearchQueryHQL(contractorGradeStr, countQuery, paramList);

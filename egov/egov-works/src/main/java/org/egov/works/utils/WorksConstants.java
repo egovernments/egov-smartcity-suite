@@ -192,4 +192,12 @@ public class WorksConstants {
     public static final String PROJECTCODE = "PROJECTCODE";
     public static final String EDIT = "edit";
     public static final String END = "END";
+    
+    public static final String CONTRACTOR_GRADE_ALPHANUMERIC_ERR_CODE = "contractorGrade.grade.alphaNumeric";
+	public static final String CONTRACTOR_GRADE_ALPHANUMERIC_ERR_MSG = "Special Characters are not allowed in Contractor Grade";
+	public static final String CONTRACTOR_GRADE_MAX_AMOUNT_INVALID_ERR_CODE = "contractor.grade.maxamount.invalid";
+	public static final String CONTRACTOR_GRADE_MAX_AMOUNT_INVALID_ERR_MSG = "Maximum amount must be greater than minimum amount";
+	public static final String CONTRACTOR_GRADE_SAVE_SUCCESS_CODE = "contractor.grade.save.success";
+	public static final String CONTRACTOR_GRADE_SAVE_SUCCESS_MSG = "contractor.grade.save.success";
+	public static final String CONTRACTOR_GRADE_NO_DATA = "noData";
 }
