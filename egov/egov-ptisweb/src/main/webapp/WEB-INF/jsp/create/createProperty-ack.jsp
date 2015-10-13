@@ -74,9 +74,11 @@
 									class="bold"> <s:property value="%{applicationNo}" /></span></td>
 							</s:if>
 						</s:if>
-						<s:elseif test="approved == true"><s:property value="%{ackMessage}" /><span
+						<s:elseif test="approved == true">
+						<td colspan="5" style="font-size: 15px;" align="center">
+						<s:property value="%{ackMessage}" /><span
 									class="bold"><s:property value="%{propertyInitiatedBy}"/></span><s:property value="%{assessmentNoMessage}"/> <span class="bold"><s:property
-									value="%{basicProperty.upicNo}" /> </span>
+									value="%{basicProperty.upicNo}" /> </span></td>
 						</s:elseif>
 						<s:else>
 							<td colspan="5" style="font-size: 15px;" align="center">
