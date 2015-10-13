@@ -69,6 +69,7 @@ public class DBMigrationConfiguration {
         for (final String schema : tenants()) {
             flyway = new Flyway();
             flyway.setBaselineOnMigrate(true);
+            flyway.setOutOfOrder(true);
             if (applicationProperties.devMode())
                 flyway.setLocations("classpath:/db/migration/main/", "classpath:/db/migration/sample/");
             else
