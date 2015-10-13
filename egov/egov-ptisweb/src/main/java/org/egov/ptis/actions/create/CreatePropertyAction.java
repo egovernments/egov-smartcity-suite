@@ -898,7 +898,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         else if (null != propTypeMstr && !propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             if (!StringUtils.isBlank(houseNumber))
                 validateHouseNumber(wardId, houseNumber, basicProp);
-            else
+            else if(userDesgn.equals(REVENUE_INSPECTOR_DESGN))
                 addActionError(getText("mandatory.doorNo"));
 
         if (null == property.getBasicProperty().getRegdDocDate()) {
