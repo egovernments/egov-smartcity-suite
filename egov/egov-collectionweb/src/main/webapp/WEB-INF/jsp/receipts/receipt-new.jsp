@@ -139,7 +139,7 @@ function showInstrumentDetails(obj){
 }
 
 function clearCashDetails(){
-	document.getElementById('instrHeaderCash.instrumentAmount').value="0.0";
+	document.getElementById('instrHeaderCash.instrumentAmount').value="";
 }
 
 function clearChequeDDDetails(){
@@ -184,7 +184,7 @@ function clearChequeDDDetails(){
 
 	    //clear instrument amount
 	    if(getControlInBranch(table.rows[j],'instrumentChequeAmount')!=null){
-	    	getControlInBranch(table.rows[j],'instrumentChequeAmount').value="0.0";
+	    	getControlInBranch(table.rows[j],'instrumentChequeAmount').value="";
 	    }
 	    
 	    //clear branch name 
@@ -200,12 +200,12 @@ function clearChequeDDDetails(){
 }
 
 function clearCardDetails(){
-	document.getElementById('instrHeaderCard.instrumentAmount').value="0.0";
+	document.getElementById('instrHeaderCard.instrumentAmount').value="";
 	document.getElementById('instrHeaderCard.transactionNumber').value="";
 	document.getElementById('instrHeaderCard.instrumentNumber').value="";
 }
 function clearBankDetails(){
-	document.getElementById('instrHeaderBank.instrumentAmount').value="0.0";
+	document.getElementById('instrHeaderBank.instrumentAmount').value="";
 	document.getElementById('instrHeaderBank.transactionNumber').value="";
 	document.getElementById('bankChallanDate').value="";
 	if(document.getElementById("accountNumberMaster")!=null){
@@ -250,7 +250,7 @@ function addChequeGrid(tableId,trId1,trId2,trId3,trId4,obj,trId5)
 		document.forms[0].instrumentBranchName[0].value="";
 		document.forms[0].bankName[0].value="";
 		document.forms[0].bankID[0].value="-1";
-		document.forms[0].instrumentChequeAmount[0].value="0.0";
+		document.forms[0].instrumentChequeAmount[0].value="";
 
 		document.forms[0].instrumentType[0].value="";
 
@@ -355,7 +355,7 @@ function loadchequegrid(tableId,trId1,trId2,trId3,trId4,trId5){
 		if(chequeNo!=null&&chequeNo.value!=""){
 			chqNumberArray=chequeNo.value.split(',');
 		}
-		if(chequeAmt!=null&&chequeAmt.value!="0.0"){
+		if(chequeAmt!=null&&chequeAmt.value!=""){
 			chqAmtArray=chequeAmt.value.split(',');
 		}
 		if(chequeDate!=null&&chequeDate.value!="DD/MM/YYYY"){
@@ -1264,6 +1264,7 @@ function displayPaytModes(){
        if(chequeDDAllowed=='true' && cashAllowed=='false'){
        		document.getElementById('chequeradiobutton').checked=true;
        		document.getElementById('chequeDDdetails').style.display='table-row';
+       		document.getElementById('cashdetails').style.display="none";
        		document.getElementById('instrumentTypeCashOrCard').value="";
        		
        		displayChequeDDInstrumentTypeDetails();
@@ -1348,16 +1349,16 @@ function onBodyLoad()
 		getControlInBranch(chequetable.rows[4],'deletechequerow').style.display="none";
 	
 	if(document.getElementById('instrHeaderCash.instrumentAmount').value==""){
-		document.getElementById('instrHeaderCash.instrumentAmount').value="0.0";
+		document.getElementById('instrHeaderCash.instrumentAmount').value="";
 	}
 	if(document.getElementById('instrHeaderCard.instrumentAmount').value==""){
-		document.getElementById('instrHeaderCard.instrumentAmount').value="0.0";
+		document.getElementById('instrHeaderCard.instrumentAmount').value="";
 	}
 	if(document.getElementById('instrHeaderBank.instrumentAmount').value==""){
-		document.getElementById('instrHeaderBank.instrumentAmount').value="0.0";
+		document.getElementById('instrHeaderBank.instrumentAmount').value="";
 	}
 	if(document.getElementById('instrumentChequeAmount').value==""){
-		document.getElementById('instrumentChequeAmount').value="0.0";
+		document.getElementById('instrumentChequeAmount').value="";
 	}
 	if(document.getElementById('paidBy').value==""){
 		var paidby =  "Paid By" + '<s:property value="%{payeeName}"/>';
@@ -1378,14 +1379,14 @@ function onBodyLoad()
 }
 
 function displayPaymentDetails(){
-if(document.getElementById("instrHeaderBank.instrumentAmount")!=null && document.getElementById("instrHeaderBank.instrumentAmount").value!="0.0"){
+if(document.getElementById("instrHeaderBank.instrumentAmount")!=null && document.getElementById("instrHeaderBank.instrumentAmount").value!=""){
 		document.getElementById('bankradiobutton').checked=true;
 		document.getElementById('bankdetails').style.display='table-row';
        	document.getElementById('instrumentTypeCashOrCard').value="bank";
        	document.getElementById('cashdetails').style.display="none";
        	// document.getElementById('carddetails').style.display="none";
 	}
-	if(document.getElementById("instrHeaderCard.instrumentAmount")!=null && document.getElementById("instrHeaderCard.instrumentAmount").value!="0.0"){
+	if(document.getElementById("instrHeaderCard.instrumentAmount")!=null && document.getElementById("instrHeaderCard.instrumentAmount").value!=""){
 		document.getElementById('cardradiobutton').checked=true;
 		document.getElementById('carddetails').style.display='table-row';
        	document.getElementById('instrumentTypeCashOrCard').value="card";
@@ -1397,7 +1398,7 @@ if(document.getElementById("instrHeaderBank.instrumentAmount")!=null && document
 	for(var m=0;m<chequetablelen1;m++)
 	{
 		var chequeAmt=getControlInBranch(chequetable.rows[m],'instrumentChequeAmount');
-		if(chequeAmt!=null && chequeAmt.value!="0.0")
+		if(chequeAmt!=null && chequeAmt.value!="")
 		{
 			document.getElementById('chequeradiobutton').checked=true;
 			document.getElementById('chequeDDdetails').style.display='table-row';
@@ -1944,7 +1945,7 @@ function showHideMandataryMark(obj){
 	   <tr id="cashdetails" >
 		   <td class="bluebox" width="3%" ></td>
 		   <td class="bluebox" width="21%"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-		   <td class="bluebox" colspan="3"><s:textfield label="instrumentAmount" id="instrHeaderCash.instrumentAmount" name="instrHeaderCash.instrumentAmount" maxlength="14" size="18" cssClass="amount" onblur="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);" onkeyup="setCashInstrumentDetails(this);"/></td>
+		   <td class="bluebox" colspan="3"><s:textfield label="instrumentAmount" id="instrHeaderCash.instrumentAmount" name="instrHeaderCash.instrumentAmount" maxlength="14" size="18" cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);" onkeyup="setCashInstrumentDetails(this);"/></td>
 	   </tr>
 	   
 	   
@@ -1993,7 +1994,7 @@ function showHideMandataryMark(obj){
 		       		<tr id="chequeamountrow">
 		       		    <td class="bluebox" width="3%"></td>
 						<td class="bluebox"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-						<td class="bluebox"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[0].instrumentAmount"  size="18"  cssClass="amount" onblur="callpopulateapportioningamountforbills();"/></td>
+						<td class="bluebox"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[0].instrumentAmount"  size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();"/></td>
 						<td class="bluebox">&nbsp;</td>
 						<td class="bluebox">&nbsp;</td>
 					</tr>
@@ -2043,7 +2044,7 @@ function showHideMandataryMark(obj){
 		       		<!-- This row captures the cheque/DD Amount -->
 		       		<tr id="chequeamountrow">
 						<td class="bluebox2new"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-						<td class="bluebox2"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[%{#instrstatus.index}].instrumentAmount"  size="18"  cssClass="amount" onblur="callpopulateapportioningamountforbills();" /></td>
+						<td class="bluebox2"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[%{#instrstatus.index}].instrumentAmount"  size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();" /></td>
 						<td class="bluebox2">&nbsp;</td>
 						<td class="bluebox2">&nbsp;</td>
 					</tr>
@@ -2083,7 +2084,7 @@ function showHideMandataryMark(obj){
 					        <tr id="carddetailsrow">
 					  		    <td class="bluebox" width="3%"></td>
 								<td class="bluebox"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-					            <td class="bluebox"><s:textfield label="instrHeaderCard.instrumentAmount" id="instrHeaderCard.instrumentAmount" maxlength="14" name="instrHeaderCard.instrumentAmount" size="18"  cssClass="amount" onblur="callpopulateapportioningamountforbills();setCardInstrumentDetails(this);" onkeyup="setCardInstrumentDetails(this);"/></td>
+					            <td class="bluebox"><s:textfield label="instrHeaderCard.instrumentAmount" id="instrHeaderCard.instrumentAmount" maxlength="14" name="instrHeaderCard.instrumentAmount" size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setCardInstrumentDetails(this);" onkeyup="setCardInstrumentDetails(this);"/></td>
 					        </tr>
 					        
 			            </table> 
@@ -2132,7 +2133,7 @@ function showHideMandataryMark(obj){
 				       		<tr id="bankamountrow">
 				       		<td class="bluebox" width="3%">&nbsp;</td>
 				       		<td class="bluebox" width="22%"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-				       		<td class="bluebox"><s:textfield label="instrumentAmount" id="instrHeaderBank.instrumentAmount" name="instrHeaderBank.instrumentAmount" maxlength="14" size="18" cssClass="amount" onblur="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);" onkeyup="setBankInstrumentDetails(this);"/></td>
+				       		<td class="bluebox"><s:textfield label="instrumentAmount" id="instrHeaderBank.instrumentAmount" name="instrHeaderBank.instrumentAmount" maxlength="14" size="18" cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);" onkeyup="setBankInstrumentDetails(this);"/></td>
 				       		</tr>
 						</table> 
 				<!-- End of bank grid table -->
@@ -2143,7 +2144,7 @@ function showHideMandataryMark(obj){
 		</td></tr>
 		
 		<!-- Paid by details -->
-		<tr id="cashdetails" >
+		<tr >
 		   <td class="bluebox" width="3%" ></td>
 		   <td class="bluebox" width="21%"><s:text name="billreceipt.counter.paidby"/><span class="mandatory1">*</span></td>
 		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" value="%{payeeName}" /></td>

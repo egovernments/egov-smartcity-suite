@@ -37,12 +37,12 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 ------------------------------------------------------------------------------->
-<%@ page language="java" pageEncoding="UTF-8" isErrorPage="true"%>
+<%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>eGov - Application Error</title>
+	<title>eGov - Unauthorised</title>
 	<link href="<c:url value='/css/commonegovNew.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 	</head>
 	<body>
@@ -59,7 +59,7 @@
 							    <img width="100px" alt="Error" src="/egi/resources/erp2/images/error.png">
 							</td>
                             <td>
-							    <span class="bold">Server has encountered a problem. Please try again or contact system administrator if the problem persists.</span>
+							    <span class="bold">You are not authorised to view this page.</span>
 							</td>
 						</tr>
 					</table>

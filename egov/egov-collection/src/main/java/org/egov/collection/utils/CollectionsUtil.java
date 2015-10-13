@@ -230,7 +230,7 @@ public class CollectionsUtil {
                         Integer.valueOf((String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID)));
             else
                 location = (Location) persistenceService.findByNamedQuery(CollectionConstants.QUERY_LOCATION_BY_USER,
-                        getLoggedInUser().getName());
+                        getLoggedInUser().getUsername());
             if (location == null)
                 throw new ApplicationRuntimeException("Unable to fetch the location of the logged in user ["
                         + (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME) + "]");
