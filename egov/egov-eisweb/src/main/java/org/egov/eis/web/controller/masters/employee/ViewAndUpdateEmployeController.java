@@ -47,6 +47,7 @@ import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeTypeRepository;
 import org.egov.eis.service.EmployeeService;
+import org.egov.eis.service.JurisdictionService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -75,6 +77,9 @@ public class ViewAndUpdateEmployeController {
     @Autowired
     private BoundaryTypeService boundaryTypeService;
     
+    @Autowired
+    private JurisdictionService jurisdictionService;
+    
     @ModelAttribute
     public Employee employeeModel(@PathVariable final String code) {
         return employeeService.getEmployeeByCode(code);
@@ -89,13 +94,14 @@ public class ViewAndUpdateEmployeController {
     }
 
     @RequestMapping(value = "/update/{code}",method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final Employee employee, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model) {
+    public String update(@Valid @ModelAttribute Employee employee, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final Model model,@RequestParam final String removedJurisdictionIds) {
         if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("mode", "update");
             return "employee-form";
         }
+        employee = jurisdictionService.removeDeletedJurisdictions(employee,removedJurisdictionIds);
         employeeService.update(employee);
         redirectAttrs.addFlashAttribute("employee", employee);
         model.addAttribute("message", "Employee updated successfully");

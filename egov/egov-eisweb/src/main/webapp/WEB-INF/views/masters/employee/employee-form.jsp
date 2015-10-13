@@ -97,6 +97,7 @@
                     			<form:hidden path="password" value="${employee.password}"/>
                             </c:if>
 								<form:hidden path="locale" value="en_IN"/>
+								<input type="hidden" value="" id="removedJurisdictionIds" name ="removedJurisdictionIds"/>
 								<input type="hidden" value="${mode}" id="mode"/>
 									<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/><span class="mandatory"></span></label>
@@ -599,7 +600,11 @@
 										<c:forEach var="jurdctn" items="${employee.jurisdictions}"
 											varStatus="status">
 											<tr>
-												<td><input type="hidden"
+												<td>
+													<input type="hidden" id="table_jurisdictionid${status.index}"
+													name="jurisdictions[${status.index}].id"
+													value="${jurdctn.id}"/>
+													<input type="hidden"
 													id="jurisdictions[${status.index}].boundaryType"
 													name="jurisdictions[${status.index}].boundaryType"
 													value="${jurdctn.boundaryType.id}" /> <input type="text"

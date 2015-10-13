@@ -418,6 +418,10 @@ $(document).ready(function(){
 	}
 
 	$(document).on('click',"#jurdctndelete_row",function (){
+		if(!$("#removedJurisdictionIds").val()==""){
+			$("#removedJurisdictionIds").val($("#removedJurisdictionIds").val()+",");
+		}
+		$("#removedJurisdictionIds").val($("#removedJurisdictionIds").val()+$("#table_jurisdictionid"+$(this).attr("value")+"").val());
 		$(this).closest('tr').remove();
 	});
 

@@ -39,6 +39,7 @@
  */
 package org.egov.eis.service;
 
+import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.repository.JurisdictionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,5 +71,17 @@ public class JurisdictionService {
     public void delete(final Jurisdiction jurisdiction) {
         jurisdictionRepository.delete(jurisdiction);
     }
-
+    
+    public Jurisdiction getById(final Long id) {
+        return jurisdictionRepository.findOne(id);
+    }
+    
+    @Transactional
+    public Employee removeDeletedJurisdictions(Employee employee,String removedJurisdictionIds) {
+        if(null!=removedJurisdictionIds)
+         for(String id : removedJurisdictionIds.split(",")){
+             employee.getJurisdictions().remove(jurisdictionRepository.findOne(Long.valueOf(id)));
+         }
+         return employee;
+     }
 }
