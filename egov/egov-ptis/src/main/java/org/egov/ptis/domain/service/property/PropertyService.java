@@ -101,7 +101,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.commons.lang.StringUtils;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.Area;
@@ -150,14 +151,11 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.Apartment;
-import org.egov.ptis.domain.entity.property.BaseRegisterResult;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Floor;
-import org.egov.ptis.domain.entity.property.FloorDetailsView;
 import org.egov.ptis.domain.entity.property.FloorType;
-import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -2362,6 +2360,20 @@ public class PropertyService {
                 Double.valueOf((Double) waterTaxInfo.get("totalTaxDue")));
     }
 
+    /**
+     * Returns Water tax due of an assessment
+     * 
+     * @param assessmentNo
+     * @param request
+     * @return
+     */
+    public BigDecimal getWaterTaxDues(final String assessmentNo, HttpServletRequest request) {
+        final String wtmsRestURL = String.format(WTMS_TAXDUE_RESTURL,
+                WebUtils.extractRequestDomainURL(request, false), assessmentNo);
+        final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
+        return waterTaxInfo.get("totalTaxDue") == null ? BigDecimal.ZERO : new BigDecimal(
+                Double.valueOf((Double) waterTaxInfo.get("totalTaxDue")));
+    }
     /**
      * Method to validate bifurcation of property either using create assessment
      * or alter assessment

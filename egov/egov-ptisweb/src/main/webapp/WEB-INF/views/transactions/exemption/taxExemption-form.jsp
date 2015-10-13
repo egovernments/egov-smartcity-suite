@@ -89,7 +89,7 @@
 							<spring:message code="lbl.annualvalue" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							Rs.
+							<spring:message code="lbl.rs"/>
 							<fmt:formatNumber pattern="#,##0.00" value="${arv}" />
 						</div>
 						<div class="col-xs-3">

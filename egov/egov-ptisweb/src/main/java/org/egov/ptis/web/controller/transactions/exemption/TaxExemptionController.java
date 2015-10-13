@@ -40,10 +40,16 @@
 package org.egov.ptis.web.controller.transactions.exemption;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -56,6 +62,7 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.TaxExeptionReason;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -81,6 +88,8 @@ public class TaxExemptionController {
     private PtDemandDao ptDemandDAO;
     @PersistenceContext
     private EntityManager entityManager;
+    @Autowired
+    private PropertyService propertyService;
 
     @ModelAttribute
     public Property propertyModel(@PathVariable final String assessmentNo) {
@@ -95,12 +104,29 @@ public class TaxExemptionController {
     }
 
     @RequestMapping(value = "/form/{assessmentNo}", method = RequestMethod.GET)
-    public String exemptionForm(final Model model, @PathVariable("assessmentNo") final String assessmentNo) {
+    public String exemptionForm(final HttpServletRequest request, final Model model, @PathVariable("assessmentNo") final String assessmentNo) {
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        if (null != basicProperty && !basicProperty.isUnderWorkflow()) {
+        if (null != basicProperty && basicProperty.isUnderWorkflow()) {
             model.addAttribute("wfPendingMsg", "Could not do " + APPLICATION_TYPE_TAX_EXEMTION
                     + " now, property is undergoing some work flow.");
             return TARGET_WORKFLOW_ERROR;
+        } else if (null != basicProperty) {
+            final Map<String, BigDecimal> propertyTaxDetails = propertyService.getCurrentPropertyTaxDetails(basicProperty
+                    .getActiveProperty());
+            final BigDecimal currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
+            final BigDecimal currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(
+                    propertyTaxDetails.get(CURR_COLL_STR));
+            final BigDecimal arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
+                    propertyTaxDetails.get(ARR_COLL_STR));
+            final BigDecimal currentWaterTaxDue = propertyService.getWaterTaxDues(basicProperty.getUpicNo(), request);
+            model.addAttribute("currentPropertyTax", currentPropertyTax);
+            model.addAttribute("currentPropertyTaxDue", currentPropertyTaxDue);
+            model.addAttribute("arrearPropertyTaxDue", arrearPropertyTaxDue);
+            model.addAttribute("currentWaterTaxDue", currentWaterTaxDue);
+            if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
+                model.addAttribute("taxDuesErrorMsg", "Above tax dues must be payed before initiating " + APPLICATION_TYPE_TAX_EXEMTION);
+                return TARGET_TAX_DUES;
+            }
         }
         final BasicProperty parentBasicProperty = basicPropertyDAO.getParentBasicPropertyByBasicPropertyId(basicProperty.getId());
         if (null != parentBasicProperty)
@@ -121,4 +147,5 @@ public class TaxExemptionController {
     public Session getSession() {
         return entityManager.unwrap(Session.class);
     }
+    
 }

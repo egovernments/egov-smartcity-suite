@@ -98,4 +98,9 @@
     	<put-attribute name="page-title" value="lbl.workflow.error" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/common/workflowError.jsp"/>
     </definition>
+    
+    <definition name="taxdues" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.tax.dues" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/common/taxdues.jsp"/>
+    </definition>
 </tiles-definitions>
