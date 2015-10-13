@@ -124,20 +124,20 @@
 						<td class="bluebox"><s:text name="PropertyAddress"></s:text>
 							:</td>
 						<td class="bluebox"><span class="bold"><s:property
-									value="basicproperty.address" /></span></td>
+									value="basicproperty.address" default="N/A"/></span></td>
 						<td class="bluebox"><s:text name="Zone"></s:text> :</td>
 						<td class="bluebox"><span class="bold"><s:property
-									value="basicproperty.propertyID.zone.name" /></span></td>
+									value="basicproperty.propertyID.zone.name" default="N/A"/></span></td>
 					</tr>
 
 					<tr>
 						<td class="greybox2">&nbsp;</td>
 						<td class="greybox"><s:text name="Ward" /> :</td>
 						<td class="greybox"><span class="bold"><s:property
-									value="basicproperty.propertyID.ward.name" /></span></td>
+									value="basicproperty.propertyID.ward.name" default="N/A"/></span></td>
 						<td class="greybox"><s:text name="block" /> :</td>
 						<td class="greybox"><span class="bold"><s:property
-									value="basicproperty.propertyID.area.name" /></span></td>
+									value="basicproperty.propertyID.area.name" default="N/A"/></span></td>
 					</tr>
 
 					<tr>
@@ -165,16 +165,24 @@
 									<s:iterator value="basicproperty.propertyOwnerInfo"
 										status="status">
 										<tr>
-											<td class="blueborderfortd" align="center"><s:property
-													value="owner.aadhaarNumber" /></td>
+											<td class="blueborderfortd" align="center">
+												<s:if test='%{owner.aadhaarNumber == ""}'>
+								        				N/A
+							        			</s:if>
+							        			<s:else>
+													<s:property value="%{owner.aadhaarNumber}" default="N/A" />        			
+							        			</s:else>
+											</td>
 											<td class="blueborderfortd" align="center"><s:property
 													value="owner.name" /></td>
 											<td class="blueborderfortd" align="center"><s:property
 													value="owner.gender" /></td>
 											<td class="blueborderfortd" align="center"><s:property
 													value="owner.mobileNumber" /></td>
-											<td class="blueborderfortd" align="center"><s:property
-													value="owner.emailId" /></td>
+											<td class="blueborderfortd" align="center">
+												<s:if test='%{owner.emailId == ""}'>N/A</s:if>
+	        		   							<s:else><s:property value="%{owner.emailId}" /></s:else>
+											</td>
 											<td class="blueborderfortd" align="center"><s:property
 													value="owner.guardianRelation" default="N/A" /></td>
 											<td class="blueborderfortd" align="center"><s:property

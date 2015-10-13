@@ -76,7 +76,10 @@
 	    </td>	
 	    <td class="blueborderfortd" style="padding: 2px 2px">
 	    	<div align="center">
-	    	<span class="bold"><s:property default="N/A" value="%{occupantName}" /> </span>
+		    	<span class="bold">
+		    		<s:if test="%{occupantName == ''}">N/A</s:if>
+		    		<s:else><s:property default="N/A" value="%{occupantName}" /></s:else>
+		    	</span>
 	        </div>
 	    </td>	
 

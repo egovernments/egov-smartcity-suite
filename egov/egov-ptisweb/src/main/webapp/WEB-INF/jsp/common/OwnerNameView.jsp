@@ -52,7 +52,14 @@
     <s:iterator value="basicProperty.propertyOwnerInfo" status="ownerStatus">
 			<tr id="nameRow">
         		<td class="blueborderfortd" align="center">
-        			<span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.aadhaarNumber}" default="N/A" /></span>
+        			<span class="bold">
+	        			<s:if test='%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.aadhaarNumber == ""}'>
+	        				N/A
+	        			</s:if>
+	        			<s:else>
+							<s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.aadhaarNumber}" default="N/A" />        			
+	        			</s:else>
+	        		</span>
         		</td>
         		<td class="blueborderfortd" align="center">
         		   <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.mobileNumber}" /></span>
@@ -64,7 +71,10 @@
         		   <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.gender}" /></span>
         		</td>
         		<td class="blueborderfortd" align="center">
-        		   <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.emailId}" /></span>
+        		   <span class="bold">
+	        		   	<s:if test='%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.emailId == ""}'>N/A</s:if>
+	        		   	<s:else><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.emailId}" /></s:else>
+        		   	</span>
         		</td>
         		<td class="blueborderfortd" align="center">
         		   <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.guardianRelation}" /></span>

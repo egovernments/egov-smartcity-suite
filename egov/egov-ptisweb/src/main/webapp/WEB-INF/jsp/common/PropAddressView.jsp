@@ -71,7 +71,12 @@
 	    <td class="bluebox" width="8%"><s:text name="elec.wardno"/> : </td>
 	    <td class="bluebox"><span class="bold"><s:property default="N/A" value="%{basicProperty.propertyID.electionBoundary.name}" /> </span></td>
 	    <td class="bluebox"><s:text name="doorno"></s:text></td>
-	    <td class="bluebox"><span class="bold"><s:property default="N/A" value="%{houseNumber}" /> </span></td>
+	    <td class="bluebox">
+	    	<span class="bold">
+	    		<s:if test='%{houseNumber == ""}'>N/A</s:if>
+	    		<s:else><s:property default="N/A" value="%{houseNumber}"/></s:else>
+	    	</span>
+	    </td>	
 	</tr>
 	<tr>
 		<td class="bluebox2" width="8%">&nbsp;</td>

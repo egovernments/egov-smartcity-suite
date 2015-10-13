@@ -199,7 +199,8 @@
 				<s:text name="deviationper"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				<s:property default="N/A" value="%{propertyDetail.deviationPercentage}"/> 
+				<s:if test='%{propertyDetail.deviationPercentage == ""}'>N/A</s:if>
+				<s:else><s:property value="%{propertyDetail.deviationPercentage}" default="N/A"/></s:else>
 			</div>
 			<div class="col-xs-3 add-margin">
 				<s:text name="rsnForCreatin"></s:text>

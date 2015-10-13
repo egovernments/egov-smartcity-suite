@@ -216,7 +216,10 @@
 		</td>
 		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="greybox">
-			<span class="bold"><s:property value="%{propertyDetail.occupancyCertificationNo}"/></span>
+			<span class="bold">
+				<s:if test='%{propertyDetail.occupancyCertificationNo == ""}'>N/A</s:if>
+				<s:else><s:property value="%{propertyDetail.occupancyCertificationNo}" default="N/A"/></s:else>
+			</span>
 		</td>
 	</tr>
 	<tr id="appurtenantRow">

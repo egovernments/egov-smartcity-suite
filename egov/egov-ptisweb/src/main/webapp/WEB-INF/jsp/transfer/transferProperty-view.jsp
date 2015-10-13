@@ -103,20 +103,20 @@
 						<td class="bluebox"><s:text name="PropertyAddress"></s:text>
 							:</td>
 						<td class="bluebox"><span class="bold"><s:property
-									value="basicproperty.address" /></span></td>
+									value="basicproperty.address" default="N/A"/></span></td>
 						<td class="bluebox"><s:text name="Zone"></s:text> :</td>
 						<td class="bluebox"><span class="bold"><s:property
-									value="basicproperty.propertyID.zone.name" /></span></td>
+									value="basicproperty.propertyID.zone.name" default="N/A"/></span></td>
 					</tr>
 
 					<tr>
 						<td class="greybox2">&nbsp;</td>
 						<td class="greybox"><s:text name="Ward" /> :</td>
 						<td class="greybox"><span class="bold"><s:property
-									value="basicproperty.propertyID.ward.name" /></span></td>
+									value="basicproperty.propertyID.ward.name" default="N/A"/></span></td>
 						<td class="greybox"><s:text name="block" /> :</td>
 						<td class="greybox"><span class="bold"><s:property
-									value="basicproperty.propertyID.area.name" /></span></td>
+									value="basicproperty.propertyID.area.name" default="N/A"/></span></td>
 					</tr>
 
 					<tr>
@@ -150,16 +150,28 @@
 									<s:iterator value="basicproperty.propertyOwnerInfo"
 										status="status">
 										<tr>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property value="owner.aadhaarNumber" /></span></td>
+											<td class="blueborderfortd" align="center">
+												<span class="bold">
+													<s:if test='%{owner.aadhaarNumber == ""}'>
+								        				N/A
+								        			</s:if>
+								        			<s:else>
+														<s:property value="%{owner.aadhaarNumber}" default="N/A" />        			
+								        			</s:else>
+												</span>
+											</td>
 											<td class="blueborderfortd" align="center"><span
 												class="bold"><s:property value="owner.mobileNumber" /></span></td>
 											<td class="blueborderfortd" align="center"><span
 												class="bold"><s:property value="owner.name" /></span></td>
 											<td class="blueborderfortd" align="center"><span
 												class="bold"><s:property value="owner.gender" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property value="owner.emailId" /></span></td>
+											<td class="blueborderfortd" align="center">
+												<span class="bold">
+													<s:if test='%{owner.emailId == ""}'>N/A</s:if>
+	        		   								<s:else><s:property value="%{owner.emailId}" /></s:else>
+												</span>
+											</td>
 											<td class="blueborderfortd" align="center"><span
 												class="bold"><s:property
 														value="owner.guardianRelation" default="N/A" /></span></td>
@@ -194,9 +206,11 @@
 								</tr>
 								<s:iterator value="transfereeInfos" status="ownerStatus">
 									<tr>
-										<td class="blueborderfortd" align="center"><span
-											class="bold"><s:property
-													value="%{transfereeInfos[#ownerStatus.index].aadhaarNumber}" /></span>
+										<td class="blueborderfortd" align="center">
+											<span class="bold">
+												<s:if test='%{transfereeInfos[#ownerStatus.index].aadhaarNumber == ""}'>N/A</s:if>
+												<s:else><s:property	value="%{transfereeInfos[#ownerStatus.index].aadhaarNumber}" /></s:else>
+											</span>
 										</td>
 										<td class="blueborderfortd" align="center"><span
 											class="bold"><s:property
@@ -208,9 +222,12 @@
 										<td class="blueborderfortd" align="center"><span
 											class="bold"><s:property
 													value="%{transfereeInfos[#ownerStatus.index].gender}" /></span></td>
-										<td class="blueborderfortd" align="center"><span
-											class="bold"><s:property
-													value="%{transfereeInfos[#ownerStatus.index].emailId}" /></span></td>
+										<td class="blueborderfortd" align="center">
+											<span class="bold">
+												<s:if test='%{transfereeInfos[#ownerStatus.index].emailId == ""}'>N/A</s:if>
+	        		   							<s:else><s:property value="%{transfereeInfos[#ownerStatus.index].emailId}" /></s:else>
+											</span>
+										</td>
 										<td class="blueborderfortd" align="center"><span
 											class="bold"><s:property
 													value="%{transfereeInfos[#ownerStatus.index].guardianRelation}" /></span>
