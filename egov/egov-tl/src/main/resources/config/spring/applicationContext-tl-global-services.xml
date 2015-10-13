@@ -67,5 +67,8 @@
     <bean id="LicenseObjectionInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="LicenseObjectionPersistenceService"/>
     </bean>
+    <bean class="org.egov.tl.utils.LicenseUtils" id="licenseUtils"
+		scope="prototype">
+	</bean>
     
 </beans>

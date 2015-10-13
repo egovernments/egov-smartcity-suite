@@ -82,10 +82,8 @@ import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseStatus;
 import org.egov.tl.domain.entity.LicenseStatusValues;
@@ -95,10 +93,12 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * The Class LicenseUtils. A utility class used across the License Products
  */
+@Service
 public class LicenseUtils {
     private static final Logger LOGGER = Logger.getLogger(LicenseUtils.class);
     public static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";

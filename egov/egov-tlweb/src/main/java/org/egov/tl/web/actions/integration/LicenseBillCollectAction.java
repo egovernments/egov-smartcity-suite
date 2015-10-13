@@ -42,42 +42,37 @@ package org.egov.tl.web.actions.integration;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.egov.commons.dao.InstallmentDao;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.service.integration.LicenseBill;
 import org.egov.tl.domain.service.integration.LicenseBillService;
+import org.egov.tl.utils.Constants;
+import org.egov.tl.utils.LicenseNumberGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 public class LicenseBillCollectAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
     private Long licenseId;
+    
+    @Autowired
     private LicenseBillService licenseBillService;
     private LicenseBill licenseBill;
     private String collectXML;
-
-    public String getCollectXML() {
-        return collectXML;
-    }
-
-    public void setLicenseBillService(final LicenseBillService licenseBillService) {
-        this.licenseBillService = licenseBillService;
-    }
-
-    public void setLicenseBill(final LicenseBill licenseBill) {
-        this.licenseBill = licenseBill;
-    }
-
-    public Long getLicenseId() {
-        return licenseId;
-    }
-
-    public void setLicenseId(final Long licenseId) {
-        this.licenseId = licenseId;
-    }
+    @Autowired
+    private ModuleService moduleService;
+    @Autowired
+    private LicenseNumberGenerator licenseNumberGenerator;
+    @Autowired
+    private InstallmentDao installmentDao;
 
     @Override
     public String execute() throws UnsupportedEncodingException, IOException {
@@ -89,11 +84,14 @@ public class LicenseBillCollectAction extends BaseFormAction {
                     .write("<center style='color:red;font-weight:bolder'>License Fee already collected !</center>");
             return null;
         }
+        final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
+        final String currentInstallmentYear = formatYear.format(installmentDao.getInsatllmentByModuleForGivenDate(
+                moduleService.getModuleByName(Constants.TRADELICENSE_MODULENAME), new Date()).getInstallmentYear());
         licenseBill.setLicense(license);
+        licenseBill.setReferenceNumber(licenseNumberGenerator.generateBillNumber(currentInstallmentYear));
         licenseBillService.setLicense(license);
         collectXML = URLEncoder.encode(licenseBillService.getBillXML(licenseBill), "UTF-8");
         return SUCCESS;
-
     }
 
     public String renew() throws UnsupportedEncodingException, IOException {
@@ -115,4 +113,19 @@ public class LicenseBillCollectAction extends BaseFormAction {
         return null;
     }
 
+    public String getCollectXML() {
+        return collectXML;
+    }
+
+    public Long getLicenseId() {
+        return licenseId;
+    }
+
+    public void setLicenseId(final Long licenseId) {
+        this.licenseId = licenseId;
+    }
+
+   public void setLicenseBill(LicenseBill licenseBill) {
+        this.licenseBill = licenseBill;
+    }
 }

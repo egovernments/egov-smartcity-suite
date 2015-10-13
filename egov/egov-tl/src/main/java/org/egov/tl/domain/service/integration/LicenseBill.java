@@ -59,18 +59,18 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseDemand;
 import org.egov.tl.utils.LicenseUtils;
-
+import org.springframework.beans.factory.annotation.Autowired;
 public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalculator {
 
+    @Autowired
     private LicenseUtils licenseUtils;
     private License license;
     private String moduleName;
     private String serviceCode;
-    private EgBillDao billDao;
-
-    public void setBillDao(final EgBillDao billDao) {
-        this.billDao = billDao;
-    }
+    @Autowired
+    private EgBillDao egBillDao;
+    private String referenceNumber;
+    private Boolean isCallbackForApportion = Boolean.FALSE;
 
     public License getLicense() {
         return license;
@@ -121,7 +121,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public EgBillType getBillType() {
-        return billDao.getBillTypeByCode("AUTO");
+        return egBillDao.getBillTypeByCode("AUTO");
 
     }
 
@@ -148,7 +148,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getDepartmentCode() {
-        return "CAF";// TODO
+        return "H";// TODO Change according to TL
     }
 
     @Override
@@ -158,12 +158,12 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getFundCode() {
-        return "45061";// TODO Insert
+        return "01";// TODO Change according to TL
     }
 
     @Override
     public String getFundSourceCode() {
-        return "BOM 637";// TODO
+        return "01";// TODO Change according to TL
     }
 
     @Override
@@ -227,12 +227,12 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public Boolean isCallbackForApportion() {
-        return false;
+        return isCallbackForApportion;
     }
 
     @Override
     public void setCallbackForApportion(final Boolean b) {
-
+        isCallbackForApportion = b;
     }
 
     @Override
@@ -266,6 +266,15 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     public BigDecimal calculatePenalty(final Date latestCollectedRcptDate, final Date fromDate, final BigDecimal amount) {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    @Override
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
+    
+    public void setReferenceNumber(final String referenceNumber) {
+        this.referenceNumber = referenceNumber;
     }
 
 }

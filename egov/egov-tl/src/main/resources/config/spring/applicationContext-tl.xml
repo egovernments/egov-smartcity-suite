@@ -51,11 +51,6 @@
 	<context:component-scan base-package="org.egov.tl" />
 	<aop:aspectj-autoproxy proxy-target-class="true"/>
 	
-	<bean class="org.egov.tl.utils.LicenseUtils" id="licenseUtils"
-		scope="prototype">
-		<property name="persistenceService" ref="persistenceService" />
-	</bean>
-
 	<bean id="feeService" class="org.egov.tl.domain.service.FeeService"
 		parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.tl.domain.entity.FeeMatrix" />
@@ -89,13 +84,13 @@
 		<!-- <property name="installmentDao" ref="installmentDao" /> -->
 	</bean>
 
-	<bean id="licenseBillService"
+	<!-- <bean id="licenseBillService"
 		class="org.egov.tl.domain.service.integration.LicenseBillService"
 		scope="prototype">
-		<!-- <property name="billDao" ref="billDao" />
-		<property name="persistenceService" ref="persistenceService" /> -->
+		<property name="billDao" ref="billDao" />
+		<property name="persistenceService" ref="persistenceService" />
 	</bean>
-
+ -->
 	<bean id="licenseReportService"
 		class="org.egov.tl.domain.service.LicenseReportService"
 		scope="prototype">
@@ -143,8 +138,8 @@
 		scope="prototype">
 		<property name="moduleName" value="Trade License" />
 		<property name="serviceCode" value="TL" />
-		<property name="billDao" ref="billDao" />
-		<property name="licenseUtils" ref="licenseUtils" />
+		<!-- <property name="billDao" ref="billDao" /> 
+		<property name="licenseUtils" ref="licenseUtils" />-->
 	</bean>
 
 	<bean id="licenseDocumentTypeService" parent="persistenceService" scope="prototype">
