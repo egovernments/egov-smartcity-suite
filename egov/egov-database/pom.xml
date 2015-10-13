@@ -8,18 +8,13 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 	<name>e-governments database</name>
-
 	<artifactId>egov-database</artifactId>
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+          		<artifactId>maven-resources-plugin</artifactId>
+          		<version>2.7</version>
 				<executions>
 					<execution>
 						<id>copy-migrations</id>
