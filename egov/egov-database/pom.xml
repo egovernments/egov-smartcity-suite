@@ -67,6 +67,9 @@
 								<resource>
 									<directory>../egov-assets/src/main/resources/db/migration</directory>
 								</resource>
+								<resource>
+									<directory>../egov-works/src/main/resources/db/migration</directory>
+								</resource>
 							</resources>
 						</configuration>
 					</execution>
