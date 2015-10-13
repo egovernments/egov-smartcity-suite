@@ -101,12 +101,13 @@ jQuery(document).ready(function($)
 	$('#location').typeahead({
 		  hint: true,
 		  highlight: true,
-		  minLength: 3
+		  minLength: 1
 		}, {
 		displayKey: 'name',
 		source: complaintlocation.ttAdapter()
 	}).on('typeahead:selected', function(event, data){            
-		$("#locationid").val(data.value);    
+		//$("#locationid").val(data.locId);    
+		$("#crosshierarchyId").val(data.value);    
 		$('#lat, #lng').val(0.0);
     });
 	

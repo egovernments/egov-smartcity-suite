@@ -42,6 +42,7 @@ import java.util.List;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.CrossHierarchy;
 import org.egov.infra.admin.master.repository.CrossHierarchyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,5 +61,25 @@ public class CrossHierarchyService {
 
     public List<Boundary> getCrossHierarchyChildrens(final Boundary boundary, final BoundaryType boundaryType) {
         return crossHierarchyRepository.findByParentAndChildBoundaryType(boundary, boundaryType);
+    }
+
+    public List<CrossHierarchy> getChildBoundaryNameAndBndryTypeAndHierarchyType(final String boundaryTypeName,
+            final String parentTypeName, final String hierarchyTypeName, final String name) {
+        return crossHierarchyRepository.findActiveBoundariesByNameAndBndryTypeNameAndHierarchyTypeName(boundaryTypeName,
+                parentTypeName, hierarchyTypeName, name);
+    }
+
+    public List<Boundary> getChildBoundariesNameAndBndryTypeAndHierarchyType(final String boundaryTypeName,
+            final String parentTypeName, final String hierarchyTypeName) {
+        return crossHierarchyRepository.findChildBoundariesNameAndBndryTypeAndHierarchyType(boundaryTypeName, parentTypeName,
+                hierarchyTypeName);
+    }
+
+    public List<Boundary> getActiveChildBoundariesByBoundaryId(final Long id) {
+        return crossHierarchyRepository.findActiveBoundariesById(id);
+    }
+
+    public CrossHierarchy findById(final Long id) {
+        return crossHierarchyRepository.findOne(id);
     }
 }

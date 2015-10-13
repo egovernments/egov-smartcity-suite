@@ -46,6 +46,7 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.admin.master.entity.CrossHierarchy;
 import org.egov.infra.validation.ValidatorUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.web.controller.complaint.GenericComplaintController;
@@ -73,8 +74,14 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
 
     @RequestMapping(value = "register", method = POST)
     public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
-            final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files) {
+            final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files,
+            @RequestParam("crosshierarchyId") final Long crosshierarchyId) {
 
+        if (null != crosshierarchyId) {
+            final CrossHierarchy crosshierarchy = crossHierarchyService.findById(crosshierarchyId);
+            complaint.setLocation(crosshierarchy.getParent());
+            complaint.setChildLocation(crosshierarchy.getChild());
+        }
         if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
             resultBinder.rejectValue("location", "location.required");
 
@@ -95,7 +102,7 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
     @RequestMapping(value = "anonymous/register", method = POST)
     public String registerComplaintAnonymous(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
             final RedirectAttributes redirectAttributes, final HttpServletRequest request,
-            @RequestParam("files") final MultipartFile[] files) {
+            @RequestParam("files") final MultipartFile[] files, @RequestParam("crosshierarchyId") final Long crosshierarchyId) {
 
         if (!ValidatorUtils.isCaptchaValid(request))
             resultBinder.reject("captcha.not.valid");
@@ -106,6 +113,12 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
 
         if (StringUtils.isBlank(complaint.getComplainant().getName()))
             resultBinder.rejectValue("complainant.name", "complainant.name.ismandatory");
+
+        if (null != crosshierarchyId) {
+            final CrossHierarchy crosshierarchy = crossHierarchyService.findById(crosshierarchyId);
+            complaint.setLocation(crosshierarchy.getParent());
+            complaint.setChildLocation(crosshierarchy.getChild());
+        }
 
         if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
             resultBinder.rejectValue("location", "location.required");

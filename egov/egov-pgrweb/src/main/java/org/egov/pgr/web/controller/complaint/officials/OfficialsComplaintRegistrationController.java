@@ -48,6 +48,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
+import org.egov.infra.admin.master.entity.CrossHierarchy;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ReceivingCenter;
 import org.egov.pgr.entity.enums.ReceivingMode;
@@ -83,8 +84,13 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
 
     @RequestMapping(value = "register", method = POST)
     public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
-            final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files) {
-
+            final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files,
+            @RequestParam("crosshierarchyId") final Long crosshierarchyId) {
+        if (null != crosshierarchyId) {
+            final CrossHierarchy crosshierarchy = crossHierarchyService.findById(crosshierarchyId);
+            complaint.setLocation(crosshierarchy.getParent());
+            complaint.setChildLocation(crosshierarchy.getChild());
+        }
         if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
             resultBinder.rejectValue("location", "location.required");
 
@@ -92,6 +98,7 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
             return "complaint/officials/registration-form";
 
         try {
+
             complaintService.createComplaint(complaint);
         } catch (final ValidationException e) {
             resultBinder.rejectValue("location", e.getMessage());

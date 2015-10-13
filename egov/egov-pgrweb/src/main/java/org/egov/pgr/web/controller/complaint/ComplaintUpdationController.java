@@ -49,6 +49,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -98,6 +99,9 @@ public class ComplaintUpdationController {
     private MessageSource messageSource;
 
     @Autowired
+    private CrossHierarchyService crossHierarchyService;
+
+    @Autowired
     public ComplaintUpdationController(final ComplaintService complaintService,
             final ComplaintTypeService complaintTypeService,
             final ComplaintStatusMappingService complaintStatusMappingService, final SmartValidator validator) {
@@ -127,11 +131,12 @@ public class ComplaintUpdationController {
             model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
             model.addAttribute("complaintType", complaintTypeService.findAll());
             model.addAttribute("ward", Collections.EMPTY_LIST);
-            model.addAttribute("zone",
-                    boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("ZONE", "ADMINISTRATION"));
             if (complaint.getLocation() != null && complaint.getLocation().getParent() != null)
                 model.addAttribute("ward",
-                        boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
+                        boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "Administration"));
+            if (complaint.getLocation() != null && complaint.getLocation().getParent() != null)
+                model.addAttribute("location",
+                        crossHierarchyService.getChildBoundariesNameAndBndryTypeAndHierarchyType("Locality", "Ward", "Location"));
             model.addAttribute("mailSubject", "Grievance regarding " + complaint.getComplaintType().getName());
 
             model.addAttribute("mailBody", complaintService.getEmailBody(complaint));

@@ -1,4 +1,4 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency,
+/** eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -51,6 +51,7 @@ import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ReceivingCenter;
 import org.egov.pims.commons.Designation;
@@ -75,6 +76,9 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
     @Autowired
     private PositionMasterService positionMasterService;
 
+    @Autowired
+    private CrossHierarchyService crossHierarchyService;
+
     @RequestMapping(value = { "citizen/complaintTypes", "citizen/anonymous/complaintTypes", "officials/complaintTypes",
             "router/complaintTypes", "escalationTime/complaintTypes",
             "pgrreport/complaintTypes" }, method = GET, produces = APPLICATION_JSON_VALUE)
@@ -93,30 +97,24 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
         return receivingCenter == null ? Boolean.TRUE : receivingCenter.isCrnRequired();
     }
 
-    @RequestMapping(value = { "citizen/locations", "citizen/anonymous/locations", "officials/locations" }, method = GET, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = { "citizen/locations", "citizen/anonymous/locations",
+            "officials/locations" }, method = GET, produces = TEXT_PLAIN_VALUE)
     public @ResponseBody String getAllLocationJSON(@RequestParam final String locationName) {
         final StringBuilder locationJSONData = new StringBuilder("[");
-        // TODO Improve this code
         final String locationNameLike = "%" + locationName + "%";
-        boundaryService.getBondariesByNameAndBndryTypeAndHierarchyType("Ward", "ADMINISTRATION", locationNameLike).stream().forEach(location -> {
-            locationJSONData.append("{\"name\":\"");
-            if (location.isRoot())
-                locationJSONData.append(location.getName());
-            else {
-                Boundary currentLocation = location;
-                while (!currentLocation.isRoot()) {
-                    locationJSONData.append(currentLocation.getName()).append(", ");
-                    currentLocation = currentLocation.getParent();
-                    if (currentLocation.isRoot()) {
-                        locationJSONData.append(currentLocation.getName());
-                        break;
-                    }
-                }
-            }
-            locationJSONData.append("\",\"id\":").append(location.getId()).append("},");
-        });
+
+        crossHierarchyService
+                .getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Ward", "Location", locationNameLike)
+                .stream().forEach(location -> {
+                    locationJSONData.append("{\"name\":\"");
+
+                    locationJSONData.append(location.getChild().getName() + " - " + location.getParent().getName());
+                    locationJSONData.append("\",\"id\":").append(location.getId()).append("},");
+                });
+
         if (locationJSONData.lastIndexOf(",") != -1)
             locationJSONData.deleteCharAt(locationJSONData.lastIndexOf(","));
+
         locationJSONData.append("]");
         return locationJSONData.toString();
     }
@@ -127,7 +125,8 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
         return positionMasterService.getAllPositionsByNameLike(positionName);
     }
 
-    @RequestMapping(value = { "router/boundaries-by-type", "escalation/boundaries-by-type" }, method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = { "router/boundaries-by-type",
+            "escalation/boundaries-by-type" }, method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> getBoundariesbyType(@RequestParam final String boundaryName,
             @RequestParam final Long boundaryTypeId, final HttpServletResponse response) throws IOException {
         final String likeBoundaryName = "%" + boundaryName + "%";

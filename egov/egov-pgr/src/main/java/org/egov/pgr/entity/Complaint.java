@@ -160,6 +160,10 @@ public class Complaint extends StateAware {
     @Enumerated(EnumType.ORDINAL)
     private CitizenFeedback citizenFeedback;
 
+    @ManyToOne
+    @JoinColumn(name = "childLocation", nullable = false)
+    private Boundary childLocation;
+
     /*
      * For indexing the below fields are kept. These will not be added to the database. This will be available only in index.
      */
@@ -408,6 +412,14 @@ public class Complaint extends StateAware {
 
     public void setCitizenFeedback(final CitizenFeedback citizenFeedback) {
         this.citizenFeedback = citizenFeedback;
+    }
+
+    public Boundary getChildLocation() {
+        return childLocation;
+    }
+
+    public void setChildLocation(Boundary childLocation) {
+        this.childLocation = childLocation;
     }
 
 }

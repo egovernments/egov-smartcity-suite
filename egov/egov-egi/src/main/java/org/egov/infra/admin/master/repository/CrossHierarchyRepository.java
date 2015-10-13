@@ -44,10 +44,25 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CrossHierarchyRepository extends JpaRepository<CrossHierarchy, Long> {
 
     List<Boundary> findByParentAndChildBoundaryType(Boundary boundary, BoundaryType boundaryType);
+
+    @Query("select ch from CrossHierarchy ch where UPPER(ch.childType.name)= UPPER(:boundaryTypeName) and UPPER(ch.parentType.name)= UPPER(:parentTypeName) and UPPER(ch.childType.hierarchyType.name) =UPPER(:hierarchyTypeName) and UPPER(ch.child.name) like UPPER(:name) order by ch.child.name")
+    List<CrossHierarchy> findActiveBoundariesByNameAndBndryTypeNameAndHierarchyTypeName(
+            @Param("boundaryTypeName") String boundaryTypeName, @Param("parentTypeName") String parentTypeName,
+            @Param("hierarchyTypeName") String hierarchyTypeName, @Param("name") String name);
+
+    @Query("select ch.child from CrossHierarchy ch where UPPER(ch.childType.name)= UPPER(:boundaryTypeName) and UPPER(ch.parentType.name)= UPPER(:parentTypeName) and UPPER(ch.childType.hierarchyType.name) =UPPER(:hierarchyTypeName)")
+    List<Boundary> findChildBoundariesNameAndBndryTypeAndHierarchyType(
+            @Param("boundaryTypeName") String boundaryTypeName, @Param("parentTypeName") String parentTypeName,
+            @Param("hierarchyTypeName") String hierarchyTypeName);
+
+    @Query("select ch.child from CrossHierarchy ch where ch.parent.id= :id")
+    List<Boundary> findActiveBoundariesById(@Param("id") Long id);
 }

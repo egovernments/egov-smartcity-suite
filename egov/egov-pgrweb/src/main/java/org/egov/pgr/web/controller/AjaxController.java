@@ -51,7 +51,7 @@ import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.web.support.json.adapter.UserAdaptor;
 import org.egov.infstr.services.EISServeable;
 import org.egov.pims.commons.Designation;
@@ -73,51 +73,51 @@ import com.google.gson.reflect.TypeToken;
 public class AjaxController {
 
     @Autowired
-    private BoundaryService boundaryService;
+    private EISServeable eisService;
 
     @Autowired
-    private EISServeable eisService;
-    
-    @Autowired
     private DesignationService designationService;
-   
+
     @Autowired
     private PositionMasterService positionMasterService;
-    
-    @RequestMapping(value = "/ajax-getWards", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+
+    @Autowired
+    private CrossHierarchyService crossHierarchyService;
+
+    @RequestMapping(value = "/ajax-getChildLocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> getWardsForZone(@RequestParam final Long id) {
-        return boundaryService.getActiveChildBoundariesByBoundaryId(id);
+        return crossHierarchyService.getActiveChildBoundariesByBoundaryId(id);
     }
 
     @RequestMapping(value = "/ajax-approvalDesignations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Designation> getDesignations(
             @ModelAttribute("designations") @RequestParam final Integer approvalDepartment) {
-        List<Designation> designations =  eisService.getAllDesignationByDept(approvalDepartment, new Date());
-        //FIXME this is hack for lazy loaded collection
+        final List<Designation> designations = eisService.getAllDesignationByDept(approvalDepartment, new Date());
+        // FIXME this is hack for lazy loaded collection
         designations.forEach(designation -> designation.toString());
         return designations;
     }
-    
+
     @RequestMapping(value = "/ajax-designationsByDepartment", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Designation> getDesignationsByDepartmentId(
             @ModelAttribute("designations") @RequestParam final Long approvalDepartment) {
-        List<Designation> designations =  designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
-         designations.forEach(designation -> designation.toString());
+        final List<Designation> designations = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
+        designations.forEach(designation -> designation.toString());
         return designations;
     }
-    
-    @RequestMapping(value = "/ajax-positionsByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Position>  getPositionByDepartmentAndDesignation(@RequestParam final Long approvalDepartment,
-			@RequestParam final Long approvalDesignation,
-			final HttpServletResponse response) {
-		List<Position> positions = new ArrayList<Position>();
-		positions = positionMasterService.getPositionsByDepartmentAndDesignationForGivenRange(
-				approvalDepartment, approvalDesignation, new Date());
 
-		positions.forEach(position -> position.toString());
-		// }
-		return positions;
-	}
+    @RequestMapping(value = "/ajax-positionsByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Position> getPositionByDepartmentAndDesignation(@RequestParam final Long approvalDepartment,
+            @RequestParam final Long approvalDesignation,
+            final HttpServletResponse response) {
+        List<Position> positions = new ArrayList<Position>();
+        positions = positionMasterService.getPositionsByDepartmentAndDesignationForGivenRange(
+                approvalDepartment, approvalDesignation, new Date());
+
+        positions.forEach(position -> position.toString());
+        // }
+        return positions;
+    }
 
     /**
      * This api uses UserAdaptor to Construct Json
@@ -136,7 +136,8 @@ public class AjaxController {
             // below line should be removed once the commonService.getPosistions
             // apis query joins and returns user
             final Gson jsonCreator = new GsonBuilder().registerTypeAdapter(User.class, new UserAdaptor()).create();
-            return jsonCreator.toJson(users, new TypeToken<Collection<User>>() {}.getType());
+            return jsonCreator.toJson(users, new TypeToken<Collection<User>>() {
+            }.getType());
         }
         return "[]";
     }
