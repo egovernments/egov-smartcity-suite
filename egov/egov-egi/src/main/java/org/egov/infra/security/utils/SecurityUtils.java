@@ -51,18 +51,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SecurityUtils {
-
+    private static final long ANONYMOUS_USER_ID = 2L;
     @Autowired
     private UserService userService;
 
     public User getCurrentUser() {
         if (isCurrentUserAuthenticated()) {
             if (isCurrentUserAnonymous())
-                return userService.getUserById(1l);
+                return userService.getUserById(ANONYMOUS_USER_ID);
             else
                 return userService.getUserById(((SecureUser) getCurrentAuthentication().get().getPrincipal()).getUserId());
         } else
-            return userService.getUserById(1l);
+            return userService.getUserById(ANONYMOUS_USER_ID);
 
     }
 
