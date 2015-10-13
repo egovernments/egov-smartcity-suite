@@ -130,6 +130,18 @@
 					
 						<div class="form-group">
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+									name="licenseSubCategory.category.lbl" /><span class="mandatory"></span></label>
+							<div class="col-sm-3 add-margin">
+								<s:select headerKey="-1"
+										headerValue="%{getText('default.select')}" name="categoryId"
+										id="categoryId" listKey="key" listValue="value"
+										list="licenseCategoryMap" cssClass="form-control" value="%{categoryId}" 
+										/>
+							</div>
+						</div>
+					
+						<div class="form-group">
+							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseSubCategory.name.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
 								<s:textfield id="name"	name="name" value="%{name}" cssClass="form-control"/>
@@ -139,18 +151,6 @@
 									name="licenseSubCategory.code.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
 								<s:textfield id="code"	name="code" value="%{code}" cssClass="form-control"/>
-							</div>
-						</div>
-						
-						<div class="form-group">
-							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
-									name="licenseSubCategory.category.lbl" /><span class="mandatory"></span></label>
-							<div class="col-sm-3 add-margin">
-								<s:select headerKey="-1"
-										headerValue="%{getText('default.select')}" name="categoryId"
-										id="categoryId" listKey="key" listValue="value"
-										list="licenseCategoryMap" cssClass="form-control" value="%{categoryId}" 
-										/>
 							</div>
 						</div>
 						
