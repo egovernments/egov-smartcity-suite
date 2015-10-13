@@ -45,15 +45,20 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.entity.AgencyWiseCollection;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
-import org.egov.demand.model.EgDemandDetails;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.utils.DateUtils;
@@ -63,55 +68,59 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class AdvertisementBillable extends AbstractBillable implements Billable {
-    private static final Logger LOGGER = Logger.getLogger(AdvertisementBillable.class);
+public class AgencyWiseBillable extends AbstractBillable implements Billable {
+    private static final Logger LOGGER = Logger.getLogger(AgencyWiseBillable.class);
     public static final String collectionTypeHoarding = "hoarding";
-    public static final String FEECOLLECTIONMESSAGE = "Fee Collection : Hoarding Number -";
+    public static final String FEECOLLECTIONMESSAGE = "Fee Collection : Agency Name-";
     private static final String STRING_DEPARTMENT_CODE = "R";
     public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
 
-    public static final String FEECOLLECTION = "Fee Collection";
+    private static final String ADMINISTRATION_HIERARCHY_TYPE = "ADMINISTRATION";
+    private static final String CITY_BOUNDARY_TYPE = "City";
+
+    public static final String FEECOLLECTION = "AgencyWise Fee Collection";
     public static final String AUTO = "AUTO";
-    public static final String WARD = "Ward";
-    public static final String ADDRESSTYPEASOWNER = "OWNER";
     private String referenceNumber;
 
     @Autowired
     private ModuleService moduleService;
 
-    private Hoarding hoarding;
-    private String collectionType;
+    private AgencyWiseCollection agencyWiseCollection;
+
+    @Autowired
+    private HierarchyTypeService hierarchyTypeService;
+    @Autowired
+    private BoundaryTypeService boundaryTypeService;
+    @Autowired
+    private BoundaryService boundaryService;
 
     @Autowired
     private EgBillDao egBillDAO;
 
     @Override
     public String getBillPayee() {
-        if (hoarding != null)
-            /*
-             * if (collectionType != null &&
-             * collectionTypeHoarding.equalsIgnoreCase(collectionType)) { return
-             * hoarding.getOwnerDetail(); } else
-             */
-            return hoarding.getAgency() != null ? hoarding.getAgency().getName() : " ";
+        if (agencyWiseCollection != null && agencyWiseCollection.getAgency() != null)
+            return agencyWiseCollection.getAgency().getName();
         return null;
     }
 
     @Override
     public String getBillAddress() {
-        if (hoarding != null)
-            if (collectionType != null && collectionTypeHoarding.equalsIgnoreCase(collectionType))
-                return " ";
-            else
-                return hoarding.getAgency() != null ? hoarding.getAgency().getAddress() : " ";
+        if (agencyWiseCollection != null && agencyWiseCollection.getAgency() != null)
+            return agencyWiseCollection.getAgency().getAddress();
+
         return null;
     }
 
     @Override
     public EgDemand getCurrentDemand() {
-        return hoarding != null ? hoarding.getDemandId() : null;
+
+        if (agencyWiseCollection != null && agencyWiseCollection.getAgencyWiseDemand() != null)
+            return agencyWiseCollection.getAgencyWiseDemand();
+
+        return null;
     }
 
     @Override
@@ -135,16 +144,35 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     @Override
     public Long getBoundaryNum() {
-        if (hoarding != null && hoarding.getAdminBoundry() != null)
-            return hoarding.getAdminBoundry().getBoundaryNum();
+        final Boundary boundary = getBoundaryAsCity();
+        if (boundary != null)
+            return boundary.getId();
+        return null;
+    }
+
+    private Boundary getBoundaryAsCity() {
+        HierarchyType hType = null;
+        hType = hierarchyTypeService.getHierarchyTypeByName(ADMINISTRATION_HIERARCHY_TYPE);
+
+        List<Boundary> locationList = null;
+        if (hType != null) {
+            final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(CITY_BOUNDARY_TYPE,
+                    hType);
+            if (bType != null)
+                locationList = boundaryService.getActiveBoundariesByBoundaryTypeId(bType.getId());
+
+            if (locationList != null && locationList.size() > 0)
+                return locationList.get(0);
+
+        }
         return null;
     }
 
     @Override
     public String getBoundaryType() {
-
-        if (hoarding != null && hoarding.getAdminBoundry() != null)
-            return hoarding.getAdminBoundry().getBoundaryType().getName();
+        final Boundary boundary = getBoundaryAsCity();
+        if (boundary != null)
+            return boundary.getBoundaryType().getName();
         return null;
     }
 
@@ -175,7 +203,7 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     @Override
     public Date getLastDate() {
-        return hoarding.getPenaltyCalculationDate() != null ? hoarding.getPenaltyCalculationDate() : null;
+        return new Date();
     }
 
     @Override
@@ -202,12 +230,8 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
     public BigDecimal getTotalAmount() {
         BigDecimal balance = BigDecimal.ZERO;
 
-        if (hoarding != null && hoarding.getDemandId() != null)
-            for (final EgDemandDetails det : hoarding.getDemandId().getEgDemandDetails()) {
-                final BigDecimal dmdAmt = det.getAmount();
-                final BigDecimal collAmt = det.getAmtCollected();
-                balance = balance.add(dmdAmt.subtract(collAmt));
-            }
+        if (agencyWiseCollection != null && agencyWiseCollection.getTotalAmount() != null)
+            balance = agencyWiseCollection.getTotalAmount();
         return balance;
     }
 
@@ -220,9 +244,10 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
     public String getDescription() {
         final StringBuffer description = new StringBuffer();
 
-        if (hoarding != null && hoarding.getHoardingNumber() != null) {
+        if (agencyWiseCollection != null && agencyWiseCollection.getAgency() != null) {
             description.append(FEECOLLECTIONMESSAGE);
-            description.append(hoarding.getHoardingNumber() != null ? hoarding.getHoardingNumber() : "");
+            description.append(agencyWiseCollection.getAgency() != null ? agencyWiseCollection.getAgency().getName()
+                    : "");
         }
         return description.toString();
     }
@@ -240,8 +265,8 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     @Override
     public String getConsumerId() {
-        if (hoarding != null)
-            return hoarding.getId().toString();
+        if (agencyWiseCollection != null)
+            return AdvertisementTaxConstants.AGENCY_PREFIX_CONSUMERCODE.concat(agencyWiseCollection.getId().toString());
         return null;
     }
 
@@ -256,22 +281,6 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     }
 
-    public Hoarding getHoarding() {
-        return hoarding;
-    }
-
-    public void setHoarding(final Hoarding hoarding) {
-        this.hoarding = hoarding;
-    }
-
-    public String getCollectionType() {
-        return collectionType;
-    }
-
-    public void setCollectionType(final String collectionType) {
-        this.collectionType = collectionType;
-    }
-
     @Override
     public String getReferenceNumber() {
         return referenceNumber;
@@ -280,4 +289,13 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
     public void setReferenceNumber(final String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
+
+    public AgencyWiseCollection getAgencyWiseCollection() {
+        return agencyWiseCollection;
+    }
+
+    public void setAgencyWiseCollection(final AgencyWiseCollection agencyWiseCollection) {
+        this.agencyWiseCollection = agencyWiseCollection;
+    }
+
 }

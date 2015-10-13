@@ -43,8 +43,14 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
+import org.egov.adtax.entity.AgencyWiseCollection;
+import org.egov.adtax.entity.AgencyWiseCollectionDetail;
 import org.egov.adtax.service.AdvertisementDemandService;
+import org.egov.adtax.service.AgencyWiseCollectionService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -57,6 +63,7 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,12 +72,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AdvertisementTaxCollection extends TaxCollection {
     private static final Logger LOGGER = Logger.getLogger(AdvertisementTaxCollection.class);
-    private BigDecimal totalAmount = BigDecimal.ZERO;
+    private final BigDecimal totalAmount = BigDecimal.ZERO;
 
     @Autowired
     private EgBillDao egBillDAO;
     @Autowired
     private AdvertisementDemandService advertisementDemandService;
+    @Autowired
+    AgencyWiseCollectionService agencyWiseCollectionService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
     @Override
     public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber,
@@ -79,9 +95,117 @@ public class AdvertisementTaxCollection extends TaxCollection {
         return null;
     }
 
+    /**
+     * Collection will be possible either by agency wise or individual hoarding
+     * wise. Calling common api to update demand. If demand present in agency
+     * wise collection object, then we will consider collection happened by
+     * Agency wise.
+     */
     @Override
     public void updateDemandDetails(final BillReceiptInfo billRcptInfo) {
-        totalAmount = billRcptInfo.getTotalAmount();
+
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("updateDemandDetails : Demand updation for advertisement started. ");
+
+        EgDemand demand = getDemandByBillReferenceNumber(Long.valueOf(billRcptInfo.getBillReferenceNum()));
+        final AgencyWiseCollection agencyWiseCollection = agencyWiseCollectionService.getAgencyWiseCollectionByDemand(demand);
+                
+
+        if (agencyWiseCollection != null) {
+
+            agencyWiseCollection.setAmountCollected(Boolean.TRUE);
+            /*
+             * We are using demandupdated flag to check whether demand updated
+             * or not. We can use scheduler to update these records in bulk if
+             * required.
+             */
+            agencyWiseCollection.setDemandUpdated(Boolean.TRUE);
+
+            if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED))
+                updateAgencyWiseCollectionOnCreate(billRcptInfo, agencyWiseCollection);
+            else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED))
+                updateAgencyWiseCollectionCancelation(billRcptInfo, agencyWiseCollection);
+
+        } else{
+            demand = generalDemandUpdationForAdvertisement(billRcptInfo);
+        }
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("updateDemandDetails : Demand updation processed. ");
+
+    }
+
+    private void updateAgencyWiseCollectionCancelation(final BillReceiptInfo billRcptInfo,
+            final AgencyWiseCollection agencyWiseCollection) {
+        cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
+
+        for (final AgencyWiseCollectionDetail agencyDtl : agencyWiseCollection.getAgencyWiseCollectionDetails())
+            if (agencyDtl.getDemandDetail() != null)
+                agencyDtl.getDemandDetail().setAmtCollected(
+                        agencyDtl.getDemandDetail().getAmtCollected().subtract(agencyDtl.getAmount()));
+            else {
+                final List<EgDemandDetails> penaltyDmtDtails = advertisementDemandService
+                        .getDemandDetailByPassingDemandDemandReason(agencyDtl.getDemand(), agencyDtl.getDemandreason());
+
+                if (penaltyDmtDtails != null && penaltyDmtDtails.size() > 0) {
+                    penaltyDmtDtails.get(0).setAmtCollected(
+                            penaltyDmtDtails.get(0).getAmtCollected().subtract(agencyDtl.getAmount()));
+                    penaltyDmtDtails.get(0).setAmount(
+                            penaltyDmtDtails.get(0).getAmount().subtract(agencyDtl.getAmount()));
+                }
+            }
+
+        updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
+    }
+
+    /**
+     * Iterate each agency detail and update collected amount.Assumption is full
+     * amount will be collected from collection system. Penalty we need to add
+     * as fresh entry in demand detail.
+     */
+    private void updateAgencyWiseCollectionOnCreate(final BillReceiptInfo billRcptInfo,
+            final AgencyWiseCollection agencyWiseCollection) {
+        for (final AgencyWiseCollectionDetail agencyDtl : agencyWiseCollection.getAgencyWiseCollectionDetails())
+            if (agencyDtl.getDemandDetail() != null) {
+                agencyDtl.getDemandDetail().setAmtCollected(
+                        agencyDtl.getDemandDetail().getAmtCollected().add(agencyDtl.getAmount()));
+
+                persistCollectedReceipts(agencyDtl.getDemandDetail(), billRcptInfo.getReceiptNum(), totalAmount,
+                        billRcptInfo.getReceiptDate(), agencyDtl.getAmount());
+                agencyDtl.getDemand().addCollected(agencyDtl.getAmount());
+            } else {
+                final List<EgDemandDetails> penaltyDmtDtails = advertisementDemandService
+                        .getDemandDetailByPassingDemandDemandReason(agencyDtl.getDemand(), agencyDtl.getDemandreason());
+                /*
+                 * Check whether penalty reason already present in current
+                 * demand.
+                 */
+                if (penaltyDmtDtails != null && penaltyDmtDtails.size() > 0) {
+                    penaltyDmtDtails.get(0).setAmount(penaltyDmtDtails.get(0).getAmount().add(agencyDtl.getAmount()));
+                    penaltyDmtDtails.get(0).setAmtCollected(
+                            penaltyDmtDtails.get(0).getAmtCollected().add(agencyDtl.getAmount()));
+                    persistCollectedReceipts(penaltyDmtDtails.get(0), billRcptInfo.getReceiptNum(), totalAmount,
+                            billRcptInfo.getReceiptDate(), agencyDtl.getAmount());
+                } else {
+                    /*
+                     * Create new demand detail entry eg:for penalty
+                     */
+                    final EgDemandDetails demandDetail = advertisementDemandService.createDemandDetails(
+                            agencyDtl.getAmount(), agencyDtl.getDemandreason(), agencyDtl.getAmount());
+                    agencyDtl.getDemand().addEgDemandDetails(demandDetail);
+                    agencyDtl.getDemand().addBaseDemand(agencyDtl.getAmount());
+                    agencyDtl.getDemand().addCollected(agencyDtl.getAmount());
+                    getCurrentSession().flush();
+                    persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
+                            billRcptInfo.getReceiptDate(), agencyDtl.getAmount());
+                }
+            }
+    }
+
+    /**
+     * @param billRcptInfo
+     * @return
+     */
+    private EgDemand generalDemandUpdationForAdvertisement(final BillReceiptInfo billRcptInfo) {
         final EgDemand demand = getDemandByBillReferenceNumber(Long.valueOf(billRcptInfo.getBillReferenceNum()));
         final String indexNo = ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader()
                 .getConsumerCode();
@@ -95,16 +219,18 @@ public class AdvertisementTaxCollection extends TaxCollection {
             updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
         else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED))
             updateDemandWithcollectdTaxDetails(demand, billRcptInfo, EVENT_RECEIPT_CREATED);
-        else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED)) {
+        else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED))
             updateDemandWithcollectdTaxDetails(demand, billRcptInfo, EVENT_RECEIPT_CANCELLED);
-            updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
-
-        }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("updateDemandDetails : Demand after processed : " + demand);
-
+        // updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
+        return demand;
     }
 
+    /**
+     * @param demand
+     * @param billReceiptInfo
+     * @param eventType
+     * @return
+     */
     private BigDecimal updateDemandWithcollectdTaxDetails(final EgDemand demand, final BillReceiptInfo billReceiptInfo,
             final String eventType) {
 
@@ -135,13 +261,17 @@ public class AdvertisementTaxCollection extends TaxCollection {
         return totalAmountCollected;
     }
 
+    /**
+     * @param demand
+     * @param billRcptInfo
+     */
     @Transactional
     private void updateDmdDetForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("Entering method updateDmdDetForRcptCancel");
         String demandMasterReasonDesc = null;
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-            && !rcptAccInfo.getIsRevenueAccount()) {
+                    && !rcptAccInfo.getIsRevenueAccount()) {
                 demandMasterReasonDesc = billRcptInfo
                         .getDescription()
                         .substring(
@@ -160,7 +290,7 @@ public class AdvertisementTaxCollection extends TaxCollection {
                                             + " for demandDetail " + demandDetail);
 
                         demandDetail
-                        .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                                .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
 
                     }
             }
@@ -176,6 +306,13 @@ public class AdvertisementTaxCollection extends TaxCollection {
         }
     }
 
+    /**
+     * @param demandMasterReasonDesc
+     * @param demand
+     * @param billReceiptInfo
+     * @param recAccInfo
+     * @return
+     */
     private BigDecimal createOrUpdateDemandDetails(final String demandMasterReasonDesc, final EgDemand demand,
             final BillReceiptInfo billReceiptInfo, final ReceiptAccountInfo recAccInfo) {
         BigDecimal totalAmountCollected = BigDecimal.ZERO;
@@ -186,7 +323,7 @@ public class AdvertisementTaxCollection extends TaxCollection {
             // updating the existing demand detail..
             for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
                 if (demandDetail.getEgDemandReason() != null
-                && demandDetail.getEgDemandReason().getEgDemandReasonMaster() != null
+                        && demandDetail.getEgDemandReason().getEgDemandReasonMaster() != null
                         && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().trim()
                                 .equalsIgnoreCase(demandMasterReasonDesc)) {
                     // && (demandDetail.getAmount().compareTo(BigDecimal.ZERO) >
@@ -215,12 +352,20 @@ public class AdvertisementTaxCollection extends TaxCollection {
                         demandMasterReasonDesc, advertisementDemandService.getCurrentInstallment()), recAccInfo
                         .getCrAmount());
                 demand.addEgDemandDetails(demandDetail);
+                getCurrentSession().flush();
+                persistCollectedReceipts(demandDetail, billReceiptInfo.getReceiptNum(), totalAmount,
+                        billReceiptInfo.getReceiptDate(), recAccInfo.getCrAmount());
+
             }
             demand.setModifiedDate(new Date());
         }
         return totalAmountCollected;
     }
 
+    /**
+     * @param billId
+     * @return
+     */
     private EgDemand getDemandByBillReferenceNumber(final Long billId) {
         EgDemand egDemand = null;
         if (billId != null) {

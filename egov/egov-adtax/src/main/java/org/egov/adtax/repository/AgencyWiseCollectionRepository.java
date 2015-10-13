@@ -37,20 +37,18 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.adtax.utils.constants;
+package org.egov.adtax.repository;
 
-public class AdvertisementTaxConstants {
-    public static final String MODULE_NAME = "Advertisement Tax";
-    public static final String MODULETYPE = "adtax";
-    public static final String YEARLY = "Yearly";
-    public static final String MONTHLY = "Monthly";
-    public static final String DEMANDREASON_ADVERTISEMENTTAX = "Advertisemnt_Tax";
-    public static final String DEMANDREASON_ENCROCHMENTFEE = "Enchroachmnt_Fee";
-    public static final String SERVICE_CODE = "ADTAX";
-    public static final String COLL_RECEIPTDETAIL_DESC_PREFIX = "Collection";
-    public static final String PENALTYCALCULATIONREQUIRED = "Penalty Calculation required";
-    public static final String DEMANDREASON_PENALTY = "Penalty";
-    public static final String PENALTYAMOUNT = "PENALTYAMOUNT";
-    public static final String PENDINGDEMANDAMOUNT = "PENDINGDEMANDAMOUNT";
-    public static final String AGENCY_PREFIX_CONSUMERCODE = "AGENCY-";
+import org.egov.adtax.entity.AgencyWiseCollection;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+public interface AgencyWiseCollectionRepository extends JpaRepository<AgencyWiseCollection, Long> {
+
+    AgencyWiseCollection findByBillNumber(String billNumber);
+
+    @Query("select A from AgencyWiseCollection A where A.agencyWiseDemand.id=:demandid")
+    AgencyWiseCollection findAgencyWiseCollectionByDemand(@Param("demandid")Long demandid);
+
 }

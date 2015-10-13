@@ -40,9 +40,11 @@
 package org.egov.adtax.service;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,6 +55,7 @@ import org.egov.adtax.entity.Hoarding;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
@@ -72,11 +75,16 @@ public class AdvertisementDemandService {
     private InstallmentDao installmentDao;
 
     @Autowired
+    private DemandGenericDao demandGenericDao;
+
+    
+    @Autowired
     private ModuleService moduleService;
 
     @PersistenceContext
     private EntityManager entityManager;
-
+    
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -90,7 +98,7 @@ public class AdvertisementDemandService {
         EgDemand demand = null;
         final Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
         final Installment installment = getCurrentInstallment();
-        final BigDecimal totalDemandAmount = BigDecimal.ZERO;
+        BigDecimal totalDemandAmount = BigDecimal.ZERO;
         BigDecimal taxAmount = BigDecimal.ZERO;
         if (hoarding != null && hoarding.getDemandId() == null) {
             if (hoarding.getTaxAmount() != null || hoarding.getPendingTax()!=null) {
@@ -104,14 +112,14 @@ public class AdvertisementDemandService {
                         (taxAmount),
                         getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX,
                                 installment), BigDecimal.ZERO));
-                totalDemandAmount.add((taxAmount));
+                totalDemandAmount=  totalDemandAmount.add((taxAmount));
             }
             if (hoarding.getEncroachmentFee() != null) {
                 demandDetailSet.add(createDemandDetails(
                         (hoarding.getEncroachmentFee()),
                         getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE,
                                 installment), BigDecimal.ZERO));
-                totalDemandAmount.add((hoarding.getEncroachmentFee()));
+                totalDemandAmount= totalDemandAmount.add((hoarding.getEncroachmentFee()));
             }
             demand = createDemand(demandDetailSet, installment, totalDemandAmount);
         }
@@ -298,19 +306,30 @@ public class AdvertisementDemandService {
     }
 
     private BigDecimal calculatePenalty(BigDecimal penaltyAmt,final EgDemandDetails demandDtl, final BigDecimal amount, Date penaltyCalculationDate) {
-          int noofmonths = 0;
-         
-         if(penaltyCalculationDate!=null)
-             noofmonths= (DateUtils.noOfMonths(penaltyCalculationDate, new Date()))+1;
-         else
-             noofmonths= (DateUtils.noOfMonths(demandDtl.getEgDemandReason().getEgInstallmentMaster()
-                     .getFromDate(), new Date()))+1;
-             
+        int noofmonths = 0;
+
+        if (penaltyCalculationDate != null)
+            noofmonths = (DateUtils.noOfMonths(penaltyCalculationDate, new Date()));
+        else
+            noofmonths = (DateUtils.noOfMonths(demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate(),
+                    new Date()));
+
         if (noofmonths > 0)
-            penaltyAmt = penaltyAmt.add(amount.multiply(BigDecimal.valueOf(noofmonths)).divide(
-                    BigDecimal.valueOf(100).setScale(0, BigDecimal.ROUND_HALF_UP)).setScale(0, BigDecimal.ROUND_HALF_UP));
+            noofmonths++;
+
+        if (noofmonths > 0) {
+            penaltyAmt = penaltyAmt.add(amount.multiply(BigDecimal.valueOf(noofmonths))
+                    .divide(BigDecimal.valueOf(100).setScale(0, BigDecimal.ROUND_HALF_UP))
+                    .setScale(0, BigDecimal.ROUND_HALF_UP));
+        }
         return penaltyAmt;
     }
+    
+    public BigDecimal calculatePenalty(final EgDemandDetails demandDtl, final BigDecimal amount, Date penaltyCalculationDate) {
+        BigDecimal penaltyAmt=BigDecimal.ZERO;
+        penaltyAmt= calculatePenalty(penaltyAmt,demandDtl,amount,penaltyCalculationDate);
+        return penaltyAmt;
+  }
     /**
      * 
      * @param demand
@@ -364,5 +383,12 @@ public class AdvertisementDemandService {
         }
         return amountCollectedInCurrentYear;
     }
+    
+    public List<EgDemandDetails> getDemandDetailByPassingDemandDemandReason(EgDemand demand , EgDemandReason demandReason) {
 
-}
+        return  demandGenericDao.getDemandDetailsForDemandAndReasons(
+            demand, Arrays.asList(demandReason));
+ 
+    }
+   
+  }

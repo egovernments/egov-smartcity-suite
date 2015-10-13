@@ -69,7 +69,9 @@ public class AgencyService {
     public Agency findByCode(final String code) {
         return agencyRepository.findByCode(code);
     }
-
+    public Agency findByName(final String name) {
+        return agencyRepository.findByName(name.trim());
+    }
     public List<Agency> findAll() {
         return agencyRepository.findAll();
     }

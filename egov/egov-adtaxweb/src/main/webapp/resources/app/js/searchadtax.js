@@ -126,6 +126,7 @@ $(document).ready(function(){
 				"bDestroy": true,
 				"ajax": "/adtax/hoarding/search-list?"+$("#hoardingsearchform").serialize(),
 				"columns" : [
+				              { "data": "hordingIdsSearchedByAgency","visible": false, "searchable": false },
 							  { "data" : "agencyName", "title": "Agency"},
 							  { "data" : "totalHoardingInAgency", "title": "No.of hoarding"},
 							  { "data" : "pendingDemandAmount", "title": "Total Amount"},
@@ -152,7 +153,7 @@ $(document).ready(function(){
 			"bDestroy": true,
 			"autoWidth": false,
 			"columns" : [
-			  { "data" : "hoardingNumber", "title":"Hoarding No."},
+		      { "data" : "hoardingNumber", "title":"Hoarding No."},
 			  { "data" : "applicationNumber", "title": "Application No."},
 			  { "data" : "applicationFromDate", "title": "Application Date"},
 			  { "data" : "agencyName", "title": "Agency"},
@@ -179,5 +180,16 @@ $(document).ready(function(){
 		window.open("generatebill/hoarding/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 
 	});
+	
+	$("#adtax_search").on('click','tbody tr td .collect-agencyWiseFee',function(event) {
+		var hoardingIds = oTable.fnGetData($(this).parent().parent(),0);
+		var agencyName = oTable.fnGetData($(this).parent().parent(),1);
+		var pendingAmount = oTable.fnGetData($(this).parent().parent(),3); 
+
+		window.open("collectTaxByAgency/"+agencyName+"/"+hoardingIds+"/"+pendingAmount ,''+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+	
+	  
+	});
+	
 });
 

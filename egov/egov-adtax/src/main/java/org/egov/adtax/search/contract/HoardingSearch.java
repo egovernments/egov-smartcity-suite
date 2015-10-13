@@ -60,6 +60,7 @@ public class HoardingSearch {
     private BigDecimal pendingDemandAmount;
     private BigDecimal penaltyAmount;
     private int totalHoardingInAgency;
+    private String hordingIdsSearchedByAgency;
     public String getHoardingNumber() {
         return hoardingNumber;
     }
@@ -186,6 +187,14 @@ public class HoardingSearch {
 
     public void setTotalHoardingInAgency(int totalHoardingInAgency) {
         this.totalHoardingInAgency = totalHoardingInAgency;
+    }
+
+    public String getHordingIdsSearchedByAgency() {
+        return hordingIdsSearchedByAgency;
+    }
+
+    public void setHordingIdsSearchedByAgency(String hordingIdsSearchedByAgency) {
+        this.hordingIdsSearchedByAgency = hordingIdsSearchedByAgency;
     }
     
 }

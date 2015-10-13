@@ -190,15 +190,20 @@ public class HoardingService {
                         hoardingSearchResult.setPenaltyAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT));
                         hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
                         hoardingSearchResult.setTotalHoardingInAgency(1);
+                        hoardingSearchResult.setHordingIdsSearchedByAgency(result.getId().toString());
                         agencyWiseHoardingList.put(result.getAgency().getName(), hoardingSearchResult);
                     } else {
+                        StringBuffer hoardingIds= new StringBuffer();
                         hoardingSearchObj.setPenaltyAmount(
                                 hoardingSearchObj.getPenaltyAmount().add(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT)));
                         hoardingSearchObj.setPendingDemandAmount(hoardingSearchObj.getPendingDemandAmount()
                                 .add(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT)));
                         hoardingSearchObj.setTotalHoardingInAgency(hoardingSearchObj.getTotalHoardingInAgency() + 1);
+                        
+                        hoardingIds.append(hoardingSearchObj.getHordingIdsSearchedByAgency()).append("~").append(result.getId());
+                           hoardingSearchObj.setHordingIdsSearchedByAgency(hoardingIds.toString()); 
                         // agencyWiseHoardingList.put(result.getAgency().getName(), hoardingSearchObj);
-                    }
+                                   }
                 } else {
                      
                     final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService.checkPedingAmountByDemand(result.getDemandId(),result.getPenaltyCalculationDate());
@@ -219,5 +224,7 @@ public class HoardingService {
     public Hoarding findByHoardingNumber(final String hoardingNumber) {
         return hoardingRepository.findByHoardingNumber(hoardingNumber);
     }
-
+    public Hoarding findBy(final Long hoardingId) {
+        return hoardingRepository.findOne(hoardingId);
+    }
 }
