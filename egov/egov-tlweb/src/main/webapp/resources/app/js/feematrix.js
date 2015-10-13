@@ -99,6 +99,7 @@ var licenseAppTypeDisabled=$('#licenseAppType').is(':disabled');
 					 $('#natureOfBusiness').attr("disabled", true); 
 				 if(licenseAppTypeDisabled)
 					 $('#licenseAppType').attr("disabled", true); 
+				 alert("Details saved Successfully");
 					
 			}, 
 			error: function (response) {
@@ -107,6 +108,7 @@ var licenseAppTypeDisabled=$('#licenseAppType').is(':disabled');
 					$('#natureOfBusiness').attr("disabled", true); 
 				if(licenseAppTypeDisabled)
 					$('#licenseAppType').attr("disabled", true); 
+				 alert("Failed to Save Details");
 
 				
 			}

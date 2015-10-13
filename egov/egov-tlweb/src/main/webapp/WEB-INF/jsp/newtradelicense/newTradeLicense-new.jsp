@@ -136,7 +136,7 @@
 			var rowcnt = 1; // special counter to keep track of the number of Rows for id & name values
 			var labelCnt = 1; // special counter to keep track of the number of Rows for id & name values
 					
-			function totalHP() { 
+			function findtotalHP() { 
 				var tot = 0;
 				for( var i=0; i<=motorcnt ;i++) {			  		
 			  		if(document.getElementById('installedMotorList['+i+'].hp')!=null && document.getElementById('installedMotorList['+i+'].noOfMachines')) {
@@ -243,7 +243,7 @@
 				if(browser=='Microsoft Internet Explorer'){
 				    noOfMachines.onblur=totalHP;
 				} else {
-				    noOfMachines.setAttribute('onBlur', 'checkLength(this,3);totalHP(this);' );
+				    noOfMachines.setAttribute('onBlur', 'checkLength(this,3);findtotalHP();' );
 				}
 				cellRight.appendChild(noOfMachines);
 				    
@@ -269,7 +269,7 @@
 				if(browser=='Microsoft Internet Explorer'){
 				    horsepower.onblur=totalHP;
 				} else{
-				    horsepower.setAttribute('onBlur', 'checkLength(this,3);totalHP(this);' );
+				    horsepower.setAttribute('onBlur', 'checkLength(this,3);findtotalHP();' );
 				}
 				  
 				 cellRight.appendChild(horsepower);
@@ -297,7 +297,7 @@
  					{
  					document.all('tb2Create').deleteRow(oRow.rowIndex);
  					}
- 					totalHP();  
+ 					findtotalHP();  
 				 	detailchange();
 				}
 			}
@@ -463,7 +463,7 @@
 														}else{
 															document.getElementById("addmoremotor").style.display='none';
 														} 														
-														totalHP();
+														findtotalHP();
 												</script>
                                     </div>
                                     
