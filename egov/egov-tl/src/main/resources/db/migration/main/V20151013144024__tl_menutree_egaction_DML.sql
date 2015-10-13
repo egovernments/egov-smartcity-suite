@@ -219,7 +219,7 @@ Insert into eg_roleaction values((select id from eg_role where name='Super User'
 (select id from eg_action where name='Create-Motor FeeMatrix'));
 
 Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application)
-values(nextval('SEQ_EG_ACTION'),'Create-Workforce FeeMatrix','/feematrix/create?fee=Motor Fee',
+values(nextval('SEQ_EG_ACTION'),'Create-Workforce FeeMatrix','/feematrix/create?fee=Workforce Fee',
 (select id from eg_module where name='Trade License Masters'),1,'Create-Workforce FeeMatrix',true,'tl',
 (select id from eg_module where name='Trade License' and parentmodule is null));
 

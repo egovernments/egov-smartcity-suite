@@ -47,8 +47,8 @@ insert into EGTL_MSTR_FEE_TYPE values (nextval('seq_EGTL_MSTR_FEE_TYPE'),'Workfo
 
 
 --Roles for Trade License
-Insert into EG_ROLE (ID,NAME,DESCRIPTION,CREATEDDATE,CREATEDBY,LASTMODIFIEDBY,LASTMODIFIEDDATE,VERSION) values ((select max(id)+1 from eg_role),'TLCreator','TradeLicense creator',NOW(),1,1,NOW(),0);
-Insert into EG_ROLE (ID,NAME,DESCRIPTION,CREATEDDATE,CREATEDBY,LASTMODIFIEDBY,LASTMODIFIEDDATE,VERSION) values ((select max(id)+1 from eg_role),'TLApprover','TradeLicense Approver',NOW(),1,1,NOW(),0);
+Insert into EG_ROLE (ID,NAME,DESCRIPTION,CREATEDDATE,CREATEDBY,LASTMODIFIEDBY,LASTMODIFIEDDATE,VERSION) values (nextval('seq_eg_role'),'TLCreator','TradeLicense creator',NOW(),1,1,NOW(),0);
+Insert into EG_ROLE (ID,NAME,DESCRIPTION,CREATEDDATE,CREATEDBY,LASTMODIFIEDBY,LASTMODIFIEDDATE,VERSION) values (nextval('seq_eg_role'),'TLApprover','TradeLicense Approver',NOW(),1,1,NOW(),0);
 
 
 --Designation
@@ -92,6 +92,13 @@ INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, MODULE ) VALUES ( nextval(
 
 
 INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, MODULE ) VALUES ( nextval('SEQ_EG_APPCONFIG'), 'Is Fee For New and Renew Same','Is Fee For New and Renew Same',(select id from eg_module where name='Trade License'));
+
+---Appconfig Value for Fee 
+INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES (nextval('SEQ_EG_APPCONFIG_VALUES'),
+ (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='Is Fee For Permanent and Temporary Same' AND   MODULE =(select id from eg_module where name='Trade License')),current_date,'Y',0);
+
+INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES (nextval('SEQ_EG_APPCONFIG_VALUES'),
+ (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='Is Fee For New and Renew Same' AND   MODULE =(select id from eg_module where name='Trade License')),current_date,'Y',0);
 
 
 --UOM master data
