@@ -254,7 +254,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate);
                 } else
                     validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate);
-                validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetailsProxy(), property);
+                validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetailsProxy(), property, areaOfPlot);
             }
         }
 
@@ -325,7 +325,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
    
     private void validateFloor(final PropertyTypeMaster propTypeMstr, final List<Floor> floorList,
-            final Property property) {
+            final Property property, final String areaOfPlot) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into validateFloor \nPropertyTypeMaster:" + propTypeMstr + ", No of floors: "
                     + (floorList != null ? floorList : ZERO));
@@ -369,9 +369,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                             if (floor.getOccupancyDate().after(new Date()))
                                 addActionError(getText("mandatory.dtFlrBeforeCurr"));
 
-                        if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getArea() == null
-                                || floor.getBuiltUpArea().getArea().equals(""))
-                            addActionError(getText("mandatory.assbleArea"));
+						if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getArea() == null
+								|| floor.getBuiltUpArea().getArea().equals("")) {
+							addActionError(getText("mandatory.assbleArea"));
+							if (floor.getBuiltUpArea().getArea() > Double.valueOf(areaOfPlot))
+								addActionError(getText("assbleArea.notgreaterthan.extentsite"));
+						}
                     }
                 }
         if (LOGGER.isDebugEnabled())
