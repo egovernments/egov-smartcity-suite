@@ -79,10 +79,10 @@
 								
 								<li class="ico-menu">
 									<a class="dropdown-toggle" href="javascript:void(0);" data-toggle="dropdown">
-										<i class="fa fa-user"></i>
+										<i class="fa fa-user"></i>${userName}
 									</a>
 									<ul class="right-arrow dropdown-menu" role="menu">
-										<li><a href="javascript:void(0);"><i class="fa fa-user"></i> Edit Profile</a></li>
+										<li><a href="/egi/home/profile/edit"><i class="fa fa-user"></i>Edit Profile</a></li>
 										<li><a href="javascript:void(0);" onclick="jQuery('.change-password').modal('show', {backdrop: 'static'});"><i class="fa fa-key"></i> Change Password</a></li>
 										<li><a href="/egi/logout"><i class="fa fa-sign-out"></i> Sign out</a></li>
 									</ul>
