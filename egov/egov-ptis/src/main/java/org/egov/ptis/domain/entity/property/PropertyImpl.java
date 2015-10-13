@@ -523,14 +523,20 @@ public class PropertyImpl extends StateAware implements Property {
 		return unitCalculationDetailClones;
 	}
 
-	@Override
-	public String getStateDetails() {
-		final String upicNo = getBasicProperty().getUpicNo() != null && !getBasicProperty().getUpicNo().isEmpty() ? getBasicProperty()
-				.getUpicNo() : "";
-		final String applicationNo = getApplicationNo() != null && !getApplicationNo().isEmpty() ? getApplicationNo()
-				: "";
-		return upicNo.isEmpty() ? applicationNo : upicNo;
-	}
+        @Override
+        public String getStateDetails() {
+            StringBuffer stateDetails = new StringBuffer("");
+            final String upicNo = getBasicProperty().getUpicNo() != null && !getBasicProperty().getUpicNo().isEmpty() ? getBasicProperty()
+                    .getUpicNo()
+                    : "";
+            final String applicationNo = getApplicationNo() != null && !getApplicationNo().isEmpty() ? getApplicationNo()
+                    : "";
+            stateDetails.append(upicNo.isEmpty() ? applicationNo : upicNo).append(", ")
+                    .append(getBasicProperty().getProperty().getPropertyDetail().getCategoryType()).append(", ")
+                    .append(getBasicProperty().getPropertyID().getLocality().getName()).append(", ")
+                    .append(getBasicProperty().getFullOwnerName());
+            return stateDetails.toString();
+        }
 
 	@Override
 	public BigDecimal getManualAlv() {
