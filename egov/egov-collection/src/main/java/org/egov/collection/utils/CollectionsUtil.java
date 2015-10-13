@@ -80,7 +80,6 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.pims.commons.Designation;
@@ -232,9 +231,6 @@ public class CollectionsUtil {
             else
                 location = (Location) persistenceService.findByNamedQuery(CollectionConstants.QUERY_LOCATION_BY_USER,
                         getLoggedInUser().getName());
-
-            location = (Location) HibernateUtil.getCurrentSession().createQuery("from Location where id = 2").list()
-                    .get(0);
             if (location == null)
                 throw new ApplicationRuntimeException("Unable to fetch the location of the logged in user ["
                         + (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME) + "]");
