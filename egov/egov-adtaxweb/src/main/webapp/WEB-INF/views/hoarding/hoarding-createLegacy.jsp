@@ -69,7 +69,7 @@
 									<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="pendingTax" id="pendingTax" required="required"/>
+									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="pendingTax" id="pendingTax" required="required"/>
                                		<form:errors path="pendingTax" cssClass="error-msg" />
 								</div>
 							</div>

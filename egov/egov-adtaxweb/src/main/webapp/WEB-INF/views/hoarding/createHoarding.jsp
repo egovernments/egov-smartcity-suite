@@ -51,7 +51,8 @@
 								<form:hidden path="legacy" id="legacy" value="${hoarding.legacy}" />
 								<form:hidden path="penaltyCalculationDate" id="penaltyCalculationDate" value="${hoarding.penaltyCalculationDate}" />
 								
-									<form:input type="text" cssClass="form-control" path="applicationNumber" id="applicationNumber" required="required"/>
+									<form:input type="text"  cssClass="form-control patternvalidation" 
+                        	      data-pattern="alphanumerichyphenbackslash" path="applicationNumber" maxlength="25" id="applicationNumber" required="required"/>
                                		<form:errors path="applicationNumber" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
@@ -69,7 +70,8 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="permissionNumber" id="permissionNumber" required="required"/>
+									<form:input type="text" cssClass="form-control patternvalidation" 
+                        	      data-pattern="alphanumerichyphenbackslash" maxlength="25"  path="permissionNumber" id="permissionNumber" required="required"/>
                                		<form:errors path="permissionNumber" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
@@ -77,7 +79,8 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="hoardingNumber" id="hoardingNumber" required="required"/>
+									<form:input type="text" cssClass="form-control patternvalidation" 
+                        	      data-pattern="username" maxlength="25"  path="hoardingNumber" id="hoardingNumber" required="required"/>
                                		<form:errors path="hoardingNumber" cssClass="error-msg" />
 								</div>
 							</div>
@@ -87,7 +90,8 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="hoardingName" id="hoardingName" required="required"/>
+									<form:input type="text" cssClass="form-control patternvalidation" 
+                        	   data-pattern="alphanumericwithspace" maxlength="125"  path="hoardingName" id="hoardingName" required="required"/>
                                		<form:errors path="hoardingName" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
@@ -111,8 +115,8 @@
 								<spring:message code="lbl.hoarding.adv"/>
 								<span class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
-									<form:textarea path="advertiser" cols="5" rows="2" class="form-control"  required="required" minlength="5" maxlength="125"/>
-                               		<form:errors path="advertiser" cssClass="error-msg" />
+									<form:textarea path="advertiser" cols="5" rows="2" class="form-control patternvalidation"  data-pattern="alphanumericwithspace" required="required" minlength="5" maxlength="125"/>
+                               		<form:errors path="advertiser" cssClass="error-msg" /> 
 								</div>
 							</div>
 							<div class="form-group">
@@ -121,7 +125,7 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:textarea path="advertisementParticular" cols="5" rows="2" class="form-control"  required="required" minlength="5" maxlength="512"/>
+									<form:textarea path="advertisementParticular" cols="5" rows="2" class="form-control patternvalidation" data-pattern="alphanumericwithspace"  required="required" minlength="5" maxlength="256"/>
 									<form:errors path="advertisementParticular" cssClass="error-msg" />
 								</div>
 									<label class="col-sm-2 control-label text-right">
@@ -142,7 +146,7 @@
 								</label>
 								<div class="col-sm-3 add-margin">
 									<div class="input-group">
-										<form:input type="text" cssClass="form-control" path="propertyNumber" id="propertyNumber" /><span
+										<form:input type="text" cssClass="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" maxlength="15" path="propertyNumber" id="propertyNumber" /><span
 											class="input-group-addon"> <i
 											class="fa fa-search specific"></i></span>
                                			<form:errors path="propertyNumber" cssClass="error-msg" />
@@ -153,7 +157,7 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:textarea path="ownerDetail" cols="5" rows="2" class="form-control"  required="required" minlength="5" maxlength="125"/>
+									<form:textarea path="ownerDetail" cols="5" rows="2" class="form-control patternvalidation" data-pattern="alphanumericwithspace"  required="required" minlength="5" maxlength="125"/>
                                		<form:errors path="ownerDetail" cssClass="error-msg" />
 								</div>
 							</div>
@@ -203,7 +207,7 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="measurement" id="measurement" required="required"/>
+									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15" path="measurement" id="measurement" required="required"/>
                                		<form:errors path="measurement" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
@@ -222,14 +226,14 @@
 								<spring:message code="lbl.length"/>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="length" id="length"/>
+									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15" path="length" id="length"/>
                                		<form:errors path="length" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.width"/>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="width" id="width"/>
+									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="width" id="width"/>
                                		<form:errors path="width" cssClass="error-msg" />
 								</div>
 							</div>
@@ -238,7 +242,7 @@
 								<spring:message code="lbl.breadth"/>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="breadth" id="breadth"/>
+									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="breadth" id="breadth"/>
                                		<form:errors path="breadth" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
@@ -246,7 +250,7 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="totalHeight" id="totalHeight" required="required"/>
+									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="totalHeight" id="totalHeight" required="required"/>
                                		<form:errors path="totalHeight" cssClass="error-msg" />
 								</div>
 							</div>
@@ -285,7 +289,7 @@
 								<spring:message code="lbl.address"/>
 								<span class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
-									<form:textarea path="address" cols="5" rows="2" class="form-control"  required="required" minlength="5" maxlength="512"/>
+									<form:textarea path="address" cols="5" rows="2" class="form-control patternvalidation" data-pattern="alphanumericwithspace"   required="required" minlength="5" maxlength="256"/>
                                		<form:errors path="address" cssClass="error-msg" />
 								</div>
 							</div>
@@ -354,14 +358,14 @@
 								<spring:message code="lbl.tax"/>
 								<span class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="taxAmount" id="taxAmount" required="required"/>
+									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="taxAmount" id="taxAmount" required="required"/>
                                		<form:errors path="taxAmount" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.hoarding.enc.fee"/>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="encroachmentFee" id="encroachmentFee"/>
+									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="encroachmentFee" id="encroachmentFee"/>
                                		<form:errors path="encroachmentFee" cssClass="error-msg" />
 								</div>
 							</div>
