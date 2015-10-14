@@ -114,8 +114,11 @@ public class LicenseCategoryAction extends BaseFormAction {
             LOGGER.error("Exception found while persisting License category: " + valEx.getErrors());
             throw new ValidationException(valEx.getErrors());
         }
-        addActionMessage("\'" + licenseCategory.getCode() + "\' " + getText("license.category.save.success"));
-        id = licenseCategory.getId();
+        if (userMode.equalsIgnoreCase(NEW))
+            addActionMessage("\'" + licenseCategory.getCode() + "\' " + getText("license.category.save.success"));
+        else if (userMode.equalsIgnoreCase(EDIT))
+            addActionMessage("\'" + licenseCategory.getCode() + "\' " + getText("license.category.edit.success"));
+        userMode = SUCCESS;
         return NEW;
     }
 

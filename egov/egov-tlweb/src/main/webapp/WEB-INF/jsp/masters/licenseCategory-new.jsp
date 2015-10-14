@@ -37,11 +37,10 @@
  
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
 	<title>
@@ -59,10 +58,18 @@
 	<script>
 
 	function bodyOnLoad(){
-		if(dom.get("userMode").value=='view'){
+		if(dom.get("userMode").value=='view' || dom.get("userMode").value=='success'){
 			 dom.get("code").readOnly=true;
 			 dom.get("name").readOnly=true;
 		}
+	}
+
+	function reload(){
+		dom.get("code").value="";
+		dom.get("name").value="";
+		document.licenseCategoryForm.action='${pageContext.request.contextPath}/masters/licenseCategory-newform.action';
+    	document.licenseCategoryForm.submit();
+		
 	}
 
 	function validateFormAndSubmit(){
@@ -82,10 +89,43 @@
 		 	}
 	}
 
+	function validateData(obj,param){
+		clearMessage('category_error');
+		var screenType="categoryMaster"; 
+		var name="";
+		var code="";
+		alert(obj.value);
+		if(param=="name")
+			name=obj.value;
+		else if(param=="code")
+			code=obj.value;
+		makeJSONCall(["errorMsg","isUnique","paramType"],'${pageContext.request.contextPath}/masters/ajaxMaster-validateActions.action',
+		    	{name:name,code:code,screenType:screenType},categorySuccessHandler,categoryFailureHandler);
+	}
+
+	categoryFailureHandler=function(){
+		   showMessage('category_error','Unable to perform this action');
+		   return false;
+	}
+
+	categorySuccessHandler = function(req,res){
+	    var results=res.results;
+	    if(results[0].isUnique=="false"){
+		    if(!(results[0].errorMsg=="" || results[0].errorMsg==null)){
+		    	showMessage('category_error',results[0].errorMsg);
+		    	if(results[0].paramType=="name")
+			    	dom.get("name").value="";
+		    	else if(results[0].paramType=="code")
+			    	dom.get("code").value="";
+	 			return false;
+	     	} 
+	    }
+	 }
+
 	</script>
 </head>
 <body onload="bodyOnLoad();">
-	<div id="category_error" class="errorstyle" style="display:none;"></div> 
+	<div id="category_error" class="error-msg" style="display:none;"></div> 
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel-body">
@@ -127,13 +167,13 @@
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseCategory.name.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="name"	name="name" value="%{name}" class="form-control"/>
+								<s:textfield id="name"	name="name" value="%{name}" pattern="[A-Za-z_- ]+" title="characters and - _ space are only allowed" class="form-control" maxLength="32"  onchange="return validateData(this,'name')"/>
 							</div>
 							
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseCategory.code.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="code"	name="code" value="%{code}" class="form-control"/>
+								<s:textfield id="code"	name="code" value="%{code}" class="form-control" pattern="[A-Za-z]+" title="only characters are only allowed" maxLength="5"  onchange="return validateData(this,'code')"/>
 							</div>
 						</div>
 					</div>
@@ -143,9 +183,11 @@
 
 			<div class="row">
 				<div class="text-center">
-					<s:if test="%{userMode!='view'}">
+					<s:if test="%{userMode!='view' && userMode!='success'}">
 						<button type="button" id="btnsave" class="btn btn-primary" onclick="return validateFormAndSubmit();">
 							Save</button>
+						<button type="button" id="btnReset" type="reset" class="btn btn-default" onclick="reload();">
+						Reset</button>
 					</s:if>
 					<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
 						Close</button>

@@ -112,7 +112,7 @@ public class UnitOfMeasurementAction extends BaseFormAction {
         try {
             unitOfMeasurement = unitOfMeasurementService.persist(unitOfMeasurement);
         } catch (final ValidationException valEx) {
-            LOGGER.error("Exception found while persisting License category: " + valEx.getErrors());
+            LOGGER.error("Exception found while persisting Unit of Measurement: " + valEx.getErrors());
             throw new ValidationException(valEx.getErrors());
         }
         if (userMode.equalsIgnoreCase(NEW))

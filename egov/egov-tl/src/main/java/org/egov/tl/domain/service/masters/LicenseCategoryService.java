@@ -49,5 +49,23 @@ public class LicenseCategoryService extends PersistenceService<LicenseCategory, 
     public LicenseCategoryService() {
         setType(LicenseCategory.class);
     }
+    
+    /**
+     * @Description returns category object that matches param name
+     * @param name
+     * @return
+     */
+    public LicenseCategory findCategoryByName(final String name) {
+        return this.find("From LicenseCategory where name=?", name);
+    }
+
+    /**
+     * @Description returns category object that matches param code
+     * @param code
+     * @return
+     */
+    public LicenseCategory findCategoryByCode(final String code) {
+        return this.find("From LicenseCategory where code=?", code);
+    }
 
 }

@@ -5,7 +5,9 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.tl.domain.entity.LicenseCategory;
 import org.egov.tl.domain.entity.UnitOfMeasurement;
+import org.egov.tl.domain.service.masters.LicenseCategoryService;
 import org.egov.tl.domain.service.masters.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,6 +24,7 @@ public class AjaxMasterAction extends BaseFormAction {
     private String code;
     public static final String UNIQUECHECK = "uniqueCheck";
     private static final String UOM_MASTER = "uomMaster";
+    private static final String CATEGORY_MASTER = "categoryMaster";
     private static final String NAME = "name";
     private static final String CODE = "code";
     private Boolean isUnique;
@@ -29,6 +32,8 @@ public class AjaxMasterAction extends BaseFormAction {
     private String paramType;
     @Autowired
     private UnitOfMeasurementService unitOfMeasurementService;
+    @Autowired
+    private LicenseCategoryService licenseCategoryService;
 
     @Override
     public Object getModel()
@@ -44,7 +49,7 @@ public class AjaxMasterAction extends BaseFormAction {
     public String validateActions() {
         if (name != null && !name.isEmpty()) {
             // Invoked from UOM Master Screen - name unique check
-            if (screenType.equalsIgnoreCase(UOM_MASTER)) {
+            if (screenType != null && screenType.equalsIgnoreCase(UOM_MASTER)) {
                 paramType = NAME;
                 final UnitOfMeasurement unitOfMeasurement = unitOfMeasurementService.findUOMByName(name);
                 if (unitOfMeasurement != null) {
@@ -52,14 +57,32 @@ public class AjaxMasterAction extends BaseFormAction {
                     isUnique = Boolean.FALSE;
                 } else
                     isUnique = Boolean.TRUE;
+            }  // Invoked from Category Master Screen - name unique check
+            else if (screenType != null && screenType.equalsIgnoreCase(CATEGORY_MASTER)) {
+                paramType = NAME;
+                final LicenseCategory licenseCategory = licenseCategoryService.findCategoryByName(name);
+                if (licenseCategory != null) {
+                    errorMsg = getText("lc.validate.duplicateName", new String[] { name });
+                    isUnique = Boolean.FALSE;
+                } else
+                    isUnique = Boolean.TRUE;
             }
         } else if (code != null && !code.isEmpty())
             // Invoked from UOM Master Screen - code unique check
-            if (screenType.equalsIgnoreCase(UOM_MASTER)) {
+            if (screenType != null && screenType.equalsIgnoreCase(UOM_MASTER)) {
                 paramType = CODE;
                 final UnitOfMeasurement unitOfMeasurement = unitOfMeasurementService.findUOMByCode(code);
                 if (unitOfMeasurement != null) {
-                    errorMsg = getText("uom.validate.duplicateCode", new String[] { name });
+                    errorMsg = getText("uom.validate.duplicateCode", new String[] { code });
+                    isUnique = Boolean.FALSE;
+                } else
+                    isUnique = Boolean.TRUE;
+            } // Invoked from Category Master Screen - code unique check
+            else if (screenType != null && screenType.equalsIgnoreCase(CATEGORY_MASTER)) {
+                paramType = CODE;
+                final LicenseCategory licenseCategory = licenseCategoryService.findCategoryByCode(code);
+                if (licenseCategory != null) {
+                    errorMsg = getText("lc.validate.duplicateCode", new String[] { code });
                     isUnique = Boolean.FALSE;
                 } else
                     isUnique = Boolean.TRUE;
