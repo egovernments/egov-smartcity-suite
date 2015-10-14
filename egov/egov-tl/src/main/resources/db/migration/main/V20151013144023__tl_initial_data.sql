@@ -51,23 +51,6 @@ Insert into EG_ROLE (ID,NAME,DESCRIPTION,CREATEDDATE,CREATEDBY,LASTMODIFIEDBY,LA
 Insert into EG_ROLE (ID,NAME,DESCRIPTION,CREATEDDATE,CREATEDBY,LASTMODIFIEDBY,LASTMODIFIEDDATE,VERSION) values (nextval('seq_eg_role'),'TLApprover','TradeLicense Approver',NOW(),1,1,NOW(),0);
 
 
---Designation
-INSERT INTO egeis_deptdesig(id,designation,department,outsourcedposts,sanctionedposts,version,createddate,lastmodifieddate,createdby,lastmodifiedby)
-values(nextval('seq_egeis_deptdesig'),(SELECT id FROM eg_designation where name='Sanitary inspector'),(SELECT id FROM eg_department WHERE name='Health'),0,2,0,now(),now(),1,1);
-INSERT INTO egeis_deptdesig(id,designation,department,outsourcedposts,sanctionedposts,version,createddate,lastmodifieddate,createdby,lastmodifiedby)
-values(nextval('seq_egeis_deptdesig'),(SELECT id FROM eg_designation where name='Assistant health officer'),(SELECT id FROM eg_department WHERE name='Health'),0,2,0,now(),now(),1,1);
-
-
---Position
-INSERT INTO eg_position(id,name,deptdesig,createddate,lastmodifieddate,createdby,lastmodifiedby,ispostoutsourced,version) values
-(nextval('seq_eg_position'),'H-SANITORY INSPECTOR-1',(SELECT id from egeis_deptdesig where department in (SELECT id from eg_department WHERE name='Health') and 
-designation in (SELECT id from eg_designation WHERE name='Sanitary inspector')),now(),now(),1,1,false,0);
-
-INSERT INTO eg_position(id,name,deptdesig,createddate,lastmodifieddate,createdby,lastmodifiedby,ispostoutsourced,version) values
-(nextval('seq_eg_position'),'H-ASSISTANT HEALTH OFFICER-1',(SELECT id from egeis_deptdesig where department in (SELECT id from eg_department WHERE name='Health') and 
-designation in (SELECT id from eg_designation WHERE name='Assistant health officer')),now(),now(),1,1,false,0);
-
-
 ------ Workflow type
 INSERT INTO eg_wf_types (id, module, type, link, createdby, createddate, lastmodifiedby, lastmodifieddate, renderyn, groupyn, typefqn, displayname, version)
 values (nextval('seq_eg_wf_types'), (select id from eg_module where name = 'Trade License'), 'TradeLicense', '/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id=:ID',
