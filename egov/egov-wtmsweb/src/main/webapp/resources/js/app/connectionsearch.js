@@ -234,6 +234,7 @@ jQuery(document).ready(function($) {
 					$("#aplicationSearchResults").on('change','tbody tr td .dropchange',
 							function() {
 							var consumerNumber = tableContainer.fnGetData($(this).parent().parent(), 1);
+							var applicationTypeCode = tableContainer.fnGetData($(this).parent().parent(), 3);
 										if (this.value == 0) {
 											var url = '/wtms/application/view/'+ consumerNumber;
 											$('#waterSearchRequestForm').attr('method', 'get');
@@ -260,7 +261,7 @@ jQuery(document).ready(function($) {
 											else if (this.value == 4) {
 										} else if (this.value == 5) {
 										} else if (this.value == 6) {
-											var url = '/wtms/application/generatebill/'+ consumerNumber;
+											var url = '/wtms/application/generatebill/'+ consumerNumber+"?applicationTypeCode="+applicationTypeCode;
 											$('#waterSearchRequestForm').attr('method', 'get');
 											$('#waterSearchRequestForm').attr('action', url);
 											window.location = url;
