@@ -532,9 +532,9 @@ public class PropertyImpl extends StateAware implements Property {
             final String applicationNo = getApplicationNo() != null && !getApplicationNo().isEmpty() ? getApplicationNo()
                     : "";
             stateDetails.append(upicNo.isEmpty() ? applicationNo : upicNo).append(", ")
-                    .append(getBasicProperty().getProperty().getPropertyDetail().getCategoryType()).append(", ")
+                    .append(getPropertyDetail().getCategoryType()).append(", ")
                     .append(getBasicProperty().getPropertyID().getLocality().getName()).append(", ")
-                    .append(getBasicProperty().getFullOwnerName());
+                    .append(getBasicProperty().getPrimaryOwner().getName());
             return stateDetails.toString();
         }
 
