@@ -402,7 +402,7 @@ public class ConnectionDemandService {
         return getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId()).list();
     }
 
-    public String generateBill(final String consumerCode,String applicationTypeCode) {
+    public String generateBill(final String consumerCode) {
         String collectXML = "";
         final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
         String currentInstallmentYear = null;
