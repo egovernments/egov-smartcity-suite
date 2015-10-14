@@ -45,6 +45,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.billsaccounting.services.BillsAccountingService;
+import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
@@ -125,7 +126,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
     protected List<String> headerFields = new ArrayList<String>();
     protected List<String> mandatoryFields = new ArrayList<String>();
     protected EisUtilService eisService;
-    private @Autowired static BillsService billsMngr;
+    private @Autowired static BillsService billsService;
     private @Autowired AppConfigValueService appConfigValuesService;
     private @Autowired BillsAccountingService billsAccountingService;
     private BillsService billsManager;
@@ -134,7 +135,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
     private final PreApprovedVoucher preApprovedVoucher = new PreApprovedVoucher();
     private List<PreApprovedVoucher> billDetailslist;
     private List<PreApprovedVoucher> subLedgerlist;
-
+    private @Autowired CreateVoucher createVoucher;
     private ContraJournalVoucher contraVoucher;
     private static final String ERROR = "error";
 
@@ -456,7 +457,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
                 LOGGER.debug("bill id=======" + parameters.get(BILLID)[0]);
             methodName = "save";
             // check budgetary check
-            egBillregister = billsMngr.getBillRegisterById(Integer.valueOf(parameters.get(BILLID)[0]));
+            egBillregister = billsService.getBillRegisterById(Integer.valueOf(parameters.get(BILLID)[0]));
             // egBillregister = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?",
             // Long.valueOf(parameters.get(BILLID)[0]));
             if (!financialYearDAO.isSameFinancialYear(egBillregister.getBilldate(), preApprovedVoucher.getVoucherDate()))
@@ -472,7 +473,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
             if (list.isEmpty())
                 throw new ValidationException(EMPTY_STRING, "budgetCheckRequired is not defined in AppConfig");
             boolean checkReq = false;
-            vhid = billsAccountingService.createPreApprovedVoucherFromBill(Integer.parseInt(parameters.get(BILLID)[0]),
+            vhid = createVoucher.createVoucherFromBill(Integer.parseInt(parameters.get(BILLID)[0]),null,
                     voucherNumber, preApprovedVoucher.getVoucherDate());
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("voucher id=======" + vhid);
@@ -600,8 +601,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("User selected id is : " + userId);
-        voucherWorkflowService.transition(parameters.get(ACTIONNAME)[0] + "|" + userId, voucherHeader,
-                parameters.get("comments")[0]);
+        //voucherWorkflowService.transition(parameters.get(ACTIONNAME)[0] + "|" + userId, voucherHeader, parameters.get("comments")[0]);
         voucherService.persist(voucherHeader);
     }
 
@@ -1096,21 +1096,21 @@ public class PreApprovedVoucherAction extends BaseFormAction
 
     protected Boolean validateOwner(State state)
     {
+        Boolean check = false;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("validating owner for user " + EgovThreadLocals.getUserId());
         List<Position> positionsForUser = null;
-        positionsForUser = null;// eisService.getPositionsForUser(Integer.valueOf(EgovThreadLocals.getUserId()), new Date());
-        if (positionsForUser.contains(state.getOwnerPosition()))
-        {
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Valid Owner :return true");
-            return true;
-        } else
-        {
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Invalid  Owner :return false");
-            return false;
+        positionsForUser = eisService.getPositionsForUser(EgovThreadLocals.getUserId(), new Date());
+        for(Position pos:positionsForUser){
+            if (pos.getId().equals(state.getOwnerPosition().getId()))
+            {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Valid Owner :return true");
+                check =  true;
+            }
         }
+        return check;
+       
     }
 
     public void setVoucherService(final VoucherService voucherService) {
@@ -1190,9 +1190,6 @@ public class PreApprovedVoucherAction extends BaseFormAction
         this.departmentId = departmentId;
     }
 
-    public void setBillsService(BillsService billsManager) {
-        this.billsManager = billsManager;
-    }
 
     public String getType() {
         return type;
@@ -1307,12 +1304,14 @@ public class PreApprovedVoucherAction extends BaseFormAction
         this.financialYearDAO = financialYearDAO;
     }
 
-    public static BillsService getBillsMngr() {
-        return billsMngr;
+    public static BillsService getBillsService() {
+        return billsService;
     }
 
-    public static void setBillsMngr(BillsService billsMngr) {
-        PreApprovedVoucherAction.billsMngr = billsMngr;
+    public static void setBillsService(BillsService billsService) {
+        PreApprovedVoucherAction.billsService = billsService;
     }
+
+
 
 }

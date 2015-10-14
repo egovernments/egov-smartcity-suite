@@ -105,6 +105,6 @@
 		<property name="employeeServiceOld" ref="employeeServiceOld" />
 		</bean>
 	
-	<bean id="voucherCreator" class="org.egov.billsaccounting.services.CreateVoucher" scope="prototype" />
-
+	<bean id="createVoucher" class="org.egov.billsaccounting.services.CreateVoucher" scope="prototype">
+	</bean>
 </beans>

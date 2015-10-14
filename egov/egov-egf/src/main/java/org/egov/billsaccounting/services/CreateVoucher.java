@@ -181,8 +181,8 @@ public class CreateVoucher {
 
     // transaction related common variables
     private int usrId;
-
-    private BillsService billsMngr;
+    @Autowired
+    private BillsService billsService;
     @Autowired
     private FundHibernateDAO fundDAO;
 
@@ -313,12 +313,24 @@ public class CreateVoucher {
             throws ApplicationRuntimeException, SQLException, TaskFailedException {
         CVoucherHeader vh = null;
         try {
+            if(voucherStatus==null){
+                List vStatusList=appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "PREAPPROVEDVOUCHERSTATUS");   
+                
+                if(!vStatusList.isEmpty()&&vStatusList.size()==1)
+                {       AppConfigValues appVal=(AppConfigValues)vStatusList.get(0);
+                voucherStatus=(String)appVal.getValue();
+                }
+                else
+                {
+                        throw new ApplicationRuntimeException("PREAPPROVEDVOUCHERSTATUS"+"is not defined in AppConfig values cannot proceed creating voucher");
+                }
+            }
             this.vStatus = voucherStatus;
             this.usrId = EgovThreadLocals.getUserId().intValue();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(" ---------------Generating Voucher for Bill-------");
             EgBillregister egBillregister = null;
-            egBillregister = billsMngr.getBillRegisterById(Integer.valueOf(billId));
+            egBillregister = billsService.getBillRegisterById(Integer.valueOf(billId));
             PersistenceService persistenceService = new PersistenceService();
             // persistenceService.setSessionFactory(new SessionFactory());
             /*
@@ -545,8 +557,7 @@ public class CreateVoucher {
                         : egBilldetails.getDebitamount());
                 detailMap.put(VoucherConstant.CREDITAMOUNT, egBilldetails.getCreditamount() == null ? BigDecimal.ZERO
                         : egBilldetails.getCreditamount());
-                String glcode = (persistenceService.find("select glcode from CChartOfAccounts where id = ? ",
-                        (egBilldetails.getGlcodeid()).longValue())).toString();
+                String glcode = HibernateUtil.getCurrentSession().createQuery("select glcode from CChartOfAccounts where id = "+(egBilldetails.getGlcodeid()).longValue()).list().get(0).toString();
                 detailMap.put(VoucherConstant.GLCODE, glcode);
                 accountdetails.add(detailMap);
                 subLedgerlist = egBilldetails.getEgBillPaydetailes();
@@ -596,7 +607,7 @@ public class CreateVoucher {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(" ---------------Generating Voucher-------");
             EgBillregister egBillregister = null;
-            egBillregister = billsMngr.getBillRegisterById(Integer.valueOf(billId));
+            egBillregister = billsService.getBillRegisterById(Integer.valueOf(billId));
             /*
              * identify the bill type and delegate get the fund and fundsource check for mandatory fields for implementation if
              * missing throw exception department is mandatory for implementation type fund is mandatory for all implementations
@@ -2286,7 +2297,7 @@ public class CreateVoucher {
         postInBillRegister(supplierBillDetails, billregister);
         postInEgbillMis(billregister, supplierBillDetails);
         postinbilldetail(billregister, ledgerlist);
-        billregister = billsMngr.createBillRegister(billregister);
+        billregister = billsService.createBillRegister(billregister);
 
         return billregister;
 

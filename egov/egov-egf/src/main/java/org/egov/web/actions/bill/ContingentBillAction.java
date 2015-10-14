@@ -84,6 +84,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.NumberToWord;
 import org.egov.infstr.workflow.Action;
@@ -164,7 +165,8 @@ public class ContingentBillAction extends BaseBillAction {
         //  If the department is mandatory show the logged in users assigned department only.
                 if(mandatoryFields.contains("department")){
                         List<Department> deptList;
-                        deptList = voucherHelper.getAllAssgnDeptforUser();
+                        EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
+                        deptList = masterCache.get("egi-department");//voucherHelper.getAllAssgnDeptforUser();
                         addDropdownData("departmentList", deptList);
                       /*  if(deptList == null || deptList.isEmpty())
                         {

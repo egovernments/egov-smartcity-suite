@@ -66,6 +66,7 @@ import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.VoucherTypeBean;
 import org.egov.pims.service.EisUtilService;
@@ -104,7 +105,8 @@ public class BillVoucherAction extends BaseVoucherAction {
                 super.prepare();
         //  If the department is mandatory show the logged in users assigned department only.
                 if(mandatoryFields.contains("department")){
-                        addDropdownData("departmentList", voucherHelper.getAllAssgnDeptforUser());
+                        EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
+                        addDropdownData("departmentList", masterCache.get("egi-department"));
                 }
         }
 @Action(value="/voucher/billVoucher-newForm")

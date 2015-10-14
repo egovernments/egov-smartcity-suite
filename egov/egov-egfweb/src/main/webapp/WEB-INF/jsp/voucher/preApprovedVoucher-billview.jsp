@@ -84,7 +84,7 @@ function openSource(){
 	}
 	window.open(url,'Source','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700')
 }
-function validateApproverUser(name,value){
+function validateApproverUserAndSubmitForm(name,value){
 	
 	document.getElementById("actionName").value= name;
 	<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>
@@ -92,10 +92,13 @@ function validateApproverUser(name,value){
 		return false;
 		}
 	</s:if>
+	document.preApprovedVoucher.action='${pageContext.request.contextPath}/voucher/preApprovedVoucher-save.action';
+	document.preApprovedVoucher.submit();
+	
 }
 </script>
 <body onload="checkBillIdBillview()">
-<s:form action="preApprovedVoucher" theme="simple" >
+<s:form action="preApprovedVoucher" theme="simple" name ="preApprovedVoucher" id ="preApprovedVoucher">
 			<jsp:include page="../budget/budgetHeader.jsp">
         		<jsp:param name="heading" value="Bill Voucher -Create" />
 			</jsp:include>
@@ -203,6 +206,7 @@ function validateApproverUser(name,value){
 					<s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="%{name}" name="%{name}" method="save" onclick="return validateApproverUser('%{name}','%{description}')"/>
 			</s:if>
 		</s:iterator>
+		<s:submit type="submit" cssClass="buttonsubmit" value="Send for Approval" id="%aa_approve" name="aa_approve" onclick="return validateApproverUserAndSubmitForm('aa_approve','Send for Approval')"/>
 		<s:if test="%{egBillregister.expendituretype == finConstExpendTypeContingency}">
 			<input type="button" class="button" id="print" value="Print Preview" onclick="printEJV()"/>
 		</s:if> 

@@ -78,7 +78,7 @@
 			<td class="bluebox">Bill Type<span class="bluebox"><span class="mandatory1">*</span></span></td>
 			<td class="bluebox"><s:select name="expType" id="expType" list="dropdownData.expTypeList"  headerKey="-1" headerValue="----Choose----"   /></td>
 			<td class="bluebox" id="deptLabel"><s:text name="voucher.department"/></td>
-			<td class="bluebox"><s:select name="vouchermis.departmentid" id="departmentid" list="dropdownData.departmentList" listKey="id" listValue="deptName" headerKey="-1" headerValue="----Choose----" value="voucherHeader.vouchermis.departmentid.id"/></td>
+			<td class="bluebox"><s:select name="vouchermis.departmentid" id="departmentid" list="dropdownData.departmentList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----" value="voucherHeader.vouchermis.departmentid.id"/></td>
 	
 		</tr>
 			

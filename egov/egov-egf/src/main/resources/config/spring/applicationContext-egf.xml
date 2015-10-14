@@ -55,8 +55,7 @@
 	<!--<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="sessionFactory" ref="egovSessionFactory" />
 	</bean>-->
-	<bean id="createVoucher" class="org.egov.billsaccounting.services.CreateVoucher" scope="prototype">
-	</bean>
+	
 	<bean class="org.egov.infra.admin.master.service.AppConfigService" id="appConfigService" scope="prototype" >
 	</bean>
 	<bean class="org.egov.commons.dao.FundHibernateDAO" id="fundHibernateDAO" scope="prototype" />
@@ -228,6 +227,9 @@
 		
 	</bean> 
 	 <bean id="mastersService" class="org.egov.masters.services.MastersService" scope="prototype">
+	 </bean> 
+	 <bean id="billsService" class="org.egov.services.bills.BillsService" scope="prototype">
+	 
 		
 	</bean> 
 	<bean id="billRegisterService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
