@@ -117,6 +117,9 @@ public class City extends AbstractAuditable {
     @NotBlank
     private String districtName;
 
+    @SafeHtml
+    private String regionName;
+
     private Float longitude;
 
     private Float latitude;
@@ -225,6 +228,14 @@ public class City extends AbstractAuditable {
         this.districtName = districtName;
     }
 
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(final String regionName) {
+        this.regionName = regionName;
+    }
+
     public CityPreferences getPreferences() {
         return preferences;
     }
@@ -243,7 +254,6 @@ public class City extends AbstractAuditable {
             cityPrefs.put("cityname", StringUtils.isEmpty(preferences.getMunicipalityName()) ? name : preferences.getMunicipalityName());
             cityPrefs.put("citylogo",
                     preferences.logoExist() ? String.format(LOGO_URL, preferences.getMunicipalityLogo().getFileStoreId(), code) : "");
-            cityPrefs.put("cityKmlFileStoreId", preferences.kmlExist() ? preferences.getGisKML().getFileStoreId() : "");
             cityPrefs.put("corpAddress", preferences.getMunicipalityAddress());
             cityPrefs.put("corpCallCenterNo", preferences.getMunicipalityCallCenterNo());
             cityPrefs.put("corpContactNo", preferences.getMunicipalityContactNo());

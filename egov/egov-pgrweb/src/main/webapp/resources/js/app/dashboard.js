@@ -1209,7 +1209,7 @@ function overviewGis(gisData){
 	};
 
 	var geoXml=new geoXML3.parser({map: map, singleInfoWindow: true,suppressInfoWindows: true,afterParse:drawPolygonColor});
-	geoXml.parse(kmlURL);
+	geoXml.parse("/egi/downloadfile/gis");
 }
 
 function createPieInGmap() {
@@ -1597,5 +1597,5 @@ function drawGisAnalysis(winId, gisData,gisOption) {
 	};
 
 	var geoXml=new geoXML3.parser({map: map, singleInfoWindow: true,suppressInfoWindows: true,afterParse:drawPolygonColor});
-	geoXml.parse('../resources/kml/coc_wards.kml');
+	geoXml.parse("/egi/downloadfile/gis");
 }

@@ -38,16 +38,13 @@
  */
 package org.egov.infra.web.controller.admin.masters.city;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
 
 import javax.validation.Valid;
 
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.CityPreferences;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,37 +84,15 @@ public class CitySetupController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String updateCitySetup(@Valid @ModelAttribute final City city, final BindingResult bindResult,
-            @RequestParam(required = false) final MultipartFile gisKML,
-            @RequestParam(required = false) final MultipartFile logo,
-            final RedirectAttributes redirectAttrs) {
+            @RequestParam(required = false) final MultipartFile logo, final RedirectAttributes redirectAttrs) throws IOException {
         if (bindResult.hasErrors())
             return "city-setup";
-        addToCityFileData(city, Arrays.asList(gisKML, logo));
+        if (!logo.isEmpty())
+            city.getPreferences().setMunicipalityLogo(fileStoreService.store(logo.getInputStream(), logo.getOriginalFilename(),
+                    logo.getContentType(), EgovThreadLocals.getCityCode()));
         cityService.updateCity(city);
         redirectAttrs.addFlashAttribute("message", "msg.city.update.success");
         return "redirect:/city/setup/view";
     }
 
-    private void addToCityFileData(final City city, final List<MultipartFile> files) {
-        if (!files.isEmpty())
-            files.stream().filter(file -> !file.isEmpty()).forEach(file -> {
-                try {
-                    final FileStoreMapper fileStore = fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                            file.getContentType(), EgovThreadLocals.getCityCode());
-                    switch (file.getName()) {
-                    case "gisKML":
-                        city.getPreferences().setGisKML(fileStore);
-                        break;
-                    case "logo":
-                        city.getPreferences().setMunicipalityLogo(fileStore);
-                        break;
-                    default:
-                        break;
-                    }
-                } catch (final Exception e) {
-                    throw new ApplicationRuntimeException("err.city.add.files");
-                }
-            });
-
-    }
 }

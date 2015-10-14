@@ -182,6 +182,24 @@
 									<form:errors path="districtCode"
 										cssClass="add-margin error-msg" />
 								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label"><spring:message
+										code="lbl.city.region.name" /></label>
+								<div class="col-sm-6" style="padding-top: 7px">
+									<div class="input-group">
+										<form:input path="regionName" id="regionName" type="text"
+											class="form-control" placeholder="" autocomplete="off" />
+										<span class="input-group-btn">
+											<button class="btn btn-default btnpopover" type="button"
+												data-toggle="popover" data-placement="right" title=""
+												data-content="<spring:message code="help.city.region.name" />">
+												<i class="entypo-help"></i>
+											</button>
+										</span>
+									</div>
+									<form:errors path="regionName" cssClass="add-margin error-msg" />
+								</div>
 
 							</div>
 							<div class="form-group">
@@ -420,30 +438,6 @@
 									<form:errors path="longitude" cssClass="add-margin error-msg" />
 								</div>
 
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message
-										code="lbl.city.gis.kml" /></label>
-								<div class="col-sm-6" style="padding-top: 7px">
-									<a target="_blank"
-										href="/egi/downloadfile?fileStoreId=${city.preferences.gisKML.fileStoreId}&moduleName=${sessionScope.cityCode}">${city.preferences.gisKML.fileName}</a>
-									
-									<div class="input-group">
-										<input type="file" name="gisKML" id="gisKML" data-accept="kml"
-											data-errormsg="Please select valid Gis KML file!"
-											class="form-control" placeholder="" autocomplete="off" />
-									    <span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.city.giskml" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
-									
-									<form:errors path="preferences.gisKML"
-										cssClass="add-margin error-msg" />
-								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message

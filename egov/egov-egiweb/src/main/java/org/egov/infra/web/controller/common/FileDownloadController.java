@@ -39,11 +39,15 @@
 package org.egov.infra.web.controller.common;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.utils.FileStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -76,9 +80,16 @@ public class FileDownloadController {
     }
 
     @RequestMapping("/gis")
-    public void download(@RequestParam final String fileStoreId, @RequestParam final String moduleName,
-            final HttpServletResponse response) throws IOException {
-        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, moduleName, false, response);
+    public void download(final HttpServletResponse response) throws IOException {
+        try (final InputStream in = Thread.currentThread().getContextClassLoader()
+                .getResourceAsStream("gis/kml/" + EgovThreadLocals.getTenantID() + "/wards.kml");
+                final OutputStream out = response.getOutputStream();) {
+            if (in != null) {
+                response.setHeader("Content-Disposition", "inline;filename=wards.kml");
+                response.setContentType("application/vnd.google-earth.kml+xml");
+                IOUtils.write(IOUtils.toByteArray(in), out);
+            }
+        }
     }
 
 }
