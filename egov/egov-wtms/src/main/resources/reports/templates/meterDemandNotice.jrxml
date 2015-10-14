@@ -63,7 +63,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="false" pdfFontName="Times-Roman"/>
 				</textElement>
-				<text><![CDATA[Property Asseesment Numbr:]]></text>
+				<text><![CDATA[Property Assessment  Number:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="131" y="0" width="187" height="33" uuid="726950ec-ebf3-4345-be96-aad0d6a62e61"/>
