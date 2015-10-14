@@ -52,8 +52,6 @@
 	jQuery.noConflict();
 	jQuery("#loadingMask").remove();
 	function loadOnStartUp() {
-		document.getElementById("saleDetail").className = "hiddentext";
-		document.getElementById("saleDetail").readOnly = true;
 		enableBlock();
 		try {
 			jQuery(".datepicker").datepicker({
@@ -196,11 +194,11 @@
 								id="transRsnId" list="dropdownData.MutationReason" listKey="id"
 								listValue="mutationName" headerKey="-1"
 								headerValue="%{getText('default.select')}"
-								value="%{mutationReason.id}" onchange="enableSaleDtls(this);" />
+								value="%{mutationReason.id}" onchange="enableBlock();" />
 						</td>
-						<td class="greybox"><s:text name="saleDetls" /> <span
+						<td class="greybox reasonRow"><s:text name="saleDetls" /> <span
 							class="mandatory1">*</span> :</td>
-						<td class="greybox"><s:textarea cols="30" rows="2"
+						<td class="greybox reasonRow"><s:textarea cols="30" rows="2"
 								name="saleDetail" id="saleDetail"
 								onchange="return validateMaxLength(this);"
 								onblur="trim(this,this.value);"></s:textarea></td>
@@ -277,12 +275,10 @@
 			if (obj != null || obj != "undefined") {
 				var selectedValue = obj.options[obj.selectedIndex].text;
 				if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SALES_DEED}" />') {
-					document.getElementById("saleDetail").readOnly = false;
-					document.getElementById("saleDetail").className = "";
+					jQuery("#saleDetail").val("");
+					jQuery("td.reasonRow").show();
 				} else {
-					document.getElementById("saleDetail").value = "";
-					document.getElementById("saleDetail").className = "hiddentext";
-					document.getElementById("saleDetail").readOnly = true;
+					jQuery("td.reasonRow").hide();
 				}
 			}
 		}
