@@ -60,6 +60,7 @@ import javax.validation.constraints.Pattern;
 
 import org.egov.adtax.entity.enums.AgencyStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
@@ -68,6 +69,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "EGADTAX_AGENCY")
 @SequenceGenerator(name = Agency.SEQ_AGENCY, sequenceName = Agency.SEQ_AGENCY, allocationSize = 1)
+@Unique(id = "id", tableName = "EGADTAX_AGENCY", columnName = { "code", "name" }, fields = {
+        "code", "name"}, enableDfltMsg = true, message = "Already Exist.Value should be unique.")
 public class Agency extends AbstractAuditable {
     private static final long serialVersionUID = 4958014584254475596L;
     public static final String SEQ_AGENCY = "SEQ_EGADTAX_AGENCY";

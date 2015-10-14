@@ -91,7 +91,7 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.mobileNo"/><span class="mandatory"></span></label>
                         <div class="col-sm-3 add-margin">
-                            <form:input type="text" cssClass="form-control patternvalidation" data-pattern="number" path="mobileNumber" maxlength="10" id="mobilenumber" required="required"/>
+                            <form:input type="text" cssClass="form-control patternvalidation" data-pattern="number" data-inputmask="'mask': '9999999999'"  placeholder="Mobile Number"  path="mobileNumber" maxlength="10" id="mobilenumber" required="required"/>
                             <form:errors path="mobileNumber" cssClass="error-msg"/>
                         </div>
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.emailid"/></label>
