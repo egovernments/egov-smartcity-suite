@@ -38,6 +38,8 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -83,7 +85,13 @@ public class PropertyMutation extends StateAware {
 
     @Override
     public String getStateDetails() {
-        return "Transfer Property"+ " - " +this.basicProperty.getUpicNo();
+        StringBuffer stateDetails = new StringBuffer("");
+        stateDetails.append(getBasicProperty().getUpicNo()).append(", ")
+                .append(PROPERTY_TYPE_CATEGORIES.get(getBasicProperty().getProperty().getPropertyDetail().getCategoryType()))
+                .append(", ")
+                .append(getBasicProperty().getPropertyID().getLocality().getName()).append(", ")
+                .append(getPrimaryTransferee().getName());
+        return stateDetails.toString();
     }
 
     public PropertyMutationMaster getMutationReason() {

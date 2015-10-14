@@ -247,8 +247,12 @@
 						<td class="greybox"><span class="bold"><s:property
 									value="%{mutationReason.mutationName}" /></span></td>
 						<td class="greybox"><s:text name="saleDetls" /> :</td>
-						<td class="greybox"><span class="bold"><s:property
-									value="%{saleDetail}" /></span></td>
+						<td class="greybox">
+							<span class="bold">
+								<s:if test="%{saleDetail == ''}">N/A</s:if>
+								<s:else><s:property value="%{saleDetail}" /></s:else>
+							</span>
+						</td>
 					</tr>
 					<tr>
 						<td class="greybox2">&nbsp;</td>

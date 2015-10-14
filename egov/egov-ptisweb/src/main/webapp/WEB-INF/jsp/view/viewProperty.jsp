@@ -113,7 +113,7 @@
 			<div class="col-xs-3 add-margin view-content">
 				<s:property
 					default="N/A"
-					value="%{basicProperty.property.propertyDetail.categoryType}" />
+					value="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_TYPE_CATEGORIES.get(basicProperty.property.propertyDetail.categoryType)}" />
 			</div>
 			<div class="col-xs-3 add-margin">
 				<s:text name="apartcomplex.name"></s:text>

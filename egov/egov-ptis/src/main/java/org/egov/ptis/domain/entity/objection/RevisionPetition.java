@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.objection;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -51,7 +53,6 @@ import javax.validation.Valid;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -107,10 +108,15 @@ public class RevisionPetition extends StateAware implements Auditable{
 	private Boolean generateSpecialNotice;
 	public static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 
-	@Override
-	public String getStateDetails() {
-		return getBasicProperty().getUpicNo();
-	}
+        @Override
+        public String getStateDetails() {
+            StringBuffer stateDetails = new StringBuffer("");
+            stateDetails.append(getBasicProperty().getUpicNo()).append(", ")
+                    .append(PROPERTY_TYPE_CATEGORIES.get(getBasicProperty().getProperty().getPropertyDetail().getCategoryType())).append(", ")
+                    .append(getBasicProperty().getPropertyID().getLocality().getName()).append(", ")
+                    .append(getBasicProperty().getPrimaryOwner().getName());
+            return stateDetails.toString();
+        }
 
 	public EgwStatus getEgwStatus() {
 		return egwStatus;

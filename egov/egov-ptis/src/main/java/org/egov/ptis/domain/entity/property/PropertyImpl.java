@@ -45,6 +45,7 @@
 package org.egov.ptis.domain.entity.property;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
@@ -532,7 +533,7 @@ public class PropertyImpl extends StateAware implements Property {
             final String applicationNo = getApplicationNo() != null && !getApplicationNo().isEmpty() ? getApplicationNo()
                     : "";
             stateDetails.append(upicNo.isEmpty() ? applicationNo : upicNo).append(", ")
-                    .append(getPropertyDetail().getCategoryType()).append(", ")
+                    .append(PROPERTY_TYPE_CATEGORIES.get(getPropertyDetail().getCategoryType())).append(", ")
                     .append(getBasicProperty().getPropertyID().getLocality().getName()).append(", ")
                     .append(getBasicProperty().getPrimaryOwner().getName());
             return stateDetails.toString();

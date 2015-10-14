@@ -313,6 +313,18 @@ public interface PropertyTaxConstants {
         }
     };
 
+    public static final Map<String, String> PROPERTY_TYPE_CATEGORIES = new HashMap<String, String>() {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
+
+        {
+            putAll(VAC_LAND_PROPERTY_TYPE_CATEGORY);
+            putAll(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
+        }
+    };
+    
     public static final TreeMap<String, String> DEVIATION_PERCENTAGE = new TreeMap<String, String>() {
         /**
          *

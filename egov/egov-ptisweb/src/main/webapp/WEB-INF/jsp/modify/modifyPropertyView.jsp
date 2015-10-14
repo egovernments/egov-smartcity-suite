@@ -195,7 +195,7 @@
 		</td>
 		<td class="greybox" width="25%"><s:text name="property.type"></s:text></td>
 		<td class="greybox">
-			<span class="bold"><s:property value="%{propertyDetail.categoryType}" default="N/A"/></span>
+			<span class="bold"><s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_TYPE_CATEGORIES.get(propertyDetail.categoryType)}" default="N/A"/></span>
 		</td>
 	</tr>
 	<tr id="apartmentRow">
