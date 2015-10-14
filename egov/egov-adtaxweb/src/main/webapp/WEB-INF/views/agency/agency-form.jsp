@@ -57,7 +57,8 @@
                            <div class="col-sm-3 add-margin">
                            		<c:choose>
 									<c:when test="${empty agency.id}">
-                               			<form:input type="text" cssClass="form-control" path="code" id="agencycode" required="required"/>
+                               			<form:input type="text" cssClass="form-control patternvalidation" 
+                        	  data-pattern="alphanumerichyphenbackslash"  maxlength="15" path="code" id="agencycode" required="required"/>
                                			<form:errors path="code" cssClass="error-msg" />
                                		</c:when>
                                		<c:otherwise>
@@ -68,19 +69,21 @@
                            </div>
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.agency.name"/><span class="mandatory"></span></label>
                            <div class="col-sm-3 add-margin">
-                               <form:input type="text" cssClass="form-control" path="name" id='agencyname' required="required"/>
+                               <form:input type="text" cssClass="form-control patternvalidation" 
+                        	  data-pattern="alphanumericwithspace" path="name"  maxlength="32" id='agencyname' required="required"/>
                                <form:errors path="name" cssClass="error-msg"/>
                            </div>
                     </div>
 	                <div class="form-group">
 	                	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.agency.ssid"/></label>
                        <div class="col-sm-3 add-margin">
-                           <form:input type="text" cssClass="form-control" path="ssId" id="ssid"/>
+                           <form:input type="text" cssClass="form-control patternvalidation" 
+                        	  data-pattern="alphanumerichyphenbackslash" path="ssId" id="ssid" maxlength="15"/>
                            <form:errors path="ssId" cssClass="error-msg"/>
                        </div>
 	                   <label class="col-sm-2 control-label text-right"><spring:message code="lbl.agency.deposit"/><span class="mandatory"></span></label>
                        <div class="col-sm-3 add-margin">
-                           <form:input class="form-control patternvalidation" data-pattern="number" 
+                           <form:input class="form-control patternvalidation" data-pattern="decimalvalue" 
                            		maxlength="10" id="depositAmount" path="depositAmount" required="required"/>
                            <form:errors path="depositAmount" cssClass="error-msg"/>
                        </div>
@@ -88,20 +91,20 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.mobileNo"/><span class="mandatory"></span></label>
                         <div class="col-sm-3 add-margin">
-                            <form:input type="text" cssClass="form-control" path="mobileNumber" id="mobilenumber" required="required"/>
+                            <form:input type="text" cssClass="form-control patternvalidation" data-pattern="number" path="mobileNumber" maxlength="10" id="mobilenumber" required="required"/>
                             <form:errors path="mobileNumber" cssClass="error-msg"/>
                         </div>
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.emailid"/></label>
                         <div class="col-sm-3 add-margin">
-                            <form:input type="text" cssClass="form-control" path="emailId" id="emailid"/>
+                            <form:input type="text" cssClass="form-control patternvalidation"   data-pattern="regexp_alphabetspecialcharacters"  path="emailId" id="emailid"  maxlength="32"/>
                             <form:errors path="emailId" cssClass="error-msg"/>
                         </div>
                     </div>
                    	<div class="form-group">
                     	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.address"/></label>
                         <div class="col-sm-3 add-margin">
-                        	<form:textarea path="address" id="agencyaddress" cssClass="form-control is_valid_alphabet" 
-                        	cssErrorClass="form-control error" maxlength="200"/>
+                        	<form:textarea path="address" id="agencyaddress" cssClass="form-control patternvalidation" 
+                        	  data-pattern="alphanumericwithspacehyphenunderscore" cssErrorClass="form-control error" maxlength="250"/>
 							<form:errors path="address" cssClass="error-msg"/>
                         </div>
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.status"/><span class="mandatory"></span></label>
