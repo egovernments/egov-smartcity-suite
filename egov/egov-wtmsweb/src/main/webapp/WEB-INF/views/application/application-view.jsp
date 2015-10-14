@@ -47,6 +47,7 @@
 <form:form  id="waterConnectionSuccess" method ="get" class="form-horizontal form-groups-bordered" modelAttribute="waterConnectionDetails" >				
 <div class="page-container" id="page-container">
 	<input type="hidden" id="mode" name="hidden" value="${mode}"/>
+	<input type="hidden" id="applicationTypeCode"  value="<c:out value="${waterConnectionDetails.applicationType.code}" />" />
 	<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">

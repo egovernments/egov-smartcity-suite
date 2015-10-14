@@ -402,14 +402,18 @@ public class ConnectionDemandService {
         return getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId()).list();
     }
 
-    public String generateBill(final String consumerCode) {
+    public String generateBill(final String consumerCode,String applicationTypeCode)  {
         String collectXML = "";
         final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
         String currentInstallmentYear = null;
         final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context
                 .getBean("waterConnectionBillable");
-       final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCode(consumerCode);
+        final WaterConnectionDetails waterConnectionDetails; 
+        if (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE))
+            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
+                    consumerCode,ConnectionStatus.ACTIVE);
+            else
+                waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode);
        if (ConnectionStatus.INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
             currentInstallmentYear = formatYear.format(getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
                     WaterTaxConstants.YEARLY, new Date()).getInstallmentYear());

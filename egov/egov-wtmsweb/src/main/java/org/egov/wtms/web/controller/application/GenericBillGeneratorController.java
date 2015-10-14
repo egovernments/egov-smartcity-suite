@@ -47,14 +47,17 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -95,12 +98,15 @@ public class GenericBillGeneratorController {
         return new ModelAndView("application/collecttax-view", "waterConnectionDetails", waterConnectionDetails);
     }
 
-    @RequestMapping(value = "/generatebill/{applicationCode}", method = POST)
+     @RequestMapping(value = "/generatebill/{applicationCode}", method = POST)
     public String payTax(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
-            final RedirectAttributes redirectAttributes, @PathVariable final String applicationCode, final Model model) {
-        waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
-                applicationCode,ConnectionStatus.ACTIVE);//findByApplicationNumberOrConsumerCode(applicationCode);
-        model.addAttribute("collectxml", connectionDemandService.generateBill(waterConnectionDetails.getApplicationNumber()));
+            final RedirectAttributes redirectAttributes, @PathVariable final String applicationCode,@RequestParam final String applicationTypeCode, final Model model) {
+        if (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE))
+            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
+                applicationCode,ConnectionStatus.ACTIVE);
+        else
+            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationCode);
+        model.addAttribute("collectxml", connectionDemandService.generateBill(applicationCode,applicationTypeCode));
         return "collecttax-redirection";
     }
 
