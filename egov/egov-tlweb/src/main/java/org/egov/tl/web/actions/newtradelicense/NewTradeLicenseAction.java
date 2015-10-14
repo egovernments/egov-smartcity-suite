@@ -47,6 +47,7 @@ import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -62,6 +63,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
@@ -128,17 +130,17 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
 
     @Override
     @SkipValidation
+    @ValidationErrorPage(value="new")
     @Action(value = "/newtradelicense/newTradeLicense-approve")
     public String approve() {
         tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", getSession().get("model.id"));
         if (BUTTONAPPROVE.equals(workFlowAction)) {
             license().setCreationAndExpiryDate();
-            if (!license().isPaid())
+            /*if (!license().isPaid())
                 throw new ValidationException("applicationNumber", "license.fee.notcollected", license().getApplicationNumber());
-            if (license().getTempLicenseNumber() == null) {
+            */if (license().getTempLicenseNumber() == null) {
                 final String nextRunningLicenseNumber = service().getNextRunningLicenseNumber(
-                        "egtl_" + license().getFeeTypeStr()
-                        + "_license_number");
+                        "egtl_license_number");
                 license().generateLicenseNumber(nextRunningLicenseNumber);
             }
             final LicenseStatus activeStatus = (LicenseStatus) persistenceService
@@ -152,27 +154,32 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @ValidationErrorPage(Constants.NEW)
     @Action(value = "/newtradelicense/newTradeLicense-create")
     public String create() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Trade license Creation Parameters:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
-        if (tradeLicense.getInstalledMotorList() != null) {
-            final Iterator<MotorDetails> motorDetails = tradeLicense.getInstalledMotorList().iterator();
-            while (motorDetails.hasNext()) {
-                final MotorDetails installedMotor = motorDetails.next();
-                if (installedMotor != null && installedMotor.getHp() != null && installedMotor.getNoOfMachines() != null
-                        && installedMotor.getHp().compareTo(BigDecimal.ZERO) != 0
-                        && installedMotor.getNoOfMachines().compareTo(Long.valueOf("0")) != 0)
-                    installedMotor.setLicense(tradeLicense);
-                else
-                    motorDetails.remove();
-            }
+        try {
+			if (LOGGER.isDebugEnabled())
+			    LOGGER.debug("Trade license Creation Parameters:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
+			if (tradeLicense.getInstalledMotorList() != null) {
+			    final Iterator<MotorDetails> motorDetails = tradeLicense.getInstalledMotorList().iterator();
+			    while (motorDetails.hasNext()) {
+			        final MotorDetails installedMotor = motorDetails.next();
+			        if (installedMotor != null && installedMotor.getHp() != null && installedMotor.getNoOfMachines() != null
+			                && installedMotor.getHp().compareTo(BigDecimal.ZERO) != 0
+			                && installedMotor.getNoOfMachines().compareTo(Long.valueOf("0")) != 0)
+			            installedMotor.setLicense(tradeLicense);
+			        else
+			            motorDetails.remove();
+			    }
 
-        }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug(" Create Trade License Application Name of Establishment :"
-                + tradeLicense.getNameOfEstablishment());
-        LicenseAppType newAppType = (LicenseAppType)persistenceService.find("from  LicenseAppType where name='New' ");
-        tradeLicense.setLicenseAppType(newAppType);
-        return super.create(tradeLicense); 
+			}
+			if (LOGGER.isDebugEnabled())
+			    LOGGER.debug(" Create Trade License Application Name of Establishment :"
+			        + tradeLicense.getNameOfEstablishment());
+			LicenseAppType newAppType = (LicenseAppType)persistenceService.find("from  LicenseAppType where name='New' ");
+			tradeLicense.setLicenseAppType(newAppType);
+			return super.create(tradeLicense);
+		} catch (RuntimeException e) {
+			ValidationError vr=new ValidationError(e.getMessage(), e.getMessage());
+			throw new ValidationException(Arrays.asList(vr) );
+		} 
     }
 
     @Override

@@ -128,7 +128,7 @@ public class TradeLicense extends License {
         final StringBuilder licenseNumber = new StringBuilder(32);
         final Calendar cal = Calendar.getInstance();
         cal.setTime(super.getApplicationDate());
-        licenseNumber.append(getFeeTypeStr()).append(Constants.BACKSLASH).append(runningNumber).append(Constants.BACKSLASH)
+        licenseNumber.append("TL").append(Constants.BACKSLASH).append(runningNumber).append(Constants.BACKSLASH)
                 .append(Constants.monthName[cal.get(Calendar.MONTH)]).append("-").append(cal.get(Calendar.YEAR));
         setLicenseNumber(licenseNumber.toString());
         LOGGER.debug("Generated License Number =" + licenseNumber.toString());
