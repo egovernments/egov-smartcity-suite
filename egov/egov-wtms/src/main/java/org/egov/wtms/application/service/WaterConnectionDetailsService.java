@@ -759,8 +759,9 @@ public class WaterConnectionDetailsService {
     }
     public BigDecimal getTotalAmount(final WaterConnectionDetails waterConnectionDetails) {
         final EgDemand currentDemand = waterConnectionDetails.getDemand();
-        final List instVsAmt = connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand);
         BigDecimal balance = BigDecimal.ZERO;
+        if(currentDemand!=null){
+        final List instVsAmt = connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand);
         for (final Object object : instVsAmt) {
             final Object[] ddObject = (Object[]) object;
             final BigDecimal dmdAmt = (BigDecimal) ddObject[2];
@@ -769,6 +770,7 @@ public class WaterConnectionDetailsService {
                 collAmt = new BigDecimal((Double) ddObject[3]);
             balance = balance.add(dmdAmt.subtract(collAmt));
            }
+        }
         return balance;
     }
 }
