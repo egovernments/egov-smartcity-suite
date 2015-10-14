@@ -110,7 +110,7 @@ public class BillVoucherAction extends BaseVoucherAction {
                 }
         }
 @Action(value="/voucher/billVoucher-newForm")
-        public String newform(){
+        public String newForm(){
                 if(false/*getValidActions("designation").size()==0*/)//Phoenix
                 {
                         addActionError(getText("pjv.designation.notmatching"));
@@ -156,7 +156,7 @@ public class BillVoucherAction extends BaseVoucherAction {
                         } catch (ParseException e) {
                                 throw new ValidationException(Arrays.asList(new ValidationError("not a valid date", "not a valid date")));
                         }
-        return newform();
+        return newForm();
     }
         public List<Action> getValidActions(String purpose) {
         	List<Action> validButtons = new ArrayList<Action>();
