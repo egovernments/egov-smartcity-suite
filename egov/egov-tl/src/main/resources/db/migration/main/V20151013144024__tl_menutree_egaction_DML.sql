@@ -174,21 +174,21 @@ INSERT INTO eg_roleaction (roleid, actionid) values ((select id from eg_role whe
 INSERT INTO eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'TLCreator'),(select id from eg_action where name = 'editTradeLicense-edit'));
 INSERT INTO eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'TLApprover'),(select id from eg_action where name = 'NewTradeLicense-approve'));
 INSERT INTO eg_roleaction (actionid, roleid) values ((select id from eg_action where name = 'Create New License'), (select id from eg_role where name = 'TLCreator'));
-
+/*
 INSERT INTO eg_roleaction (actionid, roleid) values ((select id from eg_action where name = 'AjaxDesignationDropdown'), (select id from eg_role where name = 'TLCreator'));
 INSERT INTO eg_roleaction (actionid, roleid) values ((select id from eg_action where name = 'AjaxApproverDropdown'), (select id from eg_role where name = 'TLCreator'));
-
+*/
 INSERT INTO eg_roleaction (actionid, roleid) values ((select id from eg_action where name = 'SearchTradeLicense'), (select id from eg_role where name = 'TLCreator'));
 INSERT INTO eg_roleaction (actionid, roleid) values ((select id from eg_action where name = 'SearchTradeLicense'), (select id from eg_role where name = 'TLApprover'));
 INSERT INTO eg_roleaction (actionid, roleid) values ((select id from eg_action where name = 'searchTrade-search'), (select id from eg_role where name = 'TLCreator'));
 INSERT INTO eg_roleaction (actionid, roleid) values ((select id from eg_action where name = 'searchTrade-search'), (select id from eg_role where name = 'TLApprover'));
 INSERT INTO eg_roleaction (actionid, roleid) values ((select id from eg_action where name = 'viewTradeLicense-view'), (select id from eg_role where name = 'TLCreator'));
 INSERT INTO eg_roleaction (actionid, roleid) values ((select id from eg_action where name = 'viewTradeLicense-view'), (select id from eg_role where name = 'TLApprover'));
-
+/*
 INSERT INTO eg_roleaction (actionid, roleid) values ((select id from eg_action where name = 'AjaxDesignationDropdown'), (select id from eg_role where name = 'TLApprover'));
 
 INSERT INTO eg_roleaction (actionid, roleid) values ((select id from eg_action where name = 'AjaxApproverDropdown'), (select id from eg_role where name = 'TLApprover'));
-
+*/
 INSERT INTO eg_roleaction (actionid, roleid) values ((select id from eg_action where name = 'New Trade License Before Renew'), (select id from eg_role where name = 'TLCreator'));
 insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'TLCreator'), id from eg_action where name = 'NewTradeLicense-renewal';
 INSERT INTO eg_roleaction (actionid, roleid) values ((select id from eg_action where name = 'View Trade License Duplicate Certificate'), (select id from eg_role where name = 'TLCreator'));
@@ -255,4 +255,3 @@ insert into eg_roleaction (roleid, actionid) select (select id from eg_role wher
 Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'Cancel License Submit','/cancellation/cancelLicense-confirmCancellation.action',null,(select id from EG_MODULE where name = 'Trade License Transactions'),5,'Cancel License Submit','f','tl',0,1,now(),1,now(),(select id from eg_module  where name = 'Trade License'));
 
 insert into eg_roleaction (roleid, actionid) select (select id from eg_role where name = 'TLApprover'), id from eg_action where name='Cancel License Submit' and contextroot = 'tl';
-
