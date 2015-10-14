@@ -61,7 +61,7 @@
 	</script>
 </head>
 <body>
-	<div id="subCategory_error" class="errorstyle" style="display:none;"></div> 
+	<div id="subCategory_error" class="error-msg" style="display:none;"></div> 
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel-body">

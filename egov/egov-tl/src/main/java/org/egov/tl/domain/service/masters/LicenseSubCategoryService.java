@@ -42,6 +42,7 @@ package org.egov.tl.domain.service.masters;
 import java.util.List;
 
 import org.egov.infstr.services.PersistenceService;
+import org.egov.tl.domain.entity.LicenseCategory;
 import org.egov.tl.domain.entity.LicenseSubCategory;
 import org.springframework.stereotype.Service;
 
@@ -59,6 +60,25 @@ public class LicenseSubCategoryService extends PersistenceService<LicenseSubCate
      */
     public List<LicenseSubCategory> findAllSubCategoryByCategory(final Long categoryId) {
         return findAllBy("From org.egov.tl.domain.entity.LicenseSubCategory where category.id=?", categoryId);
+    }
+    
+    
+    /**
+     * @Description returns subcategory object that matches param name
+     * @param name
+     * @return
+     */
+    public LicenseSubCategory findSubCategoryByName(final String name) {
+        return this.find("From LicenseSubCategory where name=?", name);
+    }
+
+    /**
+     * @Description returns subcategory object that matches param code
+     * @param code
+     * @return
+     */
+    public LicenseSubCategory findSubCategoryByCode(final String code) {
+        return this.find("From LicenseSubCategory where code=?", code);
     }
 
 }

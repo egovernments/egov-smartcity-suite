@@ -6,8 +6,10 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.tl.domain.entity.LicenseCategory;
+import org.egov.tl.domain.entity.LicenseSubCategory;
 import org.egov.tl.domain.entity.UnitOfMeasurement;
 import org.egov.tl.domain.service.masters.LicenseCategoryService;
+import org.egov.tl.domain.service.masters.LicenseSubCategoryService;
 import org.egov.tl.domain.service.masters.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,6 +27,7 @@ public class AjaxMasterAction extends BaseFormAction {
     public static final String UNIQUECHECK = "uniqueCheck";
     private static final String UOM_MASTER = "uomMaster";
     private static final String CATEGORY_MASTER = "categoryMaster";
+    private static final String SUB_CATEGORY_MASTER = "subcategoryMaster";
     private static final String NAME = "name";
     private static final String CODE = "code";
     private Boolean isUnique;
@@ -34,6 +37,8 @@ public class AjaxMasterAction extends BaseFormAction {
     private UnitOfMeasurementService unitOfMeasurementService;
     @Autowired
     private LicenseCategoryService licenseCategoryService;
+    @Autowired
+    private LicenseSubCategoryService licenseSubCategoryService;
 
     @Override
     public Object getModel()
@@ -66,8 +71,19 @@ public class AjaxMasterAction extends BaseFormAction {
                     isUnique = Boolean.FALSE;
                 } else
                     isUnique = Boolean.TRUE;
+            } // Invoked from Category Master Screen - name unique check
+            else if (screenType != null && screenType.equalsIgnoreCase(SUB_CATEGORY_MASTER)) {
+                paramType = NAME;
+                final LicenseSubCategory licenseSubCategory = licenseSubCategoryService.findSubCategoryByName(name);
+                if (licenseSubCategory != null) {
+                    errorMsg = getText("lsc.validate.duplicateName", new String[] { name });
+                    isUnique = Boolean.FALSE;
+                } else
+                    isUnique = Boolean.TRUE;
             }
-        } else if (code != null && !code.isEmpty())
+            
+            
+        } else if (code != null && !code.isEmpty()) {
             // Invoked from UOM Master Screen - code unique check
             if (screenType != null && screenType.equalsIgnoreCase(UOM_MASTER)) {
                 paramType = CODE;
@@ -86,7 +102,17 @@ public class AjaxMasterAction extends BaseFormAction {
                     isUnique = Boolean.FALSE;
                 } else
                     isUnique = Boolean.TRUE;
+            } // Invoked from Category Master Screen - code unique check
+            else if (screenType != null && screenType.equalsIgnoreCase(SUB_CATEGORY_MASTER)) {
+                paramType = CODE;
+                final LicenseSubCategory licenseSubCategory = licenseSubCategoryService.findSubCategoryByCode(code);
+                if (licenseSubCategory != null) {
+                    errorMsg = getText("lsc.validate.duplicateCode", new String[] { code });
+                    isUnique = Boolean.FALSE;
+                } else
+                    isUnique = Boolean.TRUE;
             }
+        } 
         return UNIQUECHECK;
     }
 

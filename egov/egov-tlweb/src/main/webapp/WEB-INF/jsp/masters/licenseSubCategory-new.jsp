@@ -59,11 +59,21 @@
 	<script>
 
 	function bodyOnLoad(){
-		if(dom.get("userMode").value=='view'){
+		if(dom.get("userMode").value=='view'  || dom.get("userMode").value=='success'){
 			 dom.get("code").disabled=true;
 			 dom.get("name").disabled=true;
 			 dom.get("categoryId").disabled=true;
 		}
+	}
+
+
+	function reload(){
+		dom.get("code").value="";
+		dom.get("name").value="";
+		dom.get("categoryId").value="-1";
+		document.licenseSubCategoryForm.action='${pageContext.request.contextPath}/masters/licenseSubCategory-newform.action';
+    	document.licenseSubCategoryForm.submit();
+		
 	}
 
 	function validateFormAndSubmit(){
@@ -86,6 +96,39 @@
 		    	document.licenseSubCategoryForm.submit();
 		 	}
 	}
+
+	function validateData(obj,param){
+		clearMessage('subcategory_error');
+		var screenType="subcategoryMaster"; 
+		var name="";
+		var code="";
+		if(param=="name")
+			name=obj.value;
+		else if(param=="code")
+			code=obj.value;
+		makeJSONCall(["errorMsg","isUnique","paramType"],'${pageContext.request.contextPath}/masters/ajaxMaster-validateActions.action',
+		    	{name:name,code:code,screenType:screenType},subcategorySuccessHandler,subcategoryFailureHandler);
+	}
+
+	subcategoryFailureHandler=function(){
+		   showMessage('subcategory_error','Unable to perform this action');
+		   return false;
+	}
+
+	subcategorySuccessHandler = function(req,res){
+	    var results=res.results;
+	    if(results[0].isUnique=="false"){
+		    if(!(results[0].errorMsg=="" || results[0].errorMsg==null)){
+		    	showMessage('subcategory_error',results[0].errorMsg);
+		    	if(results[0].paramType=="name")
+			    	dom.get("name").value="";
+		    	else if(results[0].paramType=="code")
+			    	dom.get("code").value="";
+	 			return false;
+	     	} 
+	    }
+	 }
+	
 
 	</script>
 </head>
@@ -144,13 +187,13 @@
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseSubCategory.name.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="name"	name="name" value="%{name}" cssClass="form-control"/>
+								<s:textfield id="name"	name="name" value="%{name}" pattern="[A-Za-z_- ]+" title="characters and - _ space are only allowed" maxLength="32" cssClass="form-control"/>
 							</div>
 							
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseSubCategory.code.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="code"	name="code" value="%{code}" cssClass="form-control"/>
+								<s:textfield id="code"	name="code" value="%{code}" pattern="[A-Za-z]+" title="only characters are only allowed" maxLength="5" cssClass="form-control"/>
 							</div>
 						</div>
 						
@@ -161,9 +204,11 @@
 
 			<div class="row">
 				<div class="text-center">
-					<s:if test="%{userMode!='view'}">
+					<s:if test="%{userMode!='view' && userMode!='success'}">
 						<button type="button" id="btnsave" class="btn btn-primary" onclick="return validateFormAndSubmit();">
 							Save</button>
+						<button type="button" id="btnReset" type="reset" class="btn btn-default" onclick="reload();">
+						Reset</button>
 					</s:if>
 					<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
 						Close</button>

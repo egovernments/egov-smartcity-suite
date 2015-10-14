@@ -175,13 +175,13 @@
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="uommaster.name.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="name"	name="name" class="form-control" value="%{name}" onchange="return validateData(this,'name')"/>
+								<s:textfield id="name"	name="name" class="form-control" pattern="[A-Za-z_- ]+" title="characters and - _ space are only allowed" maxLength="32" value="%{name}" onchange="return validateData(this,'name')"/>
 							</div>
 							
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="uommaster.code.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="code"	name="code" class="form-control" value="%{code}" onchange="return validateData(this,'code')"/>
+								<s:textfield id="code"	name="code" class="form-control" value="%{code}" onchange="return validateData(this,'code')"  pattern="[A-Za-z]+" title="only characters are only allowed" maxLength="5"/>
 							</div>
 						</div>
 						
@@ -201,7 +201,7 @@
 				<div class="text-center">
 					<s:if test="%{userMode!='view' && userMode!='success'}">
 						<button type="button" id="btnsave" class="btn btn-primary" onclick="return validateFormAndSubmit();">
-							Submit</button>
+							Save</button>
 						<button type="button" id="btnReset" type="reset" class="btn btn-default" onclick="reload();">
 						Reset</button>
 					</s:if>

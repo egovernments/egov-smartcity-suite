@@ -94,7 +94,6 @@
 		var screenType="categoryMaster"; 
 		var name="";
 		var code="";
-		alert(obj.value);
 		if(param=="name")
 			name=obj.value;
 		else if(param=="code")

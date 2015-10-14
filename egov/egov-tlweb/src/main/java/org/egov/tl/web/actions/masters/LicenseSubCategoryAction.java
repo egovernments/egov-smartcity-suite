@@ -140,8 +140,11 @@ public class LicenseSubCategoryAction extends BaseFormAction {
             LOGGER.error("Exception found while persisting License category: " + valEx.getErrors());
             throw new ValidationException(valEx.getErrors());
         }
-        addActionMessage("\'" + subCategory.getCode() + "\' " + getText("license.subcategory.save.success"));
-        id = subCategory.getId();
+        if (userMode.equalsIgnoreCase(NEW))
+            addActionMessage("\'" + subCategory.getCode() + "\' " + getText("license.subcategory.save.success"));
+        else if (userMode.equalsIgnoreCase(EDIT))
+            addActionMessage("\'" + subCategory.getCode() + "\' " + getText("license.subcategory.edit.success"));
+        userMode = SUCCESS;
         return NEW;
     }
 
