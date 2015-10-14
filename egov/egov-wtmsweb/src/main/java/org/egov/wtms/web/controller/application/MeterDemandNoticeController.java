@@ -221,7 +221,7 @@ public class MeterDemandNoticeController {
                 formatter.format(waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
         reportParams.put("noofunitsconsume", waterConnectionDetails.getMeterConnection().get(0).getCurrentReading()
                 - meterReadingpriviousObj.getCurrentReading());
-        reportParams.put("totalBilltoCollect", connectionDemandService.getTotalAmount(waterConnectionDetails));
+        reportParams.put("totalBilltoCollect", waterConnectionDetailsService.getTotalAmount(waterConnectionDetails));
         reportParams.put("currentMonthCharges", getCurrentMonthDemandAmount(waterConnectionDetails,waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
         reportParams.put("totalDueAmount", getTotalDue(waterConnectionDetails,waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
         
@@ -232,7 +232,7 @@ public class MeterDemandNoticeController {
 
     public BigDecimal getTotalDue(final WaterConnectionDetails waterConnectionDetails,Date givenDate) {
         BigDecimal balance = BigDecimal.ZERO;
-        balance = connectionDemandService.getTotalAmount(waterConnectionDetails);
+        balance = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
         final BigDecimal demnadDetCurrentamount = getCurrentMonthDemandAmount(waterConnectionDetails, givenDate);
         balance = balance.subtract(demnadDetCurrentamount);
         return balance;

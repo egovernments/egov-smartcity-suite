@@ -60,6 +60,7 @@
 				<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}">
 				<input type="hidden" id="currentUser" value="${currentUser}" name="currentUser"/>  
 				<form:hidden id="mode" path=""  value="${mode}"/>
+				<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>
 				<form:hidden id="documentName" path="" value="${documentName}"/>
 				<form:hidden path="applicationType" id="applicationType.id" value="${changeOfUse.applicationType.id}"/>
 				<form:hidden path="connectionStatus" id="connectionStatus" value="${changeOfUse.connectionStatus}"/>

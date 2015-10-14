@@ -57,6 +57,7 @@
 			<form:hidden path="applicationType" id="applicationType.id" value="${waterConnectionDetails.applicationType.id}"/>
 			<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}">
 			<input id="applicationCode" type="hidden" value="<c:out value="${waterConnectionDetails.applicationNumber}" />" />  						
+				<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 				<jsp:include page="connectiondetails-view.jsp"></jsp:include>
 				

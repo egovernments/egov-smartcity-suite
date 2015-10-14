@@ -734,19 +734,6 @@ public class ConnectionDemandService {
         return currrentInstallMentExist;
     }
     
-    public BigDecimal getTotalAmount(final WaterConnectionDetails waterConnectionDetails) {
-        final EgDemand currentDemand = waterConnectionDetails.getDemand();
-        final List instVsAmt = getDmdCollAmtInstallmentWise(currentDemand);
-        BigDecimal balance = BigDecimal.ZERO;
-        for (final Object object : instVsAmt) {
-            final Object[] ddObject = (Object[]) object;
-            final BigDecimal dmdAmt = (BigDecimal) ddObject[2];
-            BigDecimal collAmt = BigDecimal.ZERO;
-            if (ddObject[2] != null)
-                collAmt = new BigDecimal((Double) ddObject[3]);
-            balance = balance.add(dmdAmt.subtract(collAmt));
-           }
-        return balance;
-    }
+   
 
 }

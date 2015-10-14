@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -176,7 +177,8 @@ public class UpdateConnectionController extends GenericConnectionController {
             waterConnectionDetails.getConnection().setMeterSerialNumber("");
         }
         appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
-
+        BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
+        model.addAttribute("waterTaxDueforParent",waterTaxDueforParent);
         return "newconnection-edit";
     }
 

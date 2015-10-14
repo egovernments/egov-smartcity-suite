@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -122,6 +123,8 @@ public class AdditionalConnectionController extends GenericConnectionController 
         model.addAttribute("mode", "addconnection");
         model.addAttribute("validationMessage",
                 additionalConnectionService.validateAdditionalConnection(parentConnectionDetails));
+        BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(parentConnectionDetails);
+        model.addAttribute("waterTaxDueforParent",waterTaxDueforParent);
         model.addAttribute("typeOfConnection", WaterTaxConstants.ADDNLCONNECTION);
     }
 

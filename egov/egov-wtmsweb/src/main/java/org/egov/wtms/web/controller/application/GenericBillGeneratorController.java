@@ -42,6 +42,8 @@ package org.egov.wtms.web.controller.application;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.math.BigDecimal;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -95,6 +97,8 @@ public class GenericBillGeneratorController {
         model.addAttribute("mode", "waterTaxCollection");
         model.addAttribute("checkOperator", waterTaxUtils.checkCollectionOperatorRole());
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
+        BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
+        model.addAttribute("waterTaxDueforParent",waterTaxDueforParent);
         return new ModelAndView("application/collecttax-view", "waterConnectionDetails", waterConnectionDetails);
     }
 

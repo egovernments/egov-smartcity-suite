@@ -54,6 +54,8 @@
 					<spring:message  code="lbl.basicdetails"/>
 				</div>
 			</div>
+			<form:hidden id="mode" path=""  value="${mode}"/>
+			<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>
 			<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}">
 			<input id="applicationCode" type="hidden" value="<c:out value="${waterConnectionDetails.applicationNumber}" />" />  						
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
@@ -115,6 +117,7 @@
 					
 </form:form>
 <script>
+
 if($('#validationMessage').val()!='')
 	alert($('#validationMessage').val());
 function validate(){

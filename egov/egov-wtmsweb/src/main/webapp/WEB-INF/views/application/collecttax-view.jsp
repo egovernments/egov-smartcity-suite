@@ -48,6 +48,7 @@
 	<div class="col-md-12">
 		<form:form  id="waterConnectionSuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="waterConnectionDetails" >
 		<input type="hidden" id="applicationTypeCode"  value="<c:out value="${waterConnectionDetails.applicationType.code}" />" />
+		<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>  
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
@@ -61,7 +62,7 @@
 	<div class="row text-center">
 		<div class="add-margin">
 			<c:choose>
-				<c:when test="${null!=mode && mode=='waterTaxCollection' && (waterConnectionDetails.demand.baseDemand-waterConnectionDetails.demand.amtCollected)>0}">
+				<c:when test="${null!=mode && mode=='waterTaxCollection' && waterTaxDueforParent >0}">
 					<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
 				</c:when>
 			</c:choose>

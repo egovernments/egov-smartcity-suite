@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,10 +131,8 @@ public class ReconnectionController extends GenericConnectionController {
         model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("typeOfConnection", WaterTaxConstants.RECONNECTIONCONNECTION);
-        /*
-         * model.addAttribute("validationMessage", closerConnectionService.validateChangeOfUseConnection
-         * (waterConnectionDetails));
-         */
+        BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
+        model.addAttribute("waterTaxDueforParent",waterTaxDueforParent);
         return "reconnection-newForm";
     }
 

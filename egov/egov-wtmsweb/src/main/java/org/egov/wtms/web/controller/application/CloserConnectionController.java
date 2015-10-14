@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -147,8 +148,11 @@ public class CloserConnectionController extends GenericConnectionController {
         model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("typeOfConnection", WaterTaxConstants.CLOSINGCONNECTION);
+        model.addAttribute("mode", "closureConnection");
         model.addAttribute("validationMessage",
                 closerConnectionService.validateChangeOfUseConnection(waterConnectionDetails));
+        BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
+        model.addAttribute("waterTaxDueforParent",waterTaxDueforParent);
         return "connection-closeForm";
     }
 

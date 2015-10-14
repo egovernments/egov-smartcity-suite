@@ -106,7 +106,8 @@ public class MeterReadingController {
                         waterConnectionDetails.getConnectionType().name()));
         model.addAttribute("mode", "meterEntry");
         model.addAttribute("meterReadingCurrentObj", new MeterReadingConnectionDetails());
-
+        BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
+        model.addAttribute("waterTaxDueforParent",waterTaxDueforParent);
         return "newconnection-meterEntry";
     }
 

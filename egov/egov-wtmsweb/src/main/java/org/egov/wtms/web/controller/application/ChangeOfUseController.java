@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -222,6 +223,8 @@ public class ChangeOfUseController extends GenericConnectionController {
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("validationMessage",
                 changeOfUseService.validateChangeOfUseConnection(connectionUnderChange));
+        BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(connectionUnderChange);
+        model.addAttribute("waterTaxDueforParent",waterTaxDueforParent);
         model.addAttribute("typeOfConnection", WaterTaxConstants.CHANGEOFUSE);
     }
 

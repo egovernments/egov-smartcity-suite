@@ -30,6 +30,8 @@
  */
 package org.egov.wtms.application.service;
 
+import java.math.BigDecimal;
+
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -51,7 +53,10 @@ public class AdditionalConnectionService {
 
     @Autowired
     private ResourceBundleMessageSource messageSource;
-
+    
+    @Autowired
+    private WaterConnectionDetailsService waterConnectionDetailsService;
+    
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
 
@@ -84,8 +89,8 @@ public class AdditionalConnectionService {
                         assessmentDetails.getPropertyDetails().getTaxDue().toString(),
                         parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "additional" }, null);
         } else if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(ADDCONNALLOWEDIFWTDUE)) {
-            if (parentWaterConnectionDetail.getDemand().getBaseDemand().doubleValue()
-                    - parentWaterConnectionDetail.getDemand().getAmtCollected().doubleValue() > 0)
+           BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(parentWaterConnectionDetail);
+           if ( waterTaxDueforParent.doubleValue() > 0)
                 validationMessage = messageSource
                         .getMessage("err.validate.primary.connection.watertax.due", null, null);
             if (parentWaterConnectionDetail.getConnection().getId() != null)

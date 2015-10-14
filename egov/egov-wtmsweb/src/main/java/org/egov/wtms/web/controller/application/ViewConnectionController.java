@@ -39,6 +39,8 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.math.BigDecimal;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -82,6 +84,8 @@ public class ViewConnectionController {
                 waterConnectionDetailsService.getConnectionTypesMap().get(details.getConnectionType().name()));
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(details));
         model.addAttribute("checkOperator", waterTaxUtils.checkCollectionOperatorRole());
+        BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(details);
+        model.addAttribute("waterTaxDueforParent",waterTaxDueforParent);
         model.addAttribute("mode", "search");
         return "application-view";
     }

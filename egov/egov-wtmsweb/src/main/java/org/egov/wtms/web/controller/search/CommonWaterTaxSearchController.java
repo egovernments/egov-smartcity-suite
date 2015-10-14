@@ -167,9 +167,7 @@ public class CommonWaterTaxSearchController {
                 && applicationType.equals(WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX)) {
             BigDecimal amoutToBeCollected = BigDecimal.ZERO;
             if (null != waterConnectionDetails.getDemand())
-                amoutToBeCollected = waterConnectionDetails.getDemand().getBaseDemand()
-                .subtract(waterConnectionDetails.getDemand().getAmtCollected());
-
+                amoutToBeCollected=waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
             if (!waterConnectionDetails.getLegacy()
                     && (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
                             || waterConnectionDetails.getApplicationType().getCode()

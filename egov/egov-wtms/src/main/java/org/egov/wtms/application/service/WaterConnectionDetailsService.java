@@ -599,7 +599,7 @@ public class WaterConnectionDetailsService {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS);
-        BigDecimal amountTodisplayInIndex=connectionDemandService.getTotalAmount(waterConnectionDetails);
+        BigDecimal amountTodisplayInIndex=getTotalAmount(waterConnectionDetails);
         if (waterConnectionDetails.getLegacy())
             consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails,amountTodisplayInIndex);
     }
@@ -612,7 +612,7 @@ public class WaterConnectionDetailsService {
             LOG.debug(" updating Indexes Started... ");
         BigDecimal amountTodisplayInIndex=BigDecimal.ZERO;
         if(waterConnectionDetails.getConnection().getConsumerCode()!=null){
-         amountTodisplayInIndex=connectionDemandService.getTotalAmount(waterConnectionDetails);
+         amountTodisplayInIndex=getTotalAmount(waterConnectionDetails);
         }
         if (waterConnectionDetails.getLegacy()) {
             consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails,amountTodisplayInIndex);
@@ -756,5 +756,19 @@ public class WaterConnectionDetailsService {
     public WaterConnectionDetails getActiveNonHistoryConnectionDetailsByConnection(final WaterConnection waterConnection) {
         return waterConnectionDetailsRepository.findByConnectionAndConnectionStatusAndIsHistory(waterConnection,
                 ConnectionStatus.ACTIVE, Boolean.FALSE);
+    }
+    public BigDecimal getTotalAmount(final WaterConnectionDetails waterConnectionDetails) {
+        final EgDemand currentDemand = waterConnectionDetails.getDemand();
+        final List instVsAmt = connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand);
+        BigDecimal balance = BigDecimal.ZERO;
+        for (final Object object : instVsAmt) {
+            final Object[] ddObject = (Object[]) object;
+            final BigDecimal dmdAmt = (BigDecimal) ddObject[2];
+            BigDecimal collAmt = BigDecimal.ZERO;
+            if (ddObject[2] != null)
+                collAmt = new BigDecimal((Double) ddObject[3]);
+            balance = balance.add(dmdAmt.subtract(collAmt));
+           }
+        return balance;
     }
 }

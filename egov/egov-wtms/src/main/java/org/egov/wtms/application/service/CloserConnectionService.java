@@ -30,6 +30,8 @@
  */
 package org.egov.wtms.application.service;
 
+import java.math.BigDecimal;
+
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -64,6 +66,7 @@ public class CloserConnectionService {
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
 
+    
     @Autowired
     private ApplicationProcessTimeService applicationProcessTimeService;
 
@@ -99,8 +102,8 @@ public class CloserConnectionService {
                         assessmentDetails.getPropertyDetails().getTaxDue().toString(),
                         parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "Closure" }, null);
         } else if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE)) {
-            if (parentWaterConnectionDetail.getDemand().getBaseDemand().doubleValue()
-                    - parentWaterConnectionDetail.getDemand().getAmtCollected().doubleValue() > 0)
+            BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(parentWaterConnectionDetail);
+            if ( waterTaxDueforParent.doubleValue() > 0)
                 validationMessage = messageSource
                         .getMessage("err.validate.primary.connection.wtdue.forclosureConnection", null, null);
     /*        if (parentWaterConnectionDetail.getConnection().getId() != null)
