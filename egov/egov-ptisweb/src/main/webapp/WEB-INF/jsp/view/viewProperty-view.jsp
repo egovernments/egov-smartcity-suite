@@ -97,7 +97,7 @@
 				<s:else>
 				<jsp:include page="viewProperty.jsp"/>
 				<br/>
-				<div class="buttonbottom" align="center">
+				<div class="buttonbottom no-print" align="center">
 				<!--From application index search same view page is given, if new property is under work flow and assessment no is not generated then all links are disabled  -->
 				<s:if test="%{basicProperty.upicNo!=null}">
 				<s:if test="%{!property.getIsExemptedFromTax() && (isCitizen || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase()))}">
