@@ -101,434 +101,422 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Results({ @Result(name = ViewDCBPropertyAction.VIEW, location = "viewDCBProperty-view.jsp"),
-		@Result(name = ViewDCBPropertyAction.HEADWISE_DCB, location = "viewDCBProperty-headwiseDcb.jsp"),
-		@Result(name = ViewDCBPropertyAction.RESULT_MIGDATA, location = "viewDCBProperty-viewMigData.jsp") })
+        @Result(name = ViewDCBPropertyAction.HEADWISE_DCB, location = "viewDCBProperty-headwiseDcb.jsp"),
+        @Result(name = ViewDCBPropertyAction.RESULT_MIGDATA, location = "viewDCBProperty-viewMigData.jsp") })
 public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequestAware {
-	private static final Logger LOGGER = Logger.getLogger(ViewDCBPropertyAction.class);
-	public static final String HEADWISE_DCB = "headwiseDcb";
-	public static final String VIEW = "view";
-	public static final String RESULT_MIGDATA = "viewMigData";
-
-	private Map<String, BigDecimal> propertyArrearsMap = new TreeMap<String, BigDecimal>();
-	private List<PropertyArrearBean> propertyArrearsList = new ArrayList<PropertyArrearBean>();
-	private DCBReport dcbReport = new DCBReport();
-
-	private String propertyId;
-	private BasicProperty basicProperty;
-	private DCBDisplayInfo dcbDispInfo;
-	private HttpSession session = null;
-	private HttpServletRequest request;
-	private Long userId;
-	private Boolean isCitizen = Boolean.FALSE;
-	private List<PropertyReceipt> propReceiptList = new ArrayList<PropertyReceipt>();
-	private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	private List<Receipt> cancelRcpt = new ArrayList<Receipt>();
-	private List<Receipt> activeRcpts = new ArrayList<Receipt>();
-	private List<Receipt> mutationRcpts = new ArrayList<Receipt>();
-	private String demandEffectiveYear;
-	private Integer noOfDaysForInactiveDemand;
-	private String errorMessage;
-	private String roleName;
-	private Map<String, Object> viewMap;
-
-	@Autowired
-	private UserService userService;
-	@Autowired
-	private BasicPropertyDAO basicPropertyDAO;
-	@Autowired
-	private PtDemandDao ptDemandDAO;
-	@Autowired
-	private ApplicationContextBeanProvider beanProvider;
-	@Autowired
-	private DCBService dcbService;
-	@Autowired
-	private PropertyTaxUtil propertyTaxUtil;
-
-	public ViewDCBPropertyAction() {
-	}
-
-	@Override
-	public Object getModel() {
-		return dcbReport;
-	}
-
-	@Override
-	public void prepare() {
-		setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
-	}
-
-	/**
-	 * 
-	 * @return String the target page
-	 */
-
-	@ValidationErrorPage(value = VIEW)
-	@Action(value = "/view/viewDCBProperty-displayPropInfo")
-	public String displayPropInfo() {
-
-		LOGGER.debug("Entered into method displayPropInfo");
-		LOGGER.debug("displayPropInfo : propertyId : " + propertyId);
-		DCBUtils dcbUtils = new DCBUtils();
-		session = request.getSession();
-		if (session.getAttribute(SESSIONLOGINID) == null) {
-			User user = userService.getUserByUsername(CITIZENUSER);
-			userId = user.getId();
-			EgovThreadLocals.setUserId(userId);
-			session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
-			if (user != null)
-				setCitizen(Boolean.TRUE);
-		} else {
-			setCitizen(Boolean.FALSE);
-			final Long userId = (Long) session().get(SESSIONLOGINID);
-			if (userId != null) {
-				setRoleName(propertyTaxUtil.getRolesForUserId(userId));
-			}
-		}
-
-		try {
-			if (getBasicProperty() == null) {
-				throw new PropertyNotFoundException();
-			} else {
-				LOGGER.debug("BasicProperty : " + basicProperty);
-				basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
-				viewMap = new HashMap<String, Object>();
-				viewMap.put("propID", basicProperty.getPropertyID());
-				PropertyTypeMaster propertyTypeMaster = basicProperty.getProperty().getPropertyDetail()
-						.getPropertyTypeMaster();
-				viewMap.put("ownershipType", propertyTypeMaster.getType());
-				Property property = getBasicProperty().getProperty();
-				viewMap.put("propAddress", getBasicProperty().getAddress().toString());
-				viewMap.put("ownerName", basicProperty.getFullOwnerName());
-				if (!property.getIsExemptedFromTax()) {
-					Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
-					viewMap.put("currTaxAmount", demandCollMap.get(CURR_DMD_STR));
-					viewMap.put("currTaxDue", demandCollMap.get(CURR_DMD_STR)
-							.subtract(demandCollMap.get(CURR_COLL_STR)));
-					viewMap.put("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
-					PropertyTaxBillable billable = (PropertyTaxBillable) beanProvider
-							.getBean(BEANNAME_PROPERTY_TAX_BILLABLE);
-					billable.setBasicProperty(basicProperty);
-					dcbService.setBillable(billable);
-
-					dcbDispInfo = dcbUtils.prepareDisplayInfo();
-
-					dcbReport = dcbService.getCurrentDCBAndReceipts(dcbDispInfo);
-					// Display active receipt
-					activeRcpts = populateActiveReceiptsOnly(dcbReport.getReceipts());
-					// Display cancelled receipt
-					cancelRcpt = populateCancelledReceiptsOnly(dcbReport.getReceipts());
-					// Display name transfer receipts
-					populateMutationReceipts();
-				} else {
-					viewMap.put("currTaxAmount", BigDecimal.ZERO);
-					viewMap.put("currTaxDue", BigDecimal.ZERO);
-					viewMap.put("currTaxAmount", BigDecimal.ZERO);
-				}
-
-			}
-		} catch (PropertyNotFoundException e) {
-			LOGGER.error("Property not found with given propertyId " + propertyId, e);
-		} catch (DCBException e) {
-			errorMessage = "Demand details does not exists !";
-			LOGGER.warn(errorMessage);
-		}
-		LOGGER.debug("Exit from method displayPropInfo");
-		return VIEW;
-	}
-
-	@Action(value = "/view/viewDCBProperty-displayHeadwiseDcb")
-	public String displayHeadwiseDcb() {
-		LOGGER.debug("Entered into method displayHeadwiseDcb");
-		LOGGER.debug("displayPropInfo : Index Number : " + propertyId);
-		DCBUtils dcbUtils = new DCBUtils();
-		session = request.getSession();
-		if (session.getAttribute("com.egov.user.LoginUserId") == null) {
-			/*
-			 * UserDAO userDao = new UserDAO(); User user =
-			 * userDao.getUserByUserName(CITIZENUSER); userId = user.getId();
-			 * EGOVThreadLocals.setUserId(userId.toString());
-			 */
-			// EGOVThreadLocals.setUserId("27613");
-			session.setAttribute("com.egov.user.LoginUserName", CITIZENUSER);
-			setCitizen(Boolean.TRUE);
-		} else {
-			setCitizen(Boolean.FALSE);
-		}
-
-		try {
-			if (getBasicProperty() == null) {
-				throw new PropertyNotFoundException();
-			}
-		} catch (PropertyNotFoundException e) {
-			LOGGER.error("Property not found with given Index Number " + propertyId, e);
-		}
-
-		LOGGER.debug("BasicProperty : " + basicProperty);
-		basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
-		PropertyTaxBillable billable = (PropertyTaxBillable) beanProvider.getBean(BEANNAME_PROPERTY_TAX_BILLABLE);
-		billable.setBasicProperty(basicProperty);
-		dcbService.setBillable(billable);
-		// dcbDispInfo = dcbUtils.prepareDisplayInfo();
-		dcbDispInfo = dcbUtils.prepareDisplayInfoHeadwise();
-		dcbReport = dcbService.getCurrentDCBAndReceipts(dcbDispInfo);
-		LOGGER.debug("Exit from method displayHeadwiseDcb");
-		return HEADWISE_DCB;
-	}
-
-	private List<Receipt> populateActiveReceiptsOnly(Map<Installment, List<Receipt>> receipts) {
-
-		List<Receipt> rcpt = new ArrayList<Receipt>();
-		for (Map.Entry<Installment, List<Receipt>> entry : receipts.entrySet()) {
-			for (Receipt r : entry.getValue()) {
-				if (!rcpt.contains(r) && !r.getReceiptStatus().equals(RCPT_CANCEL_STATUS)) {
-					rcpt.add(r);
-				}
-			}
-		}
-		return rcpt;
-	}
-
-	private void receiptsInDescendingOrderOfReceiptDate() {
-		LOGGER.debug("Entered into receiptsInDescendingOrderOfReceiptDate");
-
-		for (Map.Entry<Installment, List<Receipt>> receiptMap : dcbReport.getReceipts().entrySet()) {
-			List<Receipt> receipts = receiptMap.getValue();
-			Collections.sort(receipts, new Comparator<Receipt>() {
-
-				@Override
-				public int compare(Receipt r1, Receipt r2) {
-					int returnValue = 0;
-
-					if (r1.getReceiptDate().before(r2.getReceiptDate())) {
-						returnValue = 1;
-					} else if (r1.getReceiptDate().after(r2.getReceiptDate())) {
-						returnValue = -1;
-					} else if (r1.getReceiptDate().equals(r2.getReceiptDate())) {
-						returnValue = 0;
-					}
-					return returnValue;
-				}
-			});
-		}
-
-		LOGGER.debug("Exiting from receiptsInDescendingOrderOfReceiptDate");
-	}
-
-	private List<Receipt> populateCancelledReceiptsOnly(Map<Installment, List<Receipt>> receipts) {
-
-		List<Receipt> rcpt = new ArrayList<Receipt>();
-		for (Map.Entry<Installment, List<Receipt>> entry : receipts.entrySet()) {
-			for (Receipt r : entry.getValue()) {
-				if (!rcpt.contains(r) && r.getReceiptStatus().equals(RCPT_CANCEL_STATUS)) {
-					rcpt.add(r);
-				}
-			}
-		}
-		return rcpt;
-	}
-
-	/**
-	 * Called to get the cancelled receipts
-	 * 
-	 * @return List of Receipts
-	 */
-	public List<Receipt> getCancelledReceipts() {
-
-		LOGGER.debug("Entered into method getCancelledReceipts");
-
-		List<Receipt> cancelledReceipts = new ArrayList<Receipt>();
-		for (Installment inst : dcbReport.getReceipts().keySet()) {
-			List<Receipt> receipts = dcbReport.getReceipts().get(inst);
-			LOGGER.debug("Installment : " + inst);
-			LOGGER.debug("Cancelled receipts : ");
-			for (Receipt rcpt : receipts) {
-				if (!cancelledReceipts.contains(rcpt) && rcpt.getReceiptStatus().equals(CANCELLED_RECEIPT_STATUS)) {
-					LOGGER.debug("Receipt : " + rcpt);
-					cancelledReceipts.add(rcpt);
-				}
-			}
-		}
-
-		LOGGER.debug("Number of cancelled receitps : " + (cancelledReceipts != null ? cancelledReceipts.size() : ZERO));
-		LOGGER.debug("Exit from method getCancelledREceipts");
-
-		return cancelledReceipts;
-	}
-
-	@Override
-	@SkipValidation
-	public void setServletRequest(HttpServletRequest arg0) {
-		this.request = arg0;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Action(value = "/view/viewDCBProperty-showMigData")
-	public String getMigratedData() {
-		LOGGER.debug("Entered into getMigratedData");
-		LOGGER.debug("getMigratedData - propertyId: " + getPropertyId());
-		// List of property receipts
-		propReceiptList = getPersistenceService().findAllBy("from PropertyReceipt where basicProperty.id=?",
-				getBasicProperty().getId());
-		for (PropertyReceipt propReceipt : propReceiptList) {
-			try {
-				propReceipt.setReceiptDate(sdf.parse(sdf.format(propReceipt.getReceiptDate())));
-				propReceipt.setFromDate(sdf.parse(sdf.format(propReceipt.getFromDate())));
-				propReceipt.setToDate(sdf.parse(sdf.format(propReceipt.getToDate())));
-			} catch (ParseException e) {
-				LOGGER.error("ParseException in getPropertyArrears method for Property" + propertyId, e);
-			}
-		}
-		LOGGER.debug("Exiting from getMigratedData");
-		return RESULT_MIGDATA;
-	}
-
-	private void populateMutationReceipts() {
-		Receipt receipt = null;
-		for (PropertyMutation propMutation : basicProperty.getPropertyMutations()) {
-			if (propMutation.getReceiptNum() != null && !propMutation.getReceiptNum().isEmpty()) {
-				receipt = new Receipt();
-				receipt.setReceiptNumber(propMutation.getReceiptNum());
-				receipt.setReceiptAmt(propMutation.getMutationFee());
-				receipt.setReceiptDate(propMutation.getReceiptDate());
-				mutationRcpts.add(receipt);
-			}
-		}
-	}
-
-	public String getPropertyId() {
-		return propertyId;
-	}
-
-	public void setPropertyId(String propertyId) {
-		this.propertyId = propertyId;
-	}
-
-	public BasicProperty getBasicProperty() {
-		return basicProperty;
-	}
-
-	public void setBasicProperty(BasicProperty basicProperty) {
-		this.basicProperty = basicProperty;
-	}
-
-	public DCBService getDcbService() {
-		return dcbService;
-	}
-
-	public void setDcbService(DCBService dcbService) {
-		this.dcbService = dcbService;
-	}
-
-	public DCBDisplayInfo getDcbDispInfo() {
-		return dcbDispInfo;
-	}
-
-	public void setDcbDispInfo(DCBDisplayInfo dcbDispInfo) {
-		this.dcbDispInfo = dcbDispInfo;
-	}
-
-	public DCBReport getDcbReport() {
-		return dcbReport;
-	}
-
-	public void setDcbReport(DCBReport dcbReport) {
-		this.dcbReport = dcbReport;
-	}
-
-	public Map<String, BigDecimal> getPropertyArrearsMap() {
-		return propertyArrearsMap;
-	}
-
-	public void setPropertyArrearsMap(Map<String, BigDecimal> propertyArrearsMap) {
-		this.propertyArrearsMap = propertyArrearsMap;
-	}
-
-	public Boolean getIsCitizen() {
-		return isCitizen;
-	}
-
-	public void setCitizen(Boolean isCitizen) {
-		this.isCitizen = isCitizen;
-	}
-
-	public List<PropertyArrearBean> getPropertyArrearsList() {
-		return propertyArrearsList;
-	}
-
-	public void setPropertyArrearsList(List<PropertyArrearBean> propertyArrearsList) {
-		this.propertyArrearsList = propertyArrearsList;
-	}
-
-	public List<PropertyReceipt> getPropReceiptList() {
-		return propReceiptList;
-	}
-
-	public void setPropReceiptList(List<PropertyReceipt> propReceiptList) {
-		this.propReceiptList = propReceiptList;
-	}
-
-	public List<Receipt> getCancelRcpt() {
-		return cancelRcpt;
-	}
-
-	public void setCancelRcpt(List<Receipt> cancelRcpt) {
-		this.cancelRcpt = cancelRcpt;
-	}
-
-	public List<Receipt> getActiveRcpts() {
-		return activeRcpts;
-	}
-
-	public void setActiveRcpts(List<Receipt> activeRcpts) {
-		this.activeRcpts = activeRcpts;
-	}
-
-	public List<Receipt> getMutationRcpts() {
-		return mutationRcpts;
-	}
-
-	public void setMutationRcpts(List<Receipt> mutationRcpts) {
-		this.mutationRcpts = mutationRcpts;
-	}
-
-	public String getDemandEffectiveYear() {
-		return demandEffectiveYear;
-	}
-
-	public void setDemandEffectiveYear(String demandEffectiveYear) {
-		this.demandEffectiveYear = demandEffectiveYear;
-	}
-
-	public Integer getNoOfDaysForInactiveDemand() {
-		return noOfDaysForInactiveDemand;
-	}
-
-	public void setNoOfDaysForInactiveDemand(Integer noOfDaysForInactiveDemand) {
-		this.noOfDaysForInactiveDemand = noOfDaysForInactiveDemand;
-	}
-
-	public String getErrorMessage() {
-		return errorMessage;
-	}
-
-	public Map<String, Object> getViewMap() {
-		return viewMap;
-	}
-
-	public void setViewMap(Map<String, Object> viewMap) {
-		this.viewMap = viewMap;
-	}
-
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
-
-	public String getRoleName() {
-		return roleName;
-	}
-
-	public void setRoleName(String roleName) {
-		this.roleName = roleName;
-	}
+    private static final Logger LOGGER = Logger.getLogger(ViewDCBPropertyAction.class);
+    public static final String HEADWISE_DCB = "headwiseDcb";
+    public static final String VIEW = "view";
+    public static final String RESULT_MIGDATA = "viewMigData";
+
+    private Map<String, BigDecimal> propertyArrearsMap = new TreeMap<String, BigDecimal>();
+    private List<PropertyArrearBean> propertyArrearsList = new ArrayList<PropertyArrearBean>();
+    private DCBReport dcbReport = new DCBReport();
+
+    private String propertyId;
+    private BasicProperty basicProperty;
+    private DCBDisplayInfo dcbDispInfo;
+    private HttpSession session = null;
+    private HttpServletRequest request;
+    private Long userId;
+    private Boolean isCitizen = Boolean.FALSE;
+    private List<PropertyReceipt> propReceiptList = new ArrayList<PropertyReceipt>();
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    private List<Receipt> cancelRcpt = new ArrayList<Receipt>();
+    private List<Receipt> activeRcpts = new ArrayList<Receipt>();
+    private List<Receipt> mutationRcpts = new ArrayList<Receipt>();
+    private String demandEffectiveYear;
+    private Integer noOfDaysForInactiveDemand;
+    private String errorMessage;
+    private String roleName;
+    private Map<String, Object> viewMap;
+
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private BasicPropertyDAO basicPropertyDAO;
+    @Autowired
+    private PtDemandDao ptDemandDAO;
+    @Autowired
+    private ApplicationContextBeanProvider beanProvider;
+    @Autowired
+    private DCBService dcbService;
+    @Autowired
+    private PropertyTaxUtil propertyTaxUtil;
+
+    public ViewDCBPropertyAction() {
+    }
+
+    @Override
+    public Object getModel() {
+        return dcbReport;
+    }
+
+    @Override
+    public void prepare() {
+        setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
+    }
+
+    /**
+     * @return String the target page
+     */
+
+    @ValidationErrorPage(value = VIEW)
+    @Action(value = "/view/viewDCBProperty-displayPropInfo")
+    public String displayPropInfo() {
+
+        LOGGER.debug("Entered into method displayPropInfo");
+        LOGGER.debug("displayPropInfo : propertyId : " + propertyId);
+        DCBUtils dcbUtils = new DCBUtils();
+        session = request.getSession();
+        if (session.getAttribute(SESSIONLOGINID) == null) {
+            User user = userService.getUserByUsername(CITIZENUSER);
+            userId = user.getId();
+            EgovThreadLocals.setUserId(userId);
+            session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
+            if (user != null)
+                setCitizen(Boolean.TRUE);
+        } else {
+            setCitizen(Boolean.FALSE);
+            final Long userId = (Long) session().get(SESSIONLOGINID);
+            if (userId != null) {
+                setRoleName(propertyTaxUtil.getRolesForUserId(userId));
+            }
+        }
+
+        try {
+            if (getBasicProperty() == null) {
+                throw new PropertyNotFoundException();
+            } else {
+                LOGGER.debug("BasicProperty : " + basicProperty);
+                basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
+                viewMap = new HashMap<String, Object>();
+                viewMap.put("propID", basicProperty.getPropertyID());
+                PropertyTypeMaster propertyTypeMaster = basicProperty.getProperty().getPropertyDetail()
+                        .getPropertyTypeMaster();
+                viewMap.put("ownershipType", propertyTypeMaster.getType());
+                Property property = getBasicProperty().getProperty();
+                viewMap.put("propAddress", getBasicProperty().getAddress().toString());
+                viewMap.put("ownerName", basicProperty.getFullOwnerName());
+                if (!property.getIsExemptedFromTax()) {
+                    Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
+                    viewMap.put("currTaxAmount", demandCollMap.get(CURR_DMD_STR));
+                    viewMap.put("currTaxDue", demandCollMap.get(CURR_DMD_STR)
+                            .subtract(demandCollMap.get(CURR_COLL_STR)));
+                    viewMap.put("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
+                    PropertyTaxBillable billable = (PropertyTaxBillable) beanProvider
+                            .getBean(BEANNAME_PROPERTY_TAX_BILLABLE);
+                    billable.setBasicProperty(basicProperty);
+                    dcbService.setBillable(billable);
+
+                    dcbDispInfo = dcbUtils.prepareDisplayInfo();
+
+                    dcbReport = dcbService.getCurrentDCBAndReceipts(dcbDispInfo);
+                    // Display active receipt
+                    activeRcpts = populateActiveReceiptsOnly(dcbReport.getReceipts());
+                    // Display cancelled receipt
+                    cancelRcpt = populateCancelledReceiptsOnly(dcbReport.getReceipts());
+                    // Display name transfer receipts
+                    populateMutationReceipts();
+                } else {
+                    viewMap.put("currTaxAmount", BigDecimal.ZERO);
+                    viewMap.put("currTaxDue", BigDecimal.ZERO);
+                    viewMap.put("currTaxAmount", BigDecimal.ZERO);
+                }
+
+            }
+        } catch (PropertyNotFoundException e) {
+            LOGGER.error("Property not found with given propertyId " + propertyId, e);
+        } catch (DCBException e) {
+            errorMessage = "Demand details does not exists !";
+            LOGGER.warn(errorMessage);
+        }
+        LOGGER.debug("Exit from method displayPropInfo");
+        return VIEW;
+    }
+
+    @Action(value = "/view/viewDCBProperty-displayHeadwiseDcb")
+    public String displayHeadwiseDcb() {
+        LOGGER.debug("Entered into method displayHeadwiseDcb");
+        LOGGER.debug("displayPropInfo : Index Number : " + propertyId);
+        DCBUtils dcbUtils = new DCBUtils();
+        session = request.getSession();
+        if (session.getAttribute("com.egov.user.LoginUserId") == null) {
+            /*
+             * UserDAO userDao = new UserDAO(); User user =
+             * userDao.getUserByUserName(CITIZENUSER); userId = user.getId();
+             * EGOVThreadLocals.setUserId(userId.toString());
+             */
+            // EGOVThreadLocals.setUserId("27613");
+            session.setAttribute("com.egov.user.LoginUserName", CITIZENUSER);
+            setCitizen(Boolean.TRUE);
+        } else {
+            setCitizen(Boolean.FALSE);
+        }
+
+        try {
+            if (getBasicProperty() == null) {
+                throw new PropertyNotFoundException();
+            }
+        } catch (PropertyNotFoundException e) {
+            LOGGER.error("Property not found with given Index Number " + propertyId, e);
+        }
+
+        LOGGER.debug("BasicProperty : " + basicProperty);
+        basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
+        PropertyTaxBillable billable = (PropertyTaxBillable) beanProvider.getBean(BEANNAME_PROPERTY_TAX_BILLABLE);
+        billable.setBasicProperty(basicProperty);
+        dcbService.setBillable(billable);
+        // dcbDispInfo = dcbUtils.prepareDisplayInfo();
+        dcbDispInfo = dcbUtils.prepareDisplayInfoHeadwise();
+        dcbReport = dcbService.getCurrentDCBAndReceipts(dcbDispInfo);
+        LOGGER.debug("Exit from method displayHeadwiseDcb");
+        return HEADWISE_DCB;
+    }
+
+    private List<Receipt> populateActiveReceiptsOnly(Map<Installment, List<Receipt>> receipts) {
+
+        List<Receipt> rcpt = new ArrayList<Receipt>();
+        for (Map.Entry<Installment, List<Receipt>> entry : receipts.entrySet()) {
+            for (Receipt r : entry.getValue()) {
+                if (!rcpt.contains(r) && !r.getReceiptStatus().equals(RCPT_CANCEL_STATUS)) {
+                    rcpt.add(r);
+                }
+            }
+        }
+        return receiptsInDescendingOrderOfReceiptDate(rcpt);
+    }
+
+    private List<Receipt> receiptsInDescendingOrderOfReceiptDate(List<Receipt> receipts) {
+        LOGGER.debug("Entered into receiptsInDescendingOrderOfReceiptDate");
+
+            Collections.sort(receipts, new Comparator<Receipt>() {
+
+                @Override
+                public int compare(Receipt r1, Receipt r2) {
+                    return r2.getReceiptDate().compareTo(r1.getReceiptDate());
+                }
+            });
+
+        LOGGER.debug("Exiting from receiptsInDescendingOrderOfReceiptDate");
+        return receipts;
+    }
+
+    private List<Receipt> populateCancelledReceiptsOnly(Map<Installment, List<Receipt>> receipts) {
+
+        List<Receipt> rcpt = new ArrayList<Receipt>();
+        for (Map.Entry<Installment, List<Receipt>> entry : receipts.entrySet()) {
+            for (Receipt r : entry.getValue()) {
+                if (!rcpt.contains(r) && r.getReceiptStatus().equals(RCPT_CANCEL_STATUS)) {
+                    rcpt.add(r);
+                }
+            }
+        }
+        return receiptsInDescendingOrderOfReceiptDate(rcpt);
+    }
+
+    /**
+     * Called to get the cancelled receipts
+     * 
+     * @return List of Receipts
+     */
+    public List<Receipt> getCancelledReceipts() {
+
+        LOGGER.debug("Entered into method getCancelledReceipts");
+
+        List<Receipt> cancelledReceipts = new ArrayList<Receipt>();
+        for (Installment inst : dcbReport.getReceipts().keySet()) {
+            List<Receipt> receipts = dcbReport.getReceipts().get(inst);
+            LOGGER.debug("Installment : " + inst);
+            LOGGER.debug("Cancelled receipts : ");
+            for (Receipt rcpt : receipts) {
+                if (!cancelledReceipts.contains(rcpt) && rcpt.getReceiptStatus().equals(CANCELLED_RECEIPT_STATUS)) {
+                    LOGGER.debug("Receipt : " + rcpt);
+                    cancelledReceipts.add(rcpt);
+                }
+            }
+        }
+
+        LOGGER.debug("Number of cancelled receitps : " + (cancelledReceipts != null ? cancelledReceipts.size() : ZERO));
+        LOGGER.debug("Exit from method getCancelledREceipts");
+
+        return cancelledReceipts;
+    }
+
+    @Override
+    @SkipValidation
+    public void setServletRequest(HttpServletRequest arg0) {
+        this.request = arg0;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Action(value = "/view/viewDCBProperty-showMigData")
+    public String getMigratedData() {
+        LOGGER.debug("Entered into getMigratedData");
+        LOGGER.debug("getMigratedData - propertyId: " + getPropertyId());
+        // List of property receipts
+        propReceiptList = getPersistenceService().findAllBy("from PropertyReceipt where basicProperty.id=?",
+                getBasicProperty().getId());
+        for (PropertyReceipt propReceipt : propReceiptList) {
+            try {
+                propReceipt.setReceiptDate(sdf.parse(sdf.format(propReceipt.getReceiptDate())));
+                propReceipt.setFromDate(sdf.parse(sdf.format(propReceipt.getFromDate())));
+                propReceipt.setToDate(sdf.parse(sdf.format(propReceipt.getToDate())));
+            } catch (ParseException e) {
+                LOGGER.error("ParseException in getPropertyArrears method for Property" + propertyId, e);
+            }
+        }
+        LOGGER.debug("Exiting from getMigratedData");
+        return RESULT_MIGDATA;
+    }
+
+    private void populateMutationReceipts() {
+        Receipt receipt = null;
+        for (PropertyMutation propMutation : basicProperty.getPropertyMutations()) {
+            if (propMutation.getReceiptNum() != null && !propMutation.getReceiptNum().isEmpty()) {
+                receipt = new Receipt();
+                receipt.setReceiptNumber(propMutation.getReceiptNum());
+                receipt.setReceiptAmt(propMutation.getMutationFee());
+                receipt.setReceiptDate(propMutation.getReceiptDate());
+                mutationRcpts.add(receipt);
+            }
+        }
+    }
+
+    public String getPropertyId() {
+        return propertyId;
+    }
+
+    public void setPropertyId(String propertyId) {
+        this.propertyId = propertyId;
+    }
+
+    public BasicProperty getBasicProperty() {
+        return basicProperty;
+    }
+
+    public void setBasicProperty(BasicProperty basicProperty) {
+        this.basicProperty = basicProperty;
+    }
+
+    public DCBService getDcbService() {
+        return dcbService;
+    }
+
+    public void setDcbService(DCBService dcbService) {
+        this.dcbService = dcbService;
+    }
+
+    public DCBDisplayInfo getDcbDispInfo() {
+        return dcbDispInfo;
+    }
+
+    public void setDcbDispInfo(DCBDisplayInfo dcbDispInfo) {
+        this.dcbDispInfo = dcbDispInfo;
+    }
+
+    public DCBReport getDcbReport() {
+        return dcbReport;
+    }
+
+    public void setDcbReport(DCBReport dcbReport) {
+        this.dcbReport = dcbReport;
+    }
+
+    public Map<String, BigDecimal> getPropertyArrearsMap() {
+        return propertyArrearsMap;
+    }
+
+    public void setPropertyArrearsMap(Map<String, BigDecimal> propertyArrearsMap) {
+        this.propertyArrearsMap = propertyArrearsMap;
+    }
+
+    public Boolean getIsCitizen() {
+        return isCitizen;
+    }
+
+    public void setCitizen(Boolean isCitizen) {
+        this.isCitizen = isCitizen;
+    }
+
+    public List<PropertyArrearBean> getPropertyArrearsList() {
+        return propertyArrearsList;
+    }
+
+    public void setPropertyArrearsList(List<PropertyArrearBean> propertyArrearsList) {
+        this.propertyArrearsList = propertyArrearsList;
+    }
+
+    public List<PropertyReceipt> getPropReceiptList() {
+        return propReceiptList;
+    }
+
+    public void setPropReceiptList(List<PropertyReceipt> propReceiptList) {
+        this.propReceiptList = propReceiptList;
+    }
+
+    public List<Receipt> getCancelRcpt() {
+        return cancelRcpt;
+    }
+
+    public void setCancelRcpt(List<Receipt> cancelRcpt) {
+        this.cancelRcpt = cancelRcpt;
+    }
+
+    public List<Receipt> getActiveRcpts() {
+        return activeRcpts;
+    }
+
+    public void setActiveRcpts(List<Receipt> activeRcpts) {
+        this.activeRcpts = activeRcpts;
+    }
+
+    public List<Receipt> getMutationRcpts() {
+        return mutationRcpts;
+    }
+
+    public void setMutationRcpts(List<Receipt> mutationRcpts) {
+        this.mutationRcpts = mutationRcpts;
+    }
+
+    public String getDemandEffectiveYear() {
+        return demandEffectiveYear;
+    }
+
+    public void setDemandEffectiveYear(String demandEffectiveYear) {
+        this.demandEffectiveYear = demandEffectiveYear;
+    }
+
+    public Integer getNoOfDaysForInactiveDemand() {
+        return noOfDaysForInactiveDemand;
+    }
+
+    public void setNoOfDaysForInactiveDemand(Integer noOfDaysForInactiveDemand) {
+        this.noOfDaysForInactiveDemand = noOfDaysForInactiveDemand;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public Map<String, Object> getViewMap() {
+        return viewMap;
+    }
+
+    public void setViewMap(Map<String, Object> viewMap) {
+        this.viewMap = viewMap;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
 
 }
