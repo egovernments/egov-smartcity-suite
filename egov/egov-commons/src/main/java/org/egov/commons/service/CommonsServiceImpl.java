@@ -983,7 +983,7 @@ public class CommonsServiceImpl implements CommonsService {
             Long boundaryId = 0L;
             if (latitude != null && longitude != null) {
                 final Map<String, URL> map = new HashMap<String, URL>();
-                map.put("url", Thread.currentThread().getContextClassLoader().getResource("gis/shape/"+EgovThreadLocals.getTenantID()+"/wards.shp"));
+                map.put("url", Thread.currentThread().getContextClassLoader().getResource("gis/"+EgovThreadLocals.getTenantID()+"/wards.shp"));
                 final DataStore dataStore = DataStoreFinder.getDataStore(map);
                 final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = dataStore.getFeatureSource(
                         dataStore.getTypeNames()[0])

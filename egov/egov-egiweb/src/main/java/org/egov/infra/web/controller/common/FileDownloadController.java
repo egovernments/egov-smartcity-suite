@@ -82,7 +82,7 @@ public class FileDownloadController {
     @RequestMapping("/gis")
     public void download(final HttpServletResponse response) throws IOException {
         try (final InputStream in = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("gis/kml/" + EgovThreadLocals.getTenantID() + "/wards.kml");
+                .getResourceAsStream("gis/" + EgovThreadLocals.getTenantID() + "/wards.kml");
                 final OutputStream out = response.getOutputStream();) {
             if (in != null) {
                 response.setHeader("Content-Disposition", "inline;filename=wards.kml");
