@@ -66,7 +66,6 @@ public class CommonController extends ApiController {
             }
             citizenCreate.getDevices().add(device);
             citizenService.create(citizenCreate);
-            citizenService.sendActivationMessage(citizenCreate);
             return res.setDataAdapter(new UserAdapter()).success(citizenCreate, this.getMessage("msg.citizen.reg.success"));
         } catch (ApplicationRuntimeException e) {
             msg = e.getMessage();
