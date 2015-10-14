@@ -115,10 +115,10 @@ public class RevisionPetition extends StateAware implements Auditable {
      public String getStateDetails() {
          final StringBuffer stateDetails = new StringBuffer("");
          stateDetails.append(getBasicProperty().getUpicNo()).append(", ")
-         .append(getBasicProperty().getPrimaryOwner().getName())
+         .append(getBasicProperty().getPrimaryOwner().getName()).append(", ")
          .append(PROPERTY_TYPE_CATEGORIES.get(getBasicProperty().getProperty().getPropertyDetail().getCategoryType()))
          .append(", ")
-         .append(getBasicProperty().getPropertyID().getLocality().getName()).append(", ");
+         .append(getBasicProperty().getPropertyID().getLocality().getName());
          return stateDetails.toString();
      }
 
