@@ -1,40 +1,40 @@
 /*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
+ *
+ * 	1) All versions of this program, verbatim or modified must carry this
  * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
+ *
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It
+ * 	   is required that all modified versions of this material be marked in
  * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
+ *
+ * 	3) This license does not grant any rights to any user of the program
+ * 	   with regards to rights under trademark law for use of the trade names
  * 	   or trademarks of eGovernments Foundation.
- * 
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
 package org.egov.ptis.domain.entity.objection;
@@ -57,228 +57,228 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.hibernate.validator.constraints.Length;
+
 /**
  * @author manoranjan
- * 
+ *
  */
-//@CompareDates(fromDate = "dateOfOutcome", toDate = "recievedOn", dateFormat = "dd/MM/yyyy", message = "dateOfOutcome.greaterThan.recievedOn")
-public class RevisionPetition extends StateAware implements Auditable{
+// @CompareDates(fromDate = "dateOfOutcome", toDate = "recievedOn", dateFormat = "dd/MM/yyyy", message =
+// "dateOfOutcome.greaterThan.recievedOn")
+public class RevisionPetition extends StateAware implements Auditable {
 
-	/**
-	 * Default serial version Id
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     * Default serial version Id
+     */
+    private static final long serialVersionUID = 1L;
 
-	private Long id;
-	
-	private EgwStatus egwStatus;
+    private Long id;
 
-	private BasicProperty basicProperty;
+    private EgwStatus egwStatus;
 
-	@Length(max = 50, message = "objection.objectionNumber.length")
-	private String objectionNumber;
+    private BasicProperty basicProperty;
 
-	/*@ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "objection.receivedOn.futuredate")*/
-	/*@org.egov.infra.persistence.validator.annotation.DateFormat(message = "invalid.fieldvalue.receivedOn")*/
-	private Date recievedOn;
+    @Length(max = 50, message = "objection.objectionNumber.length")
+    private String objectionNumber;
 
-	@Length(max = 256, message = "objection.objectionNumber.length")
-	private String recievedBy;
+    /* @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "objection.receivedOn.futuredate") */
+    /* @org.egov.infra.persistence.validator.annotation.DateFormat(message = "invalid.fieldvalue.receivedOn") */
+    private Date recievedOn;
 
-	private String details;
+    @Length(max = 256, message = "objection.objectionNumber.length")
+    private String recievedBy;
 
-	private String docNumberObjection;
+    private String details;
 
-	private String docNumberOutcome;
-	private PropertyImpl property;
-	
-	@Valid
-	private List<Hearing> hearings = new LinkedList<Hearing>();
+    private String docNumberObjection;
 
-	@Valid
-	private List<Inspection> inspections = new LinkedList<Inspection>();
+    private String docNumberOutcome;
+    private PropertyImpl property;
 
-/*	@ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "objection.outcomedate.futuredate")
-	@org.egov.infra.persistence.validator.annotation.DateFormat(message = "invalid.fieldvalue.outcomedate")
-*/	private Date dateOfOutcome;
+    @Valid
+    private List<Hearing> hearings = new LinkedList<Hearing>();
 
-	private String remarks;// for dateOfOutcome
+    @Valid
+    private List<Inspection> inspections = new LinkedList<Inspection>();
 
-	private Boolean objectionRejected;
-	private Boolean generateSpecialNotice;
-	public static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+    /*
+     * @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "objection.outcomedate.futuredate")
+     * @org.egov.infra.persistence.validator.annotation.DateFormat(message = "invalid.fieldvalue.outcomedate")
+     */private Date dateOfOutcome;
 
-        @Override
-        public String getStateDetails() {
-            StringBuffer stateDetails = new StringBuffer("");
-            stateDetails.append(getBasicProperty().getUpicNo()).append(", ")
-                    .append(PROPERTY_TYPE_CATEGORIES.get(getBasicProperty().getProperty().getPropertyDetail().getCategoryType())).append(", ")
-                    .append(getBasicProperty().getPropertyID().getLocality().getName()).append(", ")
-                    .append(getBasicProperty().getPrimaryOwner().getName());
-            return stateDetails.toString();
-        }
+     private String remarks;// for dateOfOutcome
 
-	public EgwStatus getEgwStatus() {
-		return egwStatus;
-	}
+     private Boolean objectionRejected;
+     private Boolean generateSpecialNotice;
+     public static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 
-	public String getObjectionNumber() {
-		return objectionNumber;
-	}
+     @Override
+     public String getStateDetails() {
+         final StringBuffer stateDetails = new StringBuffer("");
+         stateDetails.append(getBasicProperty().getUpicNo()).append(", ")
+         .append(getBasicProperty().getPrimaryOwner().getName())
+         .append(PROPERTY_TYPE_CATEGORIES.get(getBasicProperty().getProperty().getPropertyDetail().getCategoryType()))
+         .append(", ")
+         .append(getBasicProperty().getPropertyID().getLocality().getName()).append(", ");
+         return stateDetails.toString();
+     }
 
-	@Required(message = "objection.receiviedOn.null")
-	public Date getRecievedOn() {
-		return recievedOn;
-	}
+     public EgwStatus getEgwStatus() {
+         return egwStatus;
+     }
 
-	@Required(message = "objection.receiviedBy.null")
-	/*@Length(max = 256, message = "objection.receivedBy.length")*/
-	public String getRecievedBy() {
-		return recievedBy;
-	}
+     public String getObjectionNumber() {
+         return objectionNumber;
+     }
 
-	@Required(message = "objection.details.null")
-	@Length(max = 1024, message = "objection.details.length")
-	public String getDetails() {
-		return details;
-	}
+     @Required(message = "objection.receiviedOn.null")
+     public Date getRecievedOn() {
+         return recievedOn;
+     }
 
-	public void setEgwStatus(EgwStatus egwStatus) {
-		this.egwStatus = egwStatus;
-	}
+     @Required(message = "objection.receiviedBy.null")
+     /* @Length(max = 256, message = "objection.receivedBy.length") */
+     public String getRecievedBy() {
+         return recievedBy;
+     }
 
-	public void setObjectionNumber(String objectionNumber) {
-		this.objectionNumber = objectionNumber;
-	}
+     @Required(message = "objection.details.null")
+     @Length(max = 1024, message = "objection.details.length")
+     public String getDetails() {
+         return details;
+     }
 
-	public void setRecievedOn(Date recievedOn) {
-		this.recievedOn = recievedOn;
-	}
+     public void setEgwStatus(final EgwStatus egwStatus) {
+         this.egwStatus = egwStatus;
+     }
 
-	public void setRecievedBy(String recievedBy) {
-		this.recievedBy = recievedBy;
-	}
+     public void setObjectionNumber(final String objectionNumber) {
+         this.objectionNumber = objectionNumber;
+     }
 
-	public void setDetails(String details) {
-		this.details = details;
-	}
+     public void setRecievedOn(final Date recievedOn) {
+         this.recievedOn = recievedOn;
+     }
 
-	public List<Hearing> getHearings() {
-		return hearings;
-	}
+     public void setRecievedBy(final String recievedBy) {
+         this.recievedBy = recievedBy;
+     }
 
-	public void setHearings(List<Hearing> hearings) {
-		this.hearings = hearings;
-	}
+     public void setDetails(final String details) {
+         this.details = details;
+     }
 
-	public List<Inspection> getInspections() {
-		return inspections;
-	}
+     public List<Hearing> getHearings() {
+         return hearings;
+     }
 
-	public Date getDateOfOutcome() {
-		return dateOfOutcome;
-	}
+     public void setHearings(final List<Hearing> hearings) {
+         this.hearings = hearings;
+     }
 
-	public String getRemarks() {
-		return remarks;
-	}
+     public List<Inspection> getInspections() {
+         return inspections;
+     }
 
-	public Boolean getObjectionRejected() {
-		return objectionRejected;
-	}
+     public Date getDateOfOutcome() {
+         return dateOfOutcome;
+     }
 
-	public void setInspections(List<Inspection> inspections) {
-		this.inspections = inspections;
-	}
+     public String getRemarks() {
+         return remarks;
+     }
 
-	public void setDateOfOutcome(Date dateOfOutcome) {
-		this.dateOfOutcome = dateOfOutcome;
-	}
+     public Boolean getObjectionRejected() {
+         return objectionRejected;
+     }
 
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
+     public void setInspections(final List<Inspection> inspections) {
+         this.inspections = inspections;
+     }
 
-	public void setObjectionRejected(Boolean objectionRejected) {
-		this.objectionRejected = objectionRejected;
-	}
+     public void setDateOfOutcome(final Date dateOfOutcome) {
+         this.dateOfOutcome = dateOfOutcome;
+     }
 
-	public BasicProperty getBasicProperty() {
-		return basicProperty;
-	}
+     public void setRemarks(final String remarks) {
+         this.remarks = remarks;
+     }
 
-	public void setBasicProperty(BasicProperty basicProperty) {
-		this.basicProperty = basicProperty;
-	}
+     public void setObjectionRejected(final Boolean objectionRejected) {
+         this.objectionRejected = objectionRejected;
+     }
 
-	public String getDocNumberObjection() {
-		return docNumberObjection;
-	}
+     public BasicProperty getBasicProperty() {
+         return basicProperty;
+     }
 
-	public String getDocNumberOutcome() {
-		return docNumberOutcome;
-	}
+     public void setBasicProperty(final BasicProperty basicProperty) {
+         this.basicProperty = basicProperty;
+     }
 
-	public void setDocNumberObjection(String docNumberObjection) {
-		this.docNumberObjection = docNumberObjection;
-	}
+     public String getDocNumberObjection() {
+         return docNumberObjection;
+     }
 
-	public void setDocNumberOutcome(String docNumberOutcome) {
-		this.docNumberOutcome = docNumberOutcome;
-	}
+     public String getDocNumberOutcome() {
+         return docNumberOutcome;
+     }
 
-	public String getFmtdReceivedOn() {
-		if (recievedOn != null)
-			return dateFormat.format(recievedOn);
-		else
-			return "";
-	}
-	
-	@Override
-	public String toString() {
-		
-		StringBuilder sb = new StringBuilder();
-		
-		
-		sb.append("UcipNo :").append(null!=basicProperty?basicProperty.getUpicNo():" ");
-		sb.append("status :").append(null!= egwStatus?egwStatus.getDescription():" ");
-		sb.append("objectionNumber :").append(null!= objectionNumber?objectionNumber:" ");
-		
-		return sb.toString();
-	}
+     public void setDocNumberObjection(final String docNumberObjection) {
+         this.docNumberObjection = docNumberObjection;
+     }
 
-    @Override
-    public Long getId() {
-        return this.id;
-    }
+     public void setDocNumberOutcome(final String docNumberOutcome) {
+         this.docNumberOutcome = docNumberOutcome;
+     }
 
-    @Override
-    public void setId(Long id) {
-       this.id= id;
-    }
+     public String getFmtdReceivedOn() {
+         if (recievedOn != null)
+             return dateFormat.format(recievedOn);
+         else
+             return "";
+     }
 
-    public PropertyImpl getProperty() {
-        return property;
-    }
+     @Override
+     public String toString() {
 
-    public void setProperty(PropertyImpl property) {
-        this.property = property;
-    }
+         final StringBuilder sb = new StringBuilder();
 
-    public Boolean getGenerateSpecialNotice() {
-        return generateSpecialNotice;
-    }
+         sb.append("UcipNo :").append(null != basicProperty ? basicProperty.getUpicNo() : " ");
+         sb.append("status :").append(null != egwStatus ? egwStatus.getDescription() : " ");
+         sb.append("objectionNumber :").append(null != objectionNumber ? objectionNumber : " ");
 
-    public void setGenerateSpecialNotice(Boolean generateSpecialNotice) {
-        this.generateSpecialNotice = generateSpecialNotice;
-    }
+         return sb.toString();
+     }
 
-    /*public PropertyImpl getReferenceProperty() {
-        return referenceProperty;
-    }
+     @Override
+     public Long getId() {
+         return id;
+     }
 
-    public void setReferenceProperty(PropertyImpl referenceProperty) {
-        this.referenceProperty = referenceProperty;
-    }*/
+     @Override
+     public void setId(final Long id) {
+         this.id = id;
+     }
+
+     public PropertyImpl getProperty() {
+         return property;
+     }
+
+     public void setProperty(final PropertyImpl property) {
+         this.property = property;
+     }
+
+     public Boolean getGenerateSpecialNotice() {
+         return generateSpecialNotice;
+     }
+
+     public void setGenerateSpecialNotice(final Boolean generateSpecialNotice) {
+         this.generateSpecialNotice = generateSpecialNotice;
+     }
+
+     /*
+      * public PropertyImpl getReferenceProperty() { return referenceProperty; } public void setReferenceProperty(PropertyImpl
+      * referenceProperty) { this.referenceProperty = referenceProperty; }
+      */
 
 }

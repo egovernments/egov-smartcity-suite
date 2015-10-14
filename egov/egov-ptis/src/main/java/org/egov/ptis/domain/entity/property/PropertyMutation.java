@@ -85,12 +85,12 @@ public class PropertyMutation extends StateAware {
 
     @Override
     public String getStateDetails() {
-        StringBuffer stateDetails = new StringBuffer("");
+        final StringBuffer stateDetails = new StringBuffer("");
         stateDetails.append(getBasicProperty().getUpicNo()).append(", ")
-                .append(PROPERTY_TYPE_CATEGORIES.get(getBasicProperty().getProperty().getPropertyDetail().getCategoryType()))
-                .append(", ")
-                .append(getBasicProperty().getPropertyID().getLocality().getName()).append(", ")
-                .append(getPrimaryTransferee().getName());
+        .append(getPrimaryTransferee().getName())
+        .append(PROPERTY_TYPE_CATEGORIES.get(getBasicProperty().getProperty().getPropertyDetail().getCategoryType()))
+        .append(", ")
+        .append(getBasicProperty().getPropertyID().getLocality().getName()).append(", ");
         return stateDetails.toString();
     }
 
