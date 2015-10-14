@@ -43,6 +43,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_THIRDPARTY_CREATED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.egov.eis.entity.Assignment;
@@ -189,7 +190,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 if (waterConnectionDetails.getApplicationType().getCode()
                         .equalsIgnoreCase(WaterTaxConstants.CHANGEOFUSE)) {
                     waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
-                    consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetailsFullFlag);
+                    consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetailsFullFlag,BigDecimal.ZERO);
                 }
                 if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
                     waterConnectionDetails.transition(true).end().withSenderName(user.getName())

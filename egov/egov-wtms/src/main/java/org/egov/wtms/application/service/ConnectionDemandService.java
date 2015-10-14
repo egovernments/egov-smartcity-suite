@@ -402,15 +402,15 @@ public class ConnectionDemandService {
         return getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId()).list();
     }
 
-    public String generateBill(final String consumerCode) {
+    public String generateBill(final String consumerCode,String applicationTypeCode) {
         String collectXML = "";
         final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
         String currentInstallmentYear = null;
         final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context
                 .getBean("waterConnectionBillable");
-        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+       final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumberOrConsumerCode(consumerCode);
-        if (ConnectionStatus.INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
+       if (ConnectionStatus.INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
             currentInstallmentYear = formatYear.format(getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
                     WaterTaxConstants.YEARLY, new Date()).getInstallmentYear());
         else if (ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus())
@@ -728,6 +728,21 @@ public class ConnectionDemandService {
                             waterConnectionDetails.getDemand().getEgInstallmentMaster().getInstallmentNumber()))
                 currrentInstallMentExist = true;
         return currrentInstallMentExist;
+    }
+    
+    public BigDecimal getTotalAmount(final WaterConnectionDetails waterConnectionDetails) {
+        final EgDemand currentDemand = waterConnectionDetails.getDemand();
+        final List instVsAmt = getDmdCollAmtInstallmentWise(currentDemand);
+        BigDecimal balance = BigDecimal.ZERO;
+        for (final Object object : instVsAmt) {
+            final Object[] ddObject = (Object[]) object;
+            final BigDecimal dmdAmt = (BigDecimal) ddObject[2];
+            BigDecimal collAmt = BigDecimal.ZERO;
+            if (ddObject[2] != null)
+                collAmt = new BigDecimal((Double) ddObject[3]);
+            balance = balance.add(dmdAmt.subtract(collAmt));
+           }
+        return balance;
     }
 
 }

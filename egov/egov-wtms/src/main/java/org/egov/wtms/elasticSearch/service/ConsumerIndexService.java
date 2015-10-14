@@ -56,7 +56,7 @@ public class ConsumerIndexService {
     
     @Indexing(name = Index.WATERCHARGES, type = IndexType.CONNECTIONSEARCH)
     public ConsumerSearch createConsumerIndex(final WaterConnectionDetails waterConnectionDetails,
-            final AssessmentDetails assessmentDetails) {
+            final AssessmentDetails assessmentDetails,final BigDecimal amountTodisplayInIndex) {
 
         String mobileNumber = null;
         Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
@@ -78,8 +78,7 @@ public class ConsumerIndexService {
         consumerSearch.setApplicationCode(waterConnectionDetails.getApplicationType().getCode());
         consumerSearch.setStatus(waterConnectionDetails.getConnectionStatus().name());
         consumerSearch.setConnectionType(waterConnectionDetails.getConnectionType().name());
-        consumerSearch.setWaterTaxDue((null !=waterConnectionDetails.getDemand() && null !=waterConnectionDetails.getDemand().getBaseDemand() ? waterConnectionDetails.getDemand().getBaseDemand():BigDecimal.ZERO)
-                .subtract((null !=waterConnectionDetails.getDemand() && null !=waterConnectionDetails.getDemand().getAmtCollected() ?waterConnectionDetails.getDemand().getAmtCollected():BigDecimal.ZERO)));
+        consumerSearch.setWaterTaxDue(amountTodisplayInIndex);
         ownerNameItr = assessmentDetails.getOwnerNames().iterator();
         if (ownerNameItr.hasNext()) {
             consumerSearch.setConsumerName(ownerNameItr.next().getOwnerName());
@@ -90,4 +89,6 @@ public class ConsumerIndexService {
         }
         return consumerSearch;
     }
+    
+    
 }
