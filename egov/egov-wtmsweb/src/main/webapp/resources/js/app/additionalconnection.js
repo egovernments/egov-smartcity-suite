@@ -110,6 +110,8 @@ $(document).ready(function(){
 						$("#nooffloors").html(response.propertyDetails.noOfFloors);
 						if(response.ownerNames[0].mobileNumber != '')
 							$("#mobileNumber").html(response.ownerNames[0].mobileNumber);
+						if(response.ownerNames[0].emailId != '')
+							$("#email").html(response.ownerNames[0].emailId);
 						$("#propertyaddress").html(response.propertyAddress);
 						boundaryData = '';
 						if(response.boundaryDetails.zoneName != null && response.boundaryDetails.zoneName != '')
