@@ -117,7 +117,7 @@
 	</div>
 	<s:if test="%{preApprovedVoucherList.size!=0 || preApprovedVoucherList!=null}">
 	<div id="listid" style="display:block">
-					<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
+					<table width="100%"  align="center" class="tablebottom">
 			        <tr>  
 			        	<th class="bluebgheadtd">Sl. No.</th>
 			            <th class="bluebgheadtd">Bill Number</th>  
@@ -128,26 +128,26 @@
 			            <th class="bluebgheadtd">Department</th>  
 			        </tr>  
 				    <s:iterator var="p" value="preApprovedVoucherList" status="s">  
-				    <tr>  
-				    	<td>  
+				    <tr class="setborder">  
+				    	<td class="bluebox setborder">  
 				            <s:property value="#s.index+1" />  
 				        </td>
-						<td>  
+						<td class="bluebox setborder" style="text-align:center">  
 				            <a href="preApprovedVoucher-voucher.action?billid=<s:property value='%{id}'/>"><s:property value="%{billnumber}" /> </a> 
 				        </td>
-				        <td style="text-align:center">  
+				        <td  class="bluebox setborder" style="text-align:center">  
 				            <s:date name="%{billdate}" format="dd/MM/yyyy"/>  
 				        </td>
-				        <td style="text-align:right">  
+				        <td class="bluebox setborder" style="text-align:right">  
 				        	<s:text name="format.number" ><s:param value="%{billamount}"/></s:text>
 				        </td>
-				        <td  style="text-align:center">  
+				        <td class="bluebox setborder"  style="text-align:right">  
 				            <s:text name="format.number" ><s:param value="%{passedamount}"/></s:text>
 				        </td>
-				        <td style="text-align:center">  
+				        <td class="bluebox setborder" style="text-align:center">  
 				            <s:property value="%{expendituretype}" />  
 				        </td>
-				         <td style="text-align:center">  
+				         <td class="bluebox setborder" style="text-align:center">  
 				            <s:property value="%{egBillregistermis.egDepartment.name}" />  
 				        </td>
 				    </tr>  
