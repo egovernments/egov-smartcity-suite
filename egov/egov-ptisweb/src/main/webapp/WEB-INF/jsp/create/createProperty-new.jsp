@@ -80,6 +80,11 @@
 							<%@ include file="../common/DocumentUploadForm.jsp"%>
 						</tr>
 					</s:if>
+					<s:if test="%{state != null}">
+						<tr>
+							<%@ include file="../common/workflowHistoryView.jsp"%>
+						<tr>					
+					</s:if>
 					<s:if test="%{propertyByEmployee == true}">
 						<tr>
 							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
