@@ -59,6 +59,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class BoundaryService {
 
     private final BoundaryRepository boundaryRepository;
+    
+    @Autowired
+    private CrossHierarchyService crossHierarchyService;
 
     @Autowired
     public BoundaryService(final BoundaryRepository boundaryRepository) {
@@ -192,33 +195,44 @@ public class BoundaryService {
     
     public List<Map<String, Object>> getBoundaryDataByNameLike(final String name) {        
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-        getBoundaryByNameLike(name).stream()
-                .forEach(
-                        location -> {
-                                Map<String, Object> res = new HashMap<String, Object>();
-                                res.put("id", location.getId());
-                                if (location.isRoot())
-                                        res.put("name", location.getName());
-                                else {
-                                        Boundary currentLocation = location;
-                                        StringBuilder loc = new StringBuilder();
-                                        String delim = "";
-                                        while (!currentLocation.isRoot()) {
-                                                loc.append(delim).append(
-                                                                currentLocation.getName());
-                                                delim = ",";
-                                                currentLocation = currentLocation
-                                                                .getParent();
-                                                if (currentLocation.isRoot()) {
-                                                        loc.append(delim).append(
-                                                                        currentLocation.getName());
-                                                        break;
-                                                }
-                                        }
-                                        res.put("name", loc.toString());
-                                        list.add(res);
-                                }
-                        });
+        
+       crossHierarchyService
+        .getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Ward", "Location", name)
+        .stream().forEach(location -> {
+        	Map<String, Object> res = new HashMap<String, Object>();
+        	res.put("id", location.getId());
+        	res.put("name", location.getChild().getName() + " - " + location.getParent().getName());
+        	list.add(res);
+        });
+        
+    /*getBoundaryByNameLike(name).stream()
+            .forEach(
+                    location -> {
+                            Map<String, Object> res = new HashMap<String, Object>();
+                            res.put("id", location.getId());
+                            if (location.isRoot())
+                                    res.put("name", location.getName());
+                            else {
+                                    Boundary currentLocation = location;
+                                    StringBuilder loc = new StringBuilder();
+                                    String delim = "";
+                                    while (!currentLocation.isRoot()) {
+                                            loc.append(delim).append(
+                                                            currentLocation.getName());
+                                            delim = ",";
+                                            currentLocation = currentLocation
+                                                            .getParent();
+                                            if (currentLocation.isRoot()) {
+                                                    loc.append(delim).append(
+                                                                    currentLocation.getName());
+                                                    break;
+                                            }
+                                    }
+                                    res.put("name", loc.toString());
+                                    list.add(res);
+                            }
+                    });*/
+       
         return list;
         
     }
