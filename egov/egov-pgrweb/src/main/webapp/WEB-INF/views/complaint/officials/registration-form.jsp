@@ -108,7 +108,7 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintType"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
-							<input id="complaintTypeName" class="form-control typeahead is_valid_alphabet" placeholder=""
+							<input id="complaintTypeName" class="form-control typeahead is_valid_alphabet" placeholder='<spring:message code="lbl.placholder.grievance"/>'
 								autocomplete="off" required="required" value="${complaint.complaintType.name}"/>
 							<form:hidden path="complaintType" id="complaintTypeId" value="0"/>
 							<form:errors path="complaintType" cssClass="add-margin error-msg"/>
@@ -158,7 +158,7 @@
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintLoc"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
 							<div class="input-group">
-								<input id="location" type="text" value="${complaint.location.name}" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
+								<input id="location" type="text" value="${complaint.location.name}" class="form-control low-width" placeholder='<spring:message code="lbl.placeholder.grievance.loc"/>' autocomplete="off" required="required"/>
 								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe specific"></i></span>
 								<form:hidden path="location" id="locationid"/>
 								<input type="hidden"  name="crosshierarchyId" id="crosshierarchyId"/>

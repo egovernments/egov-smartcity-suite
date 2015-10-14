@@ -85,7 +85,7 @@ public class AjaxController {
     private CrossHierarchyService crossHierarchyService;
 
     @RequestMapping(value = "/ajax-getChildLocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Boundary> getWardsForZone(@RequestParam final Long id) {
+    public @ResponseBody List<Boundary> getChildBoundariesById(@RequestParam final Long id) {
         return crossHierarchyService.getActiveChildBoundariesByBoundaryId(id);
     }
 

@@ -78,7 +78,7 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.address"/></label>
 						<div class="col-sm-6">
-							<form:textarea path="complainant.address" id="address" minlength="10" placeholder="" maxlength="256" cssClass="form-control autogrow" />
+							<form:textarea path="complainant.address" id="address" placeholder="" maxlength="256" cssClass="form-control autogrow" />
 							<form:errors path="complainant.address" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
@@ -92,7 +92,7 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintType"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
-							<input id="complaintTypeName" class="form-control typeahead is_valid_alphabet" placeholder="Enter your complaint"
+							<input id="complaintTypeName" class="form-control typeahead is_valid_alphabet" placeholder='<spring:message code="lbl.placholder.grievance"/>'
 								autocomplete="off" required="required" value="${complaint.complaintType.name}"/>
 							<form:hidden path="complaintType" id="complaintTypeId" value="0" />
 							<form:errors path="complaintType" cssClass="add-margin error-msg" />
@@ -142,7 +142,7 @@
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintLoc"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
 							<div class="input-group"  id="location-tour">
-								<input id="location" type="text" value="${complaint.location.name}" class="form-control low-width" placeholder="Enter your complaint location or select it from map icon" autocomplete="off" required="required"/>
+								<input id="location" type="text" value="${complaint.location.name}" class="form-control low-width" placeholder='<spring:message code="lbl.placeholder.grievance.loc"/>' autocomplete="off" required="required"/>
 								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe specific"></i></span>
 								<form:hidden path="location" id="locationid"/>
 								<input type="hidden"  name="crosshierarchyId" id="crosshierarchyId"/>
