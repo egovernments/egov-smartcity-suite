@@ -77,7 +77,7 @@ public class LocalDiskFileStoreService implements FileStoreService {
     @Override
     public FileStoreMapper store(final File sourceFile, final String fileName, final String mimeType, final String moduleName) {
         try {
-            final FileStoreMapper fileMapper = new FileStoreMapper(UUID.randomUUID().toString(), 
+            final FileStoreMapper fileMapper = new FileStoreMapper(UUID.randomUUID().toString(),
                     StringUtils.defaultString(fileName, sourceFile.getName()));
             final Path newFilePath = createNewFilePath(fileMapper, moduleName);
             Files.copy(sourceFile.toPath(), newFilePath);
@@ -133,5 +133,19 @@ public class LocalDiskFileStoreService implements FileStoreService {
             LOG.info("Created File Store Directory {}/{}/{}", fileStoreBaseDir, EgovThreadLocals.getCityCode(), moduleName);
         }
         return Paths.get(fileStoreDir.toString() + File.separator + fileMapper.getFileStoreId());
+    }
+
+    @Override
+    public void delete(final String fileStoreId, final String moduleName) {
+        final Path fileStoreDir = Paths.get(fileStoreBaseDir + File.separator + EgovThreadLocals.getCityCode() + File.separator + moduleName);
+        if (Files.exists(fileStoreDir)) {
+            final Path filePath = Paths.get(fileStoreDir.toString() + File.separator + fileStoreId);
+            try {
+                Files.deleteIfExists(filePath);
+            } catch (final IOException e) {
+                LOG.error("Could not remove document {}", filePath.getFileName(), e);
+                throw new ApplicationRuntimeException("Could not remove document", e);
+            }
+        }
     }
 }

@@ -122,20 +122,20 @@
 						<td class="bluebox"><s:text name="PropertyAddress"></s:text>
 							:</td>
 						<td class="bluebox"><span class="bold"><s:property
-									value="basicproperty.address" default="N/A"/></span></td>
+									value="basicproperty.address" default="N/A" /></span></td>
 						<td class="bluebox"><s:text name="Zone"></s:text> :</td>
 						<td class="bluebox"><span class="bold"><s:property
-									value="basicproperty.propertyID.zone.name" default="N/A"/></span></td>
+									value="basicproperty.propertyID.zone.name" default="N/A" /></span></td>
 					</tr>
 
 					<tr>
 						<td class="greybox2">&nbsp;</td>
 						<td class="greybox"><s:text name="Ward" /> :</td>
 						<td class="greybox"><span class="bold"><s:property
-									value="basicproperty.propertyID.ward.name" default="N/A"/></span></td>
+									value="basicproperty.propertyID.ward.name" default="N/A" /></span></td>
 						<td class="greybox"><s:text name="block" /> :</td>
 						<td class="greybox"><span class="bold"><s:property
-									value="basicproperty.propertyID.area.name" default="N/A"/></span></td>
+									value="basicproperty.propertyID.area.name" default="N/A" /></span></td>
 					</tr>
 
 					<tr>
@@ -144,6 +144,16 @@
 						<td class="greybox"><span class="bold">Rs. <s:property
 									value="currentPropertyTax" /> /-
 						</span></td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td colspan="5">
+							<div class="headingsmallbg">
+								<span class="bold"><s:text name="ownerdetails.title"></s:text></span>
+							</div>
+						</td>
 					</tr>
 					<tr>
 						<td colspan="5">
@@ -163,28 +173,32 @@
 									<s:iterator value="basicproperty.propertyOwnerInfo"
 										status="status">
 										<tr>
-											<td class="blueborderfortd" align="center">
-												<s:if test='%{owner.aadhaarNumber == ""}'>
-								        				N/A
-							        			</s:if>
-							        			<s:else>
-													<s:property value="%{owner.aadhaarNumber}" default="N/A" />        			
-							        			</s:else>
-											</td>
-											<td class="blueborderfortd" align="center"><s:property
-													value="owner.name" /></td>
-											<td class="blueborderfortd" align="center"><s:property
-													value="owner.gender" /></td>
-											<td class="blueborderfortd" align="center"><s:property
-													value="owner.mobileNumber" /></td>
-											<td class="blueborderfortd" align="center">
-												<s:if test='%{owner.emailId == ""}'>N/A</s:if>
-	        		   							<s:else><s:property value="%{owner.emailId}" /></s:else>
-											</td>
-											<td class="blueborderfortd" align="center"><s:property
-													value="owner.guardianRelation" default="N/A" /></td>
-											<td class="blueborderfortd" align="center"><s:property
-													value="owner.guardian" default="N/A" /></td>
+											<td class="blueborderfortd" align="center"><s:if
+													test='%{owner.aadhaarNumber == ""}'>
+													<span class="bold"> N/A</span>
+												</s:if> <s:else>
+													<span class="bold"><s:property
+															value="%{owner.aadhaarNumber}" default="N/A" /> </span>
+												</s:else></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.name" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.gender" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.mobileNumber" /></span></td>
+											<td class="blueborderfortd" align="center"><s:if
+													test='%{owner.emailId == ""}'>
+													<span class="bold">N/A</span>
+												</s:if> <s:else>
+													<span class="bold"><s:property
+															value="%{owner.emailId}" /></span>
+												</s:else></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+														value="owner.guardianRelation" default="N/A" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.guardian"
+														default="N/A" /></span></td>
 										</tr>
 									</s:iterator>
 								</tbody>
@@ -200,8 +214,7 @@
 								id="transRsnId" list="dropdownData.MutationReason" listKey="id"
 								listValue="mutationName" headerKey="-1"
 								headerValue="%{getText('default.select')}"
-								value="%{mutationReason.id}" onchange="enableBlock();" />
-						</td>
+								value="%{mutationReason.id}" onchange="enableBlock();" /></td>
 						<td class="greybox reasonRow"><s:text name="saleDetls" /> <span
 							class="mandatory1">*</span> :</td>
 						<td class="greybox reasonRow"><s:textarea cols="30" rows="2"
@@ -242,6 +255,11 @@
 				<s:if test="%{!documentTypes.isEmpty()}">
 					<%@ include file="../common/DocumentUploadForm.jsp"%>
 				</s:if>
+				<s:if test="%{state != null}">
+					<tr>
+						<%@ include file="../common/workflowHistoryView.jsp"%>
+					<tr>
+				</s:if>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
@@ -256,30 +274,39 @@
 			Mandatory Fields</div>
 	</div>
 	<script type="text/javascript">
-		jQuery("#marketValue").blur(function() {
-			    if(jQuery("#marketValue").val().length >= 5) {
-							var marketVal = parseInt(jQuery("#marketValue").val());
-							var transferReason = document
-									.getElementById("transRsnId").options[document
-									.getElementById("transRsnId").selectedIndex].text;
-							if (isNaN(marketVal) || marketVal < 1)
-								return false;
-							jQuery.ajax({
-								type : "GET",
-								url : "calculate-mutationfee.action",
-								cache : true,
-								data : {
-									"marketValue" : marketVal,
-									"transferReason" : transferReason,
-									"mutationId" : jQuery("#mutationId").val()
-								}
-							}).done(function(value) {
-								jQuery("#mutationFee").val(roundoff(value));
-							});
-			    } else {
-			    	alert("Minimum five digit value is required for document value");
-				    }
-				});
+		jQuery("#marketValue")
+				.blur(
+						function() {
+							if (jQuery("#marketValue").val().length >= 5) {
+								var marketVal = parseInt(jQuery("#marketValue")
+										.val());
+								var transferReason = document
+										.getElementById("transRsnId").options[document
+										.getElementById("transRsnId").selectedIndex].text;
+								if (isNaN(marketVal) || marketVal < 1)
+									return false;
+								jQuery
+										.ajax(
+												{
+													type : "GET",
+													url : "calculate-mutationfee.action",
+													cache : true,
+													data : {
+														"marketValue" : marketVal,
+														"transferReason" : transferReason,
+														"mutationId" : jQuery(
+																"#mutationId")
+																.val()
+													}
+												}).done(
+												function(value) {
+													jQuery("#mutationFee").val(
+															roundoff(value));
+												});
+							} else {
+								alert("Minimum five digit value is required for document value");
+							}
+						});
 		function enableSaleDtls(obj) {
 			var selectedValue = obj.options[obj.selectedIndex].text;
 			if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SALES_DEED}" />') {
@@ -343,8 +370,8 @@
 				alert("Atleast one owner details is mandatory!");
 			}
 		}
-
 	</script>
-	<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	<script
+		src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 </body>
 </html>

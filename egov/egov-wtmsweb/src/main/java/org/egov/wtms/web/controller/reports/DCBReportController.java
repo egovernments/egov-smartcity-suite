@@ -198,15 +198,15 @@ public class DCBReportController {
         fromQry = new StringBuilder(" from egwtr_mv_dcb_view dcbinfo,eg_boundary boundary ");
         if (mode.equalsIgnoreCase(ZONEWISE)) {
             selectQry1
-                    .append("select distinct cast(dcbinfo.zoneid as integer) as \"zoneid\",boundary.name as \"boundaryName\",dcbinfo.username as \"username\", ");
-            groupByQry.append(" group by dcbinfo.zoneid,boundary.name,dcbinfo.username order by boundary.name");
+                    .append("select distinct cast(dcbinfo.zoneid as integer) as \"zoneid\",boundary.name as \"boundaryName\", ");
+            groupByQry.append(" group by dcbinfo.zoneid,boundary.name order by boundary.name");
             whereQry.append(" where dcbinfo.zoneid=boundary.id ");
             if (paramList != null && !paramList.equalsIgnoreCase(""))
                 whereQry = whereQry.append(" and dcbinfo.zoneid in (" + paramList + ")");
         } else if (mode.equalsIgnoreCase(WARDWISE)) {
             selectQry1
-                    .append("select distinct cast(dcbinfo.wardid as integer) as \"wardid\",boundary.name as \"boundaryName\",dcbinfo.username as \"username\", ");
-            groupByQry.append(" group by dcbinfo.wardid,boundary.name,dcbinfo.username order by boundary.name");
+                    .append("select distinct cast(dcbinfo.wardid as integer) as \"wardid\",boundary.name as \"boundaryName\", ");
+            groupByQry.append(" group by dcbinfo.wardid,boundary.name order by boundary.name");
             whereQry.append(" where dcbinfo.wardid=boundary.id ");
             if (paramList != null && !paramList.equalsIgnoreCase("") && reportType.equalsIgnoreCase("wardWise"))
                 whereQry = whereQry.append(" and dcbinfo.wardid in (" + paramList + ")");
@@ -214,8 +214,8 @@ public class DCBReportController {
                 whereQry = whereQry.append(" and dcbinfo.zoneid in (" + paramList + ")");
         } else if (mode.equalsIgnoreCase(BLOCKWISE)) {
             selectQry1
-                    .append("select distinct cast(dcbinfo.block as integer) as \"wardid\",boundary.name as \"boundaryName\",dcbinfo.username as \"username\", ");
-            groupByQry.append(" group by dcbinfo.block,boundary.name,dcbinfo.username order by boundary.name");
+                    .append("select distinct cast(dcbinfo.block as integer) as \"wardid\",boundary.name as \"boundaryName\", ");
+            groupByQry.append(" group by dcbinfo.block,boundary.name order by boundary.name");
             whereQry.append(" where dcbinfo.block=boundary.id ");
             if (paramList != null && !paramList.equalsIgnoreCase("") && reportType.equalsIgnoreCase("blockWise"))
                 whereQry = whereQry.append(" and dcbinfo.block in (" + paramList + ")");

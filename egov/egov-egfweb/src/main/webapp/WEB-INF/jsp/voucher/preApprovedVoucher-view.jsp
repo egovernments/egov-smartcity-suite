@@ -199,7 +199,7 @@ display: none;
   		</s:if>
 	</div>
 	</div>
- 	<div  class="buttonbottom">
+ 	<div  align = "center" class="buttonbottom">
 		<s:if test="%{from=='Receipt'}">
 			<s:iterator value="%{getValidActions()}" var="p"  status="s">
 			  <s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="wfBtn%{#s.index}" name="%{name}" method="approve" onclick="document.getElementById('actionName').value='%{name}';return true"/>

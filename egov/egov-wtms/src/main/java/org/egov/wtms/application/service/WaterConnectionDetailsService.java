@@ -399,13 +399,15 @@ public class WaterConnectionDetailsService {
 
         // To backUpdate waterConnectiondetails after ClosureConnection is
         // cancelled
-        if (waterConnectionDetails.getCloseConnectionType() != null
+        if (waterConnectionDetails.getCloseConnectionType() != null && waterConnectionDetails.getReConnectionReason()==null
                 && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CANCELLED)
                 && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INACTIVE)) {
             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_SANCTIONED, WaterTaxConstants.MODULETYPE));
             waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
             waterConnectionDetails.setCloseConnectionType(null);
+            waterConnectionDetails.setCloseconnectionreason(null);
+            waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(waterConnectionDetails.getPreviousApplicationType()));
             updateIndexes(waterConnectionDetails);
             updatedWaterConnectionDetails = waterConnectionDetailsRepository.save(waterConnectionDetails);
         }
@@ -417,6 +419,7 @@ public class WaterConnectionDetailsService {
                     WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED, WaterTaxConstants.MODULETYPE));
             waterConnectionDetails.setConnectionStatus(ConnectionStatus.CLOSED);
             waterConnectionDetails.setReConnectionReason(null);
+            waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.CLOSINGCONNECTION));
             updateIndexes(waterConnectionDetails);
             updatedWaterConnectionDetails = waterConnectionDetailsRepository.save(waterConnectionDetails);
         }
@@ -582,11 +585,11 @@ public class WaterConnectionDetailsService {
                 approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                         waterConnectionDetails);
             else if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED)
-                    || !workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
+                    || (!workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
                     && waterConnectionDetails.getStatus().getCode()
-                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED)
-                    || waterConnectionDetails.getStatus().getCode()
-                            .equals(WaterTaxConstants.WORKFLOW_RECOONCTIONINITIATED)) {
+                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED))
+                    || (!workFlowAction.equals(WFLOW_ACTION_STEP_REJECT) && waterConnectionDetails.getStatus().getCode()
+                            .equals(WaterTaxConstants.WORKFLOW_RECOONCTIONINITIATED))) {
                 final Position posobj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation());
                 if (posobj != null)
                     approvalPosition = posobj.getId();

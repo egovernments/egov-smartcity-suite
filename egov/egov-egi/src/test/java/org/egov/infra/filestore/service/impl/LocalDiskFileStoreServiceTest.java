@@ -204,5 +204,14 @@ public class LocalDiskFileStoreServiceTest {
 	    Files.deleteIfExists(file.toPath());
 	}
     }
+    
+    @Test
+    public final void testDeleteFile() throws IOException {
+        final File newFile = Files.createTempFile(tempFilePath, "xyz", "txt").toFile();
+        FileUtils.write(newFile, "Test");
+        FileStoreMapper fileStoreMapper = diskFileService.store(newFile, "fileName", "text/plain", "testmodule");
+        diskFileService.delete(fileStoreMapper.getFileStoreId(), "testmodule");
+        Files.deleteIfExists(newFile.toPath());
+    }
 
 }

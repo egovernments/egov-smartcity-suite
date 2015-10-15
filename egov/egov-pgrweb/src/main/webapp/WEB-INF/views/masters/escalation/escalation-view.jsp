@@ -109,7 +109,7 @@
 						<label class="col-sm-3 control-label"><spring:message code="lbl.escalation.position" /><span class="mandatory"></span></label>
 						<div class="col-sm-6">
 						<form:input id="com_position" path="position.name" type="text"
-								class="form-control typeahead is_valid_alphabet"
+								class="form-control typeahead is_valid_letters_space_hyphen_underscore"
 								placeholder="" autocomplete="off" required="required" />
 									
 							<input type=hidden id="mode" value="${mode}">

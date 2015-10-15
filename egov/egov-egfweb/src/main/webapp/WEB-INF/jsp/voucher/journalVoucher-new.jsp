@@ -153,7 +153,7 @@
 			<br/>
 		</table> 
 		</div> 
-		<div  class="buttonbottom" id="buttondiv">                   
+		<div  align = "center" class="buttonbottom" id="buttondiv">                   
 			<s:iterator value="%{getValidActions('')}" var="p">
 				<s:if test="%{description !='Cancel'}">
 					<s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="%{name}" name="%{name}" method="create" onclick="return validateJV('save','%{name}','%{description}')"/>

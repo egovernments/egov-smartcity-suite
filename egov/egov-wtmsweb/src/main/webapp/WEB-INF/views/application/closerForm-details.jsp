@@ -23,7 +23,7 @@
 # 
 #     In addition to the terms of the GPL license to be adhered to in using this
 #     program, the following additional terms are to be complied with:
-# 
+# closuredocumentdetails-view.jsp
 # 	1) All versions of this program, verbatim or modified must carry this 
 # 	   Legal Notice.
 # 
@@ -75,6 +75,11 @@ if(mode !='closeredit'){
 $(':radio:not(:checked)').attr('disabled', true);
 $('#closeconnectionreason').attr('disabled', true);
 }
+if(mode =='closereditForAE')
+	{
+	$('#closeconnectionreason').attr('disabled', false);
+	$(':radio:not(:checked)').attr('disabled', false);
+	}
 else
 {
 	$('#closeconnectionreason').attr('disabled', false);

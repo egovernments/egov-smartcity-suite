@@ -203,8 +203,7 @@
 
 	<tr class="bpddetails">
 		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="deviationper"></s:text><span
-			class="mandatory1">*</span> :</td>
+		<td class="bluebox"><s:text name="deviationper"></s:text>:</td>
 		<td class="bluebox"><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}"
 				name="propertyDetail.deviationPercentage" id="deviationPercentage"

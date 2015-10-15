@@ -233,6 +233,8 @@ public class WaterConnectionDetails extends StateAware {
     private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>(0);
 
     private String closeConnectionType;
+    
+    private String previousApplicationType;
 
     @Length(max = 1024)
     private String closeconnectionreason;
@@ -270,6 +272,14 @@ public class WaterConnectionDetails extends StateAware {
     public String myLinkId() {
         return applicationNumber;
 
+    }
+
+    public String getPreviousApplicationType() {
+        return previousApplicationType;
+    }
+
+    public void setPreviousApplicationType(String previousApplicationType) {
+        this.previousApplicationType = previousApplicationType;
     }
 
     public ApplicationType getApplicationType() {

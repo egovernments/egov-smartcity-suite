@@ -153,4 +153,11 @@
 	   <property name="receiptHeaderService" ref="receiptHeaderService" />
 	   <property name="reconciliationService" ref="reconciliationService" />
 	</bean>
+	
+	<bean class="org.egov.collection.integration.services.DishonorChequeService" id="dishonorChequeService" scope="prototype">
+	   <property name="persistenceService" ref="persistenceService" />
+	   <property name="receiptHeaderService" ref="receiptHeaderService" />
+	   <property name="collectionsUtil" ref="collectionsUtil" />
+	</bean>
+	
 </beans>

@@ -82,6 +82,10 @@
 							<c:when test="${waterConnectionDetails.connectionStatus == 'INACTIVE' && waterConnectionDetails.applicationType.code=='NEWCONNECTION'}">
 							<span><spring:message code="msg.newapplication.cancel.success" /></span>
 							</c:when>
+								<c:when test="${waterConnectionDetails.status.code == 'SANCTIONED' && waterConnectionDetails.connectionStatus == 'ACTIVE' && waterConnectionDetails.previousApplicationType !=null  }">
+								<spring:message code="msg.connection.disconnected" />
+								<%-- <spring:message code="msg.sussess.forward" /><br>${approvalUser} --%>
+							</c:when>
 							<c:when test="${waterConnectionDetails.status.code == 'SANCTIONED' && waterConnectionDetails.connectionStatus == 'ACTIVE'  }">
 								<spring:message code="msg.connection.sanctioned.success" />
 								<%-- <spring:message code="msg.sussess.forward" /><br>${approvalUser} --%>
@@ -103,7 +107,10 @@
 								
 						</c:when>
 						<c:when test="${waterConnectionDetails.state.value== 'Rejected' && waterConnectionDetails.applicationType.code=='CLOSINGCONNECTION' && waterConnectionDetails.closeConnectionType != null}">
-							<span><spring:message code="msg.closure.rejection.success" /></span>
+							<span><spring:message code="msg.closure.rejection.success" />${approverName}</span>
+							</c:when>
+							<c:when test="${waterConnectionDetails.status.code== 'Rejected' && waterConnectionDetails.applicationType.code=='CLOSINGCONNECTION' && waterConnectionDetails.closeConnectionType != null}">
+							<span><spring:message code="msg.closure.rejection.success" />${approverName}</span>
 							</c:when>
 				</c:choose>
 				</div>

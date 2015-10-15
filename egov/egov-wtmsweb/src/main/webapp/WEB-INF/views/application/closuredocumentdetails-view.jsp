@@ -37,63 +37,54 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ page language="java" pageEncoding="UTF-8"%>
-<%@ include file="/includes/taglibs.jsp"%>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<html>
-	<head>
-		<title>Property Transfer Fee Payment</title>
-	</head>
-		<div class="formmainbox">
-			<s:if test="%{hasErrors()}">
-				<div class="errorstyle" id="property_error_area">
-					<div class="errortext">
-						<s:actionerror />
-					</div>
-				</div>
-			</s:if>
-			<form action="collect-fee.action" name="transferform" theme="simple">
-				<div class="headingbg">
-					Property Transfer Fee Payment
-				</div>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<table class="table table-bordered">
+
+<input type="hidden" id="appforDocumentList"  value="${appforDocumentList}" />
+<div class="panel-heading">
+									<div class="panel-title">
+									Closure Connection Documents
+									</div>
+									
+								</div>
+<c:if test="${!appforDocumentList.isEmpty()}">
+	<thead>
+		<tr>
+			<th><spring:message code="lbl.slno" /></th>
+			<th><spring:message code="lbl.documentname" /></th>
+			<th><spring:message code="lbl.documentnumber" /></th>
+			<th><spring:message code="lbl.documentdate" /></th>
+			<c:if test="${mode!='ack'}">
+				<th><spring:message code="lbl.files"/></th>
+			</c:if>
+		</tr>
+	</thead>
+	</c:if>
+	<c:choose>
+		<c:when test="${!appforDocumentList.isEmpty()}">
+			<c:forEach items="${appforDocumentList}" var="docs" varStatus="serialNo">
+				<tbody>
 					<tr>
-						<td class="bluebox2" style="width:23%;">
-							&nbsp;
+						<td><c:out value="${serialNo.count}"/></td>
+						<td><c:out value="${docs.documentNames.documentName}" /></td>
+						<td><c:out value="${docs.documentNumber}" /></td>
+						<td><fmt:formatDate pattern="dd/MM/yyyy" value="${docs.documentDate}" var="docsDate"/><c:out value="${docsDate}" /></td>
+						<c:if test="${mode!='ack'}">
+						<td><c:forEach items="${docs.getSupportDocs()}" var="file">
+								<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=WTMS" target="_blank"> 
+								<c:out value="${file.fileName}"/></a>
+							</c:forEach>
 						</td>
-						<td class="bluebox" style="width:20%;text-align:right;">
-							Application No :
-						</td>
-						<td class="bluebox">
-							<span class="bold"><input type="text" name="applicationNo"/></span>
-						</td>
-						<td class="bluebox">
-							&nbsp;
-						</td>
+						</c:if>
 					</tr>
-					<tr>
-						<td colspan="4" align="center">OR</td>
-					</tr>
-					<tr>
-						<td class="bluebox2" style="width:5%;">
-							&nbsp;
-						</td>
-						<td class="bluebox" style="width:20%;text-align:right;">
-							Assessment No :
-						</td>
-						<td class="bluebox">
-							<span class="bold"><input type="text" name="assessmentNo"/></span>
-						</td>
-						<td class="bluebox">
-							&nbsp;
-						</td>
-					</tr>
-				</table>
-				<div class="buttonbottom" align="center">
-					<input type="submit" value="Pay Fee" class="buttonsubmit" align="center"/>
-					<input type="button" value="Close" class="button" align="center" onClick="return confirmClose();" />
-				</div>
-			</form>
-		</div>
-	</body>
-</html>
+				</tbody>
+			</c:forEach>
+		</c:when>
+		<c:otherwise>
+			<div class="col-md-12 col-xs-6  panel-title">No documents found</div>
+		</c:otherwise>
+	</c:choose>
+</table>
