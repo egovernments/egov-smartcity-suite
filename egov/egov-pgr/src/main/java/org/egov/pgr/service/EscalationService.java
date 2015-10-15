@@ -176,9 +176,8 @@ public class EscalationService {
                 final StringBuffer smsBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
                         .append(", The complaint Number (").append(complaint.getCrn())
                         .append(") has been escalated to ").append(superiorUser.getName()).append(" on ")
-                        .append(formattedEscalationDate);   
+                        .append(formattedEscalationDate);
                 if (superiorUser != null) {
-                    System.out.println(superiorUser.getEmailId());
                     messagingService.sendEmail(superiorUser.getEmailId(), emailSubject.toString(), emailBody.toString());
                     messagingService.sendSMS(superiorUser.getMobileNumber(), smsBody.toString());
                 }
