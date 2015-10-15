@@ -47,10 +47,18 @@
 		<s:text name='NewProp.title' />
 	</s:if></title>
 <sx:head />
-<script	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"type="text/javascript"></script>
-<link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
-<script	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>" type="text/javascript"></script>
-<script	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>" type="text/javascript"></script>
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"
+	type="text/javascript"></script>
+<link
+	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+	rel="stylesheet" type="text/css" />
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	type="text/javascript"></script>
+<script
+	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"
+	type="text/javascript"></script>
 </head>
 
 <body onload="loadOnStartUp();">
@@ -61,7 +69,7 @@
 			</div>
 		</div>
 	</s:if>
- <s:form name="CreatePropertyForm" action="createProperty-create"
+	<s:form name="CreatePropertyForm" action="createProperty-create"
 		theme="simple" enctype="multipart/form-data">
 		<s:push value="model">
 			<s:token />
@@ -80,10 +88,26 @@
 							<%@ include file="../common/DocumentUploadForm.jsp"%>
 						</tr>
 					</s:if>
+					<s:if test="%{propertyTaxDetailsMap.size != 0 && isExemptedFromTax == false}">
+						<tr class="taxDetails">
+							<td colspan="5">
+								<div class="headingsmallbg">
+									<span class="bold"><s:text name="taxdetailsheader" /> </span>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="5">
+								<div align="center">
+									<%@ include file="../common/propertyTaxDetailsForm.jsp"%>
+								</div>
+							</td>
+						</tr>
+					</s:if>
 					<s:if test="%{state != null}">
 						<tr>
 							<%@ include file="../common/workflowHistoryView.jsp"%>
-						<tr>					
+						<tr>
 					</s:if>
 					<s:if test="%{propertyByEmployee == true}">
 						<tr>
@@ -110,66 +134,64 @@
 		</s:push>
 	</s:form>
 	<script type="text/javascript">
+		jQuery.noConflict();
+		jQuery("#loadingMask").remove();
+		jQuery(function($) {
+			try {
+				$(".datepicker").datepicker({
+					format : "dd/mm/yyyy"
+				});
+				reInitializeDateOnChangeEvent();
+			} catch (e) {
+				console.warn("No Date Picker " + e);
+			}
+		});
 
-jQuery.noConflict();
-jQuery("#loadingMask").remove();
-jQuery(function ($) {
-	try { 
-		$(".datepicker").datepicker({
-			format: "dd/mm/yyyy"
-		}); 
-		reInitializeDateOnChangeEvent();
-		}catch(e) {
-		console.warn("No Date Picker "+ e);
-	}
-});
+		function reInitializeDateOnChangeEvent() {
 
-function reInitializeDateOnChangeEvent(){
+			jQuery(".datepicker").on('changeDate', function(ev) {
+				jQuery(this).datepicker('hide');
+			});
 
-	jQuery(".datepicker").on('changeDate', function(ev){
-		jQuery(this).datepicker('hide');
-	}); 
-	
-}
+		}
 
-function loadOnStartUp() {
-	document.getElementById('assessmentRow').style.display="none";
-	enableCorresAddr();
-	enableAppartnaumtLandDetails();
-	makeMandatory();
-	document.getElementById("appurtenantRow").style.display = "none";
-	enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
-	enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
-	var appartunentLand = jQuery('input[name="propertyDetail.appurtenantLandChecked"]');
-	if (jQuery(appartunentLand).is(":checked")) {
-		enableAppartnaumtLandDetails();
-	}
-	var category = '<s:property value="%{propertyDetail.categoryType}"/>';
-	document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].value = category;
-	toggleFloorDetails();
-     var aadhartextboxes = jQuery('.txtaadhar');
-     console.log(aadhartextboxes);
-     aadhartextboxes.each(function() {
-	   	if(jQuery(this).val())
-	   	{
-	   		  getAadharDetails(this);
-	   	}
-	 });
-     populateBoundaries();
-     loadDesignationFromMatrix();
-}
+		function loadOnStartUp() {
+			document.getElementById('assessmentRow').style.display = "none";
+			enableCorresAddr();
+			enableAppartnaumtLandDetails();
+			makeMandatory();
+			document.getElementById("appurtenantRow").style.display = "none";
+			enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
+			enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
+			var appartunentLand = jQuery('input[name="propertyDetail.appurtenantLandChecked"]');
+			if (jQuery(appartunentLand).is(":checked")) {
+				enableAppartnaumtLandDetails();
+			}
+			var category = '<s:property value="%{propertyDetail.categoryType}"/>';
+			document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].value = category;
+			toggleFloorDetails();
+			var aadhartextboxes = jQuery('.txtaadhar');
+			console.log(aadhartextboxes);
+			aadhartextboxes.each(function() {
+				if (jQuery(this).val()) {
+					getAadharDetails(this);
+				}
+			});
+			populateBoundaries();
+			loadDesignationFromMatrix();
+		}
 
-function onSubmit() { 
-	jQuery('#gender, #guardianRelation').removeAttr('disabled');
-	document.forms[0].action = 'createProperty-create.action';
-	<s:if test="mode=='edit'">
-	document.forms[0].action = 'createProperty-forward.action';
-	</s:if>
-	document.forms[0].submit;
-   return true;
-}
-
-</script>
-<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+		function onSubmit() {
+			jQuery('#gender, #guardianRelation').removeAttr('disabled');
+			document.forms[0].action = 'createProperty-create.action';
+			<s:if test="mode=='edit'">
+			document.forms[0].action = 'createProperty-forward.action';
+			</s:if>
+			document.forms[0].submit;
+			return true;
+		}
+	</script>
+	<script
+		src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 </body>
 </html>

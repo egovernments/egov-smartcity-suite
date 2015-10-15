@@ -146,6 +146,22 @@
 					<tr>
 						<%@ include file="../create/createPropertyView.jsp"%>
 					</tr>
+					<s:if test="%{propertyTaxDetailsMap.size != 0 && isExemptedFromTax == false}">
+						<tr class="taxDetails">
+							<td colspan="5">
+								<div class="headingsmallbg">
+									<span class="bold"><s:text name="taxdetailsheader" /> </span>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="5">
+								<div align="center">
+									<%@ include file="../common/propertyTaxDetailsForm.jsp"%>
+								</div>
+							</td>
+						</tr>
+					</s:if>
 					<s:if test="%{state != null}">
 						<tr>
 							<%@ include file="../common/workflowHistoryView.jsp"%>

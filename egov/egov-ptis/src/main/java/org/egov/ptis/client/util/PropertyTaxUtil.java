@@ -1522,7 +1522,7 @@ public class PropertyTaxUtil {
         final String query = "select ptd from Ptdemand ptd " + "inner join fetch ptd.egDemandDetails dd "
                 + "inner join fetch dd.egDemandReason dr " + "inner join fetch dr.egDemandReasonMaster drm "
                 + "inner join fetch ptd.egptProperty p " + "inner join fetch p.basicProperty bp "
-                + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I') " + "and p = :property "
+                + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I' or p.status = 'W') " + "and p = :property "
                 + "and ptd.egInstallmentMaster = :installment";
 
         final Ptdemand ptDemand = (Ptdemand) HibernateUtil.getCurrentSession().createQuery(query)
@@ -2235,5 +2235,45 @@ public class PropertyTaxUtil {
         final Query qry = persistenceService.getSession().createSQLQuery(selectQuery).setLong("basicPropId", basicPropId);
         list = qry.list();
         return (BigDecimal) list.get(0);
+    }
+    
+    public Map<String, BigDecimal> prepareDemandDetForWorkflowProperty(final Property property,
+            final Installment currentInstallment) {
+        LOGGER.debug("Entered into prepareDemandDetForWorkflowProperty, property=" + property);
+
+        Map<String, BigDecimal> DCBDetails = new HashMap<String, BigDecimal>();
+        String demandReason = "";
+        Installment installment = null;
+        BigDecimal totalCurrentDemand = BigDecimal.ZERO;
+        BigDecimal totalCurrentCollection = BigDecimal.ZERO;
+
+        final List<String> demandReasonExcludeList = Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
+                PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE);
+
+        final String query = "select ptd from Ptdemand ptd " + "inner join fetch ptd.egDemandDetails dd "
+                + "inner join fetch dd.egDemandReason dr " + "inner join fetch dr.egDemandReasonMaster drm "
+                + "inner join fetch ptd.egptProperty p " + "inner join fetch p.basicProperty bp "
+                + "where bp.active = true " + "and (p.status = 'W' or p.status = 'I' or p.status = 'A') " + "and p = :property "
+                + "and ptd.egInstallmentMaster = :installment";
+
+        final Ptdemand ptDemand = (Ptdemand) HibernateUtil.getCurrentSession().createQuery(query)
+                .setEntity("property", property).setEntity("installment", currentInstallment).list().get(0);
+
+        for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
+
+            demandReason = dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode();
+
+            if (!demandReasonExcludeList.contains(demandReason)) {
+                installment = dmdDet.getEgDemandReason().getEgInstallmentMaster();
+                if (installment.equals(currentInstallment)) {
+                    totalCurrentDemand = totalCurrentDemand.add(dmdDet.getAmount());
+                    totalCurrentCollection = totalCurrentCollection.add(dmdDet.getAmtCollected());
+                    DCBDetails.put(dmdDet.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), dmdDet.getAmount());
+                }
+            }
+        }
+        LOGGER.debug("prepareDemandDetForWorkflowProperty - demands=" + DCBDetails);
+        LOGGER.debug("Exiting from prepareDemandDetForWorkflowProperty");
+        return DCBDetails;
     }
 }

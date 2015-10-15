@@ -362,36 +362,36 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     @SkipValidation
     @Action(value = "/modifyProperty-saveDataEntry")
-	public String saveDataEntry() {
+    public String saveDataEntry() {
 
         LOGGER.debug("updateData: Property modification started for Migrated Property, PropertyId: " + propertyModel);
         final long startTimeMillis = System.currentTimeMillis();
-		LOGGER.debug("Entered into modifyForm, \nIndexNumber: " + indexNumber + ", BasicProperty: " + basicProp
-				+ ", OldProperty: " + oldProperty + ", PropertyModel: " + propertyModel);
-		 Date propCompletionDate = null;
+        LOGGER.debug("Entered into modifyForm, \nIndexNumber: " + indexNumber + ", BasicProperty: " + basicProp
+                + ", OldProperty: " + oldProperty + ", PropertyModel: " + propertyModel);
+        Date propCompletionDate = null;
         final PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.findById(Integer.valueOf(propTypeId), false);
         if (!proptypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propCompletionDate = propService.getLowestDtOfCompFloorWise(propertyModel.getPropertyDetail()
                     .getFloorDetailsProxy());
         else
             propCompletionDate = propertyModel.getPropertyDetail().getDateOfCompletion();
-		PropertyImpl property = (PropertyImpl) basicProp.getProperty();
-		propService.createProperty(property, getAreaOfPlot(), modifyRsn, propTypeId, propUsageId,
-                propOccId, 'A', propertyModel.getDocNumber(), null, floorTypeId, roofTypeId, wallTypeId, woodTypeId,
-                taxExemptedReason);
+        PropertyImpl property = (PropertyImpl) basicProp.getProperty();
+        propService.createProperty(property, getAreaOfPlot(), modifyRsn, propTypeId, propUsageId, propOccId, 'A',
+                propertyModel.getDocNumber(), null, floorTypeId, roofTypeId, wallTypeId, woodTypeId, taxExemptedReason);
         propertyModel.setPropertyModifyReason(modifyRsn);
         propertyModel.setBasicProperty(basicProp);
         propertyModel.setEffectiveDate(propCompletionDate);
-		LOGGER.debug("modifyForm: AreaOfPlot: " + getAreaOfPlot() + ", PropTypeId: " + getPropTypeId()
-				+ ", PropUsageId: " + getPropUsageId() + ", PropOccId: " + getPropOccId());
-		LOGGER.debug("Exiting from modifyForm");
+        LOGGER.debug("modifyForm: AreaOfPlot: " + getAreaOfPlot() + ", PropTypeId: " + getPropTypeId()
+                + ", PropUsageId: " + getPropUsageId() + ", PropOccId: " + getPropOccId());
+        LOGGER.debug("Exiting from modifyForm");
 
-            final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-            LOGGER.info("updateData: Property modified successfully in system with Index Number: "
-                    + basicProp.getUpicNo() + "; Time taken(ms) = " + elapsedTimeMillis);
+        final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+        LOGGER.info("updateData: Property modified successfully in system with Index Number: " + basicProp.getUpicNo()
+                + "; Time taken(ms) = " + elapsedTimeMillis);
 
-		return RESULT_ACK;
-	}
+        return RESULT_ACK;
+    }
+
     /**
      * Populates form data to be displayed
      * 
@@ -761,11 +761,17 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             LOGGER.debug("prepare: BasicProperty: " + basicProp);
             propWF = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
-            if (propWF != null)
+            if (propWF != null) {
                 setProperty(propWF);
-        } else if (indexNumber != null && !indexNumber.trim().isEmpty())
+                preparePropertyTaxDetails(propWF);
+            } else {
+                preparePropertyTaxDetails(basicProp.getActiveProperty());
+            }
+        } else if (indexNumber != null && !indexNumber.trim().isEmpty()) {
             setBasicProp((BasicProperty) getPersistenceService().findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO,
                     indexNumber));
+            preparePropertyTaxDetails(basicProp.getActiveProperty());
+        }
         documentTypes = propService.getPropertyModificationDocumentTypes();
         final List<FloorType> floorTypes = getPersistenceService().findAllBy("from FloorType order by name");
         final List<RoofType> roofTypes = getPersistenceService().findAllBy("from RoofType order by name");
@@ -1954,6 +1960,14 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     public void setPropertyCategory(String propertyCategory) {
         this.propertyCategory = propertyCategory;
+    }
+
+    public Map<String, BigDecimal> getPropertyTaxDetailsMap() {
+        return propertyTaxDetailsMap;
+    }
+
+    public void setPropertyTaxDetailsMap(Map<String, BigDecimal> propertyTaxDetailsMap) {
+        this.propertyTaxDetailsMap = propertyTaxDetailsMap;
     }
 
 }

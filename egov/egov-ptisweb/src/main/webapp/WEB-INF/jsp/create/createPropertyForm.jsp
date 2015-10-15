@@ -293,7 +293,6 @@
 			</div>
 		</td>
 	</tr>
-  
 </table>
 <script type="text/javascript">
 	function showDocumentManager() {

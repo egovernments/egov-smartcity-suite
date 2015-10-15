@@ -46,6 +46,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
@@ -74,9 +78,11 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJ
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -594,6 +600,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("prepare: Property by ModelId: " + property + "BasicProperty on property: " + basicProp);
         }
+        if (null != property && null != property.getId())
+            preparePropertyTaxDetails(property);
         documentTypes = propService.getPropertyCreateDocumentTypes();
         final List<FloorType> floorTypeList = getPersistenceService().findAllBy("from FloorType order by name");
         final List<RoofType> roofTypeList = getPersistenceService().findAllBy("from RoofType order by name");
@@ -614,8 +622,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
         final List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 LOCALITY, LOCATION_HIERARCHY_TYPE);
-        final List<Boundary> zones = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-                ZONE, ADMIN_HIERARCHY_TYPE);
+        final List<Boundary> zones = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,
+                ADMIN_HIERARCHY_TYPE);
         final List<Boundary> electionWardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 ELECTIONWARD_BNDRY_TYPE, ELECTION_HIERARCHY_TYPE);
         final List<Boundary> enumerationBlockList = boundaryService
@@ -655,16 +663,16 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         } else
             setPropTypeCategoryMap(Collections.EMPTY_MAP);
 
-        //Loading property usages based on property category
-        if(StringUtils.isNoneBlank(propertyCategory)) {
+        // Loading property usages based on property category
+        if (StringUtils.isNoneBlank(propertyCategory)) {
             if (propertyCategory.equals(CATEGORY_MIXED))
-            usageList = getPersistenceService().findAllBy("From PropertyUsage order by usageName");
-        else if (propertyCategory.equals(CATEGORY_RESIDENTIAL))
-            usageList = getPersistenceService().findAllBy(
-                    "From PropertyUsage where isResidential = true order by usageName");
-        else if (propertyCategory.equals(CATEGORY_NON_RESIDENTIAL))
-            usageList = getPersistenceService().findAllBy(
-                    "From PropertyUsage where isResidential = false order by usageName");
+                usageList = getPersistenceService().findAllBy("From PropertyUsage order by usageName");
+            else if (propertyCategory.equals(CATEGORY_RESIDENTIAL))
+                usageList = getPersistenceService().findAllBy(
+                        "From PropertyUsage where isResidential = true order by usageName");
+            else if (propertyCategory.equals(CATEGORY_NON_RESIDENTIAL))
+                usageList = getPersistenceService().findAllBy(
+                        "From PropertyUsage where isResidential = false order by usageName");
         }
 
         addDropdownData("UsageList", usageList);
@@ -686,6 +694,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     + ", TaxExemptedReasonList: "
                     + (getDropdownData().get("taxExemptedList") != null ? getDropdownData().get("taxExemptedList")
                             : "List is NULL"));
+
+        if (null != property && null != property.getId()) {
+            final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
+                    propertyTaxUtil.getCurrentInstallment());
+        }
 
         LOGGER.debug("Exiting from prepare");
     }
@@ -867,8 +880,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propertyId.setModifiedDate(new Date());
         propertyId.setArea(boundaryService.getBoundaryById(getBlockId()));
         propertyId.setLocality(boundaryService.getBoundaryById(getLocality()));
-		if (getStreetId() != null && getStreetId() != -1)
-			propertyId.setStreet(boundaryService.getBoundaryById(getStreetId()));
+        if (getStreetId() != null && getStreetId() != -1)
+            propertyId.setStreet(boundaryService.getBoundaryById(getStreetId()));
         propertyId.setEastBoundary(getEastBoundary());
         propertyId.setWestBoundary(getWestBoundary());
         propertyId.setNorthBoundary(getNorthBoundary());
@@ -898,7 +911,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         else if (null != propTypeMstr && !propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             if (!StringUtils.isBlank(houseNumber))
                 validateHouseNumber(wardId, houseNumber, basicProp);
-            else if(userDesgn.equals(REVENUE_INSPECTOR_DESGN))
+            else if (userDesgn.equals(REVENUE_INSPECTOR_DESGN))
                 addActionError(getText("mandatory.doorNo"));
 
         if (null == property.getBasicProperty().getRegdDocDate()) {
@@ -1526,6 +1539,14 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     public void setStreetId(Long streetId) {
         this.streetId = streetId;
+    }
+
+    public Map<String, BigDecimal> getPropertyTaxDetailsMap() {
+        return propertyTaxDetailsMap;
+    }
+
+    public void setPropertyTaxDetailsMap(Map<String, BigDecimal> propertyTaxDetailsMap) {
+        this.propertyTaxDetailsMap = propertyTaxDetailsMap;
     }
 
 }
