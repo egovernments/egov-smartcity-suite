@@ -51,7 +51,7 @@
 	    </div>
 	</div>
 	<div class="form-group">
-	    <label class="col-sm-3 control-label text-right"><s:text name='licensee.applicantName' /><span class="mandatory"></span></label>
+	    <label class="col-sm-3 control-label text-right"><s:text name='licensee.applicantname' /><span class="mandatory"></span></label>
 	    <div class="col-sm-3 add-margin">
 	       <s:textfield name="licensee.applicantName" id="applicantName" maxlength="32" cssClass="form-control patternvalidation" data-pattern="alphabetwithspace" required="required"/>
 	    </div>

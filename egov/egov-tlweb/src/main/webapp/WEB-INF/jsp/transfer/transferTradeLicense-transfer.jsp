@@ -43,397 +43,133 @@
 <title><s:text name="page.title.transfertrade" /></title>
 <sx:head />
 <script>
-		  	function validateForm(obj) {
-			    if (validateForm_transferTradeLicense() == false) {
-			      return false;
-			    } else {
-			      clearWaterMark();
-			      onSubmit();
-			    }
-			  }
-
-		  	function clearWaterMark(){
-				if(document.getElementById('applicationDate') && document.getElementById('applicationDate').value=='dd/MM/yyyy') {
-					document.getElementById('applicationDate').value = '';
-				}				
+		function validateDataBeforeSubmit() {
+			if (document.getElementById("applicantName").value == '' || document.getElementById("applicantName").value == null){
+				showMessage('transferLicense_error', '<s:text name="licensetransfer.applicantname.null" />');
+				document.getElementById("applicantName").focus();
+				return false;
+			}  else if (document.getElementById("licenseeAddress").value == '' || document.getElementById("licenseeAddress").value == null){
+				showMessage('transferLicense_error', '<s:text name="licensetransfer.licenseeaddress.null" />');
+				document.getElementById("licenseeAddress").focus();
+				return false;
+			} else if (document.getElementById("commdateApp").value == '') {
+				showMessage('transferLicense_error', '<s:text name="licensetransfer.date.none" />');
+				return false;
+			} else {
+		    	clearMessage('transferLicense_error');
+		    	document.transferTradeLicense.action='${pageContext.request.contextPath}/transfer/transferTradeLicense-create.action';
+		    	document.transferTradeLicense.submit();
 			}
-			
-			function checkLength(obj,val){
-				if(obj.value.length>val) {
-					alert('Max '+val+' digits allowed')
-					obj.value = obj.value.substring(0,val);
-				}
-			}	
-
-			function onSubmit() {
-        		document.forms[0].action = 'transferTradeLicense-create.action';
-        		document.forms[0].submit;
-        	}
-			
-		</script>
+		} 
+		
+		function onSubmit() {
+			return validateDataBeforeSubmit(this);
+		}
+</script>
 </head>
-<body>
-	<table align="center" width="100%">
-		<tbody>
-			<tr>
-				<td>
-					<div align="center">
-						<center>
-							<div class="formmainbox">
-								<div class="headingbg">
-									<s:text name="page.title.transfertrade" />
-								</div>
-								<table>
-									<tr>
-										<td align="left" style="color: #FF0000">
-											<s:actionerror cssStyle="color: #FF0000" />
-											<s:actionmessage />
-										</td>
-									</tr>
-								</table>
-								<s:form action="transferTradeLicense" theme="css_xhtml"
-									name="registrationForm" validate="true">
-									<s:token />
-									<s:push value="model">
-										<s:hidden name="id"/>
-										<c:set var="trclass" value="greybox" />
-										<table border="0" cellpadding="0" cellspacing="0" width="100%">
-											<tbody>
-												<c:choose>
-													<c:when test="${trclass=='greybox'}">
-														<c:set var="trclass" value="bluebox" />
-													</c:when>
-													<c:when test="${trclass=='bluebox'}">
-														<c:set var="trclass" value="greybox" />
-													</c:when>
-												</c:choose>
-												<tr>
-													<td colspan="5" class="headingwk">
-														<div class="arrowiconwk">
-															<img
-																src="${pageContext.request.contextPath}/images/arrow.gif"
-																height="20" />
-														</div>
-														<div class="headplacer">
-															<s:text name='license.tranfer.title' />
-														</div>
-													</td>
-												</tr>
-												<tr>
-													<td class="<c:out value="${trclass}"/>" width="5%">
-														&nbsp;</td>
-													<td class="<c:out value="${trclass}"/>"><s:text
-															name="license.licensenumber" /></td>
-													<td class="<c:out value="${trclass}"/>"><s:property
-															value="licenseNumber" /></td>
-													<td class="<c:out value="${trclass}"/>"><s:text
-															name="license.tradename" /></td>
-													<td class="<c:out value="${trclass}"/>"><s:property
-															value="tradeName.name" /> <s:hidden name="license" /></td>
-												</tr>
-												<c:choose>
-													<c:when test="${trclass=='greybox'}">
-														<c:set var="trclass" value="bluebox" />
-													</c:when>
-													<c:when test="${trclass=='bluebox'}">
-														<c:set var="trclass" value="greybox" />
-													</c:when>
-												</c:choose>
-												<c:choose>
-													<c:when test="${hotelGrade!=null && hotelGrade!=''}">
-														<td class="<c:out value="${trclass}"/>">&nbsp;</td>
-														<td class="<c:out value="${trclass}"/>"><s:text
-																name="license.hotel.grade" /></td>
-														<td class="<c:out value="${trclass}"/>" colspan="3">
-															<s:property value="hotelGrade" />
-														</td>
-													</c:when>
-												</c:choose>
 
-												<c:choose>
-													<c:when test="${trclass=='greybox'}">
-														<c:set var="trclass" value="bluebox" />
-													</c:when>
-													<c:when test="${trclass=='bluebox'}">
-														<c:set var="trclass" value="greybox" />
-													</c:when>
-												</c:choose>
-												<tr>
-													<td class="<c:out value="${trclass}"/>" width="5%">
-														&nbsp;</td>
-													<td class="<c:out value="${trclass}"/>"><s:text
-															name="licensee.current.applicantname" /></td>
-													<td class="<c:out value="${trclass}"/>"><s:property
-															value="licensee.applicantName" /></td>
-													<td class="<c:out value="${trclass}"/>"><s:text
-															name="license.applicationdate" /> <span
-														class="mandatory1">*</span></td>
-													<s:date name='licenseTransfer.oldApplicationDate'
-														id="VTL.applicationDate" format='dd/MM/yyyy' />
-													<td class="<c:out value="${trclass}"/>"><s:textfield
-															name="licenseTransfer.oldApplicationDate"
-															id="applicationDate" value="%{applicationDate}"
-															onfocus="waterMarkTextIn('applicationDate','dd/mm/yyyy');"
-															onblur="waterMarkTextOut('applicationDate','dd/mm/yyyy');lessThanOrEqualToCurrentDate(this)"
-															maxlength="10" size="10"
-															onkeyup="DateFormat(this,this.value,event,false,'3')" />
-														<a
-														href="javascript:show_calendar('forms[0].applicationDate',null,null,'DD/MM/YYYY');"
-														onmouseover="window.status='Date Picker';return true;"
-														onmouseout="window.status='';return true;"> <img
-															src="${pageContext.request.contextPath}/images/calendaricon.gif"
-															alt="Date" width="18" height="18" border="0"
-															align="absmiddle" id="calenderImgId" /></td>
-												</tr>
-												<c:choose>
-													<c:when test="${trclass=='greybox'}">
-														<c:set var="trclass" value="bluebox" />
-													</c:when>
-													<c:when test="${trclass=='bluebox'}">
-														<c:set var="trclass" value="greybox" />
-													</c:when>
-												</c:choose>
-												<tr>
-													<td class="<c:out value="${trclass}"/>" width="5%">
-														&nbsp;</td>
-													<td class="<c:out value="${trclass}"/>"><s:text
-															name="licensee.applicantname" /> <span class="mandatory1">*</span>
-													</td>
-													<td class="<c:out value="${trclass}"/>"><s:textfield
-															name="licenseTransfer.oldApplicantName"
-															id="applicantName" value="%{licensee.applicantName}"
-															maxlength="100" /></td>
-													<td class="<c:out value="${trclass}"/>"><s:text
-															name="license.establishmentname" /> <span
-														class="mandatory1">*</span></td>
-													<td class="<c:out value="${trclass}"/>"><s:textfield
-															name="licenseTransfer.oldNameOfEstablishment"
-															id="nameOfEstablishment" maxlength="100"
-															value="%{nameOfEstablishment}" /></td>
-												</tr>
-												<c:choose>
-													<c:when test="${trclass=='greybox'}">
-														<c:set var="trclass" value="bluebox" />
-													</c:when>
-													<c:when test="${trclass=='bluebox'}">
-														<c:set var="trclass" value="greybox" />
-													</c:when>
-												</c:choose>
-												<s:if test="%{licensee.boundary.name.contains('Zone')}">
-													<tr>
-														<td class="<c:out value="${trclass}"/>" width="5%">&nbsp;</td>
-														<td class="<c:out value="${trclass}"/>" align="right"><s:text
-																name="license.zone" /><span class="mandatory1">*</span>
-														</td>
-														<td class="<c:out value="${trclass}"/>" align="left"><s:select
-																headerKey=""
-																headerValue="%{getText('license.default.select')}"
-																name="licenseeZoneId" id="licenseeZoneId"
-																list="licenseZoneList" listKey="id" listValue='name'
-																value="licensee.boundary.id"
-																onChange="setupLicenseeAjaxDivision(this);" /> <egov:ajaxdropdown
-																id="populateLicenseeDivision" fields="['Text','Value']"
-																dropdownId='licenseedivision'
-																url='domain/commonTradeLicenseAjax-populateDivisions.action' /></td>
-														<td class="<c:out value="${trclass}"/>"><s:text
-																name="license.division" /></td>
-														<td class="<c:out value="${trclass}"/>"><s:select
-																headerKey=""
-																headerValue="%{getText('license.default.select')}"
-																disabled="%{sDisabled}" name="licenseTransfer.boundary"
-																id="licenseedivision"
-																list="dropdownData.divisionListLicensee" listKey="id"
-																listValue='name' value="%{licensee.boundary.id}"
-																onChange="setupAjaxArea(this);" /> <egov:ajaxdropdown
-																id="populateLicenseeArea" fields="['Text','Value']"
-																dropdownId='licenseeArea'
-																url='domain/commonAjax-populateAreas.action' /></td>
-													</tr>
-												</s:if>
-												<s:else>
-													<tr>
-														<td class="<c:out value="${trclass}"/>" width="5%">&nbsp;</td>
-														<td class="<c:out value="${trclass}"/>" align="right"><s:text
-																name="license.zone" /><span class="mandatory1">*</span>
-														</td>
-														<td class="<c:out value="${trclass}"/>" align="left"><s:select
-																headerKey=""
-																headerValue="%{getText('license.default.select')}"
-																name="licenseeZoneId" id="licenseeZoneId"
-																list="dropdownData.zoneList" listKey="id"
-																listValue='name'
-																onChange="setupLicenseeAjaxDivision(this);" /> <egov:ajaxdropdown
-																id="populateLicenseeDivision" fields="['Text','Value']"
-																dropdownId='licenseedivision'
-																url='domain/commonAjax-populateDivisions.action' /></td>
-														<td class="<c:out value="${trclass}"/>"><s:text
-																name="license.division" /></td>
-														<td class="<c:out value="${trclass}"/>"><s:select
-																headerKey=""
-																headerValue="%{getText('license.default.select')}"
-																disabled="%{sDisabled}" name="licenseTransfer.boundary"
-																id="licenseedivision"
-																list="dropdownData.divisionListLicensee" listKey="id"
-																listValue='name' value="%{licensee.boundary.id}"
-																onChange="setupAjaxArea(this);" /> <egov:ajaxdropdown
-																id="populateLicenseeArea" fields="['Text','Value']"
-																dropdownId='licenseeArea'
-																url='domain/commonAjax-populateAreas.action' /></td>
-													</tr>
-												</s:else>
-												<c:choose>
-													<c:when test="${trclass=='greybox'}">
-														<c:set var="trclass" value="bluebox" />
-													</c:when>
-													<c:when test="${trclass=='bluebox'}">
-														<c:set var="trclass" value="greybox" />
-													</c:when>
-												</c:choose>
-												<tr>
-													<td class="<c:out value="${trclass}"/>" width="5%">
-														&nbsp;</td>
-													<td class="<c:out value="${trclass}"/>"><s:text
-															name='license.housenumber' /> <span class="mandatory1">*</span>
-													</td>
-													<td class="<c:out value="${trclass}"/>"><s:textfield
-															name="licenseTransfer.oldAddress.houseNoBldgApt"
-															value="%{licensee.address.houseNoBldgApt}" maxlength="10" /></td>
-													<td class="<c:out value="${trclass}"/>" colspan="2">
-														&nbsp;
-													</td>
-												<c:choose>
-													<c:when test="${trclass=='greybox'}">
-														<c:set var="trclass" value="bluebox" />
-													</c:when>
-													<c:when test="${trclass=='bluebox'}">
-														<c:set var="trclass" value="greybox" />
-													</c:when>
-												</c:choose>
-												<tr>
-													<td class="<c:out value="${trclass}"/> width="5%">
-													<td class="<c:out value="${trclass}"/>"><s:text
-															name='license.remainingaddress' /></td>
-													<td class="<c:out value="${trclass}"/>" colspan="3"><s:textarea
-															name="licenseTransfer.oldAddress.streetRoadLine"
-															value="%{licensee.address.streetRoadLine}" rows="3"
-															cols="40" maxlength="500" /></td>
-												</tr>
-												<c:choose>
-													<c:when test="${trclass=='greybox'}">
-														<c:set var="trclass" value="bluebox" />
-													</c:when>
-													<c:when test="${trclass=='bluebox'}">
-														<c:set var="trclass" value="greybox" />
-													</c:when>
-												</c:choose>
-												<tr>
-													<td class="<c:out value="${trclass}"/>" width="5%">
-														&nbsp;</td>
-													<td class="<c:out value="${trclass}"/>"><s:text
-															name='license.pincode' /></td>
-													<td class="<c:out value="${trclass}"/>"><s:textfield
-															name="licenseTransfer.oldAddress.pinCode"
-															onKeyPress="return numbersonly(this, event)"
-															onBlur="checkLength(this,6)"
-															value="%{licensee.address.pinCode}" maxlength="6" /></td>
-													<td class="<c:out value="${trclass}"/>"><s:text
-															name='license.address.phonenumber' /></td>
-													<td class="<c:out value="${trclass}"/>"><s:textfield
-															name="licenseTransfer.oldPhoneNumber"
-															value="%{phoneNumber}"
-															onKeyPress="return numbersonly(this, event)"
-															maxlength="15" /></td>
-												</tr>
-												<c:choose>
-													<c:when test="${trclass=='greybox'}">
-														<c:set var="trclass" value="bluebox" />
-													</c:when>
-													<c:when test="${trclass=='bluebox'}">
-														<c:set var="trclass" value="greybox" />
-													</c:when>
-												</c:choose>
-												<tr>
-													<td class="<c:out value="${trclass}"/>" width="5%">
-														&nbsp;</td>
-													<td class="<c:out value="${trclass}"/>"><s:text
-															name='licensee.homephone' /></td>
-													<td class="<c:out value="${trclass}"/>"><s:textfield
-															name="licenseTransfer.oldHomePhoneNumber"
-															value="%{licensee.phoneNumber}"
-															onKeyPress="return numbersonly(this, event)"
-															maxlength="15" /></td>
-													<td class="<c:out value="${trclass}"/>"><s:text
-															name='licensee.mobilephone' /></td>
-													<td class="<c:out value="${trclass}"/>"><s:textfield
-															name="licenseTransfer.oldMobileNumber"
-															value="%{licensee.mobilePhoneNumber}"
-															onKeyPress="return numbersonly(this, event)"
-															maxlength="15" /></td>
-												</tr>
-												<c:choose>
-													<c:when test="${trclass=='greybox'}">
-														<c:set var="trclass" value="bluebox" />
-													</c:when>
-													<c:when test="${trclass=='bluebox'}">
-														<c:set var="trclass" value="greybox" />
-													</c:when>
-												</c:choose>
-												<tr>
-													<td class="<c:out value="${trclass}"/> width="5%"></td>
+	<body>
+	<div id="transferLicense_error" class="error-msg" style="display:none;"></div> 
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel-body">
+			<s:if test="%{hasErrors()}">
+				<div align="left">
+					<s:actionerror />
+					<s:fielderror/>
+				</div>			
+			</s:if>
+			<s:if test="%{hasActionMessages()}">
+			<div class="messagestyle">
+				<s:actionmessage theme="simple" />
+			</div>
+			</s:if>
 
-													<td class="<c:out value="${trclass}"/>"><s:text
-															name='licensee.emailId' /></td>
-													<td class="<c:out value="${trclass}"/>"><s:textfield
-															name="licenseTransfer.oldEmailId"
-															value="%{licensee.emailId}"
-															onBlur="validateEmail(this);checkLength(this,50)"
-															maxlength="50" /></td>
-													<td class="<c:out value="${trclass}"/>"><s:text
-															name='licensee.uid' /></td>
-													<td class="<c:out value="${trclass}"/>"><s:textfield
-															name="licenseTransfer.oldUid" value="%{licensee.uid}"
-															onBlur="checkLength(this,12)" maxlength="12" /></td>
-												</tr>
-												<%-- <tr>
-													<td colspan="5">
-														<%@ include file='../common/commonWorkflowMatrix.jsp'%>
-														<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
-													</td>
-												</tr> --%>
-											</tbody>
-										</table>
-
-										<div class="mandatory1" style="font-size: 11px;" align="left">
-											* Mandatory Fields</div>
-										<div>
-											<table>
-												<tr class="buttonbottom" id="buttondiv"
-													style="align: middle">
-													<%-- <s:if test="%{roleName.contains('TLAPPROVER')}">
-													<td><s:submit cssClass="buttonsubmit" value="Approve"
-															id="Approve" method="create"
-															onclick="return validateForm(this);" /></td>
-															</s:if>
-													<td><s:submit cssClass="buttonsubmit" value="Forward"
-															id="Forward" method="create"
-															onclick="return validateForm(this);" /></td> --%>
-													<td><s:submit type="submit" cssClass="buttonsubmit"
-															value="Save" id="Save" method="create"
-															onclick="return validateForm(this);" /></td>
-													<td><input type="button" value="Close"
-														id="closeButton" onclick="javascript: window.close();"
-														class="button" /></td>
-												</tr>
-											</table>
-										</div>
-									</s:push>
-								</s:form>
+			<s:form action="transferTradeLicense" theme="css_xhtml" name="transferTradeLicense" id="transferTradeLicense" cssClass="form-horizontal form-groups-bordered">
+				<s:token />
+				<s:push value="model">
+					<s:hidden name="id"/>
+					<s:hidden name="licenseId" />
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-heading">
+							<div class="panel-title text-left">
+									<s:text name='page.title.transfertrade' />
 							</div>
-						</center>
+						</div>
+						<div class="panel-body custom-form">
+							<div class="form-group">
+								<label for="field-1" class="col-sm-3 control-label text-right"><s:text
+										name="licenseTransfer.licensenumber" /></label>
+								  <div class="col-sm-3 add-margin"><s:property value="licenseNumber" />			       
+								   </div>
+								
+								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+										name="licenseTransfer.establishmentname" /></label>
+								<div class="col-sm-3 add-margin">
+									<s:property value="nameOfEstablishment" />	
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label for="field-1" class="col-sm-3 control-label text-right"><s:text
+										name="licenseTransfer.tradename" /></label>
+								  <div class="col-sm-3 add-margin"><s:property value="tradeName.name" />			       
+								   </div>
+								
+								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+										name="licenseTransfer.licenseeName" /></label>
+								<div class="col-sm-3 add-margin">
+									<s:property value="licensee.applicantName" />	
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label for="field-1" class="col-sm-3 control-label text-right"><s:text
+										name="licenseTransfer.dateofapplication" /><span class="mandatory"></span></label>
+								  <div class="col-sm-3 add-margin">
+								       <s:date name="applicationDate" id="commDateId2" format="dd/MM/yyyy" />
+										<s:textfield disabled="%{sDisabled}" name="commdateApp" id="commdateApp" class="form-control datepicker" data-date-end-date="0d" maxlength="10" size="10" value="%{commDateId2}" />
+								   </div>
+								
+								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+										name="licenseTransfer.applicantname" /><span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<s:textfield name="licensee.applicantName" id="applicantName" maxlength="32" cssClass="form-control patternvalidation" data-pattern="alphabetwithspace"/>
+								</div>
+							</div>   
+							
+							<div class="form-group">
+								<label for="field-1" class="col-sm-3 control-label text-right"><s:text
+										name="licenseTransfer.isaddressdifferent" /><span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<s:checkbox id="active"	name="active" value="%{active}"/>
+								</div>
+								
+								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
+										name="licenseTransfer.address" /><span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<s:textarea name="licensee.address"  id="licenseeAddress" maxlength="250" cssClass="form-control"/>
+								</div>
+							</div>   
+						</div>
 					</div>
-				</td>
-			</tr>
-		</tbody>
-	</table>
-</body>
+				</s:push>
+				
+				<div class="row">
+					<div class="text-center">
+						<button type="button" id="btnsubmit" class="btn btn-primary" onclick="return validateDataBeforeSubmit();">
+						Submit</button>
+						<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
+						Close</button>
+					</div>
+				</div>
+				
+			</s:form></div></div></div>
+			<script>
+			jQuery(".datepicker").datepicker({
+				format: "dd/mm/yyyy",
+				autoclose: true 
+			}); 
+			</script>
+	</body>
 </html>

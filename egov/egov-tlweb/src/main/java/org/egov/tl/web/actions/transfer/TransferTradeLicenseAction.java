@@ -24,16 +24,16 @@
  *      In addition to the terms of the GPL license to be adhered to in using this
  *      program, the following additional terms are to be complied with:
  *
- *  	1) All versions of this program, verbatim or modified must carry this
- *  	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- *  	2) Any misrepresentation of the origin of the material is prohibited. It
- *  	   is required that all modified versions of this material be marked in
- *  	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *  	3) This license does not grant any rights to any user of the program
- *  	   with regards to rights under trademark law for use of the trade names
- *  	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
@@ -51,7 +51,6 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -70,30 +69,7 @@ import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.opensymphony.xwork2.validator.annotations.EmailValidator;
-import com.opensymphony.xwork2.validator.annotations.IntRangeFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
-
 @ParentPackage("egov")
-@Validations(requiredFields = {
-        @RequiredFieldValidator(fieldName = "licenseTransfer.oldApplicantName", message = "", key = Constants.REQUIRED),
-        @RequiredFieldValidator(fieldName = "licenseTransfer.oldApplicationDate", message = "", key = Constants.REQUIRED),
-        @RequiredFieldValidator(fieldName = "licenseTransfer.oldNameOfEstablishment", message = "", key = Constants.REQUIRED),
-        /*@RequiredFieldValidator(fieldName = "licenseTransfer.oldAddress.houseNoBldgApt", message = "", key = Constants.REQUIRED),*/
-        @RequiredFieldValidator(fieldName = "licenseeZoneId", message = "", key = Constants.REQUIRED) },
-
-        emails = { @EmailValidator(message = "Please enter the valid Email Id", fieldName = "licenseTransfer.oldEmailId", key = "Please enter the valid Email Id") }, stringLengthFields = {
-        @StringLengthFieldValidator(fieldName = "licenseTransfer.oldNameOfEstablishment", maxLength = "100", message = "", key = "Name of Establishment can be upto 100 characters"),
-        @StringLengthFieldValidator(fieldName = "licenseTransfer.oldApplicantName", maxLength = "100", message = "", key = "Applicant Name can be upto 100 characters"),
-        /*@StringLengthFieldValidator(fieldName = "licenseTransfer.oldAddress.houseNoBldgApt", maxLength = "10", message = "", key = "Maximum  length for house number is 10"),*/
-        /*@StringLengthFieldValidator(fieldName = "licenseTransfer.oldAddress.streetAddress2", maxLength = "10", message = "", key = "Maximum  length for house number is 10"),*/
-        @StringLengthFieldValidator(fieldName = "licenseTransfer.oldAddress.streetRoadLine", maxLength = "500", message = "", key = "Remaining address can be upto 500 characters long"),
-        @StringLengthFieldValidator(fieldName = "licenseTransfer.oldPhoneNumber", maxLength = "15", message = "", key = "Maximum  length for Phone number is 15"),
-        @StringLengthFieldValidator(fieldName = "licenseTransfer.oldMobileNumber", maxLength = "15", message = "", key = "Maximum length for Phone Number is 15"),
-        @StringLengthFieldValidator(fieldName = "licenseTransfer.oldHomePhoneNumber", maxLength = "15", message = "", key = "Phone number should be upto 15 numbers"),
-        @StringLengthFieldValidator(fieldName = "licenseTransfer.oldUid", maxLength = "12", message = "", key = "Maximum length for UID is 12") }, intRangeFields = { @IntRangeFieldValidator(fieldName = "licenseTransfer.oldAddress.pinCode", min = "100000", max = "999999", message = "", key = "Minimum and Maximum length for Pincode is 6 and all Digit Cannot be 0") })
 @Results({
 @Result(name = "transfer", location = "transferTradeLicense-transfer.jsp"),
 @Result(name = "message", location = "transferTradeLicense-message.jsp"),
@@ -111,6 +87,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
     private UserService userService;
     @Autowired
     private SecurityUtils securityUtils;
+    private Long licenseId;
 
     public TransferTradeLicenseAction() {
         super();
@@ -155,13 +132,13 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
     @SkipValidation
 @Action(value="/transfer/transferTradeLicense-newForm")
     public String newForm() {
-        tl = (TradeLicense) ts.getPersistenceService().find("from TradeLicense where id=?", tl.getId());
-        tl.setLicenseeZoneId(Long.valueOf(tl.getLicensee().getBoundary().getParent().getId()));
+        tl = (TradeLicense) ts.getPersistenceService().find("from TradeLicense where id=?",licenseId);
+       // tl.setLicenseeZoneId(Long.valueOf(tl.getLicensee().getBoundary().getParent().getId()));
         List cityZoneList = new ArrayList();
         cityZoneList = licenseUtils.getAllZone();
         tl.setLicenseZoneList(cityZoneList);
-        final Boundary licenseeboundary = boundaryService.getBoundaryById(tl.getLicensee().getBoundary().getId());
-        if (licenseeboundary.getName().contains("Zone"))
+        final Boundary licenseeboundary = boundaryService.getBoundaryById(tl.getBoundary().getId());
+        if (licenseeboundary!=null && licenseeboundary.getName().contains("Zone"))
             addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSEE, Collections.EMPTY_LIST);
         loadAjaxedDropDowns();
         return "transfer";
@@ -330,5 +307,13 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
     @Override
     protected License license() {
         return tl;
+    }
+
+    public Long getLicenseId() {
+        return licenseId;
+    }
+
+    public void setLicenseId(Long licenseId) {
+        this.licenseId = licenseId;
     }
 }

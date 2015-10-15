@@ -165,7 +165,7 @@ String path = request.getContextPath();
 								</s:if>
 								<s:if test="%{#attr.license.status.statusCode=='ACT'}">
 									<s:if test="%{roleName.contains('TLCREATOR')}">
-										<option value="/transfer/transferTradeLicense-newForm.action?model.id=">
+										<option value="/transfer/transferTradeLicense-newForm.action?licenseId=">
 											<s:text name="license.action.transfer" />
 										</option>
 										<s:if test="%{#attr.license.oldLicenseNumber != null && #attr.license.oldLicenseNumber != ''}">
