@@ -105,7 +105,7 @@ public class CloserConnectionService {
             BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(parentWaterConnectionDetail);
             if ( waterTaxDueforParent.doubleValue() > 0)
                 validationMessage = messageSource
-                        .getMessage("err.closyure.connection.watertaxdue", null, null);
+                        .getMessage("err.closure.connection.watertaxdue", null, null);
     /*        if (parentWaterConnectionDetail.getConnection().getId() != null)
                 if (waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0)
                     validationMessage = messageSource.getMessage("err.validate.additional.connection.wtdue.forchangeofuse",
