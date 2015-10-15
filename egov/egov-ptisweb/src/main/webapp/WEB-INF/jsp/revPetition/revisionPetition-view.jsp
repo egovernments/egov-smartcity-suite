@@ -302,6 +302,11 @@
             </div>
             </td>
           </tr>
+		<s:if test="%{state != null}">
+			<tr>
+				<%@ include file="../common/workflowHistoryView.jsp"%>
+			<tr>					
+		</s:if>
           <tr>
             <td>
             <div id="approval_header" > 
