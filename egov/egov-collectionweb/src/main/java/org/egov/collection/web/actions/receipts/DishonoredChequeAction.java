@@ -55,9 +55,8 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.DishonoredChequeBean;
-import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.integration.services.DishonorChequeService;
 import org.egov.collection.service.ReceiptHeaderService;
-import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.BankBranchHibernateDAO;
 import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -71,8 +70,8 @@ import org.egov.model.instrument.InstrumentType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({ @Result(name = DishonoredChequeAction.SEARCH, location = "dishonoredCheque-search.jsp"),
-        @Result(name = DishonoredChequeAction.SUCCESS, location = "dishonoredCheque-success.jsp"),
-        @Result(name = "accountList", location = "dishonoredCheque-accountList.jsp") })
+    @Result(name = DishonoredChequeAction.SUCCESS, location = "dishonoredCheque-success.jsp"),
+    @Result(name = "accountList", location = "dishonoredCheque-accountList.jsp") })
 @ParentPackage("egov")
 public class DishonoredChequeAction extends SearchFormAction {
 
@@ -100,6 +99,7 @@ public class DishonoredChequeAction extends SearchFormAction {
     private ReceiptHeaderService receiptHeaderService;
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
+    private DishonorChequeService dishonorChequeService;
 
     @Override
     public Object getModel() {
@@ -169,23 +169,9 @@ public class DishonoredChequeAction extends SearchFormAction {
 
     @Action(value = "/receipts/dishonoredCheque-dishonorCheque")
     public String dishonorCheque() throws Exception {
-        final String installmentIdsStr[] = instHeaderIds.split(",");
-        for (final String installmentIdStr : installmentIdsStr) {
-            final InstrumentHeader iHeader = (InstrumentHeader) getPersistenceService().find(
-                    "from InstrumentHeader where id=?", Long.valueOf(installmentIdStr));
-            final EgwStatus statusDishonored = egwStatusDAO.getStatusByModuleAndCode(
-                    CollectionConstants.MODULE_NAME_INSTRUMENTHEADER, CollectionConstants.INSTRUMENT_DISHONORED_STATUS);
-            iHeader.setStatusId(statusDishonored);
-            final ReceiptHeader receiptHeader = (ReceiptHeader) getPersistenceService().find(
-                    "select DISTINCT (receipt) from org.egov.collection.entity.ReceiptHeader receipt "
-                + "join receipt.receiptInstrument as instruments where instruments.id=?", Long.valueOf(installmentIdStr));
-            final EgwStatus statusBounced = egwStatusDAO.getStatusByModuleAndCode(
-                    CollectionConstants.MODULE_NAME_RECEIPTHEADER,
-                    CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED);
-            receiptHeader.setStatus(statusBounced);
-            instrumentHeaderService.update(iHeader);
-            receiptHeaderService.update(receiptHeader);
-        }
+        final String instrumentHeaderIds[] = instHeaderIds.split(",");
+        for (final String instHeadId : instrumentHeaderIds)
+            dishonorChequeService.updateCollectionsOnInstrumentDishonor(Long.valueOf(instHeadId));
         return SUCCESS;
     }
 
@@ -281,10 +267,6 @@ public class DishonoredChequeAction extends SearchFormAction {
         this.chequeDate = chequeDate;
     }
 
-    public ReceiptHeaderService getReceiptHeaderService() {
-        return receiptHeaderService;
-    }
-
     public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
         this.receiptHeaderService = receiptHeaderService;
     }
@@ -309,8 +291,12 @@ public class DishonoredChequeAction extends SearchFormAction {
         return instHeaderIds;
     }
 
-    public void setInstHeaderIds(String instHeaderIds) {
+    public void setInstHeaderIds(final String instHeaderIds) {
         this.instHeaderIds = instHeaderIds;
+    }
+
+    public void setDishonorChequeService(DishonorChequeService dishonorChequeService) {
+        this.dishonorChequeService = dishonorChequeService;
     }
 
 }
