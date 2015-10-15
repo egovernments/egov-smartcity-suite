@@ -11,6 +11,9 @@
 	}
 
 	function validateWorkFlowApprover(name) {
+		if(!onSubmitValidations()){
+			return false;
+		}
 	    document.getElementById("workFlowAction").value=name;
 	    var approverPosId = document.getElementById("approverPositionId");
 	    if(approverPosId && approverPosId.value != -1) {
@@ -33,15 +36,20 @@
 	    return  onSubmit();
 	}
 </script>
-<div class="buttonbottom text-center">
+
+<div class="buttonbottom" align="center">
 	<s:hidden id="workFlowAction" name="workFlowAction"/>
-	<div style="display:inline-block"><s:iterator value="%{getValidActions()}" var="name">
-		<s:if test="%{name!=''}">
-			<s:submit type="submit" cssClass="buttonsubmit" value="%{name}"
-				id="%{name}" name="%{name}"
-				onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');"  style="margin:0 10px"/>
-		</s:if>
-	</s:iterator></div> 
-	<div style="display:inline-block"><input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" /></div>
-	
+	<table>
+		<tr>
+			<td><s:iterator value="%{getValidActions()}" var="name">
+					<s:if test="%{name!=''}">
+					<td>
+						<s:submit type="submit" cssClass="buttonsubmit custom-button" value="%{name}"
+							id="%{name}" name="%{name}"
+							onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');" style="margin:0 5px"/></td>
+					</s:if>
+				</s:iterator> <td><input type="button" name="button2" id="button2" value="Close"
+				class="button" onclick="window.close();" style="margin:0 5px"/></td></td>
+		</tr>
+	</table>
 </div>

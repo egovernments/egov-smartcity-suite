@@ -80,16 +80,16 @@
 		var code= dom.get("code").value;
 		var name= dom.get("name").value;
 		var categoryId= dom.get("categoryId").value;
-		if (name == '' || name == null){
+		if (categoryId == '-1'){
+			showMessage('subcategory_error', '<s:text name="tradelic.master.tradesubcategoryid.null" />');
+			return false;
+		}  else if (name == '' || name == null){
 			showMessage('subcategory_error', '<s:text name="tradelic.master.tradesubcategoryname.null" />');
 			return false;
 		} else if (code == '' || code == null){
 			showMessage('subcategory_error', '<s:text name="tradelic.master.tradesubcategorycode.null" />');
 			return false;
-		}  else if (categoryId == '-1'){
-			showMessage('subcategory_error', '<s:text name="tradelic.master.tradesubcategoryid.null" />');
-			return false;
-		} 
+		}
 		else {
 		    	clearMessage('subcategory_error')
 		    	document.licenseSubCategoryForm.action='${pageContext.request.contextPath}/masters/licenseSubCategory-save.action';
@@ -133,7 +133,7 @@
 	</script>
 </head>
 <body onload="bodyOnLoad();">
-	<div id="subcategory_error" class="errorstyle" style="display:none;"></div> 
+	<div id="subcategory_error" class="error-msg" style="display:none;"></div> 
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel-body">
@@ -187,13 +187,13 @@
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseSubCategory.name.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="name"	name="name" value="%{name}" pattern="[A-Za-z_- ]+" title="characters and - _ space are only allowed" maxLength="32" cssClass="form-control"/>
+								<s:textfield id="name"	name="name" value="%{name}" class="form-control patternvalidation" data-pattern="alphabetwithspacehyphenunderscore" maxLength="32" cssClass="form-control"/>
 							</div>
 							
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseSubCategory.code.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="code"	name="code" value="%{code}" pattern="[A-Za-z]+" title="only characters are only allowed" maxLength="5" cssClass="form-control"/>
+								<s:textfield id="code"	name="code" value="%{code}" class="form-control patternvalidation" data-pattern="alphabetwithspace" maxLength="5" cssClass="form-control"/>
 							</div>
 						</div>
 						
@@ -205,7 +205,7 @@
 			<div class="row">
 				<div class="text-center">
 					<s:if test="%{userMode!='view' && userMode!='success'}">
-						<button type="button" id="btnsave" class="btn btn-primary" onclick="return validateFormAndSubmit();">
+						<button type="submit" id="btnsave" class="btn btn-primary" onclick="return validateFormAndSubmit();">
 							Save</button>
 						<button type="button" id="btnReset" type="reset" class="btn btn-default" onclick="reload();">
 						Reset</button>

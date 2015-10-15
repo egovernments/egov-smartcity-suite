@@ -130,7 +130,7 @@
 	</script>
 </head>
 <body onload="bodyOnLoad();">
-	<div id="uom_error" class="errorstyle" style="display:none;"></div> 
+	<div id="uom_error" class="error-msg" style="display:none;"></div> 
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel-body">
@@ -175,13 +175,13 @@
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="uommaster.name.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="name"	name="name" class="form-control" pattern="[A-Za-z_- ]+" title="characters and - _ space are only allowed" maxLength="32" value="%{name}" onchange="return validateData(this,'name')"/>
+								<s:textfield id="name"	name="name" class="form-control patternvalidation" data-pattern="alphabetwithspacehyphenunderscore" maxLength="32" value="%{name}" onchange="return validateData(this,'name')"/>
 							</div>
 							
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="uommaster.code.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="code"	name="code" class="form-control" value="%{code}" onchange="return validateData(this,'code')"  pattern="[A-Za-z]+" title="only characters are only allowed" maxLength="5"/>
+								<s:textfield id="code"	name="code" class="form-control patternvalidation" data-pattern="alphabetwithspace" value="%{code}" onchange="return validateData(this,'code')"  maxLength="5"/>
 							</div>
 						</div>
 						
@@ -200,7 +200,7 @@
 			<div class="row">
 				<div class="text-center">
 					<s:if test="%{userMode!='view' && userMode!='success'}">
-						<button type="button" id="btnsave" class="btn btn-primary" onclick="return validateFormAndSubmit();">
+						<button type="submit" id="btnsave" class="btn btn-primary" onclick="return validateFormAndSubmit();">
 							Save</button>
 						<button type="button" id="btnReset" type="reset" class="btn btn-default" onclick="reload();">
 						Reset</button>

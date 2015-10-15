@@ -25,6 +25,9 @@ var regexp_alphanumericspecialcharacters = /[^a-zA-Z0-9_@./#&+-]/g ;
 //This will allow you to enter alphabets and numbers with space, hyphen(-) and underscore(_). (eg: data-pattern="alphanumericwithspacehyphenunderscore")
 var regexp_alphanumerichyphenunderscore = /[^a-zA-Z0-9 _-]/g ;
 
+//This will allow you to enter alphabets with space, hyphen(-) and underscore(_). (eg: data-pattern="alphabetwithspacehyphenunderscore")
+var regexp_alphabethyphenunderscore = /[^a-zA-Z _-]/g ;
+
 //This will allow you to enter numbers and dot. (eg: data-pattern="decimalvalue")
 var regexp_decimalvalue = /[^0-9.]/g ;
 
@@ -80,6 +83,12 @@ function alphanumericwithspecialcharacters(obj){
 function alphanumericwithspacehyphenunderscore(obj){
 	if(jQuery(obj).val().match(regexp_alphanumerichyphenunderscore)){
 		jQuery(obj).val( jQuery(obj).val().replace(regexp_alphanumerichyphenunderscore,'') );
+	}
+}
+
+function alphabetwithspacehyphenunderscore(obj){
+	if(jQuery(obj).val().match(regexp_alphabethyphenunderscore)){
+		jQuery(obj).val( jQuery(obj).val().replace(regexp_alphabethyphenunderscore,'') );
 	}
 }
 

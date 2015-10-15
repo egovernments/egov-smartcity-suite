@@ -107,21 +107,7 @@
     			if(validateForm_newTradeLicense()==false) { 
     				return false;
     			} else { 
-
-<s:if test="#{mode=='view'}">
-clearMessage('newLicense_error');
-toggleFields(false,"");
-document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
-document.newTradeLicense.submit();
-
-</s:if>
-<s:else>                       	              
-    				clearMessage('newLicense_error');
-    				toggleFields(false,"");
-        			document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-create.action';
-    		    	document.newTradeLicense.submit();
-</s:else>
-    	              
+					return true;    	              
     			 } 
   			}
 
@@ -328,8 +314,23 @@ document.newTradeLicense.submit();
        			}
     		}
 
-    		function onSubmit() {
+			function onSubmitValidations() {
     			return validateForm(this);
+        	}
+
+    		function onSubmit() {
+    			<s:if test="%{mode=='view'}">
+					clearMessage('newLicense_error');
+					toggleFields(false,"");
+					document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
+					document.newTradeLicense.submit();
+				</s:if>
+				<s:else>                       	              
+					clearMessage('newLicense_error');
+					toggleFields(false,"");
+	    			document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-create.action';
+			    	document.newTradeLicense.submit();
+				</s:else>
         	}
 
 			// Calls propertytax REST api to retrieve property details for an assessment no
