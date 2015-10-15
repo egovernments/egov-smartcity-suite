@@ -52,6 +52,7 @@
 	jQuery.noConflict();
 	jQuery("#loadingMask").remove();
 	function loadOnStartUp() {
+		var saleDetails = '<s:property value="%{saleDetail}"/>';
 		enableBlock();
 		try {
 			jQuery(".datepicker").datepicker({
@@ -73,6 +74,7 @@
 			}
 		});
 		loadDesignationFromMatrix();
+		jQuery("#saleDetail").val(saleDetails);
 	}
 	function onSubmit() {
 		var actionName = document.getElementById("workFlowAction").value;
