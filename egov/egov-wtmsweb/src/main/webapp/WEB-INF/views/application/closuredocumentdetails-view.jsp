@@ -23,7 +23,7 @@
 # 
 #     In addition to the terms of the GPL license to be adhered to in using this
 #     program, the following additional terms are to be complied with:
-# closuredocumentdetails-view.jsp
+# 
 # 	1) All versions of this program, verbatim or modified must carry this 
 # 	   Legal Notice.
 # 
@@ -41,49 +41,50 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<div class="panel panel-primary" data-collapsed="0">
-								<div class="panel-heading">
+<table class="table table-bordered">
+
+<input type="hidden" id="appforDocumentList"  value="${appforDocumentList}" />
+<div class="panel-heading">
 									<div class="panel-title">
-									<spring:message  code="lbl.closureheader"/> 
+									Closure Connection Documents
 									</div>
 									
 								</div>
-					<div class="panel-body">
-					<div class="form-group">
-										<label class="col-sm-3 col-xs-12 control-label text-right"><spring:message  code="lbl.connectiontype"/>
-                                        </label>
-						<div class="col-sm-6 add-margin dynamic-span capitalize">
-							<form:radiobuttons path="closeConnectionType" items="${radioButtonMap}"   name="closeConnectionType" element="span" /> 
-						</div>
-					</div>
-					</div>
-                    <div class="form-group">
-										<label class="col-sm-3 col-xs-12 control-label text-right"><spring:message  code="lbl.closerReason"/>
-                                        </label>
-                                        <div class="col-sm-8 col-xs-12 add-margin">
-                                           <form:input class="form-control" id="closeconnectionreason" path="closeconnectionreason" name="closeconnectionreason" />
-	
-                    </div>
-				</div>
-                                    
-</div>
-<script>
-
-var mode =$('#mode').val();
-if(mode !='closeredit'){
-$(':radio:not(:checked)').attr('disabled', true);
-$('#closeconnectionreason').attr('disabled', true);
-}
-if(mode =='closereditForAE')
-	{
-	$('#closeconnectionreason').attr('disabled', false);
-	$(':radio:not(:checked)').attr('disabled', false);
-	}
-else
-{
-	$('#closeconnectionreason').attr('disabled', false);
-	$(':radio:not(:checked)').attr('disabled', false);
-}
-</script>
-
+<c:if test="${!appforDocumentList.isEmpty()}">
+	<thead>
+		<tr>
+			<th><spring:message code="lbl.slno" /></th>
+			<th><spring:message code="lbl.documentname" /></th>
+			<th><spring:message code="lbl.documentnumber" /></th>
+			<th><spring:message code="lbl.documentdate" /></th>
+			<c:if test="${mode!='ack'}">
+				<th><spring:message code="lbl.files"/></th>
+			</c:if>
+		</tr>
+	</thead>
+	</c:if>
+	<c:choose>
+		<c:when test="${!appforDocumentList.isEmpty()}">
+			<c:forEach items="${appforDocumentList}" var="docs" varStatus="serialNo">
+				<tbody>
+					<tr>
+						<td><c:out value="${serialNo.count}"/></td>
+						<td><c:out value="${docs.documentNames.documentName}" /></td>
+						<td><c:out value="${docs.documentNumber}" /></td>
+						<td><fmt:formatDate pattern="dd/MM/yyyy" value="${docs.documentDate}" var="docsDate"/><c:out value="${docsDate}" /></td>
+						<c:if test="${mode!='ack'}">
+						<td><c:forEach items="${docs.getSupportDocs()}" var="file">
+								<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=WTMS" target="_blank"> 
+								<c:out value="${file.fileName}"/></a>
+							</c:forEach>
+						</td>
+						</c:if>
+					</tr>
+				</tbody>
+			</c:forEach>
+		</c:when>
+		<c:otherwise>
+			<div class="col-md-12 col-xs-6  panel-title">No documents found</div>
+		</c:otherwise>
+	</c:choose>
+</table>

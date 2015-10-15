@@ -49,7 +49,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
 	<form:hidden path="" id="statuscode" value="${waterConnectionDetails.status.code}"/>
 	<form:hidden path="" id="wfstate" value="${waterConnectionDetails.state.id}"/> 
-	<input type="hidden" id="closerConnection" value="${waterConnectionDetails.closeConnectionType}"/> 
+	<input type="text" id="closerConnection" value="${waterConnectionDetails.closeConnectionType}"/> 
 	<input type="hidden" id="currentUser" value="${currentUser}"/>  
 	<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>  
 	
@@ -70,22 +70,22 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 		<div class="panel panel-primary" data-collapsed="0">
 			<jsp:include page="connectiondetails.jsp"></jsp:include> 	
 		</div>
-			<jsp:include page="documentdetails-view.jsp"></jsp:include> 
+		<jsp:include page="documentdetails-view.jsp"></jsp:include> 
 			<jsp:include page="estimationdetails.jsp"></jsp:include>
 	</c:if>				
 	<c:if test="${waterConnectionDetails.status.code =='CREATED' && mode=='edit' }">
 		<div class="panel panel-primary" data-collapsed="0">
 			<jsp:include page="connectiondetails.jsp"></jsp:include> 	
 		</div>
-			<jsp:include page="documentdetails-view.jsp"></jsp:include> 
-			
-	</c:if>	
+		<jsp:include page="documentdetails-view.jsp"></jsp:include> 
+			</c:if>
+	
 	<c:if test="${waterConnectionDetails.status.code =='CREATED' && mode=='' && waterConnectionDetails.state.value =='Rejected'}">
 		<div class="panel panel-primary" data-collapsed="0">
 			<jsp:include page="connectiondetails.jsp"></jsp:include> 	
 		</div>
-			<jsp:include page="documentdetails-view.jsp"></jsp:include> 
-			
+		<jsp:include page="documentdetails-view.jsp"></jsp:include> 
+		
 	</c:if>			
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
@@ -101,15 +101,18 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 		<c:if test="${waterConnectionDetails.status.code == 'WORKORDERGENERATED'}">
 			<jsp:include page="tapexecutiondetails-form.jsp"></jsp:include>
 		</c:if>
+		
 		<c:if test="${(waterConnectionDetails.status.code =='CLOSERINITIATED'  ||  waterConnectionDetails.status.code =='CLOSERAPPROVED'  || waterConnectionDetails.status.code =='CLOSERINPROGRESS'||waterConnectionDetails.status.code =='CLOSERSANCTIONED') }">
 			<jsp:include page="closerForm-details.jsp"></jsp:include>
+			<jsp:include page="closuredocumentdetails-view.jsp"></jsp:include>
+			</div>
 			</c:if>
 			
 		<c:if test="${(waterConnectionDetails.status.code =='RECONNECTIONINPROGRESS'  ||  waterConnectionDetails.status.code =='RECONNECTIONAPPROVED'  || waterConnectionDetails.status.code =='RECONNECTIONSANCTIONED'||waterConnectionDetails.status.code =='RECONNECTIONINITIATED') }">			
 	<jsp:include page="reconnection-details.jsp"></jsp:include> 
 	
 	</c:if>
-</div>	
+	
 	 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 	 	<jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>
 	
