@@ -545,6 +545,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicProp.setUnderWorkflow(true);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         basicPropertyService.persist(basicProp);
+        approverName = "";
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (propService.isEmployee(property.getCreatedBy()))
             propertyInitiatedBy = property.getCreatedBy().getName();

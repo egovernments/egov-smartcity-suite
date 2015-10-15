@@ -537,7 +537,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             final State propertyState = property.getState();
             if (propertyState.getValue().endsWith(WF_STATE_REVENUE_CLERK_APPROVED)) {
                 args.add(property.getApplicationNo());
-                args.add(sMSEmailService.getCityName());
                 if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType)) {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.newpropertycreate.sms", args);

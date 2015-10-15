@@ -557,10 +557,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             if (mutationState.getValue().equals(WF_STATE_REVENUE_CLERK_APPROVED)) {
                 argsForTransferor.add(propertyMutation.getFullTranferorName());
                 argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
-                argsForTransferor.add(transferOwnerService.getCityName());
                 argsForTransferee.add(propertyMutation.getFullTranfereeName());
                 argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
-                argsForTransferee.add(transferOwnerService.getCityName());
                 smsMsgForTransferor = getText("msg.createtransferproperty.sms", argsForTransferor);
                 smsMsgForTransferee = getText("msg.createtransferproperty.sms", argsForTransferee);
             } else if (mutationState.getValue().equals(WF_STATE_REJECTED)) {
@@ -582,14 +580,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 argsForTransferor.add(propertyMutation.getFullTranferorName());
                 argsForTransferor.add(propertyMutation.getFullTranfereeName());
                 argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
-                argsForTransferor.add(transferOwnerService.getUserDesigantion().getName());
                 argsForTransferor.add(transferOwnerService.getCityName());
                 smsMsgForTransferor = getText("msg.approvetransferproperty.sms", argsForTransferor);
-                
                 argsForTransferee.add(propertyMutation.getFullTranferorName());
                 argsForTransferee.add(propertyMutation.getFullTranfereeName());
                 argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
-                argsForTransferee.add(transferOwnerService.getUserDesigantion().getName());
                 argsForTransferee.add(transferOwnerService.getCityName());
                 smsMsgForTransferee = getText("msg.approvetransferproperty.sms", argsForTransferee);
             }
