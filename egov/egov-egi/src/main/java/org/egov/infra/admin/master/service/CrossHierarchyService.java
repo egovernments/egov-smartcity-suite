@@ -75,6 +75,11 @@ public class CrossHierarchyService {
                 hierarchyTypeName);
     }
 
+    public List<Boundary> getParentBoundaryByChildBoundaryAndParentBoundaryType(final Long childId,
+            final Long parentTypeId) {
+        return crossHierarchyRepository.findParentBoundaryByChildBoundaryAndParentBoundaryType(childId, parentTypeId);
+    }
+
     public List<Boundary> getActiveChildBoundariesByBoundaryId(final Long id) {
         return crossHierarchyRepository.findActiveBoundariesById(id);
     }

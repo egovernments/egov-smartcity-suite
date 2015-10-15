@@ -40,7 +40,9 @@
 package org.egov.ptis.actions.common;
 
 import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.BLOCK;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
@@ -82,8 +84,11 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
@@ -177,6 +182,10 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     private SecurityUtils securityUtils;
     @Autowired
     private UserService userService;
+    @Autowired
+    private CrossHierarchyService crossHierarchyService;
+    @Autowired
+    private BoundaryTypeService boundaryTypeService;
 
     @Override
     public Object getModel() {
@@ -220,8 +229,8 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     @Action(value = "/ajaxCommon-blockByLocality")
     public void blockByLocality() throws IOException, NoSuchObjectException {
         LOGGER.debug("Entered into blockByLocality, locality: " + locality);
-        final List<Boundary> blocks = getPersistenceService().findAllBy(
-                "select CH.parent from CrossHierarchy CH where CH.child.id = ? ", getLocality());
+        BoundaryType blockType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BLOCK, ADMIN_HIERARCHY_TYPE);
+        final List<Boundary> blocks = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(getLocality(), blockType.getId());
         List<Boundary> streets = boundaryService.getChildBoundariesByBoundaryId(getLocality());
         final List<JSONObject> wardJsonObjs = new ArrayList<JSONObject>();
         final List<Long> boundaries = new ArrayList<Long>();
