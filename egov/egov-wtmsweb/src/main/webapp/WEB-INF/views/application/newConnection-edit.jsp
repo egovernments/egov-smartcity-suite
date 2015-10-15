@@ -49,7 +49,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
 	<form:hidden path="" id="statuscode" value="${waterConnectionDetails.status.code}"/>
 	<form:hidden path="" id="wfstate" value="${waterConnectionDetails.state.id}"/> 
-	<input type="text" id="closerConnection" value="${waterConnectionDetails.closeConnectionType}"/> 
+	<input type="hidden" id="closerConnection" value="${waterConnectionDetails.closeConnectionType}"/> 
 	<input type="hidden" id="currentUser" value="${currentUser}"/>  
 	<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>  
 	
@@ -110,6 +110,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 			
 		<c:if test="${(waterConnectionDetails.status.code =='RECONNECTIONINPROGRESS'  ||  waterConnectionDetails.status.code =='RECONNECTIONAPPROVED'  || waterConnectionDetails.status.code =='RECONNECTIONSANCTIONED'||waterConnectionDetails.status.code =='RECONNECTIONINITIATED') }">			
 	<jsp:include page="reconnection-details.jsp"></jsp:include> 
+	<jsp:include page="closuredocumentdetails-view.jsp"></jsp:include>
 	
 	</c:if>
 	

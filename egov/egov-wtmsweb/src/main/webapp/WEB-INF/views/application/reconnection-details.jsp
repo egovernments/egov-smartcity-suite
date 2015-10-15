@@ -72,6 +72,9 @@ if(mode !='reconnectioneredit'){
 
 $('#reConnectionReason').attr('disabled', true);
 }
+if(mode =='reconEditForAE'){
+	$('#reConnectionReason').attr('disabled', false);
+}
 
 </script>
 

@@ -41,6 +41,7 @@ package org.egov.wtms.web.controller.application;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -66,6 +67,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -139,7 +142,7 @@ public class ReconnectionController extends GenericConnectionController {
     @RequestMapping(value = "/reconnection/{applicationCode}", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model) {
+            final HttpServletRequest request, final Model model,@RequestParam("files") final MultipartFile[] files) {
 
         String workFlowAction = "";
 
@@ -154,23 +157,15 @@ public class ReconnectionController extends GenericConnectionController {
 
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
-        final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
-        int i = 0;
-        if (!waterConnectionDetails.getApplicationDocs().isEmpty())
-            for (final ApplicationDocuments applicationDocument : waterConnectionDetails.getApplicationDocs()) {
-                if (applicationDocument.getDocumentNumber() == null && applicationDocument.getDocumentDate() != null) {
-                    final String fieldError = "applicationDocs[" + i + "].documentNumber";
-                    resultBinder.rejectValue(fieldError, "documentNumber.required");
-                }
-                if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() == null) {
-                    final String fieldError = "applicationDocs[" + i + "].documentDate";
-                    resultBinder.rejectValue(fieldError, "documentDate.required");
-                } else if (validApplicationDocument(applicationDocument))
-                    applicationDocs.add(applicationDocument);
-                i++;
-            }
-        waterConnectionDetails.setApplicationDocs(applicationDocs);
-        processAndStoreApplicationDocuments(waterConnectionDetails);
+        final List<DocumentNames> documentListForClosed = waterConnectionDetailsService
+                .getAllActiveDocumentNames(waterConnectionDetails.getApplicationType());
+        final ApplicationDocuments applicationDocument = new ApplicationDocuments();
+        applicationDocument.setDocumentNames(documentListForClosed.get(0));
+        applicationDocument.setWaterConnectionDetails(waterConnectionDetails);
+        applicationDocument.setSupportDocs(addToFileStore(files));
+        applicationDocument.setDocumentNumber("111");
+        applicationDocument.setDocumentDate(new Date());
+        waterConnectionDetails.getApplicationDocs().add(applicationDocument);
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
         // waterConnectionDetails.setCloseConnectionType(request.getParameter("closeConnectionType").charAt(0));

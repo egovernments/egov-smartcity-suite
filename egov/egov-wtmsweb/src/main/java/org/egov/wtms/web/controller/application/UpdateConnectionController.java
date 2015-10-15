@@ -145,6 +145,11 @@ public class UpdateConnectionController extends GenericConnectionController {
                 waterConnectionDetails.setCloseConnectionType(ClosureType.Permanent.toString());
             else
                 waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.toString());
+           
+            model.addAttribute("radioButtonMap", Arrays.asList(ClosureType.values()));
+        } 
+        if(waterConnectionDetails.getCloseConnectionType() != null && (waterConnectionDetails.getReConnectionReason() == null ||  waterConnectionDetails.getReConnectionReason() != null) )
+        {
             if (!waterConnectionDetails.getApplicationDocs().isEmpty()){
                 for (final ApplicationDocuments appDoc : waterConnectionDetails.getApplicationDocs()) {
                     if (appDoc.getDocumentNames() != null
@@ -159,12 +164,14 @@ public class UpdateConnectionController extends GenericConnectionController {
             else{
                 model.addAttribute("appforDocumentList", waterConnectionDetails.getApplicationDocs());
             }
-            model.addAttribute("radioButtonMap", Arrays.asList(ClosureType.values()));
-        } else if (waterConnectionDetails.getCloseConnectionType() != null
+        }
+        else if (waterConnectionDetails.getCloseConnectionType() != null
                 && waterConnectionDetails.getReConnectionReason() != null) {
             model.addAttribute("additionalRule", WaterTaxConstants.RECONNECTIONCONNECTION);
             model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
-        } else
+            
+        }
+        else
             model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
@@ -246,7 +253,12 @@ public class UpdateConnectionController extends GenericConnectionController {
             model.addAttribute("mode", "closereditForAE");
         if (waterConnectionDetails.getReConnectionReason() != null
                 && waterConnectionDetails.getState().getValue().equals("Rejected"))
+            if(waterConnectionDetails.getReConnectionReason() != null && waterConnectionDetails.getStatus().getCode()
+                    .equals(WaterTaxConstants.WORKFLOW_RECOONCTIONINITIATED))
             model.addAttribute("mode", "reconnectioneredit");
+        if(waterConnectionDetails.getReConnectionReason() != null && waterConnectionDetails.getStatus().getCode()
+                .equals(WaterTaxConstants.WORKFLOW_RECOONCTIONINITIATED))
+            model.addAttribute("mode", "reconEditForAE");
 
     }
 

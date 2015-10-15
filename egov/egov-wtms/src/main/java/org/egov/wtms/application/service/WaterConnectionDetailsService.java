@@ -350,7 +350,7 @@ public class WaterConnectionDetailsService {
                 .getCode())
                 && waterConnectionDetails.getCloseConnectionType().equals("T")
                 && waterConnectionDetails.getReConnectionReason() != null
-                && workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION)) {
+                && workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION) && ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
             waterConnectionDetails.setApplicationType(applicationTypeService
                     .findByCode(WaterTaxConstants.RECONNECTIONCONNECTION));
             waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
@@ -412,9 +412,9 @@ public class WaterConnectionDetailsService {
             updatedWaterConnectionDetails = waterConnectionDetailsRepository.save(waterConnectionDetails);
         }
         // back to CLoserSanctioned Status if Reconnection is Rejected 2 times
-        if (waterConnectionDetails.getReConnectionReason() != null
+        if (waterConnectionDetails.getReConnectionReason() != null && waterConnectionDetails.getCloseConnectionType() =="T"
                 && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CANCELLED)
-                && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.CLOSED)) {
+                && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INACTIVE)) {
             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED, WaterTaxConstants.MODULETYPE));
             waterConnectionDetails.setConnectionStatus(ConnectionStatus.CLOSED);
@@ -654,12 +654,15 @@ public class WaterConnectionDetailsService {
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS__RECOONCTIONINPROGRESS)
                             || waterConnectionDetails.getStatus().getCode()
-                                    .equals(WaterTaxConstants.APPLICATION_STATUS__RECOONCTIONINPROGRESS)
+                                    .equals(WaterTaxConstants.WORKFLOW_RECOONCTIONINITIATED)
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS__RECOONCTIONSANCTIONED)
                             || waterConnectionDetails.getStatus().getCode()
-                                    .equals(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED) || waterConnectionDetails
-                            .getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED))) {
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED) 
+                            || waterConnectionDetails
+                            .getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)
+                            || waterConnectionDetails
+                            .getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED))) {
                 final ApplicationIndex applicationIndex = applicationIndexService
                         .findByApplicationNumber(waterConnectionDetails.getApplicationNumber());
                 applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());

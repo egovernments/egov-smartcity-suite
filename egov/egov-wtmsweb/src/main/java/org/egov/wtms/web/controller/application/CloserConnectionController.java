@@ -178,10 +178,10 @@ public class CloserConnectionController extends GenericConnectionController {
 
         waterConnectionDetails.setPreviousApplicationType(request.getParameter("previousApplicationType"));
 
-        final List<DocumentNames> ddddlist = waterConnectionDetailsService
+        final List<DocumentNames> documentListForClosed = waterConnectionDetailsService
                 .getAllActiveDocumentNames(waterConnectionDetails.getApplicationType());
         final ApplicationDocuments applicationDocument = new ApplicationDocuments();
-        applicationDocument.setDocumentNames(ddddlist.get(0));
+        applicationDocument.setDocumentNames(documentListForClosed.get(0));
 
         applicationDocument.setWaterConnectionDetails(waterConnectionDetails);
         applicationDocument.setSupportDocs(addToFileStore(files));

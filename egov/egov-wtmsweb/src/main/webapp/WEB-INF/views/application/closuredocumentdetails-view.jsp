@@ -45,10 +45,16 @@
 
 <input type="hidden" id="appforDocumentList"  value="${appforDocumentList}" />
 <div class="panel-heading">
+<c:if test="${waterConnectionDetails.applicationType.code=='CLOSINGCONNECTION'}">
 									<div class="panel-title">
 									Closure Connection Documents
 									</div>
-									
+									</c:if>
+								<c:if test="${waterConnectionDetails.applicationType.code=='RECONNECTION'}">
+									<div class="panel-title">
+									ReConnection Documents
+									</div>
+									</c:if>
 								</div>
 <c:if test="${!appforDocumentList.isEmpty()}">
 	<thead>
