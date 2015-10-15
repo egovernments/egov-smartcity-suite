@@ -285,12 +285,16 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         ackBean.setApplicationNo(propertyMutation.getApplicationNo());
         ackBean.setApplicationDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getMutationDate()));
         ackBean.setApplicationName(propertyMutation.getFullTranfereeName());
-        ackBean.setOwnerName(basicProperty.getFullOwnerName());
+        if (propertyMutation.getTransfereeInfos() != null && propertyMutation.getTransfereeInfos().size() > 0) {
+            String newOwnerName = "";
+            for (final User usr : propertyMutation.getTransfereeInfos())
+            	newOwnerName = newOwnerName + usr.getName() + ",";
+            ackBean.setOwnerName(newOwnerName.substring(0, newOwnerName.length() - 1));
+        }
         ackBean.setOwnerAddress(basicProperty.getAddress().toString());
         ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, TRANSFER)
                 .getResolutionTime().toString());
-        ackBean.setLoggedInUsername(userService.getUserById(EgovThreadLocals.getUserId()).getName());
-
+        
         final ReportRequest reportInput = new ReportRequest("transferProperty_ack", ackBean, reportParams);
         reportInput.setReportFormat(FileFormat.PDF);
         return reportService.createReport(reportInput);
