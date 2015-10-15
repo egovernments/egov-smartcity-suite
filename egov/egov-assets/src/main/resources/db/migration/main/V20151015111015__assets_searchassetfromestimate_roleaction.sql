@@ -1,0 +1,8 @@
+INSERT INTO EG_ACTION (id,name,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate,lastmodifiedby,lastmodifieddate,application) values (nextval('seq_eg_action'),'WorksSearchAsset','/assetmaster/asset-showSearchPage.action',null,(select id from eg_module where name='Asset Master'),null,'WorksSearchAsset','false','egassets',0,1,now(),1,now(),(select id from eg_module  where name = 'Asset Management'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'WorksSearchAsset'));
+
+INSERT INTO EG_ACTION (id,name,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate,lastmodifiedby,lastmodifieddate,application) values (nextval('seq_eg_action'),'WorksSearchAssetSearchResult','/assetmaster/asset-showSearchResult.action',null,(select id from eg_module where name='Asset Master'),null,'WorksSearchAssetSearchResult','false','egassets',0,1,now(),1,now(),(select id from eg_module  where name = 'Asset Management'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'WorksSearchAssetSearchResult'));
+
+--rollback delete from EG_ROLEACTION where actionid in (select id FROM eg_action WHERE name in('WorksSearchAsset', 'WorksSearchAssetSearchResult') and contextroot='egassets');
+--rollback delete from eg_action where name in('WorksSearchAsset', 'WorksSearchAssetSearchResult') and contextroot='egassets';

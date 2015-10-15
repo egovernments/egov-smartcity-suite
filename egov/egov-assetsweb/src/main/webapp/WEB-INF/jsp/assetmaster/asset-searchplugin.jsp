@@ -53,9 +53,10 @@ window.onload = function () {
 }
 
 function submitForm(){
-	document.assetViewForm.action='${pageContext.request.contextPath}/assetmaster/asset-showSerachResult.action';
-   	document.assetViewForm.submit();
+	document.assetSearchPluginForm.action='${pageContext.request.contextPath}/assetmaster/asset-showSearchResult.action';
+   	document.assetSearchPluginForm.submit();
 }
+
 </script>
 <html>
 	<head>
@@ -111,13 +112,13 @@ function submitForm(){
 							<s:if test="fromDiaryModule">
 								<s:hidden name="catTypeId" value="%{catTypeId}"/>
 							</s:if>
-							<s:hidden name="fromDiaryModule" value="%{fromDiaryModule}"/>
+							<s:hidden name="assetStatus" value="%{assetStatus}"/>
 							<tr>
 								<td width="11%" class="whiteboxwk">
 									<s:text name="asset.cat.type" />:
 								</td>
 								<td width="21%" class="whitebox2wk">
-									<s:select headerKey=""
+									<s:select headerKey="-1"
 										headerValue="%{getText('list.default.select')}"
 										name="assetType" id="assettype"
 										cssClass="selectwk" list="dropdownData.assetTypeList"

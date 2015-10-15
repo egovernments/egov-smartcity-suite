@@ -122,8 +122,6 @@ public class AssetAction extends SearchFormAction {
     private static final String Asset_SAVE_SUCCESS = "asset.save.success";
     private static final String WardList = "wardList";
     private static final String StatusList = "statusList";
-    private static final String Unable_To_Load_Heirarchy_Information = "Unable to load Heirarchy information";
-    private static final String Error_While_Loading_HeirarchyType = "Error while loading HeirarchyType - HeirarchyType.";
     // UI fields
     private String userMode;
     private boolean fDisabled;
@@ -170,7 +168,7 @@ public class AssetAction extends SearchFormAction {
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
     @Autowired
     private HierarchyTypeService hierarchyTypeService;
-    
+
     @Autowired
     private CrossHierarchyService crossHeirarchyService;
     @Autowired
@@ -212,7 +210,7 @@ public class AssetAction extends SearchFormAction {
         addDropdownData("acquisitionModeList", Arrays.asList(ModeOfAcquisition.values()));
 
         // Fetch HeirarchyType
-        HierarchyType hType = hierarchyTypeService.getHierarchyTypeByName(LOCATION_HIERARCHY_TYPE);
+        final HierarchyType hType = hierarchyTypeService.getHierarchyTypeByName(LOCATION_HIERARCHY_TYPE);
 
         /**
          * Fetch Area Dropdown List
@@ -412,7 +410,7 @@ public class AssetAction extends SearchFormAction {
 
     public List<Boundary> getAllLocation() {
         HierarchyType hType = null;
-            hType = hierarchyTypeService.getHierarchyTypeByName(LOCATION_HIERARCHY_TYPE);
+        hType = hierarchyTypeService.getHierarchyTypeByName(LOCATION_HIERARCHY_TYPE);
         List<Boundary> locationList = null;
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(LOACTION_BOUNDARY_TYPE,
                 hType);
@@ -422,7 +420,7 @@ public class AssetAction extends SearchFormAction {
 
     public List<Boundary> getAllWard() {
         HierarchyType hType = null;
-            hType = hierarchyTypeService.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
+        hType = hierarchyTypeService.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
         List<Boundary> wardList = null;
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(WARD_BOUNDARY_TYPE, hType);
         wardList = boundaryService.getAllBoundariesByBoundaryTypeId(bType.getId());
@@ -430,7 +428,7 @@ public class AssetAction extends SearchFormAction {
     }
 
     public List<Boundary> getAllZone() {
-        HierarchyType hType = hierarchyTypeService.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
+        final HierarchyType hType = hierarchyTypeService.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
         List<Boundary> zoneList = null;
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(Zone_BOUNDARY_TYPE, hType);
         if (actionType == null)
@@ -533,9 +531,13 @@ public class AssetAction extends SearchFormAction {
         return SEARCH_PLUGIN;
     }
 
-    @Action(value = "/assetmaster/asset-showSerachResult")
-    public String showSerachResult() throws Exception {
-        setStatusList(getStatusList(assetStatus));
+    @Action(value = "/assetmaster/asset-showSearchResult")
+    public String showSearchResult() throws Exception {
+        if (!assetStatus.isEmpty() && assetStatus.get(0) != null) {
+            final List<String> statusDescList = Arrays
+                    .asList(assetStatus.get(0).substring(1, assetStatus.get(0).length() - 1).split(", "));
+            setStatusList(getStatusList(statusDescList));
+        }
         if (statusId != null && !statusId.isEmpty())
             assetList = searchAssets();
         else
@@ -1043,6 +1045,10 @@ public class AssetAction extends SearchFormAction {
 
     public void setAssetCategoryService(final AssetCategoryService assetCategoryService) {
         this.assetCategoryService = assetCategoryService;
+    }
+
+    public List<String> getAssetStatus() {
+        return assetStatus;
     }
 
 }
