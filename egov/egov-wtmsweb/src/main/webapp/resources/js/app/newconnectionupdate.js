@@ -217,7 +217,7 @@ $(document).ready(function()
 					if(applicationDate !='' && approvalDate != '') {
 						if($('form').valid())	{
 							if(!validateDateRange(applicationDate, approvalDate)) {
-								alert("The Approval Date can not be less than the Date of Application.");
+								bootbox.alert("The Approval Date can not be less than the Date of Application.");
 								$('#approvalDate').val('');
 								return false;
 							}
@@ -285,7 +285,7 @@ $(document).ready(function()
 			var executionDate = $('#executionDate').val();
 			if(applicationDate !='' && executionDate != '') {
 				if(!validateDateRange(applicationDate, executionDate)) {
-					alert("The Execution Date can not be less than the Date of Application.");
+					bootbox.alert("The Execution Date can not be less than the Date of Application.");
 					$('#executionDate').val('');
 					
 					return false;			
