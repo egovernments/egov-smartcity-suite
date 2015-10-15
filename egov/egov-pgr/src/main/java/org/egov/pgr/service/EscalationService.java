@@ -45,7 +45,9 @@ import java.util.List;
 
 import org.egov.commons.ObjectType;
 import org.egov.commons.service.ObjectTypeService;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
+import org.egov.eis.service.PositionHierarchyService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -88,11 +90,17 @@ public class EscalationService {
 
     @Autowired
     private ComplaintRepository complaintRepository;
-
+    @Autowired
     private MessagingService messagingService;
 
     @Autowired
     private PgrApplicationProperties pgrApplicationProperties;
+
+    @Autowired
+    private PositionHierarchyService positionHierarchyService;
+
+    @Autowired
+    private AssignmentService assignmentService;
 
     @Autowired
     public EscalationService(final EscalationRepository escalationRepository) {
@@ -133,15 +141,17 @@ public class EscalationService {
 
     @Transactional
     public void escalateComplaint() {
-        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PGRConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
+        final AppConfigValues appConfigValue = appConfigValuesService
+                .getConfigValuesByModuleAndKey(PGRConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
         final Boolean isEmailNotificationSet = "YES".equalsIgnoreCase(appConfigValue.getValue());
         final ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
         final List<Complaint> escalationComplaints = complaintService.getComplaintsEligibleForEscalation();
 
         for (final Complaint complaint : escalationComplaints) {
-            final Position superiorPosition = eisCommonService
-                    .getSuperiorPositionByObjectAndObjectSubTypeAndPositionFrom(objectType.getId(),
-                            complaint.getComplaintType().getName(), complaint.getAssignee().getId());
+            final Position superiorPosition = positionHierarchyService
+                    .getPosHirByPosAndObjectTypeAndObjectSubType(complaint.getAssignee().getId(),
+                            objectType.getId(), complaint.getComplaintType().getCode())
+                    .getToPosition();
             final User superiorUser = eisCommonService.getUserForPosition(superiorPosition.getId(), new Date());
             complaint.setEscalationDate(getExpiryDate(complaint));
             complaint.setAssignee(superiorPosition);
@@ -166,10 +176,11 @@ public class EscalationService {
                 final StringBuffer smsBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
                         .append(", The complaint Number (").append(complaint.getCrn())
                         .append(") has been escalated to ").append(superiorUser.getName()).append(" on ")
-                        .append(formattedEscalationDate);
+                        .append(formattedEscalationDate);   
                 if (superiorUser != null) {
+                    System.out.println(superiorUser.getEmailId());
                     messagingService.sendEmail(superiorUser.getEmailId(), emailSubject.toString(), emailBody.toString());
-                    messagingService.sendSMS( superiorUser.getMobileNumber(), smsBody.toString());
+                    messagingService.sendSMS(superiorUser.getMobileNumber(), smsBody.toString());
                 }
             }
         }
@@ -178,7 +189,8 @@ public class EscalationService {
     protected DateTime getExpiryDate(final Complaint complaint) {
 
         DateTime expiryDate = complaint.getEscalationDate();
-        final Designation designation = eisCommonService.getEmployeeDesignation(complaint.getAssignee().getId());
+        final Designation designation = assignmentService.getPrimaryAssignmentForPositon(complaint.getAssignee().getId())
+                .getDesignation();
         final Integer noOfhrs = getHrsToResolve(designation.getId(), complaint.getComplaintType().getId());
         expiryDate = expiryDate.plusHours(noOfhrs);
         return expiryDate;
