@@ -80,7 +80,7 @@
 				</tr>
 			</table>
 			</div>
-			<div  class="buttonbottom">
+			<div  align = "center" class="buttonbottom">
 				<input type="submit" class="buttonsubmit" value="Search" id="Search" name="button" onclick="return validateFormAndSubmit();" />
 				<input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/>
 			</div>
@@ -104,32 +104,32 @@
 					
 				    <tr>
 					 
-				    	<td class="text-center">  
+				    	<td style="text-align:center" class="text-center bluebox setborder">  
 				            <s:property value="#s.index+1" />  
 				        </td>
-				        <td class="text-center">  
+				        <td style="text-align:center" class="text-center bluebox setborder">  
 				            <s:property value="%{expendituretype}" />
 				        </td>
-				        <td class="text-center">  
+				        <td  style="text-align:center" class="text-center bluebox setborder">  
 				            <s:property value="%{billtype}" />  
 				        </td>
-						<td class="text-center">  
+						<td style="text-align:center" class="text-center bluebox setborder">  
 				             <a href="#" onclick="openBill('<s:property value='%{sourcepath}' />')"><s:property value="%{billnumber}" /></a>
 				        </td>
-				        <td class="text-center">  
+				        <td style="text-align:center" class="text-center bluebox setborder">  
 				            <s:date name="%{billdate}" format="dd/MM/yyyy"/>  
 				        </td>
-				        <td style="text-align:right">  
+				        <td class="bluebox setborder" style="text-align:right">  
 				            <s:text name="bill.format.number" ><s:param value="%{billamount}"/></s:text>
 				        </td>
-				        <td  style="text-align:right">  
+				        <td  class="bluebox setborder" style="text-align:right">  
 				           <s:text name="bill.format.number" ><s:param value="%{passedamount}"/></s:text>
 				        </td>
 				        
-				         <td  class="text-center">  
+				         <td style="text-align:center" class="text-center bluebox setborder">  
 				            <s:property value="%{billstatus}" />  
 				        </td>
-				        <td  class="text-center">  
+				        <td style="text-align:center" class="text-center bluebox setborder ">  
 				            <s:property value="%{ownerName}" />  
 				        </td>
 				    </tr>  
