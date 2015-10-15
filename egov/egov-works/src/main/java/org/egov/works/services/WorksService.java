@@ -121,7 +121,7 @@ public class WorksService {
     }
 
     public String getWorksConfigValue(final String key) {
-        final List<AppConfigValues> configList = getAppConfigValue("Works", key);
+        final List<AppConfigValues> configList = getAppConfigValue(WorksConstants.WORKS_MODULE_NAME, key);
         if (!configList.isEmpty())
             return configList.get(0).getValue();
         return null;

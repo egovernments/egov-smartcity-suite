@@ -138,7 +138,7 @@ var makeAssetsTable = function() {
 		}
 		var records = assetsTable.getRecordSet();
 		if (column.key == 'Search' && status!='') {
-			window.open("${pageContext.request.contextPath}/../egassets/assetmaster/asset!showSearchPage.action?rowId="+records.getRecordIndex(record)+"&assetStatus="+status,"",
+			window.open("${pageContext.request.contextPath}/../egassets/assetmaster/asset-showSearchPage.action?rowId="+records.getRecordIndex(record)+"&assetStatus="+status,"",
 	 			"height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
 		}    
 	});
@@ -249,7 +249,7 @@ function update(elemValue) {
 jq(document).on('click', '.assetCode', function(){
 	var indexNum = jq(this).attr("name").substring(jq(this).attr("name").indexOf('[')+1,jq(this).attr("name").indexOf(']'));
 	var assetId = jq('#assetyui-rec'+indexNum).val();
-	var url = "${pageContext.request.contextPath}/../egassets/assetmaster/asset!showform.action?id="+assetId+"&userMode=view";
+	var url = "${pageContext.request.contextPath}/../egassets/assetmaster/asset-showform.action?id="+assetId+"&userMode=view";
 	window.open(url,'', 'height=650,width=980,scrollbars=yes,status=yes'); 
 });
 
