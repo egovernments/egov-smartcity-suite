@@ -42,7 +42,6 @@ package org.egov.works.web.actions.estimate;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -409,20 +408,9 @@ public class AbstractEstimateAction extends BaseFormAction {
 
     private void validateForLatLongSelection() {
         if (abstractEstimate.getLatitude() == null || abstractEstimate.getLongitude() == null
-                || StringUtils.isBlank(abstractEstimate.getLocation())) {
-            final String cutOffDateStr = worksService.getWorksConfigValue("LAT_LON_CUT_OFF_DATE");
-            if (StringUtils.isNotBlank(cutOffDateStr))
-                try {
-                    final Date cutOffDate = formatter.parse(cutOffDateStr);
-                    final Date createdDate = abstractEstimate.getCreatedDate() == null ? new Date() : abstractEstimate
-                            .getCreatedDate();
-                    if (createdDate.after(cutOffDate))
-                        throw new ValidationException(Arrays.asList(new ValidationError("estimate.latlon.required",
-                                "estimate.latlon.required")));
-                } catch (final ParseException e) {
-                    logger.error("Unable to parse estimate lat, lon estimate cut off date");
-                }
-        }
+                || StringUtils.isBlank(abstractEstimate.getLocation()))
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError("estimate.latlon.required", "estimate.latlon.required")));
     }
 
     @Action(value = "/estimate/abstractEstimate-maps")

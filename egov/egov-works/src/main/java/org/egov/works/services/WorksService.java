@@ -263,7 +263,7 @@ public class WorksService {
     }
 
     public Map<String, Integer> getExceptionSOR() {
-        final List<AppConfigValues> appConfigList = getAppConfigValue("Works", "EXCEPTIONALSOR");
+        final List<AppConfigValues> appConfigList = getAppConfigValue(WorksConstants.WORKS_MODULE_NAME, "EXCEPTIONALSOR");
         final Map<String, Integer> resultMap = new HashMap<String, Integer>();
         for (final AppConfigValues configValue : appConfigList) {
             final String value[] = configValue.getValue().split(",");
@@ -1098,7 +1098,8 @@ public class WorksService {
     }
 
     public Map<String, String> getBoundaryDepartment() {
-        final List<AppConfigValues> appConfigList = getAppConfigValue("Works", "REGION_BOUNDARY_DEPARTMENT_NAME");
+        final List<AppConfigValues> appConfigList = getAppConfigValue(WorksConstants.WORKS_MODULE_NAME,
+                "REGION_BOUNDARY_DEPARTMENT_NAME");
         final Map<String, String> resultMap = new HashMap<String, String>();
         for (final AppConfigValues configValue : appConfigList) {
             final String value[] = configValue.getValue().split(",");
