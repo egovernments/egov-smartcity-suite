@@ -264,7 +264,7 @@ public class PropertyMutation extends StateAware {
 
     private String buildGuarianName(final List<User> userInfo) {
         final StringBuilder guardianName = new StringBuilder();
-        for (final User owner : getTransfereeInfos())
+        for (final User owner : userInfo)
             if (StringUtils.isNotBlank(owner.getGuardian()))
                 guardianName.append(owner.getGuardian()).append(", ");
         if (guardianName.length() > 0)
