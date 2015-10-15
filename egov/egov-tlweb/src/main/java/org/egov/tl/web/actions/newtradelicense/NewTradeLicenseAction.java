@@ -127,18 +127,20 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         tradeLicense.setApplicationDate(new Date());
         return super.newForm();
     }
-
+    
     @Override
-    @SkipValidation
-    @ValidationErrorPage(value="new")
+    @ValidationErrorPage(Constants.NEW)
     @Action(value = "/newtradelicense/newTradeLicense-approve")
     public String approve() {
         tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", getSession().get("model.id"));
+        if(mode.equalsIgnoreCase(VIEW) && tradeLicense!=null && !tradeLicense.isPaid()){
+            prepareNewForm();
+            ValidationError vr=new ValidationError("license.fee.notcollected", "license.fee.notcollected");
+            throw new ValidationException(Arrays.asList(vr) );
+        }
         if (BUTTONAPPROVE.equals(workFlowAction)) {
             license().setCreationAndExpiryDate();
-            /*if (!license().isPaid())
-                throw new ValidationException("applicationNumber", "license.fee.notcollected", license().getApplicationNumber());
-            */if (license().getTempLicenseNumber() == null) {
+            if (license().getTempLicenseNumber() == null) {
                 final String nextRunningLicenseNumber = service().getNextRunningLicenseNumber(
                         "egtl_license_number");
                 license().generateLicenseNumber(nextRunningLicenseNumber);

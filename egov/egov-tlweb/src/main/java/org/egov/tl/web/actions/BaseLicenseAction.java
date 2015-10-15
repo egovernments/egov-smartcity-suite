@@ -151,7 +151,6 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
     // sub class should get the object of the model and set to license()
     @SuppressWarnings("unchecked")
-    @SkipValidation
     public String approve() {
         processWorkflow(NEW);
         persistenceService.persist(license());
