@@ -159,26 +159,35 @@
 										<tr>
 											<td class="blueborderfortd" align="center">
 												<s:if test='%{owner.aadhaarNumber == ""}'>
-							        				N/A
+							        				<span
+												class="bold">N/A</span>
 							        			</s:if>
 							        			<s:else>
-													<s:property value="%{owner.aadhaarNumber}" default="N/A" />        			
+													<span
+												class="bold"><s:property value="%{owner.aadhaarNumber}" default="N/A" />  </span>      			
 							        			</s:else>
 											</td>
-											<td class="blueborderfortd" align="center"><s:property
-													value="owner.mobileNumber" /></td>
-											<td class="blueborderfortd" align="center"><s:property
-													value="owner.name" /></td>
-											<td class="blueborderfortd" align="center"><s:property
-													value="owner.gender" /></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+													value="owner.mobileNumber" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+													value="owner.name" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+													value="owner.gender" /></span></td>
 											<td class="blueborderfortd" align="center">
-												<s:if test='%{owner.emailId == ""}'>N/A</s:if>
-	        		   							<s:else><s:property value="%{owner.emailId}" /></s:else>
+												<s:if test='%{owner.emailId == ""}'><span
+												class="bold">N/A</span></s:if>
+	        		   							<s:else><span
+												class="bold"><s:property value="%{owner.emailId}" /></span></s:else>
 											</td>
-											<td class="blueborderfortd" align="center"><s:property
-													value="owner.guardianRelation" default="N/A" /></td>
-											<td class="blueborderfortd" align="center"><s:property
-													value="owner.guardian" default="N/A" /></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+													value="owner.guardianRelation" default="N/A" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+													value="owner.guardian" default="N/A" /></span></td>
 										</tr>
 									</s:iterator>
 								</tbody>

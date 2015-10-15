@@ -89,7 +89,7 @@
 						</td>
 					</tr>
 				</table>
-				<div class="buttonbottom">
+				<div class="buttonbottom" align="center">
 					<input type="submit" value="Pay Fee" class="buttonsubmit" align="center"/>
 					<input type="button" value="Close" class="button" align="center" onClick="return confirmClose();" />
 				</div>
