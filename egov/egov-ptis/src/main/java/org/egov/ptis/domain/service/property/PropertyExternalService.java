@@ -307,23 +307,30 @@ public class PropertyExternalService {
         final PropertyID propertyID = basicProperty.getPropertyID();
         if (null != propertyID) {
             if (null != propertyID.getZone()) {
+                boundaryDetails.setZoneId(propertyID.getZone().getId());
                 boundaryDetails.setZoneNumber(propertyID.getZone().getBoundaryNum());
                 boundaryDetails.setZoneName(propertyID.getZone().getName());
                 boundaryDetails.setZoneBoundaryType(propertyID.getZone().getBoundaryType().getName());
             }
             if (null != propertyID.getWard()) {
+                boundaryDetails.setWardId(propertyID.getWard().getId());
                 boundaryDetails.setWardNumber(propertyID.getWard().getBoundaryNum());
                 boundaryDetails.setWardName(propertyID.getWard().getName());
                 boundaryDetails.setWardBoundaryType(propertyID.getWard().getBoundaryType().getName());
             }
             if (null != propertyID.getArea()) {
+                boundaryDetails.setBlockId(propertyID.getArea().getId());
                 boundaryDetails.setBlockNumber(propertyID.getArea().getBoundaryNum());
                 boundaryDetails.setBlockName(propertyID.getArea().getName());
             }
-            if (null != propertyID.getLocality())
+            if (null != propertyID.getLocality()){
+                boundaryDetails.setLocalityId(propertyID.getLocality().getId());
                 boundaryDetails.setLocalityName(propertyID.getLocality().getName());
-            if (null != propertyID.getStreet())
+            }
+            if (null != propertyID.getStreet()){
+                boundaryDetails.setStreetId(propertyID.getStreet().getId());
                 boundaryDetails.setStreetName(propertyID.getStreet().getName());
+            }
         }
         return boundaryDetails;
     }
