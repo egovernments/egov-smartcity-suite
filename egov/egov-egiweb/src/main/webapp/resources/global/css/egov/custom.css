@@ -2316,3 +2316,15 @@ body.index, .page-container{
     height: 100vh;        /* Viewport-relative units */
     width: 96vw;
 }
+
+.nav-pills > li > a {
+    padding:5px;
+}
+
+.nav-pills > li {
+    margin-bottom: 5px;
+}
+
+.nav-pills > li + li {
+    margin-left: 5px;
+}

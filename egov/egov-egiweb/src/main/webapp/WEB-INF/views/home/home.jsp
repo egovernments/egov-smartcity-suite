@@ -214,6 +214,10 @@
 									<span class="inline-elem"><input type="text" id="inboxsearch" class="form-control input-sm"></span>
 								</div>
 							</div>
+							<div class="row">
+								<div class="col-md-12" id="natureofwork" >
+								</div>
+							</div>
 							<table class="table table-bordered datatable" id="official_inbox">
 								<thead>
 									<tr>
@@ -446,6 +450,7 @@
 		<script>
 		var menuItems = ${menu};
 		var focussedmenu = "worklist";
+		var now;
 		</script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
 		<script src="<c:url value='/resources/js/app/custom-menu.js'/>"></script>

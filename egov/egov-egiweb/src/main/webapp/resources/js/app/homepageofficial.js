@@ -132,6 +132,7 @@ $(document).ready(function()
 	$('.workspace').click(function(){
 		$('.main-space').hide();
 		$('.workspace').removeClass('active');
+		clearnow();
 		$(this).addClass('active');
 		if($(this).attr('data-work') == 'worklist' ){
 			focussedmenu = "worklist";
@@ -187,8 +188,33 @@ $(document).ready(function()
 		}
 	});	
 	
+	$('#natureofwork').on('click', 'ul li a', function() {
+		$('#natureofwork ul li').removeClass('active');
+		$(this).parent().addClass('active');
+		if($('#natureofwork ul li a[data-now=Reset]').length == 0){
+			$('#natureofwork ul').append('<li role="presentation"><a href="javascript:void(0)" data-now=Reset><span><i class="fa fa-refresh"></i></span>Reset / Clear</a></li>');
+		}
+	    now = $(this).data('now');
+	    now_json = [];
+	    //console.log('Clicked item-->'+now);
+	    refreshnow(now);
+	    $('#inboxsearch').trigger('keyup');
+	});
+	
 });
 
+var response_json= [];
+var counts = [];
+var now_json = [];
+var now_name=[];
+
+function clearnow(){
+	$('#natureofwork').html('');
+	response_json= [];
+	counts = [];
+	now_json = [];
+	now_name = [];
+}
 //common ajax functions for worklist, drafts and notifications 
 function worklist(){
 	tableContainer1 = $("#official_inbox"); 
@@ -209,8 +235,34 @@ function worklist(){
 			{ "data": "id","visible": false, "searchable": false },
 			{ "data": "link","visible": false, "searchable": false }
 		] ,
-		"aaSorting": [[0, 'desc']]
+		"aaSorting": [[0, 'desc']],
+		"fnInitComplete": function (oSettings, json) {
+	          response_json = JSON.stringify(json.data);
+	          console.log('response--->'+response_json);
+	          if(JSON.parse(response_json).length != 0){
+		          $.each(JSON.parse(response_json), function(key, value) {
+		        	  if (!counts.hasOwnProperty(value.task)) {
+		        		  counts[value.task] = 1;
+	        		  } else {
+	        			  counts[value.task]++;
+	        		  }
+		          });
+		          //console.log(counts);
+		          
+		          $('#natureofwork').append('<ul class="nav nav-pills" role="tablist"></ul>');
+		          for (var k in counts){
+	        	    if (counts.hasOwnProperty(k)) {
+	        	    	now_name.push(k);
+	        	    	$('#natureofwork ul').append('<li role="presentation"><a href="javascript:void(0)" data-now='+k+'><span><i class="fa fa-tags"></i></span>'+k+' <span class="badge">'+counts[k]+'</span></a></li>');
+	        	         //console.log("Key is " + k + ", value is" + counts[k]);
+	        	    }
+		          }
+	          }else{
+	        	  console.log('Response data is empty');
+	          }
+	     }
 	});
+	
 }
 
 function drafts(){
@@ -247,10 +299,67 @@ function notifications(){
 	});
 }
 
+function worklistwrtnow(json){
+	console.log('came to construct datatable!!');
+	//$("#official_inbox").empty();
+	tableContainer1 = $("#official_inbox"); 
+	tableContainer1.dataTable({
+		"sPaginationType": "bootstrap",
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+		"bDestroy": true,
+		"autoWidth": false,
+		"data": json,
+			"columns": [
+			{ "data": "date","width": "16%" },
+			{ "data": "sender","width": "15%" },
+			{ "data": "task","width": "20%" },
+			{ "data": "status","width": "24%" },
+			{ "data": "details","width": "20%" },
+			{ "data" : null, "target":-1,"defaultContent": '<i class="fa fa-history history-size" class="tooltip-secondary" data-toggle="tooltip" title="History"></i>'},
+			{ "data": "id","visible": false, "searchable": false },
+			{ "data": "link","visible": false, "searchable": false }
+		] ,
+		"aaSorting": [[0, 'desc']]
+	});
+}
+
+function refreshnow(now){
+	console.log('came to refresh nature of work');
+    console.log('parent JSON-->'+response_json);
+    if(now != 'Reset' && now!= undefined){
+    	console.log('nature of work other than reset or undefined--->'+now);
+	    $.each(JSON.parse(response_json), function(key, value) {
+	    	if (value.task === now) {
+	    		//console.log(JSON.stringify(value));
+	    		now_json.push(value);
+	    	}
+	    });
+	    console.log('NOW JSON-->'+JSON.stringify(now_json));
+	    worklistwrtnow(now_json);
+    }else{
+    	console.log('came as reset or undefined');
+    	worklistwrtnow(JSON.parse(response_json));
+    }
+}
+
 function inboxloadmethod(){
 	//alert('came to my parent'+focussedmenu);
+	//alert('Nature of work'+now);
+	clearnow();
 	if(focussedmenu == 'worklist'){
 		worklist();
+		//nature of work make it stable
+		setTimeout(function(){ 
+			if(now_name.indexOf(now) > -1){
+				refreshnow(now);
+				$('#natureofwork ul').append('<li role="presentation"><a href="javascript:void(0)" data-now=Reset><span><i class="fa fa-refresh"></i></span>Reset / Clear</a></li>');
+				$('#natureofwork ul li a[data-now='+now+']').parent().addClass('active');
+			}else{
+				refreshnow('Reset');
+			}
+			$('#inboxsearch').trigger('keyup');
+		}, 500);
 	}else if(focussedmenu == 'drafts'){
 		drafts();
 	}else if(focussedmenu == 'notifications'){
