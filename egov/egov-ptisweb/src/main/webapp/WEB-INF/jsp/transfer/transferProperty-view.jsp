@@ -282,6 +282,11 @@
 							<%@ include file="../common/DocumentUploadView.jsp"%>
 						</tr>
 					</s:if>
+					<s:if test="%{state != null}">
+						<tr>
+							<%@ include file="../common/workflowHistoryView.jsp"%>
+						<tr>					
+					</s:if>
 				</table>
 				<s:if
 					test="%{!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT) && 

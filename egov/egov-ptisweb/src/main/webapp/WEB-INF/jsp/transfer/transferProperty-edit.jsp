@@ -242,6 +242,11 @@
 				<s:if test="%{!documentTypes.isEmpty()}">
 					<%@ include file="../common/DocumentUploadForm.jsp"%>
 				</s:if>
+				<s:if test="%{state != null}">
+						<tr>
+							<%@ include file="../common/workflowHistoryView.jsp"%>
+						<tr>					
+					</s:if>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
