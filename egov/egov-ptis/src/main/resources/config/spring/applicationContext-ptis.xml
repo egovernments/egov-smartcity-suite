@@ -100,4 +100,13 @@
 	<bean id="propertyService" class="org.egov.ptis.domain.service.report.ReportService" scope="prototype" >
 	    <property name="propPerServ" ref="persistenceService"/>
 	</bean>
+	
+	<bean id="dashboardSQLSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basenames">
+      		<list>
+        		<value>classpath:dashboard/ptis-dashboard-sql</value>        
+      		</list>
+    	</property>
+     	<property name="cacheSeconds" value="1"/> 
+	</bean>
 </beans>
