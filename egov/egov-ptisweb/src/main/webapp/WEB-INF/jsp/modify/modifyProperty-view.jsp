@@ -224,6 +224,11 @@
 							<%@ include file="../modify/modifyPropertyView.jsp"%>
 						</tr>
 					</s:elseif>
+					<s:if test="%{state != null}">
+						<tr>
+							<%@ include file="../common/workflowHistoryView.jsp"%>
+						<tr>					
+					</s:if>
 					<s:if test="%{!(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn) ||
 						(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn) 
 							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)))}">
