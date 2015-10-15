@@ -271,8 +271,7 @@ if(document.getElementById("billDetailsTableNet[0].isSubledger").value=='true')
 		return false;
 	}
 }
-	
-document.getElementById("billDetailsTableNet[0].glcodeDetail").disabled=true;
+
 document.getElementById("commonBean.subledgerType").disabled=true;
 
 var i=0;
@@ -578,6 +577,10 @@ for(var l=0;l<subledgerLen;l++)
 	previousCode=currentCode;
 	
 }
+document.getElementById("billDetailsTableNet[0].glcodeDetail").value="";
+document.getElementById("billDetailsTableNet[0].glcodeDetail").disabled=true;
+document.getElementById("billDetailsTableNet[0].accounthead").value="";
+
 }
 
 function calculateNet(obj)

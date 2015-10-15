@@ -3047,6 +3047,12 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 	public void setSubLedgerTypeList(List<Accountdetailtype> subLedgerTypeList) {
 		this.subLedgerTypeList = subLedgerTypeList;
 	}
+	public AppConfigValueService getAppConfigValuesService() {
+	    return appConfigValuesService;
+	}
+	public void setAppConfigValuesService(AppConfigValueService appConfigValuesService) {
+	    this.appConfigValuesService = appConfigValuesService;
+	}
 	
 	
 	

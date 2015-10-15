@@ -374,7 +374,7 @@ public class ContingentBillAction extends BaseBillAction {
                         }
                                 
                         cbill =(Cbill) createBill();
-                        createCheckList(cbill);
+                        //createCheckList(cbill);
                        // cbill.start().withOwner(getPosition());
                         addActionMessage(getText("cbill.transaction.succesful")+cbill.getBillnumber());
                         billRegisterId=cbill.getId();
