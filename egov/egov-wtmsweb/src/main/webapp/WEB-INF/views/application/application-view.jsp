@@ -54,6 +54,8 @@
 					<spring:message  code="lbl.basicdetails"/>
 				</div>
 			</div>
+			<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>
+				
 			<input id="applicationCode" type="hidden" value="<c:out value="${waterConnectionDetails.applicationNumber}" />" />  						
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 		</div>
@@ -69,7 +71,7 @@
 	<c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONNOTICEGENERATED' && checkOperator }">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.collect.fees"/></button>
 	</c:if>
-	<c:if test="${(waterConnectionDetails.demand.baseDemand-waterConnectionDetails.demand.amtCollected)>0 && checkOperator }">
+	<c:if test="${waterTaxDueforParent > 0 && checkOperator }">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
 	</c:if>
 	<c:if test="${waterConnectionDetails.status.code != 'CREATED' && waterConnectionDetails.status.code != 'VERIFIED' 
