@@ -189,8 +189,9 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
                 if (waterConnectionDetails.getApplicationType().getCode()
                         .equalsIgnoreCase(WaterTaxConstants.CHANGEOFUSE)) {
+                    BigDecimal amountTodisplayInIndex=waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
                     waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
-                    consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetailsFullFlag,BigDecimal.ZERO);
+                    consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetailsFullFlag,amountTodisplayInIndex);
                 }
                 if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
                     waterConnectionDetails.transition(true).end().withSenderName(user.getName())
