@@ -194,7 +194,7 @@ $(document).ready(function()
 		if($('#natureofwork ul li a[data-now=Reset]').length == 0){
 			$('#natureofwork ul').append('<li role="presentation"><a href="javascript:void(0)" data-now=Reset><span><i class="fa fa-refresh"></i></span>Reset / Clear</a></li>');
 		}
-	    now = $(this).data('now');
+	    now = unescape($(this).data('now'));
 	    now_json = [];
 	    //console.log('Clicked item-->'+now);
 	    refreshnow(now);
@@ -247,13 +247,14 @@ function worklist(){
 	        			  counts[value.task]++;
 	        		  }
 		          });
-		          //console.log(counts);
+		          console.log(counts);
 		          
 		          $('#natureofwork').append('<ul class="nav nav-pills" role="tablist"></ul>');
 		          for (var k in counts){
 	        	    if (counts.hasOwnProperty(k)) {
 	        	    	now_name.push(k);
-	        	    	$('#natureofwork ul').append('<li role="presentation"><a href="javascript:void(0)" data-now='+k+'><span><i class="fa fa-tags"></i></span>'+k+' <span class="badge">'+counts[k]+'</span></a></li>');
+	        	    	var key = escape(k);
+	        	    	$('#natureofwork ul').append('<li role="presentation"><a href="javascript:void(0)" data-now="'+key+'"><span><i class="fa fa-tags"></i></span>'+k+' <span class="badge">'+counts[k]+'</span></a></li>');
 	        	         //console.log("Key is " + k + ", value is" + counts[k]);
 	        	    }
 		          }
