@@ -573,3 +573,7 @@ table.setborder tr{
         display: none !important;
     }
 }
+
+.yui-skin-sam .yui-ac-input {
+    position: relative;
+}
