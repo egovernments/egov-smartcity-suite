@@ -192,4 +192,8 @@ public interface Property extends Auditable {
     public String getApplicationNo();
 
     public void setApplicationNo(String applicationNo);
+    
+    public String getDemolitionReason();
+    
+    public void setDemolitionReason(String demolitionReason);
 }

@@ -44,8 +44,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
 
-<form:form id="demolition" method="post"
-	class="form-horizontal form-groups-bordered" modelAttribute="property">
+<form:form id="demolition" method="post" class="form-horizontal form-groups-bordered" modelAttribute="property">
 	<div class="page-container" id="page-container">
 		<div class="main-content">
 			<div class="row">
@@ -63,6 +62,7 @@
 								<div class="col-xs-3 add-margin view-content">
 									<c:out value="${property.basicProperty.upicNo}"></c:out>
 								</div>
+								
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.assmtno.parentproperty" />
 								</div>
@@ -251,6 +251,9 @@
 					</div>
 				</div>
 			</div>
+			<%-- <div id="OwnerNameDiv">
+				<jsp:include page="../common/ownerDetailsFrom.jsp"></jsp:include>
+			</div> --%>
 
 			<div class="row">
 				<div class="col-md-12">
@@ -262,16 +265,14 @@
 							</div>
 						</div>
 						<div class="panel-body custom-form">
-							<form role="form" class="form-horizontal form-groups-bordered">
 								<div class="form-group">
 									<label class="col-sm-3 control-label text-right"><spring:message
 											code="lbl.demolition.reason" /><span class="mandatory"></span>
 									</label>
 									<div class="col-sm-8 add-margin">
-										<textarea class="form-control"></textarea>
+										<form:textarea path="demolitionReason" class="form-control"></form:textarea>
 									</div>
 								</div>
-							</form>
 						</div>
 					</div>
 				</div>
@@ -288,33 +289,6 @@
 							</div>
 						</div>
 
-						<%-- <div class="form-group">
-							<label class="col-sm-2 control-label" style="text-align: center"> <spring:message	code="lbl.surveyNumber" /><span class="mandatory"></span></label>
-							<label class="col-sm-2 control-label" style="text-align: center"> <spring:message	code="lbl.pattaNumber" /><span class="mandatory"></span></label> 
-							<label class="col-sm-2 control-label" style="text-align: center"> <spring:message	code="lbl.vacantland.area" /><span class="mandatory"></span></label> 
-							<label class="col-sm-3 control-label" style="text-align: center"> <spring:message	code="lbl.MarketValue" /><span class="mandatory"></span></label> 
-							<label class="col-sm-2 control-label" style="text-align: center"> <spring:message	code="lbl.pattaNumber" /><span class="mandatory"></span></label>
-						</div>
-						<div class="form-group">
-							<div class="col-sm-2 add-margin">
-								<form:input path="propertyDetail.surveyNumber" id="surveyNumber" cssClass="form-control" cssErrorClass="form-control error" />
-							</div>
-							<div class="col-sm-2 add-margin">
-								<form:input path="propertyDetail.pattaNumber" id="pattaNumber" cssClass="form-control" cssErrorClass="form-control error" />
-							</div>
-							<div class="col-sm-2 add-margin">
-								<form:input path="propertyDetail.sitalArea.area" id="sitalArea"	cssClass="form-control"
-									cssErrorClass="form-control error" />
-							</div>
-							<div class="col-sm-3 add-margin">
-								<form:input path="propertyDetail.marketValue" id="marketValue"	cssClass="form-control"
-									cssErrorClass="form-control error" />
-							</div>
-							<div class="col-sm-3 add-margin">
-								<form:input path="propertyDetail.currentCapitalValue" id="currentCapitalValue"	cssClass="form-control"
-									cssErrorClass="form-control error" />
-							</div>
-						</div> --%>
 						 <table width="100%" border="0" cellspacing="0" cellpadding="0"
 								class="tablebottom" id="vacantLandTable">
 
@@ -394,7 +368,7 @@
 				</div>
 			</div>
 
-			<div class="row">
+			<%-- <div class="row">
 				<div class="col-md-12">
 					<div class="panel panel-primary" data-collapsed="0">
 
@@ -435,10 +409,10 @@
 						</div>
 					</div>
 				</div>
-			</div>
+			</div> --%>
 
 			<div class="form-group text-center">
-				<input type="button" class="buttonsubmit" value="Submit">
+				<button type="submit" class="btn btn-success"><spring:message code="lbl.submit"/></button>
 				&nbsp; <input type="button" class="button" value="Close">
 			</div>
 		</div>

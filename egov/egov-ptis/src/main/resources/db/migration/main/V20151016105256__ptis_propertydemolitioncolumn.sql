@@ -1,0 +1,1 @@
+ALTER TABLE egpt_property ADD COLUMN demolitionreason character varying(256);

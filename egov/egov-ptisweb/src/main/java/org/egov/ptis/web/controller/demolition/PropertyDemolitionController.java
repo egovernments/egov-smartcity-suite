@@ -39,30 +39,51 @@
  ******************************************************************************/
 package org.egov.ptis.web.controller.demolition;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
+
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.VacantProperty;
+import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
+import org.egov.ptis.domain.service.property.PropertyPersistenceService;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/property/demolition/{assessmentNo}")
 public class PropertyDemolitionController {
+
+    protected static final String COMMON_FORM = "commonForm";
+    protected static final String DEMOLITION_FORM = "demolition-form";
+    protected static final String DEMOLITION_SUCCESS = "demolition-success";
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -70,32 +91,62 @@ public class PropertyDemolitionController {
     @Autowired
     private PtDemandDao ptDemandDAO;
 
+    @Autowired
+    private PropertyDemolitionService propertyDemolitionService;
+    PropertyImpl oldProperty = new PropertyImpl();
+    PropertyImpl propertyModel = new PropertyImpl();
+    BasicProperty basicProperty;
+
     @ModelAttribute
-    public Property complaintTypeModel(@PathVariable String assessmentNo) {
+    public Property propertyModel(@PathVariable String assessmentNo) {
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        return basicProperty.getActiveProperty();
+        if (null != basicProperty) {
+            oldProperty = basicProperty.getActiveProperty();
+            basicProperty = oldProperty.getBasicProperty();
+            propertyModel = (PropertyImpl) basicProperty.getActiveProperty().createPropertyclone();
+        }
+        return propertyModel;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public String newForm(final Model model, @PathVariable String assessmentNo) {
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        if (null != basicProperty) {
-            Property property = basicProperty.getActiveProperty();
-            model.addAttribute("property", basicProperty.getActiveProperty());
-            if (!property.getIsExemptedFromTax()) {
-                final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
-                model.addAttribute("currTax", demandCollMap.get(CURR_DMD_STR));
-                model.addAttribute("currTaxDue",
-                        demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
-                model.addAttribute("totalArrDue",
-                        demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
-            } else {
-                model.addAttribute("currTax", BigDecimal.ZERO);
-                model.addAttribute("currTaxDue", BigDecimal.ZERO);
-                model.addAttribute("totalArrDue", BigDecimal.ZERO);
-            }
+        basicProperty = oldProperty.getBasicProperty();
+        if (null != basicProperty && basicProperty.isUnderWorkflow()) {
+            model.addAttribute("wfPendingMsg", "Could not do " + APPLICATION_TYPE_DEMOLITION
+                    + " now, property is undergoing some work flow.");
+            return TARGET_WORKFLOW_ERROR;
         }
-        return "demolition-form";
+        Property property = basicProperty.getActiveProperty();
+        model.addAttribute("property", basicProperty.getActiveProperty());
+        if (!property.getIsExemptedFromTax()) {
+            final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
+            model.addAttribute("currTax", demandCollMap.get(CURR_DMD_STR));
+            model.addAttribute("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
+            model.addAttribute("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
+        } else {
+            model.addAttribute("currTax", BigDecimal.ZERO);
+            model.addAttribute("currTaxDue", BigDecimal.ZERO);
+            model.addAttribute("totalArrDue", BigDecimal.ZERO);
+        }
+        return DEMOLITION_FORM;
+    }
+
+    @Transactional
+    @RequestMapping(method = RequestMethod.POST)
+    public String demoltionFormSubmit(@ModelAttribute Property property, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request) {
+        final Character status = STATUS_WORKFLOW;
+        propertyDemolitionService.saveProperty(oldProperty, property, status);
+        return DEMOLITION_SUCCESS;
+    }
+
+    public BasicProperty getBasicProperty() {
+        return basicProperty;
+    }
+
+    public void setBasicProperty(BasicProperty basicProperty) {
+        this.basicProperty = basicProperty;
     }
 
 }

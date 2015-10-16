@@ -109,4 +109,6 @@
     	</property>
      	<property name="cacheSeconds" value="1"/> 
 	</bean>
+	
+	<bean id="demolitionService" class="org.egov.ptis.domain.service.demolition.PropertyDemolitionService" />
 </beans>

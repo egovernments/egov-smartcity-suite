@@ -113,6 +113,7 @@ public class PropertyImpl extends StateAware implements Property {
     private BigDecimal alv;
     private List<Document> documents = new ArrayList<>();
     private String applicationNo;
+    private String demolitionReason;
 
     /**
      * @Size(min=1) is not working when we modify a migrated property, Reason is because for the migrated property the tax xml is
@@ -640,6 +641,16 @@ public class PropertyImpl extends StateAware implements Property {
     @Override
     public void setApplicationNo(final String applicationNo) {
         this.applicationNo = applicationNo;
+    }
+    
+    @Override
+    public String getDemolitionReason() {
+        return demolitionReason;
+    }
+
+    @Override
+    public void setDemolitionReason(String demolitionReason) {
+        this.demolitionReason = demolitionReason;
     }
 
 }

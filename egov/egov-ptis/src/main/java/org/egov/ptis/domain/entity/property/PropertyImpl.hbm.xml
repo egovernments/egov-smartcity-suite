@@ -69,6 +69,7 @@
 
 		<property name="effectiveDate" column="EFFECTIVE_DATE" />
 		<property name="status" column="STATUS" />
+		<property name="demolitionReason" column="DEMOLITIONREASON" />
 
 		<many-to-one name="basicProperty"
 			class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" column="ID_BASIC_PROPERTY"
