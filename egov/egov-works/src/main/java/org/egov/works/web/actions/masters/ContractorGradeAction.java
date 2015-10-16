@@ -53,9 +53,9 @@ import org.egov.commons.ContractorGrade;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
-import org.egov.infstr.search.SearchQueryHQL;
-import org.egov.infstr.services.PersistenceService;
+import org.egov.works.master.services.ContractorGradeService;
 import org.egov.works.utils.WorksConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
 	@Result(name = ContractorGradeAction.NEW, location = "contractorGrade-new.jsp"),
@@ -68,7 +68,8 @@ public class ContractorGradeAction extends SearchFormAction {
 
     private static final long serialVersionUID = 4500128509093695097L;
     private ContractorGrade contractorGrade = new ContractorGrade();
-    private PersistenceService<ContractorGrade, Long> contractorGradeService;
+    @Autowired
+    private ContractorGradeService contractorGradeService;
     private List<ContractorGrade> contractorGradeList = null;
     public static final String SEARCH = "searchPage";
     public static final String INDEX = "index";
@@ -84,7 +85,9 @@ public class ContractorGradeAction extends SearchFormAction {
 
     @Action(value = "/masters/contractorGrade-save")
     public String save() {
-        contractorGrade = contractorGradeService.persist(contractorGrade);
+    	if(!validateContractorGrade())
+    		return NEW;
+    	contractorGrade = contractorGradeService.persist(contractorGrade);
         addActionMessage(getText(WorksConstants.CONTRACTOR_GRADE_SAVE_SUCCESS_CODE, WorksConstants.CONTRACTOR_GRADE_SAVE_SUCCESS_MSG));
         contractorGradeList = new ArrayList<ContractorGrade>();
         contractorGradeList.add(contractorGrade);
@@ -104,7 +107,7 @@ public class ContractorGradeAction extends SearchFormAction {
     @Override
     public void prepare() {
         if (id != null)
-            contractorGrade = contractorGradeService.findById(id, false);
+            contractorGrade = contractorGradeService.getContractorGradeById(id);
         final List<BigDecimal> tempMaxAmountList = persistenceService
                 .findAllByNamedQuery("getContractorGradeMaxAmountList");
         final List<BigDecimal> tempMinAmountList = persistenceService
@@ -129,13 +132,13 @@ public class ContractorGradeAction extends SearchFormAction {
     }
 
     public String list() {
-        contractorGradeList = contractorGradeService.findAll();
+        contractorGradeList = contractorGradeService.getAllContractorGrades();
         return INDEX;
     }
 
     @Action(value = "/masters/contractorGrade-edit")
     public String edit() {
-        contractorGrade = contractorGradeService.findById(contractorGrade.getId(), false);
+        contractorGrade = contractorGradeService.getContractorGradeById(contractorGrade.getId());
         return EDIT;
     }
 
@@ -163,12 +166,12 @@ public class ContractorGradeAction extends SearchFormAction {
         if (grade != null && !grade.equals("")) {
             hasNoErrors = Pattern.matches(Constants.ALPHANUMERIC_WITHSPACE, grade);
             if (hasNoErrors == false) {
-                addActionError(getText(WorksConstants.CONTRACTOR_GRADE_ALPHANUMERIC_ERR_CODE, WorksConstants.CONTRACTOR_GRADE_ALPHANUMERIC_ERR_MSG));
+                addActionError(getText("contractorGrade.grade.alphaNumeric"));
             }
         }
         if (minAmount != -1 && maxAmount != -1)
             if (minAmount >= maxAmount) {
-                addActionError(getText(WorksConstants.CONTRACTOR_GRADE_MAX_AMOUNT_INVALID_ERR_CODE, WorksConstants.CONTRACTOR_GRADE_MAX_AMOUNT_INVALID_ERR_MSG));
+                addActionError(getText("contractor.grade.maxamount.invalid"));
                 return SEARCH;
 
             }
@@ -182,7 +185,7 @@ public class ContractorGradeAction extends SearchFormAction {
         else
             setDisplData(WorksConstants.YES);
 
-        return "searchPage";
+        return SEARCH;
     }
 
     public String getDisplData() {
@@ -229,10 +232,6 @@ public class ContractorGradeAction extends SearchFormAction {
         return contractorGrade;
     }
 
-    public void setContractorGradeService(final PersistenceService<ContractorGrade, Long> contractorGradeService) {
-        this.contractorGradeService = contractorGradeService;
-    }
-
     public void setContractorGrade(final ContractorGrade contractorGrade) {
         this.contractorGrade = contractorGrade;
     }
@@ -256,33 +255,7 @@ public class ContractorGradeAction extends SearchFormAction {
 
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
-        final StringBuffer contractorGradeSql = new StringBuffer(100);
-        String contractorGradeStr = "";
-        final List<Object> paramList = new ArrayList<Object>();
-        contractorGradeSql.append(" from ContractorGrade cg");
-
-        if (getGrade() != null && !getGrade().trim().equals("") || getMinAmount() != -1 || getMaxAmount() != -1)
-            contractorGradeSql.append(" where 1=1");
-
-        if (getGrade() != null && !getGrade().trim().equals("")) {
-            contractorGradeSql.append(" and UPPER(cg.grade) like ?");
-            paramList.add("%" + getGrade().trim().toUpperCase() + "%");
-        }
-
-        if (getMinAmount() != -1) {
-            contractorGradeSql.append(" and cg.minAmount = ?");
-            paramList.add(BigDecimal.valueOf(getMinAmount()));
-        }
-
-        if (getMaxAmount() != -1) {
-            contractorGradeSql.append(" and cg.maxAmount = ?");
-            paramList.add(BigDecimal.valueOf(getMaxAmount()));
-        }
-        contractorGradeSql.append(" group by cg.id");
-        contractorGradeStr = contractorGradeSql.toString();
-        final String countQuery = "select count(*) " + contractorGradeStr;
-        return new SearchQueryHQL(contractorGradeStr, countQuery, paramList);
-
+    	return contractorGradeService.prepareSearchQuery(grade, minAmount, maxAmount);
     }
 
     public List<String> getMaxAmountList() {
@@ -300,5 +273,29 @@ public class ContractorGradeAction extends SearchFormAction {
     public void setMinAmountList(final List<String> minAmountList) {
         this.minAmountList = minAmountList;
     }
-
+    
+    public Boolean validateContractorGrade() {
+    	Boolean isValid = Boolean.FALSE;
+    	Boolean isFieldEmpty = Boolean.FALSE;
+        if(grade.isEmpty()) {
+        	addActionError(getText("contractorGrade.grade.null"));
+        	isFieldEmpty = Boolean.TRUE;
+        } 
+        if(contractorGrade.getDescription().isEmpty()) {
+        	addActionError(getText("contractorGrade.description.null"));
+        	isFieldEmpty = Boolean.TRUE;
+        } 
+        if(contractorGrade.getMinAmount() == null) {
+        	addActionError(getText("contractorGrade.minAmount.null"));
+        	isFieldEmpty = Boolean.TRUE;
+        } 
+        if(contractorGrade.getMaxAmount() == null) {
+        	addActionError(getText("contractorGrade.maxAmount.null"));
+        	isFieldEmpty = Boolean.TRUE;
+        }
+        if(!isFieldEmpty) {
+        	isValid = Boolean.TRUE;
+        }
+        return isValid;
+    }
 }

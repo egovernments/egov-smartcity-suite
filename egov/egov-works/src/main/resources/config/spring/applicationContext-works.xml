@@ -415,10 +415,10 @@
 		<property name="contractorBillService" ref="contractorBillService" />
 	</bean>
 
-	<bean id="contractorGradeService" parent="persistenceService"
+	<!-- <bean id="contractorGradeService" parent="persistenceService"
 		scope="prototype">
 		<property name="type" value="org.egov.commons.ContractorGrade" />
-	</bean>
+	</bean> -->
 	<bean id="tenderResponseContractorsService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"
@@ -576,4 +576,7 @@
 	<bean id="genericDao" class="org.egov.infstr.dao.GenericHibernateDAO"/>
 	<!-- <bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl"/> -->
 	<bean id="budgetDetailsDAO" class="org.egov.dao.budget.BudgetDetailsHibernateDAO"/>
+	<bean id="contractorGradeService" class="org.egov.works.master.services.ContractorGradeService">
+		<property name="type" value="org.egov.commons.ContractorGrade"/>
+	</bean>
 </beans>
