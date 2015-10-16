@@ -579,8 +579,6 @@ public class WaterConnectionDetailsService {
                     || waterConnectionDetails.getStatus().getCode()
                             .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED)
                     || waterConnectionDetails.getStatus().getCode()
-                            .equals(WaterTaxConstants.APPLICATION_STATUS__RECOONCTIONINPROGRESS)
-                    || waterConnectionDetails.getStatus().getCode()
                             .equals(WaterTaxConstants.APPLICATION_STATUS__RECOONCTIONAPPROVED))
                 approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                         waterConnectionDetails);
@@ -588,8 +586,9 @@ public class WaterConnectionDetailsService {
                     || (!workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
                     && waterConnectionDetails.getStatus().getCode()
                             .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED))
-                    || (!workFlowAction.equals(WFLOW_ACTION_STEP_REJECT) && waterConnectionDetails.getStatus().getCode()
-                            .equals(WaterTaxConstants.WORKFLOW_RECOONCTIONINITIATED))) {
+                    || (!workFlowAction.equals(WFLOW_ACTION_STEP_REJECT) && (waterConnectionDetails.getStatus().getCode()
+                            .equals(WaterTaxConstants.WORKFLOW_RECOONCTIONINITIATED) || waterConnectionDetails.getStatus().getCode()
+                            .equals(WaterTaxConstants.APPLICATION_STATUS__RECOONCTIONINPROGRESS)))) {
                 final Position posobj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation());
                 if (posobj != null)
                     approvalPosition = posobj.getId();
@@ -653,8 +652,6 @@ public class WaterConnectionDetailsService {
                                     .equals(WaterTaxConstants.WORKFLOW_RECOONCTIONINITIATED)
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS__RECOONCTIONINPROGRESS)
-                            || waterConnectionDetails.getStatus().getCode()
-                                    .equals(WaterTaxConstants.WORKFLOW_RECOONCTIONINITIATED)
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS__RECOONCTIONSANCTIONED)
                             || waterConnectionDetails.getStatus().getCode()
