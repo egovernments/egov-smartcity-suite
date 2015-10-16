@@ -134,10 +134,11 @@ public class CloserConnectionController extends GenericConnectionController {
 
     private String loadViewData(final Model model, final HttpServletRequest request,
             final WaterConnectionDetails waterConnectionDetails) {
-        model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
-        model.addAttribute("additionalRule", WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE);
         waterConnectionDetails.setPreviousApplicationType(waterConnectionDetails.getApplicationType().getCode());
         model.addAttribute("previousApplicationType", waterConnectionDetails.getApplicationType().getCode());
+        model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
+        model.addAttribute("applicationDocList", waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(waterConnectionDetails));
+        model.addAttribute("additionalRule", WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE);
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
         model.addAttribute("radioButtonMap", Arrays.asList(ClosureType.values()));

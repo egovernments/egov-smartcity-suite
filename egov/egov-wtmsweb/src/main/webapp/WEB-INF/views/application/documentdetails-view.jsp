@@ -41,8 +41,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <table class="table table-bordered">
-<c:if test="${!waterConnectionDetails.applicationDocs.isEmpty()}">
+<c:if test="${!applicationDocList.isEmpty()}">
 	<thead>
 		<tr>
 			<th><spring:message code="lbl.slno" /></th>
@@ -56,8 +57,8 @@
 	</thead>
 	</c:if>
 	<c:choose>
-		<c:when test="${!waterConnectionDetails.applicationDocs.isEmpty()}">
-			<c:forEach items="${waterConnectionDetails.applicationDocs}" var="docs" varStatus="serialNo">
+		<c:when test="${!applicationDocList.isEmpty()}">
+			<c:forEach items="${applicationDocList}" var="docs" varStatus="serialNo">
 				<tbody>
 					<tr>
 						<td><c:out value="${serialNo.count}"/></td>

@@ -55,7 +55,7 @@ $(document).ready(function()
 		$('#approvalDesignation').removeAttr('required');
 		$('#approvalPosition').removeAttr('required');
 		}
-	if(approvalPositionExist!=0 && (mode=='' && closerConnection !=null ))
+	if(approvalPositionExist!=0 && ((mode=='' || mode=='closereditForAE' || mode=='reconEditForAE')&& closerConnection !=null ))
 	{
 	$(".show-row").hide(); 
 	$('#approverDetailHeading').hide();

@@ -100,22 +100,19 @@
 								<span ><spring:message code="msg.sussess.forward" />${approverName}</span>
 						</c:when>
 							<c:when test="${waterConnectionDetails.closeConnectionType != null && waterConnectionDetails.status.code== 'CLOSERAPPROVED'}">
-							<span><spring:message code="msg.connection.approved.success" />${approverName}</span>
+							<span><spring:message code="msg.closreConn.approved.success" />${approverName}</span>
 								
 						</c:when>
 						<c:when test="${waterConnectionDetails.state.value== 'Rejected' && waterConnectionDetails.applicationType.code=='CLOSINGCONNECTION' && waterConnectionDetails.closeConnectionType != null}">
 							<span><spring:message code="msg.closure.rejection.success" />${approverName}</span>
 							</c:when>
-							
 							<c:when test="${waterConnectionDetails.reConnectionReason !=null && waterConnectionDetails.closeConnectionType == 'T' &&  waterConnectionDetails.state.value != 'Rejected' && waterConnectionDetails.status.code!= 'RECONNECTIONAPPROVED'}">
 							<span><spring:message code="msg.reconnection.ack.success" /></span>
 								<span ><spring:message code="msg.sussess.forward" />${approverName}</span>
 						</c:when>
 							<c:when test="${waterConnectionDetails.closeConnectionType == 'T' && waterConnectionDetails.status.code== 'RECONNECTIONAPPROVED'}">
 							<span><spring:message code="msg.reconnection.approved.success" />${approverName}</span>
-								
 						</c:when>
-						
 						<c:when test="${waterConnectionDetails.state.value== 'Rejected' && waterConnectionDetails.applicationType.code=='RECONNECTION' && waterConnectionDetails.closeConnectionType == 'T'}">
 							<span><spring:message code="msg.reconnection.rejection.success" />${approverName}</span>
 							</c:when>

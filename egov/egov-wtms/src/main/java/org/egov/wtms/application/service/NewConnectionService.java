@@ -79,6 +79,10 @@ public class NewConnectionService {
                     validationMessage = messageSource
                     .getMessage("err.validate.newconnection.disconnected", new String[] {
                             waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
+                else if (waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.CLOSED))
+                    validationMessage = messageSource
+                    .getMessage("err.validate.newconnection.closed", new String[] {
+                            waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
                 else if (waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.HOLDING))
                     validationMessage = messageSource.getMessage("err.validate.newconnection.holding", new String[] {
                             waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);

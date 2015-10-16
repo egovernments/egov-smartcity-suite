@@ -52,11 +52,10 @@ public class WaterTaxConstants {
     public static final String APPLICATION_NUMBER = "applicationNumber";
     public static final String NEWCONNECTION = "NEWCONNECTION";
     public static final String METERED = "Metered";
-    public static final String CONNECTIONTYPE_METERED= "METERED";
+    public static final String CONNECTIONTYPE_METERED = "METERED";
     public static final String NON_METERED = "Non-metered";
     public static final String EGMODULES_NAME = "Water Tax";
     public static final String EGMODULE_NAME = "Water Tax Management";
-    public static final String WATERTAX_CONNECTION_CHARGE = "WTAXCONCHARGE";
     public static final String WATERTAX_SECURITY_CHARGE = "WTAXSECURITY";
     public static final String WATERTAX_DONATION_CHARGE = "WTAXDONATION";
     public static final String CONNECTION_FEE = "Connection fee";
@@ -139,24 +138,21 @@ public class WaterTaxConstants {
     public static final String APPLICATION_STATUS_WOGENERATED = "WORKORDERGENERATED";
     public static final String APPLICATION_STATUS_SANCTIONED = "SANCTIONED";
     public static final String APPLICATION_STATUS_CANCELLED = "CANCELLED";
-    
+
     public static final String APPLICATION_STATUS_CLOSERiNTITIATED = "CLOSERINITIATED";
     public static final String APPLICATION_STATUS_CLOSERINPROGRESS = "CLOSERINPROGRESS";
     public static final String APPLICATION_STATUS_CLOSERAPRROVED = "CLOSERAPPROVED";
     public static final String APPLICATION_STATUS_CLOSERSANCTIONED = "CLOSERSANCTIONED";
-    public static final String  WORKFLOW_CLOSUREADDITIONALRULE = "CLOSECONNECTION";
-    public static final String  WORKFLOW_RECOONCTIONINITIATED = "RECONNECTIONINITIATED";
-    public static final String  APPLICATION_STATUS__RECOONCTIONINPROGRESS = "RECONNECTIONINPROGRESS";
-    public static final String  APPLICATION_STATUS__RECOONCTIONAPPROVED = "RECONNECTIONAPPROVED";
-    public static final String  APPLICATION_STATUS__RECOONCTIONSANCTIONED = "RECONNECTIONSANCTIONED";
-    
-    
-    
-    public static final String  SEARCH_MENUTREE_APPLICATIONTYPE_CLOSURE= "CLOSURECONNECTION";
-    public static final String  SEARCH_MENUTREE_APPLICATIONTYPE_METERED = "METERENTRY";
-    public static final String  SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX = "COLLECTTAX";
-    
-    
+    public static final String WORKFLOW_CLOSUREADDITIONALRULE = "CLOSECONNECTION";
+    public static final String WORKFLOW_RECONNCTIONINITIATED = "RECONNECTIONINITIATED";
+    public static final String APPLICATION_STATUS__RECONNCTIONINPROGRESS = "RECONNECTIONINPROGRESS";
+    public static final String APPLICATION_STATUS__RECONNCTIONAPPROVED = "RECONNECTIONAPPROVED";
+    public static final String APPLICATION_STATUS__RECONNCTIONSANCTIONED = "RECONNECTIONSANCTIONED";
+
+    public static final String SEARCH_MENUTREE_APPLICATIONTYPE_CLOSURE = "CLOSURECONNECTION";
+    public static final String SEARCH_MENUTREE_APPLICATIONTYPE_METERED = "METERENTRY";
+    public static final String SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX = "COLLECTTAX";
+
     // appconfig key
     public static final String SENDSMSFORWATERTAX = "SENDSMSFORWATERTAX";
     public static final String WATERTAXWORKFLOWDEPARTEMENT = "DEPARTMENTFORWORKFLOW";
@@ -166,7 +162,7 @@ public class WaterTaxConstants {
     public static final String MULTIPLENEWCONNECTIONFORPID = "MULTIPLENEWCONNECTIONFORPID";
     public static final String DOCUMENTREQUIREDFORBPL = "DOCUMENTREQUIREDFORBPL";
     public static final String ROLEFORNONEMPLOYEEINWATERTAX = "ROLEFORNONEMPLOYEEINWATERTAX";
-    public static final String ROLESFORLOGGEDINUSER="RolesForSearchWAterTaxConnection";
+    public static final String ROLESFORLOGGEDINUSER = "RolesForSearchWAterTaxConnection";
 
     // this is just another name to new connection
     public static final String PRIMARYCONNECTION = "Primary Connection";
@@ -195,16 +191,21 @@ public class WaterTaxConstants {
     public static final String WATER_CONN_BILLNO_SEQ = "SEQ_BILLNO_";
 
     public static final String RESIDENTIAL = "RESIDENTIAL";
-    public static final String WFLOW_ACTION_STEP_THIRDPARTY_CREATED="Created";
+    public static final String WFLOW_ACTION_STEP_THIRDPARTY_CREATED = "Created";
     public static final String NONMETEREDDEMANDREASON = "Water tax charges";
     public static final String MASTERSTATUSACTIVE = "ACTIVE";
     public static final String MASTERSTATUSINACTIVE = "IN ACTIVE";
-    
+
     // HashMap map b/n Demand reason string and code
     public static final LinkedHashMap<String, String> NON_METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
+        /**
+         *
+         */
+        private static final long serialVersionUID = -9153822216362973956L;
+
         {
             put(WATERTAXREASONCODE, NONMETEREDDEMANDREASON);
-           
+
         }
     };
 }

@@ -40,14 +40,18 @@
 package org.egov.wtms.web.controller.application;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -79,6 +83,7 @@ public class ViewConnectionController {
         details = waterConnectionDetailsService
                 .findByApplicationNumberOrConsumerCode(applicationNumber);
         }
+        model.addAttribute("applicationDocList", waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(details));
         model.addAttribute("waterConnectionDetails", details);
         model.addAttribute("connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(details.getConnectionType().name()));
