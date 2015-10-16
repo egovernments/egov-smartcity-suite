@@ -39,20 +39,27 @@
  */
 package org.egov.works.web.actions.estimate;
 
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.models.estimate.EstimateTemplate;
 import org.egov.works.models.masters.SORRate;
 
+@Results({
+        @Result(name = AjaxEstimateTemplateAction.SEARCH_RESULTS, location = "ajaxEstimateTemplate-searchResults.jsp"),
+        @Result(name = AjaxEstimateTemplateAction.ACTIVITIES, location = "ajaxEstimateTemplate-activities.jsp")
+})
 public class AjaxEstimateTemplateAction extends BaseFormAction {
 
     private static final long serialVersionUID = 4779374304829178146L;
     private EstimateTemplate estimateTemplate = new EstimateTemplate();
     private static final String CODEUNIQUECHECK = "codeUniqueCheck";
-    private static final String SEARCH_RESULTS = "searchResults";
-    private static final String ACTIVITIES = "activities";
+    public static final String SEARCH_RESULTS = "searchResults";
+    public static final String ACTIVITIES = "activities";
     private int status;
     private String code;
     private long workTypeId;
@@ -60,6 +67,7 @@ public class AjaxEstimateTemplateAction extends BaseFormAction {
     private SORRate currentRate;
     private Date estimateDate;
     private String query;
+    private List<EstimateTemplate> estimateTemplateList;
 
     @Override
     public Object getModel() {
@@ -67,11 +75,13 @@ public class AjaxEstimateTemplateAction extends BaseFormAction {
         return estimateTemplate;
     }
 
+    @Action(value = "/estimate/ajaxEstimateTemplate-searchAjax")
     public String searchAjax() {
+        estimateTemplateList = getEstimateTemplates();
         return SEARCH_RESULTS;
     }
 
-    public Collection<EstimateTemplate> getEstimateTemplateList() {
+    public List<EstimateTemplate> getEstimateTemplates() {
         String strquery = "";
         if (workTypeId > 0)
             strquery = "from EstimateTemplate et where upper(et.code) like '" + query.toUpperCase()
@@ -83,6 +93,7 @@ public class AjaxEstimateTemplateAction extends BaseFormAction {
         return getPersistenceService().findAllBy(strquery);
     }
 
+    @Action(value = "/estimate/ajaxEstimateTemplate-findCodeAjax")
     public String findCodeAjax() {
         estimateTemplate = (EstimateTemplate) getPersistenceService().find("from EstimateTemplate where upper(code)=?",
                 code.toUpperCase());
@@ -176,6 +187,10 @@ public class AjaxEstimateTemplateAction extends BaseFormAction {
 
     public void setQuery(final String query) {
         this.query = query;
+    }
+
+    public List<EstimateTemplate> getEstimateTemplateList() {
+        return estimateTemplateList;
     }
 
 }

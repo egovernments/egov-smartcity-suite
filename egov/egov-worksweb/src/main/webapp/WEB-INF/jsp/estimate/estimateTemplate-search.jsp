@@ -53,7 +53,7 @@ loadSubType= function(req, res){
 
 function submitEstimateTemplateSearchForm() {
 	document.estimateTemplateSearchForm.status.disabled=false;
-    document.estimateTemplateSearchForm.action='${pageContext.request.contextPath}/estimate/estimateTemplate!searchDetails.action';
+    document.estimateTemplateSearchForm.action='${pageContext.request.contextPath}/estimate/estimateTemplate-searchDetails.action';
     dom.get('estimateTemplateCode').value="";
 	dom.get('typeOfWork').value=""; 
 	dom.get('subTypeOfWork').value="";
@@ -121,7 +121,7 @@ function bodyOnLoad(){
              <tr>
                 <td class="whiteboxwk"><span class="mandatory">*</span><s:text name="estimate.template.search.type" />:</td>
                 <td class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.template.search.default.select')}" name="workType" id="workType" cssClass="selectwk" list="dropdownData.parentCategoryList" listKey="id" listValue="description" value="%{workType.id}" onChange="setupSubTypes(this);"/>
-                <egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='subType' url='estimate/ajaxEstimate!subcategories.action' selectedValue="%{subType.id}" afterSuccess="loadSubType" />
+                <egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='subType' url='estimate/ajaxEstimate-subcategories.action' selectedValue="%{subType.id}" afterSuccess="loadSubType" />
                 </td>
                 <td class="whiteboxwk"><s:text name="estimate.template.search.subtype" />:</td>
                 <td class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.template.search.default.select')}" name="subType" value="%{subType.id}" id="subType" cssClass="selectwk" list="dropdownData.categoryList" listKey="id" listValue="description"/></td>
@@ -177,9 +177,7 @@ function bodyOnLoad(){
 </div>
 </div>
 <s:hidden name="sourcePage" id="sourcePage"
-									value="%{sourcePage}" />
-<s:hidden name="checkDWRelatedSORs" id="checkDWRelatedSORs"
-									value="%{checkDWRelatedSORs}" />									
+									value="%{sourcePage}" />								
 </s:form>
 </body>
 

@@ -142,7 +142,7 @@ function getActivitiesForTemplate(code){
                 if(allresults[i].sor!=null && allresults[i].sor=="yes"){
                 records=sorDataTable.getRecordSet();
                 sorDataTable.addRow({schedule:allresults[i].Id,Code:allresults[i].Code,SlNo:sorDataTable.getRecordSet().getLength()+1,Description:allresults[i].Description,UOM:allresults[i].UOM,sorrate:allresults[i].UnitRate,rate:allresults[i].UnitRate,Delete:'X',FullDescription:allresults[i].FullDescription});
-                getFactor(allresults[i].UOM,sorDataTable.getRecord(sorDataTable.getRecordSet().getLength()-1));
+                getUOMFactor(allresults[i].UOM,sorDataTable.getRecord(sorDataTable.getRecordSet().getLength()-1));
                 }
                 else if(allresults[i].sor!=null && allresults[i].sor=="no"){
                 nonSorDataTable.addRow({NonSorId:allresults[i].Id,Sl_No:nonSorDataTable.getRecordSet().getLength()+1,SlNo:nonSorDataTable.getRecordSet().getLength()+1,nonSordescription:allresults[i].Description,Uom:allresults[i].UOM,nonSorUom:allresults[i].UOM,rate:allresults[i].UnitRate,Delete:'X'  });
@@ -163,14 +163,13 @@ function getActivitiesForTemplate(code){
 	            dom.get("sor_error").style.display='';
 	            document.getElementById("sor_error").innerHTML='<s:text name="estimate.sor.invalid.sor"/>';
 	        };
-	 makeJSONCall(["sor","Id","Description","Code","FullDescription","UOM","UnitRate"],'${pageContext.request.contextPath}/estimate/ajaxEstimateTemplate!findCodeAjax.action',{estimateDate:document.getElementById("estimateDate").value,code:code},myCodeSuccessHandler,myCodeFailureHandler) ;
+	 makeJSONCall(["sor","Id","Description","Code","FullDescription","UOM","UnitRate"],'${pageContext.request.contextPath}/estimate/ajaxEstimateTemplate-findCodeAjax.action',{estimateDate:document.getElementById("estimateDate").value,code:code},myCodeSuccessHandler,myCodeFailureHandler) ;
 }
 
 function searchTemplate(){
 	var typeOfWork="";
 	var subTypeOfWork="";
 	var estimateTemplateCode="";
-	var dwRCRelatedParam = "";
 	
 	if(dom.get("codeSearch").value!=''){
 		estimateTemplateCode=dom.get("codeSearch").value;
@@ -182,11 +181,7 @@ function searchTemplate(){
 		}
 	}
 	
-	//TODO - where is this variable checkDWRelatedSORs is used?
-	<s:if test="%{fromRateContract==true}" >
-		dwRCRelatedParam = "&checkDWRelatedSORs=true"; 
-	</s:if>
-	window.open("${pageContext.request.contextPath}/estimate/estimateTemplate!search.action?sourcePage=searchForEstimate"+"&estimateTemplateCode="+estimateTemplateCode+"&typeOfWork="+typeOfWork+"&subTypeOfWork="+subTypeOfWork+dwRCRelatedParam,"", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+	window.open("${pageContext.request.contextPath}/estimate/estimateTemplate-search.action?sourcePage=searchForEstimate"+"&estimateTemplateCode="+estimateTemplateCode+"&typeOfWork="+typeOfWork+"&subTypeOfWork="+subTypeOfWork,"", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 }
 </script>
 
@@ -213,7 +208,7 @@ function searchTemplate(){
                 <span id="codeSearchResults"></span>
                 </div>
                 </div>
-                <egov:autocomplete name="codeSearch" width="20" field="codeSearch" url="ajaxEstimateTemplate!searchAjax.action?status=1&" queryQuestionMark="false" results="codeSearchResults" paramsFunction="codeSearchParameters" handler="codeSearchSelectionHandler" forceSelectionHandler="codeSelectionEnforceHandler" afterHandler="afterCodeResults"/>
+                <egov:autocomplete name="codeSearch" width="20" field="codeSearch" url="ajaxEstimateTemplate-searchAjax.action?status=1&" queryQuestionMark="false" results="codeSearchResults" paramsFunction="codeSearchParameters" handler="codeSearchSelectionHandler" forceSelectionHandler="codeSelectionEnforceHandler" afterHandler="afterCodeResults"/>
                 <span class='warning' id="improperCodeSelectionWarning"></span>
                 <div id="loadImageForCode" style="display:none"><img src="/egi/resources/erp2/images/loading.gif" />Loading Template codes. Please wait..</div>
             </td>

@@ -3,7 +3,7 @@
 {
 "ResultSet": {
     "Result":[
-    <s:iterator var="s" value="estimateTemplate.activities" status="status">
+    <s:iterator var="s" value="estimateTemplate.estimateTemplateActivities" status="status">
     {<s:if test="%{schedule!=null}">
     "sor":"yes",
     "Id":"<s:property value="%{schedule.id}" />",

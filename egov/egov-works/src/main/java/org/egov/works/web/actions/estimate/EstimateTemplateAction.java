@@ -62,9 +62,7 @@ import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @Results({
         @Result(name = EstimateTemplateAction.NEW, location = "estimateTemplate-new.jsp"),
         @Result(name = EstimateTemplateAction.SEARCH, location = "estimateTemplate-search.jsp")
@@ -87,18 +85,7 @@ public class EstimateTemplateAction extends SearchFormAction {
     private Long typeOfWork;
     private String estimateTemplateCode;
     private Long subTypeOfWork;
-
-    private String checkDWRelatedSORs;
     public static final String SEARCH = "search";
-
-    public String getCheckDWRelatedSORs() {
-        return checkDWRelatedSORs;
-    }
-
-    public void setCheckDWRelatedSORs(final String checkDWRelatedSORs) {
-        this.checkDWRelatedSORs = checkDWRelatedSORs;
-    }
-
     private AbstractEstimateService abstractEstimateService;
 
     public EstimateTemplateAction() {
@@ -155,7 +142,6 @@ public class EstimateTemplateAction extends SearchFormAction {
         return SEARCH;
     }
 
-    @Transactional
     public String save() {
         estimateTemplate.getEstimateTemplateActivities().clear();
         populateSorActivities();
@@ -220,19 +206,16 @@ public class EstimateTemplateAction extends SearchFormAction {
         return status;
     }
 
-    /*
-     * @Override public String search() { estimateTemplate.setStatus(1); return "search"; }
-     */
-
+    @Action(value = "/estimate/estimateTemplate-searchDetails")
     public String searchDetails() {
         if (estimateTemplate.getWorkType() == null || estimateTemplate.getWorkType().getId() == -1) {
             final String messageKey = "estimate.template.search.workType.error";
             addActionError(getText(messageKey));
-            return "search";
+            return SEARCH;
         }
         setPageSize(WorksConstants.PAGE_SIZE);
         super.search();
-        return "search";
+        return SEARCH;
     }
 
     public List<EstimateTemplateActivity> getSorActivities() {
