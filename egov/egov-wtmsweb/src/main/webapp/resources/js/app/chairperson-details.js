@@ -22,7 +22,7 @@ $(document).ready(function(){
 				},
 				{
 					"mData" : "chairPerson",
-					"sTitle" : "Chair Person",
+					"sTitle" : "Chair Person Name",
 				}, 
 				 {
 					"mData" : "fromDate",
