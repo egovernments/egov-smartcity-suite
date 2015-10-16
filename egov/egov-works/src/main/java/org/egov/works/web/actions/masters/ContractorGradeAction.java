@@ -88,7 +88,7 @@ public class ContractorGradeAction extends SearchFormAction {
     	if(!validateContractorGrade())
     		return NEW;
     	contractorGrade = contractorGradeService.persist(contractorGrade);
-        addActionMessage(getText(WorksConstants.CONTRACTOR_GRADE_SAVE_SUCCESS_CODE, WorksConstants.CONTRACTOR_GRADE_SAVE_SUCCESS_MSG));
+        addActionMessage(getText("contractor.grade.save.success"));
         contractorGradeList = new ArrayList<ContractorGrade>();
         contractorGradeList.add(contractorGrade);
         return INDEX;
