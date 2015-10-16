@@ -161,7 +161,7 @@
 							data-placement="top" title="" data-original-title="Locate on map"
 							onclick="jQuery('#complaint-locate').modal('show', {backdrop: 'static'});">
 							<i class="entypo-globe"></i></span> <span id="address_locate">
-							<c:out value="${complaint.location.name}"></c:out></span>
+							<c:out value="${complaint.childLocation.localName} - ${complaint.location.name}"></c:out></span>
 					</div>
 				</div>
 				<div class="row">

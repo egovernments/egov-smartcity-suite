@@ -69,6 +69,9 @@ public class ApiUrl {
 	public final static String COMPLAINT_STATUS = "/complaint/{complaintNo}/status";
 	
 	public final static String COMPLAINT_UPDATE_STATUS = "/complaint/{complaintNo}/updateStatus";
+	
+	public final static String COMPLAINT_HISTORY = "/complaint/{complaintNo}/complaintHistory";
+        
 
 	/**
 	 * Citizen

@@ -158,10 +158,10 @@
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintLoc"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
 							<div class="input-group">
-								<input id="location" type="text" value="${complaint.location.name}" class="form-control low-width" placeholder='<spring:message code="lbl.placeholder.grievance.loc"/>' autocomplete="off" required="required"/>
+								<input id="location" type="text" value="${crossHierarchyLocation}" class="form-control low-width" placeholder='<spring:message code="lbl.placeholder.grievance.loc"/>' autocomplete="off" required="required"/>
 								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe specific"></i></span>
 								<form:hidden path="location" id="locationid"/>
-								<input type="hidden"  name="crosshierarchyId" id="crosshierarchyId"/>
+								<form:hidden path="crossHierarchyId" id="crosshierarchyId"/>
 				   				<form:hidden path="lat" id="lat"/>
                    				<form:hidden path="lng" id="lng"/>
 							</div>
@@ -227,8 +227,8 @@
 	if(complaintTypeId !== ''){
 		$("#complaintTypeId").val(complaintTypeId);
 	}
-	var locationid = '${complaint.location.id}';
+	/* var locationid = '${complaint.location.id}';
 	if(locationid !== ''){
 		$("#locationid").val(locationid);
-	}
+	} */
 </script>

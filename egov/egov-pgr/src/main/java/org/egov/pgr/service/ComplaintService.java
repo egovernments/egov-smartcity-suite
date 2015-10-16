@@ -324,17 +324,20 @@ public class ComplaintService {
         map.put("date", state.getDateInfo());
         map.put("comments", state.getComments());
         map.put("updatedBy", state.getLastModifiedBy().getName());
+        map.put("updatedUserType", state.getLastModifiedBy().getType());
         map.put("status", state.getValue());
         final Position ownerPosition = state.getOwnerPosition();
         user = state.getOwnerUser();
         user = state.getOwnerUser();
         if (null != user) {
             map.put("user", user.getUsername());
+            map.put("usertype", null != user.getType() ? user.getType() : "");
             map.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
                     ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
         } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
             user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
             map.put("user", null != user.getUsername() ? user.getUsername() : "");
+            map.put("usertype", null != user.getType() ? user.getType() : "");
             map.put("department", null != ownerPosition.getDeptDesig().getDepartment()
                     ? ownerPosition.getDeptDesig().getDepartment().getName() : "");
         }
@@ -346,16 +349,19 @@ public class ComplaintService {
             HistoryMap.put("date", stateHistory.getDateInfo());
             HistoryMap.put("comments", stateHistory.getComments());
             HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
+            HistoryMap.put("updatedUserType", stateHistory.getLastModifiedBy().getType());
             HistoryMap.put("status", stateHistory.getValue());
             final Position owner = stateHistory.getOwnerPosition();
             user = stateHistory.getOwnerUser();
             if (null != user) {
                 HistoryMap.put("user", user.getUsername());
+                HistoryMap.put("usertype", null != user.getType() ? user.getType() : "");
                 HistoryMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
                         ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
             } else if (null != owner && null != owner.getDeptDesig()) {
                 user = eisCommonService.getUserForPosition(owner.getId(), new Date());
                 HistoryMap.put("user", null != user.getUsername() ? user.getUsername() : "");
+                HistoryMap.put("usertype", null != user.getType() ? user.getType() : "");
                 HistoryMap.put("department", null != owner.getDeptDesig().getDepartment()
                         ? owner.getDeptDesig().getDepartment().getName() : "");
             }

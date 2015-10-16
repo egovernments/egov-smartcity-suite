@@ -51,6 +51,7 @@ import org.egov.infra.validation.ValidatorUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.web.controller.complaint.GenericComplaintController;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,19 +75,22 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
 
     @RequestMapping(value = "register", method = POST)
     public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
-            final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files,
-            @RequestParam("crosshierarchyId") final Long crosshierarchyId) {
+            final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files, final Model model) {
 
-        if (null != crosshierarchyId) {
-            final CrossHierarchy crosshierarchy = crossHierarchyService.findById(crosshierarchyId);
+        if (null != complaint.getCrossHierarchyId()) {
+            final CrossHierarchy crosshierarchy = crossHierarchyService.findById(complaint.getCrossHierarchyId());
             complaint.setLocation(crosshierarchy.getParent());
             complaint.setChildLocation(crosshierarchy.getChild());
         }
         if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
             resultBinder.rejectValue("location", "location.required");
 
-        if (resultBinder.hasErrors())
+        if (resultBinder.hasErrors()) {
+            if (null != complaint.getCrossHierarchyId())
+                model.addAttribute("crossHierarchyLocation",
+                        complaint.getChildLocation().getName() + " - " + complaint.getLocation().getName());
             return "complaint/citizen/registration-form";
+        }
 
         try {
             complaint.setSupportDocs(addToFileStore(files));
@@ -102,7 +106,7 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
     @RequestMapping(value = "anonymous/register", method = POST)
     public String registerComplaintAnonymous(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
             final RedirectAttributes redirectAttributes, final HttpServletRequest request,
-            @RequestParam("files") final MultipartFile[] files, @RequestParam("crosshierarchyId") final Long crosshierarchyId) {
+            @RequestParam("files") final MultipartFile[] files, final Model model) {
 
         if (!ValidatorUtils.isCaptchaValid(request))
             resultBinder.reject("captcha.not.valid");
@@ -114,8 +118,8 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
         if (StringUtils.isBlank(complaint.getComplainant().getName()))
             resultBinder.rejectValue("complainant.name", "complainant.name.ismandatory");
 
-        if (null != crosshierarchyId) {
-            final CrossHierarchy crosshierarchy = crossHierarchyService.findById(crosshierarchyId);
+        if (null != complaint.getCrossHierarchyId()) {
+            final CrossHierarchy crosshierarchy = crossHierarchyService.findById(complaint.getCrossHierarchyId());
             complaint.setLocation(crosshierarchy.getParent());
             complaint.setChildLocation(crosshierarchy.getChild());
         }
@@ -123,8 +127,12 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
         if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
             resultBinder.rejectValue("location", "location.required");
 
-        if (resultBinder.hasErrors())
+        if (resultBinder.hasErrors()) {
+            if (null != complaint.getCrossHierarchyId())
+                model.addAttribute("crossHierarchyLocation",
+                        complaint.getChildLocation().getName() + " - " + complaint.getLocation().getName());
             return "complaint/citizen/anonymous-registration-form";
+        }
 
         try {
             complaint.setSupportDocs(addToFileStore(files));

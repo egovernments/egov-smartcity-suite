@@ -202,6 +202,9 @@ public class Complaint extends StateAware {
         return ulb;
     }
 
+    @Transient
+    private Long crossHierarchyId;
+
     @Override
     public Long getId() {
         return id;
@@ -418,8 +421,16 @@ public class Complaint extends StateAware {
         return childLocation;
     }
 
-    public void setChildLocation(Boundary childLocation) {
+    public void setChildLocation(final Boundary childLocation) {
         this.childLocation = childLocation;
+    }
+
+    public Long getCrossHierarchyId() {
+        return crossHierarchyId;
+    }
+
+    public void setCrossHierarchyId(final Long crossHierarchyId) {
+        this.crossHierarchyId = crossHierarchyId;
     }
 
 }

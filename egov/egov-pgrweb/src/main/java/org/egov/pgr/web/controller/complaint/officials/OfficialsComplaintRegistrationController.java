@@ -56,6 +56,7 @@ import org.egov.pgr.service.ReceivingCenterService;
 import org.egov.pgr.web.controller.complaint.GenericComplaintController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -84,18 +85,21 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
 
     @RequestMapping(value = "register", method = POST)
     public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
-            final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files,
-            @RequestParam("crosshierarchyId") final Long crosshierarchyId) {
-        if (null != crosshierarchyId) {
-            final CrossHierarchy crosshierarchy = crossHierarchyService.findById(crosshierarchyId);
+            final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files, final Model model) {
+        if (null != complaint.getCrossHierarchyId()) {
+            final CrossHierarchy crosshierarchy = crossHierarchyService.findById(complaint.getCrossHierarchyId());
             complaint.setLocation(crosshierarchy.getParent());
             complaint.setChildLocation(crosshierarchy.getChild());
         }
         if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
             resultBinder.rejectValue("location", "location.required");
 
-        if (resultBinder.hasErrors())
+        if (resultBinder.hasErrors()) {
+            if (null != complaint.getCrossHierarchyId())
+                model.addAttribute("crossHierarchyLocation",
+                        complaint.getChildLocation().getName() + " - " + complaint.getLocation().getName());
             return "complaint/officials/registration-form";
+        }
 
         try {
 

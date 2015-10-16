@@ -115,7 +115,7 @@
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-location">
 						<span class="map-tool-class btn-secondary" data-toggle="tooltip" title="Locate on map" data-work="Locate on map" onclick="jQuery('#complaint-locate').modal('show', {backdrop: 'static'});"><i class="entypo-globe"></i></span>
-						<span id="address_locate">${complaint.location.localName}</span>
+						<span id="address_locate">${complaint.childLocation.localName} - ${complaint.location.localName}</span>
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.landmark"/>
