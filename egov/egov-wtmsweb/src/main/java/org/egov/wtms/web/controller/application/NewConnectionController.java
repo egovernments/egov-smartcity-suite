@@ -307,6 +307,7 @@ public class NewConnectionController extends GenericConnectionController {
                 waterConnectionDetailsService.getConnectionTypesMap().get(
                         waterConnectionDetails.getConnectionType().name()));
         model.addAttribute("cityName", waterTaxUtils.getCityName());
+        model.addAttribute("applicationDocList", waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(waterConnectionDetails));
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
         model.addAttribute("mode", "ack");
         return new ModelAndView("application/application-success", "waterConnectionDetails", waterConnectionDetails);
