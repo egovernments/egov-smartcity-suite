@@ -58,6 +58,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionService;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.joda.time.DateTime;
@@ -86,9 +87,10 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
         final List<WaterConnection> waterConnections = waterConnectionService.findByPropertyIdentifier(propertyId);
         final List<ConsumerConsumption> consumerConsumptions = new ArrayList<ConsumerConsumption>();
         for (final WaterConnection waterConnection : waterConnections) {
-            final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                    .getActiveConnectionDetailsByConnection(waterConnection);
-            if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
+             final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+            .findByConnection(waterConnection);
+             if (waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
+             if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
                 final ConsumerConsumption consumerConsumption = new ConsumerConsumption();
                 consumerConsumption.setHscno(waterConnectionDetails.getConnection().getConsumerCode());
                 final Map<String, BigDecimal> resultmap = connectionDemandService.getDemandCollMapForPtisIntegration(
