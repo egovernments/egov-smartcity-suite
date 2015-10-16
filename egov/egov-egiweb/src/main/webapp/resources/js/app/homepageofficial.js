@@ -355,7 +355,8 @@ function inboxloadmethod(){
 			if(now_name.indexOf(now) > -1){
 				refreshnow(now);
 				$('#natureofwork ul').append('<li role="presentation"><a href="javascript:void(0)" data-now=Reset><span><i class="fa fa-refresh"></i></span>Reset / Clear</a></li>');
-				$('#natureofwork ul li a[data-now='+now+']').parent().addClass('active');
+				var key =  escape(now);
+				$('#natureofwork ul li a[data-now="'+key+'"]').parent().addClass('active');
 			}else{
 				refreshnow('Reset');
 			}
