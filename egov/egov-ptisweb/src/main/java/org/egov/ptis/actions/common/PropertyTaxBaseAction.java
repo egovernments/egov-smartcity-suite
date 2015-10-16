@@ -541,6 +541,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.newpropertycreate.sms", args);
                     if (emailid != null) {
+                    	args.add(sMSEmailService.getCityName());
                         emailSubject = getText("msg.newpropertycreate.email.subject",
                                 new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.newpropertycreate.email", args);
@@ -550,6 +551,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.alterAssessmentForward.sms", args);
                     if (emailid != null) {
+                    	args.add(sMSEmailService.getCityName());
                         emailSubject = getText("msg.alterAssessmentForward.email.subject",
                                 new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.alterAssessmentForward.email", args);
