@@ -85,5 +85,9 @@ else
 	$('#closeconnectionreason').attr('disabled', false);
 	$(':radio:not(:checked)').attr('disabled', false);
 }
+if(mode == "" ){
+	$(':radio:not(:checked)').attr('disabled', true);
+	$('#closeconnectionreason').attr('disabled', true);
+	}
 </script>
 

@@ -72,7 +72,7 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.consumerno" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="connection.consumerCode" 
+							<form:input path="connection.consumerCode" id="consumerCodeData"
 								class="form-control text-left patternvalidation" data-pattern="number" maxlength="10" required="required" />
 								<form:errors path="connection.consumerCode" cssClass="add-margin error-msg" />	
 						</div>

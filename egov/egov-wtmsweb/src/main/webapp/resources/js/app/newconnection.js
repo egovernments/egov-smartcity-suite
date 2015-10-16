@@ -164,8 +164,29 @@ $(document).ready(function(){
 	});
 	
 });
-
-
+$('#consumerCodeData').blur(function(){
+	console.log('Got blur event');
+		$.ajax({
+				url: "/wtms/ajax-consumerCodeExistFordataEntry",     
+					type: "GET",
+					cache: true,
+					data: {
+						consumerCode : $('#consumerCodeData').val() 
+						
+					},
+					dataType: "json",
+			}).done(function(value) {
+				 if(value == true) {
+					 alert('Entered ConsumerCode Allready Exist');
+					 $('#consumerCodeData').val('');
+					 return false;
+				 } else {
+					 document.forms[0].submit;
+					 return true; 
+				 }
+			});
+		
+	});
 
 
 function loadPropertyDetails() {

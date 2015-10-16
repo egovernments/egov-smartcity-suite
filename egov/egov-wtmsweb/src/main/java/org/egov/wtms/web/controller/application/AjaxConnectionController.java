@@ -119,5 +119,21 @@ public class AjaxConnectionController {
                 waterConnectionDetails, givenDate);
         return enteredMonthReadingExist;
     }
+    
+    @RequestMapping(value = "/ajax-consumerCodeExistFordataEntry", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Boolean validateconsumerNumberForDataEntry(
+            @ModelAttribute("waterConnectionDetails") @RequestParam final String consumerCode) {
+        Boolean enteredMonthReadingExist = Boolean.FALSE;
+        if(consumerCode !=null){
+        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .findByApplicationNumberOrConsumerCode(consumerCode);
+         
+        if(waterConnectionDetails !=null && waterConnectionDetails.getConnection().getConsumerCode().equals(consumerCode))
+        {
+            enteredMonthReadingExist=Boolean.TRUE;
+        }
+        }
+        return enteredMonthReadingExist;
+    }
 
 }

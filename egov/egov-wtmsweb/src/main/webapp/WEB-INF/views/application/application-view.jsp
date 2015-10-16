@@ -71,7 +71,7 @@
 	<c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONNOTICEGENERATED' && checkOperator }">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.collect.fees"/></button>
 	</c:if>
-	<c:if test="${waterTaxDueforParent > 0 && checkOperator }">
+	<c:if test="${waterConnectionDetails.status.code != 'ESTIMATIONNOTICEGENERATED' && waterTaxDueforParent > 0 && checkOperator }">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
 	</c:if>
 	<c:if test="${waterConnectionDetails.status.code != 'CREATED' && waterConnectionDetails.status.code != 'VERIFIED' 

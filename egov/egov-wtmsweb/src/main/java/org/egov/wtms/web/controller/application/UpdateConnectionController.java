@@ -154,10 +154,18 @@ public class UpdateConnectionController extends GenericConnectionController {
                 for (final ApplicationDocuments appDoc : waterConnectionDetails.getApplicationDocs()) {
                     if (appDoc.getDocumentNames() != null
                             && appDoc.getDocumentNames().getApplicationType().getCode()
-                                    .equals(WaterTaxConstants.CLOSINGCONNECTION)) {
-                        waterConnectionDetails.getApplicationDocs().clear();
-                        waterConnectionDetails.getApplicationDocs().add(appDoc);
-                        model.addAttribute("appforDocumentList", waterConnectionDetails.getApplicationDocs());
+                                    .equals(WaterTaxConstants.CLOSINGCONNECTION) ) {
+                       List<ApplicationDocuments> tempListDoc=new ArrayList<ApplicationDocuments>();
+                       tempListDoc.add(appDoc);
+                        model.addAttribute("appforDocumentList", tempListDoc);
+                    }
+                    if (appDoc.getDocumentNames() != null
+                            && appDoc.getDocumentNames().getApplicationType().getCode()
+                                    .equals(WaterTaxConstants.RECONNECTIONCONNECTION) ) {
+                      // waterConnectionDetails.getApplicationDocs().add(appDoc);
+                       List<ApplicationDocuments> tempListDocrecon=new ArrayList<ApplicationDocuments>();
+                       tempListDocrecon.add(appDoc);
+                        model.addAttribute("appforDocumentList", tempListDocrecon);
                     }
                 }
             }
