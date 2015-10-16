@@ -85,7 +85,7 @@ public class DrillDownReportService {
         else if (selecteduser != null && !"".equals(selecteduser))
             query.append("  SELECT   emp.name||'~'|| pos.name    as name, ");
         else if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary"))
-            query.append("SELECT bndryparent.name as name, ");
+            query.append("SELECT bndry.name as name, ");
         else
             query.append("SELECT dept.name as name, ");
 
@@ -102,7 +102,7 @@ public class DrillDownReportService {
                 + "WHEN (state.value not in ('COMPLETED','REJECTED','WITHDRAWN') AND "
                 + "(cd.createddate - CURRENT_DATE ) > (interval '1h' * ctype.slahours)) THEN 1 ELSE 0 END) beyondsla ");
         query.append(
-                " FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype , eg_wf_states state, egpgr_complaint cd  left JOIN eg_boundary bndry on cd.location =bndry.id left JOIN eg_boundary bndryparent on  bndry.parent=bndryparent.id  left JOIN eg_department dept on cd.department =dept.id left join eg_position pos on cd.assignee=pos.id  left join view_egeis_employee emp on pos.id=emp.position ");
+                " FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype , eg_wf_states state, egpgr_complaint cd  left JOIN eg_boundary bndry on cd.location =bndry.id  left JOIN eg_department dept on cd.department =dept.id left join eg_position pos on cd.assignee=pos.id  left join view_egeis_employee emp on pos.id=emp.position ");
 
         buildWhereClause(fromDate, toDate, complaintDateType, query, department, boundary, complainttype, selecteduser);
 
@@ -132,7 +132,7 @@ public class DrillDownReportService {
         } else if (complainttype != null && !"".equals(complainttype))
             query.append(" group by ctype.name  ");
         else if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary"))
-            query.append("  group by bndryparent.name ");
+            query.append("  group by bndry.name ");
         else
             query.append("  group by dept.name ");
     }
@@ -158,9 +158,9 @@ public class DrillDownReportService {
 
         if (boundary != null && !"".equals(boundary))
             if (boundary.equalsIgnoreCase("NOT AVAILABLE"))
-                query.append(" and  bndryparent.name is null ");
+                query.append(" and  bndry.name is null ");
             else {
-                query.append(" and upper(trim(bndryparent.name))= '");
+                query.append(" and upper(trim(bndry.name))= '");
                 query.append(boundary.toUpperCase()).append("' ");
             }
         if (department != null && !"".equals(department))
@@ -217,14 +217,14 @@ public class DrillDownReportService {
         final StringBuffer query = new StringBuffer();
 
         query.append(
-                "SELECT distinct complainant.id as complaintid, crn,cd.createddate,complainant.name as complaintname,cd.details,cs.name as status , bndry.name as boundaryname , cd.citizenfeedback as feedback ,");
+                "SELECT distinct complainant.id as complaintid, crn,cd.createddate,complainant.name as complaintname,cd.details,cs.name as status , bndry.name || ' - ' || childlocation.name AS boundaryname , cd.citizenfeedback as feedback ,");
         query.append(
                 "CASE WHEN state.value IN ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - state.lastmodifieddate) < (interval '1h' * ctype.slahours) THEN 'Yes' WHEN (state.value NOT IN ('COMPLETED','REJECTED','WITHDRAWN') ");
         query.append(
                 "AND (cd.createddate - CURRENT_DATE) < (interval '1h' * ctype.slahours)) THEN 'Yes' ELSE 'No' END as issla ");
         query.append(
                 "FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype ,eg_wf_states state ,egpgr_complaint cd left JOIN eg_boundary bndry "
-                        + "on cd.location =bndry.id left JOIN eg_boundary bndryparent on  bndry.parent=bndryparent.id  left JOIN eg_department dept "
+                        + "on cd.location =bndry.id left JOIN eg_boundary childlocation on cd.childlocation = childlocation.id left JOIN eg_department dept "
                         + "on cd.department =dept.id  left join eg_position pos on cd.assignee=pos.id left join view_egeis_employee emp "
                         + "on pos.id=emp.position , egpgr_complainant complainant ");
 

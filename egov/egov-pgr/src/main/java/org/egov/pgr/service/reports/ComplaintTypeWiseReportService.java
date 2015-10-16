@@ -140,7 +140,7 @@ public class ComplaintTypeWiseReportService {
         final StringBuffer query = new StringBuffer();
 
         query.append(
-                " SELECT  distinct complainant.id as complaintid, crn,cd.createddate,complainant.name as complaintname,cd.details,cs.name as status , bndry.name as boundaryname, cd.citizenfeedback as feedback,");
+                " SELECT  distinct complainant.id as complaintid, crn,cd.createddate,complainant.name as complaintname,cd.details,cs.name as status , bndry.name || ' - ' || childlocation.name as boundaryname, cd.citizenfeedback as feedback,");
         query.append(
                 "CASE WHEN state.value IN ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - state.lastmodifieddate) < (interval '1h' * ctype.slahours) THEN 'Yes' WHEN (state.value NOT IN ('COMPLETED','REJECTED','WITHDRAWN') ");
         query.append(
@@ -148,7 +148,7 @@ public class ComplaintTypeWiseReportService {
         query.append(
                 "FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype ,eg_wf_states state, egpgr_complaint cd left JOIN eg_boundary bndry ");
         query.append(
-                "on cd.location =bndry.id left JOIN eg_boundary bndryparent on  bndry.parent=bndryparent.id  left JOIN eg_department dept on cd.department =dept.id  ");
+                "on cd.location =bndry.id left JOIN eg_boundary childlocation on  cd.childlocation=childlocation.id  left JOIN eg_department dept on cd.department =dept.id  ");
         query.append(
                 "left join eg_position pos on cd.assignee=pos.id left join view_egeis_employee emp on pos.id=emp.position , egpgr_complainant complainant ");
 

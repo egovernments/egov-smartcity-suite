@@ -62,7 +62,7 @@ public class AgeingReportService {
         final StringBuffer query = new StringBuffer();
 
         if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary"))
-            query.append("SELECT bndryparent.name as name, ");// TODO CHECK
+            query.append("SELECT bndry.name as name, ");// TODO CHECK
         // DEPARTMENTWISE
         // OR ZONE WISE
         else
@@ -83,14 +83,14 @@ public class AgeingReportService {
                     + " FROM egpgr_complaintstatus cs  ,egpgr_complainttype ctype ,egpgr_complaint cd  ");
 
         if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary"))
-            query.append("  left JOIN eg_boundary bndry on cd.location =bndry.id left JOIN eg_boundary bndryparent on  bndry.parent=bndryparent.id ");
+            query.append("  left JOIN eg_boundary bndry on cd.location =bndry.id ");
         else
             query.append("  left JOIN eg_department dept on cd.department =dept.id ");
 
         buildWhereClause(fromDate, toDate, typeofReport, complaintDateType, query);
 
         if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary"))
-            query.append("  group by bndryparent.name ");
+            query.append("  group by bndry.name ");
         else
             query.append("  group by dept.name ");
 
