@@ -64,6 +64,7 @@ public class WaterTaxConstants {
     public static final String CLOSINGCONNECTION = "CLOSINGCONNECTION";
     public static final String RECONNECTIONCONNECTION = "RECONNECTION";
     public static final String CHANGEOFUSE = "CHANGEOFUSE";
+    public static final String CLOSURECONN = "Closure Of Connection";
     public static final String SMSEMAILTYPEADDITONALCONNCREATE = "additionalconncreate";
     public static final String SMSEMAILTYPEADDITONALCONNAPPROVE = "additionalconnapprove";
     public static final String SMSEMAILTYPENEWCONNAPPROVE = "newconnapprove";
