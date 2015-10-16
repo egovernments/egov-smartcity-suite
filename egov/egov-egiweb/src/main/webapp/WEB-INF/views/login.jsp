@@ -132,9 +132,10 @@
 								<spring:message code="lbl.check.comp.status"/>&nbsp;<br>
 								<input type="text" placeholder="Grievance number" id="compsearchtxt"
 									style="padding: 2px 5px; height: 30px; border: 1px solid #D0D2D7; font-size: 15px;">
-								<button class="btn-custom" id="compsearch"
+								<button class="btn-custom" id="compsearch" title="Why is this tooltip showing on hover?"
 									style="padding: 4px 5px; vertical-align: bottom;"><spring:message code="btn.lbl.search"/></button>
 							</div>
+							<div class="error-msg search-error-msg display-hide" style="padding-left: 65px;">Grievance number is mandatory</div>
 						</div>
 						<c:if test="${not empty sessionScope.corpCallCenterNo}">
 							<div class="col-md-12 community-card">
