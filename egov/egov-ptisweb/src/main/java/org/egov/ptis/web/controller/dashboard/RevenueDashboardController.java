@@ -86,6 +86,16 @@ public class RevenueDashboardController {
         return revenueDashboardService.getWardwisePerformanceTab(zoneName);
     }
 
+    @RequestMapping(value = "/revenueTrendForTheWeek", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Map<String, Object>> revenueTrendForTheWeek() {
+        return revenueDashboardService.revenueTrendForTheWeek();
+    }
+    
+    @RequestMapping(value = "/revenueTrend", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, List<Object>> getAnnualZonewiseBar() {
+        return revenueDashboardService.getAnnualZonewiseBar();
+    }
+    
     @RequestMapping(value = "/target-achieved", produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Collection<Double>> targetVsAchieved() {
         return revenueDashboardService.targetVsAchieved();
