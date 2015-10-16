@@ -151,7 +151,8 @@ public class CloserConnectionController extends GenericConnectionController {
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("typeOfConnection", WaterTaxConstants.CLOSINGCONNECTION);
         model.addAttribute("mode", "closureConnection");
-        model.addAttribute("validationMessage", "");
+        model.addAttribute("validationMessage",
+                closerConnectionService.validateChangeOfUseConnection(waterConnectionDetails));
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         return "connection-closeForm";
