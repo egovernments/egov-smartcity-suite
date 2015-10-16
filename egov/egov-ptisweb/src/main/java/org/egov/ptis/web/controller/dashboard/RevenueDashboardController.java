@@ -82,37 +82,37 @@ public class RevenueDashboardController {
     }
 
     @RequestMapping(value = "/performance-tabularDrill", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Map<String, Object>> performanceTabularDrill(@PathVariable final String zoneName) {
+    public @ResponseBody List<Map<String, Object>> performanceTabularDrill(@PathVariable final String zoneName) {
         return revenueDashboardService.getWardwisePerformanceTab(zoneName);
     }
 
     @RequestMapping(value = "/revenueTrendForTheWeek", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Map<String, Object>> revenueTrendForTheWeek() {
+    public @ResponseBody List<Map<String, Object>> revenueTrendForTheWeek() {
         return revenueDashboardService.revenueTrendForTheWeek();
     }
     
     @RequestMapping(value = "/revenueTrend", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, List<Object>> getAnnualZonewiseBar() {
+    public @ResponseBody Map<String, List<Object>> getAnnualZonewiseBar() {
         return revenueDashboardService.getAnnualZonewiseBar();
     }
     
     @RequestMapping(value = "/target-achieved", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Collection<Double>> targetVsAchieved() {
+    public @ResponseBody Map<String, Collection<Double>> targetVsAchieved() {
         return revenueDashboardService.targetVsAchieved();
     }
 
     @RequestMapping(value = "/collections-paymentMode", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> collectionsPaymentMode() {
+    public @ResponseBody Map<String, Object> collectionsPaymentMode() {
         return revenueDashboardService.collectionsPaymentMode();
     }
 
     @RequestMapping(value = "/coverage-efficiency", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> coverageEfficiency() {
+    public @ResponseBody Map<String, Object> coverageEfficiency() {
         return revenueDashboardService.coverageEfficiency();
     }
 
     @RequestMapping(value = "/coverage-efficiency-ward", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> coverageEfficiencyWard(@PathVariable final String zoneName) {
+    public @ResponseBody Map<String, Object> coverageEfficiencyWard(@PathVariable final String zoneName) {
         return revenueDashboardService.coverageEfficiencyWard(zoneName);
     }
 }

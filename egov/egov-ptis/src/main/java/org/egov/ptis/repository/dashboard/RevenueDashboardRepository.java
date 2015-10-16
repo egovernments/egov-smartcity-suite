@@ -219,8 +219,8 @@ public class RevenueDashboardRepository {
         qry.setParameter("fromDate", startOfGivenDate(currentDate.minusDays(6)).toDate());
         qry.setParameter("toDate", endOfGivenDate(currentDate).toDate());
         final List<Object[]> revenueData = qry.list();
-        final List<Map<String, Object>> currentYearTillDays = constructDayPlaceHolder(currentDate.minusDays(7),
-                currentDate.minusDays(1), "E-dd", "EEEE, dd MMM yyyy");
+        final List<Map<String, Object>> currentYearTillDays = constructDayPlaceHolder(currentDate.minusDays(6),
+                currentDate, "E-dd", "EEEE, dd MMM yyyy");
         for (final Object[] revnueObj : revenueData)
             for (final Map<String, Object> mapdata : currentYearTillDays)
                 if (mapdata.containsValue(org.apache.commons.lang.StringUtils.capitalize(String.valueOf(revnueObj[0])
