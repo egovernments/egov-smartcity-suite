@@ -1,0 +1,1 @@
+update eg_module set enabled = true where name ='WaterTaxMasters';

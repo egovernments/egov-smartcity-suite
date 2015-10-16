@@ -51,7 +51,7 @@ $(document).ready(function(){
 		var name = $('input').val();
 	       if (name != ''){
 	        $.ajax({
-	            url: '/wtms/application/ajax-chairPersonName',
+	            url: '/wtms/application/ajax-activeChairPersonExistsAsOnCurrentDate',
 	            type: "GET",
 	            data: {
 	            	name: name
@@ -72,7 +72,7 @@ $(document).ready(function(){
 	    		}
 	        });
 	       }
-	      
+	       
 		});
 	
 });
