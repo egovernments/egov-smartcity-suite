@@ -340,6 +340,7 @@ function refreshnow(now){
 	    worklistwrtnow(now_json);
     }else{
     	console.log('came as reset or undefined');
+    	$('#natureofwork ul li a[data-now="Reset"]').parent().remove();
     	worklistwrtnow(JSON.parse(response_json));
     }
 }
