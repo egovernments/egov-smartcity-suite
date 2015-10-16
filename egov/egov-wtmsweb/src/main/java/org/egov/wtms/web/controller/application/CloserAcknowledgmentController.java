@@ -109,16 +109,17 @@ public class CloserAcknowledgmentController {
             }
 
                 reportParams.put("applicationType",
-                        WordUtils.capitalize(WaterTaxConstants.CLOSINGCONNECTION));
+                        WordUtils.capitalize(WaterTaxConstants.CLOSURECONN));
           
             reportParams.put("cityName", session.getAttribute("cityname"));
             reportParams.put("district", session.getAttribute("districtName"));
-           reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
+            reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
             reportParams.put("applicantName", ownerName);
             reportParams.put("consumerCode", waterConnectionDetails.getConnection().getConsumerCode());
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("houseNo", doorNo[0]);
             reportParams.put("closeApprovalDate", formatter.format(waterConnectionDetails.getCloseApprovalDate()!=null ?waterConnectionDetails.getCloseApprovalDate():new Date()));
+            reportParams.put("closeConnectionType", waterConnectionDetails.getCloseConnectionType().equals('T')? "Temporary":"Permanent");
             reportInput = new ReportRequest(ESTIMATION_NOTICE, waterConnectionDetails.getEstimationDetails(), reportParams);
         }
         final HttpHeaders headers = new HttpHeaders();

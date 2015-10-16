@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="12"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="district" class="java.lang.String"/>
 	<parameter name="applicationType" class="java.lang.String"/>
@@ -61,14 +61,14 @@
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["This is to acknowledge that an application for "+$P{closeConnectionType}+" "+$P{applicationType}+" has been Approved by commissioner for Water tap connection with H.S.C No."+$P{consumerCode}+", with address "+$P{address}+". Disconnection is effective from "+$P{closeApprovalDate}+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["This is to acknowledge that an application for "+$P{closeConnectionType}+" "+$P{applicationType}+" has been approved by commissioner for Water tap connection with H.S.C No."+$P{consumerCode}+", with address "+$P{address}+". Disconnection is effective from "+$P{closeApprovalDate}+"."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement uuid="3f16c27b-54d5-410d-a416-f25b4d13bef7" x="342" y="96" width="209" height="23"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 					<font size="12" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Approval Date: </style>"+$P{applicationDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Approval Date : </style>"+$P{applicationDate}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="fc5a9caf-2a7c-46da-9e8a-7c4df632632c" x="342" y="217" width="194" height="25"/>
@@ -92,7 +92,7 @@
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="e253dff5-83d2-4974-beb6-2b5889365713" x="109" y="96" width="122" height="23"/>
+				<reportElement uuid="e253dff5-83d2-4974-beb6-2b5889365713" x="99" y="96" width="122" height="23"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
