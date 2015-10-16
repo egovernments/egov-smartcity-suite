@@ -200,7 +200,24 @@
 									</div>
 									<form:errors path="regionName" cssClass="add-margin error-msg" />
 								</div>
-
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label"><spring:message
+										code="lbl.city.grade" /></label>
+								<div class="col-sm-6" style="padding-top: 7px">
+									<div class="input-group">
+										<form:input path="grade" id="grade" type="text"
+											class="form-control" placeholder="" autocomplete="off" />
+										<span class="input-group-btn">
+											<button class="btn btn-default btnpopover" type="button"
+												data-toggle="popover" data-placement="right" title=""
+												data-content="<spring:message code="help.city.grade" />">
+												<i class="entypo-help"></i>
+											</button>
+										</span>
+									</div>
+									<form:errors path="grade" cssClass="add-margin error-msg" />
+								</div>
 							</div>
 							<div class="form-group">
 								<label for="active" class="col-sm-3 control-label"><spring:message

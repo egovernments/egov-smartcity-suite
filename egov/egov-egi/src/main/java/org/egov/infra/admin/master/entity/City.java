@@ -120,6 +120,9 @@ public class City extends AbstractAuditable {
     @SafeHtml
     private String regionName;
 
+    @SafeHtml
+    private String grade;
+
     private Float longitude;
 
     private Float latitude;
@@ -234,6 +237,14 @@ public class City extends AbstractAuditable {
 
     public void setRegionName(final String regionName) {
         this.regionName = regionName;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(final String grade) {
+        this.grade = grade;
     }
 
     public CityPreferences getPreferences() {
