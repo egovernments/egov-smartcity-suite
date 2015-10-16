@@ -103,7 +103,7 @@
 							<span><spring:message code="msg.closreConn.approved.success" />${approverName}</span>
 								
 						</c:when>
-						<c:when test="${waterConnectionDetails.state.value== 'Rejected' && waterConnectionDetails.applicationType.code=='CLOSINGCONNECTION' && waterConnectionDetails.closeConnectionType != null}">
+						<c:when test="${waterConnectionDetails.state.value== 'Rejected' && waterConnectionDetails.reConnectionReason==null && waterConnectionDetails.closeConnectionType != null}">
 							<span><spring:message code="msg.closure.rejection.success" />${approverName}</span>
 							</c:when>
 							<c:when test="${waterConnectionDetails.reConnectionReason !=null && waterConnectionDetails.closeConnectionType == 'T' &&  waterConnectionDetails.state.value != 'Rejected' && waterConnectionDetails.status.code!= 'RECONNECTIONAPPROVED'}">

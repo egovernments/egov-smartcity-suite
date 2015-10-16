@@ -252,12 +252,13 @@ public class UpdateConnectionController extends GenericConnectionController {
                             .getApplicationType().getCode(), "", ""));
         if (waterConnectionDetails.getCurrentState().getValue().equals("Rejected"))
             model.addAttribute("mode", "");
-        if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CLOSINGCONNECTION)
+        if ((waterConnectionDetails.getStatus().getCode()
+                .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS) || waterConnectionDetails.getStatus().getCode()
+                .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED)) && waterConnectionDetails.getReConnectionReason()==null
                 && waterConnectionDetails.getCloseConnectionType() != null
                 && waterConnectionDetails.getState().getValue().equals("Rejected"))
             model.addAttribute("mode", "closeredit");
-        if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CLOSINGCONNECTION)
-                && waterConnectionDetails.getCloseConnectionType() != null
+        if (waterConnectionDetails.getCloseConnectionType() != null && waterConnectionDetails.getReConnectionReason() == null
                 && waterConnectionDetails.getStatus().getCode()
                         .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED))
             model.addAttribute("mode", "closereditForAE");

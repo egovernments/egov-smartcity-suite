@@ -117,17 +117,16 @@ public class CloserConnectionController extends GenericConnectionController {
         return waterConnectionDetails;
     }
 
-    public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
+    /*public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails waterConnectionDetails) {
         waterConnectionDetails.setApplicationType(applicationTypeService
                 .findByCode(WaterTaxConstants.CLOSINGCONNECTION));
         return waterConnectionDetailsService.getAllActiveDocumentNames(waterConnectionDetails.getApplicationType());
-    }
+    }*/
 
     @RequestMapping(value = "/close/{applicationCode}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String applicationCode, final HttpServletRequest request) {
-        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByConsumerCodeAndConnectionStatus(applicationCode, ConnectionStatus.ACTIVE);
+        final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(applicationCode);
 
         return loadViewData(model, request, waterConnectionDetails);
     }
@@ -135,7 +134,7 @@ public class CloserConnectionController extends GenericConnectionController {
     private String loadViewData(final Model model, final HttpServletRequest request,
             final WaterConnectionDetails waterConnectionDetails) {
         waterConnectionDetails.setPreviousApplicationType(waterConnectionDetails.getApplicationType().getCode());
-        model.addAttribute("previousApplicationType", waterConnectionDetails.getApplicationType().getCode());
+        model.addAttribute("previousApplicationType", waterConnectionDetails.getPreviousApplicationType());
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
         model.addAttribute("applicationDocList", waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(waterConnectionDetails));
         model.addAttribute("additionalRule", WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE);
@@ -181,7 +180,7 @@ public class CloserConnectionController extends GenericConnectionController {
         waterConnectionDetails.setPreviousApplicationType(request.getParameter("previousApplicationType"));
 
         final List<DocumentNames> documentListForClosed = waterConnectionDetailsService
-                .getAllActiveDocumentNames(waterConnectionDetails.getApplicationType());
+                .getAllActiveDocumentNames(applicationTypeService.findByCode(WaterTaxConstants.CLOSINGCONNECTION));
         final ApplicationDocuments applicationDocument = new ApplicationDocuments();
         applicationDocument.setDocumentNames(documentListForClosed.get(0));
 

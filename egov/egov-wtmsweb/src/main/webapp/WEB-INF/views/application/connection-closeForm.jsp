@@ -58,7 +58,7 @@
 			<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>
 			<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}">
 			
-			<input type="hidden" id="previousApplicationType" value="${previousApplicationType}" name="previousApplicationType"/>
+			<input type="text" id="previousApplicationType" value="${previousApplicationType}" name="previousApplicationType"/>
 			<input id="applicationCode" type="hidden" value="<c:out value="${waterConnectionDetails.applicationNumber}" />" />  						
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 				<jsp:include page="connectiondetails-view.jsp"></jsp:include>
