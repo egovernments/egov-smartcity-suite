@@ -139,7 +139,6 @@ public class AjaxEstimateAction extends BaseFormAction {
     private Integer approverDepartmentId;
     private List<Object> approverList;
     private String employeeCode;
-    private String dwSORCheck;
     private Long estimateTemplateId;
     private String estimateIds;
     private String sorCodes = "";
@@ -657,14 +656,6 @@ public class AjaxEstimateAction extends BaseFormAction {
 
     public void setSorCodes(final String sorCodes) {
         this.sorCodes = sorCodes;
-    }
-
-    public String getDwSORCheck() {
-        return dwSORCheck;
-    }
-
-    public void setDwSORCheck(final String dwSORCheck) {
-        this.dwSORCheck = dwSORCheck;
     }
 
     public Long getEstimateTemplateId() {

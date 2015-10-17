@@ -49,57 +49,14 @@ function setEstimateTemplateId(id){
 function selectTemplate(){
 var code=document.getElementById('selectedCode').value;
 var estimateTemplateId =document.getElementById('estimateTemplateId').value;
-var isRCEstimate = dom.get('checkDWRelatedSORs').value;
 
 if(code==""){
  	dom.get("estimateTemplate_error").style.display='block';
 	document.getElementById("estimateTemplate_error").innerHTML='Please select at least one template';
 	return false;
  }
- if(isRCEstimate==''){
-	 window.opener.resetTemplate(code,document.getElementById('workType').value,document.getElementById('subType').value);
-	 window.close();
- }
- else{
- 	validateDWSOR(estimateTemplateId);
- }
-}
-function validateDWSOR(estimateTemplateId)
-{
-	makeJSONCall(["Value","sorCodes"],'${pageContext.request.contextPath}/estimate/ajaxEstimate!depositWorksSOREstTemplateCheck.action',{estimateTemplateId:estimateTemplateId},depWorksSORCheckSuccess,depWorksSORCheckFailure) ;
-}
-
-depWorksSORCheckSuccess = function(req,res){
-	results=res.results;
-	var checkResult='';
-	var sorCodes='';
-	var code=document.getElementById('selectedCode').value;
-	
-	if(results != '') {
-		checkResult =   results[0].Value;
-		sorCodes =   results[0].sorCodes;
-	}
-	
-	if((checkResult != '' && checkResult=='valid')){
-		window.opener.resetTemplate(code,document.getElementById('workType').value,document.getElementById('subType').value);
-		window.close();
-	}	
-	else {
-		dom.get("estimateTemplate_error").innerHTML='<s:text name="estimateTemplate.sor.check.for.DWEstimates.msg1" />'+sorCodes+' '+'<s:text name="estimateTemplate.sor.check.for.DWEstimates.msg2" />';
-	    dom.get("estimateTemplate_error").style.display='';
-	    return false;
-	}
-	if(dom.get("estimateTemplate_error").innerHTML==('<s:text name="estimateTemplate.sor.check.for.DWEstimates.msg1" />'+sorCodes+' '+'<s:text name="estimateTemplate.sor.check.for.DWEstimates.msg2" />'))
-	{
-		dom.get("estimateTemplate_error").innerHTML='';
-	    dom.get("estimateTemplate_error").style.display='none';
-	}
-	
-}
-
-depWorksSORCheckFailure= function(){
-    dom.get("estimateTemplate_error").style.display='';
-	document.getElementById("estimateTemplate_error").innerHTML='<s:text name="sor.depositWorks.sor.check.failure" />';
+ window.opener.resetTemplate(code,document.getElementById('workType').value,document.getElementById('subType').value);
+ window.close();
 }
 </script>
 
@@ -130,7 +87,7 @@ depWorksSORCheckFailure= function(){
 			   titleKey="mb.search.column.wono"
 			   style="width:8%;text-align:left">
                   <egov-authz:authorize actionName="viewEstimateTemplate">
-                  <a href="${pageContext.request.contextPath}/estimate/estimateTemplate!edit.action?mode=view&id=<s:property value='%{#attr.currentRow.id}'/>">
+                  <a href="${pageContext.request.contextPath}/estimate/estimateTemplate-edit.action?mode=view&id=<s:property value='%{#attr.currentRow.id}'/>">
 				  </egov-authz:authorize>	 
 					 <s:property  value='%{#attr.currentRow.code}' />
 				  <egov-authz:authorize actionName="viewEstimateTemplate">
