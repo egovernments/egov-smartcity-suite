@@ -175,20 +175,13 @@ String path = request.getContextPath();
 										</s:if>
 									</s:if>
 								</s:if>
-								<s:if test="%{roleName.contains('ULB Operator')}">
-									<s:if test="%{#attr.license.isPaid() != true && #attr.license.status.statusCode=='ACK' && #attr.license.isWorkFlowStateRejected() != true}">
-										<option value="/integration/licenseBillCollect.action?licenseId=">
+								 <s:if test="%{roleName.contains('ULB OPERATOR') || roleName.contains('CSC OPERATOR')}">
+									<s:if test="%{#attr.license.isPaid() != true && (#attr.license.status.statusCode=='ACK' || #attr.license.status.statusCode=='UWF') && #attr.license.isWorkFlowStateRejected() != true}">
+									 	<option value="/integration/licenseBillCollect.action?licenseId=">
 											<s:text name="Collect Fee" />
 										</option>
-									</s:if>
-								</s:if>
-							</s:if>
-							<s:if test="%{roleName.contains('ULB Operator')}">
-								<s:if test="%{#attr.license.isPaid() != true && #attr.license.status.statusCode=='UWF' && #attr.license.isWorkFlowStateRejected() != true}">
-									<option value="/integration/licenseBillCollect.action?licenseId=">
-										<s:text name="Collect Fee" />
-									</option>
-								</s:if>
+								 	</s:if>
+								</s:if> 
 							</s:if>
 							<s:if test="%{roleName.contains('TLCREATOR')}">
 								<s:if test="%{#attr.license.licenseNumber != null && #attr.license.licenseNumber != ''}">
