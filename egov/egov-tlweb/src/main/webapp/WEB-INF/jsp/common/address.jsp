@@ -45,7 +45,7 @@ jQuery(document).ready(function(){
 		console.log("came jursidiction"+jQuery('#boundary').val());
 		getZoneWard();
 	});
-	<s:if test="%{hasErrors() || mode=='view'}">
+	<s:if test="%{hasErrors() || mode=='view' || mode=='edit'}">
 	 if(jQuery('#boundary').val()!='-1'){
 		getZoneWard();
 	 }
