@@ -319,7 +319,7 @@
         	}
 
     		function onSubmit() {
-    			<s:if test="%{mode=='view'}">
+    			<s:if test="%{mode!=null && mode=='view'}">
 					clearMessage('newLicense_error');
 					toggleFields(false,"");
 					document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
