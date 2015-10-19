@@ -41,19 +41,21 @@ $(document).ready(function(){
 	
 	$('#zoneList').change(function(){
 		$.ajax({
-			url: "/egi/wards-by-zone",     
 			type: "GET",
-			data: {
-				zoneId: $('#zoneList').val()  
-			},
+			url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
+			cache: true,
 			dataType: "json",
+			data:{
+				locality : $('#zoneList').val()
+		  	   },
 			success: function (response) {
 				console.log("success"+response);
-				$("#zoneId").val($('#zoneList').val());    
 				$('#wardlist').empty();
-				$('#wardlist').append($("<option value=''>Select from below</option>"));
-				$.each(response, function(index, value) {
-					$('#wardlist').append($('<option>').text(value.name).attr('value', value.id))
+				$('#wardlist').append($('<option>').text('Select from below').attr('value', ""));
+				$.each(response.results.boundaries, function (j, boundary) {
+					if (boundary.wardId) {
+							$('#wardlist').append($('<option>').text(boundary.wardName).attr('value', boundary.wardId))
+					}
 				});
 			}, 
 			error: function (response) {
@@ -99,7 +101,7 @@ $(document).ready(function(){
 	//		oTable.dataTable().clear();
 		oTable.dataTable({
 			"sPaginationType": "bootstrap",
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 			"autoWidth": false,
 			"bDestroy": true,
@@ -120,7 +122,7 @@ $(document).ready(function(){
 			//oTable.dataTable().clear();
 			oTable.dataTable({
 				"sPaginationType": "bootstrap",
-				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6'l><'col-md-1 col-xs-2 text-right'p>>",
 				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 				"autoWidth": false,
 				"bDestroy": true,
@@ -131,7 +133,6 @@ $(document).ready(function(){
 							  { "data" : "totalHoardingInAgency", "title": "No.of hoarding"},
 							  { "data" : "pendingDemandAmount", "title": "Total Amount"},
 							  { "data" : "penaltyAmount", "title": "Penalty Amount"},
-							  { "data" : "status", "title": "Hoarding Status"}	,
 							  { "data" : null, "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary collect-agencyWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Collect</button>&nbsp;'}
 
 							  ],
