@@ -226,57 +226,6 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         return "street";
     }
 
-    @Action(value = "/ajaxCommon-blockByLocality")
-    public void blockByLocality() throws IOException, NoSuchObjectException {
-        LOGGER.debug("Entered into blockByLocality, locality: " + locality);
-        BoundaryType blockType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BLOCK, ADMIN_HIERARCHY_TYPE);
-        final List<Boundary> blocks = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(getLocality(), blockType.getId());
-        List<Boundary> streets = boundaryService.getChildBoundariesByBoundaryId(getLocality());
-        final List<JSONObject> wardJsonObjs = new ArrayList<JSONObject>();
-        final List<Long> boundaries = new ArrayList<Long>();
-        for (final Boundary block : blocks) {
-            final Boundary ward = block.getParent();
-            final JSONObject jsonObject = new JSONObject();
-            if (!boundaries.contains(ward.getId())) {
-                jsonObject.put("wardId", ward.getId());
-                jsonObject.put("wardName", ward.getName());
-            }
-            jsonObject.put("blockId", block.getId());
-            jsonObject.put("blockName", block.getName());
-            wardJsonObjs.add(jsonObject);
-            boundaries.add(ward.getId());
-        }
-        final List<JSONObject> streetJsonObjs = new ArrayList<JSONObject>();
-        for (final Boundary street : streets) {
-            final JSONObject streetObj = new JSONObject();
-            streetObj.put("streetId", street.getId());
-            streetObj.put("streetName", street.getName());
-            streetJsonObjs.add(streetObj);
-        }
-        final Map<String, List<JSONObject>> map = new HashMap<String, List<JSONObject>>();
-        map.put("boundaries", wardJsonObjs);
-        map.put("streets", streetJsonObjs);
-        final JSONObject bj = new JSONObject();
-        bj.put("results", map);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(bj.toString(), response.getWriter());
-    }
-
-    @Action(value = "/ajaxCommon-blockByWard")
-    public void blockByWard() throws IOException {
-        LOGGER.debug("Entered into blockByWard, wardId: " + wardId);
-        List<Boundary> blocks = new ArrayList<Boundary>();
-        blocks = boundaryService.getActiveChildBoundariesByBoundaryId(getWardId());
-        final List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
-        for (final Boundary block : blocks) {
-            final JSONObject jsonObj = new JSONObject();
-            jsonObj.put("blockId", block.getId());
-            jsonObj.put("blockName", block.getName());
-            jsonObjects.add(jsonObj);
-        }
-        IOUtils.write(jsonObjects.toString(), response.getWriter());
-    }
-
     @SuppressWarnings("unchecked")
     @Action(value = "/ajaxCommon-populateDesignationsByDept")
     public String populateDesignationsByDept() {

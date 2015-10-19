@@ -42,7 +42,10 @@ package org.egov.infra.web.controller.admin.masters;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
@@ -54,7 +57,9 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -78,7 +83,13 @@ public class GenericMasterAjaxController {
 
     @Autowired
     private UserService userService;
-
+    
+    @Autowired
+    private CrossHierarchyService crossHierarchyService;
+    
+    private static final String BLOCK = "Block";
+	private static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";
+	
     @RequestMapping(value = "/boundarytype/ajax/boundarytypelist-for-hierarchy", method = RequestMethod.GET)
     public @ResponseBody void getBoundaryTypeByHierarchyType(@RequestParam final Long hierarchyTypeId,
             final HttpServletResponse response) throws IOException {
@@ -182,5 +193,54 @@ public class GenericMasterAjaxController {
             jsonArray.add(jsonObject);
         }
         return jsonArray.toString();
+    }
+    
+    @RequestMapping(value = "/boundary/ajaxBoundary-blockByLocality", method = RequestMethod.GET)
+    public void blockByLocality(@RequestParam final Long locality, final HttpServletResponse response) throws IOException, NoSuchObjectException {
+        BoundaryType blockType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BLOCK, ADMIN_HIERARCHY_TYPE);
+        final List<Boundary> blocks = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(locality, blockType.getId());
+        List<Boundary> streets = boundaryService.getChildBoundariesByBoundaryId(locality);
+        final List<JSONObject> wardJsonObjs = new ArrayList<JSONObject>();
+        final List<Long> boundaries = new ArrayList<Long>();
+        for (final Boundary block : blocks) {
+            final Boundary ward = block.getParent();
+            final JSONObject jsonObject = new JSONObject();
+            if (!boundaries.contains(ward.getId())) {
+                jsonObject.put("wardId", ward.getId());
+                jsonObject.put("wardName", ward.getName());
+            }
+            jsonObject.put("blockId", block.getId());
+            jsonObject.put("blockName", block.getName());
+            wardJsonObjs.add(jsonObject);
+            boundaries.add(ward.getId());
+        }
+        final List<JSONObject> streetJsonObjs = new ArrayList<JSONObject>();
+        for (final Boundary street : streets) {
+            final JSONObject streetObj = new JSONObject();
+            streetObj.put("streetId", street.getId());
+            streetObj.put("streetName", street.getName());
+            streetJsonObjs.add(streetObj);
+        }
+        final Map<String, List<JSONObject>> map = new HashMap<String, List<JSONObject>>();
+        map.put("boundaries", wardJsonObjs);
+        map.put("streets", streetJsonObjs);
+        final JSONObject bj = new JSONObject();
+        bj.put("results", map);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        IOUtils.write(bj.toString(), response.getWriter());
+    }
+
+    @RequestMapping(value = "/boundary/ajaxBoundary-blockByWard", method = RequestMethod.GET)
+    public void blockByWard(@RequestParam final Long wardId,final HttpServletResponse response) throws IOException {
+        List<Boundary> blocks = new ArrayList<Boundary>();
+        blocks = boundaryService.getActiveChildBoundariesByBoundaryId(wardId);
+        final List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
+        for (final Boundary block : blocks) {
+            final JSONObject jsonObj = new JSONObject();
+            jsonObj.put("blockId", block.getId());
+            jsonObj.put("blockName", block.getName());
+            jsonObjects.add(jsonObj);
+        }
+        IOUtils.write(jsonObjects.toString(), response.getWriter());
     }
 }

@@ -91,7 +91,7 @@ jQuery('#ward').change(
 				jQuery('#block').prop("disabled", true);
 			} else {
 				jQuery.ajax({
-					url : "/ptis/common/ajaxCommon-blockByWard.action",
+					url : "/egi/boundary/ajaxBoundary-blockByWard.action",
 					type : "GET",
 					data : {
 						wardId : wardId

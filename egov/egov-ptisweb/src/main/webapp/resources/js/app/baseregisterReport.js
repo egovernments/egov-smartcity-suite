@@ -88,7 +88,7 @@ $('#baseRegisterReportSearch').click(function(e){
 $('#ward').change(function(){
 	console.log("came on change of ward"+$('#ward').val());
 	jQuery.ajax({
-		url: "/ptis/common/ajaxCommon-blockByWard.action",
+		url: "/egi/boundary/ajaxBoundary-blockByWard.action",
 		type: "GET",
 		data: {
 			wardId : jQuery('#ward').val()

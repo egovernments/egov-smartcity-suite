@@ -48,7 +48,7 @@
 function populateBoundaries() {
 	console.log("came jursidiction"+jQuery('#locality').val());
 	jQuery.ajax({
-		url: "/ptis/common/ajaxCommon-blockByLocality.action",
+		url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
 		type: "GET",
 		data: {
 			locality : jQuery('#locality').val()
@@ -91,7 +91,7 @@ function populateBoundaries() {
 
 function populateBlock() {
 	jQuery.ajax({
-		url: "/ptis/common/ajaxCommon-blockByWard.action",
+		url: "/egi/boundary/ajaxBoundary-blockByWard.action",
 		type: "GET",
 		data: {
 			wardId : jQuery('#wardId').val()
