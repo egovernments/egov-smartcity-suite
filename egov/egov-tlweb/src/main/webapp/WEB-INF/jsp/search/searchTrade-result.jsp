@@ -175,7 +175,7 @@ String path = request.getContextPath();
 										</s:if>
 									</s:if>
 								</s:if>
-								<s:if test="%{roleName.contains('OPERATOR')}">
+								<s:if test="%{roleName.contains('ULB Operator')}">
 									<s:if test="%{#attr.license.isPaid() != true && #attr.license.status.statusCode=='ACK' && #attr.license.isWorkFlowStateRejected() != true}">
 										<option value="/integration/licenseBillCollect.action?licenseId=">
 											<s:text name="Collect Fee" />
@@ -183,7 +183,7 @@ String path = request.getContextPath();
 									</s:if>
 								</s:if>
 							</s:if>
-							<s:if test="%{roleName.contains('OPERATOR')}">
+							<s:if test="%{roleName.contains('ULB Operator')}">
 								<s:if test="%{#attr.license.isPaid() != true && #attr.license.status.statusCode=='UWF' && #attr.license.isWorkFlowStateRejected() != true}">
 									<option value="/integration/licenseBillCollect.action?licenseId=">
 										<s:text name="Collect Fee" />
