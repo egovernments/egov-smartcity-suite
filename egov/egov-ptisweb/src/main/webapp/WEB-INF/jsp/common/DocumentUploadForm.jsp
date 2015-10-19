@@ -111,14 +111,12 @@
 		window.open(sUrl,"window",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');	
 	}
 
-	jQuery("input:file").change(function (){
+	jQuery(".doctable input:file").change(function (){
 	     var fileName = jQuery(this).val();
 	     if(fileName)
 	     {
-		   console.log('file picked!');
 	       jQuery(this).after("<a href='javascript:void(0);' onclick='clearSelectedFile(this);' class='fileclear'><span class='tblactionicon delete'><i class='fa fa-times-circle'></i></span></a>"); 
 	     }else{
-	       console.log('file not picked!');
 	       if(jQuery(this).next().is("span"))
 		   {
 	    	   jQuery(this).next().remove();
