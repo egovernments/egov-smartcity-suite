@@ -103,4 +103,16 @@
     	<put-attribute name="page-title" value="lbl.tax.dues" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/common/taxdues.jsp"/>
     </definition>
+    
+    <definition name="dashboard_layout" template="/WEB-INF/views/template/revenueDashboard.jsp">
+        <put-attribute name="title" value="Property Tax Dashboard"/>
+        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
+    </definition>
+    
+    <definition name="dashboard/home" extends="dashboard_layout">
+    	<put-attribute name="page-title" value="lbl.dashboard.title" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/dashboard/revenueHome.jsp"/>
+    </definition>
 </tiles-definitions>
