@@ -85,8 +85,6 @@ public class ContractorGradeAction extends SearchFormAction {
 
     @Action(value = "/masters/contractorGrade-save")
     public String save() {
-    	if(!validateContractorGrade())
-    		return NEW;
     	contractorGrade = contractorGradeService.persist(contractorGrade);
         addActionMessage(getText("contractor.grade.save.success"));
         contractorGradeList = new ArrayList<ContractorGrade>();
@@ -101,7 +99,7 @@ public class ContractorGradeAction extends SearchFormAction {
     
     @Action(value = "/masters/contractorGrade-viewContractorGrade")
     public String viewContractorGrade() {
-        return "searchPage";
+        return SEARCH;
     }
 
     @Override
@@ -272,30 +270,5 @@ public class ContractorGradeAction extends SearchFormAction {
 
     public void setMinAmountList(final List<String> minAmountList) {
         this.minAmountList = minAmountList;
-    }
-    
-    public Boolean validateContractorGrade() {
-    	Boolean isValid = Boolean.FALSE;
-    	Boolean isFieldEmpty = Boolean.FALSE;
-        if(grade.isEmpty()) {
-        	addActionError(getText("contractorGrade.grade.null"));
-        	isFieldEmpty = Boolean.TRUE;
-        } 
-        if(contractorGrade.getDescription().isEmpty()) {
-        	addActionError(getText("contractorGrade.description.null"));
-        	isFieldEmpty = Boolean.TRUE;
-        } 
-        if(contractorGrade.getMinAmount() == null) {
-        	addActionError(getText("contractorGrade.minAmount.null"));
-        	isFieldEmpty = Boolean.TRUE;
-        } 
-        if(contractorGrade.getMaxAmount() == null) {
-        	addActionError(getText("contractorGrade.maxAmount.null"));
-        	isFieldEmpty = Boolean.TRUE;
-        }
-        if(!isFieldEmpty) {
-        	isValid = Boolean.TRUE;
-        }
-        return isValid;
     }
 }

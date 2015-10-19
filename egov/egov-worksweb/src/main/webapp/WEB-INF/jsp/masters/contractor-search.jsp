@@ -89,7 +89,7 @@
 													<s:text name='contractor.search.label.code' />:
 												</td>
 												<td width="37%" class="greybox2wk">
-													<s:textfield name="contractorcode" id="contractorcode" cssClass="selectboldwk"/>
+													<s:textfield name="contractorCode" id="contractorCode" cssClass="selectboldwk"/>
 												</td>
 											</tr>
 											<tr>

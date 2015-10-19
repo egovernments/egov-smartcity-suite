@@ -249,7 +249,7 @@ var makeContractorDataTable = function() {
 	};  
 }
 
---></script>
+</script>
 <div class="errorstyle" id="contractor_error" style="display: none;"></div>
 
 <div class="navibarshadowwk"></div>
