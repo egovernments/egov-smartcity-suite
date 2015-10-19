@@ -145,14 +145,19 @@
 				</div>
 			</td>
 
-			<td class="blueborderfortd" id="AddRemoveFloor"><img id="addF"
-				name="addF"
-				src="${pageContext.request.contextPath}/resources/image/addrow.gif"
-				alt="Add" onclick="javascript:addFloor(); return false;" width="18"
-				height="18" border="0" /><img id="dDelF" name="dDelF"
-				src="${pageContext.request.contextPath}/resources/image/removerow.gif"
-				alt="Remove" onclick="javascript:delFloor(this);return false;"
-				width="18" height="18" border="0" /></td>
+			<td class="blueborderfortd" id="AddRemoveFloor">
+			
+			   <span id="addF" alt="AddF" class="tblactionicon add" 
+			        onclick="javascript:addFloor(); return false;">
+			           <i class="fa fa-plus-circle"></i>
+			  </span>
+			  &nbsp;
+			  <span id="dDelF" alt="DelF" class="tblactionicon delete" 
+			        onclick="javascript:delFloor(this);return false;">
+			           <i class="fa fa-minus-circle"></i>
+			  </span>
+			
+			</td>
 
 		</tr>
 	</s:if>
@@ -273,10 +278,19 @@
 					</div>
 				</td>
 				
-				<td class="blueborderfortd" id="AddRemoveFloor"><img id="addF" name="addF"
-					src="${pageContext.request.contextPath}/resources/image/addrow.gif"	alt="Add" onclick="javascript:addFloor(); return false;"
-					width="18" height="18" border="0" /><img id="dDelF" name="dDelF" src="${pageContext.request.contextPath}/resources/image/removerow.gif"
-					alt="Remove" onclick="javascript:delFloor(this);return false;"	width="18" height="18" border="0" /></td>
+				<td class="blueborderfortd" id="AddRemoveFloor">
+				
+				  <span id="addF" alt="AddF" class="tblactionicon add" 
+			        onclick="javascript:addFloor(); return false;">
+			           <i class="fa fa-plus-circle"></i>
+				  </span>
+				  &nbsp;
+				  <span id="dDelF" alt="DelF" class="tblactionicon delete" 
+				        onclick="javascript:delFloor(this);return false;">
+				           <i class="fa fa-minus-circle"></i>
+				  </span>
+				  
+				</td>
 			</tr>
 		</s:iterator>
 	</s:else>

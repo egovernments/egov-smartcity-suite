@@ -60,6 +60,8 @@
 <script
 	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"
 	type="text/javascript"></script>
+	
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
 
 </head>
 

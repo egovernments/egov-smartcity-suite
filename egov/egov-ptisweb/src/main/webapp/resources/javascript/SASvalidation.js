@@ -813,13 +813,13 @@ function deleteOwner(obj)
 	else
 	{
 		tbl.deleteRow(rIndex);
-		jQuery("#nameTable tr:eq(1) td img[alt='Add']").show();
+		jQuery("#nameTable tr:eq(1) td span[alt='addOwnerBtn']").show();
 		//starting index for table fields
 		var idx=0;
 		
 		//regenerate index existing inputs in table row
 		jQuery("#nameTable tr:not(:first)").each(function() {
-			jQuery(this).find("input, select,input:checkbox").each(function() {
+			jQuery(this).find("input, select,input:checkbox, span").each(function() {
 			   jQuery(this).attr({
 			      'id': function(_, id) {  
 			    	  return id.replace(/\[.\]/g, '['+ idx +']'); 
@@ -839,11 +839,11 @@ function deleteOwner(obj)
 			//hide add option except first row
 			if(idx === 0)
 			{
-				jQuery(this).find('img [name="addOwnerBtn"]').show();
+				jQuery(this).find('span [alt="addOwnerBtn"]').show();
 			}
 			else
 			{
-				jQuery(this).find('img [name="addOwnerBtn"]').hide();
+				jQuery(this).find('span [alt="removeOwnerBtn"]').hide();
 			}
 			
 			idx++;
@@ -924,13 +924,13 @@ function addOwner() {
 			}
 			
 			// Generate all textboxes Id and name with new index
-			jQuery("#nameRow").clone().find("input, select, img").each(
+			jQuery("#nameRow").clone().find("input, select, span i").each(
 					function() {
 
 						if (jQuery(this).data('server')) {
 							jQuery(this).removeAttr('data-server');
 						}
-						if (!jQuery(this).is('img')) {
+						if (!jQuery(this).is('i')) {
 							jQuery(this).attr(
 									{
 										'id' : function(_, id) {
@@ -972,7 +972,7 @@ function addOwner() {
 
 					}).end().appendTo("#nameTable");
 
-			jQuery("#nameTable tr:last td img[alt='Add']").hide();
+			jQuery("#nameTable tr:last td span[alt='addOwnerBtn']").hide();
 			jQuery("#nameTable tr:last td img[alt='Remove']").show();
 
 		}
@@ -1322,7 +1322,7 @@ function addFloor()
 						 
 			    }).end().appendTo("#floorDetails");
 							
-				jQuery("#floorDetails tr:last td img[alt='Add']").hide();
+				jQuery("#floorDetails tr:last td span[alt='AddF']").hide();
 				
 				//re-intialize datepicker fields
 				jQuery(".datepicker").datepicker({format: 'dd/mm/yyyy'});
@@ -1347,7 +1347,7 @@ function delFloor(obj)
 
 		tbl.deleteRow(rIndex);	
 		
-		jQuery("#floorDetails tr:eq(1) td img[alt='Add']").show();
+		jQuery("#floorDetails tr:eq(1) td span[alt='AddF']").show();
 		//starting index for table fields
 		var idx=0;
 		
@@ -1381,11 +1381,11 @@ function delFloor(obj)
 			//hide add option except first row
 			if(idx === 0)
 			{
-				jQuery(this).find('img [name="addF"]').show();
+				jQuery(this).find('span [alt="AddF"]').show();
 			}
 			else
 			{
-				jQuery(this).find('img [name="addF"]').hide();
+				jQuery(this).find('span [alt="AddF"]').hide();
 			}
 			
 			idx++;

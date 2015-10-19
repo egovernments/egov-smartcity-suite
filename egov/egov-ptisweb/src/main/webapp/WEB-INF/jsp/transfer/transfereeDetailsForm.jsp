@@ -93,8 +93,15 @@
 								        		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Guardian name is mandatory!"/>
 								        </td>
 								        <td class="blueborderfortd">
-								        	<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
-								      		<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteOwner(this); return false;" alt="Remove" width="18" height="18" border="0" />
+								        	 <span id="addOwnerBtn" name="addOwnerBtn" class="tblactionicon add" alt="addOwnerBtn"
+												    onclick="javascript:addOwner(); return false;" >
+												       <i class="fa fa-plus-circle"></i>
+											  </span>
+											  &nbsp;
+											  <span id="removeOwnerBtn" name="removeOwnerBtn" class="tblactionicon delete" alt="removeOwnerBtn"
+											        onclick="javascript:deleteOwner(this); return false;">
+											           <i class="fa fa-minus-circle"></i>
+											  </span>
 								        </td>
 								     </tr>
 								     </s:if>
@@ -134,8 +141,15 @@
 								        </td>
 								        
 								        <td class="blueborderfortd">
-								        	<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
-								      		<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteOwner(this); return false;" alt="Remove" width="18" height="18" border="0" />
+								        	 <span id="addOwnerBtn" name="addOwnerBtn" class="tblactionicon add" alt="addOwnerBtn"
+												    onclick="javascript:addOwner(); return false;" >
+												       <i class="fa fa-plus-circle"></i>
+											  </span>
+											  &nbsp;
+											  <span id="removeOwnerBtn" name="removeOwnerBtn" class="tblactionicon delete" alt="removeOwnerBtn"
+											        onclick="javascript:deleteOwner(this); return false;">
+											           <i class="fa fa-minus-circle"></i>
+											  </span>
 								        </td>
 								     </tr>
 								     </s:iterator>
