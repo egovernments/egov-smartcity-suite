@@ -327,7 +327,7 @@ jq(document).on('click', '#woView', function(){
 	<s:hidden name="id"/>
 	</s:if>
 <s:hidden name="mode" id="mode"/>
-<s:hidden name="isAllowEstDateModify" id="isAllowEstDateModify"/> 
+<s:hidden name="isAllowEstDateModify" id=""/> 
 <div class="formmainbox"><div class="insidecontent">
   <div class="rbroundbox2">
 	<div class="rbtop2"><div></div></div>
@@ -527,10 +527,7 @@ jq(document).on('click', '#woView', function(){
  model.egwStatus.code=='ADMIN_CHECKED' || model.egwStatus.code=='BUDGETARY_APPROPRIATION_DONE' ||
  model.egwStatus.code=='DEPOSIT_CODE_APPR_CHECKED' || model.egwStatus.code=='DEPOSIT_CODE_APPR_DONE') }">
   <s:if test="%{appConfigValuesToSkipBudget.contains(model.type.name) }">
-   <!--<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/financialDetail!viewDepositFolioPDF.action?estimateId=<s:property value='%{model.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="buttonadd" value="View Deposit Folio" id="depositfolioreportButton" name="depositfolioreportButton"/>    			
-  
- -->
- <input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/financialDetail!viewDepositWorksFolio.action?estimateId=<s:property value='%{model.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="buttonadd" value="View Deposit Folio" id="depositfolioreportButton" name="depositfolioreportButton"/>
+ 	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/financialDetail!viewDepositWorksFolio.action?estimateId=<s:property value='%{model.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="buttonadd" value="View Deposit Folio" id="depositfolioreportButton" name="depositfolioreportButton"/>
  </s:if>
   <s:else> <input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/financialDetail!viewBudgetFolio.action?estimateId=<s:property value='%{model.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="buttonadd" 
      value="View Budget Folio" id="viewBudgetFolio" name="viewBudgetFolio"/>
@@ -644,8 +641,10 @@ jq(document).on('click', '#woView', function(){
 				document.abstractEstimateForm.tech_sanction.readonly=false;
 				document.abstractEstimateForm.tech_sanction.disabled=false;
 			}
-			document.abstractEstimateForm.reject.readonly=false;
-			document.abstractEstimateForm.reject.disabled=false;
+	     	if(document.abstractEstimateForm.reject){
+				document.abstractEstimateForm.reject.readonly=false;
+				document.abstractEstimateForm.reject.disabled=false;
+	     	}
 		
 	       if(document.abstractEstimateForm.updateFinancialDetailButton){  	
 				document.abstractEstimateForm.updateFinancialDetailButton.readonly=false;

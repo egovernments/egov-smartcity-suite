@@ -82,7 +82,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
-        @Result(name = AjaxEstimateAction.SUBCATEGORIES, location = "ajaxEstimate-subcategories.jsp") })
+        @Result(name = AjaxEstimateAction.SUBCATEGORIES, location = "ajaxEstimate-subcategories.jsp"),
+        @Result(name = AjaxEstimateAction.OVERHEADS, location = "ajaxEstimate-overheads.jsp")
+})
 public class AjaxEstimateAction extends BaseFormAction {
 
     private static final long serialVersionUID = 4566034960012106080L;
@@ -92,7 +94,7 @@ public class AjaxEstimateAction extends BaseFormAction {
     private static final String USERS_IN_DEPT = "usersInDept";
     private static final String DESIGN_FOR_EMP = "designForEmp";
     public static final String SUBCATEGORIES = "subcategories";
-    private static final String OVERHEADS = "overheads";
+    public static final String OVERHEADS = "overheads";
     private static final String WORKFLOW_USER_LIST = "workflowUsers";
     private static final String WORKFLOW_DESIG_LIST = "workflowDesignations";
     private static final String CHANGE_DEPARTMENT = "changeDepartment";
@@ -235,6 +237,7 @@ public class AjaxEstimateAction extends BaseFormAction {
         return CHANGE_DEPARTMENT;
     }
 
+    @Action(value = "/estimate/ajaxEstimate-overheads")
     public String overheads() {
         overheads = getPersistenceService().findAllByNamedQuery(Overhead.OVERHEADS_BY_DATE, estDate, estDate);
         return OVERHEADS;

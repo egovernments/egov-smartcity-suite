@@ -42,7 +42,6 @@ package org.egov.works.web.actions.estimate;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,7 +50,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -115,13 +113,12 @@ import net.sf.jasperreports.engine.JRException;
 public class AbstractEstimateAction extends BaseFormAction {
 
     private static final long serialVersionUID = -4801105778751138267L;
-    private static final Logger logger = Logger.getLogger(AbstractEstimateAction.class);
+    private final Logger LOGGER = Logger.getLogger(getClass());
     private static final String CANCEL_ACTION = "cancel";
     private static final String SAVE_ACTION = "save";
     private static final Object REJECT_ACTION = "reject";
     private static final String SOURCE_SEARCH = "search";
     private static final String SOURCE_INBOX = "inbox";
-    private static final String MODULE_NAME = "Works";
     private static final String KEY_NAME = "SKIP_BUDGET_CHECK";
     public static final String MAPS = "maps";
     private AbstractEstimate abstractEstimate = new AbstractEstimate();
@@ -156,7 +153,6 @@ public class AbstractEstimateAction extends BaseFormAction {
     public static final String PRINT = "print";
     private String mode = "";
     private boolean isAllowEstDateModify = false;
-    private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", new Locale("en", "IN"));
 
     private String employeeName;
     private String designation;
@@ -366,14 +362,9 @@ public class AbstractEstimateAction extends BaseFormAction {
             try {
                 abstractEstimateService.setProjectCode(abstractEstimate);
                 abstractEstimate.setApprovedDate(new Date());
-            } catch (final ValidationException sequenceException) {
+            } catch (final ValidationException valException) {
                 setSourcepage("inbox");
-                final List<ValidationError> errorList = sequenceException.getErrors();
-                for (final ValidationError error : errorList)
-                    if (error.getMessage().contains("DatabaseSequenceFirstTimeException")) {
-                        prepare();
-                        throw new ValidationException(Arrays.asList(new ValidationError("error", error.getMessage())));
-                    }
+                throw new ValidationException(valException.getErrors());
             }
         abstractEstimate = abstractEstimateService.persist(abstractEstimate);
 
@@ -933,7 +924,7 @@ public class AbstractEstimateAction extends BaseFormAction {
     }
 
     public List<String> getAppConfigValuesToSkipBudget() {
-        return worksService.getNatureOfWorkAppConfigValues(MODULE_NAME, KEY_NAME);
+        return worksService.getNatureOfWorkAppConfigValues(WorksConstants.WORKS_MODULE_NAME, KEY_NAME);
     }
 
     public String getEstimateValue() {
