@@ -183,15 +183,30 @@ public class Hoarding extends AbstractAuditable {
     @ManyToOne
     @JoinColumn(name = "revenueinspector")
     private RevenueInspector revenueInspector;
-
+   
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "revenueboundary", nullable = true)
-    private Boundary revenueBoundary;
+    @JoinColumn(name = "location", nullable = true)
+    private Boundary location;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "adminBoundry", nullable = false)
-    private Boundary adminBoundry;
+    @JoinColumn(name = "ward", nullable = false)
+    private Boundary ward;
+    
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "block", nullable = false)
+    private Boundary block;
+    
+    @ManyToOne
+    @JoinColumn(name = "street")
+    private Boundary street;
+       
+    @ManyToOne
+    @JoinColumn(name = "electionward")
+    private Boundary electionWard;
+    
 
     @NotNull
     @SafeHtml
@@ -423,21 +438,7 @@ public class Hoarding extends AbstractAuditable {
         this.revenueInspector = revenueInspector;
     }
 
-    public Boundary getRevenueBoundary() {
-        return revenueBoundary;
-    }
-
-    public void setRevenueBoundary(final Boundary revenueBoundary) {
-        this.revenueBoundary = revenueBoundary;
-    }
-
-    public Boundary getAdminBoundry() {
-        return adminBoundry;
-    }
-
-    public void setAdminBoundry(final Boundary adminBoundry) {
-        this.adminBoundry = adminBoundry;
-    }
+    
 
     public String getAddress() {
         return address;
@@ -510,5 +511,47 @@ public class Hoarding extends AbstractAuditable {
     public void setPenaltyCalculationDate(Date penaltyCalculationDate) {
         this.penaltyCalculationDate = penaltyCalculationDate;
     }
+
+    public Boundary getLocation() {
+        return location;
+    }
+
+    public void setLocation(Boundary location) {
+        this.location = location;
+    }
+
+    public Boundary getWard() {
+        return ward;
+    }
+
+    public void setWard(Boundary ward) {
+        this.ward = ward;
+    }
+
+    public Boundary getBlock() {
+        return block;
+    }
+
+    public void setBlock(Boundary block) {
+        this.block = block;
+    }
+
+    public Boundary getStreet() {
+        return street;
+    }
+
+    public void setStreet(Boundary street) {
+        this.street = street;
+    }
+
+    public Boundary getElectionWard() {
+        return electionWard;
+    }
+
+    public void setElectionWard(Boundary electionWard) {
+        this.electionWard = electionWard;
+    }
+
+  
 
 }

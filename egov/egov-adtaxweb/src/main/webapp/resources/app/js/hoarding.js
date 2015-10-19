@@ -1,6 +1,5 @@
 $(document).ready(function(){
-    
-   
+	 
    var agency = new Bloodhound({
 		datumTokenizer: function (datum) {
 			return Bloodhound.tokenizers.whitespace(datum.value);
@@ -49,7 +48,18 @@ $(document).ready(function(){
    $('#rateClass').change(function(){
 	   calculateTax();
 	});
-  
+   
+   $('#propertyNumber').change(function(){
+	   callPropertyTaxRest(); 
+	});
+   
+   $('#location').change(function() {
+	//	 alert('HI');
+		 populateBoundaries();
+	 });
+   $('#ward').change(function() {
+		   populateBlock();
+		 });
    
    $('#category').change(function(){
 	   
@@ -86,13 +96,13 @@ $(document).ready(function(){
 				dataType: "json",
 				data:{'parentBoundaryId' : this.value}
 			}).done(function(value) {
-				$('#adminBoundry option:gt(0)').remove();
+				$('#ward option:gt(0)').remove();
 				$.each(value, function(index, val) {
-				     $('#adminBoundry').append($('<option>').text(val.name).attr('value', val.id));
+				     $('#ward').append($('<option>').text(val.name).attr('value', val.id));
 				});
-				if(adminBoundry !== '') {
-					$("select#adminBoundry").val(adminBoundry); 
-					adminBoundry = '';
+				if(ward !== '') {
+					$("select#ward").val(ward); 
+					ward = '';
 				}
 			});
 		}
@@ -109,13 +119,13 @@ $(document).ready(function(){
 				dataType: "json",
 				data:{'parentBoundaryId' : this.value}
 			}).done(function(value) {
-				$('#revenueBoundary option:gt(0)').remove();
+				$('#location option:gt(0)').remove();
 				$.each(value, function(index, val) {
-				     $('#revenueBoundary').append($('<option>').text(val.name).attr('value', val.id));
+				     $('#location').append($('<option>').text(val.name).attr('value', val.id));
 				});
-				if(revenueBoundary !== '') {
-					$("select#revenueBoundary").val(revenueBoundary); 
-					revenueBoundary = '';
+				if(location !== '') {
+					$("select#location").val(location); 
+					location = '';
 				}
 			});
 		}
@@ -141,7 +151,126 @@ $(document).ready(function(){
 	   });
    });
    
-  
+   function resetOnPropertyNumChange(){
+
+    	$('#ward').html("");
+    	$('#location').val("");
+		$('#block').html("");
+		$('#street').html("");
+		$('#address').val("");
+		
+   }
+   
+   function callPropertyTaxRest(){
+	var propertyNo = jQuery("#propertyNumber").val();
+   	if(propertyNo!="" && propertyNo!=null){
+			console.log(propertyNo); 
+			jQuery.ajax({
+			//	url: "/ptis/rest/property/" + propertyNo,
+				url:"/restapi/property/assessmentDetails",
+				type:"post",
+				contentType:"application/json", 
+				dataType :"json",
+			    data: JSON.stringify({"assessmentNo":propertyNo}),
+				success:function(data){
+					if(data.errorDetails.errorCode != null && data.errorDetails.errorCode != ''){
+						alert(data.errorDetails.errorMessage);
+						$('#location').val("");
+						
+						document.getElementById("propertyNumber").value="";
+						resetOnPropertyNumChange();
+					} else{
+						if(data.boundaryDetails!=null){
+							
+							$('#ward').html("");
+							$('#block').html("");
+							$('#street').html("");
+							$('#address').val("");
+							
+							$('#location').val(data.boundaryDetails.localityId);
+							$('#ward').append("<option value='"+data.boundaryDetails.wardId+"'>"+data.boundaryDetails.wardName+"</option>");
+							$('#block').append("<option value='"+data.boundaryDetails.blockId+"'>"+data.boundaryDetails.blockName+"</option>");
+							if(data.boundaryDetails.streetId!=null)
+							$('#street').append("<option value='"+data.boundaryDetails.streetId+"'>"+data.boundaryDetails.streetName+"</option>");
+					
+							if(data.propertyAddress!=null)
+							$('#address').val(data.propertyAddress); 
+						}
+					}
+				},
+				error:function(e){
+					console.log('error:'+e.message);
+					document.getElementById("propertyNumber").value="";
+					resetOnPropertyNumChange();
+					alert("Error getting property details");
+				}
+			});
+   	} else{
+   		document.getElementById("propertyNumber").focus();
+   		resetOnPropertyNumChange();
+       }
+   }
+   function populateBoundaries() {
+		//alert('HI0000000000');
+		console.log("came jursidiction"+$('#location').val());
+		$.ajax({
+			type: "GET",
+			url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
+			cache: true,
+			dataType: "json",
+			data:{
+				locality : $('#location').val()
+		  	   }
+			}).done(function(response) {
+
+				$('#ward').html("");
+				$('#block').html("");
+				$('#street').html("");
+				$.each(response.results.boundaries, function (j, boundary) {
+					if (boundary.wardId) {
+						$('#ward').append("<option value='"+boundary.wardId+"'>"+boundary.wardName+"</option>");
+					}
+					$('#block').append("<option value='"+boundary.blockId+"'>"+boundary.blockName+"</option>");
+				});
+				$.each(response.results.streets, function (j, street) {
+					$('#street').append("<option value='"+street.streetId+"'>"+street.streetName+"</option>");
+				});
+			 })
+			.fail(function(response1) {
+				console.log("failed");
+				$('#ward').html("");
+				$('#block').html("");
+				$('#street').html("");
+				alert("No boundary details mapped for location");
+			 });
+			
+	
+   }
+   function populateBlock()
+   {
+	   	$.ajax({
+		type: "GET",
+		url: "/egi/boundary/ajaxBoundary-blockByWard.action",
+		cache: true,
+		dataType: "json",
+		data:{
+			wardId : $('#ward').val()
+				}
+		}).done(function(response) {
+
+			$('#block').html("");
+			$.each(response, function (j, block) {
+				$('#block').append("<option value='"+block.blockId+"'>"+block.blockName+"</option>");
+			});
+		 })
+		.fail(function(response1) {
+			console.log("failed");
+			$('#block').html("");
+			alert("No block details mapped for ward");
+		 });
+	
+   }
+
    function format_lat_long(latorlong) {
 		var loc_arry = latorlong.split(",");
 		var degree= parseFloat(loc_arry[0]);
@@ -181,6 +310,6 @@ $(document).ready(function(){
    }
    
    $('#category').trigger('change');
-   $('#adminBoundryParent').trigger('change');
+   $('#location').trigger('change');
    $('#revenueBoundryParent').trigger('change');
 });

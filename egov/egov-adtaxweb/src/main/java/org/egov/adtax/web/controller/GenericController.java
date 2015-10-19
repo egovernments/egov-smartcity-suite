@@ -45,6 +45,7 @@ import org.egov.adtax.entity.HoardingCategory;
 import org.egov.adtax.entity.RevenueInspector;
 import org.egov.adtax.service.HoardingCategoryService;
 import org.egov.adtax.service.RevenueInspectorService;
+import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,5 +75,9 @@ public abstract class GenericController {
     @ModelAttribute("zoneList")
     public List<Boundary> getZones() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", "ADMINISTRATION");
+    }
+    @ModelAttribute("localities")
+    public List<Boundary> localities() {
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_LOCALITY, AdvertisementTaxConstants.LOCATION_HIERARCHY_TYPE );
     }
 }

@@ -135,16 +135,16 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     @Override
     public Long getBoundaryNum() {
-        if (hoarding != null && hoarding.getAdminBoundry() != null)
-            return hoarding.getAdminBoundry().getBoundaryNum();
+        if (hoarding != null && hoarding.getWard() != null)
+            return hoarding.getWard().getBoundaryNum();
         return null;
     }
 
     @Override
     public String getBoundaryType() {
 
-        if (hoarding != null && hoarding.getAdminBoundry() != null)
-            return hoarding.getAdminBoundry().getBoundaryType().getName();
+        if (hoarding != null && hoarding.getWard() != null)
+            return hoarding.getWard().getBoundaryType().getName();
         return null;
     }
 

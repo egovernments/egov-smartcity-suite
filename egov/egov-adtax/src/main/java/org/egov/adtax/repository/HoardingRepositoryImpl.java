@@ -64,7 +64,7 @@ public class HoardingRepositoryImpl implements HoardingRepositoryCustom {
     @Override
     public List<Hoarding> fetchHoardingsLike(final HoardingSearch hoardingSearch) {
         final Criteria hoardingCriteria = entityManager.unwrap(Session.class).createCriteria(Hoarding.class, "hoarding");
-        hoardingCriteria.createAlias("hoarding.adminBoundry", "adminBoundry").createAlias("adminBoundry.parent", "parentBoundry");
+      //  hoardingCriteria.createAlias("hoarding.location", "location").createAlias("hoarding.ward", "ward");
         if (hoardingSearch.getAgency() != null)
             hoardingCriteria.add(Restrictions.eq("agency.id", hoardingSearch.getAgency()));
         if (isNotBlank(hoardingSearch.getHoardingNumber()))
@@ -73,10 +73,10 @@ public class HoardingRepositoryImpl implements HoardingRepositoryCustom {
             hoardingCriteria.add(Restrictions.eq("applicationNumber", hoardingSearch.getApplicationNumber()));
         if (isNotBlank(hoardingSearch.getPermissionNumber()))
             hoardingCriteria.add(Restrictions.eq("permissionNumber", hoardingSearch.getPermissionNumber()));
-        if (hoardingSearch.getAdminBoundryParent() != null)
-            hoardingCriteria.add(Restrictions.eq("parentBoundry.id", hoardingSearch.getAdminBoundryParent()));
+        if (hoardingSearch.getAdminBoundryParent() != null) 
+            hoardingCriteria.add(Restrictions.eq("location.id", hoardingSearch.getAdminBoundryParent()));
         if (hoardingSearch.getAdminBoundry() != null)
-            hoardingCriteria.add(Restrictions.eq("adminBoundry.id", hoardingSearch.getAdminBoundry()));
+            hoardingCriteria.add(Restrictions.eq("ward.id", hoardingSearch.getAdminBoundry()));
         if (hoardingSearch.getCategory() != null)
             hoardingCriteria.add(Restrictions.eq("category.id", hoardingSearch.getCategory()));
         if (hoardingSearch.getSubCategory() != null)
@@ -86,7 +86,8 @@ public class HoardingRepositoryImpl implements HoardingRepositoryCustom {
         if (hoardingSearch.getStatus() != null)
             hoardingCriteria.add(Restrictions.eq("status", hoardingSearch.getStatus()));
         if (hoardingSearch.getApplicationFromDate() != null)
-            hoardingCriteria.add(Restrictions.gt("applicationDate", DateUtils.startOfDay(hoardingSearch.getApplicationFromDate())));
+            
+            hoardingCriteria.add(Restrictions.ge("applicationDate", DateUtils.startOfDay(hoardingSearch.getApplicationFromDate())));
         if (hoardingSearch.getApplicationToDate() != null)
             hoardingCriteria.add(Restrictions.le("applicationDate", DateUtils.endOfDay(hoardingSearch.getApplicationToDate())));
 
@@ -96,7 +97,7 @@ public class HoardingRepositoryImpl implements HoardingRepositoryCustom {
     @Override
     public List<Object[]> fetchHoardingsBySearchType(final Hoarding hoarding, final String searchType) {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Hoarding.class, "hoarding")
-                .createAlias("hoarding.adminBoundry", "ward").createAlias("hoarding.adminBoundry.parent", "zone")
+                .createAlias("hoarding.ward", "ward").createAlias("hoarding.location", "location")
                 .createAlias("hoarding.category", "category").createAlias("hoarding.subCategory", "subCategory")
                 .createAlias("hoarding.revenueInspector", "revenueInspector").createAlias("hoarding.agency", "agency");
         if ("agency".equalsIgnoreCase(searchType))
@@ -104,10 +105,10 @@ public class HoardingRepositoryImpl implements HoardingRepositoryCustom {
                     .add(Projections.rowCount(), "count")).setResultTransformer(Transformers.aliasToBean(AgencyWiseResult.class));
         if (null != hoarding.getHoardingNumber() && !hoarding.getHoardingNumber().isEmpty())
             criteria.add(Restrictions.eq("hoarding.hoardingNumber", hoarding.getHoardingNumber()));
-        if (null != hoarding.getAdminBoundry().getParent())
-            criteria.add(Restrictions.eq("zone.id", hoarding.getAdminBoundry().getParent().getId()));
-        if (null != hoarding.getAdminBoundry().getId())
-            criteria.add(Restrictions.eq("ward.id", hoarding.getAdminBoundry().getId()));
+        if (null != hoarding.getLocation())
+            criteria.add(Restrictions.eq("location.id", hoarding.getLocation().getId()));
+        if (null != hoarding.getWard())
+            criteria.add(Restrictions.eq("ward.id", hoarding.getWard().getId()));
         if (null != hoarding.getCategory())
             criteria.add(Restrictions.eq("category.id", hoarding.getCategory().getId()));
         if (null != hoarding.getSubCategory())
@@ -125,17 +126,17 @@ public class HoardingRepositoryImpl implements HoardingRepositoryCustom {
     public List<Hoarding> fetchHoardingsBySearchParams(final Hoarding hoarding) {
 
           final Criteria hoardingCriteria = entityManager.unwrap(Session.class).createCriteria(Hoarding.class, "hoarding")
-                .createAlias("hoarding.adminBoundry", "ward").createAlias("hoarding.adminBoundry.parent", "zone")
+               // .createAlias("hoarding.ward", "ward").createAlias("hoarding.location", "location")
                 .createAlias("hoarding.category", "category").createAlias("hoarding.subCategory", "subCategory")
                 .createAlias("hoarding.revenueInspector", "revenueInspector").createAlias("hoarding.agency", "agency");
         
         if (null != hoarding.getHoardingNumber() && !hoarding.getHoardingNumber().isEmpty())
             hoardingCriteria.add(Restrictions.eq("hoarding.hoardingNumber", hoarding.getHoardingNumber()));
-        if (null != hoarding.getAdminBoundry().getParent())
-            hoardingCriteria.add(Restrictions.eq("zone.id", hoarding.getAdminBoundry().getParent().getId()));
-        if (null != hoarding.getAdminBoundry().getId())
-            hoardingCriteria.add(Restrictions.eq("ward.id", hoarding.getAdminBoundry().getId()));
-        if (null != hoarding.getCategory())
+        if (null != hoarding.getLocation())
+            hoardingCriteria.add(Restrictions.eq("location.id", hoarding.getLocation().getId()));
+        if (null != hoarding.getWard())
+            hoardingCriteria.add(Restrictions.eq("ward.id", hoarding.getWard().getId()));
+     if (null != hoarding.getCategory())
             hoardingCriteria.add(Restrictions.eq("category.id", hoarding.getCategory().getId()));
         if (null != hoarding.getSubCategory())
             hoardingCriteria.add(Restrictions.eq("subCategory.id", hoarding.getSubCategory().getId()));

@@ -131,7 +131,6 @@
 								</div>
 									<label class="col-sm-2 control-label text-right">
 									<spring:message code="lbl.hoarding.prop.type"/>
-									
 									</label>
 									<div class="col-sm-3 add-margin view-content">
 										${hoarding.propertyType}
@@ -139,10 +138,10 @@
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.hoarding.prop.assesmt.no"/>
-								</label>
+								<spring:message code="lbl.hoarding.status"/>
+									</label>
 								<div class="col-sm-3 add-margin view-content">
-									${hoarding.propertyNumber}
+										${hoarding.status}
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.owner.detail"/>
@@ -152,13 +151,61 @@
 									${hoarding.ownerDetail}
 								</div>
 							</div>
-							<div class="form-group">
+														
+							<div class="panel-heading custom_form_panel_heading">
+								<div class="panel-title">
+								<spring:message code="lbl.hoarding.location"/>
+								</div>
+							</div>	
+								<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.hoarding.status"/>
-								
+								<spring:message code="lbl.hoarding.prop.assesmt.no"/>
+							
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${hoarding.status}
+									<c:out value="${hoarding.propertyNumber}" default="N/A"/>
+								</div>
+								<label class="col-sm-2 control-label text-right">
+									<spring:message code="lbl.locality"/>
+								</label>
+								<div class="col-sm-3 add-margin view-content">
+									<c:out value="${hoarding.location.name}" default="N/A"/>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.rev.ward"/>
+								</label>
+								<div class="col-sm-3 add-margin view-content">
+									<c:out value="${hoarding.ward.name}" default="N/A"/>
+								</div>
+								<label class="col-sm-2 control-label text-right">
+								<spring:message code="lbl.block"/>
+								</label>
+								<div class="col-sm-3 add-margin view-content">
+										<c:out value="${hoarding.block.name}" default="N/A"/>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.street"/>
+								</label>
+								<div class="col-sm-3 add-margin view-content">
+									<c:out value="${hoarding.street.name}" default="N/A"/>
+								</div>
+								<label class="col-sm-2 control-label text-right">
+								<spring:message code="lbl.election.ward"/>
+								</label>
+								<div class="col-sm-3 add-margin view-content">
+									<c:out value="${hoarding.electionWard.name}" default="N/A"/>
+								</div>
+							</div>
+								<div class="form-group">
+								<label class="col-sm-3 control-label text-right">
+									<spring:message code="lbl.address"/>
+								</label>
+								<div class="col-sm-3 add-margin view-content">
+									<c:out value="${hoarding.address}" default="N/A"/>
 								</div>
 								<div class="col-sm-5 add-margin">&nbsp;</div>
 							</div>
@@ -226,48 +273,7 @@
 									${hoarding.totalHeight}
 								</div>
 							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.rev.zone"/>
-								</label>
-								<div class="col-sm-3 add-margin view-content">
-									<c:out value="${hoarding.revenueBoundary.parent.parent.name}" default="N/A"/>
-								</div>
-								<label class="col-sm-2 control-label text-right">
-								<spring:message code="lbl.rev.ward"/>
-								</label>
-								<div class="col-sm-3 add-margin view-content">
-									<c:out value="${hoarding.revenueBoundary.parent.name}" default="N/A"/>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.locality"/>
-								</label>
-								<div class="col-sm-3 add-margin view-content">
-									<c:out value="${hoarding.revenueBoundary.name}" default="N/A"/>
-								</div>
-								<label class="col-sm-2 control-label text-right">
-								<spring:message code="lbl.address"/>
-								</label>
-								<div class="col-sm-3 add-margin view-content">
-									${hoarding.address}
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.zone"/>
-								</label>
-								<div class="col-sm-3 add-margin view-content">
-									<c:out value="${hoarding.adminBoundry.parent.name}" default="N/A"/>
-								</div>
-								<label class="col-sm-2 control-label text-right">
-								<spring:message code="lbl.ward"/>
-								</label>
-								<div class="col-sm-3 add-margin view-content">
-									<c:out value="${hoarding.adminBoundry.name}" default="N/A"/>
-								</div>
-							</div>
+						
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.class"/>

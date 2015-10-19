@@ -101,22 +101,25 @@
                         </div>
                     </div>
                     <div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.zone"/></label>
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.locality"/></label>
 					    <div class="col-sm-3 add-margin">
-					    	<select id="zoneList" class="form-control">
-					      		<option value="0"> <spring:message code="lbl.select"/> </option>
-					   			<c:forEach items="${zoneList}" var="zone">
+					    	<form:select path="adminBoundryParent" id="zoneList" cssClass="form-control" 
+							cssErrorClass="form-control error">
+								<form:option value=""><spring:message code="lbl.select" /></form:option>
+								<c:forEach items="${localities}" var="zone">
 					   				<option value="${zone.id}"> ${zone.name}</option>
 					   			</c:forEach>
-					  		</select>
-					  		<form:input type="hidden" id="zoneId" path="adminBoundryParent" value="" />
+							</form:select>
+					  		
 					    </div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.ward"/></label>
 					    <div class="col-sm-3 add-margin">
-							<select id="wardlist" class="form-control">
-					            <option value="0"> <spring:message code="lbl.select"/> </option>
-					        </select>
-					        <form:input type="hidden" id="wardId" path="adminBoundry" value="" />
+							
+							<form:select path="adminBoundry" id="wardlist" cssClass="form-control" 
+							cssErrorClass="form-control error">
+								<form:option value=""><spring:message code="lbl.select" /></form:option>
+							</form:select>
+							
 						</div>
 					</div>
                     <div class="form-group">
