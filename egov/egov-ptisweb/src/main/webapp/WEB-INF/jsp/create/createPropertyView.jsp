@@ -43,7 +43,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
     <tr>
-		<td class="greybox2">&nbsp;</td>
+		<td class="greybox">&nbsp;</td>
 		<s:if test="%{basicProp.upicNo!=null}">
 			<td class="greybox"><s:text name="prop.Id" /> :</td>
 			<td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProp.upicNo}" /> </span></td>
@@ -118,8 +118,8 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox" width="25%"><s:text name="ModifyReason"></s:text> :</td>
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="ModifyReason"></s:text> :</td>
 		<td class="greybox" width="">
 			<span class="bold"><s:property value="%{propertyDetail.propertyMutationMaster.mutationName}" default="N/A"/></span>
 		</td>
@@ -174,7 +174,7 @@
 	</tr>
 	<tr class="bpddetailsheader">
 	<td class="greybox" width="5%">&nbsp;</td>
-	<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
+	<td class="greybox"><s:text name="builidingdetails"></s:text> :</td>
 	<td class="greybox" width="20%">
 	<s:if test="propertyDetail.buildingPlanDetailsChecked == true">
 				<span class="bold">Yes</span>
@@ -300,10 +300,6 @@
 			</div>
 		</td>
 	</tr>
-	<s:if test="%{!documentTypes.isEmpty()}">
-		<tr>
-			<%@ include file="../common/DocumentUploadView.jsp"%>
-		</tr>
-	</s:if>
+
 
 </table>

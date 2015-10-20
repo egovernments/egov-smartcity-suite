@@ -45,7 +45,7 @@
 	</tr>
 	
   <tr>
-  	<td class="greybox2">&nbsp;</td>
+  	<td class="greybox">&nbsp;</td>
   	<td class="greybox"><s:text name="locality"/> : </td>
 	<td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProperty.propertyID.locality.name}" /> </span>
 	</td>
@@ -53,25 +53,25 @@
   </tr>
 
 	<tr>
-		<td class="bluebox2" width="8%">&nbsp;</td>
-	    <td class="bluebox" width="8%"><s:text name="zone"/> : </td>
-	    <td class="bluebox"><span class="bold"><s:property default="N/A" value="%{basicProperty.propertyID.zone.name}" /> </span></td>
-	    <td class="bluebox" width="10%"><s:text name="revwardno"/> : </td>
-	    <td class="bluebox"><span class="bold"><s:property default="N/A" value="%{basicProperty.propertyID.ward.name}" /> </span></td>
+		<td class="greybox">&nbsp;</td>
+	    <td class="greybox"><s:text name="zone"/> : </td>
+	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProperty.propertyID.zone.name}" /> </span></td>
+	    <td class="greybox" width="10%"><s:text name="revwardno"/> : </td>
+	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProperty.propertyID.ward.name}" /> </span></td>
 	</tr>
 	<tr>
-		<td class="greybox2" width="8%">&nbsp;</td>
-	    <td class="greybox" width="8%"><s:text name="blockno"/> : </td>
+		<td class="greybox">&nbsp;</td>
+	    <td class="greybox"><s:text name="blockno"/> : </td>
 	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProperty.propertyID.area.name}" /> </span></td>
 	    <td class="greybox" width="10%"><s:text name="Street"/> : </td>
 	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProperty.propertyID.Street.name}" /> </span></td>
 	</tr>
 	<tr>
-		<td class="bluebox2" width="8%">&nbsp;</td>
-	    <td class="bluebox" width="8%"><s:text name="elec.wardno"/> : </td>
-	    <td class="bluebox"><span class="bold"><s:property default="N/A" value="%{basicProperty.propertyID.electionBoundary.name}" /> </span></td>
-	    <td class="bluebox"><s:text name="doorno"></s:text></td>
-	    <td class="bluebox">
+		<td class="greybox">&nbsp;</td>
+	    <td class="greybox"><s:text name="elec.wardno"/> : </td>
+	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProperty.propertyID.electionBoundary.name}" /> </span></td>
+	    <td class="greybox"><s:text name="doorno"></s:text></td>
+	    <td class="greybox">
 	    	<span class="bold">
 	    		<s:if test='%{houseNumber == ""}'>N/A</s:if>
 	    		<s:else><s:property default="N/A" value="%{houseNumber}"/></s:else>
@@ -79,11 +79,11 @@
 	    </td>	
 	</tr>
 	<tr>
-		<td class="bluebox2" width="8%">&nbsp;</td>
-	    <td class="bluebox" width="8%"><s:text name="enumerationblock"/> : </td>
-	    <td class="bluebox"><span class="bold"><s:property default="N/A" value="%{basicProperty.propertyID.electionBoundary.name}" /> </span></td>
-	    <td class="bluebox" width="8%"><s:text name="PinCode"/> : </td>
-	    <td class="bluebox"><span class="bold"><s:property default="N/A" value="%{pinCode}" /> </span></td>
+		<td class="greybox">&nbsp;</td>
+	    <td class="greybox"><s:text name="enumerationblock"/> : </td>
+	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProperty.propertyID.electionBoundary.name}" /> </span></td>
+	    <td class="greybox"><s:text name="PinCode"/> : </td>
+	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{pinCode}" /> </span></td>
 	</tr>
 	
 </div>

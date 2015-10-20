@@ -164,11 +164,21 @@
 							</td>
 						</tr>
 					</s:if>
+					
+					<s:if test="%{!documentTypes.isEmpty()}">
+							<tr>
+							   <td colspan="5">
+								<%@ include file="../common/DocumentUploadView.jsp"%>
+								</td>
+							</tr>
+						</s:if>
+					
 					<s:if test="%{state != null}">
 						<tr>
 							<%@ include file="../common/workflowHistoryView.jsp"%>
 						<tr>					
 					</s:if>
+					
 					<s:if test="%{!@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)}">
 						<tr>
 							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
