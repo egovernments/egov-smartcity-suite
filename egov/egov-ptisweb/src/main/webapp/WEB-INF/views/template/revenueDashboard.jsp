@@ -120,7 +120,7 @@
 	              	<li>
 		            	<a href="javascript:void(0)"  class="menu-item" data-fn="coverageEfficiency" data-win="coverageEfficiencyWin" id="revenueCov"><i class="fa fa-flash fa-lg fa-fw"></i> Coverage Eff.</a>
 		            </li>
-		            <li>
+		            <!-- <li>
 		            	<a href="javascript:void(0)"  class="menu-item" data-fn="zonewiseAnalysis" data-win="zonewiseAnalysisWin" id="zonewiseAnalysis"><i class="fa fa-pie-chart fa-lg fa-fw"></i> Zone Analysis</a>
 		            </li>
 		             <li>
@@ -128,7 +128,7 @@
 		            </li>
 		            <li>
 		            	<a href="javascript:void(0)"  class="menu-item" data-fn="collectionEfficiency" data-win="performanceWin" id="revenuePerf"><i class="fa fa-map-marker fa-lg fa-fw"></i> Collection Eff.</a>
-		            </li>
+		            </li> -->
 		            <li>
 		            	<a href="javascript:void(0)"  class="menu-item" data-fn="collectionsPaymentMode" data-win="collectionsPaymentWin" id="revenueColl"><i class="fa fa-map-marker fa-lg fa-fw"></i> Collection Mode</a>
 		            </li>
