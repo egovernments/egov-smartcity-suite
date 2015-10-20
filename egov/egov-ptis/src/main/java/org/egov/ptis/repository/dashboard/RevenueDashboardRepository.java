@@ -276,14 +276,14 @@ public class RevenueDashboardRepository {
 
     public Map<String, Object> collectionsPaymentMode() {
         final List<Object[]> typeCollection = getQuery("revenue.ptis.collecion.payment.type").list();
-        final BigDecimal totalTransactions = (BigDecimal) getQuery("revenue.ptis.collecion.total").uniqueResult();
+        final BigDecimal totalTransactions = BigDecimal.valueOf((Double) getQuery("revenue.ptis.collecion.total").uniqueResult());
         final DecimalFormat df = new DecimalFormat("####0.00");
         final List<Map<String, Object>> overAllCollHolder = new LinkedList<Map<String, Object>>();
         final Map<String, BigDecimal> overallCollPercHolder = new HashMap<String, BigDecimal>();
         for (final Object[] collObj : typeCollection) {
             final Map<String, Object> collPaymentType = new HashMap<String, Object>();
             collPaymentType.put("name", String.valueOf(collObj[0]));
-            BigDecimal collectionPerc = (BigDecimal) collObj[1];
+            BigDecimal collectionPerc = collObj[1] != null ? new BigDecimal(collObj[1].toString()) : BigDecimal.ZERO;
             collectionPerc = collectionPerc.multiply(BigDecimal.valueOf(100)).divide(totalTransactions, 2, RoundingMode.HALF_UP);
             overallCollPercHolder.put(String.valueOf(collObj[0]), collectionPerc != null ? collectionPerc : BigDecimal.ZERO);
             collPaymentType.put("y", collectionPerc != null ? new BigDecimal(df.format(collectionPerc.doubleValue())) : 0);
@@ -292,11 +292,11 @@ public class RevenueDashboardRepository {
 
         final List<Object[]> totalNoTransactions = getQuery("revenue.ptis.collecion.total.type").list();
         final List<Map<String, Object>> totalPercTrans = new LinkedList<Map<String, Object>>();
-        final BigDecimal totalCount = (BigDecimal) getQuery("revenue.ptis.collecion.total.count").uniqueResult();
+        final BigDecimal totalCount = new BigDecimal(getQuery("revenue.ptis.collecion.total.count").uniqueResult().toString());
         for (final Object[] revenueObj : totalNoTransactions) {
             final Map<String, Object> revnTotalTransData = new HashMap<String, Object>();
             revnTotalTransData.put("name", String.valueOf(revenueObj[0]));
-            BigDecimal numberTransactions = (BigDecimal) revenueObj[1];
+            BigDecimal numberTransactions = revenueObj[1] != null ? new BigDecimal(revenueObj[1].toString()) : BigDecimal.ZERO;
             numberTransactions = numberTransactions.multiply(BigDecimal.valueOf(100)).divide(totalCount, 2, RoundingMode.HALF_UP);
             revnTotalTransData.put("y", numberTransactions != null ? new BigDecimal(df.format(numberTransactions.doubleValue()))
             : 0);
@@ -326,9 +326,9 @@ public class RevenueDashboardRepository {
         for (final Object[] revenueObj : overallData) {
             final Map<String, Object> revnData = new HashMap<String, Object>();
             revnData.put("name", String.valueOf(revenueObj[0]));
-            final BigDecimal noOfProps = (BigDecimal) revenueObj[1];
+            final BigDecimal noOfProps = revenueObj[1] != null ? new BigDecimal(revenueObj[1].toString()) : BigDecimal.ZERO;
             revnData.put("noOfProps", noOfProps != null ? noOfProps.doubleValue() : "0");
-            final BigDecimal noOfTaxProps = (BigDecimal) revenueObj[2];
+            final BigDecimal noOfTaxProps = revenueObj[2] != null ? new BigDecimal(revenueObj[2].toString()) : BigDecimal.ZERO;
             revnData.put("noOfTaxProps", noOfTaxProps != null ? noOfTaxProps.doubleValue() : "0");
             final BigDecimal coverageEfficiency = (BigDecimal) revenueObj[3];
             revnData.put("y", coverageEfficiency != null ? coverageEfficiency.doubleValue() : "0");
