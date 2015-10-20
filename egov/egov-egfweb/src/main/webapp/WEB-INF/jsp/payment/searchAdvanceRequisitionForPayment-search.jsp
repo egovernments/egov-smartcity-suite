@@ -148,13 +148,14 @@ var arfNumberSearchSelectionHandler = function(sType, arguments){
 										id="closeButton" name="button" onclick="window.close();" />
 							</td>
 						</tr>
-						<%@ include file='searchAdvanceRequisitionForPayment-result.jsp'%>
+						
 					</table>									
 				</td>
 				</tr>				
 			</table>
 			</div>
 			<!-- end of formmainbox -->
+			<%@ include file='searchAdvanceRequisitionForPayment-result.jsp'%>
 	</s:form>
 </body>
 </html>

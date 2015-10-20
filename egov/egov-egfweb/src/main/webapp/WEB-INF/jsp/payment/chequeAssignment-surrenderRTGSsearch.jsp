@@ -49,7 +49,7 @@
 			<jsp:include page="../budget/budgetHeader.jsp">
 				<jsp:param name="heading" value="RTGS Surrender Search" />
 			</jsp:include>
- 			<span class="mandatory" id="errrorSpan">
+ 			<span id="errrorSpan">
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage />
@@ -57,9 +57,9 @@
 			<div class="formmainbox"><div class="subheadnew"><s:text name="surrender.rtgs.search"/></div>
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
-					<td class="greybox" width="30%"><s:text name="chq.assignment.paymentvoucherdatefrom"/> </td>
+					<td class="greybox"><s:text name="chq.assignment.paymentvoucherdatefrom"/> </td>
 					<td class="greybox"><s:textfield name="fromDate" id="fromDate" maxlength="20" value="%{fromDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].fromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)</td>
-					<td class="greybox" width="30%"><s:text name="chq.assignment.paymentvoucherdateto"/> </td>
+					<td class="greybox"><s:text name="chq.assignment.paymentvoucherdateto"/> </td>
 					<td class="greybox"><s:textfield name="toDate" id="toDate" maxlength="20" value="%{toDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 				</tr>
 				<tr>
@@ -69,16 +69,16 @@
 					<td class="bluebox"><s:textfield name="instrumentNumber" id="instrumentNumber" onkeyup="validateOnlyNumber()"/></td>
 				</tr>
 				<tr>
-					<td class="greybox"><s:text name="bank"/><span class="mandatory">*</span></td>
+					<td class="greybox"><s:text name="bank"/><span class="mandatory"></span></td>
 					<td class="greybox"><s:select name="bank_branch" id="bank_branch" list="dropdownData.bankbranchList" listKey="bankBranchId" listValue="bankBranchName"  headerKey="-1" headerValue="----Choose----" onchange="loadBankAccount(this)" /></td>
 					 <egov:ajaxdropdown id="bankaccount" fields="['Text','Value']" dropdownId="bankaccount" url="voucher/common!ajaxLoadBanksAccountsWithAssignedCheques.action" />
-					<td class="greybox"><s:text name="bankaccount"/><span class="mandatory">*</span></td>
+					<td class="greybox"><s:text name="bankaccount"/><span class="mandatory"></span></td>
 					<td class="greybox"  colspan="2"><s:select name="bankaccount" id="bankaccount" list="dropdownData.bankaccountList" listKey="id" listValue="chartofaccounts.glcode+'--'+accountnumber+'---'+accounttype"  headerKey="-1" headerValue="----Choose----" value="%{bankaccount}"/></td>
 				</tr>
 				<tr>
 				<s:if test="%{shouldShowHeaderField('department')}">
 	<td class="greybox"><s:text name="voucher.department"/>
-	<s:if test="%{isFieldMandatory('department')}"><span class="bluebox"><span class="mandatory">*</span></span></s:if></td>
+	<s:if test="%{isFieldMandatory('department')}"><span class="bluebox"><span class="mandatory"></span></span></s:if></td>
 	<td class="greybox"><s:select name="department" id="department" list="dropdownData.departmentList" listKey="id" listValue="deptName" headerKey="" headerValue="----Choose----"  value="%{department}"  /><td>
 	</s:if>
 				<td></td>
