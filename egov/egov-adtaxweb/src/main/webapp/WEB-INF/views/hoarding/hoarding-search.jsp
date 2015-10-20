@@ -75,21 +75,24 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.hoarding.category"/></label>
                         <div class="col-sm-3 add-margin">
-                        	<select id="categories" class="form-control">
-                       			<option value="0"> <spring:message code="lbl.select"/> </option>
-                       			<c:forEach items="${hoardingcategories}" var="hoardingcategory">
+                        			
+                   			<form:select path="category" id="categories" cssClass="form-control" 
+							cssErrorClass="form-control error">
+								<form:option value=""><spring:message code="lbl.select" /></form:option>
+									<c:forEach items="${hoardingcategories}" var="hoardingcategory">
                        				<option value="${hoardingcategory.id}"> ${hoardingcategory.name}</option>
                        			</c:forEach>
-                   			</select>
-                   			<form:hidden path="category" id="category"/>
-							<form:errors path="category" cssClass="error-msg"/>
+							</form:select>
+						 <form:errors path="category" cssClass="error-msg"/>
+                        
                         </div>
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.hoarding.subcategory"/></label>
                         <div class="col-sm-3 add-margin">
-		                    <select id="subcategories" class="form-control">
-                       			<option value="0"> <spring:message code="lbl.select"/> </option>
-                   			</select>
-                   			<form:hidden path="subCategory" id="subCategoryId"/>
+		                  
+		                  	<form:select path="subCategory" id="subcategories" cssClass="form-control" 
+							cssErrorClass="form-control error">
+								<form:option value=""><spring:message code="lbl.select" /></form:option>
+								</form:select>
 							<form:errors path="subCategory" cssClass="error-msg"/>
                         </div>
                     </div>

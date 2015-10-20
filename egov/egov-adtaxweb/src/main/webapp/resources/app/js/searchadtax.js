@@ -35,9 +35,9 @@ $(document).ready(function(){
 		$("#agencyId").val(data.value);    
    });
    
-	$('#subcategories').change(function(){
+	/*$('#subcategories').change(function(){
 		$("#subCategoryId").val($('#subcategories').val());    
-	});
+	});*/
 	
 	$('#zoneList').change(function(){
 		$.ajax({
@@ -78,7 +78,7 @@ $(document).ready(function(){
 			dataType: "json",
 			success: function (response) {
 				console.log("success"+response);
-				$("#category").val($('#categories').val());    
+				//$("#category").val($('#categories').val());    
 				$('#subcategories').empty();
 				$('#subcategories').append($("<option value=''>Select from below</option>"));
 				$.each(response, function(index, value) {
@@ -92,14 +92,24 @@ $(document).ready(function(){
 		});
 	});
 	
+	var prevdatatable;
+	
 	$('#search').click(function(e){
 		oTable= $('#adtax_search');
-		 var radioValue = $("input[name='searchType']:checked").val();
-		 var radioBtnVal = radioValue.replace(/^"?(.+?)"?$/,'$1'); 
+		var radioValue = $("input[name='searchType']:checked").val();
+		var radioBtnVal = radioValue.replace(/^"?(.+?)"?$/,'$1'); 
 
+	    console.log('radio button value is -> '+radioBtnVal);
+		
+		if(prevdatatable)
+		{
+			prevdatatable.fnClearTable();
+			$('#adtax_search thead tr').remove();
+		}
+		
 		if(radioBtnVal=='hoarding'){
-	//		oTable.dataTable().clear();
-		oTable.dataTable({
+		//oTable.fnClearTable();
+			prevdatatable = oTable.dataTable({
 			"sPaginationType": "bootstrap",
 			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -113,14 +123,14 @@ $(document).ready(function(){
 						  { "data" : "agencyName", "title": "Agency"},
 						  { "data" : "pendingDemandAmount", "title": "Amount"},
 						  { "data" : "penaltyAmount", "title": "Penalty Amount"},
-						  { "data" : null, "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Collect</button>&nbsp;'}
+						  { "data" : "", "title": "Actions","target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Collect</button>&nbsp;'}
 
 						  ],
-						  "aaSorting": [[2, 'desc']] 
+						  "aaSorting": [[4, 'asc']] 
 				});
 		} else {
-			//oTable.dataTable().clear();
-			oTable.dataTable({
+			
+			prevdatatable = oTable.dataTable({
 				"sPaginationType": "bootstrap",
 				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6'l><'col-md-1 col-xs-2 text-right'p>>",
 				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -133,10 +143,9 @@ $(document).ready(function(){
 							  { "data" : "totalHoardingInAgency", "title": "No.of hoarding"},
 							  { "data" : "pendingDemandAmount", "title": "Total Amount"},
 							  { "data" : "penaltyAmount", "title": "Penalty Amount"},
-							  { "data" : null, "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary collect-agencyWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Collect</button>&nbsp;'}
+							  { "data" : "","title": "Actions", "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary collect-agencyWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Collect</button>&nbsp;'}
 
-							  ],
-							  "aaSorting": [[2, 'desc']]
+							  ]
 					});
 		}
 		e.stopPropagation();
@@ -159,9 +168,8 @@ $(document).ready(function(){
 			  { "data" : "applicationFromDate", "title": "Application Date"},
 			  { "data" : "agencyName", "title": "Agency"},
 			  { "data" : "status", "title": "Hoarding Status"},
-			  { "data" : null, "target":-1,"defaultContent": '<span class="add-padding"><i class="fa fa-edit history-size" class="tooltip-secondary" data-toggle="tooltip" title="Edit"></i></span><span class="add-padding"><i class="fa fa-eye history-size" class="tooltip-secondary" data-toggle="tooltip" title="View"></i></span>'},
-			  ],
-			  "aaSorting": [[2, 'desc']]
+			  { "data" : "", "target":-1,"defaultContent": '<span class="add-padding"><i class="fa fa-edit history-size" class="tooltip-secondary" data-toggle="tooltip" title="Edit"></i></span><span class="add-padding"><i class="fa fa-eye history-size" class="tooltip-secondary" data-toggle="tooltip" title="View"></i></span>'},
+			  ]
 		});
 		e.stopPropagation();
 	});
