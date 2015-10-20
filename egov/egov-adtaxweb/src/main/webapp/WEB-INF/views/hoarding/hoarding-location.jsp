@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%> 
 		<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-								<spring:message code="lbl.hoarding.location"/>
+								<spring:message code="lbl.hoarding.locality"/>
 								</div>
 							</div>		
 							<div class="form-group">
@@ -62,11 +62,11 @@
 									<span class="mandatory"></span></label>
 							
 								<div class="col-sm-3 add-margin">
-								<form:select path="location" id="location" cssClass="form-control" cssErrorClass="form-control error" required="required">
+								<form:select path="locality" id="locality" cssClass="form-control" cssErrorClass="form-control error" required="required">
 										<form:option value=""><spring:message code="lbl.select" /></form:option>
 										<form:options items="${localities}" itemLabel="name" itemValue="id"/>
 									</form:select>
-									<form:errors path="location" cssClass="error-msg" />
+									<form:errors path="locality" cssClass="error-msg" />
 								</div>
 							</div>
 							<div class="form-group">

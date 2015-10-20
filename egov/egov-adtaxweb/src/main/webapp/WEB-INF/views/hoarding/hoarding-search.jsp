@@ -96,7 +96,7 @@
                      <div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.locality"/></label>
 					    <div class="col-sm-3 add-margin">
-					    	<form:select path="location" id="zoneList" cssClass="form-control" 
+					    	<form:select path="locality" id="zoneList" cssClass="form-control" 
 							cssErrorClass="form-control error">
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
 								<c:forEach items="${localities}" var="zone">

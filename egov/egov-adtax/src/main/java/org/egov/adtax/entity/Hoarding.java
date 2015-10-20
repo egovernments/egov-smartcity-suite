@@ -186,8 +186,8 @@ public class Hoarding extends AbstractAuditable {
    
  
     @ManyToOne
-    @JoinColumn(name = "location")
-    private Boundary location;
+    @JoinColumn(name = "locality")
+    private Boundary locality;
 
     @NotNull
     @ManyToOne
@@ -512,12 +512,13 @@ public class Hoarding extends AbstractAuditable {
         this.penaltyCalculationDate = penaltyCalculationDate;
     }
 
-    public Boundary getLocation() {
-        return location;
+ 
+    public Boundary getLocality() {
+        return locality;
     }
 
-    public void setLocation(Boundary location) {
-        this.location = location;
+    public void setLocality(Boundary locality) {
+        this.locality = locality;
     }
 
     public Boundary getWard() {

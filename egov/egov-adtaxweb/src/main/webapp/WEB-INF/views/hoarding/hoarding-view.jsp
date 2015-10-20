@@ -154,7 +154,7 @@
 														
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-								<spring:message code="lbl.hoarding.location"/>
+								<spring:message code="lbl.hoarding.locality"/>
 								</div>
 							</div>	
 								<div class="form-group">
@@ -169,7 +169,7 @@
 									<spring:message code="lbl.locality"/>
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									<c:out value="${hoarding.location.name}" default="N/A"/>
+									<c:out value="${hoarding.locality.name}" default="N/A"/>
 								</div>
 							</div>
 							<div class="form-group">

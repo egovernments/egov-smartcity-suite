@@ -74,7 +74,7 @@ public class HoardingRepositoryImpl implements HoardingRepositoryCustom {
         if (isNotBlank(hoardingSearch.getPermissionNumber()))
             hoardingCriteria.add(Restrictions.eq("permissionNumber", hoardingSearch.getPermissionNumber()));
         if (hoardingSearch.getAdminBoundryParent() != null) 
-            hoardingCriteria.add(Restrictions.eq("location.id", hoardingSearch.getAdminBoundryParent()));
+            hoardingCriteria.add(Restrictions.eq("locality.id", hoardingSearch.getAdminBoundryParent()));
         if (hoardingSearch.getAdminBoundry() != null)
             hoardingCriteria.add(Restrictions.eq("ward.id", hoardingSearch.getAdminBoundry()));
         if (hoardingSearch.getCategory() != null)
@@ -97,7 +97,7 @@ public class HoardingRepositoryImpl implements HoardingRepositoryCustom {
     @Override
     public List<Object[]> fetchHoardingsBySearchType(final Hoarding hoarding, final String searchType) {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Hoarding.class, "hoarding")
-                .createAlias("hoarding.ward", "ward").createAlias("hoarding.location", "location")
+                .createAlias("hoarding.ward", "ward").createAlias("hoarding.locality", "locality")
                 .createAlias("hoarding.category", "category").createAlias("hoarding.subCategory", "subCategory")
                 .createAlias("hoarding.revenueInspector", "revenueInspector").createAlias("hoarding.agency", "agency");
         if ("agency".equalsIgnoreCase(searchType))
@@ -105,8 +105,8 @@ public class HoardingRepositoryImpl implements HoardingRepositoryCustom {
                     .add(Projections.rowCount(), "count")).setResultTransformer(Transformers.aliasToBean(AgencyWiseResult.class));
         if (null != hoarding.getHoardingNumber() && !hoarding.getHoardingNumber().isEmpty())
             criteria.add(Restrictions.eq("hoarding.hoardingNumber", hoarding.getHoardingNumber()));
-        if (null != hoarding.getLocation())
-            criteria.add(Restrictions.eq("location.id", hoarding.getLocation().getId()));
+        if (null != hoarding.getLocality())
+            criteria.add(Restrictions.eq("locality.id", hoarding.getLocality().getId()));
         if (null != hoarding.getWard())
             criteria.add(Restrictions.eq("ward.id", hoarding.getWard().getId()));
         if (null != hoarding.getCategory())
@@ -132,8 +132,8 @@ public class HoardingRepositoryImpl implements HoardingRepositoryCustom {
         
         if (null != hoarding.getHoardingNumber() && !hoarding.getHoardingNumber().isEmpty())
             hoardingCriteria.add(Restrictions.eq("hoarding.hoardingNumber", hoarding.getHoardingNumber()));
-        if (null != hoarding.getLocation())
-            hoardingCriteria.add(Restrictions.eq("location.id", hoarding.getLocation().getId()));
+        if (null != hoarding.getLocality())
+            hoardingCriteria.add(Restrictions.eq("locality.id", hoarding.getLocality().getId()));
         if (null != hoarding.getWard())
             hoardingCriteria.add(Restrictions.eq("ward.id", hoarding.getWard().getId()));
      if (null != hoarding.getCategory())

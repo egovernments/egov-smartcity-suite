@@ -53,7 +53,7 @@ $(document).ready(function(){
 	   callPropertyTaxRest(); 
 	});
    
-   $('#location').change(function() {
+   $('#locality').change(function() {
 	//	 alert('HI');
 		 populateBoundaries();
 	 });
@@ -119,13 +119,13 @@ $(document).ready(function(){
 				dataType: "json",
 				data:{'parentBoundaryId' : this.value}
 			}).done(function(value) {
-				$('#location option:gt(0)').remove();
+				$('#locality option:gt(0)').remove();
 				$.each(value, function(index, val) {
-				     $('#location').append($('<option>').text(val.name).attr('value', val.id));
+				     $('#locality').append($('<option>').text(val.name).attr('value', val.id));
 				});
-				if(location !== '') {
-					$("select#location").val(location); 
-					location = '';
+				if(locality !== '') {
+					$("select#locality").val(locality); 
+					locality = '';
 				}
 			});
 		}
@@ -154,7 +154,7 @@ $(document).ready(function(){
    function resetOnPropertyNumChange(){
 
     	$('#ward').html("");
-    	$('#location').val("");
+    	$('#locality').val("");
 		$('#block').html("");
 		$('#street').html("");
 		$('#address').val("");
@@ -175,7 +175,7 @@ $(document).ready(function(){
 				success:function(data){
 					if(data.errorDetails.errorCode != null && data.errorDetails.errorCode != ''){
 						alert(data.errorDetails.errorMessage);
-						$('#location').val("");
+						$('#locality').val("");
 						
 						document.getElementById("propertyNumber").value="";
 						resetOnPropertyNumChange();
@@ -187,7 +187,7 @@ $(document).ready(function(){
 							$('#street').html("");
 							$('#address').val("");
 							
-							$('#location').val(data.boundaryDetails.localityId);
+							$('#locality').val(data.boundaryDetails.localityId);
 							$('#ward').append("<option value='"+data.boundaryDetails.wardId+"'>"+data.boundaryDetails.wardName+"</option>");
 							$('#block').append("<option value='"+data.boundaryDetails.blockId+"'>"+data.boundaryDetails.blockName+"</option>");
 							if(data.boundaryDetails.streetId!=null)
@@ -212,14 +212,14 @@ $(document).ready(function(){
    }
    function populateBoundaries() {
 		//alert('HI0000000000');
-		console.log("came jursidiction"+$('#location').val());
+		console.log("came jursidiction"+$('#locality').val());
 		$.ajax({
 			type: "GET",
 			url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
 			cache: true,
 			dataType: "json",
 			data:{
-				locality : $('#location').val()
+				locality : $('#locality').val()
 		  	   }
 			}).done(function(response) {
 
@@ -241,7 +241,7 @@ $(document).ready(function(){
 				$('#ward').html("");
 				$('#block').html("");
 				$('#street').html("");
-				alert("No boundary details mapped for location");
+				alert("No boundary details mapped for locality");
 			 });
 			
 	
@@ -310,6 +310,6 @@ $(document).ready(function(){
    }
    
    $('#category').trigger('change');
-   $('#location').trigger('change');
+   $('#locality').trigger('change');
    $('#revenueBoundryParent').trigger('change');
 });
