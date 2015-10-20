@@ -74,6 +74,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.bean.PropertyNoticeInfo;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -193,7 +194,9 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         final Ptdemand currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
         BigDecimal totalTax = BigDecimal.ZERO;
 		for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {
-			totalTax = totalTax.add(demandDetail.getAmount());
+			if(demandDetail.getEgDemandReason().getEgInstallmentMaster().equals(PropertyTaxUtil.getCurrentInstallment())){
+				totalTax = totalTax.add(demandDetail.getAmount());
+			}
 			if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
 					.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS))
 				ownerInfo.setEducationTax(demandDetail.getAmount());
