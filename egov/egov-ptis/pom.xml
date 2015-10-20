@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.egov</groupId>
 		<artifactId>egov-erp</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>egov-ptis</artifactId>
 	<name>e-governments ptis</name>
@@ -12,43 +12,43 @@
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-egi</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-eis</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-config</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-portal</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-demand</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-egf</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-collection</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		
 	<dependency>
 	    <groupId>org.egov</groupId>
 	    <artifactId>egov-egi</artifactId>
-	    <version>1.0-SNAPSHOT</version>
+	    <version>1.0.0-SNAPSHOT</version>
 	    <classifier>tests</classifier>
 	    <scope>test</scope>
 	</dependency>
@@ -56,21 +56,21 @@
 	<dependency>
 	    <groupId>org.egov</groupId>
 	    <artifactId>egov-config</artifactId>
-	    <version>1.0-SNAPSHOT</version>
+	    <version>1.0.0-SNAPSHOT</version>
 	    <classifier>tests</classifier>
 	    <scope>test</scope>
 	</dependency>
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-commons</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.0-SNAPSHOT</version>
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency> 
 	 <dependency>
 	    <groupId>org.egov</groupId>
 	    <artifactId>egov-eis</artifactId>
-	    <version>1.0-SNAPSHOT</version>
+	    <version>1.0.0-SNAPSHOT</version>
 	    <classifier>tests</classifier>
 	    <scope>test</scope>
 	</dependency>
@@ -396,7 +396,7 @@
 					<dependency>
 						<groupId>org.egov</groupId>
 						<artifactId>egov-egi</artifactId>
-						<version>1.0-SNAPSHOT</version>
+						<version>1.0.0-SNAPSHOT</version>
 					</dependency>
 					<dependency>
 		                <groupId>joda-time</groupId>
@@ -406,7 +406,7 @@
 		            <dependency>
 						<groupId>org.egov</groupId>
 						<artifactId>egov-demand</artifactId>
-						<version>1.0-SNAPSHOT</version>
+						<version>1.0.0-SNAPSHOT</version>
 					</dependency>
 		            <dependency>
 						<groupId>org.egov</groupId>

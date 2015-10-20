@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>egov-erp</artifactId>
 		<groupId>org.egov</groupId>
-		<version>1.0-SNAPSHOT</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -16,13 +16,13 @@
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-pgr</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-egi</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0.0-SNAPSHOT</version>
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
@@ -30,13 +30,13 @@
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-ptis</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-wtms</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		
 		<!-- VIEWS RELATED END -->
@@ -91,7 +91,7 @@
 
 	<!--  
 	<build>
-		<outputDirectory>Y:\etc\wildfly-9.0.0.CR1\standalone\deployments\egov-ear-1.0-SNAPSHOT.ear\egov-api-1.0-SNAPSHOT.war\WEB-INF\classes</outputDirectory>
+		<outputDirectory>Y:\etc\wildfly-9.0.0.CR1\standalone\deployments\egov-ear-1.0.0-SNAPSHOT.ear\egov-api-1.0.0-SNAPSHOT.war\WEB-INF\classes</outputDirectory>
 	</build>
 	-->
 </project>
