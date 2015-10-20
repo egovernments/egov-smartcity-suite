@@ -114,21 +114,24 @@
 		        	<li class="visible-sm-block visible-xs-block">
 		        		<a data-toggle="tooltip" data-placement="bottom" title="Home" href="/dashboard/home"><i class="fa fa-home fa-lg fa-fw"></i> Smart City Home</a>
 		        	</li>
-		        	<!-- <li id='deflt'>
-	              		<a  href="javascript:void(0)" class="menu-item" data-fn="redressalEfficiency" data-win="performanceWin" id="pgrPerf"><i class="fa fa-bar-chart fa-lg fa-fw"></i> Efficiency</a>
+		        	<li id='deflt'>
+	              		<a  href="javascript:void(0)" class="menu-item" data-fn="overviewArea" data-win="overviewWin" id="revenueOv"><i class="fa fa-bar-chart fa-lg fa-fw"></i> Target vs Actual</a>
 	              	</li>
-		            <li>
-		            	<a href="javascript:void(0)"  class="menu-item" data-fn="openCompPendency" data-win="slaWin" id="pgrSla"><i class="fa fa-pie-chart fa-lg fa-fw"></i> Pendency</a>
+	              	<li>
+		            	<a href="javascript:void(0)"  class="menu-item" data-fn="coverageEfficiency" data-win="coverageEfficiencyWin" id="revenueCov"><i class="fa fa-flash fa-lg fa-fw"></i> Coverage Eff.</a>
 		            </li>
 		            <li>
-		            	<a href="javascript:void(0)"  class="menu-item" data-fn="compTypeDistribution" data-win="overviewWin" id="pgrOverview"><i class="fa fa-flash fa-lg fa-fw"></i> Type Distribution</a>
+		            	<a href="javascript:void(0)"  class="menu-item" data-fn="zonewiseAnalysis" data-win="zonewiseAnalysisWin" id="zonewiseAnalysis"><i class="fa fa-pie-chart fa-lg fa-fw"></i> Zone Analysis</a>
 		            </li>
-		             <li id='top5'>
-		            	<a href="javascript:void(0)"  class="menu-item" data-fn="topFiveCompType" data-win="topFiveCompTypeWin" id="topFiveCompTypeview"><i class="fa fa-area-chart fa-lg fa-fw"></i> Top Five Complaint Types</a>
+		             <li>
+		            	<a href="javascript:void(0)"  class="menu-item" data-fn="wardwiseAnalysis" data-win="wardwiseAnalysisWin" id="wardwiseAnalysis"><i class="fa fa-area-chart fa-lg fa-fw"></i> Ward Analysis</a>
 		            </li>
 		            <li>
-		            	<a href="javascript:void(0)"  class="menu-item" data-fn="wardwiseAnalysis" data-win="wardwiseAnalysisWin" id="wardwiseAnalysis"><i class="fa fa-map-marker fa-lg fa-fw"></i> GIS Analysis</a>
-		            </li> -->
+		            	<a href="javascript:void(0)"  class="menu-item" data-fn="collectionEfficiency" data-win="performanceWin" id="revenuePerf"><i class="fa fa-map-marker fa-lg fa-fw"></i> Collection Eff.</a>
+		            </li>
+		            <li>
+		            	<a href="javascript:void(0)"  class="menu-item" data-fn="collectionsPaymentMode" data-win="collectionsPaymentWin" id="revenueColl"><i class="fa fa-map-marker fa-lg fa-fw"></i> Collection Mode</a>
+		            </li>
 		      </ul>
 		    </div>
 		  </div>

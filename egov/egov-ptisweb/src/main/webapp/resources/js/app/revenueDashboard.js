@@ -1,5 +1,10 @@
+//Initial view
 var lastbtnId = "revenueOv";
 var lastWinId = "overviewWin";
+if(isdefault) {
+	$("#deflt").addClass("active");
+}
+
 $(".menu-item").click(function(){
 	var btnId = $(this).attr('id');
 	var winId = $(this).data('win');
@@ -482,7 +487,7 @@ function coverageEfficiency() {
 	}
 	$("#coverageEfficiencyGraph").empty();
 	setTitle("Zonal Coverage Eff.");
-	$.ajax({url:"coverageEfficiency.do",
+	$.ajax({url:"/ptis/dashboard/coverage-efficiency",
 		cache:false
 	}).done(function(coverageEfficiencydata) {
 		$('#coverageEfficiencyGraph').highcharts({
@@ -577,7 +582,7 @@ function coverageEfficiencyDrilldown(zoneName) {
 		$("#coverageEfficiencyGraph").highcharts().destroy();
 	}
 	setTitle("Ward Coverage Eff.");
-	$.ajax({url:"coverageEfficiencyWard.do?zoneName="+zoneName,
+	$.ajax({url:"/ptis/dashboard/coverage-efficiency-ward?zoneName="+zoneName,
 		cache:false
 	}).done(function(data) {
 		$('#coverageEfficiencyGraph').highcharts({

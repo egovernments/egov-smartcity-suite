@@ -37,6 +37,9 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
+<script>
+	var isdefault = true;
+</script>
 <div id="performanceWin" class="container-win" style="display:none">
 	<div class="row">
 		<div class="col-md-6 col-lg-6 col-sm-12">
