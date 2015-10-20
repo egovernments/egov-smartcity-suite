@@ -75,7 +75,7 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control datepicker" path="applicationDate" id="applicationDate" required="required" readonly="true"/>
+									<form:input type="text" cssClass="form-control " path="applicationDate" id="applicationDate" required="required" readonly="true"/>
                                		<form:errors path="applicationDate" cssClass="error-msg" />
 								</div>
 							</div>

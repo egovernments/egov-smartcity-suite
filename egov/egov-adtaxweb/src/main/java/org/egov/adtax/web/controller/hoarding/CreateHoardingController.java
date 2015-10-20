@@ -56,6 +56,7 @@ import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.utils.DateUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -111,19 +112,52 @@ public class CreateHoardingController extends HoardingControllerSupport {
     public String createHoarding(@Valid @ModelAttribute final Hoarding hoarding, final BindingResult resultBinder,
             final RedirectAttributes redirAttrib) {
         validateHoardingDocs(hoarding, resultBinder);
+        validateApplicationDate(hoarding, resultBinder);
         if (resultBinder.hasErrors())
             return "hoarding-create";
         storeHoardingDocuments(hoarding);
-        hoarding.setPenaltyCalculationDate(new Date());
+        hoarding.setPenaltyCalculationDate(hoarding.getApplicationDate());
         hoardingService.createHoarding(hoarding);
         redirAttrib.addFlashAttribute("message", "hoarding.create.success");
         return "redirect:/hoarding/create";
     }
 
+    private void validateApplicationDate(Hoarding hoarding, BindingResult resultBinder) {
+       if(hoarding!=null && hoarding.getApplicationDate()!=null )
+       {
+           final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
+           if (installmentObj != null && installmentObj.getFromDate() != null)
+           {
+               if( hoarding.getApplicationDate().after(DateUtils.endOfDay(installmentObj.getToDate()))||
+               hoarding.getApplicationDate().before(DateUtils.startOfDay(installmentObj.getFromDate())))
+               {
+                   resultBinder.rejectValue("applicationDate", "invalid.applicationDate");
+               }
+           }
+           
+       }
+        
+    }
+    private void validateLegacyApplicationDate(Hoarding hoarding, BindingResult resultBinder) {
+        if(hoarding!=null && hoarding.getApplicationDate()!=null )
+        {
+            final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
+            if (installmentObj != null && installmentObj.getToDate() != null)
+            {
+                if( hoarding.getApplicationDate().after(DateUtils.endOfDay(installmentObj.getToDate())))
+                {
+                    resultBinder.rejectValue("applicationDate", "invalid.applicationDateForLegacy");
+                }
+            }
+            
+        }
+         
+     }
     @RequestMapping(value = "createLegacy", method = POST)
     public String createLegacyHoarding(@Valid @ModelAttribute final Hoarding hoarding,
             final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
         validateHoardingDocs(hoarding, resultBinder);
+        validateLegacyApplicationDate(hoarding, resultBinder);
         if (resultBinder.hasErrors())
             return "hoarding-createLegacy";
         storeHoardingDocuments(hoarding);
