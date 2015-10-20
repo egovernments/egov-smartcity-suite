@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.wtms.masters.entity.UsageType;
+import org.egov.wtms.masters.entity.WaterPropertyUsage;
 import org.egov.wtms.masters.repository.UsageTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -109,6 +110,9 @@ public class UsageTypeService {
 
     public List<UsageType> getAllUsageTypesByPropertyType(final Long propertyType) {
         return usageTypeRepository.getAllUsageTypesByPropertyType(propertyType);
+    }
+    public WaterPropertyUsage getAllUsageTypesByPropertyTypeAndUsageType(final String propertyType,final String usageTypeCode) {
+        return usageTypeRepository.getAllUsageTypesByPropertyTypeAndUsageType(propertyType,usageTypeCode);
     }
 
     public List<UsageType> getUsageTypeListForRest() {

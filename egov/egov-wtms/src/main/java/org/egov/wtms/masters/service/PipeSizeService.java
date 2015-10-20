@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.wtms.masters.entity.PipeSize;
+import org.egov.wtms.masters.entity.PropertyPipeSize;
 import org.egov.wtms.masters.repository.PipeSizeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -102,6 +103,10 @@ public class PipeSizeService {
         return pipeSizeRepository.getAllPipeSizesByPropertyType(propertyType);
     }
 
+    public PropertyPipeSize getAllPipeSizesByPropertyTypeAnPipeSize(final String propertyType,final String pipesizeCode) {
+        return pipeSizeRepository.getAllPipeSizesByPropertyTypeAndPipesize(propertyType,pipesizeCode);
+    }
+    
     public List<PipeSize> getPipeSizeListForRest() {
         final List<PipeSize> pipeSizeList = pipeSizeRepository.findByActiveTrueOrderBySizeInInchAsc();
         final List<PipeSize> prepareListForRest = new ArrayList<PipeSize>(0);

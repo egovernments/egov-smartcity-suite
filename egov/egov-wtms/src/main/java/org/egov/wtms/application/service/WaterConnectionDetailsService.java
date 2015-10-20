@@ -55,11 +55,13 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -107,6 +109,9 @@ public class WaterConnectionDetailsService {
 
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
@@ -204,6 +209,12 @@ public class WaterConnectionDetailsService {
             waterConnectionDetails.setDisposalDate(getDisposalDate(waterConnectionDetails, appProcessTime));
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
+        //TODO: as off now using anonymous created for MeeSeva after we need to craete role for this and add in appconfig for recordCreatedBYNonEmployee API
+        // so it will work as CSC Operator record
+        if(userService.getUserById(waterConnectionDetails.getCreatedBy().getId()).getUsername().equals("anonymous")){
+        EgovThreadLocals.setUserId(Long.valueOf("40"));
+        savedWaterConnectionDetails.setCreatedBy(userService.getUserById(EgovThreadLocals.getUserId()));
+        }
         if (LOG.isDebugEnabled())
             LOG.debug(" persisting WaterConnectionDetail object is completed and WorkFlow API Stared ");
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = getInitialisedWorkFlowBean();

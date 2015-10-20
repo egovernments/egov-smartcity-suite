@@ -41,9 +41,8 @@ package org.egov.wtms.masters.repository;
 
 import java.util.List;
 
-import org.egov.wtms.masters.entity.ConnectionCategory;
-import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.UsageType;
+import org.egov.wtms.masters.entity.WaterPropertyUsage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -64,5 +63,9 @@ public interface UsageTypeRepository extends JpaRepository<UsageType, Long> {
 
     @Query("select PU.usagetype from org.egov.wtms.masters.entity.WaterPropertyUsage PU where PU.propertyType=:propertyType ")
     List<UsageType> getAllUsageTypesByPropertyType(@Param("propertyType") Long propertyType);
-    
+
+    @Query("select PU from org.egov.wtms.masters.entity.WaterPropertyUsage PU where PU.propertyType in(select PT.id from PropertyType PT where PT.code =:propertyType) and PU.usagetype.code=:usageTypeCode")
+    WaterPropertyUsage getAllUsageTypesByPropertyTypeAndUsageType(@Param("propertyType") String propertyType,
+            @Param("usageTypeCode") String usageTypeCode);
+
 }

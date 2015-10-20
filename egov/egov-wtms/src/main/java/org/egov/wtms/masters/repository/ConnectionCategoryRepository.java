@@ -42,6 +42,7 @@ package org.egov.wtms.masters.repository;
 import java.util.List;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
+import org.egov.wtms.masters.entity.PropertyCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -63,5 +64,8 @@ public interface ConnectionCategoryRepository extends JpaRepository<ConnectionCa
 
     @Query("select PC.categorytype from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType=:propertyType and PC.categorytype.name != 'BPL' ")
     List<ConnectionCategory> getAllCategoryTypesByPropertyTypeNotInBPL(@Param("propertyType") Long propertyType);
+    
+    @Query("select PC from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType in (select PT.id from PropertyType PT where PT.code =:propertyType) and PC.categorytype.code =:categoryCode ")
+    PropertyCategory getAllCategoryTypesByPropertyTypeAndCategory(@Param("propertyType") String propertyType,@Param("categoryCode") String categoryCode);
 
 }
