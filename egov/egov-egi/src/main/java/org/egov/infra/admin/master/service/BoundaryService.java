@@ -197,7 +197,7 @@ public class BoundaryService {
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         
        crossHierarchyService
-        .getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Ward", "Location", '%'+name+'%')
+        .getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Ward", "Location","Administration", '%'+name+'%')
         .stream().forEach(location -> {
         	Map<String, Object> res = new HashMap<String, Object>();
         	res.put("id", location.getId());

@@ -104,7 +104,7 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
         final String locationNameLike = "%" + locationName + "%";
 
         crossHierarchyService
-                .getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Ward", "Location", locationNameLike)
+                .getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Ward", "Location","Administration", locationNameLike)
                 .stream().forEach(location -> {
                     locationJSONData.append("{\"name\":\"");
 
