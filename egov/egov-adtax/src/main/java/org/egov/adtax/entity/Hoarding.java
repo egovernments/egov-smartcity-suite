@@ -184,9 +184,9 @@ public class Hoarding extends AbstractAuditable {
     @JoinColumn(name = "revenueinspector")
     private RevenueInspector revenueInspector;
    
-    @NotNull
+ 
     @ManyToOne
-    @JoinColumn(name = "location", nullable = true)
+    @JoinColumn(name = "location")
     private Boundary location;
 
     @NotNull
@@ -194,9 +194,9 @@ public class Hoarding extends AbstractAuditable {
     @JoinColumn(name = "ward", nullable = false)
     private Boundary ward;
     
-    @NotNull
+
     @ManyToOne
-    @JoinColumn(name = "block", nullable = false)
+    @JoinColumn(name = "block")
     private Boundary block;
     
     @ManyToOne
