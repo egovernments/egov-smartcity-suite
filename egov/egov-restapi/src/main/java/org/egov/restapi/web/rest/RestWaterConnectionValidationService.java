@@ -40,50 +40,31 @@ public class RestWaterConnectionValidationService {
             final WaterPropertyUsage usageTypesList = usageTypeService.getAllUsageTypesByPropertyTypeAndUsageType(
                     connectionInfo.getPropertyType(), connectionInfo.getUsageType());
 
-            if (connectionInfo.getPropertyType().equals("RESIDENTIAL") && usageTypesList == null) {
+           if(usageTypesList == null) {
                 errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.PROPERTY_RESIDENTIAL_USAGETYPE_COMBINATION_VALID_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_RESIDENTIAL_USAGETYPE_COMBINATION_VALID);
+                errorDetails.setErrorCode(RestApiConstants.PROPERTY_USAGETYPE_COMBINATION_VALID_CODE);
+                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_USAGETYPE_COMBINATION_VALID);
                 return errorDetails;
-
-            } else if (connectionInfo.getPropertyType().equals("NON-RESIDENTIAL") && usageTypesList == null) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.PROPERTY_NONRESIDENTIAL_USAGETYPE_COMBINATION_VALID_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_NONRESIDENTIAL_USAGETYPE_COMBINATION_VALID);
-                return errorDetails;
-
-            }
+           }
             final PropertyPipeSize pipeSizeList = pipeSizeService.getAllPipeSizesByPropertyTypeAnPipeSize(
                     connectionInfo.getPropertyType(), connectionInfo.getPipeSize());
-            if (connectionInfo.getPropertyType().equals("RESIDENTIAL") && pipeSizeList == null) {
+            if ( pipeSizeList == null) {
                 errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.PROPERTY_RESIDENTIAL_PIPESIZE_COMBINATION_VALID_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_RESIDENTIAL_PIPESIZE_COMBINATION_VALID);
+                errorDetails.setErrorCode(RestApiConstants.PROPERTY_PIPESIZE_COMBINATION_VALID_CODE);
+                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_PIPESIZE_COMBINATION_VALID);
                 return errorDetails;
-            } else if (connectionInfo.getPropertyType().equals("NON-RESIDENTIAL") && pipeSizeList == null) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.PROPERTY_NON_RESIDENTIAL_PIPESIZE_COMBINATION_VALID_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_NON_RESIDENTIAL_PIPESIZE_COMBINATION_VALID);
-                return errorDetails;
-
             }
 
             final PropertyCategory categoryTypes = connectionCategoryService
                     .getAllCategoryTypesByPropertyTypeAndCategory(connectionInfo.getPropertyType(),
                             connectionInfo.getCategory());
 
-            if (connectionInfo.getPropertyType().equals("RESIDENTIAL") && categoryTypes == null) {
+            if ( categoryTypes == null) {
                 errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.PROPERTY_RESIDENTIAL_CATEGORY_COMBINATION_VALID_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_RESIDENTIAL_CATEGORY_COMBINATION_VALID);
+                errorDetails.setErrorCode(RestApiConstants.PROPERTY_CATEGORY_COMBINATION_VALID_CODE);
+                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_CATEGORY_COMBINATION_VALID);
                 return errorDetails;
-            } else if (connectionInfo.getPropertyType().equals("NON-RESIDENTIAL") && categoryTypes == null) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.PROPERTY_NON_RESIDENTIAL_CATEGORY_COMBINATION_VALID_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_NON_RESIDENTIAL_CATEGORY_COMBINATION_VALID);
-                return errorDetails;
-
-            }
+            } 
         }
         return errorDetails;
     }

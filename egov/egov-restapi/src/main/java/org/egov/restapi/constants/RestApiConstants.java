@@ -128,28 +128,20 @@ public class RestApiConstants {
 	public static final String SURROUNDING_BOUNDARY_DETAILS_REQ_MSG = "Surrounding Boundary Details is required.";
 	
 	//Water TAx
-	public static final String PROPERTY_RESIDENTIAL_USAGETYPE_COMBINATION_VALID_CODE="42";
-	public static final String PROPERTY_RESIDENTIAL_USAGETYPE_COMBINATION_VALID = "if PropertyType is Residential then usageType must be Domestic or Apartment";
+	public static final String PROPERTY_USAGETYPE_COMBINATION_VALID_CODE="42";
+	public static final String PROPERTY_USAGETYPE_COMBINATION_VALID = "PropertyType and UsageType Combination is not valid";
 	
-	public static final String PROPERTY_NONRESIDENTIAL_USAGETYPE_COMBINATION_VALID_CODE="43";
-        public static final String PROPERTY_NONRESIDENTIAL_USAGETYPE_COMBINATION_VALID = "if PropertyType is Non-Residential then usageType must be Commercial or Lodges or Hotel or Industrial";
-        
-        public static final String PROPERTY_RESIDENTIAL_PIPESIZE_COMBINATION_VALID_CODE="44";
-        public static final String PROPERTY_RESIDENTIAL_PIPESIZE_COMBINATION_VALID = "if PropertyType is Residential then Pipesize must be 1/2 0r 1/4 or 3/4 or 1 or 2 Inches";
+	
+        public static final String PROPERTY_PIPESIZE_COMBINATION_VALID_CODE="44";
+        public static final String PROPERTY_PIPESIZE_COMBINATION_VALID = "PropertyType and Pipesize Combination is not valid";
 
-        public static final String PROPERTY_NON_RESIDENTIAL_PIPESIZE_COMBINATION_VALID_CODE="45";
-        public static final String PROPERTY_NON_RESIDENTIAL_PIPESIZE_COMBINATION_VALID = "if PropertyType is Residential then Pipesize must be 1/2 0r 1/4 or 3/4 or 1 or 2 or 3 or 4 Inches";
+        public static final String PROPERTY_CATEGORY_COMBINATION_VALID_CODE="49";
+        public static final String PROPERTY_CATEGORY_COMBINATION_VALID = "PropertyType and Category Combination is not valid";
 
-        public static final String PROPERTY_RESIDENTIAL_CATEGORY_COMBINATION_VALID_CODE="49";
-        public static final String PROPERTY_RESIDENTIAL_CATEGORY_COMBINATION_VALID = "if PropertyType is Residential then Category must be GENERAL OR BPL OR OYT";
-
-        public static final String PROPERTY_NON_RESIDENTIAL_CATEGORY_COMBINATION_VALID_CODE="48";
-        public static final String PROPERTY_NON_RESIDENTIAL_CATEGORY_COMBINATION_VALID = "if PropertyType is Non-Residential then Category must be GENERAL OR OYT ";
-
-        public static final String PROPERTYID_IS_VALID_CODE="46";
+       public static final String PROPERTYID_IS_VALID_CODE="46";
         public static final String PROPERTYID_IS_VALID = "Provided propertyId is not Valid";
         
         public static final String PROPERTYID_IS_VALID_CONNECTION_CODE="47";
-        public static final String PROPERTYID_IS_VALID_CONNECTION = "Provided propertyId is not Valid either its allready in connected with some other Connection or its InACtive";
+        public static final String PROPERTYID_IS_VALID_CONNECTION = "Provided propertyId has already connection";
 
 }
