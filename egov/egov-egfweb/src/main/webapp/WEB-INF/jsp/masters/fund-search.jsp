@@ -56,6 +56,7 @@
 	<s:hidden name="showMode"  />
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
     		<tr>
+    			<td class="greybox"></td>
 				<td class="greybox">Code</td>
 			    <td class="greybox"><s:textfield id="code" name="code" /></td>
 			    <td class="greybox">Name</td>
@@ -63,15 +64,12 @@
 			</tr>
     	
     	</table>
-    	
-    	<br/><br/>
-    	
     	<div class="buttonbottom">
 			<s:submit method="search" value="Search" cssClass="buttonsubmit" />
 			<input type="submit" value="Close"
 				onclick="javascript:window.close()" class="button" />
 		</div>
-		
+		</div>
 		<s:if test="%{fundSearchList.size!=0}">
 		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 		

@@ -61,21 +61,20 @@ function loadBank(obj)
         			<jsp:param name="heading" value='Remittance Recovery' />
 			</jsp:include>
 			
-			<span class="mandatory">
+			<span>
 			<font  style='color: red ; font-weight:bold '> 
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage /></font>
 			</span>
-		<div class="formheading"/><div class="subheadnew"><s:text name="remit.recovery.new.title"/></div>
-		<br/>
+		<div class="formmainbox"/><div class="subheadnew"><s:text name="remit.recovery.new.title"/></div>
 <div align="center">
 <font  style='color: red ; font-weight:bold '> 
 <p class="error-block" id="lblError" ></p></font>
     <table border="0" width="100%">
 	<tr>
 	<td class="greybox"></td>
-	    <td class="greybox"><s:text name="remit.recovery.search.code"/><span class="mandatory">*</span></td>
+	    <td class="greybox"><s:text name="remit.recovery.search.code"/><span class="mandatory"></span></td>
 	    <td class="greybox"><s:select name="remittanceBean.recoveryId" id="recoveryId" list="dropdownData.recoveryList" listKey="id" listValue="type" headerKey="-1" headerValue="----Choose----"  value="%{remittanceBean.recoveryId}"/></td>
 		<td  class="greybox" width="10%">
 		<td  class="greybox">
@@ -87,7 +86,7 @@ function loadBank(obj)
 		<s:textfield name="remittanceBean.fromVhDate" id="fromVhDate" value="%{remittanceBean.fromVhDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
 		<a href="javascript:show_calendar('remitRecoveryForm.fromVhDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 		
-		<td  class="bluebox" ><s:text name="remit.recovery.search.todate" /><span class="mandatory">*</span></td>
+		<td  class="bluebox" ><s:text name="remit.recovery.search.todate" /><span class="mandatory"></span></td>
 		<td  class="bluebox">
 		<s:date name="voucherDate" id="voucherDateId" format="dd/MM/yyyy"/>
 		<s:textfield name="voucherDate" id="voucherDate" value="%{voucherDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
@@ -105,6 +104,7 @@ function loadBank(obj)
 		<s:submit type="submit" cssClass="buttonsubmit" value="Search" id="search" name="search" method="search" onclick="return validateSearch();"/> 
 		<s:submit type="submit" cssClass="buttonsubmit" value="Cancel"   method="newform"/>
 		<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
+	</div>
 	</div>
 <s:if test='%{listRemitBean != null }'>
 <s:if test="%{ listRemitBean.size()>0}">

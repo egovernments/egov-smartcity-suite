@@ -40,11 +40,11 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
 			    <td class="bluebox">&nbsp;</td>
-				<td class="bluebox" width="20%"><strong><s:text name="function.code"/><span class="mandatory">*</span></strong></td>
+				<td class="bluebox" width="20%"><strong><s:text name="function.code"/><span class="mandatory"></span></strong></td>
 			    <td class="bluebox">
 			    	<s:textfield id="code" name="code" value="%{code}"/>
 			    </td>
-				<td class="bluebox" width="20%"><strong><s:text name="function.name"/><span class="mandatory">*</span></strong></td>
+				<td class="bluebox" width="20%"><strong><s:text name="function.name"/><span class="mandatory"></span></strong></td>
 			    <td class="bluebox">
 			    	<s:textfield id="name" name="name" value="%{name}"/>
 			    </td>

@@ -90,7 +90,6 @@
 				<s:fielderror />
 			</div>
 			<%@include file="partyType-form.jsp"%>
-			<br/><br/>
 		<div class="buttonbottom" align="center">
 		
  		<table align="center">

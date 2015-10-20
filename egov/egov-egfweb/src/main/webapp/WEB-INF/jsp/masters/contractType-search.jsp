@@ -82,14 +82,12 @@
 			</tr>    	
     	</table>
     	
-    	<br/><br/>
-    	
     	<div class="buttonbottom">
 			<s:submit method="search" value="Search" cssClass="buttonsubmit" />
 			<input type="submit" value="Close"
 				onclick="javascript:window.close()" class="button" />
 		</div>
-		
+		</div>
 		<s:if test="%{typeOfWorkList.size!=0}">
 		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 		

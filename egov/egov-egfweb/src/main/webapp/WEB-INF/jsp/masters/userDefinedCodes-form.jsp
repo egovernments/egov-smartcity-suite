@@ -40,7 +40,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
 			    <td class="greybox">&nbsp;</td>
-				<td class="greybox" width="20%"><strong><s:text name="subCodeFor"/><span class="mandatory">*</span></strong></td>
+				<td class="greybox" width="20%"><strong><s:text name="subCodeFor"/><span class="mandatory"></span></strong></td>
 			    <td class="greybox">
 			    	<s:select list="dropdownData.userDefCodeList" id="accEntity.accountdetailtype.id" listKey="id"	listValue="name" 
 			    	name="accEntity.accountdetailtype.id" headerKey=""	headerValue="---- Choose ----" 
@@ -50,11 +50,11 @@
 			</tr>
 			<tr>
 			    <td class="bluebox">&nbsp;</td>
-				<td class="bluebox" width="20%"><strong><s:text name="userDefCode.code"/><span class="mandatory">*</span></strong></td>
+				<td class="bluebox" width="20%"><strong><s:text name="userDefCode.code"/><span class="mandatory"></span></strong></td>
 			    <td class="bluebox">
 			    	<s:textfield id="code" name="code" value="%{code}"/>
 			    </td>
-				<td class="bluebox" width="20%"><strong><s:text name="userDefCode.name"/><span class="mandatory">*</span></strong></td>
+				<td class="bluebox" width="20%"><strong><s:text name="userDefCode.name"/><span class="mandatory"></span></strong></td>
 			    <td class="bluebox">
 			    	<s:textfield id="name" name="name" value="%{name}"/>
 			    </td>
