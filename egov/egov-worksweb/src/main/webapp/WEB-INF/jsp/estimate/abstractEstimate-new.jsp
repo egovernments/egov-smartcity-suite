@@ -463,7 +463,8 @@ jq(document).on('click', '#woView', function(){
 <s:if test="%{(hasErrors() || sourcepage=='inbox' || model.egwStatus==null || model.egwStatus.code=='NEW' 
 || model.egwStatus.code=='REJECTED') && (sourcepage=='inbox' || model.egwStatus==null || hasErrors())}">
 <!-- TODO:Fixeme - hard coded save button for time being till we implement common workflow -->
-<input type="submit" class="buttonfinal" value="SAVE" id="save" name="save" method="save" onclick="document.abstractEstimateForm.actionName.value='save';return validate('save');" />	  	
+<input type="submit" class="buttonfinal" value="SAVE" id="save" name="save" onclick="document.abstractEstimateForm.actionName.value='save';return validate('save');" />	  
+<input type="submit" class="buttonfinal" value="SAVE & SUBMIT" id="submit_for_approval" name="submit_for_approval" onclick="document.abstractEstimateForm.actionName.value='submit_for_approval';return validate('submit_for_approval');" />		
 	<!--<s:iterator value="%{validActions}"> 
 	  <s:if test="%{description!=''}">
 	  	<s:if test="%{description=='CANCEL' && model.estimateNumber!=null}">
@@ -613,8 +614,10 @@ jq(document).on('click', '#woView', function(){
 		document.abstractEstimateForm.BOQxlsButton.disabled=false;
 		document.abstractEstimateForm.closeButton.readonly=false;
 		document.abstractEstimateForm.closeButton.disabled=false;
-		document.abstractEstimateForm.financialDetailButton.readonly=false;
-		document.abstractEstimateForm.financialDetailButton.disabled=false;		
+		if(document.abstractEstimateForm.financialDetailButton!=null){
+			document.abstractEstimateForm.financialDetailButton.readonly=false;
+			document.abstractEstimateForm.financialDetailButton.disabled=false;		
+		}
 		
 		if(document.abstractEstimateForm.viewBudgetFolio!=null){
 			document.abstractEstimateForm.viewBudgetFolio.readonly=false;
@@ -650,9 +653,10 @@ jq(document).on('click', '#woView', function(){
 				document.abstractEstimateForm.updateFinancialDetailButton.readonly=false;
 				document.abstractEstimateForm.updateFinancialDetailButton.disabled=false;
 			}	
-			document.abstractEstimateForm.financialDetailButton.readonly=false;
-			document.abstractEstimateForm.financialDetailButton.disabled=false;
-			
+	       if(document.abstractEstimateForm.financialDetailButton){  
+				document.abstractEstimateForm.financialDetailButton.readonly=false;
+				document.abstractEstimateForm.financialDetailButton.disabled=false;
+	       }
 			if(document.abstractEstimateForm.budget_appropriation){
 				document.abstractEstimateForm.budget_appropriation.readonly=false;
 				document.abstractEstimateForm.budget_appropriation.disabled=false;
@@ -715,7 +719,8 @@ jq(document).on('click', '#woView', function(){
 		document.abstractEstimateForm.BOQxlsButton.disabled=false;
 		 document.abstractEstimateForm.history.readonly=false; 
 		document.abstractEstimateForm.history.disabled=false;
-		document.abstractEstimateForm.financialDetailButton.disabled=false;
+		if(document.abstractEstimateForm.financialDetailButton)
+			document.abstractEstimateForm.financialDetailButton.disabled=false;
 		if(document.abstractEstimateForm.viewBudgetFolio)
 			document.abstractEstimateForm.viewBudgetFolio.disabled=false;
     }

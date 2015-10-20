@@ -262,6 +262,10 @@ public class WorksService {
         return EgovThreadLocals.getUserId();
     }
 
+    public User getCurrentLoggedInUser() {
+        return (User) persistenceService.getSession().load(User.class, EgovThreadLocals.getUserId());
+    }
+
     public Map<String, Integer> getExceptionSOR() {
         final List<AppConfigValues> appConfigList = getAppConfigValue(WorksConstants.WORKS_MODULE_NAME, "EXCEPTIONALSOR");
         final Map<String, Integer> resultMap = new HashMap<String, Integer>();
