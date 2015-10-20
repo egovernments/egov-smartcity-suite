@@ -81,7 +81,7 @@ public class RevenueDashboardController {
         return revenueDashboardService.getRevenueZonewisePerformance();
     }
 
-    @RequestMapping(value = "/performance-tabularDrill", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/performance-tabularDrill/{zoneName}", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Map<String, Object>> performanceTabularDrill(@PathVariable final String zoneName) {
         return revenueDashboardService.getWardwisePerformanceTab(zoneName);
     }
@@ -111,7 +111,7 @@ public class RevenueDashboardController {
         return revenueDashboardService.coverageEfficiency();
     }
 
-    @RequestMapping(value = "/coverage-efficiency-ward", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/coverage-efficiency-ward/{zoneName}", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Map<String, Object> coverageEfficiencyWard(@PathVariable final String zoneName) {
         return revenueDashboardService.coverageEfficiencyWard(zoneName);
     }

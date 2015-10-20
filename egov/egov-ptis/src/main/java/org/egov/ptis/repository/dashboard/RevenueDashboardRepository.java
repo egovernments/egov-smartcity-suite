@@ -353,11 +353,14 @@ public class RevenueDashboardRepository {
         for (final Object[] revenueObj : overAllData) {
             final Map<String, Object> revnData = new HashMap<String, Object>();
             revnData.put("name", String.valueOf(revenueObj[0]));
-            final BigDecimal noOfProps = (BigDecimal) revenueObj[1];
+            final BigDecimal noOfProps = revenueObj[1] != null ? new BigDecimal(revenueObj[1].toString())
+                    : BigDecimal.ZERO;
             revnData.put("noOfProps", noOfProps != null ? noOfProps.doubleValue() : "0");
-            final BigDecimal noOfTaxProps = (BigDecimal) revenueObj[2];
+            final BigDecimal noOfTaxProps = revenueObj[2] != null ? new BigDecimal(revenueObj[2].toString())
+                    : BigDecimal.ZERO;
             revnData.put("noOfTaxProps", noOfTaxProps != null ? noOfTaxProps.doubleValue() : "0");
-            final BigDecimal coverageEfficiency = (BigDecimal) revenueObj[3];
+            final BigDecimal coverageEfficiency = revenueObj[3] != null ? new BigDecimal(revenueObj[3].toString())
+                    : BigDecimal.ZERO;
             revnData.put("y", coverageEfficiency != null ? coverageEfficiency.doubleValue() : "0");
             coverageDataHolder.put(String.valueOf(revenueObj[0]), revnData);
         }

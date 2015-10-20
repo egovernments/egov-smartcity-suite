@@ -582,7 +582,7 @@ function coverageEfficiencyDrilldown(zoneName) {
 		$("#coverageEfficiencyGraph").highcharts().destroy();
 	}
 	setTitle("Ward Coverage Eff.");
-	$.ajax({url:"/ptis/dashboard/coverage-efficiency-ward?zoneName="+zoneName,
+	$.ajax({url:"/ptis/dashboard/coverage-efficiency-ward/"+zoneName,
 		cache:false
 	}).done(function(data) {
 		$('#coverageEfficiencyGraph').highcharts({
