@@ -322,7 +322,7 @@ function validateSearch()
 	 else{
 		if(dom.get('type').value==-1 && dom.get('status').value==-1 && 
 		dom.get('location').value=="" && dom.get('executingDepartment').value==-1 && 
-		dom.get('fromDate').value=="" && dom.get('toDate').value==""  &&  dom.get('preparedBy').value==-1 &&
+		dom.get('fromDate').value=="" && dom.get('toDate').value==""  &&  dom.get('estimateCreatedBy').value==-1 &&
 		dom.get('parentCategory').value==-1 && dom.get('category').value==-1 && dom.get('description').value=="")
 		{
 			dom.get("searchEstimate_error").innerHTML='Please Select any one of the Search Parameters'; 
@@ -352,7 +352,7 @@ function checkPrint(){
 
 	if(dom.get('type').value==-1 && dom.get('status').value==-1 && 
 	dom.get('location').value=="" && dom.get('executingDepartment').value==-1 && 
-	dom.get('fromDate').value=="" && dom.get('toDate').value==""  &&  dom.get('preparedBy').value==-1 &&
+	dom.get('fromDate').value=="" && dom.get('toDate').value==""  &&  dom.get('estimateCreatedBy').value==-1 &&
 	dom.get('parentCategory').value==-1 && dom.get('category').value==-1 && dom.get('description').value=="")
 	{
 		dom.get("searchEstimate_error").innerHTML='Please search the Estimate Before Printing'; 
@@ -770,8 +770,14 @@ function jurisdictionSearchParameters(){
 															<egov:ajaxdropdown id="assignedTo2"fields="['Text','Value']" 
 																dropdownId="assignedTo2" url="workorder/ajaxWorkOrder!getDesignationByDeptId.action" />
 														</s:if>
-														<s:else>															
+														<s:else>	
 															<s:select headerKey="-1"
+																headerValue="%{getText('estimate.default.select')}"
+																name="execDept" id="executingDepartment"
+																cssClass="selectwk"
+																list="dropdownData.executingDepartmentList" listKey="id"
+																listValue="name" value="%{execDept}" />														
+															<!-- <s:select headerKey="-1"
 																headerValue="%{getText('estimate.default.select')}"
 																name="execDept" id="executingDepartment"
 																cssClass="selectwk"
@@ -781,7 +787,7 @@ function jurisdictionSearchParameters(){
 															<egov:ajaxdropdown id="preparedBy"
 																fields="['Text','Value','Designation']"
 																dropdownId='preparedBy' optionAttributes='Designation'
-																url='estimate/ajaxEstimate!usersInExecutingDepartment.action' />
+																url='estimate/ajaxEstimate-usersInExecutingDepartment.action' /> -->	
 														</s:else>
 													</td>
 													<s:if test="%{source=='wp'}">
@@ -919,15 +925,15 @@ function jurisdictionSearchParameters(){
 												&& source!='cancelMilestone'}">
 												<tr>
 													<td class="greyboxwk">
-														<s:text name="estimate.preparedBy" />
+														<s:text name="estimate.createdBy" />
 														:
 													</td>
 													<td class="greybox2wk">
 														<s:select headerKey="-1"
 															headerValue="%{getText('estimate.default.select')}"
-															name="empId" value="%{empId}" id="preparedBy"
-															cssClass="selectwk" list="dropdownData.preparedByList"
-															listKey="id" listValue="employeeName" />
+															name="estimateCreatedBy" value="%{estimateCreatedBy}" id="estimateCreatedBy"
+															cssClass="selectwk" list="dropdownData.estimateCreatedByList"
+															listKey="id" listValue="name" />
 
 													</td>
 
@@ -994,13 +1000,13 @@ function jurisdictionSearchParameters(){
 																			value="%{workOrderNo}" id="workOrderNo"
 																			cssClass="selectwk" />
 			   													</td>
-			   													<td class="greyboxwk" width="11%"><s:text name="label.preparedBy" /> : </td>
+			   													<td class="greyboxwk" width="11%"><s:text name="label.createdBy" /> : </td>
 																<td class="greybox2wk" width="21%">
 																					<s:select headerKey="-1" 
 																						headerValue="%{getText('estimate.default.select')}"
-																						name="empId" value="%{empId}" id="preparedBy"
-																						cssClass="selectwk" list="dropdownData.preparedByList"
-																						listKey="id" listValue="employeeName" />
+																						name="estimateCreatedBy" value="%{estimateCreatedBy}" id="estimateCreatedBy"
+																						cssClass="selectwk" list="dropdownData.estimateCreatedByList"
+																						listKey="id" listValue="name" />
 																</td>
 													</tr>
 	   											</s:if>

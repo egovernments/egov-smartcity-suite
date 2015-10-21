@@ -4,9 +4,9 @@
 "ResultSet": {
     "Result":[
     <s:iterator var="s" value="usersInExecutingDepartment" status="status">  
-    {"Text":"<s:property value="%{employeeName}" />",
+    {"Text":"<s:property value="%{name}" />",
     "Value":"<s:property value="%{id}" />",
-    "Designation":"<s:property value="%{desigId.designationName}" />"
+    "Designation":"<s:property value="%{designation.name}" />"
     }<s:if test="!#status.last">,</s:if>
     </s:iterator>       
     ]

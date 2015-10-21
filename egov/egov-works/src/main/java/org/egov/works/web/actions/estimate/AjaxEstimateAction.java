@@ -83,7 +83,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ParentPackage("egov")
 @Results({
         @Result(name = AjaxEstimateAction.SUBCATEGORIES, location = "ajaxEstimate-subcategories.jsp"),
-        @Result(name = AjaxEstimateAction.OVERHEADS, location = "ajaxEstimate-overheads.jsp")
+        @Result(name = AjaxEstimateAction.OVERHEADS, location = "ajaxEstimate-overheads.jsp"),
+        @Result(name = AjaxEstimateAction.USERS_IN_DEPT, location = "ajaxEstimate-usersInDept.jsp")
 })
 public class AjaxEstimateAction extends BaseFormAction {
 
@@ -91,7 +92,7 @@ public class AjaxEstimateAction extends BaseFormAction {
 
     private static final Logger logger = Logger.getLogger(AjaxEstimateAction.class);
 
-    private static final String USERS_IN_DEPT = "usersInDept";
+    public static final String USERS_IN_DEPT = "usersInDept";
     private static final String DESIGN_FOR_EMP = "designForEmp";
     public static final String SUBCATEGORIES = "subcategories";
     public static final String OVERHEADS = "overheads";
@@ -197,19 +198,21 @@ public class AjaxEstimateAction extends BaseFormAction {
         return "estimateNumSearchResults";
     }
 
+    @Action(value = "/estimate/ajaxEstimate-usersInExecutingDepartment")
     public String usersInExecutingDepartment() {
         try {
             final HashMap<String, Object> criteriaParams = new HashMap<String, Object>();
             if (executingDepartment != null && executingDepartment != -1)
                 criteriaParams.put("departmentId", executingDepartment.toString());
-            // criteriaParams.put("isPrimary", "Y"); // Commented to show
-            // primary and secondary designations in Prepared By list
             if (StringUtils.isNotBlank(employeeCode))
                 criteriaParams.put("code", employeeCode);
             if (executingDepartment == null || executingDepartment == -1)
                 usersInExecutingDepartment = Collections.EMPTY_LIST;
-            else
-                usersInExecutingDepartment = eisService.getEmployeeInfoList(criteriaParams);
+            // TODO:Fixeme - commented out for time being since there is no corresponding API with latest EmployeeView is not
+            // provided from EIS
+            /*
+             * else usersInExecutingDepartment = eisService.getEmployeeInfoList(criteriaParams);
+             */
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("user.find.error", e);
         }
