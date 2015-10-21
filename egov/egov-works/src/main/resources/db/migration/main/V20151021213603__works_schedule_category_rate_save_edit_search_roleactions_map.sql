@@ -1,0 +1,15 @@
+-- INSERT schedule category  action into EG_ACTION---
+Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'WorksSaveScheduleCategory','/masters/scheduleCategory-save.action',null,(select id from EG_MODULE where name = 'WorksScheduleCategoryMaster'),1,'WorksSaveScheduleCategory','false','egworks',0,1,now(),1,now(),(select id from eg_module  where name = 'Works Management'));
+Insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='WorksSaveScheduleCategory' and contextroot = 'egworks'));
+-- INSERT schedule of rate save action into EG_ACTION---
+Insert into eg_action (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'WorksSaveScheduleOfRate','/masters/scheduleOfRate-save.action',null,(select id from EG_MODULE where name = 'WorksScheduleOfRateMaster'),1,'WorksSaveScheduleOfRate','false','egworks',0,1,now(),1,now(),(select id from eg_module  where name = 'Works Management'));
+Insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='WorksSaveScheduleOfRate' and contextroot = 'egworks'));
+-- INSERT schedule of rate edit action into EG_ACTION---
+Insert into eg_action (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'WorksEditScheduleOfRate','/masters/scheduleOfRate-edit.action',null,(select id from EG_MODULE where name = 'WorksScheduleOfRateMaster'),1,'WorksSaveScheduleOfRate','false','egworks',0,1,now(),1,now(),(select id from eg_module  where name = 'Works Management'));
+Insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='WorksEditScheduleOfRate' and contextroot = 'egworks'));
+
+update eg_action set url = '/masters/scheduleOfRate-searchList.action' where name = 'WorksScheduleOfRateSearch';
+-- INSERT schedule of rate search action into EG_ACTION---
+Insert into eg_action (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'WorksSearchScheduleOfRate','/masters/scheduleOfRate-searchSorDetails.action',null,(select id from EG_MODULE where name = 'WorksScheduleOfRateMaster'),1,'WorksSearchScheduleOfRate','false','egworks',0,1,now(),1,now(),(select id from eg_module  where name = 'Works Management'));
+Insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='WorksSearchScheduleOfRate' and contextroot = 'egworks'));
+

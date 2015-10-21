@@ -44,17 +44,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.commons.ContractorGrade;
-import org.egov.commons.EgwStatus;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.Contractor;
-import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.services.WorksService;
 import org.egov.works.web.actions.masters.ContractorAction;
 import org.hibernate.Criteria;

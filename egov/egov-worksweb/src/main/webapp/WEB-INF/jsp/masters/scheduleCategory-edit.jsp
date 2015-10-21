@@ -37,21 +37,4 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp" %> 
-<html>  
-<head>  
-    <title> Edit  Schedule Category</title>  
-</head>  
-	<body>  
-		<s:actionerror/>  
-		<s:fielderror />   
-		<s:form>  
-			<s:hidden  name="model.id" />
-			<s:submit method="save" value="Save "/>  
-		</s:form>  
-	    <ul>  
-	        <li><a href="scheduleCategory!newform.action"> Add a new scheduleCategory</a></li>  
-	        <li><a href="scheduleCategory"> Schedule Category listing</a></li>  
-	    </ul>  
-	</body>  
-</html>
+<%@ include file="scheduleCategory-new.jsp" %> 

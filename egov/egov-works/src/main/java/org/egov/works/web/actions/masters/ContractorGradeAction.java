@@ -179,7 +179,7 @@ public class ContractorGradeAction extends SearchFormAction {
         search();
         
         if (searchResult != null && searchResult.getFullListSize() == 0)
-            setDisplData(WorksConstants.CONTRACTOR_GRADE_NO_DATA);
+            setDisplData(WorksConstants.NO_DATA);
         else
             setDisplData(WorksConstants.YES);
 

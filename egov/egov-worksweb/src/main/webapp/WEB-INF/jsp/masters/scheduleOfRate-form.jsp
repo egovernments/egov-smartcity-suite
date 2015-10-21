@@ -44,76 +44,62 @@
 </style>
 <script src="<egov:url path='resources/js/works.js'/>"></script>
 <script>
-jQuery("#loadingMask").remove();
 function validateSORFormAndSubmit() {
-
     clearMessage('sor_error')
 	links=document.scheduleOfRate.getElementsByTagName("span");
 	errors=false;
-	for(i=0;i<links.length;i++) {
-        if(links[i].innerHTML=='&nbsp;x' && links[i].style.display!='none'){
+	for(i=0; i<links.length; i++) {
+        if(links[i].innerHTML=='&nbsp;x' && links[i].style.display!='none') {
             errors=true;
             break;
         }
     }
     
     if(errors) {
-        dom.get("sor_error").style.display='';
+        dom.get("sor_error").style.display = '';
     	document.getElementById("sor_error").innerHTML='<s:text name="sor.validate_x.message" />';
     	return false;
-    }
-    else {
-	
-		var lenFrm=document.scheduleOfRate.elements.length;
-		for(i=0;i<lenFrm;i++){
+    } else {
+		var lenFrm = document.scheduleOfRate.elements.length;
+		for(i=0; i<lenFrm; i++) {
 			document.scheduleOfRate.elements[i].readonly=false;	
 			document.scheduleOfRate.elements[i].disabled=false;	
-		
-		} 
-  // document.scheduleOfRate.action='${pageContext.request.contextPath}/masters/scheduleOfRate!create.action';
-//	document.scheduleOfRate.submit();
-    	
+		}   	
    	}
-    jQuery(".commontopyellowbg").prepend('<div id="loadingMask" style="display:none;overflow:none;scroll:none;" ><img src="/egi/images/bar_loader.gif"> <span id="message">Please wait....</span></div>')
     doLoadingMask();
 }
 
 function enableLastEndDate(){
-		var persistedRatesCnt = '<s:property value="%{editableRateList.size()}"/>';
-		var i;
-		var records= scheduleOfRateDataTable.getRecordSet();
+	var persistedRatesCnt = '<s:property value="%{editableRateList.size()}"/>';
+	var i;
+	var records= scheduleOfRateDataTable.getRecordSet();
 
-		hideColumn('deleteRate');
-		disablePrevRates();
-		for(i=0;i<records.getLength();i++){
-				if(i <= (persistedRatesCnt-1)){
-					// dont do anything
-					}
-				else{
-					//enable all fields of new rows
-					dom.get("rate"+records.getRecord(i).getId()).readonly=false;
-					dom.get("rate"+records.getRecord(i).getId()).disabled=false;
-					dom.get("startDate"+records.getRecord(i).getId()).readonly=false;
-					dom.get("startDate"+records.getRecord(i).getId()).disabled=false;
-					dom.get("endDate"+records.getRecord(i).getId()).readonly=false;
-					dom.get("endDate"+records.getRecord(i).getId()).disabled=false;
-				}
+	hideColumn('deleteRate');
+	disablePrevRates();
+	for(i=0;i<records.getLength();i++){
+		if(i <= (persistedRatesCnt-1)) {
+			// dont do anything
+		} else {
+			//enable all fields of new rows
+			dom.get("rate"+records.getRecord(i).getId()).readonly=false;
+			dom.get("rate"+records.getRecord(i).getId()).disabled=false;
+			dom.get("startDate"+records.getRecord(i).getId()).readonly=false;
+			dom.get("startDate"+records.getRecord(i).getId()).disabled=false;
+			dom.get("endDate"+records.getRecord(i).getId()).readonly=false;
+			dom.get("endDate"+records.getRecord(i).getId()).disabled=false;
 		}
-		dom.get("endDate"+records.getRecord(persistedRatesCnt-1).getId()).readonly=false;
-		dom.get("endDate"+records.getRecord(persistedRatesCnt-1).getId()).disabled=false;	
-		
+	}
+	dom.get("endDate"+records.getRecord(persistedRatesCnt-1).getId()).readonly=false;
+	dom.get("endDate"+records.getRecord(persistedRatesCnt-1).getId()).disabled=false;	
 }
 
-function hideColumn(colKey)
-{
+function hideColumn(colKey) {
 	scheduleOfRateDataTable.hideColumn(colKey);
 }
 
-function disableEnablePrevRateDetails(records,j){
-	
+function disableEnablePrevRateDetails(records,j) {
 	var endDate;
-    
-	if(dom.get("endDate"+records.getRecord(j).getId()).value!=""){
+	if(dom.get("endDate"+records.getRecord(j).getId()).value!="") {
 		endDate = dom.get("endDate"+records.getRecord(j).getId()).value;
 	}
 	dom.get("rate"+records.getRecord(j).getId()).readonly=true;
@@ -135,7 +121,7 @@ function disableEnablePrevRateDetails(records,j){
 	}
 }
 
-function disablePreviousRatesOnLoad(){
+function disablePreviousRatesOnLoad() {
 	<s:if test="%{id!=null && mode=='edit'}">
 		hideColumn('deleteRate');
 		disablePrevRates();
@@ -145,25 +131,23 @@ function disablePreviousRatesOnLoad(){
 function disablePrevRates(){
 	var records= scheduleOfRateDataTable.getRecordSet();
 	var j;
-	if(records.getLength()>1){
-		for(j=0;j<records.getLength();j++)
-		{
+	if(records.getLength()>1) {
+		for(j=0;j<records.getLength();j++) {
 			disableEnablePrevRateDetails(records,j);
 		}
+	} else {
+		j=records.getLength()-1;
+		disableEnablePrevRateDetails(records,j);
 	}
-	else{
-			j=records.getLength()-1;
-			disableEnablePrevRateDetails(records,j);
-		}
 }
 
-function validateLineBreaks(){
+function validateLineBreaks() {
 	var codeName = dom.get('code').value;
 	codeName = codeName.replace(/([\n]|'|<br \>)/g,'');
 	dom.get("code").value = codeName;
 }
 
-function validateLineBreaksInDescription(){
+function validateLineBreaksInDescription() {
 	var descriptionText = dom.get('description').value;
 	descriptionText = descriptionText.replace(/([\n]|<br \>)/g,'');
 	dom.get("description").value = descriptionText;
@@ -172,30 +156,30 @@ function validateLineBreaksInDescription(){
 function UniqueCheckOnCodenumber() {
 	codeno = dom.get('code').value;
 	scheduleCategory = dom.get('scheduleCategory').value;
-	if(scheduleCategory==-1 && codeno!='')
+	if(scheduleCategory==-1 && codeno!='') {
 		dom.get("selectcategory").style.display = "";
-	else {
+	} else {
 		populatenumberunique({codeNo:codeno,scheduleCategoryId:scheduleCategory});
 		dom.get("selectcategory").style.display = "none";
 	}
 }
 
 function checkForCode() {	
-	 if(dom.get("numberunique").style.display =="" ){
+	 if(dom.get("numberunique").style.display =="" ) {
 		 document.getElementById('code').value="";
 	 }	 
 }
  
-function createHiddenFormatter(el, oRecord, oColumn, oData){
-var hiddenFormatter = function(el, oRecord, oColumn, oData) {
-    var value = (YAHOO.lang.isValue(oData))?oData:"";
-    var id=oColumn.getKey()+oRecord.getId();
-    var fieldName = "actionRates[" + oRecord.getCount() + "]." + oColumn.getKey();
-    var fieldValue=value;
-    markup="<input type='hidden' id='"+id+"' name='"+fieldName+"' value='"+fieldValue+"' /><span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span>";
-    el.innerHTML = markup;
-}
-return hiddenFormatter;
+function createHiddenFormatter(el, oRecord, oColumn, oData) {
+	var hiddenFormatter = function(el, oRecord, oColumn, oData) {
+    	var value = (YAHOO.lang.isValue(oData))?oData:"";
+    	var id=oColumn.getKey()+oRecord.getId();
+    	var fieldName = "actionRates[" + oRecord.getCount() + "]." + oColumn.getKey();
+    	var fieldValue=value;
+    	markup="<input type='hidden' id='"+id+"' name='"+fieldName+"' value='"+fieldValue+"' /><span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span>";
+    	el.innerHTML = markup;
+	}
+	return hiddenFormatter;
 }
 var hiddenFormatter = createHiddenFormatter(10,10); 
  
@@ -257,7 +241,7 @@ var makeScheduleOfRateDataTable = function() {
 	};  
 }
 
---></script>
+</script>
 <div class="errorstyle" id="sor_error" style="display: none;"></div>
 
 <span align="center" style="display:none" id="selectcategory">
@@ -298,8 +282,8 @@ var makeScheduleOfRateDataTable = function() {
 				</td>
 			</tr>
 			<tr>
-				<td width="11%" class="whiteboxwk"><s:text name="sor.depositWorks.checkbox" />:</td>
-            	<td width="21%" class="whiteboxwk" style="text-align:left;"><s:checkbox name="isDepositWorksSOR" id="isDepositWorksSOR" value="%{isDepositWorksSOR}"/></td>
+				<td width="11%" class="whiteboxwk"></td>
+            	<td width="21%" class="whiteboxwk"></td>
             	<td width="15%" class="whiteboxwk"></td>
             	<td width="53%" class="whitebox2wk"></td>
 			</tr>

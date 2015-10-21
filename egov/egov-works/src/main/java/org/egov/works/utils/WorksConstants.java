@@ -200,11 +200,12 @@ public class WorksConstants {
 	public static final String CONTRACTOR_GRADE_MAX_AMOUNT_INVALID_ERR_MSG = "Maximum amount must be greater than minimum amount";
 	public static final String CONTRACTOR_GRADE_SAVE_SUCCESS_CODE = "contractor.grade.save.success";
 	public static final String CONTRACTOR_GRADE_SAVE_SUCCESS_MSG = "contractor.grade.save.success";
-	public static final String CONTRACTOR_GRADE_NO_DATA = "noData";
+	public static final String NO_DATA = "noData";
 	
 	public static final String STATUS_MODULE_NAME = "Contractor";
 	public static final String EDIT_ENABLE_ROLE_NAME = "Edit Contractor Bank Info";
 	public static final String BANK = "bank";
 	public static final String NEGOTIATION_DATE_FORMAT_INVALID = "Negotiation date is not valid, should be in dd/MM/yyyy format";
 	public static final String NEGOTIATION_DATE = "negDate";
+	public static final String VIEW = "view";
 }

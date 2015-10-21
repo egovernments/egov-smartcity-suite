@@ -45,8 +45,8 @@
 <script type="text/javascript">
      
 	function validate(){	
-		//alert(document.forms[0].action='/egworks/masters/scheduleOfRate!searchSorDetails.action'
-		document.forms[0].action='<%=request.getContextPath()%>/masters/scheduleOfRate!searchSorDetails.action';
+		//alert(document.forms[0].action='/egworks/masters/scheduleOfRate-searchSorDetails.action'
+		document.forms[0].action='<%=request.getContextPath()%>/masters/scheduleOfRate-searchSorDetails.action';
 		//alert(document.forms[0].action);
 		document.forms[0].submit();
 		//return false;
@@ -64,7 +64,7 @@
         		<s:actionmessage theme="simple"/>
         	</div>
     	</s:if>
-		<s:form name="searchSORForm" id="searchSORForm" action="/masters/scheduleOfRate!searchSorDetails.action" theme="simple">			
+		<s:form name="searchSORForm" id="searchSORForm" action="/masters/scheduleOfRate-searchSorDetails.action" theme="simple">			
 			<div class="navibarshadowwk">
 			</div>
 			<div class="formmainbox">
@@ -101,15 +101,17 @@
 									<s:text name="master.sor.category" />:
 								</td>
 								<td width="21%" class="whitebox2wk">
-									<!-- Need to uncomment when listValue is available-->
-									<%-- <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}"
+									<s:if test="%{scheduleCategoryList.size != 0}">
+										<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}"
 										name="scheduleCategoryId" id="scheduleCategory" cssClass="selectwk"
-										list="dropdownData.scheduleCategorylist" listKey="id"
-										listValue="code"/> --%>
-									<!-- Need to remove when scheduleCategorylist is not null-->
+										list="dropdownData.scheduleCategoryList" listKey="id"
+										listValue="code"/>
+									</s:if>
+									<s:if test="%{scheduleCategoryList.size == 0}">
 									<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" 
 										name="categoryType" id="categoryTypeId" cssClass="selectwk"
 										list="#{'1':'BRIDGES-NORTH'}"></s:select>
+									</s:if>
 								</td>
 								<td width="11%" class="whiteboxwk">
 									&nbsp;
@@ -199,11 +201,11 @@
 														<table width="100" border="0" cellpadding="0" cellspacing="2">
 															<tr> <egov-authz:authorize actionName="WorksSOREditAutho">                   		
 															  	<td width="20">
-																	<a href="${pageContext.request.contextPath}/masters/scheduleOfRate!edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
+																	<a href="${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
 																		<s:text name="sor.edit" /></a>
 																</td>
 																<td width="20">
-																	<a href="${pageContext.request.contextPath}/masters/scheduleOfRate!edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
+																	<a href="${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
 																		<img src='/egi/resources/erp2/images/page_edit.png' alt="Edit Data" width="16" height="16" border="0" align="absmiddle" />
 																	</a>
 																</td>
@@ -212,12 +214,12 @@
 																</egov-authz:authorize>
 																<egov-authz:authorize actionName="WorksSORViewAutho">
 																<td width="20" align="right">
-																	<a href="${pageContext.request.contextPath}/masters/scheduleOfRate!edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
+																	<a href="${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
 																		<s:text name="sor.view" />
 																	</a>
 																</td>
 																<td width="20" align="left">
-																	<a href="${pageContext.request.contextPath}/masters/scheduleOfRate!edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
+																	<a href="${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
 																		<img src='/egi/resources/erp2/images/book_open.png' alt="View Data" width="16" height="16" border="0" align="absmiddle" />
 																	</a>
 																</td>

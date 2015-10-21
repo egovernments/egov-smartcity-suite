@@ -78,15 +78,11 @@
 			<null />
 		</constructor-arg>
 	</bean>
-
-	<bean id="scheduleOfRateService" parent="persistenceService"
-		scope="prototype">
+	<bean id="scheduleOfRateService" class="org.egov.works.master.services.ScheduleOfRateService">
 		<property name="type" value="org.egov.works.models.masters.ScheduleOfRate" />
 	</bean>
-	<bean id="scheduleCategoryService" parent="persistenceService"
-		scope="prototype">
-		<property name="type"
-			value="org.egov.works.models.masters.ScheduleCategory" />
+	<bean id="scheduleCategoryService" class="org.egov.works.master.services.ScheduleCategoryService">
+		<property name="type" value="org.egov.works.models.masters.ScheduleCategory"/>
 	</bean>
 	<bean id="worksStatusService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.works.models.tender.SetStatus" />
@@ -581,5 +577,8 @@
 	<bean id="budgetDetailsDAO" class="org.egov.dao.budget.BudgetDetailsHibernateDAO"/>
 	<bean id="contractorGradeService" class="org.egov.works.master.services.ContractorGradeService">
 		<property name="type" value="org.egov.commons.ContractorGrade"/>
+	</bean>
+	<bean id="uomService" class="org.egov.works.master.services.UOMService">
+		<property name="type" value="org.egov.common.entity.UOM"/>
 	</bean>
 </beans>
