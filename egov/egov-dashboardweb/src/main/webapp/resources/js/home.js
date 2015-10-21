@@ -232,6 +232,293 @@ $.ajax({url:"/pgr/dashboard/typewise-aggregate",
 	    });
 });
 
+// Revenue
+$.ajax({
+	url : '/ptis/dashboard/revenueTrendForTheWeek',
+	cache : false
+}).done(
+		function(revenueTrendForWeek) {
+			$('#newtimeLineRevenueTrend').highcharts(
+					{
+						chart : {
+							borderRadius : '5px'
+						},
+						colors : Highcharts.map(Highcharts.getOptions().colors,
+								function(color) {
+									return {
+										radialGradient : {
+											cx : 0.5,
+											cy : 0.3,
+											r : 0.7
+										},
+										stops : [
+												[ 0, color ],
+												[
+														1,
+														Highcharts.Color(color)
+																.brighten(-0.3)
+																.get('rgb') ] // darken
+										]
+									};
+								}),
+						exporting : {
+							enabled : false
+						},
+						credits : {
+							enabled : false
+						},
+						title : {
+							text : ''
+						},
+						tooltip : {
+							enabled : true,
+							formatter : function() {
+								return this.point.tooltipFormat + '<br/>'
+										+ this.series.name + ': <b>' + this.y
+										+ ' cr </b>';
+							}
+						},
+						legend : {
+							enabled : false
+						},
+						xAxis : {
+							type : 'category',
+							labels : {
+								rotation : -45,
+								style : {
+									fontSize : 'xx-small',
+									fontFamily : 'Verdana, sans-serif'
+								}
+							},
+							min : 0,
+							allowDecimals : false
+
+						},
+						yAxis : {
+							title : {
+								text : 'Amount Collected (Crores)'
+							}
+						},
+						plotOptions : {
+							series : {
+								borderWidth : 0,
+								minPointLength : 4,
+								dataLabels : {
+									enabled : false,
+									format : '{point.y}',
+									color : 'white'
+								},
+								stacking : 'normal',
+								cursor : 'pointer'
+							}
+						},
+						series : [ {
+							type : 'column',
+							colorByPoint : true,
+							name : ' Collection Amount',
+							data : revenueTrendForWeek,
+						} ]
+					});
+		});
+
+// Revenue Annual Targeted vs Actual
+$.ajax({
+	url : "/ptis/dashboard/revenueTrend",
+	cache : false
+}).done(
+		function(revenueTrend) {
+			$('#timeLineRevenueTrend').highcharts(
+					{
+						chart : {
+							borderRadius : '5px'
+						},
+						colors : Highcharts.map(Highcharts.getOptions().colors,
+								function(color) {
+									return {
+										radialGradient : {
+											cx : 0.5,
+											cy : 0.3,
+											r : 0.7
+										},
+										stops : [
+												[ 0, color ],
+												[
+														1,
+														Highcharts.Color(color)
+																.brighten(-0.3)
+																.get('rgb') ] // darken
+										]
+									};
+								}),
+						exporting : {
+							enabled : false
+						},
+						credits : {
+							enabled : false
+						},
+						title : {
+							text : ''
+						},
+						tooltip : {
+							shared : true,
+							valueSuffix : ' cr'
+						},
+						legend : {
+							layout : 'vertical',
+							align : 'left',
+							verticalAlign : 'top',
+							x : 50,
+							y : 10,
+							symbolHeight : 7,
+							symbolWidth : 7,
+							floating : true,
+							borderWidth : 1,
+							itemStyle : {
+								font : 'xx-small Verdana, sans-serif'
+							}
+						},
+						xAxis : {
+							type : 'category',
+							labels : {
+								rotation : -45
+							}
+						},
+						yAxis : {
+							title : {
+								text : 'Annual Collections',
+								style : {
+									fontSize : '15px'
+								},
+								verticalAlign : 'bottom'
+							},
+							labels : {
+								format : '{value} cr',
+								style : {
+									color : Highcharts.getOptions().colors[1]
+								}
+							},
+							min : 0
+						},
+						plotOptions : {
+							column : {
+								grouping : false,
+								borderWidth : 0,
+								minPointLength : 4,
+								dataLabels : {
+									enabled : false,
+									format : '{point.y}%',
+									color : 'white'
+
+								},
+							}
+						},
+						series : [ {
+							type : 'column',
+							// colorByPoint: true,
+							name : 'Targeted Collections',
+							data : revenueTrend.targeted
+						}, {
+							type : 'column',
+							// colorByPoint: true,
+							name : 'Collections',
+							data : revenueTrend.actual
+						} ]
+					});
+		});
+
+$.ajax({
+	url : "/ptis/dashboard/target-achieved",
+	cache : false
+}).done(
+		function(targetvsachieved) {
+			$('#overviewGraphCumilative').highcharts(
+					{
+						chart : {
+							borderRadius : '5px'
+						},
+						title : {
+							text : ''
+						},
+						subtitle : {
+							text : ''
+						},
+						exporting : {
+							enabled : false
+						},
+						credits : {
+							enabled : false
+						},
+						xAxis : [ {
+							categories : [ 'Apr', 'May', 'Jun', 'Jul', 'Aug',
+									'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb',
+									'Mar' ]
+						} ],
+						yAxis : [ { // Primary yAxis
+							labels : {
+								format : '{value} cr',
+								style : {
+									color : Highcharts.getOptions().colors[1]
+								}
+							},
+							title : {
+								text : 'Cumulative',
+								style : {
+									fontSize : '15px'
+								},
+								verticalAlign : 'bottom'
+							},
+							min : 0
+						} ],
+						tooltip : {
+							shared : true,
+							crosshairs : true
+						},
+						legend : {
+							layout : 'vertical',
+							align : 'left',
+							verticalAlign : 'top',
+							x : 50,
+							y : 10,
+							symbolHeight : 7,
+							symbolWidth : 7,
+							floating : true,
+							borderWidth : 1,
+							itemStyle : {
+								font : 'xx-small Verdana, sans-serif'
+							}
+						},
+						series : [ {
+							name : 'Targeted Collections',
+							type : 'line',
+							data : targetvsachieved.cumilativetarget,
+							tooltip : {
+								valueSuffix : 'cr'
+							},
+							color : Highcharts.getOptions().colors[1]
+						}, {
+							name : 'Actual Collections',
+							type : 'line',
+							yAxis : 0,
+							data : targetvsachieved.cumilativeachieved,
+							tooltip : {
+								valueSuffix : ' cr'
+							},
+							color : Highcharts.getOptions().colors[0]
+
+						}, {
+							name : 'Last Year Collections',
+							type : 'line',
+							yAxis : 0,
+							data : targetvsachieved.lastcumilativeachieved,
+							tooltip : {
+								valueSuffix : ' cr'
+							},
+							color : Highcharts.getOptions().colors[2]
+
+						} ]
+					});
+		});
+
 
 /*$('#newtimeLineRevenueTrend').highcharts({
 	chart : {
@@ -380,167 +667,6 @@ $('#newtimeLinePaymentTrend').highcharts({
     }]
 });
 
-//Revenue
-
-$('#newtimeLineRevenueTrend').highcharts({
-    chart: {
-    		borderRadius:'5px'
-        },
-        colors: Highcharts.map(Highcharts.getOptions().colors, function(color) {
-	        return {
-	            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
-	            stops: [
-	                    [0, color],
-	                    [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
-	            ]
-	        };
-	    }),
-        exporting:{
-        	enabled:false
-        },
-        credits: {
-            enabled: false
-        },
-        title: {
-            text:''
-        },
-        tooltip: {
-        	enabled:true,
-        	formatter: function() {
-                return  this.point.tooltipFormat +'<br/>' + this.series.name +': <b>' + this.y + ' cr </b>';
-            }
-		},
-        legend: {
-        	enabled:false
-        },
-        xAxis: {
-            type: 'category',
-            labels: {
-            	rotation: -45,
-                style: {
-                    fontSize: 'xx-small',
-                    fontFamily: 'Verdana, sans-serif'
-                }
-            },
-            min:0,
-			allowDecimals:false
-            
-        },
-        yAxis: {
-            title: {
-                text: 'Amount Collected (Crores)'
-            }
-        },
-        plotOptions: {
-        	series: {
-                borderWidth: 0,
-                minPointLength: 4,
-                dataLabels: {
-                    enabled: false,
-                    format: '{point.y}',
-                    color:'white'
-                },
-                stacking: 'normal',
-                cursor: 'pointer'
-            }
-        },
-        series: [{
-            type: 'column',
-            colorByPoint: true,
-            name: ' Collection Amount',
-            data: revenueTrendForWeek,
-        }]
-    });
-
-//Revenue Annual Targeted vs Actual 
-$('#timeLineRevenueTrend').highcharts({
-	   chart: {
-		   		borderRadius:'5px'
-	        },
-	        colors: Highcharts.map(Highcharts.getOptions().colors, function(color) {
-	            return {
-	                radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
-	                stops: [
-	                        [0, color],
-	                        [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
-	                ]
-	            };
-	        }),
-	        exporting:{
-     		enabled:false
-	        },
-	        credits: {
-	            enabled: false
-	        },
-	        title: {
-	            text: ''
-	        },
-	        tooltip: {
-	             shared: true,
-	             valueSuffix:' cr'
-				},
-	        legend: {
-	        	   layout: 'vertical',
-	               align: 'left',
-	               verticalAlign: 'top',
-	               x: 50,
-	               y: 10,
-	               symbolHeight:7,
-	               symbolWidth:7,
-	               floating: true,
-	               borderWidth: 1,
-	               itemStyle: {
-	                   font: 'xx-small Verdana, sans-serif'
-	               }
-	        },
-	        xAxis: {
-             type: 'category',
-             labels: {
-                 rotation: -45
-             }
-         },
-         yAxis: {
-        	 title: {
-	            	text:'Annual Collections',
-	            	style:{
-	                    fontSize: '15px'
-	                },
-	                verticalAlign:'bottom'
-	            },
-	            labels: {
-	                format: '{value} cr',
-	                style: {
-	                    color: Highcharts.getOptions().colors[1]
-	                }
-	            },
-	            min: 0
-         },
-	        plotOptions: {
-	        	column: {
-	        	 grouping:false,
-                 borderWidth: 0,
-                 minPointLength: 4,
-                 dataLabels: {
-                     enabled: false,
-                     format: '{point.y}%',
-                     color:'white'
-                     	
-                 },
-             }
-	        },
-	        series: [{
-	            type: 'column',
-	           // colorByPoint: true,
-	            name: 'Targeted Collections',
-	            data: revenueTrend.targeted
-	        },{
-	            type: 'column',
-	         //   colorByPoint: true,
-	            name: 'Collections',
-	            data: revenueTrend.actual
-	        }]
-	    });
-
 //Expenditure
 $('#timeLinePaymentTrend').highcharts({
     chart: {
@@ -669,92 +795,6 @@ $('#timeLinePaymentTrend').highcharts({
 		    }]
 		});
 	});
-	
-	
-	$.ajax({url:"revenuedashboard/targetVsAchieved.do",
-		cache:false
-	}).done(function(targetvsachieved) {
-		$('#overviewGraphCumilative').highcharts({
-			chart: {
-				borderRadius:'5px'
-			},
-			title:{text:''},
-	        subtitle:{
-	        	text:''
-	        },
-	        exporting: {enabled: false},
-	        credits : {enabled : false},
-	        xAxis: [{
-	            categories: ['Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec','Jan','Feb','Mar']
-	        }],
-	        yAxis: [{ // Primary yAxis
-	            labels: {
-	                format: '{value} cr',
-	                style: {
-	                    color: Highcharts.getOptions().colors[1]
-	                }
-	            },
-	            title: {
-	            	text:'Cumulative',
-	            	style:{
-	                    fontSize: '15px'
-	                },
-	                verticalAlign:'bottom'
-	            },
-	            min:0
-	        }],
-	        tooltip: {
-	            shared: true,
-	            crosshairs: true
-	        },
-	        legend: {
-	        	   layout: 'vertical',
-	               align: 'left',
-	               verticalAlign: 'top',
-	               x: 50,
-	               y: 10,
-	               symbolHeight:7,
-	               symbolWidth:7,
-	               floating: true,
-	               borderWidth: 1,
-	               itemStyle: {
-	                   font: 'xx-small Verdana, sans-serif'
-	               }
-	        },
-	        series: [{
-	            name: 'Targeted Collections',
-	            type: 'line',
-	            data: targetvsachieved.cumilativetarget,
-	            tooltip: {
-	                valueSuffix: 'cr'
-	            },
-	            color:Highcharts.getOptions().colors[1]
-	        },
-	        {
-	            name: 'Actual Collections',
-	            type: 'line',
-	            yAxis: 0,
-	            data: targetvsachieved.cumilativeachieved,
-	            tooltip: {
-	                valueSuffix: ' cr'
-	            },
-	            color:Highcharts.getOptions().colors[0]
-
-	        },
-	        {
-	            name: 'Last Year Collections',
-	            type: 'line',
-	            yAxis: 0,
-	            data: targetvsachieved.lastcumilativeachieved,
-	            tooltip: {
-	                valueSuffix: ' cr'
-	            },
-	            color:Highcharts.getOptions().colors[2]
-
-	        }]
-	    });
-	});
-
 
 	$.ajax({url:"expendashboard/performanceLine.do",
 		cache:false
