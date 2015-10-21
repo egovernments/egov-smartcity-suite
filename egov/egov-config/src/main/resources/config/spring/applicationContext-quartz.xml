@@ -73,7 +73,7 @@
         		<prop key="org.quartz.scheduler.threadsInheritContextClassLoaderOfInitializer">true</prop>
         		
         		<!-- Job Store and Clustering Properties -->
-        		<prop key="org.quartz.jobStore.isClustered">false</prop>
+        		<prop key="org.quartz.jobStore.isClustered">true</prop>
         		<prop key="org.quartz.jobStore.clusterCheckinInterval">60000</prop>
         		<prop key="org.quartz.jobStore.acquireTriggersWithinLock">false</prop>
         		<prop key="org.quartz.jobStore.txIsolationLevelReadCommitted">true</prop>
