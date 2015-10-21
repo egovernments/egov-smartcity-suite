@@ -770,6 +770,20 @@ public class CollectionsUtil {
                         + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
         return billingService;
     }
+    
+    /**
+     * @return list of all active locations
+     */
+    public List getAllLocations() {
+            return persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_LOCATIONS);
+    }
+
+    /**
+     * @return list of all fund
+     */
+    public List getAllFunds() {
+            return persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FUND);
+    }
 
     public User getUserById(final Long userId) {
         return userService.getUserById(userId);

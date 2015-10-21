@@ -67,6 +67,7 @@ public final class CollectionConstants {
     public static final String DROPDOWN_DATA_BANKBRANCH_LIST = "bankBranchList";
     public static final String DROPDOWN_DATA_ACCOUNT_NO_LIST = "accountNumberList";
     public static final String DROPDOWN_DATA_INST_MODE_LIST = "instrumentModeList";
+    public static final String DROPDOWN_DATA_LOCATION_LIST = "locationList";
 
     // Instrument Types
     public static final String INSTRUMENTTYPE_CASH = FinancialConstants.INSTRUMENT_TYPE_CASH;
@@ -189,6 +190,7 @@ public final class CollectionConstants {
     public static final String QUERY_STATUSES_FOR_MODULE_AND_CODES = "getStatusesForModuleAndCodes";
 
     public static final String QUERY_ALL_DEPARTMENTS = "getallDepartment";
+    public static final String QUERY_ALL_LOCATIONS = "getAllLocations";
     public static final String QUERY_ALL_FUNCTION = "getallFunction";
     public static final String QUERY_ALL_FUNCTIONARY = "getallFunctionary";
     public static final String QUERY_ALL_FUND = "getallFund";
@@ -498,5 +500,9 @@ public final class CollectionConstants {
             put("dd", "DD");
         }
     };
+ // Named query for dishonor changes
+    public static final String QUERY_INSTRUMENT_DISHONOR_STATUSES = "INSTRUMENT_STATUS_FOR_DISHONOR";
+    public static final String QUERY_DISHONOR_STATE_OWNERS = "DISHONOR_STATE_OWNERS";
+   
 
 }
