@@ -161,7 +161,7 @@ function populateBlock() {
 	
 	<tr>
 		<td class="bluebox2">&nbsp;</td>
-	    <td class="bluebox"><s:text name="elec.wardno"></s:text> : </td>
+	    <td class="bluebox"><s:text name="elec.wardno"></s:text><span class="mandatory1">*</span> : </td>
 	    <td class="bluebox"><s:select name="electionWardId" id="electionWardId" list="dropdownData.electionWardList"
 			listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{electionWardId}"/></td>
 	    <td class="bluebox"><s:text name="doorno"></s:text><span class="mandatory1" id="houseNoSpan">*</span> :</td>
