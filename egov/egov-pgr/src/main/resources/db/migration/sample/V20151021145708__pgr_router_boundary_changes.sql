@@ -1,0 +1,1 @@
+update egpgr_router  set bndryid =(select id from eg_boundary where boundarytype  =(select id from eg_boundary_type where name='City' and hierarchytype=(select id from eg_hierarchy_type where name='ADMINISTRATION' ))) where position =(select id from eg_position where name='L-ASSISTANT ENGINEER-1') and complainttypeid is null;
