@@ -113,15 +113,15 @@
 								<s:text name="license.zone" />
 							</div>
 							<div class="col-md-3 col-xs-6 add-margin view-content">
-								<s:property value="boundary.parent.name" />
+								<s:property value="boundary.parent.parent.name" />
 							</div>
 						</div>
 						<div class="row add-border">
 							<div class="col-md-3 col-xs-6 add-margin">
 								<s:text name="license.division" />
 							</div>
-							<div class="col-md-3 col-xs-6 add-margin view-content">
-								<s:property value="boundary.name" />
+							<div class="col-md-3 col-xs-6 add-margin view-content"> 
+								<s:property value="boundary.parent.name" />
 							</div>
 							<div class="col-md-3 col-xs-6 add-margin">
 								<s:text name="licensee.applicantname" />
@@ -135,21 +135,9 @@
 								<s:text name="licensee.address" />
 							</div>
 							<div class="col-md-3 col-xs-6 add-margin view-content">
-								<s:if test="%{licensee.address.houseNo!=''}">
-										<s:property value="licensee.address.houseNo" />, 
-								</s:if> 
-								<s:if test="%{licensee.address.streetAddress1!=''}">
-										<s:property value="licensee.address.streetAddress1" />,
-								</s:if> 
-								<s:if test="%{licensee.boundary.parent.name!=''}">
-										<s:property value="licensee.boundary.parent.name" />,
-								</s:if> 
-								<s:if test="%{licensee.boundary.name!=''}">
-										<s:property value="licensee.boundary.name" />
-								</s:if> 
-								<s:if test="%{licensee.address.pinCode!=null}">,&nbsp;<s:property
-											value="licensee.address.pinCode" />
-									</s:if>
+								<s:if test="%{licensee.address!=null}"><s:property
+											value="licensee.address" />
+								</s:if>
 							</div>
 							<div class="col-md-3 col-xs-6 add-margin">
 								<s:text name="license.amount.to.be.paid" />

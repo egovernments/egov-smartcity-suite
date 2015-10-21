@@ -154,7 +154,11 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     public String approve() {
         processWorkflow(NEW);
         persistenceService.persist(license());
-        return "message";
+        // Generate PFA Certificate on final approval
+        if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONAPPROVE)) {
+            return Constants.PFACERTIFICATE;
+        } else
+            return "message";
     }
 
     @SkipValidation
