@@ -49,14 +49,13 @@
 			<jsp:include page="budgetHeader.jsp">
         		<jsp:param name="heading" value="Budget Definition Create" />
 			</jsp:include>
-			<span class="mandatory">
+			<span class="error-msg">
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage />
 			</span>
 			<div class="formmainbox"><div class="subheadnew">Budget Definition Create</div>
 				<%@ include file='budget-form.jsp'%>
-				<td><div align="left" class="mandatory">* <s:text name="mandatory.fields"/></div></td>
 				<div class="buttonbottom">
 					<label></label>
 					<label><s:submit method="create" value="Save " cssClass="buttonsubmit" />  </label>

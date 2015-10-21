@@ -83,22 +83,21 @@
 		}
 		
 	</script>
-	<div class="formmainbox">
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<s:push value="model">
 			<tr>
 				<td class="bluebox" width="10%">&nbsp;</td>
-				<td class="bluebox"><s:text name="budget.budgetname"/> <span class="mandatory">*</span></td>
+				<td class="bluebox"><s:text name="budget.budgetname"/> <span class="mandatory"></span></td>
 				<td class="bluebox"><s:textfield name="name" id="name" maxlength="50" size="60"/><span class="highlight2">Max. 50 characters</span></td>
 			</tr>
 			<tr>
 				<td class="greybox">&nbsp;</td>
-				<td class="greybox"><s:text name="budget.bere"/> <span class="mandatory">*</span></td>
+				<td class="greybox"><s:text name="budget.bere"/> <span class="mandatory"></span></td>
 				<td class="greybox"><s:radio name="isbere" list="isbereList" onchange="populateParent()"/></td>
 			</tr>
 			<tr>
 				<td class="bluebox">&nbsp;</td>
-				<td class="bluebox"><s:text name="budget.financialYear"/> <span class="mandatory">*</span></td>
+				<td class="bluebox"><s:text name="budget.financialYear"/> <span class="mandatory"></span></td>
 				<td class="bluebox"><s:select name="financialYear" id="financialYear" list="dropdownData.financialYearList" listKey="id" listValue="finYearRange" headerKey="-1" headerValue="----Select----"  value="%{financialYear.id}" onchange="populateReferenceBudgets();populateParent()"/> </td>
 			</tr>
 			<tr>
@@ -133,4 +132,3 @@
 			</tr>
 			</s:push>
 		</table>
-		</div>

@@ -52,19 +52,17 @@
   <body>
 	<div class="formmainbox"><div class="subheadnew"><s:text name="consolidate.budget.report"/></div>
 	
-	<br/><br/>
-	
 	<s:form name="consolidatedBudgetReportForm" action="consolidatedBudgetReport" theme="simple" >
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
     		<tr>
     			<td  class="bluebox" width="15%"></td>
 				<td  class="bluebox" width="15%">
-					<s:text name="report.financialYear.report"/><span class="mandatory">*</span>
+					<s:text name="report.financialYear.report"/><span class="mandatory"></span>
 				</td>
 				<td class="bluebox"><s:select list="dropdownData.financialYearList"  listKey="id" listValue="finYearRange" name="financialYear.id" headerKey="0" headerValue="--- Select ---" value="financialYear.id" id="financialYear"></s:select></td>
 				<td  class="bluebox" width="15%"></td>				
 				<td  class="bluebox" width="15%">
-				<s:text name="report.fund.type"/><span class="mandatory">*</span>
+				<s:text name="report.fund.type"/><span class="mandatory"></span>
 				</td>
 				<td  class="bluebox" width="15%">
 				<s:select name="fundType" id="fundType" list="#{'Select':'---Choose---','REVENUE':'REVENUE','CAPITAL':'CAPITAL'}" value="%{fundType}"/>
@@ -74,7 +72,7 @@
 			<tr>
 				<td  class="bluebox" width="15%"></td>
 				<td  class="bluebox" width="15%">
-				<s:text name="report.budget.type"/><span class="mandatory">*</span>
+				<s:text name="report.budget.type"/><span class="mandatory"></span>
 				</td>
 				<td  class="bluebox" width="15%">
 				<s:select name="budgetType" id="budgetType" list="#{'Select':'---Choose---','RECEIPTS':'RECEIPTS','EXPENDITURE':'EXPENDITURE'}" value="%{budgetType}"/>
@@ -94,7 +92,7 @@
 			<input type="submit" value="Close"
 				onclick="javascript:window.close()" class="button" />
 		</div>
-		
+		</div>
 		<s:if test="%{bpBeanMajList.size!=0}">
 		<div align="center" class="extracontent"><h4><s:property value="fundType"/>  <s:property value="budgetType"/></h4></div> 
 		<div align="right" class="extracontent"><b>Amount in Thousands</b></div>  

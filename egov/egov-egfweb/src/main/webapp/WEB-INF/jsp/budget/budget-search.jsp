@@ -65,17 +65,15 @@
 			<table align="center" width="100%">
 				<tr>
 					<td class="bluebox" width="10%">&nbsp;</td>
-					<td class="bluebox" width="30%"><s:text name="budget.financialYear"/> <span class="mandatory">*</span></td>
+					<td class="bluebox" width="30%"><s:text name="budget.financialYear"/> <span class="mandatory"></span></td>
 					<td class="bluebox"><s:select label="Financial Year" name="financialYear" id="financialYear" list="dropdownData.financialYearList" listKey="id" listValue="finYearRange" headerKey="-1" headerValue="----Choose----" value="%{budget.financialYear.id}"/></td>
 				</tr>
-				<br/>
 			</table>
-			<div align="left" class="mandatory">* <s:text name="mandatory.fields"/></div>
 			<div class="buttonbottom">
 				<s:submit method="list" value="Search" onclick="return check()" cssClass="buttonsubmit" />  
 				<input type="submit" value="Close" onclick="javascript:window.close()" class="button"/>
 			</div>
-			
+			</div>
 			<div id="listid" style="display:block">
 					<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 			        <tr>  
@@ -115,14 +113,11 @@
 				    <s:hidden name="targetvalue" value="%{target}" id="targetvalue"/>  
 				</table>  
 			</div>
-			<br/>
 			<div id="msgdiv" style="display:none">
 				<table align="center" width="100%">
 					<tr><td colspan="7"><s:text name="no.data.found"/></td></tr>
 				</table>
 			</div>
-			<br/>
-			<br/>
 		</s:form>  
 		<script>
 		if(dom.get('targetvalue').value=='NONE')
