@@ -55,10 +55,10 @@ public class AdvertisementTaxConstants {
     public static final String AGENCY_PREFIX_CONSUMERCODE = "AGENCY-";
     
     public static final String BOUNDARYTYPE_LOCALITY = "locality";
-    public static final String BOUNDARYTYPE_ELECTIONWARD = "Election Ward";
+    public static final String BOUNDARYTYPE_ELECTIONWARD = "Ward";
     public static final String BOUNDARYTYPE_ZONE = "Zone";
     public static final String LOCATION_HIERARCHY_TYPE = "LOCATION";
-    public static final String ADMINISTRATION_HIERARCHY_TYPE = "ADMINISTRATION";
-    public static final String ELECTION_HIERARCHY_TYPE = "ELECTION";
+    public static final String ADMINISTRATION_HIERARCHY_TYPE = "REVENUE";
+    public static final String ELECTION_HIERARCHY_TYPE = "ADMINISTRATION";
     
 }

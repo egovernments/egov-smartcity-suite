@@ -88,7 +88,7 @@ public class GenericMasterAjaxController {
     private CrossHierarchyService crossHierarchyService;
     
     private static final String BLOCK = "Block";
-	private static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";
+	private static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
 	
     @RequestMapping(value = "/boundarytype/ajax/boundarytypelist-for-hierarchy", method = RequestMethod.GET)
     public @ResponseBody void getBoundaryTypeByHierarchyType(@RequestParam final Long hierarchyTypeId,
@@ -197,7 +197,7 @@ public class GenericMasterAjaxController {
     
     @RequestMapping(value = "/boundary/ajaxBoundary-blockByLocality", method = RequestMethod.GET)
     public void blockByLocality(@RequestParam final Long locality, final HttpServletResponse response) throws IOException, NoSuchObjectException {
-        BoundaryType blockType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BLOCK, ADMIN_HIERARCHY_TYPE);
+        BoundaryType blockType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BLOCK, REVENUE_HIERARCHY_TYPE);
         final List<Boundary> blocks = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(locality, blockType.getId());
         List<Boundary> streets = boundaryService.getChildBoundariesByBoundaryId(locality);
         final List<JSONObject> wardJsonObjs = new ArrayList<JSONObject>();

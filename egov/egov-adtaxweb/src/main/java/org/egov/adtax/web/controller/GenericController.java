@@ -74,7 +74,7 @@ public abstract class GenericController {
 
     @ModelAttribute("zoneList")
     public List<Boundary> getZones() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", "ADMINISTRATION");
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_ZONE, AdvertisementTaxConstants.ADMINISTRATION_HIERARCHY_TYPE);
     }
     @ModelAttribute("localities")
     public List<Boundary> localities() {
