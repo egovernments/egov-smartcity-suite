@@ -251,6 +251,7 @@ function worklist(){
 		          console.log('Length of the count object-->'+Object.keys(counts).length);
 		          
 		          if(Object.keys(counts).length > 1){
+		        	  $('#natureofwork').append('<ul class="nav nav-pills" role="tablist"></ul>');
 		        	  for (var k in counts){
 			        	    if (counts.hasOwnProperty(k)) {
 			        	    	now_name.push(k);
@@ -262,7 +263,7 @@ function worklist(){
 		          }else{
 		        	  console.log('Count length is '+Object.keys(counts).length+'.. Due to that not appended!!');
 		          }
-		          $('#natureofwork').append('<ul class="nav nav-pills" role="tablist"></ul>');
+		          
 		          
 	          }else{
 	        	  console.log('Response data is empty');
