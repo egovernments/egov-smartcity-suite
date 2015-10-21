@@ -64,9 +64,8 @@ public class CrossHierarchyService {
     }
 
     public List<CrossHierarchy> getChildBoundaryNameAndBndryTypeAndHierarchyType(final String boundaryTypeName,
-            final String parentTypeName, final String hierarchyTypeName,final String parenthierarchyTypeName, final String name) {
-        return crossHierarchyRepository.findActiveBoundariesByNameAndBndryTypeNameAndHierarchyTypeName(boundaryTypeName,
-                parentTypeName, hierarchyTypeName,parenthierarchyTypeName, name);
+             final String hierarchyTypeName,final String parenthierarchyTypeName, final String name) {
+        return crossHierarchyRepository.findActiveBoundariesByNameAndBndryTypeNameAndHierarchyTypeName(boundaryTypeName, hierarchyTypeName,parenthierarchyTypeName, name);
     }
 
     public List<Boundary> getChildBoundariesNameAndBndryTypeAndHierarchyType(final String boundaryTypeName,
