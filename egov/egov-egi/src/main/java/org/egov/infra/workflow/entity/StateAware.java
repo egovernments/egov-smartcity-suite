@@ -39,6 +39,8 @@
  */
 package org.egov.infra.workflow.entity;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -197,6 +199,11 @@ public abstract class StateAware extends AbstractAuditable {
         return this;
     }
 
+    public final StateAware withNatureOfTask(final String natureOfTask) {
+        state.setNatureOfTask(natureOfTask);
+        return this;
+    }
+
     public final StateAware withExtraInfo(final String extraInfo) {
         state.setExtraInfo(extraInfo);
         return this;
@@ -218,13 +225,14 @@ public abstract class StateAware extends AbstractAuditable {
     }
 
     private void resetState() {
-        state.setComments("");
+        state.setComments(EMPTY);
         state.setDateInfo(null);
         state.setExtraDateInfo(null);
-        state.setExtraInfo("");
-        state.setNextAction("");
-        state.setValue("");
-        state.setSenderName("");
+        state.setExtraInfo(EMPTY);
+        state.setNextAction(EMPTY);
+        state.setValue(EMPTY);
+        state.setSenderName(EMPTY);
+        state.setNatureOfTask(EMPTY);
         state.setOwnerUser(null);
         state.setOwnerPosition(null);
     }
