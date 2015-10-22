@@ -112,10 +112,10 @@ public class HomeController {
             final HttpServletResponse response, final ModelMap modelData) {
         final User user = securityUtils.getCurrentUser();
         setUserLocale(user, request, response);
-        if (securityUtils.currentUserType().equals(UserType.EMPLOYEE))
-            return prepareOfficialHomePage(user, session, modelData);
-        else
+        if (securityUtils.currentUserType().equals(UserType.CITIZEN))
             return "redirect:/../portal/home";
+        else
+            return prepareOfficialHomePage(user, session, modelData);
     }
 
     @RequestMapping(value = "favourite/add", method = RequestMethod.POST)
