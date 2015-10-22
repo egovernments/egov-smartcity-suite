@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>egov-erp</artifactId>
 		<groupId>org.egov</groupId>
-		<version>1.0.0-CR1</version>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 
 	<name>e-governments dashboard</name>
@@ -15,7 +15,7 @@
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-egi</artifactId>
-			<version>1.0.0-CR1</version>
+			<version>1.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
