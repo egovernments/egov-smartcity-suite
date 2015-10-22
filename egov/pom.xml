@@ -1262,6 +1262,24 @@
 					<scmCommentPrefix>Releasing${line.separator}</scmCommentPrefix>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-javadoc-plugin</artifactId>
+			    <version>2.10.2</version>
+			    <executions>
+			        <execution>
+			            <id>attach-javadocs</id>
+			            <goals>
+			                <goal>jar</goal>
+			            </goals>
+			            <configuration> 
+			                <additionalparam>-Xdoclint:none</additionalparam>
+			                <failOnError>false</failOnError>
+			            </configuration>
+			        </execution>
+			    </executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>
