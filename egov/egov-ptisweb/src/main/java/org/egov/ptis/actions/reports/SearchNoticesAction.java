@@ -40,9 +40,9 @@
 package org.egov.ptis.actions.reports;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 import java.io.ByteArrayInputStream;
@@ -369,7 +369,7 @@ public class SearchNoticesAction extends SearchFormAction {
         super.prepare();
         final List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 ZONE.toUpperCase(),
-                ADMIN_HIERARCHY_TYPE);
+                REVENUE_HIERARCHY_TYPE);
         final List<PropertyTypeMaster> propTypeList = propertyTypeMasterDAO.findAll();
         addDropdownData("Zone", zoneList);
         if (LOGGER.isDebugEnabled())

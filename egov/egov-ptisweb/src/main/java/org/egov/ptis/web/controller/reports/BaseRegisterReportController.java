@@ -84,7 +84,7 @@ public class BaseRegisterReportController {
     @ModelAttribute("wards")
     public List<Boundary> wardBoundaries() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(PropertyTaxConstants.WARD,
-                PropertyTaxConstants.ADMIN_HIERARCHY_TYPE);
+                PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
     }
 
     @RequestMapping(method = RequestMethod.GET)

@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_ARREARREGISTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -106,7 +106,7 @@ public class ArrearRegisterReportAction extends ReportFormAction {
         addDropdownData("localityList", localityList);
 
         final List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone",
-                ADMIN_HIERARCHY_TYPE);
+                REVENUE_HIERARCHY_TYPE);
         addDropdownData("Zone", zoneList);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);

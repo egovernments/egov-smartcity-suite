@@ -39,7 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 import java.util.List;
@@ -88,7 +88,7 @@ public class DCBReportAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, ADMIN_HIERARCHY_TYPE);
+        zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, REVENUE_HIERARCHY_TYPE);
         setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
         ZoneBndryMap.put(0l, "All");
     }

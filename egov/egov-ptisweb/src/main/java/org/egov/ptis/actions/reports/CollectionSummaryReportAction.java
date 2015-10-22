@@ -2,10 +2,10 @@ package org.egov.ptis.actions.reports;
 
 import static java.math.BigDecimal.ZERO;
 import static org.egov.infra.web.struts.actions.BaseFormAction.VIEW;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.COLL_MODES_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 
 import java.io.IOException;
@@ -112,11 +112,11 @@ public class CollectionSummaryReportAction extends BaseFormAction {
             LOGGER.debug("Entered into prepare method");
         super.prepare();
         setZoneBndryMap(CommonServices.getFormattedBndryMap(boundaryService
-                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", ADMIN_HIERARCHY_TYPE)));
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", REVENUE_HIERARCHY_TYPE)));
         setWardBndryMap(CommonServices.getFormattedBndryMap(boundaryService
-                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", ADMIN_HIERARCHY_TYPE)));
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", REVENUE_HIERARCHY_TYPE)));
         setBlockBndryMap(CommonServices.getFormattedBndryMap(boundaryService
-                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Block", ADMIN_HIERARCHY_TYPE)));
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Block", REVENUE_HIERARCHY_TYPE)));
         setLocalityBndryMap(CommonServices.getFormattedBndryMap(boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Locality", LOCATION_HIERARCHY_TYPE)));
         addDropdownData("instrumentTypeList", propertyTaxUtil.prepareInstrumentTypeList());
@@ -129,7 +129,7 @@ public class CollectionSummaryReportAction extends BaseFormAction {
 
         super.prepare();
         final List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone",
-                ADMIN_HIERARCHY_TYPE);
+        		REVENUE_HIERARCHY_TYPE);
         addDropdownData("zoneList", zoneList);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
