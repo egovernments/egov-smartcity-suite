@@ -16,10 +16,7 @@ BEGIN
 	return v_date;   
 END; 
 $BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
-ALTER FUNCTION lastFinYearDate(timestamp without time zone)
-  OWNER TO postgres;
+  LANGUAGE plpgsql;
 
 create or replace function previousFinancialYear()
 returns character varying as
@@ -34,10 +31,7 @@ begin
 	return prevFinYear;
 end;
 $BODY$
-LANGUAGE plpgsql VOLATILE
-  COST 100;
-ALTER FUNCTION previousFinancialYear()
-  OWNER TO postgres;
+LANGUAGE plpgsql;
 
 create or replace function currentFinancialYear()
 returns character varying as
@@ -52,10 +46,7 @@ begin
 	return currFinYear;
 end;
 $BODY$
-LANGUAGE plpgsql VOLATILE
-  COST 100;
-ALTER FUNCTION currentFinancialYear()
-  OWNER TO postgres;
+LANGUAGE plpgsql;
   
 --tables
 CREATE TABLE egpt_mv_collection
