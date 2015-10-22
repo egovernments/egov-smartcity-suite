@@ -59,14 +59,33 @@
 
 	<repositories>
 		<repository>
-			<id>repo.egovernments.org-snapshots</id>
-			<url>http://repo.egovernments.org/nexus/content/repositories/snapshots/</url>
+			<id>repo.egovernments.org</id>
+			<name>eGov Public Repository Group</name>
+			<url>http://repo.egovernments.org/nexus/content/groups/public/</url>
 			<snapshots>
+				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</repository>
 	</repositories>
 
+	<pluginRepositories>
+		<pluginRepository>
+			<id>repo.egovernments.org</id>
+			<name>eGov Public Repository Group</name>
+			<url>http://repo.egovernments.org/nexus/content/groups/public/</url>
+			<releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+	
 	<properties>
 		<hibernate-version>4.3.7.Final</hibernate-version>
 		<struts2-version>2.3.24</struts2-version>
@@ -1242,6 +1261,23 @@
 					<tagNameFormat>@{project.version}</tagNameFormat>
 					<scmCommentPrefix>Releasing${line.separator}</scmCommentPrefix>
 				</configuration>
+			</plugin>
+			
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-javadoc-plugin</artifactId>
+			    <version>2.10.3</version>
+			    <executions>
+			        <execution>
+			            <id>attach-javadocs</id>
+			            <goals>
+			                <goal>jar</goal>
+			            </goals>
+			            <configuration>
+			                <additionalparam>-Xdoclint:none</additionalparam>
+			            </configuration>
+			        </execution>
+			    </executions>
 			</plugin>
 		</plugins>
 	</build>
