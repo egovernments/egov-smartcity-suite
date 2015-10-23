@@ -71,6 +71,7 @@ public class WaterTaxConstants {
     public static final String SMSEMAILTYPENEWCONNEXECUTION = "newconnexecutiondate";
     public static final String SMSEMAILTYPENEWCONNESTNOTICE = "newconnestnotice";
     public static final String SMSEMAILTYPEADDCONNESTNOTICE = "addconnestnotice";
+    public static final String DONATIONMASTER = "DONATIONMASTER";
 
     public static final String SMSEMAILTYPENEWCONNFEEPAID = "newconnfeepaid";
     public static final String SMSEMAILTYPEADDCONNFEEPAID = "addconnfeepaid";
