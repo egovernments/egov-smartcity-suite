@@ -50,7 +50,6 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -62,7 +61,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 
 @ParentPackage("egov")
 @Results({ @Result(name = CashCollectionReportAction.INDEX, location = "cashCollectionReport-index.jsp"),
-        @Result(name = CashCollectionReportAction.REPORT, location = "cashCollectionReport-report.jsp") })
+    @Result(name = CashCollectionReportAction.REPORT, location = "cashCollectionReport-report.jsp") })
 public class CashCollectionReportAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -93,40 +92,35 @@ public class CashCollectionReportAction extends BaseFormAction {
     }
 
     /**
-     * @param instrumentStatus
-     *            the Instrument Status to set
+     * @param instrumentStatus the Instrument Status to set
      */
     public void setInstrumentStatus(final String instrumentStatus) {
         critParams.put(EGOV_INSTRUMENT_STATUS, instrumentStatus);
     }
 
     /**
-     * @param fromDate
-     *            the from date to set
+     * @param fromDate the from date to set
      */
     public void setFromDate(final Date fromDate) {
         critParams.put(EGOV_FROM_DATE, fromDate);
     }
 
     /**
-     * @param toDate
-     *            the to date to set
+     * @param toDate the to date to set
      */
     public void setToDate(final Date toDate) {
         critParams.put(EGOV_TO_DATE, toDate);
     }
 
     /**
-     * @param counterId
-     *            the counter id to set
+     * @param counterId the counter id to set
      */
     public void setCounterId(final Long counterId) {
         critParams.put(EGOV_COUNTER_ID, counterId);
     }
 
     /**
-     * @param userId
-     *            the user id to set
+     * @param userId the user id to set
      */
     public void setUserId(final Long userId) {
         critParams.put(EGOV_COUNTER_OPERATOR_ID, userId);
@@ -227,19 +221,19 @@ public class CashCollectionReportAction extends BaseFormAction {
 
     /**
      * Action method to create the cash submission report
-     * 
+     *
      * @return report
      */
     @Action(value = "/reports/cashCollectionReport-submissionReport")
     public String submissionReport() {
         final Map<String, Object> session = getSession();
-        final User user = collectionsUtil.getLoggedInUser();
+        collectionsUtil.getLoggedInUser();
 
         final Date today = ReportUtil.today();
         critParams.put(EGOV_FROM_DATE, today);
         critParams.put(EGOV_TO_DATE, today);
 
-        //critParams.put(EGOV_COUNTER_OPERATOR_ID, user.getId().longValue());
+        // critParams.put(EGOV_COUNTER_OPERATOR_ID, user.getId().longValue());
         critParams.put(EGOV_COUNTER_OPERATOR_ID, Long.valueOf(-1L));
         critParams.put(EGOV_COUNTER_ID, collectionsUtil.getLocationOfUser(getSession()).getId().longValue());
         critParams.put(EGOV_RECEIPT_IDS,
@@ -250,7 +244,7 @@ public class CashCollectionReportAction extends BaseFormAction {
 
     /**
      * Action method that creates the report
-     * 
+     *
      * @return report
      */
     @Action(value = "/reports/cashCollectionReport-report")
@@ -265,7 +259,7 @@ public class CashCollectionReportAction extends BaseFormAction {
 
     /**
      * Action method for criteria screen
-     * 
+     *
      * @return index
      */
     @Action(value = "/reports/cashCollectionReport-criteria")
@@ -274,16 +268,14 @@ public class CashCollectionReportAction extends BaseFormAction {
     }
 
     /**
-     * @param reportService
-     *            the reportService to set
+     * @param reportService the reportService to set
      */
     public void setReportService(final ReportService reportService) {
         this.reportService = reportService;
     }
 
     /**
-     * @param collectionsUtil
-     *            the Collections Utility object to set
+     * @param collectionsUtil the Collections Utility object to set
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;

@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -53,59 +53,62 @@ import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 
 @Results({
-@Result(name = ReceiptNumberSearchAction.SEARCH_RESULTS, location="receiptNumberSearch-searchResults.jsp" ),
-@Result(name = ReceiptNumberSearchAction.MANUALRECEIPTNUMBER_SEARCH_RESULTS, location="receiptNumberSearch-manualReceiptNumberResults.jsp" )
+        @Result(name = ReceiptNumberSearchAction.SEARCH_RESULTS, location = "receiptNumberSearch-searchResults.jsp"),
+        @Result(name = ReceiptNumberSearchAction.MANUALRECEIPTNUMBER_SEARCH_RESULTS, location = "receiptNumberSearch-manualReceiptNumberResults.jsp")
 })
-
-@ParentPackage("egov")  
+@ParentPackage("egov")
 public class ReceiptNumberSearchAction extends BaseFormAction {
-	private static final long serialVersionUID = 1L;
-	private ReceiptHeaderService receiptHeaderService;   
-	protected static final String SEARCH_RESULTS = "searchResults";
-	protected static final String MANUALRECEIPTNUMBER_SEARCH_RESULTS = "manualReceiptNumberResults";
-	private List<ReceiptHeader> receiptNumberList = new ArrayList<ReceiptHeader>();
-	private String query;
-	
-	public String getQuery() {
-		return query;
-	}
+    private static final long serialVersionUID = 1L;
+    private ReceiptHeaderService receiptHeaderService;
+    protected static final String SEARCH_RESULTS = "searchResults";
+    protected static final String MANUALRECEIPTNUMBER_SEARCH_RESULTS = "manualReceiptNumberResults";
+    private List<ReceiptHeader> receiptNumberList = new ArrayList<ReceiptHeader>();
+    private String query;
 
-	public void setQuery(String query) {
-		this.query = query;
-	}
-	@Action(value = "/receipts/receiptNumberSearch-searchAjax")
-	public String searchAjax(){
-		return SEARCH_RESULTS;
-	}
+    public String getQuery() {
+        return query;
+    }
 
-	public Object getModel() {
-		return null;
-	}
-	
-	@Action(value = "/receipts/receiptNumberSearch-searchManualReceiptNumberAjax")
-	public String searchManualReceiptNumberAjax()
-	{
-		return MANUALRECEIPTNUMBER_SEARCH_RESULTS;
-	}
+    public void setQuery(final String query) {
+        this.query = query;
+    }
 
-	public Collection<ReceiptHeader> getManualReceiptNumberList() {
-		if(StringUtils.isNotBlank(query))
-			receiptNumberList = receiptHeaderService.findAllBy("from org.egov.collection.entity.ReceiptHeader where upper(manualreceiptnumber) like  ? || '%'",query.toUpperCase());
-		return receiptNumberList;
-	}
-	
-	public Collection<ReceiptHeader> getReceiptNumberList() {
-		if(StringUtils.isNotBlank(query))
-			receiptNumberList = receiptHeaderService.findAllBy("from org.egov.collection.entity.ReceiptHeader where upper(receiptnumber) like '%' || ? || '%'",query.toUpperCase());
-		return receiptNumberList;
-	}
+    @Action(value = "/receipts/receiptNumberSearch-searchAjax")
+    public String searchAjax() {
+        return SEARCH_RESULTS;
+    }
 
+    @Override
+    public Object getModel() {
+        return null;
+    }
 
-	/**
-	 * @param receiptHeaderService the receiptHeaderService to set
-	 */
-	public void setReceiptHeaderService(ReceiptHeaderService receiptHeaderService) {
-		this.receiptHeaderService = receiptHeaderService;
-	}
+    @Action(value = "/receipts/receiptNumberSearch-searchManualReceiptNumberAjax")
+    public String searchManualReceiptNumberAjax()
+    {
+        return MANUALRECEIPTNUMBER_SEARCH_RESULTS;
+    }
+
+    public Collection<ReceiptHeader> getManualReceiptNumberList() {
+        if (StringUtils.isNotBlank(query))
+            receiptNumberList = receiptHeaderService.findAllBy(
+                    "from org.egov.collection.entity.ReceiptHeader where upper(manualreceiptnumber) like  ? || '%'",
+                    query.toUpperCase());
+        return receiptNumberList;
+    }
+
+    public Collection<ReceiptHeader> getReceiptNumberList() {
+        if (StringUtils.isNotBlank(query))
+            receiptNumberList = receiptHeaderService.findAllBy(
+                    "from org.egov.collection.entity.ReceiptHeader where upper(receiptnumber) like '%' || ? || '%'",
+                    query.toUpperCase());
+        return receiptNumberList;
+    }
+
+    /**
+     * @param receiptHeaderService the receiptHeaderService to set
+     */
+    public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
+        this.receiptHeaderService = receiptHeaderService;
+    }
 }
-

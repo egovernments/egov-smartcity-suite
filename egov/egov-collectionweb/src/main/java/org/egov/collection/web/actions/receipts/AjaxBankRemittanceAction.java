@@ -44,6 +44,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -58,9 +61,9 @@ import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Designation;
 import org.hibernate.Query;
+import org.hibernate.Session;
 
 @ParentPackage("egov")
 @Results({ @Result(name = AjaxBankRemittanceAction.BANKBRANCHLIST, location = "ajaxBankRemittance-bankBranchList.jsp"),
@@ -82,13 +85,18 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     private CollectionsUtil collectionsUtil;
 
     /**
-     * A <code>Long</code> representing the fund id. The fund id is arriving
-     * from the miscellanoeus receipt screen
+     * A <code>Long</code> representing the fund id. The fund id is arriving from the miscellanoeus receipt screen
      */
     private Integer fundId;
     private Integer branchId;
     private final List<Bankbranch> bankBranchArrayList = new ArrayList<Bankbranch>();
     private List<Bankaccount> bankAccountArrayList;
+    @PersistenceContext
+    protected EntityManager entityManager;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
     @Action(value = "/receipts/ajaxBankRemittance-bankBranchList")
     public String bankBranchList() {
@@ -105,7 +113,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
                 + serviceName
                 + "' and fd.NAME='" + getFundName() + "'";
 
-        final Query bankBranchQuery = HibernateUtil.getCurrentSession().createSQLQuery(bankBranchQueryString);
+        final Query bankBranchQuery = getCurrentSession().createSQLQuery(bankBranchQueryString);
         final List<Object[]> queryResults = bankBranchQuery.list();
 
         for (int i = 0; i < queryResults.size(); i++) {
@@ -136,7 +144,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
                 + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
                 + "ba.BRANCHID=" + branchId + " and sd.NAME='" + serviceName + "' and fd.NAME='" + fundName + "'";
 
-        final Query bankAccountQuery = HibernateUtil.getCurrentSession().createSQLQuery(bankAccountQueryString);
+        final Query bankAccountQuery = getCurrentSession().createSQLQuery(bankAccountQueryString);
         final List<Object[]> queryResults = bankAccountQuery.list();
 
         bankAccountArrayList = new ArrayList<Bankaccount>();
@@ -174,16 +182,14 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param serviceName
-     *            the serviceName to set
+     * @param serviceName the serviceName to set
      */
     public void setServiceName(final String serviceName) {
         this.serviceName = serviceName;
     }
 
     /**
-     * @param branchId
-     *            the branchId to set
+     * @param branchId the branchId to set
      */
     public void setBranchId(final Integer branchId) {
         this.branchId = branchId;
@@ -218,8 +224,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param fundName
-     *            the fundName to set
+     * @param fundName the fundName to set
      */
     public void setFundName(final String fundName) {
         this.fundName = fundName;
@@ -234,8 +239,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param designationId
-     *            the designationId to set
+     * @param designationId the designationId to set
      */
     public void setDesignationId(final Long designationId) {
         this.designationId = designationId;
@@ -249,8 +253,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param approverDeptId
-     *            the approverDeptId to set
+     * @param approverDeptId the approverDeptId to set
      */
     public void setApproverDeptId(final Long approverDeptId) {
         this.approverDeptId = approverDeptId;
@@ -271,8 +274,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param collectionsUtil
-     *            the collectionsUtil to set
+     * @param collectionsUtil the collectionsUtil to set
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;

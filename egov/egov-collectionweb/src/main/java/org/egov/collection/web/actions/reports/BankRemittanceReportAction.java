@@ -50,7 +50,7 @@ import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 
 @Results({ @Result(name = BankRemittanceReportAction.INDEX, location = "bankRemittanceReport-index.jsp"),
-        @Result(name = BankRemittanceReportAction.REPORT, location = "bankRemittanceReport-report.jsp") })
+    @Result(name = BankRemittanceReportAction.REPORT, location = "bankRemittanceReport-report.jsp") })
 public class BankRemittanceReportAction extends ReportFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -71,8 +71,7 @@ public class BankRemittanceReportAction extends ReportFormAction {
     }
 
     /**
-     * @param collectionsUtil
-     *            the collections utility object to set
+     * @param collectionsUtil the collections utility object to set
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
@@ -86,8 +85,7 @@ public class BankRemittanceReportAction extends ReportFormAction {
     }
 
     /**
-     * @param deptId
-     *            the department id to set
+     * @param deptId the department id to set
      */
     public void setDeptId(final Integer deptId) {
         setReportParam(EGOV_DEPT_ID, deptId);

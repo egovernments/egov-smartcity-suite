@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -56,151 +56,165 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.DateUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-@ParentPackage("egov") 
-@Transactional(readOnly=true)
+@ParentPackage("egov")
+@Transactional(readOnly = true)
 public class SearchChallanAction extends BaseFormAction {
-	private static final long serialVersionUID = 1L;
-	private Integer serviceId=-1;
-	private Date fromDate;
-	private Date toDate;
-	private Integer status=-1;
-	private Integer departmentId=-1;
-	private String challanNumber;
-	private List<ReceiptHeader> results= new ArrayList<ReceiptHeader>();
-	private String target="new";
-	private final static String sourcePage="search";
-	
-	@Override
-	public Object getModel() {
-		return null;
-	}
-	public void prepare() {
-		super.prepare();
-		setupDropdownDataExcluding();
-		addDropdownData("departmentList", getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_ALL_DEPARTMENTS));
-		addDropdownData("serviceList",getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_CHALLAN_SERVICES,CollectionConstants.CHALLAN_SERVICE_TYPE));
-	}
-	
-	public SearchChallanAction(){
-		super();
-	}
-	public String reset() {
-		results = null;
-		serviceId=-1;
-		challanNumber = "";
-		fromDate=null;
-		toDate=null;
-		status=-1;
-		return SUCCESS;
-	}
-	public List getChallanStatuses () {
-		return persistenceService.findAllBy(
-				"from EgwStatus s where moduletype=? order by description",
-				Challan.class.getSimpleName());
-	}
-	public String search() {
-		StringBuilder queryString=new StringBuilder(" select distinct receipt from org.egov.collection.entity.ReceiptHeader receipt");
-		StringBuilder criteria = new StringBuilder();
-		StringBuilder joinString = new StringBuilder();
-		StringBuilder whereString = new StringBuilder(" order by receipt.createdDate desc");
-		ArrayList<Object> params = new ArrayList<Object>();
-		if (StringUtils.isNotBlank(getChallanNumber())) {
-			criteria.append(" upper(receipt.challan.challanNumber) like ? ");
-			params.add("%" + getChallanNumber().toUpperCase() + "%");
-		}
-		if(getDepartmentId()!=-1){
-			criteria.append(getJoinOperand(criteria)).append(" receipt.receiptMisc.department.id = ? ");
-			params.add(getDepartmentId());
-		}
-		if (getStatus() != -1) {
-			criteria.append(getJoinOperand(criteria)).append(" receipt.challan.status.id = ? ");
-			params.add(getStatus());
-		}
-		if (getFromDate() != null) {
-			criteria.append(getJoinOperand(criteria)).append(" receipt.challan.challanDate >= ? ");
-			params.add(fromDate);
-		}
-		if (getToDate() != null) {
-			criteria.append(getJoinOperand(criteria)).append(" receipt.challan.challanDate < ? ");
-			params.add(DateUtils.add(toDate, Calendar.DATE, 1));
-		}
-		if (getServiceId() != -1) {
-			criteria.append(getJoinOperand(criteria)).append(" receipt.challan.service.id = ? ");
-			params.add(Long.valueOf(getServiceId()));
-		}
-		criteria.append(getJoinOperand(criteria)).append(" receipt.receipttype = ? ");
-		params.add(CollectionConstants.RECEIPT_TYPE_CHALLAN);
-		
-		queryString.append(StringUtils.isBlank(joinString.toString())?"":joinString);
-		queryString.append(StringUtils.isBlank(criteria.toString())?"":" where ").append(criteria);
-		queryString.append(whereString);
-		results=getPersistenceService().findAllBy(queryString.toString(),params.toArray());
-		if(results.size()>500){
-			 results.clear();
-			 throw new ValidationException(Arrays.asList(new ValidationError(
-					 "searchchallan.changecriteria","More than 500 results found.Please add more search criteria")));
-			 
-		}
-		target="searchresult";
-		return SUCCESS;
-	}
-	
-	private String getJoinOperand(StringBuilder criteria) {
-		return StringUtils.isBlank(criteria.toString())?"":" and ";
-	}
-	public Integer getServiceId() {
-		return serviceId;
-	}
+    private static final long serialVersionUID = 1L;
+    private Integer serviceId = -1;
+    private Date fromDate;
+    private Date toDate;
+    private Integer status = -1;
+    private Integer departmentId = -1;
+    private String challanNumber;
+    private List<ReceiptHeader> results = new ArrayList<ReceiptHeader>();
+    private String target = "new";
+    private final static String sourcePage = "search";
 
-	public void setServiceId(Integer serviceId) {
-		this.serviceId = serviceId;
-	}
-	public Date getFromDate() {
-		return fromDate;
-	}
+    @Override
+    public Object getModel() {
+        return null;
+    }
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
+    @Override
+    public void prepare() {
+        super.prepare();
+        setupDropdownDataExcluding();
+        addDropdownData("departmentList", getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_ALL_DEPARTMENTS));
+        addDropdownData(
+                "serviceList",
+                getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_CHALLAN_SERVICES,
+                        CollectionConstants.CHALLAN_SERVICE_TYPE));
+    }
 
-	public Date getToDate() {
-		return toDate;
-	}
+    public SearchChallanAction() {
+        super();
+    }
 
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
+    public String reset() {
+        results = null;
+        serviceId = -1;
+        challanNumber = "";
+        fromDate = null;
+        toDate = null;
+        status = -1;
+        return SUCCESS;
+    }
 
-	public Integer getStatus() {
-		return status;
-	}
+    public List getChallanStatuses() {
+        return persistenceService.findAllBy(
+                "from EgwStatus s where moduletype=? order by description",
+                Challan.class.getSimpleName());
+    }
 
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
-	public String getChallanNumber() {
-		return challanNumber;
-	}
+    public String search() {
+        final StringBuilder queryString = new StringBuilder(
+                " select distinct receipt from org.egov.collection.entity.ReceiptHeader receipt");
+        final StringBuilder criteria = new StringBuilder();
+        final StringBuilder joinString = new StringBuilder();
+        final StringBuilder whereString = new StringBuilder(" order by receipt.createdDate desc");
+        final ArrayList<Object> params = new ArrayList<Object>();
+        if (StringUtils.isNotBlank(getChallanNumber())) {
+            criteria.append(" upper(receipt.challan.challanNumber) like ? ");
+            params.add("%" + getChallanNumber().toUpperCase() + "%");
+        }
+        if (getDepartmentId() != -1) {
+            criteria.append(getJoinOperand(criteria)).append(" receipt.receiptMisc.department.id = ? ");
+            params.add(getDepartmentId());
+        }
+        if (getStatus() != -1) {
+            criteria.append(getJoinOperand(criteria)).append(" receipt.challan.status.id = ? ");
+            params.add(getStatus());
+        }
+        if (getFromDate() != null) {
+            criteria.append(getJoinOperand(criteria)).append(" receipt.challan.challanDate >= ? ");
+            params.add(fromDate);
+        }
+        if (getToDate() != null) {
+            criteria.append(getJoinOperand(criteria)).append(" receipt.challan.challanDate < ? ");
+            params.add(DateUtils.add(toDate, Calendar.DATE, 1));
+        }
+        if (getServiceId() != -1) {
+            criteria.append(getJoinOperand(criteria)).append(" receipt.challan.service.id = ? ");
+            params.add(Long.valueOf(getServiceId()));
+        }
+        criteria.append(getJoinOperand(criteria)).append(" receipt.receipttype = ? ");
+        params.add(CollectionConstants.RECEIPT_TYPE_CHALLAN);
 
-	public void setChallanNumber(String challanNumber) {
-		this.challanNumber = challanNumber;
-	}
-	
-	public String getTarget() {
-		return target;
-	}
-	public List<ReceiptHeader> getResults() {
-		return results;
-	}
-	
-	public Integer getDepartmentId(){
-		return departmentId;
-	}
-	public void setDepartmentId(Integer departmentId){
-		this.departmentId=departmentId;
-	}
-	
-	public String getSourcePage() {
-		return sourcePage;
-	}
+        queryString.append(StringUtils.isBlank(joinString.toString()) ? "" : joinString);
+        queryString.append(StringUtils.isBlank(criteria.toString()) ? "" : " where ").append(criteria);
+        queryString.append(whereString);
+        results = getPersistenceService().findAllBy(queryString.toString(), params.toArray());
+        if (results.size() > 500) {
+            results.clear();
+            throw new ValidationException(Arrays.asList(new ValidationError(
+                    "searchchallan.changecriteria", "More than 500 results found.Please add more search criteria")));
+
+        }
+        target = "searchresult";
+        return SUCCESS;
+    }
+
+    private String getJoinOperand(final StringBuilder criteria) {
+        return StringUtils.isBlank(criteria.toString()) ? "" : " and ";
+    }
+
+    public Integer getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(final Integer serviceId) {
+        this.serviceId = serviceId;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(final Integer status) {
+        this.status = status;
+    }
+
+    public String getChallanNumber() {
+        return challanNumber;
+    }
+
+    public void setChallanNumber(final String challanNumber) {
+        this.challanNumber = challanNumber;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    public List<ReceiptHeader> getResults() {
+        return results;
+    }
+
+    public Integer getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(final Integer departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public String getSourcePage() {
+        return sourcePage;
+    }
 }

@@ -70,8 +70,8 @@ import org.egov.model.instrument.InstrumentType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({ @Result(name = DishonoredChequeAction.SEARCH, location = "dishonoredCheque-search.jsp"),
-    @Result(name = DishonoredChequeAction.SUCCESS, location = "dishonoredCheque-success.jsp"),
-    @Result(name = "accountList", location = "dishonoredCheque-accountList.jsp") })
+        @Result(name = DishonoredChequeAction.SUCCESS, location = "dishonoredCheque-success.jsp"),
+        @Result(name = "accountList", location = "dishonoredCheque-accountList.jsp") })
 @ParentPackage("egov")
 public class DishonoredChequeAction extends SearchFormAction {
 
@@ -295,7 +295,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         this.instHeaderIds = instHeaderIds;
     }
 
-    public void setDishonorChequeService(DishonorChequeService dishonorChequeService) {
+    public void setDishonorChequeService(final DishonorChequeService dishonorChequeService) {
         this.dishonorChequeService = dishonorChequeService;
     }
 

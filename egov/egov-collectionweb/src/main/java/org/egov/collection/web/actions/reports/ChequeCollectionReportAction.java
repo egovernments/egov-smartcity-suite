@@ -50,7 +50,6 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -59,7 +58,6 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.utils.HibernateUtil;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ChequeCollectionReportAction.INDEX, location = "chequeCollectionReport-index.jsp"),
@@ -161,13 +159,13 @@ public class ChequeCollectionReportAction extends BaseFormAction {
     @Action(value = "/reports/chequeCollectionReport-submissionReport")
     public String submissionReport() {
         final Map<String, Object> session = getSession();
-        final User user = collectionsUtil.getLoggedInUser();
+        // final User user = collectionsUtil.getLoggedInUser();
 
         final Date today = ReportUtil.today();
         critParams.put(EGOV_FROM_DATE, today);
         critParams.put(EGOV_TO_DATE, today);
 
-        //critParams.put(EGOV_COUNTER_OPERATOR_ID, user.getId().longValue());
+        // critParams.put(EGOV_COUNTER_OPERATOR_ID, user.getId().longValue());
         critParams.put(EGOV_COUNTER_OPERATOR_ID, Long.valueOf(-1L));
         critParams.put(EGOV_COUNTER_ID, collectionsUtil.getLocationOfUser(getSession()).getId().longValue());
         critParams.put(EGOV_RECEIPT_IDS,
@@ -197,16 +195,14 @@ public class ChequeCollectionReportAction extends BaseFormAction {
     }
 
     /**
-     * @param reportService
-     *            the reportService to set
+     * @param reportService the reportService to set
      */
     public void setReportService(final ReportService reportService) {
         this.reportService = reportService;
     }
 
     /**
-     * @param critParams
-     *            the critParams to set
+     * @param critParams the critParams to set
      */
     public void setCritParams(final Map<String, Object> critParams) {
         this.critParams = critParams;
@@ -220,8 +216,7 @@ public class ChequeCollectionReportAction extends BaseFormAction {
     }
 
     /**
-     * @param collectionsUtil
-     *            the Collections Utility object to set
+     * @param collectionsUtil the Collections Utility object to set
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
