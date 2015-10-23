@@ -41,7 +41,7 @@ package org.egov.restapi.model;
 
 import javax.validation.constraints.NotNull;
 
-public class ConnectionInfo {
+public class WaterConnectionInfo {
     @NotNull
     private String propertyID;
     

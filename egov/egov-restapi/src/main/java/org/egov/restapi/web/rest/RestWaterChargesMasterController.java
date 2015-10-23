@@ -75,7 +75,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 @RestController
-public class RestWaterTaxMasterController {
+public class RestWaterChargesMasterController {
 
     @Autowired
     private ConnectionDemandService connectionDemandService;

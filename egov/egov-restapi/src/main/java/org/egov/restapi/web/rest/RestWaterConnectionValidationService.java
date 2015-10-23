@@ -43,7 +43,8 @@ import java.io.IOException;
 
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.constants.RestApiConstants;
-import org.egov.restapi.model.ConnectionInfo;
+import org.egov.restapi.model.WaterConnectionInfo;
+import org.egov.restapi.model.WaterConnectionInfo;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.AdditionalConnectionService;
@@ -91,7 +92,7 @@ public class RestWaterConnectionValidationService {
     @Autowired
     private NewConnectionService newConnectionService;
 
-    public ErrorDetails validateCreateRequest(final ConnectionInfo connectionInfo) {
+    public ErrorDetails validateCreateRequest(final WaterConnectionInfo connectionInfo) {
         ErrorDetails errorDetails = null;
         if (connectionInfo.getPropertyType() != null) {
             final WaterPropertyUsage usageTypesList = usageTypeService.getAllUsageTypesByPropertyTypeAndUsageType(
@@ -138,7 +139,7 @@ public class RestWaterConnectionValidationService {
         return errorDetails;
     }
 
-    public ErrorDetails validateWaterConnectionDetails(final ConnectionInfo connectionInfo) throws IOException {
+    public ErrorDetails validateWaterConnectionDetails(final WaterConnectionInfo connectionInfo) throws IOException {
         String responseMessage = "";
         ErrorDetails errorDetails = null;
         responseMessage = newConnectionService.checkValidPropertyAssessmentNumber(connectionInfo.getPropertyID());
@@ -154,7 +155,7 @@ public class RestWaterConnectionValidationService {
         return errorDetails;
     }
 
-    public ErrorDetails validateAdditionalWaterConnectionDetails(final ConnectionInfo connectionInfo)
+    public ErrorDetails validateAdditionalWaterConnectionDetails(final WaterConnectionInfo connectionInfo)
             throws IOException {
         String responseMessage = "";
         ErrorDetails errorDetails = null;
@@ -172,7 +173,7 @@ public class RestWaterConnectionValidationService {
         return errorDetails;
     }
 
-    public ErrorDetails validateChangOfUsageWaterConnectionDetails(final ConnectionInfo connectionInfo)
+    public ErrorDetails validateChangOfUsageWaterConnectionDetails(final WaterConnectionInfo connectionInfo)
             throws IOException {
         String responseMessage = "";
         ErrorDetails errorDetails = null;
@@ -184,6 +185,28 @@ public class RestWaterConnectionValidationService {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorMessage(RestApiConstants.CONSUMERCODE_IS_NOT_VALID_CONNECTION);
             errorDetails.setErrorCode(RestApiConstants.CONSUMERCODE_IS_NOT_VALID_CONNECTION_CODE);
+        }
+
+        return errorDetails;
+    }
+    
+    public ErrorDetails validateCombinationOfChangOfUsage(final WaterConnectionInfo connectionInfo)
+            throws IOException {
+        String responseMessage = "";
+        ErrorDetails errorDetails = null;
+        final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
+                .findByConsumerCodeAndConnectionStatus(connectionInfo.getConsumerCode(), ConnectionStatus.ACTIVE);
+        if(connectionUnderChange.getCategory().getCode().equals(connectionInfo.getCategory()) &&
+                connectionUnderChange.getUsageType().getCode().equals(connectionInfo.getUsageType()) &&
+                connectionUnderChange.getPropertyType().getCode().equals(connectionInfo.getPropertyType()) &&
+                connectionUnderChange.getPipeSize().getCode().equals(connectionInfo.getPipeSize())&&
+                connectionUnderChange.getConnectionType().name().equals(connectionInfo.getConnectionType())){
+        responseMessage = "Please modify at least one mandatory field";
+        }
+        if (responseMessage != "" && responseMessage != null) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorMessage(RestApiConstants.CONSUMERCODE_IS_NOT_VALID_CONNECTION);
+            errorDetails.setErrorCode(responseMessage);
         }
 
         return errorDetails;

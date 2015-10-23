@@ -48,7 +48,7 @@ import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
 import org.jboss.logging.Logger;
 
-public class RestConnectionSearchRequest {
+public class RestWaterConnectionSearchRequest {
     
     private String searchText;
     private String hscnumber;
@@ -56,7 +56,7 @@ public class RestConnectionSearchRequest {
     private String locality;
     private String mobilenumber;
 
-    private static final Logger logger = Logger.getLogger(RestConnectionSearchRequest.class);
+    private static final Logger logger = Logger.getLogger(RestWaterConnectionSearchRequest.class);
 
     public String getHscnumber() {
         return hscnumber;

@@ -58,14 +58,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 @RestController
-public class RestConnectionSearchController {
+public class RestWaterConnectionSearchController {
 
     @Autowired
     private SearchService searchService;
 
     @RequestMapping(value = "/watercharges/searchconnection", method = RequestMethod.POST)
     @ResponseBody
-    public String searchConnection(@RequestBody final RestConnectionSearchRequest searchRequest) {
+    public String searchConnection(@RequestBody final RestWaterConnectionSearchRequest searchRequest) {
         final SearchResult searchResult = searchService.search(asList(Index.WATERCHARGES.toString()),
                 asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(),
                 searchRequest.searchFilters(), Sort.NULL, Page.NULL);
