@@ -113,6 +113,6 @@ function setEstimateId(elem){
 	<display:column headerClass="pagetableth" class="pagetabletd"
 		title="Executing Depatrtment" titleKey="estimate.search.executingdept"
 		style="width:10%;text-align:left"
-		property="executingDepartment.deptName"></display:column>
+		property="executingDepartment.name"></display:column>
 
 </display:table>

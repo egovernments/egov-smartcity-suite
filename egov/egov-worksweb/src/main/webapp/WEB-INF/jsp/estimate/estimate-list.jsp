@@ -60,7 +60,7 @@ function gotoPage(obj)
 	
 	if(dom.get('searchActions')[1]!=null && obj.value==dom.get('searchActions')[1].value)
 	{
-		window.open("${pageContext.request.contextPath}/estimate/abstractEstimate!edit.action?id="+estimateIden.value+
+		window.open("${pageContext.request.contextPath}/estimate/abstractEstimate-edit.action?id="+estimateIden.value+
 		"&sourcepage=search",'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 	}
 	if(dom.get('searchActions')[2]!=null && obj.value==dom.get("searchActions")[2].value)
@@ -69,21 +69,15 @@ function gotoPage(obj)
 	}
 	if(dom.get('searchActions')[3]!=null && obj.value==dom.get("searchActions")[3].value)
 	{
-		window.open("${pageContext.request.contextPath}/estimate/abstractEstimate!workflowHistory.action?stateValue="+
+		window.open("${pageContext.request.contextPath}/estimate/abstractEstimate-workflowHistory.action?stateValue="+
 		estimateStateId.value,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 	}
 	if(dom.get('searchActions')[4]!=null && obj.value==dom.get("searchActions")[4].value)
 	{
-		viewDocumentManager(docNumber.value);return false;
+		//viewDocumentManager(docNumber.value);return false;
 	}
 	if(dom.get('searchActions')[5]!=null && obj.value==dom.get("searchActions")[5].value)
 	{
-		var	depositWorksRCId = getControlInBranch(currRow,'depositWorksRCId').value;
-		if(depositWorksRCId!=""){
-			alert('<s:text name="copy.estimate.depositWorks.RCEstimate.check" />');
-		    return false;
-		}
-		
 		checkEstNumberForCopy(estNum.value);
 	}
 }
@@ -356,14 +350,14 @@ function toggleCancelRemarks(obj) {
 	</display:column> 
 
 	<display:column headerClass="pagetableth" class="pagetabletd" title="Estimate Number" style="width:10%;text-align:left" property="estimateNumber" />
-	<display:column headerClass="pagetableth" class="pagetabletd" title="Executing Department" titleKey='estimate.search.executingdept' style="width:8%;text-align:left" property='executingDepartment.deptName' />
+	<display:column headerClass="pagetableth" class="pagetabletd" title="Executing Department" titleKey='estimate.search.executingdept' style="width:8%;text-align:left" property='executingDepartment.name' />
 	<s:if test="%{source==''}">
-		<display:column headerClass="pagetableth" class="pagetabletd" title="User Department" titleKey='estimate.search.userdept' style="width:8%;text-align:left" property='userDepartment.deptName' />
+		<display:column headerClass="pagetableth" class="pagetabletd" title="User Department" titleKey='estimate.search.userdept' style="width:8%;text-align:left" property='userDepartment.name' />
 	</s:if>	
 	
 	<display:column headerClass="pagetableth" class="pagetabletd" title="Name" titleKey='estimate.search.name' style="width:20%;text-align:left" property='name' />
 
-	<display:column headerClass="pagetableth" class="pagetabletd" title="<a href='javascript:sortBy();'>Status</a>" titleKey='estimate.search.status' style="width:10%;text-align:left">
+	<display:column headerClass="pagetableth" class="pagetabletd" title="Status" titleKey='estimate.search.status' style="width:10%;text-align:left">
 		<s:property value="#attr.currentRow.egwStatus.description" />
 	</display:column>
 	
@@ -391,9 +385,8 @@ function toggleCancelRemarks(obj) {
 	<s:hidden name="docNumber" id="docNumber" value="%{#attr.currentRow.documentNumber}" />
 	<s:hidden name="estimateIden" id="estimateIden" value="%{#attr.currentRow.id}" />
 	<s:hidden name="estimateStateId" id="estimateStateId" value="%{#attr.currentRow.state.id}" />
-	<s:hidden name="execDeptName" id="execDeptName" value="%{#attr.currentRow.executingDepartment.deptName}" />
+	<s:hidden name="execDeptName" id="execDeptName" value="%{#attr.currentRow.executingDepartment.name}" />
 	<s:hidden name="estNum" id="estNum" value="%{#attr.currentRow.estimateNumber}" />
-	<s:hidden name="depositWorksRCId" id="depositWorksRCId" value="%{#attr.currentRow.applicationRequest.rateContract.id}" />
 	<s:select theme="simple" id="searchActions" name="searchActions"
 			list="estimateActions"
 			headerValue="%{getText('estimate.default.select')}" headerKey="-1"

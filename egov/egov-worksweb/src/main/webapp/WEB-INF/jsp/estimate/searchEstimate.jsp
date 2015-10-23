@@ -1170,7 +1170,7 @@ function jurisdictionSearchParameters(){
 													<s:elseif
 														test="%{source=='createNegotiationNew' || source=='SearchEstimateforWO'}">
 														<tr>
-															<td><%@ include file='estimateNewSearch-list.jsp'%></td>
+															<td><%@ include file='estimateSearch-list.jsp'%></td>
 														</tr>
 														<tr>
 															<td>

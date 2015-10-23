@@ -57,6 +57,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
@@ -77,7 +79,6 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.pims.service.EisUtilService;
 import org.egov.works.models.contractorBill.ContractorBillRegister;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.masters.NatureOfWork;
@@ -93,10 +94,11 @@ import org.egov.works.web.actions.workorder.AjaxWorkOrderAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
+@Results({ @Result(name = SearchEstimateAction.SUCCESS, location = "searchEstimate.jsp") })
 public class SearchEstimateAction extends SearchFormAction {
 
     private static final long serialVersionUID = -6825168798764375539L;
-    private static final Logger logger = Logger.getLogger(SearchEstimateAction.class);
+    private final Logger logger = Logger.getLogger(getClass());
     private String status;
     private Integer expenditureType = -1;
     private String estimateNumber = "";
@@ -108,12 +110,15 @@ public class SearchEstimateAction extends SearchFormAction {
     private Long assignedTo2;
     private String source;
     private Long execDept;
+
+    @Autowired
     private AbstractEstimateService abstractEstimateService;
     private final List<AbstractEstimate> results = new LinkedList<AbstractEstimate>();
     private AbstractEstimate estimates = new AbstractEstimate();
     private Long estimateCreatedBy;
     private String wpdate;
 
+    @Autowired
     private WorksService worksService;
     private String negoCreatedBy;
     private String statusReq;
@@ -123,11 +128,9 @@ public class SearchEstimateAction extends SearchFormAction {
     public static final String dateFormat = "dd-MMM-yyyy";
     private String option = "";
     private boolean selectedorder;
-    private Integer expenditureTypeid;
     public static final String RESULTS = "results";
     public static final String SEARCH_ESTIMATE_FOR_WO = "SearchEstimateforWO";
     public static final String UNCHECKED = "unchecked";
-    private EisUtilService eisService;
     @Autowired
     private DepartmentService departmentService;
     private boolean checkWO;
@@ -161,14 +164,6 @@ public class SearchEstimateAction extends SearchFormAction {
     private String milestoneStatus;
     private String status2;
 
-    public Integer getExpenditureTypeid() {
-        return expenditureTypeid;
-    }
-
-    public void setExpenditureTypeid(final Integer expenditureTypeid) {
-        this.expenditureTypeid = expenditureTypeid;
-    }
-
     public SearchEstimateAction() {
         addRelatedEntity("category", EgwTypeOfWork.class);
         addRelatedEntity("parentCategory", EgwTypeOfWork.class);
@@ -178,14 +173,6 @@ public class SearchEstimateAction extends SearchFormAction {
     @Override
     public Object getModel() {
         return estimates;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(final String status) {
-        this.status = status;
     }
 
     @Override
@@ -205,7 +192,8 @@ public class SearchEstimateAction extends SearchFormAction {
             final Object row = iter.next();
             final AbstractEstimate estimate = (AbstractEstimate) row;
             if (!estimate.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.ADMIN_SANCTIONED_STATUS)
-                    && !estimate.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
+                    && !estimate.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)
+                    && estimate.getState() != null) {
                 final String posName = estimate.getState().getOwnerPosition().getName();
                 final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(estimate.getState()
                         .getOwnerPosition().getId());
@@ -329,7 +317,6 @@ public class SearchEstimateAction extends SearchFormAction {
         final AjaxWorkOrderAction ajaxWorkOrderAction = new AjaxWorkOrderAction();
         ajaxWorkOrderAction.setPersistenceService(getPersistenceService());
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
-        ajaxEstimateAction.setEisService(eisService);
         super.prepare();
         setupDropdownDataExcluding("ward");
         final List<Department> values = getPersistenceService().findAllBy("from Department dt");
@@ -553,65 +540,25 @@ public class SearchEstimateAction extends SearchFormAction {
         return queryAndParams;
     }
 
-    public List<AbstractEstimate> getResults() {
-        return results;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(final String source) {
-        this.source = source;
-    }
-
-    public Integer getExpenditureType() {
-        return expenditureType;
-    }
-
-    public void setExpenditureType(final Integer expenditureType) {
-        this.expenditureType = expenditureType;
-    }
-
-    public String getEstimatenumber() {
-        return estimateNumber;
-    }
-
-    public void setEstimatenumber(final String estimatenumber) {
-        estimateNumber = estimatenumber;
-    }
-
-    public AbstractEstimate getEstimates() {
-        return estimates;
-    }
-
-    public void setEstimates(final AbstractEstimate estimates) {
-        this.estimates = estimates;
-    }
-
-    public Long getExecDept() {
-        return execDept;
-    }
-
-    public void setExecDept(final Long execDept) {
-        this.execDept = execDept;
-    }
-
     public List<String> getEstimateActions() {
-        String actions = "";
         final List<Role> copyEstActionRoles = new ArrayList<Role>();
         boolean allowCopyEst = false;
-        List<String> actionList = new ArrayList<String>();
         String copyEstActionName;
 
-        actions = worksService.getWorksConfigValue("ESTIMATES_SEARCH_ACTIONS");
-        if (actions != null) {
-            actionList = new ArrayList(Arrays.asList(actions.split(",")));
+        final List<String> actionList = new ArrayList<String>();
+        actionList.add(0, WorksConstants.ACTION_VIEW);
+        actionList.add(1, WorksConstants.ACTION_VIEW_PDF);
+        actionList.add(2, WorksConstants.ACTION_WF_HISTORY);
+        actionList.add(3, WorksConstants.ACTION_VIEW_DOCUMENT);
+        actionList.add(4, WorksConstants.ACTION_COPY_ESTIMATE);
+
+        if (actionList != null && !actionList.isEmpty()) {
             copyEstActionName = actionList.get(actionList.size() - 1);
 
             // get the roles for the Copy Estimate action
-            final org.egov.infra.admin.master.entity.Action copyEstaction = actionService.getActionByName(copyEstActionName);
-            copyEstActionRoles.addAll(copyEstaction.getRoles());
+            final org.egov.infra.admin.master.entity.Action copyEstimateAction = actionService.getActionByName(copyEstActionName);
+            if (copyEstimateAction != null)
+                copyEstActionRoles.addAll(copyEstimateAction.getRoles());
 
             // check if the userroles contains the copy estimate action roles
             for (final Role copyEstrole : copyEstActionRoles)
@@ -662,86 +609,6 @@ public class SearchEstimateAction extends SearchFormAction {
             return "wpSearch";
     }
 
-    public Long getEstimateCreatedBy() {
-        return estimateCreatedBy;
-    }
-
-    public void setEstimateCreatedBy(final Long estimateCreatedBy) {
-        this.estimateCreatedBy = estimateCreatedBy;
-    }
-
-    public void setAbstractEstimateService(final AbstractEstimateService abstractEstimateService) {
-        this.abstractEstimateService = abstractEstimateService;
-    }
-
-    public String getWpdate() {
-        return wpdate;
-    }
-
-    public void setWpdate(final String wpdate) {
-        this.wpdate = wpdate;
-    }
-
-    public void setWorksService(final WorksService worksService) {
-        this.worksService = worksService;
-    }
-
-    public String getNegoCreatedBy() {
-        return negoCreatedBy;
-    }
-
-    public void setNegoCreatedBy(final String negoCreatedBy) {
-        this.negoCreatedBy = negoCreatedBy;
-    }
-
-    public String getStatusReq() {
-        return statusReq;
-    }
-
-    public void setStatusReq(final String statusReq) {
-        this.statusReq = statusReq;
-    }
-
-    public Date getFromDate() {
-        return fromDate;
-    }
-
-    public Date getToDate() {
-        return toDate;
-    }
-
-    public void setFromDate(final Date fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public void setToDate(final Date toDate) {
-        this.toDate = toDate;
-    }
-
-    public String getEstimateOrWpSearchReq() {
-        return estimateOrWpSearchReq;
-    }
-
-    public void setEstimateOrWpSearchReq(final String estimateOrWpSearchReq) {
-        this.estimateOrWpSearchReq = estimateOrWpSearchReq;
-    }
-
-    public boolean getSelectedorder() {
-        return selectedorder;
-    }
-
-    public void setSelectedorder(final boolean selectedorder) {
-        this.selectedorder = selectedorder;
-    }
-
-    public String getOption() {
-        return option;
-    }
-
-    public void setOption(final String option) {
-        this.option = option;
-    }
-
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
         // prepare the query string
@@ -749,7 +616,7 @@ public class SearchEstimateAction extends SearchFormAction {
         String query = null;
         String countQuery = null;
         String baseQuery = null;
-        String OrderBy = null;
+        // String OrderBy = null;
         final StringBuilder sb = new StringBuilder(500);
         Map queryAndParms = null;
 
@@ -770,9 +637,9 @@ public class SearchEstimateAction extends SearchFormAction {
         } else {
             baseQuery = "from AbstractEstimate as ae where ae.parent is null  ";
             boolean isError = false;
-            OrderBy = "asc";
-            if (selectedorder)
-                OrderBy = "desc";
+            /*
+             * OrderBy = "asc"; if (selectedorder) OrderBy = "desc";
+             */
             if (SEARCH_ESTIMATE_FOR_WO.equals(source)) {
                 if (StringUtils.isNotBlank(status)) {
                     sb.append(baseQuery);
@@ -846,7 +713,7 @@ public class SearchEstimateAction extends SearchFormAction {
                     logger.error("Date Conversion Error :" + e.getMessage());
                     addFieldError("parse exception", "Date Conversion Error");
                 }
-                sb.append(" and trunc(ae.state.createdDate)<=? ");
+                sb.append(" and trunc(ae.approvedDate)<=? ");
                 paramList.add(workspacDate);
             }
 
@@ -883,8 +750,8 @@ public class SearchEstimateAction extends SearchFormAction {
                 paramList.add(toDate);
             }
 
-            if (sb.length() > 0 && !isError && getFieldErrors().isEmpty() && !"menu".equalsIgnoreCase(option))
-                sb.append(" order by  ae.egwStatus.code  " + OrderBy + " ");
+            // if (sb.length() > 0 && !isError && getFieldErrors().isEmpty() && !"menu".equalsIgnoreCase(option))
+            // sb.append(" group by ae.egwStatus.code, ae.id order by ae.egwStatus.code " + OrderBy + " ");
 
             query = sb.toString();
             countQuery = "select count(distinct ae.id) " + query;
@@ -1060,6 +927,78 @@ public class SearchEstimateAction extends SearchFormAction {
             roles.addAll(user.getRoles());
     }
 
+    public Long getEstimateCreatedBy() {
+        return estimateCreatedBy;
+    }
+
+    public void setEstimateCreatedBy(final Long estimateCreatedBy) {
+        this.estimateCreatedBy = estimateCreatedBy;
+    }
+
+    public String getWpdate() {
+        return wpdate;
+    }
+
+    public void setWpdate(final String wpdate) {
+        this.wpdate = wpdate;
+    }
+
+    public String getNegoCreatedBy() {
+        return negoCreatedBy;
+    }
+
+    public void setNegoCreatedBy(final String negoCreatedBy) {
+        this.negoCreatedBy = negoCreatedBy;
+    }
+
+    public String getStatusReq() {
+        return statusReq;
+    }
+
+    public void setStatusReq(final String statusReq) {
+        this.statusReq = statusReq;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public String getEstimateOrWpSearchReq() {
+        return estimateOrWpSearchReq;
+    }
+
+    public void setEstimateOrWpSearchReq(final String estimateOrWpSearchReq) {
+        this.estimateOrWpSearchReq = estimateOrWpSearchReq;
+    }
+
+    public boolean getSelectedorder() {
+        return selectedorder;
+    }
+
+    public void setSelectedorder(final boolean selectedorder) {
+        this.selectedorder = selectedorder;
+    }
+
+    public String getOption() {
+        return option;
+    }
+
+    public void setOption(final String option) {
+        this.option = option;
+    }
+
     public String getProjCode() {
         return projCode;
     }
@@ -1124,14 +1063,6 @@ public class SearchEstimateAction extends SearchFormAction {
         this.assignedTo1 = assignedTo1;
     }
 
-    public void setDepartmentService(final DepartmentService departmentService) {
-        this.departmentService = departmentService;
-    }
-
-    public void setEisService(final EisUtilService eisService) {
-        this.eisService = eisService;
-    }
-
     public boolean isCheckWO() {
         return checkWO;
     }
@@ -1146,14 +1077,6 @@ public class SearchEstimateAction extends SearchFormAction {
 
     public void setWorkOrdEstIds(final String workOrdEstIds) {
         this.workOrdEstIds = workOrdEstIds;
-    }
-
-    public CommonsService getCommonsService() {
-        return commonsService;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public String getMessageKey() {
@@ -1219,4 +1142,57 @@ public class SearchEstimateAction extends SearchFormAction {
     public void setMilestoneStatus(final String milestoneStatus) {
         this.milestoneStatus = milestoneStatus;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(final String status) {
+        this.status = status;
+    }
+
+    public List<AbstractEstimate> getResults() {
+        return results;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(final String source) {
+        this.source = source;
+    }
+
+    public Integer getExpenditureType() {
+        return expenditureType;
+    }
+
+    public void setExpenditureType(final Integer expenditureType) {
+        this.expenditureType = expenditureType;
+    }
+
+    public String getEstimatenumber() {
+        return estimateNumber;
+    }
+
+    public void setEstimatenumber(final String estimatenumber) {
+        estimateNumber = estimatenumber;
+    }
+
+    public AbstractEstimate getEstimates() {
+        return estimates;
+    }
+
+    public void setEstimates(final AbstractEstimate estimates) {
+        this.estimates = estimates;
+    }
+
+    public Long getExecDept() {
+        return execDept;
+    }
+
+    public void setExecDept(final Long execDept) {
+        this.execDept = execDept;
+    }
+
 }
