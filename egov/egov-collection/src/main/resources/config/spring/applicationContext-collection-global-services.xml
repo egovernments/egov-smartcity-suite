@@ -158,6 +158,7 @@
 	   <property name="persistenceService" ref="persistenceService" />
 	   <property name="receiptHeaderService" ref="receiptHeaderService" />
 	   <property name="collectionsUtil" ref="collectionsUtil" />
+	   <property name="financialsUtil" ref="financialsUtil" />
 	</bean>
 	
 </beans>

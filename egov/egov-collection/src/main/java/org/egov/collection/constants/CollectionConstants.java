@@ -169,7 +169,6 @@ public final class CollectionConstants {
     public static final String QUERY_ACTIVE_COUNTERS = "getAllActiveCounters";
     public static final String QUERY_CREATEDBYUSERS_OF_RECEIPTS = "CREATEDBYUSERS_OF_RECEIPTS";
     public static final String QUERY_LOCATION_BY_USER = "getLocationByUser";
-    public static final String QUERY_STATUS_BY_MODULE_AND_CODE = "getEgwStatusByModuleAndCode";
     public static final String QUERY_SERVICES_BY_TYPE = "getServicesByType";
     public static final String QUERY_COLLECTION_SERVICS = "getCollectionServices";
     public static final String QUERY_FUNCTIONARY_BY_CODE = "getFunctionaryByCode";
@@ -200,6 +199,7 @@ public final class CollectionConstants {
     public static final String QUERY_GETFINANCIALYEARBYDATE = "getFinancialYearByDate";
     public static final String QUERY_GET_LOCATIONBYID = "getLocationById";
     public static final String QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID = "getContraVoucherbyVoucherHeaderId";
+    public static final String QUERY_GET_INSTRUMENTHEADER_BY_ID = "INSTRUMENTHEADERBYID";
 
     // Workflow actions
     public static final String WF_ACTION_CREATE_RECEIPT = "Create Receipt";
@@ -500,9 +500,8 @@ public final class CollectionConstants {
             put("dd", "DD");
         }
     };
- // Named query for dishonor changes
+    // Named query for dishonor changes
     public static final String QUERY_INSTRUMENT_DISHONOR_STATUSES = "INSTRUMENT_STATUS_FOR_DISHONOR";
     public static final String QUERY_DISHONOR_STATE_OWNERS = "DISHONOR_STATE_OWNERS";
-   
 
 }

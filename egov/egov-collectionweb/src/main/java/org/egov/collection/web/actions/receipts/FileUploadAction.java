@@ -783,7 +783,7 @@ public class FileUploadAction extends BaseFormAction{
 		receiptHeader.setService((ServiceDetails) persistenceService.findByNamedQuery(
 				CollectionConstants.QUERY_SERVICE_BY_CODE, 
 				CollectionConstants.SERVICE_CODE_COLLECTIONS));
-		receiptHeader.setStatus(collectionsUtil.getEgwStatusForModuleAndCode(
+		receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
 				CollectionConstants.MODULE_NAME_RECEIPTHEADER,
 				CollectionConstants.RECEIPT_STATUS_CODE_PENDING));
 		
@@ -846,7 +846,7 @@ public class FileUploadAction extends BaseFormAction{
 					collectionsUtil.getLoggedInUser());
 		}
 			
-		receiptHeader.getChallan().setStatus(collectionsUtil.getEgwStatusForModuleAndCode(
+		receiptHeader.getChallan().setStatus(collectionsUtil.getStatusForModuleAndCode(
 				CollectionConstants.MODULE_NAME_CHALLAN, 
 				CollectionConstants.CHALLAN_STATUS_CODE_CREATED));
 		//set service in challan
@@ -909,7 +909,7 @@ public class FileUploadAction extends BaseFormAction{
 		receiptHeader.setLocation(collectionsUtil.getLocationOfUser(getSession()));
 		
 		// manually created challan receipts are in approved state
-		receiptHeader.setStatus(collectionsUtil.getEgwStatusForModuleAndCode(
+		receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
 				CollectionConstants.MODULE_NAME_RECEIPTHEADER, 
 				CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
 		

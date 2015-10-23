@@ -49,24 +49,22 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
+import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.services.instrument.FinancialIntegrationService;
 import org.egov.utils.FinancialConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class DishonorChequeService implements FinancialIntegrationService {
 
     private static final Logger LOGGER = Logger.getLogger(DishonorChequeService.class);
 
     private CollectionsUtil collectionsUtil;
+    private FinancialsUtil financialsUtil;
     private PersistenceService persistenceService;
     private ReceiptHeaderService receiptHeaderService;
-    @Autowired
-    private EgwStatusHibernateDAO egwStatusDAO;
 
     @Override
     public void updateCollectionsOnInstrumentDishonor(final Long instrumentHeaderId) {
@@ -80,10 +78,10 @@ public class DishonorChequeService implements FinancialIntegrationService {
                         + "join receipt.receiptInstrument as instruments where instruments.id=? and instruments.statusId.code not in (?,?)",
                         Long.valueOf(instrumentHeaderId), receiptInstrumentBounceStatus.getCode(),
                         receiptCancellationStatus.getCode());
-        final InstrumentHeader instHeader = (InstrumentHeader) persistenceService.findByNamedQuery(
-                "INSTRUMENTHEADERBYID", instrumentHeaderId);
-        instHeader.setStatusId(getDishonoredStatus());
-        persistenceService.persist(instHeader);
+        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.findByNamedQuery(
+                CollectionConstants.QUERY_GET_INSTRUMENTHEADER_BY_ID, instrumentHeaderId);
+        instrumentHeader.setStatusId(getDishonoredStatus());
+        financialsUtil.updateInstrumentHeader(instrumentHeader);
         // update receipts - set status to INSTR_BOUNCED and recon flag to false
         updateReceiptHeaderStatus(receiptHeader, receiptInstrumentBounceStatus, false);
         LOGGER.debug("Updated receipt status to " + receiptInstrumentBounceStatus.getCode()
@@ -104,18 +102,11 @@ public class DishonorChequeService implements FinancialIntegrationService {
     }
 
     /**
-     * This method updates the status and reconciliation flag for the given
-     * receipt
+     * This method updates the status and reconciliation flag for the given receipt
      *
-     * @param receiptHeader
-     *            <code>ReceiptHeader</code> objects whose status and
-     *            reconciliation flag have to be modified
-     * @param status
-     *            a <code>EgwStatus</code> instance representing the state to
-     *            which the receipt has to be updated with
-     * @param isReconciled
-     *            a <code>Boolean</code> flag indicating the value for the
-     *            reconciliation status
+     * @param receiptHeader <code>ReceiptHeader</code> objects whose status and reconciliation flag have to be modified
+     * @param status a <code>EgwStatus</code> instance representing the state to which the receipt has to be updated with
+     * @param isReconciled a <code>Boolean</code> flag indicating the value for the reconciliation status
      */
     private void updateReceiptHeaderStatus(final ReceiptHeader receiptHeader, final EgwStatus status,
             final boolean isReconciled) {
@@ -126,22 +117,19 @@ public class DishonorChequeService implements FinancialIntegrationService {
     }
 
     private EgwStatus getDishonoredStatus() {
-        return egwStatusDAO.getStatusByModuleAndCode(FinancialConstants.STATUS_MODULE_INSTRUMENT,
+        return collectionsUtil.getStatusForModuleAndCode(FinancialConstants.STATUS_MODULE_INSTRUMENT,
                 FinancialConstants.INSTRUMENT_DISHONORED_STATUS);
     }
 
     /**
      * <p>
-     * This method populates the receipt details into the bill objects to send
-     * to the billing system. A map is created with key as the service code, and
-     * value as Set of <code>BillReceiptInfo</code> for the receipt to be
-     * updated to that billing system.
+     * This method populates the receipt details into the bill objects to send to the billing system. A map is created with key as
+     * the service code, and value as Set of <code>BillReceiptInfo</code> for the receipt to be updated to that billing system.
      * <p>
-     * Only if the billing system is updated successfully, the reconciliation
-     * status of those receipts are set to true
+     * Only if the billing system is updated successfully, the reconciliation status of those receipts are set to true
      *
-     * @return a <code>Boolean</code> flag indicating true only if the updates
-     *         to all the billing system have taken place successfully
+     * @return a <code>Boolean</code> flag indicating true only if the updates to all the billing system have taken place
+     * successfully
      */
     private Boolean updateDetailsToBillingSystem(final ReceiptHeader receiptHeader) {
 
@@ -176,6 +164,10 @@ public class DishonorChequeService implements FinancialIntegrationService {
 
     public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
         this.receiptHeaderService = receiptHeaderService;
+    }
+
+    public void setFinancialsUtil(final FinancialsUtil financialsUtil) {
+        this.financialsUtil = financialsUtil;
     }
 
     @Override

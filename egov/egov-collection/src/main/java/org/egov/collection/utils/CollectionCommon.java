@@ -571,7 +571,7 @@ public class CollectionCommon {
         final ReceiptHeader receiptHeaderToBeCancelled = receiptHeaderService.findById(receiptHeader.getReceiptHeader()
                 .getId(), false);
 
-        receiptHeaderToBeCancelled.setStatus(collectionsUtil.getEgwStatusForModuleAndCode(
+        receiptHeaderToBeCancelled.setStatus(collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED));
 
         receiptHeaderService.persist(receiptHeaderToBeCancelled);
@@ -598,7 +598,7 @@ public class CollectionCommon {
          */
 
         // receipt status is PENDING
-        newReceiptHeader.setStatus(collectionsUtil.getEgwStatusForModuleAndCode(
+        newReceiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_PENDING));
         // the new receipt has reference to the cancelled receipt
         // newReceiptHeader.setReferenceCollectionHeaderId(oldReceiptHeader.getId());
@@ -664,7 +664,7 @@ public class CollectionCommon {
          * prepare method
          */
 
-        receiptHeader.setStatus(collectionsUtil.getEgwStatusForModuleAndCode(
+        receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED));
         receiptHeader.setIsReconciled(true); // have to check this for
         // scheduler

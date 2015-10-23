@@ -840,7 +840,7 @@ public class ReceiptAction extends BaseFormAction {
             serviceType = receiptHeader.getService().getServiceType();
             receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_COUNTER);
             receiptHeader.setLocation(collectionsUtil.getLocationOfUser(getSession()));
-            receiptHeader.setStatus(collectionsUtil.getEgwStatusForModuleAndCode(
+            receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
                     CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED));
             receiptHeader.setPaidBy(StringEscapeUtils.unescapeHtml(paidBy));
 

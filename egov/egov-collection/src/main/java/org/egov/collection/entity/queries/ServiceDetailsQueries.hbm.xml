@@ -36,9 +36,6 @@
 	<query name="getFunctionaryByCode">
 	<![CDATA[select f from Functionary f where f.code=?]]></query>
 
-	<query name="getEgwStatusByModuleAndCode">
-	<![CDATA[select status from EgwStatus status where status.moduletype=? and status.code=?]]></query>
-
 	<query name="getAllActiveCounters">
 	<![CDATA[from org.egov.lib.security.terminal.model.Location loc where loc.isActive = 1 and loc.isLocation = 0 order by loc.name]]></query>
 	

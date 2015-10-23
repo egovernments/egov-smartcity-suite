@@ -251,7 +251,7 @@ CollectionIntegrationService {
         receiptHeader.setIsReconciled(Boolean.FALSE);
         receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_FIELDCOLLECTION);
 
-        receiptHeader.setStatus(collectionsUtil.getEgwStatusForModuleAndCode(
+        receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
 
         receiptHeader.setPaidBy(bill.getPaidBy());
@@ -417,7 +417,7 @@ CollectionIntegrationService {
         receiptHeader.setIsReconciled(Boolean.TRUE);
         receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_COUNTER);
 
-        receiptHeader.setStatus(collectionsUtil.getEgwStatusForModuleAndCode(
+        receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
 
         receiptHeader.setPaidBy(bill.getPaidBy());

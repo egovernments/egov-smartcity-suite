@@ -164,7 +164,7 @@ public class ReconciliationService {
 
         // set online payment status as SUCCESS
         receipt.getOnlinePayment().setStatus(
-                collectionsUtil.getEgwStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+                collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                         CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS));
 
         receiptHeaderService.persist(receipt);

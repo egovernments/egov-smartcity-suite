@@ -390,7 +390,7 @@ public class ChallanAction extends BaseFormAction {
 		receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_COUNTER);
 		//is this reqd
 		receiptHeader.setLocation(collectionsUtil.getLocationOfUser(getSession()));
-		receiptHeader.setStatus(collectionsUtil.getEgwStatusForModuleAndCode(
+		receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
 				CollectionConstants.MODULE_NAME_RECEIPTHEADER, 
 				CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED));
 		receiptHeader.setCreatedBy(collectionsUtil.getLoggedInUser());
@@ -707,7 +707,7 @@ public class ChallanAction extends BaseFormAction {
 		receiptHeader.setService((ServiceDetails) getPersistenceService().findByNamedQuery(
 				CollectionConstants.QUERY_SERVICE_BY_CODE, 
 				CollectionConstants.SERVICE_CODE_COLLECTIONS));
-		receiptHeader.setStatus(collectionsUtil.getEgwStatusForModuleAndCode(
+		receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
 				CollectionConstants.MODULE_NAME_RECEIPTHEADER,
 				CollectionConstants.RECEIPT_STATUS_CODE_PENDING));
 		
@@ -788,7 +788,7 @@ public class ChallanAction extends BaseFormAction {
 					collectionsUtil.getLoggedInUser());
 		}
 			
-		receiptHeader.getChallan().setStatus(collectionsUtil.getEgwStatusForModuleAndCode(
+		receiptHeader.getChallan().setStatus(collectionsUtil.getStatusForModuleAndCode(
 				CollectionConstants.MODULE_NAME_CHALLAN, 
 				CollectionConstants.CHALLAN_STATUS_CODE_CREATED));
 		//set service in challan

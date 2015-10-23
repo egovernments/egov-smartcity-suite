@@ -473,7 +473,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
         // set online payment status as SUCCESS
         receipt.getOnlinePayment().setStatus(
-                collectionsUtil.getEgwStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+                collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                         CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS));
         receiptHeaderService.persist(receipt);
     }
@@ -550,11 +550,11 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 // set online payment status as TO BE REFUNDED/REFUNDED
                 if (getStatusCode()[i].equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED))
                     receipts[i].getOnlinePayment().setStatus(
-                            collectionsUtil.getEgwStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+                            collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                                     CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED));
                 else
                     receipts[i].getOnlinePayment().setStatus(
-                            collectionsUtil.getEgwStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+                            collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                                     CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED));
 
                 receiptHeaderService.persist(receipts[i]);
