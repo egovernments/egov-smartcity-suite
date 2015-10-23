@@ -67,57 +67,45 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.city.name" /><span class="mandatory"></span></label>
+								<c:set var="helptext">
+								<spring:message code="help.city.name"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
-										<form:input path="name" id="name" type="text"
+										<form:input path="name" id="name" type="text" 
+											data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"
 											class="form-control" placeholder="" autocomplete="off"
-											required="required" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.city.name"/>">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
-									<form:errors path="name" cssClass="add-margin error-msg" />
+											required="required"  />
+										<form:errors path="name" cssClass="add-margin error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.city.local.name" /></label>
+								<c:set var="helptext">
+								<spring:message code="help.city.local.name" />
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="localName" id="localName" type="text"
+											data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"
 											class="form-control" placeholder="" autocomplete="off" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.city.local.name" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
-									<form:errors path="localName" cssClass="add-margin error-msg" />
+										<form:errors path="localName" cssClass="add-margin error-msg" />
 								</div>
 
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.city.code" /><span class="mandatory"></span></label>
+								<c:set var="helptext">
+								<spring:message code="help.city.code" />
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="code" id="code" type="text"
+											data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"
 											class="form-control" placeholder="" autocomplete="off"
 											required="required" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.city.code" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 									<form:errors path="code" cssClass="add-margin error-msg" />
 								</div>
 
@@ -125,19 +113,15 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.city.domain.url" /><span class="mandatory"></span></label>
+								<c:set var="helptext">
+								<spring:message code="help.city.domain.url" />
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="domainURL" id="domainURL" type="text"
+											data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"
 											class="form-control" placeholder="" autocomplete="off"
 											required="required" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.city.domain.url" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 									<form:errors path="domainURL" cssClass="add-margin error-msg" />
 								</div>
 
@@ -145,19 +129,15 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.city.district.name" /><span class="mandatory"></span></label>
+								<c:set var="helptext">
+								<spring:message code="help.city.district.name"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="districtName" id="districtName" type="text"
+											data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"
 											class="form-control" placeholder="" autocomplete="off"
 											required="required" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.city.district.name" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 									<form:errors path="districtName"
 										cssClass="add-margin error-msg" />
 								</div>
@@ -166,19 +146,15 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.city.district.code" /><span class="mandatory"></span></label>
+								<c:set var="helptext">
+								<spring:message code="help.city.district.code"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="districtCode" id="districtCode" type="text"
+											data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"
 											class="form-control" placeholder="" autocomplete="off"
 											required="required" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.city.district.code" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 									<form:errors path="districtCode"
 										cssClass="add-margin error-msg" />
 								</div>
@@ -186,36 +162,28 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.city.region.name" /></label>
+								<c:set var="helptext">
+								<spring:message code="help.city.region.name"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="regionName" id="regionName" type="text"
+											data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"
 											class="form-control" placeholder="" autocomplete="off" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.city.region.name" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 									<form:errors path="regionName" cssClass="add-margin error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.city.grade" /></label>
+								<c:set var="helptext">
+								<spring:message code="help.city.grade"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="grade" id="grade" type="text"
+											data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"
 											class="form-control" placeholder="" autocomplete="off" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.city.grade" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 									<form:errors path="grade" cssClass="add-margin error-msg" />
 								</div>
 							</div>
@@ -238,42 +206,32 @@
 						<div id="preferences" class="tab-pane fade">
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message code="lbl.city.logo"/></label>
+								<c:set var="helptext">
+								<spring:message code="help.corp.logo"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
 									<img id="imglogo" height="60" width="60"
 										src="/egi/downloadfile?fileStoreId=${city.preferences.municipalityLogo.fileStoreId}&moduleName=${sessionScope.cityCode}">
 
-									<div class="input-group">
 										<input type="file" name="logo" id="logo"
 											data-accept="jpg,jpeg,png,gif,PNG,JPG,JPEG"
 											data-errormsg="Please select valid image file!"
-											class="form-control" placeholder="" autocomplete="off" /> <span
-											class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.corp.logo" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
+											class="form-control" placeholder="" autocomplete="off" data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"  />
 									<form:errors path="preferences.municipalityLogo" cssClass="add-margin error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.corp.name" /><span class="mandatory"></span></label>
+								<c:set var="helptext">
+								<spring:message code="help.corp.name"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="preferences.municipalityName" id="latitude"
-											type="text" cssClass="form-control" placeholder=""
+											type="text" data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}" cssClass="form-control" placeholder=""
 											autocomplete="off" required="required" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.corp.name" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 									<form:errors path="preferences.municipalityName"
 										cssClass="add-margin error-msg" />
 								</div>
@@ -282,19 +240,14 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.corp.address" /></label>
+								<c:set var="helptext">
+								<spring:message code="help.corp.address"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="icon-inputgroup input-group">
 										<form:textarea path="preferences.municipalityAddress"
-											id="municipalityAddress" type="text" cssClass="form-control"
+											id="municipalityAddress" type="text" data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}" cssClass="form-control"
 											placeholder="" autocomplete="off" rows="5" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.corp.address" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 									<form:errors path="preferences.municipalityAddress"
 										cssClass="add-margin error-msg" />
 								</div>
@@ -302,19 +255,14 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.corp.contact.no" /></label>
+								<c:set var="helptext">
+								<spring:message code="help.corp.contact.no"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="preferences.municipalityContactNo"
-											id="municipalityContactNo" type="text" cssClass="form-control"
+											id="municipalityContactNo" type="text" data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}" cssClass="form-control"
 											placeholder="" autocomplete="off" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.corp.contact.no" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 									<form:errors path="preferences.municipalityContactNo"
 										cssClass="add-margin error-msg" />
 								</div>
@@ -322,19 +270,15 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.corp.contact.email" /></label>
+								<c:set var="helptext">
+								<spring:message code="help.corp.contact.email"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="preferences.municipalityContactEmail"
 											id="municipalityContactEmail" type="text"
+											data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"
 											cssClass="form-control" placeholder="" autocomplete="off" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.corp.contact.email" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 									<form:errors path="preferences.municipalityContactEmail"
 										cssClass="add-margin error-msg" />
 								</div>
@@ -342,19 +286,15 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.corp.callcenter.no" /></label>
+								<c:set var="helptext">
+								<spring:message code="help.corp.callcenter.no"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="preferences.municipalityCallCenterNo"
 											id="municipalityCallCenterNo" type="text"
+											data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"
 											cssClass="form-control" placeholder="" autocomplete="off" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.corp.callcenter.no" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 									<form:errors path="preferences.municipalityCallCenterNo"
 										cssClass="add-margin error-msg" />
 								</div>
@@ -362,57 +302,45 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.corp.gis.location.link" /></label>
+								<c:set var="helptext">
+								<spring:message code="help.corp.gis.location.link"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="preferences.municipalityGisLocation"
 											id="municipalityOfficeGisLocation" type="text"
+											data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"
 											cssClass="form-control" placeholder="" autocomplete="off" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.corp.gis.location.link" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 									<form:errors path="preferences.municipalityGisLocation" cssClass="add-margin error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.corp.fb.link" /></label>
+								<c:set var="helptext">
+								<spring:message code="help.corp.fb.link"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="preferences.municipalityFacebookLink" id="facebookLink"
 											type="text" cssClass="form-control" placeholder=""
+											data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"
 											autocomplete="off" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.corp.fb.link" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 									<form:errors path="preferences.municipalityFacebookLink" cssClass="add-margin error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.corp.twitter.link" /></label>
+								<c:set var="helptext">
+								<spring:message code="help.corp.twitter.link"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="preferences.municipalityTwitterLink" id="twitterLink"
 											type="text" cssClass="form-control" placeholder=""
+											data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"
 											autocomplete="off" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.corp.twitter.link" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 									<form:errors path="preferences.municipalityTwitterLink" cssClass="add-margin error-msg" />
 								</div>
 							</div>
@@ -421,18 +349,14 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.city.lat" /></label>
+								<c:set var="helptext">
+								<spring:message code="help.city.coord.lat"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="latitude" id="latitude" type="text"
+										data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"
 											cssClass="form-control" placeholder="" autocomplete="off" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.city.coord.lat" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 									<form:errors path="latitude" cssClass="add-margin error-msg" />
 								</div>
 
@@ -440,18 +364,14 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.city.lng" /></label>
+								<c:set var="helptext">
+								<spring:message code="help.city.coord.lng"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="longitude" id="longitude" type="text"
+											data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"
 											cssClass="form-control" placeholder="" autocomplete="off" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.city.coord.lng" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 									<form:errors path="longitude" cssClass="add-margin error-msg" />
 								</div>
 
@@ -459,19 +379,15 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.city.recaptcha.pri" /><span class="mandatory"></span></label>
+								<c:set var="helptext">
+								<spring:message code="help.city.recaptcha.pvt.key"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="recaptchaPK" id="recaptchaPK" type="text"
+											data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"
 											class="form-control" placeholder="" autocomplete="off"
 											required="required" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.city.recaptcha.pvt.key" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 									<form:errors path="recaptchaPK" cssClass="add-margin error-msg" />
 								</div>
 
@@ -479,19 +395,15 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.city.recaptcha.pub" /><span class="mandatory"></span></label>
+								<c:set var="helptext">
+								<spring:message code="help.city.recaptcha.pub.key"/>
+								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<div class="input-group">
 										<form:input path="recaptchaPub" id="recaptchaPub" type="text"
+											data-toggle="popover" data-trigger="focus" data-placement="right" 
+											data-content="${helptext}"
 											class="form-control" placeholder="" autocomplete="off"
 											required="required" />
-										<span class="input-group-btn">
-											<button class="btn btn-default btnpopover" type="button"
-												data-toggle="popover" data-placement="right" title=""
-												data-content="<spring:message code="help.city.recaptcha.pub.key" />">
-												<i class="entypo-help"></i>
-											</button>
-										</span>
-									</div>
 
 									<form:errors path="recaptchaPub"
 										cssClass="add-margin error-msg" />
@@ -526,4 +438,9 @@
 		</form:form>
 	</div>
 </div>
+<style type="text/css">
+    .popover{
+        min-width:200px;
+    }
+</style>
 <script src="../../resources/js/app/citysetup.js"></script>

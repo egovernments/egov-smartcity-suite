@@ -86,13 +86,12 @@ h1.its, h2.its, h3.its, h4.its, h5.its, h6.its, p.its, strong.its, form.its, div
     border-right-color: #6b4f2c;
     border-bottom-color: #6b4f2c;
     font-family: semibold;
-    font-size: 10px;
+    font-size: 13px;
     font-weight: bold;
     color: #FFF;
     padding: 4px;
     background-color: #6b4f2c;
     background-image: none;
-
 	}	 				
 
 	table.its td
@@ -154,6 +153,7 @@ table.its th, table.its td{
 	padding: 2px 4px 2px 4px;
 	text-align: left;
 	vertical-align: top;
+	font-size: 14px;
 }
 table.its th,table.its td.textAlign2 {
 border-right:0px solid #000000; 		/*    ********RIGHT MARGIN FOR CREDIT*********          */

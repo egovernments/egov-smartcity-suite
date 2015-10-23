@@ -1,9 +1,8 @@
 package org.egov.ptis.actions.reports;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +27,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +75,7 @@ public class TitleTransferRegisterAction extends BaseFormAction {
             LOGGER.debug("Entered into prepare method");
         super.prepare();
         final List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone",
-                ADMIN_HIERARCHY_TYPE);
+        		REVENUE_HIERARCHY_TYPE);
         addDropdownData("zoneList", zoneList);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);

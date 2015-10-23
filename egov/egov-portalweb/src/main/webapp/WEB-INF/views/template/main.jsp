@@ -74,7 +74,7 @@
     <body class="page-body" onload="onBodyLoad()" oncontextmenu="return false;">
     	<div class="page-container login-page">
     	<tiles:insertAttribute name="header"/>
-                <div class="main-content login-page">
+                <div class="main-content login-page with-hr-menu">
                     <tiles:insertAttribute name="body"/>
                 </div>
              <tiles:insertAttribute name="footer"/>

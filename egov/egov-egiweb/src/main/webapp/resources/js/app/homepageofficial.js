@@ -204,14 +204,14 @@ $(document).ready(function()
 });
 
 var response_json= [];
-var counts = [];
+var counts = {};
 var now_json = [];
 var now_name=[];
 
 function clearnow(){
 	$('#natureofwork').html('');
 	response_json= [];
-	counts = [];
+	counts = {};
 	now_json = [];
 	now_name = [];
 }
@@ -247,17 +247,24 @@ function worklist(){
 	        			  counts[value.task]++;
 	        		  }
 		          });
-		          console.log(counts);
+		          console.log('Count object'+JSON.stringify(counts));
+		          console.log('Length of the count object-->'+Object.keys(counts).length);
 		          
-		          $('#natureofwork').append('<ul class="nav nav-pills" role="tablist"></ul>');
-		          for (var k in counts){
-	        	    if (counts.hasOwnProperty(k)) {
-	        	    	now_name.push(k);
-	        	    	var key = escape(k);
-	        	    	$('#natureofwork ul').append('<li role="presentation"><a href="javascript:void(0)" data-now="'+key+'"><span><i class="fa fa-tags"></i></span>'+k+' <span class="badge">'+counts[k]+'</span></a></li>');
-	        	         //console.log("Key is " + k + ", value is" + counts[k]);
-	        	    }
+		          if(Object.keys(counts).length > 1){
+		        	  $('#natureofwork').append('<ul class="nav nav-pills" role="tablist"></ul>');
+		        	  for (var k in counts){
+			        	    if (counts.hasOwnProperty(k)) {
+			        	    	now_name.push(k);
+			        	    	var key = escape(k);
+			        	    	$('#natureofwork ul').append('<li role="presentation"><a href="javascript:void(0)" data-now="'+key+'"><span><i class="fa fa-tags"></i></span>'+k+' <span class="badge">'+counts[k]+'</span></a></li>');
+			        	         //console.log("Key is " + k + ", value is" + counts[k]);
+			        	    }
+				          }
+		          }else{
+		        	  console.log('Count length is '+Object.keys(counts).length+'.. Due to that not appended!!');
 		          }
+		          
+		          
 	          }else{
 	        	  console.log('Response data is empty');
 	          }

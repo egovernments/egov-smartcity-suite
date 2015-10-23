@@ -42,7 +42,6 @@ package org.egov.works.web.actions.estimate;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,7 +50,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -115,13 +113,12 @@ import net.sf.jasperreports.engine.JRException;
 public class AbstractEstimateAction extends BaseFormAction {
 
     private static final long serialVersionUID = -4801105778751138267L;
-    private static final Logger logger = Logger.getLogger(AbstractEstimateAction.class);
+    private final Logger LOGGER = Logger.getLogger(getClass());
     private static final String CANCEL_ACTION = "cancel";
     private static final String SAVE_ACTION = "save";
     private static final Object REJECT_ACTION = "reject";
     private static final String SOURCE_SEARCH = "search";
     private static final String SOURCE_INBOX = "inbox";
-    private static final String MODULE_NAME = "Works";
     private static final String KEY_NAME = "SKIP_BUDGET_CHECK";
     public static final String MAPS = "maps";
     private AbstractEstimate abstractEstimate = new AbstractEstimate();
@@ -156,7 +153,6 @@ public class AbstractEstimateAction extends BaseFormAction {
     public static final String PRINT = "print";
     private String mode = "";
     private boolean isAllowEstDateModify = false;
-    private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", new Locale("en", "IN"));
 
     private String employeeName;
     private String designation;
@@ -350,6 +346,12 @@ public class AbstractEstimateAction extends BaseFormAction {
         }
 
         try {
+            if (SAVE_ACTION.equals(actionName) && abstractEstimate.getEgwStatus() == null)
+                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("AbstractEstimate", "NEW"));
+            else if (actionName.equals("submit_for_approval"))
+                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("AbstractEstimate", "CREATED"));
+            // TODO: Fixme - CREATED status setting is for time being. Need to replace with proper status as per the workflow
+            // matrix
             abstractEstimateService.setEstimateNumber(abstractEstimate);
             abstractEstimate = abstractEstimateService.persist(abstractEstimate);
         } catch (final ValidationException valException) {
@@ -366,21 +368,17 @@ public class AbstractEstimateAction extends BaseFormAction {
             try {
                 abstractEstimateService.setProjectCode(abstractEstimate);
                 abstractEstimate.setApprovedDate(new Date());
-            } catch (final ValidationException sequenceException) {
+                abstractEstimate = abstractEstimateService.persist(abstractEstimate);
+            } catch (final ValidationException valException) {
                 setSourcepage("inbox");
-                final List<ValidationError> errorList = sequenceException.getErrors();
-                for (final ValidationError error : errorList)
-                    if (error.getMessage().contains("DatabaseSequenceFirstTimeException")) {
-                        prepare();
-                        throw new ValidationException(Arrays.asList(new ValidationError("error", error.getMessage())));
-                    }
+                throw new ValidationException(valException.getErrors());
             }
-        abstractEstimate = abstractEstimateService.persist(abstractEstimate);
 
         messageKey = "estimate." + actionName;
         addActionMessage(getText(messageKey, "The estimate was saved successfully"));
 
-        getDesignation(abstractEstimate);
+        // TODO : Fixme - Commented out for time being. Need to fix after implementing workflow matrix
+        // getDesignation(abstractEstimate);
         if (SAVE_ACTION.equals(actionName))
             sourcepage = "inbox";
         return SAVE_ACTION.equals(actionName) ? EDIT : SUCCESS;
@@ -530,8 +528,6 @@ public class AbstractEstimateAction extends BaseFormAction {
                     "estimate.workvalue.null")));
 
         }
-        if (SAVE_ACTION.equals(actionName) && abstractEstimate.getEgwStatus() == null)
-            abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("AbstractEstimate", "NEW"));
     }
 
     protected void populateSorActivities() {
@@ -555,13 +551,27 @@ public class AbstractEstimateAction extends BaseFormAction {
         for (final Activity activity : nonSorActivities)
             if (activity != null) {
                 activity.setUom(activity.getNonSor().getUom());
+                // TODO:Fixme - Setting auditable properties by time being since HibernateEventListener is not getting triggered
+                // on
+                // update of estimate for child objects
+                activity.getNonSor().setCreatedBy(worksService.getCurrentLoggedInUser());
+                activity.getNonSor().setCreatedDate(new Date());
+                activity.getNonSor().setModifiedBy(worksService.getCurrentLoggedInUser());
+                activity.getNonSor().setModifiedDate(new Date());
                 abstractEstimate.addActivity(activity);
             }
     }
 
     private void populateActivities() {
-        for (final Activity activity : abstractEstimate.getActivities())
+        for (final Activity activity : abstractEstimate.getActivities()) {
+            // TODO:Fixme - Setting auditable properties by time being since HibernateEventListener is not getting triggered on
+            // update of estimate for child objects
+            activity.setCreatedBy(worksService.getCurrentLoggedInUser());
+            activity.setCreatedDate(new Date());
+            activity.setModifiedBy(worksService.getCurrentLoggedInUser());
+            activity.setModifiedDate(new Date());
             activity.setAbstractEstimate(abstractEstimate);
+        }
     }
 
     protected void populateOverheads() {
@@ -570,6 +580,12 @@ public class AbstractEstimateAction extends BaseFormAction {
                 overheadValue.setOverhead((Overhead) getPersistenceService().find("from Overhead where id = ?",
                         overheadValue.getOverhead().getId()));
                 overheadValue.setAbstractEstimate(abstractEstimate);
+                // TODO:Fixme - Setting auditable properties by time being since HibernateEventListener is not getting triggered
+                // on update of estimate for child objects
+                overheadValue.setCreatedBy(worksService.getCurrentLoggedInUser());
+                overheadValue.setCreatedDate(new Date());
+                overheadValue.setModifiedBy(worksService.getCurrentLoggedInUser());
+                overheadValue.setModifiedDate(new Date());
                 abstractEstimate.addOverheadValue(overheadValue);
             }
     }
@@ -607,6 +623,12 @@ public class AbstractEstimateAction extends BaseFormAction {
                         validAssetCodes.add(lAsset.getCode());
                     assetValue.setAsset(lAsset);
                     assetValue.setAbstractEstimate(abstractEstimate);
+                    // TODO:Fixme - Setting auditable properties by time being since HibernateEventListener is not getting
+                    // triggered on update of estimate for child objects
+                    assetValue.setCreatedBy(worksService.getCurrentLoggedInUser());
+                    assetValue.setCreatedDate(new Date());
+                    assetValue.setModifiedBy(worksService.getCurrentLoggedInUser());
+                    assetValue.setModifiedDate(new Date());
                     abstractEstimate.addAssetValue(assetValue);
                 }
             }
@@ -648,6 +670,12 @@ public class AbstractEstimateAction extends BaseFormAction {
                         "from CFinancialYear where id = ?", multiYearEstimate.getFinancialYear().getId()));
                 multiYearEstimate.setAbstractEstimate(abstractEstimate);
                 totalPerc = totalPerc + multiYearEstimate.getPercentage();
+                // TODO:Fixme - Setting auditable properties by time being since HibernateEventListener is not getting triggered
+                // on update of estimate for child objects
+                multiYearEstimate.setCreatedBy(worksService.getCurrentLoggedInUser());
+                multiYearEstimate.setCreatedDate(new Date());
+                multiYearEstimate.setModifiedBy(worksService.getCurrentLoggedInUser());
+                multiYearEstimate.setModifiedDate(new Date());
                 abstractEstimate.addMultiYearEstimate(multiYearEstimate);
             }
             if (multiYearEstimate != null && actionMultiYearEstimateValues.size() == count && totalPerc != 0.0
@@ -933,7 +961,7 @@ public class AbstractEstimateAction extends BaseFormAction {
     }
 
     public List<String> getAppConfigValuesToSkipBudget() {
-        return worksService.getNatureOfWorkAppConfigValues(MODULE_NAME, KEY_NAME);
+        return worksService.getNatureOfWorkAppConfigValues(WorksConstants.WORKS_MODULE_NAME, KEY_NAME);
     }
 
     public String getEstimateValue() {

@@ -126,4 +126,22 @@ public class RestApiConstants {
 	
 	public static final String SURROUNDING_BOUNDARY_DETAILS_REQ_CODE = "41";
 	public static final String SURROUNDING_BOUNDARY_DETAILS_REQ_MSG = "Surrounding Boundary Details is required.";
+	
+	//Water TAx
+	public static final String PROPERTY_USAGETYPE_COMBINATION_VALID_CODE="42";
+	public static final String PROPERTY_USAGETYPE_COMBINATION_VALID = "PropertyType and UsageType Combination is not valid";
+	
+	
+        public static final String PROPERTY_PIPESIZE_COMBINATION_VALID_CODE="44";
+        public static final String PROPERTY_PIPESIZE_COMBINATION_VALID = "PropertyType and Pipesize Combination is not valid";
+
+        public static final String PROPERTY_CATEGORY_COMBINATION_VALID_CODE="49";
+        public static final String PROPERTY_CATEGORY_COMBINATION_VALID = "PropertyType and Category Combination is not valid";
+
+       public static final String PROPERTYID_IS_VALID_CODE="46";
+        public static final String PROPERTYID_IS_VALID = "Provided propertyId is not Valid";
+        
+        public static final String PROPERTYID_IS_VALID_CONNECTION_CODE="47";
+        public static final String PROPERTYID_IS_VALID_CONNECTION = "Provided propertyId has already connection";
+
 }

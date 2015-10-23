@@ -49,7 +49,7 @@
 			<jsp:include page="../budget/budgetHeader.jsp">
 				<jsp:param name="heading" value="Cheque Surrender Search" />
 			</jsp:include>
- 			<span class="mandatory" id="errorSpan">
+ 			<span id="errorSpan">
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage />
@@ -69,16 +69,16 @@
 					<td class="bluebox"><s:textfield name="instrumentNumber" id="instrumentNumber" onkeyup="validateOnlyNumber()"/></td>
 				</tr>
 				<tr>
-					<td class="greybox"><s:text name="bank"/><span class="mandatory">*</span></td>
+					<td class="greybox"><s:text name="bank"/><span class="mandatory"></span></td>
 					<td class="greybox"><s:select name="bank_branch" id="bank_branch" list="dropdownData.bankbranchList" listKey="bankBranchId" listValue="bankBranchName"  headerKey="-1" headerValue="----Choose----" onchange="loadBankAccount(this)" /></td>
 					 <egov:ajaxdropdown id="bankaccount" fields="['Text','Value']" dropdownId="bankaccount" url="voucher/common!ajaxLoadBanksAccountsWithAssignedCheques.action" />
-					<td class="greybox"><s:text name="bankaccount"/><span class="mandatory">*</span></td>
+					<td class="greybox"><s:text name="bankaccount"/><span class="mandatory"></span></td>
 					<td class="greybox"  colspan="2"><s:select name="bankaccount" id="bankaccount" list="dropdownData.bankaccountList" listKey="id" listValue="chartofaccounts.glcode+'--'+accountnumber+'---'+accounttype"  headerKey="-1" headerValue="----Choose----" value="%{bankaccount}"/></td>
 				</tr>
 				<tr>
 				<s:if test="%{shouldShowHeaderField('department')}">
 	<td class="greybox"><s:text name="voucher.department"/>
-	<s:if test="%{isFieldMandatory('department')}"><span class="bluebox"><span class="mandatory">*</span></span></s:if></td>
+	<s:if test="%{isFieldMandatory('department')}"><span class="bluebox"><span class="mandatory"></span></span></s:if></td>
 	<td class="greybox"><s:select name="department" id="department" list="dropdownData.departmentList" listKey="id" listValue="deptName" headerKey="" headerValue="----Choose----"  value="%{department}"  /><td>
 	</s:if>
 				<td></td>

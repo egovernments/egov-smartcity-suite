@@ -48,7 +48,7 @@
 function populateBoundaries() {
 	console.log("came jursidiction"+jQuery('#locality').val());
 	jQuery.ajax({
-		url: "/ptis/common/ajaxCommon-blockByLocality.action",
+		url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
 		type: "GET",
 		data: {
 			locality : jQuery('#locality').val()
@@ -91,7 +91,7 @@ function populateBoundaries() {
 
 function populateBlock() {
 	jQuery.ajax({
-		url: "/ptis/common/ajaxCommon-blockByWard.action",
+		url: "/egi/boundary/ajaxBoundary-blockByWard.action",
 		type: "GET",
 		data: {
 			wardId : jQuery('#wardId').val()
@@ -161,7 +161,7 @@ function populateBlock() {
 	
 	<tr>
 		<td class="bluebox2">&nbsp;</td>
-	    <td class="bluebox"><s:text name="elec.wardno"></s:text> : </td>
+	    <td class="bluebox"><s:text name="elec.wardno"></s:text><span class="mandatory1">*</span> : </td>
 	    <td class="bluebox"><s:select name="electionWardId" id="electionWardId" list="dropdownData.electionWardList"
 			listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{electionWardId}"/></td>
 	    <td class="bluebox"><s:text name="doorno"></s:text><span class="mandatory1" id="houseNoSpan">*</span> :</td>

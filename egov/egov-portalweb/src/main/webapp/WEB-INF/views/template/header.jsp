@@ -49,7 +49,7 @@
 				
 				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
 					<div class="container-fluid">
-						<div class="navbar-header col-lg-4 col-md-4 col-sm-2 col-xs-3">
+						<div class="navbar-header col-lg-4 col-md-6 col-sm-2 col-xs-3">
 							<a class="navbar-brand" href="javascript:void(0);">
 								<img src="<c:url value='${sessionScope.citylogo}' context='/egi'/>" height="60">
 								<div>
@@ -57,7 +57,7 @@
 								</div>
 							</a>
 						</div>
-						<div class="nav-menu col-lg-4 col-md-6 col-sm-7 col-xs-12">
+						<div class="nav-menu col-lg-4 col-xs-12">
 							<ul class="hr-menu text-center">
 								<li class="active"><a class="menu-item " href="/portal/home" data-show-screen="#inbox-template"> <span class="title">Inbox</span><span id="unreadMessageCount" class="badge custom-badge">
 								 </span></a></li>
@@ -68,11 +68,11 @@
 							</ul>
 						</div><!--/.nav-collapse -->
 						
-						<div class="col-lg-4 col-md-2 col-sm-3 col-xs-9 nav-right-menu home">
+						<div class="col-lg-4 col-md-6 col-sm-5 col-xs-9 nav-right-menu home">
 							<ul class="hr-menu text-right">
 								
 								<li class="ico-menu">
-									<a href="javascript:void(0);">
+									<a href="javascript:void(0);" title="Help">
 										<i class="fa fa-question-circle"></i>
 									</a>
 								</li>
@@ -82,9 +82,9 @@
 										<i class="fa fa-user"></i>${userName}
 									</a>
 									<ul class="right-arrow dropdown-menu" role="menu">
-										<li><a href="/egi/home/profile/edit"><i class="fa fa-user"></i>Edit Profile</a></li>
-										<li><a href="javascript:void(0);" onclick="jQuery('.change-password').modal('show', {backdrop: 'static'});"><i class="fa fa-key"></i> Change Password</a></li>
-										<li><a href="/egi/logout"><i class="fa fa-sign-out"></i> Sign out</a></li>
+										<li><a href="/egi/home/profile/edit" data-open-popup><i class="fa fa-user"></i>Edit Profile</a></li>
+										<li><a href="javascript:void(0);" onclick="jQuery('.change-password').modal('show', {backdrop: 'static'});"><i class="fa fa-key"></i>Change Password</a></li>
+										<li><a href="/egi/logout"><i class="fa fa-sign-out"></i>Sign out</a></li>
 									</ul>
 								</li>
 								

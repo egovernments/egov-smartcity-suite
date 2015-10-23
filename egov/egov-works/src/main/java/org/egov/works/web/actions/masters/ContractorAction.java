@@ -41,7 +41,6 @@ package org.egov.works.web.actions.masters;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,34 +54,32 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
-import org.egov.commons.ContractorGrade;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.service.CommonsService;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.entity.Department;
+import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
+import org.egov.commons.dao.BankHibernateDAO;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
-import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.works.master.services.ContractorGradeService;
+import org.egov.works.master.services.ContractorService;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ContractorAction.NEW, location = "contractor-new.jsp"),
         @Result(name = ContractorAction.VIEW_CONTRACTOR, location = "contractor-viewContractor.jsp"),
-        @Result(name = ContractorAction.SEARCH, location = "contractor-search.jsp")
+        @Result(name = ContractorAction.SEARCH, location = "contractor-search.jsp"),
+        @Result(name = ContractorAction.INDEX, location = "contractor-index.jsp"),
+        @Result(name = ContractorAction.EDIT, location = "contractor-edit.jsp")
 })
 public class ContractorAction extends SearchFormAction {
 
@@ -92,9 +89,10 @@ public class ContractorAction extends SearchFormAction {
 
     public static final String VIEW_CONTRACTOR = "viewContractor";
     public static final String SEARCH = "search";
-
-    private PersistenceService<Contractor, Long> contractorService;
-
+    public static final String INDEX = "index";
+    public static final String EDIT = "edit";
+    @Autowired
+    private ContractorService contractorService;
     private Contractor contractor = new Contractor();
 
     private List<Contractor> contractorList = null;
@@ -102,17 +100,24 @@ public class ContractorAction extends SearchFormAction {
     private Long id;
     private String mode;
     @Autowired
-    private CommonsService commonsService;
+    private AccountdetailkeyHibernateDAO accountdetailKeyHibDAO;
     @Autowired
     private RoleService roleService;
     @Autowired
     private UserService userService;
     private WorksService worksService;
-
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibDAO;
+    @Autowired
+    private ContractorGradeService contractorGradeService;
+    @Autowired
+    private BankHibernateDAO bankHibDAO;
     // -----------------------Search parameters----------------------------------
     private String contractorName;
-    private String contractorcode;
-    private Integer departmentId;
+    private String contractorCode;
+    private Long departmentId;
     private Long gradeId;
     private Date searchDate;
     private boolean sDisabled;
@@ -125,11 +130,10 @@ public class ContractorAction extends SearchFormAction {
     private List<ContractorDetail> contractorDetailList = null;
     private PersistenceService<ContractorDetail, Long> contractorDetailService;
     private Integer rowId;
-    private final String EDIT_ENABLE_ROLE_NAME = "Edit Contractor Bank Info";
     private boolean hasRoleMapped;
 
     public ContractorAction() {
-        addRelatedEntity("bank", Bank.class);
+        addRelatedEntity(WorksConstants.BANK, Bank.class);
     }
 
     @Override
@@ -143,79 +147,39 @@ public class ContractorAction extends SearchFormAction {
     }
 
     public String list() {
-        contractorList = contractorService.findAllBy(" from Contractor con order by code asc");
+    	contractorList = contractorService.getAllContractors();
         return INDEX;
     }
 
+    @Action(value = "/masters/contractor-edit")
     public String edit() {
         contractor = contractorService.findById(contractor.getId(), false);
         return EDIT;
     }
 
-    @Override
+    /*@Override
     @Action(value = "/masters/contractor-search")
     public String search() {
         return VIEW_CONTRACTOR;
-    }
-
-    @Action(value = "/masters/contractor-viewResult")
-    public String viewResult() {
-        setPageSize(WorksConstants.PAGE_SIZE);
-        search();
+    }*/
+    
+    @Action(value = "/masters/contractor-viewContractor")
+    public String viewContractor() {
         return VIEW_CONTRACTOR;
     }
 
-    public void getContractorListForCriterias() {
-        String contractorStr = null;
-        final List<Object> paramList = new ArrayList<Object>();
-        Object[] params;
-        contractorStr = " select distinct contractor from Contractor contractor ";
-
-        if (statusId != null || departmentId != null || gradeId != null)
-            contractorStr = contractorStr + " left outer join fetch contractor.contractorDetails as detail ";
-
-        if (statusId != null || departmentId != null || gradeId != null || contractorcode != null && !contractorcode.equals("")
-                || contractorName != null && !contractorName.equals(""))
-            contractorStr = contractorStr + " where contractor.code is not null";
-
-        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorcode)) {
-            contractorStr = contractorStr + " and UPPER(contractor.code) like ?";
-            paramList.add("%" + contractorcode.toUpperCase() + "%");
-        }
-
-        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorName)) {
-            contractorStr = contractorStr + " and UPPER(contractor.name) like ?";
-            paramList.add("%" + contractorName.toUpperCase() + "%");
-        }
-
-        if (statusId != null) {
-            contractorStr = contractorStr + " and detail.status.id = ?";
-            paramList.add(statusId);
-        }
-
-        if (departmentId != null) {
-            contractorStr = contractorStr + " and detail.department.id = ?";
-            paramList.add(departmentId);
-        }
-
-        if (gradeId != null) {
-            contractorStr = contractorStr + " and detail.grade.id = ?";
-            paramList.add(gradeId);
-        }
-
-        if (paramList.isEmpty())
-            contractorList = contractorService.findAllBy(contractorStr);
-        else {
-            params = new Object[paramList.size()];
-            params = paramList.toArray(params);
-            contractorList = contractorService.findAllBy(contractorStr, params);
-        }
-    }
+	@Action(value = "/masters/contractor-viewResult")
+	public String viewResult() {
+		setPageSize(WorksConstants.PAGE_SIZE);
+		contractorList = contractorService.getContractorListForCriterias(contractorName, contractorCode, departmentId, statusId, gradeId);
+		search();
+		return VIEW_CONTRACTOR;
+	}
 
     /* end listing contractor based on criteria */
-
+    @Action(value = "/masters/contractor-save")
     public String save() {
-        populateContractorDetails();
+        populateContractorDetails(mode);
         getHasRoleMapped();
         if (mode.equalsIgnoreCase("") && !hasRoleMapped) {
             if (org.apache.commons.lang.StringUtils.isNotBlank(contractor.getPanNumber()) && contractor.getBank() != null &&
@@ -233,10 +197,9 @@ public class ContractorAction extends SearchFormAction {
                 contractor.setIsEditEnabled(true);
         } else
             contractor.setIsEditEnabled(contractor.getIsEditEnabled());
-        contractor = contractorService.merge(contractor);
+        contractor = contractorService.persist(contractor);
         createAccountDetailKey(contractor);
-        final String messageKey = "contractor.save.success";
-        addActionMessage(getText(messageKey, "The Contractor was saved successfully"));
+        addActionMessage(getText("contractor.save.success"));
         return list();
     }
 
@@ -246,17 +209,16 @@ public class ContractorAction extends SearchFormAction {
      */
     @Action(value = "/masters/contractor-searchPage")
     public String searchPage() {
-        final String negDate = (String) request.get("negDate");
+        final String negDate = (String) request.get(WorksConstants.NEGOTIATION_DATE);
         if (negDate != null) {
             final SimpleDateFormat dftDateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             try {
                 searchDate = dftDateFormatter.parse(negDate);
             } catch (final ParseException e) {
-                logger.error("Negotiation date is not valid, should be in dd/MM/yyyy format");
+                logger.error(WorksConstants.NEGOTIATION_DATE_FORMAT_INVALID);
             }
         }
-
-        return "search";
+        return SEARCH;
     }
 
     /**
@@ -265,94 +227,54 @@ public class ContractorAction extends SearchFormAction {
      */
     @Action(value = "/masters/contractor-searchResult")
     public String searchResult() {
-        searchContractor();
-        return "search";
+        contractorService.searchContractor(contractorName, contractorCode, departmentId, statusId, gradeId, null);
+        return SEARCH;
 
-    }
-
-    /**
-     * This method will see if search parameters are in request. If yes, will search contractor as per criteria and set add it to
-     * result list.
-     * @author prashant.gaurav
-     */
-    private void searchContractor() {
-        logger.debug("Inside searchContractor");
-        // Get default status to be searched from app config values
-        final List<AppConfigValues> configList = worksService.getAppConfigValue("Works", "CONTRACTOR_STATUS");
-        // Assuming that status is inserted using db script
-        final String status = configList.get(0).getValue();
-
-        final Criteria criteria = contractorService.getSession().createCriteria(Contractor.class);
-        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorcode))
-            criteria.add(Restrictions.sqlRestriction("lower({alias}.code) like lower(?)", "%" + contractorcode.trim() + "%",
-                    StringType.INSTANCE));
-
-        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorName))
-            criteria.add(Restrictions.sqlRestriction("lower({alias}.name) like lower(?)", "%" + contractorName.trim() + "%",
-                    StringType.INSTANCE));
-
-        criteria.createAlias("contractorDetails", "detail").createAlias("detail.status", "status");
-        criteria.add(Restrictions.eq("status.description", status));
-        if (departmentId != null)
-            criteria.add(Restrictions.eq("detail.department.id", departmentId));
-
-        if (gradeId != null)
-            criteria.add(Restrictions.eq("detail.grade.id", gradeId));
-
-        if (searchDate != null)
-            criteria.add(Restrictions.le("detail.validity.startDate", searchDate))
-                    .add(Restrictions.or(Restrictions.ge("detail.validity.endDate", searchDate),
-                            Restrictions.isNull("detail.validity.endDate")));
-
-        criteria.addOrder(Order.asc("name"));
-        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-        contractorList = criteria.list();
     }
 
     protected void createAccountDetailKey(final Contractor cont) {
-        // Accountdetailtype accountdetailtype=mastersMgr.getAccountdetailtypeByName("contractor");
         final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName("contractor");
-
         final Accountdetailkey adk = new Accountdetailkey();
         adk.setGroupid(1);
         adk.setDetailkey(cont.getId().intValue());
         adk.setDetailname(accountdetailtype.getAttributename());
         adk.setAccountdetailtype(accountdetailtype);
-        commonsService.createAccountdetailkey(adk);
+        accountdetailKeyHibDAO.create(adk);
     }
 
-    protected void populateContractorDetails() {
+    protected void populateContractorDetails(String mode) {
         contractor.getContractorDetails().clear();
+        
         for (final ContractorDetail contractorDetail : actionContractorDetails)
             if (validContractorDetail(contractorDetail)) {
-                contractorDetail.setDepartment((Department) getPersistenceService().find("from Department where id = ?",
-                        contractorDetail.getDepartment().getId()));
-                contractorDetail.setStatus((EgwStatus) getPersistenceService().find("from EgwStatus where id = ?",
-                        contractorDetail.getStatus().getId()));
+                contractorDetail.setDepartment(departmentService.getDepartmentById(contractorDetail.getDepartment().getId()));
+                contractorDetail.setStatus((EgwStatus)egwStatusHibDAO.findById(contractorDetail.getStatus().getId(), false));
                 if (contractorDetail.getGrade().getId() == null)
                     contractorDetail.setGrade(null);
                 else
-                    contractorDetail.setGrade((ContractorGrade) getPersistenceService().find("from ContractorGrade where id = ?",
-                            contractorDetail.getGrade().getId()));
+                	contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId());
                 contractorDetail.setContractor(contractor);
+                if(mode.equals("edit")) {
+                	setPrimaryDetails(contractorDetail);
+                }
                 contractor.addContractorDetail(contractorDetail);
             } else if (contractorDetail != null) {
                 if (contractorDetail.getDepartment() == null || contractorDetail.getDepartment().getId() == null)
                     contractorDetail.setDepartment(null);
                 else
-                    contractorDetail.setDepartment((Department) getPersistenceService().find("from Department where id = ?",
-                            contractorDetail.getDepartment().getId()));
+                	contractorDetail.setDepartment(departmentService.getDepartmentById(contractorDetail.getDepartment().getId()));
                 if (contractorDetail.getStatus() == null || contractorDetail.getStatus().getId() == null)
                     contractorDetail.setStatus(null);
                 else
-                    contractorDetail.setStatus((EgwStatus) getPersistenceService().find("from EgwStatus where id = ?",
-                            contractorDetail.getStatus().getId()));
+                	contractorDetail.setStatus((EgwStatus)egwStatusHibDAO.findById(contractorDetail.getStatus().getId(), false));
                 if (contractorDetail.getGrade() == null || contractorDetail.getGrade().getId() == null)
                     contractorDetail.setGrade(null);
                 else
-                    contractorDetail.setGrade((ContractorGrade) getPersistenceService().find("from ContractorGrade where id = ?",
-                            contractorDetail.getGrade().getId()));
+                	contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId());
                 contractorDetail.setContractor(contractor);
+                if(mode.equals("edit")) {
+                	setPrimaryDetails(contractorDetail);
+                }
                 contractor.addContractorDetail(contractorDetail);
             }
     }
@@ -373,20 +295,16 @@ public class ContractorAction extends SearchFormAction {
         return contractorList;
     }
 
-    public void setContractorService(final PersistenceService<Contractor, Long> service) {
-        contractorService = service;
-    }
-
     @Override
     public void prepare() {
         if (id != null)
             contractor = contractorService.findById(id, false);
         super.prepare();
-        setupDropdownDataExcluding("bank");
-        addDropdownData("departmentList", getPersistenceService().findAllBy("from Department order by upper(name)"));
-        addDropdownData("gradeList", getPersistenceService().findAllBy("from ContractorGrade order by upper(grade)"));
-        addDropdownData("bankList", getPersistenceService().findAllBy("from Bank where isactive=1 order by upper(name)"));
-        addDropdownData("statusList", getPersistenceService().findAllBy("from EgwStatus where moduletype='Contractor'"));
+        setupDropdownDataExcluding(WorksConstants.BANK);
+        addDropdownData("departmentList", departmentService.getAllDepartments());
+        addDropdownData("gradeList", contractorGradeService.getAllContractorGrades());
+        addDropdownData("bankList", bankHibDAO.findAll());
+        addDropdownData("statusList", egwStatusHibDAO.getStatusByModule(WorksConstants.STATUS_MODULE_NAME));
     }
 
     public Long getId() {
@@ -422,14 +340,6 @@ public class ContractorAction extends SearchFormAction {
         this.actionContractorDetails = actionContractorDetails;
     }
 
-    public CommonsService getCommonsService() {
-        return commonsService;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
-    }
-
     public String getContractorName() {
         return contractorName;
     }
@@ -438,19 +348,19 @@ public class ContractorAction extends SearchFormAction {
         this.contractorName = contractorName;
     }
 
-    public String getContractorcode() {
-        return contractorcode;
+    public String getContractorCode() {
+        return contractorCode;
     }
 
-    public void setContractorcode(final String contractorcode) {
-        this.contractorcode = contractorcode;
+    public void setContractorCode(final String contractorCode) {
+        this.contractorCode = contractorCode;
     }
 
-    public Integer getDepartmentId() {
+    public Long getDepartmentId() {
         return departmentId;
     }
 
-    public void setDepartmentId(final Integer departmentId) {
+    public void setDepartmentId(final Long departmentId) {
         this.departmentId = departmentId;
     }
 
@@ -523,47 +433,11 @@ public class ContractorAction extends SearchFormAction {
 
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
-
-        String contractorStr = null;
-        final List<Object> paramList = new ArrayList<Object>();
-        contractorStr = " from ContractorDetail detail ";
-
-        if (statusId != null || departmentId != null || gradeId != null || contractorcode != null && !contractorcode.equals("")
-                || contractorName != null && !contractorName.equals(""))
-            contractorStr = contractorStr + " where detail.contractor.code is not null";
-
-        if (contractorcode != null && !contractorcode.equals("")) {
-            contractorStr = contractorStr + " and UPPER(detail.contractor.code) like ?";
-            paramList.add("%" + contractorcode.toUpperCase() + "%");
-        }
-
-        if (contractorName != null && !contractorName.equals("")) {
-            contractorStr = contractorStr + " and UPPER(detail.contractor.name) like ?";
-            paramList.add("%" + contractorName.toUpperCase() + "%");
-        }
-
-        if (statusId != null) {
-            contractorStr = contractorStr + " and detail.status.id = ? ";
-            paramList.add(statusId);
-        }
-
-        if (departmentId != null) {
-            contractorStr = contractorStr + " and detail.department.id = ? ";
-            paramList.add(departmentId);
-        }
-
-        if (gradeId != null) {
-            contractorStr = contractorStr + " and detail.grade.id = ? ";
-            paramList.add(gradeId);
-        }
-        final String query = "select distinct detail.contractor " + contractorStr;
-
-        final String countQuery = "select count(distinct detail.contractor) " + contractorStr;
-        return new SearchQueryHQL(query, countQuery, paramList);
+    	return contractorService.prepareQuery(contractorName, contractorCode, departmentId, statusId, gradeId);
     }
 
     public boolean getHasRoleMapped() {
-        final Role role = roleService.getRoleByName(EDIT_ENABLE_ROLE_NAME);
+        final Role role = roleService.getRoleByName(WorksConstants.EDIT_ENABLE_ROLE_NAME);
         final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
         if (role != null && user != null && !user.getRoles().isEmpty())
             for (final Role userRoleObj : user.getRoles())
@@ -583,5 +457,15 @@ public class ContractorAction extends SearchFormAction {
     public void setRowId(final Integer rowId) {
         this.rowId = rowId;
     }
+    //TODO: Need to remove this method after getting better alternate option
+    private ContractorDetail setPrimaryDetails(ContractorDetail contractorDetail) {
+    	User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
+    	contractorDetail.setCreatedBy(user);
+    	contractorDetail.setCreatedDate(new Date());
+    	return contractorDetail;
+    }
 
+	public ContractorGradeService getContractorGradeService() {
+		return contractorGradeService;
+	} 
 }

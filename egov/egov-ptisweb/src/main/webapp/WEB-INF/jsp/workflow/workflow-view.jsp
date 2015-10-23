@@ -117,6 +117,14 @@
         	<%@ include file="../common/createPropertyView.jsp"%>  
         	
         	</tr>
+        <s:if test="%{!documentTypes.isEmpty()}">
+			<tr>
+			   <td colspan="5">
+				<%@ include file="../common/DocumentUploadView.jsp"%>
+				</td>
+			</tr>
+		</s:if>
+		
         </s:if>
  		<tr>
         	<%@ include file="../workflow/property-workflow.jsp" %>  

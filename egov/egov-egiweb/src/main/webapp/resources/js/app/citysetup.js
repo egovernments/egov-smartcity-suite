@@ -33,6 +33,8 @@ document.body.addEventListener('keydown', function (e) {
 
 $(document).ready(function(){
 	
+	$('#code').attr('disabled',true);
+	
    //file chooser filter validation
    $("input:file").change(
 			function(e) {
@@ -63,16 +65,6 @@ $(document).ready(function(){
 					}
 				}
 			
-	});
-	
-	$('input,textarea').focus(function() {
-		var clickedbtn = $(this).siblings('span').find('button');
-		$('[data-toggle="popover"]').popover('destroy');
-		clickedbtn.popover('show');
-	});
-	
-	$('input,textarea').blur( function() {
-		$('[data-toggle="popover"]').popover('destroy');
 	});
 	
 	//popup initialize

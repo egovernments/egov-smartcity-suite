@@ -55,7 +55,7 @@
 			<jsp:include page="../budget/budgetHeader.jsp">
 				<jsp:param name="heading" value="RTGS Ref. No Assignment Search for Auto Remittance Payment" />
 			</jsp:include>
- 			<span class="mandatory">
+ 			<span class="error-msg">
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage />

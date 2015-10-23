@@ -46,10 +46,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
@@ -65,6 +61,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_WORKF
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_DEMAND_INACTIVE;
@@ -72,6 +69,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
@@ -82,7 +80,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -624,9 +621,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 LOCALITY, LOCATION_HIERARCHY_TYPE);
         final List<Boundary> zones = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,
-                ADMIN_HIERARCHY_TYPE);
+                REVENUE_HIERARCHY_TYPE);
         final List<Boundary> electionWardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-                ELECTIONWARD_BNDRY_TYPE, ELECTION_HIERARCHY_TYPE);
+                WARD, ADMIN_HIERARCHY_TYPE);
         final List<Boundary> enumerationBlockList = boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ELECTIONWARD_BNDRY_TYPE,
                         ELECTION_HIERARCHY_TYPE);
@@ -920,6 +917,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
         if (StringUtils.isBlank(property.getBasicProperty().getRegdDocNo())) {
             addActionError(getText("mandatory.regdocno"));
+        }
+        
+        if (electionWardId == null || electionWardId == -1) {
+            addActionError(getText("mandatory.election.ward"));
         }
         for (final PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfoProxy())
             if (owner != null) {

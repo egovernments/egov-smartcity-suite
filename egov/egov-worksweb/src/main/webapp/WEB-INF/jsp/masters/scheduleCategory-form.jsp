@@ -38,33 +38,25 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <script>
-function setFocus(obj,defaultval)
-{
-	if(obj.value==defaultval ){
+function setFocus(obj,defaultval) {
+	if(obj.value==defaultval ) {
 		document.getElementById(obj.id).value="";
 		document.getElementById(obj.id).style.color='#000000';
-		}
+	}
 }
-function setBlur(obj,defaultval)
-{
-  if(obj.value == ""){
+function setBlur(obj,defaultval) {
+  if(obj.value == "") {
 		document.getElementById(obj.id).value=defaultval;
-				document.getElementById(obj.id).style.color='#999999';
-
+		document.getElementById(obj.id).style.color='#999999';
 	}
 }
-function methodTest()
-{
-  if(document.getElementById("code").value=="Category code"){
+function methodTest() {
+ 	if(document.getElementById("code").value=="Category Code"){
 		document.getElementById("code").value="";
-		
-		
 	}
-if(document.getElementById("description").value=="Category Name"){
-		document.getElementById("description").value="";
-		
+	if(document.getElementById("description").value=="Category Name") {
+		document.getElementById("description").value="";		
 	}
-
 }
 </script>
 	<div class="formmainbox">
@@ -85,15 +77,15 @@ if(document.getElementById("description").value=="Category Name"){
 					<td colspan="4" class="headingwk">
 					<div class="arrowiconwk"><img
 						src="/egi/resources/erp2/images/arrow.gif" /></div>
-					<div class="headplacer">SOR Category</div>
+					<div class="headplacer"><s:text name="scheduleCategory.sor.category"/></div>
 					</td>
 				</tr>
 				<td class="aligncenter">
 				<table align="center" width="300" border="0" cellpadding="0"
 					cellspacing="0">
 					<tr>
-						<td width="42%" class="tablesubheadwka">Category code</td>
-						<td width="42%" class="tablesubheadwka">Category Name</td>
+						<td width="42%" class="tablesubheadwka"><s:text name="schedCategory.code"/></td>
+						<td width="42%" class="tablesubheadwka"><s:text name="schedCategory.description"/></td>
 
 					</tr>
 			</table>
@@ -125,13 +117,12 @@ if(document.getElementById("description").value=="Category Name"){
 					<td>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
-							<td width="30%" class="greyboxwk"><span class="bold">Add
-							SOR Category:</span></td>
+							<td width="30%" class="greyboxwk"><span class="bold"><s:text name="scheduleCategory.add.sor.category"/>:</span></td>
 
 							<td width="70%" class="greybox2wk"><s:textfield
-								cssClass="selectwk grey" name="code" maxlength="15" id="code" value ="Category code" size="40" onfocus="setFocus(this,'Category code')" onblur="setBlur(this,'Category code')"/> <span
+								cssClass="selectwk grey" name="code" maxlength="15" id="code" value ="Category Code" size="40" onfocus="setFocus(this,'Category Code')" onblur="setBlur(this,'Category Code')"/> <span
 								cssClass="buttonholderwk"> <s:textfield
-								cssClass="selectwk grey" name="description" maxlength="150" id="description" value = "Category Name"  size="40" onfocus="setFocus(this,'Category Name')" onblur="setBlur(this,'Category Name')"/> <s:submit cssClass="buttonfinal" value="SAVE" id="saveButton" name="button" method="create" onclick="methodTest();"/> </span></td>
+								cssClass="selectwk grey" name="description" maxlength="150" id="description" value = "Category Name"  size="40" onfocus="setFocus(this,'Category Name')" onblur="setBlur(this,'Category Name')"/> <s:submit cssClass="buttonfinal" value="SAVE" id="saveButton" name="button" method="save" onclick="methodTest();"/> </span></td>
 						</tr>
 					</table>
 					</td>

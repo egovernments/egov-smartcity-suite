@@ -102,6 +102,7 @@ public class StateHistory implements Serializable {
     private String senderName;
     private String nextAction;
     private String comments;
+    private String natureOfTask;
     private String extraInfo;
     private Date dateInfo;
     private Date extraDateInfo;
@@ -124,6 +125,7 @@ public class StateHistory implements Serializable {
         extraInfo = state.getExtraInfo();
         dateInfo = state.getDateInfo();
         extraDateInfo = state.getExtraDateInfo();
+        natureOfTask = state.getNatureOfTask();
     }
 
     public State getState() {
@@ -180,6 +182,14 @@ public class StateHistory implements Serializable {
 
     public void setComments(final String comments) {
         this.comments = comments;
+    }
+
+    public String getNatureOfTask() {
+        return natureOfTask;
+    }
+
+    public void setNatureOfTask(final String natureOfTask) {
+        this.natureOfTask = natureOfTask;
     }
 
     public String getExtraInfo() {

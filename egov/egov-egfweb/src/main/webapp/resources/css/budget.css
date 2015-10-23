@@ -62,6 +62,7 @@ td.bluebox {
 	padding-left: 5px;
 	color: #000000;
 	text-align: left;
+	vertical-align: baseline;
 	}
 	
 	td.bluebox3 {

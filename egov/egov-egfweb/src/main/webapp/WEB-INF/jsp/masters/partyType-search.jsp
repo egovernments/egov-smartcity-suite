@@ -50,8 +50,6 @@
   <body>
 	<div class="formmainbox"><div class="subheadnew"><s:text name="party.search"/></div>
 	
-	<br/><br/>
-	
 	<s:form name="partyForm" action="partyType" theme="simple" >
 	<s:hidden name="showMode"  />
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -79,14 +77,12 @@
 			</tr>    	
     	</table>
     	
-    	<br/><br/>
-    	
     	<div class="buttonbottom">
 			<s:submit method="search" value="Search" cssClass="buttonsubmit" />
 			<input type="submit" value="Close"
 				onclick="javascript:window.close()" class="button" />
 		</div>
-		
+		</div>
 		<s:if test="%{partySearchList.size!=0}">
 		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 		

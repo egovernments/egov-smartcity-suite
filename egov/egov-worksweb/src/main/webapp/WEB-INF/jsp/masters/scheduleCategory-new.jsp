@@ -37,28 +37,27 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp" %> 
+<%@ include file="/includes/taglibs.jsp" %>
 <html>
-<head>
-<title>Add Schedule Category</title>
-</head>
-<body id = "home">
-
-<s:if test="%{hasErrors()}">
-        <div class="errorstyle">
-          <s:actionerror/>
-          <s:fielderror/>
-        </div>
-    </s:if>
-	<s:if test="%{hasActionMessages()}">
-        <div class="messagestyle">
-        	<s:actionmessage theme="simple"/>
-        </div>
-    </s:if>
-<s:form action="scheduleCategory" theme="simple">
-<s:token/> 
- <%@ include file='scheduleCategory-form.jsp'%>
-</s:form>
-</body>
+	<head>
+		<title><s:text name="scheduleCategory.add.title"/></title>
+	</head>
+	<body id="home">
+		<s:if test="%{hasErrors()}">
+			<div class="errorstyle">
+				<s:actionerror />
+				<s:fielderror />
+			</div>
+		</s:if>
+		<s:if test="%{hasActionMessages()}">
+			<div class="messagestyle">
+				<s:actionmessage theme="simple" />
+			</div>
+		</s:if>
+		<s:form action="scheduleCategory-save" theme="simple" name="scheduleCategory">
+			<s:token />
+			<%@ include file='scheduleCategory-form.jsp'%>
+		</s:form>
+	</body>
 </html>
 

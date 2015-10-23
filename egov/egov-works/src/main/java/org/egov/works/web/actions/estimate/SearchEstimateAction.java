@@ -111,7 +111,7 @@ public class SearchEstimateAction extends SearchFormAction {
     private AbstractEstimateService abstractEstimateService;
     private final List<AbstractEstimate> results = new LinkedList<AbstractEstimate>();
     private AbstractEstimate estimates = new AbstractEstimate();
-    private Integer empId;
+    private Long estimateCreatedBy;
     private String wpdate;
 
     private WorksService worksService;
@@ -349,7 +349,9 @@ public class SearchEstimateAction extends SearchFormAction {
         addDropdownData("parentCategoryList",
                 getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
         populateCategoryList(ajaxEstimateAction, estimates.getParentCategory() != null);
-        populatePreparedByList(ajaxEstimateAction, execDept != null);
+        // populatePreparedByList(ajaxEstimateAction, execDept != null);
+        addDropdownData("estimateCreatedByList",
+                abstractEstimateService.findAllBy("select distinct createdBy from AbstractEstimate"));
         if ("wp".equals(source))
             setStatus(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
 
@@ -499,9 +501,9 @@ public class SearchEstimateAction extends SearchFormAction {
                 }
 
         if (SEARCH_ESTIMATE_FOR_MILESTONE.equalsIgnoreCase(source) || VIEW_MILESTONE.equalsIgnoreCase(source))
-            if (empId != null && empId != -1) {
+            if (estimateCreatedBy != null && estimateCreatedBy != -1) {
                 query.append(" and woe.estimate.createdBy.id = ?");
-                paramList.add(empId);
+                paramList.add(estimateCreatedBy);
             }
 
         if (StringUtils.isNotBlank(getProjCode())) {
@@ -660,12 +662,12 @@ public class SearchEstimateAction extends SearchFormAction {
             return "wpSearch";
     }
 
-    public Integer getEmpId() {
-        return empId;
+    public Long getEstimateCreatedBy() {
+        return estimateCreatedBy;
     }
 
-    public void setEmpId(final Integer empId) {
-        this.empId = empId;
+    public void setEstimateCreatedBy(final Long estimateCreatedBy) {
+        this.estimateCreatedBy = estimateCreatedBy;
     }
 
     public void setAbstractEstimateService(final AbstractEstimateService abstractEstimateService) {
@@ -817,9 +819,9 @@ public class SearchEstimateAction extends SearchFormAction {
                 paramList.add("%" + projCode + "%");
             }
 
-            if (empId != null && empId != -1) {
+            if (estimateCreatedBy != null && estimateCreatedBy != -1) {
                 sb.append(" and ae.createdBy.id=? ");
-                paramList.add(empId);
+                paramList.add(estimateCreatedBy);
             }
             if (estimates.getCategory() != null) {
                 sb.append(" and ae.category.id= ? ");

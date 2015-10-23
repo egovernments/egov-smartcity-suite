@@ -139,11 +139,12 @@ public class ContractorGrade extends BaseModel {
 
 	public List<ValidationError> validate() {
 		List<ValidationError> errorList = null;
-		if (maxAmount.compareTo(minAmount) == -1) {
-			return Arrays.asList(new ValidationError("maxAmount", "contractor.grade.maxamount.invalid"));
+		if(minAmount != null && maxAmount != null) {
+			if (maxAmount.compareTo(minAmount) == -1) {
+				return Arrays.asList(new ValidationError("maxAmount", "contractor.grade.maxamount.invalid"));
+			}
 		}
 		return errorList;
-
 	}
 
 	@Override

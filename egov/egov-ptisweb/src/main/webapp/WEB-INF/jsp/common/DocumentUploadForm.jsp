@@ -39,12 +39,7 @@
 -->
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<script>
-	function viewDocument(fileStoreId) {
-		var sUrl = "/egi/downloadfile?fileStoreId="+fileStoreId+"&moduleName=PTIS";
-		window.open(sUrl,"window",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');	
-	}
-</script>
+
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td colspan="5">
@@ -56,7 +51,7 @@
 
 	<tr>
 		<td colspan="5">
-			<table class="tablebottom" id="nameTable" width="100%" border="0" cellpadding="0" cellspacing="0">
+			<table class="tablebottom doctable" id="nameTable" width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tbody>
 					<tr>
 						<th class="bluebgheadtd"><s:text name="doctable.sno" /></th>
@@ -109,3 +104,29 @@
 		</td>
 	</tr>
 </table>
+
+<script>
+	function viewDocument(fileStoreId) {
+		var sUrl = "/egi/downloadfile?fileStoreId="+fileStoreId+"&moduleName=PTIS";
+		window.open(sUrl,"window",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');	
+	}
+
+	jQuery(".doctable input:file").change(function (){
+	     var fileName = jQuery(this).val();
+	     if(fileName)
+	     {
+	       jQuery(this).after("<a href='javascript:void(0);' onclick='clearSelectedFile(this);' class='fileclear'><span class='tblactionicon delete'><i class='fa fa-times-circle'></i></span></a>"); 
+	     }else{
+	       if(jQuery(this).next().is("span"))
+		   {
+	    	   jQuery(this).next().remove();
+		   }
+	     }
+	});
+
+	function clearSelectedFile(obj)
+	{
+		jQuery(obj).parent().find('input:file').val('');
+		jQuery(obj).remove();
+	}
+</script>

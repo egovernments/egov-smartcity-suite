@@ -49,12 +49,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.core.security.user.UserImpl;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.common.entity.UOM;
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.Required;
@@ -62,8 +60,9 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
-import org.egov.infstr.search.SearchQueryHQL;
-import org.egov.infstr.services.PersistenceService;
+import org.egov.works.master.services.ScheduleCategoryService;
+import org.egov.works.master.services.ScheduleOfRateService;
+import org.egov.works.master.services.UOMService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.masters.MarketRate;
 import org.egov.works.models.masters.SORRate;
@@ -72,21 +71,28 @@ import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.utils.WorksConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
         @Result(name = ScheduleOfRateAction.NEW, location = "scheduleOfRate-new.jsp"),
-        @Result(name = ScheduleOfRateAction.SEARCH, location = "scheduleOfRate-search.jsp")
+        @Result(name = ScheduleOfRateAction.SEARCH, location = "scheduleOfRate-search.jsp"),
+        @Result(name = ScheduleOfRateAction.EDIT, location = "scheduleOfRate-edit.jsp"),
+        @Result(name = ScheduleOfRateAction.INDEX, location = "scheduleOfRate-index.jsp")
 })
 @ParentPackage("egov")
 public class ScheduleOfRateAction extends SearchFormAction {
 
     private static final long serialVersionUID = -5496042432775969286L;
-    private PersistenceService<ScheduleOfRate, Long> scheduleOfRateService;
+    @Autowired
+    private ScheduleOfRateService scheduleOfRateService;
+    @Autowired
+    private ScheduleCategoryService scheduleCategoryService;
+    @Autowired
+    private UOMService uomService;
     private ScheduleOfRate scheduleOfRate = new ScheduleOfRate();
     private List<ScheduleOfRate> scheduleOfRateList = null;
-    private static final List<ScheduleCategory> scheduleCategoryList = null;
+    private List<ScheduleCategory> scheduleCategoryList = null;
     private Long id;
-    private String messageKey;
     private String mode;
     private String displData;
 
@@ -95,12 +101,11 @@ public class ScheduleOfRateAction extends SearchFormAction {
     private String code;
     private String description;
 
-    /* on 9/10/09 */
     private Map<Long, String> deletFlagMap = new HashMap<Long, String>();
     private Map<Long, String> deleteFlagMap2 = new HashMap<Long, String>();
-    private String estimateDtFlag = "no";
+    private String estimateDtFlag = WorksConstants.NO;
     private Date estimateDate;
-    public static final String flagValue = "yes";
+    public static final String flagValue = WorksConstants.YES;
 
     private List<SORRate> actionRates = new LinkedList<SORRate>();
     private List<MarketRate> actionMarketRates = new LinkedList<MarketRate>();
@@ -108,14 +113,13 @@ public class ScheduleOfRateAction extends SearchFormAction {
     private List abstractEstimateList = null;
     private List woeList = null;
     private Date woDate;
-    private String woDateFlag = "no";
+    private String woDateFlag = WorksConstants.NO;
     private List<SORRate> editableRateList = new ArrayList<SORRate>();
     public static final String SEARCH = "search";
 
     public ScheduleOfRateAction() {
         addRelatedEntity("scheduleCategory", ScheduleCategory.class);
         addRelatedEntity("uom", UOM.class);
-        addRelatedEntity("createdBy", UserImpl.class);
     }
 
     @Override
@@ -128,58 +132,47 @@ public class ScheduleOfRateAction extends SearchFormAction {
         return NEW;
     }
 
-    @Override
+    /*@Override
     @SkipValidation
     @Action(value = "/masters/scheduleOfRate-search")
     public String search() {
         return SEARCH;
-    }
+    }*/
 
-    /*
-     * sept2309 @return searchpage
-     */
+    @Action(value = "/masters/scheduleOfRate-searchList")
     public String searchList() {
-        setDisplData("no");
-        scheduleOfRateList = scheduleOfRateService.findAllBy(" from ScheduleOfRate sor order by code asc");
-        return "searchpage";
+        setDisplData(WorksConstants.NO);
+        scheduleCategoryList = scheduleCategoryService.getAllScheduleCategories();
+        return SEARCH;
     }
 
     public String list() {
-        scheduleOfRateList = scheduleOfRateService.findAllBy(" from ScheduleOfRate sor order by code asc");
+        scheduleOfRateList = scheduleOfRateService.getAllScheduleOfRates();
         return INDEX;
     }
 
+    @Action(value = "/masters/scheduleOfRate-edit")
     public String edit() {
-        scheduleOfRate = scheduleOfRateService.findById(scheduleOfRate.getId(), false);
-        if (StringUtils.isNotBlank(mode) && mode.equalsIgnoreCase("view"))
-            return "edit";
+        scheduleOfRate = scheduleOfRateService.getScheduleOfRateById(id);
+        if (StringUtils.isNotBlank(mode) && mode.equalsIgnoreCase(WorksConstants.VIEW))
+            return EDIT;
         getRateDetailsForSORId(false);
         getRateDetailsForSORIdForREValidation(false);
-        return "edit";
+        return EDIT;
     }
 
+    @Action(value = "/masters/scheduleOfRate-save")
     public String save() {
-        scheduleOfRateService.update(scheduleOfRate);
-        return SUCCESS;
-    }
-
-    public String create() {
         populateRates();
         populateMarketRates();
         getPersistedRateDetails(scheduleOfRate);
         getRateDetailsForSORId(true);
         getRateDetailsForSORIdForREValidation(true);
-
-        if (scheduleOfRate.getId() == null)
-            scheduleOfRateService.persist(scheduleOfRate);
-        else
-            scheduleOfRateService.merge(scheduleOfRate);
+        scheduleOfRateService.persist(scheduleOfRate);
         scheduleOfRate = scheduleOfRateService.findById(scheduleOfRate.getId(), false);
         scheduleOfRateList = new ArrayList<ScheduleOfRate>();
         scheduleOfRateList.add(scheduleOfRate);
-        messageKey = "sor.save.success";
-        addActionMessage(getText(messageKey, "The SOR was saved successfully"));
-        // return list();
+        addActionMessage(getText("sor.save.success"));
         return INDEX;
     }
 
@@ -216,20 +209,14 @@ public class ScheduleOfRateAction extends SearchFormAction {
         return scheduleOfRateList;
     }
 
-    public void setScheduleOfRateService(
-            final PersistenceService<ScheduleOfRate, Long> service) {
-        scheduleOfRateService = service;
-    }
-
     @Override
     public void prepare() {
         if (id != null)
             scheduleOfRate = scheduleOfRateService.findById(id, false);
         super.prepare();
-        // setupDropdownDataExcluding();
-        final List<ScheduleOfRate> categories = scheduleOfRateService.findAllBy("from ScheduleCategory sc");
-        addDropdownData("scheduleCategoryList", categories);
-        addDropdownData("uomlist", scheduleOfRateService.findAllBy("from UOM  order by upper(uom)"));
+        scheduleCategoryList = scheduleCategoryService.getAllScheduleCategories();
+        addDropdownData("scheduleCategoryList", scheduleCategoryList);
+        addDropdownData("uomlist", uomService.getAllUOMs());
     }
 
     private void getPersistedRateDetails(final ScheduleOfRate sor) {
@@ -281,14 +268,6 @@ public class ScheduleOfRateAction extends SearchFormAction {
         this.displData = displData;
     }
 
-    public List<ScheduleCategory> getScheduleCategoryList() {
-        // scheduleCategoryList= scheduleCategoryService.findAllBy(" from
-        // ScheduleCategory sc order by code asc");
-        // System.out.println("$$$$$$$$$$$inside action
-        // getScheduleCategoryList");
-        return scheduleCategoryList;
-    }
-
     /**
      * @return the scheduleCategoryId
      * @Validation @RequiredStringValidator(message="Please select a category")
@@ -318,21 +297,21 @@ public class ScheduleOfRateAction extends SearchFormAction {
         this.code = code;
     }
 
+    @Action(value = "/masters/scheduleOfRate-searchSorDetails")
     public String searchSorDetails() {
         if (scheduleCategoryId == -1) {
-            messageKey = "sor.category.not.null";
-            addActionError(getText(messageKey, "Please Select Category"));
-            return "searchpage";
+            addActionError(getText("sor.category.not.null"));
+            return SEARCH;
         } else {
             setPageSize(WorksConstants.PAGE_SIZE);
             search();
         }
         if (searchResult.getFullListSize() == 0)
-            setDisplData("noData");
+            setDisplData(WorksConstants.NO_DATA);
         else
             setDisplData(flagValue);
 
-        return "searchpage";
+        return SEARCH;
     }
 
     /**
@@ -365,18 +344,14 @@ public class ScheduleOfRateAction extends SearchFormAction {
     }
 
     public void iterateRateList(final List<SORRate> rateList, final boolean validationMessageRequired) {
-        abstractEstimateList = getPersistenceService().findAllBy(
-                "select ae from AbstractEstimate ae, Activity act where act.abstractEstimate=ae and act.abstractEstimate.parent is null and act.abstractEstimate.egwStatus.code <> 'CANCELLED' and act.schedule.id = "
-                        + scheduleOfRate.getId());
+    	abstractEstimateList = scheduleOfRateService.getAllAbstractEstimateByScheduleOrRateId(scheduleOfRate.getId());
         final SORRate rate = rateList.get(rateList.size() - 1);
         if (!abstractEstimateList.isEmpty())
             iterateAbstractList(abstractEstimateList, rate, validationMessageRequired);
     }
 
     public void iterateRateListForRE(final List<SORRate> rateList, final boolean validationMessageFlag) {
-        woeList = getPersistenceService().findAllBy(
-                "select distinct(woa.workOrderEstimate) from WorkOrderActivity woa where woa.workOrderEstimate.estimate.parent.id is not null and woa.workOrderEstimate.estimate.egwStatus.code<> 'CANCELLED' and exists (select sor.id from ScheduleOfRate sor where sor.id = woa.activity.schedule.id and sor.id = ? )",
-                scheduleOfRate.getId());
+        woeList = scheduleOfRateService.getAllWorkOrderEstimateByScheduleOfRateId(scheduleOfRate.getId());
         final SORRate rate = rateList.get(rateList.size() - 1);
         if (!woeList.isEmpty())
             iterateWOList(woeList, rate, validationMessageFlag);
@@ -448,7 +423,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
                 } else if (!trackFlagMap.isEmpty()) {
                     final String value = trackFlagMap.get(0);
                     if (value != null && !value.equalsIgnoreCase(flagValue))
-                        deleteFlagMap2.put(rate.getId(), "no");
+                        deleteFlagMap2.put(rate.getId(), WorksConstants.NO);
                 }
             }
         }      // end of for wo
@@ -576,26 +551,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
 
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
-        final StringBuffer scheduleOfRateSql = new StringBuffer(100);
-        String scheduleOfRateStr = "";
-        final List<Object> paramList = new ArrayList<Object>();
-        scheduleOfRateSql.append(" from ScheduleOfRate sor where sor.scheduleCategory.id=?");
-        paramList.add(scheduleCategoryId);
-
-        if (getCode() != null && !getCode().equals("")) {
-            scheduleOfRateSql.append(" and UPPER(sor.code) like ?");
-            paramList.add("%" + getCode().toUpperCase() + "%");
-        }
-
-        if (getDescription() != null && !getDescription().equals("")) {
-            scheduleOfRateSql.append(" and UPPER(sor.description) like ?");
-            paramList.add("%" + getDescription().toUpperCase() + "%");
-        }
-
-        scheduleOfRateStr = scheduleOfRateSql.toString();
-        final String countQuery = "select count(*) " + scheduleOfRateStr;
-        return new SearchQueryHQL(scheduleOfRateStr, countQuery, paramList);
-
+        return scheduleOfRateService.prepareSearchQuery(scheduleCategoryId, code, description);
     }
 
     public Map<Long, String> getDeleteFlagMap2() {
@@ -637,4 +593,16 @@ public class ScheduleOfRateAction extends SearchFormAction {
     public void setEditableRateList(final List<SORRate> editableRateList) {
         this.editableRateList = editableRateList;
     }
+
+	public List<ScheduleCategory> getScheduleCategoryList() {
+		return scheduleCategoryList;
+	}
+
+	public void setScheduleCategoryList(List<ScheduleCategory> scheduleCategoryList) {
+		this.scheduleCategoryList = scheduleCategoryList;
+	}
+
+	public void setScheduleOfRateList(List<ScheduleOfRate> scheduleOfRateList) {
+		this.scheduleOfRateList = scheduleOfRateList;
+	}
 }

@@ -102,7 +102,6 @@
 		</div>  
 		<s:form name="fundForm" action="fund" theme="simple" >
 			<%@include file="fund-form.jsp"%>
-			<br/><br/>
 		<div class="buttonbottom"> 
 			<s:submit name="create" value="Save & New" method="create" cssClass="buttonsubmit" onclick="javascript: return validate();"/>
 			<s:submit name="create" value="Save & Close" method="create" cssClass="buttonsubmit" onclick="validate();setClose();"/>

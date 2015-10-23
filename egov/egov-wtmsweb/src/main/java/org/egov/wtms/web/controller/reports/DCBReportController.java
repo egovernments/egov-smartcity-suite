@@ -60,6 +60,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -107,17 +108,17 @@ public class DCBReportController {
 
     @ModelAttribute("zones")
     public List<Boundary> zones() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, ADMIN_HIERARCHY_TYPE);
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
     }
 
     @ModelAttribute("wards")
     public List<Boundary> wards() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, ADMIN_HIERARCHY_TYPE);
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
     }
 
     @ModelAttribute("blocks")
     public List<Boundary> blocks() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BLOCK, ADMIN_HIERARCHY_TYPE);
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BLOCK, PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
     }
 
     @ModelAttribute("localitys")

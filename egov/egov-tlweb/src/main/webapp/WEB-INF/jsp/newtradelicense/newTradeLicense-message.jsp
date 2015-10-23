@@ -46,9 +46,14 @@
 	</head>
 	<body onload="refreshInbox()">
 		<s:form action="newTradeLicense" theme="simple">
-			<span class="mandatory1"> <s:actionmessage /> </span>
-			<br />
-			<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
+			<%-- <span class="mandatory1"> <s:actionmessage /> </span>
+			<br /> --%>
+			<div class="alert alert-success view-content">
+			  <s:actionmessage />
+			</div>
+			<div class="text-center">
+				<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
+			</div>
 		</s:form>
 	</body>
 

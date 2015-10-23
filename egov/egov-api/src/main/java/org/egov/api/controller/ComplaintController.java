@@ -58,8 +58,9 @@ import org.egov.api.controller.core.ApiUrl;
 import org.egov.api.model.ComplaintSearchRequest;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
-import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.CrossHierarchy;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
@@ -104,6 +105,9 @@ public class ComplaintController extends ApiController {
 
     @Autowired
     protected ComplaintTypeService complaintTypeService;
+
+    @Autowired
+    protected CrossHierarchyService crossHierarchyService;
 
     // --------------------------------------------------------------------------------//
     /**
@@ -170,9 +174,9 @@ public class ComplaintController extends ApiController {
             final long complaintTypeId = (int) complaintRequest.get("complaintTypeId");
             if (complaintRequest.get("locationId") != null && (int) complaintRequest.get("locationId") > 0) {
                 final long locationId = (int) complaintRequest.get("locationId");
-                final Boundary loc = boundaryService.getBoundaryById(locationId);
-                if (loc != null)
-                    complaint.setLocation(loc);
+                final CrossHierarchy crosshierarchy = crossHierarchyService.findById(locationId);
+                complaint.setLocation(crosshierarchy.getParent());
+                complaint.setChildLocation(crosshierarchy.getChild());
             }
             if (complaintRequest.get("lng") != null && (double) complaintRequest.get("lng") > 0) {
                 final double lng = (double) complaintRequest.get("lng");

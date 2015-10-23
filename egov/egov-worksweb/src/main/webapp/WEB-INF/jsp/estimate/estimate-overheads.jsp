@@ -116,7 +116,7 @@ function clearOverheads() {
 function resetOverheads()
 {
    var estimateDate = document.getElementById("estimateDate").value;
-   makeJSONCall(["Text","Value","Name","Percentage","Lumpsum"],'${pageContext.request.contextPath}/estimate/ajaxEstimate!overheads.action',{estDate:document.getElementById("estimateDate").value},overheadLoadHandler,overheadLoadFailureHandler) ;
+   makeJSONCall(["Text","Value","Name","Percentage","Lumpsum"],'${pageContext.request.contextPath}/estimate/ajaxEstimate-overheads.action',{estDate:document.getElementById("estimateDate").value},overheadLoadHandler,overheadLoadFailureHandler) ;
 }
 
 function setupDescriptionOptions(natureOfWork) {

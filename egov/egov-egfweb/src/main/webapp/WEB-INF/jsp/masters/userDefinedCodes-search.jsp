@@ -60,13 +60,11 @@
   <body>
 	<div class="formmainbox"><div class="subheadnew"><s:text name="userDefCode.search"/></div>
 	
-	<br/><br/>
-	
 	<s:form name="userDefCodeForm" action="userDefinedCodes" theme="simple" >
 	<s:hidden name="showMode"  />
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
-				<td class="greybox"><s:text name="subCodeFor"/><span class="mandatory">*</span></td>
+				<td class="greybox"><s:text name="subCodeFor"/><span class="mandatory"></span></td>
 			    <td class="greybox">
 			    	<s:select list="dropdownData.userDefCodeList" id="accEntity.accountdetailtype.id" listKey="id"	
 			    		listValue="name" name="accEntity.accountdetailtype.id" headerKey="" headerValue="---- Choose ----" 
@@ -84,14 +82,13 @@
     	
     	</table>
     	
-    	<br/><br/>
     	
     	<div class="buttonbottom">
 			<s:submit method="search" value="Search" cssClass="buttonsubmit" onclick="javascript: return validate();"/>
 			<input type="submit" value="Close"
 				onclick="javascript:window.close()" class="button" />
 		</div>
-		
+		</div>
 		<s:if test="%{searchList.size!=0}">
 		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 		

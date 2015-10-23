@@ -64,7 +64,7 @@
 	</jsp:include>
 	<s:form theme="simple" name="chequeMaster" >	
 	
-		<div class="formheading"/><div class="subheadnew">Cheque Master - Search</div>
+		<div class="formmainbox"/><div class="subheadnew">Cheque Master - Search</div>
 		<br>
 		<font  style='color: red ; font-weight:bold '> 
 			<p class="error-block" id="lblError" ></p>
@@ -86,10 +86,11 @@
 				</tr>
 			</table>
 		<div class="buttonbottom" style="padding-bottom:10px;">
-		<input type="button" id="Close" value="Add/Modify Cheque" onclick="addModifyChq();" class="buttonsubmit"/>
-		<s:reset id="Reset" value="Cancel" cssClass="buttonsubmit"/>
-		<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
-	</div>
+			<input type="button" id="Close" value="Add/Modify Cheque" onclick="addModifyChq();" class="buttonsubmit"/>
+			<s:reset id="Reset" value="Cancel" cssClass="buttonsubmit"/>
+			<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
+		</div>
+		</div>
 	</s:form>
 
 <script>

@@ -56,6 +56,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.master.service.PropertyUsageService;
 import org.hibernate.SQLQuery;
@@ -108,12 +109,12 @@ public class NatureOfUsageReportController {
 
     @ModelAttribute("wards")
     public List<Boundary> getWards() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, ADMIN_HIERARCHY_TYPE);
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
     }
 
     @ModelAttribute("blocks")
     public List<Boundary> getBlocks() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BLOCK, ADMIN_HIERARCHY_TYPE);
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BLOCK, PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
     }
 
     @RequestMapping(value = "/natureOfUsageReport-form", method = RequestMethod.GET)

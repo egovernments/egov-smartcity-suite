@@ -154,7 +154,11 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     public String approve() {
         processWorkflow(NEW);
         persistenceService.persist(license());
-        return "message";
+        // Generate PFA Certificate on final approval
+        if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONAPPROVE)) {
+            return Constants.PFACERTIFICATE;
+        } else
+            return "message";
     }
 
     @SkipValidation
@@ -340,7 +344,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             addDropdownData(Constants.DROPDOWN_TRADENAME_LIST, Collections.EMPTY_LIST);
         else
             addDropdownData(Constants.DROPDOWN_TRADENAME_LIST,
-                    licenseUtils.getAllTradeNames(getModel().getClass().getSimpleName()));
+                    licenseUtils.getAllTradeNames(getModel().getClass().getSimpleName())); 
 
         setupWorkflowDetails();
     }
@@ -386,7 +390,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
                         this.getText("license.rejectedlast"));
             else
                 addActionMessage(this.getText("license.rejected") +
-                        user.getName());
+                        license().getApplicationNumber());
         }
         else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONGENERATEDCERTIFICATE))
             addActionMessage(this.getText("license.certifiacte.print.complete.recorded"));

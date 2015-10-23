@@ -61,13 +61,6 @@ function refreshInbox(){
 		<s:else>
 			<s:property value="%{estimateNumber}"/> &nbsp; <s:text name="%{getText(messageKey)}" />
 		</s:else>
-		<br />
-		 <s:if test="%{model.state.text2!=null}">
-		 	Estimate approval number is <s:property value="%{model.state.text2}" /> 
-		 </s:if>
-		 <s:if test="%{model.egwStatus.code=='ADMIN_SANCTIONED' && model.state.previous.text2!=null}">
-		 	Estimate approval number is <s:property value="%{model.state.previous.text2}" />
-		 </s:if>	
 		<br>
 		<s:if test="%{projectCode}">
 				<s:if test="%{model.egwStatus.code=='CANCELLED'}">			

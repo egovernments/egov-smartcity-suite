@@ -53,7 +53,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td class="greybox" width="5%"/>
-		<td class="greybox"><s:text name="report.financialYear"/> <span class="mandatory">*</span></td>
+		<td class="greybox"><s:text name="report.financialYear"/> <span class="mandatory"></span></td>
 		<td class="greybox"><s:select name="financialYear" id="financialYear" list="dropdownData.financialYearList" listKey="id" listValue="finYearRange" headerKey="0" headerValue="----Select----"  value="%{model.financialYear.id}" /> </td>
 		<td class="greybox"><s:text name="report.department"/></td>
 		<td class="greybox"><s:select name="department" id="department" list="dropdownData.departmentList" listKey="id" listValue="deptName" headerKey="0" headerValue="----Select----"  value="%{model.department.id}" /> </td>
@@ -66,4 +66,3 @@
 		<td class="bluebox"><s:select name="function" id="function" list="dropdownData.functionList" listKey="id" listValue="name" headerKey="-1" headerValue="----Select----"  value="%{function.id}" /> </td>
 	</tr>
 </table>
-<td><div align="left" class="mandatory">* Mandatory Fields</div></td>

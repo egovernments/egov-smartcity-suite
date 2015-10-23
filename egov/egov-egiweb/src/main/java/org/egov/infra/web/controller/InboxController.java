@@ -104,7 +104,7 @@ public class InboxController {
             inboxItem.setId(InboxRenderService.GROUP_Y.equals(workflowTypes.getGroupYN()) ? EMPTY : state.getId() + "#" + workflowTypes.getId());
             inboxItem.setDate(DATE_FORMATTER.print(new DateTime(state.getCreatedDate())));
             inboxItem.setSender(state.getSenderName());
-            inboxItem.setTask(workflowTypes.getDisplayName());
+            inboxItem.setTask(isBlank(state.getNatureOfTask()) ? workflowTypes.getDisplayName() : state.getNatureOfTask());
             final String nextAction = inboxRenderServiceDeligate.getNextAction(state);
             inboxItem.setStatus(state.getValue() + (isBlank(nextAction) ? EMPTY : " - " + nextAction));
             inboxItem.setDetails(isBlank(stateAware.getStateDetails()) ? EMPTY : stateAware.getStateDetails());

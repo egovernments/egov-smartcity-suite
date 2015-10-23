@@ -59,7 +59,7 @@
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 		<link rel="stylesheet" href="<c:url value='/css/commonegovNew.css' context='/egi'/>" />
-		
+				
 		<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>

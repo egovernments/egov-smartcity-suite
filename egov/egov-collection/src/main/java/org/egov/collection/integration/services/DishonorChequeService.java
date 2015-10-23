@@ -39,9 +39,7 @@ eGov suite of products aim to improve the internal efficiency,transparency,
  */
 package org.egov.collection.integration.services;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -52,9 +50,13 @@ import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.model.instrument.InstrumentHeader;
 import org.egov.services.instrument.FinancialIntegrationService;
+import org.egov.utils.FinancialConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DishonorChequeService implements FinancialIntegrationService {
 
@@ -63,6 +65,8 @@ public class DishonorChequeService implements FinancialIntegrationService {
     private CollectionsUtil collectionsUtil;
     private PersistenceService persistenceService;
     private ReceiptHeaderService receiptHeaderService;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusDAO;
 
     @Override
     public void updateCollectionsOnInstrumentDishonor(final Long instrumentHeaderId) {
@@ -71,20 +75,21 @@ public class DishonorChequeService implements FinancialIntegrationService {
                 .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED);
         final EgwStatus receiptCancellationStatus = collectionsUtil
                 .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED);
-        final List<String> receiptStatusToExclude = new ArrayList<String>(0);
-        receiptStatusToExclude.add(receiptInstrumentBounceStatus.getCode());
-        receiptStatusToExclude.add(receiptCancellationStatus.getCode());
-        final ReceiptHeader receiptHeader = (ReceiptHeader) persistenceService.find(
-                "select DISTINCT (receipt) from org.egov.collection.entity.ReceiptHeader receipt "
-                        + "join receipt.receiptInstrument as instruments where instruments.id=?",
-                        Long.valueOf(instrumentHeaderId));
-
+        final ReceiptHeader receiptHeader = (ReceiptHeader) persistenceService
+                .find("select DISTINCT (receipt) from ReceiptHeader receipt "
+                        + "join receipt.receiptInstrument as instruments where instruments.id=? and instruments.statusId.code not in (?,?)",
+                        Long.valueOf(instrumentHeaderId), receiptInstrumentBounceStatus.getCode(),
+                        receiptCancellationStatus.getCode());
+        final InstrumentHeader instHeader = (InstrumentHeader) persistenceService.findByNamedQuery(
+                "INSTRUMENTHEADERBYID", instrumentHeaderId);
+        instHeader.setStatusId(getDishonoredStatus());
+        persistenceService.persist(instHeader);
         // update receipts - set status to INSTR_BOUNCED and recon flag to false
         updateReceiptHeaderStatus(receiptHeader, receiptInstrumentBounceStatus, false);
         LOGGER.debug("Updated receipt status to " + receiptInstrumentBounceStatus.getCode()
                 + " set reconcilation to false");
 
-        // update the billing system
+        // update the billing system.
         if (updateDetailsToBillingSystem(receiptHeader))
             LOGGER.debug("Billing system have been updated successfully");
         else {
@@ -117,7 +122,12 @@ public class DishonorChequeService implements FinancialIntegrationService {
         if (status != null)
             receiptHeader.setStatus(status);
         receiptHeader.setIsReconciled(isReconciled);
-        receiptHeaderService.persist(receiptHeader);
+        receiptHeaderService.update(receiptHeader);
+    }
+
+    private EgwStatus getDishonoredStatus() {
+        return egwStatusDAO.getStatusByModuleAndCode(FinancialConstants.STATUS_MODULE_INSTRUMENT,
+                FinancialConstants.INSTRUMENT_DISHONORED_STATUS);
     }
 
     /**
@@ -169,7 +179,7 @@ public class DishonorChequeService implements FinancialIntegrationService {
     }
 
     @Override
-    public void updateSourceInstrumentVoucher(String event, Long instrumentHeaderId) {
+    public void updateSourceInstrumentVoucher(final String event, final Long instrumentHeaderId) {
         // TODO Auto-generated method stub
 
     }

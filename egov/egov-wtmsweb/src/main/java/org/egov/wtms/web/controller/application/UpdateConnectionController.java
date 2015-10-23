@@ -57,6 +57,7 @@ import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.service.ChairPersonService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.wtms.application.entity.ApplicationDocuments;
@@ -105,6 +106,9 @@ public class UpdateConnectionController extends GenericConnectionController {
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private WaterTaxNumberGenerator waterTaxNumberGenerator;
@@ -217,7 +221,9 @@ public class UpdateConnectionController extends GenericConnectionController {
         final Boolean recordCreatedBYNonEmployee = waterTaxUtils.getCurrentUserRole(waterConnectionDetails
                 .getCreatedBy());
         // if record from csc to Clerk
-        if (recordCreatedBYNonEmployee && null == request.getAttribute("mode")
+      //TODO: as off now using anonymous created for MeeSeva after we need to craete role for this and add in appconfig for recordCreatedBYNonEmployee API
+        // so it will work as CSC Operator record
+        if ( (recordCreatedBYNonEmployee || userService.getUserById(waterConnectionDetails.getCreatedBy().getId()).getUsername().equals("anonymous")) && null == request.getAttribute("mode")
                 && waterConnectionDetails.getState().getHistory().isEmpty()) {
             model.addAttribute("mode", "edit");
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
@@ -374,10 +380,13 @@ public class UpdateConnectionController extends GenericConnectionController {
 
                 + waterConnectionDetails.getApplicationNumber();
 
-            if (workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
-                    && waterConnectionDetails.getStatus().getCode()
-                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED))
+            if ((workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
+                    || workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_RECONNECTIONACKNOWLDGEENT_BUTTON)) &&
+                            (waterConnectionDetails.getStatus().getCode()
+                            .equals(WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED)|| waterConnectionDetails.getStatus().getCode()
+                            .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONINPROGRESS))){
                 approvalPosition = waterTaxUtils.getApproverPosition("Revenue Clerk", waterConnectionDetails);
+            }
             final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                     + waterTaxUtils.getApproverUserName(approvalPosition);
             return "redirect:/application/application-success?pathVars=" + pathVars;

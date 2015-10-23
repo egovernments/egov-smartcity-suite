@@ -319,12 +319,18 @@
         	}
 
     		function onSubmit() {
-    			<s:if test="%{mode=='view'}">
+    			<s:if test="%{mode!=null && mode=='view'}">
 					clearMessage('newLicense_error');
 					toggleFields(false,"");
 					document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
 					document.newTradeLicense.submit();
 				</s:if>
+				<s:elseif test="%{mode!=null && mode=='edit'}">
+					clearMessage('newLicense_error');
+					toggleFields(false,"");
+					document.newTradeLicense.action = '${pageContext.request.contextPath}//newtradelicense/editTradeLicense-edit.action';
+					document.newTradeLicense.submit;
+				</s:elseif>
 				<s:else>                       	              
 					clearMessage('newLicense_error');
 					toggleFields(false,"");
@@ -390,8 +396,11 @@
                 <div class="row">
                     <div class="col-md-12">
                      <div class="text-right error-msg" style="font-size:14px;"><s:text name="dateofapplication.lbl" /> : <s:date name="applicationDate"  format="dd/MM/yyyy"/></div>
+                     <s:if test="%{applicationNumber!=null}">
+                    	 <div class="text-right error-msg" style="font-size:14px;"><s:text name="application.num" /> : <s:property value="%{applicationNumber}" /></div>
+                 	</s:if>
                  		<s:if test="%{hasErrors()}">
-							<div align="left">
+							<div align="center">
 								<s:actionerror />
 								<s:fielderror/>
 							</div>			 
@@ -410,12 +419,19 @@
 							<s:hidden id="detailChanged" name="detailChanged" />
 							<s:hidden id="applicationDate" name="applicationDate" />
 							<s:hidden id="mode" name="mode" value="%{mode}" />
+							<s:hidden name="id" id="id" />
                         <div class="panel panel-primary" data-collapsed="0">
                             <div class="panel-heading">
-                            
+                            <s:if test="%{mode=='edit'}">
+								<div class="panel-title" style="text-align:center">
+										<s:text name='page.title.edittrade' /> 
+								</div>
+							</s:if>
+							<s:else>
 								<div class="panel-title" style="text-align:center">
 										<s:text name='newtradeLicense.heading' /> 
 								</div>
+							</s:else>
                             
                                 <ul class="nav nav-tabs" id="settingstab">
                                     <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true">Trade Details</a></li>

@@ -69,7 +69,7 @@
         	<s:actionmessage theme="simple"/>
         </div>
     </s:if>
-		<s:form action="contractor" theme="simple" name="contractor" > 
+		<s:form action="contractor-save" theme="simple" name="contractor"> 
 		<s:token/> 
 			<s:hidden  name="model.id" />
 			<s:hidden  name="id" />

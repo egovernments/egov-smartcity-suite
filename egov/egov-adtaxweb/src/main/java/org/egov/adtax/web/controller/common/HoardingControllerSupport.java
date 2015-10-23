@@ -55,6 +55,7 @@ import org.egov.adtax.service.RatesClassService;
 import org.egov.adtax.service.RevenueInspectorService;
 import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.service.UnitOfMeasureService;
+import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.properties.ApplicationProperties;
@@ -104,12 +105,20 @@ public class HoardingControllerSupport {
 
     @ModelAttribute("revenueZones")
     public List<Boundary> revenueZones() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", "ELECTION");
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_ZONE,AdvertisementTaxConstants.ELECTION_HIERARCHY_TYPE);
     }
 
     @ModelAttribute("zones")
     public List<Boundary> zones() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", "ADMINISTRATION");
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_ZONE, AdvertisementTaxConstants.ADMINISTRATION_HIERARCHY_TYPE );
     }
-
+    @ModelAttribute("localities")
+    public List<Boundary> localities() {
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_LOCALITY, AdvertisementTaxConstants.LOCATION_HIERARCHY_TYPE );
+    }
+    @ModelAttribute("revenueWards")
+    public List<Boundary> revenueWards() {
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_ELECTIONWARD, AdvertisementTaxConstants.ELECTION_HIERARCHY_TYPE );
+    }
+ 
 }

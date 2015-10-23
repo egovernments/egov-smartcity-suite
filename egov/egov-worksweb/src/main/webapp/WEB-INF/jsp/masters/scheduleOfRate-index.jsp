@@ -98,12 +98,13 @@
 					<td width="51%"><s:property value="%{description}" /></td>
 					<td width="9%"><s:property value="%{uom.uom}" /></td>					
 					<td width="13%">
-						<table width="80" border="0" cellpadding="0" cellspacing="2">
+						<table width="100" border="0" cellpadding="0" cellspacing="2">
                   		<tr>                    		
-                    		<td width="20"><a href="${pageContext.request.contextPath}/masters/scheduleOfRate!edit.action?id=<s:property value='%{id}'/>&mode=edit"><s:text name="sor.edit" /></a></td>
-                    		<td width="20"><a href="${pageContext.request.contextPath}/masters/scheduleOfRate!edit.action?id=<s:property value='%{id}'/>&mode=edit"><img src='/egi/resources/erp2/images/page_edit.png' alt="Edit Data" width="16" height="16" border="0" align="absmiddle" />&nbsp;/</a></td>
-                    		<td width="20"><a href="${pageContext.request.contextPath}/masters/scheduleOfRate!edit.action?id=<s:property value='%{id}'/>&mode=view"><s:text name="sor.view" /></a></td>
-                    		<td width="20"><a href="${pageContext.request.contextPath}/masters/scheduleOfRate!edit.action?id=<s:property value='%{id}'/>&mode=view"><img src='/egi/resources/erp2/images/book_open.png' alt="View Data" width="16" height="16" border="0" align="absmiddle" /></a></td>
+                    		<td width="20"><a href="${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?id=<s:property value='%{id}'/>&mode=edit"><s:text name="sor.edit" /></a></td>
+                    		<td width="20"><a href="${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?id=<s:property value='%{id}'/>&mode=edit"><img src='/egi/resources/erp2/images/page_edit.png' alt="Edit Data" width="16" height="16" border="0" align="absmiddle" /></a></td>
+                    		<td width="20">/</td>
+                    		<td width="20"><a href="${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?id=<s:property value='%{id}'/>&mode=view"><s:text name="sor.view" /></a></td>
+                    		<td width="20"><a href="${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?id=<s:property value='%{id}'/>&mode=view"><img src='/egi/resources/erp2/images/book_open.png' alt="View Data" width="16" height="16" border="0" align="absmiddle" /></a></td>
                     	</tr>
                 		</table>
                 	</td>

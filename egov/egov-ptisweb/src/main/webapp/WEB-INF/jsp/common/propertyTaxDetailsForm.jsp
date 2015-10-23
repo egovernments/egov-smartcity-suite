@@ -38,20 +38,14 @@
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
 <%@ include file="/includes/taglibs.jsp"%>
-<table width="100%" border="0" cellpadding="0" cellspacing="0"
-	class="tablebottom" id="taxDetails">
-	<tr>
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="annualvalue"></s:text> :</td>
-		<td class="greybox"><span class="bold">Rs. <s:text
-					name="format.money">
-					<s:param value="propertyTaxDetailsMap.ARV" />
-				</s:text></span></td>
-	</tr>
-	<tr>
+
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0" id="taxDetails">
+    <tr>
 		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox"><s:text name="currentpropertytax"></s:text> :</td>
-		<td class="greybox" width=""><s:if
+		<td class="greybox" width="25%"><s:text name="currentpropertytax"></s:text> :</td>
+		<td class="greybox" width="">
+			<s:if
 				test="%{propertyTaxDetailsMap.generalTax != null}">
 				<span class="bold">Rs. <s:text name="format.money">
 						<s:param value="propertyTaxDetailsMap.generalTax" />
@@ -60,16 +54,31 @@
 				<span class="bold">Rs. <s:text name="format.money">
 						<s:param value="propertyTaxDetailsMap.vacantLandTax" />
 					</s:text></span>
-			</s:else></td>
-		<td class="greybox" width=""></td>
+			</s:else>
+		</td>
+		<td class="greybox" width="25%"><s:text name="annualvalue"></s:text> :</td>
+		<td class="greybox" width="">
+			<span class="bold">
+			   Rs. <s:text name="format.money">
+					<s:param value="propertyTaxDetailsMap.ARV" />
+				</s:text>
+			</span>
+		</td>
 	</tr>
-
+	
 	<tr>
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="EduCess"></s:text> :</td>
 		<td class="greybox"><span class="bold">Rs. <s:text
 					name="format.money">
 					<s:param value="propertyTaxDetailsMap.eduCess" />
+				</s:text></span></td>
+				
+		<td class="greybox" width="20%"><s:text name="totalTax"></s:text>
+			:</td>
+		<td class="greybox"><span class="bold">Rs. <s:text
+					name="format.money">
+					<s:param value="propertyTaxDetailsMap.totalTax" />
 				</s:text></span></td>
 	</tr>
 
@@ -80,16 +89,8 @@
 					name="format.money">
 					<s:param value="propertyTaxDetailsMap.libraryCess" />
 				</s:text></span></td>
-	</tr>
-
-	<tr>
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox" width="20%"><s:text name="totalTax"></s:text>
-			:</td>
-		<td class="greybox"><span class="bold">Rs. <s:text
-					name="format.money">
-					<s:param value="propertyTaxDetailsMap.totalTax" />
-				</s:text></span></td>
+		<td></td>
+		<td></td>
 	</tr>
 
 

@@ -50,7 +50,7 @@
 			<jsp:include page="../budget/budgetHeader.jsp">
 				<jsp:param name="heading" value="Cheque Assignment Search" />
 			</jsp:include>
- 			<span class="mandatory">
+ 			<span class="error-msg">
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage />
@@ -71,13 +71,13 @@
 				    
 				      <s:if test="%{reassignSurrenderChq && paymentMode=='cheque'}">
 				      <th class="bluebgheadtdnew"><s:text name="chq.assignment.instrument.serialno"/></th>
-				    	<th class="bluebgheadtdnew" width="10%"><s:text name="chq.assignment.instrument.no"/><span class="mandatory">*</span></th>
-				    	<th class="bluebgheadtdnew"><s:text name="chq.assignment.instrument.date"/><span class="mandatory">*</span><br>(dd/mm/yyyy)</th>
+				    	<th class="bluebgheadtdnew" width="10%"><s:text name="chq.assignment.instrument.no"/><span class="mandatory"></span></th>
+				    	<th class="bluebgheadtdnew"><s:text name="chq.assignment.instrument.date"/><span class="mandatory"></span><br>(dd/mm/yyyy)</th>
 				    </s:if>
 				    <s:elseif test="%{!isChequeNoGenerationAuto() && paymentMode=='cheque'}">
 				    	<th class="bluebgheadtdnew"><s:text name="chq.assignment.instrument.serialno"/></th>
-				    	<th class="bluebgheadtdnew" width="10%"><s:text name="chq.assignment.instrument.no"/><span class="mandatory">*</span></th>
-				    	<th class="bluebgheadtdnew"><s:text name="chq.assignment.instrument.date"/><span class="mandatory">*</span><br>(dd/mm/yyyy)</th>
+				    	<th class="bluebgheadtdnew" width="10%"><s:text name="chq.assignment.instrument.no"/><span class="mandatory"></span></th>
+				    	<th class="bluebgheadtdnew"><s:text name="chq.assignment.instrument.date"/><span class="mandatory"></span><br>(dd/mm/yyyy)</th>
 				    </s:elseif>
 				</tr>
 				<s:iterator var="p" value="chequeAssignmentList" status="s">  
@@ -111,20 +111,20 @@
 				<table align="center" width="100%" cellspacing="0">
 					<tr>
 						<td class="greybox">
-							<s:text name="chq.assignment.department"/><span class="mandatory">*</span>
+							<s:text name="chq.assignment.department"/><span class="mandatory"></span>
 							<s:select name="vouchermis.departmentid" id="departmentid" list="dropdownData.departmentList" listKey="id" listValue="deptName" headerKey="-1" headerValue="----Choose----"  value="%{voucherHeader.vouchermis.departmentid.id}"/>
 						</td>
 						<td class="greybox">
-								<s:text name="chq.assignment.instrument.serialno"/><span class="mandatory">*</span>
+								<s:text name="chq.assignment.instrument.serialno"/><span class="mandatory"></span>
 								<s:select name="serialNo" id="serialNo" list="chequeSlNoMap"  value='%{serialNo}'  />
 							</td>
 						<s:if test="%{reassignSurrenderChq && paymentMode!='cheque'}">
 							<td class="greybox">
-								<s:text name="chq.assignment.instrument.no"/><span class="mandatory">*</span>
+								<s:text name="chq.assignment.instrument.no"/><span class="mandatory"></span>
 								<s:textfield id="chequeNumber0" name="chequeNo" value="%{chequeNo}" onchange="validateReassignSurrenderChequeNumber(this)"/>
 							</td>
 							<td class="greybox">
-								<s:text name="chq.assignment.instrument.date"/><span class="mandatory">*</span>(dd/mm/yyyy)
+								<s:text name="chq.assignment.instrument.date"/><span class="mandatory"></span>(dd/mm/yyyy)
 								<s:date name="chequeDt" var="tempChequeDate" format="dd/MM/yyyy"/><s:textfield id="chequeDt" name="chequeDt" value="%{tempChequeDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].chequeDt');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)
 							</td>
 						</s:if>
@@ -132,17 +132,17 @@
 						
 						<s:elseif test="%{!isChequeNoGenerationAuto() && paymentMode!='cheque'}">
 							<td class="greybox">
-								<s:text name="chq.assignment.instrument.no"/><span class="mandatory">*</span>
+								<s:text name="chq.assignment.instrument.no"/><span class="mandatory"></span>
 								<s:textfield id="chequeNumber0" name="chequeNo" value="%{chequeNo}" onchange="validateChequeNumber(this)"/>
 							</td>
 							<td class="greybox">
-								<s:text name="chq.assignment.instrument.date"/><span class="mandatory">*</span>(dd/mm/yyyy)
+								<s:text name="chq.assignment.instrument.date"/><span class="mandatory"></span>(dd/mm/yyyy)
 								<s:date name="chequeDt" var="tempChequeDate" format="dd/MM/yyyy"/><s:textfield id="chequeDt" name="chequeDt" value="%{tempChequeDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].chequeDt');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)
 							</td>
 						</s:elseif>
 						<s:if  test="%{paymentMode!='cheque'}">
 							<td class="greybox">
-								<s:text name="chq.assignment.instrument.infavourof"/><span class="mandatory">*</span>
+								<s:text name="chq.assignment.instrument.infavourof"/><span class="mandatory"></span>
 								<s:textfield id="inFavourOf" name="inFavourOf" value="%{inFavourOf}" maxlength="50"/>
 							</td>
 						</s:if>

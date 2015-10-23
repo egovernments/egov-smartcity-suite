@@ -44,17 +44,24 @@ import java.util.List;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.services.PersistenceService;
+import org.egov.works.master.services.ScheduleCategoryService;
 import org.egov.works.models.masters.ScheduleCategory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
-@Result(name = ScheduleCategoryAction.NEW, location = "scheduleCategory-new.jsp")
+@Results({ 
+	@Result(name = ScheduleCategoryAction.NEW, location = "scheduleCategory-new.jsp"),
+	@Result(name = ScheduleCategoryAction.EDIT, location = "scheduleCategory-edit.jsp") 
+})
 public class ScheduleCategoryAction extends BaseFormAction {
 
     private static final long serialVersionUID = 8722637434208106061L;
-    private PersistenceService<ScheduleCategory, Long> scheduleCategoryService;
-    private ScheduleCategory scheduleCategoryInstance = new ScheduleCategory();
+    
+    @Autowired
+    private ScheduleCategoryService scheduleCategoryService;
+    private ScheduleCategory scheduleCategory = new ScheduleCategory();
     private List<ScheduleCategory> scheduleCategoryList = null;
 
     @Override
@@ -68,36 +75,26 @@ public class ScheduleCategoryAction extends BaseFormAction {
     }
 
     public String list() {
-        scheduleCategoryList = scheduleCategoryService.findAllBy("from ScheduleCategory sc");
+        scheduleCategoryList = scheduleCategoryService.getAllScheduleCategories();
         return NEW;
-    }
-
-    public String edit() {
-        scheduleCategoryInstance = scheduleCategoryService.findById(scheduleCategoryInstance.getId(), false);
-        return EDIT;
     }
 
     @Override
     public void prepare() {
-        scheduleCategoryList = scheduleCategoryService.findAllBy("from ScheduleCategory sc");
+        scheduleCategoryList = scheduleCategoryService.getAllScheduleCategories();
         super.prepare();
     }
 
+    @Action(value = "/masters/scheduleCategory-save")
     public String save() {
-        scheduleCategoryService.update(scheduleCategoryInstance);
-        return SUCCESS;
-    }
-
-    public String create() {
-        scheduleCategoryService.create(scheduleCategoryInstance);
-        addActionMessage("The Category Code for ScheduleCategory was saved successfully");
-
+        scheduleCategoryService.persist(scheduleCategory);
+        addActionMessage(getText("schedule.category.save.success"));
         return list();
     }
 
     @Override
     public Object getModel() {
-        return scheduleCategoryInstance;
+        return scheduleCategory;
     }
 
     public List<ScheduleCategory> getScheduleCategoryList() {
@@ -108,20 +105,12 @@ public class ScheduleCategoryAction extends BaseFormAction {
         this.scheduleCategoryList = scheduleCategoryList;
     }
 
-    public void setScheduleCategoryService(final PersistenceService<ScheduleCategory, Long> service) {
-        scheduleCategoryService = service;
+    public ScheduleCategory getScheduleCategory() {
+        return scheduleCategory;
     }
 
-    public PersistenceService<ScheduleCategory, Long> getScheduleCategoryService() {
-        return scheduleCategoryService;
-    }
-
-    public ScheduleCategory getScheduleCategoryInstance() {
-        return scheduleCategoryInstance;
-    }
-
-    public void setScheduleCategoryInstance(
-            final ScheduleCategory scheduleCategoryInstance) {
-        this.scheduleCategoryInstance = scheduleCategoryInstance;
+    public void setScheduleCategory(
+            final ScheduleCategory scheduleCategory) {
+        this.scheduleCategory = scheduleCategory;
     }
 }

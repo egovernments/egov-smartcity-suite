@@ -204,6 +204,8 @@ public interface PropertyTaxConstants {
     public static final String ELECTION_HIERARCHY_TYPE = "ELECTION";
     public static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";
     public static final String LOCATION_HIERARCHY_TYPE = "LOCATION";
+    public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
+    
     // boundary Types
     public static final String CITY_BNDRY_TYPE = "Revenue City";
     public static final String ZONE_BNDRY_TYPE = "Revenue Zone";

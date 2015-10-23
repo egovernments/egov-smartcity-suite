@@ -1,0 +1,824 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2015-10-21T16:51:29 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_dishonored_cheque_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="749560f5-966f-4c9c-9c04-ed0be706f118">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="384"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Postgresql"/>
+	<import value="java.lang.*"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="java.util.*"/>
+	<import value="java.text.*"/>
+	<import value="java.math.*"/>
+	<style name="Title" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<parameter name="EGOV_FROM_DATE" class="java.util.Date">
+		<parameterDescription><![CDATA[From Date]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_TO_DATE" class="java.util.Date">
+		<parameterDescription><![CDATA[To Date]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_TO_DATE_PLUS_ONE" class="java.util.Date" isForPrompting="false">
+		<parameterDescription><![CDATA[Actual to date used in the query - it is calculated by adding one to the to date passed]]></parameterDescription>
+		<defaultValueExpression><![CDATA[ReportUtil.add($P{EGOV_TO_DATE}, Calendar.DAY_OF_MONTH, 1)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_FORMATED_FROMDATE" class="java.lang.String">
+		<parameterDescription><![CDATA[The formatted From date]]></parameterDescription>
+		<defaultValueExpression><![CDATA[$P{EGOV_FROM_DATE}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_FORMATED_TODATE" class="java.lang.String">
+		<parameterDescription><![CDATA[The formatted To date]]></parameterDescription>
+		<defaultValueExpression><![CDATA[$P{EGOV_TO_DATE_PLUS_ONE}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_PAYMENT_MODE" class="java.lang.String">
+		<parameterDescription><![CDATA[The payment mode (cash/cheque)]]></parameterDescription>
+		<defaultValueExpression><![CDATA["ALL"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_SERVICE_ID" class="java.lang.Long">
+		<parameterDescription><![CDATA[Service ID]]></parameterDescription>
+		<defaultValueExpression><![CDATA[-1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_FUND_ID" class="java.lang.Long">
+		<parameterDescription><![CDATA[Fund ID]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Long(-1)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_INSTRUMENT_NUMBER" class="java.lang.String">
+		<parameterDescription><![CDATA[Instrument Number]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_HOSTNAME" class="java.lang.String">
+		<parameterDescription><![CDATA[Host name]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Q_PAYMENT_MODES" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{EGOV_PAYMENT_MODE} == "cheque" ? "AND INSTP.TYPE =  ('cheque')" :
+$P{EGOV_PAYMENT_MODE} == "dd" ? "AND INSTP.TYPE = 'dd'" :
+"AND INSTP.TYPE IN ('cheque', 'dd')"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Q_SERVICE_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Where clause for service id]]></parameterDescription>
+		<defaultValueExpression><![CDATA[($P{EGOV_SERVICE_ID} == null || $P{EGOV_SERVICE_ID} == -1) ? "" : " AND SER.ID = (" + $P{EGOV_SERVICE_ID} +")"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_USER_ID" class="java.lang.Long">
+		<parameterDescription><![CDATA[User Id]]></parameterDescription>
+		<defaultValueExpression><![CDATA[-1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_STATUS_ID" class="java.lang.Integer">
+		<parameterDescription><![CDATA[Status ID]]></parameterDescription>
+		<defaultValueExpression><![CDATA[-1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Q_STATUS_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Where clause for status id]]></parameterDescription>
+		<defaultValueExpression><![CDATA[($P{EGOV_STATUS_ID} == null || $P{EGOV_STATUS_ID} == -1) ? "" : "AND STA.ID = " + $P{EGOV_STATUS_ID}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_LOCATION_ID" class="java.lang.Long"/>
+	<parameter name="Q_LOCATION_ID" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[($P{EGOV_LOCATION_ID} == null || $P{EGOV_LOCATION_ID}.intValue() == -1) ? "" : "AND (MAINLOCATION.ID = " + $P{EGOV_LOCATION_ID}+" OR EG_LOCATION.ID = " + $P{EGOV_LOCATION_ID}+" )"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Q_INSTRUMENT_NUMBER" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Where clause for Instrument Number]]></parameterDescription>
+		<defaultValueExpression><![CDATA[($P{EGOV_INSTRUMENT_NUMBER} == null || $P{EGOV_INSTRUMENT_NUMBER} =="") ? "" : " AND INS.INSTRUMENTNUMBER = ('" + $P{EGOV_INSTRUMENT_NUMBER} +"')"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Q_FROMDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Where clause for From Date]]></parameterDescription>
+		<defaultValueExpression><![CDATA[($P{EGOV_FROM_DATE} == null ) ? "" : " AND INS.INSTRUMENTDATE >= '" + $P{EGOV_FORMATED_FROMDATE} +"'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Q_TODATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Where clause for To Date]]></parameterDescription>
+		<defaultValueExpression><![CDATA[($P{EGOV_TO_DATE} == null ) ? "" : " AND INS.INSTRUMENTDATE <= '" + $P{EGOV_FORMATED_TODATE} + "'"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+CH.RECEIPTNUMBER AS RECEIPT_NUMBER ,CH.TOTALAMOUNT as RECEIPT_AMOUNT,
+INS.INSTRUMENTNUMBER as CHEQUE_DD_NO,
+INS.INSTRUMENTDATE  as CHEQUE_DD_DATE, BANK.NAME AS DEPOSITEDINBANK,
+INS.INSTRUMENTAMOUNT AS DISHONERED_AMOUNT,STA.DESCRIPTION AS STATUS,
+CH.ID as selectedReceipts, STA1.DESCRIPTION AS RECEIPT_STATUS
+FROM
+EGCL_COLLECTIONHEADER CH INNER JOIN  egcl_collectioninstrument CINS ON CH.ID = CINS.COLLECTIONHEADER
+INNER JOIN  EGF_INSTRUMENTHEADER INS ON CINS.INSTRUMENTHEADER = INS.ID
+INNER JOIN  bankaccount BACC ON INS.BANKACCOUNTID = BACC.ID
+INNER JOIN  bankbranch BRANCH ON BACC.BRANCHID = BRANCH.ID
+INNER JOIN  BANK BANK ON BRANCH.BANKID = BANK.ID
+INNER JOIN  EGCL_SERVICEDETAILS SER ON SER.ID = CH.SERVICEDETAILS
+INNER JOIN  EGW_STATUS STA ON INS.ID_STATUS=STA.ID
+INNER JOIN  EGW_STATUS STA1 ON CH.STATUS=STA1.ID
+INNER JOIN  EGF_INSTRUMENTTYPE INSTP ON  INSTP.ID = INS.INSTRUMENTTYPE
+INNER JOIN EG_LOCATION EG_LOCATION ON CH.LOCATION=EG_LOCATION.ID
+FULL OUTER JOIN EG_LOCATION MAINLOCATION ON EG_LOCATION.ID=MAINLOCATION.ID
+
+WHERE
+STA.MODULETYPE = 'Instrument'
+AND STA.DESCRIPTION IN ('Dishonored','dishonour cheque in workflow')
+$P!{Q_FROMDATE}
+$P!{Q_TODATE}
+$P!{Q_SERVICE_ID}
+$P!{Q_PAYMENT_MODES}
+$P!{Q_STATUS_ID}
+$P!{Q_LOCATION_ID}
+$P!{Q_INSTRUMENT_NUMBER}
+ORDER BY INS.LASTMODIFIEDDATE]]>
+	</queryString>
+	<field name="RECEIPT_NUMBER" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="selectedReceipts" class="java.lang.String">
+		<fieldDescription><![CDATA[selectedReceipts]]></fieldDescription>
+	</field>
+	<field name="RECEIPT_AMOUNT" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="CHEQUE_DD_NO" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="DEPOSITEDINBANK" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="CHEQUE_DD_DATE" class="java.util.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="DISHONERED_AMOUNT" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="STATUS" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="RECEIPT_STATUS" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="TOTAL_INSTRUMENT_AMOUNT" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DISHONERED_AMOUNT}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_RECEIPT_AMOUNT" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{RECEIPT_AMOUNT}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="260" splitType="Stretch">
+			<staticText>
+				<reportElement style="Title" x="233" y="21" width="320" height="33" uuid="eaf9cda1-5895-40ec-a667-a71eaef20715"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Dishonored Cheque Report]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="111" width="143" height="20" uuid="deab76ff-8498-4be3-9c58-6426f653eab0"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Cheque From Date:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="611" y="111" width="179" height="20" uuid="a1d40a45-f5dd-43ae-a97d-7015d0384d96"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_TO_DATE} == null ) ? "NA" : $P{EGOV_TO_DATE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="143" y="111" width="207" height="20" uuid="4f489138-d442-47f9-85d5-d945cec5326a"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_FROM_DATE} == null ) ? "NA" : $P{EGOV_FROM_DATE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="489" y="111" width="124" height="20" uuid="97e3feb8-d111-45af-87b4-62de97da1c80"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Cheque To Date:]]></text>
+			</staticText>
+			<image>
+				<reportElement x="16" y="8" width="91" height="92" uuid="4aeab61c-fd2d-48a0-a9bf-6e50920d8f57"/>
+				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="-1" y="130" width="144" height="20" uuid="266f61fa-0668-4f83-a18f-5a9e3f23b77b"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" isStrikeThrough="false" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Service:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="143" y="130" width="207" height="20" uuid="1b21d1f2-3950-42aa-b006-50d6b14f654a"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_SERVICE_ID} == null || $P{EGOV_SERVICE_ID} == -1) ? "All Services" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EGCL_SERVICEDETAILS WHERE ID = " + $P{EGOV_SERVICE_ID})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="489" y="130" width="124" height="20" uuid="aa71d1b1-0b5b-4cd9-bc61-7657160ee61d"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Payment Mode:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="611" y="130" width="179" height="20" uuid="376206a6-8e8f-4374-8b0a-60877f9d0648"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_PAYMENT_MODE} == null || $P{EGOV_PAYMENT_MODE} == "ALL") ? "All Payment Modes" :  $P{EGOV_PAYMENT_MODE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="-1" y="150" width="144" height="21" uuid="1c015ab1-63b7-45a5-bfcb-a1a70e33a30a"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Status:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="143" y="152" width="207" height="20" uuid="e57b4b18-e31e-480e-9c51-33f13fa55866"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_STATUS_ID} == null || $P{EGOV_STATUS_ID} == -1) ? "All Status" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT DESCRIPTION FROM EGW_STATUS WHERE ID = " + $P{EGOV_STATUS_ID})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="611" y="150" width="179" height="20" uuid="3e657d38-7e27-46ee-9929-b46655a310cb"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_LOCATION_ID} == null || $P{EGOV_LOCATION_ID}.intValue() == -1) ? "All Locations" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_LOCATION WHERE ID = " + $P{EGOV_LOCATION_ID})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="489" y="150" width="124" height="20" uuid="1d7deff9-bd50-4b3f-9bd4-515e8c726137"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" isStrikeThrough="false" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Location:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="143" y="172" width="207" height="20" uuid="c5a922b1-4dc8-4636-a70f-8d6f99a949aa"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_INSTRUMENT_NUMBER} == null || $P{EGOV_INSTRUMENT_NUMBER} == "") ? "NA" : $P{EGOV_INSTRUMENT_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="-1" y="171" width="144" height="21" uuid="00b6928b-52cc-4321-9e96-af664c5b4c29"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Instrument Number:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="26" splitType="Stretch">
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="78" y="0" width="30" height="26" uuid="2749966a-5897-43c3-8426-7658dd615dad"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Sl No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="108" y="0" width="85" height="26" uuid="67ff40dd-5d9f-4bed-b6bd-e6924039fa1f"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Receipt Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="193" y="0" width="97" height="26" uuid="974c20ef-a7eb-4048-8a85-cb9eee3f681b"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Receipt Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="480" y="0" width="66" height="26" uuid="fe1fca01-ac91-4805-bdd0-de7e0820b89f"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Dishonoed Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="290" y="0" width="100" height="26" uuid="2d6076e7-9842-4ed9-9c7b-0c86dc2408e7"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Cheque/DD No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="390" y="0" width="90" height="26" uuid="97e2533d-d98f-4c8d-8bf5-753351431f0c"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Cheque/DD Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="621" y="0" width="76" height="26" uuid="6d25ca20-88a3-45d0-98c4-dbca7cea540d"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Receipt Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="546" y="0" width="75" height="26" uuid="d171b7cc-3f51-42cd-a33e-86489c788ad1"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Instrument Status]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="27" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="78" y="0" width="30" height="27" uuid="b5c32da5-97e7-4ee7-85be-34e195ba8e92"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" hyperlinkType="Reference" hyperlinkTarget="custom_target">
+				<reportElement x="108" y="0" width="85" height="27" uuid="9c6f4a9e-3127-4fa8-8d58-85ff57223f40"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" isItalic="true" isUnderline="true" pdfFontName="Times-Italic"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPT_NUMBER}]]></textFieldExpression>
+				<hyperlinkReferenceExpression><![CDATA[$P{EGOV_HOSTNAME}+"collection/receipts/receipt!viewReceipts.action?selectedReceipts=" +$F{selectedReceipts}]]></hyperlinkReferenceExpression>
+				<hyperlinkTooltipExpression><![CDATA[$F{selectedReceipts}]]></hyperlinkTooltipExpression>
+			</textField>
+			<textField>
+				<reportElement x="193" y="0" width="97" height="27" uuid="64197044-436f-46f9-9211-d96da1f9383a"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPT_AMOUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="480" y="0" width="66" height="27" uuid="19729a56-ec41-490a-8924-fcf9ad9dbd01"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DISHONERED_AMOUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="0" width="100" height="27" uuid="e01574a0-215b-4fbf-88c3-0fc64a0ef910"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHEQUE_DD_NO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="390" y="0" width="90" height="27" uuid="3c3d851c-98f4-4733-92c9-59eaf7ba82c4"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{CHEQUE_DD_DATE})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="546" y="0" width="75" height="27" uuid="9893affe-cf0d-40ea-bf30-c7f0d2512ee2"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{STATUS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="621" y="0" width="76" height="27" uuid="d4a77e3b-c58a-4def-9630-f93ebf1ab2cb"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPT_STATUS}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="21" splitType="Stretch">
+			<textField evaluationTime="Report">
+				<reportElement style="Column header" x="658" y="0" width="40" height="20" uuid="01d48e2e-8aaf-49d2-bea2-b0f346290fa9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Column header" x="578" y="0" width="80" height="20" uuid="88d7163e-a986-49e6-a5a8-890e913eba2f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement style="Column header" x="78" y="0" width="197" height="20" uuid="ca1b708b-3135-4d3b-bbad-8eb4b7304694"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="20">
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement style="Column header" x="78" y="0" width="197" height="20" uuid="51103fb1-9922-4ee3-91a8-3b587692ae7f"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Column header" x="658" y="0" width="40" height="20" uuid="84aaef79-20b3-43cb-b3fd-32a856f0c7ab"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Column header" x="578" y="0" width="80" height="20" uuid="dc34f737-8f3c-4ddd-8514-f21b31c111f5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="78" y="0" width="115" height="20" uuid="fa9ec29e-eae5-4de8-88be-1b4b330761cf"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="193" y="0" width="50" height="20" uuid="95ea0c5e-7730-46ec-9531-d6d7622af42f"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_RECEIPT_AMOUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="609" y="0" width="50" height="20" uuid="c8f96573-0bbe-4b03-964e-60648c99144e"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_INSTRUMENT_AMOUNT}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="243" y="0" width="366" height="20" uuid="e269a310-7db0-4f6c-956d-71bd8e0cfa75"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="659" y="0" width="38" height="20" uuid="1fded7e5-e2ae-4dfe-8d48-cfa458d90942"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</summary>
+	<noData>
+		<band height="350">
+			<staticText>
+				<reportElement x="203" y="298" width="368" height="31" uuid="a86e9d46-a05a-45ee-8827-6aa0b395a42b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="24" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[No data found!]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Title" x="233" y="33" width="320" height="33" uuid="89c00de2-b11a-49fb-8b58-b83aa5c434eb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Dishonored Cheque Report]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="582" y="141" width="175" height="20" uuid="50afd569-be7f-4721-bb02-bc36ff991934"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_PAYMENT_MODE} == null || $P{EGOV_PAYMENT_MODE} == "ALL") ? "All Payment Modes" :  $P{EGOV_PAYMENT_MODE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="582" y="122" width="176" height="20" uuid="79a683c6-3d0f-47e4-89eb-d918d496038f"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" isItalic="false" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_TO_DATE} == null ) ? "NA" : $P{EGOV_TO_DATE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="138" y="122" width="207" height="20" uuid="b74530fa-a256-4e80-b0e5-8e636cbfc4ac"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_FROM_DATE} == null ) ? "NA" : $P{EGOV_FROM_DATE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="141" width="137" height="18" uuid="e8bda2f0-db11-49dd-8610-b25f6a82096c"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" isStrikeThrough="false" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Service:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="138" y="141" width="207" height="20" uuid="af078e47-b956-44b3-8ec7-12afa5f54e00"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_SERVICE_ID} == null || $P{EGOV_SERVICE_ID} == -1) ? "All Services" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EGCL_SERVICEDETAILS WHERE ID = " + $P{EGOV_SERVICE_ID})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="455" y="141" width="127" height="20" uuid="196501f1-90e7-43f9-ae31-b7b411d79b10"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Payment Mode:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="455" y="122" width="127" height="20" uuid="4f0e2dd4-ea01-49a9-8fd3-2fa8ed3ad14c"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" isItalic="false" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Cheque To Date:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="122" width="137" height="20" uuid="a0d66646-2341-40ca-b0e1-200c4c429dc3"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Cheque From Date:]]></text>
+			</staticText>
+			<image>
+				<reportElement x="16" y="10" width="91" height="92" uuid="e42a6f0d-76f4-44df-8e1e-ffe176741964"/>
+				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="140" y="161" width="206" height="20" uuid="aa937ede-5df9-4359-bbf5-2184895f2bf7"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_STATUS_ID} == null || $P{EGOV_STATUS_ID} == -1) ? "All Status" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT DESCRIPTION FROM EGW_STATUS WHERE ID = " + $P{EGOV_STATUS_ID})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="160" width="137" height="20" uuid="91ef8e7a-b27d-43a1-91cc-c3bd045345df"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Status:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="455" y="159" width="127" height="21" uuid="9a01a0a7-87c4-4ea5-ad76-c3e98259334e"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" isStrikeThrough="false" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Location:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="582" y="159" width="175" height="21" uuid="e030d353-bfca-492b-95d1-b19d73a528ec"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_LOCATION_ID} == null || $P{EGOV_LOCATION_ID}.intValue() == -1) ? "All Locations" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_LOCATION WHERE ID = " + $P{EGOV_LOCATION_ID})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="180" width="137" height="21" uuid="18b52abe-957e-4c55-835e-129e8f90da13"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Instrument Number:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="140" y="181" width="206" height="20" uuid="fbcb837a-4a29-4675-ab39-b2e6c82572b1"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_INSTRUMENT_NUMBER} == null || $P{EGOV_INSTRUMENT_NUMBER} == "") ? "NA" : $P{EGOV_INSTRUMENT_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</noData>
+</jasperReport>

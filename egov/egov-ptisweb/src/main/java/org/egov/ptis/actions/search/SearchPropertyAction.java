@@ -54,6 +54,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 
 import java.math.BigDecimal;
@@ -365,9 +366,9 @@ public class SearchPropertyAction extends BaseFormAction {
     @Override
     public void prepare() {
         final List<Boundary> zoneList = boundaryService
-                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", ADMIN_HIERARCHY_TYPE);
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", REVENUE_HIERARCHY_TYPE);
         final List<Boundary> wardList = boundaryService
-                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", ADMIN_HIERARCHY_TYPE);
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", REVENUE_HIERARCHY_TYPE);
         final List<Boundary> locationList = boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Locality", LOCATION_HIERARCHY_TYPE);
 

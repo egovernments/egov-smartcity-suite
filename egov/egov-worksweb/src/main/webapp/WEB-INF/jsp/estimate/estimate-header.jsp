@@ -248,9 +248,6 @@ function resetPreviousDate(){
 	document.forms[0].estimateDate.value=previousDate;
 }
 
-function setExpenditureType(){
-	 document.getElementById('expenditureType').value = document.getElementById('type').options[document.getElementById('type').selectedIndex].value;
-}
 function clearMsg(obj)
 {
 	if(obj.value==dom.get("executingDepartment").value && '<s:property value="%{errorCode}" />'=='estimate.depositworks.dept.check')
@@ -366,12 +363,10 @@ function jurisdictionSearchParameters(){
                 <td width="53%" class="whitebox2wk">
                 <s:if test="%{(dropdownData.typeList.size==1)}" >
 	                <s:select name="type" id="type" cssClass="selectwk" list="dropdownData.typeList" listKey="id" listValue="name" value="%{type.id}" />
-	                <s:select id="expenditureType" cssClass="selectwk" list="dropdownData.typeList" listKey="id" listValue="expenditureType.value" value="%{type.id}" style="display:none;"/>
                 </s:if>
                 <s:else>
 	                <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="type" id="type" cssClass="selectwk" list="dropdownData.typeList" listKey="id" listValue="name" value="%{type.id}" 
-	                	onChange="javascript:warn('natureOfWorkChanged');setExpenditureType();resetAssets(this.options[this.selectedIndex].value);"/>
-	                <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" id="expenditureType" cssClass="selectwk" list="dropdownData.typeList" listKey="id" listValue="expenditureType.value" value="%{type.id}" style="display:none;"/>
+	                	onChange="javascript:warn('natureOfWorkChanged');resetAssets(this.options[this.selectedIndex].value);"/>	                
                 </s:else>
                 <span class='warning' id="natureOfWorkChangedWarning"></span></td>
               </tr>

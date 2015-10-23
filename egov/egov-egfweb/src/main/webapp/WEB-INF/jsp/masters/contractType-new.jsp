@@ -78,7 +78,6 @@
 				<s:fielderror />
 			</div>
 			<%@include file="contractType-form.jsp"%>
-			<br/><br/>
 		<div class="buttonbottom" align="center"> 
 		<table align="center">
 			<tr class="buttonbottom" id="buttondiv" style="align:middle" >

@@ -1001,7 +1001,7 @@ public class CommonsServiceImpl implements CommonsService {
                             final String bndryType = (String) feature.getAttribute("bndrytype");
                             LOG.debug("Got boundary number {} and boundary type {} from GIS", boundaryNum, bndryType);
                             if (boundaryNum != null && StringUtils.isNotBlank(bndryType)) {
-                                final BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByName(bndryType);
+                                final BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(bndryType,"ADMINISTRATION");
                                 final Boundary boundary = boundaryService.getBoundaryByTypeAndNo(boundaryType, boundaryNum);
                                 if (boundary != null && true)
                                     boundaryId = boundary.getId();

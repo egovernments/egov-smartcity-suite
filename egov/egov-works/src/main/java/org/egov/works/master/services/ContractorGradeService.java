@@ -13,7 +13,7 @@ import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 
-public class ContractorGradeService extends PersistenceService<ContractorGrade, Long> {
+public class ContractorGradeService extends PersistenceService<ContractorGrade, Long>  {
 
 	@PersistenceContext
     private EntityManager entityManager;
@@ -57,5 +57,4 @@ public class ContractorGradeService extends PersistenceService<ContractorGrade, 
 		final String countQuery = "select count(*) " + contractorGradeStr;
 		return new SearchQueryHQL(contractorGradeStr, countQuery, paramList);
 	}
-    
 }

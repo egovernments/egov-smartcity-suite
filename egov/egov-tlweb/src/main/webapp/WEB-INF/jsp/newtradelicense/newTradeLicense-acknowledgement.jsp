@@ -76,22 +76,95 @@
 </head>
 <body onload="refreshInbox()">
 	<center>
-		<div id="message">
-			<s:actionmessage />
+		<div class="row">
+			<div class="col-md-12">
+			<s:form name="certificateform" action="viewTradeLicense">
+			<s:push value="model">
+				<div class="panel panel-primary" data-collapsed="0">
+					<div class="panel-heading">
+						<div class="panel-title text-center no-float">
+							<s:text name="license.acknowledgement.slip.for.tradelicense" />
+							<%-- <div><s:actionmessage /></div> --%>
+						</div>
+					</div>
+					<div class="panel-body">
+						<div class="row add-border">
+							<div class="col-md-3 col-xs-6 add-margin">
+								<s:text name="license.applicationnumber" />
+							</div>
+							<div class="col-md-3 col-xs-6 add-margin view-content">
+								<s:property value="applicationNumber" />
+							</div>
+							<div class="col-md-3 col-xs-6 add-margin">
+								<s:text name="license.applicationdate" />
+							</div>
+							<div class="col-md-3 col-xs-6 add-margin view-content">
+								<s:date name="applicationDate" id="formattedApplicationDate" format="dd-MMM-yyyy" /><s:property value="%{formattedApplicationDate}" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-md-3 col-xs-6 add-margin">
+								<s:text name="license.applied.for" />
+							</div>
+							<div class="col-md-3 col-xs-6 add-margin view-content">
+								<s:property value="tradeName.name" />
+							</div>
+							<div class="col-md-3 col-xs-6 add-margin">
+								<s:text name="license.zone" />
+							</div>
+							<div class="col-md-3 col-xs-6 add-margin view-content">
+								<s:property value="boundary.parent.parent.name" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-md-3 col-xs-6 add-margin">
+								<s:text name="license.division" />
+							</div>
+							<div class="col-md-3 col-xs-6 add-margin view-content"> 
+								<s:property value="boundary.parent.name" />
+							</div>
+							<div class="col-md-3 col-xs-6 add-margin">
+								<s:text name="licensee.applicantname" />
+							</div>
+							<div class="col-md-3 col-xs-6 add-margin view-content">
+								<s:property value="licensee.applicantName" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-md-3 col-xs-6 add-margin">
+								<s:text name="licensee.address" />
+							</div>
+							<div class="col-md-3 col-xs-6 add-margin view-content">
+								<s:if test="%{licensee.address!=null}"><s:property
+											value="licensee.address" />
+								</s:if>
+							</div>
+							<div class="col-md-3 col-xs-6 add-margin">
+								<s:text name="license.amount.to.be.paid" />
+							</div>
+							<div class="col-md-3 col-xs-6 add-margin view-content">
+								<s:property value="getPayableAmountInWords()" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</s:push>
+			</s:form>
+			</div>
 		</div>
-		<div id="content">
+		<%-- <div id="content">
 			<s:form name="certificateform" action="viewTradeLicense">
 				<s:push value="model">
 					<table width="100%" border="0" cellpadding="5" cellspacing="5"
 						style="margin-left: 25px">
 						<tr>
 							<td colspan="4" align="center"><img
-								src="/egi/images/<%-- <%=logoName%> --%>" width="91" height="90" /></td>
+								src="/egi/images/<%=logoName%>" width="91" height="90" /></td>
 						</tr>
 
 						<tr>
 							<td colspan="4" align="center"
-								style="font-size: 15px; font-weight: bolder;"><%-- <%=cityName%> --%>
+								style="font-size: 15px; font-weight: bolder;"><%=cityName%>
 								<br /></td>
 						</tr>
 						<tr>
@@ -169,12 +242,12 @@
 						</tr>
 						<tr>
 							<td colspan="4"><s:text
-									name="license.acknowledgement.bottom.text" /> <%-- <%=cityName%> --%>.</td>
+									name="license.acknowledgement.bottom.text" /> <%=cityName%>.</td>
 						</tr>
 					</table>
 				</s:push>
 			</s:form>
-		</div>
+		</div> --%>
 		<div align="center" id="printDiv">
 			<input type="button" id="print" class="button" value="Print"
 				onclick="return printLicense()" /> &nbsp;&nbsp; <input

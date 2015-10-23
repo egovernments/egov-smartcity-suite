@@ -70,7 +70,7 @@
 		 jQuery('#localityId').change(function() {
 			console.log("came jursidiction"+jQuery('#localityId').val());
 			jQuery.ajax({
-				url: "/ptis/common/ajaxCommon-blockByLocality.action",
+				url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
 				type: "GET",
 				data: {
 					locality : jQuery('#localityId').val()

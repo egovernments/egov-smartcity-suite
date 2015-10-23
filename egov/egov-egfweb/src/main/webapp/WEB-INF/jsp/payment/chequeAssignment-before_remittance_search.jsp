@@ -49,7 +49,7 @@
 			<jsp:include page="../budget/budgetHeader.jsp">
 				<jsp:param name="heading" value="Cheque Assignment Search" />
 			</jsp:include>
- 			<span class="mandatory" id="errorSpan">
+ 			<span class="error-msg" id="errorSpan">
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage />
@@ -57,33 +57,37 @@
 			<div class="formmainbox"><div class="subheadnew"><s:text name="chq.assignment.heading.search"/></div>
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
-					<td class="greybox" width="30%"><s:text name="chq.assignment.paymentvoucherdatefrom"/> </td>
+					<td class="greybox"> </td>
+					<td class="greybox"><s:text name="chq.assignment.paymentvoucherdatefrom"/> </td>
 					<td class="greybox"><s:textfield name="fromDate" id="fromDate" maxlength="20" value="%{fromDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].fromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)</td>
-					<td class="greybox" width="30%"><s:text name="chq.assignment.paymentvoucherdateto"/> </td>
+					<td class="greybox"><s:text name="chq.assignment.paymentvoucherdateto"/> </td>
 					<td class="greybox"><s:textfield name="toDate" id="toDate" maxlength="20" value="%{toDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 				</tr>
 				<tr>
-					<td class="bluebox"><s:text name="payment.mode"/><span class="mandatory">*</span></td>
+					<td class="greybox"> </td>
+					<td class="bluebox"><s:text name="payment.mode"/><span class="mandatory"></span></td>
 					<td class="bluebox"><s:radio id="paymentMode" name="paymentMode" list="%{modeOfPaymentMap}" value="%{paymentMode}"/></td>
 					<td class="bluebox"><s:text name="chq.assignment.paymentvoucherno"/> </td>
 					<td class="bluebox"><s:textfield name="voucherNumber" id="voucherNumber" value="%{voucherNumber}"/></td>
 				</tr>
 				<tr>
-					<td class="greybox"><s:text name="recovery.code"/><span class="mandatory">*</span></td>
+					<td class="greybox"> </td>
+					<td class="greybox"><s:text name="recovery.code"/><span class="mandatory"></span></td>
 	    			<td class="greybox"><s:select name="recoveryId" id="recoveryId" list="dropdownData.recoveryList" listKey="id" listValue="type" headerKey="" headerValue="----Choose----"  /></td>
 		
 				</tr>
 				<jsp:include page="../voucher/vouchertrans-filter.jsp"/>
 				<tr>
+					<td class="greybox"> </td>
 					<egov:ajaxdropdown id="bank_branch" fields="['Text','Value']" dropdownId="bank_branch" url="voucher/common!ajaxLoadBanksWithApprovedRemittances.action" />
-					<td class="greybox"><s:text name="chq.assignment.bank"/><span class="mandatory">*</span></td>
+					<td class="greybox"><s:text name="chq.assignment.bank"/><span class="mandatory"></span></td>
 					<td class="greybox"><s:select name="bank_branch" id="bank_branch" list="bankBranchMap"   headerKey="-1" headerValue="----Choose----" onchange="loadBankAccount(this)" value="%{bank_branch}"/></td>
 					<egov:ajaxdropdown id="bankaccount" fields="['Text','Value']" dropdownId="bankaccount" url="voucher/common!ajaxLoadBankAccountsWithApprovedRemittances.action"/>
-					<td class="greybox"><s:text name="chq.assignment.bankaccount"/><span class="mandatory">*</span></td>
+					<td class="greybox"><s:text name="chq.assignment.bankaccount"/><span class="mandatory"></span></td>
 					<td class="greybox"  colspan="2"><s:select name="bankaccount" id="bankaccount" list="dropdownData.bankaccountList" listKey="id" listValue="chartofaccounts.glcode+'--'+accountnumber+'---'+accounttype"  headerKey="-1" headerValue="----Choose----" value="%{bankaccount}"/></td>
 				</tr>
 				<tr>
-				
+				<td class="greybox"> </td>
 				<td class="bluebox">
 				<s:text name="chq.assignment.re-assignsurrendercheque"/>
 				</td class="bluebox">

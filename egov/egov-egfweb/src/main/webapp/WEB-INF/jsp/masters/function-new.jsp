@@ -88,7 +88,6 @@
 		</div>  
 		<s:form name="funcForm" action="function" theme="simple" >
 			<%@include file="function-form.jsp"%>
-			<br/><br/>
 		<div class="buttonbottom"> 
 			<s:submit name="create" value="Save & New" method="create" cssClass="buttonsubmit" onclick="javascript: return validate();"/>
 			<s:submit name="create" value="Save & Close" method="create" cssClass="buttonsubmit" onclick="validate();setClose();"/>

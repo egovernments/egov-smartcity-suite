@@ -349,6 +349,7 @@ div.buttonbottom {
 	font-family: regular;
 	font-size: 11px;
 	color: #000000;
+	text-align: center;
 	}
 
 div.commontopyellowbg {
@@ -577,3 +578,29 @@ table.setborder tr{
 .yui-skin-sam .yui-ac-input {
     position: relative;
 }
+
+.tblactionicon i
+{
+	font-size:1.7em;
+}
+
+.tblactionicon.add
+{
+	color:#4CAF50;
+}
+
+.tblactionicon.delete
+{
+	color:#F44336;
+}
+
+.doctable input[type="file"]
+{
+	display:inline-block;
+}
+
+a.fileclear
+{
+	margin-left:5px;
+}
+

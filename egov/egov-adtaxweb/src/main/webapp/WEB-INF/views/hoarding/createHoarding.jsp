@@ -142,15 +142,15 @@
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.hoarding.prop.assesmt.no"/>
+								<spring:message code="lbl.hoarding.status"/>
+									<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<div class="input-group">
-										<form:input type="text" cssClass="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" maxlength="15" path="propertyNumber" id="propertyNumber" /><span
-											class="input-group-addon"> <i
-											class="fa fa-search specific"></i></span>
-                               			<form:errors path="propertyNumber" cssClass="error-msg" />
-									</div>
+									<form:select path="status" id="status" cssClass="form-control" cssErrorClass="form-control error" required="required">
+										<form:option value=""><spring:message code="lbl.select" /></form:option>
+										<form:options items="${hoardingStatus}"/>
+									</form:select>
+									<form:errors path="status" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.owner.detail"/>
@@ -161,20 +161,9 @@
                                		<form:errors path="ownerDetail" cssClass="error-msg" />
 								</div>
 							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.hoarding.status"/>
-								<span class="mandatory"></span>
-								</label>
-								<div class="col-sm-3 add-margin">
-									<form:select path="status" id="status" cssClass="form-control" cssErrorClass="form-control error" required="required">
-										<form:option value=""><spring:message code="lbl.select" /></form:option>
-										<form:options items="${hoardingStatus}"/>
-									</form:select>
-									<form:errors path="status" cssClass="error-msg" />
-								</div>
-								<div class="col-sm-5 add-margin">&nbsp;</div>
-							</div>
+					
+								<jsp:include page="hoarding-location.jsp"></jsp:include>
+						
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
 								<spring:message code="lbl.hoarding.struct"/>
@@ -252,66 +241,6 @@
 								<div class="col-sm-3 add-margin">
 									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="totalHeight" id="totalHeight" required="required"/>
                                		<form:errors path="totalHeight" cssClass="error-msg" />
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.rev.zone"/>
-								</label>
-								<div class="col-sm-3 add-margin">
-									<select id="revenueBoundaryParent" class="form-control">
-										<option value=""><spring:message code="lbl.select" /></option>
-										<c:forEach items="${revenueZones}" var="revZone">
-											<option value="${revZone.id}">${revZone.name}</option>
-										</c:forEach>
-									</select>
-									<form:errors path="revenueBoundary.parent" cssClass="error-msg" />
-								</div>
-								<label class="col-sm-2 control-label text-right">
-								<spring:message code="lbl.rev.ward"/>
-								</label>
-								<div class="col-sm-3 add-margin">
-									<form:select path="revenueBoundary" id="revenueBoundary" cssClass="form-control" cssErrorClass="form-control error">
-										<form:option value=""><spring:message code="lbl.select"/></form:option>
-									</form:select>
-									<form:errors path="revenueBoundary" cssClass="error-msg" />
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.locality"/>
-								</label>
-								<div class="col-sm-3 add-margin">
-									<select class="form-control"><option>select
-											from below</option></select>
-								</div>
-								<label class="col-sm-2 control-label text-right">
-								<spring:message code="lbl.address"/>
-								<span class="mandatory"></span></label>
-								<div class="col-sm-3 add-margin">
-									<form:textarea path="address" cols="5" rows="2" class="form-control patternvalidation" data-pattern="alphanumericwithspace"   required="required" minlength="5" maxlength="256"/>
-                               		<form:errors path="address" cssClass="error-msg" />
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.zone"/>
-								<span class="mandatory"></span></label>
-								<div class="col-sm-3 add-margin">
-									<form:select path="adminBoundry.parent" id="adminBoundryParent" cssClass="form-control" cssErrorClass="form-control error" required="required">
-										<form:option value=""><spring:message code="lbl.select" /></form:option>
-										<form:options items="${zones}" itemLabel="name" itemValue="id"/>
-									</form:select>
-									<form:errors path="adminBoundry.parent" cssClass="error-msg" />
-								</div>
-								<label class="col-sm-2 control-label text-right">
-								<spring:message code="lbl.ward"/>
-								<span class="mandatory"></span></label>
-								<div class="col-sm-3 add-margin">
-									<form:select path="adminBoundry" id="adminBoundry" cssClass="form-control" cssErrorClass="form-control error" required="required">
-										<form:option value=""><spring:message code="lbl.select"/></form:option>
-									</form:select>
-									<form:errors path="adminBoundry" cssClass="error-msg" />
 								</div>
 							</div>
 							<div class="form-group">

@@ -45,7 +45,7 @@
       <td colspan="5" width="5%"><div class="headingsmallbg"><span class="bold"><s:text name="CorrAddr"/></span></div></td>
     </tr>
     <tr>
-    <td class="bluebox2" width="5%">&nbsp;</td>
+    <td class="greybox" width="5%">&nbsp;</td>
     <td class="greybox" width="10%">Correspondence Address:</td>
     <td class="greybox"><span class="bold"><s:property default="N/A" value="%{corrAddress1}" /> </span></td>
     

@@ -46,7 +46,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
+
 <title><s:text name='NewProp.title' /></title>
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
 <sx:head />
 <!-- <script type="text/javascript" src="/ptis/javascript/unitRentAgreement.js"></script> -->
 
@@ -162,11 +164,21 @@
 							</td>
 						</tr>
 					</s:if>
+					
+					<s:if test="%{!documentTypes.isEmpty()}">
+							<tr>
+							   <td colspan="5">
+								<%@ include file="../common/DocumentUploadView.jsp"%>
+								</td>
+							</tr>
+						</s:if>
+					
 					<s:if test="%{state != null}">
 						<tr>
 							<%@ include file="../common/workflowHistoryView.jsp"%>
 						<tr>					
 					</s:if>
+					
 					<s:if test="%{!@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)}">
 						<tr>
 							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>

@@ -128,5 +128,9 @@
     <query name="getActiveServiceByCodes">
 	<![CDATA[select s from ServiceDetails s where s.serviceCategory.isActive = '1' and s.serviceType = ? and s.code in(:param_1) order by s.orderNumber]]>
 	</query>
+	
+	<query name="getAllLocations">
+    <![CDATA[from Location loc where loc.isLocation = 1 order by loc.name]]></query>
+    
     
 </hibernate-mapping>

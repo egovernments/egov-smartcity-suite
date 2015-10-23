@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -110,13 +109,14 @@ public class State extends AbstractAuditable {
     @JoinColumn(name = "OWNER_USER")
     private User ownerUser;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "state")
+    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY, mappedBy = "state")
     @OrderBy("id")
     private List<StateHistory> history = Collections.emptyList();
 
     private String senderName;
     private String nextAction;
     private String comments;
+    private String natureOfTask;
     private String extraInfo;
     private Date dateInfo;
     private Date extraDateInfo;
@@ -204,6 +204,14 @@ public class State extends AbstractAuditable {
 
     protected void setComments(final String comments) {
         this.comments = comments;
+    }
+
+    public String getNatureOfTask() {
+        return natureOfTask;
+    }
+
+    public void setNatureOfTask(final String natureOfTask) {
+        this.natureOfTask = natureOfTask;
     }
 
     public String getExtraInfo() {

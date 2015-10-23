@@ -49,7 +49,7 @@
 			<jsp:include page="../budget/budgetHeader.jsp">
 				<jsp:param name="heading" value="RTGS Ref.No Assignment Search for Auto Remittance Payment" />
 			</jsp:include>
- 			<span class="mandatory" id="errorSpan">
+ 			<span id="errorSpan">
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage />
@@ -63,7 +63,7 @@
 					<td class="bluebox"><s:textfield name="toDate" id="toDate" maxlength="20" value="%{toDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 				</tr>
 				<tr>
-					<td class="greybox"><s:text name="payment.mode"/><span class="mandatory">*</span></td>
+					<td class="greybox"><s:text name="payment.mode"/><span class="mandatory"></span></td>
 					<td class="greybox"><s:radio id="paymentMode" name="paymentMode" list="#{'rtgs':'RTGS'}"  onchange="enableOrDisableBillType(this)" value="%{paymentMode}"/></td>
 					<td class="greybox"><s:text name="chq.assignment.paymentvoucherno"/> </td>
 					<td class="greybox"><s:textfield name="voucherNumber" id="voucherNumber" value="%{voucherNumber}"/></td>

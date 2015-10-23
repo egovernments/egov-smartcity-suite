@@ -76,8 +76,8 @@
 <script>
 //this is to reset the sub combobox upon field error
 var subcategory = '${hoarding.subCategory.id}';
-var adminBoundry = '${hoarding.adminBoundry.id}';
-var revenueBoundary = '${hoarding.revenueBoundary.id}';
+var adminBoundry = '${hoarding.ward.id}';
+var revenueBoundary = '${hoarding.locality.id}';
 </script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/app/js/hoarding.js'/>"></script>

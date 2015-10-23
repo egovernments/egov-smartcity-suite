@@ -44,19 +44,12 @@
 	<head>
 		<title>Trade License Certificate</title>
 		<script>
-			function refreshInbox() {
-				if (opener && opener.top.document.getElementById('inboxframe')) {
-					opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
-				}
-			}
-			
 			function printLicense(){
 				document.getElementById('printDiv').style.display = 'none';
    				window.print();
-   				//document.getElementById('printDiv').style.display = '';
 			}
       
-	      function submitandclose(){
+	      /* function submitandclose(){
 		      var printcomplete=confirm("Are you sure License Certificate print completed?","YES","NO");
 		      if(printcomplete) {
 		      	document.getElementById('workflowBean.actionName').value='generatedcertificate';
@@ -65,7 +58,7 @@
 		      	return false;
 		      }	      
 	      }
-      
+       */
 		</script>
 		<%-- <% 
 			String cityUrl = (String) session.getAttribute("cityurl");
@@ -94,9 +87,9 @@
 									<br/>
 									<s:text name="license.pfacertificate.publicHealthDepartment" />
 									<br />
-									<s:if test="%{#parameters.duplicate}">
+									<%-- <s:if test="%{#parameters.duplicate}">
 										<s:text name="license.certificate.watermark.duplicate" />
-									</s:if>
+									</s:if> --%>
 									<br />
 
 								</td>
@@ -135,31 +128,13 @@
 										</tr>
 										<tr>
 											<td>
-												<s:text name="licence.pfacertificate.applicantage" />
-											</td>
-											<td>
-												:
-											</td>
-											<td>
-
-												<b><s:property value="licensee.age" /> </b>
-											</td>
-										</tr>
-										<tr>
-											<td>
 												<s:text name="licensee.pfacertificate.residentialaddress" />
 											</td>
 											<td>
 												:
 											</td>
 											<td>
-												<b><s:property value="licensee.address.houseNo" />
-													<s:if test="licensee.address.streetAddress1!=null">, </s:if>
-													<s:property value="licensee.address.streetAddress1" />
-													<s:if test="licensee.address.streetAddress2!=null">, </s:if>
-													<s:property value="licensee.address.streetAddress2" />, <s:property value="licensee.boundary.parent.name" />, <s:property value="licensee.boundary.name" />
-													<s:if test="licensee.address.pinCode!=null">,  </s:if>
-													<s:property value="licensee.address.pinCode" /> </b>
+												<b><s:property value="licensee.address" /> </b>
 											</td>
 
 										</tr>
@@ -183,13 +158,7 @@
 												:
 											</td>
 											<td>
-												<b><s:property value="address.houseNo" />
-													<s:if test="address.streetAddress1!=null">, </s:if>
-													<s:property value="address.streetAddress1" />
-													<s:if test="address.streetAddress2!=null">, </s:if>
-													<s:property value="address.streetAddress2" />, <s:property value="boundary.parent.name" />, <s:property value="boundary.name" />
-													<s:if test="address.pinCode!=null">, </s:if>
-													<s:property value="address.pinCode" />
+												<b><s:property value="address" />
 												</b>
 											</td>
 										</tr>
@@ -217,21 +186,10 @@
 								<td>
 									<s:text name="license.pfacertificate.shrismt" />
 									&nbsp;
-									<b><s:property value="licensee.applicantName" /> <s:if test="licensee.age!=null">
-									</b> &nbsp;
-									<s:text name="license.pfacertificate.aged" />
-									&nbsp;
-									<b><s:property value="licensee.age" />
-										</s:if> </b>
+									<b><s:property value="licensee.applicantName" /> </b>
 									<s:text name="license.pfacertificate.residingat" />
 									&nbsp;
-									<b><s:property value="licensee.address.houseNo" />
-										<s:if test="licensee.address.streetAddress1!=null">, </s:if>
-										<s:property value="licensee.address.streetAddress1" />
-										<s:if test="licensee.address.streetAddress2!=null">, </s:if>
-										<s:property value="licensee.address.streetAddress2" />, <s:property value="licensee.boundary.parent.name" />, <s:property value="licensee.boundary.name" />
-										<s:if test="licensee.address.pinCode!=null">,  </s:if>
-										<s:property value="licensee.address.pinCode" /> </b>
+									<b> <s:property value="licensee.address" /> </b>
 									<s:text name="license.pfacertificate.ishereby" />
 									<b>&nbsp;<s:property value="tradeName.name" />
 									</b> &nbsp;
@@ -240,14 +198,7 @@
 									<b><s:property value="nameOfEstablishment" />
 									</b>
 									<s:text name="license.pfacertificate.situatedin" />
-									<b><s:property value="address.houseNo" />
-										<s:if test="address.streetAddress1!=null">, </s:if>
-										<s:property value="address.streetAddress1" />
-										<s:if test="address.streetAddress2!=null">, </s:if>
-										<s:property value="address.streetAddress2" />, <s:property value="boundary.parent.name" />, <s:property value="boundary.name" />
-										<s:if test="address.pinCode!=null">, </s:if>
-										<s:property value="address.pinCode" />
-									</b>
+									<b><s:property value="address" /></b>
 								</td>
 							</tr>
 							<tr>
@@ -270,11 +221,6 @@
 									<s:text name="license.pfacertificate.licensingauthority" />
 								</td>
 							</tr>
-							<tr>
-								<td align="right">
-									<s:text name="license.pfacertificate.cityofnagpurcorporation" />
-								</td>
-							</tr>
 						</table>
 						<s:hidden name="model.id" />
 						<s:hidden name="workflowBean.actionName" id="workflowBean.actionName" />
@@ -284,11 +230,11 @@
 									<td>
 										<input type="button" id="print" value="Print" onclick="return printLicense()" />
 									</td>
-									<s:if test="%{!#parameters.duplicate}">
+								<%-- 	<s:if test="%{!#parameters.duplicate}">
 										<td>
 											<s:submit value="Print Complete" id="printcmplt" method="approve" onclick="return submitandclose();" />
 										</td>
-									</s:if>
+									</s:if> --%>
 									<td>
 										<input type="button" id="close" value="Close" onclick="javascript:window.close();" />
 									</td>
