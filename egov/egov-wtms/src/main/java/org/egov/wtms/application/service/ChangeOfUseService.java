@@ -32,7 +32,9 @@ package org.egov.wtms.application.service;
 
 import java.math.BigDecimal;
 
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -62,6 +64,9 @@ public class ChangeOfUseService {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
@@ -142,6 +147,10 @@ public class ChangeOfUseService {
         if (appProcessTime != null)
             changeOfUse.setDisposalDate(waterConnectionDetailsService.getDisposalDate(changeOfUse, appProcessTime));
         final WaterConnectionDetails savedChangeOfUse = waterConnectionDetailsRepository.save(changeOfUse);
+        if(userService.getUserById(savedChangeOfUse.getCreatedBy().getId()).getUsername().equals("anonymous")){
+            EgovThreadLocals.setUserId(Long.valueOf("40"));
+            savedChangeOfUse.setCreatedBy(userService.getUserById(EgovThreadLocals.getUserId()));
+            }
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedChangeOfUse, approvalPosition,

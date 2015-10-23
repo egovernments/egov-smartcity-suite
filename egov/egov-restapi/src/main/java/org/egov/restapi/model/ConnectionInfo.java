@@ -8,6 +8,8 @@ public class ConnectionInfo {
     
     private String consumerCode;
     
+    private String reasonforChangeOfUsage;
+    
     @NotNull
     private String waterSource;
     @NotNull
@@ -25,6 +27,12 @@ public class ConnectionInfo {
     private Integer numberOfRooms;
     private Integer numberOfPersons;
     
+    public String getReasonforChangeOfUsage() {
+        return reasonforChangeOfUsage;
+    }
+    public void setReasonforChangeOfUsage(String reasonforChangeOfUsage) {
+        this.reasonforChangeOfUsage = reasonforChangeOfUsage;
+    }
     /**
      * @return the propertyID
      */
