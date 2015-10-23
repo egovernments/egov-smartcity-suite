@@ -58,40 +58,4 @@ $(document).ready(function(){
 				console.log("failed");
 			}
 		});
-	  
-	  $('#buttonid').click(function() {
-		   alert("sushant");
-	    	   alert("JQuery Running!");
-	        $.ajax({
-	            url: '/wtms/application/ajax-adddonationdetails',
-	            type: "GET",
-	            data: {
-	            	propertyType: $('#propertyType').val()  ,
-	            	categoryType: $('#connectionCategorie').val()  ,
-	            	usageType: $('#usageType').val()  ,
-	            	maxPipeSize: $('#pipeSize').val()  ,
-	                minPipeSize: $('#minpipeSize').val() , 
-	                effectiveDate: $('#effectiveDate').val(),
-	                donationAmount: $('#donationAmount').val()
-	            },
-	            dataType : 'json',
-	            success: function (response) {
-	    			console.log("success"+response);
-	    			if(response==true){
-		    				addChairPerson();
-		    			}
-	    			else{
-	    				//alert('false');
-	    				overwritechairperson();
-	    			}
-	    		},error: function (response) {
-	    			console.log("failed");
-	    		}
-	        });
-	   
-	       
-		});
-	
-	
-	
  });
