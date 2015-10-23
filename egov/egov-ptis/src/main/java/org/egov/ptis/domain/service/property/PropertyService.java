@@ -2534,7 +2534,7 @@ public class PropertyService {
         final Designation designation = designationService.getDesignationByName(getDesignationForThirdPartyUser());
         final Department department = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
         final List<Assignment> assignment = assignmentService.findByDepartmentDesignationAndBoundary(
-                department.getId(), designation.getId(), basicProperty.getPropertyID().getZone().getId());
+                department.getId(), designation.getId(), basicProperty.getPropertyID().getElectionBoundary().getId());
         return assignment.get(0);
     }
 
