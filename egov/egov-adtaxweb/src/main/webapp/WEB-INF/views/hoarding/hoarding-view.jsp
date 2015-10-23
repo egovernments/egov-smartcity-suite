@@ -345,7 +345,7 @@
 									<div class="col-sm-3 text-center">
 										<c:forEach var="file" items="${docs.files}">	
 										<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=ADTAX&toSave=true"> 
-											${file.fileName}
+											${file.fileName}<br>
 										</a>
 										</c:forEach>
 									</div>

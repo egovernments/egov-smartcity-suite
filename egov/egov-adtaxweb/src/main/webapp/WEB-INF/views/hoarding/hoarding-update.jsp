@@ -343,14 +343,29 @@
 									class='mandatory'></span>" : ""}${docs.name}
 									</div>
 									<div class="col-sm-3 text-center">
-										<input type="checkbox" ${hoarding.documents[status.index].enclosed ? "checked='checked'" : ""} 
+										<input type="checkbox" ${hoarding.documents[status.index].enclosed && hoarding.documents[status.index].files.size()>0 ? "checked='checked'  disabled='disabled'" : ""} 
 										name="documents[${status.index}].enclosed" ${docs.mandatory ? "required='required'" : ""}>
+										
+									
 									</div>
 									<div class="col-sm-3 text-center">
+										
+										<c:forEach var="file" items="${hoarding.documents[status.index].files}">	
+										<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=ADTAX&toSave=true"> 
+											${file.fileName}<br>
+										</a>
+								 	
+										</c:forEach>
+									 		
+										
 										<input type="file" name="documents[${status.index}].attachments" class="form-control" >
 										<form:errors path="documents[${status.index}].attachments" cssClass="add-margin error-msg" />
 										<form:hidden path="documents[${status.index}].doctype" value="${docs.id}" /> 
+								 		<form:hidden path="documents[${status.index}].id" value="${hoarding.documents[status.index].id}" /> 
+								 		
 									</div>
+									
+									
 								</div>
 							</c:forEach> 
 							</c:when>

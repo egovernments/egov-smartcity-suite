@@ -41,7 +41,9 @@ package org.egov.adtax.web.controller.common;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import org.egov.adtax.entity.Hoarding;
 import org.egov.adtax.entity.HoardingCategory;
+import org.egov.adtax.entity.HoardingDocument;
 import org.egov.adtax.entity.HoardingDocumentType;
 import org.egov.adtax.entity.RatesClass;
 import org.egov.adtax.entity.RevenueInspector;
@@ -61,7 +63,9 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.utils.FileStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 public class HoardingControllerSupport {
      protected SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -120,5 +124,43 @@ public class HoardingControllerSupport {
     public List<Boundary> revenueWards() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_ELECTIONWARD, AdvertisementTaxConstants.ELECTION_HIERARCHY_TYPE );
     }
- 
+    
+    protected void storeHoardingDocuments(final Hoarding hoarding) {
+        hoarding.getDocuments().forEach(document -> {
+            document.setFiles(fileStoreUtils.addToFileStore(document.getAttachments(), "ADTAX"));
+        });
+    }
+    protected void updateHoardingDocuments(final Hoarding hoarding) {
+        hoarding.getDocuments().forEach(document -> {
+            document.addFiles(fileStoreUtils.addToFileStore(document.getAttachments(), "ADTAX"));
+        });
+    }
+    
+    protected void validateHoardingDocs(final Hoarding hoarding, final BindingResult resultBinder) {
+        int index = 0;
+        for (final HoardingDocument document : hoarding.getDocuments()) {
+            if (document.getDoctype().isMandatory() && document.getAttachments()[0].getSize() == 0)
+                resultBinder.rejectValue("documents[" + index + "].attachments", "hoarding.doc.mandatory");
+            else if (document.isEnclosed() && document.getAttachments()[0].getSize() == 0)
+                resultBinder.rejectValue("documents[" + index + "].attachments", "hoarding.doc.not.enclosed");
+            index++;
+        }
+    }
+    protected void validateHoardingDocsOnUpdate(final Hoarding hoarding, final BindingResult resultBinder, RedirectAttributes redirAttrib) {
+        int index = 0;
+        for (final HoardingDocument document : hoarding.getDocuments()) {
+            if (document.getDoctype().isMandatory() && document.getFiles().size()==0 && document.getAttachments()[0].getSize() == 0){
+                resultBinder.rejectValue("documents[" + index + "].attachments", "hoarding.doc.mandatory");
+                redirAttrib.addFlashAttribute("message", "hoarding.doc.not.enclosed");
+            }
+            else if (document.isEnclosed() && document.getFiles().size()==0 && document.getAttachments()[0].getSize() == 0)
+            {
+                resultBinder.rejectValue("documents[" + index + "].attachments", "hoarding.doc.not.enclosed");
+                redirAttrib.addFlashAttribute("message", "hoarding.doc.not.enclosed");
+            }
+                index++;
+        }
+       
+        
+    }
 }

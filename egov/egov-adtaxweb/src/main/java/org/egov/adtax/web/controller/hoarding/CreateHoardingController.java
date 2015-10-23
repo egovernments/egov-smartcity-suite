@@ -175,20 +175,6 @@ public class CreateHoardingController extends HoardingControllerSupport {
         return "redirect:/hoarding/createLegacy";
     }
 
-    private void storeHoardingDocuments(final Hoarding hoarding) {
-        hoarding.getDocuments().forEach(document -> {
-            document.setFiles(fileStoreUtils.addToFileStore(document.getAttachments(), "ADTAX"));
-        });
-    }
-
-    private void validateHoardingDocs(final Hoarding hoarding, final BindingResult resultBinder) {
-        int index = 0;
-        for (final HoardingDocument document : hoarding.getDocuments()) {
-            if (document.getDoctype().isMandatory() && document.getAttachments()[0].getSize() == 0)
-                resultBinder.rejectValue("documents[" + index + "].attachments", "hoarding.doc.mandatory");
-            else if (document.isEnclosed() && document.getAttachments()[0].getSize() == 0)
-                resultBinder.rejectValue("documents[" + index + "].attachments", "hoarding.doc.not.enclosed");
-            index++;
-        }
-    }
+  
+  
 }

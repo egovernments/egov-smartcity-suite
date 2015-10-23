@@ -73,9 +73,13 @@ public class UpdateHoardingController extends HoardingControllerSupport {
 
     @RequestMapping(value = "update/{hoardingNumber}", method = POST)
     public String updateHoarding(@Valid @ModelAttribute final Hoarding hoarding, final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
+     
+        validateHoardingDocsOnUpdate(hoarding, resultBinder,redirAttrib);
+              
         if (resultBinder.hasErrors())
             return "hoarding-update";
         try {
+            updateHoardingDocuments(hoarding);
             hoardingService.updateHoarding(hoarding);
             redirAttrib.addFlashAttribute("message", "hoarding.update.success");
             return "redirect:/hoarding/view/" + hoarding.getHoardingNumber();
