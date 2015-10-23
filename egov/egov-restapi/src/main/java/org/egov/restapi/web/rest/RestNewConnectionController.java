@@ -61,8 +61,10 @@ import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.model.ConnectionInfo;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.AdditionalConnectionService;
 import org.egov.wtms.application.service.NewConnectionService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.application.service.WaterConnectionService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
@@ -125,7 +127,10 @@ public class RestNewConnectionController {
 
     @Autowired
     private UsageTypeService usageTypeService;
-
+    
+    
+    @Autowired
+    private WaterConnectionService waterConnectionService;
     @Autowired
     private WaterSourceService waterSourceService;
 
@@ -152,8 +157,8 @@ public class RestNewConnectionController {
         final ErrorDetails errorDetails = restWaterConnectionValidationService.validateCreateRequest(connectionInfo);
         if (errorDetails != null)
             return getJSONResponse(errorDetails);
-
-        final WaterConnectionDetails waterConnectionDetails = populateAndPersistWaterConnectionDetails(connectionInfo);
+        String applicationCode=WaterTaxConstants.NEWCONNECTION;
+        final WaterConnectionDetails waterConnectionDetails = populateAndPersistWaterConnectionDetails(connectionInfo,applicationCode);
         return waterConnectionDetails.getApplicationNumber();
         /*
          * String httpStatus = HttpStatus.OK.getReasonPhrase(); try {
@@ -168,7 +173,20 @@ public class RestNewConnectionController {
          * httpStatus;
          */
     }
-
+    @RequestMapping(value = "/watercharges/addconnection", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String createAddtionalConnection(@Valid @RequestBody final ConnectionInfo connectionInfo)
+            throws JsonGenerationException, JsonMappingException, IOException, ParseException {
+        final ErrorDetails response = restWaterConnectionValidationService.validateAdditionalWaterConnectionDetails(connectionInfo);
+        String applicationCode=WaterTaxConstants.ADDNLCONNECTION;
+        if (response != null)
+            return getJSONResponse(response);
+        final ErrorDetails errorDetails = restWaterConnectionValidationService.validateCreateRequest(connectionInfo);
+        if (errorDetails != null)
+            return getJSONResponse(errorDetails);
+        final WaterConnectionDetails waterConnectionDetails = populateAndPersistWaterConnectionDetails(connectionInfo,applicationCode);
+        return waterConnectionDetails.getApplicationNumber();
+     
+    }
     /*
      * @RequestMapping(value = "/watercharges/token", method =
      * RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE) public
@@ -183,10 +201,11 @@ public class RestNewConnectionController {
      * getJSONResponse(tokenMap); }
      */
 
-    private WaterConnectionDetails populateAndPersistWaterConnectionDetails(final ConnectionInfo connectionInfo) {
+    private WaterConnectionDetails populateAndPersistWaterConnectionDetails(final ConnectionInfo connectionInfo,final String applicationCode) {
         // TODO : Persist WaterConnectionDetails
-        WaterConnectionDetails waterConnectionDetails = prepareWaterConnectionDetails(connectionInfo);
+        WaterConnectionDetails waterConnectionDetails = prepareWaterConnectionDetails(connectionInfo,applicationCode);
         Long approvalPosition = 0l;
+        
         final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(waterConnectionDetails
                 .getConnection().getPropertyIdentifier());
         if (userPosition != null)
@@ -198,7 +217,7 @@ public class RestNewConnectionController {
 
     }
 
-    private WaterConnectionDetails prepareWaterConnectionDetails(final ConnectionInfo connectionInfo) {
+    private WaterConnectionDetails prepareWaterConnectionDetails(final ConnectionInfo connectionInfo,final String applicationCode) {
 
         final WaterConnection waterConnection = new WaterConnection();
 
@@ -207,7 +226,15 @@ public class RestNewConnectionController {
         waterConnection.setPropertyIdentifier(connectionInfo.getPropertyID());
         waterConnectionDetails.setConnection(waterConnection);
         waterConnectionDetails.setApplicationDate(new Date());
+        if(applicationCode.equals(WaterTaxConstants.NEWCONNECTION)){
         waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.NEWCONNECTION));
+        }
+        else
+        {
+            final WaterConnection connection = waterConnectionService.findByConsumerCode(connectionInfo.getConsumerCode());
+            waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION));
+            waterConnection.setParentConnection(connection);
+        }
         waterConnectionDetails.setCategory(connectionCategoryService.findByCode(connectionInfo.getCategory()));
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
         waterConnectionDetails.setConnectionType(connectionInfo.getConnectionType().equals(

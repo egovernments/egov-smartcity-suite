@@ -143,5 +143,10 @@ public class RestApiConstants {
         
         public static final String PROPERTYID_IS_VALID_CONNECTION_CODE="47";
         public static final String PROPERTYID_IS_VALID_CONNECTION = "Provided propertyId has already connection";
+        
+        public static final String CONSUMERCODE_IS_NOT_VALID_CONNECTION_CODE="50";
+        public static final String CONSUMERCODE_IS_NOT_VALID_CONNECTION = "Provided consumerCode is Not valid or some waterTaxDue is present";
+        
+       
 
 }

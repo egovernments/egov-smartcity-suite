@@ -5,10 +5,16 @@ import java.io.IOException;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.ConnectionInfo;
+import org.egov.wtms.application.entity.WaterConnection;
+import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.AdditionalConnectionService;
 import org.egov.wtms.application.service.NewConnectionService;
+import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.application.service.WaterConnectionService;
 import org.egov.wtms.masters.entity.PropertyCategory;
 import org.egov.wtms.masters.entity.PropertyPipeSize;
 import org.egov.wtms.masters.entity.WaterPropertyUsage;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.egov.wtms.masters.service.PipeSizeService;
@@ -27,7 +33,15 @@ public class RestWaterConnectionValidationService {
 
     @Autowired
     private UsageTypeService usageTypeService;
+    
+    @Autowired
+    private WaterConnectionService waterConnectionService;
 
+    @Autowired
+    private WaterConnectionDetailsService waterConnectionDetailsService;
+    
+    @Autowired
+    private AdditionalConnectionService additionalConnectionService;
     @Autowired
     private ConnectionCategoryService connectionCategoryService;
 
@@ -93,6 +107,23 @@ public class RestWaterConnectionValidationService {
             errorDetails.setErrorCode(RestApiConstants.PROPERTYID_IS_VALID_CONNECTION_CODE);
         }
         }
+        return errorDetails;
+    }
+    
+    public ErrorDetails validateAdditionalWaterConnectionDetails(final ConnectionInfo connectionInfo) throws IOException {
+        String responseMessage = "";
+        ErrorDetails errorDetails = null;
+        final WaterConnection connection = waterConnectionService.findByConsumerCode(connectionInfo.getConsumerCode());
+       WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService.getParentConnectionDetails(
+                connection.getPropertyIdentifier(), ConnectionStatus.ACTIVE);
+        responseMessage =additionalConnectionService.validateAdditionalConnection(parentConnectionDetails);
+       
+        if (responseMessage != "" && responseMessage != null) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorMessage(RestApiConstants.CONSUMERCODE_IS_NOT_VALID_CONNECTION);
+            errorDetails.setErrorCode(RestApiConstants.CONSUMERCODE_IS_NOT_VALID_CONNECTION_CODE);
+        }
+        
         return errorDetails;
     }
 }

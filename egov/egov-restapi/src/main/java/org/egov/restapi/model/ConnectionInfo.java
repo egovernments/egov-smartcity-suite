@@ -5,6 +5,9 @@ import javax.validation.constraints.NotNull;
 public class ConnectionInfo {
     @NotNull
     private String propertyID;
+    
+    private String consumerCode;
+    
     @NotNull
     private String waterSource;
     @NotNull
@@ -141,6 +144,12 @@ public class ConnectionInfo {
      */
     public void setNumberOfPersons(Integer numberOfPersons) {
         this.numberOfPersons = numberOfPersons;
+    }
+    public String getConsumerCode() {
+        return consumerCode;
+    }
+    public void setConsumerCode(String consumerCode) {
+        this.consumerCode = consumerCode;
     }
     
     
