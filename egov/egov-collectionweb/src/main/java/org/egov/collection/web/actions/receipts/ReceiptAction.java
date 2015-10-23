@@ -693,7 +693,7 @@ public class ReceiptAction extends BaseFormAction {
             addDropdownData("functionaryList",
                     persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FUNCTIONARY));
         if (headerFields.contains(CollectionConstants.FUND))
-            addDropdownData("fundList", persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FUND));
+            addDropdownData("fundList", collectionsUtil.getAllFunds());
         if (headerFields.contains(CollectionConstants.FIELD))
             addDropdownData("fieldList", persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FIELD));
         if (headerFields.contains(CollectionConstants.FUNDSOURCE))

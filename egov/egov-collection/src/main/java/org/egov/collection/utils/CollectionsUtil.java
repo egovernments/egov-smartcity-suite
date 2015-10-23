@@ -54,6 +54,7 @@ import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.Fund;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
@@ -728,7 +729,7 @@ public class CollectionsUtil {
     /**
      * @return list of all fund
      */
-    public List getAllFunds() {
+    public List<Fund> getAllFunds() {
         return persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FUND);
     }
 

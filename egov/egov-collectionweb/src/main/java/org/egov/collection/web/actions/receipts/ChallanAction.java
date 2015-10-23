@@ -1066,8 +1066,7 @@ public class ChallanAction extends BaseFormAction {
 		
 		if(headerFields.contains(CollectionConstants.FUND)){
 			setupDropdownDataExcluding("receiptMisc.fund");
-			addDropdownData("fundList", persistenceService.findAllByNamedQuery(
-					CollectionConstants.QUERY_ALL_FUND));
+			addDropdownData("fundList", collectionsUtil.getAllFunds());
 		}
 		if(headerFields.contains(CollectionConstants.DEPARTMENT)){
 			addDropdownData("departmentList", persistenceService.findAllByNamedQuery(

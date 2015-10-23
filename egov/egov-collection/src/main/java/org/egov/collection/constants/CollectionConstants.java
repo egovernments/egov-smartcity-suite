@@ -188,13 +188,13 @@ public final class CollectionConstants {
     public static final String QUERY_ALL_STATUSES_FOR_MODULE = "getAllStatusesForModule";
     public static final String QUERY_STATUSES_FOR_MODULE_AND_CODES = "getStatusesForModuleAndCodes";
 
-    public static final String QUERY_ALL_DEPARTMENTS = "getallDepartment";
+    public static final String QUERY_ALL_DEPARTMENTS = "getAllDepartment";
     public static final String QUERY_ALL_LOCATIONS = "getAllLocations";
-    public static final String QUERY_ALL_FUNCTION = "getallFunction";
-    public static final String QUERY_ALL_FUNCTIONARY = "getallFunctionary";
-    public static final String QUERY_ALL_FUND = "getallFund";
-    public static final String QUERY_ALL_FUNDSOURCE = "getallFundsource";
-    public static final String QUERY_ALL_FIELD = "getallField";
+    public static final String QUERY_ALL_FUNCTION = "getAllFunction";
+    public static final String QUERY_ALL_FUNCTIONARY = "getAllFunctionary";
+    public static final String QUERY_ALL_FUND = "getAllFund";
+    public static final String QUERY_ALL_FUNDSOURCE = "getAllFundsource";
+    public static final String QUERY_ALL_FIELD = "getAllField";
     public static final String QUERY_VOUCHERHEADER_BY_VOUCHERNUMBER = "getVoucherHeaderByVoucherNumber";
     public static final String QUERY_GETFINANCIALYEARBYDATE = "getFinancialYearByDate";
     public static final String QUERY_GET_LOCATIONBYID = "getLocationById";
