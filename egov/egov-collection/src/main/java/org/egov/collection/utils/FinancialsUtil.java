@@ -43,9 +43,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
@@ -58,13 +55,13 @@ import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentType;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.services.contra.ContraService;
 import org.egov.services.instrument.InstrumentService;
 import org.hibernate.SQLQuery;
-import org.hibernate.Session;
 
 /**
  * Utility class for interfacing with financials. This class should be used for calling any financials APIs from erp collections.
@@ -76,13 +73,7 @@ public class FinancialsUtil {
     private CreateVoucher voucherCreator;
     private CollectionsUtil collectionsUtil;
     private static final Logger LOGGER = Logger.getLogger(FinancialsUtil.class);
-    @PersistenceContext
-    protected static EntityManager financialsUtilEntityManager;
-
-    public static Session getFinancialUtilCurrentSession() {
-        return financialsUtilEntityManager.unwrap(Session.class);
-    }
-
+    
     /**
      * @param instrumentService the Instrument Service to set
      */
@@ -310,7 +301,7 @@ public class FinancialsUtil {
             return true;
         if (purposeId != null)
             try {
-                final SQLQuery query = getFinancialUtilCurrentSession().createSQLQuery(
+                final SQLQuery query = HibernateUtil.getCurrentSession().createSQLQuery(
                         "SELECT NAME FROM EGF_ACCOUNTCODE_PURPOSE WHERE ID = " + purposeId);
                 final List<String> purposeNames = query.list();
                 if (purposeNames != null && purposeNames.size() == 1) {
@@ -351,7 +342,7 @@ public class FinancialsUtil {
      */
     public static List<CChartOfAccounts> getBankChartofAccountCodeList() {
         final ChartOfAccountsDAO chartOfAccoutsDAO = new ChartOfAccountsHibernateDAO(CChartOfAccounts.class,
-                getFinancialUtilCurrentSession());
+                HibernateUtil.getCurrentSession());
         return chartOfAccoutsDAO.getBankChartofAccountCodeList();
     }
 
