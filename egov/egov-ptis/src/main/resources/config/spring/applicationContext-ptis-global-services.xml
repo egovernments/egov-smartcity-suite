@@ -62,11 +62,11 @@
          <constructor-arg index="0" ref="revisionPetitionPersistenceService"/>
     </bean>
     
-    <bean id="propertyMutationPersistenceService" parent="persistenceService">
+    <bean id="propertyMutationPersistenceService" parent="persistenceService" scope="prototype">
         <property name="type" value="org.egov.ptis.domain.entity.property.PropertyMutation" />
     </bean>
     
-    <bean id="PropertyMutationInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+    <bean id="PropertyMutationInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl" scope="prototype">
          <constructor-arg index="0" ref="propertyMutationPersistenceService"/>
     </bean>
     
