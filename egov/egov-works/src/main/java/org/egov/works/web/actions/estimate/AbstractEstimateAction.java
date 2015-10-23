@@ -109,7 +109,8 @@ import net.sf.jasperreports.engine.JRException;
         @Result(name = AbstractEstimateAction.NEW, location = "abstractEstimate-new.jsp"),
         @Result(name = AbstractEstimateAction.MAPS, location = "abstractEstimate-maps.jsp"),
         @Result(name = AbstractEstimateAction.EDIT, location = "abstractEstimate-edit.jsp"),
-        @Result(name = AbstractEstimateAction.SUCCESS, location = "abstractEstimate-success.jsp") })
+        @Result(name = AbstractEstimateAction.SUCCESS, location = "abstractEstimate-success.jsp"),
+        @Result(name = AbstractEstimateAction.HISTORY, location = "abstractEstimate-history.jsp") })
 public class AbstractEstimateAction extends BaseFormAction {
 
     private static final long serialVersionUID = -4801105778751138267L;
@@ -121,6 +122,7 @@ public class AbstractEstimateAction extends BaseFormAction {
     private static final String SOURCE_INBOX = "inbox";
     private static final String KEY_NAME = "SKIP_BUDGET_CHECK";
     public static final String MAPS = "maps";
+    public static final String HISTORY = "history";
     private AbstractEstimate abstractEstimate = new AbstractEstimate();
     private List<Activity> sorActivities = new LinkedList<Activity>();
     private List<Activity> nonSorActivities = new LinkedList<Activity>();
@@ -201,6 +203,7 @@ public class AbstractEstimateAction extends BaseFormAction {
         addRelatedEntity("depositCode", DepositCode.class);
     }
 
+    @Action(value = "/estimate/abstractEstimate-edit")
     public String edit() {
 
         if (SOURCE_INBOX.equalsIgnoreCase(sourcepage)) {
@@ -211,7 +214,7 @@ public class AbstractEstimateAction extends BaseFormAction {
         } else if (StringUtils.isEmpty(sourcepage))
             sourcepage = "search";
         getWorkOrderDetails();
-        return NEW;
+        return EDIT;
     }
 
     private void getWorkOrderDetails() {
@@ -261,8 +264,9 @@ public class AbstractEstimateAction extends BaseFormAction {
         return total;
     }
 
+    @Action(value = "/estimate/abstractEstimate-workflowHistory")
     public String workflowHistory() {
-        return "history";
+        return HISTORY;
     }
 
     @Override

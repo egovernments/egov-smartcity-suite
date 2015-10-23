@@ -536,7 +536,7 @@ jq(document).on('click', '#woView', function(){
 	
  </s:if>
    <s:if test="%{sourcepage=='search'}">
-   		<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate!workflowHistory.action?stateValue=<s:property value='%{state.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="buttonfinal" value="History" id="history" name="History"/>
+   		<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-workflowHistory.action?stateValue=<s:property value='%{state.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="buttonfinal" value="History" id="history" name="History"/>
    </s:if>
 </div>
 </s:push>
@@ -687,7 +687,7 @@ jq(document).on('click', '#woView', function(){
         var tempEstimateValue=Math.round(eval(document.getElementById("grandTotal").innerHTML)+eval(document.getElementById("nonSorGrandTotal").innerHTML)+eval(document.getElementById("overHeadTotalAmnt").innerHTML));
         document.getElementById("estimateValue").value=roundTo(tempEstimateValue);
        
-        document.getElementById('docViewButton').style.visibility='';
+        //document.getElementById('docViewButton').style.visibility=''; 
         document.getElementById('history').style.visibility='';
         document.abstractEstimateForm.closeButton.readonly=false;
 		document.abstractEstimateForm.closeButton.disabled=false;

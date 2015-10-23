@@ -325,7 +325,7 @@ function toggleCancelRemarks(obj) {
 		</td>
 	</tr>
 </table>
-
+<s:if test= "%{searchResult.fullListSize!= 0}">	
 <display:table name="searchResult" pagesize="30" uid="currentRow"
 	cellpadding="0" cellspacing="0" requestURI=""
 	style="border:1px;width:100%;empty-cells:show;border-collapse:collapse;">
@@ -394,6 +394,19 @@ function toggleCancelRemarks(obj) {
 	</display:column>
 
 </display:table>
+</s:if>
+<s:elseif test= "%{searchResult.fullListSize== 0}">	
+	   <div>
+	      <table width="100%" border="0" cellpadding="0" cellspacing="0">
+	   	     <tr>
+	 	         <td align="center">
+	                <s:text name='label.no.records.found'></s:text>
+	             </td>
+	   		</tr>
+    	</table>
+   	 </div>
+</s:elseif>	  
+
 <s:if test="%{searchResult.fullListSize != 0 && source=='cancelEstimate'}" >
 	<P align="left">
 		<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="mandatory">*</span><s:text name="cancellation.reason" />:</b>
