@@ -100,7 +100,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-public class PropertyTransferService extends PersistenceService<PropertyMutation, Long> {
+public class PropertyTransferService {
+    
+    @Autowired
+    @Qualifier("propertyMutationService")
+    private PersistenceService<PropertyMutation, Long> propertyMutationService;
 
     @Autowired
     @Qualifier("propertyImplService")
@@ -218,7 +222,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
             if (user.getId().equals(transfereeId))
                 userToRemove = user;
         propertyMutation.getTransfereeInfos().remove(userToRemove);
-        persist(propertyMutation);
+        propertyMutationService.persist(propertyMutation);
     }
 
     public double calculateMutationFee(final double marketValue, final String transferReason,
@@ -259,7 +263,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
     }
 
     public PropertyMutation getPropertyMutationByApplicationNo(final String applicationNo) {
-        return findByNamedQuery("BY_APPLICATION_NO", applicationNo);
+        return propertyMutationService.findByNamedQuery("BY_APPLICATION_NO", applicationNo);
     }
 
     public PropertyMutation getCurrentPropertyMutationByAssessmentNo(final String assessmentNo) {
@@ -335,7 +339,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         transferees.forEach(transferee -> {
             if (transferee.isNew()) {
                 User user = null;
-                getSession().setFlushMode(FlushMode.MANUAL);
+                propertyMutationService.getSession().setFlushMode(FlushMode.MANUAL);
                 if (null != transferee.getAadhaarNumber() && !transferee.getAadhaarNumber().isEmpty())
                     user = userService.getUserByAadhaarNumberAndType(transferee.getAadhaarNumber(),
                             transferee.getType());
@@ -367,7 +371,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
             } else
                 newOwners.add(transferee);
         });
-        getSession().setFlushMode(FlushMode.AUTO);
+        propertyMutationService.getSession().setFlushMode(FlushMode.AUTO);
         transferees.clear();
         transferees.addAll(newOwners);
     }
@@ -413,7 +417,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
 
     @Transactional
     public void updateMutationCollection(final PropertyMutation propertyMutation) {
-        persist(propertyMutation);
+        propertyMutationService.persist(propertyMutation);
     }
 
     public String getCityName() {
