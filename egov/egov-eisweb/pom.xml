@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.egov</groupId>
     <artifactId>egov-erp</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
   </parent>
   
   <artifactId>egov-eisweb</artifactId>
@@ -14,7 +14,7 @@
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-egi</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.1-SNAPSHOT</version>
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-eis</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
         <!-- VIEWS RELATED END -->
