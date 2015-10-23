@@ -429,17 +429,18 @@ public class AssetAction extends SearchFormAction {
 
     public List<Boundary> getAllZone() {
         final HierarchyType hType = hierarchyTypeService.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
-        List<Boundary> zoneList = null;
+        List<Boundary> zoneList = new ArrayList<Boundary>();
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(Zone_BOUNDARY_TYPE, hType);
         if (actionType == null)
             actionType = "";
-        if (actionType.equalsIgnoreCase(CREATEASSET))
-            zoneList = boundaryService.getActiveBoundariesByBoundaryTypeId(bType.getId());
-        else if (actionType == "" || actionType.equalsIgnoreCase(VIEWASSET) || actionType.equalsIgnoreCase(MODIFYASSET))
-            if ("edit".equalsIgnoreCase(userMode))
+        if (bType != null)
+            if (actionType.equalsIgnoreCase(CREATEASSET))
                 zoneList = boundaryService.getActiveBoundariesByBoundaryTypeId(bType.getId());
-            else
-                zoneList = boundaryService.getAllBoundariesByBoundaryTypeId(bType.getId());
+            else if (actionType == "" || actionType.equalsIgnoreCase(VIEWASSET) || actionType.equalsIgnoreCase(MODIFYASSET))
+                if ("edit".equalsIgnoreCase(userMode))
+                    zoneList = boundaryService.getActiveBoundariesByBoundaryTypeId(bType.getId());
+                else
+                    zoneList = boundaryService.getAllBoundariesByBoundaryTypeId(bType.getId());
         return zoneList;
     }
 
