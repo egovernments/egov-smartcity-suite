@@ -404,7 +404,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 basicproperty = transferOwnerService.getBasicPropertyByUpicNo(assessmentNo);
 
             if (mutationId != null) {
-                propertyMutation = transferOwnerService.find("From PropertyMutation where id = ? ", mutationId);
+				propertyMutation = (PropertyMutation) persistenceService.find("From PropertyMutation where id = ? ",
+						mutationId);
                 basicproperty = propertyMutation.getBasicProperty();
             }
 
