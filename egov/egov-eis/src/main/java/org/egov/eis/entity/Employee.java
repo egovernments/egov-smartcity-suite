@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -41,9 +40,7 @@ package org.egov.eis.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -68,12 +65,23 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "egeis_employee")
 @Unique(id = "id", tableName = "egeis_employee", columnName = { "code" }, fields = { "code" }, enableDfltMsg = true)
+@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+@AuditOverrides( {
+        @AuditOverride(forClass=User.class, name="name"),
+        @AuditOverride(forClass=User.class, name="mobileNumber"),
+        @AuditOverride(forClass=User.class, name="emailId")
+})
 public class Employee extends User implements EntityType {
 
     private static final long serialVersionUID = -1105585841211211215L;
@@ -82,29 +90,36 @@ public class Employee extends User implements EntityType {
     @SafeHtml
     @Column(name = "code", unique = true)
     @Pattern(regexp = Constants.ALPHANUMERIC)
+    @NotAudited
     private String code;
 
     @Temporal(value = TemporalType.DATE)
+    @NotAudited
     private Date dateOfAppointment;
 
     @Temporal(value = TemporalType.DATE)
+    @NotAudited
     private Date dateOfRetirement;
 
     @Enumerated(EnumType.STRING)
     @NotNull
+    @NotAudited
     private EmployeeStatus employeeStatus;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employeetype")
+    @NotAudited
     private EmployeeType employeeType;
 
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy(" primary,id DESC ")
+    @NotAudited
     private final List<Assignment> assignments = new ArrayList<Assignment>(0);
 
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id DESC ")
+    @NotAudited
     private final List<Jurisdiction> jurisdictions = new ArrayList<Jurisdiction>(0);
 
     public Employee() {

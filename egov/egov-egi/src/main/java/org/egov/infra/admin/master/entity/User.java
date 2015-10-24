@@ -74,6 +74,7 @@ import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
+import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.Email;
@@ -124,6 +125,7 @@ public class User extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(min = 2, max = 100)
+    @Audited
     private String name;
 
     @Enumerated(EnumType.ORDINAL)
@@ -132,11 +134,13 @@ public class User extends AbstractAuditable {
     @Pattern(regexp = Constants.MOBILE_NUM)
     @SafeHtml
     @Length(max = 15)
+    @Audited
     private String mobileNumber;
 
     @Email(regexp = Constants.EMAIL)
     @SafeHtml
     @Length(max = 128)
+    @Audited
     private String emailId;
 
     @SafeHtml
