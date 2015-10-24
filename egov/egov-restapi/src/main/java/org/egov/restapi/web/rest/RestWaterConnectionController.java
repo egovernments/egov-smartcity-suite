@@ -81,15 +81,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Connection Service class provided RESTful services to create water connection
+ * Controller provides RESTful services to create new/additional/change of use water connection
  */
 @RestController
 public class RestWaterConnectionController {
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
-    /*@Autowired
-    private TokenService tokenService;*/
+    /*
+     * @Autowired private TokenService tokenService;
+     */
 
     @Autowired
     private NewConnectionService newConnectionService;
@@ -126,20 +127,22 @@ public class RestWaterConnectionController {
 
     @Autowired
     private WaterConnectionService waterConnectionService;
+
     @Autowired
     private WaterSourceService waterSourceService;
 
     @Autowired
     private ChangeOfUseService changeOfUseService;
 
-    /*@PersistenceContext
-    private EntityManager entityManager;*/
+    /*
+     * @PersistenceContext private EntityManager entityManager;
+     */
 
     public static final String SUCCESS = "SUCCESS";
 
-    /*public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }*/
+    /*
+     * public Session getCurrentSession() { return entityManager.unwrap(Session.class); }
+     */
 
     @RequestMapping(value = "/watercharges/newconnection", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public String createNewConnection(@Valid @RequestBody final WaterConnectionInfo WaterConnectionInfo)
@@ -160,16 +163,12 @@ public class RestWaterConnectionController {
                 applicationCode);
         return waterConnectionDetails.getApplicationNumber();
         /*
-         * String httpStatus = HttpStatus.OK.getReasonPhrase(); try {
-         * System.out.println("newConnection :  " + WaterConnectionInfo.toString());
-         * System.out.println("token : " + token); final Boolean
-         * isAuthenticatedUser = authenticateUser("mahesh", "demo"); final Token
-         * tokenObj = validateToken(token); if (tokenObj != null) { if
-         * (isAuthenticatedUser) { tokenService.redeem(tokenObj); } else
-         * httpStatus = HttpStatus.UNAUTHORIZED.getReasonPhrase(); } else
-         * httpStatus = HttpStatus.PRECONDITION_FAILED.getReasonPhrase(); }
-         * catch (final Exception exp) { exp.printStackTrace(); } return
-         * httpStatus;
+         * String httpStatus = HttpStatus.OK.getReasonPhrase(); try { System.out.println("newConnection :  " +
+         * WaterConnectionInfo.toString()); System.out.println("token : " + token); final Boolean isAuthenticatedUser =
+         * authenticateUser("mahesh", "demo"); final Token tokenObj = validateToken(token); if (tokenObj != null) { if
+         * (isAuthenticatedUser) { tokenService.redeem(tokenObj); } else httpStatus = HttpStatus.UNAUTHORIZED.getReasonPhrase(); }
+         * else httpStatus = HttpStatus.PRECONDITION_FAILED.getReasonPhrase(); } catch (final Exception exp) {
+         * exp.printStackTrace(); } return httpStatus;
          */
     }
 
@@ -191,17 +190,12 @@ public class RestWaterConnectionController {
     }
 
     /*
-     * @RequestMapping(value = "/watercharges/token", method =
-     * RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE) public
-     * String getToken() throws JsonGenerationException, JsonMappingException,
-     * IOException { final String strQuery =
-     * "select md from EgModules md where md.name=:name"; final Query hql =
-     * getCurrentSession().createQuery(strQuery); hql.setParameter("name",
-     * WaterTaxConstants.EGMODULES_NAME); final Map<String, String> tokenMap =
-     * new HashMap<String, String>(0); tokenMap.put("tokennumber",
-     * tokenService.generate(TTL_FOR_TOKEN_SECS, ((EgModules)
-     * hql.uniqueResult()).getName()).getTokenNumber()); return
-     * getJSONResponse(tokenMap); }
+     * @RequestMapping(value = "/watercharges/token", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+     * public String getToken() throws JsonGenerationException, JsonMappingException, IOException { final String strQuery =
+     * "select md from EgModules md where md.name=:name"; final Query hql = getCurrentSession().createQuery(strQuery);
+     * hql.setParameter("name", WaterTaxConstants.EGMODULES_NAME); final Map<String, String> tokenMap = new HashMap<String,
+     * String>(0); tokenMap.put("tokennumber", tokenService.generate(TTL_FOR_TOKEN_SECS, ((EgModules)
+     * hql.uniqueResult()).getName()).getTokenNumber()); return getJSONResponse(tokenMap); }
      */
 
     @RequestMapping(value = "/watercharges/changeofuse", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -210,14 +204,14 @@ public class RestWaterConnectionController {
 
         final ErrorDetails response = restWaterConnectionValidationService
                 .validateChangOfUsageWaterConnectionDetails(waterConnectionInfo);
-        
+
         final String applicationCode = WaterTaxConstants.CHANGEOFUSE;
         if (response != null)
             return getJSONResponse(response);
-        final ErrorDetails errorMessage = restWaterConnectionValidationService. validateCombinationOfChangOfUsage(waterConnectionInfo);
-        if(errorMessage !=null){
+        final ErrorDetails errorMessage = restWaterConnectionValidationService
+                .validateCombinationOfChangOfUsage(waterConnectionInfo);
+        if (errorMessage != null)
             return getJSONResponse(response);
-        }
         final ErrorDetails errorDetails = restWaterConnectionValidationService.validateCreateRequest(waterConnectionInfo);
         if (errorDetails != null)
             return getJSONResponse(errorDetails);
@@ -229,12 +223,10 @@ public class RestWaterConnectionController {
 
     private WaterConnectionDetails populateAndPersistWaterConnectionDetails(final WaterConnectionInfo WaterConnectionInfo,
             final String applicationCode) {
-        // TODO : Persist WaterConnectionDetails
         WaterConnectionDetails waterConnectionDetails = null;
         Long approvalPosition = 0l;
 
         Position userPosition = null;
-        // TODO: if condition for NEWCONNECTION AND ADDCONNECTION
         if (!applicationCode.equals(WaterTaxConstants.CHANGEOFUSE)) {
             waterConnectionDetails = prepareNewAndAdditionalConnectionDetails(WaterConnectionInfo, applicationCode);
             userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection()

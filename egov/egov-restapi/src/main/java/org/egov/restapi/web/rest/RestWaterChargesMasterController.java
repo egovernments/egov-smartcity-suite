@@ -130,10 +130,10 @@ public class RestWaterChargesMasterController {
 
     @RequestMapping(value = "/watercharges/waterconnectiontypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getWaterConnectionTypes() throws JsonGenerationException, JsonMappingException, IOException {
-        final List<Map<String,String>> connectionTypeList = new ArrayList<Map<String,String>>(0);
-        Map<String,String> meteredTypeMap =  new HashMap<String, String>(0);
+        final List<Map<String, String>> connectionTypeList = new ArrayList<Map<String, String>>(0);
+        final Map<String, String> meteredTypeMap = new HashMap<String, String>(0);
         meteredTypeMap.put("code", ConnectionType.METERED.toString());
-        Map<String,String> nonMeteredTypeMap =  new HashMap<String, String>(0);
+        final Map<String, String> nonMeteredTypeMap = new HashMap<String, String>(0);
         nonMeteredTypeMap.put("code", ConnectionType.NON_METERED.toString());
         connectionTypeList.add(meteredTypeMap);
         connectionTypeList.add(nonMeteredTypeMap);

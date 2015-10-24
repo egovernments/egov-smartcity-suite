@@ -67,14 +67,15 @@ public class RestApplicationSearchController {
     @RequestMapping(value = "/common/searchapplication", method = RequestMethod.POST)
     @ResponseBody
     public String searchApplication(@RequestBody final ApplicationSearchRequest searchRequest) {
-        String applicationNumber =  searchRequest.getApplicationNumber() != null ? "\""+searchRequest.getApplicationNumber()+"\"" : "";
+        final String applicationNumber = searchRequest.getApplicationNumber() != null ? "\""
+                + searchRequest.getApplicationNumber() + "\"" : "";
         searchRequest.setApplicationNumber(applicationNumber);
         final SearchResult searchResult = searchService.search(asList(Index.APPLICATION.toString()),
                 asList(IndexType.APPLICATIONSEARCH.toString()), searchRequest.searchQuery(),
                 searchRequest.searchFilters(), Sort.NULL, Page.NULL);
         return convertSearchResultToJson(searchResult);
     }
-    
+
     private String convertSearchResultToJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(SearchResult.class, new ApplicationSearchAdaptor()).create();

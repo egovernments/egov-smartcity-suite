@@ -44,7 +44,6 @@ import java.io.IOException;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.WaterConnectionInfo;
-import org.egov.restapi.model.WaterConnectionInfo;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.AdditionalConnectionService;

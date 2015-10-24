@@ -49,7 +49,7 @@ import org.egov.search.domain.Filters;
 import org.jboss.logging.Logger;
 
 public class RestWaterConnectionSearchRequest {
-    
+
     private String searchText;
     private String hscnumber;
     private String applicantname;
@@ -62,7 +62,7 @@ public class RestWaterConnectionSearchRequest {
         return hscnumber;
     }
 
-    public void setHscnumber(String hscnumber) {
+    public void setHscnumber(final String hscnumber) {
         this.hscnumber = hscnumber;
     }
 
@@ -70,7 +70,7 @@ public class RestWaterConnectionSearchRequest {
         return applicantname;
     }
 
-    public void setApplicantname(String applicantname) {
+    public void setApplicantname(final String applicantname) {
         this.applicantname = applicantname;
     }
 
@@ -78,10 +78,10 @@ public class RestWaterConnectionSearchRequest {
         return mobilenumber;
     }
 
-    public void setMobilenumber(String mobilenumber) {
+    public void setMobilenumber(final String mobilenumber) {
         this.mobilenumber = mobilenumber;
     }
-    
+
     public String getLocality() {
         return locality;
     }
@@ -90,7 +90,6 @@ public class RestWaterConnectionSearchRequest {
         this.locality = locality;
     }
 
-    
     public String getSearchText() {
         return searchText;
     }
