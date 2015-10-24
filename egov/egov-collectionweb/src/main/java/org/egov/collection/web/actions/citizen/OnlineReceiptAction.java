@@ -40,6 +40,7 @@
 package org.egov.collection.web.actions.citizen;
 
 import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -96,9 +97,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({ @Result(name = OnlineReceiptAction.NEW, location = "onlineReceipt-new.jsp"),
-    @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
-    @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
-    @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
+        @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
+        @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
+        @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
 public class OnlineReceiptAction extends BaseFormAction implements ServletRequestAware {
 
     private static final Logger LOGGER = Logger.getLogger(OnlineReceiptAction.class);
@@ -504,8 +505,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                     errors.add(new ValidationError(
                             "Manual Reconciliation Rolled back as Voucher Creation Failed For Payment Reference ID : "
                                     + receipts[i].getId(),
-                                    "Manual Reconciliation Rolled back as Voucher Creation Failed For Payment Reference ID : "
-                                            + receipts[i].getId()));
+                            "Manual Reconciliation Rolled back as Voucher Creation Failed For Payment Reference ID : "
+                                    + receipts[i].getId()));
                     LOGGER.error("Update to financial systems failed");
                     throw new ValidationException(errors);
                 }
@@ -553,7 +554,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         } catch (final ApplicationRuntimeException ex) {
             errors.add(new ValidationError("Manual Reconciliation of Online Payments Rolled back as "
                     + "update to billing system failed.", "Manual Reconciliation of Online Payments Rolled back as "
-                            + "update to billing system failed."));
+                    + "update to billing system failed."));
             LOGGER.error("Update to billing systems failed");
 
             throw new ValidationException(errors);
@@ -608,7 +609,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
         // populates model when request is from the billing system
         if (StringUtils.isNotBlank(getCollectXML())) {
-            final String decodedCollectXml = java.net.URLDecoder.decode(getCollectXML());
+            final String decodedCollectXml = decodeBillXML();
             try {
                 collDetails = (BillInfoImpl) xmlHandler.toObject(decodedCollectXml);
                 // modelPayeeList.clear();
@@ -656,6 +657,16 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE,
                         CollectionConstants.SERVICE_TYPE_PAYMENT));
         constructServiceDetailsList();
+    }
+
+    private String decodeBillXML() {
+        String decodedBillXml = "";
+        try {
+            decodedBillXml = java.net.URLDecoder.decode(getCollectXML(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return decodedBillXml;
     }
 
     /**

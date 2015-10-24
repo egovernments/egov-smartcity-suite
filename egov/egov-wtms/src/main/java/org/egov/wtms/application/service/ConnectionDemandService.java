@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.application.service;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -402,7 +403,7 @@ public class ConnectionDemandService {
         return getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId()).list();
     }
 
-    public String generateBill(final String consumerCode,String applicationTypeCode)  {
+    public String generateBill(final String consumerCode,String applicationTypeCode) throws UnsupportedEncodingException  {
         String collectXML = "";
         final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
         String currentInstallmentYear = null;
@@ -436,7 +437,7 @@ public class ConnectionDemandService {
         waterConnectionBillable.setBillType(getBillTypeByCode(WaterTaxConstants.BILLTYPE_AUTO));
 
         final String billXml = connectionBillService.getBillXML(waterConnectionBillable);
-        collectXML = URLEncoder.encode(billXml);
+        collectXML = URLEncoder.encode(billXml,"UTF-8");
         return collectXML;
     }
 

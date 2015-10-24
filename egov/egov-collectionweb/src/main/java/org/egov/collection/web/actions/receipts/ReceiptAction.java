@@ -39,6 +39,7 @@
  */
 package org.egov.collection.web.actions.receipts;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -214,7 +215,7 @@ public class ReceiptAction extends BaseFormAction {
      * A <code>List</code> of <code>String</code> informations sent by the billing system indicating which are the modes of
      * payment that are not allowed during receipt creation
      */
-    private List<String> collectionModesNotAllowed = new ArrayList<String>();
+    private List<String> collectionModesNotAllowed = new ArrayList<String>(0);
 
     /**
      * The <code>User</code> representing the counter operator who has created the receipt
@@ -225,7 +226,7 @@ public class ReceiptAction extends BaseFormAction {
      * A <code>List</code> of <code>ReceiptPayeeDetails</code> representing the model for the action.
      */
 
-    private List<ReceiptDetail> receiptDetailList = new ArrayList<ReceiptDetail>();
+    private List<ReceiptDetail> receiptDetailList = new ArrayList<ReceiptDetail>(0);
 
     private String instrumentTypeCashOrCard;
 
@@ -293,7 +294,7 @@ public class ReceiptAction extends BaseFormAction {
         setReceiptCreatedByCounterOperator(collectionsUtil.getLoggedInUser());
         // populates model when request is from the billing system
         if (getCollectXML() != null && !getCollectXML().equals("")) {
-            final String decodedCollectXML = java.net.URLDecoder.decode(getCollectXML());
+            final String decodedCollectXML = decodeBillXML();
             try {
                 collDetails = (BillInfoImpl) xmlHandler.toObject(decodedCollectXML);
 
@@ -361,6 +362,16 @@ public class ReceiptAction extends BaseFormAction {
             instrumentCount = instrumentProxyList.size();
     }
 
+    private String decodeBillXML() {
+        String decodedBillXml = "";
+        try {
+            decodedBillXml = java.net.URLDecoder.decode(getCollectXML(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return decodedBillXml;
+    }
+
     /**
      * @param populate
      */
@@ -374,8 +385,8 @@ public class ReceiptAction extends BaseFormAction {
             addDropdownData("bankBranchList", ajaxBankRemittanceAction.getBankBranchArrayList());
             addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
         } else // to load branch list and account list while returning after an
-            // error
-            if (getServiceName() != null && receiptMisc.getFund() != null) {
+               // error
+        if (getServiceName() != null && receiptMisc.getFund() != null) {
             final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId());
             ajaxBankRemittanceAction.setFundName(fund.getName());
             ajaxBankRemittanceAction.bankBranchList();
@@ -390,11 +401,11 @@ public class ReceiptAction extends BaseFormAction {
                 ajaxBankRemittanceAction.accountList();
                 addDropdownData(ACCOUNT_NUMBER_LIST, ajaxBankRemittanceAction.getBankAccountArrayList());
             } else
-                    addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
-            } else {
+                addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
+        } else {
             addDropdownData("bankBranchList", Collections.emptyList());
             addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
-            }
+        }
     }
 
     /**
