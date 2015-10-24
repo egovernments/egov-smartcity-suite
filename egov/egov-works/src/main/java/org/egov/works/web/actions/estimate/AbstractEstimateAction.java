@@ -70,7 +70,9 @@ import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EmployeeService;
+import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -80,10 +82,14 @@ import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.budget.BudgetUsage;
+import org.egov.pims.commons.Position;
 import org.egov.pims.service.EisUtilService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.Activity;
@@ -98,6 +104,7 @@ import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.ContractorBillService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jasperreports.engine.JRException;
@@ -111,18 +118,21 @@ import net.sf.jasperreports.engine.JRException;
         @Result(name = AbstractEstimateAction.EDIT, location = "abstractEstimate-edit.jsp"),
         @Result(name = AbstractEstimateAction.SUCCESS, location = "abstractEstimate-success.jsp"),
         @Result(name = AbstractEstimateAction.HISTORY, location = "abstractEstimate-history.jsp") })
-public class AbstractEstimateAction extends BaseFormAction {
+public class AbstractEstimateAction extends GenericWorkFlowAction {
 
     private static final long serialVersionUID = -4801105778751138267L;
     private final Logger LOGGER = Logger.getLogger(getClass());
-    private static final String CANCEL_ACTION = "cancel";
-    private static final String SAVE_ACTION = "save";
-    private static final Object REJECT_ACTION = "reject";
+    private static final String CANCEL_ACTION = "Cancel";
+    private static final String SAVE_ACTION = "Save";
+    private static final Object REJECT_ACTION = "Reject";
+    private static final Object APPROVE_ACTION = "Approve";
+    private static final Object FORWARD_ACTION = "Forward";
     private static final String SOURCE_SEARCH = "search";
     private static final String SOURCE_INBOX = "inbox";
     private static final String KEY_NAME = "SKIP_BUDGET_CHECK";
     public static final String MAPS = "maps";
     public static final String HISTORY = "history";
+    public static final String ABSTRACTESTIMATE = "AbstractEstimate";
     private AbstractEstimate abstractEstimate = new AbstractEstimate();
     private List<Activity> sorActivities = new LinkedList<Activity>();
     private List<Activity> nonSorActivities = new LinkedList<Activity>();
@@ -176,6 +186,12 @@ public class AbstractEstimateAction extends BaseFormAction {
     private FundSourceHibernateDAO fundSourceHibernateDAO;
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
+    private AssignmentService assignmentService;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private SimpleWorkflowService<AbstractEstimate> abstractEstimateWorkflowService;
 
     public String getMessageKey() {
         return messageKey;
@@ -270,7 +286,7 @@ public class AbstractEstimateAction extends BaseFormAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         return abstractEstimate;
     }
 
@@ -316,7 +332,7 @@ public class AbstractEstimateAction extends BaseFormAction {
 
         final Assignment latestAssignment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser();
         if (latestAssignment != null) {
-            departmentId = latestAssignment.getDepartment().getId();
+            approverDepartment = latestAssignment.getDepartment().getId().toString();
             // Executing department needs to be defaulted to logged in user Primary assignment department
             if (abstractEstimate != null && abstractEstimate.getId() == null && abstractEstimate.getExecutingDepartment() == null)
                 abstractEstimate.setExecutingDepartment(latestAssignment.getDepartment());
@@ -325,37 +341,45 @@ public class AbstractEstimateAction extends BaseFormAction {
 
     @Action(value = "/estimate/abstractEstimate-save")
     public String save() {
-        final String actionName = parameters.get("actionName")[0];
-        if (actionName != null
-                && !(actionName.equals("reject") || actionName.equals("save") || actionName
-                        .equals("submit_for_approval")))
+        // final String actionName = parameters.get("actionName")[0];
+        if (workFlowAction != null
+                && !(workFlowAction.equals(REJECT_ACTION) || workFlowAction.equals(SAVE_ACTION) || workFlowAction
+                        .equals(FORWARD_ACTION)))
             validateNonSorActivities();
-        if (!actionName.equals("reject"))
+        if (!workFlowAction.equals(REJECT_ACTION))
             validateDeptForDepositWorks();
 
-        if (!(CANCEL_ACTION.equals(actionName) && abstractEstimate.getId() == null))
+        if (!(CANCEL_ACTION.equals(workFlowAction) && abstractEstimate.getId() == null))
             if (abstractEstimate.getEgwStatus() != null
-                    && !(abstractEstimate.getEgwStatus().getCode().equals("REJECTED")
-                            && (actionName.equals("submit_for_approval") || actionName.equals("save")) || abstractEstimate
+                    && !(abstractEstimate.getEgwStatus().getCode().equals(AbstractEstimate.EstimateStatus.REJECTED.toString())
+                            && (workFlowAction.equals(FORWARD_ACTION) || workFlowAction.equals(SAVE_ACTION)) || abstractEstimate
                                     .getEgwStatus().getCode().equals("NEW"))) {
                 // If Estimate is in work flow other than Rejected or in Drafts
                 // case then do nothing(do not delete child tables and insert
                 // again)
             } else
-                populateEstimateDetails(actionName);
+                populateEstimateDetails(workFlowAction);
 
-        if (actionName.equals("submit_for_approval")) {
+        if (workFlowAction.equals(FORWARD_ACTION)
+                && (abstractEstimate.getEgwStatus() == null || abstractEstimate.getEgwStatus() != null
+                        && (abstractEstimate.getEgwStatus().getCode().equals(AbstractEstimate.EstimateStatus.REJECTED.toString())
+                                || abstractEstimate
+                                        .getEgwStatus().getCode().equals("NEW")))) {
             validateForAssetSelection();
             validateForLatLongSelection();
         }
 
         try {
-            if (SAVE_ACTION.equals(actionName) && abstractEstimate.getEgwStatus() == null)
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("AbstractEstimate", "NEW"));
-            else if (actionName.equals("submit_for_approval"))
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("AbstractEstimate", "CREATED"));
+            /*
+             * if (SAVE_ACTION.equals(actionName) && abstractEstimate.getEgwStatus() == null)
+             * abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("AbstractEstimate", "NEW")); else if
+             * (actionName.equals("submit_for_approval"))
+             * abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("AbstractEstimate", "CREATED"));
+             */
             // TODO: Fixme - CREATED status setting is for time being. Need to replace with proper status as per the workflow
             // matrix
+            transitionWorkFlow(abstractEstimate);
+            abstractEstimateService.applyAuditing(abstractEstimate.getState());
             abstractEstimateService.setEstimateNumber(abstractEstimate);
             abstractEstimate = abstractEstimateService.persist(abstractEstimate);
         } catch (final ValidationException valException) {
@@ -378,14 +402,99 @@ public class AbstractEstimateAction extends BaseFormAction {
                 throw new ValidationException(valException.getErrors());
             }
 
-        messageKey = "estimate." + actionName;
+        messageKey = "estimate." + workFlowAction;
         addActionMessage(getText(messageKey, "The estimate was saved successfully"));
 
         // TODO : Fixme - Commented out for time being. Need to fix after implementing workflow matrix
         // getDesignation(abstractEstimate);
-        if (SAVE_ACTION.equals(actionName))
+        if (SAVE_ACTION.equals(workFlowAction))
             sourcepage = "inbox";
-        return SAVE_ACTION.equals(actionName) ? EDIT : SUCCESS;
+        return SAVE_ACTION.equals(workFlowAction) ? EDIT : SUCCESS;
+    }
+
+    public void transitionWorkFlow(final AbstractEstimate abstractEstimate) {
+        final DateTime currentDate = new DateTime();
+        final User user = securityUtils.getCurrentUser();
+        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        Position position = null;
+        Assignment wfInitiator = null;
+
+        if (abstractEstimate.getId() != null)
+            wfInitiator = getWorkflowInitiator(abstractEstimate);
+
+        if (CANCEL_ACTION.equals(workFlowAction)) {
+            if (wfInitiator.equals(userAssignment)) {
+                abstractEstimate.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                        .withDateInfo(currentDate.toDate());
+                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE,
+                        AbstractEstimate.EstimateStatus.CANCELLED.toString()));
+            }
+        } else if (REJECT_ACTION.equals(workFlowAction)) {
+            abstractEstimate.transition(true).withSenderName(user.getName()).withComments(approverComments)
+                    .withStateValue(AbstractEstimate.EstimateStatus.REJECTED.toString()).withDateInfo(currentDate.toDate())
+                    .withOwner(wfInitiator.getPosition());
+            abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE,
+                    AbstractEstimate.EstimateStatus.REJECTED.toString()));
+
+        } else {
+            if (null != approverPositionId && approverPositionId != -1)
+                position = (Position) persistenceService.find("from Position where id=?", approverPositionId);
+            // position = positionMasterService.getPositionById(approverPositionId);
+            else if (APPROVE_ACTION.equals(workFlowAction))
+                position = wfInitiator.getPosition();
+            if (abstractEstimate.getState() == null) {
+                final WorkFlowMatrix wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
+                        null, getAdditionalRule(), currentState, null);
+                abstractEstimate.transition().start().withSenderName(user.getName()).withComments(approverComments)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(position)
+                        .withNextAction(wfmatrix.getNextAction());
+                abstractEstimate
+                        .setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE, wfmatrix.getNextStatus()));
+            } else if (abstractEstimate.getCurrentState().getNextAction().equalsIgnoreCase("END")) {
+                abstractEstimate.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                        .withDateInfo(currentDate.toDate());
+                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE,
+                        abstractEstimate.getCurrentState().getValue()));
+            } else {
+                final WorkFlowMatrix wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
+                        null, getAdditionalRule(), abstractEstimate.getCurrentState().getValue(), null);
+                abstractEstimate.transition(true).withSenderName(user.getName()).withComments(approverComments)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(position)
+                        .withNextAction(wfmatrix.getNextAction());
+                abstractEstimate
+                        .setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE, wfmatrix.getNextStatus()));
+            }
+
+        }
+        setApproverAndDesignation(abstractEstimate);
+    }
+
+    public void setApproverAndDesignation(final AbstractEstimate abstractEstimate) {
+        /* start for customizing workflow message display */
+        if (abstractEstimate.getEgwStatus() != null
+                && !"NEW".equalsIgnoreCase(abstractEstimate.getEgwStatus().getCode())) {
+            Date date = new Date();
+            if (abstractEstimate.getState().getCreatedDate() != null)
+                date = abstractEstimate.getState().getCreatedDate();
+            final String result = worksService.getEmpNameDesignation(abstractEstimate.getState().getOwnerPosition(),
+                    date);
+            if (result != null && !"@".equalsIgnoreCase(result)) {
+                final String empName = result.substring(0, result.lastIndexOf('@'));
+                final String designation = result.substring(result.lastIndexOf('@') + 1, result.length());
+                setEmployeeName(empName);
+                setDesignation(designation);
+            }
+        }
+        /* end */
+    }
+
+    private Assignment getWorkflowInitiator(final AbstractEstimate abstractEstimate) {
+        Assignment wfInitiator;
+        if (abstractEstimate.getCreatedBy() == null)
+            wfInitiator = assignmentService.getPrimaryAssignmentForUser(worksService.getCurrentLoggedInUserId());
+        else
+            wfInitiator = assignmentService.getPrimaryAssignmentForUser(abstractEstimate.getCreatedBy().getId());
+        return wfInitiator;
     }
 
     private void validateForAssetSelection() {
@@ -420,6 +529,7 @@ public class AbstractEstimateAction extends BaseFormAction {
         return MAPS;
     }
 
+    // TODO:Fixme - check and remove this
     private void validateNonSorActivities() {
         final Set<String> exceptionSor = worksService.getExceptionSOR().keySet();
         for (final Activity activity : nonSorActivities)
@@ -434,44 +544,17 @@ public class AbstractEstimateAction extends BaseFormAction {
             }
     }
 
-    public void getDesignation(final AbstractEstimate abstractEstimate) {
-        /* start for customizing workflow message display */
-        if (abstractEstimate.getEgwStatus() != null
-                && !"NEW".equalsIgnoreCase(abstractEstimate.getEgwStatus().getCode())) {
-            final String result = worksService.getEmpNameDesignation(abstractEstimate.getState().getOwnerPosition(),
-                    abstractEstimate.getState().getCreatedDate());
-            if (result != null && !"@".equalsIgnoreCase(result)) {
-                final String empName = result.substring(0, result.lastIndexOf('@'));
-                final String designation = result.substring(result.lastIndexOf('@') + 1, result.length());
-                setEmployeeName(empName);
-                setDesignation(designation);
-            }
-        }
-        /* end */
-    }
-
-    public String cancel() {
-        if (abstractEstimate.getId() != null) {
-            // TODO:Fixme - Commented out for time being.. workflow needs to be implemented based on matrix
-            // workflowService.transition(AbstractEstimate.Actions.CANCEL.toString(), abstractEstimate, approverComments);
-            final String oldEstimateNo = abstractEstimate.getEstimateNumber();
-            abstractEstimate.setEstimateNumber(oldEstimateNo.concat("/C"));
-            getBudgetUsageListForEstimateNumber(oldEstimateNo);
-            abstractEstimate = abstractEstimateService.persist(abstractEstimate);
-        }
-        messageKey = "estimate.cancel";
-        getDesignation(abstractEstimate);
-        return SUCCESS;
-    }
-
-    public String reject() {
-        // TODO:Fixme - Commented out for time being.. workflow needs to be implemented based on matrix
-        // workflowService.transition(AbstractEstimate.Actions.REJECT.toString(), abstractEstimate, approverComments);
-        abstractEstimate = abstractEstimateService.persist(abstractEstimate);
-        messageKey = "estimate.reject";
-        getDesignation(abstractEstimate);
-        return SUCCESS;
-    }
+    /*
+     * public String cancel() { if (abstractEstimate.getId() != null) { // TODO:Fixme - Commented out for time being.. workflow
+     * needs to be implemented based on matrix // workflowService.transition(AbstractEstimate.Actions.CANCEL.toString(),
+     * abstractEstimate, approverComments); final String oldEstimateNo = abstractEstimate.getEstimateNumber();
+     * abstractEstimate.setEstimateNumber(oldEstimateNo.concat("/C")); getBudgetUsageListForEstimateNumber(oldEstimateNo);
+     * abstractEstimate = abstractEstimateService.persist(abstractEstimate); } messageKey = "estimate.cancel";
+     * getDesignation(abstractEstimate); return SUCCESS; } public String reject() { // TODO:Fixme - Commented out for time being..
+     * workflow needs to be implemented based on matrix // workflowService.transition(AbstractEstimate.Actions.REJECT.toString(),
+     * abstractEstimate, approverComments); abstractEstimate = abstractEstimateService.persist(abstractEstimate); messageKey =
+     * "estimate.reject"; getDesignation(abstractEstimate); return SUCCESS; }
+     */
 
     public String downloadTemplate() {
         return "template";
@@ -948,10 +1031,12 @@ public class AbstractEstimateAction extends BaseFormAction {
         this.designationId = designationId;
     }
 
+    @Override
     public String getApproverComments() {
         return approverComments;
     }
 
+    @Override
     public void setApproverComments(final String approverComments) {
         this.approverComments = approverComments;
     }

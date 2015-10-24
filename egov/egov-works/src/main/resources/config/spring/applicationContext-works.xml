@@ -109,7 +109,7 @@
 		<constructor-arg value="org.egov.works.models.estimate.AbstractEstimate" />
 	</bean>  -->
 
-	<bean id="packageWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
+	<!-- <bean id="packageWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="workspackageWFService" />
 		<constructor-arg value="org.egov.works.models.tender.WorksPackage" />
@@ -117,9 +117,9 @@
 
 	<bean class="org.egov.works.services.WorkspackageWFService" id="workspackageWFService"
 		parent="persistenceService" scope="prototype">
-		<!-- 	<property name="employeeServiceOld" ref="employeeServiceOld" /> -->
+			<property name="employeeServiceOld" ref="employeeServiceOld" />
 	</bean>
-
+ -->
 	<bean id="checklistService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.infstr.models.EgChecklists" />
 	</bean>
@@ -212,11 +212,11 @@
 		<!-- 	<property name="employeeServiceOld" ref="employeeServiceOld" /> -->
 	</bean>
 
-	<bean id="tenderResponseWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
+<!-- 	<bean id="tenderResponseWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="tenderResponseService" />
 		<constructor-arg value="org.egov.works.models.tender.TenderResponse" />
-	</bean>
+	</bean> -->
 
 
 	<!-- added on jan6 -->
@@ -277,9 +277,9 @@
 		<property name="measurementBookService" ref="measurementBookService" />
 	</bean>
 	<!-- workflow for measurementbook -->
-	<bean class="org.egov.works.services.MeasurementBookWFService" id="measurementBookWFService"
+<!-- 	<bean class="org.egov.works.services.MeasurementBookWFService" id="measurementBookWFService"
 		parent="persistenceService" scope="prototype">
-	<!-- 	<property name="employeeServiceOld" ref="employeeServiceOld" /> -->
+		<property name="employeeServiceOld" ref="employeeServiceOld" />
 	</bean>
 	<bean id="measurementBookWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
@@ -288,13 +288,13 @@
 	</bean>
 	<bean class="org.egov.works.services.ContractorBillWFService" id="contractorBillWFService"
 		parent="persistenceService" scope="prototype">
-		<!-- 	<property name="employeeServiceOld" ref="employeeServiceOld" /> -->
+			<property name="employeeServiceOld" ref="employeeServiceOld" />
 	</bean>
 	<bean id="contractorBillWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="contractorBillWFService" />
 		<constructor-arg value="org.egov.model.bills.EgBillregister" />
-	</bean>
+	</bean> -->
 	<bean id="egovCommon" class="org.egov.egf.commons.EgovCommon"
 		scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
@@ -379,11 +379,11 @@
 		parent="persistenceService" scope="prototype">
 		<!-- 	<property name="employeeServiceOld" ref="employeeServiceOld" /> -->
 	</bean>
-	<bean id="workOrderWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
+	<!-- <bean id="workOrderWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="workOrderWFService" />
 		<constructor-arg value="org.egov.works.models.workorder.WorkOrder" />
-	</bean>
+	</bean> -->
 	<bean id="voucherService" class="org.egov.services.voucher.VoucherService"
 		parent="persistenceService" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
@@ -457,16 +457,16 @@
 			value="org.egov.works.models.masters.MilestoneTemplate" />
 	</bean>
 
-	<bean class="org.egov.works.services.MilestoneTemplateWFService"
+	<!-- <bean class="org.egov.works.services.MilestoneTemplateWFService"
 		id="milestoneTemplateWFService" parent="persistenceService" scope="prototype">
-		<!-- 	<property name="employeeServiceOld" ref="employeeServiceOld" /> 
-		<property name="commonsService" ref="commonsService" /> -->
+			<property name="employeeServiceOld" ref="employeeServiceOld" /> 
+		<property name="commonsService" ref="commonsService" />
 	</bean>
 
 	<bean id="milestoneTemplateWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="milestoneTemplateWFService" />
-		<!-- <constructor-arg value="org.egov.works.models.masters.MilestoneTemplate" /> -->
+		<constructor-arg value="org.egov.works.models.masters.MilestoneTemplate" />
 	</bean>
 	<bean id="milestoneService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.works.models.milestone.Milestone" />
@@ -474,32 +474,32 @@
 
 	<bean class="org.egov.works.services.MilestoneWFService" id="milestoneWFService"
 		parent="persistenceService" scope="prototype">
-		<!-- 	<property name="employeeServiceOld" ref="employeeServiceOld" /> 
-		<property name="commonsService" ref="commonsService" /> -->
+			<property name="employeeServiceOld" ref="employeeServiceOld" /> 
+		<property name="commonsService" ref="commonsService" />
 	</bean>
 
 	<bean id="milestoneWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="milestoneWFService" />
 		<constructor-arg value="org.egov.works.models.milestone.Milestone" />
-	</bean>
+	</bean> -->
 	<bean id="trackMilestoneService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"
 			value="org.egov.works.models.milestone.TrackMilestone" />
 	</bean>
-
+<!-- 
 	<bean class="org.egov.works.services.TrackMilestoneWFService" id="trackMilestoneWFService"
 		parent="persistenceService" scope="prototype">
-		<!-- 	<property name="employeeServiceOld" ref="employeeServiceOld" /> 
-		<property name="commonsService" ref="commonsService" /> -->
+			<property name="employeeServiceOld" ref="employeeServiceOld" /> 
+		<property name="commonsService" ref="commonsService" />
 	</bean>
 
 	<bean id="trackMilestoneWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="trackMilestoneWFService" />
 		<constructor-arg value="org.egov.works.models.milestone.TrackMilestone" />
-	</bean>
+	</bean> -->
 
 	<bean id="reportHelper" class="org.egov.utils.ReportHelper" />
 
@@ -510,7 +510,7 @@
 	</bean>
 
 
-	<bean class="org.egov.works.services.RevisionEstimateWFService"
+<!-- 	<bean class="org.egov.works.services.RevisionEstimateWFService"
 		id="revisionEstimateWFService" parent="persistenceService" scope="prototype">
 		<property name="abstractEstimateService" ref="abstractEstimateService" />
 		<property name="revisionEstimateService" ref="revisionEstimateService" />
@@ -521,7 +521,7 @@
 		<constructor-arg ref="revisionEstimateWFService" />
 		<constructor-arg
 			value="org.egov.works.models.revisionEstimate.RevisionAbstractEstimate" />
-	</bean>
+	</bean> -->
 	<bean id="revisionWorkOrderService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"
@@ -560,17 +560,17 @@
 		<!-- <property name="contractorAdvanceWorkflowService" ref="contractorAdvanceWorkflowService" /> -->
 	</bean>
 
-	<bean
+<!-- 	<bean
 		class="org.egov.works.services.contractoradvance.ContractorAdvanceWFService"
 		id="contractorAdvanceWFService" parent="persistenceService" scope="prototype">
-		<!-- 	<property name="employeeServiceOld" ref="employeeServiceOld" /> -->
+			<property name="employeeServiceOld" ref="employeeServiceOld" />
 	</bean>
 	<bean id="contractorAdvanceWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="contractorAdvanceWFService" />
 		<constructor-arg
 			value="org.egov.works.models.contractoradvance.ContractorAdvanceRequisition" />
-	</bean>
+	</bean> -->
 	<bean id="billsDaoFactory" class="org.egov.dao.bills.BillsHibernateDaoFactory"/>
 	<bean id="genericDao" class="org.egov.infstr.dao.GenericHibernateDAO"/>
 	<!-- <bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl"/> -->

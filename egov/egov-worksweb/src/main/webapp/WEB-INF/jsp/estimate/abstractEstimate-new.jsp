@@ -40,7 +40,7 @@
 <%@ include file="/includes/taglibs.jsp" %> 
 <html>
 <title><s:text name='page.title.estimate'/></title>
-<body onload="showHideMap();setCurrentdate();refreshInbox();noBack();" onpageshow="if(event.persisted) noBack();" onunload="" class="yui-skin-sam">
+<body onload="onPageLoad()" onpageshow="if(event.persisted) noBack();" onunload="" class="yui-skin-sam">
 <script src="<egov:url path='resources/js/works.js'/>"></script>
 <script src="../resources/js/jquery-1.7.2.min.js"></script>
 <script>
@@ -50,6 +50,15 @@ window.history.forward(1);
 function noBack() {
 	window.history.forward(); 
 }
+
+function onPageLoad() {
+	showHideMap();
+	setCurrentdate();
+	loadDesignationFromMatrix();
+	refreshInbox();
+	noBack();
+}
+
 designationLoadHandler = function(req,res){  
   results=res.results;
   dom.get("designation").value=results[0].Designation;
@@ -253,10 +262,13 @@ function validateCancel() {
 function viewDocument(){
 	  viewDocumentManager(dom.get("docNumber").value); 
 }
-
+function onSubmit() {
+	action = document.getElementById("workFlowAction").value;
+	return validate(action);
+}
 function validate(text){
 	<s:if test="%{model.id==null || model.egwStatus.code=='NEW' || model.egwStatus.code=='REJECTED'}">
-		if(document.getElementById("actionName").value=='submit_for_approval'){
+		if(text=='Forward'){
 			if(document.getElementById("estimateValue").value!=''){
 				var estmValue=document.getElementById("estimateValue").value;
 				var parts=estmValue.split(".");
@@ -276,7 +288,7 @@ function validate(text){
 	if(!validateDataBeforeSubmit(forms[0]))
 		return false;
 
-	if(document.getElementById("actionName").value!='reject') {
+	if(text != 'Reject' || text != 'Cancel') {
 		if (!validateNonSorUomDropDown()) {
 			return false;	
 		}
@@ -287,7 +299,7 @@ function validate(text){
 	//setDocumentValues();
 	document.abstractEstimateForm.action='${pageContext.request.contextPath}/estimate/abstractEstimate-save.action';
 	document.abstractEstimateForm.submit();
-	//return true;
+	return true;
 }
 
 
@@ -434,15 +446,17 @@ jq(document).on('click', '#woView', function(){
           
           <tr><td>&nbsp;</td></tr>
           <!-- TODO:Fixeme - Commented out for time being Need to implement new workflow which is based on matrix and correspodning jsp needs to be included here -->
-	  	<!-- <tr> 
+	  	<tr> 
 		    <td>
 		    <div id="manual_workflow">
-		    <s:if test="%{sourcepage!='search'}"> -->
+		    <s:if test="%{sourcepage!='search'}">
+				<%@ include file="../workflow/commonWorkflowMatrix.jsp"%> 
+				<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
 		         <!--%@ include file="workflowApproval.jsp"% -->   
-		   <!-- </s:if>
+		  </s:if>
 		    </div>
 		    </td>
-          </tr>	 -->  
+          </tr>
           <tr>
           	<td colspan="4" class="shadowwk"> </td>                  
           </tr>          
@@ -463,9 +477,9 @@ jq(document).on('click', '#woView', function(){
 <s:if test="%{(hasErrors() || sourcepage=='inbox' || model.egwStatus==null || model.egwStatus.code=='NEW' 
 || model.egwStatus.code=='REJECTED') && (sourcepage=='inbox' || model.egwStatus==null || hasErrors())}">
 <!-- TODO:Fixeme - hard coded save button for time being till we implement common workflow -->
-<input type="submit" class="buttonfinal" value="SAVE" id="save" name="save" onclick="document.abstractEstimateForm.actionName.value='save';return validate('save');" />	  
+<!--<input type="submit" class="buttonfinal" value="SAVE" id="save" name="save" onclick="document.abstractEstimateForm.actionName.value='save';return validate('save');" />	  
 <input type="submit" class="buttonfinal" value="SAVE & SUBMIT" id="submit_for_approval" name="submit_for_approval" onclick="document.abstractEstimateForm.actionName.value='submit_for_approval';return validate('submit_for_approval');" />		
-	<!--<s:iterator value="%{validActions}"> 
+	<s:iterator value="%{validActions}"> 
 	  <s:if test="%{description!=''}">
 	  	<s:if test="%{description=='CANCEL' && model.estimateNumber!=null}">
 			<s:submit type="submit" cssClass="buttonfinal" value="%{description}" id="%{name}" name="%{name}" method="cancel" onclick="return validateCancel();document.abstractEstimateForm.actionName.value='%{name}'"/>
@@ -480,16 +494,16 @@ jq(document).on('click', '#woView', function(){
 		 	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/financialDetail!add.action?estimateId=<s:property value='%{model.id}'/>&sourcepage=<s:property value='%{sourcepage}'/>&source=UpdateFinancialDetail', '_self');" class="buttonadd" value="Update Financial Details " id="updateFinancialDetailButton" name="updateFinancialDetailButton"/>
   </s:if>
 </s:if>
-
+<%-- 
 <s:if test="%{model.id==null}">
 	  <input type="button" class="buttonfinal" value="CLEAR" id="button" name="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-newform.action','_self');"/>
-</s:if>
-<s:if test="%{sourcepage!='search'}">
+</s:if> --%>
+<%-- <s:if test="%{sourcepage!='search'}">
 	<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="confirmClose('<s:text name='estimate.close.confirm'/>');"/>
-	</s:if>
-	<s:else>
+</s:if> --%>
+<s:if test="%{sourcepage=='search'}" >
 	<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();"/>
-	</s:else>
+</s:if>
 <s:if test="%{model.id!=null && model.estimateNumber!=null}">
   	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimatePDF.action?estimateID=<s:property value='%{model.id}'/>');" class="buttonpdf" value="VIEW PDF" id="pdfButton" name="pdfButton"/>
   	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-viewBillOfQuantitiesXls.action?sourcepage=boqPDF&id=<s:property value='%{model.id}'/>');" class="buttonpdf" value="VIEW BOQ XLS" id="BOQxlsButton" name="BOQxlsButton"/>
