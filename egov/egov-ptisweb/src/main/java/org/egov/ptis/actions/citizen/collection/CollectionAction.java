@@ -46,6 +46,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.Map;
@@ -139,7 +140,11 @@ public class CollectionAction extends BaseFormAction {
         propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty.getPropertyID()
                 .getWard().getBoundaryNum().toString()));
         propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_AUTO));
-        collectXML = URLEncoder.encode(ptBillServiceImpl.getBillXML(propertyTaxBillable));
+        try {
+            collectXML = URLEncoder.encode(ptBillServiceImpl.getBillXML(propertyTaxBillable),"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.info("Exiting method generatePropertyTaxBill, collectXML: " + collectXML);
 

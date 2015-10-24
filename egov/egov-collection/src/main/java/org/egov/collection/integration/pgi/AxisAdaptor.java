@@ -345,9 +345,14 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
 
             if (fieldValue != null && fieldValue.length() > 0) {
                 // append the URL parameters
-                buf.append(URLEncoder.encode(fieldName));
+                try {
+                    buf.append(URLEncoder.encode(fieldName,"UTF-8"));
+                    buf.append(URLEncoder.encode(fieldValue,"UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException(e.getMessage());
+                }
                 buf.append('=');
-                buf.append(URLEncoder.encode(fieldValue));
+                
             }
 
             // add a '&' to the end if we have more fields coming.
