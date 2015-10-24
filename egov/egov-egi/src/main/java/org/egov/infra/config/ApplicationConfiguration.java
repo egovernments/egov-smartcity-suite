@@ -38,9 +38,7 @@
  ******************************************************************************/
 package org.egov.infra.config;
 
-import java.io.IOException;
 import java.util.Properties;
-import java.util.jar.Manifest;
 
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -48,13 +46,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 @Configuration
 public class ApplicationConfiguration {
+
     @Autowired
     private ApplicationContext context;
 
@@ -64,11 +62,6 @@ public class ApplicationConfiguration {
     @Bean
     public FileStoreService fileStoreService() {
         return (FileStoreService) context.getBean(applicationProperties.filestoreServiceBeanName());
-    }
-
-    @Bean
-    public Manifest manifest() throws IOException {
-        return new Manifest(new ClassPathResource("/META-INF/MANIFEST.MF").getInputStream());
     }
 
     @Bean

@@ -38,6 +38,8 @@
  */
 package org.egov.infra.config.properties;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -160,6 +162,14 @@ public class ApplicationProperties {
     }
 
     public String getProperty(final String propCode) {
-        return environment.getProperty(propCode, "");
+        return environment.getProperty(propCode, EMPTY);
+    }
+
+    public String appVersion() {
+        return environment.getProperty("app.version", EMPTY);
+    }
+
+    public String appBuildNo() {
+        return environment.getProperty("app.build.no", EMPTY);
     }
 }

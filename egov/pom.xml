@@ -87,10 +87,13 @@
 	</pluginRepositories>
 	
 	<properties>
+		<timestamp>${maven.build.timestamp}</timestamp>
+   		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
 		<hibernate-version>4.3.7.Final</hibernate-version>
 		<struts2-version>2.3.24</struts2-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<build.number>Local</build.number>
+		<build.number>${timestamp}</build.number>
+		<app.version>${pom.version}</app.version>
 		<egov-search-version>1.0.1-SNAPSHOT</egov-search-version>
 	</properties>
 
