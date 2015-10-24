@@ -596,8 +596,10 @@ jq(document).on('click', '#woView', function(){
 			document.abstractEstimateForm.pdfButton.disabled=false;
 			document.abstractEstimateForm.BOQxlsButton.readonly=false;
 			document.abstractEstimateForm.BOQxlsButton.disabled=false;
-			document.abstractEstimateForm.closeButton.readonly=false;
-			document.abstractEstimateForm.closeButton.disabled=false;
+			if(document.abstractEstimateForm.closeButton != null) {
+				document.abstractEstimateForm.closeButton.readonly=false;
+				document.abstractEstimateForm.closeButton.disabled=false;
+			}
 			links=document.abstractEstimateForm.getElementsByTagName("a");
 			for(i=0;i<links.length;i++){
 		    	if(links[i].id.indexOf("header_")!=0)
@@ -626,9 +628,11 @@ jq(document).on('click', '#woView', function(){
 		document.abstractEstimateForm.pdfButton.disabled=false;
 		document.abstractEstimateForm.BOQxlsButton.readonly=false;
 		document.abstractEstimateForm.BOQxlsButton.disabled=false;
-		document.abstractEstimateForm.closeButton.readonly=false;
-		document.abstractEstimateForm.closeButton.disabled=false;
-		if(document.abstractEstimateForm.financialDetailButton!=null){
+		if(document.abstractEstimateForm.closeButton != null) { 
+			document.abstractEstimateForm.closeButton.readonly=false;
+			document.abstractEstimateForm.closeButton.disabled=false;
+		}
+		if(document.abstractEstimateForm.financialDetailButton!=null){  
 			document.abstractEstimateForm.financialDetailButton.readonly=false;
 			document.abstractEstimateForm.financialDetailButton.disabled=false;		
 		}
@@ -647,13 +651,18 @@ jq(document).on('click', '#woView', function(){
 				var tempEstimateValue=Math.round(eval(document.getElementById("grandTotal").innerHTML)+eval(document.getElementById("nonSorGrandTotal").innerHTML)+eval(document.getElementById("overHeadTotalAmnt").innerHTML));
 		 		document.getElementById("estimateValue").value=roundTo(tempEstimateValue);
 			</s:if>		
- 			document.abstractEstimateForm.closeButton.readonly=false;
-			document.abstractEstimateForm.closeButton.disabled=false;	
+			if(document.abstractEstimateForm.closeButton != null) {
+	 			document.abstractEstimateForm.closeButton.readonly=false;
+				document.abstractEstimateForm.closeButton.disabled=false;
+			}	
 			document.abstractEstimateForm.pdfButton.readonly=false;
 			document.abstractEstimateForm.pdfButton.disabled=false;
 			document.abstractEstimateForm.BOQxlsButton.readonly=false;
 			document.abstractEstimateForm.BOQxlsButton.disabled=false;
-	    
+			<s:if test="%{model.egwStatus.code!='NEW' && model.egwStatus.code!='REJECTED'}"> 		
+				toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments','Save',
+			                     'Forward','Reject','button2','Approve']); 
+            </s:if>
 	     	if(document.abstractEstimateForm.tech_sanction){
 				document.abstractEstimateForm.tech_sanction.readonly=false;
 				document.abstractEstimateForm.tech_sanction.disabled=false;
@@ -703,8 +712,10 @@ jq(document).on('click', '#woView', function(){
        
         //document.getElementById('docViewButton').style.visibility=''; 
         document.getElementById('history').style.visibility='';
-        document.abstractEstimateForm.closeButton.readonly=false;
-		document.abstractEstimateForm.closeButton.disabled=false;
+        if(document.abstractEstimateForm.closeButton != null) {
+	        document.abstractEstimateForm.closeButton.readonly=false;
+			document.abstractEstimateForm.closeButton.disabled=false;
+        }
 		document.abstractEstimateForm.history.readonly=false;
 		document.abstractEstimateForm.history.disabled=false;
 		
@@ -724,8 +735,10 @@ jq(document).on('click', '#woView', function(){
         for(var i=0;i<document.forms[0].length;i++) {
       		document.forms[0].elements[i].disabled =true;
       	}	
-	    document.abstractEstimateForm.closeButton.readonly=false;
-		document.abstractEstimateForm.closeButton.disabled=false;
+        if(document.abstractEstimateForm.closeButton != null) {
+		    document.abstractEstimateForm.closeButton.readonly=false;
+			document.abstractEstimateForm.closeButton.disabled=false;
+        }
 				
 	    document.abstractEstimateForm.pdfButton.readonly=false;
 		document.abstractEstimateForm.pdfButton.disabled=false;

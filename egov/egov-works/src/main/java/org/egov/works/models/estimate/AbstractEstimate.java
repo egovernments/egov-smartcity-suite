@@ -551,7 +551,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     @Override
     public String getStateDetails() {
-        return "AbstractEstimate : " + getEstimateNumber();
+        return "Abstract Estimate : " + getEstimateNumber();
     }
 
     public String getTotalSOREstimatedAmt() {

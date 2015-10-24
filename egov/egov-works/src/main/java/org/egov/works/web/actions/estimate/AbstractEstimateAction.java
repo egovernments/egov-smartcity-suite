@@ -76,8 +76,6 @@ import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -128,7 +126,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
     private static final Object APPROVE_ACTION = "Approve";
     private static final Object FORWARD_ACTION = "Forward";
     private static final String SOURCE_SEARCH = "search";
-    private static final String SOURCE_INBOX = "inbox";
+    /* private static final String SOURCE_INBOX = "inbox"; */
     private static final String KEY_NAME = "SKIP_BUDGET_CHECK";
     public static final String MAPS = "maps";
     public static final String HISTORY = "history";
@@ -143,8 +141,9 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
 
     @Autowired
     private EmployeeService employeeService;
-    @Autowired
-    private UserService userService;
+    /*
+     * @Autowired private UserService userService;
+     */
 
     // TODO:Fixme - Commented out for time being.. workflow needs to be implemented based on matrix
     // private WorkflowService<AbstractEstimate> workflowService;
@@ -222,12 +221,13 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
     @Action(value = "/estimate/abstractEstimate-edit")
     public String edit() {
 
-        if (SOURCE_INBOX.equalsIgnoreCase(sourcepage)) {
-            final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
-            final boolean isValidUser = worksService.validateWorkflowForUser(abstractEstimate, user);
-            if (isValidUser)
-                throw new ApplicationRuntimeException("Error: Invalid Owner - No permission to view this page.");
-        } else if (StringUtils.isEmpty(sourcepage))
+        // TODO:Fixme - commented out for time being since the validation not working properly
+        /*
+         * if (SOURCE_INBOX.equalsIgnoreCase(sourcepage)) { final User user =
+         * userService.getUserById(worksService.getCurrentLoggedInUserId()); final boolean isValidUser =
+         * worksService.validateWorkflowForUser(abstractEstimate, user); if (isValidUser) throw new ApplicationRuntimeException(
+         * "Error: Invalid Owner - No permission to view this page."); } else
+         */if (StringUtils.isEmpty(sourcepage))
             sourcepage = "search";
         getWorkOrderDetails();
         return EDIT;
@@ -419,8 +419,8 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         Position position = null;
         Assignment wfInitiator = null;
 
-        if (abstractEstimate.getId() != null)
-            wfInitiator = getWorkflowInitiator(abstractEstimate);
+        // if (abstractEstimate.getId() != null)
+        wfInitiator = getWorkflowInitiator(abstractEstimate);
 
         if (CANCEL_ACTION.equals(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
@@ -436,6 +436,16 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
             abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE,
                     AbstractEstimate.EstimateStatus.REJECTED.toString()));
 
+        } else if (SAVE_ACTION.equals(workFlowAction)) {
+            if (abstractEstimate.getState() == null) {
+                final WorkFlowMatrix wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
+                        null, getAdditionalRule(), currentState, null);
+                abstractEstimate.transition().start().withSenderName(user.getName()).withComments(approverComments)
+                        .withStateValue(wfmatrix.getCurrentState()).withDateInfo(currentDate.toDate())
+                        .withOwner(wfInitiator.getPosition());
+                abstractEstimate
+                        .setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE, "NEW"));
+            }
         } else {
             if (null != approverPositionId && approverPositionId != -1)
                 position = (Position) persistenceService.find("from Position where id=?", approverPositionId);
@@ -466,7 +476,8 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
             }
 
         }
-        setApproverAndDesignation(abstractEstimate);
+        if (!(CANCEL_ACTION.equals(workFlowAction) || SAVE_ACTION.equals(workFlowAction)))
+            setApproverAndDesignation(abstractEstimate);
     }
 
     public void setApproverAndDesignation(final AbstractEstimate abstractEstimate) {
@@ -543,18 +554,6 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                 }
             }
     }
-
-    /*
-     * public String cancel() { if (abstractEstimate.getId() != null) { // TODO:Fixme - Commented out for time being.. workflow
-     * needs to be implemented based on matrix // workflowService.transition(AbstractEstimate.Actions.CANCEL.toString(),
-     * abstractEstimate, approverComments); final String oldEstimateNo = abstractEstimate.getEstimateNumber();
-     * abstractEstimate.setEstimateNumber(oldEstimateNo.concat("/C")); getBudgetUsageListForEstimateNumber(oldEstimateNo);
-     * abstractEstimate = abstractEstimateService.persist(abstractEstimate); } messageKey = "estimate.cancel";
-     * getDesignation(abstractEstimate); return SUCCESS; } public String reject() { // TODO:Fixme - Commented out for time being..
-     * workflow needs to be implemented based on matrix // workflowService.transition(AbstractEstimate.Actions.REJECT.toString(),
-     * abstractEstimate, approverComments); abstractEstimate = abstractEstimateService.persist(abstractEstimate); messageKey =
-     * "estimate.reject"; getDesignation(abstractEstimate); return SUCCESS; }
-     */
 
     public String downloadTemplate() {
         return "template";
@@ -1061,9 +1060,9 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         this.estimateValue = estimateValue;
     }
 
-    public void setUserService(final UserService userService) {
-        this.userService = userService;
-    }
+    /*
+     * public void setUserService(final UserService userService) { this.userService = userService; }
+     */
 
     public void setReportService(final ReportService reportService) {
         this.reportService = reportService;
