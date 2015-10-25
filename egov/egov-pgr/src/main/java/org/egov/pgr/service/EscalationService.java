@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -42,15 +41,19 @@ package org.egov.pgr.service;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.egov.commons.ObjectType;
 import org.egov.commons.service.ObjectTypeService;
+import org.egov.eis.entity.PositionHierarchy;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionHierarchyService;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.config.properties.PgrApplicationProperties;
@@ -103,6 +106,12 @@ public class EscalationService {
     private AssignmentService assignmentService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
+    private PositionMasterService positionMasterService;
+
+    @Autowired
     public EscalationService(final EscalationRepository escalationRepository) {
 
         this.escalationRepository = escalationRepository;
@@ -146,13 +155,21 @@ public class EscalationService {
         final Boolean isEmailNotificationSet = "YES".equalsIgnoreCase(appConfigValue.getValue());
         final ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
         final List<Complaint> escalationComplaints = complaintService.getComplaintsEligibleForEscalation();
-
+        Position superiorPosition = null;
+        User superiorUser = null;
         for (final Complaint complaint : escalationComplaints) {
-            final Position superiorPosition = positionHierarchyService
+            final PositionHierarchy positionHierarchy = positionHierarchyService
                     .getPosHirByPosAndObjectTypeAndObjectSubType(complaint.getAssignee().getId(),
-                            objectType.getId(), complaint.getComplaintType().getCode())
-                    .getToPosition();
-            final User superiorUser = eisCommonService.getUserForPosition(superiorPosition.getId(), new Date());
+                            objectType.getId(), complaint.getComplaintType().getCode());
+            if (null != positionHierarchy) {
+                superiorPosition = positionHierarchy.getToPosition();
+                superiorUser = eisCommonService.getUserForPosition(superiorPosition.getId(), new Date());
+            } else {
+                final Set<User> users = userService.getUsersByRoleName("Grievance Officer");
+                superiorUser = users.iterator().next();
+                if (superiorUser != null)
+                    superiorPosition = positionMasterService.getCurrentPositionForUser(superiorPosition.getId());
+            }
             complaint.setEscalationDate(getExpiryDate(complaint));
             complaint.setAssignee(superiorPosition);
             complaint.transition().withOwner(superiorPosition).withComments("Complaint is escalated")
