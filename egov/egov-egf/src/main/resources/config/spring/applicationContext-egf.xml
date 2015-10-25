@@ -268,9 +268,7 @@
 		<property name="chartOfAccountDetailService" ref="chartOfAccountDetailService"/>
 		<property name="voucherHeaderPersitService" ref="voucherHeaderPersitService"/>
 	</bean>
-	<bean id="eisUtilService" class="org.egov.pims.service.EisUtilService" scope="prototype" >
-		<property name="persistenceService"  ref="persistenceService" />
-	</bean>
+
 	<bean id="shrdFSrcPerSer" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="type" value="org.egov.commons.SharedFundSource" />
 	</bean>

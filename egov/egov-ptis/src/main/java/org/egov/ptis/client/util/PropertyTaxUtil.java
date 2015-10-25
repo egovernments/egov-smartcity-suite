@@ -196,6 +196,7 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * @author malathi
@@ -205,6 +206,7 @@ public class PropertyTaxUtil {
     private static final Logger LOGGER = Logger.getLogger(PropertyTaxUtil.class);
 
     @Autowired
+    @Qualifier("persistenceService")
     private PersistenceService persistenceService;
     @Autowired
     private UserService userService;
@@ -239,6 +241,7 @@ public class PropertyTaxUtil {
     @Autowired
     private FinancialYearDAO financialYearDAO;
     @Autowired
+    @Qualifier("waterChargesIntegrationServiceImpl")
     private WaterChargesIntegrationService waterChargesIntegrationService;
     @Autowired
     private BoundaryService boundaryService;

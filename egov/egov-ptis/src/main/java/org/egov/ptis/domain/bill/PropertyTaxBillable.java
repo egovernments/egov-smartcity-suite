@@ -89,12 +89,13 @@ import org.egov.ptis.domain.service.property.RebatePeriodService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 
 /**
  * @author satyam
  */
-@Component("propertyTaxBillable")
+@Service("propertyTaxBillable")
 public class PropertyTaxBillable extends AbstractBillable implements Billable, LatePayPenaltyCalculator,
 RebateCalculator {
 
@@ -122,7 +123,7 @@ RebateCalculator {
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
-    private PropertyService propertyService;
+    private ApplicationContext beanProvider;
 
     private Boolean isCallbackForApportion = Boolean.TRUE;
     private LPPenaltyCalcType penaltyCalcType = SIMPLE;
@@ -459,6 +460,7 @@ RebateCalculator {
             final EgDemand currentDemand = getCurrentDemand();
             final Installment currentInstall = currentDemand.getEgInstallmentMaster();
             property = getBasicProperty().getProperty();
+            PropertyService propertyService = beanProvider.getBean("propService", PropertyService.class);
             final Installment assessmentEffecInstallment = propertyService.getAssessmentEffectiveInstallment(basicProperty
                     .getAssessmentdate());
 

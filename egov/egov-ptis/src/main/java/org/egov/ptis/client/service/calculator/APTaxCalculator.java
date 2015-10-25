@@ -85,6 +85,7 @@ import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.service.calculator.PropertyTaxCalculator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 //TODO name class as client specific
 public class APTaxCalculator implements PropertyTaxCalculator {
@@ -104,7 +105,9 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     private Installment currInstallment = null;
 
     @Autowired
+    @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+    
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
 

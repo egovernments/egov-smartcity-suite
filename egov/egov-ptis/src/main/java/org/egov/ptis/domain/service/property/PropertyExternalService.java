@@ -92,7 +92,6 @@ import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
@@ -148,6 +147,7 @@ import org.egov.ptis.domain.model.ReceiptDetails;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
@@ -162,7 +162,7 @@ public class PropertyExternalService {
     @Autowired
     private PtDemandDao ptDemandDAO;
     @Autowired
-    private ApplicationContextBeanProvider beanProvider;
+    private ApplicationContext beanProvider;
     private Long userId;
     private BasicProperty basicProperty;
     private PropertyImpl property;
@@ -175,6 +175,7 @@ public class PropertyExternalService {
     @Autowired
     private PTBillServiceImpl ptBillServiceImpl;
     @Autowired
+    @Qualifier("propertyTaxBillable")
     private PropertyTaxBillable propertyTaxBillable;
     @Autowired
     private PropertyTypeMasterDAO propertyTypeMasterDAO;
@@ -182,8 +183,7 @@ public class PropertyExternalService {
     private EntityManager entityManager;
     @Autowired
     private BoundaryService boundaryService;
-    @Autowired
-    private PropertyService propService;
+    
     private final List<File> uploads = new ArrayList<File>();
     private final List<String> uploadContentTypes = new ArrayList<String>();
     @Autowired
@@ -1086,6 +1086,7 @@ public class PropertyExternalService {
         // Set PropertyMutationMaster object
         final PropertyMutationMaster propertyMutationMaster = getPropertyMutationMaster(mutationReasonCode);
         basicProperty.setPropertyMutationMaster(propertyMutationMaster);
+        PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
         basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PROP_CREATE_RSN, null, null,
                 null, null, null));
         // Set isBillCreated property value as false
@@ -1415,6 +1416,7 @@ public class PropertyExternalService {
 
     public List<MasterCodeNamePairDetails> getPropertyCreateDocumentTypes() {
         final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+        PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
         final List<DocumentType> documentTypes = propService.getPropertyCreateDocumentTypes();
         for (final DocumentType documentType : documentTypes) {
             final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
@@ -1426,6 +1428,7 @@ public class PropertyExternalService {
     }
 
     public DocumentType getDocumentTypeByCode(final String docTypeCode) {
+        PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
         final List<DocumentType> documentTypes = propService.getPropertyCreateDocumentTypes();
         DocumentType documentType = null;
         for (final DocumentType docType : documentTypes)
@@ -1648,6 +1651,7 @@ public class PropertyExternalService {
         final User user = userService.getUserById(EgovThreadLocals.getUserId());
         final String approverComments = "Property has been successfully forwarded.";
         final String currentState = "Created";
+        PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
         final Assignment assignment = propService.getUserPositionByZone(property.getBasicProperty());
         final Position pos = assignment.getPosition();
 

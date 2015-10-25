@@ -44,7 +44,7 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("propertyIntegrationServiceImpl")
 public class PropertyIntegrationServiceImpl implements PropertyIntegrationService {
 
     @Autowired

@@ -21,6 +21,7 @@ import org.egov.tl.domain.entity.UnitOfMeasurement;
 import org.egov.tl.domain.service.FeeMatrixService;
 import org.egov.tl.domain.service.FeeTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -41,6 +42,7 @@ public class FeeMatrixController {
 	@Autowired
 	private  FeeMatrixService feeMatrixService;
 	@Autowired
+	@Qualifier("persistenceService")
 	public PersistenceService persistenceService;
 
 	@Autowired
