@@ -40,6 +40,7 @@
 package org.egov.adtax.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -56,6 +57,7 @@ import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
+import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
@@ -390,5 +392,10 @@ public class AdvertisementDemandService {
             demand, Arrays.asList(demandReason));
  
     }
-   
+
+    public List<BillReceipt> getBilReceiptsByDemand(EgDemand demand) {
+        List<BillReceipt> billReceiptList = new ArrayList<BillReceipt>();
+        billReceiptList = demandGenericDao.getBillReceipts(demand);
+        return billReceiptList;
+    }
   }

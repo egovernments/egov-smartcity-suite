@@ -102,6 +102,11 @@ public class HoardingControllerSupport {
         return ratesClassService.getAllActiveRatesClass();
     }
 
+    @ModelAttribute("allRateClasses")
+    public List<RatesClass> getAllRatesClass() {
+        return ratesClassService.getAllRatesClass();
+    }
+       
     @ModelAttribute("hoardingDocumentTypes")
     public List<HoardingDocumentType> hoardingDocumentTypes() {
         return hoardingDocumentTypeService.getAllDocumentTypes();

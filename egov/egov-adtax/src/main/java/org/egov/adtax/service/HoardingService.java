@@ -41,8 +41,10 @@ package org.egov.adtax.service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -51,8 +53,13 @@ import org.egov.adtax.entity.Hoarding;
 import org.egov.adtax.entity.enums.HoardingStatus;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.repository.HoardingRepository;
+import org.egov.adtax.search.contract.HoardingDcbReport;
 import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
+import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.collection.integration.services.CollectionIntegrationService;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.model.EgdmCollectedReceipt;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,7 +77,9 @@ public class HoardingService {
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-
+    @Autowired
+    protected CollectionIntegrationService collectionIntegrationService;
+    
     @Autowired
     private AdvertisementDemandService advertisementDemandService;
 
@@ -166,7 +175,50 @@ public class HoardingService {
         });
         return hoardingSearchResults;
     }
+    
+public List<HoardingDcbReport> getHoardingWiseDCBResult(final Hoarding hoarding) {
+     List<HoardingDcbReport> HoardingDcbReportResults = new ArrayList<>();
+    Map<String,BillReceiptInfo> billReceiptInfoMap = new HashMap<String,BillReceiptInfo>();
+        if(hoarding!=null && hoarding.getDemandId()!=null)
+ {
+            for (EgDemandDetails demandDtl : hoarding.getDemandId().getEgDemandDetails()) {
+                HoardingDcbReport hoardingReport = new HoardingDcbReport();
+                Set<String> receiptNumbetSet = new HashSet<String>();
+                StringBuffer agencyName = new StringBuffer();
+                StringBuffer receiptNumber = new StringBuffer();
+                hoardingReport.setDemandReason(demandDtl.getEgDemandReason().getEgDemandReasonMaster()
+                        .getReasonMaster());
+                hoardingReport.setInstallmentYearDescription(demandDtl.getEgDemandReason().getEgInstallmentMaster()
+                        .getDescription());
+                hoardingReport.setDemandAmount(demandDtl.getAmount());
+                hoardingReport.setCollectedAmount(demandDtl.getAmtCollected());
 
+                for (EgdmCollectedReceipt collRecpt : demandDtl.getEgdmCollectedReceipts()) {
+                    if (!collRecpt.isCancelled()) {
+                        receiptNumbetSet.add(collRecpt.getReceiptNumber());
+                        receiptNumber.append(collRecpt.getReceiptNumber()).append(" ");
+                    }
+                }
+                if (receiptNumbetSet.size() > 0) {
+                    hoardingReport.setReceiptNumber(receiptNumber.toString());
+                    billReceiptInfoMap = collectionIntegrationService.getReceiptInfo(
+                            AdvertisementTaxConstants.SERVICE_CODE, receiptNumbetSet);
+
+                }
+                if (billReceiptInfoMap.size() > 0) {
+                    for (Map.Entry<String, BillReceiptInfo> map : billReceiptInfoMap.entrySet()) {
+                        agencyName.append(map.getValue().getPayeeName());
+                        agencyName.append(" ");
+                    }
+
+                }
+                hoardingReport.setPayeeName(agencyName.toString());
+                HoardingDcbReportResults.add(hoardingReport);
+            }
+        }
+    return HoardingDcbReportResults;
+
+}
     public List<HoardingSearch> getHoardingSearchResult(final Hoarding hoarding, final String searchType) {
 
         final List<Hoarding> hoardings = hoardingRepository.fetchHoardingsBySearchParams(hoarding);

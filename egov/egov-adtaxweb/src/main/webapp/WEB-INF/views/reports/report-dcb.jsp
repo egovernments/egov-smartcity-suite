@@ -49,19 +49,20 @@
 	            <div class="panel-heading">
 	                <div class="panel-title"></div>
 	            </div>
-	         	<jsp:include page="commonSearchPage.jsp"></jsp:include>
-	      </div>
+	            	<jsp:include page="../hoarding/commonSearchPage.jsp"></jsp:include>
+	 
+	            </div>
 	        </div>
 	        <div class="col-md-12">
        			<div class="text-center">
-       				<button type="button" class="btn btn-primary" id="search-update"><spring:message code="lbl.submit"/></button>
+       				<button type="button" class="btn btn-primary" id="search-dcb"><spring:message code="lbl.submit"/></button>
            			<button type="reset"  id="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
 		    		<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
        			</div>
         	</div>
     	 </form:form>
     	 <div class="col-md-12"><br>
-    	 	<table class="table table-bordered datatable dt-responsive" id="search-update-result-table"></table>
+    	 	<table class="table table-bordered datatable dt-responsive" id="search-dcbresult-table"></table>
     	 </div>
 	</div>
 
