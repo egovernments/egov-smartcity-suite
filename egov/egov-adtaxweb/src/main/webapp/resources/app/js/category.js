@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+/*#-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,33 +36,21 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-message.scheduleofrate.create=Schedule of rate created successfully 
-message.category.ismandatory=Category is mandatory.
-message.subcategory.ismandatory=Sub Category is mandatory.
-message.uom.ismandatory=Unit of measure is mandatory.
+#-------------------------------------------------------------------------------*/
+jQuery(document).ready(function($) {
+	
+	
+	$("#searcheditbutton").click(function() {
+		var action = '/adtax/category/updateCategory/' + $('#categorydesc').val();
+		$('#categoryForm').attr('method', 'get');
+		$('#categoryForm').attr('action', action);
+	});
+	
+	$("#buttonView").click(function() {
+		var action = '/adtax/category/success/' + $('#categorydesc').val();
+		$('#categoryForm').attr('method', 'get');
+		$('#categoryForm').attr('action', action);
+	});
+	
+});
 
-##Agency master
-message.agency.create=Agency created successfully 
-message.agency.update=Agency updated successfully
-
-##Hoarding
-hoarding.create.success= Hoarding successfully created
-hoarding.update.success= Hoarding successfully updated
-
-##RatesClass
-message.ratesClass.create=RatesClass created successfully
-message.ratesClass.update=RatesClass updated successfully
-
-##Unit of Measure
-message.uom.create=Unit of Measure created successfully
-message.uom.update=Unit of Measure updated successfully
-
-##Category
-message.category.create=Category created successfully
-message.category.update=Category updated successfully
-message.category.code= Category code is already exist.
-
-
-## collection
-msg.collection.noPendingTax= There is no pending tax to be collected for selected hoarding.

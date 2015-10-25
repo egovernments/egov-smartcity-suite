@@ -61,5 +61,20 @@ public class HoardingCategoryService {
     public List<HoardingCategory> getAllActiveHoardingCategory() {
         return hoardingCategoryRepository.getAllActiveHoardingCategory();
     }
+    public List<HoardingCategory> getAllHoardingCategory() {
+        return hoardingCategoryRepository.getAllHoardingCategory();
+    }
+    @Transactional
+    public HoardingCategory createHoardingCategory(HoardingCategory category) {
+        return hoardingCategoryRepository.save(category);
+    }
+
+    public HoardingCategory getCategoryById(Long id) {
+        return hoardingCategoryRepository.findOne(id);
+    }
+    @Transactional
+    public HoardingCategory updateHoardingCategory(HoardingCategory category) {
+        return hoardingCategoryRepository.save(category);
+      }
 
 }

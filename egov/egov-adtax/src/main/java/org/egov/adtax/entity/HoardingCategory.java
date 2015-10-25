@@ -49,12 +49,15 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGADTAX_CATEGORY")
 @SequenceGenerator(name = HoardingCategory.SEQ_CATEGORY, sequenceName = HoardingCategory.SEQ_CATEGORY, allocationSize = 1)
+@Unique(id = "id", tableName = "EGADTAX_CATEGORY", columnName = { "code","name" }, fields = { "code",
+"name" }, enableDfltMsg = true)
 public class HoardingCategory extends AbstractAuditable {
 
     private static final long serialVersionUID = 3539719034190449335L;

@@ -53,5 +53,7 @@ public interface HoardingCategoryRepository extends JpaRepository<HoardingCatego
 
     @Query("from HoardingCategory hc where hc.active=true order by hc.name ")
     List<HoardingCategory> getAllActiveHoardingCategory();
+    @Query("from HoardingCategory hc  order by hc.name ")
+    List<HoardingCategory> getAllHoardingCategory();
 
 }
