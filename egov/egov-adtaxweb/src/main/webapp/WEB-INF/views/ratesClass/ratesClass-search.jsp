@@ -42,48 +42,35 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<div class="row">
-	<div class="col-md-12">
-		<form:form  id="ratesclasssuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="ratesClass" >
-	 		<c:if test="${not empty message}">
-                   <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
-            </c:if>
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading ">
-					<div class="panel-title">
-						<strong><spring:message code="title.ratesClass.details"/></strong>
+<div class="row" id="page-content">
+    <div class="col-md-12">
+	 <form:form id="rateClassForm" method="post" class="form-horizontal form-groups-bordered" modelAttribute="ratesClass" commandName="ratesClass">
+				<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+				</div> 
+				<div class="panel-body custom-form">
+					<div class="form-group">
+						<label class="col-sm-4 control-label"><spring:message code="lbl.ratesClass.name">
+						</spring:message><span class="mandatory"></span></label>
+						<div class="col-sm-4 add-margin">
+                            <form:select path="description" id="rateClassdesc" cssClass="form-control" cssErrorClass="form-control error" required="required">
+                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
+                                <form:options items="${rateClasses}" itemValue="id" itemLabel="description"/>
+                            </form:select>
+                            	<form:errors path="description" cssClass="error-msg"/>
+                       	</div>
 					</div>
-				</div>
-				
-				<div class="panel-body "> 										
-					<div class="row add-border">
-                    	<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.ratesClass.name"/></div>
-                        <div class="col-md-3 col-xs-6 add-margin view-content">
-                        	<c:out value="${ratesClass.description}"></c:out>
-                        	<input id="classdesc" type="hidden"
-								value="<c:out value="${ratesClass.description}" />" />
-                        </div>
-                        <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.rateClass.active"/></div>
-						<div class="col-sm-3 add-margin view-content">
-                           	<c:out value="${ratesClass.active}"></c:out>
-						</div>
-                    </div>
-           		</div>
-			</div>
-			<div class="row">
-				<div class="text-center">
-				<%-- <c:if test="${not empty message}">
-					<button type="submit" id="buttonEdit" class="btn btn-success">
-						<spring:message code="lbl.edit" />
-					</button>
-				</c:if> --%>
-	       			<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
-	       				<spring:message code="lbl.close"/>
-	       			</button>
-				</div>
-			</div> 
-		</form:form>
-	</div>
+               	</div>
+	        </div>
+            <div class="form-group">
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary" id="searcheditbutton"><spring:message code="lbl.edit"/></button>
+                    <button type="submit" class="btn btn-primary" id="buttonView"><spring:message code="lbl.view"/></button>
+                    <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+                    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
+                </div>
+            </div>
+        </form:form>
+    </div>
 </div>
-<%-- <script src="<c:url value='/resources/app/js/agency.js'/>"></script>
- --%>
+<script src="<c:url value='/resources/app/js/rateClass.js'/>"></script>

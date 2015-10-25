@@ -263,7 +263,7 @@
 								<div class="col-sm-3 add-margin">
 									<form:select path="rateClass" id="rateClass" cssClass="form-control" cssErrorClass="form-control error" required="required">
 										<form:option value=""><spring:message code="lbl.select" /></form:option>
-										<form:options items="${rateClasses}" itemLabel="description" itemValue="id"/>
+										<form:options items="${allRateClasses}" itemLabel="description" itemValue="id"/>
 									</form:select>
 									<form:errors path="rateClass" cssClass="error-msg" />
 								</div>

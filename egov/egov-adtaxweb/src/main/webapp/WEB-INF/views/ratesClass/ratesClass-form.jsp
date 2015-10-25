@@ -44,7 +44,7 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<form:form id="agencyform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="agency" commandName="ratesClass">
+		<form:form id="agencyform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="ratesClass" commandName="ratesClass">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading ">
 					<div class="panel-title">
@@ -52,16 +52,19 @@
 					</div>
 				</div>
 				<div class="panel-body custom-form"> 										
-					<div class="form-group">
+					<div class="form-group"> 
                     	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.ratesClass.name"/><span class="mandatory"></span></label>
                            <div class="col-sm-3 add-margin">
                            		<c:choose>
 									<c:when test="${empty ratesClass.id}">
-                               			<form:input type="text" cssClass="form-control" path="description" id="classdesc" required="required"/>
-                               			<form:errors path="description" cssClass="error-msg" />
+                               			<form:input type="text" cssClass="form-control patternvalidation" 
+                        	      data-pattern="alphanumericwithspace" maxlength="49" path="description" id="classdesc" required="required"/>
+                               			<form:input type="hidden" cssClass="form-control" path="id" />
+                               				<form:errors path="description" cssClass="error-msg" />
                                		</c:when>
                                		<c:otherwise>
-                               			<form:input type="text" cssClass="form-control" path="description" id="classdesc" required="required" disabled="true"/>
+                               			<form:input type="hidden" cssClass="form-control" path="id" />
+                               			<form:input type="text" cssClass="form-control" path="description" id="classdesc" required="required" readonly="true" />
                                			<form:errors path="description" cssClass="error-msg" />
                                		</c:otherwise>
                                	</c:choose>
@@ -77,7 +80,7 @@
         	<div class="row">
 				<div class="text-center">
 					<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
-					<c:if test="${empty agency.id}">
+					<c:if test="${empty ratesClass.id}">
 						<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
 					</c:if>
 			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>

@@ -1,4 +1,5 @@
-/** eGov suite of products aim to improve the internal efficiency,transparency,
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -23,16 +24,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
+	1) All versions of this program, verbatim or modified must carry this
+	   Legal Notice.
 
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
+	   reasonable ways as different from the original version.
 
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
+	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -41,67 +42,65 @@ package org.egov.adtax.web.controller.ratesClass;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.egov.adtax.entity.RatesClass;
 import org.egov.adtax.service.RatesClassService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/ratesclass")
-public class RatesClassController {
+public class UpdateRateClassController {
+
 
     private final RatesClassService rateClassService;
 
     @Autowired
-    public RatesClassController(final RatesClassService rateClassService) {
+    public UpdateRateClassController(final RatesClassService rateClassService) {
         this.rateClassService = rateClassService;
     }
 
     @ModelAttribute
-    public RatesClass ratesClass() {
-        return new RatesClass();
-    }
-
-    @ModelAttribute(value = "rateClasses")
-    public List<RatesClass> getAllRatesClasses() {
-        return rateClassService.findAll();
+    public RatesClass ratesClassModel(@PathVariable final Long id, final Model model) {
+        return rateClassService.getRateClassById(id);
     }
     
-    @RequestMapping(value = "create", method = GET)
-    public String create() {
-        return "ratesClass-form";
-    }
-    
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String search() {
-        return "ratesClass-search";
-    }
-    @RequestMapping(value = "create", method = POST)
-    public String create(@Valid @ModelAttribute final RatesClass ratesClass,
-            final BindingResult errors, final RedirectAttributes redirectAttrs) {
+    @RequestMapping(value = "/update/{id}", method = POST) 
+    public String update(@Valid @ModelAttribute final RatesClass rateClass, final BindingResult errors,
+            final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
             return "ratesClass-form";
-        rateClassService.createRatesClass(ratesClass);
-        redirectAttrs.addFlashAttribute("ratesClass", ratesClass);
-        redirectAttrs.addFlashAttribute("message", "message.ratesClass.create");
-        return "redirect:/ratesclass/success/" + ratesClass.getId();
+        rateClassService.updateRateClass(rateClass);
+        redirectAttrs.addFlashAttribute("rateClass", rateClass);
+        redirectAttrs.addFlashAttribute("message", "message.ratesClass.update"); 
+        return "redirect:/ratesclass/success/" + rateClass.getId();
+    }
+    
+    
+    @RequestMapping(value = "/updateRatesClass/{id}", method = GET)
+    public String update(@PathVariable final Long id) {
+        return "redirect:/ratesclass/update/" + id;
     }
 
-    @RequestMapping(value = "/success/{description}", method = GET)
-    public ModelAndView successView(@PathVariable("description") final Long description, @ModelAttribute final RatesClass ratesClass) {
-        return new ModelAndView("ratesClass/ratesClass-success", "ratesClass", rateClassService.getRateClassById(description));
+    
+    @RequestMapping(value = "/update/{id}", method = GET)
+    public ModelAndView updateView(@PathVariable("id") final Long id, @ModelAttribute final RatesClass ratesclass) {
+         return new ModelAndView("ratesClass/ratesClass-form", "ratesClass", rateClassService.getRateClassById(id));
 
     }
 
+    @RequestMapping(value = "/view/{id}", method = GET)
+    public String view(@ModelAttribute final RatesClass rateClass, final BindingResult errors) {
+        if (errors.hasErrors())
+            return "ratesClass-search";
+        return "redirect:/ratesclass/success/" + rateClass.getId();
+    }
 }

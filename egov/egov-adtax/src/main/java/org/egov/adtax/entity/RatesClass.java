@@ -49,12 +49,15 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egadtax_rates_Class")
 @SequenceGenerator(name = RatesClass.SEQ_RATES_CLASS, sequenceName = RatesClass.SEQ_RATES_CLASS, allocationSize = 1)
+@Unique(id = "id", tableName = "egadtax_rates_Class", columnName = { "description" }, fields = {
+        "description" }, enableDfltMsg = true)
 public class RatesClass  extends AbstractPersistable<Long> { 
 
     private static final long serialVersionUID = 3430864664081345984L;
