@@ -65,6 +65,8 @@ import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -76,7 +78,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class EscalationService {
-
+    private static final Logger LOG = LoggerFactory.getLogger(EscalationService.class);
     private final EscalationRepository escalationRepository;
 
     @Autowired
@@ -166,37 +168,44 @@ public class EscalationService {
                 superiorUser = eisCommonService.getUserForPosition(superiorPosition.getId(), new Date());
             } else {
                 final Set<User> users = userService.getUsersByRoleName("Grievance Officer");
-                superiorUser = users.iterator().next();
+                if (!users.isEmpty())
+                    superiorUser = users.iterator().next();
                 if (superiorUser != null)
                     superiorPosition = positionMasterService.getCurrentPositionForUser(superiorPosition.getId());
+                else {
+                    LOG.warn("Could not do escalation, no user defined for Grievance Officer role");
+                    return;
+                }
             }
-            complaint.setEscalationDate(getExpiryDate(complaint));
-            complaint.setAssignee(superiorPosition);
-            complaint.transition().withOwner(superiorPosition).withComments("Complaint is escalated")
-                    .withDateInfo(complaint.getEscalationDate().toDate())
-                    .withStateValue(complaint.getStatus().getName())
-                    .withSenderName(securityUtils.getCurrentUser().getName());
-            complaintRepository.save(complaint);
-            if (isEmailNotificationSet) {
-                final String formattedEscalationDate = new SimpleDateFormat("dd/MM/yyyy HH:mm")
-                        .format(complaint.getEscalationDate().toDate());
-                final StringBuffer emailBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
-                        .append(",\n \n     The complaint Number (").append(complaint.getCrn())
-                        .append(") is escalated.\n").append("\n Complaint Details - \n \n Complaint type - ")
-                        .append(complaint.getComplaintType().getName()).append(" \n Location details - ")
-                        .append(complaint.getLocation().getName()).append("\n Complaint description - ")
-                        .append(complaint.getDetails()).append("\n Complaint status -")
-                        .append(complaint.getStatus().getName()).append("\n Complaint escalated to - ")
-                        .append(superiorUser.getName()).append("\n Escalation Time - ").append(formattedEscalationDate);
-                final StringBuffer emailSubject = new StringBuffer().append("Escalated Complaint Number -")
-                        .append(complaint.getCrn()).append(" (").append(complaint.getStatus().getName()).append(")");
-                final StringBuffer smsBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
-                        .append(", The complaint Number (").append(complaint.getCrn())
-                        .append(") has been escalated to ").append(superiorUser.getName()).append(" on ")
-                        .append(formattedEscalationDate);
-                if (superiorUser != null) {
-                    messagingService.sendEmail(superiorUser.getEmailId(), emailSubject.toString(), emailBody.toString());
-                    messagingService.sendSMS(superiorUser.getMobileNumber(), smsBody.toString());
+            if (superiorPosition != null) {
+                complaint.setEscalationDate(getExpiryDate(complaint));
+                complaint.setAssignee(superiorPosition);
+                complaint.transition().withOwner(superiorPosition).withComments("Complaint is escalated")
+                        .withDateInfo(complaint.getEscalationDate().toDate())
+                        .withStateValue(complaint.getStatus().getName())
+                        .withSenderName(securityUtils.getCurrentUser().getName());
+                complaintRepository.save(complaint);
+                if (isEmailNotificationSet) {
+                    final String formattedEscalationDate = new SimpleDateFormat("dd/MM/yyyy HH:mm")
+                            .format(complaint.getEscalationDate().toDate());
+                    final StringBuffer emailBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
+                            .append(",\n \n     The complaint Number (").append(complaint.getCrn())
+                            .append(") is escalated.\n").append("\n Complaint Details - \n \n Complaint type - ")
+                            .append(complaint.getComplaintType().getName()).append(" \n Location details - ")
+                            .append(complaint.getLocation().getName()).append("\n Complaint description - ")
+                            .append(complaint.getDetails()).append("\n Complaint status -")
+                            .append(complaint.getStatus().getName()).append("\n Complaint escalated to - ")
+                            .append(superiorUser.getName()).append("\n Escalation Time - ").append(formattedEscalationDate);
+                    final StringBuffer emailSubject = new StringBuffer().append("Escalated Complaint Number -")
+                            .append(complaint.getCrn()).append(" (").append(complaint.getStatus().getName()).append(")");
+                    final StringBuffer smsBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
+                            .append(", The complaint Number (").append(complaint.getCrn())
+                            .append(") has been escalated to ").append(superiorUser.getName()).append(" on ")
+                            .append(formattedEscalationDate);
+                    if (superiorUser != null) {
+                        messagingService.sendEmail(superiorUser.getEmailId(), emailSubject.toString(), emailBody.toString());
+                        messagingService.sendSMS(superiorUser.getMobileNumber(), smsBody.toString());
+                    }
                 }
             }
         }
