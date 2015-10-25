@@ -49,12 +49,15 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egadtax_UnitOfMeasure")
 @SequenceGenerator(name = UnitOfMeasure.SEQ_UNITOFMEASURE, sequenceName = UnitOfMeasure.SEQ_UNITOFMEASURE, allocationSize = 1)
+@Unique(id = "id", tableName = "egadtax_UnitOfMeasure", columnName = { "code","description" }, fields = { "code",
+"description" }, enableDfltMsg = true)
 public class UnitOfMeasure extends AbstractAuditable {
 
     private static final long serialVersionUID = 8341855744507541704L;

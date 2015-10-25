@@ -122,11 +122,62 @@
     	<put-attribute name="page-title" value="title.ratesClass.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/ratesClass/ratesClass-form.jsp"/>
     </definition>
+        <definition name="ratesClass/ratesClass-form" extends="base_layout">
+    	<put-attribute name="page-title" value="title.ratesClass.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/ratesClass/ratesClass-form.jsp"/>
+    </definition>
+    
+    <definition name="ratesClass-search" extends="base_layout">
+    	<put-attribute name="page-title" value="title.ratesClass.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/ratesClass/ratesClass-search.jsp"/>
+    </definition>
     
     <definition name="ratesClass/ratesClass-success" extends="base_layout">
     	<put-attribute name="page-title" value="title.ratesClass.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/ratesClass/ratesClass-success.jsp"/>
     </definition>
+
+
+
+    <definition name="unitOfMeasure-form" extends="base_layout">
+    	<put-attribute name="page-title" value="title.uom.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/unitOfMeasure/unitOfMeasure-form.jsp"/>
+    </definition>
+        <definition name="unitOfMeasure/unitOfMeasure-form" extends="base_layout">
+    	<put-attribute name="page-title" value="title.uom.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/unitOfMeasure/unitOfMeasure-form.jsp"/>
+    </definition>
+    
+    <definition name="unitOfMeasure-search" extends="base_layout">
+    	<put-attribute name="page-title" value="title.uom.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/unitOfMeasure/unitOfMeasure-search.jsp"/>
+    </definition>
+    
+    <definition name="unitOfMeasure/unitOfMeasure-success" extends="base_layout">
+    	<put-attribute name="page-title" value="title.uom.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/unitOfMeasure/unitOfMeasure-success.jsp"/>
+    </definition>
+
+
+    <definition name="category-form" extends="base_layout">
+    	<put-attribute name="page-title" value="title.category.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/category/category-form.jsp"/>
+    </definition>
+        <definition name="category/category-form" extends="base_layout">
+    	<put-attribute name="page-title" value="title.category.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/category/category-form.jsp"/>
+    </definition>
+    
+    <definition name="category-search" extends="base_layout">
+    	<put-attribute name="page-title" value="title.category.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/category/category-search.jsp"/>
+    </definition>
+    
+    <definition name="category/category-success" extends="base_layout">
+    	<put-attribute name="page-title" value="title.category.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/category/category-success.jsp"/>
+    </definition>
+
 
   <definition name="collectAdvtax-redirection" extends="base_layout">	 
         <put-attribute name="page-title" value="title.collect.Advtax.view" cascade="true"/>
@@ -142,4 +193,14 @@
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-createLegacy.jsp"/>
     </definition>
        
+     <definition name="report-dcb" extends="base_layout">
+    	<put-attribute name="page-title" value="title.hoardingwise.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/report-dcb.jsp"/>
+    </definition>
+     <definition name="report-dcbview" extends="base_layout">
+    	<put-attribute name="page-title" value="title.hoardingwise.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/report-dcbview.jsp"/>
+    </definition>
+    
+    
 </tiles-definitions>

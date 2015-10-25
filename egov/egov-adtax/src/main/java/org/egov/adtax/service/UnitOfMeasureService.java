@@ -65,9 +65,19 @@ public class UnitOfMeasureService {
     public List<UnitOfMeasure> getAllActiveUnitOfMeasure() {
         return unitOfMeasureRepository.getAllActiveUnitOfMeasures();
     }
-
-    public UnitOfMeasure getRateClassById(final Long id) {
+   
+    public UnitOfMeasure getUnitOfMeasureById(final Long id) {
         return unitOfMeasureRepository.findOne(id);
     }
+    @Transactional
+    public UnitOfMeasure updateUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
+        return unitOfMeasureRepository.save(unitOfMeasure);
+    }
 
+    @Transactional
+    public UnitOfMeasure createUnitOfMeasure(final UnitOfMeasure unitOfMeasure) {
+        return unitOfMeasureRepository.save(unitOfMeasure);
+    }
+
+   
 }
