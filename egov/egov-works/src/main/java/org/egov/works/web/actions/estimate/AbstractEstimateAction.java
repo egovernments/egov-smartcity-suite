@@ -381,27 +381,19 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
             transitionWorkFlow(abstractEstimate);
             abstractEstimateService.applyAuditing(abstractEstimate.getState());
             abstractEstimateService.setEstimateNumber(abstractEstimate);
+
+            if (abstractEstimate.getEgwStatus() != null
+                    && abstractEstimate.getEgwStatus().getCode()
+                            .equals(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString())) {
+                abstractEstimateService.setProjectCode(abstractEstimate);
+                abstractEstimate.setApprovedDate(new Date());
+            }
+
             abstractEstimate = abstractEstimateService.persist(abstractEstimate);
+
         } catch (final ValidationException valException) {
             throw new ValidationException(valException.getErrors());
         }
-
-        // TODO:Fixme - Commented out for time being.. workflow needs to be implemented based on matrix
-        // abstractEstimate = workflowService.transition(actionName, abstractEstimate, approverComments);
-        if (abstractEstimate.getType() != null
-                && abstractEstimate.getType().getExpenditureType() != null
-                && abstractEstimate.getEgwStatus() != null
-                && abstractEstimate.getEgwStatus().getCode()
-                        .equals(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()))
-            try {
-                abstractEstimateService.setProjectCode(abstractEstimate);
-                abstractEstimate.setApprovedDate(new Date());
-                abstractEstimate = abstractEstimateService.persist(abstractEstimate);
-            } catch (final ValidationException valException) {
-                setSourcepage("inbox");
-                throw new ValidationException(valException.getErrors());
-            }
-
         messageKey = "estimate." + workFlowAction;
         addActionMessage(getText(messageKey, "The estimate was saved successfully"));
 
@@ -451,7 +443,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                 position = (Position) persistenceService.find("from Position where id=?", approverPositionId);
             // position = positionMasterService.getPositionById(approverPositionId);
             else if (APPROVE_ACTION.equals(workFlowAction))
-                position = wfInitiator.getPosition();
+                position = abstractEstimate.getCurrentState().getOwnerPosition();
             if (abstractEstimate.getState() == null) {
                 final WorkFlowMatrix wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
                         null, getAdditionalRule(), currentState, null);
@@ -460,7 +452,8 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                         .withNextAction(wfmatrix.getNextAction());
                 abstractEstimate
                         .setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE, wfmatrix.getNextStatus()));
-            } else if (abstractEstimate.getCurrentState().getNextAction().equalsIgnoreCase("END")) {
+            } else if (abstractEstimate.getCurrentState().getNextAction() != null
+                    && abstractEstimate.getCurrentState().getNextAction().equalsIgnoreCase("END")) {
                 abstractEstimate.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
                         .withDateInfo(currentDate.toDate());
                 abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE,

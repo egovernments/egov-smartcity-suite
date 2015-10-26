@@ -54,8 +54,9 @@ function noBack() {
 function onPageLoad() {
 	showHideMap();
 	setCurrentdate();
-	loadDesignationFromMatrix();
-	refreshInbox();
+	<s:if test="%{getNextAction()!='END'}">
+		loadDesignationFromMatrix();
+	</s:if>
 	noBack();
 }
 
@@ -767,6 +768,8 @@ jq(document).on('click', '#woView', function(){
 	
 	
 </script>
+
+	<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 </body>
 
 </html>
