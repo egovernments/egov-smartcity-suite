@@ -488,8 +488,9 @@ public interface PropertyTaxConstants {
         private static final long serialVersionUID = 464912402295082366L;
 
         {
-            put(-2, "Basement-2");
-            put(-1, "Basement-1");
+            put(-3, "Basement-2");
+            put(-2, "Basement-1");
+            put(-1, "Stilt Floor");
             put(0, "Ground Floor");
             put(1, "1st floor");
             put(2, "2nd Floor");
