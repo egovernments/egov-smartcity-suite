@@ -57,7 +57,6 @@ public class PropertyMaterlizeView implements Serializable {
     private String houseNo;
     private String propertyAddress;
     private PropertyTypeMaster propTypeMstrID;
-    private Integer propUsageMstrID;
     private Boundary ward;
     private Boundary zone;
     private Boundary street;
@@ -189,14 +188,6 @@ public class PropertyMaterlizeView implements Serializable {
 
     public void setPropTypeMstrID(final PropertyTypeMaster propTypeMstrID) {
         this.propTypeMstrID = propTypeMstrID;
-    }
-
-    public Integer getPropUsageMstrID() {
-        return propUsageMstrID;
-    }
-
-    public void setPropUsageMstrID(final Integer propUsageMstrID) {
-        this.propUsageMstrID = propUsageMstrID;
     }
 
     public BigDecimal getAggrArrDmd() {
