@@ -102,23 +102,6 @@
 <tr>
 	<td class="greybox">
 	</td>
-	<td class="greybox" align="right">
-		<s:text name="license.zone" />
-	</td>
-	<td class="greybox" align="left">
-		<s:select headerKey="-1" headerValue="%{getText('license.default.select')}" name="zone" id="zone" list="dropdownData.zoneList" listKey="id" listValue='name' onChange="setupAjaxDivision(this);" />
-		<egov:ajaxdropdown id="populateDivision" fields="['Text','Value']" dropdownId='division' url='domain/commonAjax-populateDivisions.action' />
-	</td>
-	<td class="greybox">
-		<s:text name="license.division" />
-	</td>
-	<td class="greybox">
-		<s:select headerKey="-1" headerValue="%{getText('license.default.select')}" name="division" id="division" list="dropdownData.divisionListLicense" listKey="id" listValue='name' value="division" />
-	</td>
-</tr>
-<tr>
-	<td class="greybox">
-	</td>
 	<td class="greybox">
 		<s:text name="license.tradename" />
 	</td>
@@ -127,7 +110,7 @@
 	</td>
 	<td class="greybox">
 		<s:text name="licensee.establishmentname" />
-	</td>
+	</td> 
 	<td class="greybox">
 		<span class="bluebox"> <s:textfield label="establishmentname" tabindex="2" name="establishmentName" value="%{establishmentName}" size="30" onBlur="trimAll(this.value);" id="establishmentName" /> </span>
 	</td>

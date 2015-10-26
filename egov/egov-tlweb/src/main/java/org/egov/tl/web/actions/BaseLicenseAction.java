@@ -339,7 +339,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         addDropdownData(Constants.DROPDOWN_AREA_LIST_LICENSEE, Collections.EMPTY_LIST);
         addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSE, Collections.EMPTY_LIST);
         addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSEE, Collections.EMPTY_LIST);
-        addDropdownData(Constants.DROPDOWN_ZONE_LIST, licenseUtils.getAllZone());
+      //  addDropdownData(Constants.DROPDOWN_ZONE_LIST, licenseUtils.getAllZone());
         if (getModel().getClass().getSimpleName().equalsIgnoreCase(Constants.ELECTRICALLICENSE_LICENSETYPE))
             addDropdownData(Constants.DROPDOWN_TRADENAME_LIST, Collections.EMPTY_LIST);
         else
