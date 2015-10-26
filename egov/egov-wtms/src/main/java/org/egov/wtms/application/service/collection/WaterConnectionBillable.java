@@ -45,6 +45,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.AbstractBillable;
@@ -77,6 +78,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
+    private static final String DISPLAY_MESSAGE = "Water Tax Collection";
     private WaterConnectionDetails WaterConnectionDetails;
     private AssessmentDetails assessmentDetails;
     private Long userId;
@@ -162,7 +164,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getFundSourceCode() {
-        return DEFAULT_FUNCTIONARY_CODE;
+        return DEFAULT_FUND_SRC_CODE;
     }
 
     @Override
@@ -227,15 +229,19 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getDisplayMessage() {
-        return "Water Tax Collection";
+        return DISPLAY_MESSAGE;
     }
 
     @Override
     public String getCollModesNotAllowed() {
-        if(ConnectionStatus.ACTIVE.equals(getWaterConnectionDetails().getConnectionStatus()))
-            return "bankchallan";
-        else
-            return "bankchallan,dd,cheque";
+        if (ConnectionStatus.ACTIVE.equals(getWaterConnectionDetails().getConnectionStatus())) {
+            return CollectionConstants.INSTRUMENTTYPE_BANK;
+        } else {
+            StringBuilder collectionModesNotAllowed = new StringBuilder();
+            collectionModesNotAllowed.append(CollectionConstants.INSTRUMENTTYPE_BANK).append(",").
+                    append(CollectionConstants.INSTRUMENTTYPE_DD).append(",").append(CollectionConstants.INSTRUMENTTYPE_CHEQUE);
+            return collectionModesNotAllowed.toString();
+        }
     }
 
     @Override
@@ -289,7 +295,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     public String buildAddressDetails(final AssessmentDetails assessmentDetails) {
         final BoundaryDetails boundaryDetails = assessmentDetails.getBoundaryDetails();
-        final StringBuffer address = new StringBuffer();
+        final StringBuilder address = new StringBuilder();
         if (boundaryDetails.getZoneName() != null)
             address.append(boundaryDetails.getZoneName());
         if (boundaryDetails.getWardName() != null)
