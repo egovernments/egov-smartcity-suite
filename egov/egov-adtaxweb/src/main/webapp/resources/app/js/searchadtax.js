@@ -33,6 +33,10 @@ $(document).ready(function(){
 		source: agency.ttAdapter()
 	}).on('typeahead:selected typeahead:autocompleted typeahead:matched', function(event, data){
 		$("#agencyId").val(data.value);    
+	   }).on('change',function(event,data){
+   		if($('#agencyTypeAhead').val() == ''){
+   			$("#agencyId").val(''); //reset hidden element value
+   	    }
    });
    
 	/*$('#subcategories').change(function(){
