@@ -44,9 +44,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -63,7 +60,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
 import org.hibernate.Query;
-import org.hibernate.Session;
 
 @ParentPackage("egov")
 @Results({ @Result(name = AjaxBankRemittanceAction.BANKBRANCHLIST, location = "ajaxBankRemittance-bankBranchList.jsp"),
@@ -80,8 +76,8 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     protected static final String DESIGNATIONLIST = "designationList";
     private Long designationId;
     private Long approverDeptId;
-    private List<EmployeeView> postionUserList = new ArrayList<EmployeeView>();
-    private List<Designation> designationMasterList = new ArrayList<Designation>();
+    private List<EmployeeView> postionUserList = new ArrayList<EmployeeView>(0);
+    private List<Designation> designationMasterList = new ArrayList<Designation>(0);
     private CollectionsUtil collectionsUtil;
 
     /**
@@ -89,14 +85,8 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
      */
     private Integer fundId;
     private Integer branchId;
-    private final List<Bankbranch> bankBranchArrayList = new ArrayList<Bankbranch>();
+    private final List<Bankbranch> bankBranchArrayList = new ArrayList<Bankbranch>(0);
     private List<Bankaccount> bankAccountArrayList;
-    @PersistenceContext
-    protected EntityManager entityManager;
-
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
 
     @Action(value = "/receipts/ajaxBankRemittance-bankBranchList")
     public String bankBranchList() {
@@ -113,7 +103,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
                 + serviceName
                 + "' and fd.NAME='" + getFundName() + "'";
 
-        final Query bankBranchQuery = getCurrentSession().createSQLQuery(bankBranchQueryString);
+        final Query bankBranchQuery = persistenceService.getSession().createSQLQuery(bankBranchQueryString);
         final List<Object[]> queryResults = bankBranchQuery.list();
 
         for (int i = 0; i < queryResults.size(); i++) {
@@ -144,7 +134,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
                 + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
                 + "ba.BRANCHID=" + branchId + " and sd.NAME='" + serviceName + "' and fd.NAME='" + fundName + "'";
 
-        final Query bankAccountQuery = getCurrentSession().createSQLQuery(bankAccountQueryString);
+        final Query bankAccountQuery = persistenceService.getSession().createSQLQuery(bankAccountQueryString);
         final List<Object[]> queryResults = bankAccountQuery.list();
 
         bankAccountArrayList = new ArrayList<Bankaccount>();
