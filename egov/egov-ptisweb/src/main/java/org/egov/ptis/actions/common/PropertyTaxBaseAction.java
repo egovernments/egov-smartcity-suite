@@ -359,14 +359,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         if (floor.getPropertyOccupation() == null || null == floor.getPropertyOccupation().getId()
                                 || floor.getPropertyOccupation().getId().toString().equals("-1"))
                             addActionError(getText("mandatory.floor.occ"));
-                        else {
-                            final PropertyOccupation occupancy = (PropertyOccupation) getPersistenceService()
-                                    .find("from PropertyOccupation po where po.id = ?",
-                                            floor.getPropertyOccupation().getId());
-                            if (occupancy.getOccupation().equalsIgnoreCase(OCC_TENANT)
-                                    && floor.getOccupantName().equals(""))
-                                addActionError(getText("mandatory.floor.occupantName"));
-                        }
 
                         if (floor.getOccupancyDate() == null || floor.getOccupancyDate().equals(""))
                             addActionError(getText("mandatory.floor.docOcc"));
