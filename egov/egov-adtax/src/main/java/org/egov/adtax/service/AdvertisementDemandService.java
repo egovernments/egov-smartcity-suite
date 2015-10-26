@@ -62,9 +62,9 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.utils.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -307,18 +307,24 @@ public class AdvertisementDemandService {
 
     }
 
+    private int noOfMonths(final Date startDate, final Date endDate) {
+        DateTime sDate = new DateTime(startDate);
+        DateTime eDate = new DateTime(endDate);
+        final int yearDiff = eDate.getYear() - sDate.getYear();
+        int noOfMonths = yearDiff * 12 + eDate.getMonthOfYear() - sDate.getMonthOfYear();
+        return noOfMonths;
+
+    }
+    
     private BigDecimal calculatePenalty(BigDecimal penaltyAmt,final EgDemandDetails demandDtl, final BigDecimal amount, Date penaltyCalculationDate) {
         int noofmonths = 0;
 
         if (penaltyCalculationDate != null)
-            noofmonths = (DateUtils.noOfMonths(penaltyCalculationDate, new Date()));
+            noofmonths = (noOfMonths(penaltyCalculationDate, new Date())); 
         else
-            noofmonths = (DateUtils.noOfMonths(demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate(),
+            noofmonths = (noOfMonths(demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate(),
                     new Date()));
-
-        if (noofmonths > 0)
-            noofmonths++;
-
+      
         if (noofmonths > 0) {
             penaltyAmt = penaltyAmt.add(amount.multiply(BigDecimal.valueOf(noofmonths))
                     .divide(BigDecimal.valueOf(100).setScale(0, BigDecimal.ROUND_HALF_UP))
