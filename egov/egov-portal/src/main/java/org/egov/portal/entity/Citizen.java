@@ -1,4 +1,4 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency,
+/** eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -62,7 +62,7 @@ public class Citizen extends User {
     private String activationCode;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "eg_userdevice", joinColumns = @JoinColumn(name = "userid") , inverseJoinColumns = @JoinColumn(name = "deviceid") )
+    @JoinTable(name = "eg_userdevice", joinColumns = @JoinColumn(name = "userid"), inverseJoinColumns = @JoinColumn(name = "deviceid"))
     private Set<Device> devices = new HashSet<>();
 
     public Citizen() {
