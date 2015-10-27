@@ -40,6 +40,7 @@
 package org.egov.infra.messaging.sms;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,7 +95,7 @@ class SMSService {
                             urlParameters.add(new BasicNameValuePair(paramNameValue[0], paramNameValue[1]));
                         }
                 }
-                post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                post.setEntity(new UrlEncodedFormEntity(urlParameters, StandardCharsets.UTF_8));
                 final HttpResponse response = client.execute(post);
                 final String responseCode = IOUtils.toString(response.getEntity().getContent());
                 LOGGER.info("SMS sending completed with response code [{}] - [{}]", responseCode,

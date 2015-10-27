@@ -72,7 +72,7 @@ public class SecurityUtils {
 
     public static boolean isCurrentUserAuthenticated() {
         final Optional<Authentication> authentication = getCurrentAuthentication();
-        return authentication.isPresent() ? authentication.get().isAuthenticated() : false;
+        return authentication.isPresent() &&  authentication.get().isAuthenticated();
     }
 
     public static boolean isCurrentUserAnonymous() {
