@@ -420,7 +420,8 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                  * .withDateInfo(currentDate.toDate());
                  */
                 abstractEstimate.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
-                        .withStateValue(AbstractEstimate.EstimateStatus.CANCELLED.toString()).withDateInfo(currentDate.toDate());
+                        .withStateValue(AbstractEstimate.EstimateStatus.CANCELLED.toString()).withDateInfo(currentDate.toDate())
+                        .withNextAction("END");
                 abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE,
                         AbstractEstimate.EstimateStatus.CANCELLED.toString()));
             }

@@ -77,7 +77,7 @@
 					Deposit Code cancellation number for the estimate is <s:property value="%{budgetRejectionNo}" />	
 				<br />
 				</s:if>	 	 --%>				
-				<s:if test="%{model.egwStatus.code=='ADMIN_SANCTIONED' || model.currentState.value=='END'}">
+				<s:if test="%{model.egwStatus.code=='ADMIN_SANCTIONED' || model.egwStatus.code=='CANCELLED'}">
 		 		</s:if>
 				<s:else>	
 					The File has been forwarded to <s:property value="%{employeeName}" />(<s:property value="%{designation}" />)
