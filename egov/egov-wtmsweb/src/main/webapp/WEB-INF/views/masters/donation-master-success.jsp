@@ -45,7 +45,7 @@
 <script src="<c:url value='/resources/js/app/designation.js'/>"></script>
 		 
 			
-			<form:form  method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="donationMaster" id="donationDetailsform" >
+			<form:form  method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="donationDetails" id="donationDetailsform" >
 				<div class="row">
 						<div class="col-md-12">
 							<c:if test="${not empty message}">
@@ -64,14 +64,14 @@
 											<spring:message code="lbl.propertytype"/> 
 										</div>
 										<div class="col-md-3 col-xs-6 add-margin view-content">
-											<c:out value="${donationMaster.propertyType.name}"/>
+											<c:out value="${donationDetails.donationHeader.propertyType.name}"/>
 										</div>
 										
 										<div class="col-md-3 col-xs-6 add-margin">
 											<spring:message code="lbl.category"/>
 										</div>
 										<div class="col-md-3 col-xs-6 add-margin view-content">
-											<c:out value="${donationMaster.categoryType.name}"/>
+											<c:out value="${donationDetails.donationHeader.category.name}"/>
 										</div>
 									</div>
 									<div class="row add-border">
@@ -79,14 +79,14 @@
 											<spring:message code="lbl.usagetype"/>  
 										</div>
 										<div class="col-md-3 col-xs-6 add-margin view-content">
-											<c:out value="${donationMaster.usageType.name}"/>
+											<c:out value="${donationDetails.donationHeader.usageType.name}"/>
 										</div>
 										
 										<div class="col-md-3 col-xs-6 add-margin">
 											<spring:message code="lbl.hscpipesize.max.inches"/>
 										</div>
 										<div class="col-md-3 col-xs-6 add-margin view-content">
-											<c:out value="${donationMaster.maxPipeSize.code}"/>
+											<c:out value="${donationDetails.donationHeader.maxPipeSize.code}"/>
 										</div>
 									</div>
 									<div class="row add-border">
@@ -94,7 +94,7 @@
 											<spring:message code="lbl.hscpipesize.min.inches"/>
 										</div>
 										<div class="col-md-3 col-xs-6 add-margin view-content">
-											<c:out value="${donationMaster.minPipeSize.code}"/>
+											<c:out value="${donationDetails.donationHeader.minPipeSize.code}"/>
 										</div>
 										
 										<div class="col-md-3 col-xs-6 add-margin">
@@ -102,7 +102,7 @@
 										</div>
 										<div class="col-md-3 col-xs-6 add-margin view-content">
 										
-											<c:out value="${donationMaster.donationAmount}"/>
+											<c:out value="${donationDetails.amount}"/>
 										</div>
 									</div>
 									<div class="row add-border">
@@ -110,7 +110,7 @@
 											<spring:message code="lbl.effective.fromdate"/>
 										</div>
 										<div class="col-md-3 col-xs-6 add-margin view-content">
-										<fmt:formatDate value="${donationMaster.effectiveDate}" var="DOB"
+										<fmt:formatDate value="${donationDetails.fromDate}" var="DOB"
 															pattern="dd/MM/yyyy" />
 											<c:out value="${DOB}"/>
 											<%-- <c:out value="${donationMaster.effectiveDate}"/> --%>

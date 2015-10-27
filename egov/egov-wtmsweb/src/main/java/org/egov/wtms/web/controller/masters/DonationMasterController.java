@@ -1,12 +1,13 @@
-package org.egov.wtms.web.controller.application;
+package org.egov.wtms.web.controller.masters;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import javax.validation.Valid;
 
-import org.egov.wtms.masters.entity.DonationMaster;
+import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
-import org.egov.wtms.masters.service.DonationMasterService;
+import org.egov.wtms.masters.service.DonationDetailsService;
+import org.egov.wtms.masters.service.DonationHeaderService;
 import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.PropertyTypeService;
 import org.egov.wtms.masters.service.UsageTypeService;
@@ -21,18 +22,25 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "/application")
-public class DonationMasterController extends GenericConnectionController {
+@RequestMapping(value = "/masters")
+public class DonationMasterController {
 
     @Autowired
-    private DonationMasterService donationMasterService;
+    private DonationDetailsService donationDetailsService;
 
+    @Autowired
     private final PropertyTypeService propertyTypeService;
 
+    @Autowired
+    private final DonationHeaderService donationHeaderService;
+
+    @Autowired
     private final ConnectionCategoryService connectionCategoryService;
 
+    @Autowired
     private final UsageTypeService usageTypeService;
 
+    @Autowired
     private final PipeSizeService pipeSizeService;
 
     public static final String CONTENTTYPE_JSON = "application/json";
@@ -40,18 +48,18 @@ public class DonationMasterController extends GenericConnectionController {
     @Autowired
     public DonationMasterController(final PropertyTypeService propertyTypeService,
             final ConnectionCategoryService connectionCategoryService, final UsageTypeService usageTypeService,
-            final PipeSizeService pipeSizeService) {
+            final PipeSizeService pipeSizeService, final DonationHeaderService donationHeaderService) {
         this.propertyTypeService = propertyTypeService;
         this.connectionCategoryService = connectionCategoryService;
         this.usageTypeService = usageTypeService;
         this.pipeSizeService = pipeSizeService;
-
+        this.donationHeaderService = donationHeaderService;
     }
 
     @RequestMapping(value = "/donationMaster", method = GET)
     public String viewForm(final Model model) {
-        final DonationMaster donationMaster = new DonationMaster();
-        model.addAttribute("donationMaster", donationMaster);
+        final DonationDetails donationDetails = new DonationDetails();
+        model.addAttribute("donationDetails", donationDetails);
         model.addAttribute("typeOfConnection", WaterTaxConstants.DONATIONMASTER);
         model.addAttribute("categoryType", connectionCategoryService.getAllActiveConnectionCategory());
         model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
@@ -62,14 +70,14 @@ public class DonationMasterController extends GenericConnectionController {
     }
 
     @RequestMapping(value = "/donationMaster", method = RequestMethod.POST)
-    public String addDonationMasterDetails(@Valid @ModelAttribute final DonationMaster donationMaster,
+    public String addDonationMasterDetails(@Valid @ModelAttribute final DonationDetails donationDetails,
             final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
-        System.out.println(donationMaster.getPropertyType());
-        if (!resultBinder.hasErrors())
+        if (resultBinder.hasErrors())
             return "donation-master";
-        donationMaster.setActive(Boolean.TRUE);
-        donationMasterService.createDonationMaster(donationMaster);
-        redirectAttrs.addFlashAttribute("donationMaster", donationMaster);
+        donationDetails.getDonationHeader().setActive(true);
+        donationHeaderService.createDonationHeader(donationDetails.getDonationHeader());
+        donationDetailsService.createDonationDetails(donationDetails);
+        redirectAttrs.addFlashAttribute("donationDetails", donationDetails);
         model.addAttribute("message", "Donation Master Data created successfully");
         return "donation-master-success";
     }

@@ -44,7 +44,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
     <%--  <form role="form" class="form-horizontal form-groups-bordered"> --%>
-    <form:form method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="donationMaster" id="donationDetailsform"
+    <form:form method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="donationDetails" id="donationDetailsform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 
@@ -52,7 +52,7 @@
     <label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.propertytype" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="propertyType" data-first-option="false" id="propertyType"
+		<form:select path="donationHeader.propertyType" data-first-option="false" id="propertyType"
 			cssClass="form-control" required="required" >
 			<form:option value="">
 				<spring:message code="lbl.select" />
@@ -60,12 +60,12 @@
 			<form:options items="${propertyType}" itemValue="id"
 				itemLabel="name" />
 		</form:select>		
-		<form:errors path="propertyType" cssClass="add-margin error-msg" />					
+		<form:errors path="donationHeader.propertyType" cssClass="add-margin error-msg" />					
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.category" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="categoryType" data-first-option="false" id="connectionCategorie"
+		<form:select path="donationHeader.category" data-first-option="false" id="connectionCategorie"
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
@@ -73,7 +73,7 @@
 			<form:options items="${categoryType}" itemValue="id"
 				itemLabel="name" />
 		</form:select>
-		<form:errors path="categoryType" cssClass="add-margin error-msg" />
+		<form:errors path="donationHeader.category" cssClass="add-margin error-msg" />
 	</div>
 	
 </div>
@@ -81,7 +81,7 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.usagetype" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="usageType" data-first-option="false" id="usageType"
+		<form:select path="donationHeader.usageType" data-first-option="false" id="usageType"
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
@@ -89,12 +89,12 @@
 			<form:options items="${usageType}" itemValue="id"
 				itemLabel="name" />
 		</form:select>
-		<form:errors path="usageType" cssClass="add-margin error-msg" />
+		<form:errors path="donationHeader.usageType" cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.hscpipesize.max.inches" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="maxPipeSize" data-first-option="false" id="pipeSize"
+		<form:select path="donationHeader.maxPipeSize" data-first-option="false" id="pipeSize"
 			cssClass="form-control" required="required" >
 			<form:option value="">
 				<spring:message code="lbl.select" />
@@ -102,7 +102,7 @@
 			<form:options items="${maxPipeSize}" itemValue="id" 
 				itemLabel="code" />
 		</form:select>		
-		<form:errors path="maxPipeSize" cssClass="add-margin error-msg" />					
+		<form:errors path="donationHeader.maxPipeSize" cssClass="add-margin error-msg" />					
 	</div>
 </div>
 
@@ -110,7 +110,7 @@
 <label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.hscpipesize.min.inches" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="minPipeSize" data-first-option="false" id="minpipeSize"
+		<form:select path="donationHeader.minPipeSize" data-first-option="false" id="minpipeSize"
 			cssClass="form-control" required="required" >
 			<form:option value="">
 				<spring:message code="lbl.select" />
@@ -118,23 +118,23 @@
 			<form:options items="${minPipeSize}" itemValue="id" 
 				itemLabel="code" />
 		</form:select>		
-		<form:errors path="minPipeSize" cssClass="add-margin error-msg" />					
+		<form:errors path="donationHeader.minPipeSize" cssClass="add-margin error-msg" />					
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.donation.amount" /><span class="mandatory"></span></label> 
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="number" maxlength="6" id="donationAmount" path="donationAmount" />
-		<form:errors path="donationAmount" cssClass="add-margin error-msg" />		
+		<form:input class="form-control patternvalidation" data-pattern="number" maxlength="6" id="donationAmount" path="amount" />
+		<form:errors path="amount" cssClass="add-margin error-msg" />		
 	</div>
 </div>
 <div class="form-group">
 <label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.effective.fromdate" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input  path="effectiveDate"  
+							<form:input  path="fromDate"  
 								class="form-control datepicker" data-date-end-date="0d"
 								id="effectiveDate" data-inputmask="'mask': 'd/m/y'" required="required" />
-								<form:errors path="effectiveDate" cssClass="add-margin error-msg" />
+								<form:errors path="fromDate" cssClass="add-margin error-msg" />
 						</div>
 </div>
 <form:hidden id="typeOfConnection" path="" value="${typeOfConnection}"/>

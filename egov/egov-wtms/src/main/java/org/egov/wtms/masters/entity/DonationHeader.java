@@ -77,6 +77,13 @@ public class DonationHeader extends AbstractAuditable {
     @NotNull
     @JoinColumn(name = "usagetype", nullable = false)
     private UsageType usageType;
+    
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "propertytype", nullable = false)
+    private PropertyType propertyType;
+
+    
 
     @ManyToOne
     @NotNull
@@ -87,12 +94,6 @@ public class DonationHeader extends AbstractAuditable {
     @NotNull
     @JoinColumn(name = "maxpipesize", nullable = false)
     private PipeSize maxPipeSize;
-
-    @NotNull
-    private Long minSumpCapacity;
-
-    @NotNull
-    private Long maxSumpCapacity;
 
     private boolean active;
 
@@ -140,21 +141,13 @@ public class DonationHeader extends AbstractAuditable {
     public void setMaxPipeSize(final PipeSize maxPipeSize) {
         this.maxPipeSize = maxPipeSize;
     }
-
-    public Long getMinSumpCapacity() {
-        return minSumpCapacity;
+    
+    public PropertyType getPropertyType() {
+        return propertyType;
     }
 
-    public void setMinSumpCapacity(final Long minSumpCapacity) {
-        this.minSumpCapacity = minSumpCapacity;
-    }
-
-    public Long getMaxSumpCapacity() {
-        return maxSumpCapacity;
-    }
-
-    public void setMaxSumpCapacity(final Long maxSumpCapacity) {
-        this.maxSumpCapacity = maxSumpCapacity;
+    public void setPropertyType(PropertyType propertyType) {
+        this.propertyType = propertyType;
     }
 
     public boolean isActive() {

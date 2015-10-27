@@ -157,11 +157,11 @@
     </definition>
     <definition name="donation-master" extends="base_layout">
         <put-attribute name="page-title" value="title.donation.master" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/application/donation-master.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/donation-master.jsp"/>
     </definition>
     <definition name="donation-master-success" extends="base_layout">
         <put-attribute name="page-title" value="title.donation.master" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/application/donation-master-success.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/donation-master-success.jsp"/>
     </definition>
     
 </tiles-definitions>
