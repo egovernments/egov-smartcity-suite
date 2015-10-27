@@ -183,7 +183,7 @@
 						</td>
 					</tr>
 					<s:if
-						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED.equals(state.value)}">
+						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED.equalsIgnoreCase(state.value)}">
 						<tr>
 							<td colspan="5">
 								<div class="headingsmallbg">
@@ -335,7 +335,7 @@
 									value="%{#docDate}" /></span></td>
 					</tr>
 					<s:if
-						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.equals(userDesignation)}">
+						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesignation)}">
 						<tr>
 							<td class="bluebox2">&nbsp;</td>
 							<td class="bluebox"><s:text name="docValue" /> :</td>
