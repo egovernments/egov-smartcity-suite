@@ -123,7 +123,6 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
     private static final String CANCEL_ACTION = "Cancel";
     private static final String SAVE_ACTION = "Save";
     private static final Object REJECT_ACTION = "Reject";
-    private static final Object APPROVE_ACTION = "Approve";
     private static final Object FORWARD_ACTION = "Forward";
     private static final String SOURCE_SEARCH = "search";
     /* private static final String SOURCE_INBOX = "inbox"; */
@@ -416,15 +415,19 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
 
         if (CANCEL_ACTION.equals(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
+                /*
+                 * abstractEstimate.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                 * .withDateInfo(currentDate.toDate());
+                 */
                 abstractEstimate.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
-                        .withDateInfo(currentDate.toDate());
+                        .withStateValue(AbstractEstimate.EstimateStatus.CANCELLED.toString()).withDateInfo(currentDate.toDate());
                 abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE,
                         AbstractEstimate.EstimateStatus.CANCELLED.toString()));
             }
         } else if (REJECT_ACTION.equals(workFlowAction)) {
             abstractEstimate.transition(true).withSenderName(user.getName()).withComments(approverComments)
                     .withStateValue(AbstractEstimate.EstimateStatus.REJECTED.toString()).withDateInfo(currentDate.toDate())
-                    .withOwner(wfInitiator.getPosition());
+                    .withOwner(wfInitiator.getPosition()).withNextAction("");
             abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE,
                     AbstractEstimate.EstimateStatus.REJECTED.toString()));
 
@@ -442,8 +445,9 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
             if (null != approverPositionId && approverPositionId != -1)
                 position = (Position) persistenceService.find("from Position where id=?", approverPositionId);
             // position = positionMasterService.getPositionById(approverPositionId);
-            else if (APPROVE_ACTION.equals(workFlowAction))
-                position = abstractEstimate.getCurrentState().getOwnerPosition();
+            /*
+             * else if (APPROVE_ACTION.equals(workFlowAction)) position = abstractEstimate.getCurrentState().getOwnerPosition();
+             */
             if (abstractEstimate.getState() == null) {
                 final WorkFlowMatrix wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
                         null, getAdditionalRule(), currentState, null);
@@ -452,18 +456,24 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                         .withNextAction(wfmatrix.getNextAction());
                 abstractEstimate
                         .setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE, wfmatrix.getNextStatus()));
-            } else if (abstractEstimate.getCurrentState().getNextAction() != null
-                    && abstractEstimate.getCurrentState().getNextAction().equalsIgnoreCase("END")) {
-                abstractEstimate.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
-                        .withDateInfo(currentDate.toDate());
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE,
-                        abstractEstimate.getCurrentState().getValue()));
-            } else {
+            } /*
+               * else if (abstractEstimate.getCurrentState().getNextAction() != null &&
+               * abstractEstimate.getCurrentState().getNextAction().equalsIgnoreCase("END")) {
+               * abstractEstimate.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+               * .withDateInfo(currentDate.toDate());
+               * abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE,
+               * abstractEstimate.getCurrentState().getValue())); }
+               */else {
                 final WorkFlowMatrix wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
                         null, getAdditionalRule(), abstractEstimate.getCurrentState().getValue(), null);
-                abstractEstimate.transition(true).withSenderName(user.getName()).withComments(approverComments)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(position)
-                        .withNextAction(wfmatrix.getNextAction());
+                if (wfmatrix.getNextAction() != null && wfmatrix.getNextAction().equalsIgnoreCase("END"))
+                    abstractEstimate.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                            .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
+                            .withNextAction(wfmatrix.getNextAction());
+                else
+                    abstractEstimate.transition(true).withSenderName(user.getName()).withComments(approverComments)
+                            .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(position)
+                            .withNextAction(wfmatrix.getNextAction());
                 abstractEstimate
                         .setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE, wfmatrix.getNextStatus()));
             }
