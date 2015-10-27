@@ -54,7 +54,7 @@ function noBack() {
 function onPageLoad() {
 	showHideMap();
 	setCurrentdate();
-	<s:if test="%{getNextAction()!='END'}">
+	<s:if test="%{sourcepage!='search' && getNextAction()!='END'}">
 		loadDesignationFromMatrix();
 	</s:if>
 	noBack();
