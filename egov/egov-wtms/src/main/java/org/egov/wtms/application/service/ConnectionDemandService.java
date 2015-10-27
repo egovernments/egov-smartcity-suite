@@ -172,7 +172,7 @@ public class ConnectionDemandService {
                     .equals(waterConnectionDetails.getConnectionType()))))
 
                 donationDetails = donationDetailsService.findByDonationHeader(donationHeaderService
-                        .findByCategoryandUsageandMinPipeSize(waterConnectionDetails.getCategory(),
+                        .findByPropertyandCategoryandUsageandMinPipeSize(waterConnectionDetails.getPropertyType(),waterConnectionDetails.getCategory(),
                                 waterConnectionDetails.getUsageType(), waterConnectionDetails.getPipeSize()
                                         .getSizeInInch()));
 
