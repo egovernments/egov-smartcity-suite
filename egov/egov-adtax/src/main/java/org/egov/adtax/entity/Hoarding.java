@@ -105,7 +105,6 @@ public class Hoarding extends AbstractAuditable {
     @Length(max = 25)
     private String hoardingNumber;
 
-    @NotNull
     @SafeHtml
     @Length(max = 125)
     private String hoardingName;
@@ -145,6 +144,10 @@ public class Hoarding extends AbstractAuditable {
     @Length(max = 125)
     private String ownerDetail;
 
+    @SafeHtml
+    @Length(max = 50)
+    private String electricityServiceNumber;
+      
     @NotNull
     @Enumerated(EnumType.ORDINAL)
     private HoardingStatus status;
@@ -551,6 +554,14 @@ public class Hoarding extends AbstractAuditable {
 
     public void setElectionWard(Boundary electionWard) {
         this.electionWard = electionWard;
+    }
+
+    public String getElectricityServiceNumber() {
+        return electricityServiceNumber;
+    }
+
+    public void setElectricityServiceNumber(String electricityServiceNumber) {
+        this.electricityServiceNumber = electricityServiceNumber;
     }
 
   

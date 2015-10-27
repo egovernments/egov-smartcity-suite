@@ -93,14 +93,14 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
+								<%-- <label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.name"/>
 								
 								</label>
 								<div class="col-sm-3 add-margin view-content">
 									${hoarding.hoardingName}
-								</div>
-								<label class="col-sm-2 control-label text-right">
+								</div> --%>
+								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.type"/>
 								</label>
 								<div class="col-sm-3 add-margin view-content dynamic-span capitalize">
@@ -259,13 +259,13 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
+								<%-- <label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.breadth"/>
 								</label>
 								<div class="col-sm-3 add-margin view-content">
 									${hoarding.breadth}
-								</div>
-								<label class="col-sm-2 control-label text-right">
+								</div> --%>
+								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.total.height"/>
 								
 								</label>
@@ -295,10 +295,16 @@
 								<div class="col-sm-3 add-margin view-content">
 									<c:out value="${hoarding.advertisementDuration}" default="N/A"/>
 								</div>
+								<label class="col-sm-2 control-label text-right">
+								<spring:message code="lbl.hoarding.electricityservicenumber"/>
+								</label>
+								<div class="col-sm-3 add-margin">
+								  		<c:out value="${hoarding.electricityServiceNumber}" default="N/A"/>
+								</div>
 							</div>
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-								<spring:message code="lbl.fee.details"/>
+								<spring:message code="lbl.hoarding.tax.feeDetails"/>
 								</div>
 							</div>
 							<div class="form-group">
