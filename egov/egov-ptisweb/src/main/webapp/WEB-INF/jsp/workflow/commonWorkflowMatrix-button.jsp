@@ -35,7 +35,7 @@
 </script>
 <div class="buttonbottom" align="center">
 	<s:hidden id="workFlowAction" name="workFlowAction"/>
-	<table>
+	<table style="width: 100%; text-align: center;">
 		<tr>
 			<td><s:iterator value="%{getValidActions()}" var="name">
 					<s:if test="%{name!=''}">

@@ -72,6 +72,7 @@ public class MutationFeeCollection extends TaxCollection {
     @Autowired
     private PropertyTransferService propertyTransferService;
     
+    @Autowired
     private PersistenceService persistenceService;
 
     @Autowired
