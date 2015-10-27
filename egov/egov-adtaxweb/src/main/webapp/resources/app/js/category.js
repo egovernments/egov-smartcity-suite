@@ -52,5 +52,18 @@ jQuery(document).ready(function($) {
 		$('#categoryForm').attr('action', action);
 	});
 	
+	$("#subcateditbutton").click(function() {
+		var action = '/adtax/subcategory/updateSubCategory/' + $('#subcategorydesc').val();
+		$('#subcategoryform').attr('method', 'get');
+		$('#subcategoryform').attr('action', action);
+	});
+	
+	$("#subcateditbuttonview").click(function() {
+		var action = '/adtax/subcategory/success/' + $('#subcategorydesc').val();
+		$('#subcategoryform').attr('method', 'get');
+		$('#subcategoryform').attr('action', action);
+	});
+	
+	
 });
 

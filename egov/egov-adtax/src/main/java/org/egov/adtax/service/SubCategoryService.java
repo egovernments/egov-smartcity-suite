@@ -62,4 +62,22 @@ public class SubCategoryService {
         return subCategoryRepository.getAllActiveSubCategoryByCategoryId(categoryId);
     }
 
+    public List<SubCategory> getAllSubCategory() {
+        return subCategoryRepository.getAllSubCategory();
+    }
+    @Transactional
+    public SubCategory  createSubCategory( SubCategory subCategory) {
+       return subCategoryRepository.save(subCategory);
+        
+    }
+    @Transactional
+    public SubCategory  updateSubCategory( SubCategory subCategory) {
+       return subCategoryRepository.save(subCategory);
+        
+    }
+
+    public SubCategory getSubCategoryById(Long id) {
+        return subCategoryRepository.findOne(id);
+    }
+
 }

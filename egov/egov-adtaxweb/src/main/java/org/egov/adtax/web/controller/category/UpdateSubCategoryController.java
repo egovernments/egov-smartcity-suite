@@ -42,10 +42,14 @@ package org.egov.adtax.web.controller.category;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.egov.adtax.entity.HoardingCategory;
+import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.service.HoardingCategoryService;
+import org.egov.adtax.service.SubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -57,49 +61,56 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/category")
-public class UpdateCategoryController {
+@RequestMapping("/subcategory")
+public class UpdateSubCategoryController {
 
-    private final HoardingCategoryService hoardingCategoryService;
+    private final SubCategoryService subCategoryService;
+  
+    @Autowired
+    private HoardingCategoryService hoardingCategoryService;
 
     @Autowired
-    public UpdateCategoryController(final HoardingCategoryService hoardingCategoryService) {
-        this.hoardingCategoryService = hoardingCategoryService;
+    public UpdateSubCategoryController(final SubCategoryService subCategoryService) {
+        this.subCategoryService = subCategoryService;
     }
 
     @ModelAttribute
-    public HoardingCategory hoardingCategoryModel(@PathVariable final Long id, final Model model) {
-        return hoardingCategoryService.getCategoryById(id);
+    public SubCategory subCategoryModel(@PathVariable final Long id, final Model model) {
+        return subCategoryService.getSubCategoryById(id);
     }
     
+    @ModelAttribute(value = "hoardingCategories")
+    public List<HoardingCategory> getAllHoardingCategory() {
+        return hoardingCategoryService.getAllHoardingCategory();
+    }
     @RequestMapping(value = "/update/{id}", method = POST) 
-    public String update(@Valid @ModelAttribute final HoardingCategory hoardingCategory, final BindingResult errors,
+    public String update(@Valid @ModelAttribute final SubCategory subCategory, final BindingResult errors,
             final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
-            return "category-form";
-        hoardingCategoryService.updateHoardingCategory(hoardingCategory);
-        redirectAttrs.addFlashAttribute("hoardingCategory", hoardingCategory);
-        redirectAttrs.addFlashAttribute("message", "message.category.update"); 
-        return "redirect:/category/success/" + hoardingCategory.getId();
+            return "subcategory-form";
+        subCategoryService.updateSubCategory(subCategory);
+        redirectAttrs.addFlashAttribute("subCategory", subCategory);
+        redirectAttrs.addFlashAttribute("message", "message.subcategory.update"); 
+        return "redirect:/subcategory/success/" + subCategory.getId();
     }
     
     
-    @RequestMapping(value = "/updateCategory/{id}", method = GET)
+    @RequestMapping(value = "/updateSubCategory/{id}", method = GET)
     public String update(@PathVariable final Long id) {
-        return "redirect:/category/update/" + id;
+        return "redirect:/subcategory/update/" + id;
     }
 
     
     @RequestMapping(value = "/update/{id}", method = GET)
-    public ModelAndView updateView(@PathVariable("id") final Long id, @ModelAttribute final HoardingCategory hoardingCategory) {
-         return new ModelAndView("category/category-form", "hoardingCategory", hoardingCategoryService.getCategoryById(id));
+    public ModelAndView updateView(@PathVariable("id") final Long id, @ModelAttribute final SubCategory subcategory) {
+         return new ModelAndView("subcategory/subcategory-form", "subCategory", subCategoryService.getSubCategoryById(id));
 
     }
 
     @RequestMapping(value = "/view/{id}", method = GET)
-    public String view(@ModelAttribute final HoardingCategory hoardingCategory, final BindingResult errors) {
+    public String view(@ModelAttribute final SubCategory subCategory, final BindingResult errors) {
         if (errors.hasErrors())
-            return "category-search";
-        return "redirect:/category/success/" + hoardingCategory.getId();
+            return "subcategory-search";
+        return "redirect:/subcategory/success/" + subCategory.getId();
     }
 }

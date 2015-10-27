@@ -179,6 +179,26 @@
     </definition>
 
 
+  <definition name="subcategory-form" extends="base_layout">
+    	<put-attribute name="page-title" value="title.subcategory.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/category/subcategory-form.jsp"/>
+    </definition>
+        <definition name="subcategory/subcategory-form" extends="base_layout">
+    	<put-attribute name="page-title" value="title.subcategory.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/category/subcategory-form.jsp"/>
+    </definition>
+    
+    <definition name="subcategory-search" extends="base_layout">
+    	<put-attribute name="page-title" value="title.subcategory.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/category/subcategory-search.jsp"/>
+    </definition>
+    
+    <definition name="subcategory/subcategory-success" extends="base_layout">
+    	<put-attribute name="page-title" value="title.subcategory.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/category/subcategory-success.jsp"/>
+    </definition>
+
+
   <definition name="collectAdvtax-redirection" extends="base_layout">	 
         <put-attribute name="page-title" value="title.collect.Advtax.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/collection/collectAdvtax-redirection.jsp"/>

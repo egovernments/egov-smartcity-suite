@@ -44,30 +44,34 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<form:form  id="categorysuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="hoardingCategory" >
+		<form:form  id="subcategorysuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="subCategory" >
 	 		<c:if test="${not empty message}">
                    <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
             </c:if>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading ">
 					<div class="panel-title">
-						<strong><spring:message code="title.category.details"/></strong>
+						<strong><spring:message code="title.subcategory.details"/></strong>
 					</div>
 				</div>
 				
 				<div class="panel-body "> 										
 					<div class="row add-border">
-                    	<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.category.name"/></div>
+                    	<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.subcategory.name"/></div>
                         <div class="col-md-3 col-xs-6 add-margin view-content">
-                        	<c:out value="${hoardingCategory.name}"></c:out>
+                        	<c:out value="${subCategory.description}"></c:out>
                         </div>
-                        <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.category.code"/></div>
+                        <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.subcategory.code"/></div>
 						<div class="col-sm-3 add-margin view-content">
-                           	<c:out value="${hoardingCategory.code}"></c:out>
+                           	<c:out value="${subCategory.code}"></c:out>
 						</div>
-                        <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.category.active"/></div>
+						  <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.subcategory.category"/></div>
 						<div class="col-sm-3 add-margin view-content">
-                           	<c:out value="${hoardingCategory.active}"></c:out>
+                           	<c:out value="${subCategory.category.name}"></c:out>
+						</div>
+                        <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.subcategory.active"/></div>
+						<div class="col-sm-3 add-margin view-content">
+                           	<c:out value="${subCategory.active}"></c:out>
 						</div>
                 
                     </div>
