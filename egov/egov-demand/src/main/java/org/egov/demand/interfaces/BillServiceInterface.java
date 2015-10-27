@@ -108,6 +108,7 @@ public abstract class BillServiceInterface {
 		EgBill bill = new EgBill();
 		bill.setBillNo(billObj.getReferenceNumber());
 		bill.setBoundaryNum(billObj.getBoundaryNum().intValue());
+		bill.setTransanctionReferenceNumber(billObj.getTransanctionReferenceNumber());
 		bill.setBoundaryType(billObj.getBoundaryType());
 		bill.setCitizenAddress(billObj.getBillAddress());
 		bill.setCitizenName(billObj.getBillPayee());

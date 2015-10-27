@@ -563,7 +563,7 @@ public class PropertyExternalService {
     }
 
     public ReceiptDetails payPropertyTax(final String assessmentNo, final String paymentMode, final BigDecimal totalAmount,
-            final String paidBy) {
+            final String paidBy,final String transanctionId) {
         ReceiptDetails receiptDetails = null;
         ErrorDetails errorDetails = null;
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
@@ -574,6 +574,7 @@ public class PropertyExternalService {
                 .getPropertyID().getWard().getBoundaryNum().toString()));
         propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_MANUAL));
         propertyTaxBillable.setLevyPenalty(Boolean.TRUE);
+        propertyTaxBillable.setTransanctionReferenceNumber(transanctionId);
         final EgBill egBill = ptBillServiceImpl.generateBill(propertyTaxBillable);
 
         final CollectionHelper collectionHelper = new CollectionHelper(egBill);
@@ -595,7 +596,7 @@ public class PropertyExternalService {
             receiptDetails.setPaidBy(billReceiptInfo.getPaidBy());
             receiptDetails.setTotalAmountPaid(billReceiptInfo.getTotalAmount());
             receiptDetails.setCollectionType(billReceiptInfo.getCollectionType());
-
+            receiptDetails.setTransanctionId(billReceiptInfo.getManualReceiptNumber());
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);

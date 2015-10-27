@@ -88,6 +88,7 @@ public class EgBill implements java.io.Serializable {
 	private String consumerId;
 	private String displayMessage;
 	private Boolean callBackForApportion;
+	private String transanctionReferenceNumber;
 
 	@Override
 	public String toString() {
@@ -394,7 +395,15 @@ public class EgBill implements java.io.Serializable {
 		this.callBackForApportion = callBackForApportion;
 	}
 
-	@Override
+	public String getTransanctionReferenceNumber() {
+        return transanctionReferenceNumber;
+    }
+
+    public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
+        this.transanctionReferenceNumber = transanctionReferenceNumber;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;

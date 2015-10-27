@@ -104,6 +104,8 @@ public interface Billable {
 	String getDescription();
 
 	String getDisplayMessage();
+	
+	String getTransanctionReferenceNumber();
 
 	/**
 	 * Comma separated list of payment modes not allowed for the Demand.

@@ -236,7 +236,7 @@ public class AssessmentService {
 				responseJson = getJSONResponse(errorDetails);
 			} else {
 				ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(assessmentNo, paymentMode,
-						totalAmount, paidBy);
+						totalAmount, paidBy,null);
 				responseJson = getJSONResponse(receiptDetails);
 			}
 		}

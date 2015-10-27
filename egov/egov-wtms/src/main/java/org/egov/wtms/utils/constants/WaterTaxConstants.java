@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.utils.constants;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class WaterTaxConstants {
@@ -196,6 +197,7 @@ public class WaterTaxConstants {
     public static final String NONMETEREDDEMANDREASON = "Water tax charges";
     public static final String MASTERSTATUSACTIVE = "ACTIVE";
     public static final String MASTERSTATUSINACTIVE = "IN ACTIVE";
+   
 
     // HashMap map b/n Demand reason string and code
     public static final LinkedHashMap<String, String> NON_METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
@@ -209,4 +211,23 @@ public class WaterTaxConstants {
 
         }
     };
+    public static final String TOTAL_AMOUNT = "amount";
+    public final static String PAID_BY = "paidBy";
+    public static final HashMap<String, String> GLCODEMAP_FOR_CURRENTTAX = new HashMap<String, String>() {
+        /**
+         *
+         */
+        private static final long serialVersionUID = 540382999962934138L;
+
+        {
+
+            put(WATERTAX_DONATION_CHARGE, "1100201");
+            put(WATERTAX_SECURITY_CHARGE, "1100201");
+            put(WATERTAXREASONCODE, "1405016");
+           
+
+        }
+    };
+    public static final String THIRD_PARTY_ERR_CODE_SUCCESS = "WTMS-REST-0";
+    public static final String THIRD_PARTY_ERR_MSG_SUCCESS = "SUCCESS";
 }

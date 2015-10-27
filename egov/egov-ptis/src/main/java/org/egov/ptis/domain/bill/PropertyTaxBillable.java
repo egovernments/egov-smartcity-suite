@@ -138,6 +138,7 @@ RebateCalculator {
     private Boolean mutationFeePayment = Boolean.FALSE;
     private BigDecimal mutationFee;
     private String mutationApplicationNo;
+    private String transanctionReferenceNumber;
 
     private final DateTime PENALTY_EFFECTIVE_DATE_FIRST_HALF = new DateTime().withDayOfMonth(30).withMonthOfYear(06);
     private final DateTime PENALTY_EFFECTIVE_DATE_SECOND_HALF = new DateTime().withMonthOfYear(12).withDayOfMonth(31);
@@ -612,5 +613,13 @@ RebateCalculator {
 
     public void setMutationApplicationNo(final String mutationApplicationNo) {
         this.mutationApplicationNo = mutationApplicationNo;
+    }
+
+    public String getTransanctionReferenceNumber() {
+        return transanctionReferenceNumber;
+    }
+
+    public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
+        this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
 }

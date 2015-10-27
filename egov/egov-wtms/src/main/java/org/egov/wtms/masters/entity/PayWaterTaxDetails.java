@@ -38,35 +38,31 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.restapi.model;
+package org.egov.wtms.masters.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
-
-import javax.ws.rs.FormParam;
-
-import org.egov.ptis.domain.model.FloorDetails;
-import org.egov.ptis.domain.model.OwnerDetails;
 
 @SuppressWarnings("serial")
-public class PayPropertyTaxDetails implements Serializable {
+public class PayWaterTaxDetails implements Serializable {
 
-	private String assessmentNo;
+	private String consumerNo;
 	private String paymentMode;
 	private BigDecimal totalAmount;
 	private String paidBy;
 	private String transactionId;
 
-	public String getAssessmentNo() {
-		return assessmentNo;
-	}
+	
 
-	public void setAssessmentNo(String assessmentNo) {
-		this.assessmentNo = assessmentNo;
-	}
+	public String getConsumerNo() {
+        return consumerNo;
+    }
 
-	public String getPaymentMode() {
+    public void setConsumerNo(String consumerNo) {
+        this.consumerNo = consumerNo;
+    }
+
+    public String getPaymentMode() {
 		return paymentMode;
 	}
 
@@ -90,11 +86,11 @@ public class PayPropertyTaxDetails implements Serializable {
 		this.paidBy = paidBy;
 	}
 
-	@Override
-	public String toString() {
-		return "PayPropertyTaxDetails [assessmentNo=" + assessmentNo + ", paymentMode=" + paymentMode + ", totalAmount="
-				+ totalAmount + ", paidBy=" + paidBy + "]";
-	}
+    @Override
+    public String toString() {
+        return "PayWaterTaxDetails [consumerNo=" + consumerNo + ", paymentMode=" + paymentMode + ", totalAmount="
+                + totalAmount + ", paidBy=" + paidBy + "]";
+    }
 
     public String getTransactionId() {
         return transactionId;
@@ -103,5 +99,7 @@ public class PayPropertyTaxDetails implements Serializable {
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
     }
+
+	
 
 }

@@ -1,10 +1,12 @@
-package org.egov.ptis.domain.model;
+package org.egov.wtms.masters.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import org.egov.ptis.domain.model.ErrorDetails;
+
 @SuppressWarnings("serial")
-public class ReceiptDetails implements Serializable {
+public class WaterReceiptDetails implements Serializable {
 	private String receiptNo;
 	private String receiptDate;
 	private String payeeName;
@@ -15,8 +17,8 @@ public class ReceiptDetails implements Serializable {
 	private String paidBy;
 	private BigDecimal totalAmountPaid;
 	private String collectionType;
-	private ErrorDetails errorDetails;
 	private String transanctionId;
+	private ErrorDetails errorDetails;
 	public String getReceiptNo() {
 		return receiptNo;
 	}

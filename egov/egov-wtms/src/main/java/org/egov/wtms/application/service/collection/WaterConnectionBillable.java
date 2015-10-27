@@ -85,6 +85,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     private EgBillType billType;
     private Boolean isCallbackForApportion = Boolean.FALSE;
     private String referenceNumber;
+    private String transanctionReferenceNumber;
 
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
@@ -324,5 +325,13 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     public void setReferenceNumber(final String referenceNumber) {
         this.referenceNumber = referenceNumber;
+    }
+    @Override
+    public String getTransanctionReferenceNumber() {
+        return transanctionReferenceNumber;
+    }
+
+    public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
+        this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
 }

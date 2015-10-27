@@ -207,6 +207,7 @@ public class AssessmentService {
 		String paymentMode = payPropTaxDetails.getPaymentMode();
 		BigDecimal totalAmount = payPropTaxDetails.getTotalAmount();
 		String paidBy = payPropTaxDetails.getPaidBy();
+		String transanctionId=payPropTaxDetails.getTransactionId();
 
 		ErrorDetails errorDetails = propertyExternalService.validatePaymentDetails(assessmentNo, paymentMode,
 				totalAmount, paidBy);
@@ -214,7 +215,7 @@ public class AssessmentService {
 			responseJson = getJSONResponse(errorDetails);
 		} else {
 			ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(assessmentNo, paymentMode,
-					totalAmount, paidBy);
+					totalAmount, paidBy,transanctionId);
 			responseJson = getJSONResponse(receiptDetails);
 		}
 		return responseJson;
@@ -236,20 +237,7 @@ public class AssessmentService {
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@RequestMapping(value = "/property/payWaterTax", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED, produces = MediaType.APPLICATION_JSON)
-	public String payWateTax(@FormParam("consumerNo") String consumerNo, @FormParam("paymentMode") String paymentMode,
-			@FormParam("totalAmount") BigDecimal totalAmount, @FormParam("paidBy") String paidBy)
-					throws JsonGenerationException, JsonMappingException, IOException {
-		ErrorDetails errorDetails = propertyExternalService.validatePaymentDetails(consumerNo, paymentMode, totalAmount,
-				paidBy);
-		if (null != errorDetails) {
-			return getJSONResponse(errorDetails);
-		} else {
-			errorDetails = propertyExternalService.payWaterTax(consumerNo, paymentMode, totalAmount, paidBy);
-			return getJSONResponse(errorDetails);
-		}
-	}
-
+	
 	/**
 	 * This method is used to get the property type master details
 	 *
