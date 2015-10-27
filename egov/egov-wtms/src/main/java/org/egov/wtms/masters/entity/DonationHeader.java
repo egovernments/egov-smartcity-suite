@@ -77,13 +77,11 @@ public class DonationHeader extends AbstractAuditable {
     @NotNull
     @JoinColumn(name = "usagetype", nullable = false)
     private UsageType usageType;
-    
+
     @ManyToOne
     @NotNull
     @JoinColumn(name = "propertytype", nullable = false)
     private PropertyType propertyType;
-
-    
 
     @ManyToOne
     @NotNull
@@ -141,12 +139,12 @@ public class DonationHeader extends AbstractAuditable {
     public void setMaxPipeSize(final PipeSize maxPipeSize) {
         this.maxPipeSize = maxPipeSize;
     }
-    
+
     public PropertyType getPropertyType() {
         return propertyType;
     }
 
-    public void setPropertyType(PropertyType propertyType) {
+    public void setPropertyType(final PropertyType propertyType) {
         this.propertyType = propertyType;
     }
 
