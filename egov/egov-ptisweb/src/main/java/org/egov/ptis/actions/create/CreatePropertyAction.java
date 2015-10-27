@@ -721,7 +721,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicProperty.setPropertyMutationMaster(propertyMutationMaster);
         basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PROP_CREATE_RSN, null, null,
                 null, null, getParentIndex()));
-        basicProperty.setBoundary(boundaryService.getBoundaryById(getWardId()));
+        basicProperty.setBoundary(boundaryService.getBoundaryById(getElectionWardId()));
         basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
         basicPropertyService.createOwners(property, basicProperty, ownerAddress);
         property.setBasicProperty(basicProperty);
