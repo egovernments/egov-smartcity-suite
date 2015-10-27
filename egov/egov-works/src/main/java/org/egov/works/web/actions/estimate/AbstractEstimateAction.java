@@ -815,7 +815,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                             .getLatestApprYearEndDate(abstractEstimate.getFinancialDetails().get(0))));
         }
         // Make corresponding project code as inactive
-        abstractEstimate.getProjectCode().setIsActive(false);
+        abstractEstimate.getProjectCode().setActive(false);
 
         // TODO - The setter methods of variables in State.java are
         // protected. Need to alternative way to solve this issue.

@@ -53,7 +53,7 @@ public class ProjectCode extends BaseModel implements EntityType {
     private static final long serialVersionUID = -1569796745047275070L;
     private String code;
     private Set<AbstractEstimate> estimates = new HashSet<AbstractEstimate>();
-    private Boolean isActive;
+    private boolean active;
     @Length(max = 1024, message = "projectCode.description.length")
     private String description;
     // @Required(message="projectCode.name.null")
@@ -144,12 +144,12 @@ public class ProjectCode extends BaseModel implements EntityType {
         return description;
     }
 
-    public Boolean getIsActive() {
-        return isActive;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setIsActive(final Boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
     public String getDescription() {

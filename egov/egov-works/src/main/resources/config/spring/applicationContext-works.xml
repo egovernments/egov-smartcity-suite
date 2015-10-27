@@ -91,7 +91,6 @@
 	<bean class="org.egov.works.services.AbstractEstimateService" id="abstractEstimateService"
 		parent="persistenceService" scope="prototype">
 		<property name="estimateNumberGenerator" ref="estimateNumberGenerator" />
-		<property name="projectcodeGenerator" ref="projectcodeGenerator" />
 		<property name="budgetNumberGenerator" ref="budgetNumberGenerator" />
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
 		<property name="egovCommon" ref="egovCommon" />

@@ -55,8 +55,11 @@ function refreshInbox(){
 		<s:property value="%{model.estimateNumber}"/> &nbsp;: <s:text name="%{getText(messageKey)}" />
 	</s:if>
 	<s:else>
-		<s:if test="%{model.currentState.nextAction!=''}">
+		<s:if test="%{model.currentState.nextAction != '' && model.currentState.nextAction != 'END'}">
 			<s:property value="%{model.estimateNumber}"/> &nbsp; <s:text name="%{getText(messageKey)}" />(<s:property value="%{model.egwStatus.description}"/>) - <s:text name="%{model.currentState.nextAction}"/>
+		</s:if>
+		<s:if test="%{model.currentState.nextAction != '' && model.currentState.nextAction == 'END'">
+			<s:property value="%{model.estimateNumber}"/> &nbsp; <s:text name="%{getText(messageKey)}" />(<s:property value="%{model.egwStatus.description}"/>)
 		</s:if>
 		<s:else>
 			<s:property value="%{estimateNumber}"/> &nbsp; <s:text name="%{getText(messageKey)}" />

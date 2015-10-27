@@ -407,7 +407,7 @@ public class SubledgerCodeAction extends BaseFormAction {
             }
             projectCode.setCodeName(codeName);
             projectCode.setDescription(description);
-            projectCode.setIsActive(ISACTIVE);
+            projectCode.setActive(ISACTIVE);
             projectCode.setEgwStatus(commonsService.getStatusByModuleAndCode(ProjectCode.class.getSimpleName(),
                     WorksConstants.DEFAULT_PROJECTCODE_STATUS));
             projectCodeService.persist(projectCode); // Persists an Entry in EGW_PROJECTCODE Table
