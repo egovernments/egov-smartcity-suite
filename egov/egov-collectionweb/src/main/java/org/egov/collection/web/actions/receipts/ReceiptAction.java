@@ -369,7 +369,8 @@ public class ReceiptAction extends BaseFormAction {
     private void populateBankBranchList(final boolean populate) {
         final AjaxBankRemittanceAction ajaxBankRemittanceAction = new AjaxBankRemittanceAction();
         ajaxBankRemittanceAction.setServiceName(getServiceName());
-
+        ajaxBankRemittanceAction.setPersistenceService(getPersistenceService());
+        
         if (populate) {
             ajaxBankRemittanceAction.setFundName(getFundName());
             ajaxBankRemittanceAction.bankBranchList();
