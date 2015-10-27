@@ -73,7 +73,7 @@ public class FinancialsUtil {
     private CreateVoucher voucherCreator;
     private CollectionsUtil collectionsUtil;
     private static final Logger LOGGER = Logger.getLogger(FinancialsUtil.class);
-    
+
     /**
      * @param instrumentService the Instrument Service to set
      */
@@ -145,7 +145,7 @@ public class FinancialsUtil {
 
     public CVoucherHeader createPreApprovalVoucher(final Map<String, Object> headerdetails,
             final List<HashMap<String, Object>> accountcodedetails, final List<HashMap<String, Object>> subledgerdetails)
-            throws ApplicationRuntimeException {
+                    throws ApplicationRuntimeException {
         CVoucherHeader voucherHeaders = null;
         try {
             if (headerdetails instanceof HashMap)

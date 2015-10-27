@@ -66,7 +66,7 @@ public class CashCollectionReportAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
 
-    private final Map<String, Object> critParams = new HashMap<String, Object>();
+    private final Map<String, Object> critParams = new HashMap<String, Object>(0);
     private ReportService reportService;
     private CollectionsUtil collectionsUtil;
     private Integer reportId = -1;

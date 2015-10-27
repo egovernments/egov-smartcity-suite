@@ -1,5 +1,5 @@
 /**
-eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -24,16 +24,16 @@ eGov suite of products aim to improve the internal efficiency,transparency,
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -93,10 +93,10 @@ public class DishonorChequeService implements FinancialIntegrationService {
         else {
             final String errorMsg = "Billing system have not been updated successfully for receipt number: "
                     + receiptHeader.getReceiptnumber() + receiptHeader.getConsumerCode() != null ? "and consumer code : "
-                    + receiptHeader.getConsumerCode()
-                    : "";
-            LOGGER.debug(errorMsg);
-            throw new ApplicationRuntimeException(errorMsg);
+                            + receiptHeader.getConsumerCode()
+                            : "";
+                            LOGGER.debug(errorMsg);
+                            throw new ApplicationRuntimeException(errorMsg);
         }
 
     }

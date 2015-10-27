@@ -117,7 +117,7 @@ public class MiscellaneousFileUploadAction extends BaseFormAction {
         return errorRowMap;
     }
 
-    private final List<String> errorMsgsList = new ArrayList<String>();
+    private final List<String> errorMsgsList = new ArrayList<String>(0);
 
     private void injectObjectsIntoAction() {
         receiptAction = new ReceiptAction();

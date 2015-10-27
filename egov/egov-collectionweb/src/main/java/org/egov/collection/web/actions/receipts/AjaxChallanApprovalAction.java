@@ -60,8 +60,8 @@ public class AjaxChallanApprovalAction extends BaseFormAction {
     private Integer designationId;
     private Integer approverDeptId;
     private Long receiptheaderId;
-    private List<EmployeeView> postionUserList = new ArrayList<EmployeeView>();
-    private List<Designation> designationMasterList = new ArrayList<Designation>();
+    private List<EmployeeView> postionUserList = new ArrayList<EmployeeView>(0);
+    private List<Designation> designationMasterList = new ArrayList<Designation>(0);
     private CollectionsUtil collectionsUtil;
     private ReceiptHeaderService receiptHeaderService;
 

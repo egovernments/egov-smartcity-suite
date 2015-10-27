@@ -62,7 +62,7 @@ public class ReceiptNumberSearchAction extends BaseFormAction {
     private ReceiptHeaderService receiptHeaderService;
     protected static final String SEARCH_RESULTS = "searchResults";
     protected static final String MANUALRECEIPTNUMBER_SEARCH_RESULTS = "manualReceiptNumberResults";
-    private List<ReceiptHeader> receiptNumberList = new ArrayList<ReceiptHeader>();
+    private List<ReceiptHeader> receiptNumberList = new ArrayList<ReceiptHeader>(0);
     private String query;
 
     public String getQuery() {

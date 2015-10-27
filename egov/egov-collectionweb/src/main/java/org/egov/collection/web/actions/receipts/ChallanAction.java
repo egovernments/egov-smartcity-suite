@@ -184,7 +184,7 @@ public class ChallanAction extends BaseFormAction {
      */
     private String voucherNumber;
 
-    List<ValidationError> errors = new ArrayList<ValidationError>();
+    List<ValidationError> errors = new ArrayList<ValidationError>(0);
 
     private Integer reportId = -1;
 
@@ -233,7 +233,7 @@ public class ChallanAction extends BaseFormAction {
 
     /**
      * This method is invoked when user clicks on Save challan from Create Challan UI.
-     * 
+     *
      * All workflow transitions for the challan happen through this method.
      *
      * @return the string
@@ -290,8 +290,8 @@ public class ChallanAction extends BaseFormAction {
                 errors.add(new ValidationError(
                         getText("challanreceipt.created.message", new String[] {
                                 receiptHeader.getReceiptnumber() }),
-                        "Receipt Already Created For this Challan. Receipt Number is "
-                                + receiptHeader.getReceiptnumber()));
+                                "Receipt Already Created For this Challan. Receipt Number is "
+                                        + receiptHeader.getReceiptnumber()));
                 throw new ValidationException(errors);
             }
         }
@@ -328,7 +328,7 @@ public class ChallanAction extends BaseFormAction {
 
     /**
      * This method is invoked to view the challan.
-     * 
+     *
      * @return
      */
     @Action(value = "/receipts/challan-viewChallan", results = { @Result(name = VIEW, type = "redirect") })
@@ -445,7 +445,7 @@ public class ChallanAction extends BaseFormAction {
 
     /**
      * This method generates the report for the requested challan
-     * 
+     *
      * @return
      */
     public String printChallan() {
@@ -463,7 +463,7 @@ public class ChallanAction extends BaseFormAction {
 
     /**
      * This method directs the user to cancel the requested challan receipt
-     * 
+     *
      * @return
      */
     public String cancelReceipt() {
@@ -478,7 +478,7 @@ public class ChallanAction extends BaseFormAction {
 
     /**
      * This method is invoked when receipt is cancelled
-     * 
+     *
      * @return
      */
     @Transactional
@@ -614,9 +614,9 @@ public class ChallanAction extends BaseFormAction {
     /**
      * This instrument creates instrument header instances for the receipt, when the instrument type is Cheque or DD. The created
      * <code>InstrumentHeader</code> instance is persisted
-     * 
+     *
      * @param k an int value representing the index of the instrument type as chosen from the front end
-     * 
+     *
      * @return an <code>InstrumentHeader</code> instance populated with the instrument details
      */
     private List<InstrumentHeader> populateInstrumentHeaderForChequeDD(final List<InstrumentHeader> instrumentHeaderList,
@@ -640,7 +640,7 @@ public class ChallanAction extends BaseFormAction {
     /**
      * This method creates a receipt along with the challan. The receipt is created in PENDING status where as the challan is
      * created with a CREATED status.
-     * 
+     *
      * The receipt is actually created later when there is a request for it to be created against the challan.
      */
     @Transactional
@@ -705,7 +705,7 @@ public class ChallanAction extends BaseFormAction {
 
             totalAmt = totalAmt.add(
                     receiptDetail.getCramount()).subtract(
-                    receiptDetail.getDramount());
+                            receiptDetail.getDramount());
 
             final CFinancialYear financialYear = commonsServiceImpl.getFinancialYearById(rDetails.getFinancialYearId());
             receiptDetail.setFinancialYear(financialYear);
@@ -755,7 +755,7 @@ public class ChallanAction extends BaseFormAction {
     public ReceiptDetail setAccountPayeeDetails(final List<ReceiptDetailInfo> subLedgerlist, final ReceiptDetail receiptDetail) {
         for (final ReceiptDetailInfo subvoucherDetails : subLedgerlist)
             if (subvoucherDetails.getGlcode() != null && subvoucherDetails.getGlcode().getId() != 0 &&
-                    subvoucherDetails.getGlcode().getId().equals(receiptDetail.getAccounthead().getId())) {
+            subvoucherDetails.getGlcode().getId().equals(receiptDetail.getAccounthead().getId())) {
 
                 final Accountdetailtype accdetailtype = (Accountdetailtype) getPersistenceService().findByNamedQuery(
                         CollectionConstants.QUERY_ACCOUNTDETAILTYPE_BY_ID,
@@ -831,7 +831,7 @@ public class ChallanAction extends BaseFormAction {
                     (CChartOfAccountDetail) getPersistenceService().find(
                             " from CChartOfAccountDetail" +
                                     " where glCodeId=(select id from CChartOfAccounts where glcode=?)",
-                            rDetails.getGlcodeDetail());
+                                    rDetails.getGlcodeDetail());
 
             if (null != chartOfAccountDetail) {
                 accountDetailMap = new HashMap<String, Object>();
@@ -864,8 +864,8 @@ public class ChallanAction extends BaseFormAction {
 
                     final StringBuffer subledgerDetailRow = new StringBuffer();
                     subledgerDetailRow.append(rDetails.getGlcode().getId().toString()).
-                            append(rDetails.getDetailType().getId().toString()).
-                            append(rDetails.getDetailKeyId().toString());
+                    append(rDetails.getDetailType().getId().toString()).
+                    append(rDetails.getDetailKeyId().toString());
                     if (null == subLedgerMap.get(subledgerDetailRow.toString()))
                         subLedgerMap.put(subledgerDetailRow.toString(), subledgerDetailRow.toString());
                     else

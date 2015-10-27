@@ -66,7 +66,7 @@ public class SearchChallanAction extends BaseFormAction {
     private Integer status = -1;
     private Integer departmentId = -1;
     private String challanNumber;
-    private List<ReceiptHeader> results = new ArrayList<ReceiptHeader>();
+    private List<ReceiptHeader> results = new ArrayList<ReceiptHeader>(0);
     private String target = "new";
     private final static String sourcePage = "search";
 
@@ -112,7 +112,7 @@ public class SearchChallanAction extends BaseFormAction {
         final StringBuilder criteria = new StringBuilder();
         final StringBuilder joinString = new StringBuilder();
         final StringBuilder whereString = new StringBuilder(" order by receipt.createdDate desc");
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final ArrayList<Object> params = new ArrayList<Object>(0);
         if (StringUtils.isNotBlank(getChallanNumber())) {
             criteria.append(" upper(receipt.challan.challanNumber) like ? ");
             params.add("%" + getChallanNumber().toUpperCase() + "%");

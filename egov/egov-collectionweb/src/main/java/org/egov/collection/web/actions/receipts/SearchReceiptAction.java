@@ -194,7 +194,7 @@ public class SearchReceiptAction extends SearchFormAction {
 
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortDir) {
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final ArrayList<Object> params = new ArrayList<Object>(0);
         final StringBuilder searchQueryString = new StringBuilder("select distinct receipt ");
         final StringBuilder countQueryString = new StringBuilder("select count(distinct receipt) ");
         final StringBuilder fromString = new StringBuilder(" from org.egov.collection.entity.ReceiptHeader receipt ");

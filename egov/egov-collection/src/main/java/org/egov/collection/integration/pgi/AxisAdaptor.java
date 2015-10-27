@@ -90,7 +90,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             final ReceiptHeader receiptHeader) {
         final DefaultPaymentRequest paymentRequest = new DefaultPaymentRequest();
         LOGGER.debug("inside createPaymentRequest");
-        final Map<String, String> fields = new HashMap<String, String>();
+        final Map<String, String> fields = new HashMap<String, String>(0);
         fields.put(CollectionConstants.AXIS_VERSION, EGovConfig.getMessage(
                 CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_VERSION));
         fields.put(CollectionConstants.AXIS_COMMAND, EGovConfig.getMessage(
@@ -359,8 +359,6 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             final WebResource resource = client.resource(EGovConfig.getMessage(
                     CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_RECONCILE_URL));
             final Form formData = new Form();
-            // formData.add(CollectionConstants.AXIS_PAYMENT_CLIENT,
-            // paymentServiceDetails.getServiceUrl());
             formData.add(CollectionConstants.AXIS_VERSION, EGovConfig.getMessage(
                     CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_VERSION));
             formData.add(CollectionConstants.AXIS_COMMAND, EGovConfig.getMessage(
@@ -422,6 +420,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
                     + axisResponse.getAdditionalInfo6());
         } catch (final Exception exp) {
             exp.printStackTrace();
+            LOGGER.error(exp.getMessage());
         }
         return axisResponse;
     }

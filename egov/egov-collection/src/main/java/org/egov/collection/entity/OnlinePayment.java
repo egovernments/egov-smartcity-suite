@@ -74,8 +74,7 @@ public class OnlinePayment extends BaseModel {
     }
 
     /**
-     * @param receiptHeader
-     *            the receiptHeader to set
+     * @param receiptHeader the receiptHeader to set
      */
     public void setReceiptHeader(final ReceiptHeader receiptHeader) {
         this.receiptHeader = receiptHeader;
@@ -89,8 +88,7 @@ public class OnlinePayment extends BaseModel {
     }
 
     /**
-     * @param egwStatus
-     *            the egwStatus to set
+     * @param egwStatus the egwStatus to set
      */
     public void setStatus(final EgwStatus status) {
         this.status = status;
@@ -104,8 +102,7 @@ public class OnlinePayment extends BaseModel {
     }
 
     /**
-     * @param service
-     *            the service to set
+     * @param service the service to set
      */
     public void setService(final ServiceDetails service) {
         this.service = service;
@@ -119,8 +116,7 @@ public class OnlinePayment extends BaseModel {
     }
 
     /**
-     * @param transactionNumber
-     *            the transactionNumber to set
+     * @param transactionNumber the transactionNumber to set
      */
     public void setTransactionNumber(final String transactionNumber) {
         this.transactionNumber = transactionNumber;
@@ -134,8 +130,7 @@ public class OnlinePayment extends BaseModel {
     }
 
     /**
-     * @param transactionAmount
-     *            the transactionAmount to set
+     * @param transactionAmount the transactionAmount to set
      */
     public void setTransactionAmount(final BigDecimal transactionAmount) {
         this.transactionAmount = transactionAmount;
@@ -149,8 +144,7 @@ public class OnlinePayment extends BaseModel {
     }
 
     /**
-     * @param transactionDate
-     *            the transactionDate to set
+     * @param transactionDate the transactionDate to set
      */
     public void setTransactionDate(final Date transactionDate) {
         this.transactionDate = transactionDate;

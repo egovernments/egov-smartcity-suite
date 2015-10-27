@@ -62,8 +62,8 @@ import org.egov.infra.web.struts.actions.ReportFormAction;
  */
 @ParentPackage("egov")
 @Results({
-        @Result(name = ReceiptRegisterReportAction.INDEX, location = "receiptRegisterReport-index.jsp"),
-        @Result(name = ReceiptRegisterReportAction.REPORT, location = "receiptRegisterReport-report.jsp") })
+    @Result(name = ReceiptRegisterReportAction.INDEX, location = "receiptRegisterReport-index.jsp"),
+    @Result(name = ReceiptRegisterReportAction.REPORT, location = "receiptRegisterReport-report.jsp") })
 public class ReceiptRegisterReportAction extends ReportFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -81,7 +81,7 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
      * @return the payment mode list to be shown to user in criteria screen
      */
     private Map<String, String> createPaymentModeList() {
-        final Map<String, String> paymentModesMap = new HashMap<String, String>();
+        final Map<String, String> paymentModesMap = new HashMap<String, String>(0);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CASH, CollectionConstants.INSTRUMENTTYPE_CASH);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD, CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CARD, CollectionConstants.INSTRUMENTTYPE_CARD);
@@ -186,7 +186,7 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
 
     /**
      * Action method for criteria screen
-     * 
+     *
      * @return index
      */
     @Override

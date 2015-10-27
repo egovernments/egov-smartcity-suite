@@ -124,11 +124,6 @@ public interface PaymentResponse {
 
     public void setAdditionalInfo3(String additionalInfo3);
 
-    /*
-     * public String getAdditionalInfo4(); public void setAdditionalInfo4(String
-     * additionalInfo4); public String getAdditionalInfo5(); public void
-     * setAdditionalInfo5(String additionalInfo5);
-     */
     public String getPaytGatewayServiceCode();
 
     public void setPaytGatewayServiceCode(String paytGatewayServiceCode);

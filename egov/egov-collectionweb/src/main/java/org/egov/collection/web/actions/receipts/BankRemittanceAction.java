@@ -40,6 +40,7 @@
 package org.egov.collection.web.actions.receipts;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -60,7 +61,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({ @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
-        @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
+    @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
 @ParentPackage("egov")
 public class BankRemittanceAction extends BaseFormAction {
 
@@ -69,7 +70,7 @@ public class BankRemittanceAction extends BaseFormAction {
     private List<HashMap<String, Object>> paramList = null;
     private ReceiptHeaderService receiptHeaderService;
     private final ReceiptHeader receiptHeaderIntsance = new ReceiptHeader();
-    private List voucherHeaderValues = new ArrayList();
+    private List voucherHeaderValues = new ArrayList(0);
     private String[] serviceNameArray;
     private String[] totalCashAmountArray;
     private String[] totalChequeAmountArray;
@@ -111,7 +112,7 @@ public class BankRemittanceAction extends BaseFormAction {
         final User user = collectionsUtil.getLoggedInUser();
         final Employee employee = employeeService.getEmployeeById(user.getId());
         final StringBuilder jurValuesId = new StringBuilder();
-        for (Jurisdiction element : employee.getJurisdictions()) {
+        for (final Jurisdiction element : employee.getJurisdictions()) {
             if (jurValuesId.length() > 0)
                 jurValuesId.append(',');
             jurValuesId.append(element.getBoundary().getId());
@@ -124,8 +125,8 @@ public class BankRemittanceAction extends BaseFormAction {
         paramList = receiptHeaderService.findAllRemitanceDetails(jurValuesId.toString());
         addDropdownData("approverDepartmentList",
                 collectionsUtil.getDepartmentsAllowedForBankRemittanceApproval(collectionsUtil.getLoggedInUser()));
-        addDropdownData("designationMasterList", new ArrayList());
-        addDropdownData("postionUserList", new ArrayList());
+        addDropdownData("designationMasterList", Collections.EMPTY_LIST);
+        addDropdownData("postionUserList", Collections.EMPTY_LIST);
 
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
 
@@ -144,8 +145,8 @@ public class BankRemittanceAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        addDropdownData("bankBranchList", new ArrayList());
-        addDropdownData("accountNumberList", new ArrayList());
+        addDropdownData("bankBranchList", Collections.EMPTY_LIST);
+        addDropdownData("accountNumberList", Collections.EMPTY_LIST);
     }
 
     @Action(value = "/receipts/bankRemittance-create")

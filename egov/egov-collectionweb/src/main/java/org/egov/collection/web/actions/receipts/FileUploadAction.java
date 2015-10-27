@@ -117,7 +117,7 @@ public class FileUploadAction extends BaseFormAction {
     /**
      * An array list of String arrays. Each String array represents an input set of values for challan receipt creation.
      */
-    private List<String[]> inputList = new ArrayList<String[]>();
+    private List<String[]> inputList = new ArrayList<String[]>(0);
 
     private List<ReceiptDetailInfo> billCreditDetailslist = null;
     private List<ReceiptDetailInfo> subLedgerlist = null;
@@ -148,7 +148,7 @@ public class FileUploadAction extends BaseFormAction {
 
     private final Map<Integer, String> errorRowMap = new TreeMap<Integer, String>();
 
-    private List<Long> errorReceiptList = new ArrayList<Long>();
+    private List<Long> errorReceiptList = new ArrayList<Long>(0);
 
     private Integer successNo = 0;
 

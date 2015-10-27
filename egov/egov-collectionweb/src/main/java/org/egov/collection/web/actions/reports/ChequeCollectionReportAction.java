@@ -66,7 +66,7 @@ public class ChequeCollectionReportAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
 
-    public Map<String, Object> critParams = new HashMap<String, Object>();
+    public Map<String, Object> critParams = new HashMap<String, Object>(0);
     private ReportService reportService;
     private CollectionsUtil collectionsUtil;
     private Integer reportId = -1;

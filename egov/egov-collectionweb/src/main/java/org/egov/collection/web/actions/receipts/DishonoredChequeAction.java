@@ -43,6 +43,7 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -70,8 +71,8 @@ import org.egov.model.instrument.InstrumentType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({ @Result(name = DishonoredChequeAction.SEARCH, location = "dishonoredCheque-search.jsp"),
-        @Result(name = DishonoredChequeAction.SUCCESS, location = "dishonoredCheque-success.jsp"),
-        @Result(name = "accountList", location = "dishonoredCheque-accountList.jsp") })
+    @Result(name = DishonoredChequeAction.SUCCESS, location = "dishonoredCheque-success.jsp"),
+    @Result(name = "accountList", location = "dishonoredCheque-accountList.jsp") })
 @ParentPackage("egov")
 public class DishonoredChequeAction extends SearchFormAction {
 
@@ -95,7 +96,7 @@ public class DishonoredChequeAction extends SearchFormAction {
     private String instrumentMode;
     private Long accountNumber;
     private EgovPaginatedList paginatedList;
-    protected List<DishonoredChequeBean> dishonoredChequeDisplayList = new ArrayList<DishonoredChequeBean>();
+    protected List<DishonoredChequeBean> dishonoredChequeDisplayList = new ArrayList<DishonoredChequeBean>(0);
     private ReceiptHeaderService receiptHeaderService;
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
@@ -111,7 +112,7 @@ public class DishonoredChequeAction extends SearchFormAction {
     public void prepare() {
         super.prepare();
         addDropdownData(CollectionConstants.DROPDOWN_DATA_BANKBRANCH_LIST, bankBranchHibernateDAO.getAllBankBranchs());
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_ACCOUNT_NO_LIST, new ArrayList());
+        addDropdownData(CollectionConstants.DROPDOWN_DATA_ACCOUNT_NO_LIST, Collections.EMPTY_LIST);
         instrumentModesMap = CollectionConstants.INSTRUMENT_MODES_MAP;
     }
 

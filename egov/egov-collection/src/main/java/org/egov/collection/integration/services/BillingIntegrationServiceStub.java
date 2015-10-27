@@ -57,13 +57,10 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 /**
- * This interface needs to be implemented by any billing application that
- * integrates with the eGov collection system. For internal applications, the
- * methods can use direct API calls. For external applications, the integration
- * can be through web-service/REST calls. The convention to be followed: a bean
- * named "<servicename>collectionsInterface" needs to be available in the spring
- * context. Service name is the name provided for the billing service in
- * <ServiceDetails> class.
+ * This interface needs to be implemented by any billing application that integrates with the eGov collection system. For internal
+ * applications, the methods can use direct API calls. For external applications, the integration can be through web-service/REST
+ * calls. The convention to be followed: a bean named "<servicename>collectionsInterface" needs to be available in the spring
+ * context. Service name is the name provided for the billing service in <ServiceDetails> class.
  */
 public class BillingIntegrationServiceStub implements BillingIntegrationService {
 
@@ -71,30 +68,15 @@ public class BillingIntegrationServiceStub implements BillingIntegrationService 
 
     @Override
     public void updateReceiptDetails(final Set<BillReceiptInfo> billReceipts) throws ApplicationRuntimeException {
-        // FileOutputStream fos = null;
         try {
             String xml = null;
-            // fos = new
-            // FileOutputStream(getOutputFile("BillReceiptOutput.xml"));
-
             xml = convertToXML(billReceipts);
-            // fos.write(xml.getBytes());
-
             LOGGER.debug("Written bill details to file successfully " + xml);
 
-            // fos.close();
-
-        } /*
-         * catch (FileNotFoundException e) { LOGGER.error(
-         * "Error occrured while updating dishonored cheque status to billing system : "
-         * + e.getMessage()); return false; } catch (IOException e) {
-         * LOGGER.error(
-         * "Error occrured while updating dishonored cheque status to billing system : "
-         * + e.getMessage()); return false; }
-         */catch (final Exception e) {
-             LOGGER.error("Error occrured while updating dishonored cheque status to billing system : " + e.getMessage());
-             throw new ApplicationRuntimeException("Exception Occured");
-         }
+        } catch (final Exception e) {
+            LOGGER.error("Error occrured while updating dishonored cheque status to billing system : " + e.getMessage());
+            throw new ApplicationRuntimeException("Exception Occured");
+        }
 
     }
 
@@ -107,10 +89,8 @@ public class BillingIntegrationServiceStub implements BillingIntegrationService 
     /**
      * This method converts the given bill receipt object into an XML
      *
-     * @param billReceipt
-     *            an instance of <code>BillReceiptInfo</code>
-     * @return a <code>String</code> representing the XML format of the
-     *         <code>BillReceiptInfo</code> object
+     * @param billReceipt an instance of <code>BillReceiptInfo</code>
+     * @return a <code>String</code> representing the XML format of the <code>BillReceiptInfo</code> object
      */
     private String convertToXML(final Set<BillReceiptInfo> billReceipts) {
         final XStream xStream = new XStream(new DomDriver());
@@ -120,9 +100,9 @@ public class BillingIntegrationServiceStub implements BillingIntegrationService 
         xStream.alias("Bill-Receipt", BillReceiptInfoImpl.class);
         return xStream.toXML(billReceipts);
     }
-    
+
     @Override
-    public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid){
-            return new ArrayList<ReceiptDetail>(0);
+    public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber, final BigDecimal actualAmountPaid) {
+        return new ArrayList<ReceiptDetail>(0);
     }
 }

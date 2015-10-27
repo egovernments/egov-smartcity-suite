@@ -263,8 +263,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     }
 
     /**
-     * @param location
-     *            the location to set
+     * @param location the location to set
      */
     public void setLocation(final Location location) {
         this.location = location;
@@ -288,10 +287,8 @@ public class ReceiptHeader extends StateAware implements Auditable {
     }
 
     /**
-     * Returns instrument type of receipts associated with the receipt. Since
-     * multiple modes of payment for a receipt are not allowed (as of now), this
-     * method will return the type of the first instrument associated with this
-     * receipt.
+     * Returns instrument type of receipts associated with the receipt. Since multiple modes of payment for a receipt are not
+     * allowed (as of now), this method will return the type of the first instrument associated with this receipt.
      *
      * @return instrument type of instruments associated with the receipt
      */
@@ -314,21 +311,18 @@ public class ReceiptHeader extends StateAware implements Auditable {
     }
 
     /**
-     * @param receiptInstrument
-     *            the receiptInstrument to set
+     * @param receiptInstrument the receiptInstrument to set
      */
     public void setReceiptInstrument(final Set<InstrumentHeader> receiptInstrument) {
         this.receiptInstrument = receiptInstrument;
     }
 
     /**
-     * @param type
-     *            - the Instrument type
-     * @return Returns list of instruments of this instrument type. Useful to
-     *         get all cheque instruments or all bank instruments.
+     * @param type - the Instrument type
+     * @return Returns list of instruments of this instrument type. Useful to get all cheque instruments or all bank instruments.
      */
     public List<InstrumentHeader> getInstruments(final String type) {
-        final ArrayList<InstrumentHeader> instrumentList = new ArrayList<InstrumentHeader>();
+        final ArrayList<InstrumentHeader> instrumentList = new ArrayList<InstrumentHeader>(0);
         for (final InstrumentHeader instrument : getReceiptInstrument())
             if (type.equals(instrument.getInstrumentType().getType()))
                 instrumentList.add(instrument);
@@ -343,8 +337,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     }
 
     /**
-     * @param receiptVoucher
-     *            the receiptVoucher to set
+     * @param receiptVoucher the receiptVoucher to set
      */
     public void setReceiptVoucher(final Set<ReceiptVoucher> receiptVoucher) {
         this.receiptVoucher = receiptVoucher;
@@ -362,8 +355,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     }
 
     /**
-     * @param isReconciled
-     *            the isReconciled to set
+     * @param isReconciled the isReconciled to set
      */
     public void setIsReconciled(final Boolean isReconciled) {
         this.isReconciled = isReconciled;
@@ -377,8 +369,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     }
 
     /**
-     * @param status
-     *            the egwStatus to set
+     * @param status the egwStatus to set
      */
     public void setStatus(final EgwStatus status) {
         this.status = status;
@@ -392,8 +383,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     }
 
     /**
-     * @param reasonforcancellation
-     *            the reasonforcancellation to set
+     * @param reasonforcancellation the reasonforcancellation to set
      */
     public void setReasonForCancellation(final String reasonforcancellation) {
         reasonForCancellation = reasonforcancellation;
@@ -415,8 +405,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     }
 
     /**
-     * @param paidBy
-     *            the paidBy to set
+     * @param paidBy the paidBy to set
      */
     public void setPaidBy(final String paidBy) {
         this.paidBy = paidBy;
@@ -430,8 +419,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     }
 
     /**
-     * @param overRideAccountHeads
-     *            the overRideAccountHeads to set
+     * @param overRideAccountHeads the overRideAccountHeads to set
      */
     public void setOverrideAccountHeads(final Boolean overrideAccountHeads) {
         this.overrideAccountHeads = overrideAccountHeads;
@@ -445,8 +433,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     }
 
     /**
-     * @param callbackForApportioning
-     *            flag indicating if billing system should do the apportioning
+     * @param callbackForApportioning flag indicating if billing system should do the apportioning
      */
     public void setCallbackForApportioning(final Boolean callbackForApportioning) {
         this.callbackForApportioning = callbackForApportioning;
@@ -460,8 +447,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     }
 
     /**
-     * @param partPaymentAllowed
-     *            the partPaymentAllowed to set
+     * @param partPaymentAllowed the partPaymentAllowed to set
      */
     public void setPartPaymentAllowed(final Boolean partPaymentAllowed) {
         this.partPaymentAllowed = partPaymentAllowed;
@@ -526,8 +512,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     }
 
     /**
-     * @param voucherDate
-     *            the voucherDate to set
+     * @param voucherDate the voucherDate to set
      */
     public void setVoucherDate(final Date voucherDate) {
         this.voucherDate = voucherDate;
@@ -541,8 +526,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     }
 
     /**
-     * @param voucherNumber
-     *            the voucherNumber to set
+     * @param voucherNumber the voucherNumber to set
      */
     public void setVoucherNum(final String voucherNum) {
         this.voucherNum = voucherNum;
@@ -582,8 +566,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     }
 
     /**
-     * @param onlinePayment
-     *            the onlinePayment to set
+     * @param onlinePayment the onlinePayment to set
      */
     public void setOnlinePayment(final OnlinePayment onlinePayment) {
         this.onlinePayment = onlinePayment;
@@ -605,8 +588,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     }
 
     /**
-     * @param receiptHeader
-     *            the receiptHeader to set
+     * @param receiptHeader the receiptHeader to set
      */
     public void setReceiptHeader(final ReceiptHeader receiptHeader) {
         this.receiptHeader = receiptHeader;
@@ -620,18 +602,16 @@ public class ReceiptHeader extends StateAware implements Auditable {
     }
 
     /**
-     * @param receiptHeaders
-     *            the receiptHeaders to set
+     * @param receiptHeaders the receiptHeaders to set
      */
     public void setReceiptHeaders(final Set<ReceiptHeader> receiptHeaders) {
         this.receiptHeaders = receiptHeaders;
     }
 
     /**
-     * This method returns Challan Number associated with the receipt In case of
-     * Cancelled receipts, get the receipt object created in liu of old receipt
-     * object and returns the challan number associated with the new receipt
-     * object. this method is invoked from serach receipt UI screen
+     * This method returns Challan Number associated with the receipt In case of Cancelled receipts, get the receipt object
+     * created in liu of old receipt object and returns the challan number associated with the new receipt object. this method is
+     * invoked from serach receipt UI screen
      *
      * @return String
      */
@@ -683,8 +663,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     }
 
     /**
-     * @param workflowUserName
-     *            the workflowUserName to set
+     * @param workflowUserName the workflowUserName to set
      */
     public void setWorkflowUserName(final String workflowUserName) {
         this.workflowUserName = workflowUserName;

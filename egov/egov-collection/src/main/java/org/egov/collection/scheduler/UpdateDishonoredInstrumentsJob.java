@@ -43,13 +43,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Locale;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -70,11 +67,6 @@ public class UpdateDishonoredInstrumentsJob extends AbstractQuartzJob {
     @Autowired
     private ReceiptHeaderService receiptHeaderService;
 
-    // private List<ReceiptHeader> receiptHeaders = new
-    // ArrayList<ReceiptHeader>();
-    private final Set<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>();
-    // private final Set<ReceiptPayeeDetails> receiptPayeeDetails = new
-    // HashSet<ReceiptPayeeDetails>();
     private final CollectionsUtil collectionsUtil = new CollectionsUtil();
     private boolean testMode = false;
 
@@ -95,27 +87,21 @@ public class UpdateDishonoredInstrumentsJob extends AbstractQuartzJob {
     }
 
     /**
-     * This method gets the bounced cheque instruments from financials' and
-     * sends the corresponding update to the billing system as a batch at the
-     * end of day
+     * This method gets the bounced cheque instruments from financials' and sends the corresponding update to the billing system
+     * as a batch at the end of day
      */
     public void processDishonoredInstruments() {
         LOGGER.debug("Started batch update process");
         Date bouncedToDate = new Date();
         Date bouncedFromDate = null;
 
-        /*
-         * if(!testMode){ HibernateUtil.getCurrentSession().beginTransaction();
-         * }
-         */
         try {
             final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             final String strDate = sdf.format(bouncedToDate);
             bouncedToDate = sdf.parse(strDate);
             /**
-             * Add one day to current date as the default Date format returns
-             * date in 00:00:00 format and hence doesn't fetches records marked
-             * as dishonoured on the current day
+             * Add one day to current date as the default Date format returns date in 00:00:00 format and hence doesn't fetches
+             * records marked as dishonoured on the current day
              */
 
             bouncedToDate = DateUtils.add(bouncedToDate, Calendar.DAY_OF_MONTH, 1);
@@ -128,53 +114,30 @@ public class UpdateDishonoredInstrumentsJob extends AbstractQuartzJob {
             bouncedFromDate = DateUtils.add(bouncedFromDate, Calendar.DAY_OF_MONTH, -1);
 
             /*
-             * List<InstrumentVoucher> bouncedChequeVouchers = instrumentService
-             * .getBouncedCheques(bouncedFromDate, bouncedToDate);
-             * LOGGER.debug("Bounced cheque vouchers from " + bouncedFromDate +
-             * " till " + bouncedToDate + " : " + bouncedChequeVouchers); //
-             * perform batch update if there are any bounced instruments if
-             * (bouncedChequeVouchers != null &&
-             * !(bouncedChequeVouchers.isEmpty()) &&
-             * bouncedChequeVouchers.get(0) != null) { // get list of vouchers
-             * corresponding to the bounced cheques List<Long> voucherHeaderIds
-             * = new ArrayList<Long>(); for (InstrumentVoucher instrVoucher :
-             * bouncedChequeVouchers) {
-             * voucherHeaderIds.add(instrVoucher.getVoucherHeaderId() .getId());
-             * } EgwStatus status = collectionsUtil.getReceiptStatusForCode(
-             * CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED); //
-             * for each instrument get list of receipt headers
-             * List<ReceiptHeader> receiptHeaders =
-             * persistenceService.findAllByNamedQuery(
-             * CollectionConstants.QUERY_RECEIPTS_FOR_VOUCHERS,
-             * voucherHeaderIds); List<ReceiptHeader> receiptHeaders =
-             * persistenceService.findAllByNamedQuery(
-             * CollectionConstants.QUERY_RECEIPTS_FOR_BOUNCED_INSTRUMENTS
-             * ,status.getCode(), voucherHeaderIds); // update receipts - set
-             * status to INSTR_BOUNCED and recon flag to false
-             * updateReceiptHeaderStatus(receiptHeaders, status, false);
-             * LOGGER.debug("Updated receipt status to " + status.getCode() +
-             * " set reconcilation to false"); //get receipts with recon status
-             * as false and update billing system receiptHeaders =
-             * persistenceService.findAllByNamedQuery(
-             * CollectionConstants.QUERY_RECEIPTS_BY_RECONSTATUS, false); //
-             * update the billing system if
-             * (updateDetailsToBillingSystems(receiptHeaders)) {
-             * LOGGER.debug("All billing systems have been updated successfully"
-             * ); // change the batch reconcilation date to today's date.
-             * appData.setValue(strDate);
-             * genericDao.getAppDataDAO().updateAppDataValue(appData);
-             * LOGGER.debug("Batch update completed on : " + strDate); } else {
-             * LOGGER
-             * .debug("All billing systems have not been updated successfully");
-             * } }
+             * List<InstrumentVoucher> bouncedChequeVouchers = instrumentService .getBouncedCheques(bouncedFromDate,
+             * bouncedToDate); LOGGER.debug("Bounced cheque vouchers from " + bouncedFromDate + " till " + bouncedToDate + " : " +
+             * bouncedChequeVouchers); // perform batch update if there are any bounced instruments if (bouncedChequeVouchers !=
+             * null && !(bouncedChequeVouchers.isEmpty()) && bouncedChequeVouchers.get(0) != null) { // get list of vouchers
+             * corresponding to the bounced cheques List<Long> voucherHeaderIds = new ArrayList<Long>(); for (InstrumentVoucher
+             * instrVoucher : bouncedChequeVouchers) { voucherHeaderIds.add(instrVoucher.getVoucherHeaderId() .getId()); }
+             * EgwStatus status = collectionsUtil.getReceiptStatusForCode(
+             * CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED); // for each instrument get list of receipt headers
+             * List<ReceiptHeader> receiptHeaders = persistenceService.findAllByNamedQuery(
+             * CollectionConstants.QUERY_RECEIPTS_FOR_VOUCHERS, voucherHeaderIds); List<ReceiptHeader> receiptHeaders =
+             * persistenceService.findAllByNamedQuery( CollectionConstants.QUERY_RECEIPTS_FOR_BOUNCED_INSTRUMENTS
+             * ,status.getCode(), voucherHeaderIds); // update receipts - set status to INSTR_BOUNCED and recon flag to false
+             * updateReceiptHeaderStatus(receiptHeaders, status, false); LOGGER.debug("Updated receipt status to " +
+             * status.getCode() + " set reconcilation to false"); //get receipts with recon status as false and update billing
+             * system receiptHeaders = persistenceService.findAllByNamedQuery( CollectionConstants.QUERY_RECEIPTS_BY_RECONSTATUS,
+             * false); // update the billing system if (updateDetailsToBillingSystems(receiptHeaders)) {
+             * LOGGER.debug("All billing systems have been updated successfully" ); // change the batch reconcilation date to
+             * today's date. appData.setValue(strDate); genericDao.getAppDataDAO().updateAppDataValue(appData);
+             * LOGGER.debug("Batch update completed on : " + strDate); } else { LOGGER
+             * .debug("All billing systems have not been updated successfully"); } }
              */
         } catch (final ParseException e) {
             LOGGER.error("Exception occured : " + e.getMessage());
         }
-        /*
-         * if(!isTestMode()){ HibernateUtil.getcommitTransaction(); }
-         */
-
     }
 
     public boolean isTestMode() {

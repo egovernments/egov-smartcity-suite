@@ -97,9 +97,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({ @Result(name = OnlineReceiptAction.NEW, location = "onlineReceipt-new.jsp"),
-        @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
-        @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
-        @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
+    @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
+    @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
+    @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
 public class OnlineReceiptAction extends BaseFormAction implements ServletRequestAware {
 
     private static final Logger LOGGER = Logger.getLogger(OnlineReceiptAction.class);
@@ -109,15 +109,15 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private CollectionsUtil collectionsUtil;
     private ReceiptHeaderService receiptHeaderService;
     private CollectionCommon collectionCommon;
-    private final List<ValidationError> errors = new ArrayList<ValidationError>();
+    private final List<ValidationError> errors = new ArrayList<ValidationError>(0);
 
     private BigDecimal onlineInstrumenttotal = BigDecimal.ZERO;
-    private List<ReceiptDetail> receiptDetailList = new ArrayList<ReceiptDetail>();
+    private List<ReceiptDetail> receiptDetailList = new ArrayList<ReceiptDetail>(0);
     private BillInfoImpl collDetails = new BillInfoImpl();
     private BillCollectXmlHandler xmlHandler;
     private String collectXML;
     private String serviceName;
-    private List<String> collectionModesNotAllowed = new ArrayList<String>();
+    private List<String> collectionModesNotAllowed = new ArrayList<String>(0);
     private Boolean overrideAccountHeads;
     private Boolean partPaymentAllowed;
     private BigDecimal totalAmountToBeCollected;
@@ -471,7 +471,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     @ValidationErrorPage(value = "reconresult")
     public String reconcileOnlinePayment() {
 
-        final HashSet<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>();
+        final HashSet<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>(0);
 
         final ReceiptHeader[] receipts = new ReceiptHeader[selectedReceipts.length];
 
@@ -505,8 +505,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                     errors.add(new ValidationError(
                             "Manual Reconciliation Rolled back as Voucher Creation Failed For Payment Reference ID : "
                                     + receipts[i].getId(),
-                            "Manual Reconciliation Rolled back as Voucher Creation Failed For Payment Reference ID : "
-                                    + receipts[i].getId()));
+                                    "Manual Reconciliation Rolled back as Voucher Creation Failed For Payment Reference ID : "
+                                            + receipts[i].getId()));
                     LOGGER.error("Update to financial systems failed");
                     throw new ValidationException(errors);
                 }
@@ -554,7 +554,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         } catch (final ApplicationRuntimeException ex) {
             errors.add(new ValidationError("Manual Reconciliation of Online Payments Rolled back as "
                     + "update to billing system failed.", "Manual Reconciliation of Online Payments Rolled back as "
-                    + "update to billing system failed."));
+                            + "update to billing system failed."));
             LOGGER.error("Update to billing systems failed");
 
             throw new ValidationException(errors);
@@ -663,7 +663,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         String decodedBillXml = "";
         try {
             decodedBillXml = java.net.URLDecoder.decode(getCollectXML(), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException e) {
             throw new RuntimeException(e.getMessage());
         }
         return decodedBillXml;

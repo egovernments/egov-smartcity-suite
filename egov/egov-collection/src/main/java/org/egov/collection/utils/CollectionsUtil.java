@@ -95,7 +95,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CollectionsUtil {
-    private final Map<String, EgwStatus> statusMap = new HashMap<String, EgwStatus>();
+    private final Map<String, EgwStatus> statusMap = new HashMap<String, EgwStatus>(0);
     private PersistenceService persistenceService;
     @Autowired
     private UserService userService;
@@ -292,7 +292,7 @@ public class CollectionsUtil {
      * @return a <code>List</code> of <code>String</code> values representing the mode of payments supported.
      */
     public List<String> getCollectionModesNotAllowed(final User loggedInUser) {
-        final List<String> collectionsModeNotAllowed = new ArrayList<String>();
+        final List<String> collectionsModeNotAllowed = new ArrayList<String>(0);
         Department dept = null;
         if (!isEmployee(loggedInUser))
             dept = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
@@ -300,7 +300,7 @@ public class CollectionsUtil {
             dept = getDepartmentOfUser(loggedInUser);
         if (dept == null) {
 
-            final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+            final List<ValidationError> validationErrors = new ArrayList<ValidationError>(0);
             validationErrors.add(new ValidationError("Department", "billreceipt.counter.deptcode.null"));
         } else if (dept.getCode().equals("R")) {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
@@ -625,11 +625,6 @@ public class CollectionsUtil {
     }
 
     public List<Designation> getDesignationsAllowedForBankRemittanceApproval(final Long departmentId) {
-        /*
-         * scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_BANKREMITTANCE_WORKFLOWDESIGNATIONS); return
-         * (List<Designation>) scripts.get(0).eval( Script.createContext("departmentId", departmentId, "collUtil", this,
-         * "persistanceService", persistenceService, "contraJournalVoucherObj", new ContraJournalVoucher()));
-         */
         Department department;
         List<Designation> designations;
         final ContraJournalVoucher contraJournalVoucherObj = new ContraJournalVoucher();
@@ -683,7 +678,7 @@ public class CollectionsUtil {
             else
                 retValue = true;
         } else {
-            final ArrayList<String> accValues = new ArrayList<String>();
+            final ArrayList<String> accValues = new ArrayList<String>(0);
             for (final AppConfigValues value : list)
                 accValues.add(value.getValue());
             if (accValues.contains(glcode))
