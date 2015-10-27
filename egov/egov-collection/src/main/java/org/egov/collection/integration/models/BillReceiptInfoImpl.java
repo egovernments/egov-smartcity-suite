@@ -73,14 +73,14 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     private String event;
 
     private final Set<ReceiptAccountInfo> accountDetails = new HashSet<ReceiptAccountInfo>(0);
-    private final Set<ReceiptInstrumentInfo> instrumentDetails = new HashSet<ReceiptInstrumentInfo>();
+    private final Set<ReceiptInstrumentInfo> instrumentDetails = new HashSet<ReceiptInstrumentInfo>(0);
 
     /**
      * Set of bounced instruments of this receipt - Will be created only if
      * event is InstrumentBounced
      */
-    private final Set<ReceiptInstrumentInfo> bouncedInstruments = new HashSet<ReceiptInstrumentInfo>();
-    private final Set<ChallanInfo> challanDetails = new HashSet<ChallanInfo>();
+    private final Set<ReceiptInstrumentInfo> bouncedInstruments = new HashSet<ReceiptInstrumentInfo>(0);
+    private final Set<ChallanInfo> challanDetails = new HashSet<ChallanInfo>(0);
     private ChallanInfo challan = null;
     /**
      * Billing system invokes this URL to view the receipt
@@ -382,5 +382,21 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     public String getConsumerCode() {
         return receiptHeader.getConsumerCode();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getManualReceiptNumber()
+     */
+    @Override
+    public String getManualReceiptNumber() {
+            return receiptHeader.getManualreceiptnumber() == null ? "": receiptHeader.getManualreceiptnumber();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getManualReceiptDate()
+     */
+    @Override
+    public Date getManualReceiptDate() {
+            return receiptHeader.getManualreceiptdate() == null ? null : receiptHeader.getManualreceiptdate();
     }
 }

@@ -168,5 +168,20 @@ public interface BillInfo {
      *            Payee object
      */
     void addPayees(BillPayeeDetails payee);
+    
+    /**
+     * This method returns the Collection Type
+     * 
+     * @return Collection Type as String
+     */
+    COLLECTIONTYPE getCollectionType();
+    
+    /**
+     * Used Only for Integration. 
+     * This method returns the Transaction Reference Number
+     *  
+     * @return Transaction Number as String
+     */
+    String getTransactionReferenceNumber();
 
 }

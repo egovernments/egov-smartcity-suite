@@ -320,6 +320,11 @@ public class CollectionCommon {
                         collDetails.getOverrideAccountHeadsAllowed(), collDetails.getCallbackForApportioning(),
                         collDetails.getDisplayMessage(), service, collModesNotAllowed.toString(),
                         billPayee.getPayeeName(), billPayee.getPayeeAddress());
+                
+                if(collDetails.getTransactionReferenceNumber() != null) {
+                    receiptHeader.setManualreceiptnumber(collDetails.getTransactionReferenceNumber());
+                    receiptHeader.setManualreceiptdate(new Date());
+                }
 
                 final Boundary boundary = boundaryService.getActiveBoundaryByBndryNumAndTypeAndHierarchyTypeCode(
                         Long.valueOf(billDetail.getBoundaryNum()), billDetail.getBoundaryType(),

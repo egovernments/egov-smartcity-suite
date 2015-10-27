@@ -72,6 +72,8 @@ public class BillInfoImpl implements BillInfo {
 
     @XStreamAlias("payees")
     private List<BillPayeeDetails> payees = new ArrayList<BillPayeeDetails>();
+    
+    private String transactionReferenceNumber;
 
     @Override
     public String getServiceCode() {
@@ -153,6 +155,7 @@ public class BillInfoImpl implements BillInfo {
         payees.add(payee);
     }
 
+    @Override
     public COLLECTIONTYPE getCollectionType() {
         return collectionType;
     }
@@ -170,7 +173,7 @@ public class BillInfoImpl implements BillInfo {
     public void setCallbackForApportioning(final Boolean callbackForApportioning) {
         this.callbackForApportioning = callbackForApportioning;
     }
-
+    
     @Override
     public boolean equals(final Object obj) {
         if (!(obj instanceof BillInfoImpl))
@@ -203,5 +206,13 @@ public class BillInfoImpl implements BillInfo {
         for (final String collectionModeNotAllowed : collectionModesNotAllowed)
             hashCode += collectionModeNotAllowed.hashCode();
         return hashCode;
+    }
+
+    public String getTransactionReferenceNumber() {
+        return this.transactionReferenceNumber;
+    }
+
+    public void setTransactionReferenceNumber(String transactionReferenceNumber) {
+        this.transactionReferenceNumber = transactionReferenceNumber;
     }
 }
