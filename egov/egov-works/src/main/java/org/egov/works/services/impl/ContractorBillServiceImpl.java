@@ -1697,7 +1697,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         List billAmountResult;
         BigDecimal totalBillAmount = BigDecimal.ZERO;
 
-        final String payQuery = " select nvl(sum(br.BILLAMOUNT),0) as \"Total Bill Amount\" FROM EG_BILLPAYEEDETAILS bpd, EG_BILLDETAILS bd, EG_BILLREGISTER br, EG_BILLREGISTERMIS mis "
+        final String payQuery = " select coalesce(sum(br.BILLAMOUNT),0) as \"Total Bill Amount\" FROM EG_BILLPAYEEDETAILS bpd, EG_BILLDETAILS bd, EG_BILLREGISTER br, EG_BILLREGISTERMIS mis "
                 + " WHERE bpd.BILLDETAILID = bd.ID AND bd.BILLID = br.ID AND br.ID = mis.BILLID AND br.BILLSTATUS != '"
                 + WorksConstants.CANCELLED_STATUS
                 + "' "
