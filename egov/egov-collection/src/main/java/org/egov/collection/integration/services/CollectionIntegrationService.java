@@ -47,6 +47,7 @@ import java.util.Set;
 import org.egov.collection.integration.models.BillInfo;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.PaymentInfo;
+import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 
 /**
@@ -147,9 +148,9 @@ public interface CollectionIntegrationService {
      * for the given date range
      * @param fromDate From Date to Search the Aggregate Payment
      * @param toDate To Date to Search the Aggregate Payment
-     * @return Map of count and sum total of amount collected 
+     * @return List of <code>RestAggregatePaymentInfo</code> containing aggregate information of receipts
      */
-    public Map<String, Object> getAggregateReceiptTotal(Date fromDate, Date toDate);
+    public List<RestAggregatePaymentInfo> getAggregateReceiptTotal(Date fromDate, Date toDate);
     
     
     /**
@@ -157,7 +158,8 @@ public interface CollectionIntegrationService {
      * given date range and service code of the billing system.
      * @param fromDate From Date to Search the Aggregate Payment
      * @param toDate To Date to Search the Aggregate Payment
-     * @return serviceCode The service code of the billing system
+     * @param serviceCode The service code of the billing system
+     * @return List of <code>RestReceiptInfo</code> containing details of Receipt Information
      */
     public List<RestReceiptInfo> getReceiptDetailsByDateAndService(Date fromDate, Date toDate, String serviceCode);
 

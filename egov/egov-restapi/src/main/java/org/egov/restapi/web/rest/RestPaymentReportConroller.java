@@ -42,11 +42,10 @@ package org.egov.restapi.web.rest;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jettison.json.JSONObject;
+import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
@@ -73,10 +72,10 @@ public class RestPaymentReportConroller {
     public String searchAggregatePaymentsByDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest)
             throws JsonGenerationException, JsonMappingException, IOException {
 
-        Map<String, Object> paymentInfoMap = collectionService.getAggregateReceiptTotal(paymentInfoSearchRequest.getFromdate(),
+        List<RestAggregatePaymentInfo> listAggregatePaymentInfo = collectionService.getAggregateReceiptTotal(
+                paymentInfoSearchRequest.getFromdate(),
                 paymentInfoSearchRequest.getTodate());
-        JSONObject json = new JSONObject(paymentInfoMap);
-        return json.toString();
+        return getJSONResponse(listAggregatePaymentInfo);
     }
 
     @RequestMapping(value = "/reconciliation/paymentdetails", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

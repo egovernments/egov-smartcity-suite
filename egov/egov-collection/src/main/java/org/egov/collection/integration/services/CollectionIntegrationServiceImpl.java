@@ -61,6 +61,7 @@ import org.egov.collection.integration.models.PaymentInfo;
 import org.egov.collection.integration.models.PaymentInfoBank;
 import org.egov.collection.integration.models.PaymentInfoCash;
 import org.egov.collection.integration.models.PaymentInfoChequeDD;
+import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
@@ -474,7 +475,10 @@ CollectionIntegrationService {
      *
      */
     @Override
-    public Map<String, Object> getAggregateReceiptTotal(final Date fromDate, final Date toDate) {
+    public List<RestAggregatePaymentInfo> getAggregateReceiptTotal(final Date fromDate, final Date toDate) {
+        
+        List<RestAggregatePaymentInfo> listAggregatePaymentInfo = new ArrayList<RestAggregatePaymentInfo>(0);
+        
         final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
         final StringBuilder queryBuilder = new StringBuilder(
                 "select count(*), sum(Totalamount) from egcl_collectionheader where receiptdate>='");
@@ -482,14 +486,17 @@ CollectionIntegrationService {
         .append("' and status in (select id from egw_status where moduletype='ReceiptHeader' and code in ('TO_BE_SUBMITTED','SUBMITTED','APPROVED','REMITTED'))");
 
         final Query query = getSession().createSQLQuery(queryBuilder.toString());
-        @SuppressWarnings("unchecked")
-        final Object[] queryResult = ((List<Object[]>) query.list()).get(0);
-        final Map<String, Object> resultMap = new HashMap<String, Object>(0);
-        resultMap.put("ulbcode", "Tirupati");
-        resultMap.put("txncount", queryResult[0]);
-        resultMap.put("txnamount", queryResult[1]);
-        return resultMap;
-
+        
+        final List<Object[]> queryResults = (List<Object[]>) query.list();
+        
+        for (Object[] objectArray:queryResults) {
+            RestAggregatePaymentInfo aggregatePaymentInfo = new RestAggregatePaymentInfo();
+            aggregatePaymentInfo.setUlbcode("Tirupati");
+            aggregatePaymentInfo.setTxncount(Integer.parseInt(objectArray[0].toString()));
+            aggregatePaymentInfo.setTxnamount(new BigDecimal(objectArray[1].toString()));
+            listAggregatePaymentInfo.add(aggregatePaymentInfo);
+        }
+        return listAggregatePaymentInfo;
     }
 
     /*
