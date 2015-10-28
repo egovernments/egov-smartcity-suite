@@ -45,14 +45,14 @@ import org.egov.collection.entity.ReceiptHeader;
 
 public class RestReceiptInfo {
     private String transactionId;
-    private String receiptNumber;
-    private String referenceNumber;
+    private String receiptNo;
+    private String referenceNo;
     private BigDecimal amount;
     
     public RestReceiptInfo(final ReceiptHeader receiptHeader) {
         this.transactionId = receiptHeader.getManualreceiptnumber();
-        this.receiptNumber = receiptHeader.getReceiptnumber();
-        this.referenceNumber = receiptHeader.getConsumerCode();
+        this.receiptNo = receiptHeader.getReceiptnumber();
+        this.referenceNo = receiptHeader.getConsumerCode();
         this.amount = receiptHeader.getTotalAmount();
     }
 
@@ -64,20 +64,20 @@ public class RestReceiptInfo {
         this.transactionId = transactionId;
     }
 
-    public String getReceiptNumber() {
-        return receiptNumber;
+    public String getReceiptNo() {
+        return receiptNo;
     }
 
-    public void setReceiptNumber(String receiptNumber) {
-        this.receiptNumber = receiptNumber;
+    public void setReceiptNo(String receiptNo) {
+        this.receiptNo = receiptNo;
     }
 
-    public String getReferenceNumber() {
-        return referenceNumber;
+    public String getReferenceNo() {
+        return referenceNo;
     }
 
-    public void setReferenceNumber(String referenceNumber) {
-        this.referenceNumber = referenceNumber;
+    public void setReferenceNo(String referenceNo) {
+        this.referenceNo = referenceNo;
     }
 
     public BigDecimal getAmount() {
