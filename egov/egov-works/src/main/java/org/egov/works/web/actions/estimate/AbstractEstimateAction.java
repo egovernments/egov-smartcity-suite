@@ -83,8 +83,11 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.commons.Position;
@@ -190,6 +193,10 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
     private SecurityUtils securityUtils;
     @Autowired
     private SimpleWorkflowService<AbstractEstimate> abstractEstimateWorkflowService;
+    private Long stateId;
+    private final List<StateHistory> workflowHistory = new LinkedList<StateHistory>();
+    @Autowired
+    private PersistenceService<State, Long> statePersistenceService;
 
     public String getMessageKey() {
         return messageKey;
@@ -281,6 +288,11 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
 
     @Action(value = "/estimate/abstractEstimate-workflowHistory")
     public String workflowHistory() {
+        if (stateId != null) {
+            final State state = statePersistenceService.findById(stateId, false);
+            workflowHistory.addAll(state.getHistory());
+            workflowHistory.add(new StateHistory(state));
+        }
         return HISTORY;
     }
 
@@ -1174,6 +1186,14 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
 
     public void setWpDetails(final List<Object> wpDetails) {
         this.wpDetails = wpDetails;
+    }
+
+    public void setStateId(final Long stateId) {
+        this.stateId = stateId;
+    }
+
+    public List<StateHistory> getWorkflowHistory() {
+        return workflowHistory;
     }
 
 }

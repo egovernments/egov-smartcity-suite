@@ -38,8 +38,6 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
-<s:if test="%{stateValue!=null}">
      <c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp" context="/egworks">
-     <c:param name="stateId" value="${stateValue}"></c:param>
+     <c:param name="stateId" value="${stateId}"></c:param>
 </c:import>
- </s:if>

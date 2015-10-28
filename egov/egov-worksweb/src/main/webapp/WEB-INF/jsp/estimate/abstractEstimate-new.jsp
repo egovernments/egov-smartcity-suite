@@ -551,7 +551,7 @@ jq(document).on('click', '#woView', function(){
 	
  </s:if>
    <s:if test="%{sourcepage=='search'}">
-   		<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-workflowHistory.action?stateValue=<s:property value='%{state.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="buttonfinal" value="History" id="history" name="History"/>
+   		<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-workflowHistory.action?stateId=<s:property value='%{state.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="buttonfinal" value="History" id="history" name="History"/>
    </s:if>
 </div>
 </s:push>

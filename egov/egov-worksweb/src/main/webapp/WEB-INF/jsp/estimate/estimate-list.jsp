@@ -69,7 +69,7 @@ function gotoPage(obj)
 	}
 	if(dom.get('searchActions')[3]!=null && obj.value==dom.get("searchActions")[3].value)
 	{
-		window.open("${pageContext.request.contextPath}/estimate/abstractEstimate-workflowHistory.action?stateValue="+
+		window.open("${pageContext.request.contextPath}/estimate/abstractEstimate-workflowHistory.action?stateId="+
 		estimateStateId.value,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 	}
 	if(dom.get('searchActions')[4]!=null && obj.value==dom.get("searchActions")[4].value)

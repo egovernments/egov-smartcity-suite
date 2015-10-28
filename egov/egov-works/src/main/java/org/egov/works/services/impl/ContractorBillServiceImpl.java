@@ -1701,7 +1701,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
                 + " WHERE bpd.BILLDETAILID = bd.ID AND bd.BILLID = br.ID AND br.ID = mis.BILLID AND br.BILLSTATUS != '"
                 + WorksConstants.CANCELLED_STATUS
                 + "' "
-                + "AND bpd.ACCOUNTDETAILTYPEID=(SELECT ID FROM ACCOUNTDETAILTYPE WHERE NAME='PROJECTCODE') AND bpd.ACCOUNTDETAILKEYID IN (:projCodeIds) AND TRUNC(br.BILLDATE) <=:date "
+                + "AND bpd.ACCOUNTDETAILTYPEID=(SELECT ID FROM ACCOUNTDETAILTYPE WHERE NAME='PROJECTCODE') AND bpd.ACCOUNTDETAILKEYID IN (:projCodeIds) AND br.BILLDATE <=:date "
                 + "AND ((mis.VOUCHERHEADERID   IS NULL) OR (mis.VOUCHERHEADERID IS NOT NULL and EXISTS (select id from voucherheader where id=mis.VOUCHERHEADERID and status="
                 + FinancialConstants.CANCELLEDVOUCHERSTATUS + ")))";
 
