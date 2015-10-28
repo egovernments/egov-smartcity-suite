@@ -61,6 +61,7 @@ import org.egov.collection.integration.models.PaymentInfo;
 import org.egov.collection.integration.models.PaymentInfoBank;
 import org.egov.collection.integration.models.PaymentInfoCash;
 import org.egov.collection.integration.models.PaymentInfoChequeDD;
+import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
@@ -467,27 +468,40 @@ CollectionIntegrationService {
         return new BillReceiptInfoImpl(receiptHeader);
     }
 
+    /*
+     * @see org.egov.infstr.collections.integration.CollectionIntegrationService# 
+     * getAggregateReceiptTotal (Date fromDate, Date toDate)
+     *
+     */
     @Override
-    public Map<String, Object> getAggrgateReceiptTotal(final Date fromDate, final Date toDate) {
+    public Map<String, Object> getAggregateReceiptTotal(final Date fromDate, final Date toDate) {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
         final StringBuilder queryBuilder = new StringBuilder(
                 "select count(*), sum(Totalamount) from egcl_collectionheader where receiptdate>='");
         queryBuilder.append(formatter.format(fromDate)).append("' and receiptdate<='").append(formatter.format(toDate))
-        .append("'");
+        .append("' and status in (select id from egw_status where moduletype='ReceiptHeader' and code in ('TO_BE_SUBMITTED','SUBMITTED','APPROVED','REMITTED'))");
 
         final Query query = getSession().createSQLQuery(queryBuilder.toString());
+        @SuppressWarnings("unchecked")
         final Object[] queryResult = ((List<Object[]>) query.list()).get(0);
         final Map<String, Object> resultMap = new HashMap<String, Object>(0);
-        resultMap.put("Count", queryResult[0]);
-        resultMap.put("Total Amount", queryResult[1]);
+        resultMap.put("ulbcode", "Tirupati");
+        resultMap.put("txncount", queryResult[0]);
+        resultMap.put("txnamount", queryResult[1]);
         return resultMap;
 
     }
 
+    /*
+     * @see org.egov.infstr.collections.integration.CollectionIntegrationService# 
+     * getReceiptDetailsByDateAndService(final Date fromDate, final Date toDate,
+            final String serviceCode)
+     *
+     */
     @Override
-    public List<BillReceiptInfo> getReceiptDetailsByDateAndService(final Date fromDate, final Date toDate,
+    public List<RestReceiptInfo> getReceiptDetailsByDateAndService(final Date fromDate, final Date toDate,
             final String serviceCode) {
-        final ArrayList<BillReceiptInfo> receipts = new ArrayList<BillReceiptInfo>(0);
+        final ArrayList<RestReceiptInfo> receipts = new ArrayList<RestReceiptInfo>(0);
         final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
                 CollectionConstants.QUERY_RECEIPTS_BY_DATE_AND_SERVICECODE, fromDate,
                 toDate, serviceCode);
@@ -495,7 +509,7 @@ CollectionIntegrationService {
             return null;
         else {
             for (final ReceiptHeader receiptHeader : receiptHeaders)
-                receipts.add(new BillReceiptInfoImpl(receiptHeader));
+                receipts.add(new RestReceiptInfo(receiptHeader));
             return receipts;
         }
     }

@@ -47,6 +47,7 @@ import java.util.Set;
 import org.egov.collection.integration.models.BillInfo;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.PaymentInfo;
+import org.egov.collection.integration.models.RestReceiptInfo;
 
 /**
  * Interface exposed by collections system to other systems (typically billing systems)
@@ -141,8 +142,23 @@ public interface CollectionIntegrationService {
      */
     public BillReceiptInfo createMiscellaneousReceipt(BillInfo bill, List<PaymentInfo> paymentInfoList);
 
-    public Map<String, Object> getAggrgateReceiptTotal(Date fromDate, Date toDate);
-
-    public List<BillReceiptInfo> getReceiptDetailsByDateAndService(Date fromDate, Date toDate, String Service);
+    /**
+     * This method returns the count of receipts created with the sum total of receipt amount
+     * for the given date range
+     * @param fromDate From Date to Search the Aggregate Payment
+     * @param toDate To Date to Search the Aggregate Payment
+     * @return Map of count and sum total of amount collected 
+     */
+    public Map<String, Object> getAggregateReceiptTotal(Date fromDate, Date toDate);
+    
+    
+    /**
+     * This method returns the list of receipt created in the system for the 
+     * given date range and service code of the billing system.
+     * @param fromDate From Date to Search the Aggregate Payment
+     * @param toDate To Date to Search the Aggregate Payment
+     * @return serviceCode The service code of the billing system
+     */
+    public List<RestReceiptInfo> getReceiptDetailsByDateAndService(Date fromDate, Date toDate, String serviceCode);
 
 }

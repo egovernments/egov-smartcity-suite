@@ -233,6 +233,12 @@
 	select rh from org.egov.collection.entity.ReceiptHeader rh, org.egov.collection.entity.OnlinePayment online where rh.id = online.receiptHeader.id and rh.id = ? and replace(replace(rh.consumerCode,'-',''),'/','') = ?
 	]]>
 	</query>
+	
+	<query name="RECEIPTS_BY_DATE_AND_SERVICECODE">
+	<![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where rh.receiptdate between ? and ? and rh.service.code = ? and rh.status.code in ('TO_BE_SUBMITTED','SUBMITTED','APPROVED','REMITTED') ]]>
+	</query>
+
 	<query name="RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE">
-    <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh left join rh.receiptInstrument as ri where ri.id=?  and rh.service.code=?]]></query>
+    <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh left join rh.receiptInstrument as ri where ri.id=?  and rh.service.code=?]]>
+    </query>
 </hibernate-mapping>
